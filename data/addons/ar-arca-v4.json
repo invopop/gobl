@@ -24,7 +24,7 @@
       },
       "values": [
         {
-          "code": "001",
+          "code": "1",
           "name": {
             "en": "Invoice A",
             "es": "Factura A"
@@ -35,7 +35,7 @@
           }
         },
         {
-          "code": "002",
+          "code": "2",
           "name": {
             "en": "Debit Note A",
             "es": "Nota de Débito A"
@@ -46,7 +46,7 @@
           }
         },
         {
-          "code": "003",
+          "code": "3",
           "name": {
             "en": "Credit Note A",
             "es": "Nota de Crédito A"
@@ -57,7 +57,21 @@
           }
         },
         {
-          "code": "006",
+          "code": "4",
+          "name": {
+            "en": "Receipt A",
+            "es": "Recibos A"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Cash Sales Note A",
+            "es": "Notas de Venta al contado A"
+          }
+        },
+        {
+          "code": "6",
           "name": {
             "en": "Invoice B",
             "es": "Factura B"
@@ -68,7 +82,7 @@
           }
         },
         {
-          "code": "007",
+          "code": "7",
           "name": {
             "en": "Debit Note B",
             "es": "Nota de Débito B"
@@ -79,7 +93,7 @@
           }
         },
         {
-          "code": "008",
+          "code": "8",
           "name": {
             "en": "Credit Note B",
             "es": "Nota de Crédito B"
@@ -90,7 +104,21 @@
           }
         },
         {
-          "code": "011",
+          "code": "9",
+          "name": {
+            "en": "Receipt B",
+            "es": "Recibos B"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Cash Sales Note B",
+            "es": "Notas de Venta al contado B"
+          }
+        },
+        {
+          "code": "11",
           "name": {
             "en": "Invoice C",
             "es": "Factura C"
@@ -101,7 +129,7 @@
           }
         },
         {
-          "code": "012",
+          "code": "12",
           "name": {
             "en": "Debit Note C",
             "es": "Nota de Débito C"
@@ -112,7 +140,7 @@
           }
         },
         {
-          "code": "013",
+          "code": "13",
           "name": {
             "en": "Credit Note C",
             "es": "Nota de Crédito C"
@@ -123,69 +151,164 @@
           }
         },
         {
-          "code": "019",
+          "code": "15",
           "name": {
-            "en": "Export Invoice",
-            "es": "Factura de Exportación"
-          },
-          "desc": {
-            "en": "Export invoice issued by registered taxpayers or monotributistas that export goods or services to clients outside the country",
-            "es": "Factura emitida por responsables inscriptos o monotributistas que exportan bienes o servicios a clientes en el exterior."
+            "en": "Receipt C",
+            "es": "Recibo C"
           }
         },
         {
-          "code": "020",
+          "code": "34",
           "name": {
-            "en": "Debit Note for Foreign Operations",
-            "es": "Nota de Débito por Operaciones con el Exterior"
-          },
-          "desc": {
-            "en": "Debit note issued by companies and businesses that export goods or services to clients outside the country",
-            "es": "Nota de débito emitida por las empresas y comercios que exportan bienes o servicios a clientes en el exterior."
+            "en": "Invoices A per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. A del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
           }
         },
         {
-          "code": "021",
+          "code": "35",
           "name": {
-            "en": "Credit Note for Foreign Operations",
-            "es": "Nota de Crédito por Operaciones con el Exterior"
-          },
-          "desc": {
-            "en": "Credit note issued by companies and businesses that export goods or services to clients outside the country",
-            "es": "Nota de crédito emitida por las empresas y comercios que exportan bienes o servicios a clientes en el exterior."
+            "en": "Vouchers B per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. B del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
           }
         },
         {
-          "code": "195",
+          "code": "39",
           "name": {
-            "en": "Invoice T",
-            "es": "Factura T"
-          },
-          "desc": {
-            "en": "Invoice issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-            "es": "Factura emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento."
+            "en": "Other Vouchers A compliant with R.G. No. 1415",
+            "es": "Otros comprobantes A que cumplan con R.G. Nro. 1415"
           }
         },
         {
-          "code": "196",
+          "code": "40",
           "name": {
-            "en": "Debit Note T",
-            "es": "Nota de Débito T"
-          },
-          "desc": {
-            "en": "Debit note issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-            "es": "Nota de débito emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento."
+            "en": "Other Vouchers B compliant with R.G. No. 1415",
+            "es": "Otros comprobantes B que cumplan con R.G. Nro. 1415"
           }
         },
         {
-          "code": "197",
+          "code": "49",
           "name": {
-            "en": "Credit Note T",
-            "es": "Nota de Crédito T"
-          },
-          "desc": {
-            "en": "Credit note issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-            "es": "Nota de crédito emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento."
+            "en": "Used Goods Purchase Invoice to Final Consumer",
+            "es": "Comprobante de Compra de Bienes Usados a Consumidor Final"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Invoice A with Legend 'Subject to Withholding'",
+            "es": "Factura A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "52",
+          "name": {
+            "en": "Debit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Débito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Credit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Crédito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "54",
+          "name": {
+            "en": "Receipt A with Legend 'Subject to Withholding'",
+            "es": "Recibo A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "Sales Account and Product Settlement A",
+            "es": "Cta de Vta y Liquido prod. A"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Sales Account and Product Settlement B",
+            "es": "Cta de Vta y Liquido prod. B"
+          }
+        },
+        {
+          "code": "63",
+          "name": {
+            "en": "Settlement A",
+            "es": "Liquidacion A"
+          }
+        },
+        {
+          "code": "64",
+          "name": {
+            "en": "Settlement B",
+            "es": "Liquidacion B"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) A",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) A",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) A",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "206",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) B",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "207",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) B",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "208",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) B",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "211",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) C",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "212",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) C",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) C",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) C"
           }
         }
       ]
@@ -691,62 +814,100 @@
       ]
     }
   ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "vat-registered",
+          "name": {
+            "en": "VAT Registered Customer",
+            "es": "Cliente Registrado en IVA"
+          },
+          "desc": {
+            "en": "Invoice A: Customer is VAT registered (Responsable Inscripto or Monotributista).",
+            "es": "Factura A: El cliente está registrado en IVA (Responsable Inscripto o Monotributista)."
+          }
+        },
+        {
+          "key": "simplified-regime",
+          "name": {
+            "en": "Simplified Tax Regime",
+            "es": "Régimen Simplificado"
+          },
+          "desc": {
+            "en": "Invoice C: Supplier is under a simplified tax regime (Monotributo).",
+            "es": "Factura C: El proveedor está bajo un régimen tributario simplificado (Monotributo)."
+          }
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
       "list": [
         {
           "name": {
-            "en": "Standard Invoice - A",
-            "es": "Factura Estándar - A"
+            "en": "Invoice A",
+            "es": "Factura A"
           },
           "desc": {
-            "en": "Used for B2B transactions when the invoice is issued by a VAT registered company."
+            "en": "Used when the invoice is issued by a VAT registered company to another\nVAT registered company or a monotributista."
           },
           "type": [
             "standard"
           ],
+          "tags": [
+            "vat-registered"
+          ],
           "ext": {
-            "ar-arca-doc-type": "001"
+            "ar-arca-doc-type": "1"
           }
         },
         {
           "name": {
-            "en": "Standard Debit Note - A",
-            "es": "Nota de Débito Estándar - A"
+            "en": "Debit Note A",
+            "es": "Nota de Débito A"
           },
           "desc": {
-            "en": "Used for B2B transactions when the debit note is issued by a VAT registered company."
+            "en": "Used when the debit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
           },
           "type": [
             "debit-note"
           ],
+          "tags": [
+            "vat-registered"
+          ],
           "ext": {
-            "ar-arca-doc-type": "002"
+            "ar-arca-doc-type": "2"
           }
         },
         {
           "name": {
-            "en": "Standard Credit Note - A",
-            "es": "Nota de Crédito Estándar - A"
+            "en": "Credit Note A",
+            "es": "Nota de Crédito A"
           },
           "desc": {
-            "en": "Used for B2B transactions when the credit note is issued by a VAT registered company."
+            "en": "Used when the credit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
           },
           "type": [
             "credit-note"
           ],
+          "tags": [
+            "vat-registered"
+          ],
           "ext": {
-            "ar-arca-doc-type": "003"
+            "ar-arca-doc-type": "3"
           }
         },
         {
           "name": {
-            "en": "Simplified Invoice - B",
-            "es": "Factura Simplificada - B"
+            "en": "Invoice B",
+            "es": "Factura B"
           },
           "desc": {
-            "en": "Used for B2C transactions when the invoice is issued by a VAT registered company."
+            "en": "Used when the invoice is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
           },
           "type": [
             "standard"
@@ -755,16 +916,16 @@
             "simplified"
           ],
           "ext": {
-            "ar-arca-doc-type": "006"
+            "ar-arca-doc-type": "6"
           }
         },
         {
           "name": {
-            "en": "Simplified Debit Note - B",
-            "es": "Nota de Débito Simplificada - B"
+            "en": "Debit Note B",
+            "es": "Nota de Débito B"
           },
           "desc": {
-            "en": "Used for B2C transactions when the debit note is issued by a VAT registered company."
+            "en": "Used when the debit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
           },
           "type": [
             "debit-note"
@@ -773,16 +934,16 @@
             "simplified"
           ],
           "ext": {
-            "ar-arca-doc-type": "007"
+            "ar-arca-doc-type": "7"
           }
         },
         {
           "name": {
-            "en": "Simplified Credit Note - B",
-            "es": "Nota de Crédito Simplificada - B"
+            "en": "Credit Note B",
+            "es": "Nota de Crédito B"
           },
           "desc": {
-            "en": "Used for B2C transactions when the credit note is issued by a VAT registered company."
+            "en": "Used when the credit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
           },
           "type": [
             "credit-note"
@@ -791,61 +952,61 @@
             "simplified"
           ],
           "ext": {
-            "ar-arca-doc-type": "008"
+            "ar-arca-doc-type": "8"
           }
         },
         {
           "name": {
-            "en": "Export Invoice",
-            "es": "Factura de Exportación"
+            "en": "Invoice C",
+            "es": "Factura C"
           },
           "desc": {
-            "en": "Used for B2B transactions when the invoice is issued by a registered taxpayer or a monotributista that exports goods or services to clients outside the country."
+            "en": "Used when the invoice is issued by a monotributista (simplified tax regime)\nto any type of customer."
           },
           "type": [
             "standard"
           ],
           "tags": [
-            "export"
+            "simplified-regime"
           ],
           "ext": {
-            "ar-arca-doc-type": "019"
+            "ar-arca-doc-type": "11"
           }
         },
         {
           "name": {
-            "en": "Debit Note for Foreign Operations",
-            "es": "Nota de Débito por Operaciones con el Exterior"
+            "en": "Debit Note C",
+            "es": "Nota de Débito C"
           },
           "desc": {
-            "en": "Used for B2B transactions when the debit note is issued by a company or business that exports goods or services to clients outside the country."
+            "en": "Used when the debit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
           },
           "type": [
             "debit-note"
           ],
           "tags": [
-            "export"
+            "simplified-regime"
           ],
           "ext": {
-            "ar-arca-doc-type": "020"
+            "ar-arca-doc-type": "12"
           }
         },
         {
           "name": {
-            "en": "Credit Note for Foreign Operations",
-            "es": "Nota de Crédito por Operaciones con el Exterior"
+            "en": "Credit Note C",
+            "es": "Nota de Crédito C"
           },
           "desc": {
-            "en": "Used for B2B transactions when the credit note is issued by a company or business that exports goods or services to clients outside the country."
+            "en": "Used when the credit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
           },
           "type": [
             "credit-note"
           ],
           "tags": [
-            "export"
+            "simplified-regime"
           ],
           "ext": {
-            "ar-arca-doc-type": "021"
+            "ar-arca-doc-type": "13"
           }
         }
       ]

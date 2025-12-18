@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fe56b7d36a81031fb5cf307a575522c5a64e594e25bf7988db422b2fc9ee3f5b"
+			"val": "4600a6eeb911499e97172b72df3ef4480884658813df865d88248de13bae9241"
 		}
 	},
 	"doc": {
@@ -14,59 +14,59 @@
 			"ar-arca-v4"
 		],
 		"$tags": [
-			"vat-registered"
+			"simplified-regime"
 		],
-		"uuid": "2d6b643f-e257-d464-c946-7b7179db7e1d",
+		"uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
 		"type": "standard",
 		"series": "1",
-		"code": "00000300",
-		"issue_date": "2025-02-15",
+		"code": "00000050",
+		"issue_date": "2025-01-18",
 		"currency": "ARS",
 		"tax": {
 			"ext": {
-				"ar-arca-concept": "1",
-				"ar-arca-doc-type": "1"
+				"ar-arca-concept": "2",
+				"ar-arca-doc-type": "11"
 			}
 		},
 		"supplier": {
-			"name": "Librería Académica S.A.",
+			"name": "María García - Diseño Gráfico",
 			"tax_id": {
 				"country": "AR",
-				"code": "30712345671"
+				"code": "20172543597"
 			},
 			"addresses": [
 				{
-					"street": "Av. Córdoba 2000",
+					"street": "Calle Florida 500",
 					"locality": "Buenos Aires",
 					"region": "Ciudad Autónoma de Buenos Aires",
-					"code": "C1120",
+					"code": "C1005",
 					"country": "AR"
 				}
 			],
 			"emails": [
 				{
-					"addr": "ventas@libreriaacademica.com.ar"
+					"addr": "maria.garcia@email.com.ar"
 				}
 			]
 		},
 		"customer": {
-			"name": "Universidad Nacional de Buenos Aires",
+			"name": "Startup Tech S.R.L.",
 			"tax_id": {
 				"country": "AR",
-				"code": "30546670623"
+				"code": "30987654321"
 			},
 			"addresses": [
 				{
-					"street": "Viamonte 430",
+					"street": "Av. Belgrano 1000",
 					"locality": "Buenos Aires",
 					"region": "Ciudad Autónoma de Buenos Aires",
-					"code": "C1053",
+					"code": "C1092",
 					"country": "AR"
 				}
 			],
 			"emails": [
 				{
-					"addr": "compras@uba.ar"
+					"addr": "admin@startuptech.com.ar"
 				}
 			],
 			"ext": {
@@ -76,41 +76,49 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "100",
+				"quantity": "1",
 				"item": {
-					"key": "goods",
-					"name": "Libros académicos (exentos de IVA)",
-					"price": "5000.00"
+					"key": "services",
+					"name": "Diseño de logotipo e identidad visual",
+					"price": "150000.00"
 				},
-				"sum": "500000.00",
+				"sum": "150000.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "zero",
-						"percent": "0%",
-						"ext": {
-							"ar-arca-vat-rate": "3"
-						}
+						"key": "exempt"
 					}
 				],
-				"total": "500000.00"
+				"total": "150000.00"
 			}
 		],
+		"ordering": {
+			"period": {
+				"start": "2025-01-01",
+				"end": "2025-01-15"
+			}
+		},
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-01-25",
+						"amount": "150000.00"
+					}
+				]
+			}
+		},
 		"totals": {
-			"sum": "500000.00",
-			"total": "500000.00",
+			"sum": "150000.00",
+			"total": "150000.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "zero",
-								"ext": {
-									"ar-arca-vat-rate": "3"
-								},
-								"base": "500000.00",
-								"percent": "0%",
+								"key": "exempt",
+								"base": "150000.00",
 								"amount": "0.00"
 							}
 						],
@@ -120,8 +128,8 @@
 				"sum": "0.00"
 			},
 			"tax": "0.00",
-			"total_with_tax": "500000.00",
-			"payable": "500000.00"
+			"total_with_tax": "150000.00",
+			"payable": "150000.00"
 		}
 	}
 }

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c15b1cc8159292e4672cc874420ae05fbc374ae92e577ebe04869b70018ae4f8"
+			"val": "9c038e87b8eebee1907c36c21f6cb20f6a7dc12cff9ded45136812f70cbdec43"
 		}
 	},
 	"doc": {
@@ -12,6 +12,9 @@
 		"$regime": "AR",
 		"$addons": [
 			"ar-arca-v4"
+		],
+		"$tags": [
+			"vat-registered"
 		],
 		"uuid": "6d0b0e89-8cf1-7e0e-c3e0-1b1513fb185d",
 		"type": "debit-note",
@@ -25,14 +28,14 @@
 				"series": "1",
 				"code": "00000123",
 				"ext": {
-					"ar-arca-doc-type": "001"
+					"ar-arca-doc-type": "1"
 				}
 			}
 		],
 		"tax": {
 			"ext": {
 				"ar-arca-concept": "2",
-				"ar-arca-doc-type": "002"
+				"ar-arca-doc-type": "2"
 			}
 		},
 		"supplier": {

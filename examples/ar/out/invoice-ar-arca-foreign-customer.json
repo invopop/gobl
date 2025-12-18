@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e1744c2fa542b8659fb51263c20451adb49aa32f6c23867f5563240f30e06502"
+			"val": "de855380f454c93bdfe15d2dd6d95a8f25e6a52074d76f22d2d8491b88e8410a"
 		}
 	},
 	"doc": {
@@ -13,16 +13,19 @@
 		"$addons": [
 			"ar-arca-v4"
 		],
+		"$tags": [
+			"simplified"
+		],
 		"uuid": "0b4f421d-c035-b242-a724-5f5957bf5c9b",
 		"type": "standard",
-		"series": "1",
+		"series": "2",
 		"code": "00000250",
 		"issue_date": "2025-02-05",
 		"currency": "ARS",
 		"tax": {
 			"ext": {
 				"ar-arca-concept": "1",
-				"ar-arca-doc-type": "001"
+				"ar-arca-doc-type": "6"
 			}
 		},
 		"supplier": {

@@ -1,6 +1,7 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$addons": ["ar-arca-v4"],
+  "$tags": ["vat-registered"],
   "type": "credit-note",
   "uuid": "5cfa9d78-7be0-6dfd-b2df-0a0402fa074c",
   "currency": "ARS",
@@ -61,7 +62,7 @@
       "code": "00000123",
       "issue_date": "2025-01-15",
       "ext": {
-        "ar-arca-doc-type": "001"
+        "ar-arca-doc-type": "1"
       }
     }
   ]

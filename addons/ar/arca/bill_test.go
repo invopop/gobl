@@ -144,12 +144,12 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax = &bill.Tax{
 			Ext: tax.Extensions{
-				arca.ExtKeyDocType: "001",
+				arca.ExtKeyDocType: "1",
 			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyConcept].String())
-		assert.Equal(t, "001", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
 	t.Run("empty lines does not set concept", func(t *testing.T) {
@@ -260,7 +260,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 	t.Run("customer not required for debit note type B (007)", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeDebitNote
-		inv.Tax.Ext[arca.ExtKeyDocType] = "007"
+		inv.Tax.Ext[arca.ExtKeyDocType] = "7"
 		inv.Customer = nil
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
@@ -270,7 +270,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 	t.Run("customer not required for credit note type B (008)", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Tax.Ext[arca.ExtKeyDocType] = "008"
+		inv.Tax.Ext[arca.ExtKeyDocType] = "8"
 		inv.Customer = nil
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
@@ -422,7 +422,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-		assert.Equal(t, "003", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
 	t.Run("valid credit note type B", func(t *testing.T) {
@@ -431,7 +431,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-		assert.Equal(t, "008", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		assert.Equal(t, "8", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 }
 
@@ -442,7 +442,7 @@ func TestDebitNoteValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-		assert.Equal(t, "002", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
 	t.Run("valid debit note type B", func(t *testing.T) {
@@ -451,7 +451,7 @@ func TestDebitNoteValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-		assert.Equal(t, "007", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		assert.Equal(t, "7", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 }
 
@@ -486,7 +486,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				Series: "1",
 				Code:   "100",
 				Ext: tax.Extensions{
-					arca.ExtKeyDocType: "001",
+					arca.ExtKeyDocType: "1",
 				},
 			},
 		}
@@ -502,7 +502,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				Series: "1",
 				Code:   "100",
 				Ext: tax.Extensions{
-					arca.ExtKeyDocType: "001",
+					arca.ExtKeyDocType: "1",
 				},
 			},
 		}
@@ -542,7 +542,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				Series: "1",
 				Code:   "100",
 				Ext: tax.Extensions{
-					arca.ExtKeyDocType: "001",
+					arca.ExtKeyDocType: "1",
 				},
 			},
 			{
@@ -622,13 +622,13 @@ func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
-	return &bill.Invoice{
+	inv := &bill.Invoice{
 		Addons: tax.WithAddons(arca.V4),
 		Series: "1",
 		Code:   "123",
 		Tax: &bill.Tax{
 			Ext: tax.Extensions{
-				arca.ExtKeyDocType: "001",
+				arca.ExtKeyDocType: "1",
 			},
 		},
 		Supplier: &org.Party{
@@ -662,6 +662,8 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 	}
+	inv.SetTags(arca.TagVATRegistered)
+	return inv
 }
 
 func testInvoiceWithGoods(t *testing.T) *bill.Invoice {
@@ -684,7 +686,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := testInvoiceWithGoods(t)
 	inv.SetTags(tax.TagSimplified)
-	inv.Tax.Ext[arca.ExtKeyDocType] = "006"
+	inv.Tax.Ext[arca.ExtKeyDocType] = "6"
 	return inv
 }
 
@@ -716,7 +718,7 @@ func testPreceding() []*org.DocumentRef {
 			Series: "1",
 			Code:   "100",
 			Ext: tax.Extensions{
-				arca.ExtKeyDocType: "001",
+				arca.ExtKeyDocType: "1",
 			},
 		},
 	}

@@ -8,70 +8,123 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Document tag keys for Argentine invoice types
+const (
+	// TagVATRegistered is used for Invoice A - transactions where the customer
+	// is VAT registered (Responsable Inscripto or Monotributista).
+	TagVATRegistered cbc.Key = "vat-registered"
+
+	// TagSimplifiedRegime is used for Invoice C - when the supplier is under a
+	// simplified tax regime (Monotributo in Argentina).
+	TagSimplifiedRegime cbc.Key = "simplified-regime"
+)
+
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.Definition{
+		{
+			Key: TagVATRegistered,
+			Name: i18n.String{
+				i18n.EN: "VAT Registered Customer",
+				i18n.ES: "Cliente Registrado en IVA",
+			},
+			Desc: i18n.String{
+				i18n.EN: "Invoice A: Customer is VAT registered (Responsable Inscripto or Monotributista).",
+				i18n.ES: "Factura A: El cliente está registrado en IVA (Responsable Inscripto o Monotributista).",
+			},
+		},
+		{
+			Key: TagSimplifiedRegime,
+			Name: i18n.String{
+				i18n.EN: "Simplified Tax Regime",
+				i18n.ES: "Régimen Simplificado",
+			},
+			Desc: i18n.String{
+				i18n.EN: "Invoice C: Supplier is under a simplified tax regime (Monotributo).",
+				i18n.ES: "Factura C: El proveedor está bajo un régimen tributario simplificado (Monotributo).",
+			},
+		},
+	},
+}
+
 var scenarios = []*tax.ScenarioSet{
 	{
 		Schema: bill.ShortSchemaInvoice,
 		List: []*tax.Scenario{
-			// ** Invoice Document Types **
+			// ** Invoice A - Customer is VAT registered **
 			{
 				Name: i18n.String{
-					i18n.EN: "Standard Invoice - A",
-					i18n.ES: "Factura Estándar - A",
+					i18n.EN: "Invoice A",
+					i18n.ES: "Factura A",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the invoice is issued by a VAT registered company.
+						Used when the invoice is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
+				Tags: []cbc.Key{
+					TagVATRegistered,
+				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "001",
+					ExtKeyDocType: "1",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Standard Debit Note - A",
-					i18n.ES: "Nota de Débito Estándar - A",
+					i18n.EN: "Debit Note A",
+					i18n.ES: "Nota de Débito A",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the debit note is issued by a VAT registered company.
+						Used when the debit note is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeDebitNote,
 				},
+				Tags: []cbc.Key{
+					TagVATRegistered,
+				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "002",
+					ExtKeyDocType: "2",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Standard Credit Note - A",
-					i18n.ES: "Nota de Crédito Estándar - A",
+					i18n.EN: "Credit Note A",
+					i18n.ES: "Nota de Crédito A",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the credit note is issued by a VAT registered company.
+						Used when the credit note is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
+				Tags: []cbc.Key{
+					TagVATRegistered,
+				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "003",
+					ExtKeyDocType: "3",
 				},
 			},
+			// ** Invoice B - Final consumers and VAT exempt customers **
 			{
 				Name: i18n.String{
-					i18n.EN: "Simplified Invoice - B",
-					i18n.ES: "Factura Simplificada - B",
+					i18n.EN: "Invoice B",
+					i18n.ES: "Factura B",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2C transactions when the invoice is issued by a VAT registered company.
+						Used when the invoice is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
 					`),
 				},
 				Types: []cbc.Key{
@@ -81,17 +134,18 @@ var scenarios = []*tax.ScenarioSet{
 					tax.TagSimplified,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "006",
+					ExtKeyDocType: "6",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Simplified Debit Note - B",
-					i18n.ES: "Nota de Débito Simplificada - B",
+					i18n.EN: "Debit Note B",
+					i18n.ES: "Nota de Débito B",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2C transactions when the debit note is issued by a VAT registered company.
+						Used when the debit note is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
 					`),
 				},
 				Types: []cbc.Key{
@@ -101,17 +155,18 @@ var scenarios = []*tax.ScenarioSet{
 					tax.TagSimplified,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "007",
+					ExtKeyDocType: "7",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Simplified Credit Note - B",
-					i18n.ES: "Nota de Crédito Simplificada - B",
+					i18n.EN: "Credit Note B",
+					i18n.ES: "Nota de Crédito B",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2C transactions when the credit note is issued by a VAT registered company.
+						Used when the credit note is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
 					`),
 				},
 				Types: []cbc.Key{
@@ -121,67 +176,71 @@ var scenarios = []*tax.ScenarioSet{
 					tax.TagSimplified,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "008",
+					ExtKeyDocType: "8",
 				},
 			},
+			// ** Invoice C - Monotributista transactions **
 			{
 				Name: i18n.String{
-					i18n.EN: "Export Invoice",
-					i18n.ES: "Factura de Exportación",
+					i18n.EN: "Invoice C",
+					i18n.ES: "Factura C",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the invoice is issued by a registered taxpayer or a monotributista that exports goods or services to clients outside the country.
+						Used when the invoice is issued by a monotributista (simplified tax regime)
+						to any type of customer.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
 				Tags: []cbc.Key{
-					tax.TagExport,
+					TagSimplifiedRegime,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "019",
+					ExtKeyDocType: "11",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Debit Note for Foreign Operations",
-					i18n.ES: "Nota de Débito por Operaciones con el Exterior",
+					i18n.EN: "Debit Note C",
+					i18n.ES: "Nota de Débito C",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the debit note is issued by a company or business that exports goods or services to clients outside the country.
+						Used when the debit note is issued by a monotributista (simplified tax regime)
+						to any type of customer.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeDebitNote,
 				},
 				Tags: []cbc.Key{
-					tax.TagExport,
+					TagSimplifiedRegime,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "020",
+					ExtKeyDocType: "12",
 				},
 			},
 			{
 				Name: i18n.String{
-					i18n.EN: "Credit Note for Foreign Operations",
-					i18n.ES: "Nota de Crédito por Operaciones con el Exterior",
+					i18n.EN: "Credit Note C",
+					i18n.ES: "Nota de Crédito C",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Used for B2B transactions when the credit note is issued by a company or business that exports goods or services to clients outside the country.
+						Used when the credit note is issued by a monotributista (simplified tax regime)
+						to any type of customer.
 					`),
 				},
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
 				Tags: []cbc.Key{
-					tax.TagExport,
+					TagSimplifiedRegime,
 				},
 				Ext: tax.Extensions{
-					ExtKeyDocType: "021",
+					ExtKeyDocType: "13",
 				},
 			},
 		},

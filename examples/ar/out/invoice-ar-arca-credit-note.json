@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6aca0cc3838ad59cb83e7bfc25b0ef1f37233c81a36a428af7324a95f7406925"
+			"val": "76d4438933809aa754a043185da77252203263c397c1b12a04ca350108c96c3d"
 		}
 	},
 	"doc": {
@@ -12,6 +12,9 @@
 		"$regime": "AR",
 		"$addons": [
 			"ar-arca-v4"
+		],
+		"$tags": [
+			"vat-registered"
 		],
 		"uuid": "5cfa9d78-7be0-6dfd-b2df-0a0402fa074c",
 		"type": "credit-note",
@@ -25,14 +28,14 @@
 				"series": "1",
 				"code": "00000123",
 				"ext": {
-					"ar-arca-doc-type": "001"
+					"ar-arca-doc-type": "1"
 				}
 			}
 		],
 		"tax": {
 			"ext": {
 				"ar-arca-concept": "1",
-				"ar-arca-doc-type": "003"
+				"ar-arca-doc-type": "3"
 			}
 		},
 		"supplier": {

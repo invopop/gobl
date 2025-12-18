@@ -85,10 +85,10 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.GetExt(ExtKeyDocType).In("006", "007", "008"),
+				!inv.Tax.GetExt(ExtKeyDocType).In("6", "7", "8", "49"),
 				validation.Required,
-				validation.By(validateInvoiceCustomer),
 			),
+			validation.By(validateInvoiceCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Ordering,

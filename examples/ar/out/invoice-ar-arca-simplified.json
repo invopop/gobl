@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "808dd7129be68a914a360418d608848be5cd8f6824663cffc076ddc887bd336c"
+			"val": "df1a4cb226ed22a4406652c1752b1a581dc382fd246621471ff0b7a50eac6229"
 		}
 	},
 	"doc": {
@@ -25,7 +25,7 @@
 		"tax": {
 			"ext": {
 				"ar-arca-concept": "1",
-				"ar-arca-doc-type": "006"
+				"ar-arca-doc-type": "6"
 			}
 		},
 		"supplier": {

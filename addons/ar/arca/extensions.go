@@ -39,7 +39,7 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "001",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Invoice A",
 					i18n.ES: "Factura A",
@@ -50,7 +50,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "002",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Debit Note A",
 					i18n.ES: "Nota de Débito A",
@@ -61,7 +61,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "003",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Credit Note A",
 					i18n.ES: "Nota de Crédito A",
@@ -72,7 +72,21 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "006",
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Receipt A",
+					i18n.ES: "Recibos A",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Cash Sales Note A",
+					i18n.ES: "Notas de Venta al contado A",
+				},
+			},
+			{
+				Code: "6",
 				Name: i18n.String{
 					i18n.EN: "Invoice B",
 					i18n.ES: "Factura B",
@@ -83,7 +97,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "007",
+				Code: "7",
 				Name: i18n.String{
 					i18n.EN: "Debit Note B",
 					i18n.ES: "Nota de Débito B",
@@ -94,7 +108,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "008",
+				Code: "8",
 				Name: i18n.String{
 					i18n.EN: "Credit Note B",
 					i18n.ES: "Nota de Crédito B",
@@ -105,7 +119,21 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "011",
+				Code: "9",
+				Name: i18n.String{
+					i18n.EN: "Receipt B",
+					i18n.ES: "Recibos B",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Cash Sales Note B",
+					i18n.ES: "Notas de Venta al contado B",
+				},
+			},
+			{
+				Code: "11",
 				Name: i18n.String{
 					i18n.EN: "Invoice C",
 					i18n.ES: "Factura C",
@@ -116,7 +144,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "012",
+				Code: "12",
 				Name: i18n.String{
 					i18n.EN: "Debit Note C",
 					i18n.ES: "Nota de Débito C",
@@ -127,7 +155,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "013",
+				Code: "13",
 				Name: i18n.String{
 					i18n.EN: "Credit Note C",
 					i18n.ES: "Nota de Crédito C",
@@ -138,69 +166,164 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "019",
+				Code: "15",
 				Name: i18n.String{
-					i18n.EN: "Export Invoice",
-					i18n.ES: "Factura de Exportación",
-				},
-				Desc: i18n.String{
-					i18n.EN: "Export invoice issued by registered taxpayers or monotributistas that export goods or services to clients outside the country",
-					i18n.ES: "Factura emitida por responsables inscriptos o monotributistas que exportan bienes o servicios a clientes en el exterior.",
+					i18n.EN: "Receipt C",
+					i18n.ES: "Recibo C",
 				},
 			},
 			{
-				Code: "020",
+				Code: "34",
 				Name: i18n.String{
-					i18n.EN: "Debit Note for Foreign Operations",
-					i18n.ES: "Nota de Débito por Operaciones con el Exterior",
-				},
-				Desc: i18n.String{
-					i18n.EN: "Debit note issued by companies and businesses that export goods or services to clients outside the country",
-					i18n.ES: "Nota de débito emitida por las empresas y comercios que exportan bienes o servicios a clientes en el exterior.",
+					i18n.EN: "Invoices A per Annex I, Section A, subsection f), R.G. No. 1415",
+					i18n.ES: "Cbtes. A del Anexo I, Apartado A, inc. f), R.G. Nro. 1415",
 				},
 			},
 			{
-				Code: "021",
+				Code: "35",
 				Name: i18n.String{
-					i18n.EN: "Credit Note for Foreign Operations",
-					i18n.ES: "Nota de Crédito por Operaciones con el Exterior",
-				},
-				Desc: i18n.String{
-					i18n.EN: "Credit note issued by companies and businesses that export goods or services to clients outside the country",
-					i18n.ES: "Nota de crédito emitida por las empresas y comercios que exportan bienes o servicios a clientes en el exterior.",
+					i18n.EN: "Vouchers B per Annex I, Section A, subsection f), R.G. No. 1415",
+					i18n.ES: "Cbtes. B del Anexo I, Apartado A, inc. f), R.G. Nro. 1415",
 				},
 			},
 			{
-				Code: "195",
+				Code: "39",
 				Name: i18n.String{
-					i18n.EN: "Invoice T",
-					i18n.ES: "Factura T",
-				},
-				Desc: i18n.String{
-					i18n.EN: "Invoice issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-					i18n.ES: "Factura emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento.",
+					i18n.EN: "Other Vouchers A compliant with R.G. No. 1415",
+					i18n.ES: "Otros comprobantes A que cumplan con R.G. Nro. 1415",
 				},
 			},
 			{
-				Code: "196",
+				Code: "40",
 				Name: i18n.String{
-					i18n.EN: "Debit Note T",
-					i18n.ES: "Nota de Débito T",
-				},
-				Desc: i18n.String{
-					i18n.EN: "Debit note issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-					i18n.ES: "Nota de débito emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento.",
+					i18n.EN: "Other Vouchers B compliant with R.G. No. 1415",
+					i18n.ES: "Otros comprobantes B que cumplan con R.G. Nro. 1415",
 				},
 			},
 			{
-				Code: "197",
+				Code: "49",
 				Name: i18n.String{
-					i18n.EN: "Credit Note T",
-					i18n.ES: "Nota de Crédito T",
+					i18n.EN: "Used Goods Purchase Invoice to Final Consumer",
+					i18n.ES: "Comprobante de Compra de Bienes Usados a Consumidor Final",
 				},
-				Desc: i18n.String{
-					i18n.EN: "Credit note issued by a registered taxpayer to tourists from abroad for accommodation operations.",
-					i18n.ES: "Nota de crédito emitida por un responsable inscripto a turistas del extranjero para operaciones de alojamiento.",
+			},
+			{
+				Code: "51",
+				Name: i18n.String{
+					i18n.EN: "Invoice A with Legend 'Subject to Withholding'",
+					i18n.ES: "Factura A con Leyenda 'Operación Sujeta a Retención'",
+				},
+			},
+			{
+				Code: "52",
+				Name: i18n.String{
+					i18n.EN: "Debit Note A with Legend 'Subject to Withholding'",
+					i18n.ES: "Nota de Débito A con Leyenda 'Operación Sujeta a Retención'",
+				},
+			},
+			{
+				Code: "53",
+				Name: i18n.String{
+					i18n.EN: "Credit Note A with Legend 'Subject to Withholding'",
+					i18n.ES: "Nota de Crédito A con Leyenda 'Operación Sujeta a Retención'",
+				},
+			},
+			{
+				Code: "54",
+				Name: i18n.String{
+					i18n.EN: "Receipt A with Legend 'Subject to Withholding'",
+					i18n.ES: "Recibo A con Leyenda 'Operación Sujeta a Retención'",
+				},
+			},
+			{
+				Code: "60",
+				Name: i18n.String{
+					i18n.EN: "Sales Account and Product Settlement A",
+					i18n.ES: "Cta de Vta y Liquido prod. A",
+				},
+			},
+			{
+				Code: "61",
+				Name: i18n.String{
+					i18n.EN: "Sales Account and Product Settlement B",
+					i18n.ES: "Cta de Vta y Liquido prod. B",
+				},
+			},
+			{
+				Code: "63",
+				Name: i18n.String{
+					i18n.EN: "Settlement A",
+					i18n.ES: "Liquidacion A",
+				},
+			},
+			{
+				Code: "64",
+				Name: i18n.String{
+					i18n.EN: "Settlement B",
+					i18n.ES: "Liquidacion B",
+				},
+			},
+			{
+				Code: "201",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Invoice (FCE) A",
+					i18n.ES: "Factura de Crédito electrónica MiPyMEs (FCE) A",
+				},
+			},
+			{
+				Code: "202",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Debit Note (FCE) A",
+					i18n.ES: "Nota de Débito electrónica MiPyMEs (FCE) A",
+				},
+			},
+			{
+				Code: "203",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Note (FCE) A",
+					i18n.ES: "Nota de Crédito electrónica MiPyMEs (FCE) A",
+				},
+			},
+			{
+				Code: "206",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Invoice (FCE) B",
+					i18n.ES: "Factura de Crédito electrónica MiPyMEs (FCE) B",
+				},
+			},
+			{
+				Code: "207",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Debit Note (FCE) B",
+					i18n.ES: "Nota de Débito electrónica MiPyMEs (FCE) B",
+				},
+			},
+			{
+				Code: "208",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Note (FCE) B",
+					i18n.ES: "Nota de Crédito electrónica MiPyMEs (FCE) B",
+				},
+			},
+			{
+				Code: "211",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Invoice (FCE) C",
+					i18n.ES: "Factura de Crédito electrónica MiPyMEs (FCE) C",
+				},
+			},
+			{
+				Code: "212",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Debit Note (FCE) C",
+					i18n.ES: "Nota de Débito electrónica MiPyMEs (FCE) C",
+				},
+			},
+			{
+				Code: "213",
+				Name: i18n.String{
+					i18n.EN: "MiPyMEs Electronic Credit Note (FCE) C",
+					i18n.ES: "Nota de Crédito electrónica MiPyMEs (FCE) C",
 				},
 			},
 		},

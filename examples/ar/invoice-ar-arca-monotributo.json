@@ -1,42 +1,51 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$addons": ["ar-arca-v4"],
-  "$tags": ["vat-registered"],
-  "type": "debit-note",
-  "uuid": "6d0b0e89-8cf1-7e0e-c3e0-1b1513fb185d",
+  "$tags": ["simplified-regime"],
+  "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "currency": "ARS",
-  "issue_date": "2025-01-22",
+  "issue_date": "2025-01-18",
   "series": "1",
-  "code": "00000001",
+  "code": "00000050",
   "supplier": {
-    "name": "Proveedor Ejemplo S.A.",
+    "name": "María García - Diseño Gráfico",
     "tax_id": {
       "country": "AR",
-      "code": "30712345671"
+      "code": "20172543597"
     },
     "addresses": [
       {
-        "street": "Av. Corrientes 1234",
+        "street": "Calle Florida 500",
         "locality": "Buenos Aires",
         "region": "Ciudad Autónoma de Buenos Aires",
-        "code": "C1043",
+        "code": "C1005",
         "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "maria.garcia@email.com.ar"
       }
     ]
   },
   "customer": {
-    "name": "Cliente Comercial S.R.L.",
+    "name": "Startup Tech S.R.L.",
     "tax_id": {
       "country": "AR",
       "code": "30987654321"
     },
     "addresses": [
       {
-        "street": "Av. Santa Fe 2500",
+        "street": "Av. Belgrano 1000",
         "locality": "Buenos Aires",
         "region": "Ciudad Autónoma de Buenos Aires",
-        "code": "C1123",
+        "code": "C1092",
         "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "admin@startuptech.com.ar"
       }
     ]
   },
@@ -44,42 +53,32 @@
     {
       "quantity": "1",
       "item": {
-        "name": "Intereses por mora",
-        "price": "25000.00"
+        "name": "Diseño de logotipo e identidad visual",
+        "price": "150000.00",
+        "key": "services"
       },
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "general"
+          "key": "exempt"
         }
       ]
-    }
-  ],
-  "preceding": [
-    {
-      "series": "1",
-      "code": "00000123",
-      "issue_date": "2025-01-15",
-      "ext": {
-        "ar-arca-doc-type": "1"
-      }
     }
   ],
   "ordering": {
     "period": {
       "start": "2025-01-01",
-      "end": "2025-01-22"
+      "end": "2025-01-15"
     }
   },
   "payment": {
     "terms": {
       "due_dates": [
         {
-          "date": "2025-01-22",
-          "percent": "100%"
+          "date": "2025-01-25",
+          "amount": "150000.00"
         }
       ]
     }
   }
 }
-

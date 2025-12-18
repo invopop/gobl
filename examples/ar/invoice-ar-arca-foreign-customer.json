@@ -1,10 +1,11 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$addons": ["ar-arca-v4"],
+  "$tags": ["simplified"],
   "uuid": "0b4f421d-c035-b242-a724-5f5957bf5c9b",
   "currency": "ARS",
   "issue_date": "2025-02-05",
-  "series": "1",
+  "series": "2",
   "code": "00000250",
   "supplier": {
     "name": "Servicios Globales Argentina S.A.",

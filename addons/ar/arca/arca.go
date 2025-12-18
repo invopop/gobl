@@ -34,7 +34,10 @@ func newAddon() *tax.AddonDef {
 		Description: i18n.String{
 			i18n.EN: "Support for the Argentina ARCA v4 standard for electronic invoicing.",
 		},
-		Extensions:  extensions,
+		Extensions: extensions,
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
 		Scenarios:   scenarios,
 		Corrections: invoiceCorrectionDefinitions,
 		Normalizer:  normalize,

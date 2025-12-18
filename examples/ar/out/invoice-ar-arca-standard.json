@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5bdd878446e6f1a6b374bc9730937cffdc7b1afb03bfa90878ab35b52e7882b3"
+			"val": "8fa2efb901dd5ab0b380ee752801cbe4a5ba66a4d4f549459c27b33f4cc1767b"
 		}
 	},
 	"doc": {
@@ -12,6 +12,9 @@
 		"$regime": "AR",
 		"$addons": [
 			"ar-arca-v4"
+		],
+		"$tags": [
+			"vat-registered"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -22,7 +25,7 @@
 		"tax": {
 			"ext": {
 				"ar-arca-concept": "1",
-				"ar-arca-doc-type": "001"
+				"ar-arca-doc-type": "1"
 			}
 		},
 		"supplier": {

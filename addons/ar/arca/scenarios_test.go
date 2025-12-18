@@ -37,62 +37,62 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		tags        []cbc.Key
 		expectedDoc string
 	}{
-		// Type A - Standard (B2B)
+		// Type A - VAT registered customer
 		{
-			name:        "standard invoice type A",
+			name:        "invoice type A",
 			invType:     bill.InvoiceTypeStandard,
-			tags:        nil,
-			expectedDoc: "001",
+			tags:        []cbc.Key{arca.TagVATRegistered},
+			expectedDoc: "1",
 		},
 		{
 			name:        "debit note type A",
 			invType:     bill.InvoiceTypeDebitNote,
-			tags:        nil,
-			expectedDoc: "002",
+			tags:        []cbc.Key{arca.TagVATRegistered},
+			expectedDoc: "2",
 		},
 		{
 			name:        "credit note type A",
 			invType:     bill.InvoiceTypeCreditNote,
-			tags:        nil,
-			expectedDoc: "003",
+			tags:        []cbc.Key{arca.TagVATRegistered},
+			expectedDoc: "3",
 		},
-		// Type B - Simplified (B2C)
+		// Type B - Final consumers and VAT exempt
 		{
-			name:        "simplified invoice type B",
+			name:        "invoice type B",
 			invType:     bill.InvoiceTypeStandard,
 			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "006",
+			expectedDoc: "6",
 		},
 		{
-			name:        "simplified debit note type B",
+			name:        "debit note type B",
 			invType:     bill.InvoiceTypeDebitNote,
 			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "007",
+			expectedDoc: "7",
 		},
 		{
-			name:        "simplified credit note type B",
+			name:        "credit note type B",
 			invType:     bill.InvoiceTypeCreditNote,
 			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "008",
+			expectedDoc: "8",
 		},
-		// Export invoices
+		// Type C - Simplified Regime (Monotributista)
 		{
-			name:        "export invoice",
+			name:        "invoice type C",
 			invType:     bill.InvoiceTypeStandard,
-			tags:        []cbc.Key{tax.TagExport},
-			expectedDoc: "019",
+			tags:        []cbc.Key{arca.TagSimplifiedRegime},
+			expectedDoc: "11",
 		},
 		{
-			name:        "export debit note",
+			name:        "debit note type C",
 			invType:     bill.InvoiceTypeDebitNote,
-			tags:        []cbc.Key{tax.TagExport},
-			expectedDoc: "020",
+			tags:        []cbc.Key{arca.TagSimplifiedRegime},
+			expectedDoc: "12",
 		},
 		{
-			name:        "export credit note",
+			name:        "credit note type C",
 			invType:     bill.InvoiceTypeCreditNote,
-			tags:        []cbc.Key{tax.TagExport},
-			expectedDoc: "021",
+			tags:        []cbc.Key{arca.TagSimplifiedRegime},
+			expectedDoc: "13",
 		},
 	}
 
@@ -121,15 +121,15 @@ func TestScenarioSummary(t *testing.T) {
 
 	t.Run("scenarios cover all main document types", func(t *testing.T) {
 		expectedDocTypes := map[cbc.Code]bool{
-			"001": false, // Invoice A
-			"002": false, // Debit Note A
-			"003": false, // Credit Note A
-			"006": false, // Invoice B
-			"007": false, // Debit Note B
-			"008": false, // Credit Note B
-			"019": false, // Export Invoice
-			"020": false, // Export Debit Note
-			"021": false, // Export Credit Note
+			"1":  false, // Invoice A
+			"2":  false, // Debit Note A
+			"3":  false, // Credit Note A
+			"6":  false, // Invoice B
+			"7":  false, // Debit Note B
+			"8":  false, // Credit Note B
+			"11": false, // Invoice C
+			"12": false, // Debit Note C
+			"13": false, // Credit Note C
 		}
 
 		for _, ss := range ad.Scenarios {
