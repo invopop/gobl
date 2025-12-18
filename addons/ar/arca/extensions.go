@@ -30,6 +30,9 @@ const (
 	TributeTypeOther                       cbc.Code = "99"
 )
 
+// Type C document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
+var TypeCDocTypes = []cbc.Code{"11", "12", "13", "211", "212", "213"}
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyDocType,

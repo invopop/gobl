@@ -56,13 +56,14 @@
         "name": "Diseño de logotipo e identidad visual",
         "price": "150000.00",
         "key": "services"
-      },
-      "taxes": [
-        {
-          "cat": "VAT",
-          "key": "exempt"
-        }
-      ]
+      }
+    }
+  ],
+  "charges": [
+    {
+      "key": "national-tax",
+      "percent": "10%",
+      "description": "Tributo Nacional"
     }
   ],
   "ordering": {

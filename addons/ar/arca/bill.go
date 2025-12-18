@@ -91,6 +91,13 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceCustomer),
 			validation.Skip,
 		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(validateInvoiceLine(inv.Tax.GetExt(ExtKeyDocType))),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Ordering,
 			validation.When(
 				inv.Tax.GetExt(ExtKeyConcept).In("2", "3"),
@@ -227,4 +234,22 @@ func validateInvoicePreceding(val any) error {
 			tax.ExtensionsRequire(ExtKeyDocType),
 		),
 	)
+}
+
+func validateInvoiceLine(docType cbc.Code) validation.RuleFunc {
+	return func(val any) error {
+		line, ok := val.(*bill.Line)
+		if !ok || line == nil {
+			return nil
+		}
+		if docType.In(TypeCDocTypes...) {
+			return validation.ValidateStruct(line,
+				validation.Field(&line.Taxes,
+					validation.Empty,
+					validation.Skip,
+				),
+			)
+		}
+		return nil
+	}
 }

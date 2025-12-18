@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4600a6eeb911499e97172b72df3ef4480884658813df865d88248de13bae9241"
+			"val": "d938952ca2e0d36673d21127194a5a8e6b3bcd06a8d44224a835fa3ac00872e1"
 		}
 	},
 	"doc": {
@@ -83,13 +83,15 @@
 					"price": "150000.00"
 				},
 				"sum": "150000.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "exempt"
-					}
-				],
 				"total": "150000.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"key": "national-tax",
+				"percent": "10%",
+				"amount": "15000.00"
 			}
 		],
 		"ordering": {
@@ -110,26 +112,11 @@
 		},
 		"totals": {
 			"sum": "150000.00",
-			"total": "150000.00",
-			"taxes": {
-				"categories": [
-					{
-						"code": "VAT",
-						"rates": [
-							{
-								"key": "exempt",
-								"base": "150000.00",
-								"amount": "0.00"
-							}
-						],
-						"amount": "0.00"
-					}
-				],
-				"sum": "0.00"
-			},
+			"charge": "15000.00",
+			"total": "165000.00",
 			"tax": "0.00",
-			"total_with_tax": "150000.00",
-			"payable": "150000.00"
+			"total_with_tax": "165000.00",
+			"payable": "165000.00"
 		}
 	}
 }

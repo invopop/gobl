@@ -611,6 +611,137 @@ func TestCorrectionDefinitions(t *testing.T) {
 	})
 }
 
+func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
+	t.Run("type C invoice without taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type C invoice with taxes on lines fails", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+	})
+
+	t.Run("type C debit note without taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Tax.Ext[arca.ExtKeyDocType] = "12" // Debit Note C
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type C debit note with taxes on lines fails", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Tax.Ext[arca.ExtKeyDocType] = "12" // Debit Note C
+		inv.Preceding = testPreceding()
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+	})
+
+	t.Run("type C credit note without taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext[arca.ExtKeyDocType] = "13" // Credit Note C
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type C credit note with taxes on lines fails", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext[arca.ExtKeyDocType] = "13" // Credit Note C
+		inv.Preceding = testPreceding()
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+	})
+
+	t.Run("FCE type C invoice without taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Tax.Ext[arca.ExtKeyDocType] = "211" // FCE Invoice C
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("FCE type C invoice with taxes on lines fails", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Tax.Ext[arca.ExtKeyDocType] = "211" // FCE Invoice C
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+	})
+
+	t.Run("type A invoice with taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// Type A invoice (doc type "1") should allow taxes
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type B invoice with taxes on lines passes", func(t *testing.T) {
+		inv := testInvoiceSimplified(t)
+		// Type B invoice (doc type "6") should allow taxes
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type C invoice with multiple lines without taxes passes", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(2, 0),
+			Item: &org.Item{
+				Name:  "Another Service",
+				Price: num.NewAmount(5000, 2),
+				Key:   org.ItemKeyServices,
+			},
+		})
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("type C invoice with taxes on second line fails", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(2, 0),
+			Item: &org.Item{
+				Name:  "Another Service",
+				Price: num.NewAmount(5000, 2),
+				Key:   org.ItemKeyServices,
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     "standard",
+				},
+			},
+		})
+		assertValidationError(t, inv, "lines: (1: (taxes: must be blank.).).")
+	})
+}
+
 // Helper functions
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
@@ -687,6 +818,49 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 	inv := testInvoiceWithGoods(t)
 	inv.SetTags(tax.TagSimplified)
 	inv.Tax.Ext[arca.ExtKeyDocType] = "6"
+	return inv
+}
+
+func testInvoiceTypeC(t *testing.T) *bill.Invoice {
+	t.Helper()
+	inv := &bill.Invoice{
+		Addons: tax.WithAddons(arca.V4),
+		Series: "1",
+		Code:   "123",
+		Tax: &bill.Tax{
+			Ext: tax.Extensions{
+				arca.ExtKeyDocType: "11", // Invoice C (monotributo)
+			},
+		},
+		Supplier: &org.Party{
+			Name: "Test Supplier Monotributo",
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "20172543597",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "30500010912",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Service Item",
+					Price: num.NewAmount(10000, 2),
+					Key:   org.ItemKeyServices,
+				},
+				// No taxes for type C invoices
+			},
+		},
+		Ordering: testOrdering(),
+		Payment:  testPayment(),
+	}
+	inv.SetTags(arca.TagSimplifiedRegime) // Type C uses simplified-regime tag
 	return inv
 }
 
