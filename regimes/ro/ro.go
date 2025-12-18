@@ -16,9 +16,9 @@
 //
 // # VAT Rates
 //
-// Romania applies the following VAT rates:
-//   - Standard rate: 19%
-//   - Reduced rate: 9% (for specific goods and services)
+// Romania applies the following VAT rates (since August 1, 2025):
+//   - Standard rate: 21%
+//   - Reduced rate: 11% (for specific goods and services)
 //   - Super-reduced rate: 5% (for certain essential goods)
 //
 // # E-Invoicing Requirements

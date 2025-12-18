@@ -129,7 +129,15 @@
             "en": "General Rate",
             "ro": "Cota standard"
           },
+          "desc": {
+            "en": "Applies to most goods and services unless specified otherwise.",
+            "ro": "Se aplică majorității bunurilor și serviciilor, cu excepția cazului în care se specifică altfel."
+          },
           "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "21.0%"
+            },
             {
               "since": "2017-01-01",
               "percent": "19.0%"
@@ -153,7 +161,15 @@
             "en": "Reduced Rate",
             "ro": "Cota redusă"
           },
+          "desc": {
+            "en": "Applies to food, pharmaceuticals, books, hotels, restaurants, and water supplies.",
+            "ro": "Se aplică la produse alimentare, medicamente, cărți, hoteluri, restaurante și apă."
+          },
           "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11.0%"
+            },
             {
               "since": "2017-01-01",
               "percent": "9.0%"
@@ -169,6 +185,10 @@
             "en": "Super-Reduced Rate",
             "ro": "Cota redusă suplimentară"
           },
+          "desc": {
+            "en": "Legacy rate for textbooks, social housing, etc. (Merged into 11% as of Aug 2025).",
+            "ro": "Cotă veche pentru manuale, locuințe sociale etc. (Înglobată în cota de 11% din august 2025)."
+          },
           "values": [
             {
               "since": "2017-01-01",
@@ -180,33 +200,18 @@
       "sources": [
         {
           "title": {
-            "en": "Romanian Fiscal Code",
-            "ro": "Codul Fiscal"
+            "en": "Law 141/2025 (Fiscal Measures)",
+            "ro": "Legea nr. 141/2025 privind măsuri fiscal-bugetare"
           },
-          "url": "https://static.anaf.ro/static/10/Anaf/legislatie/Cod_fiscal_norme_31072017.htm",
-          "at": "2024-12-17T00:00:00"
+          "url": "https://legislatie.just.ro/Public/DetaliiDocumentAfis/284000",
+          "at": "2025-07-25T00:00:00"
         },
         {
           "title": {
-            "en": "Law 227/2015 regarding the Fiscal Code",
+            "en": "Law 227/2015 (Fiscal Code)",
             "ro": "Legea 227/2015 privind Codul fiscal"
           },
-          "url": "https://static.anaf.ro/static/10/Anaf/Prezentare_R/Law227_11042018.pdf",
-          "at": "2024-12-17T00:00:00"
-        },
-        {
-          "title": {
-            "en": "European Commission - VAT Rates Applied in EU Member States"
-          },
-          "url": "https://taxation-customs.ec.europa.eu/taxation/vat/how-vat-works/vat-rates_en",
-          "at": "2024-12-17T00:00:00"
-        },
-        {
-          "title": {
-            "en": "Romanian National Agency for Fiscal Administration (ANAF)",
-            "ro": "Agenția Națională de Administrare Fiscală"
-          },
-          "url": "https://www.anaf.ro/",
+          "url": "https://legislatie.just.ro/Public/DetaliiDocument/171282",
           "at": "2024-12-17T00:00:00"
         }
       ]
