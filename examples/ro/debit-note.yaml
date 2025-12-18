@@ -1,0 +1,41 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "9abc7b56-59d8-4beb-90bd-f8f280d852ef"
+type: debit-note
+currency: RON
+issue_date: "2024-12-18"
+code: "ND-2024-001"
+
+preceding:
+  - series: "FACT-2024"
+    code: "001"
+    issue_date: "2024-12-15"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Exemplu Software SRL"
+  emails:
+    - addr: "facturare@exemplu.ro"
+  addresses:
+    - num: "42"
+      street: "Strada Exemplu"
+      locality: "București"
+      region: "București"
+      code: "010101"
+      country: RO
+
+customer:
+  tax_id:
+    country: RO
+    code: "27"
+  name: "Client Test SRL"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Taxă suplimentară pentru modificări"
+      price: "250.00"
+    taxes:
+      - cat: VAT
+        rate: standard

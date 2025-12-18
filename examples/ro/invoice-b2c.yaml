@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "4aea7b56-59d8-4beb-90bd-f8f280d85300"
+type: standard
+currency: RON
+issue_date: "2024-12-15"
+code: "FACT-B2C-001"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Magazin Electronice SRL"
+  emails:
+    - addr: "vanzari@magazin.ro"
+  addresses:
+    - num: "10"
+      street: "Strada Comercială"
+      locality: "Cluj-Napoca"
+      region: "Cluj"
+      code: "400001"
+      country: RO
+
+customer:
+  name: "Popescu Ion"
+  emails:
+    - addr: "ion.popescu@email.ro"
+  identities:
+    - type: "CNP"
+      code: "1800101123450"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Laptop Dell XPS 15"
+      price: "5000.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 2
+    item:
+      name: "Mouse wireless"
+      price: "150.00"
+    taxes:
+      - cat: VAT
+        rate: standard

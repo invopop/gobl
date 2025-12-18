@@ -1,0 +1,43 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "6aea7b56-59d8-4beb-90bd-f8f280d85500"
+type: standard
+currency: RON
+issue_date: "2024-12-15"
+code: "FACT-2024-020"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Editura Educațională SRL"
+  emails:
+    - addr: "comenzi@editura.ro"
+  addresses:
+    - num: "5"
+      street: "Strada Cărții"
+      locality: "Iași"
+      region: "Iași"
+      code: "700001"
+      country: RO
+
+customer:
+  tax_id:
+    country: RO
+    code: "27"
+  name: "Școala Generală nr. 10"
+
+lines:
+  - quantity: 200
+    item:
+      name: "Manual matematică clasa a V-a"
+      price: "30.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced
+  - quantity: 150
+    item:
+      name: "Manual limba română clasa a V-a"
+      price: "35.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced

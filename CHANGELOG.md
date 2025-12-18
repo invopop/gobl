@@ -2,9 +2,17 @@
 
 All notable changes to GOBL will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to
+[Semantic Versioning](http://semver.org/). See also the
+[GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
 ## [Unreleased]
+
+### Added
+
+- `ro`: Romanian tax regime with VAT rates (21% standard, 11% reduced as of Aug 2025), CUI/CIF and
+  CNP identity validation, invoice correction types (credit-note, debit-note, corrective), and
+  compliance with B2B/B2C e-Factura mandates (Law 296/2023, OUG 69/2024, OUG 138/2024).
 
 ## [v0.304.0] - 2025-12-10
 
@@ -13,8 +21,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: Add replicate logic to payments, orders and deliveries.
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
 - `es-verifactu-v1`: Bill Lines require at least one of the main tax categories.
-- `org`: `Item` now defines `services` and `goods` as predefined options, required by some formats/regimes.
-- `org`: `Identity` has a `scope` field for defining where an identity should be used, such as for tax or legal purposes.
+- `org`: `Item` now defines `services` and `goods` as predefined options, required by some
+  formats/regimes.
+- `org`: `Identity` has a `scope` field for defining where an identity should be used, such as for
+  tax or legal purposes.
 - `es-sii-v1`: Added initial Spain SII addon.
 
 ### Changed
@@ -53,7 +63,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the EU.
+- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the
+  EU.
 
 ## [v0.302.0] - 2025-10-29
 
@@ -76,7 +87,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Removed
 
 - `es-verifactu-v1`: validation to prevent forbidden characters in names.
-- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary
+  data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to
+  use.
 
 ### Changed
 
@@ -145,7 +158,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued
+  or recovered)
 
 ### Changed
 
@@ -159,21 +173,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
-- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
-- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
+- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace
+  and remove invalid or nil UTF-8 characters.
+- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make
+  assumptions about manually assigned extensions.
+- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove
+  restrictions on regime, expect more changes in future.
 
 ## [v0.300.0-rc1] - 2025-09-02
 
-**IMPORTANT**: Significant refactor of tax combo handling with the addition of tax "keys" that help identify the sub-classification of a tax, specifically VAT, ensuring that they can be correctly mapped.
+**IMPORTANT**: Significant refactor of tax combo handling with the addition of tax "keys" that help
+identify the sub-classification of a tax, specifically VAT, ensuring that they can be correctly
+mapped.
 
-Unmarshalling JSON GOBL documents will be migrated automatically to the new structure, including any rate tags or addon extensions, but consuming may require changes if using the tax combo `rate` property.
+Unmarshalling JSON GOBL documents will be migrated automatically to the new structure, including any
+rate tags or addon extensions, but consuming may require changes if using the tax combo `rate`
+property.
 
 ### Added
 
-- `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to normalize all common use-cases from the `rate` field, so no changes should be required.
+- `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to
+  normalize all common use-cases from the `rate` field, so no changes should be required.
 - `br`: added retained taxes CSLL, INSS and IRRF
-- `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
+- `tax`: added support for `informative` tax categories that will be calculated and reported but
+  will not affect the invoice totals.
 - `br`: made ISS an informative tax
 
 ### Fixed
@@ -182,7 +205,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 ### Changed
 
-- `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
+- `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from
+  new `standard` key using the `Combo`.
 - `pt-saft-v1`: moved exemption notes to line-level and added validations
 
 ## [v0.220.6] - 2025-08-12
@@ -211,7 +235,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 ### Changed
 
-- `es`: refactored tax identity code checks for easier re-use, removed old specific errors and replaces `DetermineTaxCodeType` method with `TaxIdentityKey`.
+- `es`: refactored tax identity code checks for easier re-use, removed old specific errors and
+  replaces `DetermineTaxCodeType` method with `TaxIdentityKey`.
 - `es`: removed old tax identity zone check.
 
 ### Fixes
@@ -253,7 +278,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 ### Added
 
 - `bill`: `Ordering` now includes an `issuer` field.
-- `es/verifactu`: Support for `es-verifactu-simplified-art7273` and `es-verifactu-issuer-type` extensions.
+- `es/verifactu`: Support for `es-verifactu-simplified-art7273` and `es-verifactu-issuer-type`
+  extensions.
 
 ### Changed
 
@@ -265,7 +291,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 - `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
 - `pt-saft-v1`: adapted and additional validations for the new `bill.Payment` structure
-- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts complaint with the regulations.
+- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts
+  complaint with the regulations.
 - `fr-choruspro`: `bill.Line` `quantity` field will now be normalized to four decimal places.
 
 ### Added
@@ -281,17 +308,23 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 ### Changed
 
-- `bill`: `PaymentLine` will recalculate tax totals based on proportional amounts paid per-line, alongside the total advances and amount due.
-- `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially alongside the advances. Please now use the `refund` flag.
-- `bill`: `Payment` will check the line document's currency and require an exchange rate if different from the document's.
-- `bill`: `Payment` `tax` field is no longer supported, we assume convertors will deal with tax for each payment line.
+- `bill`: `PaymentLine` will recalculate tax totals based on proportional amounts paid per-line,
+  alongside the total advances and amount due.
+- `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially
+  alongside the advances. Please now use the `refund` flag.
+- `bill`: `Payment` will check the line document's currency and require an exchange rate if
+  different from the document's.
+- `bill`: `Payment` `tax` field is no longer supported, we assume convertors will deal with tax for
+  each payment line.
 - `fr`: Removed unnecessary length check when validating the SIREN.
 
 ### Added
 
-- `bill`: `PaymentLine` includes a `refund` boolean to indicate flow of funds, and impacts the `Payment`'s total potentially making it negative.
+- `bill`: `PaymentLine` includes a `refund` boolean to indicate flow of funds, and impacts the
+  `Payment`'s total potentially making it negative.
 - `org`: `DocumentRef` now includes a `payable` property.
-- `bill`: `PaymentLine` includes `description`, `installment`, `payable`, `advances`, `due`, and `tax` properties.
+- `bill`: `PaymentLine` includes `description`, `installment`, `payable`, `advances`, `due`, and
+  `tax` properties.
 - `mx-cfdi-v4`: Define payment method in document.
 - `fr-choruspro-v1`: Created addon for Chorus Pro to handle invoice types and identity schemes
 
@@ -363,14 +396,17 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 ### Changed
 
-- `bill`: `Totals` now separates retained from indirect taxes, with a new `RetainedTax` field applied between the `TotalWithTax` and `Payable` amounts.
+- `bill`: `Totals` now separates retained from indirect taxes, with a new `RetainedTax` field
+  applied between the `TotalWithTax` and `Payable` amounts.
 - `tax`: `Totals` will now calculate sum with separate `Retained` amount.
 
 ### Added
 
-- `bill`: Support for `issue_time` field, which will be updated automatically if provided with a zero value. Nil issue times will always be ignored.
+- `bill`: Support for `issue_time` field, which will be updated automatically if provided with a
+  zero value. Nil issue times will always be ignored.
 - `bill`: Payment will now set issue date automatically, alongside issue time if provided.
-- `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a single document.
+- `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a
+  single document.
 - `mx-cfdi-v4`: Automatically set the `issue_time` if not already provided.
 - `tax`: `ExtensionsRequireAllOrNone` validation rule.
 - `es-verifactu-v1`: validation for export exemption codes.
@@ -404,21 +440,26 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 ### Added
 
 - `it-sdi-v1`: validation for non latin and latin-1 characters in item names.
-- `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
-- `tax`: Regime Definition now supports a primary `TaxScheme` property for usage in converting to other formats.
-- `tax`: `Identity` now supports an override `Scheme` field and `GetScheme` method that will fallback to the Regime's tax scheme default.
+- `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from
+  `bill.Invoice` and `bill.Order`)
+- `tax`: Regime Definition now supports a primary `TaxScheme` property for usage in converting to
+  other formats.
+- `tax`: `Identity` now supports an override `Scheme` field and `GetScheme` method that will
+  fallback to the Regime's tax scheme default.
 
 ### Changed
 
 - `bill`: line rounding will now check for nil item and nil item price.
-- `bill`: `code` field now "recommended" in Order, Delivery, Invoice, & Payment schemas, but should not raise JSON Schema warnings. Validation will continue to fail when signing.
+- `bill`: `code` field now "recommended" in Order, Delivery, Invoice, & Payment schemas, but should
+  not raise JSON Schema warnings. Validation will continue to fail when signing.
 - `bill`: more sub-schemas published for re-use by main document schemas.
 
 ## [v0.212.1] - 2025-03-11
 
 ### Changed
 
-- `bill`: reverting back to maintaining precision in line totals for `precise` rounding for consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
+- `bill`: reverting back to maintaining precision in line totals for `precise` rounding for
+  consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
 - `bill`: line sum rounded to currency precision in `currency` rounding.
 
 ## [v0.212.0] - 2025-03-10
@@ -428,51 +469,69 @@ Significant refinements to rounding and clarifying the naming for more clarity a
 ### Added
 
 - `it-ticket-v1`: implemented addon for AdE e-receipt format
-- `bill`: line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
-- `bill`: line Charge support for Quantity and Rate special cases for charges like tariffs that result in a fixed amount base on a rate, like, 1 cent for every 100g of sugar.
+- `bill`: line discount and charge `base` property, to use instead of the line sum in order to
+  comply with EN16931.
+- `bill`: line Charge support for Quantity and Rate special cases for charges like tariffs that
+  result in a fixed amount base on a rate, like, 1 cent for every 100g of sugar.
 
 ### Changed
 
 - `bill`: line totals will be rounded to currency precision for presentation only
 - `bill`: document Discount and Charge base and amounts always rounded to currency's precision
 - `bill`: line Discount and Charge base and amounts always rounded to currency's precision
-- `tax`: renamed rounding rules `sum-then-round` to `precise`, and `round-then-sum` to `currency`, to more accurately reflect their objectives.
-- `bill`: `currency` rounding rule implies that line totals will be calculated with the currency's precisions, bringing closer alliance with EN16931 requirements.
+- `tax`: renamed rounding rules `sum-then-round` to `precise`, and `round-then-sum` to `currency`,
+  to more accurately reflect their objectives.
+- `bill`: `currency` rounding rule implies that line totals will be calculated with the currency's
+  precisions, bringing closer alliance with EN16931 requirements.
 
 ## [v0.211.0] - 2025-02-28
 
-Another significant release that adds more documents related to the order-to-payment billing flows, and renames the "Receipt" document to simply "Payment". There are now 4 primary billing documents:
+Another significant release that adds more documents related to the order-to-payment billing flows,
+and renames the "Receipt" document to simply "Payment". There are now 4 primary billing documents:
 
 - Order
 - Delivery
 - Invoice
 - Payment (renamed from Receipt)
 
-Each document class has a subset of types to cover multiple situations. Its been tough, but we've tried to keep naming as simple and down to earth as possible so that every combination of document class and type should be easy to understand.
+Each document class has a subset of types to cover multiple situations. Its been tough, but we've
+tried to keep naming as simple and down to earth as possible so that every combination of document
+class and type should be easy to understand.
 
-**NOTE:** the new billing document types are still considered experimental and subject to significant changes. Please use with caution.
+**NOTE:** the new billing document types are still considered experimental and subject to
+significant changes. Please use with caution.
 
 ### Added
 
 - `bill`: `Delivery` document now supported.
 - `bill`: `Order` document now supported.
 - `bill`: `Payment` - `request` type now supported.
-- `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the item's price, including individual discounts and charges. This effectively implements grouping, while maintaining compatibility with all other formats that do not support breakdowns.
-- `bill`: `Line` new `substituted` array of sub-lines for informational purposes when the originally requested line could not be fulfilled, especially relevant for orders.
-- `bill`: `Tax` includes `rounding` field to be able to override the tax regimes default rounding mechanism.
-- `bill`: `CorrectionOptions` now includes `copy_tax` flag, and will automatically copy tax details from a previous document.
+- `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the
+  item's price, including individual discounts and charges. This effectively implements grouping,
+  while maintaining compatibility with all other formats that do not support breakdowns.
+- `bill`: `Line` new `substituted` array of sub-lines for informational purposes when the originally
+  requested line could not be fulfilled, especially relevant for orders.
+- `bill`: `Tax` includes `rounding` field to be able to override the tax regimes default rounding
+  mechanism.
+- `bill`: `CorrectionOptions` now includes `copy_tax` flag, and will automatically copy tax details
+  from a previous document.
 - `org`: `DocumentRef` includes `tax` property with the Tax Totals of a previous document.
 
 ### Changed
 
-- `bill`: renaming `Payment` to `PaymentDetails`, and `Delivery` to `DeliveryDetails`, to make room for new document types.
-- `bill`: renaming `Receipt` to `Payment`, and associated payment types to simply `advice` and `receipt`.
-- `org`: `Item` price is now a pointer and optional, so that items without prices can be used in `bill.Order` and `bill.Delivery` documents. `bill.Invoice` continues to validate for the presence of an item's price, as expected.
+- `bill`: renaming `Payment` to `PaymentDetails`, and `Delivery` to `DeliveryDetails`, to make room
+  for new document types.
+- `bill`: renaming `Receipt` to `Payment`, and associated payment types to simply `advice` and
+  `receipt`.
+- `org`: `Item` price is now a pointer and optional, so that items without prices can be used in
+  `bill.Order` and `bill.Delivery` documents. `bill.Invoice` continues to validate for the presence
+  of an item's price, as expected.
 - `bill`: `PaymentLine` `tax` property moved to the `document`.
 
 ### Fixed
 
-- `pay`: `Terms`, replaced `NA` option with explicit `undefined` key, to avoid defining empty constants in JSON.
+- `pay`: `Terms`, replaced `NA` option with explicit `undefined` key, to avoid defining empty
+  constants in JSON.
 
 ## [v0.210.0] - 2025-02-19
 
@@ -483,7 +542,8 @@ Each document class has a subset of types to cover multiple situations. Its been
 ### Changed
 
 - `pt-saft-v1`: changed default unit to `one`
-- `bill`: `Line` now incudes three new fields intended for greater EN16931 compatibility: `identifier`, `period`, `order`, and `cost`.
+- `bill`: `Line` now incudes three new fields intended for greater EN16931 compatibility:
+  `identifier`, `period`, `order`, and `cost`.
 - `org`: `Attachment` new structure for dealing with attachments.
 - `bill`: `Attachments` added to invoices.
 - `eu-en16931-v2017`: addon now includes additional validation for attachment codes.
@@ -498,7 +558,9 @@ Each document class has a subset of types to cover multiple situations. Its been
 
 ## [v0.209.0] - 2025-02-04
 
-This significant release adds support for the new `bill.Receipt` schema, to be used to represent payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing phases, so may still require significant changes.
+This significant release adds support for the new `bill.Receipt` schema, to be used to represent
+payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing
+phases, so may still require significant changes.
 
 ### Added
 
@@ -542,18 +604,24 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `tax`: Extensions `Get` convenience method that helps when using extensions using sub-keys.
 - `tax`: `ExtensionsExclude` validator for checking that extensions do **not** include certain keys.
 - `tax`: `ExtValue.In` for comparing extension values.
-- `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid nil panics.
-- `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
+- `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid
+  nil panics.
+- `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g.
+  `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 - `in`: added Indian regime
 - `cef`: catalogue for CEF VATEX reason codes.
-- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extensions.
+- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item
+  Type Identification) extensions.
 
 ### Changed
 
-- `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with `ExtensionsExclude`.
-- `cbc`: refactored `KeyDefinition` and `ValueDefinition` into a single `Definition` object that supports `key` and `code`.
+- `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with
+  `ExtensionsExclude`.
+- `cbc`: refactored `KeyDefinition` and `ValueDefinition` into a single `Definition` object that
+  supports `key` and `code`.
 - `tax`: removed `ExtValue` and replaced with `cbc.Code` which is now much more flexible.
-- `tax`: Catalogue definitions now loaded from JSON source as opposed to Go code. This improves memory efficiency, especially when the source data is large.
+- `tax`: Catalogue definitions now loaded from JSON source as opposed to Go code. This improves
+  memory efficiency, especially when the source data is large.
 
 ### Fixed
 
@@ -585,7 +653,8 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 ### Added
 
-- `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with conversion to other formats with some regional formatting.
+- `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with
+  conversion to other formats with some regional formatting.
 
 ### Changes
 
@@ -594,21 +663,25 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 ### Fixes
 
 - `ch`: Deleted Supplier validation (not needed for under 2300 CHF/year)
-- `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals [Issue #424](https://github.com/invopop/gobl/issues/424).
+- `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals
+  [Issue #424](https://github.com/invopop/gobl/issues/424).
 
 ## [v0.205.0] - 2024-11-12
 
 ### Added
 
 - `org`: `Address` now includes a `state` code, for countries that require them.
-- `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
-- `org`: `Inbox` now supports `email` field, with auto-normalization of URLs and emails in the `code` field.
+- `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to
+  invoices.
+- `org`: `Inbox` now supports `email` field, with auto-normalization of URLs and emails in the
+  `code` field.
 - `currency`: Exchange rate "source" field.
 
 ### Changes
 
 - Moved regime examples into single `/examples` folder.
-- `org`: `Address`, `code` for the post code is now typed as a `cbc.Code`, like the new `state` field.
+- `org`: `Address`, `code` for the post code is now typed as a `cbc.Code`, like the new `state`
+  field.
 
 ### Fixes
 
@@ -622,7 +695,8 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 ### Fixed
 
-- `tax`: identity code handling will skip default validation for specific countries that use special characters.
+- `tax`: identity code handling will skip default validation for specific countries that use special
+  characters.
 
 ## [v0.204.0] - 2024-10-31
 
@@ -636,10 +710,12 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - New "tax catalogues" used for defining extensions for specific standards.
 - `tax`: New "tax catalogues" used for defining extensions for specific standards.
 - `iso`: catalogue created with `iso-schema-id` extensions.
-- `untdid`: catalogue created with extensions: `untdid-document-type`, `untdid-payment-means`, `untdid-tax-category`, `untdid-allowance`, and `untdid-charge`.
+- `untdid`: catalogue created with extensions: `untdid-document-type`, `untdid-payment-means`,
+  `untdid-tax-category`, `untdid-allowance`, and `untdid-charge`.
 - `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
 - `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
-- `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
+- `pay`: Added `sepa` payment means key extension in main definition to be used with Credit
+  Transfers and Direct Debit.
 - `org`: `Identity` and `Inbox` support for extensions.
 - `tax`: tags for `export` and `eea` (european economic area) for use with rates.
 - `bill`: support for extensions in `Discount`, `Charge`, `LineDiscount`, and `LineCharge`.
@@ -647,14 +723,17 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 ### Changed
 
-- `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
-- `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
+- `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used
+  by addons to included additional codes.
+- `tax`: Addons can now depend on other addons, whose keys will be automatically added during
+  normalization.
 - `cbc`: Code now allows `:` separator.
 
 ### Removed
 
 - `pay`: UNTDID 4461 mappings from payment means table, now provided by catalogues
-- `bill`: `Outlay` has been removed in favour of Charges, we've also not seen any evidence this field has been used.
+- `bill`: `Outlay` has been removed in favour of Charges, we've also not seen any evidence this
+  field has been used.
 - `bill`: `ref` field from discounts and charges in favour of `code`.
 - `tax`: Regime `ChargeKeys` removed. Keys now provided in `bill` package.
 - `it`: Charge keys no longer defined, no migration required, already supported.
@@ -681,7 +760,8 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 ### Changed
 
-- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible to define a selection of reference lines in another document as opposed to just one.
+- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible
+  to define a selection of reference lines in another document as opposed to just one.
 
 ### Added
 
@@ -714,39 +794,56 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 ## [v0.200.0] - 2024-09-26
 
-Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
+Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and
+validation rules from Tax Regimes to specific packages that need to be enabled inside a document to
+be used.
 
-Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the `$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the core GOBL project as flexible as possible, while allowing greater levels of validation and customization to be added as needed.
+Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the
+`$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the
+core GOBL project as flexible as possible, while allowing greater levels of validation and
+customization to be added as needed.
 
-Another very significant internal change is around normalization. There is now a much clearer difference internally between `Calculate` and `Normalize` methods. Calculate methods are used when there is some type of math operation to perform, and normalize will simply clean the data as much as possible. The three key steps in order are: normalize, calculate, and validate.
+Another very significant internal change is around normalization. There is now a much clearer
+difference internally between `Calculate` and `Normalize` methods. Calculate methods are used when
+there is some type of math operation to perform, and normalize will simply clean the data as much as
+possible. The three key steps in order are: normalize, calculate, and validate.
 
-Finally, the `draft` flag has been removed from the header, and much more emphasis has been placed on the signatures for validation. For example, the invoice's "code" property will only be required in order to sign the envelope.
+Finally, the `draft` flag has been removed from the header, and much more emphasis has been placed
+on the signatures for validation. For example, the invoice's "code" property will only be required
+in order to sign the envelope.
 
 (We've made a big jump in minor version numbers to clarify the extent of the changes.)
 
 ### Changed
 
-- `head.Header`: Removed the `draft` flag. Instead envelopes must now be signed in order to activate additional validation rules such as requiring the invoice code, and allow "stamps" in the header.
-- Renamed `Calculate` methods to `Normalize` and removed errors, to clearly differentiate between the two processes.
+- `head.Header`: Removed the `draft` flag. Instead envelopes must now be signed in order to activate
+  additional validation rules such as requiring the invoice code, and allow "stamps" in the header.
+- Renamed `Calculate` methods to `Normalize` and removed errors, to clearly differentiate between
+  the two processes.
 - `bill`: Moved tax `tags` to the invoice level `$tags` property.
 - `tax`: Renamed `Regime` to `RegimeDef`.
 - `tax`: Renamed `Category` to `CategoryDef`.
 - `tax`: Renamed `Rate` to `RateDef`.
 - `tax`: Renamed `RateValue` to `RateValueDef`.
-- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package to use with the `mx-cfdi-v4` key.
-- `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai` packages respecitvely.
+- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package to use
+  with the `mx-cfdi-v4` key.
+- `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai`
+  packages respecitvely.
 - `pt`: moved SAF-T specific extensions to `addons/pt/saft`.
 - `it`: moved SDI and FatturaPA extensions to `addons/it/sdi` with key `it-sdi-v1`.
 - `gr`: moved MyDATA to `addons/gr/mydata`, key `gr-mydata-v1`.
 - `bill.Preceding`: replaced with `org.DocumentRef`.
 - `bill.Invoice`: Ordering now using arrays of `org.DocumentRef`.
-- `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the independent invoice code.
-- `cbc`: `Code` now allows spaces, dashes, and lower-case letters. Normalization will remove duplicate symbols.
+- `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the
+  independent invoice code.
+- `cbc`: `Code` now allows spaces, dashes, and lower-case letters. Normalization will remove
+  duplicate symbols.
 
 ### Added
 
 - `tax`: `Regime` type now used to add `$regime` attribute to documents.
-- `tax`: `Addons` type which uses the `$addons` attribute to control which addons apply to the document.
+- `tax`: `Addons` type which uses the `$addons` attribute to control which addons apply to the
+  document.
 - `tax`: `Tags` type which adds the `$tags` attribute.
 - `tax`: `Scenario` now has `Filter` property to set a code function.
 - `tax`: `AddonDef` provides support for defining addon extension packs.
@@ -758,54 +855,75 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 
 ### Fixes
 
-- `tax`: totals calculator was ignoring tax combos with rate and percent, when they should be classed as exempt.
+- `tax`: totals calculator was ignoring tax combos with rate and percent, when they should be
+  classed as exempt.
 
 ## [v0.115.0] - 2024-09-10
 
 This one is big...
 
-Significant set of changes around Scenario handling. Scenarios defined by tax regimes can now set tax extensions at the document level automatically. The objective here is to move away from external projects using scenario summaries directly, and instead use the absolute values set in the document.
+Significant set of changes around Scenario handling. Scenarios defined by tax regimes can now set
+tax extensions at the document level automatically. The objective here is to move away from external
+projects using scenario summaries directly, and instead use the absolute values set in the document.
 
-For example, the document format and type in Italy are now set inside the extensions and can be overriden if needed manually. This will be especially important when receiving and converting invoices into GOBL from external formats; its much easier to set specific values than trying to determine the appropriate tags.
+For example, the document format and type in Italy are now set inside the extensions and can be
+overriden if needed manually. This will be especially important when receiving and converting
+invoices into GOBL from external formats; its much easier to set specific values than trying to
+determine the appropriate tags.
 
-Also included is support for defining the country in tax combos, making it possible for taxes from a customers country to applied directly if needed. Typical use case would be for selling digital goods into or between EU states for B2C customers.
+Also included is support for defining the country in tax combos, making it possible for taxes from a
+customers country to applied directly if needed. Typical use case would be for selling digital goods
+into or between EU states for B2C customers.
 
-Invoices in GOBL can now also finally produced for any country in the world, even if not explicitly defined inside the tax regimes.
+Invoices in GOBL can now also finally produced for any country in the world, even if not explicitly
+defined inside the tax regimes.
 
 ### Changed
 
-- `bill.Invoice`: `customer` can now be empty by default, the `simplified` simplified tag will have no effect on the document unless used by regime scenarios.
-- `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country code, if available, to the individual tax combo lines.
-- `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied to all tax IDs, regardless of if they have a regime defined or not.
+- `bill.Invoice`: `customer` can now be empty by default, the `simplified` simplified tag will have
+  no effect on the document unless used by regime scenarios.
+- `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country
+  code, if available, to the individual tax combo lines.
+- `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied
+  to all tax IDs, regardless of if they have a regime defined or not.
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
 - `it`: always add `it-sdi-fiscal-regime` to Invoice suppliers.
-- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained`, now with validation on retained taxes.
+- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained`, now with validation on
+  retained taxes.
 - `it`: renamed extension `it-sdi-natura` to `it-sdi-exempt`.
-- `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
+- `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using
+  extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
 - `cbc`: consolidated "keys" and "codes" lists from key definitions into a single values array.
 - `gr`: switched to use the new `round-then-sum` calculation method
 - `tax.Combo`: rates when defined will always update the combo.
 - `bill.Invoice`: tax tags will always cause scenarios to update the document.
-- `es`: support for `facturae` tag which will correct set local extensions instead of using scenario summary codes.
+- `es`: support for `facturae` tag which will correct set local extensions instead of using scenario
+  summary codes.
 
 ### Added
 
 - `tax`: `Combo` now supports a `country` field.
-- `tax.Category`: added `Validation` method support for custom validation of a tax combo for a specific tax category.
-- `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
-- `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
+- `tax.Category`: added `Validation` method support for custom validation of a tax combo for a
+  specific tax category.
+- `tax.Scenario`: added "extensions" to be able to automatically update document level extensions
+  based on the scenario detected.
+- `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according
+  to the scenario.
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
-- `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
+- `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text
+  payload. This is now used in Schema Summaries.
 - `bill.Line`: added `RequireLineTaxCategory` validation helper method.
 - `cbc`: added new `ValueDefinition`.
 - `gr`: added "Income Classification" extensions.
-- `tax.TotalCalculator`: now supports `round-then-sum` as an alternative to the default `sum-then-round` calculation method to meet the requirements of regimes like Greece.
+- `tax.TotalCalculator`: now supports `round-then-sum` as an alternative to the default
+  `sum-then-round` calculation method to meet the requirements of regimes like Greece.
 
 ### Removed
 
-- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
+- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine
+  valid extensions (eg. PT and GR).
 - `cbc`: removed `CodeDefinition`.
 
 ### Fixed
@@ -828,12 +946,17 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 
 ## [v0.112.0] - 2024-07-29
 
-Significant set of small changes related to renaming of the `l10n.CountryCode` type. The main reason for this is an attempt to reduce confusion between regular ISO country selection, and the specific country codes used for tax purposes. Normally they coincide, but exception cases like for Greece, whose ISO code is `GR` but use `EL` for tax purposes, or `XI` for companies in Northern Ireland, mean that there needs to be a clear selection.
+Significant set of small changes related to renaming of the `l10n.CountryCode` type. The main reason
+for this is an attempt to reduce confusion between regular ISO country selection, and the specific
+country codes used for tax purposes. Normally they coincide, but exception cases like for Greece,
+whose ISO code is `GR` but use `EL` for tax purposes, or `XI` for companies in Northern Ireland,
+mean that there needs to be a clear selection.
 
 ### Changed
 
 - CO: improved regime's documentation
-- `l10n`: split "CountryCode" into "ISOCountryCode" and "TaxCountryCode", for the two explicit use-cases.
+- `l10n`: split "CountryCode" into "ISOCountryCode" and "TaxCountryCode", for the two explicit
+  use-cases.
 - `l10n`: renamed `CountryDefinitions` variable to `Countries()` method.
 
 ### Added
@@ -847,7 +970,8 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 
 ### Upgraded
 
-- [invopop/validation](https://github.com/invopop/validation) - upgrade to latest version with nil pointer fix.
+- [invopop/validation](https://github.com/invopop/validation) - upgrade to latest version with nil
+  pointer fix.
 
 ### Fixed
 
@@ -868,7 +992,8 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 ### Added
 
 - Including `recommended` array in more JSON Schema objects.
-- `bill.Invoice`: validation and changes around acceptance of simplified invoices with customer name. A customer without a tax ID now implies that a name is also not required.
+- `bill.Invoice`: validation and changes around acceptance of simplified invoices with customer
+  name. A customer without a tax ID now implies that a name is also not required.
 - `uuid`: Compact Base64 encoding and decoding of UUIDs for compact URLs.
 - `head`: New `Link` model for associating Envelopes with static URLs.
 - `head.Header`: Link array in addition to stamps.
@@ -896,7 +1021,8 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 
 ## [v0.110.0] - 2024-07-23
 
-Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop/gobl.cli) project directly here instead.
+Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop/gobl.cli) project
+directly here instead.
 
 ### Added
 
@@ -910,10 +1036,12 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 
 ### Changed
 
-- CO: renaming `co-dian-correction` code to `co-dian-credit-code` while also adding `co-dian-debit-code` to extensions.
+- CO: renaming `co-dian-correction` code to `co-dian-credit-code` while also adding
+  `co-dian-debit-code` to extensions.
 - CO: support debit notes
 - CO: updated validation for simplified invoices
-- GR: renamed greece country code to `EL` to reflect local naming in tax code, package still named `gr` for ease of use.
+- GR: renamed greece country code to `EL` to reflect local naming in tax code, package still named
+  `gr` for ease of use.
 - l10n: extension countries like EL, XI, EU for special tax cases
 - l10n: country definition extension flag to be able to filter ISO codes
 
@@ -925,8 +1053,10 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 
 ### Added
 
-- `bill.Invoice`: experimental `ConvertInto` method to convert the invoice's amounts from one currency into another.
-- DE: support for "de-tax-number" identity which can be used instead of regular tax ID code inside Germany.
+- `bill.Invoice`: experimental `ConvertInto` method to convert the invoice's amounts from one
+  currency into another.
+- DE: support for "de-tax-number" identity which can be used instead of regular tax ID code inside
+  Germany.
 - DE: "simplified" tax tag removes requirement for supplier tax identification.
 
 ## [v0.81.0] - 2024-07-17
@@ -934,14 +1064,19 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 ### Added
 
 - `tax.Regime`: added new "Identity Keys" definition.
-- IT: `it-sdi-format` extension added with the two main document formats in Italy: `FPA12` and `FPR12` (default for B2B/C if none assigned).
+- IT: `it-sdi-format` extension added with the two main document formats in Italy: `FPA12` and
+  `FPR12` (default for B2B/C if none assigned).
 
 ### Changed
 
-- `tax.Identity`: deprecated the `type` field, and directly removed the `uuid` and `meta` fields which no longer make sense here.
+- `tax.Identity`: deprecated the `type` field, and directly removed the `uuid` and `meta` fields
+  which no longer make sense here.
 - `tax.Regime`: standardised naming around key definitions to always include `_keys` as suffix.
-- IT: moved fiscal code (codice fiscale) from the `org.Party` Tax ID to the Identities array with the specific key `it-fiscal-code`. This implies that invoices can now be issued with **both** a VAT code (partita IVA) and a fiscal code (codice fiscale).
-- IT: data will be normalized automatically to move the fiscal code from the tax ID to the identities array.
+- IT: moved fiscal code (codice fiscale) from the `org.Party` Tax ID to the Identities array with
+  the specific key `it-fiscal-code`. This implies that invoices can now be issued with **both** a
+  VAT code (partita IVA) and a fiscal code (codice fiscale).
+- IT: data will be normalized automatically to move the fiscal code from the tax ID to the
+  identities array.
 - IT: removed explicit support for Tax ID type field.
 - ES: moved Tax ID `type` usage to the `identities` array.
 - CO: moved Tax ID type definitions to `identities` array.
@@ -997,7 +1132,8 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 
 ### Added
 
-- ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
+- ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions
+  (`l10n.CountryDef`)
 - MX: `mx.TaxIdentityCodeGeneric` constant added with the generic RFC for final consumers
 
 ## Changed
@@ -1018,26 +1154,32 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 
 ### Changed
 
-- In `pay.Online`, renamed `name` property to `label`, and `addr` to `URL`. Also added `key` property. Auto-migration included.
+- In `pay.Online`, renamed `name` property to `label`, and `addr` to `URL`. Also added `key`
+  property. Auto-migration included.
 
 ### Fixed
 
-- `bill.Invoice`: fixed issue with invalid currency codes that don't have a definition, will always resort to Tax Regime's currency.
+- `bill.Invoice`: fixed issue with invalid currency codes that don't have a definition, will always
+  resort to Tax Regime's currency.
 
 ## [v0.77.0] - 2024-05-16
 
-Fixing important bugs with some tax regimes and tax identity code validation, along with a new 'series' property for correction options.
+Fixing important bugs with some tax regimes and tax identity code validation, along with a new
+'series' property for correction options.
 
 ### Added
 
-- `series` property added to bill Correction Options to allow a series for a credit note to be added.
+- `series` property added to bill Correction Options to allow a series for a credit note to be
+  added.
 - `label` property added to `org.Party`.
 
 ### Changed
 
-- Invoice Discounts and Charges will no longer update the `base` property according to the document's sum.
+- Invoice Discounts and Charges will no longer update the `base` property according to the
+  document's sum.
 - Exempt rate in `tax.Combo` no longer required when percent is empty.
-- When correcting an invoice, if no new series is provided, the previous document's series will be maintained.
+- When correcting an invoice, if no new series is provided, the previous document's series will be
+  maintained.
 
 ### Fixed
 
@@ -1046,25 +1188,33 @@ Fixing important bugs with some tax regimes and tax identity code validation, al
 
 ## [v0.76.0] - 2024-05-13
 
-Finally, invoice multi-currency support! It's been a very long time coming, but we've finalized the details on how to handle currency conversion in invoices and potentially other documents.
+Finally, invoice multi-currency support! It's been a very long time coming, but we've finalized the
+details on how to handle currency conversion in invoices and potentially other documents.
 
 ### Added
 
-- Invoice Line Item alternative pricing added to be able to define custom prices in different currencies: `line.AltPrices`
-- Automatic conversion of invoice line item prices into invoice currency based on exchange rates defined in invoice if no alternative prices provided.
-- If an invoice has a currency that is different from that of the tax regime, a validation rule ensures that an exchange rate is defined.
+- Invoice Line Item alternative pricing added to be able to define custom prices in different
+  currencies: `line.AltPrices`
+- Automatic conversion of invoice line item prices into invoice currency based on exchange rates
+  defined in invoice if no alternative prices provided.
+- If an invoice has a currency that is different from that of the tax regime, a validation rule
+  ensures that an exchange rate is defined.
 - `currency.Amount` - new model that combines a currency with an amount.
 - BE: added Belgium regime.
 
 ### Changed
 
-- _BREAKING_: refactor of `currency.ExchangeRate` to clearly define `from` and `to` currencies (this was never supported, so we're not expecting anything to actually break).
-- Removed all regime specific currency validation, this is now performed by the invoice and depends on the available exchange rates.
+- _BREAKING_: refactor of `currency.ExchangeRate` to clearly define `from` and `to` currencies (this
+  was never supported, so we're not expecting anything to actually break).
+- Removed all regime specific currency validation, this is now performed by the invoice and depends
+  on the available exchange rates.
 - MX: invoice line totals validated to be **zero** or more, instead of positive.
 
 ### Fixed
 
-- Removing code requirement from Tax ID validation in all regimes so that when issuing a document to another country, the customers tax ID code will be validated if present, but will **not** be required. Any local rules for the issuing country for foreign IDs will continue to be applied.
+- Removing code requirement from Tax ID validation in all regimes so that when issuing a document to
+  another country, the customers tax ID code will be validated if present, but will **not** be
+  required. Any local rules for the issuing country for foreign IDs will continue to be applied.
 
 ## [v0.75.1] - 2024-05-07
 
@@ -1078,18 +1228,22 @@ Finally, invoice multi-currency support! It's been a very long time coming, but 
 
 - Bill Invoice Tax objects now support tax extensions.
 - MX Stamps for signatures from CFDI and SAT.
-- MX: extension for Place of Issue code: `mx-cfdi-issue-place` that replaces previous post code option in the supplier. Automatic normalization added.
+- MX: extension for Place of Issue code: `mx-cfdi-issue-place` that replaces previous post code
+  option in the supplier. Automatic normalization added.
 - `head` package now has `GetStamp` method to find a stamp by its provider from an array.
 - `num.Percentage` has `Base()` method to access base amount.
 - MX: FuelAccountBalance complement now supports `percent` as an alternative to `rate`.
 - ES: added extra TicketBAI exemption reasons
-- Envelope `Replicate()` and supporting methods to be able to clone/replicate an envelope or document without any potentially conflicting data.
+- Envelope `Replicate()` and supporting methods to be able to clone/replicate an envelope or
+  document without any potentially conflicting data.
 
 ### Changed
 
-- `reverse-charge` tag will no longer have impact on tax calculations, each tax combo per line should define if taxes are exempt or not.
+- `reverse-charge` tag will no longer have impact on tax calculations, each tax combo per line
+  should define if taxes are exempt or not.
 - Renaming `mx.StampProviderSATUUID` constant to just `mx.StampSATUUID`.
-- MX: FuelAccountBalance complement renamed tax `code` to `cat` (Category) with explicit usage of regular tax codes to be more aligned with other usage of tax categories.
+- MX: FuelAccountBalance complement renamed tax `code` to `cat` (Category) with explicit usage of
+  regular tax codes to be more aligned with other usage of tax categories.
 
 ### Fixed
 
@@ -1113,7 +1267,8 @@ Refining UUID library and moving to using version 7 as the default in GOBL.
 
 ### Changed
 
-- Using Version 7 UUIDs as default in GOBL. This version enables ordering by UUID and uses random extra data instead of a node ID.
+- Using Version 7 UUIDs as default in GOBL. This version enables ordering by UUID and uses random
+  extra data instead of a node ID.
 
 ### Fixed
 
@@ -1123,7 +1278,9 @@ Refining UUID library and moving to using version 7 as the default in GOBL.
 
 Refactoring UUID support.
 
-**IMPORTANT:** When running `Calculate()`, a uuid will now be assigned automatically to the document embedded in an Envelope if not already set. This is important to ensure that links between documents can always be maintained, no matter the source.
+**IMPORTANT:** When running `Calculate()`, a uuid will now be assigned automatically to the document
+embedded in an Envelope if not already set. This is important to ensure that links between documents
+can always be maintained, no matter the source.
 
 ### Added
 
@@ -1134,7 +1291,8 @@ Refactoring UUID support.
 
 ### Changed
 
-- UUID: refactored to use underlying string type instead of external package. This makes it easier to manage empty values, and avoids usage of pointers.
+- UUID: refactored to use underlying string type instead of external package. This makes it easier
+  to manage empty values, and avoids usage of pointers.
 - Removed all pointers to UUIDs and many cases replaced with `uuid.Identify` embedded structure.
 
 ### Fixed
@@ -1152,8 +1310,12 @@ Refactoring region handling for Portugal VAT and now supporting `-` in `cbc.Code
 
 ### Changed
 
-- `cbc.Code`: Now supports `-` symbol alongside `.` as a separator. Mixed feelings on this as we wanted to avoid normalization complications, but it became clear with the PT changes that a bit more flexibility here is useful. (Side note: the original intent of `cbc.Code` was to avoid dashes in tax IDs, but these are now normalized automatically.)
-- PT: moving from tax tags `azores` and `madeira` to `pt-region` extension provided in taxes combo for each line.
+- `cbc.Code`: Now supports `-` symbol alongside `.` as a separator. Mixed feelings on this as we
+  wanted to avoid normalization complications, but it became clear with the PT changes that a bit
+  more flexibility here is useful. (Side note: the original intent of `cbc.Code` was to avoid dashes
+  in tax IDs, but these are now normalized automatically.)
+- PT: moving from tax tags `azores` and `madeira` to `pt-region` extension provided in taxes combo
+  for each line.
 - PT: auto-migrate invoice supplier tax ID zone to appropriate line tax combo extension.
 
 ### Fixed
@@ -1162,7 +1324,8 @@ Refactoring region handling for Portugal VAT and now supporting `-` in `cbc.Code
 
 ## [v0.71.0] - 2024-04-08
 
-New number formatting support! Expect some possible breaking SDK changes with the `num` packages. No significant schema changes.
+New number formatting support! Expect some possible breaking SDK changes with the `num` packages. No
+significant schema changes.
 
 ### Added
 

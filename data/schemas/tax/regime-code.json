@@ -83,6 +83,10 @@
       "title": "Portugal"
     },
     {
+      "const": "RO",
+      "title": "Romania"
+    },
+    {
       "const": "SE",
       "title": "Sweden"
     },

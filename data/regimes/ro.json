@@ -1,0 +1,215 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Romania",
+    "ro": "România"
+  },
+  "time_zone": "Europe/Bucharest",
+  "country": "RO",
+  "currency": "RON",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "CUI",
+      "name": {
+        "en": "Unique Registration Code",
+        "ro": "Cod Unic de Înregistrare"
+      },
+      "desc": {
+        "en": "Romanian business registration and tax identification number (CUI/CIF).",
+        "ro": "Cod unic de înregistrare și identificare fiscală pentru companii (CUI/CIF)."
+      }
+    },
+    {
+      "code": "CNP",
+      "name": {
+        "en": "Personal Numerical Code",
+        "ro": "Cod Numeric Personal"
+      },
+      "desc": {
+        "en": "Romanian personal identification number for individuals (13 digits).",
+        "ro": "Cod numeric personal românesc pentru persoane fizice (13 cifre)."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note",
+        "corrective"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ro": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ro": "Taxa pe Valoarea Adăugată"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ro": "Cota standard"
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2016-01-01",
+              "percent": "20.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "24.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ro": "Cota redusă"
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "9.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "ro": "Cota redusă suplimentară"
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Romanian Fiscal Code",
+            "ro": "Codul Fiscal"
+          },
+          "url": "https://static.anaf.ro/static/10/Anaf/legislatie/Cod_fiscal_norme_31072017.htm",
+          "at": "2024-12-17T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Law 227/2015 regarding the Fiscal Code",
+            "ro": "Legea 227/2015 privind Codul fiscal"
+          },
+          "url": "https://static.anaf.ro/static/10/Anaf/Prezentare_R/Law227_11042018.pdf",
+          "at": "2024-12-17T00:00:00"
+        },
+        {
+          "title": {
+            "en": "European Commission - VAT Rates Applied in EU Member States"
+          },
+          "url": "https://taxation-customs.ec.europa.eu/taxation/vat/how-vat-works/vat-rates_en",
+          "at": "2024-12-17T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Romanian National Agency for Fiscal Administration (ANAF)",
+            "ro": "Agenția Națională de Administrare Fiscală"
+          },
+          "url": "https://www.anaf.ro/",
+          "at": "2024-12-17T00:00:00"
+        }
+      ]
+    }
+  ]
+}
