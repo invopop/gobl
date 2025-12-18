@@ -34,7 +34,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeDebitNote,
 				bill.InvoiceTypeCorrective,
-				// bill.InvoiceTypeSimplified is NOT needed here as we use the tag
 			),
 			validation.Skip,
 		),
