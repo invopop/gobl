@@ -46,40 +46,6 @@ For individuals, the **CNP** (Cod Numeric Personal) is used:
 - `S` = sex and century (1-8 for residents, 9 for foreign residents)
 - Validated with checksum using weights `[2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9]`
 
-During normalization, GOBL automatically removes whitespace, dashes, and the "RO" prefix from tax
-codes, and converts them to uppercase.
-
-Example usage:
-
-```json
-{
-  "tax_id": {
-    "country": "RO",
-    "code": "18547290"
-  },
-  "name": "DEDEMAN S.R.L.",
-  "identities": [
-    {
-      "type": "CUI",
-      "code": "18547290"
-    }
-  ]
-}
-```
-
-Or for an individual:
-
-```json
-{
-  "identities": [
-    {
-      "type": "CNP",
-      "code": "5000101010003"
-    }
-  ]
-}
-```
-
 ### VAT Rates
 
 Romania applies three VAT rates as defined in Law 227/2015 (updated 2025):

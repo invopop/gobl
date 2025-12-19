@@ -204,7 +204,10 @@ func TestValidateOrgIdentity(t *testing.T) {
 				Type: "UNKNOWN",
 				Code: "12345",
 			},
-			wantErr: false, // Unknown types pass through without validation
+			// Unknown types pass through without validation
+			// NOTE: Should this be the case, or do we want to panic or error here to identify when a new type has been added
+			// and hasn't been implemented?
+			wantErr: false,
 		},
 	}
 

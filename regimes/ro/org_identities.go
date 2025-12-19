@@ -59,27 +59,20 @@ var cnpWeights = []int{2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9}
 
 // normalizeOrgIdentity normalizes Romanian organization identity codes.
 func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil || id.Code == "" {
+	if id == nil {
 		return
 	}
 
-	code := id.Code.String()
-
 	switch id.Type {
 	case IdentityTypeCUI:
-		// Remove spaces, dashes, upper case
-		code = strings.ToUpper(strings.TrimSpace(code))
-		code = strings.ReplaceAll(code, " ", "")
-		code = strings.ReplaceAll(code, "-", "")
-		// Remove "RO" prefix if user entered it in the identity field
-		code = strings.TrimPrefix(code, "RO")
+		// Use standard alphanumeric normalization (uppercase, remove spaces/dashes/etc.)
+		id.Code = cbc.NormalizeAlphanumericalCode(id.Code)
+		// Remove "RO" prefix if present
+		id.Code = cbc.Code(strings.TrimPrefix(id.Code.String(), "RO"))
 	case IdentityTypeCNP:
-		code = strings.TrimSpace(code)
-		code = strings.ReplaceAll(code, " ", "")
-		code = strings.ReplaceAll(code, "-", "")
+		// CNP should be numeric only
+		id.Code = cbc.NormalizeNumericalCode(id.Code)
 	}
-
-	id.Code = cbc.Code(code)
 }
 
 // validateOrgIdentity validates Romanian organization identities.
@@ -128,6 +121,7 @@ func validateCNP(code cbc.Code) error {
 	// 1. Validate Sex/Century Digit (First digit)
 	// 1-8: Residents (M/F for various centuries)
 	// 9: Foreign citizens (Rezidenți străini)
+	// 0: Invalid
 	sexDigit := val[0]
 	if sexDigit == '0' {
 		return validation.NewError("validation_cnp_sex", "invalid CNP first digit")
@@ -144,13 +138,15 @@ func validateCNPChecksum(val string) error {
 	var sum int
 
 	// Calculate sum of first 12 digits multiplied by weights
-	for i := 0; i < 12; i++ {
+	for i := range 12 {
 		digit := int(val[i] - '0')
 		sum += digit * cnpWeights[i]
 	}
 
 	remainder := sum % 11
 	controlDigit := remainder
+	// here making a trick like the modulo 10 that we used in the tax identity requires
+	// a lookup table that would be way less readable for a negligible gain in performance
 	if remainder == 10 {
 		controlDigit = 1
 	}

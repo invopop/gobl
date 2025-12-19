@@ -41,7 +41,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv := &bill.Invoice{
 			Type:      bill.InvoiceTypeCreditNote,
 			Code:      "TEST-CN-001",
-			IssueDate: cal.MakeDate(2024, 1, 15),
+			IssueDate: cal.MakeDate(2025, 1, 15),
 			Supplier: &org.Party{
 				Name: "DEDEMAN S.R.L.",
 				TaxID: &tax.Identity{
@@ -66,7 +66,7 @@ func TestCreditNoteValidation(t *testing.T) {
 					Taxes: tax.Set{
 						{
 							Category: "VAT",
-							Percent:  num.NewPercentage(19, 2),
+							Percent:  num.NewPercentage(21, 2),
 						},
 					},
 				},
@@ -116,7 +116,7 @@ func TestCreditNoteValidation(t *testing.T) {
 				{
 					Series:    "INV",
 					Code:      "001",
-					IssueDate: cal.NewDate(2024, 1, 10), // Best practice to include date
+					IssueDate: cal.NewDate(2024, 1, 10),
 				},
 			},
 		}
