@@ -65,10 +65,36 @@ func TestNormalizeOrgIdentity(t *testing.T) {
 			},
 			expected: "5000101010003",
 		},
+		{
+			name:     "nil identity",
+			identity: nil,
+			expected: "",
+		},
+		{
+			name: "empty code",
+			identity: &org.Identity{
+				Type: ro.IdentityTypeCUI,
+				Code: "",
+			},
+			expected: "",
+		},
+		{
+			name: "unknown identity type",
+			identity: &org.Identity{
+				Type: "UNKNOWN",
+				Code: "12345",
+			},
+			expected: "12345",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.identity == nil {
+				ro.Normalize(tt.identity)
+				// Should not panic
+				return
+			}
 			ro.Normalize(tt.identity)
 			assert.Equal(t, tt.expected, tt.identity.Code)
 		})
@@ -171,6 +197,14 @@ func TestValidateOrgIdentity(t *testing.T) {
 			},
 			wantErr: true,
 			errMsg:  "cannot be blank",
+		},
+		{
+			name: "unknown identity type",
+			identity: &org.Identity{
+				Type: "UNKNOWN",
+				Code: "12345",
+			},
+			wantErr: false, // Unknown types pass through without validation
 		},
 	}
 

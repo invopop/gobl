@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/regimes/ro"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateTaxIdentity(t *testing.T) {
@@ -132,4 +133,35 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			assert.Equal(t, tt.expected, tID.Code)
 		})
 	}
+}
+
+func TestValidateTaxCodeEdgeCases(t *testing.T) {
+	t.Run("code with control digit 10 becoming 0", func(t *testing.T) {
+		// Test a CUI where the calculated control would be 10, so it becomes 0
+		tID := &tax.Identity{
+			Country: "RO",
+			Code:    "18547290",
+		}
+		err := ro.Validate(tID)
+		assert.NoError(t, err)
+	})
+
+	t.Run("minimum length code (2 digits)", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "RO",
+			Code:    "27",
+		}
+		err := ro.Validate(tID)
+		assert.NoError(t, err)
+	})
+
+	t.Run("invalid tax code with non-numeric characters", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "RO",
+			Code:    "ABC123",
+		}
+		err := ro.Validate(tID)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid format")
+	})
 }

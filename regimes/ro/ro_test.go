@@ -202,7 +202,7 @@ func TestTaxCategories(t *testing.T) {
 
 func TestRegimeRegistration(t *testing.T) {
 	// Test that the regime is properly registered
-	regime := tax.RegimeDefFor(l10n.Code(l10n.RO))
+	regime := tax.RegimeDefFor(l10n.RO)
 	require.NotNil(t, regime, "RO regime should be registered")
 	assert.Equal(t, l10n.RO.Tax(), regime.Country)
 }

@@ -425,3 +425,85 @@ func TestInvoiceTypes(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateInvoiceEdgeCases(t *testing.T) {
+	t.Run("nil supplier", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Type:      bill.InvoiceTypeStandard,
+			Code:      "INV-NIL",
+			IssueDate: cal.MakeDate(2024, 12, 15),
+			Supplier:  nil,
+			Lines: []*bill.Line{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Item",
+						Price: num.NewAmount(10000, 2),
+					},
+				},
+			},
+		}
+
+		err := ro.Validate(inv)
+		require.Error(t, err)
+	})
+
+	t.Run("nil customer for simplified invoice", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Type:      bill.InvoiceTypeStandard,
+			Code:      "SIMP-NIL",
+			IssueDate: cal.MakeDate(2025, 12, 15),
+			Tags: tax.Tags{
+				List: []cbc.Key{tax.TagSimplified},
+			},
+			Supplier: &org.Party{
+				Name: "Test Supplier SRL",
+				TaxID: &tax.Identity{
+					Country: "RO",
+					Code:    "18547290",
+				},
+			},
+			Customer: nil,
+			Lines: []*bill.Line{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Coffee",
+						Price: num.NewAmount(1500, 2),
+					},
+				},
+			},
+		}
+
+		err := ro.Validate(inv)
+		assert.NoError(t, err) // Simplified invoices allow nil customer
+	})
+
+	t.Run("line with nil item", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Type:      bill.InvoiceTypeStandard,
+			Code:      "INV-NIL-ITEM",
+			IssueDate: cal.MakeDate(2024, 12, 15),
+			Supplier: &org.Party{
+				Name: "Test Supplier SRL",
+				TaxID: &tax.Identity{
+					Country: "RO",
+					Code:    "18547290",
+				},
+			},
+			Customer: &org.Party{
+				Name: "Test Customer",
+			},
+			Lines: []*bill.Line{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     nil, // Missing item
+				},
+			},
+		}
+
+		err := ro.Validate(inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "item")
+	})
+}
