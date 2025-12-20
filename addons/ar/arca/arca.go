@@ -13,6 +13,13 @@ const (
 	V4 cbc.Key = "ar-arca-v4"
 )
 
+// ARCA Official Codes to include in stamps
+const (
+	StampCAE       cbc.Key = "arca-cae"
+	StampCAEExpiry cbc.Key = "arca-cae-expiry"
+	StampQR        cbc.Key = "arca-qr"
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 }
