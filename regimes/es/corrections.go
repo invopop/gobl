@@ -9,7 +9,6 @@ import (
 // InvoiceCorrectionTypes defines the types of corrections recognized in Spanish law
 var InvoiceCorrectionTypes = []cbc.Key{
 	bill.InvoiceTypeCreditNote,
-	bill.InvoiceTypeCorrective,
 	bill.InvoiceTypeDebitNote,
 }
 

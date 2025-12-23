@@ -86,7 +86,6 @@ GOBL supports the following correction types:
 
 - `credit-note` - For partial or full refunds (negative amounts)
 - `debit-note` - For additional charges (positive amounts)
-- `corrective` - For general corrections replacing a previous document
 
 When issuing corrections, you must reference the original invoice using the `preceding` field:
 
@@ -119,4 +118,4 @@ When issuing corrections, you must reference the original invoice using the `pre
 #### Correction Documents
 
 - **MUST** include at least one preceding document reference
-- Credit notes, debit notes, and corrective invoices all require the `preceding` field
+- Credit notes and debit notes require the `preceding` field

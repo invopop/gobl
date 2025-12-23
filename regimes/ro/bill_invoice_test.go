@@ -380,7 +380,6 @@ func TestInvoiceTypes(t *testing.T) {
 		bill.InvoiceTypeStandard,
 		bill.InvoiceTypeCreditNote,
 		bill.InvoiceTypeDebitNote,
-		bill.InvoiceTypeCorrective, // Added to match implementation coverage
 	}
 
 	for _, invType := range validTypes {

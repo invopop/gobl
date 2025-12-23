@@ -82,13 +82,11 @@ func validateCIFChecksum(code string) error {
 		sum += digit * cifWeights[i]
 	}
 
-	// This is equivalent to 11 - sum % 11, but adjusted for the modulo 10 rule
-	// to simplify the logic. This replaces the use of
-	// remainder = sum % 11
-	// checkDigit = 11 - remainder
-	//
-	// Also, instead of having to have an if branch to make the calculated control 0 when
-	// modulo is 10, we can use modulo 10 directly.
+	// Calculate control digit: (sum * 10) % 11, then % 10 to handle the case where result is 10.
+	// This replaces the traditional approach:
+	//   remainder = sum % 11
+	//   checkDigit = (11 - remainder) % 10
+	// The modulo 10 transformation ensures the result is always a single digit (0-9).
 	calculatedControl := (sum * 10) % 11 % 10
 
 	if controlDigit != calculatedControl {

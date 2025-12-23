@@ -25,7 +25,6 @@ import (
 var InvoiceCorrectionTypes = []cbc.Key{
 	bill.InvoiceTypeCreditNote, // "Factură de stornare" (Negative amounts)
 	bill.InvoiceTypeDebitNote,  // "Factură de ajustare" (Positive amounts)
-	bill.InvoiceTypeCorrective, // Generic correction
 }
 
 func correctionDefinitions() []*tax.CorrectionDefinition {

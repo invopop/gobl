@@ -33,7 +33,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 				bill.InvoiceTypeStandard,
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeDebitNote,
-				bill.InvoiceTypeCorrective,
 			),
 			validation.Skip,
 		),
@@ -42,7 +41,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 				inv.Type.In(
 					bill.InvoiceTypeCreditNote,
 					bill.InvoiceTypeDebitNote,
-					bill.InvoiceTypeCorrective,
 				),
 				validation.Required.Error("preceding invoice reference is mandatory for credit/debit notes (Art. 319 Fiscal Code)"),
 				validation.Skip,

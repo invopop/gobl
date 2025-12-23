@@ -145,8 +145,8 @@ func validateCNPChecksum(val string) error {
 
 	remainder := sum % 11
 	controlDigit := remainder
-	// here making a trick like the modulo 10 that we used in the tax identity requires
-	// a lookup table that would be way less readable for a negligible gain in performance
+	// here, using a trick like the modulo 10 optimization from the tax identity validation
+	// would require a lookup table that would be less readable for a negligible gain in performance
 	if remainder == 10 {
 		controlDigit = 1
 	}

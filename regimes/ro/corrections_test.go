@@ -33,7 +33,6 @@ func TestCorrectionDefinitions(t *testing.T) {
 	assert.Equal(t, bill.ShortSchemaInvoice, corrections.Schema)
 	assert.Contains(t, corrections.Types, bill.InvoiceTypeCreditNote)
 	assert.Contains(t, corrections.Types, bill.InvoiceTypeDebitNote)
-	assert.Contains(t, corrections.Types, bill.InvoiceTypeCorrective)
 }
 
 func TestCreditNoteValidation(t *testing.T) {
