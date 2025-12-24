@@ -47,7 +47,7 @@ func (ld *LineDiscount) Validate() error {
 				validation.Required,
 			),
 		),
-		validation.Field(&ld.Amount, validation.Required, num.NotZero),
+		validation.Field(&ld.Amount),
 		validation.Field(&ld.Ext),
 	)
 }

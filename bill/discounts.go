@@ -146,7 +146,7 @@ func (m *Discount) ValidateWithContext(ctx context.Context) error {
 				validation.Required,
 			),
 		),
-		validation.Field(&m.Amount, validation.Required),
+		validation.Field(&m.Amount),
 		validation.Field(&m.Taxes),
 		validation.Field(&m.Ext),
 		validation.Field(&m.Meta),
