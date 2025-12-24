@@ -100,7 +100,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
-				isDue(inv) && inv.Type == bill.InvoiceTypeStandard,
+				isDue(inv) && inv.Type.In(bill.InvoiceTypeStandard),
 				validation.Required.Error("payment details are required when amount is due (BR-CO-25)"), // BR-CO-25
 				validation.By(validateBillPayment),
 			),
