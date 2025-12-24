@@ -69,6 +69,13 @@ func TestInvoiceValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.NoError(t, err)
 	})
+	t.Run("credit note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
