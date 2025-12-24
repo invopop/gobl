@@ -219,6 +219,73 @@
           }
         }
       ]
+    },
+    {
+      "key": "br-nfse-operation",
+      "name": {
+        "en": "Operation Indicator",
+        "pt": "Indicador da operação"
+      },
+      "desc": {
+        "en": "Indicates the operation type for the determination of the IBS and CBS taxes by the\ntax authorities.\n\nMaps to the `cIndOp` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Note SE/CGNFS-e nº 004",
+            "pt": "Nota Técnica SE/CGNFS-e nº 004"
+          },
+          "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc-producao-restrita-piloto/nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf"
+        },
+        {
+          "title": {
+            "en": "Annex VI - Operation Indicators Table IBS/CBS v1.00",
+            "pt": "Anexo VI - Tabela de Indicadores de Operação IBS/CBS v1.00"
+          },
+          "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx"
+        }
+      ],
+      "pattern": "^\\d{6}$"
+    },
+    {
+      "key": "br-nfse-tax-status",
+      "name": {
+        "en": "Tax Status Code (CST)",
+        "pt": "Código de situação tributária (CST)"
+      },
+      "desc": {
+        "en": "Indicates the tax status of the operation for the determination of the IBS and CBS\ntaxes by the tax authorities.\n\nMaps to the `CST` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+            "pt": "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU="
+        }
+      ],
+      "pattern": "^\\d{3}$"
+    },
+    {
+      "key": "br-nfse-tax-class",
+      "name": {
+        "en": "Tax Classification Code",
+        "pt": "Código de classificação tributária"
+      },
+      "desc": {
+        "en": "Indicates the tax classification code for the determination of the IBS and CBS taxes\nby the tax authorities.\n\nMaps to the `cClassTrib` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+            "pt": "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU="
+        }
+      ],
+      "pattern": "^\\d{6}$"
     }
   ],
   "scenarios": null,
