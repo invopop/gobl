@@ -79,7 +79,7 @@ func (lc *LineCharge) Validate() error {
 				validation.Required.Error("cannot be blank with quantity"),
 			),
 		),
-		validation.Field(&lc.Amount, validation.Required, num.NotZero),
+		validation.Field(&lc.Amount),
 		validation.Field(&lc.Ext),
 	)
 }

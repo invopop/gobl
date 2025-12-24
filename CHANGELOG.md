@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 
 ### Removed
-- `bill`: `LineDiscount` no longer returns an error when the amount is 0
+
+- `bill`: `LineDiscount` and `LineCharge` no longer return an error when the amount is 0.
 
 ## [v0.304.0] - 2025-12-10
 
