@@ -24,6 +24,17 @@ func TestItemValidation(t *testing.T) {
 			},
 		},
 		{
+			name: "valid item with all IBS/CBS extensions",
+			item: &org.Item{
+				Ext: tax.Extensions{
+					nfse.ExtKeyService:   "12345678",
+					nfse.ExtKeyOperation: "030101",
+					nfse.ExtKeyTaxStatus: "000",
+					nfse.ExtKeyTaxClass:  "000001",
+				},
+			},
+		},
+		{
 			name: "nil item",
 			item: nil,
 		},
@@ -47,6 +58,36 @@ func TestItemValidation(t *testing.T) {
 				},
 			},
 			err: "ext: (br-nfse-service: required.).",
+		},
+		{
+			name: "only operation extension",
+			item: &org.Item{
+				Ext: tax.Extensions{
+					nfse.ExtKeyService:   "12345678",
+					nfse.ExtKeyOperation: "030101",
+				},
+			},
+			err: "ext: (br-nfse-tax-class: required; br-nfse-tax-status: required.)",
+		},
+		{
+			name: "only tax status extension",
+			item: &org.Item{
+				Ext: tax.Extensions{
+					nfse.ExtKeyService:   "12345678",
+					nfse.ExtKeyTaxStatus: "000",
+				},
+			},
+			err: "ext: (br-nfse-operation: required; br-nfse-tax-class: required.)",
+		},
+		{
+			name: "only tax class extension",
+			item: &org.Item{
+				Ext: tax.Extensions{
+					nfse.ExtKeyService:  "12345678",
+					nfse.ExtKeyTaxClass: "000001",
+				},
+			},
+			err: "ext: (br-nfse-operation: required; br-nfse-tax-status: required.)",
 		},
 	}
 

@@ -14,6 +14,11 @@ func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
 			tax.ExtensionsRequire(ExtKeyService),
+			tax.ExtensionsRequireAllOrNone(
+				ExtKeyOperation,
+				ExtKeyTaxStatus,
+				ExtKeyTaxClass,
+			),
 			validation.Skip,
 		),
 	)

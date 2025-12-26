@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)
+- `br`: Add CBS and IBS tax categories
+
 ## [v0.304.0] - 2025-12-10
 
 ### Added

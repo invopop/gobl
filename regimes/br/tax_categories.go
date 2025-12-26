@@ -18,6 +18,8 @@ const (
 	TaxCategoryCSLL      cbc.Code = "CSLL"
 	TaxCategoryINSS      cbc.Code = "INSS"
 	TaxCategoryIRRF      cbc.Code = "IRRF"
+	TaxCategoryIBS       cbc.Code = "IBS"
+	TaxCategoryCBS       cbc.Code = "CBS"
 )
 
 var taxCategories = []*tax.CategoryDef{
@@ -167,5 +169,41 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.PT: "Imposto de Renda Retido na Fonte",
 		},
 		Retained: true,
+	},
+	//
+	// Goods and Services Tax (IBS)
+	//
+	{
+		Code: TaxCategoryIBS,
+		Name: i18n.String{
+			i18n.EN: "IBS",
+			i18n.PT: "IBS",
+		},
+		Title: i18n.String{
+			i18n.EN: "Goods and Services Tax",
+			i18n.PT: "Imposto sobre Bens e Serviços",
+		},
+		// IBS is not really informative, but since during 2026 reporting is
+		// mandatory but collection is not, we make it informative to avoid
+		// increasing the tax totals.
+		Informative: true,
+	},
+	//
+	// Federal Goods and Services Contribution (CBS)
+	//
+	{
+		Code: TaxCategoryCBS,
+		Name: i18n.String{
+			i18n.EN: "CBS",
+			i18n.PT: "CBS",
+		},
+		Title: i18n.String{
+			i18n.EN: "Federal Goods and Services Contribution",
+			i18n.PT: "Contribuição sobre Bens e Serviços",
+		},
+		// CBS is not really informative, but since during 2026 reporting is
+		// mandatory but collection is not, we make it informative to avoid
+		// increasing the tax totals.
+		Informative: true,
 	},
 }
