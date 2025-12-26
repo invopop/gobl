@@ -84,6 +84,15 @@ var extensions = []*cbc.Definition{
 				~~~
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "1",
@@ -203,6 +212,15 @@ var extensions = []*cbc.Definition{
 				}
 				~~~
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -556,6 +574,15 @@ var extensions = []*cbc.Definition{
 				~~~
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "1",
@@ -653,6 +680,15 @@ var extensions = []*cbc.Definition{
 				generated using AI and may not be 100% accurate. Always consult with a tax
 				professional to ensure you're choosing the correct code.
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -937,6 +973,15 @@ var extensions = []*cbc.Definition{
 				~~~
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "category1_1",
@@ -1027,6 +1072,15 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				See the Income Classification Category for more information.
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -1300,6 +1354,15 @@ var extensions = []*cbc.Definition{
 				~~~
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: TaxTypeWithholding,
@@ -1365,6 +1428,15 @@ var extensions = []*cbc.Definition{
 				]
 				~~~
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -1550,6 +1622,15 @@ var extensions = []*cbc.Definition{
 				]
 				~~~
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
@@ -1791,6 +1872,15 @@ var extensions = []*cbc.Definition{
 				]
 				~~~
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical description of REST API interfaces for sending & receiving data for ERP users (Version 2.0.0)",
+					i18n.EL: "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση & λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+				},
+				URL: "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf",
+			},
 		},
 		Values: []*cbc.Definition{
 			{
