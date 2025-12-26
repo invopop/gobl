@@ -1,0 +1,50 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "8fbc9c45-123a-4beb-90bd-a8f280d85abc"
+type: credit-note
+currency: RON
+issue_date: "2024-12-20"
+code: "NC-2024-001"
+
+preceding:
+  - series: "FACT-2024"
+    code: "001"
+    issue_date: "2024-12-15"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Exemplu Software SRL"
+  emails:
+    - addr: "facturare@exemplu.ro"
+  addresses:
+    - num: "42"
+      street: "Strada Exemplu"
+      locality: "București"
+      region: "București"
+      code: "010101"
+      country: RO
+
+customer:
+  tax_id:
+    country: RO
+    code: "27"
+  name: "Client Test SRL"
+  emails:
+    - addr: "contabilitate@client.ro"
+  addresses:
+    - street: "Bulevardul Unirii"
+      num: "1"
+      locality: "București"
+      code: "030823"
+      country: RO
+
+lines:
+  - quantity: 2
+    item:
+      name: "Retur - Servicii de dezvoltare software"
+      price: "500.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard

@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "9aea7b56-59d8-4beb-90bd-f8f280d85600"
+type: standard
+currency: RON
+issue_date: "2025-12-15"
+code: "SIMP-2025-001"
+
+tax:
+  tags:
+    - simplified
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Cafenea Exemplu SRL"
+  emails:
+    - addr: "contact@cafenea.ro"
+  addresses:
+    - num: "8"
+      street: "Strada Centrală"
+      locality: "București"
+      region: "București"
+      code: "010101"
+      country: RO
+
+# Simplified invoices (<100 EUR) don't require customer details (OUG 138/2024)
+# Customer is omitted for small retail transactions
+
+lines:
+  - quantity: 2
+    item:
+      name: "Cafea espresso"
+      price: "12.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Croissant"
+      price: "8.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
+
+notes:
+  - text: "Factură simplificată conform OUG 138/2024"

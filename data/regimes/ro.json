@@ -1,0 +1,220 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Romania",
+    "ro": "România"
+  },
+  "time_zone": "Europe/Bucharest",
+  "country": "RO",
+  "currency": "RON",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "CUI",
+      "name": {
+        "en": "Unique Registration Code",
+        "ro": "Cod Unic de Înregistrare"
+      },
+      "desc": {
+        "en": "Romanian business registration and tax identification number (CUI/CIF).",
+        "ro": "Cod unic de înregistrare și identificare fiscală pentru companii (CUI/CIF)."
+      }
+    },
+    {
+      "code": "CNP",
+      "name": {
+        "en": "Personal Numerical Code",
+        "ro": "Cod Numeric Personal"
+      },
+      "desc": {
+        "en": "Romanian personal identification number for individuals (13 digits).",
+        "ro": "Cod numeric personal românesc pentru persoane fizice (13 cifre)."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note",
+        "corrective"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ro": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ro": "Taxa pe Valoarea Adăugată"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ro": "Cota standard"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless specified otherwise.",
+            "ro": "Se aplică majorității bunurilor și serviciilor, cu excepția cazului în care se specifică altfel."
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2016-01-01",
+              "percent": "20.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "24.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ro": "Cota redusă"
+          },
+          "desc": {
+            "en": "Applies to food, pharmaceuticals, books, hotels, restaurants, and water supplies.",
+            "ro": "Se aplică la produse alimentare, medicamente, cărți, hoteluri, restaurante și apă."
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11.0%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "9.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "ro": "Cota redusă suplimentară"
+          },
+          "desc": {
+            "en": "Legacy rate for textbooks, social housing, etc. (Merged into 11% as of Aug 2025).",
+            "ro": "Cotă veche pentru manuale, locuințe sociale etc. (Înglobată în cota de 11% din august 2025)."
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Law 141/2025 (Fiscal Measures)",
+            "ro": "Legea nr. 141/2025 privind măsuri fiscal-bugetare"
+          },
+          "url": "https://legislatie.just.ro/Public/DetaliiDocumentAfis/284000",
+          "at": "2025-07-25T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Law 227/2015 (Fiscal Code)",
+            "ro": "Legea 227/2015 privind Codul fiscal"
+          },
+          "url": "https://legislatie.just.ro/Public/DetaliiDocument/171282",
+          "at": "2024-12-17T00:00:00"
+        }
+      ]
+    }
+  ]
+}

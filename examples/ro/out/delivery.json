@@ -1,0 +1,82 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "33d1d45c1ea06cc183080e18bea08fd0a02656ab58b0fcbf91b6c2651782e965"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/delivery",
+		"$regime": "RO",
+		"uuid": "7890abcd-1234-5678-90ef-1234567890ab",
+		"type": "advice",
+		"series": "AVZ",
+		"code": "001",
+		"issue_date": "2024-12-14",
+		"currency": "RON",
+		"supplier": {
+			"name": "Depozit Logistic SRL",
+			"tax_id": {
+				"country": "RO",
+				"code": "18547290"
+			},
+			"addresses": [
+				{
+					"num": "100",
+					"street": "Șoseaua Industrială",
+					"locality": "București",
+					"region": "Ilfov",
+					"code": "077001",
+					"country": "RO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Magazin Retail SRL",
+			"tax_id": {
+				"country": "RO",
+				"code": "27"
+			},
+			"addresses": [
+				{
+					"num": "5",
+					"street": "Strada Centrală",
+					"locality": "București",
+					"code": "010001",
+					"country": "RO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "50",
+				"item": {
+					"name": "Cutii carton 40x30x20 cm"
+				}
+			},
+			{
+				"i": 2,
+				"quantity": "100",
+				"item": {
+					"name": "Folie stretch"
+				}
+			},
+			{
+				"i": 3,
+				"quantity": "20",
+				"item": {
+					"name": "Paleți europeni"
+				}
+			}
+		],
+		"notes": [
+			{
+				"key": "transport",
+				"text": "Transport asigurat de furnizor. Livrare la rampa de descărcare."
+			}
+		]
+	}
+}

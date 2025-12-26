@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `ro`: Romanian tax regime with VAT rates (21% standard, 11% reduced as of Aug 2025), CUI/CIF and CNP identity validation, invoice correction types (credit-note, debit-note, corrective), and compliance with B2B/B2C e-Factura mandates (Law 296/2023, OUG 69/2024, OUG 138/2024).
+
 ## [v0.304.0] - 2025-12-10
 
 ### Added

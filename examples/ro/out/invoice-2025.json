@@ -1,0 +1,154 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f161b18501f940e0272f6c2d60474fa638136ae2f16d12b49dad716151fdd701"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "RO",
+		"uuid": "7aea7b56-59d8-4beb-90bd-f8f280d85700",
+		"type": "standard",
+		"code": "FACT-2025-001",
+		"issue_date": "2025-12-15",
+		"currency": "RON",
+		"supplier": {
+			"name": "Exemplu Software SRL",
+			"tax_id": {
+				"country": "RO",
+				"code": "18547290"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Strada Exemplu",
+					"locality": "București",
+					"region": "București",
+					"code": "010101",
+					"country": "RO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturare@exemplu.ro"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Test SRL",
+			"tax_id": {
+				"country": "RO",
+				"code": "27"
+			},
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Bulevardul Unirii",
+					"locality": "București",
+					"code": "030823",
+					"country": "RO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "contabilitate@client.ro"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Servicii de dezvoltare software",
+					"price": "500.00",
+					"unit": "h"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "5000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Licență software anuală",
+					"price": "2000.00"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "2000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "5",
+				"item": {
+					"name": "Cărți tehnice",
+					"price": "100.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "11.0%"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "7500.00",
+			"total": "7500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "7000.00",
+								"percent": "21.0%",
+								"amount": "1470.00"
+							},
+							{
+								"key": "standard",
+								"base": "500.00",
+								"percent": "11.0%",
+								"amount": "55.00"
+							}
+						],
+						"amount": "1525.00"
+					}
+				],
+				"sum": "1525.00"
+			},
+			"tax": "1525.00",
+			"total_with_tax": "9025.00",
+			"payable": "9025.00"
+		},
+		"notes": [
+			{
+				"text": "Factura reflectă noile cote TVA aplicabile din 1 august 2025"
+			}
+		]
+	}
+}

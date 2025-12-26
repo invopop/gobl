@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/delivery"
+$regime: "RO"
+uuid: "7890abcd-1234-5678-90ef-1234567890ab"
+series: "AVZ"
+code: "001"
+issue_date: "2024-12-14"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Depozit Logistic SRL"
+  addresses:
+    - num: "100"
+      street: "Șoseaua Industrială"
+      locality: "București"
+      region: "Ilfov"
+      code: "077001"
+      country: RO
+
+customer:
+  tax_id:
+    country: RO
+    code: "27"
+  name: "Magazin Retail SRL"
+  addresses:
+    - street: "Strada Centrală"
+      num: "5"
+      locality: "București"
+      code: "010001"
+      country: RO
+
+lines:
+  - quantity: 50
+    item:
+      name: "Cutii carton 40x30x20 cm"
+  - quantity: 100
+    item:
+      name: "Folie stretch"
+  - quantity: 20
+    item:
+      name: "Paleți europeni"
+
+notes:
+  - key: "transport"
+    text: "Transport asigurat de furnizor. Livrare la rampa de descărcare."

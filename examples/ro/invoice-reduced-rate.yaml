@@ -1,0 +1,43 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "5aea7b56-59d8-4beb-90bd-f8f280d85400"
+type: standard
+currency: RON
+issue_date: "2024-12-15"
+code: "FACT-2024-010"
+
+supplier:
+  tax_id:
+    country: RO
+    code: "18547290"
+  name: "Restaurant Gustos SRL"
+  emails:
+    - addr: "comenzi@restaurant.ro"
+  addresses:
+    - num: "25"
+      street: "Strada Gastronomiei"
+      locality: "Brașov"
+      region: "Brașov"
+      code: "500001"
+      country: RO
+
+customer:
+  tax_id:
+    country: RO
+    code: "27"
+  name: "Hotel Turistic SRL"
+
+lines:
+  - quantity: 50
+    item:
+      name: "Meniu prânz - servicii de catering"
+      price: "40.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: 100
+    item:
+      name: "Pâine proaspătă"
+      price: "5.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
