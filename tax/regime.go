@@ -13,6 +13,9 @@ type RegimeCode l10n.TaxCountryCode
 // methods and the `$regime` attribute to be able to determine a tax regime definition
 // to associate with the document.
 type Regime struct {
+	// Regime is the country code that identifies the tax regime applicable to the document.
+	// It determines which country-specific tax rules, normalizations, and validations are applied.
+	// If this field is not provided, the supplier’s country code is used as the default regime.
 	Country RegimeCode `json:"$regime,omitempty" jsonschema:"title=Tax Regime"`
 }
 
