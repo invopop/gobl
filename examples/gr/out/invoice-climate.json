@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "66ba51da8b4d361f1df79c094057ac3eade2f70680699a424531658c15c89631"
+			"val": "8c1cd44e5911998a9e6f297313857eda9fd63dbf0cc4fc6a4243d7b2cd5f0e89"
 		}
 	},
 	"doc": {
@@ -72,7 +72,8 @@
 				"reason": "Accommodation tax",
 				"amount": "3.00",
 				"ext": {
-					"gr-mydata-other-tax": "8"
+					"gr-mydata-other-tax": "8",
+					"gr-mydata-tax-type": "3"
 				}
 			}
 		],

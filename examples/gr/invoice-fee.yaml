@@ -1,0 +1,60 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["gr-mydata-v1"]
+uuid: "019035bd-4522-7eb3-83bf-9185ead05ee6"
+currency: "EUR"
+issue_date: "2022-02-01"
+series: "SAMPLE"
+code: "001"
+type: "standard"
+$tags:
+  - "services"
+
+supplier:
+  tax_id:
+    country: "EL"
+    code: "177472438"
+  name: "Ξενοδοχείο Ακρόπολη Α.Ε."
+  emails:
+    - addr: "reservations@acropolishotel.gr"
+  addresses:
+    - num: "28"
+      street: "Λεωφόρος Συγγρού"
+      locality: "Αθήνα"
+      code: "11742"
+      country: "GR"
+
+customer:
+  tax_id:
+    country: "EL"
+    code: "841442160"
+  name: "Μαρία Παπαδοπούλου"
+  emails:
+    - addr: "maria.papadopoulou@example.com"
+  addresses:
+    - num: "15"
+      street: "Οδός Ερμού"
+      locality: "Αθήνα"
+      code: "10563"
+      country: "GR"
+
+lines:
+  - quantity: 3
+    item:
+      name: "Διανυκτέρευση - Δίκλινο Δωμάτιο με Θέα Ακρόπολη"
+      price: "120.00"
+      ext:
+        "gr-mydata-income-cat": "category1_3"
+        "gr-mydata-income-type": "E3_561_001"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+charges:
+  - reason: "Τέλος Διαμονής (3 νύχτες x €4.00)"
+    amount: "12.00"
+    ext:
+      "gr-mydata-fee": "18"
+
+payment:
+  instructions:
+    key: cash
