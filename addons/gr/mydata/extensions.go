@@ -14,7 +14,19 @@ const (
 	ExtKeyIncomeCat    = "gr-mydata-income-cat"
 	ExtKeyIncomeType   = "gr-mydata-income-type"
 	ExtKeyPaymentMeans = "gr-mydata-payment-means"
+	ExtKeyTaxType      = "gr-mydata-tax-type"
 	ExtKeyOtherTax     = "gr-mydata-other-tax"
+	ExtKeyFee          = "gr-mydata-fee"
+	ExtKeyStampDuty    = "gr-mydata-stamp-duty"
+)
+
+// Tax type codes.
+const (
+	TaxTypeWithholding = "1"
+	TaxTypeFee         = "2"
+	TaxTypeOtherTax    = "3"
+	TaxTypeStampDuty   = "4"
+	TaxTypeDeduction   = "5"
 )
 
 var extensions = []*cbc.Definition{
@@ -26,7 +38,7 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by 
+				Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by
 				30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate
 				with a specific VAT category.
 
@@ -69,7 +81,7 @@ var extensions = []*cbc.Definition{
 						}
 					],
 				}
-				~~~				
+				~~~
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -141,13 +153,13 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				The Greek tax authority (IAPR) requires an invoice type code to be specified as part of the invoice. GOBL will
 				automatically set the correct code based on the invoice's ~type~ and ~$tags~ values.
-				
+
 				However, you can also set the code manually using the ~gr-mydata-invoice-type~ extension in the tax
 				section of the invoice, and setting the invoice's ~type~ to ~other~.
 
 				The following table lists how the combination of ~type~ and ~$tags~ values are mapped to the
 				IAPR MyDATA invoice type code:
-				
+
 				| Type   | Description                                     | GOBL Type     | GOBL Tags                  |
 				| ------ | ----------------------------------------------- | ------------- |----------------------------|
 				| ~1.1~  | Sales Invoice                                   | ~standard~    | ~goods~                    |
@@ -163,7 +175,7 @@ var extensions = []*cbc.Definition{
 				| ~11.3~ | Simplified Invoice                              | ~standard~    | ~simplified~               |
 				| ~11.4~ | Retail Sales Credit Note                        | ~credit-note~ | ~simplified~               |
 				| ~11.5~ | Retail Sales Receipt on Behalf of Third Parties | ~credit-note~ | ~goods~, ~simplified~, ~self-billed~ |
-			
+
 				For example, this is how you set the IAPR invoice type explicitly:
 
 				~~~json
@@ -1258,6 +1270,260 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
+		Key: ExtKeyTaxType,
+		Name: i18n.String{
+			i18n.EN: "Tax type",
+			i18n.EL: "Είδος Φόρου",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Greek invoices may contain charges for taxes and fees different from VAT. The
+				~gr-mydata-tax-type~ extension at charge level must be used to specify the tax type.
+
+				GOBL will automatically set the proper ~gr-mydata-tax-type~ code based on the presence
+				of the related extensions: ~gr-mydata-fee~, ~gr-mydata-other-tax~ and
+				~gr-mydata-stamp-duty~.
+
+				For example:
+
+				~~~json
+				"charges": [
+					{
+						"amount": "10.00",
+						"reason": "Subscription fee",
+						"ext": {
+							"gr-mydata-tax-type": "2",
+							"gr-mydata-fees": "13",
+						}
+					}
+				]
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: TaxTypeWithholding,
+				Name: i18n.String{
+					i18n.EN: "Withholding Tax",
+					i18n.EL: "Παρακρατούμενος Φόρος",
+				},
+			},
+			{
+				Code: TaxTypeFee,
+				Name: i18n.String{
+					i18n.EN: "Fee",
+					i18n.EL: "Τέλη",
+				},
+			},
+			{
+				Code: TaxTypeOtherTax,
+				Name: i18n.String{
+					i18n.EN: "Other Tax",
+					i18n.EL: "Λοιποί Φόροι",
+				},
+			},
+			{
+				Code: TaxTypeStampDuty,
+				Name: i18n.String{
+					i18n.EN: "Stamp Duty",
+					i18n.EL: "Ψηφιακού Τέλος συναλλαγής",
+				},
+			},
+			{
+				Code: TaxTypeDeduction,
+				Name: i18n.String{
+					i18n.EN: "Deduction",
+					i18n.EL: "Κρατήσεις",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyFee,
+		Name: i18n.String{
+			i18n.EN: "Fee category",
+			i18n.EL: "Κατηγορία Τελών",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Greek invoices may contain charges for different types of fees. In GOBL, you must use
+				the ~gr-mydata-fees~ extension at charge level to specify the specific fee category
+				for the charge.
+
+				For example:
+
+				~~~json
+				"charges": [
+					{
+						"amount": "10.00",
+						"reason": "Subscription fee",
+						"ext": {
+							"gr-mydata-tax-type": "2",
+							"gr-mydata-fees": "13",
+						}
+					}
+				]
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Monthly account up to 50 euros 12%",
+					i18n.EL: "Για μηνιαίο λογαριασμό μέχρι και 50 ευρώ 12%",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Monthly account from 50.01 to 100 euros 15%",
+					i18n.EL: "Για μηνιαίο λογαριασμό από 50,01 μέχρι και 100 ευρώ 15%",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Monthly account from 100.01 to 150 euros 18%",
+					i18n.EL: "Για μηνιαίο λογαριασμό από 100,01 μέχρι και 150 ευρώ 18%",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Monthly account from 150.01 euros and above 20%",
+					i18n.EL: "Για μηνιαίο λογαριασμό από 150,01 ευρώ και άνω 20%",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Mobile telephony fee based on call time value (12%)",
+					i18n.EL: "Τέλος καρτοκινητής επί της αξίας του χρόνου ομιλίας (12%)",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "Subscription television fee 10%",
+					i18n.EL: "Τέλος στη συνδρομητική τηλεόραση 10%",
+				},
+			},
+			{
+				Code: "7",
+				Name: i18n.String{
+					i18n.EN: "Fixed-line subscription fee 5%",
+					i18n.EL: "Τέλος συνδρομητών σταθερής τηλεφωνίας 5%",
+				},
+			},
+			{
+				Code: "8",
+				Name: i18n.String{
+					i18n.EN: "Environmental fee & plastic bag v. 2339/2001 art. 6a 0.07 euros per item",
+					i18n.EL: "Περιβαλλοντικό Τέλος & πλαστικής σακούλας ν. 2339/2001 αρ. 6α 0,07 ευρώ ανά τεμάχιο",
+				},
+			},
+			{
+				Code: "9",
+				Name: i18n.String{
+					i18n.EN: "Postal service contribution 2%",
+					i18n.EL: "Εισφορά δακοκτονίας 2%",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Other fees",
+					i18n.EL: "Λοιπά τέλη",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "Petroleum fees",
+					i18n.EL: "Τέλη Λοιπών Φόρων",
+				},
+			},
+			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "Postal service contribution",
+					i18n.EL: "Εισφορά δακοκτονίας",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "Monthly account per connection (10%)",
+					i18n.EL: "Για μηνιαίο λογαριασμό κάθε σύνδεσης (10%)",
+				},
+			},
+			{
+				Code: "14",
+				Name: i18n.String{
+					i18n.EN: "Mobile and mobile telephony fee based on call time value (10%)",
+					i18n.EL: "Τέλος καρτοκινητής επί της αξίας του χρόνου ομιλίας (10%)",
+				},
+			},
+			{
+				Code: "15",
+				Name: i18n.String{
+					i18n.EN: "Mobile and mobile telephony fee for natural persons aged 15 to 29 years (0%)",
+					i18n.EL: "Τέλος κινητής και καρτοκινητής για φυσικά πρόσωπα ηλικίας 15 έως και 29 ετών (0%)",
+				},
+			},
+			{
+				Code: "16",
+				Name: i18n.String{
+					i18n.EN: "Environmental protection contribution for plastic products 0.04 cents per item [article 4 v. 4736/2020]",
+					i18n.EL: "Εισφορά προστασίας περιβάλλοντος πλαστικών προϊόντων 0,04 λεπτά ανά τεμάχιο [άρθρο 4 ν. 4736/2020]",
+				},
+			},
+			{
+				Code: "17",
+				Name: i18n.String{
+					i18n.EN: "Recycling fee 0.08 cents per item [article 80 v. 4819/2021]",
+					i18n.EL: "Τέλος ανακύκλωσης 0,08 λεπτά ανά τεμάχιο [άρθρο 80 ν. 4819/2021]",
+				},
+			},
+			{
+				Code: "18",
+				Name: i18n.String{
+					i18n.EN: "Residence fee for attendees",
+					i18n.EL: "Τέλος διαμονής παρεπιδημούντων",
+				},
+			},
+			{
+				Code: "19",
+				Name: i18n.String{
+					i18n.EN: "Fee on gross revenues of restaurants and related establishments",
+					i18n.EL: "Τέλος επί των ακαθάριστων εσόδων των εστιατορίων και συναφών καταστημάτων",
+				},
+			},
+			{
+				Code: "20",
+				Name: i18n.String{
+					i18n.EN: "Fee on gross revenues of entertainment centers",
+					i18n.EL: "Τέλος επί των ακαθάριστων εσόδων των κέντρων διασκέδασης",
+				},
+			},
+			{
+				Code: "21",
+				Name: i18n.String{
+					i18n.EN: "Fee on gross revenues of casinos",
+					i18n.EL: "Τέλος επί των ακαθάριστων εσόδων των καζίνο",
+				},
+			},
+			{
+				Code: "22",
+				Name: i18n.String{
+					i18n.EN: "Other fees on gross revenues",
+					i18n.EL: "Λοιπά τέλη επί των ακαθάριστων εσόδων",
+				},
+			},
+		},
+	},
+	{
 		Key: ExtKeyOtherTax,
 		Name: i18n.String{
 			i18n.EN: "Other taxes category",
@@ -1265,9 +1531,9 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Certain myDATA invoice types (_e.g._, 8.2 for the accommodation tax) require a category
-				for other taxes to be provided. In GOBL, you can use the ~gr-mydata-other-tax~ extension
-				at charge level.
+				Greek invoices may contain charges for different taxes other than VAT. The
+				~gr-mydata-other-tax~ extension at charge level must be used to specify the specific
+				other tax category for the charge.
 
 				For example:
 
@@ -1275,8 +1541,9 @@ var extensions = []*cbc.Definition{
 				"charges": [
 					{
 						"amount": "3.00",
-						"reason": "Accommodation tax",
+						"reason": "Climate Crisis Fee",
 						"ext": {
+							"gr-mydata-tax-type": "3",
 							"gr-mydata-other-tax": "8",
 						}
 					}
@@ -1288,112 +1555,112 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "1",
 				Name: i18n.String{
-					i18n.EN: "a1) 20% fire insurance premiums",
-					i18n.EL: "α1) Ασφάλιστρα κλάδου πυρός 20%",
+					i18n.EN: "a1) fire insurance premiums 20%",
+					i18n.EL: "α1) ασφάλιστρα κλάδου πυρός 20%",
 				},
 			},
 			{
 				Code: "2",
 				Name: i18n.String{
-					i18n.EN: "a2) 20% fire insurance premiums",
-					i18n.EL: "α2) Ασφάλιστρα κλάδου πυρός 20%",
+					i18n.EN: "a2) fire insurance premiums 20%",
+					i18n.EL: "α2) ασφάλιστρα κλάδου πυρός 20%",
 				},
 			},
 			{
 				Code: "3",
 				Name: i18n.String{
-					i18n.EN: "b) 4% life insurance premiums",
-					i18n.EL: "β) Ασφάλιστρα κλάδου ζωής 4%",
+					i18n.EN: "b) life insurance premiums 4%",
+					i18n.EL: "β) ασφάλιστρα κλάδου ζωής 4%",
 				},
 			},
 			{
 				Code: "4",
 				Name: i18n.String{
-					i18n.EN: "c) 15% other insurance premiums",
-					i18n.EL: "γ) Ασφάλιστρα λοιπών κλάδων 15%",
+					i18n.EN: "c) insurance premiums for other branches 15%",
+					i18n.EL: "γ) ασφάλιστρα λοιπών κλάδων 15%",
 				},
 			},
 			{
 				Code: "5",
 				Name: i18n.String{
-					i18n.EN: "d) 0% tax-exempt insurance premiums",
-					i18n.EL: "δ) Απαλλασσόμενα φόρου ασφάλιστρα 0%",
+					i18n.EN: "d) tax-exempt insurance premiums 0%",
+					i18n.EL: "δ) απαλλασσόμενα φόρου ασφάλιστρα 0%",
 				},
 			},
 			{
 				Code: "6",
 				Name: i18n.String{
-					i18n.EN: "Hotels 1-2 stars 0,50 €",
+					i18n.EN: "Hotels 1-2 stars 0.50 €",
 					i18n.EL: "Ξενοδοχεία 1-2 αστέρων 0,50 €",
 				},
 			},
 			{
 				Code: "7",
 				Name: i18n.String{
-					i18n.EN: "Hotels 3 stars 1,50 €",
+					i18n.EN: "Hotels 3 stars 1.50 €",
 					i18n.EL: "Ξενοδοχεία 3 αστέρων 1,50 €",
 				},
 			},
 			{
 				Code: "8",
 				Name: i18n.String{
-					i18n.EN: "Hotels 4 stars 3,00 €",
+					i18n.EN: "Hotels 4 stars 3.00 €",
 					i18n.EL: "Ξενοδοχεία 4 αστέρων 3,00 €",
 				},
 			},
 			{
 				Code: "9",
 				Name: i18n.String{
-					i18n.EN: "Hotels 5 stars 4,00 €",
-					i18n.EL: "Ξενοδοχεία 5 αστέρων 4,00 €",
+					i18n.EN: "Hotels 4 stars 4.00 €",
+					i18n.EL: "Ξενοδοχεία 4 αστέρων 4,00 €",
 				},
 			},
 			{
 				Code: "10",
 				Name: i18n.String{
-					i18n.EN: "Rental rooms - Furnished rooms - Apartments 0,50 €",
-					i18n.EL: "Ενοικιαζόμενα δωμάτια - Επιπλωμένα δωμάτια - Διαμερίσματα 0,50 €",
+					i18n.EN: "Rented - furnished rooms - apartments 0.50 €",
+					i18n.EL: "Ενοικιαζόμενα - επιπλωμένα δωμάτια - διαμερίσματα 0,50 €",
 				},
 			},
 			{
 				Code: "11",
 				Name: i18n.String{
-					i18n.EN: "Special 5% tax on tv-broadcast commercials (EFTD)",
-					i18n.EL: "Ειδικός φόρος στις διαφημίσεις που προβάλλονται από την τηλεόραση (ΕΦΔΤ) 5%",
+					i18n.EN: "Special tax on advertisements broadcast on television (EFTD) 5%",
+					i18n.EL: "Ειδικός Φόρος στις διαφημίσεις που προβάλλονται από την τηλεόραση (ΕΦΔΤ) 5%",
 				},
 			},
 			{
 				Code: "12",
 				Name: i18n.String{
-					i18n.EN: "10% luxury tax on the taxable value of intra-community acquired goods and those imported from third countries",
-					i18n.EL: "Φόρος πολυτελείας 10% επί της φορολογητέας αξίας για τα ενδοκοινοτικά αποκτήματα και εισαγόμενα από τρίτες χώρες",
+					i18n.EN: "3.1 Luxury tax 10% on the taxable value for intra-Community acquisitions and imported from third countries 10%",
+					i18n.EL: "3.1 Φόρος πολυτελείας 10% επί της φορολογητέας αξίας για τα ενδοκοινοτικώς αποκτούμενα και εισαγόμενα από τρίτες χώρες 10%",
 				},
 			},
 			{
 				Code: "13",
 				Name: i18n.String{
-					i18n.EN: "10% luxury tax on the selling price before VAT for domestically produced goods",
-					i18n.EL: "Φόρος πολυτελείας 10% επί της τιμής πώλησης προ Φ.Π.Α. για τα εγχωρίως παραγόμενα",
+					i18n.EN: "3.2 Luxury tax 10% on the selling price before VAT for domestically produced goods 10%",
+					i18n.EL: "3.2 Φόρος πολυτελείας 10% επί της τιμής πώλησης προ Φ.Π.Α. για τα εγχωρίως παραγόμενα είδη 10%",
 				},
 			},
 			{
 				Code: "14",
 				Name: i18n.String{
-					i18n.EN: "80% Public fees on the admission ticket price for casinos",
-					i18n.EL: "Δικαιώματα του Δημοσίου στα εισιτήρια των καζίνο (80% επί του εισιτηρίου)",
+					i18n.EN: "State rights on casino tickets (80% on the ticket)",
+					i18n.EL: "Δικαίωμα του Δημοσίου στα εισιτήρια των καζίνο (80% επί του εισιτηρίου)",
 				},
 			},
 			{
 				Code: "15",
 				Name: i18n.String{
-					i18n.EN: "Fire industry insurance premiums 20%",
-					i18n.EL: "Ασφάλιστρα κλάδου πυρός 20%",
+					i18n.EN: "Fire insurance premiums 20%",
+					i18n.EL: "ασφάλιστρα κλάδου πυρός 20%",
 				},
 			},
 			{
 				Code: "16",
 				Name: i18n.String{
-					i18n.EN: "Customs duties- Taxes",
+					i18n.EN: "Other Customs Duties-Taxes",
 					i18n.EL: "Λοιποί Τελωνειακοί Δασμοί-Φόροι",
 				},
 			},
@@ -1407,15 +1674,151 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "18",
 				Name: i18n.String{
-					i18n.EN: "Charges of other Taxes",
+					i18n.EN: "Charges of Other Taxes",
 					i18n.EL: "Επιβαρύνσεις Λοιπών Φόρων",
 				},
 			},
 			{
 				Code: "19",
 				Name: i18n.String{
-					i18n.EN: "Special consumption tax",
+					i18n.EN: "EFK",
 					i18n.EL: "ΕΦΚ",
+				},
+			},
+			{
+				Code: "20",
+				Name: i18n.String{
+					i18n.EN: "Hotels 1-2 stars 1.50€ (per Room/Night)",
+					i18n.EL: "Ξενοδοχεία 1-2 αστέρων 1,50€ (ανά Δωμ./Διαμ.)",
+				},
+			},
+			{
+				Code: "21",
+				Name: i18n.String{
+					i18n.EN: "Hotels 3 stars 3.00€ (per Room/Night)",
+					i18n.EL: "Ξενοδοχεία 3 αστέρων 3,00€ (ανά Δωμ./Διαμ.)",
+				},
+			},
+			{
+				Code: "22",
+				Name: i18n.String{
+					i18n.EN: "Hotels 4 stars 7.00€ (per Room/Night)",
+					i18n.EL: "Ξενοδοχεία 4 αστέρων 7,00€ (ανά Δωμ./Διαμ.)",
+				},
+			},
+			{
+				Code: "23",
+				Name: i18n.String{
+					i18n.EN: "Hotels 5 stars 10.00€ (per Room/Night)",
+					i18n.EL: "Ξενοδοχεία 5 αστέρων 10,00€ (ανά Δωμ./Διαμ.)",
+				},
+			},
+			{
+				Code: "24",
+				Name: i18n.String{
+					i18n.EN: "Rented furnished rooms – apartments 1.50€ (per Room/Night)",
+					i18n.EL: "Ενοικιαζόμενα επιπλωμένα δωμάτια – διαμερίσματα 1,50€ (ανά Δωμ./Διαμ.)",
+				},
+			},
+			{
+				Code: "25",
+				Name: i18n.String{
+					i18n.EN: "Short-term rental properties 1.50€",
+					i18n.EL: "Ακίνητα βραχυχρόνιας μίσθωσης 1,50€",
+				},
+			},
+			{
+				Code: "26",
+				Name: i18n.String{
+					i18n.EN: "Short-term rental properties detached houses over 80 sq.m. 10.00€",
+					i18n.EL: "Ακίνητα βραχυχρόνιας μίσθωσης μονοκατοικίες άνω 80 τ.μ. 10,00€",
+				},
+			},
+			{
+				Code: "27",
+				Name: i18n.String{
+					i18n.EN: "Self-catering accommodation – tourist furnished villas (villas) 10.00€",
+					i18n.EL: "Αυτοεξυπηρετούμενα καταλύματα – τουριστικές επιπλωμένες επαύλεις (βίλες) 10,00€",
+				},
+			},
+			{
+				Code: "28",
+				Name: i18n.String{
+					i18n.EN: "Short-term rental properties 0.50€",
+					i18n.EL: "Ακίνητα βραχυχρόνιας μίσθωσης 0,50€",
+				},
+			},
+			{
+				Code: "29",
+				Name: i18n.String{
+					i18n.EN: "Short-term rental properties detached houses over 80 sq.m. 4.00€",
+					i18n.EL: "Ακίνητα βραχυχρόνιας μίσθωσης μονοκατοικίες άνω 80 τ.μ. 4,00€",
+				},
+			},
+			{
+				Code: "30",
+				Name: i18n.String{
+					i18n.EN: "Self-catering accommodation – tourist furnished villas (villas) 4.00€",
+					i18n.EL: "Αυτοεξυπηρετούμενα καταλύματα – τουριστικές επιπλωμένες επαύλεις (βίλες) 4,00€",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyStampDuty,
+		Name: i18n.String{
+			i18n.EN: "Stamp duty coefficient category",
+			i18n.EL: "Κατηγορία Συντελεστή Ψηφιακού Τέλους συναλλαγής",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Greek invoices may contain charges for stamp duty. The ~gr-mydata-stamp-duty~ extension
+				at charge level must be used to specify the specific stamp duty coefficient category
+				for the charge.
+
+				For example:
+
+				~~~json
+				"charges": [
+					{
+						"amount": "12.00",
+						"reason": "Stamp duty",
+						"ext": {
+							"gr-mydata-tax-type": "4",
+							"gr-mydata-stamp-duty": "1"
+						}
+					}
+				]
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Coefficient 1.2%",
+					i18n.EL: "Συντελεστής 1,2 %",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Coefficient 2.4%",
+					i18n.EL: "Συντελεστής 2,4 %",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Coefficient 3.6%",
+					i18n.EL: "Συντελεστής 3,6 %",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Other cases",
+					i18n.EL: "Λοιπές περιπτώσεις",
 				},
 			},
 		},
