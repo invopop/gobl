@@ -8,7 +8,7 @@
         "$regime": {
           "$ref": "https://gobl.org/draft-0/tax/regime-code",
           "title": "Tax Regime",
-          "description": "Regime is the country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIf this field is not provided, the supplier’s country code is used as the default regime."
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
         },
         "uuid": {
           "type": "string",
