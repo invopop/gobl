@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -100,6 +101,12 @@ func validateOrgItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Unit,
 			validation.Required.Error("cannot be blank (BR-23)"),
+			validation.Skip,
+		),
+		validation.Field(&item.Price,
+			// Must not be negative (BR-27)
+			num.Positive,
+			validation.Skip,
 		),
 	)
 }
