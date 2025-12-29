@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16931-v2017`: Added check for negative prices.
+
+### Removed
+
+- `eu-en16931-v2017`: Removed constraint for payment terms in Credit Notes.
+
 ## [v0.304.0] - 2025-12-10
 
 ### Added
