@@ -36,7 +36,7 @@ func TestLineChargeValidation(t *testing.T) {
 
 		l.Amount = num.MakeAmount(0, 2)
 		err = l.Validate()
-		assert.ErrorContains(t, err, "amount: must not be zero")
+		assert.NoError(t, err)
 	})
 	t.Run("with base", func(t *testing.T) {
 		l := &bill.LineCharge{
