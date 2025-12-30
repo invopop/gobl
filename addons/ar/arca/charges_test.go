@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 
@@ -13,141 +12,97 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestChargeNormalization(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
-
-	testCases := []struct {
-		name         string
-		chargeKey    cbc.Key
-		expectedCode string
-	}{
-		{"national taxes", arca.ChargeKeyNationalTaxes, "1"},
-		{"provincial taxes", arca.ChargeKeyProvincialTaxes, "2"},
-		{"municipal taxes", arca.ChargeKeyMunicipalTaxes, "3"},
-		{"internal taxes", arca.ChargeKeyInternalTaxes, "4"},
-		{"gross income tax", arca.ChargeKeyGrossIncomeTax, "5"},
-		{"vat prepayment", arca.ChargeKeyVATPrepayment, "6"},
-		{"gross income tax prepayment", arca.ChargeKeyGrossIncomeTaxPrepayment, "7"},
-		{"municipal taxes prepayment", arca.ChargeKeyMunicipalTaxesPrepayment, "8"},
-		{"other prepayments", arca.ChargeKeyOtherPrepayments, "9"},
-		{"vat not categorized prepayment", arca.ChargeKeyVATNotCategorizedPrepayment, "13"},
-		{"other", arca.ChargeKeyOther, "99"},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			charge := &bill.Charge{
-				Key:     tc.chargeKey,
-				Percent: num.NewPercentage(10, 2),
-			}
-			ad.Normalizer(charge)
-			assert.Equal(t, tc.expectedCode, charge.Ext[arca.ExtKeyTributeType].String())
-		})
-	}
-
-	t.Run("unknown charge key does not set tribute type", func(t *testing.T) {
-		charge := &bill.Charge{
-			Key:     "unknown-key",
-			Percent: num.NewPercentage(10, 2),
-		}
-		ad.Normalizer(charge)
-		assert.Empty(t, charge.Ext[arca.ExtKeyTributeType])
-	})
-
-	t.Run("existing extensions are merged", func(t *testing.T) {
-		charge := &bill.Charge{
-			Key:     arca.ChargeKeyNationalTaxes,
-			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
-				"custom-key": "custom-value",
-			},
-		}
-		ad.Normalizer(charge)
-		assert.Equal(t, "1", charge.Ext[arca.ExtKeyTributeType].String())
-		assert.Equal(t, "custom-value", charge.Ext["custom-key"].String())
-	})
-
-	t.Run("existing tribute type is overwritten by normalization", func(t *testing.T) {
-		charge := &bill.Charge{
-			Key:     arca.ChargeKeyNationalTaxes, // would set "1"
-			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "5", // already set to gross income tax
-			},
-		}
-		ad.Normalizer(charge)
-		// Merge overwrites existing values with new ones
-		assert.Equal(t, "1", charge.Ext[arca.ExtKeyTributeType].String())
-	})
-}
-
 func TestChargeValidation(t *testing.T) {
 	ad := tax.AddonForKey(arca.V4)
 
-	t.Run("valid charge with tribute type passes", func(t *testing.T) {
+	t.Run("valid tax charge", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key:     arca.ChargeKeyNationalTaxes,
+			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
 			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "1",
+				arca.ExtKeyTaxType: "1", // National Taxes
 			},
 		}
 		err := ad.Validator(charge)
 		require.NoError(t, err)
 	})
 
-	t.Run("charge without tribute type does not require percent", func(t *testing.T) {
+	t.Run("tax charge missing ext", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key:    "custom-charge",
-			Reason: "Some custom charge",
-			// No percent and no tribute type extension
+			Key:     bill.ChargeKeyTax,
+			Percent: num.NewPercentage(10, 2),
+			// No ext
 		}
 		err := ad.Validator(charge)
-		require.NoError(t, err)
+		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
 	})
 
-	t.Run("missing percent fails when tribute type is present", func(t *testing.T) {
+	t.Run("tax charge with ext missing tax type", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key: arca.ChargeKeyNationalTaxes,
+			Key:     bill.ChargeKeyTax,
+			Percent: num.NewPercentage(10, 2),
 			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "1",
+				"other-ext": "value",
 			},
+		}
+		err := ad.Validator(charge)
+		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
+	})
+
+	t.Run("tax type present but missing percent", func(t *testing.T) {
+		charge := &bill.Charge{
+			Key: bill.ChargeKeyTax,
+			Ext: tax.Extensions{
+				arca.ExtKeyTaxType: "1",
+			},
+			// No percent
 		}
 		err := ad.Validator(charge)
 		assert.ErrorContains(t, err, "percent: cannot be blank")
 	})
 
-	t.Run("tribute type 'other' requires reason", func(t *testing.T) {
+	t.Run("non-tax charge does not require ext or percent", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key:     arca.ChargeKeyOther,
-			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "99", // TributeTypeOther
-			},
+			Key:    "custom-charge",
+			Reason: "Some custom charge",
+			// No percent and no ext
 		}
 		err := ad.Validator(charge)
-		assert.ErrorContains(t, err, "reason is required when tribute type is 'other'")
+		require.NoError(t, err)
 	})
 
-	t.Run("tribute type 'other' with reason passes", func(t *testing.T) {
+	t.Run("tax type other requires reason", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key:     arca.ChargeKeyOther,
+			Key:     bill.ChargeKeyTax,
+			Percent: num.NewPercentage(10, 2),
+			Ext: tax.Extensions{
+				arca.ExtKeyTaxType: "99", // TaxTypeOther
+			},
+			// No reason
+		}
+		err := ad.Validator(charge)
+		assert.ErrorContains(t, err, "reason is required when tax type is 'other'")
+	})
+
+	t.Run("tax type other with reason", func(t *testing.T) {
+		charge := &bill.Charge{
+			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
 			Reason:  "Custom tax description",
 			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "99", // TributeTypeOther
+				arca.ExtKeyTaxType: "99", // TaxTypeOther
 			},
 		}
 		err := ad.Validator(charge)
 		require.NoError(t, err)
 	})
 
-	t.Run("non-other tribute types do not require reason", func(t *testing.T) {
+	t.Run("non-other tax types do not require reason", func(t *testing.T) {
 		charge := &bill.Charge{
-			Key:     arca.ChargeKeyNationalTaxes,
+			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
 			Ext: tax.Extensions{
-				arca.ExtKeyTributeType: "1", // TributeTypeNationalTaxes
+				arca.ExtKeyTaxType: "1", // TaxTypeNationalTaxes
 			},
 			// No reason provided
 		}
@@ -157,33 +112,45 @@ func TestChargeValidation(t *testing.T) {
 }
 
 func TestChargeIntegration(t *testing.T) {
-	t.Run("charge on invoice is normalized and validated", func(t *testing.T) {
+	t.Run("charge on invoice is validated", func(t *testing.T) {
 		inv := testInvoiceWithCharge(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 
-		// Check that the charge was normalized
 		require.Len(t, inv.Charges, 1)
-		assert.Equal(t, "5", inv.Charges[0].Ext[arca.ExtKeyTributeType].String())
+		assert.Equal(t, "5", inv.Charges[0].Ext[arca.ExtKeyTaxType].String())
 	})
 
-	t.Run("invoice with charge missing percent when tribute type present fails", func(t *testing.T) {
+	t.Run("invoice with tax charge missing ext fails", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Key:     bill.ChargeKeyTax,
+				Percent: num.NewPercentage(3, 2),
+				// No ext
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
+	})
+
+	t.Run("invoice with charge missing percent fails", func(t *testing.T) {
 		inv := testInvoiceWithCharge(t)
 		require.NoError(t, inv.Calculate())
 
-		// Remove the percent but keep tribute type
 		inv.Charges[0].Percent = nil
 
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "percent: cannot be blank")
 	})
 
-	t.Run("invoice with charge without tribute type passes", func(t *testing.T) {
+	t.Run("invoice with non-tax charge passes", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Charges = []*bill.Charge{
 			{
 				Key:    "custom-charge",
-				Reason: "Some custom charge without tribute type",
+				Reason: "Some custom charge without tax type",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -196,8 +163,11 @@ func testInvoiceWithCharge(t *testing.T) *bill.Invoice {
 	inv := testInvoiceWithGoods(t)
 	inv.Charges = []*bill.Charge{
 		{
-			Key:     arca.ChargeKeyGrossIncomeTax,
+			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(3, 2), // 3%
+			Ext: tax.Extensions{
+				arca.ExtKeyTaxType: "5", // Gross Income Tax
+			},
 		},
 	}
 	return inv

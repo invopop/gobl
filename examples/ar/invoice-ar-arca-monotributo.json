@@ -61,9 +61,12 @@
   ],
   "charges": [
     {
-      "key": "national-taxes",
+      "key": "tax",
       "percent": "10%",
-      "description": "Tributo Nacional"
+      "description": "Tributo Nacional",
+      "ext": {
+        "ar-arca-tax-type": "1"
+      }
     }
   ],
   "ordering": {

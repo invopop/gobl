@@ -10,28 +10,33 @@ const (
 	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
 	ExtKeyConcept      cbc.Key = "ar-arca-concept"
 	ExtKeyIdentityType cbc.Key = "ar-arca-identity-type"
-	ExtKeyTributeType  cbc.Key = "ar-arca-tribute-type"
+	ExtKeyTaxType      cbc.Key = "ar-arca-tax-type"
 	ExtKeyVATRate      cbc.Key = "ar-arca-vat-rate"
 	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
 )
 
-// Tribute type codes
+// Tax type codes
 const (
-	TributeTypeNationalTaxes               cbc.Code = "1"
-	TributeTypeProvincialTaxes             cbc.Code = "2"
-	TributeTypeMunicipalTaxes              cbc.Code = "3"
-	TributeTypeInternalTaxes               cbc.Code = "4"
-	TributeTypeGrossIncomeTax              cbc.Code = "5"
-	TributeTypeVATPrepayment               cbc.Code = "6"
-	TributeTypeGrossIncomeTaxPrepayment    cbc.Code = "7"
-	TributeTypeMunicipalTaxesPrepayment    cbc.Code = "8"
-	TributeTypeOtherPrepayments            cbc.Code = "9"
-	TributeTypeVATNotCategorizedPrepayment cbc.Code = "13"
-	TributeTypeOther                       cbc.Code = "99"
+	ChargeTaxCodeNationalTaxes               cbc.Code = "1"
+	ChargeTaxCodeProvincialTaxes             cbc.Code = "2"
+	ChargeTaxCodeMunicipalTaxes              cbc.Code = "3"
+	ChargeTaxCodeInternalTaxes               cbc.Code = "4"
+	ChargeTaxCodeGrossIncomeTax              cbc.Code = "5"
+	ChargeTaxCodeVATPrepayment               cbc.Code = "6"
+	ChargeTaxCodeGrossIncomeTaxPrepayment    cbc.Code = "7"
+	ChargeTaxCodeMunicipalTaxesPrepayment    cbc.Code = "8"
+	ChargeTaxCodeOtherPrepayments            cbc.Code = "9"
+	ChargeTaxCodeVATNotCategorizedPrepayment cbc.Code = "13"
+	ChargeTaxCodeOther                       cbc.Code = "99"
 )
 
-// TypeCDocTypes document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
-var TypeCDocTypes = []cbc.Code{"11", "12", "13", "211", "212", "213"}
+// DocTypesB are document codes (Invoice B, Debit Note B, Credit Note B, and FCE variants)
+var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10"}
+
+// DocTypesC are document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
+var DocTypesC = []cbc.Code{"11", "12", "13", "211", "212", "213"}
+
+const TypeUsedGoodsPurchaseInvoice = "49"
 
 var extensions = []*cbc.Definition{
 	{
@@ -362,9 +367,9 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyTributeType,
+		Key: ExtKeyTaxType,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Tribute Type",
+			i18n.EN: "Argentina ARCA Tax Type",
 			i18n.ES: "Tipo de Tributo Argentina ARCA",
 		},
 		Values: []*cbc.Definition{

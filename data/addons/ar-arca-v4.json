@@ -344,9 +344,9 @@
       ]
     },
     {
-      "key": "ar-arca-tribute-type",
+      "key": "ar-arca-tax-type",
       "name": {
-        "en": "Argentina ARCA Tribute Type",
+        "en": "Argentina ARCA Tax Type",
         "es": "Tipo de Tributo Argentina ARCA"
       },
       "values": [

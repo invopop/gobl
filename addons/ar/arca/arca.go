@@ -15,9 +15,12 @@ const (
 
 // ARCA Official Codes to include in stamps
 const (
-	StampCAE       cbc.Key = "arca-cae"
+	// CAE is the code assigned by ARCA to certify that the invoice has been reported.
+	StampCAE cbc.Key = "arca-cae"
+	// CAEExpiry is the expiry date of the CAE (normally 3 days)
 	StampCAEExpiry cbc.Key = "arca-cae-expiry"
-	StampQR        cbc.Key = "arca-qr"
+	// QR is the QR code URL that contains information about the invoice including the CAE and the CAE expiry date.
+	StampQR cbc.Key = "arca-qr"
 )
 
 func init() {
@@ -56,8 +59,6 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
-	case *bill.Charge:
-		normalizeCharge(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
@@ -69,6 +70,8 @@ func validate(doc any) error {
 		return validateInvoice(obj)
 	case *bill.Charge:
 		return validateCharge(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }

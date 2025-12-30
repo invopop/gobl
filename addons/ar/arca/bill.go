@@ -29,17 +29,22 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 }
 
 func normalizeInvoice(inv *bill.Invoice) {
-	if inv.Customer != nil && !inv.Customer.Ext.Has(ExtKeyVATStatus) {
-		switch {
-		case inv.Customer.TaxID == nil:
-			inv.Customer.Ext = inv.Customer.Ext.Set(ExtKeyVATStatus, "5") // Final Consumer
-		case inv.Customer.TaxID.Country == l10n.AR.Tax():
-			inv.Customer.Ext = inv.Customer.Ext.Set(ExtKeyVATStatus, "1") // Registered VAT Company
-		default:
-			inv.Customer.Ext = inv.Customer.Ext.Set(ExtKeyVATStatus, "9") // Foreign Customer
-		}
-	}
+	normalizePartyVATStatus(inv.Customer)
 	normalizeConcept(inv)
+}
+
+func normalizePartyVATStatus(p *org.Party) {
+	if p == nil || p.Ext.Has(ExtKeyVATStatus) {
+		return
+	}
+	switch {
+	case p.TaxID == nil:
+		p.Ext = p.Ext.Set(ExtKeyVATStatus, "5") // Final Consumer
+	case p.TaxID.Country == l10n.AR.Tax():
+		p.Ext = p.Ext.Set(ExtKeyVATStatus, "1") // Registered VAT Company
+	default:
+		p.Ext = p.Ext.Set(ExtKeyVATStatus, "9") // Foreign Customer
+	}
 }
 
 func normalizeConcept(inv *bill.Invoice) {
@@ -85,7 +90,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.GetExt(ExtKeyDocType).In("6", "7", "8", "49"),
+				!inv.Tax.GetExt(ExtKeyDocType).In(append(DocTypesB, TypeUsedGoodsPurchaseInvoice)...),
 				validation.Required,
 			),
 			validation.By(validateInvoiceCustomer),
@@ -174,6 +179,9 @@ func validateInvoiceCustomer(val any) error {
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
+		validation.Field(&p.Ext,
+			tax.ExtensionsRequire(ExtKeyVATStatus),
+		),
 	)
 }
 
@@ -242,7 +250,7 @@ func validateInvoiceLine(docType cbc.Code) validation.RuleFunc {
 		if !ok || line == nil {
 			return nil
 		}
-		if docType.In(TypeCDocTypes...) {
+		if docType.In(DocTypesC...) {
 			return validation.ValidateStruct(line,
 				validation.Field(&line.Taxes,
 					validation.Empty,

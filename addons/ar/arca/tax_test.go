@@ -78,3 +78,34 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "custom-value", tc.Ext["custom-key"].String())
 	})
 }
+
+func TestValidateTaxCombo(t *testing.T) {
+	ad := tax.AddonForKey(arca.V4)
+
+	t.Run("valid VAT combo with rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				arca.ExtKeyVATRate: "5",
+			},
+		}
+		err := ad.Validator(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("VAT combo missing rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+		}
+		err := ad.Validator(tc)
+		assert.ErrorContains(t, err, "ar-arca-vat-rate: required")
+	})
+
+	t.Run("non-VAT combo does not require rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: "OTHER",
+		}
+		err := ad.Validator(tc)
+		assert.NoError(t, err)
+	})
+}

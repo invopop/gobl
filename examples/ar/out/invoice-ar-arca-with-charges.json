@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ec6df8d06b03c419573a2c804e9b627cb1ed8b991fc190b0e1c2a523d41b8c43"
+			"val": "0fdeb7cc2113b50c11d3c5bd1c3cbbeab24e482ecdcfcf5811db1618094a121c"
 		}
 	},
 	"doc": {
@@ -100,20 +100,20 @@
 		"charges": [
 			{
 				"i": 1,
-				"key": "gross-income-tax",
+				"key": "tax",
 				"percent": "3.5%",
 				"amount": "17500.00",
 				"ext": {
-					"ar-arca-tribute-type": "5"
+					"ar-arca-tax-type": "5"
 				}
 			},
 			{
 				"i": 2,
-				"key": "municipal-taxes",
+				"key": "tax",
 				"percent": "1%",
 				"amount": "5000.00",
 				"ext": {
-					"ar-arca-tribute-type": "3"
+					"ar-arca-tax-type": "3"
 				}
 			}
 		],

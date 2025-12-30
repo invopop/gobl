@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0093f0f59c522f43bf3ad256b925bbd79a5f8df832d0e601bfc81051496fbae6"
+			"val": "f0b2de76981669cc78682f8fbfdffee6a7aa1550f1b63ca07c9336e24ec19ebe"
 		}
 	},
 	"doc": {
@@ -89,11 +89,11 @@
 		"charges": [
 			{
 				"i": 1,
-				"key": "national-taxes",
+				"key": "tax",
 				"percent": "10%",
 				"amount": "15000.00",
 				"ext": {
-					"ar-arca-tribute-type": "1"
+					"ar-arca-tax-type": "1"
 				}
 			}
 		],

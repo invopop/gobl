@@ -67,12 +67,18 @@
   ],
   "charges": [
     {
-      "key": "gross-income-tax",
-      "percent": "3.5%"
+      "key": "tax",
+      "percent": "3.5%",
+      "ext": {
+        "ar-arca-tax-type": "5"
+      }
     },
     {
-      "key": "municipal-taxes",
-      "percent": "1%"
+      "key": "tax",
+      "percent": "1%",
+      "ext": {
+        "ar-arca-tax-type": "3"
+      }
     }
   ]
 }
