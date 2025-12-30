@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -139,6 +140,14 @@ func TestOrgItemValidate(t *testing.T) {
 			Unit: org.UnitOne,
 		}
 		assert.NoError(t, ad.Validator(item))
+	})
+
+	t.Run("negative price", func(t *testing.T) {
+		item := &org.Item{
+			Unit:  org.UnitOne,
+			Price: num.NewAmount(-100, 0),
+		}
+		assert.ErrorContains(t, ad.Validator(item), "price: must be greater than 0")
 	})
 }
 
