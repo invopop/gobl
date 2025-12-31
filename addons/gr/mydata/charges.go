@@ -38,7 +38,6 @@ func validateCharge(c *bill.Charge) error {
 	}
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Ext,
-			tax.ExtensionsRequire(ExtKeyTaxType),
 			validation.When(
 				c.Ext[ExtKeyTaxType] == TaxTypeFee,
 				tax.ExtensionsRequire(ExtKeyFee),
