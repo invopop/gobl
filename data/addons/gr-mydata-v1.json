@@ -33,6 +33,15 @@
       "desc": {
         "en": "Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by\n30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate\nwith a specific VAT category.\n\nThe IAPR VAT category code must be set using the `gr-mydata-vat-rate` extension of\na line's tax to one of the codes.\n\n| Code | Description                 | GOBL Rate              |\n| ---- | --------------------------- | ---------------------- |\n| `1`  | Standard rate               | `standard`             |\n| `2`  | Reduced rate                | `reduced`              |\n| `3`  | Super-reduced rate          | `super-reduced`        |\n| `4`  | Standard rate (Island)      | `standard+island`      |\n| `5`  | Reduced rate (Island)       | `reduced+island`       |\n| `6`  | Super-reduced rate (Island) | `super-reduced+island` |\n| `7`  | Without VAT                 | `exempt`               |\n| `8`  | Records without VAT         |                        |\n\nPlease, note that GOBL will automatically set the proper `gr-mydata-vat-rate` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t\"i\": 1,\n\t\t\t\"quantity\": \"20\",\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\t\"price\": \"90.00\",\n\t\t\t},\n\t\t\t\"sum\": \"1800.00\",\n\t\t\t\"taxes\": [\n\t\t\t\t{\n\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\"rate\": \"standard+island\"\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"total\": \"1800.00\"\n\t\t}\n\t],\n}\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -101,6 +110,15 @@
       "desc": {
         "en": "The Greek tax authority (IAPR) requires an invoice type code to be specified as part of the invoice. GOBL will\nautomatically set the correct code based on the invoice's `type` and `$tags` values.\n\nHowever, you can also set the code manually using the `gr-mydata-invoice-type` extension in the tax\nsection of the invoice, and setting the invoice's `type` to `other`.\n\nThe following table lists how the combination of `type` and `$tags` values are mapped to the\nIAPR MyDATA invoice type code:\n\n| Type   | Description                                     | GOBL Type     | GOBL Tags                  |\n| ------ | ----------------------------------------------- | ------------- |----------------------------|\n| `1.1`  | Sales Invoice                                   | `standard`    | `goods`                    |\n| `1.2`  | Sales Invoice/Intra-community Supplies          | `standard`    | `goods`, `export`, `eu`    |\n| `1.3`  | Sales Invoice/Third Country Supplies            | `standard`    | `goods`, `export`          |\n| `1.4`  | Sales Invoice/Sale on Behalf of Third Parties   | `standard`    | `goods`, `self-billed`     |\n| `2.1`  | Service Rendered Invoice                        | `standard`    | `services`                 |\n| `2.2`  | Intra-community Service Rendered Invoice        | `standard`    | `services`, `export`, `eu` |\n| `2.3`  | Third Country Service Rendered Invoice          | `standard`    | `services`, `export`       |\n| `5.1`  | Credit Invoice/Associated                       | `credit-note` |                            |\n| `11.1` | Retail Sales Receipt                            | `standard`    | `goods`, `simplified`      |\n| `11.2` | Service Rendered Receipt                        | `standard`    | `services`, `simplified`   |\n| `11.3` | Simplified Invoice                              | `standard`    | `simplified`               |\n| `11.4` | Retail Sales Credit Note                        | `credit-note` | `simplified`               |\n| `11.5` | Retail Sales Receipt on Behalf of Third Parties | `credit-note` | `goods`, `simplified`, `self-billed` |\n\nFor example, this is how you set the IAPR invoice type explicitly:\n\n```json\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"type\": \"other\",\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-invoice-type\": \"2.3\"\n\t\t}\n\t}\n}\n```\n\nAnd this is how you'll get the same result by using the GOBL type and tags:\n\n```json\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"gr-mydata-v1\"],\n\t\"$tags\": [\"services\", \"export\"],\n\t// ...\n\t\"type\": \"standard\",\n}\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1.1",
@@ -428,6 +446,15 @@
       "desc": {
         "en": "The IAPR requires invoices to specify a payment method code. In a GOBL invoice,\nthe payment means is set using the `key` field in the payment instructions.\nThe following table lists all the IAPR payment methods and how GOBL will map from\nthe payment instructions key to each of them:\n\n| Code | Name                             | GOBL Payment Instruction Key |\n| ---- | -------------------------------- | ---------------------------- |\n| `1`  | Domestic Payments Account Number | `credit-transfer`            |\n| `2`  | Foreign Payments Account Number  | `credit-transfer+foreign`    |\n| `3`  | Cash                             | `cash`                       |\n| `4`  | Check                            | `cheque`                     |\n| `5`  | On credit                        | `promissory-note`            |\n| `6`  | Web Banking                      | `online`                     |\n| `7`  | POS / e-POS                      | `card`                       |\n\nFor example:\n\n```js\n\"payment\": {\n\t\"instructions\": {\n\t\t\"key\": \"credit-transfer+foreign\" // Will set the IAPR Payment Method to \"2\"\n\t}\n}\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -489,6 +516,15 @@
       "desc": {
         "en": "Greece invoices can be exempt of VAT for different causes and the tax authority\nrequire a specific cause code to be provided.\n\nGOBL will try to automatically map the tax combo `key` to an appropriate exemption\ncode, but given the number of options you will no doubt need to consult with\na tax professional to determine the correct code for your case.\n\nExample usage:\n\n```js\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\"price\": \"90.00\",\n\t\t},\n\t\t\"sum\": \"1800.00\",\n\t\t\"taxes\": [\n\t\t\t{\n\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\"key\": \"exempt\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"gr-mydata-exemption\": \"3\"\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t\"total\": \"1800.00\"\n\t}\n]\n```\n\nNote that descriptions provided in the `gr-mydata-exemption` extension are\ngenerated using AI and may not be 100% accurate. Always consult with a tax\nprofessional to ensure you're choosing the correct code."
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -811,6 +847,15 @@
       "desc": {
         "en": "Invoices reported to the Greek tax authority via myDATA can optionally include information\nabout the income classification of each invoice item.\n\nIn a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be\nset at the item level to any of the values expected by the IAPR. For example:\n\n```json\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\"price\": \"90.00\",\n\t\t\t\"ext\": {\n\t\t\t\t\"gr-mydata-income-cat\": \"category1_1\",\n\t\t\t\t\"gr-mydata-income-type\": \"E3_561_001\",\n\t\t\t}\n\t\t}\n\t}\n]\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "category1_1",
@@ -900,6 +945,15 @@
       "desc": {
         "en": "See the Income Classification Category for more information."
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "E3_106",
@@ -1148,8 +1202,17 @@
         "en": "Tax type"
       },
       "desc": {
-        "en": "Greek invoices may contain charges for taxes and fees different from VAT. The\n`gr-mydata-tax-type` extension at charge level must be used to specify the tax type.\n\nGOBL will automatically set the proper `gr-mydata-tax-type` code based on the presence\nof the related extensions: `gr-mydata-fee`, `gr-mydata-other-tax` and\n`gr-mydata-stamp-duty`.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fees\": \"13\",\n\t\t}\n\t}\n]\n```"
+        "en": "Greek invoices may contain charges for taxes and fees different from VAT. The\n`gr-mydata-tax-type` extension at charge level must be used to specify the tax type.\n\nGOBL will automatically set the proper `gr-mydata-tax-type` code based on the presence\nof the related extensions: `gr-mydata-fee`, `gr-mydata-other-tax` and\n`gr-mydata-stamp-duty`.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -1195,8 +1258,17 @@
         "en": "Fee category"
       },
       "desc": {
-        "en": "Greek invoices may contain charges for different types of fees. In GOBL, you must use\nthe `gr-mydata-fees` extension at charge level to specify the specific fee category\nfor the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fees\": \"13\",\n\t\t}\n\t}\n]\n```"
+        "en": "Greek invoices may contain charges for different types of fees. In GOBL, you must use\nthe `gr-mydata-fee` extension at charge level to specify the specific fee category\nfor the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -1363,6 +1435,15 @@
       "desc": {
         "en": "Greek invoices may contain charges for different taxes other than VAT. The\n`gr-mydata-other-tax` extension at charge level must be used to specify the specific\nother tax category for the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"3.00\",\n\t\t\"reason\": \"Climate Crisis Fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"3\",\n\t\t\t\"gr-mydata-other-tax\": \"8\",\n\t\t}\n\t}\n]\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -1585,6 +1666,15 @@
       "desc": {
         "en": "Greek invoices may contain charges for stamp duty. The `gr-mydata-stamp-duty` extension\nat charge level must be used to specify the specific stamp duty coefficient category\nfor the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"12.00\",\n\t\t\"reason\": \"Stamp duty\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"4\",\n\t\t\t\"gr-mydata-stamp-duty\": \"1\"\n\t\t}\n\t}\n]\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
       "values": [
         {
           "code": "1",

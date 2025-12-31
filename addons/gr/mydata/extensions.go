@@ -1347,7 +1347,7 @@ var extensions = []*cbc.Definition{
 						"reason": "Subscription fee",
 						"ext": {
 							"gr-mydata-tax-type": "2",
-							"gr-mydata-fees": "13",
+							"gr-mydata-fee": "13",
 						}
 					}
 				]
@@ -1410,7 +1410,7 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Greek invoices may contain charges for different types of fees. In GOBL, you must use
-				the ~gr-mydata-fees~ extension at charge level to specify the specific fee category
+				the ~gr-mydata-fee~ extension at charge level to specify the specific fee category
 				for the charge.
 
 				For example:
@@ -1422,7 +1422,7 @@ var extensions = []*cbc.Definition{
 						"reason": "Subscription fee",
 						"ext": {
 							"gr-mydata-tax-type": "2",
-							"gr-mydata-fees": "13",
+							"gr-mydata-fee": "13",
 						}
 					}
 				]
