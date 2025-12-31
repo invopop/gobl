@@ -39,17 +39,17 @@ func validateCharge(c *bill.Charge) error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Ext,
 			validation.When(
-				c.Ext[ExtKeyTaxType] == TaxTypeFee,
+				c.Ext.Get(ExtKeyTaxType) == TaxTypeFee,
 				tax.ExtensionsRequire(ExtKeyFee),
 				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyFee)...),
 			),
 			validation.When(
-				c.Ext[ExtKeyTaxType] == TaxTypeOtherTax,
+				c.Ext.Get(ExtKeyTaxType) == TaxTypeOtherTax,
 				tax.ExtensionsRequire(ExtKeyOtherTax),
 				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyOtherTax)...),
 			),
 			validation.When(
-				c.Ext[ExtKeyTaxType] == TaxTypeStampDuty,
+				c.Ext.Get(ExtKeyTaxType) == TaxTypeStampDuty,
 				tax.ExtensionsRequire(ExtKeyStampDuty),
 				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyStampDuty)...),
 			),
