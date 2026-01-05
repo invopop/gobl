@@ -18,6 +18,7 @@ import (
 )
 
 var skipExamplePaths = []string{
+	".git",
 	"build/",
 	".out.",
 	"/out/",
