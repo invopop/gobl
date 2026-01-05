@@ -291,8 +291,8 @@ var extensions = []*cbc.Definition{
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "Annex VI - Operation Indicators Table IBS/CBS v1.00",
-					i18n.PT: "Anexo VI - Tabela de Indicadores de Operação IBS/CBS v1.00",
+					i18n.EN: "Annex VII - Operation Indicators Table IBS/CBS v1.00",
+					i18n.PT: "Anexo VII - Tabela de Indicadores de Operação IBS/CBS v1.00",
 				},
 				URL: "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx",
 			},
