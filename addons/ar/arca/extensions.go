@@ -7,12 +7,12 @@ import (
 
 // Extension keys for Argentina ARCA v4
 const (
-	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
-	ExtKeyConcept      cbc.Key = "ar-arca-concept"
-	ExtKeyIdentityType cbc.Key = "ar-arca-identity-type"
-	ExtKeyTaxType      cbc.Key = "ar-arca-tax-type"
-	ExtKeyVATRate      cbc.Key = "ar-arca-vat-rate"
-	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
+	ExtKeyDocType         cbc.Key = "ar-arca-doc-type"
+	ExtKeyTransactionType cbc.Key = "ar-arca-transaction-type"
+	ExtKeyIdentityType    cbc.Key = "ar-arca-identity-type"
+	ExtKeyTaxType         cbc.Key = "ar-arca-tax-type"
+	ExtKeyVATRate         cbc.Key = "ar-arca-vat-rate"
+	ExtKeyVATStatus       cbc.Key = "ar-arca-vat-status"
 )
 
 // Tax type codes
@@ -36,6 +36,7 @@ var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10"}
 // DocTypesC are document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
 var DocTypesC = []cbc.Code{"11", "12", "13", "211", "212", "213"}
 
+// TypeUsedGoodsPurchaseInvoice is the code for the used goods purchase invoice
 const TypeUsedGoodsPurchaseInvoice = "49"
 
 var extensions = []*cbc.Definition{
@@ -337,10 +338,10 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyConcept,
+		Key: ExtKeyTransactionType,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Concept",
-			i18n.ES: "Concepto Argentina ARCA",
+			i18n.EN: "Argentina ARCA Transaction Type (Product, service, or both)",
+			i18n.ES: "Tipo de Transacción Argentina ARCA (Producto, servicio, o ambos)",
 		},
 		Values: []*cbc.Definition{
 			{

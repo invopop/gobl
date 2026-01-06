@@ -30,24 +30,46 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizePartyVATStatus(inv.Customer)
-	normalizeConcept(inv)
+	normalizeTransactionType(inv)
 }
 
+// VAT statuses valid for customers without a tax ID (final consumers)
+// Default: 5 (Consumidor Final)
+// Uncertain: 4, 7, 10, 15 - unclear if they need tax ID, allowing for flexibility
+var vatStatusesNoTaxID = []cbc.Code{"5", "4", "7", "10", "15"}
+
+// VAT statuses valid for customers with an Argentine tax ID
+// Default: 1 (Responsable Inscripto)
+// Certain (Type A): 1 (Responsable Inscripto), 6 (Monotributo), 13 (Monotributista Social),
+// 16 (Monotributo Trabajador Independiente Promovido)
+//
+// Uncertain (Type B): 4 (VAT Exempt), 7 (Uncategorized), 10 (Tierra del Fuego), 15 (Not subject to VAT)
+//   - these may or may not require an AR tax ID, allowing for flexibility
+var vatStatusesARTaxID = []cbc.Code{"1", "6", "13", "16", "4", "7", "10", "15"}
+
+// VAT statuses valid for customers with a foreign tax ID
+// Default: 9 (Cliente del Exterior)
+// Also valid: 8 (Proveedor del Exterior)
+var vatStatusesForeignTaxID = []cbc.Code{"9", "8"}
+
 func normalizePartyVATStatus(p *org.Party) {
-	if p == nil || p.Ext.Has(ExtKeyVATStatus) {
+	if p == nil {
 		return
 	}
 	switch {
 	case p.TaxID == nil:
-		p.Ext = p.Ext.Set(ExtKeyVATStatus, "5") // Final Consumer
+		// No tax ID: Final Consumer or Uncategorized
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "5", vatStatusesNoTaxID...)
 	case p.TaxID.Country == l10n.AR.Tax():
-		p.Ext = p.Ext.Set(ExtKeyVATStatus, "1") // Registered VAT Company
+		// AR tax ID: any valid AR customer status
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "1", vatStatusesARTaxID...)
 	default:
-		p.Ext = p.Ext.Set(ExtKeyVATStatus, "9") // Foreign Customer
+		// Foreign tax ID: Foreign Customer or Supplier
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "9", vatStatusesForeignTaxID...)
 	}
 }
 
-func normalizeConcept(inv *bill.Invoice) {
+func normalizeTransactionType(inv *bill.Invoice) {
 	var hasGoods, hasServices bool
 	for _, line := range inv.Lines {
 		if line.Item == nil || line.Item.Key != org.ItemKeyGoods {
@@ -73,7 +95,7 @@ func normalizeConcept(inv *bill.Invoice) {
 		inv.Tax = new(bill.Tax)
 	}
 	inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-		ExtKeyConcept: code,
+		ExtKeyTransactionType: code,
 	})
 }
 
@@ -105,7 +127,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Ordering,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In("2", "3"),
+				inv.Tax.GetExt(ExtKeyTransactionType).In("2", "3"),
 				validation.Required,
 				validation.By(validateOrdering),
 			),
@@ -113,12 +135,12 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In("2", "3"),
+				inv.Tax.GetExt(ExtKeyTransactionType).In("2", "3"),
 				validation.Required,
 				validation.By(validatePayment),
 			),
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In("1"),
+				inv.Tax.GetExt(ExtKeyTransactionType).In("1"),
 				validation.By(validatePaymentNoDueDates),
 			),
 			validation.Skip,

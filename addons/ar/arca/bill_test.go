@@ -52,13 +52,93 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		assert.Equal(t, "9", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
 	})
 
-	t.Run("customer with existing VAT status is not overwritten", func(t *testing.T) {
+	t.Run("customer with existing valid VAT status is preserved", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Customer.Ext = tax.Extensions{
-			arca.ExtKeyVATStatus: "6", // Monotributo Responsible
+			arca.ExtKeyVATStatus: "6", // Monotributo Responsible - valid for AR tax ID
 		}
 		ad.Normalizer(inv)
 		assert.Equal(t, "6", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("customer with invalid VAT status for AR tax ID is corrected", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// "9" (Foreign Customer) is not valid for AR tax ID
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "9",
+		}
+		ad.Normalizer(inv)
+		// Should be corrected to default "1" (Responsable Inscripto)
+		assert.Equal(t, "1", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("AR customer with final consumer status is corrected", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// "5" (Consumidor Final) is not valid for AR tax ID - final consumers don't have CUIT
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "5",
+		}
+		ad.Normalizer(inv)
+		// Should be corrected to default "1" (Responsable Inscripto)
+		assert.Equal(t, "1", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("AR customer with VAT exempt status is preserved", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// "4" (IVA Sujeto Exento) is valid for AR tax ID - exempt organizations have CUIT
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "4",
+		}
+		ad.Normalizer(inv)
+		assert.Equal(t, "4", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("customer with invalid VAT status for foreign tax ID is corrected", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "US",
+			Code:    "123456789",
+		}
+		// "1" (Responsable Inscripto) is not valid for foreign tax ID
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "1",
+		}
+		ad.Normalizer(inv)
+		// Should be corrected to default "9" (Foreign Customer)
+		assert.Equal(t, "9", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("customer without tax ID preserves valid uncategorized status", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "12345678",
+				Ext: tax.Extensions{
+					arca.ExtKeyIdentityType: "96", // DNI
+				},
+			},
+		}
+		// "7" (Sujeto No Categorizado) is valid for no tax ID
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "7",
+		}
+		ad.Normalizer(inv)
+		assert.Equal(t, "7", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
+	})
+
+	t.Run("foreign customer can be set as foreign supplier", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "US",
+			Code:    "123456789",
+		}
+		// "8" (Proveedor del Exterior) is valid for foreign tax ID
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "8",
+		}
+		ad.Normalizer(inv)
+		assert.Equal(t, "8", inv.Customer.Ext[arca.ExtKeyVATStatus].String())
 	})
 
 	t.Run("nil customer does not panic", func(t *testing.T) {
@@ -71,26 +151,26 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 }
 
 func TestInvoiceConceptNormalization(t *testing.T) {
-	t.Run("only goods sets concept to products", func(t *testing.T) {
+	t.Run("only goods sets transaction type to products", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 	})
 
-	t.Run("only services sets concept to services", func(t *testing.T) {
+	t.Run("only services sets transaction type to services", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 	})
 
 	t.Run("default item key (empty) treated as services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		// Item.Key is empty by default, treated as services
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 	})
 
-	t.Run("mixed goods and services sets concept to products and services", func(t *testing.T) {
+	t.Run("mixed goods and services sets transaction type to products and services", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
@@ -110,7 +190,7 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Ordering = testOrdering()
 		inv.Payment = testPayment()
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 	})
 
 	t.Run("nil item defaults to services", func(t *testing.T) {
@@ -123,10 +203,10 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Ordering = testOrdering()
 		inv.Payment = testPayment()
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyConcept].String()) // mixed goods and services
+		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyTransactionType].String()) // mixed goods and services
 	})
 
-	t.Run("only nil items sets concept to services", func(t *testing.T) {
+	t.Run("only nil items sets transaction type to services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{
 			{
@@ -137,7 +217,7 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Ordering = testOrdering()
 		inv.Payment = testPayment()
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyConcept].String()) // services
+		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyTransactionType].String()) // services
 	})
 
 	t.Run("existing tax extensions are merged", func(t *testing.T) {
@@ -148,7 +228,7 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
@@ -156,7 +236,7 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Lines = nil
 		require.NoError(t, inv.Calculate())
-		assert.Empty(t, inv.Tax.Ext[arca.ExtKeyConcept])
+		assert.Empty(t, inv.Tax.Ext[arca.ExtKeyTransactionType])
 	})
 
 	t.Run("nil tax is initialized", func(t *testing.T) {
@@ -164,7 +244,7 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyConcept].String())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyTransactionType].String())
 	})
 }
 
@@ -244,15 +324,25 @@ func TestInvoiceTaxValidation(t *testing.T) {
 }
 
 func TestInvoiceCustomerValidation(t *testing.T) {
-	t.Run("customer required for invoice type A", func(t *testing.T) {
+	t.Run("B2B invoice automatically gets type A with customer", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
+		// With AR customer, should automatically become type A
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("B2C invoice automatically gets type B without customer", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// Without customer, should automatically become type B
 		inv.Customer = nil
-		assertValidationError(t, inv, "customer: cannot be blank")
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("customer not required for invoice type B (006)", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
-		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
@@ -261,7 +351,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext[arca.ExtKeyDocType] = "7"
-		inv.Customer = nil
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -271,7 +360,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext[arca.ExtKeyDocType] = "8"
-		inv.Customer = nil
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -283,8 +371,9 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("customer with identity and ext is valid", func(t *testing.T) {
-		inv := testInvoiceSimplified(t)
+	t.Run("customer with identity and ext is valid for type B", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Tax.Ext[arca.ExtKeyDocType] = "6" // Type B
 		inv.Customer.TaxID = nil
 		inv.Customer.Identities = []*org.Identity{
 			{
@@ -582,7 +671,7 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 	t.Run("validate ordering with nil for services", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		// Need to set concept to "2" (services) to trigger ordering validation
-		inv.Tax.Ext[arca.ExtKeyConcept] = "2"
+		inv.Tax.Ext[arca.ExtKeyTransactionType] = "2"
 		inv.Ordering = nil
 		err := ad.Validator(inv)
 		assert.ErrorContains(t, err, "ordering: cannot be blank")
@@ -591,7 +680,7 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 	t.Run("validate payment with nil for services", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		// Need to set concept to "2" (services) to trigger payment validation
-		inv.Tax.Ext[arca.ExtKeyConcept] = "2"
+		inv.Tax.Ext[arca.ExtKeyTransactionType] = "2"
 		inv.Payment = nil
 		err := ad.Validator(inv)
 		assert.ErrorContains(t, err, "payment: cannot be blank")
@@ -793,7 +882,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 	}
-	inv.SetTags(arca.TagVATRegistered)
 	return inv
 }
 
@@ -816,7 +904,8 @@ func testInvoiceWithServices(t *testing.T) *bill.Invoice {
 func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := testInvoiceWithGoods(t)
-	inv.SetTags(tax.TagSimplified)
+	// B2C invoice: no customer (doc type will be set automatically by scenario)
+	inv.Customer = nil
 	inv.Tax.Ext[arca.ExtKeyDocType] = "6"
 	return inv
 }

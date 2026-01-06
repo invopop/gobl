@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "39a52686cbee5477738a7e7ac1efde5361b122ae9d97b1a4c85317f8172cfff0"
+			"val": "d02e857faf234ab2a25a8aa621c5028c03a4d7fef3c0f14675e108beb5a54774"
 		}
 	},
 	"doc": {
@@ -13,47 +13,49 @@
 		"$addons": [
 			"ar-arca-v4"
 		],
-		"$tags": [
-			"simplified"
-		],
-		"uuid": "1c5a532e-d146-c353-b835-6a6068ca6d0c",
-		"type": "standard",
-		"series": "2",
-		"code": "00000500",
-		"issue_date": "2025-02-10",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
+		"type": "other",
+		"series": "1",
+		"code": "00000124",
+		"issue_date": "2025-01-15",
 		"currency": "ARS",
 		"tax": {
 			"ext": {
-				"ar-arca-doc-type": "6",
+				"ar-arca-doc-type": "49",
 				"ar-arca-transaction-type": "1"
 			}
 		},
 		"supplier": {
-			"name": "Supermercado La Esquina S.A.",
+			"name": "Compraventa de Usados S.A.",
 			"tax_id": {
 				"country": "AR",
 				"code": "30712345671"
 			},
 			"addresses": [
 				{
-					"street": "Av. Cabildo 3500",
+					"street": "Av. Warnes 1234",
 					"locality": "Buenos Aires",
 					"region": "Ciudad Autónoma de Buenos Aires",
-					"code": "C1429",
+					"code": "C1414",
 					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@usados.com.ar"
 				}
 			]
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "5",
+				"quantity": "1",
 				"item": {
 					"key": "goods",
-					"name": "Productos varios",
-					"price": "15000.00"
+					"name": "Automóvil Usado - Ford Focus 2018",
+					"price": "8500000.00"
 				},
-				"sum": "75000.00",
+				"sum": "8500000.00",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -65,12 +67,12 @@
 						}
 					}
 				],
-				"total": "75000.00"
+				"total": "8500000.00"
 			}
 		],
 		"totals": {
-			"sum": "75000.00",
-			"total": "75000.00",
+			"sum": "8500000.00",
+			"total": "8500000.00",
 			"taxes": {
 				"categories": [
 					{
@@ -81,19 +83,19 @@
 								"ext": {
 									"ar-arca-vat-rate": "5"
 								},
-								"base": "75000.00",
+								"base": "8500000.00",
 								"percent": "21.0%",
-								"amount": "15750.00"
+								"amount": "1785000.00"
 							}
 						],
-						"amount": "15750.00"
+						"amount": "1785000.00"
 					}
 				],
-				"sum": "15750.00"
+				"sum": "1785000.00"
 			},
-			"tax": "15750.00",
-			"total_with_tax": "90750.00",
-			"payable": "90750.00"
+			"tax": "1785000.00",
+			"total_with_tax": "10285000.00",
+			"payable": "10285000.00"
 		}
 	}
 }

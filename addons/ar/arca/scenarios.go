@@ -4,16 +4,13 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
 // Document tag keys for Argentine invoice types
 const (
-	// TagVATRegistered is used for Invoice A - transactions where the customer
-	// is VAT registered (Responsable Inscripto or Monotributista).
-	TagVATRegistered cbc.Key = "vat-registered"
-
 	// TagSimplifiedRegime is used for Invoice C - when the supplier is under a
 	// simplified tax regime (Monotributo in Argentina).
 	TagSimplifiedRegime cbc.Key = "simplified-regime"
@@ -22,17 +19,6 @@ const (
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*cbc.Definition{
-		{
-			Key: TagVATRegistered,
-			Name: i18n.String{
-				i18n.EN: "VAT Registered Customer",
-				i18n.ES: "Cliente Registrado en IVA",
-			},
-			Desc: i18n.String{
-				i18n.EN: "Invoice A: Customer is VAT registered (Responsable Inscripto or Monotributista).",
-				i18n.ES: "Factura A: El cliente está registrado en IVA (Responsable Inscripto o Monotributista).",
-			},
-		},
 		{
 			Key: TagSimplifiedRegime,
 			Name: i18n.String{
@@ -47,139 +33,98 @@ var invoiceTags = &tax.TagSet{
 	},
 }
 
+// VAT statuses that require Invoice Type A (B2B with VAT registered customers)
+// Based on ARCA documentation: 1 (Responsable Inscripto), 6 (Monotributo),
+// 13 (Monotributista Social), 16 (Monotributo Trabajador Independiente Promovido)
+var vatStatusesTypeA = []cbc.Code{"1", "6", "13", "16"}
+
+// invoiceCustomerIsB2B checks if the invoice should be Type A based on
+// the customer's VAT status. Type A is used when the customer is VAT registered
+// (Responsable Inscripto, Monotributo, etc.)
+//
+// Since scenarios run before normalization, we check:
+// 1. If VAT status is explicitly set → use that
+// 2. If not set but customer has AR tax ID → assume Type A (will be normalized to status "1")
+func invoiceCustomerIsB2B(doc any) bool {
+	inv, ok := doc.(*bill.Invoice)
+	if !ok {
+		return false
+	}
+	// Exclude simplified-regime invoices (type C)
+	if inv.HasTags(TagSimplifiedRegime) {
+		return false
+	}
+	if inv.Customer == nil {
+		return false
+	}
+
+	// Check if VAT status is explicitly set
+	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	if vatStatus != "" {
+		return vatStatus.In(vatStatusesTypeA...)
+	}
+
+	// VAT status not set yet - use tax ID to determine
+	// Customer with AR tax ID will be normalized to status "1" (Responsable Inscripto)
+	if inv.Customer.TaxID != nil && inv.Customer.TaxID.Country == l10n.AR.Tax() {
+		return true
+	}
+
+	return false
+}
+
+// invoiceCustomerIsB2C checks if the invoice should be Type B based on
+// the customer's VAT status. Type B is used for final consumers, exempt subjects,
+// foreign customers, and other non-VAT-registered customers.
+// VAT statuses: 4 (Exempt), 5 (Final Consumer), 7 (Uncategorized), 8 (Foreign Supplier),
+// 9 (Foreign Customer), 10 (VAT Exempt Law 19.640), 15 (VAT Not Applicable)
+//
+// Since scenarios run before normalization, we check:
+// 1. If VAT status is explicitly set → use that
+// 2. If not set → use tax ID to determine (no customer, no tax ID, or foreign = Type B)
+func invoiceCustomerIsB2C(doc any) bool {
+	inv, ok := doc.(*bill.Invoice)
+	if !ok {
+		return false
+	}
+	// Exclude simplified-regime invoices (type C)
+	if inv.HasTags(TagSimplifiedRegime) {
+		return false
+	}
+
+	// No customer = B2C
+	if inv.Customer == nil {
+		return true
+	}
+
+	// Check if VAT status is explicitly set
+	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	if vatStatus != "" {
+		// Type B if NOT in the Type A list
+		return !vatStatus.In(vatStatusesTypeA...)
+	}
+
+	// VAT status not set yet - use tax ID to determine
+	// No tax ID = B2C (will be normalized to status "5" Final Consumer)
+	if inv.Customer.TaxID == nil {
+		return true
+	}
+
+	// Foreign tax ID = B2C (will be normalized to status "9" Foreign Customer)
+	if inv.Customer.TaxID.Country != l10n.AR.Tax() {
+		return true
+	}
+
+	// AR tax ID without explicit VAT status = B2B (handled by invoiceCustomerIsB2B)
+	return false
+}
+
 var scenarios = []*tax.ScenarioSet{
 	{
 		Schema: bill.ShortSchemaInvoice,
 		List: []*tax.Scenario{
-			// ** Invoice A - Customer is VAT registered **
-			{
-				Name: i18n.String{
-					i18n.EN: "Invoice A",
-					i18n.ES: "Factura A",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the invoice is issued by a VAT registered company to another
-						VAT registered company or a monotributista.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeStandard,
-				},
-				Tags: []cbc.Key{
-					TagVATRegistered,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "1",
-				},
-			},
-			{
-				Name: i18n.String{
-					i18n.EN: "Debit Note A",
-					i18n.ES: "Nota de Débito A",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the debit note is issued by a VAT registered company to another
-						VAT registered company or a monotributista.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeDebitNote,
-				},
-				Tags: []cbc.Key{
-					TagVATRegistered,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "2",
-				},
-			},
-			{
-				Name: i18n.String{
-					i18n.EN: "Credit Note A",
-					i18n.ES: "Nota de Crédito A",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the credit note is issued by a VAT registered company to another
-						VAT registered company or a monotributista.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
-				},
-				Tags: []cbc.Key{
-					TagVATRegistered,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "3",
-				},
-			},
-			// ** Invoice B - Final consumers and VAT exempt customers **
-			{
-				Name: i18n.String{
-					i18n.EN: "Invoice B",
-					i18n.ES: "Factura B",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the invoice is issued by a VAT registered company to final
-						consumers, exempt subjects, non-categorized subjects, or foreign customers.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeStandard,
-				},
-				Tags: []cbc.Key{
-					tax.TagSimplified,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "6",
-				},
-			},
-			{
-				Name: i18n.String{
-					i18n.EN: "Debit Note B",
-					i18n.ES: "Nota de Débito B",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the debit note is issued by a VAT registered company to final
-						consumers, exempt subjects, non-categorized subjects, or foreign customers.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeDebitNote,
-				},
-				Tags: []cbc.Key{
-					tax.TagSimplified,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "7",
-				},
-			},
-			{
-				Name: i18n.String{
-					i18n.EN: "Credit Note B",
-					i18n.ES: "Nota de Crédito B",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Used when the credit note is issued by a VAT registered company to final
-						consumers, exempt subjects, non-categorized subjects, or foreign customers.
-					`),
-				},
-				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
-				},
-				Tags: []cbc.Key{
-					tax.TagSimplified,
-				},
-				Ext: tax.Extensions{
-					ExtKeyDocType: "8",
-				},
-			},
-			// ** Invoice C - Monotributista transactions **
+			// ** Invoice C - Monotributista transactions (simplified-regime tag required) **
+			// These must be first as they require explicit tags and should take precedence
 			{
 				Name: i18n.String{
 					i18n.EN: "Invoice C",
@@ -241,6 +186,122 @@ var scenarios = []*tax.ScenarioSet{
 				},
 				Ext: tax.Extensions{
 					ExtKeyDocType: "13",
+				},
+			},
+			// ** Invoice B - Final consumers and foreign customers (B2C - automatic) **
+			{
+				Name: i18n.String{
+					i18n.EN: "Invoice B",
+					i18n.ES: "Factura B",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the invoice is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
+				},
+				Filter: invoiceCustomerIsB2C,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "6",
+				},
+			},
+			{
+				Name: i18n.String{
+					i18n.EN: "Debit Note B",
+					i18n.ES: "Nota de Débito B",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the debit note is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeDebitNote,
+				},
+				Filter: invoiceCustomerIsB2C,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "7",
+				},
+			},
+			{
+				Name: i18n.String{
+					i18n.EN: "Credit Note B",
+					i18n.ES: "Nota de Crédito B",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the credit note is issued by a VAT registered company to final
+						consumers, exempt subjects, non-categorized subjects, or foreign customers.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				Filter: invoiceCustomerIsB2C,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "8",
+				},
+			},
+			// ** Invoice A - B2B with VAT registered customer (automatic) **
+			{
+				Name: i18n.String{
+					i18n.EN: "Invoice A",
+					i18n.ES: "Factura A",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the invoice is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
+				},
+				Filter: invoiceCustomerIsB2B,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "1",
+				},
+			},
+			{
+				Name: i18n.String{
+					i18n.EN: "Debit Note A",
+					i18n.ES: "Nota de Débito A",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the debit note is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeDebitNote,
+				},
+				Filter: invoiceCustomerIsB2B,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "2",
+				},
+			},
+			{
+				Name: i18n.String{
+					i18n.EN: "Credit Note A",
+					i18n.ES: "Nota de Crédito A",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Used when the credit note is issued by a VAT registered company to another
+						VAT registered company or a monotributista.
+					`),
+				},
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				Filter: invoiceCustomerIsB2B,
+				Ext: tax.Extensions{
+					ExtKeyDocType: "3",
 				},
 			},
 		},

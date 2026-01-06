@@ -1,7 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$addons": ["ar-arca-v4"],
-  "$tags": ["vat-registered"],
   "type": "debit-note",
   "uuid": "6d0b0e89-8cf1-7e0e-c3e0-1b1513fb185d",
   "currency": "ARS",

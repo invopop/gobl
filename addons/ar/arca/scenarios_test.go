@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,79 +31,152 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		assert.NotEmpty(t, invoiceScenarios.List)
 	})
 
-	// Test cases for all document type scenarios
-	testCases := []struct {
-		name        string
-		invType     cbc.Key
-		tags        []cbc.Key
-		expectedDoc string
-	}{
-		// Type A - VAT registered customer
-		{
-			name:        "invoice type A",
-			invType:     bill.InvoiceTypeStandard,
-			tags:        []cbc.Key{arca.TagVATRegistered},
-			expectedDoc: "1",
-		},
-		{
-			name:        "debit note type A",
-			invType:     bill.InvoiceTypeDebitNote,
-			tags:        []cbc.Key{arca.TagVATRegistered},
-			expectedDoc: "2",
-		},
-		{
-			name:        "credit note type A",
-			invType:     bill.InvoiceTypeCreditNote,
-			tags:        []cbc.Key{arca.TagVATRegistered},
-			expectedDoc: "3",
-		},
-		// Type B - Final consumers and VAT exempt
-		{
-			name:        "invoice type B",
-			invType:     bill.InvoiceTypeStandard,
-			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "6",
-		},
-		{
-			name:        "debit note type B",
-			invType:     bill.InvoiceTypeDebitNote,
-			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "7",
-		},
-		{
-			name:        "credit note type B",
-			invType:     bill.InvoiceTypeCreditNote,
-			tags:        []cbc.Key{tax.TagSimplified},
-			expectedDoc: "8",
-		},
-		// Type C - Simplified Regime (Monotributista)
-		{
-			name:        "invoice type C",
-			invType:     bill.InvoiceTypeStandard,
-			tags:        []cbc.Key{arca.TagSimplifiedRegime},
-			expectedDoc: "11",
-		},
-		{
-			name:        "debit note type C",
-			invType:     bill.InvoiceTypeDebitNote,
-			tags:        []cbc.Key{arca.TagSimplifiedRegime},
-			expectedDoc: "12",
-		},
-		{
-			name:        "credit note type C",
-			invType:     bill.InvoiceTypeCreditNote,
-			tags:        []cbc.Key{arca.TagSimplifiedRegime},
-			expectedDoc: "13",
-		},
-	}
+	t.Run("invoice type A - B2B with AR customer", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			inv := testInvoiceForScenario(t, tc.invType, tc.tags)
-			require.NoError(t, inv.Calculate())
-			assert.Equal(t, tc.expectedDoc, inv.Tax.Ext[arca.ExtKeyDocType].String())
-		})
-	}
+	t.Run("debit note type A - B2B with AR customer", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("credit note type A - B2B with AR customer", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("invoice type B - B2C no customer", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("invoice type B - B2C no tax ID", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "12345678",
+				Ext: tax.Extensions{
+					arca.ExtKeyIdentityType: "96", // DNI
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("invoice type B - B2C foreign customer", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "US",
+			Code:    "123456789",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("debit note type B - B2C", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Customer = nil
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "7", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("credit note type B - B2C", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Customer = nil
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "8", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("invoice type C - simplified regime", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "11", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("debit note type C - simplified regime", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "12", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("credit note type C - simplified regime", func(t *testing.T) {
+		inv := testInvoiceTypeC(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "13", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type C takes precedence over B2B", func(t *testing.T) {
+		// Even with an AR customer, simplified-regime tag should result in type C
+		inv := testInvoiceTypeC(t)
+		inv.Customer = &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "30500010912",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "11", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type C takes precedence over B2C", func(t *testing.T) {
+		// Even without a customer, simplified-regime tag should result in type C
+		inv := testInvoiceTypeC(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "11", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type A for monotributo customer", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		// Set customer as Monotributo (VAT status 6) - should be Type A
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "6",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type B for exempt customer", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		// Set customer as VAT Exempt (VAT status 4) - should be Type B
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "4",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type B for VAT exempt customer with AR tax ID", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		// Set customer as VAT Exempt (VAT status 4) - should be Type B
+		// They have an AR tax ID but are exempt from VAT
+		inv.Customer.Ext = tax.Extensions{
+			arca.ExtKeyVATStatus: "4",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
 }
 
 func TestScenarioSummary(t *testing.T) {
@@ -147,14 +221,22 @@ func TestScenarioSummary(t *testing.T) {
 	})
 }
 
-func testInvoiceForScenario(t *testing.T, invType cbc.Key, tags []cbc.Key) *bill.Invoice {
+// testInvoiceB2B creates an invoice with an Argentine customer (B2B scenario)
+func testInvoiceB2B(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := testInvoiceWithGoods(t)
-	inv.Type = invType
-	if len(tags) > 0 {
-		inv.SetTags(tags...)
-	}
-	// Clear existing doc type to let scenarios set it
+	// Clear any existing tags and doc type to let scenarios determine type
+	inv.Tags = tax.Tags{}
+	delete(inv.Tax.Ext, arca.ExtKeyDocType)
+	return inv
+}
+
+// testInvoiceB2C creates an invoice for B2C scenario (no customer or foreign)
+func testInvoiceB2C(t *testing.T) *bill.Invoice {
+	t.Helper()
+	inv := testInvoiceWithGoods(t)
+	// Clear any existing tags and doc type to let scenarios determine type
+	inv.Tags = tax.Tags{}
 	delete(inv.Tax.Ext, arca.ExtKeyDocType)
 	return inv
 }

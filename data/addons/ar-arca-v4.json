@@ -819,17 +819,6 @@
       "schema": "bill/invoice",
       "list": [
         {
-          "key": "vat-registered",
-          "name": {
-            "en": "VAT Registered Customer",
-            "es": "Cliente Registrado en IVA"
-          },
-          "desc": {
-            "en": "Invoice A: Customer is VAT registered (Responsable Inscripto or Monotributista).",
-            "es": "Factura A: El cliente está registrado en IVA (Responsable Inscripto o Monotributista)."
-          }
-        },
-        {
           "key": "simplified-regime",
           "name": {
             "en": "Simplified Tax Regime",
@@ -847,114 +836,6 @@
     {
       "schema": "bill/invoice",
       "list": [
-        {
-          "name": {
-            "en": "Invoice A",
-            "es": "Factura A"
-          },
-          "desc": {
-            "en": "Used when the invoice is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "standard"
-          ],
-          "tags": [
-            "vat-registered"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "1"
-          }
-        },
-        {
-          "name": {
-            "en": "Debit Note A",
-            "es": "Nota de Débito A"
-          },
-          "desc": {
-            "en": "Used when the debit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "debit-note"
-          ],
-          "tags": [
-            "vat-registered"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "2"
-          }
-        },
-        {
-          "name": {
-            "en": "Credit Note A",
-            "es": "Nota de Crédito A"
-          },
-          "desc": {
-            "en": "Used when the credit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "credit-note"
-          ],
-          "tags": [
-            "vat-registered"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "3"
-          }
-        },
-        {
-          "name": {
-            "en": "Invoice B",
-            "es": "Factura B"
-          },
-          "desc": {
-            "en": "Used when the invoice is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "standard"
-          ],
-          "tags": [
-            "simplified"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "6"
-          }
-        },
-        {
-          "name": {
-            "en": "Debit Note B",
-            "es": "Nota de Débito B"
-          },
-          "desc": {
-            "en": "Used when the debit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "debit-note"
-          ],
-          "tags": [
-            "simplified"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "7"
-          }
-        },
-        {
-          "name": {
-            "en": "Credit Note B",
-            "es": "Nota de Crédito B"
-          },
-          "desc": {
-            "en": "Used when the credit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "credit-note"
-          ],
-          "tags": [
-            "simplified"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "8"
-          }
-        },
         {
           "name": {
             "en": "Invoice C",
@@ -1007,6 +888,96 @@
           ],
           "ext": {
             "ar-arca-doc-type": "13"
+          }
+        },
+        {
+          "name": {
+            "en": "Invoice B",
+            "es": "Factura B"
+          },
+          "desc": {
+            "en": "Used when the invoice is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "6"
+          }
+        },
+        {
+          "name": {
+            "en": "Debit Note B",
+            "es": "Nota de Débito B"
+          },
+          "desc": {
+            "en": "Used when the debit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "debit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "7"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit Note B",
+            "es": "Nota de Crédito B"
+          },
+          "desc": {
+            "en": "Used when the credit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "8"
+          }
+        },
+        {
+          "name": {
+            "en": "Invoice A",
+            "es": "Factura A"
+          },
+          "desc": {
+            "en": "Used when the invoice is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "1"
+          }
+        },
+        {
+          "name": {
+            "en": "Debit Note A",
+            "es": "Nota de Débito A"
+          },
+          "desc": {
+            "en": "Used when the debit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "debit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "2"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit Note A",
+            "es": "Nota de Crédito A"
+          },
+          "desc": {
+            "en": "Used when the credit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "3"
           }
         }
       ]
