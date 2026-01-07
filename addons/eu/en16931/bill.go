@@ -100,7 +100,8 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
-				isDue(inv),
+				// This rule only applies to invoices, not credit or debit notes
+				isBillInvoiceDue(inv) && inv.Type == bill.InvoiceTypeStandard,
 				validation.Required.Error("payment details are required when amount is due (BR-CO-25)"), // BR-CO-25
 				validation.By(validateBillPayment),
 			),
@@ -258,7 +259,7 @@ func validateBillPayment(value any) error {
 	)
 }
 
-func isDue(inv *bill.Invoice) bool {
+func isBillInvoiceDue(inv *bill.Invoice) bool {
 	return inv.Totals != nil &&
 		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
 			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
