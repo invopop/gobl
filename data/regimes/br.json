@@ -159,6 +159,30 @@
         "pt": "Imposto de Renda Retido na Fonte"
       },
       "retained": true
+    },
+    {
+      "code": "IBS",
+      "name": {
+        "en": "IBS",
+        "pt": "IBS"
+      },
+      "title": {
+        "en": "Goods and Services Tax",
+        "pt": "Imposto sobre Bens e Serviços"
+      },
+      "informative": true
+    },
+    {
+      "code": "CBS",
+      "name": {
+        "en": "CBS",
+        "pt": "CBS"
+      },
+      "title": {
+        "en": "Federal Goods and Services Contribution",
+        "pt": "Contribuição sobre Bens e Serviços"
+      },
+      "informative": true
     }
   ]
 }
