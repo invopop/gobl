@@ -3,6 +3,7 @@ package arca
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // Extension keys for Argentina ARCA v4
@@ -30,6 +31,7 @@ const (
 	ChargeTaxCodeOther                       cbc.Code = "99"
 )
 
+// Customer VAT status codes
 const (
 	VATStatusRegisteredCompany                       cbc.Code = "1"
 	VATStatusExemptSubject                           cbc.Code = "4"
@@ -44,6 +46,7 @@ const (
 	VATStatusPromotedIndependentWorkerMonotributista cbc.Code = "16"
 )
 
+// Concept codes
 const (
 	ConceptGoods               cbc.Code = "1"
 	ConceptServices            cbc.Code = "2"
@@ -104,6 +107,38 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Argentina ARCA Document Type",
 			i18n.ES: "Tipo de comprobante Argentina ARCA",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the type of document being issued.
+
+				This can always be set directly. If not provided, GOBL will automatically determine it during
+				normalization based on the following rules:
+
+				**Type C (Simplified Tax Scheme / Monotributo supplier):**
+				If the invoice has the 'simplified-scheme' tag set, the document type will be:
+				- Standard invoice: 11 (Invoice C)
+				- Credit note: 13 (Credit Note C)
+				- Debit note: 12 (Debit Note C)
+
+				**Type A (B2B with VAT-registered customers):**
+				If the customer's 'ar-arca-vat-status' extension is one of: 1 (Registered Company),
+				6 (Monotributo Responsible), 13 (Social Monotributista), or 16 (Promoted Independent Worker),
+				the document type will be:
+				- Standard invoice: 1 (Invoice A)
+				- Credit note: 3 (Credit Note A)
+				- Debit note: 2 (Debit Note A)
+
+				**Type B (B2C or other scenarios):**
+				For all other cases (final consumers, foreign customers, exempt entities, or when no customer
+				is provided), the document type will be:
+				- Standard invoice: 6 (Invoice B)
+				- Credit note: 8 (Credit Note B)
+				- Debit note: 7 (Debit Note B)
+
+				Note: For other invoice types (liquido productos, facturas de venta al contado, etc.), the document type must be set manually.
+
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -399,14 +434,30 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyConcept,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Concept (Product, service, or both)",
-			i18n.ES: "Concepto Argentina ARCA (Producto, servicio, o ambos)",
+			i18n.EN: "Argentina ARCA Concept (Goods, services, or both)",
+			i18n.ES: "Concepto Argentina ARCA (Productos, servicios, o ambos)",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the invoice concept, indicating whether the invoice covers
+				goods, services, or both.
+
+				This extension is automatically determined by GOBL based on the 'key' field of each
+				line item:
+
+				- **1 (Products):** All line items have 'key' set to 'goods'.
+				- **2 (Services):** All line items have 'key' empty, unset, or set to any value other than 'goods'.
+				- **3 (Products and Services):** The invoice contains a mix of both goods and services.
+
+				Note: When the concept is 2 (Services) or 3 (Products and Services), the invoice must
+				include an ordering period and payment terms with due dates.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
 				Code: "1",
 				Name: i18n.String{
-					i18n.EN: "Products",
+					i18n.EN: "Goods",
 					i18n.ES: "Productos",
 				},
 			},
@@ -420,7 +471,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "3",
 				Name: i18n.String{
-					i18n.EN: "Products and services",
+					i18n.EN: "Goods and services",
 					i18n.ES: "Productos y servicios",
 				},
 			},

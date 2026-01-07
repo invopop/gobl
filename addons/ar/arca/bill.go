@@ -53,12 +53,12 @@ var invoiceTags = &tax.TagSet{
 }
 
 func normalizeBillInvoice(inv *bill.Invoice) {
-	normalizeBillInvoiceCustomer(inv.Customer)
+	normalizeBillInvoiceCustomerVATStatus(inv.Customer)
 	normalizeBillInvoiceTaxDocType(inv)
 	normalizeBillInvoiceTaxConcept(inv)
 }
 
-func normalizeBillInvoiceCustomer(p *org.Party) {
+func normalizeBillInvoiceCustomerVATStatus(p *org.Party) {
 	if p == nil {
 		return
 	}
@@ -222,7 +222,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateBillInvoiceLine(inv.Tax.GetExt(ExtKeyDocType))),
+				validation.By(validateBillInvoiceLineTaxes(inv.Tax.GetExt(ExtKeyDocType))),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -231,7 +231,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.When(
 				inv.Tax.GetExt(ExtKeyConcept).In(ConceptServices, ConceptProductsAndServices),
 				validation.Required,
-				validation.By(validateBillOrdering),
+				validation.By(validateBillOrderingPeriod),
 			),
 			validation.Skip,
 		),
@@ -388,7 +388,7 @@ func validateVATStatusMatchesDocType(docType cbc.Code) validation.RuleFunc {
 	}
 }
 
-func validateBillOrdering(val any) error {
+func validateBillOrderingPeriod(val any) error {
 	ordering, ok := val.(*bill.Ordering)
 	if !ok || ordering == nil {
 		return nil
@@ -408,12 +408,12 @@ func validateBillPaymentDetailsServices(val any) error {
 	return validation.ValidateStruct(payment,
 		validation.Field(&payment.Terms,
 			validation.Required,
-			validation.By(validatePaymentTerms),
+			validation.By(validatePaymentTermsDueDates),
 		),
 	)
 }
 
-func validatePaymentTerms(val any) error {
+func validatePaymentTermsDueDates(val any) error {
 	terms, ok := val.(*pay.Terms)
 	if !ok || terms == nil {
 		return nil
@@ -447,7 +447,7 @@ func validateBillInvoicePreceding(val any) error {
 	)
 }
 
-func validateBillInvoiceLine(docType cbc.Code) validation.RuleFunc {
+func validateBillInvoiceLineTaxes(docType cbc.Code) validation.RuleFunc {
 	return func(val any) error {
 		line, ok := val.(*bill.Line)
 		if !ok || line == nil {
@@ -456,7 +456,7 @@ func validateBillInvoiceLine(docType cbc.Code) validation.RuleFunc {
 		if docType.In(DocTypesC...) {
 			return validation.ValidateStruct(line,
 				validation.Field(&line.Taxes,
-					validation.Empty,
+					validation.Empty.Error("type C invoices (simplified tax scheme) must not have taxes on lines"),
 					validation.Skip,
 				),
 			)

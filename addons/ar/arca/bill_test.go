@@ -1313,7 +1313,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
 	})
 
 	t.Run("type C debit note without taxes on lines passes", func(t *testing.T) {
@@ -1336,7 +1336,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
 	})
 
 	t.Run("type C credit note without taxes on lines passes", func(t *testing.T) {
@@ -1359,7 +1359,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
 	})
 
 	t.Run("FCE type C invoice without taxes on lines passes", func(t *testing.T) {
@@ -1378,7 +1378,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: must be blank.).).")
+		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
 	})
 
 	t.Run("type A invoice with taxes on lines passes", func(t *testing.T) {
@@ -1425,7 +1425,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				},
 			},
 		})
-		assertValidationError(t, inv, "lines: (1: (taxes: must be blank.).).")
+		assertValidationError(t, inv, "lines: (1: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
 	})
 }
 
