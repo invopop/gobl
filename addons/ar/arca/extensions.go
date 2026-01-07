@@ -115,29 +115,20 @@ var extensions = []*cbc.Definition{
 				This can always be set directly. If not provided, GOBL will automatically determine it during
 				normalization based on the following rules:
 
-				**Type C (Simplified Tax Scheme / Monotributo supplier):**
-				If the invoice has the 'simplified-scheme' tag set, the document type will be:
-				- Standard invoice: 11 (Invoice C)
-				- Credit note: 13 (Credit Note C)
-				- Debit note: 12 (Debit Note C)
+				Type C (Simplified Tax Scheme / Monotributo supplier): If the invoice has the
+				~simplified-scheme~ tag set, the document type will be ~11~ (Invoice C), ~13~ (Credit Note C),
+				or ~12~ (Debit Note C).
 
-				**Type A (B2B with VAT-registered customers):**
-				If the customer's 'ar-arca-vat-status' extension is one of: 1 (Registered Company),
-				6 (Monotributo Responsible), 13 (Social Monotributista), or 16 (Promoted Independent Worker),
-				the document type will be:
-				- Standard invoice: 1 (Invoice A)
-				- Credit note: 3 (Credit Note A)
-				- Debit note: 2 (Debit Note A)
+				Type A (B2B with VAT-registered customers): If the customer's ~ar-arca-vat-status~ extension
+				is one of ~1~ (Registered Company), ~6~ (Monotributo Responsible), ~13~ (Social Monotributista),
+				or ~16~ (Promoted Independent Worker), the document type will be ~1~ (Invoice A), ~3~ (Credit
+				Note A), or ~2~ (Debit Note A).
 
-				**Type B (B2C or other scenarios):**
-				For all other cases (final consumers, foreign customers, exempt entities, or when no customer
-				is provided), the document type will be:
-				- Standard invoice: 6 (Invoice B)
-				- Credit note: 8 (Credit Note B)
-				- Debit note: 7 (Debit Note B)
+				Type B (B2C or other scenarios): For all other cases (final consumers, foreign customers,
+				exempt entities, or when no customer is provided), the document type will be ~6~ (Invoice B),
+				~8~ (Credit Note B), or ~7~ (Debit Note B).
 
-				Note: For other invoice types (liquido productos, facturas de venta al contado, etc.), the document type must be set manually.
-
+				For other document types the value must be set manually.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -442,14 +433,14 @@ var extensions = []*cbc.Definition{
 				Code used to identify the invoice concept, indicating whether the invoice covers
 				goods, services, or both.
 
-				This extension is automatically determined by GOBL based on the 'key' field of each
+				This extension is automatically determined by GOBL based on the ~key~ field of each
 				line item:
 
-				- **1 (Products):** All line items have 'key' set to 'goods'.
-				- **2 (Services):** All line items have 'key' empty, unset, or set to any value other than 'goods'.
-				- **3 (Products and Services):** The invoice contains a mix of both goods and services.
+				- ~1~ (Products): All line items have ~key~ set to ~goods~.
+				- ~2~ (Services): All line items have ~key~ empty, unset, or set to any value other than ~goods~.
+				- ~3~ (Products and Services): The invoice contains a mix of both goods and services.
 
-				Note: When the concept is 2 (Services) or 3 (Products and Services), the invoice must
+				When the concept is ~2~ (Services) or ~3~ (Products and Services), the invoice must
 				include an ordering period and payment terms with due dates.
 			`),
 		},
@@ -482,6 +473,51 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Argentina ARCA Tax Type",
 			i18n.ES: "Tipo de Tributo Argentina ARCA",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the type of tax applied as a charge. This is used for taxes other than
+				VAT that need to be included in the invoice (national taxes, provincial taxes, withholdings, etc.).
+
+				These taxes must be added as invoice charges (not in line items) with the charge ~key~ set
+				to ~tax~, a ~percent~ value (required, amounts are not accepted), and this extension to
+				specify the tax type.
+
+				Example - Tax applied to invoice total:
+
+				~~~json
+				"charges": [
+					{
+						"key": "tax",
+						"percent": "3%",
+						"ext": {
+							"ar-arca-tax-type": "1"
+						}
+					}
+				]
+				~~~
+
+				Example - Tax applied to a specific base:
+
+				~~~json
+				"charges": [
+					{
+						"key": "tax",
+						"percent": "3%",
+						"base": "1000.00",
+						"ext": {
+							"ar-arca-tax-type": "1"
+						}
+					}
+				]
+				~~~
+
+				Validation rules:
+
+				- When a charge has ~key: tax~, this extension is required.
+				- The ~percent~ field is required when this extension is present.
+				- When using code ~99~ (Other), the charge ~reason~ field is required to describe the tax.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -569,6 +605,25 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Argentina ARCA VAT Rate",
 			i18n.ES: "Tasa de IVA Argentina ARCA",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the VAT rate applied to line items.
+
+				This extension is automatically determined by GOBL based on the tax rate key defined in
+				the Argentine tax regime:
+
+				- ~zero~ rate (0%) → code ~3~
+				- ~reduced~ rate (10.5%) → code ~4~
+				- ~standard~ rate (21%) → code ~5~
+				- ~increased~ rate (27%) → code ~6~
+
+				For the special reduced rates of 5% and 2.5%, the extension must be set manually on the
+				line tax as these are not covered by the standard rate keys:
+
+				- 5% → code ~8~
+				- 2.5% → code ~9~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "3",
@@ -617,8 +672,39 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIdentityType,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Identity Type",
-			i18n.ES: "Tipo de Identidad Argentina ARCA",
+			i18n.EN: "Argentina ARCA Customer Identity Type",
+			i18n.ES: "Código de Documento identificatorio del comprador",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the type of identity document in the customer's ~identities~ field.
+
+				This extension is typically only needed for B2C operations where the customer needs to
+				provide an identification number but does not have a tax ID. Common examples include
+				DNI (code ~96~), passport, or provincial identity cards.
+
+				When the customer has a CUIT, CUIL, or a valid foreign tax identification number,
+				these should be included in the ~tax_id~ field instead, and this extension is not required.
+
+				Example usage for a final consumer with DNI:
+
+				~~~json
+				"customer": {
+					"name": "John Doe",
+					"identities": [
+						{
+							"code": "12345678",
+							"ext": {
+								"ar-arca-identity-type": "96"
+							}
+						}
+					],
+					"ext": {
+						"ar-arca-vat-status": "5"
+					}
+				}
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -878,8 +964,34 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyVATStatus,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Customer VAT Status",
-			i18n.ES: "Condición IVA del Receptor Argentina ARCA",
+			i18n.EN: "Customer VAT Status",
+			i18n.ES: "Condición frente al IVA del receptor",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the VAT status of the customer. This extension must be included
+				in the customer's ~ext~ field when the customer is required.
+
+				GOBL will automatically normalize this value based on the customer's tax identification:
+
+				Customer without tax ID (final consumers): Defaults to ~5~ (Final Consumer). Also
+				accepts ~4~ (Exempt Subject), ~7~ (Uncategorized), ~10~ (VAT Exempt Law 19640),
+				or ~15~ (VAT Not Applicable).
+
+				Customer with foreign tax ID: Defaults to ~9~ (Foreign Customer). Also accepts
+				~8~ (Foreign Supplier).
+
+				Customer with Argentine tax ID (CUIT/CUIL): Defaults to ~1~ (Registered VAT Company).
+				Also accepts ~6~ (Monotributo), ~13~ (Social Monotributista), ~16~ (Promoted Independent
+				Worker), ~4~ (Exempt Subject), ~7~ (Uncategorized), ~10~ (VAT Exempt Law 19640),
+				or ~15~ (VAT Not Applicable).
+
+				The VAT status is validated against the document type:
+
+				- Type A documents (~1~, ~2~, ~3~, etc.): Require VAT status ~1~, ~6~, ~13~, or ~16~.
+				- Type B documents (~6~, ~7~, ~8~, etc.): Cannot have VAT status ~1~, ~6~, ~13~, or ~16~.
+				- Document type ~49~ (Used Goods Purchase Invoice): Requires VAT status ~5~ (Final Consumer).
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
