@@ -1,19 +1,10 @@
 package mydata
 
 import (
-	"slices"
-
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
-
-var taxCategoryExtensions = []cbc.Key{
-	ExtKeyFee,
-	ExtKeyOtherTax,
-	ExtKeyStampDuty,
-}
 
 func normalizeCharge(c *bill.Charge) {
 	if c == nil {
@@ -38,28 +29,20 @@ func validateCharge(c *bill.Charge) error {
 	}
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Ext,
+			tax.ExtensionsAllowOneOf(ExtKeyFee, ExtKeyOtherTax, ExtKeyStampDuty),
 			validation.When(
 				c.Ext.Get(ExtKeyTaxType) == TaxTypeFee,
 				tax.ExtensionsRequire(ExtKeyFee),
-				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyFee)...),
 			),
 			validation.When(
 				c.Ext.Get(ExtKeyTaxType) == TaxTypeOtherTax,
 				tax.ExtensionsRequire(ExtKeyOtherTax),
-				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyOtherTax)...),
 			),
 			validation.When(
 				c.Ext.Get(ExtKeyTaxType) == TaxTypeStampDuty,
 				tax.ExtensionsRequire(ExtKeyStampDuty),
-				tax.ExtensionsExclude(taxCategoryExtensionsExcept(ExtKeyStampDuty)...),
 			),
 			validation.Skip,
 		),
 	)
-}
-
-func taxCategoryExtensionsExcept(key cbc.Key) []cbc.Key {
-	return slices.DeleteFunc(slices.Clone(taxCategoryExtensions), func(k cbc.Key) bool {
-		return k == key
-	})
 }

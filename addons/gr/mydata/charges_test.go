@@ -170,7 +170,8 @@ func TestValidateCharge(t *testing.T) {
 		}
 		err := ad.Validator(c)
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "gr-mydata-other-tax: must be blank")
+		assert.Contains(t, err.Error(), "gr-mydata-other-tax: only one allowed")
+		assert.Contains(t, err.Error(), "gr-mydata-fee: only one allowed")
 	})
 }
 

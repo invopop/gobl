@@ -305,6 +305,16 @@ func ExtensionsExclude(keys ...cbc.Key) validation.Rule {
 	}
 }
 
+// ExtensionsAllowOneOf returns a validation rule that ensures at most
+// one of the provided keys is present in the extensions map. This is useful
+// for mutually exclusive options where none or one is allowed.
+func ExtensionsAllowOneOf(keys ...cbc.Key) validation.Rule {
+	return validateExtCodeMap{
+		operator: extCodeOpOneOf,
+		keys:     keys,
+	}
+}
+
 type extCodeOp int
 
 const (
@@ -312,6 +322,7 @@ const (
 	extCodeOpAnd extCodeOp = 1 + iota
 	extCodeOpNot
 	extCodeOpXNOr
+	extCodeOpOneOf
 )
 
 type validateExtCodeMap struct {
@@ -351,6 +362,21 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 				if _, ok := em[k]; !ok {
 					err[k.String()] = errors.New("required")
 				}
+			}
+		}
+	case extCodeOpOneOf:
+		present := false
+		for _, k := range v.keys {
+			if _, ok := em[k]; ok {
+				if present {
+					for _, k := range v.keys {
+						if _, ok := em[k]; ok {
+							err[k.String()] = errors.New("only one allowed")
+						}
+					}
+					break
+				}
+				present = true
 			}
 		}
 	}
