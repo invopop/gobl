@@ -12,7 +12,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func validateInvoice(inv *bill.Invoice) error {
+func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Series, validation.Required),
 		validation.Field(&inv.Tax,
