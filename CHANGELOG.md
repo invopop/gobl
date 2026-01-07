@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - `ar-arca-v4`: Added initial Argentina ARCA addon.
 - `eu-en16931-v2017`: Added check for negative prices.
+- `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)
+- `br`: Add CBS and IBS tax categories
+- `gr-mydata-v1`: New charge types: fees, stamp duties and other taxes.
 
 ### Removed
 
