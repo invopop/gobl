@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a11e23660d5e0e20f452522eab614618ece9780d115c3019cf885b08a41527f0"
+			"val": "c5f275c8e9565ead29089e41769c81334ec1cc24a2c457ed5784762e3b7ff7f4"
 		}
 	},
 	"doc": {
@@ -14,7 +14,7 @@
 			"ar-arca-v4"
 		],
 		"$tags": [
-			"simplified-scheme"
+			"monotax"
 		],
 		"uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
 		"type": "standard",

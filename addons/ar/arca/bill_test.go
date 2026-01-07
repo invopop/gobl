@@ -328,7 +328,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeProforma
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		// Proforma is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
@@ -442,7 +442,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		assert.Equal(t, "11", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
@@ -451,7 +451,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		assert.Equal(t, "13", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
@@ -460,7 +460,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		assert.Equal(t, "12", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
@@ -474,11 +474,11 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
-	t.Run("simplified-scheme tag takes precedence over VAT status", func(t *testing.T) {
+	t.Run("monotax tag takes precedence over VAT status", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		inv.Customer.Ext = tax.Extensions{
 			arca.ExtKeyVATStatus: "1", // Would normally trigger type A
 		}
@@ -491,10 +491,10 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 func TestInvoiceDocTypeNormalization(t *testing.T) {
 	ad := tax.AddonForKey(arca.V4)
 
-	t.Run("simplified-scheme tag sets type C invoice", func(t *testing.T) {
+	t.Run("monotax tag sets type C invoice", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax.Ext = nil // Clear doc type
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		inv.Customer.Ext = tax.Extensions{
 			arca.ExtKeyVATStatus: "1", // Even with type A VAT status, tag takes precedence
 		}
@@ -502,20 +502,20 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		assert.Equal(t, "11", inv.Tax.Ext[arca.ExtKeyDocType].String()) // Invoice C
 	})
 
-	t.Run("simplified-scheme tag sets type C credit note", func(t *testing.T) {
+	t.Run("monotax tag sets type C credit note", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		assert.Equal(t, "13", inv.Tax.Ext[arca.ExtKeyDocType].String()) // Credit Note C
 	})
 
-	t.Run("simplified-scheme tag sets type C debit note", func(t *testing.T) {
+	t.Run("monotax tag sets type C debit note", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext = nil
-		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagSimplifiedScheme}}
+		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
 		ad.Normalizer(inv)
 		assert.Equal(t, "12", inv.Tax.Ext[arca.ExtKeyDocType].String()) // Debit Note C
 	})
@@ -1548,7 +1548,7 @@ func testInvoiceTypeC(t *testing.T) *bill.Invoice {
 		Ordering: testOrdering(),
 		Payment:  testPayment(),
 	}
-	inv.SetTags(arca.TagSimplifiedScheme) // Type C uses simplified-regime tag
+	inv.SetTags(arca.TagMonotax) // Type C uses monotax tag
 	return inv
 }
 

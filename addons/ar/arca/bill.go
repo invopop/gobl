@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	// TagSimplifiedScheme is used for Invoice C - when the supplier is under a
-	// simplified tax regime (Monotributo in Argentina).
-	TagSimplifiedScheme cbc.Key = "simplified-scheme"
+	// TagMonotax is used for Invoice C - when the supplier is under the
+	// Monotributo regime (simplified unified tax for small taxpayers in Argentina).
+	TagMonotax cbc.Key = "monotax"
 )
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
@@ -39,14 +39,14 @@ var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*cbc.Definition{
 		{
-			Key: TagSimplifiedScheme,
+			Key: TagMonotax,
 			Name: i18n.String{
-				i18n.EN: "Simplified Tax Scheme",
+				i18n.EN: "Monotax",
 				i18n.ES: "Monotributo",
 			},
 			Desc: i18n.String{
-				i18n.EN: "Invoice C: Supplier is under a simplified tax scheme (Monotributo).",
-				i18n.ES: "Factura C: El proveedor está bajo un esquema tributario simplificado (Monotributo).",
+				i18n.EN: "Invoice C: Supplier is under the Monotributo regime (simplified unified tax for small taxpayers).",
+				i18n.ES: "Factura C: El proveedor está bajo el régimen de Monotributo.",
 			},
 		},
 	},
@@ -107,7 +107,7 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 	var docType cbc.Code
 
 	// Check for simplified-scheme tag (Type C)
-	if inv.Tags.HasTags(TagSimplifiedScheme) {
+	if inv.Tags.HasTags(TagMonotax) {
 		docType = getDocTypeForCategory("C", inv.Type)
 	} else if inv.Customer != nil && inv.Customer.Ext != nil {
 		// Check customer VAT status

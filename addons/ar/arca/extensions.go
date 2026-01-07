@@ -116,7 +116,7 @@ var extensions = []*cbc.Definition{
 				normalization based on the following rules:
 
 				Type C (Simplified Tax Scheme / Monotributo supplier): If the invoice has the
-				~simplified-scheme~ tag set, the document type will be ~11~ (Invoice C), ~13~ (Credit Note C),
+				~monotax~ tag set, the document type will be ~11~ (Invoice C), ~13~ (Credit Note C),
 				or ~12~ (Debit Note C).
 
 				Type A (B2B with VAT-registered customers): If the customer's ~ar-arca-vat-status~ extension
