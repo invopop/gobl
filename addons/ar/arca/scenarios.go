@@ -38,13 +38,11 @@ var invoiceTags = &tax.TagSet{
 // 13 (Monotributista Social), 16 (Monotributo Trabajador Independiente Promovido)
 var vatStatusesTypeA = []cbc.Code{"1", "6", "13", "16"}
 
-// invoiceCustomerIsB2B checks if the invoice should be Type A based on
-// the customer's VAT status. Type A is used when the customer is VAT registered
-// (Responsable Inscripto, Monotributo, etc.)
+// invoiceCustomerIsB2B checks if the invoice should be Type A.
+// Type A is used when the customer has an Argentine tax ID AND is VAT registered.
 //
-// Since scenarios run before normalization, we check:
-// 1. If VAT status is explicitly set → use that
-// 2. If not set but customer has AR tax ID → assume Type A (will be normalized to status "1")
+// This function checks VAT status if explicitly set (user provided), otherwise
+// uses tax ID as a fallback. Validation ensures consistency after normalization.
 func invoiceCustomerIsB2B(doc any) bool {
 	inv, ok := doc.(*bill.Invoice)
 	if !ok {
@@ -58,14 +56,15 @@ func invoiceCustomerIsB2B(doc any) bool {
 		return false
 	}
 
-	// Check if VAT status is explicitly set
+	// If VAT status is explicitly set, use it to determine type
+	// This allows users to override the default behavior (e.g., AR tax ID with exempt status → Type B)
 	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
 	if vatStatus != "" {
 		return vatStatus.In(vatStatusesTypeA...)
 	}
 
-	// VAT status not set yet - use tax ID to determine
-	// Customer with AR tax ID will be normalized to status "1" (Responsable Inscripto)
+	// VAT status not set - use tax ID as fallback
+	// Customer with AR tax ID will be normalized to status "1" (Responsable Inscripto) → Type A
 	if inv.Customer.TaxID != nil && inv.Customer.TaxID.Country == l10n.AR.Tax() {
 		return true
 	}
@@ -73,15 +72,11 @@ func invoiceCustomerIsB2B(doc any) bool {
 	return false
 }
 
-// invoiceCustomerIsB2C checks if the invoice should be Type B based on
-// the customer's VAT status. Type B is used for final consumers, exempt subjects,
-// foreign customers, and other non-VAT-registered customers.
-// VAT statuses: 4 (Exempt), 5 (Final Consumer), 7 (Uncategorized), 8 (Foreign Supplier),
-// 9 (Foreign Customer), 10 (VAT Exempt Law 19.640), 15 (VAT Not Applicable)
+// invoiceCustomerIsB2C checks if the invoice should be Type B.
+// Type B is used for final consumers, foreign customers, or when there's no customer.
 //
-// Since scenarios run before normalization, we check:
-// 1. If VAT status is explicitly set → use that
-// 2. If not set → use tax ID to determine (no customer, no tax ID, or foreign = Type B)
+// This is the logical opposite of invoiceCustomerIsB2B - all invoices without
+// the simplified-regime tag are either B2B or B2C, making these mutually exclusive.
 func invoiceCustomerIsB2C(doc any) bool {
 	inv, ok := doc.(*bill.Invoice)
 	if !ok {
@@ -91,32 +86,8 @@ func invoiceCustomerIsB2C(doc any) bool {
 	if inv.HasTags(TagSimplifiedRegime) {
 		return false
 	}
-
-	// No customer = B2C
-	if inv.Customer == nil {
-		return true
-	}
-
-	// Check if VAT status is explicitly set
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
-	if vatStatus != "" {
-		// Type B if NOT in the Type A list
-		return !vatStatus.In(vatStatusesTypeA...)
-	}
-
-	// VAT status not set yet - use tax ID to determine
-	// No tax ID = B2C (will be normalized to status "5" Final Consumer)
-	if inv.Customer.TaxID == nil {
-		return true
-	}
-
-	// Foreign tax ID = B2C (will be normalized to status "9" Foreign Customer)
-	if inv.Customer.TaxID.Country != l10n.AR.Tax() {
-		return true
-	}
-
-	// AR tax ID without explicit VAT status = B2B (handled by invoiceCustomerIsB2B)
-	return false
+	// B2C is the opposite of B2B
+	return !invoiceCustomerIsB2B(doc)
 }
 
 var scenarios = []*tax.ScenarioSet{

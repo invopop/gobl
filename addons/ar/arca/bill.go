@@ -115,7 +115,7 @@ func validateInvoice(inv *bill.Invoice) error {
 				!inv.Tax.GetExt(ExtKeyDocType).In(append(DocTypesB, TypeUsedGoodsPurchaseInvoice)...),
 				validation.Required,
 			),
-			validation.By(validateInvoiceCustomer),
+			validation.By(validateInvoiceCustomer(inv.Tax)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -188,23 +188,68 @@ func validateInvoiceTax(val any) error {
 	)
 }
 
-func validateInvoiceCustomer(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
+func validateInvoiceCustomer(invTax *bill.Tax) validation.RuleFunc {
+	return func(val any) error {
+		p, ok := val.(*org.Party)
+		if !ok || p == nil {
+			return nil
+		}
+		if p.TaxID == nil && org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) == nil {
+			return fmt.Errorf("must have a tax_id, or an identity with ext '%s'", ExtKeyIdentityType)
+		}
+
+		return validation.ValidateStruct(p,
+			validation.Field(&p.TaxID,
+				tax.RequireIdentityCode,
+				validation.Skip,
+			),
+			validation.Field(&p.Ext,
+				tax.ExtensionsRequire(ExtKeyVATStatus),
+				validation.By(validateVATStatusMatchesDocType(invTax)),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateVATStatusMatchesDocType(invTax *bill.Tax) validation.RuleFunc {
+	return func(val any) error {
+		if invTax == nil {
+			return nil
+		}
+
+		ext, ok := val.(tax.Extensions)
+		if !ok {
+			return nil
+		}
+
+		docType := invTax.GetExt(ExtKeyDocType)
+		vatStatus := ext[ExtKeyVATStatus]
+
+		if vatStatus == "" {
+			return nil
+		}
+
+		if docType.In(DocTypesA...) {
+			// Type A invoices require VAT status 1, 6, 13, or 16
+			return validation.Validate(vatStatus,
+				validation.In(vatStatusesTypeA...).Error(
+					fmt.Sprintf("document type A requires customer VAT status to be one of %v", vatStatusesTypeA),
+				),
+			)
+		}
+
+		if docType.In(DocTypesB...) {
+			// Type B invoices require VAT status other than 1, 6, 13, or 16
+			return validation.Validate(vatStatus,
+				validation.NotIn(vatStatusesTypeA...).Error(
+					fmt.Sprintf("document type B cannot have customer VAT status %v", vatStatusesTypeA),
+				),
+			)
+		}
+
 		return nil
 	}
-	if p.TaxID == nil && org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) == nil {
-		return fmt.Errorf("must have a tax_id, or an identity with ext '%s'", ExtKeyIdentityType)
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.TaxID,
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-		validation.Field(&p.Ext,
-			tax.ExtensionsRequire(ExtKeyVATStatus),
-		),
-	)
 }
 
 func validateOrdering(val any) error {

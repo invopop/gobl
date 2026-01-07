@@ -30,8 +30,11 @@ const (
 	ChargeTaxCodeOther                       cbc.Code = "99"
 )
 
+// DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
+var DocTypesA = []cbc.Code{"1", "2", "3", "34", "39", "51", "52", "53", "54", "60", "63", "201", "202", "203"}
+
 // DocTypesB are document codes (Invoice B, Debit Note B, Credit Note B, and FCE variants)
-var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10"}
+var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10", "35", "40", "61", "64", "206", "207", "208"}
 
 // DocTypesC are document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
 var DocTypesC = []cbc.Code{"11", "12", "13", "211", "212", "213"}
@@ -677,6 +680,20 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "CI Tierra del Fuego",
 					i18n.ES: "CI Tierra del Fuego",
+				},
+			},
+			{
+				Code: "80",
+				Name: i18n.String{
+					i18n.EN: "CUIT (Unique Tax Identification Number)",
+					i18n.ES: "CUIT (Clave Única de Identificación Tributaria)",
+				},
+			},
+			{
+				Code: "86",
+				Name: i18n.String{
+					i18n.EN: "CUIL (Unique Labor Identification Number)",
+					i18n.ES: "CUIL (Clave Única de Identificación Laboral)",
 				},
 			},
 			{

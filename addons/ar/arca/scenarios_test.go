@@ -157,9 +157,18 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
-	t.Run("type B for exempt customer", func(t *testing.T) {
-		inv := testInvoiceB2B(t)
-		// Set customer as VAT Exempt (VAT status 4) - should be Type B
+	t.Run("type B for exempt customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceB2C(t)
+		// Customer without tax ID, VAT status 4 (Exempt) - should be Type B
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "12345678",
+				Ext: tax.Extensions{
+					arca.ExtKeyIdentityType: "96", // DNI
+				},
+			},
+		}
 		inv.Customer.Ext = tax.Extensions{
 			arca.ExtKeyVATStatus: "4",
 		}
@@ -167,15 +176,30 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
-	t.Run("type B for VAT exempt customer with AR tax ID", func(t *testing.T) {
+	t.Run("type B for exempt customer with AR tax ID", func(t *testing.T) {
 		inv := testInvoiceB2B(t)
-		// Set customer as VAT Exempt (VAT status 4) - should be Type B
-		// They have an AR tax ID but are exempt from VAT
+		// AR customer with VAT status 4 (Exempt) - should be Type B
+		// This is a valid case: customer has AR tax ID but is exempt from VAT
 		inv.Customer.Ext = tax.Extensions{
 			arca.ExtKeyVATStatus: "4",
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+
+	t.Run("type A with incorrect VAT status fails validation", func(t *testing.T) {
+		inv := testInvoiceB2B(t)
+		// Force Type A by leaving VAT status unset (defaults to status "1")
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
+
+		// Now manually set an invalid VAT status for Type A
+		inv.Customer.Ext[arca.ExtKeyVATStatus] = "4"
+
+		// Validation should catch this inconsistency
+		err := inv.Validate()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "document type A requires customer VAT status")
 	})
 }
 
