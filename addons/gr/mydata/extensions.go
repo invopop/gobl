@@ -1331,20 +1331,26 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Greek invoices may contain charges for taxes and fees different from VAT. The
+				Greek invoices may contain charges or allowances for taxes and fees different from VAT. The
 				~gr-mydata-tax-type~ extension at charge level must be used to specify the tax type.
 
-				GOBL will automatically set the proper ~gr-mydata-tax-type~ code based on the presence
-				of the related extensions: ~gr-mydata-fee~, ~gr-mydata-other-tax~ and
-				~gr-mydata-stamp-duty~.
+				GOBL will attempt to automatically set the ~gr-mydata-tax-type~ extension. The following
+				table shows the mappings used: first, GOBL will check the charge's ~key~ field; if that
+				does not match, it will then check for the presence of the related extension:
 
-				For example:
+				| Code | Name       | GOBL Charge Key | Extension              |
+				| ---- | ---------- | --------------- | ---------------------- |
+				| ~2~  | Fee        |                 | ~gr-mydata-fee~        |
+				| ~3~  | Other Tax  | ~tax~           | ~gr-mydata-other-tax~  |
+				| ~4~  | Stamp Duty | ~stamp-duty~    | ~gr-mydata-stamp-duty~ |
+
+				For example (manual):
 
 				~~~json
 				"charges": [
 					{
 						"amount": "10.00",
-						"reason": "Subscription fee",
+						"reason": "Stamp duty fee",
 						"ext": {
 							"gr-mydata-tax-type": "2",
 							"gr-mydata-fee": "13",
@@ -1561,7 +1567,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "18",
 				Name: i18n.String{
-					i18n.EN: "Residence fee for attendees",
+					i18n.EN: "Accommodation fee",
 					i18n.EL: "Τέλος διαμονής παρεπιδημούντων",
 				},
 			},

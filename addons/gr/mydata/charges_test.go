@@ -76,6 +76,44 @@ func TestNormalizeCharge(t *testing.T) {
 		ad.Normalizer(c)
 		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext[mydata.ExtKeyTaxType].String())
 	})
+
+	t.Run("with stamp duty charge key and existing extension", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:    bill.ChargeKeyStampDuty,
+			Amount: num.MakeAmount(1200, 2),
+			Ext: tax.Extensions{
+				mydata.ExtKeyFee: "13",
+			},
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext[mydata.ExtKeyTaxType].String())
+		assert.Equal(t, "13", c.Ext[mydata.ExtKeyFee].String())
+	})
+
+	t.Run("with tax charge key and existing extension", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:    bill.ChargeKeyTax,
+			Amount: num.MakeAmount(500, 2),
+			Ext: tax.Extensions{
+				mydata.ExtKeyOtherTax: "8",
+			},
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext[mydata.ExtKeyTaxType].String())
+		assert.Equal(t, "8", c.Ext[mydata.ExtKeyOtherTax].String())
+	})
+
+	t.Run("charge key overrides existing tax type", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:    bill.ChargeKeyStampDuty,
+			Amount: num.MakeAmount(1200, 2),
+			Ext: tax.Extensions{
+				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
+			},
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext[mydata.ExtKeyTaxType].String())
+	})
 }
 
 func TestValidateCharge(t *testing.T) {
