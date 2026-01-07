@@ -48,7 +48,6 @@ func newAddon() *tax.AddonDef {
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
-		Scenarios:   scenarios,
 		Corrections: invoiceCorrectionDefinitions,
 		Normalizer:  normalize,
 		Validator:   validate,
@@ -58,7 +57,7 @@ func newAddon() *tax.AddonDef {
 func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		normalizeInvoice(obj)
+		normalizeBillInvoice(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
@@ -67,9 +66,9 @@ func normalize(doc any) {
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return validateInvoice(obj)
+		return validateBillInvoice(obj)
 	case *bill.Charge:
-		return validateCharge(obj)
+		return validateBillCharge(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
 	}

@@ -8,11 +8,18 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
+)
+
+const (
+	// TagSimplifiedScheme is used for Invoice C - when the supplier is under a
+	// simplified tax regime (Monotributo in Argentina).
+	TagSimplifiedScheme cbc.Key = "simplified-scheme"
 )
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
@@ -28,48 +35,139 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	},
 }
 
-func normalizeInvoice(inv *bill.Invoice) {
-	normalizePartyVATStatus(inv.Customer)
-	normalizeTransactionType(inv)
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.Definition{
+		{
+			Key: TagSimplifiedScheme,
+			Name: i18n.String{
+				i18n.EN: "Simplified Tax Scheme",
+				i18n.ES: "Monotributo",
+			},
+			Desc: i18n.String{
+				i18n.EN: "Invoice C: Supplier is under a simplified tax scheme (Monotributo).",
+				i18n.ES: "Factura C: El proveedor está bajo un esquema tributario simplificado (Monotributo).",
+			},
+		},
+	},
 }
 
-// VAT statuses valid for customers without a tax ID (final consumers)
-// Default: 5 (Consumidor Final)
-// Uncertain: 4, 7, 10, 15 - unclear if they need tax ID, allowing for flexibility
-var vatStatusesNoTaxID = []cbc.Code{"5", "4", "7", "10", "15"}
+func normalizeBillInvoice(inv *bill.Invoice) {
+	normalizeBillInvoiceCustomer(inv.Customer)
+	normalizeBillInvoiceTaxDocType(inv)
+	normalizeBillInvoiceTaxConcept(inv)
+}
 
-// VAT statuses valid for customers with an Argentine tax ID
-// Default: 1 (Responsable Inscripto)
-// Certain (Type A): 1 (Responsable Inscripto), 6 (Monotributo), 13 (Monotributista Social),
-// 16 (Monotributo Trabajador Independiente Promovido)
-//
-// Uncertain (Type B): 4 (VAT Exempt), 7 (Uncategorized), 10 (Tierra del Fuego), 15 (Not subject to VAT)
-//   - these may or may not require an AR tax ID, allowing for flexibility
-var vatStatusesARTaxID = []cbc.Code{"1", "6", "13", "16", "4", "7", "10", "15"}
-
-// VAT statuses valid for customers with a foreign tax ID
-// Default: 9 (Cliente del Exterior)
-// Also valid: 8 (Proveedor del Exterior)
-var vatStatusesForeignTaxID = []cbc.Code{"9", "8"}
-
-func normalizePartyVATStatus(p *org.Party) {
+func normalizeBillInvoiceCustomer(p *org.Party) {
 	if p == nil {
 		return
 	}
 	switch {
 	case p.TaxID == nil:
 		// No tax ID: Final Consumer or Uncategorized
-		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "5", vatStatusesNoTaxID...)
-	case p.TaxID.Country == l10n.AR.Tax():
-		// AR tax ID: any valid AR customer status
-		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "1", vatStatusesARTaxID...)
-	default:
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
+			VATStatusFinalConsumer,
+			VATStatusExemptSubject,
+			VATStatusUncategorizedSubject,
+			VATStatusVATExemptLaw19640,
+			VATStatusVATNotApplicable,
+		)
+	case p.TaxID.Country != l10n.AR.Tax():
 		// Foreign tax ID: Foreign Customer or Supplier
-		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus, "9", vatStatusesForeignTaxID...)
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
+			VATStatusForeignCustomer,
+			VATStatusForeignSupplier,
+		)
+	default:
+		// AR tax ID: any valid AR customer status
+		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
+			VATStatusRegisteredCompany,
+			VATStatusMonotributoResponsible,
+			VATStatusSocialMonotributista,
+			VATStatusPromotedIndependentWorkerMonotributista,
+			VATStatusExemptSubject,
+			VATStatusUncategorizedSubject,
+			VATStatusVATExemptLaw19640,
+			VATStatusVATNotApplicable,
+		)
 	}
 }
 
-func normalizeTransactionType(inv *bill.Invoice) {
+func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
+	if inv.Tax == nil {
+		inv.Tax = new(bill.Tax)
+	}
+
+	// Skip if doc type is already set
+	if inv.Tax.GetExt(ExtKeyDocType) != "" {
+		return
+	}
+
+	// Determine the doc type category (A, B, or C)
+	var docType cbc.Code
+
+	// Check for simplified-scheme tag (Type C)
+	if inv.Tags.HasTags(TagSimplifiedScheme) {
+		docType = getDocTypeForCategory("C", inv.Type)
+	} else if inv.Customer != nil && inv.Customer.Ext != nil {
+		// Check customer VAT status
+		vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+		if vatStatus.In(vatStatusesTypeA...) {
+			// Type A for VAT status 1, 6, 13, 16
+			docType = getDocTypeForCategory("A", inv.Type)
+		} else {
+			// Type B for other VAT statuses
+			docType = getDocTypeForCategory("B", inv.Type)
+		}
+	} else {
+		// Default to Type B if no customer or no VAT status
+		docType = getDocTypeForCategory("B", inv.Type)
+	}
+
+	// Set the doc type extension
+	if docType != "" {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyDocType: docType,
+		})
+	}
+}
+
+// getDocTypeForCategory returns the doc type code based on the category (A, B, C)
+// and the invoice type (standard, credit-note, debit-note)
+func getDocTypeForCategory(category string, invType cbc.Key) cbc.Code {
+	switch category {
+	case "A":
+		switch invType {
+		case bill.InvoiceTypeStandard:
+			return "1" // Invoice A (standard)
+		case bill.InvoiceTypeDebitNote:
+			return "2" // Debit Note A
+		case bill.InvoiceTypeCreditNote:
+			return "3" // Credit Note A
+		}
+	case "B":
+		switch invType {
+		case bill.InvoiceTypeStandard:
+			return "6" // Invoice B (standard)
+		case bill.InvoiceTypeDebitNote:
+			return "7" // Debit Note B
+		case bill.InvoiceTypeCreditNote:
+			return "8" // Credit Note B
+		}
+	case "C":
+		switch invType {
+		case bill.InvoiceTypeStandard:
+			return "11" // Invoice C (standard)
+		case bill.InvoiceTypeDebitNote:
+			return "12" // Debit Note C
+		case bill.InvoiceTypeCreditNote:
+			return "13" // Credit Note C
+		}
+	}
+	return ""
+}
+
+func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {
 	var hasGoods, hasServices bool
 	for _, line := range inv.Lines {
 		if line.Item == nil || line.Item.Key != org.ItemKeyGoods {
@@ -95,19 +193,23 @@ func normalizeTransactionType(inv *bill.Invoice) {
 		inv.Tax = new(bill.Tax)
 	}
 	inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-		ExtKeyTransactionType: code,
+		ExtKeyConcept: code,
 	})
 }
 
-func validateInvoice(inv *bill.Invoice) error {
+func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Series,
 			validation.Required,
-			validation.By(validateSeries),
+			validation.By(validateBillInvoiceSeries),
 		),
 		validation.Field(&inv.Tax,
 			validation.Required,
-			validation.By(validateInvoiceTax),
+			validation.By(validateBillInvoiceTax),
+			validation.Skip,
+		),
+		validation.Field(&inv.Type,
+			validation.By(validateBillInvoiceType(inv.Tax.GetExt(ExtKeyDocType))),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
@@ -115,33 +217,33 @@ func validateInvoice(inv *bill.Invoice) error {
 				!inv.Tax.GetExt(ExtKeyDocType).In(append(DocTypesB, TypeUsedGoodsPurchaseInvoice)...),
 				validation.Required,
 			),
-			validation.By(validateInvoiceCustomer(inv.Tax)),
+			validation.By(validateBillInvoiceCustomer(inv.Tax.GetExt(ExtKeyDocType))),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateInvoiceLine(inv.Tax.GetExt(ExtKeyDocType))),
+				validation.By(validateBillInvoiceLine(inv.Tax.GetExt(ExtKeyDocType))),
 				validation.Skip,
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Ordering,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyTransactionType).In("2", "3"),
+				inv.Tax.GetExt(ExtKeyConcept).In(ConceptServices, ConceptProductsAndServices),
 				validation.Required,
-				validation.By(validateOrdering),
+				validation.By(validateBillOrdering),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyTransactionType).In("2", "3"),
+				inv.Tax.GetExt(ExtKeyConcept).In(ConceptServices, ConceptProductsAndServices),
 				validation.Required,
-				validation.By(validatePayment),
+				validation.By(validateBillPaymentDetailsServices),
 			),
 			validation.When(
-				inv.Tax.GetExt(ExtKeyTransactionType).In("1"),
-				validation.By(validatePaymentNoDueDates),
+				inv.Tax.GetExt(ExtKeyConcept).In(ConceptGoods),
+				validation.By(validateBillPaymentDetailsGoods),
 			),
 			validation.Skip,
 		),
@@ -151,14 +253,26 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 			),
 			validation.Each(
-				validation.By(validateInvoicePreceding),
+				validation.By(validateBillInvoicePreceding),
 			),
 			validation.Skip,
 		),
 	)
 }
 
-func validateSeries(value interface{}) error {
+func validateBillInvoiceTax(val any) error {
+	tx, ok := val.(*bill.Tax)
+	if !ok || tx == nil {
+		return nil
+	}
+	return validation.ValidateStruct(tx,
+		validation.Field(&tx.Ext,
+			tax.ExtensionsRequire(ExtKeyDocType),
+		),
+	)
+}
+
+func validateBillInvoiceSeries(value interface{}) error {
 	s, ok := value.(cbc.Code)
 	if !ok || s == "" {
 		return nil
@@ -176,19 +290,38 @@ func validateSeries(value interface{}) error {
 	return nil
 }
 
-func validateInvoiceTax(val any) error {
-	tx, ok := val.(*bill.Tax)
-	if !ok || tx == nil {
+func validateBillInvoiceType(docType cbc.Code) validation.RuleFunc {
+	return func(val any) error {
+		invType, ok := val.(cbc.Key)
+		if !ok {
+			return nil
+		}
+
+		// Check if invoice type is credit-note but doc type is not a credit note
+		if invType == bill.InvoiceTypeCreditNote && !docType.In(DocTypesCreditNote...) {
+			return errors.New("invoice type is credit-note but ar-arca-doc-type is not a credit note")
+		}
+
+		// Check if invoice type is debit-note but doc type is not a debit note
+		if invType == bill.InvoiceTypeDebitNote && !docType.In(DocTypesDebitNote...) {
+			return errors.New("invoice type is debit-note but ar-arca-doc-type is not a debit note")
+		}
+
+		// Check if doc type is a credit note but invoice type is not credit-note
+		if docType.In(DocTypesCreditNote...) && invType != bill.InvoiceTypeCreditNote {
+			return errors.New("ar-arca-doc-type is a credit note but invoice type is not credit-note")
+		}
+
+		// Check if doc type is a debit note but invoice type is not debit-note
+		if docType.In(DocTypesDebitNote...) && invType != bill.InvoiceTypeDebitNote {
+			return errors.New("doc type is a debit note but invoice type is not debit-note")
+		}
+
 		return nil
 	}
-	return validation.ValidateStruct(tx,
-		validation.Field(&tx.Ext,
-			tax.ExtensionsRequire(ExtKeyDocType),
-		),
-	)
 }
 
-func validateInvoiceCustomer(invTax *bill.Tax) validation.RuleFunc {
+func validateBillInvoiceCustomer(docType cbc.Code) validation.RuleFunc {
 	return func(val any) error {
 		p, ok := val.(*org.Party)
 		if !ok || p == nil {
@@ -205,28 +338,31 @@ func validateInvoiceCustomer(invTax *bill.Tax) validation.RuleFunc {
 			),
 			validation.Field(&p.Ext,
 				tax.ExtensionsRequire(ExtKeyVATStatus),
-				validation.By(validateVATStatusMatchesDocType(invTax)),
+				validation.By(validateVATStatusMatchesDocType(docType)),
 				validation.Skip,
 			),
 		)
 	}
 }
 
-func validateVATStatusMatchesDocType(invTax *bill.Tax) validation.RuleFunc {
+func validateVATStatusMatchesDocType(docType cbc.Code) validation.RuleFunc {
 	return func(val any) error {
-		if invTax == nil {
-			return nil
-		}
-
 		ext, ok := val.(tax.Extensions)
 		if !ok {
 			return nil
 		}
 
-		docType := invTax.GetExt(ExtKeyDocType)
 		vatStatus := ext[ExtKeyVATStatus]
 
 		if vatStatus == "" {
+			return nil
+		}
+
+		// Doc type 49 (Used Goods Purchase Invoice) requires Final Consumer (5)
+		if docType == TypeUsedGoodsPurchaseInvoice {
+			if vatStatus != VATStatusFinalConsumer {
+				return fmt.Errorf("document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)")
+			}
 			return nil
 		}
 
@@ -252,7 +388,7 @@ func validateVATStatusMatchesDocType(invTax *bill.Tax) validation.RuleFunc {
 	}
 }
 
-func validateOrdering(val any) error {
+func validateBillOrdering(val any) error {
 	ordering, ok := val.(*bill.Ordering)
 	if !ok || ordering == nil {
 		return nil
@@ -264,7 +400,7 @@ func validateOrdering(val any) error {
 	)
 }
 
-func validatePayment(val any) error {
+func validateBillPaymentDetailsServices(val any) error {
 	payment, ok := val.(*bill.PaymentDetails)
 	if !ok || payment == nil {
 		return nil
@@ -288,7 +424,7 @@ func validatePaymentTerms(val any) error {
 	)
 }
 
-func validatePaymentNoDueDates(val any) error {
+func validateBillPaymentDetailsGoods(val any) error {
 	payment, ok := val.(*bill.PaymentDetails)
 	if !ok || payment == nil || payment.Terms == nil {
 		return nil
@@ -299,7 +435,7 @@ func validatePaymentNoDueDates(val any) error {
 	)
 }
 
-func validateInvoicePreceding(val any) error {
+func validateBillInvoicePreceding(val any) error {
 	preceding, ok := val.(*org.DocumentRef)
 	if !ok || preceding == nil {
 		return nil
@@ -311,7 +447,7 @@ func validateInvoicePreceding(val any) error {
 	)
 }
 
-func validateInvoiceLine(docType cbc.Code) validation.RuleFunc {
+func validateBillInvoiceLine(docType cbc.Code) validation.RuleFunc {
 	return func(val any) error {
 		line, ok := val.(*bill.Line)
 		if !ok || line == nil {

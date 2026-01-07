@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d02e857faf234ab2a25a8aa621c5028c03a4d7fef3c0f14675e108beb5a54774"
+			"val": "ee3ff13d3d88b4938bf599672215272432c0bc9865159681a2e150beef94be97"
 		}
 	},
 	"doc": {
@@ -21,8 +21,8 @@
 		"currency": "ARS",
 		"tax": {
 			"ext": {
-				"ar-arca-doc-type": "49",
-				"ar-arca-transaction-type": "1"
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "49"
 			}
 		},
 		"supplier": {

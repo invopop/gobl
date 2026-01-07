@@ -1,7 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$addons": ["ar-arca-v4"],
-  "$tags": ["simplified"],
   "uuid": "4bea8c67-6ad9-5cfc-a1ce-f9f391e963b1",
   "currency": "ARS",
   "issue_date": "2025-01-16",

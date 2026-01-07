@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func validateCharge(charge *bill.Charge) error {
+func validateBillCharge(charge *bill.Charge) error {
 	return validation.ValidateStruct(charge,
 		validation.Field(&charge.Ext,
 			validation.When(

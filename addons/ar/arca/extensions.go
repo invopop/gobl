@@ -7,12 +7,12 @@ import (
 
 // Extension keys for Argentina ARCA v4
 const (
-	ExtKeyDocType         cbc.Key = "ar-arca-doc-type"
-	ExtKeyTransactionType cbc.Key = "ar-arca-transaction-type"
-	ExtKeyIdentityType    cbc.Key = "ar-arca-identity-type"
-	ExtKeyTaxType         cbc.Key = "ar-arca-tax-type"
-	ExtKeyVATRate         cbc.Key = "ar-arca-vat-rate"
-	ExtKeyVATStatus       cbc.Key = "ar-arca-vat-status"
+	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
+	ExtKeyConcept      cbc.Key = "ar-arca-concept"
+	ExtKeyIdentityType cbc.Key = "ar-arca-identity-type"
+	ExtKeyTaxType      cbc.Key = "ar-arca-tax-type"
+	ExtKeyVATRate      cbc.Key = "ar-arca-vat-rate"
+	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
 )
 
 // Tax type codes
@@ -30,17 +30,73 @@ const (
 	ChargeTaxCodeOther                       cbc.Code = "99"
 )
 
+const (
+	VATStatusRegisteredCompany                       cbc.Code = "1"
+	VATStatusExemptSubject                           cbc.Code = "4"
+	VATStatusFinalConsumer                           cbc.Code = "5"
+	VATStatusMonotributoResponsible                  cbc.Code = "6"
+	VATStatusUncategorizedSubject                    cbc.Code = "7"
+	VATStatusForeignSupplier                         cbc.Code = "8"
+	VATStatusForeignCustomer                         cbc.Code = "9"
+	VATStatusVATExemptLaw19640                       cbc.Code = "10"
+	VATStatusSocialMonotributista                    cbc.Code = "13"
+	VATStatusVATNotApplicable                        cbc.Code = "15"
+	VATStatusPromotedIndependentWorkerMonotributista cbc.Code = "16"
+)
+
+const (
+	ConceptGoods               cbc.Code = "1"
+	ConceptServices            cbc.Code = "2"
+	ConceptProductsAndServices cbc.Code = "3"
+)
+
 // DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
-var DocTypesA = []cbc.Code{"1", "2", "3", "34", "39", "51", "52", "53", "54", "60", "63", "201", "202", "203"}
+// Used for validating the document type against the VAT status.
+var DocTypesA = []cbc.Code{"1", "2", "3", "4", "5", "34", "39", "51", "52", "53", "54", "60", "63", "201", "202", "203"}
 
 // DocTypesB are document codes (Invoice B, Debit Note B, Credit Note B, and FCE variants)
+// Used for validating the document type against the VAT status.
 var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10", "35", "40", "61", "64", "206", "207", "208"}
 
 // DocTypesC are document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
-var DocTypesC = []cbc.Code{"11", "12", "13", "211", "212", "213"}
+// Used for validating the document type against the VAT status.
+var DocTypesC = []cbc.Code{"11", "12", "13", "15", "211", "212", "213"}
 
 // TypeUsedGoodsPurchaseInvoice is the code for the used goods purchase invoice
 const TypeUsedGoodsPurchaseInvoice = "49"
+
+// vatStatusesTypeA are VAT status codes that require type A documents
+// Used for validating the document type against the different VAT statuses.
+var vatStatusesTypeA = []cbc.Code{
+	VATStatusRegisteredCompany,                       // 1
+	VATStatusMonotributoResponsible,                  // 6
+	VATStatusSocialMonotributista,                    // 13
+	VATStatusPromotedIndependentWorkerMonotributista, // 16
+}
+
+// DocTypesCreditNote are document codes for all credit notes (A, B, C, and FCE variants)
+// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+var DocTypesCreditNote = []cbc.Code{
+	"3",   // Credit Note A
+	"8",   // Credit Note B
+	"13",  // Credit Note C
+	"53",  // Credit Note A with withholding legend
+	"203", // MiPyMEs Electronic Credit Note (FCE) A
+	"208", // MiPyMEs Electronic Credit Note (FCE) B
+	"213", // MiPyMEs Electronic Credit Note (FCE) C
+}
+
+// DocTypesDebitNote are document codes for all debit notes (A, B, C, and FCE variants)
+// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+var DocTypesDebitNote = []cbc.Code{
+	"2",   // Debit Note A
+	"7",   // Debit Note B
+	"12",  // Debit Note C
+	"52",  // Debit Note A with withholding legend
+	"202", // MiPyMEs Electronic Debit Note (FCE) A
+	"207", // MiPyMEs Electronic Debit Note (FCE) B
+	"212", // MiPyMEs Electronic Debit Note (FCE) C
+}
 
 var extensions = []*cbc.Definition{
 	{
@@ -341,10 +397,10 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyTransactionType,
+		Key: ExtKeyConcept,
 		Name: i18n.String{
-			i18n.EN: "Argentina ARCA Transaction Type (Product, service, or both)",
-			i18n.ES: "Tipo de Transacción Argentina ARCA (Producto, servicio, o ambos)",
+			i18n.EN: "Argentina ARCA Concept (Product, service, or both)",
+			i18n.ES: "Concepto Argentina ARCA (Producto, servicio, o ambos)",
 		},
 		Values: []*cbc.Definition{
 			{
