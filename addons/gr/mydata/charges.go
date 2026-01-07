@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func normalizeCharge(c *bill.Charge) {
+func normalizeBillCharge(c *bill.Charge) {
 	if c == nil {
 		return
 	}
@@ -23,7 +23,7 @@ func normalizeCharge(c *bill.Charge) {
 	}
 }
 
-func validateCharge(c *bill.Charge) error {
+func validateBillCharge(c *bill.Charge) error {
 	if c == nil {
 		return nil
 	}
