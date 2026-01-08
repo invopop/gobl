@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c5f275c8e9565ead29089e41769c81334ec1cc24a2c457ed5784762e3b7ff7f4"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"$tags": [
+			"monotax"
+		],
+		"uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"type": "standard",
+		"series": "1",
+		"code": "00000050",
+		"issue_date": "2025-01-18",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "2",
+				"ar-arca-doc-type": "11"
+			}
+		},
+		"supplier": {
+			"name": "María García - Diseño Gráfico",
+			"tax_id": {
+				"country": "AR",
+				"code": "20172543597"
+			},
+			"addresses": [
+				{
+					"street": "Calle Florida 500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1005",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "maria.garcia@email.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Startup Tech S.R.L.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Av. Belgrano 1000",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1092",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "admin@startuptech.com.ar"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"key": "services",
+					"name": "Diseño de logotipo e identidad visual",
+					"price": "150000.00"
+				},
+				"sum": "150000.00",
+				"total": "150000.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"key": "tax",
+				"percent": "10%",
+				"amount": "15000.00",
+				"ext": {
+					"ar-arca-tax-type": "1"
+				}
+			}
+		],
+		"ordering": {
+			"period": {
+				"start": "2025-01-01",
+				"end": "2025-01-15"
+			}
+		},
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-01-25",
+						"amount": "150000.00"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "150000.00",
+			"charge": "15000.00",
+			"total": "165000.00",
+			"tax": "0.00",
+			"total_with_tax": "165000.00",
+			"payable": "165000.00"
+		}
+	}
+}

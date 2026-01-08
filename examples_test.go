@@ -27,7 +27,7 @@ var skipExamplePaths = []string{
 	".golangci.yaml",
 	"wasm/",
 	".claude/",
-	".git",
+	".git/",
 }
 
 var updateExamples = flag.Bool("update", false, "Update the examples in the repository")
