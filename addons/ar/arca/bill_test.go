@@ -866,7 +866,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			},
 		}
 		inv.Customer.Ext = tax.Extensions{
-			arca.ExtKeyVATStatus: arca.VATStatusFinalConsumer, // 5
+			arca.ExtKeyVATStatus: "5", // Final Consumer
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -876,7 +876,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax.Ext[arca.ExtKeyDocType] = arca.TypeUsedGoodsPurchaseInvoice // 49
 		inv.Customer.Ext = tax.Extensions{
-			arca.ExtKeyVATStatus: arca.VATStatusRegisteredCompany, // 1
+			arca.ExtKeyVATStatus: "1", // Registered VAT Company
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -888,7 +888,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax.Ext[arca.ExtKeyDocType] = arca.TypeUsedGoodsPurchaseInvoice // 49
 		inv.Customer.Ext = tax.Extensions{
-			arca.ExtKeyVATStatus: arca.VATStatusMonotributoResponsible, // 6
+			arca.ExtKeyVATStatus: "6", // Monotributo Responsible
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -904,7 +904,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			Code:    "123456789",
 		}
 		inv.Customer.Ext = tax.Extensions{
-			arca.ExtKeyVATStatus: arca.VATStatusForeignCustomer, // 9
+			arca.ExtKeyVATStatus: "9", // Foreign Customer
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()

@@ -22,7 +22,7 @@ func validateBillCharge(charge *bill.Charge) error {
 		),
 		validation.Field(&charge.Reason,
 			validation.When(
-				charge.Ext.Get(ExtKeyTaxType) == ChargeTaxCodeOther,
+				charge.Ext.Get(ExtKeyTaxType) == "99", // Other
 				validation.Required.Error("reason is required when tax type is 'other'"),
 			),
 		),

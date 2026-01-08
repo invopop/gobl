@@ -16,43 +16,6 @@ const (
 	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
 )
 
-// Tax type codes
-const (
-	ChargeTaxCodeNationalTaxes               cbc.Code = "1"
-	ChargeTaxCodeProvincialTaxes             cbc.Code = "2"
-	ChargeTaxCodeMunicipalTaxes              cbc.Code = "3"
-	ChargeTaxCodeInternalTaxes               cbc.Code = "4"
-	ChargeTaxCodeGrossIncomeTax              cbc.Code = "5"
-	ChargeTaxCodeVATPrepayment               cbc.Code = "6"
-	ChargeTaxCodeGrossIncomeTaxPrepayment    cbc.Code = "7"
-	ChargeTaxCodeMunicipalTaxesPrepayment    cbc.Code = "8"
-	ChargeTaxCodeOtherPrepayments            cbc.Code = "9"
-	ChargeTaxCodeVATNotCategorizedPrepayment cbc.Code = "13"
-	ChargeTaxCodeOther                       cbc.Code = "99"
-)
-
-// Customer VAT status codes
-const (
-	VATStatusRegisteredCompany                       cbc.Code = "1"
-	VATStatusExemptSubject                           cbc.Code = "4"
-	VATStatusFinalConsumer                           cbc.Code = "5"
-	VATStatusMonotributoResponsible                  cbc.Code = "6"
-	VATStatusUncategorizedSubject                    cbc.Code = "7"
-	VATStatusForeignSupplier                         cbc.Code = "8"
-	VATStatusForeignCustomer                         cbc.Code = "9"
-	VATStatusVATExemptLaw19640                       cbc.Code = "10"
-	VATStatusSocialMonotributista                    cbc.Code = "13"
-	VATStatusVATNotApplicable                        cbc.Code = "15"
-	VATStatusPromotedIndependentWorkerMonotributista cbc.Code = "16"
-)
-
-// Concept codes
-const (
-	ConceptGoods               cbc.Code = "1"
-	ConceptServices            cbc.Code = "2"
-	ConceptProductsAndServices cbc.Code = "3"
-)
-
 // DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
 // Used for validating the document type against the VAT status.
 var DocTypesA = []cbc.Code{"1", "2", "3", "4", "5", "34", "39", "51", "52", "53", "54", "60", "63", "201", "202", "203"}
@@ -71,10 +34,10 @@ const TypeUsedGoodsPurchaseInvoice = "49"
 // vatStatusesTypeA are VAT status codes that require type A documents
 // Used for validating the document type against the different VAT statuses.
 var vatStatusesTypeA = []cbc.Code{
-	VATStatusRegisteredCompany,                       // 1
-	VATStatusMonotributoResponsible,                  // 6
-	VATStatusSocialMonotributista,                    // 13
-	VATStatusPromotedIndependentWorkerMonotributista, // 16
+	"1",  // Registered VAT Company
+	"6",  // Monotributo Responsible
+	"13", // Social Monotributista
+	"16", // Promoted Independent Worker Monotributista
 }
 
 // DocTypesCreditNote are document codes for all credit notes (A, B, C, and FCE variants)

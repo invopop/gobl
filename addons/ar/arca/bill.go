@@ -66,29 +66,29 @@ func normalizeBillInvoiceCustomerVATStatus(p *org.Party) {
 	case p.TaxID == nil:
 		// No tax ID: Final Consumer or Uncategorized
 		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
-			VATStatusFinalConsumer,
-			VATStatusExemptSubject,
-			VATStatusUncategorizedSubject,
-			VATStatusVATExemptLaw19640,
-			VATStatusVATNotApplicable,
+			"5",  // Final Consumer
+			"4",  // Exempt Subject
+			"7",  // Uncategorized Subject
+			"10", // VAT Exempt Law 19640
+			"15", // VAT Not Applicable
 		)
 	case p.TaxID.Country != l10n.AR.Tax():
 		// Foreign tax ID: Foreign Customer or Supplier
 		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
-			VATStatusForeignCustomer,
-			VATStatusForeignSupplier,
+			"9", // Foreign Customer
+			"8", // Foreign Supplier
 		)
 	default:
 		// AR tax ID: any valid AR customer status
 		p.Ext = p.Ext.SetOneOf(ExtKeyVATStatus,
-			VATStatusRegisteredCompany,
-			VATStatusMonotributoResponsible,
-			VATStatusSocialMonotributista,
-			VATStatusPromotedIndependentWorkerMonotributista,
-			VATStatusExemptSubject,
-			VATStatusUncategorizedSubject,
-			VATStatusVATExemptLaw19640,
-			VATStatusVATNotApplicable,
+			"1",  // Registered VAT Company
+			"6",  // Monotributo Responsible
+			"13", // Social Monotributista
+			"16", // Promoted Independent Worker Monotributista
+			"4",  // Exempt Subject
+			"7",  // Uncategorized Subject
+			"10", // VAT Exempt Law 19640
+			"15", // VAT Not Applicable
 		)
 	}
 }
@@ -106,21 +106,21 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 	// Determine the doc type category (A, B, or C)
 	var docType cbc.Code
 
-	// Check for simplified-scheme tag (Type C)
+	// Check for monotax tag (Type C)
 	if inv.Tags.HasTags(TagMonotax) {
 		docType = getDocTypeForCategory("C", inv.Type)
 	} else if inv.Customer != nil && inv.Customer.Ext != nil {
 		// Check customer VAT status
 		vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
 		if vatStatus.In(vatStatusesTypeA...) {
-			// Type A for VAT status 1, 6, 13, 16
+			// Type A for VAT status 1 (Registered VAT Company), 6 (Monotributo Responsible), 13 (Social Monotributista), 16 (Promoted Independent Worker Monotributista)
 			docType = getDocTypeForCategory("A", inv.Type)
 		} else {
 			// Type B for other VAT statuses
 			docType = getDocTypeForCategory("B", inv.Type)
 		}
 	} else {
-		// Default to Type B if no customer or no VAT status
+		// Default to Type B if no customer
 		docType = getDocTypeForCategory("B", inv.Type)
 	}
 
@@ -229,7 +229,10 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Ordering,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In(ConceptServices, ConceptProductsAndServices),
+				inv.Tax.GetExt(ExtKeyConcept).In(
+					"2", // Services
+					"3", // Products and services
+				),
 				validation.Required,
 				validation.By(validateBillOrderingPeriod),
 			),
@@ -237,12 +240,17 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In(ConceptServices, ConceptProductsAndServices),
+				inv.Tax.GetExt(ExtKeyConcept).In(
+					"2", // Services
+					"3", // Products and services
+				),
 				validation.Required,
 				validation.By(validateBillPaymentDetailsServices),
 			),
 			validation.When(
-				inv.Tax.GetExt(ExtKeyConcept).In(ConceptGoods),
+				inv.Tax.GetExt(ExtKeyConcept).In(
+					"1", // Products
+				),
 				validation.By(validateBillPaymentDetailsGoods),
 			),
 			validation.Skip,
@@ -360,14 +368,14 @@ func validateVATStatusMatchesDocType(docType cbc.Code) validation.RuleFunc {
 
 		// Doc type 49 (Used Goods Purchase Invoice) requires Final Consumer (5)
 		if docType == TypeUsedGoodsPurchaseInvoice {
-			if vatStatus != VATStatusFinalConsumer {
+			if vatStatus != "5" { // Final Consumer
 				return fmt.Errorf("document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)")
 			}
 			return nil
 		}
 
 		if docType.In(DocTypesA...) {
-			// Type A invoices require VAT status 1, 6, 13, or 16
+			// Type A invoices require VAT status 1 (Registered VAT Company), 6 (Monotributo Responsible), 13 (Social Monotributista), 16 (Promoted Independent Worker Monotributista)
 			return validation.Validate(vatStatus,
 				validation.In(vatStatusesTypeA...).Error(
 					fmt.Sprintf("document type A requires customer VAT status to be one of %v", vatStatusesTypeA),
@@ -376,7 +384,7 @@ func validateVATStatusMatchesDocType(docType cbc.Code) validation.RuleFunc {
 		}
 
 		if docType.In(DocTypesB...) {
-			// Type B invoices require VAT status other than 1, 6, 13, or 16
+			// Type B invoices require VAT status other than 1 (Registered VAT Company), 6 (Monotributo Responsible), 13 (Social Monotributista), 16 (Promoted Independent Worker Monotributista)
 			return validation.Validate(vatStatus,
 				validation.NotIn(vatStatusesTypeA...).Error(
 					fmt.Sprintf("document type B cannot have customer VAT status %v", vatStatusesTypeA),
