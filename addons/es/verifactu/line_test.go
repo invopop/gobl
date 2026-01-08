@@ -301,4 +301,3 @@ func validLine() *bill.Line {
 		},
 	}
 }
-

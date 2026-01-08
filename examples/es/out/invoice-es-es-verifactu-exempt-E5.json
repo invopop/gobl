@@ -1,115 +1,125 @@
 {
-	"$schema": "https://gobl.org/draft-0/bill/invoice",
-	"$regime": "ES",
-	"$addons": [
-		"es-verifactu-v1"
-	],
-	"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e5",
-	"type": "standard",
-	"series": "FT",
-	"code": "E5-001",
-	"issue_date": "2024-12-04",
-	"currency": "EUR",
-	"tax": {
-		"ext": {
-			"es-verifactu-doc-type": "F1"
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "960864899ce7503a5739d6d48bb876688739eb8476788aa7200e31fb78c73a54"
 		}
 	},
-	"supplier": {
-		"name": "EU Trading S.L.",
-		"tax_id": {
-			"country": "ES",
-			"code": "B98602642"
-		},
-		"addresses": [
-			{
-				"num": "42",
-				"street": "Calle Pradillo",
-				"locality": "Madrid",
-				"region": "Madrid",
-				"code": "28002",
-				"country": "ES"
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e5",
+		"type": "standard",
+		"series": "FT",
+		"code": "E5-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
 			}
-		]
-	},
-	"customer": {
-		"name": "Dutch Distribution B.V.",
-		"tax_id": {
-			"country": "NL",
-			"code": "000099995B57"
 		},
-		"addresses": [
-			{
-				"num": "15",
-				"street": "Main Street",
-				"locality": "Amsterdam",
-				"code": "1012 AB",
-				"country": "NL"
-			}
-		]
-	},
-	"lines": [
-		{
-			"i": 1,
-			"quantity": "200",
-			"item": {
-				"name": "Electronics components",
-				"price": "10.00",
-				"unit": "unit"
+		"supplier": {
+			"name": "EU Trading S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
 			},
-			"sum": "2000.00",
-			"taxes": [
+			"addresses": [
 				{
-					"cat": "VAT",
-					"key": "intra-community",
-					"ext": {
-						"es-verifactu-exempt": "E5",
-						"es-verifactu-regime": "01"
-					}
-				}
-			],
-			"total": "2000.00",
-			"notes": [
-				{
-					"key": "legal",
-					"code": "E5",
-					"src": "es-verifactu-exempt",
-					"text": "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro."
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
 				}
 			]
-		}
-	],
-	"totals": {
-		"sum": "2000.00",
-		"total": "2000.00",
-		"taxes": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"key": "intra-community",
-							"ext": {
-								"es-verifactu-exempt": "E5",
-								"es-verifactu-regime": "01"
-							},
-							"base": "2000.00",
-							"amount": "0.00"
-						}
-					],
-					"amount": "0.00"
-				}
-			],
-			"sum": "0.00"
 		},
-		"tax": "0.00",
-		"total_with_tax": "2000.00",
-		"payable": "2000.00"
-	},
-	"notes": [
-		{
-			"key": "general",
-			"text": "Intra-Community supply of goods from Spain to Netherlands - exempt pursuant to Article 25 of LIVA"
-		}
-	]
+		"customer": {
+			"name": "Dutch Distribution B.V.",
+			"tax_id": {
+				"country": "NL",
+				"code": "000099995B57"
+			},
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Main Street",
+					"locality": "Amsterdam",
+					"code": "1012 AB",
+					"country": "NL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "200",
+				"item": {
+					"name": "Electronics components",
+					"price": "10.00",
+					"unit": "unit"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "intra-community",
+						"ext": {
+							"es-verifactu-exempt": "E5",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "2000.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E5",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro."
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "2000.00",
+			"total": "2000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "intra-community",
+								"ext": {
+									"es-verifactu-exempt": "E5",
+									"es-verifactu-regime": "01"
+								},
+								"base": "2000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "2000.00",
+			"payable": "2000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Intra-Community supply of goods from Spain to Netherlands - exempt pursuant to Article 25 of LIVA"
+			}
+		]
+	}
 }

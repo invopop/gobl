@@ -1,115 +1,125 @@
 {
-	"$schema": "https://gobl.org/draft-0/bill/invoice",
-	"$regime": "ES",
-	"$addons": [
-		"es-verifactu-v1"
-	],
-	"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e6",
-	"type": "standard",
-	"series": "FT",
-	"code": "E6-001",
-	"issue_date": "2024-12-04",
-	"currency": "EUR",
-	"tax": {
-		"ext": {
-			"es-verifactu-doc-type": "F1"
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "033f8a9d7f49e24314b4bad8642466cc87e19cafad6128ab2e1b18ee09d7c80c"
 		}
 	},
-	"supplier": {
-		"name": "Special Services S.L.",
-		"tax_id": {
-			"country": "ES",
-			"code": "B98602642"
-		},
-		"addresses": [
-			{
-				"num": "42",
-				"street": "Calle Pradillo",
-				"locality": "Madrid",
-				"region": "Madrid",
-				"code": "28002",
-				"country": "ES"
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e6",
+		"type": "standard",
+		"series": "FT",
+		"code": "E6-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
 			}
-		]
-	},
-	"customer": {
-		"name": "Public Administration",
-		"tax_id": {
-			"country": "ES",
-			"code": "54387763P"
 		},
-		"addresses": [
-			{
-				"num": "10",
-				"street": "Avenida Siempre Viva",
-				"locality": "Barcelona",
-				"region": "Barcelona",
-				"code": "08001",
-				"country": "ES"
-			}
-		]
-	},
-	"lines": [
-		{
-			"i": 1,
-			"quantity": "1",
-			"item": {
-				"name": "Special exempt service",
-				"price": "150.00"
+		"supplier": {
+			"name": "Special Services S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
 			},
-			"sum": "150.00",
-			"taxes": [
+			"addresses": [
 				{
-					"cat": "VAT",
-					"key": "exempt",
-					"ext": {
-						"es-verifactu-exempt": "E6",
-						"es-verifactu-regime": "01"
-					}
-				}
-			],
-			"total": "150.00",
-			"notes": [
-				{
-					"key": "legal",
-					"code": "E6",
-					"src": "es-verifactu-exempt",
-					"text": "Exenta: por otra causa"
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
 				}
 			]
-		}
-	],
-	"totals": {
-		"sum": "150.00",
-		"total": "150.00",
-		"taxes": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"key": "exempt",
-							"ext": {
-								"es-verifactu-exempt": "E6",
-								"es-verifactu-regime": "01"
-							},
-							"base": "150.00",
-							"amount": "0.00"
-						}
-					],
-					"amount": "0.00"
-				}
-			],
-			"sum": "0.00"
 		},
-		"tax": "0.00",
-		"total_with_tax": "150.00",
-		"payable": "150.00"
-	},
-	"notes": [
-		{
-			"key": "general",
-			"text": "Exempt for other reasons not covered by Articles 20-25 of LIVA"
-		}
-	]
+		"customer": {
+			"name": "Public Administration",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Avenida Siempre Viva",
+					"locality": "Barcelona",
+					"region": "Barcelona",
+					"code": "08001",
+					"country": "ES"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Special exempt service",
+					"price": "150.00"
+				},
+				"sum": "150.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt",
+						"ext": {
+							"es-verifactu-exempt": "E6",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "150.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E6",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por otra causa"
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "150.00",
+			"total": "150.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"es-verifactu-exempt": "E6",
+									"es-verifactu-regime": "01"
+								},
+								"base": "150.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "150.00",
+			"payable": "150.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Exempt for other reasons not covered by Articles 20-25 of LIVA"
+			}
+		]
+	}
 }

@@ -1,113 +1,123 @@
 {
-	"$schema": "https://gobl.org/draft-0/bill/invoice",
-	"$regime": "ES",
-	"$addons": [
-		"es-verifactu-v1"
-	],
-	"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e3",
-	"type": "standard",
-	"series": "FT",
-	"code": "E3-001",
-	"issue_date": "2024-12-04",
-	"currency": "EUR",
-	"tax": {
-		"ext": {
-			"es-verifactu-doc-type": "F1"
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3a1117ce6fbede2cbece912eb1ab6bc94943511b794f5aa6110ed160d9bc3d4b"
 		}
 	},
-	"supplier": {
-		"name": "Maritime Services S.L.",
-		"tax_id": {
-			"country": "ES",
-			"code": "B98602642"
-		},
-		"addresses": [
-			{
-				"num": "42",
-				"street": "Calle Pradillo",
-				"locality": "Madrid",
-				"region": "Madrid",
-				"code": "28002",
-				"country": "ES"
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e3",
+		"type": "standard",
+		"series": "FT",
+		"code": "E3-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
 			}
-		]
-	},
-	"customer": {
-		"name": "International Shipping Ltd.",
-		"tax_id": {
-			"country": "NL",
-			"code": "000099995B57"
 		},
-		"addresses": [
-			{
-				"street": "Port Road",
-				"locality": "Amsterdam",
-				"code": "1012 AB",
-				"country": "NL"
-			}
-		]
-	},
-	"lines": [
-		{
-			"i": 1,
-			"quantity": "1",
-			"item": {
-				"name": "Ship repair services",
-				"price": "5000.00"
+		"supplier": {
+			"name": "Maritime Services S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
 			},
-			"sum": "5000.00",
-			"taxes": [
+			"addresses": [
 				{
-					"cat": "VAT",
-					"key": "export",
-					"ext": {
-						"es-verifactu-exempt": "E3",
-						"es-verifactu-regime": "02"
-					}
-				}
-			],
-			"total": "5000.00",
-			"notes": [
-				{
-					"key": "legal",
-					"code": "E3",
-					"src": "es-verifactu-exempt",
-					"text": "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones."
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
 				}
 			]
-		}
-	],
-	"totals": {
-		"sum": "5000.00",
-		"total": "5000.00",
-		"taxes": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"key": "export",
-							"ext": {
-								"es-verifactu-exempt": "E3",
-								"es-verifactu-regime": "02"
-							},
-							"base": "5000.00",
-							"amount": "0.00"
-						}
-					],
-					"amount": "0.00"
-				}
-			],
-			"sum": "0.00"
 		},
-		"tax": "0.00",
-		"total_with_tax": "5000.00",
-		"payable": "5000.00"
-	},
-	"notes": [
-		{
-			"key": "general",
-			"text": "Operations assimilated to exports - ship repair services pursuant to Article 22 of LIVA"
-		}
-	]
+		"customer": {
+			"name": "International Shipping Ltd.",
+			"tax_id": {
+				"country": "NL",
+				"code": "000099995B57"
+			},
+			"addresses": [
+				{
+					"street": "Port Road",
+					"locality": "Amsterdam",
+					"code": "1012 AB",
+					"country": "NL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Ship repair services",
+					"price": "5000.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "export",
+						"ext": {
+							"es-verifactu-exempt": "E3",
+							"es-verifactu-regime": "02"
+						}
+					}
+				],
+				"total": "5000.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E3",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones."
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "export",
+								"ext": {
+									"es-verifactu-exempt": "E3",
+									"es-verifactu-regime": "02"
+								},
+								"base": "5000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "5000.00",
+			"payable": "5000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Operations assimilated to exports - ship repair services pursuant to Article 22 of LIVA"
+			}
+		]
+	}
 }
