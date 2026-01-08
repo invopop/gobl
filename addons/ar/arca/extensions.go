@@ -18,15 +18,53 @@ const (
 
 // DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
 // Used for validating the document type against the VAT status.
-var DocTypesA = []cbc.Code{"1", "2", "3", "4", "5", "34", "39", "51", "52", "53", "54", "60", "63", "201", "202", "203"}
+var DocTypesA = []cbc.Code{
+	"1",   // Invoice A
+	"2",   // Debit Note A
+	"3",   // Credit Note A
+	"4",   // Receipt A
+	"5",   // Cash Sales Note A
+	"34",  // Invoices A per Annex I, Section A, subsection f), R.G. No. 1415
+	"39",  // Other Vouchers A compliant with R.G. No. 1415
+	"51",  // Invoice A with Legend 'Subject to Withholding'
+	"52",  // Debit Note A with Legend 'Subject to Withholding'
+	"53",  // Credit Note A with Legend 'Subject to Withholding'
+	"54",  // Receipt A with Legend 'Subject to Withholding'
+	"60",  // Sales Account and Product Settlement A
+	"63",  // Settlement A
+	"201", // MiPyMEs Electronic Credit Invoice (FCE) A
+	"202", // MiPyMEs Electronic Debit Note (FCE) A
+	"203", // MiPyMEs Electronic Credit Note (FCE) A
+}
 
 // DocTypesB are document codes (Invoice B, Debit Note B, Credit Note B, and FCE variants)
 // Used for validating the document type against the VAT status.
-var DocTypesB = []cbc.Code{"6", "7", "8", "9", "10", "35", "40", "61", "64", "206", "207", "208"}
+var DocTypesB = []cbc.Code{
+	"6",   // Invoice B
+	"7",   // Debit Note B
+	"8",   // Credit Note B
+	"9",   // Receipt B
+	"10",  // Cash Sales Note B
+	"35",  // Vouchers B per Annex I, Section A, subsection f), R.G. No. 1415
+	"40",  // Other Vouchers B compliant with R.G. No. 1415
+	"61",  // Sales Account and Product Settlement B
+	"64",  // Settlement B
+	"206", // MiPyMEs Electronic Credit Invoice (FCE) B
+	"207", // MiPyMEs Electronic Debit Note (FCE) B
+	"208", // MiPyMEs Electronic Credit Note (FCE) B
+}
 
 // DocTypesC are document codes (Invoice C, Debit Note C, Credit Note C, and FCE variants)
 // Used for validating the document type against the VAT status.
-var DocTypesC = []cbc.Code{"11", "12", "13", "15", "211", "212", "213"}
+var DocTypesC = []cbc.Code{
+	"11",  // Invoice C
+	"12",  // Debit Note C
+	"13",  // Credit Note C
+	"15",  // Receipt C
+	"211", // MiPyMEs Electronic Credit Invoice (FCE) C
+	"212", // MiPyMEs Electronic Debit Note (FCE) C
+	"213", // MiPyMEs Electronic Credit Note (FCE) C
+}
 
 // TypeUsedGoodsPurchaseInvoice is the code for the used goods purchase invoice
 const TypeUsedGoodsPurchaseInvoice = "49"
