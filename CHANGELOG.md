@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.305.0] - 2026-01-08
+
 ### Added
 - `ar-arca-v4`: Added initial Argentina ARCA addon.
 - `eu-en16931-v2017`: Added check for negative prices.
