@@ -147,7 +147,7 @@ func TestOrgItemValidate(t *testing.T) {
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(-100, 0),
 		}
-		assert.ErrorContains(t, ad.Validator(item), "price: must be greater than 0")
+		assert.ErrorContains(t, ad.Validator(item), "price: must be no less than 0")
 	})
 }
 
