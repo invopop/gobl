@@ -105,7 +105,7 @@ func validateOrgItem(item *org.Item) error {
 		),
 		validation.Field(&item.Price,
 			// Must not be negative (BR-27)
-			num.Positive,
+			num.ZeroOrPositive,
 			validation.Skip,
 		),
 	)
