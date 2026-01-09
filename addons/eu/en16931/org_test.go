@@ -149,6 +149,14 @@ func TestOrgItemValidate(t *testing.T) {
 		}
 		assert.ErrorContains(t, ad.Validator(item), "price: must be no less than 0")
 	})
+
+	t.Run("0 price", func(t *testing.T) {
+		item := &org.Item{
+			Unit:  org.UnitOne,
+			Price: num.NewAmount(0, 0),
+		}
+		assert.NoError(t, ad.Validator(item))
+	})
 }
 
 func TestOrgAttachmentValidation(t *testing.T) {
