@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.305.1] - 2026-01-09
+
+### Fixed
+
+- `eu-en16931-v2017`: Allow 0 item prices.
+
 ## [v0.305.0] - 2026-01-08
 
 ### Added
