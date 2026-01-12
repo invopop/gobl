@@ -3,6 +3,7 @@ package favat
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // Regime extension codes for local electronic formats.
@@ -123,6 +124,36 @@ var extensionKeys = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Invoice type code for KSeF",
 			i18n.PL: "Kod rodzaju faktury dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code for invoice type for KSeF. If not provided, GOBL will determine the appropriate code based on the invoice tags and type:
+
+				Standard invoices (bill.InvoiceTypeStandard):
+				- "VAT" - no tags
+				- "ZAL" - tax.TagPartial
+				- "ROZ" - tax.TagSettlement
+				- "UPR" - tax.TagSimplified
+
+				Credit notes (bill.InvoiceTypeCreditNote):
+				- "KOR" - no tags
+				- "KOR_ZAL" - tax.TagPartial
+				- "KOR_ROZ" - tax.TagSettlement
+			`),
+			i18n.PL: here.Doc(`
+				Kod rodzaju faktury dla KSeF. Jeśli nie jest podany, GOBL wyznaczy odpowiedni kod na podstawie tagów i typu faktury:
+
+				Faktury podstawowe (bill.InvoiceTypeStandard):
+				- "VAT" - brak tagów
+				- "ZAL" - tax.TagPartial
+				- "ROZ" - tax.TagSettlement
+				- "UPR" - tax.TagSimplified
+
+				Faktury korygujące (bill.InvoiceTypeCreditNote):
+				- "KOR" - brak tagów
+				- "KOR_ZAL" - tax.TagPartial
+				- "KOR_ROZ" - tax.TagSettlement
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
