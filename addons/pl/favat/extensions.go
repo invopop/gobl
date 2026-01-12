@@ -8,8 +8,7 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyVATZero       cbc.Key = "pl-favat-vat-zero"
-	ExtKeyVATSpecial    cbc.Key = "pl-favat-vat-special"
+	ExtKeyTaxCategory   cbc.Key = "pl-favat-tax-category"
 	ExtKeyEffectiveDate cbc.Key = "pl-favat-effective-date"
 	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes
 	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes
@@ -17,14 +16,59 @@ const (
 
 var extensionKeys = []*cbc.Definition{
 	{
-		Key: ExtKeyVATSpecial,
+		Key: ExtKeyTaxCategory,
 		Name: i18n.String{
-			i18n.EN: "Special VAT Extensions for KSeF",
-			i18n.PL: "Rozszerzenia specjalne dla KSeF",
+			i18n.EN: "Tax categories for KSeF",
+			i18n.PL: "Kategorie podatkowe dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Specifies tax categories including various special cases, reduced rates, and exemptions. Each of these categories corresponds to a field in the XML, with name beginning with P_13_, P_14_ etc.
+
+				For example, on an invoice for intra-community supply of goods, we fill field P_13_6_1.
+			`),
+			i18n.PL: here.Doc(`
+				Określa kategorie podatkowe, w tym różne przypadki szczególne, stawki obniżone i zwolnienia. Każda z tych kategorii odpowiada polu w XML, z nazwą zaczynającą się od P_13_, P_14_ itd.
+
+				Na przykład, na fakturze dla dostawy towarów wewnątrzwspólnotowych (WDT) wypełniamy pole P_13_6_1.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "taxi",
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Base rate",
+					i18n.PL: "Stawka podstawowa",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Sales of goods and services subject to VAT rate of 23%.",
+					i18n.PL: "Sprzedaż towarów i usług objętych stawką podatku VAT 23%.",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "First reduced rate",
+					i18n.PL: "Stawka obniżona pierwsza",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Sales of goods and services subject to VAT rate of 8%.",
+					i18n.PL: "Sprzedaż towarów i usług objętych stawką podatku VAT 8%.",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Second reduced rate",
+					i18n.PL: "Stawka obniżona druga",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Sales of goods and services subject to VAT rate of 5%.",
+					i18n.PL: "Sprzedaż towarów i usług objętych stawką podatku VAT 5%.",
+				},
+			},
+			{
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Taxi Rate",
 					i18n.PL: "Ryczałt dla taksówek",
@@ -34,45 +78,105 @@ var extensionKeys = []*cbc.Definition{
 					i18n.PL: "Specjalna stawka ryczałtu dla taksówkarzy.",
 				},
 			},
-		},
-	},
-	{
-		Key: ExtKeyVATZero,
-		Name: i18n.String{
-			i18n.EN: "Zero VAT Extensions for KSeF",
-		},
-		Values: []*cbc.Definition{
 			{
-				Code: "wdt",
+				Code: "5",
 				Name: i18n.String{
-					i18n.EN: "WDT",
-					i18n.PL: "WDT",
+					i18n.EN: "OSS (one stop shop)",
+					i18n.PL: "Punkt kompleksowej obsługi (OSS)",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Intra-community supply of goods",
-					i18n.PL: "Wewnątrzwspólnotowa dostawa towarów",
+					i18n.EN: "Special European Union procedure for the supply of certain goods and services",
+					i18n.PL: "Specjalna procedura unijna dla sprzedaży niektórych towarów i usług",
 				},
 			},
 			{
-				Code: "domestic",
+				Code: "6_1",
 				Name: i18n.String{
-					i18n.EN: "Domestic",
-					i18n.PL: "Krajowy",
+					i18n.EN: "0% WDT",
+					i18n.PL: "0% WDT",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Zero VAT, excluding WDT and export",
-					i18n.PL: "Zerowa stawka podatku z wyłączeniem WDT i eksportu",
+					i18n.EN: "Zero VAT, intra-community supply of goods",
+					i18n.PL: "Zerowa stawka podatku VAT, wewnątrzwspólnotowa dostawa towarów",
 				},
 			},
 			{
-				Code: "export",
+				Code: "6_2",
+				Name: i18n.String{
+					i18n.EN: "0% Domestic",
+					i18n.PL: "0% Krajowy",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Zero VAT, excluding intra-community supply of goods and export",
+					i18n.PL: "Zerowa stawka podatku VAT, z wyłączeniem wewnątrzwspólnotowej dostawy towarów i eksportu",
+				},
+			},
+			{
+				Code: "6_3",
+				Name: i18n.String{
+					i18n.EN: "0% Export",
+					i18n.PL: "0% Eksport",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Zero VAT, export outside the EU",
+					i18n.PL: "Zerowa stawka podatku VAT, eksport poza Unię Europejską",
+				},
+			},
+			{
+				Code: "7",
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.PL: "Zwolnienie",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Sales exempt from VAT",
+					i18n.PL: "Sprzedaż zwolniona od podatku VAT",
+				},
+			},
+			{
+				Code: "8",
 				Name: i18n.String{
 					i18n.EN: "Export",
 					i18n.PL: "Eksport",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Export outside the EU",
-					i18n.PL: "Eksport poza Unią Europejską",
+					i18n.EN: "Sales of goods and services outside the country, excluding EU VAT and OSS",
+					i18n.PL: "Sprzedaż towarów oraz świadczenia usług poza terytorium kraju, z wyłączeniem VAT UE i OSS",
+				},
+			},
+			{
+				Code: "9",
+				Name: i18n.String{
+					i18n.EN: "EU VAT",
+					i18n.PL: "VAT UE",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Services provided within the European Union, where services are taxed in the customer's country",
+					i18n.PL: "Świadczenia usług w Unii Europejskiej, gdzie usługi są opodatkowane w kraju nabywcy (VAT UE)",
+				},
+			},
+			{
+				// https://poradnikprzedsiebiorcy.pl/-odwrotne-obciazenie
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Reverse charge",
+					i18n.PL: "Odwrotne obciążenie",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Obligation to account for tax by the purchaser",
+					i18n.PL: "Obowiązek rozliczenia podatku przez nabywcę",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "EU VAT",
+					i18n.PL: "Faktura VAT marża",
+				},
+				// https://poradnikprzedsiebiorcy.pl/-faktura-vat-marza-kiedy-mozna-ja-wystawic
+				Desc: i18n.String{
+					i18n.EN: "Tax only on the margin, which the seller has calculated - applies to tourism services, sale of used goods, antiques, works of art",
+					i18n.PL: "Podatek tylko od marży, którą naliczył sprzedawca - dotyczy usług turystycznych, sprzedaży towarów używanych, antyków, dzieł sztuki",
 				},
 			},
 		},
