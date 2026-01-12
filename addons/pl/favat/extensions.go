@@ -47,7 +47,10 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "WDT",
 					i18n.PL: "WDT",
 				},
-				// TODO: description required
+				Desc: i18n.String{
+					i18n.EN: "Intra-community supply of goods",
+					i18n.PL: "Wewnątrzwspólnotowa dostawa towarów",
+				},
 			},
 			{
 				Code: "domestic",
@@ -55,7 +58,10 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Domestic",
 					i18n.PL: "Krajowy",
 				},
-				// TODO: description required
+				Desc: i18n.String{
+					i18n.EN: "Zero VAT, excluding WDT and export",
+					i18n.PL: "Zerowa stawka podatku z wyłączeniem WDT i eksportu",
+				},
 			},
 			{
 				Code: "export",
@@ -63,7 +69,10 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Export",
 					i18n.PL: "Eksport",
 				},
-				// TODO: description required
+				Desc: i18n.String{
+					i18n.EN: "Export outside the EU",
+					i18n.PL: "Eksport poza Unią Europejską",
+				},
 			},
 		},
 	},
