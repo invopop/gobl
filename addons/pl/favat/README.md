@@ -28,7 +28,7 @@ The FA_VAT `TFormaPlatnosci` field specifies an invoice's means of payment. The 
 
 #### Example
 
-The following GOBL maps to the `1` (gotówka) value of the `TFormaPlatnosci` field:
+The following GOBL maps to the `1` (gotówka = cash) value of the `TFormaPlatnosci` field:
 
 ```js
 {
@@ -44,7 +44,7 @@ The following GOBL maps to the `1` (gotówka) value of the `TFormaPlatnosci` fie
 }
 ```
 
-#### Document Type (TRodzajFaktury)
+### Document Type (TRodzajFaktury)
 
 All Polish invoices must be identified with a specific type code defined by the FA_VAT format. The following table helps identify how GOBL will map the expected Polish code with a combination of the Invoice Type and tax tags.
 

@@ -122,12 +122,20 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Regular Invoice",
 					i18n.PL: "Faktura Podstawowa",
 				},
+				Desc: i18n.String{
+					i18n.EN: "Most commonly used invoice type.",
+					i18n.PL: "Najczęściej używany typ faktury.",
+				},
 			},
 			{
 				Code: "ZAL",
 				Name: i18n.String{
 					i18n.EN: "Prepayment Invoice",
 					i18n.PL: `Faktura Zaliczkowa`,
+				},
+				Desc: i18n.String{
+					i18n.EN: "Invoice documenting receipt of payment or part of payment before performing the act, as well as an invoice issued in connection with article 106f paragraph 4 of the act (advance invoice)",
+					i18n.PL: "Faktura dokumentująca otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz faktura wystawiona w związku z art. 106f ust. 4 ustawy (faktura zaliczkowa)",
 				},
 			},
 			{
@@ -136,12 +144,20 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Settlement Invoice",
 					i18n.PL: "Faktura Rozliczeniowa",
 				},
+				Desc: i18n.String{
+					i18n.EN: "Invoice issued in connection with article 106f paragraph 3 of the act. Final invoice, which concludes the contract or transaction, includes all previous advance invoices and contains a full list of payments and transaction amount.",
+					i18n.PL: "Faktura wystawiona w związku z art. 106f ust. 3 ustawy. Kończy umowę lub transakcję, uwzględnia wszystkie poprzednie faktury zaliczkowe, zawiera pełną listę płatności i kwotę transakcji.",
+				},
 			},
 			{
 				Code: "UPR",
 				Name: i18n.String{
 					i18n.EN: "Simplified Invoice",
 					i18n.PL: "Faktura Uproszczona",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Invoice, as referred to in article 106e paragraph 5 point 3 of the act. Receipt up to 450 zł gross (100 euro) containing the buyer's NIP.",
+					i18n.PL: "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy. Paragon fiskalny do kwoty 450 zł brutto (100 euro) zawierający NIP nabywcy.",
 				},
 			},
 			{
@@ -150,6 +166,10 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Credit note",
 					i18n.PL: "Faktura korygująca",
 				},
+				Desc: i18n.String{
+					i18n.EN: "Corrects the original invoice.",
+					i18n.PL: "Poprawia fakturę oryginalną.",
+				},
 			},
 			{
 				Code: "KOR_ZAL",
@@ -157,12 +177,20 @@ var extensionKeys = []*cbc.Definition{
 					i18n.EN: "Prepayment credit note",
 					i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 				},
+				Desc: i18n.String{
+					i18n.EN: "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the prepayment invoice (ZAL).",
+					i18n.PL: "Faktura korygująca fakturę dokumentującą otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz fakturę wystawioną w związku z art. 106f ust. 4 ustawy (faktura korygująca fakturę zaliczkową). Poprawia fakturę zaliczkową (ZAL).",
+				},
 			},
 			{
 				Code: "KOR_ROZ",
 				Name: i18n.String{
 					i18n.EN: "Settlement credit note",
 					i18n.PL: "Faktura korygująca fakturę rozliczeniową",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Invoice issued in connection with article 106f paragraph 3 of the act. Corrects the settlement invoice (ROZ).",
+					i18n.PL: "Faktura korygująca fakturę wystawioną w związku z art. 106f ust. 3 ustawy. Poprawia fakturę rozliczeniową (ROZ).",
 				},
 			},
 		},
