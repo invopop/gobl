@@ -457,6 +457,232 @@ func TestValidateBillLine(t *testing.T) {
 	})
 }
 
+func TestNormalizeBillLineNegativePrice(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("negative price becomes positive with negative quantity", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Apple",
+				Price: num.NewAmount(-30, 2), // -0.30
+			},
+		}
+		ad.Normalizer(line)
+		// Price should now be positive
+		assert.Equal(t, "0.30", line.Item.Price.String())
+		// Quantity should now be negative
+		assert.Equal(t, "-1", line.Quantity.String())
+	})
+
+	t.Run("positive price remains unchanged", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Apple",
+				Price: num.NewAmount(30, 2), // 0.30
+			},
+		}
+		ad.Normalizer(line)
+		// Price should remain positive
+		assert.Equal(t, "0.30", line.Item.Price.String())
+		// Quantity should remain positive
+		assert.Equal(t, "1", line.Quantity.String())
+	})
+
+	t.Run("negative price with multiple quantity", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(5, 0),
+			Item: &org.Item{
+				Name:  "Apple",
+				Price: num.NewAmount(-30, 2), // -0.30
+			},
+		}
+		ad.Normalizer(line)
+		// Price should now be positive
+		assert.Equal(t, "0.30", line.Item.Price.String())
+		// Quantity should now be negative
+		assert.Equal(t, "-5", line.Quantity.String())
+	})
+
+	t.Run("negative price with negative quantity", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(-2, 0),
+			Item: &org.Item{
+				Name:  "Apple",
+				Price: num.NewAmount(-30, 2), // -0.30
+			},
+		}
+		ad.Normalizer(line)
+		// Price should now be positive
+		assert.Equal(t, "0.30", line.Item.Price.String())
+		// Quantity should now be positive (double negative)
+		assert.Equal(t, "2", line.Quantity.String())
+	})
+
+	t.Run("negative price in sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Item with discount",
+						Price: num.NewAmount(-30, 2), // -0.30
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Sub-line price should now be positive
+		assert.Equal(t, "0.30", line.Breakdown[0].Item.Price.String())
+		// Sub-line quantity should now be negative
+		assert.Equal(t, "-1", line.Breakdown[0].Quantity.String())
+	})
+
+	t.Run("negative price in substituted line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Substituted: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(2, 0),
+					Item: &org.Item{
+						Name:  "Replaced item",
+						Price: num.NewAmount(-50, 2), // -0.50
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Substituted line price should now be positive
+		assert.Equal(t, "0.50", line.Substituted[0].Item.Price.String())
+		// Substituted line quantity should now be negative
+		assert.Equal(t, "-2", line.Substituted[0].Quantity.String())
+	})
+
+	t.Run("nil item", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     nil,
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Item)
+	})
+
+	t.Run("nil price", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Apple",
+				Price: nil,
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Item.Price)
+	})
+
+	t.Run("zero price", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Free item",
+				Price: num.NewAmount(0, 2),
+			},
+		}
+		ad.Normalizer(line)
+		// Zero price should remain unchanged
+		assert.Equal(t, "0.00", line.Item.Price.String())
+		// Quantity should remain unchanged
+		assert.Equal(t, "1", line.Quantity.String())
+	})
+}
+
+func TestNormalizeBillLineNegativePriceIntegration(t *testing.T) {
+	t.Run("full invoice with negative price", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Regime:   tax.WithRegime("DE"),
+			Addons:   tax.WithAddons(en16931.V2017),
+			Type:     "standard",
+			Currency: "EUR",
+			Series:   "2024",
+			Code:     "1000",
+			Supplier: &org.Party{
+				Name: "Test Supplier",
+				TaxID: &tax.Identity{
+					Country: "DE",
+					Code:    "505898911",
+				},
+				Addresses: []*org.Address{
+					{
+						Street:   "Test Street",
+						Locality: "Berlin",
+						Code:     "10115",
+						Country:  "DE",
+					},
+				},
+			},
+			Customer: &org.Party{
+				Name: "Test Customer",
+				Addresses: []*org.Address{
+					{
+						Street:   "Customer Street",
+						Locality: "Munich",
+						Code:     "80331",
+						Country:  "DE",
+					},
+				},
+			},
+			Lines: []*bill.Line{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Apple",
+						Price: num.NewAmount(-30, 2), // -0.30 euros
+					},
+					Taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Rate:     "standard",
+						},
+					},
+				},
+			},
+			Payment: &bill.PaymentDetails{
+				Terms: &pay.Terms{
+					DueDates: []*pay.DueDate{
+						{
+							Date:   cal.NewDate(2025, time.January, 1),
+							Amount: num.MakeAmount(1000, 2),
+						},
+					},
+				},
+			},
+		}
+
+		// Calculate should trigger normalization
+		err := inv.Calculate()
+		require.NoError(t, err)
+
+		// Verify price is now positive
+		assert.Equal(t, "0.30", inv.Lines[0].Item.Price.String())
+		// Verify quantity is now negative
+		assert.Equal(t, "-1", inv.Lines[0].Quantity.String())
+
+		// Validate should pass since price is now >= 0
+		err = inv.Validate()
+		assert.NoError(t, err)
+	})
+}
+
 func TestValidateBillPayment(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with terms", func(t *testing.T) {

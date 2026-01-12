@@ -79,6 +79,37 @@ func normalizeBillLineCharge(m *bill.LineCharge) {
 	}
 }
 
+func normalizeBillLine(line *bill.Line) {
+	if line == nil || line.Item == nil || line.Item.Price == nil {
+		return
+	}
+	// BR-27: Item price must not be negative.
+	// Normalize negative prices by moving the negative sign to the quantity.
+	if line.Item.Price.IsNegative() {
+		// Negate the price (make it positive)
+		price := line.Item.Price.Negate()
+		line.Item.Price = &price
+		// Negate the quantity
+		line.Quantity = line.Quantity.Negate()
+	}
+	// Also normalize sub-lines in breakdown and substituted
+	normalizeBillSubLines(line.Breakdown)
+	normalizeBillSubLines(line.Substituted)
+}
+
+func normalizeBillSubLines(subLines []*bill.SubLine) {
+	for _, sl := range subLines {
+		if sl == nil || sl.Item == nil || sl.Item.Price == nil {
+			continue
+		}
+		if sl.Item.Price.IsNegative() {
+			price := sl.Item.Price.Negate()
+			sl.Item.Price = &price
+			sl.Quantity = sl.Quantity.Negate()
+		}
+	}
+}
+
 func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
