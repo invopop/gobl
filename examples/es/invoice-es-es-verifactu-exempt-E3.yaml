@@ -22,7 +22,7 @@ supplier:
 customer:
   tax_id:
     country: "NL"
-    code: "000099995B57"
+    code: "123456782B01"
   name: "International Shipping Ltd."
   addresses:
     - street: "Port Road"
