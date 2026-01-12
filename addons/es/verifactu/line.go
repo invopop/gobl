@@ -110,6 +110,9 @@ func exemptionText(exemptionCode cbc.Code) string {
 }
 
 func isExemptionNote(n *org.Note) bool {
+	if n == nil {
+		return false
+	}
 	return n.Key == org.NoteKeyLegal && n.Src == ExtKeyExempt
 }
 
