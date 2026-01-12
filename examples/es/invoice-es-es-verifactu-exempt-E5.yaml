@@ -22,7 +22,7 @@ supplier:
 customer:
   tax_id:
     country: "NL"
-    code: "000099995B57"
+    code: "854502130B01"
   name: "Dutch Distribution B.V."
   addresses:
     - num: "15"
