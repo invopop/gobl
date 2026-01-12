@@ -14,6 +14,9 @@ const (
 	ExtKeyService         = "br-nfse-service"
 	ExtKeySimples         = "br-nfse-simples"
 	ExtKeySpecialRegime   = "br-nfse-special-regime"
+	ExtKeyOperation       = "br-nfse-operation"
+	ExtKeyTaxStatus       = "br-nfse-tax-status"
+	ExtKeyTaxClass        = "br-nfse-tax-class"
 )
 
 var extensions = []*cbc.Definition{
@@ -259,5 +262,99 @@ var extensions = []*cbc.Definition{
 				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
 			},
 		},
+	},
+	{
+		Key: ExtKeyOperation,
+		Name: i18n.String{
+			i18n.EN: "Operation Indicator",
+			i18n.PT: "Indicador da operação",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the operation type for the determination of the IBS and CBS taxes by the
+				tax authorities.
+
+				Maps to the ~cIndOp~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Note SE/CGNFS-e nº 004",
+					i18n.PT: "Nota Técnica SE/CGNFS-e nº 004",
+				},
+				URL: "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc-producao-restrita-piloto/nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Annex VII - Operation Indicators Table IBS/CBS v1.00",
+					i18n.PT: "Anexo VII - Tabela de Indicadores de Operação IBS/CBS v1.00",
+				},
+				URL: "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx",
+			},
+		},
+		Pattern: `^\d{6}$`,
+	},
+	{
+		Key: ExtKeyTaxStatus,
+		Name: i18n.String{
+			i18n.EN: "Tax Status Code (CST)",
+			i18n.PT: "Código de situação tributária (CST)",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the tax status of the operation for the determination of the IBS and CBS
+				taxes by the tax authorities.
+
+				Maps to the ~CST~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+					i18n.PT: "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS",
+				},
+				URL: "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU=",
+			},
+		},
+		Pattern: `^\d{3}$`,
+	},
+	{
+		Key: ExtKeyTaxClass,
+		Name: i18n.String{
+			i18n.EN: "Tax Classification Code",
+			i18n.PT: "Código de classificação tributária",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the tax classification code for the determination of the IBS and CBS taxes
+				by the tax authorities.
+
+				Maps to the ~cClassTrib~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+					i18n.PT: "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS",
+				},
+				URL: "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU=",
+			},
+		},
+		Pattern: `^\d{6}$`,
 	},
 }

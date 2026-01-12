@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "1c5a532e-d146-c353-b835-6a6068ca6d0c",
+  "currency": "ARS",
+  "issue_date": "2025-02-10",
+  "series": "2",
+  "code": "00000500",
+  "supplier": {
+    "name": "Supermercado La Esquina S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Cabildo 3500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1429",
+        "country": "AR"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "5",
+      "item": {
+        "name": "Productos varios",
+        "price": "15000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ]
+}
+

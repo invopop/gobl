@@ -9,6 +9,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `es-verifactu-v1`: Automatic addition of legal notes to line items when exemption codes are present. Notes are added during normalization with Spanish text from extension definitions, matching the exemption code. Validation ensures exemption notes are present when required and match the corresponding exemption codes.
+## [v0.305.1] - 2026-01-09
+
+### Fixed
+
+- `eu-en16931-v2017`: Allow 0 item prices.
+
+## [v0.305.0] - 2026-01-08
+
+### Added
+- `ar-arca-v4`: Added initial Argentina ARCA addon.
+- `eu-en16931-v2017`: Added check for negative prices.
+- `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)
+- `br`: Add CBS and IBS tax categories
+- `gr-mydata-v1`: New charge types: fees, stamp duties and other taxes.
+
+### Removed
+
+- `eu-en16931-v2017`: Removed constraint for payment terms in Credit Notes.
+- `bill`: `LineDiscount` and `LineCharge` no longer return an error when the amount is 0.
 
 ## [v0.304.0] - 2025-12-10
 

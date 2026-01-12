@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "e0814bb5494ba6e58086b21256c72c7cc6fe4fc68abc67e27ae0343296fec706"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "5cfa9d78-7be0-6dfd-b2df-0a0402fa074c",
+		"type": "credit-note",
+		"series": "1",
+		"code": "00000001",
+		"issue_date": "2025-01-20",
+		"currency": "ARS",
+		"preceding": [
+			{
+				"issue_date": "2025-01-15",
+				"series": "1",
+				"code": "00000123",
+				"ext": {
+					"ar-arca-doc-type": "1"
+				}
+			}
+		],
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "3"
+			}
+		},
+		"supplier": {
+			"name": "Proveedor Ejemplo S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Corrientes 1234",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1043",
+					"country": "AR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Comercial S.R.L.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Av. Santa Fe 2500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1123",
+					"country": "AR"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"key": "goods",
+					"name": "Notebooks Dell Latitude - Devolución",
+					"price": "450000.00"
+				},
+				"sum": "900000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "900000.00"
+			}
+		],
+		"totals": {
+			"sum": "900000.00",
+			"total": "900000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "900000.00",
+								"percent": "21.0%",
+								"amount": "189000.00"
+							}
+						],
+						"amount": "189000.00"
+					}
+				],
+				"sum": "189000.00"
+			},
+			"tax": "189000.00",
+			"total_with_tax": "1089000.00",
+			"payable": "1089000.00"
+		}
+	}
+}
