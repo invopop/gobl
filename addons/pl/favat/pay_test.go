@@ -15,7 +15,7 @@ func TestPaymentMeansExtensions(t *testing.T) {
 }
 
 func TestNormalizePayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(favat.V2)
+	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("nil", func(t *testing.T) {
 		var instr *pay.Instructions
@@ -34,7 +34,7 @@ func TestNormalizePayInstructions(t *testing.T) {
 }
 
 func TestNormalizePayAdvance(t *testing.T) {
-	ad := tax.AddonForKey(favat.V2)
+	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("nil", func(t *testing.T) {
 		var adv *pay.Advance
@@ -53,7 +53,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 }
 
 func TestValidatePay(t *testing.T) {
-	ad := tax.AddonForKey(favat.V2)
+	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("advance nil", func(t *testing.T) {
 		var adv *pay.Advance

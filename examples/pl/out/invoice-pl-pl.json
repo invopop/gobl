@@ -4,20 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1f15a1047e2d937a4e3200b30e6269661a98ac9030b5653fa6fb8be59abd67cf"
+			"val": "47ada5b62fca6ff3d0358b6ec8452711c958ca3a84d30ed8b2d2a18387f3970e"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "PL",
 		"$addons": [
-			"pl-favat-v2"
+			"pl-favat-v3"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-001",
 		"issue_date": "2023-12-20",
 		"currency": "PLN",
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "VAT"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

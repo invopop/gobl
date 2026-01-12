@@ -18,7 +18,7 @@ import (
 func creditNote() *bill.Invoice {
 	inv := &bill.Invoice{
 		Regime:    tax.WithRegime("PL"),
-		Addons:    tax.WithAddons(favat.V2),
+		Addons:    tax.WithAddons(favat.V3),
 		Currency:  currency.PLN,
 		Code:      "TEST",
 		Type:      bill.InvoiceTypeCreditNote,

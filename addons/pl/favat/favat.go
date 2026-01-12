@@ -11,7 +11,6 @@ import (
 
 // Polish FA_VAT versions.
 const (
-	V2 cbc.Key = "pl-favat-v2"
 	V3 cbc.Key = "pl-favat-v3"
 )
 
@@ -23,15 +22,14 @@ const (
 )
 
 func init() {
-	tax.RegisterAddonDef(newAddonV2())
-	// V3 coming soon...
+	tax.RegisterAddonDef(newAddonV3())
 }
 
-func newAddonV2() *tax.AddonDef {
+func newAddonV3() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key: V2,
+		Key: V3,
 		Name: i18n.String{
-			i18n.EN: "Polish KSeF FA_VAT v2.x",
+			i18n.EN: "Polish KSeF FA_VAT FA(3)",
 		},
 		Tags: []*tax.TagSet{
 			invoiceTags, // scenarios.go

@@ -109,4 +109,62 @@ var extensionKeys = []*cbc.Definition{
 			},
 		},
 	},
+	{
+		Key: ExtKeyInvoiceType,
+		Name: i18n.String{
+			i18n.EN: "Invoice type code for KSeF",
+			i18n.PL: "Kod rodzaju faktury dla KSeF",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "VAT",
+				Name: i18n.String{
+					i18n.EN: "Regular Invoice",
+					i18n.PL: "Faktura Podstawowa",
+				},
+			},
+			{
+				Code: "ZAL",
+				Name: i18n.String{
+					i18n.EN: "Prepayment Invoice",
+					i18n.PL: `Faktura Zaliczkowa`,
+				},
+			},
+			{
+				Code: "ROZ",
+				Name: i18n.String{
+					i18n.EN: "Settlement Invoice",
+					i18n.PL: "Faktura Rozliczeniowa",
+				},
+			},
+			{
+				Code: "UPR",
+				Name: i18n.String{
+					i18n.EN: "Simplified Invoice",
+					i18n.PL: "Faktura Uproszczona",
+				},
+			},
+			{
+				Code: "KOR",
+				Name: i18n.String{
+					i18n.EN: "Credit note",
+					i18n.PL: "Faktura korygująca",
+				},
+			},
+			{
+				Code: "KOR_ZAL",
+				Name: i18n.String{
+					i18n.EN: "Prepayment credit note",
+					i18n.PL: `Faktura korygująca fakturę zaliczkową`,
+				},
+			},
+			{
+				Code: "KOR_ROZ",
+				Name: i18n.String{
+					i18n.EN: "Settlement credit note",
+					i18n.PL: "Faktura korygująca fakturę rozliczeniową",
+				},
+			},
+		},
+	},
 }
