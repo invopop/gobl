@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "97ff216775c6c76cc5512126e7b166aee3a3a9c0548f9ef559034462b48ab4ed"
+			"val": "dee15451741783daa832c4912abc1d3ac64f79c1e78ce045bc8d1731a0ea9199"
 		}
 	},
 	"doc": {
@@ -84,7 +84,7 @@
 						"key": "legal",
 						"code": "E4",
 						"src": "es-verifactu-exempt",
-						"text": "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
+						"text": "Exenta: por los artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
 					}
 				]
 			}

@@ -236,7 +236,7 @@
           "code": "E4",
           "name": {
             "en": "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
-            "es": "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
+            "es": "Exenta: por los artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
           },
           "desc": {
             "en": "Use for operations linked to **free zones, customs/duty-free warehouses and other customs or fiscal regimes** (e.g., depósitos francos, depósito temporal, perfeccionamiento activo/pasivo, depósito distinto del aduanero), while the goods remain under those regimes."

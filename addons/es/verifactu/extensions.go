@@ -345,7 +345,7 @@ var extensions = []*cbc.Definition{
 				Code: "E4",
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
-					i18n.ES: "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones.",
+					i18n.ES: "Exenta: por los artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones.",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
