@@ -1202,7 +1202,7 @@
         "en": "Tax type"
       },
       "desc": {
-        "en": "Greek invoices may contain charges for taxes and fees different from VAT. The\n`gr-mydata-tax-type` extension at charge level must be used to specify the tax type.\n\nGOBL will automatically set the proper `gr-mydata-tax-type` code based on the presence\nof the related extensions: `gr-mydata-fee`, `gr-mydata-other-tax` and\n`gr-mydata-stamp-duty`.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
+        "en": "Greek invoices may contain charges or allowances for taxes and fees different from VAT. The\n`gr-mydata-tax-type` extension at charge level must be used to specify the tax type.\n\nGOBL will attempt to automatically set the `gr-mydata-tax-type` extension. The following\ntable shows the mappings used: first, GOBL will check the charge's `key` field; if that\ndoes not match, it will then check for the presence of the related extension:\n\n| Code | Name       | GOBL Charge Key | Extension              |\n| ---- | ---------- | --------------- | ---------------------- |\n| `2`  | Fee        |                 | `gr-mydata-fee`        |\n| `3`  | Other Tax  | `tax`           | `gr-mydata-other-tax`  |\n| `4`  | Stamp Duty | `stamp-duty`    | `gr-mydata-stamp-duty` |\n\nFor example (manual):\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Stamp duty fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
       },
       "sources": [
         {
@@ -1393,7 +1393,7 @@
           "code": "18",
           "name": {
             "el": "Τέλος διαμονής παρεπιδημούντων",
-            "en": "Residence fee for attendees"
+            "en": "Accommodation fee"
           }
         },
         {

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16931-v2017`: Normalize line item prices if negative.
+
 ## [v0.305.1] - 2026-01-09
 
 ### Fixed
