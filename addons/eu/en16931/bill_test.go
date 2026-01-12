@@ -604,6 +604,180 @@ func TestNormalizeBillLineNegativePrice(t *testing.T) {
 		// Quantity should remain unchanged
 		assert.Equal(t, "1", line.Quantity.String())
 	})
+
+	t.Run("breakdown with nil sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Breakdown: []*bill.SubLine{
+				nil, // Nil sub-line should be skipped
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Breakdown[0])
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Breakdown[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Breakdown[1].Quantity.String())
+	})
+
+	t.Run("breakdown with nil item in sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     nil, // Nil item should be skipped
+				},
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Breakdown[0].Item)
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Breakdown[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Breakdown[1].Quantity.String())
+	})
+
+	t.Run("breakdown with nil price in sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Item without price",
+						Price: nil, // Nil price should be skipped
+					},
+				},
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Breakdown[0].Item.Price)
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Breakdown[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Breakdown[1].Quantity.String())
+	})
+
+	t.Run("substituted with nil sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Substituted: []*bill.SubLine{
+				nil, // Nil sub-line should be skipped
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Substituted[0])
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Substituted[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Substituted[1].Quantity.String())
+	})
+
+	t.Run("substituted with nil item in sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Substituted: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item:     nil, // Nil item should be skipped
+				},
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Substituted[0].Item)
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Substituted[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Substituted[1].Quantity.String())
+	})
+
+	t.Run("substituted with nil price in sub-line", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Package",
+				Price: num.NewAmount(100, 2),
+			},
+			Substituted: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Item without price",
+						Price: nil, // Nil price should be skipped
+					},
+				},
+				{
+					Quantity: num.MakeAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Valid item",
+						Price: num.NewAmount(-30, 2),
+					},
+				},
+			},
+		}
+		ad.Normalizer(line)
+		// Should not panic
+		assert.Nil(t, line.Substituted[0].Item.Price)
+		// Valid sub-line should be normalized
+		assert.Equal(t, "0.30", line.Substituted[1].Item.Price.String())
+		assert.Equal(t, "-1", line.Substituted[1].Quantity.String())
+	})
 }
 
 func TestNormalizeBillLineNegativePriceIntegration(t *testing.T) {
