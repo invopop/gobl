@@ -10,8 +10,8 @@ import (
 const (
 	ExtKeyTaxCategory   cbc.Key = "pl-favat-tax-category"
 	ExtKeyEffectiveDate cbc.Key = "pl-favat-effective-date"
-	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes
-	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes
+	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes (type of payment means - e.g. cash, bank transfer etc)
+	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes (type of invoice - e.g. regular, in advance, correction etc)
 )
 
 var extensionKeys = []*cbc.Definition{
@@ -333,6 +333,90 @@ var extensionKeys = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: "Invoice issued in connection with article 106f paragraph 3 of the act. Corrects the settlement invoice (ROZ).",
 					i18n.PL: "Faktura korygująca fakturę wystawioną w związku z art. 106f ust. 3 ustawy. Poprawia fakturę rozliczeniową (ROZ).",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyPaymentMeans,
+		Name: i18n.String{
+			i18n.EN: "Payment method code for KSeF",
+			i18n.PL: "Kod formy płatności dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code for payment method KSeF. If not provided, GOBL will determine the appropriate code:
+
+				Code | Meaning | GOBL code | Code from GOBL extension
+				1    | Cash    | cash      | -
+				2    | Card    | card      | -
+				3    | Coupon  | other     | coupon
+				4    | Cheque  | cheque    | -
+				5    | Loan    | other     | loan
+				6    | Transfer| transfer  | -
+				7    | Mobile  | other     | mobile
+			`),
+			i18n.PL: here.Doc(`
+				Kod formy płatności dla KSeF. Jeśli nie jest podany, GOBL wyznaczy odpowiedni kod:
+
+				Kod  | Znaczenie | Kod w GOBL | Kod z rozszerzenia GOBL
+				1    | Gotówka   | cash       | -
+				2    | Karta     | card       | -
+				3    | Bon       | other      | coupon
+				4    | Czek      | cheque     | -
+				5    | Kredyt    | other      | loan
+				6    | Przelew   | transfer   | -
+				7    | Mobilna   | other      | mobile
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Cash",
+					i18n.PL: "Gotówka",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Card",
+					i18n.PL: "Karta",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Coupon",
+					i18n.PL: "Bon",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Cheque",
+					i18n.PL: "Czek",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Loan",
+					i18n.PL: "Kredyt",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "Wire Transfer",
+					i18n.PL: "Przelew",
+				},
+			},
+			{
+				Code: "7",
+				Name: i18n.String{
+					i18n.EN: "Mobile",
+					i18n.PL: "Mobilna",
 				},
 			},
 		},
