@@ -233,30 +233,28 @@ var extensionKeys = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				Code for invoice type for KSeF. If not provided, GOBL will determine the appropriate code based on the invoice tags and type:
 
-				Standard invoices (bill.InvoiceTypeStandard):
-				- "VAT" - no tags
-				- "ZAL" - tax.TagPartial
-				- "ROZ" - tax.TagSettlement
-				- "UPR" - tax.TagSimplified
-
-				Credit notes (bill.InvoiceTypeCreditNote):
-				- "KOR" - no tags
-				- "KOR_ZAL" - tax.TagPartial
-				- "KOR_ROZ" - tax.TagSettlement
+				| Code    | GOBL invoice type | Tags         |
+				|---------|-------------------|--------------|
+				| VAT			| ~standard~        | -            |
+				| ZAL			| ~standard~        | ~partial~    |
+				| ROZ			| ~standard~        | ~settlement~ |
+				| UPR			| ~standard~        | ~simplified~ |
+				| KOR			| ~credit_note~     | -            |
+				| KOR_ZAL	| ~credit_note~     | ~partial~    |
+				| KOR_ROZ	| ~credit_note~     | ~settlement~ |
 			`),
 			i18n.PL: here.Doc(`
 				Kod rodzaju faktury dla KSeF. Jeśli nie jest podany, GOBL wyznaczy odpowiedni kod na podstawie tagów i typu faktury:
 
-				Faktury podstawowe (bill.InvoiceTypeStandard):
-				- "VAT" - brak tagów
-				- "ZAL" - tax.TagPartial
-				- "ROZ" - tax.TagSettlement
-				- "UPR" - tax.TagSimplified
-
-				Faktury korygujące (bill.InvoiceTypeCreditNote):
-				- "KOR" - brak tagów
-				- "KOR_ZAL" - tax.TagPartial
-				- "KOR_ROZ" - tax.TagSettlement
+				| Kod 		| Typ faktury w GOBL | Tagi         |
+				|---------|--------------------|--------------|
+				| VAT			| ~standard~         | -            |
+				| ZAL			| ~standard~         | ~partial~    |
+				| ROZ			| ~standard~         | ~settlement~ |
+				| UPR			| ~standard~         | ~simplified~ |
+				| KOR			| ~credit_note~      | -            |
+				| KOR_ZAL	| ~credit_note~      | ~partial~    |
+				| KOR_ROZ	| ~credit_note~      | ~settlement~ |
 			`),
 		},
 		Values: []*cbc.Definition{
