@@ -188,6 +188,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	if l == nil {
 		return
 	}
+	normalizeLineItemPrice(l)
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
@@ -205,6 +206,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 // Normalize performs normalization on the subline and embedded objects using the
 // provided list of normalizers.
 func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
+	normalizeSubLineItemPrice(sl)
 	sl.Discounts = CleanLineDiscounts(sl.Discounts)
 	sl.Charges = CleanLineCharges(sl.Charges)
 	tax.Normalize(normalizers, sl.Identifier)
@@ -212,6 +214,30 @@ func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, sl.Discounts)
 	tax.Normalize(normalizers, sl.Charges)
 	normalizers.Each(sl)
+}
+
+func normalizeLineItemPrice(l *Line) {
+	if l == nil || l.Item == nil || l.Item.Price == nil {
+		return
+	}
+	i := l.Item
+	if i.Price.IsNegative() {
+		p := i.Price.Negate()
+		i.Price = &p
+		l.Quantity = l.Quantity.Negate()
+	}
+}
+
+func normalizeSubLineItemPrice(sl *SubLine) {
+	if sl == nil || sl.Item == nil || sl.Item.Price == nil {
+		return
+	}
+	i := sl.Item
+	if i.Price.IsNegative() {
+		p := i.Price.Negate()
+		i.Price = &p
+		sl.Quantity = sl.Quantity.Negate()
+	}
 }
 
 func removeLineIncludedTaxes(line *Line, cat cbc.Code) *Line {
