@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
 - `org`: `Item` requires zero or positive price.
 
+### Added
+
+- `head`: `Link` support for category and improved file support.
+
 ## [v0.305.1] - 2026-01-09
 
 ### Fixed
