@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Document tag keys
+// FA_VAT specific tags for invoice types
 const (
 	TagSettlement cbc.Key = "settlement"
 )

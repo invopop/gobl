@@ -10,8 +10,11 @@ import (
 const (
 	ExtKeyTaxCategory   cbc.Key = "pl-favat-tax-category"
 	ExtKeyEffectiveDate cbc.Key = "pl-favat-effective-date"
-	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes (type of payment means - e.g. cash, bank transfer etc)
-	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes (type of invoice - e.g. regular, in advance, correction etc)
+	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means"  // for mapping to TFormaPlatnosci's codes (type of payment means - e.g. cash, bank transfer etc)
+	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"   // for mapping to TRodzajFaktury's codes (type of invoice - e.g. regular, in advance, correction etc)
+	ExtKeySelfBilling   cbc.Key = "pl-favat-self-billing"   // for mapping to P_17 field, indicating self-invoicing
+	ExtKeyReverseCharge cbc.Key = "pl-favat-reverse-charge" // for mapping to P_18, indicating reverse charge
+	ExtKeyMarginScheme  cbc.Key = "pl-favat-margin-scheme"  // for mapping to P_PMarzy, indicating margin scheme
 )
 
 var extensionKeys = []*cbc.Definition{
@@ -417,6 +420,101 @@ var extensionKeys = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Mobile",
 					i18n.PL: "Mobilna",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySelfBilling,
+		Name: i18n.String{
+			i18n.EN: "Self-invoicing code for KSeF",
+			i18n.PL: "Kod samofakturowania dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Code for indicating self-invoicing.",
+			i18n.PL: "Kod wskazujący na samofakturowanie.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Self-invoicing",
+					i18n.PL: "Samofakturowanie",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Not self-invoicing",
+					i18n.PL: "Bez samofakturowania",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyReverseCharge,
+		Name: i18n.String{
+			i18n.EN: "Reverse charge code for KSeF",
+			i18n.PL: "Kod odwrotnego obciążenia dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Code for indicating reverse charge.",
+			i18n.PL: "Kod wskazujący na odwrotne obciążenie.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Reverse charge",
+					i18n.PL: "Odwrotne obciążenie",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "No reverse charge",
+					i18n.PL: "Bez odwrotnego obciążenia",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyMarginScheme,
+		Name: i18n.String{
+			i18n.EN: "Margin scheme code for KSeF",
+			i18n.PL: "Kod oznaczający procedurę marży dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Code for indicating margin scheme.",
+			i18n.PL: "Kod wskazujący na procedurę marży.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Travel agency",
+					i18n.PL: "Biuro podróży",
+				},
+			},
+			{
+				Code: "3.1",
+				Name: i18n.String{
+					i18n.EN: "Used goods",
+					i18n.PL: "Towary używane",
+				},
+			},
+			{
+				Code: "3.2",
+				Name: i18n.String{
+					i18n.EN: "Works of art",
+					i18n.PL: "Dzieła sztuki",
+				},
+			},
+			{
+				Code: "3.3",
+				Name: i18n.String{
+					i18n.EN: "Antiques and collectibles",
+					i18n.PL: "Przedmioty kolekcjonerskie i antyki",
 				},
 			},
 		},

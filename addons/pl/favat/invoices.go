@@ -94,3 +94,25 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		validation.Field(&obj.Reason, validation.Required),
 	)
 }
+
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv.HasTags(tax.TagSelfBilled) {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeySelfBilling: "1",
+		})
+	} else {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeySelfBilling: "2",
+		})
+	}
+
+	if inv.HasTags(tax.TagReverseCharge) {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyReverseCharge: "1",
+		})
+	} else {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyReverseCharge: "2",
+		})
+	}
+}
