@@ -192,6 +192,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
+	l.Breakdown = CleanSubLines(l.Breakdown)
 	tax.Normalize(normalizers, l.Identifier)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)
@@ -206,6 +207,9 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 // Normalize performs normalization on the subline and embedded objects using the
 // provided list of normalizers.
 func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
+	if sl == nil {
+		return
+	}
 	normalizeSubLineItemPrice(sl)
 	sl.Discounts = CleanLineDiscounts(sl.Discounts)
 	sl.Charges = CleanLineCharges(sl.Charges)
@@ -214,6 +218,35 @@ func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, sl.Discounts)
 	tax.Normalize(normalizers, sl.Charges)
 	normalizers.Each(sl)
+}
+
+// IsEmpty returns true if the sub-line is empty.
+func (sl *SubLine) IsEmpty() bool {
+	return sl == nil ||
+		(sl.UUID.IsZero() &&
+			sl.Quantity.IsZero() &&
+			sl.Identifier == nil &&
+			sl.Period == nil &&
+			sl.Order.IsEmpty() &&
+			sl.Cost.IsEmpty() &&
+			sl.Item == nil &&
+			sl.Sum == nil &&
+			len(sl.Discounts) == 0 &&
+			len(sl.Charges) == 0 &&
+			sl.Total == nil &&
+			len(sl.Notes) == 0)
+}
+
+// CleanSubLines removes any nil or empty sub-lines from the
+// list.
+func CleanSubLines(sls []*SubLine) []*SubLine {
+	cleaned := make([]*SubLine, 0, len(sls))
+	for _, sl := range sls {
+		if !sl.IsEmpty() {
+			cleaned = append(cleaned, sl)
+		}
+	}
+	return cleaned
 }
 
 func normalizeLineItemPrice(l *Line) {

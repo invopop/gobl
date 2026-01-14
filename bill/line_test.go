@@ -240,9 +240,45 @@ func TestLinePriceNormalization(t *testing.T) {
 		assert.Equal(t, "-1", bd.Quantity.String())
 	})
 
+	t.Run("nil sub-line prices", func(t *testing.T) {
+		line := &Line{
+			Breakdown: []*SubLine{
+				{
+					Quantity: *num.NewAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Test Item",
+						Price: nil,
+					},
+				},
+			},
+		}
+		line.Normalize(nil)
+		bd := line.Breakdown[0]
+		assert.Nil(t, bd.Item.Price)
+		assert.Equal(t, "1", bd.Quantity.String())
+	})
+
 }
 
 func TestLineNormalize(t *testing.T) {
+	t.Run("nil line", func(t *testing.T) {
+		var line *Line
+		assert.NotPanics(t, func() {
+			line.Normalize(nil)
+			assert.Nil(t, line)
+		})
+	})
+	t.Run("nil subline", func(t *testing.T) {
+		line := &Line{
+			Breakdown: []*SubLine{
+				nil,
+			},
+		}
+		assert.NotPanics(t, func() {
+			line.Normalize(nil)
+		})
+		assert.Len(t, line.Breakdown, 0)
+	})
 	t.Run("basic", func(t *testing.T) {
 
 		line := &Line{
