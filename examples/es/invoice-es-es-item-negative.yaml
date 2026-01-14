@@ -21,7 +21,6 @@ supplier:
       country: "ES"
 
 customer:
-  uuid: "00000000-0000-0000-0000-000000000000" # should be removed
   tax_id:
     country: "ES"
     code: "54387763P"

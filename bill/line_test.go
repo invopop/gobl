@@ -101,7 +101,7 @@ func TestLineValidation(t *testing.T) {
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name:  "Test  Item",
+					Name:  "Test Item",
 					Price: num.NewAmount(1000, 2),
 				},
 			},
