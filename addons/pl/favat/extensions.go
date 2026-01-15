@@ -15,6 +15,7 @@ const (
 	ExtKeySelfBilling   cbc.Key = "pl-favat-self-billing"   // for mapping to P_17 field, indicating self-invoicing
 	ExtKeyReverseCharge cbc.Key = "pl-favat-reverse-charge" // for mapping to P_18, indicating reverse charge
 	ExtKeyMarginScheme  cbc.Key = "pl-favat-margin-scheme"  // for mapping to P_PMarzy, indicating margin scheme
+	ExtKeyExemption     cbc.Key = "pl-favat-exemption"      // for mapping to P_19 and its subfields (P_19A, P_19B, P_19C), indicating exemption
 )
 
 var extensionKeys = []*cbc.Definition{
@@ -515,6 +516,95 @@ var extensionKeys = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Antiques and collectibles",
 					i18n.PL: "Przedmioty kolekcjonerskie i antyki",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyExemption,
+		Name: i18n.String{
+			i18n.EN: "Tax exemption code for KSeF",
+			i18n.PL: "Kod oznaczający zwolnienie od podatku dla KSeF",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Extension used to indicate the type of reason for tax exemption code for KSeF. When the ~exempt~ tag
+				is used in the invoice, having ~ext~ map's ~pl-favat-exemption~ property is required. Also, it is
+				required to add descriptive text for the legal basis for exemption. To do this in GOBL, add a note
+				to the invoice with the exemption reason, in the following format:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+
+					"ext": {
+						"pl-favat-exemption": "A"
+						// ...
+					},
+					"notes": [
+						{
+							"key": "legal",
+							"code": "A",
+							"src": "pl-favat-exemption",
+							"text": "Art. 25a ust. 1 pkt 9 ustawy o VAT"
+						}
+					]
+				}
+				~~~
+
+				In notes, code must match the code from the extension.
+			`),
+			i18n.PL: here.Doc(`
+				Rozszerzenie używane do wskazania typu podstawy prawnej dla zwolnienia podatkowego w KSeF. Gdy tag
+				~exempt~ jest użyty w fakturze, to wymagane jest podanie właściwości ~pl-favat-exemption~ w ~ext~.
+				Dodatkowo, wymagane jest dodanie opisu podstawy prawnej dla zwolnienia. Aby to zrobić w GOBL, dodaj
+				notatkę do faktury z opisem podstawy prawnej dla zwolnienia, w następującym formacie:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+
+					"ext": {
+						"pl-favat-exemption": "A"
+						// ...
+					},
+
+					"notes": [
+						{
+							"key": "legal",
+							"code": "A",
+							"src": "pl-favat-exemption",
+							"text": "Art. 25a ust. 1 pkt 9 ustawy o VAT"
+						}
+					]
+				}
+				~~~
+
+				W notatkach, kod musi być identyczny z kodem z rozszerzenia.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "A",
+				Name: i18n.String{
+					i18n.EN: "Law or act issued under the law",
+					i18n.PL: "Ustawa lub akt wydany na podstawie ustawy",
+				},
+			},
+			{
+				Code: "B",
+				Name: i18n.String{
+					i18n.EN: "Directive 2006/112/EC",
+					i18n.PL: "Dyrektywa 2006/112/WE",
+				},
+			},
+			{
+				Code: "C",
+				Name: i18n.String{
+					i18n.EN: "Other legal basis",
+					i18n.PL: "Inna podstawa prawna",
 				},
 			},
 		},

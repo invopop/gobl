@@ -22,6 +22,17 @@ var invoiceTags = &tax.TagSet{
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
 		},
+		{
+			Key: cbc.Key("exempt"),
+			Name: i18n.String{
+				i18n.EN: "Tax Exempt",
+				i18n.PL: "Zwolnienie z VAT",
+			},
+			Desc: i18n.String{
+				i18n.EN: "Marks invoices that are exempt from VAT and requires the pl-favat-exemption code and note.",
+				i18n.PL: "Oznacza faktury zwolnione z VAT i wymaga kodu oraz notatki pl-favat-exemption.",
+			},
+		},
 	},
 }
 

@@ -1,6 +1,8 @@
 package favat
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -46,6 +48,10 @@ func (v *invoiceValidator) validate() error {
 				validation.Required,
 				validation.By(v.commercialCustomer),
 			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Notes,
+			validation.By(validateExemptionNote(inv)),
 			validation.Skip,
 		),
 	)
@@ -106,5 +112,50 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
 			ExtKeyReverseCharge: "1",
 		})
+	}
+
+	// Even if we know that the invoice is exempt (has tag tax.KeyExempt), we cannot autogenerate values
+	// under key ExtKeyExemption here, as there are multiple possible values for this extension.
+}
+
+func isExemptionNote(n *org.Note) bool {
+	return n.Key == org.NoteKeyLegal && n.Src == ExtKeyExemption
+}
+
+// validateExemptionNote validates that when the invoice is marked as tax exempt, appropriate the note is added
+func validateExemptionNote(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		notes, ok := val.([]*org.Note)
+		if !ok {
+			return fmt.Errorf("expected []*org.Note, got %T", val)
+		}
+
+		exemptionCode := inv.Tax.Ext.Get(ExtKeyExemption)
+
+		count := 0
+		for index, note := range notes {
+			if isExemptionNote(note) {
+				if exemptionCode == "" {
+					// Tax extension for exemption is not set, but an exemption note is present
+					return fmt.Errorf("(%d: unexpected exemption note)", index)
+				}
+				if count > 0 {
+					// More than one exemption note is present
+					return fmt.Errorf("(%d: too many exemption notes)", index)
+				}
+				if exemptionCode != note.Code {
+					// Code given in the note and in the extension are different
+					return fmt.Errorf("(%d: note code %s must match extension %s)", index, note.Code, exemptionCode)
+				}
+				count++
+			}
+		}
+
+		if exemptionCode != "" && count == 0 {
+			// Exemption code is set, but no exemption note is present
+			return fmt.Errorf("missing exemption note for code %s", exemptionCode)
+		}
+
+		return nil
 	}
 }
