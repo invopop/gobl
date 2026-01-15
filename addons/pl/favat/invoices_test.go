@@ -160,3 +160,63 @@ func TestExemptStandardInvoiceValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.NoError(t, err)
 }
+
+func TestExemptStandardInvoiceValidationFailsOnMismatchedNoteCode(t *testing.T) {
+	inv := standardInvoice()
+	inv.Tags = tax.Tags{List: []cbc.Key{tax.KeyExempt}}
+	inv.Tax = &bill.Tax{
+		Ext: tax.Extensions{
+			favat.ExtKeyExemption: "B",
+		},
+	}
+	inv.Notes = []*org.Note{
+		{
+			Key:  org.NoteKeyLegal,
+			Code: "A",
+			Src:  favat.ExtKeyExemption,
+			Text: "Art. 25a ust. 1 pkt 9 ustawy o VAT",
+		},
+	}
+
+	err := inv.Calculate()
+	require.NoError(t, err)
+
+	err = inv.Validate()
+	assert.Error(t, err)
+}
+
+func TestExemptStandardInvoiceValidationFailsWithoutNote(t *testing.T) {
+	inv := standardInvoice()
+	inv.Tags = tax.Tags{List: []cbc.Key{tax.KeyExempt}}
+	inv.Tax = &bill.Tax{
+		// valid exemption set but no matching note
+		Ext: tax.Extensions{
+			favat.ExtKeyExemption: "A",
+		},
+	}
+
+	err := inv.Calculate()
+	require.NoError(t, err)
+
+	err = inv.Validate()
+	assert.Error(t, err)
+}
+
+func TestExemptStandardInvoiceValidationFailsWithoutTax(t *testing.T) {
+	inv := standardInvoice()
+	inv.Tags = tax.Tags{List: []cbc.Key{tax.KeyExempt}}
+	inv.Notes = []*org.Note{
+		{
+			Key:  org.NoteKeyLegal,
+			Code: "A",
+			Src:  favat.ExtKeyExemption,
+			Text: "Art. 25a ust. 1 pkt 9 ustawy o VAT",
+		},
+	}
+
+	err := inv.Calculate()
+	require.NoError(t, err)
+
+	err = inv.Validate()
+	assert.Error(t, err)
+}
