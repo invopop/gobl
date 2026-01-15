@@ -100,19 +100,11 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
 			ExtKeySelfBilling: "1",
 		})
-	} else {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-			ExtKeySelfBilling: "2",
-		})
 	}
 
 	if inv.HasTags(tax.TagReverseCharge) {
 		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
 			ExtKeyReverseCharge: "1",
-		})
-	} else {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-			ExtKeyReverseCharge: "2",
 		})
 	}
 }
