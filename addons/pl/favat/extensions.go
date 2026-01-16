@@ -566,9 +566,11 @@ var extensionKeys = []*cbc.Definition{
 					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					// ...
 
-					"ext": {
-						"pl-favat-exemption": "A"
-						// ...
+					"tax": {
+						"ext": {
+							"pl-favat-exemption": "A"
+							// ...
+						},
 					},
 
 					"notes": [
