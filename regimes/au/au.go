@@ -70,10 +70,6 @@ func Normalize(doc any) {
 }
 
 // Stub functions that will be implemented in subsequent commits
-func taxCategories() []*tax.CategoryDef {
-	return nil
-}
-
 func validateInvoice(inv *bill.Invoice) error {
 	return nil
 }
