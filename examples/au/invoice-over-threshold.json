@@ -1,0 +1,66 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AU",
+  "uuid": "01927890-be3d-787c-8c0e-b5f3c3b94321",
+  "type": "standard",
+  "code": "INV-002",
+  "currency": "AUD",
+  "issue_date": "2024-01-20",
+  "supplier": {
+    "name": "Enterprise Solutions Pty Ltd",
+    "tax_id": {
+      "country": "AU",
+      "code": "53004085616"
+    },
+    "addresses": [
+      {
+        "num": "Level 5, 123",
+        "street": "Corporate Boulevard",
+        "locality": "Melbourne",
+        "region": "VIC",
+        "code": "3000",
+        "country": "AU"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "accounts@enterprise-solutions.com.au"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Large Corporate Client Pty Ltd",
+    "tax_id": {
+      "country": "AU",
+      "code": "33102417032"
+    },
+    "addresses": [
+      {
+        "num": "Suite 200, 456",
+        "street": "Business Avenue",
+        "locality": "Brisbane",
+        "region": "QLD",
+        "code": "4000",
+        "country": "AU"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "20",
+      "item": {
+        "name": "Premium Support License",
+        "price": "150.00"
+      },
+      "sum": "3000.00",
+      "taxes": [
+        {
+          "cat": "GST",
+          "rate": "general",
+          "key": "standard"
+        }
+      ]
+    }
+  ]
+}

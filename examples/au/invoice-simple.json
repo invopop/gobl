@@ -1,0 +1,52 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AU",
+  "uuid": "01927890-6890-7f7a-a555-c572df69666a",
+  "type": "standard",
+  "code": "INV-001",
+  "currency": "AUD",
+  "issue_date": "2024-01-15",
+  "supplier": {
+    "name": "Example Supplier Pty Ltd",
+    "tax_id": {
+      "country": "AU",
+      "code": "51824753556"
+    },
+    "addresses": [
+      {
+        "num": "42",
+        "street": "Main Street",
+        "locality": "Sydney",
+        "region": "NSW",
+        "code": "2000",
+        "country": "AU"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "billing@example-supplier.com.au"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Small Business Customer"
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Professional Consulting Services",
+        "price": "750.00"
+      },
+      "sum": "750.00",
+      "taxes": [
+        {
+          "cat": "GST",
+          "rate": "general",
+          "key": "standard"
+        }
+      ]
+    }
+  ]
+}
