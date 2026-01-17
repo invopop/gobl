@@ -68,8 +68,3 @@ func Normalize(doc any) {
 		normalizeParty(obj)
 	}
 }
-
-// Stub functions that will be implemented in subsequent commits
-func validateInvoice(inv *bill.Invoice) error {
-	return nil
-}
