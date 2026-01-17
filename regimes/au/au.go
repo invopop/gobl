@@ -73,11 +73,3 @@ func Normalize(doc any) {
 func validateInvoice(inv *bill.Invoice) error {
 	return nil
 }
-
-func validateTaxIdentity(tID *tax.Identity) error {
-	return nil
-}
-
-func normalizeParty(party *org.Party) {
-	// Will be implemented with tax identity normalization
-}
