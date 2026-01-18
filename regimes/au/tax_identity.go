@@ -21,7 +21,6 @@ import (
  *
  * Sources:
  *  - https://abr.business.gov.au/Help/AbnFormat
- *  - https://www.ato.gov.au/Business/Registration/Australian-business-number-ABN/
  *
  * The ABN is calculated using a modulus 89 algorithm:
  * 1. Subtract 1 from the first (left-most) digit of the ABN

@@ -10,7 +10,7 @@ import (
 
 // Sources:
 //  - https://www.ato.gov.au/business/gst
-//  - https://www.ato.gov.au/business/gst/when-to-charge-gst
+//  - https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to
 
 func taxCategories() []*tax.CategoryDef {
 	return []*tax.CategoryDef{

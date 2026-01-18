@@ -13,7 +13,7 @@ import (
 /*
  * Invoice Validation Rules for Australia
  *
- * Source: https://www.ato.gov.au/business/gst/issuing-tax-invoices
+ * Source: https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices
  *
  * Key requirement:
  * For tax invoices with a taxable value of A$1,000 or more (GST inclusive),
@@ -40,6 +40,8 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
+// Checks if the invoice customer meets the identification
+// requirements based on the taxable amount.
 func validateCustomer(inv *bill.Invoice, value interface{}) error {
 	customer, ok := value.(*org.Party)
 	if !ok || customer == nil {
