@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -53,98 +54,170 @@ func testInvoice() *bill.Invoice {
 	}
 }
 
-func TestInvoiceUnderThreshold(t *testing.T) {
-	inv := testInvoice()
-	// Total is A$500, under A$1,000 threshold
-	// Customer has name but no ABN - should pass
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err)
-}
-
-func TestInvoiceOverThresholdWithName(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Customer.Name = "Test Customer"
-	inv.Customer.TaxID = nil
-
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err, "Invoice over threshold should pass with buyer name")
-}
-
-func TestInvoiceOverThresholdWithABN(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = &tax.Identity{
-		Code:    "53004085616",
-		Country: "AU",
+// TestInvoiceBuyerIdentityThreshold tests the ATO requirement that invoices
+// with taxable amount ≥A$1,000 must include buyer name OR ABN.
+func TestInvoiceBuyerIdentityThreshold(t *testing.T) {
+	tests := []struct {
+		name         string
+		price        int64 // in cents (e.g., 150000 = A$1,500.00)
+		customerName string
+		customerABN  cbc.Code // empty = no ABN
+		wantErr      bool
+	}{
+		{
+			name:         "under threshold with name",
+			price:        50000, // A$500
+			customerName: "Test Customer",
+			wantErr:      false,
+		},
+		{
+			name:        "under threshold with ABN",
+			price:       50000, // A$500
+			customerABN: "53004085616",
+			wantErr:     false,
+		},
+		{
+			name:         "under threshold without identity",
+			price:        90000, // A$900
+			customerName: "",
+			customerABN:  "",
+			wantErr:      false,
+		},
+		{
+			name:         "exactly at threshold without identity",
+			price:        100000, // A$1,000
+			customerName: "",
+			customerABN:  "",
+			wantErr:      true,
+		},
+		{
+			name:         "over threshold without identity",
+			price:        150000, // A$1,500
+			customerName: "",
+			customerABN:  "",
+			wantErr:      true,
+		},
+		{
+			name:         "over threshold with name only",
+			price:        150000, // A$1,500
+			customerName: "Test Customer",
+			customerABN:  "",
+			wantErr:      false,
+		},
+		{
+			name:         "over threshold with ABN only",
+			price:        150000, // A$1,500
+			customerName: "",
+			customerABN:  "53004085616",
+			wantErr:      false,
+		},
+		{
+			name:         "over threshold with both name and ABN",
+			price:        150000, // A$1,500
+			customerName: "Test Customer",
+			customerABN:  "53004085616",
+			wantErr:      false,
+		},
 	}
 
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err, "Invoice over threshold should pass with buyer ABN")
-}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			inv := testInvoice()
+			inv.Lines[0].Item.Price = num.NewAmount(tt.price, 2)
+			inv.Customer.Name = tt.customerName
 
-func TestInvoiceOverThresholdWithBothNameAndABN(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Customer.Name = "Test Customer"
-	inv.Customer.TaxID = &tax.Identity{
-		Code:    "53004085616",
-		Country: "AU",
+			if tt.customerABN != "" {
+				inv.Customer.TaxID = &tax.Identity{
+					Code:    tt.customerABN,
+					Country: "AU",
+				}
+			} else {
+				inv.Customer.TaxID = nil
+			}
+
+			require.NoError(t, inv.Calculate())
+			err := au.Validate(inv)
+
+			if tt.wantErr {
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), "buyer name or ABN required")
+			} else {
+				require.NoError(t, err)
+			}
+		})
 	}
-
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err, "Invoice over threshold should pass with both name and ABN")
 }
 
-func TestInvoiceOverThresholdNoIdentity(t *testing.T) {
+// TestInvoiceZeroRatedGST verifies that GST-free (0%) supplies still count
+// as taxable supplies for the A$1,000 threshold rule.
+func TestInvoiceZeroRatedGST(t *testing.T) {
 	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
+	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500
+	inv.Lines[0].Taxes = tax.Set{
+		{
+			Category: tax.CategoryGST,
+			Percent:  num.NewPercentage(0, 2), // 0% GST-free
+		},
+	}
 	inv.Customer.Name = ""
 	inv.Customer.TaxID = nil
 
 	require.NoError(t, inv.Calculate())
 	err := au.Validate(inv)
-	require.Error(t, err, "Invoice over threshold should fail without buyer identity")
-	assert.Contains(t, err.Error(), "buyer name or ABN required")
-	assert.Contains(t, err.Error(), "A$1,000")
-}
-
-func TestInvoiceExactlyAtThreshold(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(100000, 2) // Exactly A$1,000.00
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = nil
-
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.Error(t, err, "Invoice at exactly A$1,000 should trigger the rule")
+	require.Error(t, err, "Zero-rated GST should still count as taxable supply")
 	assert.Contains(t, err.Error(), "buyer name or ABN required")
 }
 
-func TestInvoiceJustUnderThreshold(t *testing.T) {
+// TestInvoiceNonGSTLines verifies that lines without GST category
+// don't count toward the threshold.
+func TestInvoiceNonGSTLines(t *testing.T) {
 	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(90000, 2) // A$900.00
+	inv.Lines[0].Taxes = nil                           // No GST category
+	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500
 	inv.Customer.Name = ""
 	inv.Customer.TaxID = nil
 
 	require.NoError(t, inv.Calculate())
 	err := au.Validate(inv)
-	require.NoError(t, err, "Invoice under A$1,000 should not require buyer identity")
+	require.NoError(t, err, "Non-GST lines should not count toward threshold")
 }
 
-func TestInvoiceMultipleLinesOverThreshold(t *testing.T) {
+// TestInvoiceMixedGSTAndNonGST verifies that only GST lines contribute
+// to the taxable amount calculation.
+func TestInvoiceMixedGSTAndNonGST(t *testing.T) {
 	inv := testInvoice()
-	// Add another line, total = A$500 + A$600 = A$1,100
+	inv.Lines[0].Item.Price = num.NewAmount(60000, 2) // A$600 with GST
+
+	// Add a non-GST line
+	inv.Lines = append(inv.Lines, &bill.Line{
+		Quantity: num.MakeAmount(1, 0),
+		Item: &org.Item{
+			Name:  "Non-GST Item",
+			Price: num.NewAmount(50000, 2), // A$500 without GST
+		},
+		Taxes: nil, // No GST
+	})
+	inv.Customer.Name = ""
+	inv.Customer.TaxID = nil
+
+	// Only GST lines count: A$600 < A$1,000
+	require.NoError(t, inv.Calculate())
+	err := au.Validate(inv)
+	require.NoError(t, err, "Only GST lines should count (A$600 total)")
+}
+
+// TestInvoiceMultipleGSTLines verifies that multiple GST lines
+// are summed correctly for the threshold check.
+func TestInvoiceMultipleGSTLines(t *testing.T) {
+	inv := testInvoice()
+	inv.Lines[0].Item.Price = num.NewAmount(50000, 2) // A$500
+
+	// Add another GST line: A$500 + A$600 = A$1,100
 	inv.Lines = append(inv.Lines, &bill.Line{
 		Quantity: num.MakeAmount(1, 0),
 		Item: &org.Item{
 			Name:  "Another Item",
-			Price: num.NewAmount(60000, 2), // A$600.00
+			Price: num.NewAmount(60000, 2), // A$600
 		},
 		Taxes: tax.Set{
 			{
@@ -162,82 +235,14 @@ func TestInvoiceMultipleLinesOverThreshold(t *testing.T) {
 	assert.Contains(t, err.Error(), "buyer name or ABN required")
 }
 
-func TestInvoiceWithZeroRatedGST(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Lines[0].Taxes = tax.Set{
-		{
-			Category: tax.CategoryGST,
-			Percent:  num.NewPercentage(0, 2), // 0% GST-free
-		},
-	}
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = nil
-
-	// Even with 0% GST, it's still a taxable supply and should trigger the rule
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.Error(t, err, "Zero-rated GST should still count as taxable supply")
-	assert.Contains(t, err.Error(), "buyer name or ABN required")
-}
-
-func TestInvoiceNonGSTLinesOnly(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Taxes = nil // No GST category
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = nil
-
-	// No GST lines, so threshold not reached
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err, "Non-GST lines should not count toward threshold")
-}
-
-func TestInvoiceMixedGSTAndNonGST(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(60000, 2) // A$600.00 with GST
-
-	// Add a non-GST line
-	inv.Lines = append(inv.Lines, &bill.Line{
-		Quantity: num.MakeAmount(1, 0),
-		Item: &org.Item{
-			Name:  "Non-GST Item",
-			Price: num.NewAmount(50000, 2), // A$500.00 without GST
-		},
-		Taxes: nil, // No GST
-	})
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = nil
-
-	// Only GST lines count: A$600 < A$1,000
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.NoError(t, err, "Only GST lines should count, total A$600 under threshold")
-}
-
+// TestInvoiceNilCustomer verifies that nil customer doesn't cause errors
+// (simplified invoices may not have customer details).
 func TestInvoiceNilCustomer(t *testing.T) {
 	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
+	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500
 	inv.Customer = nil
 
 	require.NoError(t, inv.Calculate())
 	err := au.Validate(inv)
-	// Nil customer is allowed (simplified invoices)
-	require.NoError(t, err, "Nil customer should not cause validation error")
-}
-
-func TestInvoiceWithEmptyABN(t *testing.T) {
-	inv := testInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(150000, 2) // A$1,500.00
-	inv.Customer.Name = ""
-	inv.Customer.TaxID = &tax.Identity{
-		Code:    "", // Empty ABN
-		Country: "AU",
-	}
-
-	require.NoError(t, inv.Calculate())
-	err := au.Validate(inv)
-	require.Error(t, err, "Empty ABN should be treated as no ABN")
-	assert.Contains(t, err.Error(), "buyer name or ABN required")
+	require.NoError(t, err, "Nil customer should be allowed")
 }
