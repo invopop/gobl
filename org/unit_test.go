@@ -53,3 +53,48 @@ func TestUnitJSONSChema(t *testing.T) {
 	last := schema.OneOf[len(schema.OneOf)-1]
 	assert.Equal(t, last.Pattern, org.UnitPatternUNECE)
 }
+
+func TestNewUnitsValidation(t *testing.T) {
+	// Test all new units validate successfully
+	newUnits := []org.Unit{
+		org.UnitWeek,
+		org.UnitYear,
+		org.UnitDecilitre,
+		org.UnitKilolitre,
+		org.UnitCentigram,
+		org.UnitLinearMetre,
+		org.UnitLinearFoot,
+		org.UnitFlatFee,
+		org.UnitBlock,
+		org.UnitPacket,
+		org.UnitBundle,
+	}
+
+	for _, u := range newUnits {
+		assert.NoError(t, u.Validate(), "unit %s should validate", u)
+	}
+}
+
+func TestNewUnitsUNECE(t *testing.T) {
+	// Test UNECE mappings for new units
+	tests := []struct {
+		unit     org.Unit
+		expected cbc.Code
+	}{
+		{org.UnitWeek, "WEE"},
+		{org.UnitYear, "ANN"},
+		{org.UnitDecilitre, "DLT"},
+		{org.UnitKilolitre, cbc.CodeEmpty},
+		{org.UnitCentigram, "CGM"},
+		{org.UnitLinearMetre, "LM"},
+		{org.UnitLinearFoot, "LF"},
+		{org.UnitFlatFee, cbc.CodeEmpty},
+		{org.UnitBlock, cbc.CodeEmpty},
+		{org.UnitPacket, "PA"},
+		{org.UnitBundle, "BE"},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.expected, tt.unit.UNECE(), "UNECE code for %s should be %s", tt.unit, tt.expected)
+	}
+}
