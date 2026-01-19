@@ -6,9 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Added
-
-- `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
+## [v0.306.0] - 2026-01-19
 
 ### Changed
 
@@ -18,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `head`: `Link` support for category and improved file support.
+- `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
 
 ## [v0.305.1] - 2026-01-09
 
