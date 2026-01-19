@@ -1,0 +1,481 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "br-nfe-v4",
+  "name": {
+    "en": "Brazil NF-e 4.00"
+  },
+  "extensions": [
+    {
+      "key": "br-nfe-model",
+      "name": {
+        "en": "Fiscal Document Model Code",
+        "pt": "Código do Modelo do Documento Fiscal"
+      },
+      "desc": {
+        "en": "Code used to identify the fiscal document model. It will be\ndetermined automatically by GOBL during normalization according to\nthe scenario definitions."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "55",
+          "name": {
+            "en": "NF-e"
+          },
+          "desc": {
+            "en": "For B2B transfer of goods and certain intra-state\nservices."
+          }
+        },
+        {
+          "code": "65",
+          "name": {
+            "en": "NFC-e"
+          },
+          "desc": {
+            "en": "For B2C (retail) transfer of goods and certain\nintra-state services."
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-presence",
+      "name": {
+        "en": "Buyer Presence Indicator",
+        "pt": "Indicador de Presença do Comprador"
+      },
+      "desc": {
+        "en": "Indicator of the buyer's presence at the commercial establishment\nat the time of the operation. This field is used to classify the\ntype of commercial transaction according to Brazilian tax regulations."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "0",
+          "name": {
+            "en": "Not applicable",
+            "pt": "Não se aplica"
+          }
+        },
+        {
+          "code": "1",
+          "name": {
+            "en": "In-person operation",
+            "pt": "Operação presencial"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Non-in-person operation, via Internet",
+            "pt": "Operação não presencial, pela Internet"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Non-in-person operation, Tele-service",
+            "pt": "Operação não presencial, Teleatendimento"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "NFC-e in operation with home delivery",
+            "pt": "NFC-e em operação com entrega a domicílio"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "In-person operation, outside establishment",
+            "pt": "Operação presencial, fora do estabelecimento"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Non-in-person operation, others",
+            "pt": "Operação não presencial, outros"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-payment-means",
+      "name": {
+        "en": "Payment Method",
+        "pt": "Meio de Pagamento"
+      },
+      "desc": {
+        "en": "Code used to identify the payment method used for the transaction.",
+        "pt": "Código utilizado para identificar o meio de pagamento utilizado na transação."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Cash",
+            "pt": "Dinheiro"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Check",
+            "pt": "Cheque"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Credit Card",
+            "pt": "Cartão de Crédito"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Debit Card",
+            "pt": "Cartão de Débito"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Store Credit",
+            "pt": "Crédito Loja"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Food Voucher",
+            "pt": "Vale Alimentação"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Meal Voucher",
+            "pt": "Vale Refeição"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Gift Voucher",
+            "pt": "Vale Presente"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Fuel Voucher",
+            "pt": "Vale Combustível"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Bank Slip (Boleto)",
+            "pt": "Boleto Bancário"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Bank Deposit",
+            "pt": "Depósito Bancário"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "en": "Instant Payment (PIX)",
+            "pt": "Pagamento Instantâneo (PIX)"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "en": "Bank Transfer, Digital Wallet",
+            "pt": "Transferência bancária, Carteira Digital"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "en": "Loyalty Program, Cashback, Virtual Credit",
+            "pt": "Programa de fidelidade, Cashback, Crédito Virtual"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "No Payment",
+            "pt": "Sem pagamento"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Others",
+            "pt": "Outros"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-cfop",
+      "name": {
+        "en": "CFOP (Fiscal Operations and Services Code)",
+        "pt": "CFOP (Código Fiscal de Operações e Prestações)"
+      },
+      "desc": {
+        "en": "Four-digit code that classifies the nature of goods movements and service\nprovisions for ICMS purposes in Brazil. The first digit indicates the\noperation origin/destination (1–3 for entries; 5–7 for exits), and the\nremaining digits identify the specific type of operation.",
+        "pt": "Código de quatro dígitos que classifica a natureza das operações de\ncirculação de mercadorias e das prestações de serviços para fins de ICMS.\nO primeiro dígito indica a origem/destino da operação (1–3 para entradas;\n5–7 para saídas) e os demais identificam o tipo específico de operação."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "CFOP - Fiscal Operations and Services Codes (SEFAZ-PE)",
+            "pt": "CFOP - Código Fiscal de Operações e Prestações (SEFAZ-PE)"
+          },
+          "url": "https://www.sefaz.pe.gov.br/legislacao/tributaria/documents/legislacao/tabelas/cfop.htm",
+          "content_type": "text/html"
+        }
+      ],
+      "pattern": "^[1-7]\\d{3}$"
+    },
+    {
+      "key": "br-nfe-fiscal-incentive",
+      "name": {
+        "en": "Fiscal Incentive Indicator",
+        "pt": "Indicador de Incentivo Fiscal"
+      },
+      "desc": {
+        "en": "Indicates whether a party benefits from a fiscal incentive."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Has incentive",
+            "pt": "Possui incentivo"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Does not have incentive",
+            "pt": "Não possui incentivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-regime",
+      "name": {
+        "en": "Tax Regime Code",
+        "pt": "Código de Regime Tributário"
+      },
+      "desc": {
+        "en": "Indicates the tax regime that a party is subject to."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Simples Nacional",
+            "pt": "Simples Nacional"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Simples Nacional, Excess",
+            "pt": "Simples Nacional, Excesso"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Normal",
+            "pt": "Normal"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-special-regime",
+      "name": {
+        "en": "Special Tax Regime Code",
+        "pt": "Código do Regime Especial de Tributação"
+      },
+      "desc": {
+        "en": "Indicates a special tax regime that a party is subject to."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Municipal micro-enterprise",
+            "pt": "Microempresa municipal"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Estimated",
+            "pt": "Estimativa"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Professional Society",
+            "pt": "Sociedade de profissionais"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Cooperative",
+            "pt": "Cooperativa"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Single micro-entrepreneur (MEI)",
+            "pt": "Microempreendedor individual (MEI)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Micro-enterprise or Small Business (ME EPP)",
+            "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "ext": {
+            "br-nfe-model": "55"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "br-nfe-model": "65"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "br-nfe-state-reg",
+      "name": {
+        "en": "Company State Registration",
+        "pt": "Inscrição Estadual da Empresa"
+      }
+    },
+    {
+      "key": "gtin",
+      "name": {
+        "en": "Product's GTIN (Global Trade Item Number)",
+        "pt": "GTIN (Global Trade Item Number) do produto"
+      }
+    },
+    {
+      "key": "gtin+taxable",
+      "name": {
+        "en": "Taxable item's GTIN (Global Trade Item Number)",
+        "pt": "GTIN (Global Trade Item Number) da unidade tributável"
+      }
+    },
+    {
+      "key": "ncm",
+      "name": {
+        "en": "Product's NCM (Mercosur Common Nomenclature) code",
+        "pt": "Código NCM (Nomenclatura Comum do Mercosul) do produto"
+      }
+    }
+  ],
+  "corrections": null
+}

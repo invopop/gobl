@@ -11,6 +11,8 @@ func init() {
 		Set{},
 		Extensions{},
 		Total{},
+		RegimeCode(""),
+		AddonList{},
 		RegimeDef{},
 		AddonDef{},
 		CatalogueDef{},

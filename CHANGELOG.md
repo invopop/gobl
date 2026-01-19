@@ -10,6 +10,153 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
 
+### Changed
+
+- `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
+- `org`: `Item` requires zero or positive price.
+
+## [v0.305.1] - 2026-01-09
+
+### Fixed
+
+- `eu-en16931-v2017`: Allow 0 item prices.
+
+## [v0.305.0] - 2026-01-08
+
+### Added
+
+- `ar-arca-v4`: Added initial Argentina ARCA addon.
+- `eu-en16931-v2017`: Added check for negative prices.
+- `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)
+- `br`: Add CBS and IBS tax categories
+- `gr-mydata-v1`: New charge types: fees, stamp duties and other taxes.
+
+### Removed
+
+- `eu-en16931-v2017`: Removed constraint for payment terms in Credit Notes.
+- `bill`: `LineDiscount` and `LineCharge` no longer return an error when the amount is 0.
+
+## [v0.304.0] - 2025-12-10
+
+### Added
+
+- `bill`: Add replicate logic to payments, orders and deliveries.
+- `tax`: `Tags.RemoveTags()` method for removing tags from a list.
+- `es-verifactu-v1`: Bill Lines require at least one of the main tax categories.
+- `org`: `Item` now defines `services` and `goods` as predefined options, required by some formats/regimes.
+- `org`: `Identity` has a `scope` field for defining where an identity should be used, such as for tax or legal purposes.
+- `es-sii-v1`: Added initial Spain SII addon.
+
+### Changed
+
+- `bill`: Refactor replicate logic to rely on calculations to set default values.
+
+### Fixed
+
+- `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
+
+## Removed
+
+- `org`: `Attachment.Name` field is no longer required.
+- `it-sdi-v1`: removed IBAN length validation.
+
+## [v0.303.0] - 2025-11-17
+
+### Added
+
+- `org`: `Identity` now has `gln` as a possible Key.
+- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
+- `it-sdi-v1`: Add Italian phone number validation and normalization
+- `it-sdi-v1`: Add validation for IBANs.
+
+### Removed
+
+- `pay`: Removed terms.Detail in favour of terms.Notes
+
+### Fixed
+
+- `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
+- `be`: Update regex to account for new VAT numbers starting with 1.
+
+## [v0.302.1] - 2025-10-31
+
+### Fixed
+
+- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the EU.
+
+## [v0.302.0] - 2025-10-29
+
+### Added
+
+- `co`: Add new INC tax defenition.
+- `sg`: Singaporean regime
+- `tax`: `keys` for GST
+- `bill`: `Line` with `seller` property, to be used in Mexico.
+- `org`: `DocumentRef` supports the `schema` field.
+- `se`: Swedish regime.
+- `luhn`: package for handling luhn Mod10 calculations.
+- `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
+- `regimes/ie`: Irish regime.
+
+### Fixed
+
+- `eu-en16931-v2017`: fixed issue with payment details when due is zero
+
+### Removed
+
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
+
+### Changed
+
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
+## [v0.301.0] - 2025-10-03
+
+### Added
+
+- `it-sdi-v1`: added validation for name and persons so that at least one is set.
+- `eu-en16931-v2017`: Add missing scenario for self billing credit notes.
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+
+### Changed
+
+- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
+- `de-xrechnung-v3`: Add missing validation from CIUS.
+- `fr`: Add identity validation and normalization.
+- `it-sdi-v1`: Modify address validation to accept postbox.
+- `bill`: support for `bypass` tag, to prevent billing total calculations (experimental).
+- Updated normalizer ordering so that inside fields/objects are processed before the parent object
+
+### Removed
+
+- `pt`: migrations for Zone, no longer needed
+
+### Fixed
+
+- `pt-saft`: minimum exemption note length corrected to 6 characters
+
+## [v0.300.2] - 2025-09-18
+
+### Added
+
+- `org`: `Item` - `images` field for storing links to images of the item.
+- `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
+- `it`: added new tax category for `CP` to handle code `RT06` for retained taxes
+- `pt-saft-v1`: positive quantity validation
+- `pt-saft-v1`: tax rate normalization to prevent rate extension and percent mismatches
+- `pt-saft-v1`: exemption note text length validation
+
+### Removed
+
+- `es-verifactu-v1`: removed preceding validations for credit notes and `F3` invoice type
+
+### Fixed
+
+- `es`: IGIC now uses VAT keys
+- `bill`: fixed zero-percent handling in charges and discounts
+
 ## [v0.300.1] - 2025-09-12
 
 ### Fixed
@@ -29,6 +176,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+### Changed
+
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 

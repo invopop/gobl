@@ -230,14 +230,14 @@ func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
 	pmt.Series = cbc.NormalizeCode(pmt.Series)
 	pmt.Code = cbc.NormalizeCode(pmt.Code)
 
-	normalizers.Each(pmt)
-
 	tax.Normalize(normalizers, pmt.Method)
 	tax.Normalize(normalizers, pmt.Supplier)
 	tax.Normalize(normalizers, pmt.Customer)
 	tax.Normalize(normalizers, pmt.Preceding)
 	tax.Normalize(normalizers, pmt.Lines)
 	tax.Normalize(normalizers, pmt.Ordering)
+
+	normalizers.Each(pmt)
 }
 
 func (pmt *Payment) normalizers() tax.Normalizers {
@@ -324,8 +324,6 @@ func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	pmt.Regime.JSONSchemaExtend(js)
-	pmt.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

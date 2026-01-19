@@ -3,6 +3,7 @@ package en16931
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -89,6 +90,22 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Required, // BR-16 - at least one line
 			validation.Skip,
 		),
+		validation.Field(&inv.Supplier,
+			validation.By(validateBillInvoiceParty),
+			validation.Skip,
+		),
+		validation.Field(&inv.Customer,
+			validation.By(validateBillInvoiceParty),
+			validation.Skip,
+		),
+		validation.Field(&inv.Payment,
+			validation.When(
+				isDue(inv) && inv.Type.In(bill.InvoiceTypeStandard),
+				validation.Required.Error("payment details are required when amount is due (BR-CO-25)"), // BR-CO-25
+				validation.By(validateBillPayment),
+			),
+			validation.Skip,
+		),
 	)
 }
 
@@ -103,4 +120,146 @@ func validateBillInvoiceTax(value any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateBillInvoiceParty(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+
+	//BR-8 & BR-10
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Addresses,
+			validation.Required,
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLine(line *bill.Line) error {
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateBillLineDiscount),
+			),
+			validation.Skip,
+		),
+		validation.Field(&line.Charges,
+			validation.Each(
+				validation.By(validateBillLineCharge),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLineCharge(value any) error {
+	// BR-44
+	charge, ok := value.(*bill.LineCharge)
+	if !ok || charge == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(charge,
+		validation.Field(&charge.Reason,
+			validation.When(
+				!charge.Ext.Has(untdid.ExtKeyCharge),
+				validation.Required.Error("either a reason or a charge type extension is required"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&charge.Ext,
+			validation.When(
+				charge.Reason == "",
+				validation.Required.Error("either a reason or a charge type extension is required"),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLineDiscount(value any) error {
+	// BR-41
+	discount, ok := value.(*bill.LineDiscount)
+	if !ok || discount == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(discount,
+		// BR-41
+		validation.Field(&discount.Reason,
+			validation.When(
+				!discount.Ext.Has(untdid.ExtKeyAllowance),
+				validation.Required.Error("either a reason or an allowance type extension is required (BR-41)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&discount.Ext,
+			validation.When(
+				discount.Reason == "",
+				validation.Required.Error("either a reason or an allowance type extension is required (BR-41)"),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillCharge(charge *bill.Charge) error {
+	// BR-36
+	return validation.ValidateStruct(charge,
+		validation.Field(&charge.Reason,
+			validation.When(
+				!charge.Ext.Has(untdid.ExtKeyCharge),
+				validation.Required.Error("either a reason or a charge type extension is required (BR-36)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&charge.Ext,
+			validation.When(
+				charge.Reason == "",
+				validation.Required.Error("either a reason or a charge type extension is required (BR-36)"),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillDiscount(discount *bill.Discount) error {
+	// BR-33
+	return validation.ValidateStruct(discount,
+		validation.Field(&discount.Reason,
+			validation.When(
+				!discount.Ext.Has(untdid.ExtKeyAllowance),
+				validation.Required.Error("either a reason or an allowance type extension is required (BR-33)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&discount.Ext,
+			validation.When(
+				discount.Reason == "",
+				validation.Required.Error("either a reason or an allowance type extension is required (BR-33)"),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillPayment(value any) error {
+	payment, ok := value.(*bill.PaymentDetails)
+	if !ok || payment == nil {
+		return nil
+	}
+	return validation.ValidateStruct(payment,
+		validation.Field(&payment.Terms,
+			validation.Required.Error("payment terms are required when amount is due (BR-CO-25)"),
+		),
+	)
+}
+
+func isDue(inv *bill.Invoice) bool {
+	return inv.Totals != nil &&
+		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
+			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
 }

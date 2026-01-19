@@ -97,11 +97,6 @@
           "title": "Key",
           "description": "Type of terms to be applied."
         },
-        "detail": {
-          "type": "string",
-          "title": "Detail",
-          "description": "Text detail of the chosen payment terms."
-        },
         "due_dates": {
           "items": {
             "$ref": "#/$defs/DueDate"

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+  "currency": "ARS",
+  "issue_date": "2025-01-15",
+  "series": "1",
+  "code": "00000123",
+  "supplier": {
+    "name": "Proveedor Ejemplo S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Corrientes 1234",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1043",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "ventas@proveedorejemplo.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Cliente Comercial S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Santa Fe 2500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1123",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@clientecomercial.com.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "10",
+      "item": {
+        "name": "Notebooks Dell Latitude",
+        "price": "450000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ]
+}
+

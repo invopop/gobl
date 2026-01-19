@@ -165,7 +165,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
 	cd := cur.Def()
 	for _, d := range discounts {
-		if d.Percent != nil && !d.Percent.IsZero() {
+		if d.Percent != nil {
 			base := sum
 			if d.Base != nil {
 				b := d.Base.RescaleUp(cd.Subunits)
@@ -184,7 +184,7 @@ func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cu
 func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
 	cd := cur.Def()
 	for _, c := range charges {
-		if c.Percent != nil && !c.Percent.IsZero() {
+		if c.Percent != nil {
 			base := sum
 			if c.Base != nil {
 				b := c.Base.RescaleUp(cd.Subunits)

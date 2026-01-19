@@ -8,6 +8,7 @@ import (
 )
 
 func TestCountries(t *testing.T) {
+	t.Parallel()
 	c := l10n.Countries().Code(l10n.US)
 	assert.NotNil(t, c)
 }

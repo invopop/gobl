@@ -24,7 +24,7 @@
         "name": {
           "type": "string",
           "title": "Name",
-          "description": "Filename of the attachment."
+          "description": "Filename of the attachment, will override name retrieved from URL."
         },
         "description": {
           "type": "string",
@@ -35,7 +35,7 @@
           "type": "string",
           "format": "uri",
           "title": "URL",
-          "description": "URL of where to find the attachment. Prefer using this field\nover the Data field."
+          "description": "URL of where to find the attachment."
         },
         "digest": {
           "$ref": "https://gobl.org/draft-0/dsig/digest",
@@ -46,17 +46,11 @@
           "type": "string",
           "title": "MIME Type",
           "description": "MIME type of the attachment."
-        },
-        "data": {
-          "type": "string",
-          "contentEncoding": "base64",
-          "title": "Data",
-          "description": "Data is the base64 encoded data of the attachment directly embedded\ninside the GOBL document. This should only be used when the URL cannot\nbe used as it can dramatically increase the size of the JSON\ndocument, thus effecting usability and performance."
         }
       },
       "type": "object",
       "required": [
-        "name"
+        "url"
       ],
       "description": "An Attachment provides a structure to be used to attach documents inside a GOBL document, either as a reference via a URL, or directly as a base64 encoded string."
     }

@@ -3,14 +3,16 @@ package en16931
 import (
 	"regexp"
 
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-// Map of GOBL keys to the corresponding UNTDID 4451 code.
+// Map of GOBL Note keys to the corresponding UNTDID 4451 code.
 var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyGoods:          "AAA",
 	org.NoteKeyPayment:        "PMT",
@@ -40,6 +42,12 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyOther:          "ZZZ",
 }
 
+// Map of GOBL Identity keys to the corresponding ISO/IEC 6523 code.
+var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
+	org.IdentityKeyGLN:  "0088",
+	org.IdentityKeyGTIN: "0160",
+}
+
 var (
 	orgInboxRegexpSchemeCode = regexp.MustCompile(`(\d{4}):.*`)
 )
@@ -67,6 +75,18 @@ func normalizeOrgItem(item *org.Item) {
 	}
 }
 
+func normalizeOrgIdentity(i *org.Identity) {
+	if i == nil || i.Key == cbc.KeyEmpty {
+		return
+	}
+
+	if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
+		i.Ext = i.Ext.Merge(tax.Extensions{
+			iso.ExtKeySchemeID: scheme,
+		})
+	}
+}
+
 func normalizeOrgInbox(i *org.Inbox) {
 	if i == nil || i.Code == cbc.CodeEmpty {
 		return
@@ -81,6 +101,12 @@ func validateOrgItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Unit,
 			validation.Required.Error("cannot be blank (BR-23)"),
+			validation.Skip,
+		),
+		validation.Field(&item.Price,
+			// Must not be negative (BR-27)
+			num.ZeroOrPositive,
+			validation.Skip,
 		),
 	)
 }
@@ -115,6 +141,16 @@ func validateOrgInbox(i *org.Inbox) error {
 			validation.When(i.Scheme != cbc.CodeEmpty,
 				validation.Required.Error("cannot be blank with scheme"),
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgAddress(a *org.Address) error {
+	return validation.ValidateStruct(a,
+		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
+		validation.Field(&a.Country,
+			validation.Required,
 			validation.Skip,
 		),
 	)

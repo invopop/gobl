@@ -71,7 +71,7 @@ func TestTaxIdentity(t *testing.T) {
 		tID := &tax.Identity{
 			Country: "ES",
 			Code:    "X3157928M",
-			Scheme:  "Foo",
+			Scheme:  "Fo--o",
 		}
 		assert.ErrorContains(t, tID.Validate(), "scheme: must be in a valid format.")
 	})

@@ -227,20 +227,9 @@ func validateInvoiceTotals(val any) error {
 	}
 
 	return validation.ValidateStruct(tot,
-		validation.Field(&tot.Advances,
-			num.Max(tot.Payable.Subtract(numOrZero(tot.Due))),
-			validation.Skip,
-		),
 		validation.Field(&tot.Due,
-			num.Max(tot.Payable.Subtract(numOrZero(tot.Advances))),
+			num.ZeroOrPositive,
 			validation.Skip,
 		),
 	)
-}
-
-func numOrZero(a *num.Amount) num.Amount {
-	if a == nil {
-		return num.AmountZero
-	}
-	return *a
 }

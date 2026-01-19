@@ -46,6 +46,9 @@ func replicate(ctx context.Context, opts *ReplicateOptions) (interface{}, error)
 		if err := doc.Replicate(); err != nil {
 			return nil, err
 		}
+		if err = doc.Calculate(); err != nil {
+			return nil, err
+		}
 		if err = doc.Validate(); err != nil {
 			return nil, err
 		}

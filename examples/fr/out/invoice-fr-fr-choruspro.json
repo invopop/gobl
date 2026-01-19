@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "61c46a02a9aab4fdc7716af54a67e798f7c36bd82f1a4ae2018862f67728eae3"
+			"val": "b37ea2fa078f1676fb48638d32331698e4f719f703740c0f246dd51d8f146803"
 		}
 	},
 	"doc": {
@@ -119,13 +119,22 @@
 			}
 		],
 		"payment": {
+			"terms": {
+				"notes": "Pay before delivery"
+			},
 			"advances": [
 				{
 					"description": "Paid in full",
 					"percent": "100%",
 					"amount": "1944.00"
 				}
-			]
+			],
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"untdid-payment-means": "48"
+				}
+			}
 		},
 		"totals": {
 			"sum": "1620.00",

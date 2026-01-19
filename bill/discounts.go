@@ -146,7 +146,7 @@ func (m *Discount) ValidateWithContext(ctx context.Context) error {
 				validation.Required,
 			),
 		),
-		validation.Field(&m.Amount, validation.Required),
+		validation.Field(&m.Amount),
 		validation.Field(&m.Taxes),
 		validation.Field(&m.Ext),
 		validation.Field(&m.Meta),
@@ -190,7 +190,7 @@ func calculateDiscounts(lines []*Discount, cur currency.Code, sum num.Amount, rr
 			continue
 		}
 		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
+		if l.Percent != nil {
 			base := sum
 			if l.Base != nil {
 				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)

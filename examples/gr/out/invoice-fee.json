@@ -1,0 +1,147 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1723118745a364a423a5fd79c452ad1c9153111c7975535719f7945e8bde42e6"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"services"
+		],
+		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
+		"supplier": {
+			"name": "Ξενοδοχείο Ακρόπολη Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "177472438"
+			},
+			"addresses": [
+				{
+					"num": "28",
+					"street": "Λεωφόρος Συγγρού",
+					"locality": "Αθήνα",
+					"code": "11742",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "reservations@acropolishotel.gr"
+				}
+			]
+		},
+		"customer": {
+			"name": "Μαρία Παπαδοπούλου",
+			"tax_id": {
+				"country": "EL",
+				"code": "841442160"
+			},
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Οδός Ερμού",
+					"locality": "Αθήνα",
+					"code": "10563",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "maria.papadopoulou@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "3",
+				"item": {
+					"name": "Διανυκτέρευση - Δίκλινο Δωμάτιο με Θέα Ακρόπολη",
+					"price": "120.00",
+					"ext": {
+						"gr-mydata-income-cat": "category1_3",
+						"gr-mydata-income-type": "E3_561_001"
+					}
+				},
+				"sum": "360.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "24%",
+						"ext": {
+							"gr-mydata-vat-rate": "1"
+						}
+					}
+				],
+				"total": "360.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"reason": "Τέλος Διαμονής (3 νύχτες x €4.00)",
+				"amount": "12.00",
+				"ext": {
+					"gr-mydata-fee": "18",
+					"gr-mydata-tax-type": "2"
+				}
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
+			}
+		},
+		"totals": {
+			"sum": "360.00",
+			"charge": "12.00",
+			"total": "372.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"gr-mydata-vat-rate": "1"
+								},
+								"base": "360.00",
+								"percent": "24%",
+								"amount": "86.40"
+							}
+						],
+						"amount": "86.40"
+					}
+				],
+				"sum": "86.40"
+			},
+			"tax": "86.40",
+			"total_with_tax": "458.40",
+			"payable": "458.40"
+		}
+	}
+}

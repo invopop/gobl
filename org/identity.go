@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -29,12 +30,20 @@ const (
 	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
 	IdentityKeyISBN      cbc.Key = "isbn"      // International Standard Book Number
 	IdentityKeyHSN       cbc.Key = "hsn"       // Harmonized System of Nomenclature
+	IdentityKeyGLN       cbc.Key = "gln"       // GS1 Global Location Number
 	IdentityKeyGTIN      cbc.Key = "gtin"      // GS1 Global Trade Item Number
 	IdentityKeyEAN       cbc.Key = "ean"       // European Article Number
 	IdentityKeyUPC       cbc.Key = "upc"       // UPC (Universal Product Code)
 	IdentityKeyIMEI      cbc.Key = "imei"      // International Mobile Equipment Identity
 	IdentityKeyDUNS      cbc.Key = "duns"      // Dun & Bradstreet D-U-N-S Number
+	IdentityKeyNCM       cbc.Key = "ncm"       // Mercosur Common Nomenclature
 	IdentityKeyOther     cbc.Key = "other"
+)
+
+// Identity scopes that may be used to further classify an identity's intended use.
+const (
+	IdentityScopeTax   cbc.Key = "tax"
+	IdentityScopeLegal cbc.Key = "legal"
 )
 
 // Identity is used to define a code for a specific context. Identities can be used for
@@ -43,9 +52,11 @@ type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Scope defines the context in which this identity is meant to be used.
+	Scope cbc.Key `json:"scope,omitempty" jsonschema:"title=Scope"`
 	// Country from which the identity was issued.
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Uniquely classify this identity using a key instead of a type.
+	// Uniquely classify this identity using a key instead of a Type.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
 	// a particular context, country, or tax regime, and cannot be used
@@ -81,6 +92,12 @@ func (i *Identity) Validate() error {
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
+		validation.Field(&i.Scope,
+			validation.In(
+				IdentityScopeTax,
+				IdentityScopeLegal,
+			),
+		),
 		validation.Field(&i.Country),
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,
@@ -97,8 +114,8 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 
 // RequireIdentityType provides a validation rule that will determine if at least one
 // of the identities defined includes one with the defined type.
-func RequireIdentityType(typ cbc.Code) validation.Rule {
-	return validateIdentitySet{typ: typ}
+func RequireIdentityType(typ ...cbc.Code) validation.Rule {
+	return validateIdentitySet{typs: typ}
 }
 
 // RequireIdentityKey provides a validation rule that will determine if at least one
@@ -108,7 +125,7 @@ func RequireIdentityKey(key ...cbc.Key) validation.Rule {
 }
 
 type validateIdentitySet struct {
-	typ  cbc.Code
+	typs []cbc.Code
 	keys []cbc.Key
 }
 
@@ -122,22 +139,21 @@ func (v validateIdentitySet) Validate(value interface{}) error {
 			return nil
 		}
 	}
-
 	return fmt.Errorf("missing %s", v)
 }
 
 func (v validateIdentitySet) matches(row *Identity) bool {
-	return (v.typ == cbc.CodeEmpty || row.Type == v.typ) &&
+	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
 		(len(v.keys) == 0 || row.Key.In(v.keys...))
 }
 
 func (v validateIdentitySet) String() string {
 	var parts []string
-	if v.typ != cbc.CodeEmpty {
-		parts = append(parts, fmt.Sprintf("type '%s'", v.typ))
+	if len(v.typs) != 0 {
+		parts = append(parts, fmt.Sprintf("type '%s'", strings.Join(cbc.CodeStrings(v.typs), "', '")))
 	}
 	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), ", ")))
+		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), "', '")))
 	}
 	return strings.Join(parts, ", ")
 }
@@ -185,4 +201,21 @@ func AddIdentity(in []*Identity, i *Identity) []*Identity {
 		}
 	}
 	return append(in, i)
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	prop, ok := js.Properties.Get("scope")
+	if ok {
+		prop.OneOf = []*jsonschema.Schema{
+			{
+				Const: IdentityScopeTax,
+				Title: "Tax",
+			},
+			{
+				Const: IdentityScopeLegal,
+				Title: "Legal",
+			},
+		}
+	}
 }

@@ -267,6 +267,42 @@ func TestExtensionsExcludeValidation(t *testing.T) {
 	})
 }
 
+func TestExtensionsAllowOneOfValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsAllowOneOf(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsAllowOneOf(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("one present", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsAllowOneOf(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("both present", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+			iso.ExtKeySchemeID:        "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsAllowOneOf(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: only one allowed")
+		assert.ErrorContains(t, err, "iso-scheme-id: only one allowed")
+	})
+}
+
 func TestExtensionsHasValues(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		err := validation.Validate(nil,

@@ -146,12 +146,6 @@ func (d *Object) Replicate() error {
 			return err
 		}
 	}
-	if ident, ok := d.payload.(Identifiable); ok {
-		id := ident.GetUUID()
-		if id.IsZero() {
-			ident.SetUUID(uuid.V7())
-		}
-	}
 	return nil
 }
 

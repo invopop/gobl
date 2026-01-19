@@ -204,45 +204,44 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 
-	t.Run("simplified substitution", func(t *testing.T) {
+	t.Run("simplified substitution without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
+		// Simplified invoice without customer details stays F2
+		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "F2", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 
-		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
+		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax()))
 		require.NoError(t, inv.Validate())
-		// Should always set the doc type to R5, even if trying to override as the simplified
-		// tag has priority.
+		// Should get R5 for simplified corrective
 		assert.Equal(t, "R5", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
 	})
 
-	t.Run("correction invoice requires preceding", func(t *testing.T) {
+	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
-	t.Run("correction invoice nil preceding", func(t *testing.T) {
+	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
 		require.NoError(t, inv.Calculate())
 		ad := tax.AddonForKey(verifactu.V1)
 		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {
+	t.Run("credit note needs no preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Preceding = []*org.DocumentRef{
-			{
-				Code: "123",
-			},
-		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		ad := tax.AddonForKey(verifactu.V1)
+		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+	t.Run("corrective invoice preceding requires issue date and tax", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{
@@ -253,9 +252,9 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 
-	t.Run("correction invoice with preceding", func(t *testing.T) {
+	t.Run("corrective invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		d := cal.MakeDate(2024, 1, 1)
 		inv.Preceding = []*org.DocumentRef{
 			{
@@ -293,7 +292,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags("replacement")
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, inv.Validate(), "preceding: details of invoice being replaced must be included")
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("replacement with preceding", func(t *testing.T) {
@@ -354,6 +353,127 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
+	t.Run("simplified invoice with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
+	})
+	t.Run("simplified substitution with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Type = bill.InvoiceTypeCorrective
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		d := cal.MakeDate(2024, 1, 1)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
+	})
+	t.Run("simplified invoice F2 with customer tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "customer: (tax_id: must be blank.)")
+	})
+	t.Run("simplified substitution R5 with customer tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Type = bill.InvoiceTypeCorrective
+		d := cal.MakeDate(2024, 1, 1)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "customer: (tax_id: must be blank.)")
+	})
+	t.Run("simplified invoice F2 with customer identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		// Customer has identity - should be normalized to F1 with SimplifiedArt7273
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "customer: (identities: (0: (ext: (es-verifactu-identity-type: must be blank.).).).)")
+	})
+
+	t.Run("invoice with only retained taxes fails", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Replace VAT with IRPF (retained tax)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "lines: (0: (taxes: missing category in VAT, IGIC, IPSI.).).")
+	})
+
+	t.Run("invoice with VAT and IRPF passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

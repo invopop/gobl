@@ -1,0 +1,109 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": [
+    "br-nfse-v1"
+  ],
+  "uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
+  "series": "FL",
+  "code": "1",
+  "issue_date": "2024-11-15",
+  "currency": "BRL",
+  "supplier": {
+    "name": "Tech Solutions Consultoria Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "72072141621"
+    },
+    "identities": [
+      {
+        "key": "br-nfse-municipal-reg",
+        "code": "12345678901234"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "150",
+        "street": "Rua das Flores",
+        "street_extra": "Sala 301",
+        "locality": "Vila Madalena",
+        "region": "São Paulo",
+        "state": "SP",
+        "code": "05433-000",
+        "country": "BR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "joao.santos@gmail.com"
+      }
+    ],
+    "ext": {
+      "br-ibge-municipality": "3550308",
+      "br-nfse-fiscal-incentive": "1",
+      "br-nfse-simples": "1",
+      "br-nfse-special-regime": "4"
+    }
+  },
+  "customer": {
+    "name": "Inovação Digital Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "80723400000164"
+    },
+    "addresses": [
+      {
+        "num": "200",
+        "street": "Avenida Paulista",
+        "street_extra": "Andar 15",
+        "locality": "Bela Vista",
+        "region": "São Paulo",
+        "state": "SP",
+        "code": "01310-100",
+        "country": "BR"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "40",
+      "item": {
+        "name": "Software Development Services",
+        "price": "150.00",
+        "ext": {
+          "br-nfse-service": "02658",
+          "br-nfse-cnae": "62.01-5-01"
+        }
+      },
+      "taxes": [
+        {
+          "cat": "ISS",
+          "percent": "5%",
+          "ext": {
+            "br-nfse-iss-liability": "1"
+          }
+        },
+        {
+          "cat": "PISRet",
+          "percent": "0.65%"
+        },
+        {
+          "cat": "COFINSRet",
+          "percent": "3%"
+        },
+        {
+          "cat": "CSLL",
+          "percent": "1%"
+        },
+        {
+          "cat": "INSS",
+          "percent": "11%"
+        },
+        {
+          "cat": "IRRF",
+          "percent": "1.5%"
+        }
+      ]
+    }
+  ]
+}

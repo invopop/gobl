@@ -18,6 +18,7 @@ import (
 )
 
 var skipExamplePaths = []string{
+	".git",
 	"build/",
 	".out.",
 	"/out/",
@@ -25,6 +26,8 @@ var skipExamplePaths = []string{
 	".github",
 	".golangci.yaml",
 	"wasm/",
+	".claude/",
+	".git/",
 }
 
 var updateExamples = flag.Bool("update", false, "Update the examples in the repository")

@@ -114,8 +114,8 @@ func (m *Charge) Normalize(normalizers tax.Normalizers) {
 	m.Code = cbc.NormalizeCode(m.Code)
 	m.Taxes = tax.CleanSet(m.Taxes)
 	m.Ext = tax.CleanExtensions(m.Ext)
-	normalizers.Each(m)
 	tax.Normalize(normalizers, m.Taxes)
+	normalizers.Each(m)
 }
 
 // ValidateWithContext checks the charge's fields.
@@ -131,7 +131,7 @@ func (m *Charge) ValidateWithContext(ctx context.Context) error {
 				validation.Required,
 			),
 		),
-		validation.Field(&m.Amount, validation.Required),
+		validation.Field(&m.Amount),
 		validation.Field(&m.Taxes),
 		validation.Field(&m.Ext),
 		validation.Field(&m.Meta),
@@ -175,7 +175,7 @@ func calculateCharges(lines []*Charge, cur currency.Code, sum num.Amount, rr cbc
 			continue
 		}
 		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
+		if l.Percent != nil {
 			base := sum
 			if l.Base != nil {
 				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)

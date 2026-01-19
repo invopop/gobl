@@ -1,0 +1,84 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "9a3e310c-bf24-a131-f613-4e4846ae4b8a",
+  "currency": "ARS",
+  "issue_date": "2025-02-01",
+  "series": "1",
+  "code": "00000200",
+  "supplier": {
+    "name": "Mayorista Nacional S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. 9 de Julio 1500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1037",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "ventas@mayorista.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Distribuidora Regional S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Ruta Nacional 9 Km 50",
+        "locality": "Córdoba",
+        "region": "Córdoba",
+        "code": "X5000",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@distribuidora.com.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "100",
+      "item": {
+        "name": "Productos alimenticios varios",
+        "price": "5000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "reduced"
+        }
+      ]
+    }
+  ],
+  "charges": [
+    {
+      "key": "tax",
+      "percent": "3.5%",
+      "ext": {
+        "ar-arca-tax-type": "5"
+      }
+    },
+    {
+      "key": "tax",
+      "percent": "1%",
+      "ext": {
+        "ar-arca-tax-type": "3"
+      }
+    }
+  ]
+}
+

@@ -1,6 +1,7 @@
 # GOBL
 
-<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg?raw=true" width="181" height="219" alt="GOBL Logo">
+<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg#gh-light-mode-only" width="181" height="219" alt="GOBL Logo">
+<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_white_rgb.svg#gh-dark-mode-only" width="181" height="219" alt="GOBL Logo">
 
 Go Business Language. Core library, schemas, and CLI.
 
@@ -13,6 +14,7 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 [![GoDoc](https://godoc.org/github.com/invopop/gobl?status.svg)](https://godoc.org/github.com/invopop/gobl)
 ![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 [Official GOBL documentation site](https://docs.gobl.org).
 

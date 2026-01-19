@@ -10,8 +10,16 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
+)
+
+const (
+	// ItemKeyServices indicates that the item is a service.
+	ItemKeyServices cbc.Key = "services"
+	// ItemKeyGoods indicates that the item is a physical good.
+	ItemKeyGoods cbc.Key = "goods"
 )
 
 // Item is used to describe a single product or service. Minimal usage
@@ -35,9 +43,11 @@ type Item struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	// Images associated with the item.
+	Images []*Image `json:"images,omitempty" jsonschema:"title=Images"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
-	// Base price of a single unit to be sold.
+	// Base price of a single unit to be sold. Must be either zero or positive.
 	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Price"`
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
@@ -67,8 +77,9 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Ext = tax.CleanExtensions(i.Ext)
 
-	normalizers.Each(i)
 	tax.Normalize(normalizers, i.Identities)
+	tax.Normalize(normalizers, i.Images)
+	normalizers.Each(i)
 }
 
 // ValidateWithContext checks that the Item looks okay inside the provided context.
@@ -78,9 +89,13 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Ref),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
+		validation.Field(&i.Description),
+		validation.Field(&i.Images),
 		validation.Field(&i.Identities),
 		validation.Field(&i.Currency),
-		validation.Field(&i.Price),
+		validation.Field(&i.Price,
+			num.ZeroOrPositive,
+		),
 		validation.Field(&i.AltPrices),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Origin),
@@ -108,4 +123,25 @@ func (v *itemPriceValidator) Validate(value any) error {
 		}
 	}
 	return nil
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
+	prop, ok := js.Properties.Get("key")
+	if ok {
+		prop.AnyOf = []*jsonschema.Schema{
+			{
+				Const: ItemKeyGoods,
+				Title: "Goods",
+			},
+			{
+				Const: ItemKeyServices,
+				Title: "Services",
+			},
+			{
+				Title:   "Other",
+				Pattern: cbc.KeyPattern,
+			},
+		}
+	}
 }

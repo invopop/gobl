@@ -1,0 +1,153 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3db53cd52c0153ed77336d0eb38a189d87c7b9f4079a6ec75328a6fe73a30823"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "BR",
+		"$addons": [
+			"br-nfe-v4"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+		"type": "standard",
+		"series": "123",
+		"code": "1",
+		"issue_date": "2024-11-15",
+		"currency": "BRL",
+		"tax": {
+			"ext": {
+				"br-nfe-model": "65",
+				"br-nfe-presence": "1"
+			}
+		},
+		"supplier": {
+			"name": "Drogaria Vida Saudável Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "55263640000186"
+			},
+			"identities": [
+				{
+					"key": "br-nfe-state-reg",
+					"code": "35503304557308"
+				}
+			],
+			"addresses": [
+				{
+					"num": "200",
+					"street": "Rua Primeiro de Março",
+					"street_extra": "Torre A",
+					"locality": "Centro",
+					"region": "Rio de Janeiro",
+					"state": "RJ",
+					"code": "20010-000",
+					"country": "BR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "saudemais@example.com"
+				}
+			],
+			"ext": {
+				"br-ibge-municipality": "3304557"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Caixa de Máscaras Cirúrgicas",
+					"price": "10.00"
+				},
+				"sum": "20.00",
+				"taxes": [
+					{
+						"cat": "ICMS",
+						"percent": "4.0%"
+					},
+					{
+						"cat": "PIS",
+						"percent": "1.65%"
+					},
+					{
+						"cat": "COFINS",
+						"percent": "7.60%"
+					}
+				],
+				"total": "20.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"br-nfe-payment-means": "03"
+				}
+			}
+		},
+		"totals": {
+			"sum": "20.00",
+			"total": "20.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "ICMS",
+						"informative": true,
+						"rates": [
+							{
+								"base": "20.00",
+								"percent": "4.0%",
+								"amount": "0.80"
+							}
+						],
+						"amount": "0.80"
+					},
+					{
+						"code": "PIS",
+						"informative": true,
+						"rates": [
+							{
+								"base": "20.00",
+								"percent": "1.65%",
+								"amount": "0.33"
+							}
+						],
+						"amount": "0.33"
+					},
+					{
+						"code": "COFINS",
+						"informative": true,
+						"rates": [
+							{
+								"base": "20.00",
+								"percent": "7.60%",
+								"amount": "1.52"
+							}
+						],
+						"amount": "1.52"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "20.00",
+			"payable": "20.00"
+		},
+		"notes": [
+			{
+				"key": "reason",
+				"text": "Venda de mercadoria"
+			}
+		]
+	}
+}

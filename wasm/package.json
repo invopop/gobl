@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "This folder contains the files necessary to execute the GOBL client library in your web browser. The core library is written in Go, and compiled to WebAssembly.  The file `gobl.js` provides a thin JavaScript wrapper around the compiled WebAssembly running in a web worker.",
   "main": "index.js",
+  "homepage": "https://gobl.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/invopop/gobl.git"
+  },
   "scripts": {
     "build": "./build.sh",
     "start": "http-server . -p 8080",

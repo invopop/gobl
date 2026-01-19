@@ -10,6 +10,28 @@
   "time_zone": "America/Sao_Paulo",
   "country": "BR",
   "currency": "BRL",
+  "extensions": [
+    {
+      "key": "br-ibge-municipality",
+      "name": {
+        "en": "IBGE Municipality Code",
+        "pt": "Código do Município do IBGE"
+      },
+      "desc": {
+        "en": "The municipality code as defined by the IBGE (Brazilian Institute of Geography and\nStatistics)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "IBGE - Municipalities Codes",
+            "pt": "IBGE - Códigos dos Municípios"
+          },
+          "url": "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+        }
+      ],
+      "pattern": "^\\d{7}$"
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",
@@ -40,7 +62,8 @@
       "title": {
         "en": "State value-added tax",
         "pt": "Imposto sobre Circulação de Mercadorias e Serviços"
-      }
+      },
+      "informative": true
     },
     {
       "code": "IPI",
@@ -63,6 +86,18 @@
         "en": "Social Integration Program",
         "pt": "Programa de Integração Social"
       },
+      "informative": true
+    },
+    {
+      "code": "PISRet",
+      "name": {
+        "en": "PIS (Retained)",
+        "pt": "PIS (Retido)"
+      },
+      "title": {
+        "en": "Social Integration Program Retained",
+        "pt": "Programa de Integração Social Retido"
+      },
       "retained": true
     },
     {
@@ -74,6 +109,18 @@
       "title": {
         "en": "Contribution for the Financing of Social Security",
         "pt": "Contribuição para o Financiamento da Seguridade Social"
+      },
+      "informative": true
+    },
+    {
+      "code": "COFINSRet",
+      "name": {
+        "en": "COFINS (Retained)",
+        "pt": "COFINS (Retido)"
+      },
+      "title": {
+        "en": "Contribution for the Financing of Social Security Retained",
+        "pt": "Contribuição para o Financiamento da Seguridade Social Retido"
       },
       "retained": true
     },
@@ -112,6 +159,30 @@
         "pt": "Imposto de Renda Retido na Fonte"
       },
       "retained": true
+    },
+    {
+      "code": "IBS",
+      "name": {
+        "en": "IBS",
+        "pt": "IBS"
+      },
+      "title": {
+        "en": "Goods and Services Tax",
+        "pt": "Imposto sobre Bens e Serviços"
+      },
+      "informative": true
+    },
+    {
+      "code": "CBS",
+      "name": {
+        "en": "CBS",
+        "pt": "CBS"
+      },
+      "title": {
+        "en": "Federal Goods and Services Contribution",
+        "pt": "Contribuição sobre Bens e Serviços"
+      },
+      "informative": true
     }
   ]
 }

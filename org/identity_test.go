@@ -1,14 +1,18 @@
 package org_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAddIdentity(t *testing.T) {
@@ -131,6 +135,29 @@ func TestIdentityValidate(t *testing.T) {
 		err := id.Validate()
 		assert.ErrorContains(t, err, "type: must be empty when key is set")
 	})
+	t.Run("with valid scope", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: org.IdentityScopeTax,
+			Code:  "1234567890",
+		}
+		err := id.Validate()
+		assert.NoError(t, err)
+	})
+	t.Run("with invalid scope", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: "INVALID",
+			Code:  "1234567890",
+		}
+		err := id.Validate()
+		assert.ErrorContains(t, err, "scope: must be a valid value.")
+	})
+	t.Run("with no scope", func(t *testing.T) {
+		id := &org.Identity{
+			Code: "1234567890",
+		}
+		err := id.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 func TestIdentitySetValidators(t *testing.T) {
@@ -151,6 +178,8 @@ func TestIdentitySetValidators(t *testing.T) {
 
 		err = validation.Validate(idents, org.RequireIdentityType("FOO"))
 		assert.ErrorContains(t, err, "missing type 'FOO'")
+		err = validation.Validate(idents, org.RequireIdentityType("FOO", "FUZ"))
+		assert.ErrorContains(t, err, "missing type 'FOO', 'FUZ'")
 	})
 
 	t.Run("require identity key", func(t *testing.T) {
@@ -169,6 +198,8 @@ func TestIdentitySetValidators(t *testing.T) {
 
 		err = validation.Validate(idents, org.RequireIdentityKey("code"))
 		assert.ErrorContains(t, err, "missing key 'code'")
+		err = validation.Validate(idents, org.RequireIdentityKey("code", "another"))
+		assert.ErrorContains(t, err, "missing key 'code', 'another'")
 	})
 }
 
@@ -242,4 +273,28 @@ func TestIdentityForExtKey(t *testing.T) {
 		assert.Equal(t, "qux", id.Ext["baz"].String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
+}
+
+func TestIdentityJSONSchema(t *testing.T) {
+	base := here.Doc(`
+		{
+			"properties": {
+				"scope": {
+					"$ref": "https://gobl.org/draft-0/cbc/key",
+					"title": "Scope"
+				}
+			}
+		}
+	`)
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(base), js))
+	org.Identity{}.JSONSchemaExtend(js)
+
+	prop, ok := js.Properties.Get("scope")
+	assert.True(t, ok)
+	assert.Len(t, prop.OneOf, 2)
+	assert.Equal(t, org.IdentityScopeTax, prop.OneOf[0].Const)
+	assert.Equal(t, "Tax", prop.OneOf[0].Title)
+	assert.Equal(t, org.IdentityScopeLegal, prop.OneOf[1].Const)
+	assert.Equal(t, "Legal", prop.OneOf[1].Title)
 }

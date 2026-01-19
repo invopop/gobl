@@ -1,0 +1,68 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "2d6b643f-e257-d464-c946-7b7179db7e1d",
+  "currency": "ARS",
+  "issue_date": "2025-02-15",
+  "series": "1",
+  "code": "00000300",
+  "supplier": {
+    "name": "Librería Académica S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Córdoba 2000",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1120",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "ventas@libreriaacademica.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Universidad Nacional de Buenos Aires",
+    "tax_id": {
+      "country": "AR",
+      "code": "30546670623"
+    },
+    "addresses": [
+      {
+        "street": "Viamonte 430",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1053",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@uba.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "100",
+      "item": {
+        "name": "Libros académicos (exentos de IVA)",
+        "price": "5000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "zero"
+        }
+      ]
+    }
+  ]
+}
+

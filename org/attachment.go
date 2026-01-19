@@ -30,16 +30,15 @@ type Attachment struct {
 	// Code used to identify the payload of the attachment.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
-	// Filename of the attachment.
-	Name string `json:"name" jsonschema:"title=Name"`
+	// Filename of the attachment, will override name retrieved from URL.
+	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 
 	// Details of why the attachment is being included and details on
 	// what it contains.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// URL of where to find the attachment. Prefer using this field
-	// over the Data field.
-	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
+	// URL of where to find the attachment.
+	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 
 	// Digest is used to verify the integrity of the attachment
 	// when downloaded from the URL.
@@ -47,12 +46,6 @@ type Attachment struct {
 
 	// MIME type of the attachment.
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type"`
-
-	// Data is the base64 encoded data of the attachment directly embedded
-	// inside the GOBL document. This should only be used when the URL cannot
-	// be used as it can dramatically increase the size of the JSON
-	// document, thus effecting usability and performance.
-	Data []byte `json:"data,omitempty" jsonschema:"title=Data"`
 }
 
 // Normalize will try to clean the attachment information.
@@ -79,31 +72,19 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Key),
 		validation.Field(&a.Code),
-		validation.Field(&a.Name, validation.Required),
+		validation.Field(&a.Name),
 		validation.Field(&a.Description),
-		validation.Field(&a.URL,
-			is.URL,
-			validation.When(
-				len(a.Data) == 0,
-				validation.Required,
-			),
-		),
-		validation.Field(&a.Data,
-			validation.When(
-				len(a.URL) > 0,
-				validation.Empty.Error("must be blank with url"),
-			),
-		),
+		validation.Field(&a.URL, is.URL, validation.Required),
 		validation.Field(&a.Digest),
 		validation.Field(&a.MIME,
-			// MIME types as defined by EN 16931-1:2017
+			// MIME types as defined by EN 16931-1:2017 to be used as attachments.
 			validation.In(
 				"application/pdf",
 				"image/jpeg",
 				"image/png",
-				"test/csv",
+				"text/csv",
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-				"applicaiton/vnd.oasis.opendocument.spreadsheet",
+				"application/vnd.oasis.opendocument.spreadsheet",
 			),
 		),
 	)

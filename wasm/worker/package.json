@@ -5,8 +5,9 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/invopop/gobl.cli.git"
+    "url": "https://github.com/invopop/gobl.git"
   },
+  "homepage": "https://gobl.org",
   "author": {
     "name": "Invopop S.L.",
     "email": "dev@invopop.com",
@@ -33,7 +34,7 @@
   "devDependencies": {
     "@types/node": "^22.13.5",
     "typescript": "^5.7.3",
-    "vite": "^6.3.4",
+    "vite": "^6.4.1",
     "vite-plugin-dts": "^4.5.1"
   }
 }

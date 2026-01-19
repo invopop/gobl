@@ -23,8 +23,17 @@
         "pt": "Incentivo Fiscal"
       },
       "desc": {
-        "en": "Indicates whether a party benefits from a fiscal incentive.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-68)"
+        "en": "Indicates whether a party benefits from a fiscal incentive."
       },
+      "sources": [
+        {
+          "title": {
+            "en": "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+            "pt": "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)"
+          },
+          "url": "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -104,17 +113,6 @@
       ]
     },
     {
-      "key": "br-nfse-municipality",
-      "name": {
-        "en": "IGBE Municipality Code",
-        "pt": "Código do Município do IBGE"
-      },
-      "desc": {
-        "en": "The municipality code as defined by the IGBE (Brazilian Institute of Geography and\nStatistics).\n\nList of codes from the IGBE:\n\n* https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
-      },
-      "pattern": "^\\d{7}$"
-    },
-    {
       "key": "br-nfse-service",
       "name": {
         "en": "Service Code",
@@ -127,12 +125,21 @@
     {
       "key": "br-nfse-simples",
       "name": {
-        "en": "Opting for “Simples Nacional” regime",
+        "en": "Opting for \"Simples Nacional\" regime",
         "pt": "Optante pelo Simples Nacional"
       },
       "desc": {
-        "en": "Indicates whether a party is opting for the “Simples Nacional” (Regime Especial\nUnificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e\nEmpresas de Pequeno Porte) tax regime\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
+        "en": "Indicates whether a party is opting for the \"Simples Nacional\" (Regime Especial\nUnificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e\nEmpresas de Pequeno Porte) tax regime"
       },
+      "sources": [
+        {
+          "title": {
+            "en": "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+            "pt": "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)"
+          },
+          "url": "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -157,8 +164,17 @@
         "pt": "Regime Especial de Tributação"
       },
       "desc": {
-        "en": "Indicates a special tax regime that a party is subject to.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-66)"
+        "en": "Indicates a special tax regime that a party is subject to."
       },
+      "sources": [
+        {
+          "title": {
+            "en": "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+            "pt": "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)"
+          },
+          "url": "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download"
+        }
+      ],
       "values": [
         {
           "code": "1",
@@ -203,6 +219,73 @@
           }
         }
       ]
+    },
+    {
+      "key": "br-nfse-operation",
+      "name": {
+        "en": "Operation Indicator",
+        "pt": "Indicador da operação"
+      },
+      "desc": {
+        "en": "Indicates the operation type for the determination of the IBS and CBS taxes by the\ntax authorities.\n\nMaps to the `cIndOp` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Note SE/CGNFS-e nº 004",
+            "pt": "Nota Técnica SE/CGNFS-e nº 004"
+          },
+          "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc-producao-restrita-piloto/nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf"
+        },
+        {
+          "title": {
+            "en": "Annex VII - Operation Indicators Table IBS/CBS v1.00",
+            "pt": "Anexo VII - Tabela de Indicadores de Operação IBS/CBS v1.00"
+          },
+          "url": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx"
+        }
+      ],
+      "pattern": "^\\d{6}$"
+    },
+    {
+      "key": "br-nfse-tax-status",
+      "name": {
+        "en": "Tax Status Code (CST)",
+        "pt": "Código de situação tributária (CST)"
+      },
+      "desc": {
+        "en": "Indicates the tax status of the operation for the determination of the IBS and CBS\ntaxes by the tax authorities.\n\nMaps to the `CST` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+            "pt": "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU="
+        }
+      ],
+      "pattern": "^\\d{3}$"
+    },
+    {
+      "key": "br-nfse-tax-class",
+      "name": {
+        "en": "Tax Classification Code",
+        "pt": "Código de classificação tributária"
+      },
+      "desc": {
+        "en": "Indicates the tax classification code for the determination of the IBS and CBS taxes\nby the tax authorities.\n\nMaps to the `cClassTrib` field in the NFS-e national layout.\n\nList of possible values:\n\n* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+            "pt": "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU="
+        }
+      ],
+      "pattern": "^\\d{6}$"
     }
   ],
   "scenarios": null,
@@ -212,13 +295,6 @@
       "name": {
         "en": "Company Municipal Registration",
         "pt": "Inscrição Municipal da Empresa"
-      }
-    },
-    {
-      "key": "br-nfse-national-reg",
-      "name": {
-        "en": "Company National Registration",
-        "pt": "Inscrição Nacional da Empresa"
       }
     }
   ],

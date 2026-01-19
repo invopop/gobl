@@ -311,8 +311,6 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	inv.Series = cbc.NormalizeCode(inv.Series)
 	inv.Code = cbc.NormalizeCode(inv.Code)
 
-	normalizers.Each(inv)
-
 	tax.Normalize(normalizers, inv.Tax)
 	tax.Normalize(normalizers, inv.Supplier)
 	tax.Normalize(normalizers, inv.Customer)
@@ -322,6 +320,8 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Charges)
 	tax.Normalize(normalizers, inv.Ordering)
 	tax.Normalize(normalizers, inv.Payment)
+
+	normalizers.Each(inv)
 }
 
 func (inv *Invoice) supportedTags() []cbc.Key {
@@ -452,8 +452,6 @@ func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	inv.Regime.JSONSchemaExtend(js)
-	inv.Addons.JSONSchemaExtend(js)
 	inv.Tags.JSONSchemaExtendWithDefs(js, defaultInvoiceTags.List)
 	// Recommendations
 	js.Extras = map[string]any{

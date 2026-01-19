@@ -14,6 +14,13 @@ const (
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 )
 
+// Extension values for product key.
+const (
+	ExtValueProductGoods    cbc.Code = "goods"
+	ExtValueProductServices cbc.Code = "services"
+	ExtValueProductResale   cbc.Code = "resale"
+)
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegion,
@@ -67,25 +74,27 @@ var extensions = []*cbc.Definition{
 				There is an additional exception case for goods that are resold without modification
 				when the supplier is in the simplified tax regime. For must purposes this special
 				case can be ignored.
+
+				If no product key is provided, the default is "services".
 			`),
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "goods",
+				Code: ExtValueProductGoods,
 				Name: i18n.String{
 					i18n.EN: "Delivery of goods",
 					i18n.ES: "Entrega de bienes",
 				},
 			},
 			{
-				Code: "services",
+				Code: ExtValueProductServices,
 				Name: i18n.String{
 					i18n.EN: "Provision of services",
 					i18n.ES: "Prestacion de servicios",
 				},
 			},
 			{
-				Code: "resale",
+				Code: ExtValueProductResale,
 				Name: i18n.String{
 					i18n.EN: "Resale of goods without modification by vendor in the simplified regime",
 					i18n.ES: "Reventa de bienes sin modificación por vendedor en regimen simplificado",
@@ -105,6 +114,16 @@ var extensions = []*cbc.Definition{
 				charge transactions. In the TicketBAI format these are separated,
 				but in order to simplify GOBL and be more closely aligned with
 				other countries we've combined them into one.
+
+				The follow mappings will be made automatically by GOBL during normalization.
+
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
+				| ~reverse-charge~  | ~S2~                       |
+				| ~outside-scope~   | ~OT~, ~RL~, ~VT~, ~IE~     |
 			`),
 		},
 		Values: []*cbc.Definition{

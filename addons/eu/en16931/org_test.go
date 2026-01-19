@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/eu/en16931"
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -62,6 +64,45 @@ func TestOrgItemNormalize(t *testing.T) {
 	})
 }
 
+func TestOrgIdentityNormalize(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("accepts nil", func(t *testing.T) {
+		var id *org.Identity
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("accepts empty", func(t *testing.T) {
+		id := &org.Identity{}
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("normalizes key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("overrides key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+			Ext: tax.Extensions{
+				iso.ExtKeySchemeID: "9999",
+			},
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+}
+
 func TestOrgInboxNormalize(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 
@@ -97,6 +138,22 @@ func TestOrgItemValidate(t *testing.T) {
 	t.Run("validates unit", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitOne,
+		}
+		assert.NoError(t, ad.Validator(item))
+	})
+
+	t.Run("negative price", func(t *testing.T) {
+		item := &org.Item{
+			Unit:  org.UnitOne,
+			Price: num.NewAmount(-100, 0),
+		}
+		assert.ErrorContains(t, ad.Validator(item), "price: must be no less than 0")
+	})
+
+	t.Run("0 price", func(t *testing.T) {
+		item := &org.Item{
+			Unit:  org.UnitOne,
+			Price: num.NewAmount(0, 0),
 		}
 		assert.NoError(t, ad.Validator(item))
 	})

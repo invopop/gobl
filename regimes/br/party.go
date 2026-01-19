@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// Official state acronyms as per IBGE in Brazil
 	validStates = []cbc.Code{
 		"AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO",
 		"MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR",
@@ -34,7 +35,7 @@ func validateParty(party *org.Party) error {
 }
 
 func validateAddress(party *org.Party) validation.RuleFunc {
-	return func(value interface{}) error {
+	return func(value any) error {
 		addr, _ := value.(*org.Address)
 		if addr == nil {
 			return nil

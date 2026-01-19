@@ -51,3 +51,7 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+
+payment:
+  terms:
+    detail: "Please pay within 10 days"

@@ -19,7 +19,7 @@ func TestReplicate(t *testing.T) {
 
 	tests := testy.NewTable()
 
-	tests.Add("success", func(t *testing.T) interface{} {
+	tests.Add("success", func(t *testing.T) any {
 		return tt{
 			opts: &ReplicateOptions{
 				ParseOptions: &ParseOptions{
@@ -29,13 +29,68 @@ func TestReplicate(t *testing.T) {
 		}
 	})
 
-	tests.Add("success just invoice", func(t *testing.T) interface{} {
+	tests.Add("success just invoice", func(t *testing.T) any {
 		return tt{
 			opts: &ReplicateOptions{
 				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/invoice.json"),
+					Input: testFileReaderForDoc(t, "testdata/success.json"),
 				},
 			},
+		}
+	})
+
+	tests.Add("noname", func(t *testing.T) any {
+		return tt{
+			opts: &ReplicateOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/noname.json"),
+				},
+			},
+			err: "supplier: (name: cannot be blank",
+		}
+	})
+
+	tests.Add("noname just invoice", func(t *testing.T) any {
+		return tt{
+			opts: &ReplicateOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReaderForDoc(t, "testdata/noname.json"),
+				},
+			},
+			err: "supplier: (name: cannot be blank",
+		}
+	})
+
+	tests.Add("nocurrency", func(t *testing.T) any {
+		return tt{
+			opts: &ReplicateOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/nocurrency.json"),
+				},
+			},
+			err: "currency: missing",
+		}
+	})
+
+	tests.Add("nocurrency just invoice", func(t *testing.T) any {
+		return tt{
+			opts: &ReplicateOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReaderForDoc(t, "testdata/nocurrency.json"),
+				},
+			},
+			err: "currency: missing",
+		}
+	})
+
+	tests.Add("invalid envelope", func(t *testing.T) any {
+		return tt{
+			opts: &ReplicateOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/invalid.yaml"),
+				},
+			},
+			err: "found unexpected end of stream",
 		}
 	})
 

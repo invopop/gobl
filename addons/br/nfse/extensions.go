@@ -6,19 +6,17 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Brazilian extension keys required to issue NFS-e documents. In an initial
-// assessment, these extensions do not seem to apply to documents other than
-// NFS-e. However, if when implementing other Fiscal Notes it is found that some
-// of these extensions are common, they can be moved to the regime or to a
-// shared addon.
+// Brazilian extension keys required to issue NFS-e documents
 const (
 	ExtKeyCNAE            = "br-nfse-cnae"
 	ExtKeyFiscalIncentive = "br-nfse-fiscal-incentive"
 	ExtKeyISSLiability    = "br-nfse-iss-liability"
-	ExtKeyMunicipality    = "br-nfse-municipality"
 	ExtKeyService         = "br-nfse-service"
 	ExtKeySimples         = "br-nfse-simples"
 	ExtKeySpecialRegime   = "br-nfse-special-regime"
+	ExtKeyOperation       = "br-nfse-operation"
+	ExtKeyTaxStatus       = "br-nfse-tax-status"
+	ExtKeyTaxClass        = "br-nfse-tax-class"
 )
 
 var extensions = []*cbc.Definition{
@@ -64,12 +62,16 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Indicates whether a party benefits from a fiscal incentive.
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-68)
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
+				},
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
+			},
 		},
 	},
 	{
@@ -141,24 +143,6 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyMunicipality,
-		Name: i18n.String{
-			i18n.EN: "IGBE Municipality Code",
-			i18n.PT: "Código do Município do IBGE",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				The municipality code as defined by the IGBE (Brazilian Institute of Geography and
-				Statistics).
-
-				List of codes from the IGBE:
-
-				* https://www.ibge.gov.br/explica/codigos-dos-municipios.php
-			`),
-		},
-		Pattern: `^\d{7}$`,
-	},
-	{
 		Key: ExtKeyService,
 		Name: i18n.String{
 			i18n.EN: "Service Code",
@@ -178,7 +162,7 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeySimples,
 		Name: i18n.String{
-			i18n.EN: "Opting for “Simples Nacional” regime",
+			i18n.EN: "Opting for \"Simples Nacional\" regime",
 			i18n.PT: "Optante pelo Simples Nacional",
 		},
 		Values: []*cbc.Definition{
@@ -199,15 +183,19 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Indicates whether a party is opting for the “Simples Nacional” (Regime Especial
+				Indicates whether a party is opting for the "Simples Nacional" (Regime Especial
 				Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e
 				Empresas de Pequeno Porte) tax regime
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-67)
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
+				},
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
+			},
 		},
 	},
 	{
@@ -263,12 +251,110 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Indicates a special tax regime that a party is subject to.
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-66)
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
+				},
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
+			},
+		},
+	},
+	{
+		Key: ExtKeyOperation,
+		Name: i18n.String{
+			i18n.EN: "Operation Indicator",
+			i18n.PT: "Indicador da operação",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the operation type for the determination of the IBS and CBS taxes by the
+				tax authorities.
+
+				Maps to the ~cIndOp~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Note SE/CGNFS-e nº 004",
+					i18n.PT: "Nota Técnica SE/CGNFS-e nº 004",
+				},
+				URL: "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc-producao-restrita-piloto/nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Annex VII - Operation Indicators Table IBS/CBS v1.00",
+					i18n.PT: "Anexo VII - Tabela de Indicadores de Operação IBS/CBS v1.00",
+				},
+				URL: "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc/anexovii-indop_ibscbs_v1-00-00.xlsx",
+			},
+		},
+		Pattern: `^\d{6}$`,
+	},
+	{
+		Key: ExtKeyTaxStatus,
+		Name: i18n.String{
+			i18n.EN: "Tax Status Code (CST)",
+			i18n.PT: "Código de situação tributária (CST)",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the tax status of the operation for the determination of the IBS and CBS
+				taxes by the tax authorities.
+
+				Maps to the ~CST~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+					i18n.PT: "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS",
+				},
+				URL: "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU=",
+			},
+		},
+		Pattern: `^\d{3}$`,
+	},
+	{
+		Key: ExtKeyTaxClass,
+		Name: i18n.String{
+			i18n.EN: "Tax Classification Code",
+			i18n.PT: "Código de classificação tributária",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the tax classification code for the determination of the IBS and CBS taxes
+				by the tax authorities.
+
+				Maps to the ~cClassTrib~ field in the NFS-e national layout.
+
+				List of possible values:
+
+				* https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Technical Report RT 2025.002 - CST and cClassTrib Tables IBS/CBS",
+					i18n.PT: "Informe Técnico RT 2025.002 - Tabelas CST e cClassTrib IBS/CBS",
+				},
+				URL: "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=gya58CS0dHU=",
+			},
+		},
+		Pattern: `^\d{6}$`,
 	},
 }

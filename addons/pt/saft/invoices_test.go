@@ -371,6 +371,22 @@ func TestInvoiceNormalization(t *testing.T) {
 		today := cal.TodayIn(loc)
 		assert.Equal(t, &today, inv.ValueDate)
 	})
+	t.Run("normalize invoice with reverse charge", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyReverseCharge,
+		}
+		inv.Normalize(tax.ExtractNormalizers(inv))
+		assert.Equal(t, tax.KeyReverseCharge, inv.Lines[0].Taxes[0].Key)
+		assert.Equal(t, "ISE", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "M40", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+		require.Len(t, inv.Lines[0].Notes, 1)
+		assert.Equal(t, org.NoteKeyLegal, inv.Lines[0].Notes[0].Key)
+		assert.Equal(t, "M40", inv.Lines[0].Notes[0].Code.String())
+		assert.Equal(t, saft.ExtKeyExemption, inv.Lines[0].Notes[0].Src)
+		assert.Equal(t, "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário", inv.Lines[0].Notes[0].Text)
+	})
 }
 
 func TestInvoicePaymentValidation(t *testing.T) {
@@ -479,58 +495,6 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 			},
 		}
 		assert.ErrorContains(t, addon.Validator(inv), "preceding: the length must be no more than 1")
-	})
-}
-
-func TestInvoiceLineValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
-	t.Run("negative sum", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Sum = num.NewAmount(-10, 2)
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (sum: must be no less than 0")
-	})
-
-	t.Run("negative total", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Total = num.NewAmount(-10, 2)
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (total: must be no less than 0")
-	})
-
-	t.Run("nil line", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines = []*bill.Line{nil}
-		require.NoError(t, addon.Validator(inv))
-	})
-}
-
-func TestInvoiceLineDiscountValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
-	t.Run("valid discount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{
-			{
-				Amount: num.MakeAmount(10, 2),
-			},
-		}
-		require.NoError(t, addon.Validator(inv))
-	})
-
-	t.Run("negative discount amount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{
-			{
-				Amount: num.MakeAmount(-10, 2),
-			},
-		}
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (discounts: (0: (amount: must be no less than 0")
-	})
-
-	t.Run("nil discount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{nil}
-		require.NoError(t, addon.Validator(inv))
 	})
 }
 

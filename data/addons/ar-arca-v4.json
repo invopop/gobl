@@ -1,0 +1,998 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "ar-arca-v4",
+  "name": {
+    "en": "Argentina ARCA V4"
+  },
+  "description": {
+    "en": "Support for the Argentina ARCA v4 standard for electronic invoicing."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Argentina ARCA V4"
+      },
+      "url": "https://www.afip.gob.ar/ws/documentacion/manuales/manual-desarrollador-ARCA-COMPG-v4-0.pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "ar-arca-doc-type",
+      "name": {
+        "en": "Argentina ARCA Document Type",
+        "es": "Tipo de comprobante Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Invoice A",
+            "es": "Factura A"
+          },
+          "desc": {
+            "en": "Invoice issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Factura emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Debit Note A",
+            "es": "Nota de Débito A"
+          },
+          "desc": {
+            "en": "Debit note issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Nota de débito emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Credit Note A",
+            "es": "Nota de Crédito A"
+          },
+          "desc": {
+            "en": "Credit note issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Nota de crédito emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Receipt A",
+            "es": "Recibos A"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Cash Sales Note A",
+            "es": "Notas de Venta al contado A"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Invoice B",
+            "es": "Factura B"
+          },
+          "desc": {
+            "en": "Invoice issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Factura emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Debit Note B",
+            "es": "Nota de Débito B"
+          },
+          "desc": {
+            "en": "Debit note issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Nota de débito emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Credit Note B",
+            "es": "Nota de Crédito B"
+          },
+          "desc": {
+            "en": "Credit note issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Nota de crédito emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Receipt B",
+            "es": "Recibos B"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Cash Sales Note B",
+            "es": "Notas de Venta al contado B"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Invoice C",
+            "es": "Factura C"
+          },
+          "desc": {
+            "en": "Invoice issued by a monotributista.",
+            "es": "Factura emitida por un monotributista."
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Debit Note C",
+            "es": "Nota de Débito C"
+          },
+          "desc": {
+            "en": "Debit note issued by a monotributista",
+            "es": "Nota de débito emitida por un monotributista"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Credit Note C",
+            "es": "Nota de Crédito C"
+          },
+          "desc": {
+            "en": "Credit note issued by a monotributista",
+            "es": "Nota de crédito emitida por un monotributista"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Receipt C",
+            "es": "Recibo C"
+          }
+        },
+        {
+          "code": "34",
+          "name": {
+            "en": "Invoices A per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. A del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "35",
+          "name": {
+            "en": "Vouchers B per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. B del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "39",
+          "name": {
+            "en": "Other Vouchers A compliant with R.G. No. 1415",
+            "es": "Otros comprobantes A que cumplan con R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "40",
+          "name": {
+            "en": "Other Vouchers B compliant with R.G. No. 1415",
+            "es": "Otros comprobantes B que cumplan con R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "49",
+          "name": {
+            "en": "Used Goods Purchase Invoice to Final Consumer",
+            "es": "Comprobante de Compra de Bienes Usados a Consumidor Final"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Invoice A with Legend 'Subject to Withholding'",
+            "es": "Factura A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "52",
+          "name": {
+            "en": "Debit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Débito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Credit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Crédito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "54",
+          "name": {
+            "en": "Receipt A with Legend 'Subject to Withholding'",
+            "es": "Recibo A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "Sales Account and Product Settlement A",
+            "es": "Cta de Vta y Liquido prod. A"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Sales Account and Product Settlement B",
+            "es": "Cta de Vta y Liquido prod. B"
+          }
+        },
+        {
+          "code": "63",
+          "name": {
+            "en": "Settlement A",
+            "es": "Liquidacion A"
+          }
+        },
+        {
+          "code": "64",
+          "name": {
+            "en": "Settlement B",
+            "es": "Liquidacion B"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) A",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) A",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) A",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "206",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) B",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "207",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) B",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "208",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) B",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "211",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) C",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "212",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) C",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) C",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) C"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-concept",
+      "name": {
+        "en": "Argentina ARCA Concept",
+        "es": "Concepto Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Products",
+            "es": "Productos"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Services",
+            "es": "Servicios"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Products and services",
+            "es": "Productos y servicios"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tax-type",
+      "name": {
+        "en": "Argentina ARCA Tax Type",
+        "es": "Tipo de Tributo Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "National Taxes",
+            "es": "Impuestos Nacionales"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Provincial Taxes",
+            "es": "Impuestos Provinciales"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Municipal Taxes",
+            "es": "Impuestos Municipales"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Internal Taxes",
+            "es": "Impuestos Internos"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Gross Income Tax",
+            "es": "IIBB"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "VAT Prepayment",
+            "es": "Percepción de IVA"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Gross Income Tax Prepayment",
+            "es": "Percepción de IIBB"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Municipal Taxes Prepayment",
+            "es": "Percepciones por Impuestos Municipales"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Other Prepayments",
+            "es": "Otras Percepciones"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "VAT Not Categorized Prepayment",
+            "es": "Percepción de IVA a no Categorizado"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Other",
+            "es": "Otras"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-vat-rate",
+      "name": {
+        "en": "Argentina ARCA VAT Rate",
+        "es": "Tasa de IVA Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "3",
+          "name": {
+            "en": "0%",
+            "es": "0%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "10.5%",
+            "es": "10.5%"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "21%",
+            "es": "21%"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "27%",
+            "es": "27%"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "5%",
+            "es": "5%"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "2.5%",
+            "es": "2.5%"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-identity-type",
+      "name": {
+        "en": "Argentina ARCA Identity Type",
+        "es": "Tipo de Identidad Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "00",
+          "name": {
+            "en": "CI Capital Federal",
+            "es": "CI Capital Federal"
+          }
+        },
+        {
+          "code": "01",
+          "name": {
+            "en": "CI Buenos Aires",
+            "es": "CI Buenos Aires"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "CI Catamarca",
+            "es": "CI Catamarca"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "CI Córdoba",
+            "es": "CI Córdoba"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "CI Corrientes",
+            "es": "CI Corrientes"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "CI Entre Ríos",
+            "es": "CI Entre Ríos"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "CI Jujuy",
+            "es": "CI Jujuy"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "CI Mendoza",
+            "es": "CI Mendoza"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "CI La Rioja",
+            "es": "CI La Rioja"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "CI Salta",
+            "es": "CI Salta"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "CI San Juan",
+            "es": "CI San Juan"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "CI San Luis",
+            "es": "CI San Luis"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "CI Santa Fe",
+            "es": "CI Santa Fe"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "CI Santiago del Estero",
+            "es": "CI Santiago del Estero"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "en": "CI Tucumán",
+            "es": "CI Tucumán"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "CI Chaco",
+            "es": "CI Chaco"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "en": "CI Chubut",
+            "es": "CI Chubut"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "en": "CI Formosa",
+            "es": "CI Formosa"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "en": "CI Misiones",
+            "es": "CI Misiones"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "en": "CI Neuquén",
+            "es": "CI Neuquén"
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "en": "CI La Pampa",
+            "es": "CI La Pampa"
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "en": "CI Río Negro",
+            "es": "CI Río Negro"
+          }
+        },
+        {
+          "code": "23",
+          "name": {
+            "en": "CI Santa Cruz",
+            "es": "CI Santa Cruz"
+          }
+        },
+        {
+          "code": "24",
+          "name": {
+            "en": "CI Tierra del Fuego",
+            "es": "CI Tierra del Fuego"
+          }
+        },
+        {
+          "code": "87",
+          "name": {
+            "en": "CDI",
+            "es": "CDI"
+          }
+        },
+        {
+          "code": "89",
+          "name": {
+            "en": "LE",
+            "es": "LE"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "LC",
+            "es": "LC"
+          }
+        },
+        {
+          "code": "91",
+          "name": {
+            "en": "Foreign CI",
+            "es": "CI extranjera"
+          }
+        },
+        {
+          "code": "92",
+          "name": {
+            "en": "In Process",
+            "es": "en trámite"
+          }
+        },
+        {
+          "code": "93",
+          "name": {
+            "en": "Birth Certificate",
+            "es": "Acta Nacimiento"
+          }
+        },
+        {
+          "code": "94",
+          "name": {
+            "en": "Passport",
+            "es": "Pasaporte"
+          }
+        },
+        {
+          "code": "95",
+          "name": {
+            "en": "CI Bs. As. RNP",
+            "es": "CI Bs. As. RNP"
+          }
+        },
+        {
+          "code": "96",
+          "name": {
+            "en": "DNI",
+            "es": "DNI"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Final Consumer",
+            "es": "Consumidor Final"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-vat-status",
+      "name": {
+        "en": "Argentina ARCA Customer VAT Status",
+        "es": "Condición IVA del Receptor Argentina ARCA"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Registered VAT Company",
+            "es": "IVA Responsable Inscripto"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "VAT Exempt Subject",
+            "es": "IVA Sujeto Exento"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Final Consumer",
+            "es": "Consumidor Final"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Monotributo Responsible",
+            "es": "Responsable Monotributo"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Uncategorized Subject",
+            "es": "Sujeto No Categorizado"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Foreign Supplier",
+            "es": "Proveedor del Exterior"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Foreign Customer",
+            "es": "Cliente del Exterior"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "VAT Exempt - Law N° 19.640",
+            "es": "IVA Liberado – Ley N° 19.640"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Social Monotributista",
+            "es": "Monotributista Social"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "VAT Not Applicable",
+            "es": "IVA No Alcanzado"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Promoted Independent Worker Monotributista",
+            "es": "Monotributo Trabajador Independiente Promovido"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified-regime",
+          "name": {
+            "en": "Simplified Tax Regime",
+            "es": "Régimen Simplificado"
+          },
+          "desc": {
+            "en": "Invoice C: Supplier is under a simplified tax regime (Monotributo).",
+            "es": "Factura C: El proveedor está bajo un régimen tributario simplificado (Monotributo)."
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "name": {
+            "en": "Invoice C",
+            "es": "Factura C"
+          },
+          "desc": {
+            "en": "Used when the invoice is issued by a monotributista (simplified tax regime)\nto any type of customer."
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified-regime"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "11"
+          }
+        },
+        {
+          "name": {
+            "en": "Debit Note C",
+            "es": "Nota de Débito C"
+          },
+          "desc": {
+            "en": "Used when the debit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
+          },
+          "type": [
+            "debit-note"
+          ],
+          "tags": [
+            "simplified-regime"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "12"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit Note C",
+            "es": "Nota de Crédito C"
+          },
+          "desc": {
+            "en": "Used when the credit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
+          },
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "simplified-regime"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "13"
+          }
+        },
+        {
+          "name": {
+            "en": "Invoice B",
+            "es": "Factura B"
+          },
+          "desc": {
+            "en": "Used when the invoice is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "6"
+          }
+        },
+        {
+          "name": {
+            "en": "Debit Note B",
+            "es": "Nota de Débito B"
+          },
+          "desc": {
+            "en": "Used when the debit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "debit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "7"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit Note B",
+            "es": "Nota de Crédito B"
+          },
+          "desc": {
+            "en": "Used when the credit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
+          },
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "8"
+          }
+        },
+        {
+          "name": {
+            "en": "Invoice A",
+            "es": "Factura A"
+          },
+          "desc": {
+            "en": "Used when the invoice is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "1"
+          }
+        },
+        {
+          "name": {
+            "en": "Debit Note A",
+            "es": "Nota de Débito A"
+          },
+          "desc": {
+            "en": "Used when the debit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "debit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "2"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit Note A",
+            "es": "Nota de Crédito A"
+          },
+          "desc": {
+            "en": "Used when the credit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
+          },
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "ar-arca-doc-type": "3"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ],
+      "extensions": [
+        "ar-arca-doc-type"
+      ]
+    }
+  ]
+}

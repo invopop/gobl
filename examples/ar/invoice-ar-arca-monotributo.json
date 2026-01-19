@@ -1,0 +1,88 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "$tags": ["monotax"],
+  "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "currency": "ARS",
+  "issue_date": "2025-01-18",
+  "series": "1",
+  "code": "00000050",
+  "supplier": {
+    "name": "María García - Diseño Gráfico",
+    "tax_id": {
+      "country": "AR",
+      "code": "20172543597"
+    },
+    "addresses": [
+      {
+        "street": "Calle Florida 500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1005",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "maria.garcia@email.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Startup Tech S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Belgrano 1000",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1092",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "admin@startuptech.com.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Diseño de logotipo e identidad visual",
+        "price": "150000.00",
+        "key": "services"
+      }
+    }
+  ],
+  "charges": [
+    {
+      "key": "tax",
+      "percent": "10%",
+      "description": "Tributo Nacional",
+      "ext": {
+        "ar-arca-tax-type": "1"
+      }
+    }
+  ],
+  "ordering": {
+    "period": {
+      "start": "2025-01-01",
+      "end": "2025-01-15"
+    }
+  },
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-01-25",
+          "amount": "150000.00"
+        }
+      ]
+    }
+  }
+}
