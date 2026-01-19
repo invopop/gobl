@@ -91,7 +91,7 @@ type Link struct {
 	uuid.Identify
 	// Category helps classify the link according to a fixed list. This is optional
 	// but highly recommended as it helps receivers better understand the purpose
-	// of the link and potentially how its should be presented.
+	// of the link and potentially how it should be presented.
 	Category cbc.Key `json:"category,omitempty" jsonschema:"title=Category"`
 	// Key is a unique identifier for the link within the header and category
 	// if provided.
@@ -110,6 +110,8 @@ type Link struct {
 	Digest *dsig.Digest `json:"digest,omitempty" jsonschema:"title=Digest"`
 	// URL of the resource.
 	URL string `json:"url" jsonschema:"title=URL,format=uri"`
+	// Meta contains additional metadata about the link.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Metadata"`
 }
 
 // Validate checks that the link contains the basic information we need to function.
