@@ -205,7 +205,7 @@ func TestTaxComboNormalize(t *testing.T) {
 		ad.Normalizer(combo)
 		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
 		assert.Equal(t, "M45", combo.Ext[saft.ExtKeyExemption].String())
-		assert.Equal(t, tax.KeyExempt, combo.Key)
+		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("reverse map exemption M46", func(t *testing.T) {
@@ -218,7 +218,7 @@ func TestTaxComboNormalize(t *testing.T) {
 		ad.Normalizer(combo)
 		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
 		assert.Equal(t, "M46", combo.Ext[saft.ExtKeyExemption].String())
-		assert.Equal(t, tax.KeyExport, combo.Key)
+		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("rate missing but extension present", func(t *testing.T) {
