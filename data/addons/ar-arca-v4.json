@@ -22,6 +22,9 @@
         "en": "Argentina ARCA Document Type",
         "es": "Tipo de comprobante Argentina ARCA"
       },
+      "desc": {
+        "en": "Code used to identify the type of document being issued.\n\nThis can always be set directly. If not provided, GOBL will automatically determine it during\nnormalization based on the following rules:\n\nType C (Simplified Tax Scheme / Monotributo supplier): If the invoice has the\n`monotax` tag set, the document type will be `11` (Invoice C), `13` (Credit Note C),\nor `12` (Debit Note C).\n\nType A (B2B with VAT-registered customers): If the customer's `ar-arca-vat-status` extension\nis one of `1` (Registered Company), `6` (Monotributo Responsible), `13` (Social Monotributista),\nor `16` (Promoted Independent Worker), the document type will be `1` (Invoice A), `3` (Credit\nNote A), or `2` (Debit Note A).\n\nType B (B2C or other scenarios): For all other cases (final consumers, foreign customers,\nexempt entities, or when no customer is provided), the document type will be `6` (Invoice B),\n`8` (Credit Note B), or `7` (Debit Note B).\n\nFor other document types the value must be set manually."
+      },
       "values": [
         {
           "code": "1",
@@ -316,14 +319,17 @@
     {
       "key": "ar-arca-concept",
       "name": {
-        "en": "Argentina ARCA Concept",
-        "es": "Concepto Argentina ARCA"
+        "en": "Argentina ARCA Concept (Goods, services, or both)",
+        "es": "Concepto Argentina ARCA (Productos, servicios, o ambos)"
+      },
+      "desc": {
+        "en": "Code used to identify the invoice concept, indicating whether the invoice covers\ngoods, services, or both.\n\nThis extension is automatically determined by GOBL based on the `key` field of each\nline item:\n\n- `1` (Products): All line items have `key` set to `goods`.\n- `2` (Services): All line items have `key` empty, unset, or set to any value other than `goods`.\n- `3` (Products and Services): The invoice contains a mix of both goods and services.\n\nWhen the concept is `2` (Services) or `3` (Products and Services), the invoice must\ninclude an ordering period and payment terms with due dates."
       },
       "values": [
         {
           "code": "1",
           "name": {
-            "en": "Products",
+            "en": "Goods",
             "es": "Productos"
           }
         },
@@ -337,7 +343,7 @@
         {
           "code": "3",
           "name": {
-            "en": "Products and services",
+            "en": "Goods and services",
             "es": "Productos y servicios"
           }
         }
@@ -348,6 +354,9 @@
       "name": {
         "en": "Argentina ARCA Tax Type",
         "es": "Tipo de Tributo Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code used to identify the type of tax applied as a charge. This is used for taxes other than\nVAT that need to be included in the invoice (national taxes, provincial taxes, withholdings, etc.).\n\nThese taxes must be added as invoice charges (not in line items) with the charge `key` set\nto `tax`, a `percent` value (required, amounts are not accepted), and this extension to\nspecify the tax type.\n\nExample - Tax applied to invoice total:\n\n```json\n\"charges\": [\n\t{\n\t\t\"key\": \"tax\",\n\t\t\"percent\": \"3%\",\n\t\t\"ext\": {\n\t\t\t\"ar-arca-tax-type\": \"1\"\n\t\t}\n\t}\n]\n```\n\nExample - Tax applied to a specific base:\n\n```json\n\"charges\": [\n\t{\n\t\t\"key\": \"tax\",\n\t\t\"percent\": \"3%\",\n\t\t\"base\": \"1000.00\",\n\t\t\"ext\": {\n\t\t\t\"ar-arca-tax-type\": \"1\"\n\t\t}\n\t}\n]\n```\n\nValidation rules:\n\n- When a charge has `key: tax`, this extension is required.\n- The `percent` field is required when this extension is present.\n- When using code `99` (Other), the charge `reason` field is required to describe the tax."
       },
       "values": [
         {
@@ -435,6 +444,9 @@
         "en": "Argentina ARCA VAT Rate",
         "es": "Tasa de IVA Argentina ARCA"
       },
+      "desc": {
+        "en": "Code used to identify the VAT rate applied to line items.\n\nThis extension is automatically determined by GOBL based on the tax rate key defined in\nthe Argentine tax regime:\n\n- `zero` rate (0%) → code `3`\n- `reduced` rate (10.5%) → code `4`\n- `standard` rate (21%) → code `5`\n- `increased` rate (27%) → code `6`\n\nFor the special reduced rates of 5% and 2.5%, the extension must be set manually on the\nline tax as these are not covered by the standard rate keys:\n\n- 5% → code `8`\n- 2.5% → code `9`"
+      },
       "values": [
         {
           "code": "3",
@@ -483,8 +495,11 @@
     {
       "key": "ar-arca-identity-type",
       "name": {
-        "en": "Argentina ARCA Identity Type",
-        "es": "Tipo de Identidad Argentina ARCA"
+        "en": "Argentina ARCA Customer Identity Type",
+        "es": "Código de Documento identificatorio del comprador"
+      },
+      "desc": {
+        "en": "Code used to identify the type of identity document in the customer's `identities` field.\n\nThis extension is typically only needed for B2C operations where the customer needs to\nprovide an identification number but does not have a tax ID. Common examples include\nDNI (code `96`), passport, or provincial identity cards.\n\nWhen the customer has a CUIT, CUIL, or a valid foreign tax identification number,\nthese should be included in the `tax_id` field instead, and this extension is not required.\n\nExample usage for a final consumer with DNI:\n\n```json\n\"customer\": {\n\t\"name\": \"John Doe\",\n\t\"identities\": [\n\t\t{\n\t\t\t\"code\": \"12345678\",\n\t\t\t\"ext\": {\n\t\t\t\t\"ar-arca-identity-type\": \"96\"\n\t\t\t}\n\t\t}\n\t],\n\t\"ext\": {\n\t\t\"ar-arca-vat-status\": \"5\"\n\t}\n}\n```"
       },
       "values": [
         {
@@ -656,6 +671,20 @@
           }
         },
         {
+          "code": "80",
+          "name": {
+            "en": "CUIT (Unique Tax Identification Number)",
+            "es": "CUIT (Clave Única de Identificación Tributaria)"
+          }
+        },
+        {
+          "code": "86",
+          "name": {
+            "en": "CUIL (Unique Labor Identification Number)",
+            "es": "CUIL (Clave Única de Identificación Laboral)"
+          }
+        },
+        {
           "code": "87",
           "name": {
             "en": "CDI",
@@ -730,8 +759,11 @@
     {
       "key": "ar-arca-vat-status",
       "name": {
-        "en": "Argentina ARCA Customer VAT Status",
-        "es": "Condición IVA del Receptor Argentina ARCA"
+        "en": "Customer VAT Status",
+        "es": "Condición frente al IVA del receptor"
+      },
+      "desc": {
+        "en": "Code used to identify the VAT status of the customer. This extension must be included\nin the customer's `ext` field when the customer is required.\n\nGOBL will automatically normalize this value based on the customer's tax identification:\n\nCustomer without tax ID (final consumers): Defaults to `5` (Final Consumer). Also\naccepts `4` (Exempt Subject), `7` (Uncategorized), `10` (VAT Exempt Law 19640),\nor `15` (VAT Not Applicable).\n\nCustomer with foreign tax ID: Defaults to `9` (Foreign Customer). Also accepts\n`8` (Foreign Supplier).\n\nCustomer with Argentine tax ID (CUIT/CUIL): Defaults to `1` (Registered VAT Company).\nAlso accepts `6` (Monotributo), `13` (Social Monotributista), `16` (Promoted Independent\nWorker), `4` (Exempt Subject), `7` (Uncategorized), `10` (VAT Exempt Law 19640),\nor `15` (VAT Not Applicable).\n\nThe VAT status is validated against the document type:\n\n- Type A documents (`1`, `2`, `3`, etc.): Require VAT status `1`, `6`, `13`, or `16`.\n- Type B documents (`6`, `7`, `8`, etc.): Cannot have VAT status `1`, `6`, `13`, or `16`.\n- Document type `49` (Used Goods Purchase Invoice): Requires VAT status `5` (Final Consumer)."
       },
       "values": [
         {
@@ -819,170 +851,20 @@
       "schema": "bill/invoice",
       "list": [
         {
-          "key": "simplified-regime",
+          "key": "monotax",
           "name": {
-            "en": "Simplified Tax Regime",
-            "es": "Régimen Simplificado"
+            "en": "Monotax",
+            "es": "Monotributo"
           },
           "desc": {
-            "en": "Invoice C: Supplier is under a simplified tax regime (Monotributo).",
-            "es": "Factura C: El proveedor está bajo un régimen tributario simplificado (Monotributo)."
+            "en": "Invoice C: Supplier is under the Monotributo regime (simplified unified tax for small taxpayers).",
+            "es": "Factura C: El proveedor está bajo el régimen de Monotributo."
           }
         }
       ]
     }
   ],
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "name": {
-            "en": "Invoice C",
-            "es": "Factura C"
-          },
-          "desc": {
-            "en": "Used when the invoice is issued by a monotributista (simplified tax regime)\nto any type of customer."
-          },
-          "type": [
-            "standard"
-          ],
-          "tags": [
-            "simplified-regime"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "11"
-          }
-        },
-        {
-          "name": {
-            "en": "Debit Note C",
-            "es": "Nota de Débito C"
-          },
-          "desc": {
-            "en": "Used when the debit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
-          },
-          "type": [
-            "debit-note"
-          ],
-          "tags": [
-            "simplified-regime"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "12"
-          }
-        },
-        {
-          "name": {
-            "en": "Credit Note C",
-            "es": "Nota de Crédito C"
-          },
-          "desc": {
-            "en": "Used when the credit note is issued by a monotributista (simplified tax regime)\nto any type of customer."
-          },
-          "type": [
-            "credit-note"
-          ],
-          "tags": [
-            "simplified-regime"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "13"
-          }
-        },
-        {
-          "name": {
-            "en": "Invoice B",
-            "es": "Factura B"
-          },
-          "desc": {
-            "en": "Used when the invoice is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "standard"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "6"
-          }
-        },
-        {
-          "name": {
-            "en": "Debit Note B",
-            "es": "Nota de Débito B"
-          },
-          "desc": {
-            "en": "Used when the debit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "debit-note"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "7"
-          }
-        },
-        {
-          "name": {
-            "en": "Credit Note B",
-            "es": "Nota de Crédito B"
-          },
-          "desc": {
-            "en": "Used when the credit note is issued by a VAT registered company to final\nconsumers, exempt subjects, non-categorized subjects, or foreign customers."
-          },
-          "type": [
-            "credit-note"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "8"
-          }
-        },
-        {
-          "name": {
-            "en": "Invoice A",
-            "es": "Factura A"
-          },
-          "desc": {
-            "en": "Used when the invoice is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "standard"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "1"
-          }
-        },
-        {
-          "name": {
-            "en": "Debit Note A",
-            "es": "Nota de Débito A"
-          },
-          "desc": {
-            "en": "Used when the debit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "debit-note"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "2"
-          }
-        },
-        {
-          "name": {
-            "en": "Credit Note A",
-            "es": "Nota de Crédito A"
-          },
-          "desc": {
-            "en": "Used when the credit note is issued by a VAT registered company to another\nVAT registered company or a monotributista."
-          },
-          "type": [
-            "credit-note"
-          ],
-          "ext": {
-            "ar-arca-doc-type": "3"
-          }
-        }
-      ]
-    }
-  ],
+  "scenarios": null,
   "corrections": [
     {
       "schema": "bill/invoice",
