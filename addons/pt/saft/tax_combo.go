@@ -48,7 +48,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		case tax.KeyOutsideScope:
 			tc.Ext = tc.Ext.
 				Set(ExtKeyTaxRate, TaxRateExempt).
-				Set(ExtKeyExemption, "M99")
+				SetOneOf(ExtKeyExemption, "M99", "M44")
 		case tax.KeyIntraCommunity:
 			tc.Ext = tc.Ext.
 				Set(ExtKeyTaxRate, TaxRateExempt).
@@ -56,14 +56,14 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		case tax.KeyExport:
 			tc.Ext = tc.Ext.
 				Set(ExtKeyTaxRate, TaxRateExempt).
-				SetOneOf(ExtKeyExemption, "M05", "M04")
+				SetOneOf(ExtKeyExemption, "M05", "M04", "M46")
 		case tax.KeyExempt, tax.KeyZero: // no difference in PT
 			tc.Ext = tc.Ext.
 				Set(ExtKeyTaxRate, TaxRateExempt).
 				SetOneOf(ExtKeyExemption, "M07", // health, education, etc.
 					"M01", "M02", "M03", "M06", "M09", "M10", "M11",
 					"M12", "M13", "M14", "M15", "M19", "M20", "M21",
-					"M25", "M26",
+					"M25", "M26", "M45",
 				)
 		}
 	}
@@ -78,15 +78,15 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	switch tc.Ext.Get(ExtKeyExemption) {
 	case "M30", "M31", "M32", "M33", "M40", "M41", "M42", "M43":
 		tc.Key = tax.KeyReverseCharge
-	case "M05", "M04":
+	case "M05", "M04", "M46":
 		tc.Key = tax.KeyExport
 	case "M16":
 		tc.Key = tax.KeyIntraCommunity
-	case "M99":
+	case "M99", "M44":
 		tc.Key = tax.KeyOutsideScope
 	case "M01", "M02", "M03", "M06", "M07", "M09", "M10", "M11",
 		"M12", "M13", "M14", "M15", "M19", "M20", "M21", "M25",
-		"M26":
+		"M26", "M45":
 		tc.Key = tax.KeyExempt
 	default:
 		if tc.Key.IsEmpty() {
