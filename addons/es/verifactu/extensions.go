@@ -215,14 +215,15 @@ var extensions = []*cbc.Definition{
 
 				GOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
 
-				Automatic mapping of tax combo keys to operation classes:
+				Tax keys will be normalized as described in the following table. Some keys will set a default value which can be overridden.
 
-				| Operation Class | Tax Key                |
-				|-----------------|-------------------------|
-				| ~S1~            | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
-				| ~S2~            | ~reverse-charge~                |
-				| ~N1~            | ~outside-scope~ |
-				| ~N2~            | ~outside-scope~ (default) |
+				| Tax Key          | Operation Classes    |
+				|------------------|----------------------|
+				| ~standard~       | ~S1~                 |
+				| ~zero~           | ~S1~                 |
+				| ~reverse-charge~ | ~S2~                 |
+				| ~outside-scope~  | ~N2~ (default), ~N1~ |
+				| others           | removed              |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -302,6 +303,7 @@ var extensions = []*cbc.Definition{
 				| ~exempt~          | ~E1~ (default), ~E6~       |
 				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
 				| ~intra-community~ | ~E5~                       |
+				| others            | removed                    |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -549,10 +551,12 @@ var extensions = []*cbc.Definition{
 				The following identity ~key~ values will be mapped automatically to an extension by the 
 				addon for the following keys:
 
-				- ~passport~: ~03~
-				- ~foreign~: ~04~
-				- ~resident~: ~05~
-				- ~other~: ~06~
+				| Identity Key | Extension Code |
+				|--------------|----------------|
+				| ~passport~   | ~03~           |
+				| ~foreign~    | ~04~           |
+				| ~resident~   | ~05~           |
+				| ~other~      | ~06~           |
 
 				The ~07~ "not registered in census" code is not mapped automatically, but
 				can be provided directly if needed.

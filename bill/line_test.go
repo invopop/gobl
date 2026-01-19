@@ -95,6 +95,43 @@ func TestLineValidation(t *testing.T) {
 		lines[0].Breakdown[0].Sum = nil
 		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (sum: cannot be blank; total: cannot be blank.).).)")
 	})
+
+	t.Run("negative line amounts", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1000, 2),
+				},
+			},
+		}
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
+		lines[0].Item.Price = num.NewAmount(-1000, 2)
+		require.ErrorContains(t, validation.Validate(lines), "0: (item: (price: must be no less than 0.).)")
+	})
+
+	t.Run("negative subline amounts", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Item: &org.Item{
+					Name: "Test Group Item",
+				},
+				Breakdown: []*SubLine{
+					{
+						Quantity: num.MakeAmount(1, 0),
+						Item: &org.Item{
+							Name:  "Test Item",
+							Price: num.NewAmount(1000, 2),
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
+		lines[0].Breakdown[0].Item.Price = num.NewAmount(-1000, 2)
+		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (item: (price: must be no less than 0.).).).)")
+	})
 }
 
 func TestLinePriceNormalization(t *testing.T) {
@@ -171,9 +208,77 @@ func TestLinePriceNormalization(t *testing.T) {
 		err := calculateLineItemPrice(line.Item, currency.EUR, exampleRates(t))
 		assert.ErrorContains(t, err, "no exchange rate found from 'MXN' to 'EUR")
 	})
+
+	t.Run("negative line prices", func(t *testing.T) {
+		line := &Line{
+			Quantity: *num.NewAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(-1000, 2),
+			},
+		}
+		line.Normalize(nil)
+		assert.Equal(t, "10.00", line.Item.Price.String())
+		assert.Equal(t, "-1", line.Quantity.String())
+	})
+
+	t.Run("negative sub-line prices", func(t *testing.T) {
+		line := &Line{
+			Breakdown: []*SubLine{
+				{
+					Quantity: *num.NewAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Test Item",
+						Price: num.NewAmount(-1000, 2),
+					},
+				},
+			},
+		}
+		line.Normalize(nil)
+		bd := line.Breakdown[0]
+		assert.Equal(t, "10.00", bd.Item.Price.String())
+		assert.Equal(t, "-1", bd.Quantity.String())
+	})
+
+	t.Run("nil sub-line prices", func(t *testing.T) {
+		line := &Line{
+			Breakdown: []*SubLine{
+				{
+					Quantity: *num.NewAmount(1, 0),
+					Item: &org.Item{
+						Name:  "Test Item",
+						Price: nil,
+					},
+				},
+			},
+		}
+		line.Normalize(nil)
+		bd := line.Breakdown[0]
+		assert.Nil(t, bd.Item.Price)
+		assert.Equal(t, "1", bd.Quantity.String())
+	})
+
 }
 
 func TestLineNormalize(t *testing.T) {
+	t.Run("nil line", func(t *testing.T) {
+		var line *Line
+		assert.NotPanics(t, func() {
+			line.Normalize(nil)
+			assert.Nil(t, line)
+		})
+	})
+	t.Run("nil subline", func(t *testing.T) {
+		line := &Line{
+			Breakdown: []*SubLine{
+				nil,
+			},
+		}
+		assert.NotPanics(t, func() {
+			line.Normalize(nil)
+		})
+		assert.Len(t, line.Breakdown, 0)
+	})
 	t.Run("basic", func(t *testing.T) {
 
 		line := &Line{

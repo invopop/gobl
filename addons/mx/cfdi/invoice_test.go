@@ -278,7 +278,7 @@ func TestLineValidation(t *testing.T) {
 	inv = validInvoice()
 
 	inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (item: (price: must be greater than 0.); total: must be no less than 0.).)")
+	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be no less than 0.).)")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
@@ -416,7 +416,8 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 					cfdi.ExtKeyProdServ: "12345678",
 				},
 			},
-			err: "price: must be greater than 0",
+			// negative price now normalized to quantity
+			err: "quantity: must be greater than 0",
 		},
 		{
 			name: "nil price",

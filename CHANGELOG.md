@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `es-verifactu-v1`: Automatic addition of legal notes to line items when exemption codes are present. Notes are added during normalization with Spanish text from extension definitions, matching the exemption code. Validation ensures exemption notes are present when required and match the corresponding exemption codes.
+
+### Changed
+
+- `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
+- `org`: `Item` requires zero or positive price.
+
 ## [v0.305.1] - 2026-01-09
 
 ### Fixed
@@ -18,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [v0.305.0] - 2026-01-08
 
 ### Added
+
 - `ar-arca-v4`: Added initial Argentina ARCA addon.
 - `eu-en16931-v2017`: Added check for negative prices.
 - `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)
