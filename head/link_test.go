@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
@@ -44,6 +45,95 @@ func TestLinkValidation(t *testing.T) {
 			URL:   "https://example.com",
 		}
 		require.ErrorContains(t, l.Validate(), "key: cannot be blank")
+	})
+
+	t.Run("valid MIME types", func(t *testing.T) {
+		validMIMEs := []string{
+			"application/pdf",
+			"image/jpeg",
+			"image/png",
+			"text/csv",
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			"application/vnd.oasis.opendocument.spreadsheet",
+			"text/html",
+			"application/xml",
+			"text/xml",
+			"application/json",
+		}
+		for _, mime := range validMIMEs {
+			l := &head.Link{
+				Key:  "test",
+				MIME: mime,
+				URL:  "https://example.com",
+			}
+			assert.NoError(t, l.Validate(), "MIME type %s should be valid", mime)
+		}
+	})
+
+	t.Run("invalid MIME types", func(t *testing.T) {
+		invalidMIMEs := []string{
+			"application/octet-stream",
+			"text/plain",
+			"image/gif",
+			"video/mp4",
+			"application/zip",
+		}
+		for _, mime := range invalidMIMEs {
+			l := &head.Link{
+				Key:  "test",
+				MIME: mime,
+				URL:  "https://example.com",
+			}
+			err := l.Validate()
+			require.Error(t, err, "MIME type %s should be invalid", mime)
+			require.ErrorContains(t, err, "mime:", "Error should mention mime field")
+		}
+	})
+
+	t.Run("empty MIME type is valid", func(t *testing.T) {
+		l := &head.Link{
+			Key:  "test",
+			MIME: "",
+			URL:  "https://example.com",
+		}
+		assert.NoError(t, l.Validate())
+	})
+}
+
+func TestLinkDigestValidation(t *testing.T) {
+	t.Run("digest with valid MIME type", func(t *testing.T) {
+		l := &head.Link{
+			Key:  "test",
+			MIME: "application/pdf",
+			Digest: &dsig.Digest{
+				Algorithm: dsig.DigestSHA256,
+				Value:     "abc123",
+			},
+			URL: "https://example.com",
+		}
+		assert.NoError(t, l.Validate())
+	})
+
+	t.Run("digest without MIME type should fail", func(t *testing.T) {
+		l := &head.Link{
+			Key: "test",
+			Digest: &dsig.Digest{
+				Algorithm: dsig.DigestSHA256,
+				Value:     "abc123",
+			},
+			URL: "https://example.com",
+		}
+		err := l.Validate()
+		require.Error(t, err)
+		require.ErrorContains(t, err, "must be nil when MIME type is not provided")
+	})
+
+	t.Run("no digest without MIME type is valid", func(t *testing.T) {
+		l := &head.Link{
+			Key: "test",
+			URL: "https://example.com",
+		}
+		assert.NoError(t, l.Validate())
 	})
 }
 
