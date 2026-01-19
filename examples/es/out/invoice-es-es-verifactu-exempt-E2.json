@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "02a937ca9284cb793e87dbd471cd120a2fd9496b99724d02965c535847ce0402"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e2",
+		"type": "standard",
+		"series": "FT",
+		"code": "E2-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Export Trading S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			]
+		},
+		"customer": {
+			"name": "Global Import Inc.",
+			"tax_id": {
+				"country": "US",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Main Street",
+					"locality": "New York",
+					"region": "NY",
+					"code": "10001",
+					"country": "US"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "100",
+				"item": {
+					"name": "Spanish olive oil",
+					"price": "15.00",
+					"unit": "bottle"
+				},
+				"sum": "1500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "export",
+						"ext": {
+							"es-verifactu-exempt": "E2",
+							"es-verifactu-regime": "02"
+						}
+					}
+				],
+				"total": "1500.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E2",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes."
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "1500.00",
+			"total": "1500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "export",
+								"ext": {
+									"es-verifactu-exempt": "E2",
+									"es-verifactu-regime": "02"
+								},
+								"base": "1500.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1500.00",
+			"payable": "1500.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Export of goods outside the EU - exempt pursuant to Article 21 of LIVA"
+			}
+		]
+	}
+}

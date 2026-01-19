@@ -1,0 +1,49 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852e5"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "FT"
+code: "E5-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "EU Trading S.L."
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "NL"
+    code: "464374200B01"
+  name: "Dutch Distribution B.V."
+  addresses:
+    - num: "15"
+      street: "Main Street"
+      locality: "Amsterdam"
+      code: "1012 AB"
+      country: "NL"
+
+lines:
+  - quantity: 200
+    item:
+      name: "Electronics components"
+      price: "10.00"
+      unit: "unit"
+    taxes:
+      - cat: VAT
+        key: intra-community
+        ext:
+          es-verifactu-exempt: "E5"
+
+notes:
+  - key: "general"
+    text: "Intra-Community supply of goods from Spain to Netherlands - exempt pursuant to Article 25 of LIVA"
+

@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "b66f1a398034ecee7582582cc676a5d7c910b227dc91c5e849bd509c7c50a45c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e1",
+		"type": "standard",
+		"series": "FT",
+		"code": "E1-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Healthcare Services S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			]
+		},
+		"customer": {
+			"name": "Medical Clinic",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Avenida Siempre Viva",
+					"locality": "Barcelona",
+					"region": "Barcelona",
+					"code": "08001",
+					"country": "ES"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Medical consultation services",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt",
+						"ext": {
+							"es-verifactu-exempt": "E1",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "100.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E1",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por el artículo 20. Exenciones en operaciones interiores."
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "100.00",
+			"total": "100.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"es-verifactu-exempt": "E1",
+									"es-verifactu-regime": "01"
+								},
+								"base": "100.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "100.00",
+			"payable": "100.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Exempt medical services pursuant to Article 20 of LIVA"
+			}
+		]
+	}
+}

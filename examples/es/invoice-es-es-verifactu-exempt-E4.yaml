@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852e4"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "FT"
+code: "E4-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Customs Warehouse S.L."
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Trading Company"
+  addresses:
+    - num: "10"
+      street: "Avenida Siempre Viva"
+      locality: "Barcelona"
+      region: "Barcelona"
+      code: "08001"
+      country: "ES"
+
+lines:
+  - quantity: 50
+    item:
+      name: "Goods in customs warehouse"
+      price: "25.00"
+      unit: "box"
+    taxes:
+      - cat: VAT
+        key: export
+        ext:
+          es-verifactu-exempt: "E4"
+
+notes:
+  - key: "general"
+    text: "Goods under customs/fiscal regime - exempt pursuant to Articles 23 and 24 of LIVA"
+
+

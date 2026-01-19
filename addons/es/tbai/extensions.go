@@ -152,7 +152,7 @@ var extensions = []*cbc.Definition{
 				Code: "E4",
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
-					i18n.ES: "Exenta: por el artículos 23 y 24 de la Norma Foral del IVA",
+					i18n.ES: "Exenta: por los artículos 23 y 24 de la Norma Foral del IVA",
 				},
 			},
 			{
