@@ -756,28 +756,23 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						To be used in operations not localized in Portugal due to the
-						exception rules in numbers 7 and following of article 6.º of the
-						VAT Code.
+						To be used in services not provided in Portugal under the terms of
+						paragraphs 7 and following of article 6.º of the VAT Code.
 					`),
 				},
 			},
 			{
 				Code: "M45",
 				Name: i18n.String{
-					i18n.EN: "Artigo 58.º-A do CIVA",
-					i18n.PT: "Article 58.º-A of the CIVA",
+					i18n.EN: "Art 58º-A of the CIVA (IVA - cross-border exemption regime)",
+					i18n.PT: "Art 58º-A do CIVA (IVA - regime transfronteiriço de isenção)",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						To be used in operations located in another Member State of the
-						European Union that are exempt from VAT there, by virtue of the
-						supplier of goods or provider of services having adhered to the
-						Cross-Border Exemption Regime for operations carried out in that
-						Member State. Without prejudice to the provisions of
-						Circular-Letter no. 25 065, of 08.04.2025, for better
-						identification and separation of these operations, the mention
-						"IVA - regime transfronteiriço de isenção" must be used.
+						To be used in operations located in another Member State of the European
+						Union that are exempt from VAT there, by virtue of the supplier of goods
+						or provider of services having adhered to the Cross-Border Exemption
+						Regime for operations carried out in that Member State.
 					`),
 				},
 			},
@@ -789,11 +784,9 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						To be used by the seller in issuing invoices for operations where
-						the exemption has been applied to the transfer of goods to be
-						transported in the personal luggage of travelers without domicile
-						or establishment in the European Union, under the terms of the
-						aforementioned decree-law.
+						To be used in the transfer of goods in the personal luggage of travelers
+						without domicile in the European Union (a.k.a. tax free), under the
+						terms of the mentioned decree-law.
 					`),
 				},
 			},
