@@ -150,6 +150,7 @@ func (l *Link) Validate() error {
 			),
 		),
 		validation.Field(&l.URL, validation.Required, is.URL),
+		validation.Field(&l.Meta),
 	)
 }
 
