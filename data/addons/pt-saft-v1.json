@@ -493,17 +493,17 @@
             "pt": "Artigo 6.º do CIVA – Regras específicas"
           },
           "desc": {
-            "en": "To be used in operations not localized in Portugal due to the\nexception rules in numbers 7 and following of article 6.º of the\nVAT Code."
+            "en": "To be used in services not provided in Portugal under the terms of\nparagraphs 7 and following of article 6.º of the VAT Code."
           }
         },
         {
           "code": "M45",
           "name": {
-            "en": "Artigo 58.º-A do CIVA",
-            "pt": "Article 58.º-A of the CIVA"
+            "en": "Art 58º-A of the CIVA (IVA - cross-border exemption regime)",
+            "pt": "Art 58º-A do CIVA (IVA - regime transfronteiriço de isenção)"
           },
           "desc": {
-            "en": "To be used in operations located in another Member State of the\nEuropean Union that are exempt from VAT there, by virtue of the\nsupplier of goods or provider of services having adhered to the\nCross-Border Exemption Regime for operations carried out in that\nMember State. Without prejudice to the provisions of\nCircular-Letter no. 25 065, of 08.04.2025, for better\nidentification and separation of these operations, the mention\n\"IVA - regime transfronteiriço de isenção\" must be used."
+            "en": "To be used in operations located in another Member State of the European\nUnion that are exempt from VAT there, by virtue of the supplier of goods\nor provider of services having adhered to the Cross-Border Exemption\nRegime for operations carried out in that Member State."
           }
         },
         {
@@ -513,7 +513,7 @@
             "pt": "Decreto-lei n.º 19/2017, de 14 de fevereiro"
           },
           "desc": {
-            "en": "To be used by the seller in issuing invoices for operations where\nthe exemption has been applied to the transfer of goods to be\ntransported in the personal luggage of travelers without domicile\nor establishment in the European Union, under the terms of the\naforementioned decree-law."
+            "en": "To be used in the transfer of goods in the personal luggage of travelers\nwithout domicile in the European Union (a.k.a. tax free), under the\nterms of the mentioned decree-law."
           }
         },
         {
