@@ -626,7 +626,7 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
 						“IVA Zero” food-basket scheme allowed VAT exemption with right to
-						deduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. 
+						deduction. Active 18 Apr 2023 to 4 Jan 2024, now expired.
 					`),
 				},
 			},
@@ -677,7 +677,7 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Reverse-charge on raw cork, wood, pine-cones with shell — 
+						Reverse-charge on raw cork, wood, pine-cones with shell —
 						purchaser accounts for VAT.
 					`),
 				},
@@ -745,6 +745,48 @@ var extensions = []*cbc.Definition{
 					i18n.EN: here.Doc(`
 						Reverse-charge on investment gold transactions that are not
 						VAT-exempt under special gold regulations; buyer reports VAT.
+					`),
+				},
+			},
+			{
+				Code: "M44",
+				Name: i18n.String{
+					i18n.EN: "Article 6.º of the CIVA – Specific rules",
+					i18n.PT: "Artigo 6.º do CIVA – Regras específicas",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used in services not provided in Portugal under the terms of
+						paragraphs 7 and following of article 6.º of the VAT Code.
+					`),
+				},
+			},
+			{
+				Code: "M45",
+				Name: i18n.String{
+					i18n.EN: "Art 58º-A of the CIVA (IVA - cross-border exemption regime)",
+					i18n.PT: "Art 58º-A do CIVA (IVA - regime transfronteiriço de isenção)",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used in operations located in another Member State of the European
+						Union that are exempt from VAT there, by virtue of the supplier of goods
+						or provider of services having adhered to the Cross-Border Exemption
+						Regime for operations carried out in that Member State.
+					`),
+				},
+			},
+			{
+				Code: "M46",
+				Name: i18n.String{
+					i18n.EN: "Decree-Law No. 19/2017, of February 14",
+					i18n.PT: "Decreto-lei n.º 19/2017, de 14 de fevereiro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used in the transfer of goods in the personal luggage of travelers
+						without domicile in the European Union (a.k.a. tax free), under the
+						terms of the mentioned decree-law.
 					`),
 				},
 			},

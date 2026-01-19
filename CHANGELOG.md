@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
+
 ### Changed
 
 - `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
