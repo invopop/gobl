@@ -86,14 +86,14 @@ func (h *Header) GetStamp(provider cbc.Key) *Stamp {
 }
 
 // AddLink will add the link to the header, or update a link with the same
-// key.
+// category and key.
 func (h *Header) AddLink(l *Link) {
 	h.Links = AppendLink(h.Links, l)
 }
 
-// Link provides the link with the matching key in the header, or nil.
-func (h *Header) Link(key cbc.Key) *Link {
-	return LinkByKey(h.Links, key)
+// Link provides the link with the matching category and key in the header, or nil.
+func (h *Header) Link(category, key cbc.Key) *Link {
+	return LinkByCategoryAndKey(h.Links, category, key)
 }
 
 // Contains compares the provided header to ensure that all the fields
