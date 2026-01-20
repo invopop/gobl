@@ -27,7 +27,11 @@ import (
 
 // Threshold for requiring buyer identification (A$1,000.00)
 // Stored as 100000 cents with 2 decimal places
-var buyerIdentityThreshold = num.MakeAmount(100000, 2)
+const buyerIdentityThresholdCents int64 = 100000
+
+func buyerIdentityThreshold() num.Amount {
+	return num.MakeAmount(buyerIdentityThresholdCents, 2)
+}
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
@@ -52,7 +56,7 @@ func validateCustomer(inv *bill.Invoice, value interface{}) error {
 	taxableAmount := calculateTaxableAmount(inv)
 
 	// If taxable amount >= A$1,000, require buyer name OR ABN
-	if taxableAmount.Compare(buyerIdentityThreshold) >= 0 {
+	if taxableAmount.Compare(buyerIdentityThreshold()) >= 0 {
 		hasName := customer.Name != ""
 		hasABN := customer.TaxID != nil && customer.TaxID.Code != ""
 
