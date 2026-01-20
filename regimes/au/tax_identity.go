@@ -88,7 +88,7 @@ func validateABNChecksum(abn string) bool {
 	}
 
 	// Step 1: Subtract 1 from the first digit
-	digits[0] -= 1
+	digits[0]--
 
 	// Step 2 & 3: Apply weights and sum
 	sum := 0

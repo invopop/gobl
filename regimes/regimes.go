@@ -7,8 +7,8 @@ import (
 	// add themselves to the tax regime register.
 	_ "github.com/invopop/gobl/regimes/ae"
 	_ "github.com/invopop/gobl/regimes/ar"
-	_ "github.com/invopop/gobl/regimes/au"
 	_ "github.com/invopop/gobl/regimes/at"
+	_ "github.com/invopop/gobl/regimes/au"
 	_ "github.com/invopop/gobl/regimes/be"
 	_ "github.com/invopop/gobl/regimes/br"
 	_ "github.com/invopop/gobl/regimes/ca"

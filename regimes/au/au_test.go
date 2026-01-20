@@ -3,8 +3,8 @@ package au_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/tax"
 	_ "github.com/invopop/gobl/regimes/au"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
