@@ -63,7 +63,7 @@ func Validate(doc interface{}) error {
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
+		normalizeABN(obj)
 	case *org.Party:
 		normalizeParty(obj)
 	}

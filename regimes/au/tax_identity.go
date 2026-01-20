@@ -4,10 +4,8 @@ import (
 	"errors"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -115,17 +113,5 @@ func normalizeABN(tID *tax.Identity) {
 	if tID == nil || tID.Code == "" {
 		return
 	}
-
-	code := tID.Code.String()
-
-	// Remove common formatting characters
-	code = strings.ReplaceAll(code, " ", "")
-	code = strings.ReplaceAll(code, "-", "")
-	code = strings.ReplaceAll(code, ".", "")
-
-	// Remove "AU" country prefix if present
-	code = strings.TrimPrefix(code, string(l10n.AU))
-	code = strings.TrimPrefix(code, "AU")
-
-	tID.Code = cbc.Code(code)
+	tax.NormalizeIdentity(tID)
 }
