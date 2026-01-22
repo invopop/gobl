@@ -69,7 +69,7 @@
         "price": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Price",
-          "description": "Base price of a single unit to be sold."
+          "description": "Base price of a single unit to be sold. Must be either zero or positive."
         },
         "alt_prices": {
           "items": {

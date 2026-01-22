@@ -47,7 +47,7 @@ type Item struct {
 	Images []*Image `json:"images,omitempty" jsonschema:"title=Images"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
-	// Base price of a single unit to be sold.
+	// Base price of a single unit to be sold. Must be either zero or positive.
 	Price *num.Amount `json:"price,omitempty" jsonschema:"title=Price"`
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
@@ -93,7 +93,9 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Images),
 		validation.Field(&i.Identities),
 		validation.Field(&i.Currency),
-		validation.Field(&i.Price),
+		validation.Field(&i.Price,
+			num.ZeroOrPositive,
+		),
 		validation.Field(&i.AltPrices),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Origin),

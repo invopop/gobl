@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.306.0] - 2026-01-19
+
+### Changed
+
+- `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
+- `org`: `Item` requires zero or positive price.
+
+### Added
+
+- `head`: `Link` support for category and improved file support.
+- `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
+
 ## [v0.305.1] - 2026-01-09
 
 ### Fixed
@@ -15,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [v0.305.0] - 2026-01-08
 
 ### Added
+
 - `ar-arca-v4`: Added initial Argentina ARCA addon.
 - `eu-en16931-v2017`: Added check for negative prices.
 - `br-nfse-v1`: Add extensions for IBS/CBS tax determination (RTC)

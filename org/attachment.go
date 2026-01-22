@@ -21,6 +21,11 @@ import (
 //
 // While it is possible to include the data directly in the JSON document,
 // it is recommended to use the URL field to link to the document instead.
+//
+// Deprecation: attachments are being deprecated in favor of using Links
+// in the `head` package defined inside the envelope. These allow for
+// alternative versions or formats of the same source document to be provided
+// without breaking signatures.
 type Attachment struct {
 	uuid.Identify
 
