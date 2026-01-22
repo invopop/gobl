@@ -1,0 +1,197 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "42c34d2a1b898eb9b30886d37eaf1867348c2b4533f45a0dfd4e42adec142611"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DK",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
+		"type": "standard",
+		"series": "S2025",
+		"code": "001",
+		"issue_date": "2025-05-20",
+		"currency": "DKK",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Danish Services ApS",
+			"tax_id": {
+				"country": "DK",
+				"code": "13585628"
+			},
+			"identities": [
+				{
+					"scope": "legal",
+					"country": "DK",
+					"key": "cvr",
+					"code": "13585628"
+				}
+			],
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0184",
+					"code": "13585628"
+				}
+			],
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Nørregade",
+					"locality": "København",
+					"region": "Hovedstaden",
+					"code": "1165",
+					"country": "DK"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.dk"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Customer ApS",
+			"tax_id": {
+				"country": "DK",
+				"code": "88146328"
+			},
+			"identities": [
+				{
+					"scope": "legal",
+					"country": "DK",
+					"key": "cvr",
+					"code": "88146328"
+				}
+			],
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0184",
+					"code": "88146328"
+				}
+			],
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Amagertorv",
+					"locality": "København",
+					"region": "Hovedstaden",
+					"code": "1160",
+					"country": "DK"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "750.00",
+					"unit": "h"
+				},
+				"sum": "15000.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "1500.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "13500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Consulting services",
+					"price": "5000.00",
+					"unit": "one"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-05-30",
+						"amount": "18500.00",
+						"percent": "100%"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "DK5000400440116243",
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "18500.00",
+			"tax_included": "3700.00",
+			"total": "14800.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "14800.00",
+								"percent": "25.0%",
+								"amount": "3700.00"
+							}
+						],
+						"amount": "3700.00"
+					}
+				],
+				"sum": "3700.00"
+			},
+			"tax": "3700.00",
+			"total_with_tax": "18500.00",
+			"payable": "18500.00"
+		}
+	}
+}

@@ -46,6 +46,7 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGLN:  "0088",
 	org.IdentityKeyGTIN: "0160",
+	"cvr":               "0184", // Danish CVR-nummer (DK regime)
 }
 
 var (
