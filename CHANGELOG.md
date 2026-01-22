@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pl-favat-v3`: Added Poland FAVAT V3 addon
+
 ## [v0.306.0] - 2026-01-19
 
 ### Changed
