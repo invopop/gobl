@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "75d00125d94a06ed002e3717cde6cc4260df3070cbf0e15ed263b8d1b2b9058e"
+			"val": "8f92312eed21952de7e9462a318feba2c9e04e75268da60fb3630cce49f2b7f1"
 		}
 	},
 	"doc": {
@@ -83,6 +83,7 @@
 		"payment": {
 			"advances": [
 				{
+					"date": "2025-01-30",
 					"description": "Advance payment from ZAL/001",
 					"amount": "6150.00"
 				}

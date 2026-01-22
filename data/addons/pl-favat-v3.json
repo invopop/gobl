@@ -324,7 +324,7 @@
       ]
     },
     {
-      "key": "pl-favat-split-payment-mechanism",
+      "key": "pl-favat-split-payment",
       "name": {
         "en": "Split payment mechanism flag for KSeF",
         "pl": "Flaga mechanizmu płatności rozłożonej dla KSeF (P_18A)"

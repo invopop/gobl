@@ -61,6 +61,7 @@
       {
         "key": "credit-transfer",
         "description": "50% advance payment",
+        "date": "2025-01-15",
         "amount": "6150.00",
         "percent": "50%"
       }

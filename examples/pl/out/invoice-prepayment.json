@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c49f1399efe43d4e8975251883b7f3d18025a8529d14e241b09649f3186bfcd7"
+			"val": "aa91359cb10ba797e82117e1f65dc35b6fd7ceb5b7cb4994063623d03d83992f"
 		}
 	},
 	"doc": {
@@ -83,6 +83,7 @@
 		"payment": {
 			"advances": [
 				{
+					"date": "2025-01-15",
 					"key": "credit-transfer",
 					"description": "50% advance payment",
 					"percent": "50%",
