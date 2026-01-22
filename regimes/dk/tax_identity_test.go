@@ -19,6 +19,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid 2", code: "88146328"},
 		{name: "valid 3", code: "25063864"},
 		{
+			name: "empty code",
+			code: "",
+			err:  "",
+		},
+		{
 			name: "too short",
 			code: "1234567",
 			err:  "invalid format",
@@ -51,6 +56,43 @@ func TestValidateTaxIdentity(t *testing.T) {
 					assert.Contains(t, err.Error(), tt.err)
 				}
 			}
+		})
+	}
+}
+
+func TestNormalizeTaxIdentity(t *testing.T) {
+	tests := []struct {
+		name     string
+		code     cbc.Code
+		expected cbc.Code
+	}{
+		{
+			name:     "with DK prefix",
+			code:     "DK13585628",
+			expected: "13585628",
+		},
+		{
+			name:     "with spaces",
+			code:     "13 58 56 28",
+			expected: "13585628",
+		},
+		{
+			name:     "already normalized",
+			code:     "13585628",
+			expected: "13585628",
+		},
+		{
+			name:     "empty",
+			code:     "",
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "DK", Code: tt.code}
+			dk.Normalize(tID)
+			assert.Equal(t, tt.expected, tID.Code)
 		})
 	}
 }
