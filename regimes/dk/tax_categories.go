@@ -17,7 +17,7 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
-			i18n.DA: "Meromsætningsafgift",
+			i18n.DA: "Merværdiafgift",
 		},
 		Retained: false,
 		Keys:     tax.GlobalVATKeys(),
@@ -42,7 +42,7 @@ var taxCategories = []*tax.CategoryDef{
 				Title: i18n.String{
 					i18n.EN: "Danish Tax Agency - VAT rates",
 				},
-				URL: "https://skat.dk/",
+				URL: "https://skat.dk/erhverv/moms",
 			},
 		},
 	},
