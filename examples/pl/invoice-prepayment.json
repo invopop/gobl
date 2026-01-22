@@ -1,0 +1,69 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "$tags": ["partial"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c5e",
+  "type": "standard",
+  "series": "ZAL",
+  "code": "001",
+  "issue_date": "2025-01-15",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Klient Testowy Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Testowa 10",
+        "locality": "Kraków",
+        "code": "30-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Advance Payment for Project",
+        "price": "5000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "advances": [
+      {
+        "key": "credit-transfer",
+        "description": "50% advance payment",
+        "amount": "6150.00",
+        "percent": "50%"
+      }
+    ]
+  }
+}

@@ -4,32 +4,22 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
 const (
-	MeansKeyCoupon     cbc.Key = "coupon"
-	MeansKeyCheque     cbc.Key = "cheque"
-	MeansKeyLoan       cbc.Key = "loan"
-	MeansKeyDebtRelief cbc.Key = "credit-transfer"
-	MeansKeyMobile     cbc.Key = "mobile"
+	MeansKeyVoucher cbc.Key = "voucher"
+	MeansKeyCredit  cbc.Key = "credit"
 )
 
 var paymentMeansKeyMap = tax.Extensions{
-	pay.MeansKeyCash:                       "1", // Cash / Gotówka
-	pay.MeansKeyCard:                       "2", // Card / Karta
-	pay.MeansKeyOther.With(MeansKeyCoupon): "3", // Coupon / Bon
-	pay.MeansKeyCheque:                     "4", // Cheque / Czek
-	pay.MeansKeyOnline.With(MeansKeyLoan):  "5", // Loan / Kredyt
-	pay.MeansKeyCreditTransfer:             "6", // Wire Transfer / Przelew
-	pay.MeansKeyOther.With(MeansKeyMobile): "7", // Mobile / Mobilna
-}
-
-// PaymentMeansExtensions returns the mapping of payment means to their
-// extension values used by FA_VAT.
-func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansKeyMap
+	pay.MeansKeyCash:                        "1", // Cash / Gotówka
+	pay.MeansKeyCard:                        "2", // Card / Karta
+	pay.MeansKeyOther.With(MeansKeyVoucher): "3", // Voucher / Bon
+	pay.MeansKeyCheque:                      "4", // Cheque / Czek
+	pay.MeansKeyOther.With(MeansKeyCredit):  "5", // Credit / Kredyt
+	pay.MeansKeyCreditTransfer:              "6", // Credit Transfer / Przelew
+	pay.MeansKeyOnline:                      "7", // Online / Mobilna
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
@@ -52,28 +42,4 @@ func normalizePayAdvance(adv *pay.Advance) {
 			ExtKeyPaymentMeans: code,
 		})
 	}
-}
-
-func validatePayAdvance(a *pay.Advance) error {
-	if a == nil {
-		return nil
-	}
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
-		),
-	)
-}
-
-func validatePayInstructions(i *pay.Instructions) error {
-	if i == nil {
-		return nil
-	}
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
-		),
-	)
 }

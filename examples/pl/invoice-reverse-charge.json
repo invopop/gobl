@@ -1,0 +1,64 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "$tags": ["reverse-charge"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3ccf",
+  "type": "standard",
+  "series": "RC",
+  "code": "001",
+  "issue_date": "2025-01-22",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "EU Business GmbH",
+    "tax_id": {
+      "country": "DE",
+      "code": "111111125"
+    },
+    "addresses": [
+      {
+        "street": "Hauptstraße 100",
+        "locality": "Berlin",
+        "code": "10115",
+        "country": "DE"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "IT Services - EU Reverse Charge",
+        "price": "5000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "reverse-charge"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "key": "legal",
+      "text": "Reverse charge mechanism applies - VAT to be accounted for by the customer."
+    }
+  ]
+}

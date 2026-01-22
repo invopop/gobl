@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "09917a28c35c4a8e82a07d211673a5744a1b30283fb3b92b1b4f9a00cb8c2a71"
+			"val": "128f9340eaaa702b9685c6d94d17672f79fd1ac10b49241430a8ad26d2fec80b"
 		}
 	},
 	"doc": {
@@ -13,27 +13,27 @@
 		"$addons": [
 			"pl-favat-v3"
 		],
-		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c8b",
 		"type": "credit-note",
-		"series": "CN",
-		"code": "002",
-		"issue_date": "2023-12-21",
+		"series": "KOR",
+		"code": "001",
+		"issue_date": "2025-01-25",
 		"currency": "PLN",
 		"preceding": [
 			{
 				"type": "standard",
-				"issue_date": "2023-12-20",
-				"series": "SAMPLE",
+				"issue_date": "2025-01-22",
+				"series": "INVOICE",
 				"code": "001",
-				"reason": "Special Discount",
+				"reason": "Price correction",
 				"stamps": [
 					{
-						"prv": "ksef-id",
-						"val": "9876543210-20231220-107FDF72DB53-F7"
+						"prv": "favat-ksef-number",
+						"val": "1234567890-20250122-ABCD1234-EF"
 					}
 				],
 				"ext": {
-					"pl-favat-effective-date": "2"
+					"pl-favat-effective-date": "1"
 				}
 			}
 		],
@@ -43,40 +43,31 @@
 			}
 		},
 		"supplier": {
-			"name": "Provide One S.L.",
+			"name": "Testowa Firma Sp. z o.o.",
 			"tax_id": {
 				"country": "PL",
 				"code": "9876543210"
 			},
 			"addresses": [
 				{
-					"num": "42",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "00-015",
+					"street": "ul. Główna 1",
+					"locality": "Warsaw",
+					"code": "00-001",
 					"country": "PL"
-				}
-			],
-			"emails": [
-				{
-					"addr": "billing@example.com"
 				}
 			]
 		},
 		"customer": {
-			"name": "Sample Consumer",
+			"name": "Klient Testowy Sp. z o.o.",
 			"tax_id": {
 				"country": "PL",
-				"code": "1234567788"
+				"code": "9876543210"
 			},
 			"addresses": [
 				{
-					"num": "43",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "00-015",
+					"street": "ul. Testowa 10",
+					"locality": "Kraków",
+					"code": "30-001",
 					"country": "PL"
 				}
 			]
@@ -84,27 +75,30 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "10",
 				"item": {
-					"name": "Development services",
+					"name": "Software Development Services",
 					"price": "10.00",
 					"unit": "h"
 				},
-				"sum": "200.00",
+				"sum": "100.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "standard",
 						"rate": "general",
-						"percent": "23.0%"
+						"percent": "23.0%",
+						"ext": {
+							"pl-favat-tax-category": "1"
+						}
 					}
 				],
-				"total": "200.00"
+				"total": "100.00"
 			}
 		],
 		"totals": {
-			"sum": "200.00",
-			"total": "200.00",
+			"sum": "100.00",
+			"total": "100.00",
 			"taxes": {
 				"categories": [
 					{
@@ -112,19 +106,22 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "200.00",
+								"ext": {
+									"pl-favat-tax-category": "1"
+								},
+								"base": "100.00",
 								"percent": "23.0%",
-								"amount": "46.00"
+								"amount": "23.00"
 							}
 						],
-						"amount": "46.00"
+						"amount": "23.00"
 					}
 				],
-				"sum": "46.00"
+				"sum": "23.00"
 			},
-			"tax": "46.00",
-			"total_with_tax": "246.00",
-			"payable": "246.00"
+			"tax": "23.00",
+			"total_with_tax": "123.00",
+			"payable": "123.00"
 		}
 	}
 }

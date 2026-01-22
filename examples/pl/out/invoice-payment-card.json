@@ -1,0 +1,123 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "771a35b07230053d47134a4a1cc3a63b861f42faa180d9e042e49531aeff4a68"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v3"
+		],
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3d0d",
+		"type": "standard",
+		"series": "PAY",
+		"code": "001",
+		"issue_date": "2025-01-22",
+		"currency": "PLN",
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "VAT"
+			}
+		},
+		"supplier": {
+			"name": "Sklep Testowy",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Handlowa 5",
+					"locality": "Warsaw",
+					"code": "00-001",
+					"country": "PL"
+				}
+			]
+		},
+		"customer": {
+			"name": "Klient Indywidualny",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Klienta 10",
+					"locality": "Warsaw",
+					"code": "00-015",
+					"country": "PL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Electronics - Laptop",
+					"price": "3500.00"
+				},
+				"sum": "3500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pl-favat-tax-category": "1"
+						}
+					}
+				],
+				"total": "3500.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "card",
+				"detail": "Payment by card",
+				"ext": {
+					"pl-favat-payment-means": "2"
+				}
+			}
+		},
+		"totals": {
+			"sum": "3500.00",
+			"total": "3500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pl-favat-tax-category": "1"
+								},
+								"base": "3500.00",
+								"percent": "23.0%",
+								"amount": "805.00"
+							}
+						],
+						"amount": "805.00"
+					}
+				],
+				"sum": "805.00"
+			},
+			"tax": "805.00",
+			"total_with_tax": "4305.00",
+			"payable": "4305.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Payment received by card at point of sale."
+			}
+		]
+	}
+}

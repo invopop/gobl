@@ -1,0 +1,77 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "$tags": ["settlement"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3cad",
+  "type": "credit-note",
+  "series": "KOR-ROZ",
+  "code": "001",
+  "issue_date": "2025-02-05",
+  "currency": "PLN",
+  "preceding": [
+    {
+      "type": "standard",
+      "series": "ROZ",
+      "code": "001",
+      "issue_date": "2025-01-30",
+      "reason": "Final settlement correction",
+      "ext": {
+        "pl-favat-effective-date": "1"
+      },
+      "stamps": [
+        {
+          "prv": "favat-ksef-number",
+          "val": "1234567890-20250130-DEF45678-GH"
+        }
+      ]
+    }
+  ],
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Klient Testowy Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Testowa 10",
+        "locality": "Kraków",
+        "code": "30-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Settlement Invoice Correction",
+        "price": "1000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    }
+  ]
+}

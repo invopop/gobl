@@ -16,9 +16,9 @@ const (
 
 // KSeF official codes to include.
 const (
-	StampID   cbc.Key = "favat-id"
-	StampHash cbc.Key = "favat-hash"
-	StampQR   cbc.Key = "favat-qr"
+	StampKSEFNumber cbc.Key = "favat-ksef-number"
+	StampHash       cbc.Key = "favat-hash"
+	StampQR         cbc.Key = "favat-qr"
 )
 
 func init() {
@@ -32,10 +32,10 @@ func newAddonV3() *tax.AddonDef {
 			i18n.EN: "Polish KSeF FA_VAT FA(3)",
 		},
 		Tags: []*tax.TagSet{
-			invoiceTags, // scenarios.go
+			invoiceTags,
 		},
 		Extensions:  extensionKeys,
-		Scenarios:   scenarios, // scenarios.go
+		Scenarios:   scenarios,
 		Normalizer:  normalize,
 		Validator:   validate,
 		Corrections: corrections,
@@ -50,17 +50,17 @@ func normalize(doc any) {
 		normalizePayInstructions(obj)
 	case *pay.Advance:
 		normalizePayAdvance(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
+		return validateBillInvoice(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -71,12 +71,8 @@ var corrections = tax.CorrectionSet{
 		Types: []cbc.Key{
 			bill.InvoiceTypeCreditNote,
 		},
-		ReasonRequired: true,
 		Stamps: []cbc.Key{
-			StampID,
-		},
-		Extensions: []cbc.Key{
-			ExtKeyEffectiveDate,
+			StampKSEFNumber,
 		},
 	},
 }

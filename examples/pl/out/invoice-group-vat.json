@@ -1,0 +1,126 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f1bfd53d62f03ce1834353ad84812a762387c2d743f2c0157be19edd21b0630e"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v3"
+		],
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3cfc",
+		"type": "standard",
+		"series": "GV",
+		"code": "001",
+		"issue_date": "2025-01-22",
+		"currency": "PLN",
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "VAT"
+			}
+		},
+		"supplier": {
+			"name": "Testowa Firma Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Główna 1",
+					"locality": "Warsaw",
+					"code": "00-001",
+					"country": "PL"
+				}
+			]
+		},
+		"customer": {
+			"name": "VAT Group Member Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"identities": [
+				{
+					"code": "GV-MEMBER-12345",
+					"ext": {
+						"pl-favat-third-party-role": "10"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"street": "ul. Grupowa 50",
+					"locality": "Kraków",
+					"code": "30-001",
+					"country": "PL"
+				}
+			],
+			"ext": {
+				"pl-favat-group-vat": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Consulting Services for VAT Group Member",
+					"price": "500.00",
+					"unit": "h"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pl-favat-tax-category": "1"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pl-favat-tax-category": "1"
+								},
+								"base": "5000.00",
+								"percent": "23.0%",
+								"amount": "1150.00"
+							}
+						],
+						"amount": "1150.00"
+					}
+				],
+				"sum": "1150.00"
+			},
+			"tax": "1150.00",
+			"total_with_tax": "6150.00",
+			"payable": "6150.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice for services provided to a VAT Group member."
+			}
+		]
+	}
+}
