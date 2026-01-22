@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "42c34d2a1b898eb9b30886d37eaf1867348c2b4533f45a0dfd4e42adec142611"
+			"val": "a600105f035e4e822b1c6de3f02c34cc781b7c65f35dd2bcf563ccd8d4a37d7a"
 		}
 	},
 	"doc": {
@@ -20,7 +20,6 @@
 		"issue_date": "2025-05-20",
 		"currency": "DKK",
 		"tax": {
-			"prices_include": "VAT",
 			"ext": {
 				"untdid-document-type": "380"
 			}
@@ -34,9 +33,11 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"country": "DK",
 					"key": "cvr",
-					"code": "13585628"
+					"code": "13585628",
+					"ext": {
+						"iso-scheme-id": "0184"
+					}
 				}
 			],
 			"inboxes": [
@@ -71,9 +72,11 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"country": "DK",
 					"key": "cvr",
-					"code": "88146328"
+					"code": "88146328",
+					"ext": {
+						"iso-scheme-id": "0184"
+					}
 				}
 			],
 			"inboxes": [
@@ -107,7 +110,6 @@
 				"discounts": [
 					{
 						"reason": "Special discount",
-						"percent": "10%",
 						"amount": "1500.00"
 					}
 				],
@@ -152,23 +154,27 @@
 				"due_dates": [
 					{
 						"date": "2025-05-30",
-						"amount": "18500.00",
+						"amount": "23125.00",
 						"percent": "100%"
 					}
 				]
 			},
 			"instructions": {
-				"key": "credit-transfer",
-				"detail": "DK5000400440116243",
+				"key": "credit-transfer+sepa",
+				"credit_transfer": [
+					{
+						"iban": "DK5000400440116243",
+						"name": "Danske Bank"
+					}
+				],
 				"ext": {
-					"untdid-payment-means": "30"
+					"untdid-payment-means": "58"
 				}
 			}
 		},
 		"totals": {
 			"sum": "18500.00",
-			"tax_included": "3700.00",
-			"total": "14800.00",
+			"total": "18500.00",
 			"taxes": {
 				"categories": [
 					{
@@ -179,19 +185,19 @@
 								"ext": {
 									"untdid-tax-category": "S"
 								},
-								"base": "14800.00",
+								"base": "18500.00",
 								"percent": "25.0%",
-								"amount": "3700.00"
+								"amount": "4625.00"
 							}
 						],
-						"amount": "3700.00"
+						"amount": "4625.00"
 					}
 				],
-				"sum": "3700.00"
+				"sum": "4625.00"
 			},
-			"tax": "3700.00",
-			"total_with_tax": "18500.00",
-			"payable": "18500.00"
+			"tax": "4625.00",
+			"total_with_tax": "23125.00",
+			"payable": "23125.00"
 		}
 	}
 }
