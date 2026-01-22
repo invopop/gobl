@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
+### Fixed
+
+- `l10n`: `UnionDef` method `HasMemberOn` now correctly handles empty codes
+
 ## [v0.306.0] - 2026-01-19
 
 ### Changed
