@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/pl/favat"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNormalizePayInstructions(t *testing.T) {
@@ -58,13 +60,24 @@ func TestValidatePay(t *testing.T) {
 		})
 	})
 
-	t.Run("advance valid", func(t *testing.T) {
+	t.Run("advance valid with date", func(t *testing.T) {
+		adv := &pay.Advance{
+			Key:  pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Date: cal.NewDate(2022, 12, 27),
+		}
+		ad.Normalizer(adv)
+		err := ad.Validator(adv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("advance missing date", func(t *testing.T) {
 		adv := &pay.Advance{
 			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
 		}
 		ad.Normalizer(adv)
 		err := ad.Validator(adv)
-		assert.NoError(t, err)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "date")
 	})
 
 	t.Run("instructions nil", func(t *testing.T) {
@@ -82,7 +95,6 @@ func TestValidatePay(t *testing.T) {
 		err := ad.Validator(instr)
 		assert.NoError(t, err)
 	})
-
 }
 
 func TestPaymentMeansMapping(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -42,4 +43,16 @@ func normalizePayAdvance(adv *pay.Advance) {
 			ExtKeyPaymentMeans: code,
 		})
 	}
+}
+
+func validatePayAdvance(adv *pay.Advance) error {
+	if adv == nil {
+		return nil
+	}
+	return validation.ValidateStruct(adv,
+		validation.Field(&adv.Date,
+			validation.Required,
+			validation.Skip,
+		),
+	)
 }
