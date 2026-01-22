@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e69fbde9ba1e6f2c4f829d3d481079fab5bece929b9bbf141fa77c52955347fc"
+			"val": "6a903cd41a1827d9f83010c899810a13d3f8cc58113536897725815833de68e0"
 		}
 	},
 	"doc": {
@@ -20,7 +20,7 @@
 		"type": "standard",
 		"series": "UPR",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "52731ea4bd8dd7a4ba47da5be964ae677f3ae650eb56f3935f7fbd1d5458ddaf"
+			"val": "529eec2f3d99cef7f0750b366fda8dcd544cd4206b323ee9ad7b8459c5872b2f"
 		}
 	},
 	"doc": {
@@ -20,19 +20,19 @@
 		"type": "credit-note",
 		"series": "KOR-ROZ",
 		"code": "001",
-		"issue_date": "2025-02-05",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"preceding": [
 			{
 				"type": "standard",
-				"issue_date": "2025-01-30",
+				"issue_date": "2026-01-20",
 				"series": "ROZ",
 				"code": "001",
 				"reason": "Final settlement correction",
 				"stamps": [
 					{
 						"prv": "favat-ksef-number",
-						"val": "1234567890-20250130-DEF45678-GH"
+						"val": "1234567890-20260120-DEF45678-GH"
 					}
 				],
 				"ext": {

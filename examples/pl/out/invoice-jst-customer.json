@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3b7d2bcf23a29fd89d11060cf0776b6351222c843d1589402b729e53adf5673b"
+			"val": "30c20213384406a2c9aa563389571d93061cb56320e27eda9435465471095b6e"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"type": "standard",
 		"series": "JST",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {

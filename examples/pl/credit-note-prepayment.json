@@ -7,14 +7,14 @@
   "type": "credit-note",
   "series": "KOR-ZAL",
   "code": "001",
-  "issue_date": "2025-01-20",
+  "issue_date": "2026-01-20",
   "currency": "PLN",
   "preceding": [
     {
       "type": "standard",
       "series": "ZAL",
       "code": "001",
-      "issue_date": "2025-01-15",
+      "issue_date": "2026-01-20",
       "reason": "Advance payment cancelled",
       "ext": {
         "pl-favat-effective-date": "2"
@@ -22,7 +22,7 @@
       "stamps": [
         {
           "prv": "favat-ksef-number",
-          "val": "1234567890-20250115-XYZ98765-AB"
+          "val": "1234567890-20260120-XYZ98765-AB"
         }
       ]
     }

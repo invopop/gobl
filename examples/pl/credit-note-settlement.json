@@ -7,14 +7,14 @@
   "type": "credit-note",
   "series": "KOR-ROZ",
   "code": "001",
-  "issue_date": "2025-02-05",
+  "issue_date": "2026-01-20",
   "currency": "PLN",
   "preceding": [
     {
       "type": "standard",
       "series": "ROZ",
       "code": "001",
-      "issue_date": "2025-01-30",
+      "issue_date": "2026-01-20",
       "reason": "Final settlement correction",
       "ext": {
         "pl-favat-effective-date": "1"
@@ -22,7 +22,7 @@
       "stamps": [
         {
           "prv": "favat-ksef-number",
-          "val": "1234567890-20250130-DEF45678-GH"
+          "val": "1234567890-20260120-DEF45678-GH"
         }
       ]
     }

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "81deb15297919f37908b366a2e6cfb9c2e2b232e6ffbf4d2a8c77aff686ee944"
+			"val": "a954de45fd1a608c654a17236b42b004e5e3ecf4b528825fc0744ce10bbe9a18"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"type": "standard",
 		"series": "INVOICE",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {

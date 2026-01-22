@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8f92312eed21952de7e9462a318feba2c9e04e75268da60fb3630cce49f2b7f1"
+			"val": "1165948094449b0780fbffe6d66caf901e5ba078b94f281c7c8d5cd63a86684a"
 		}
 	},
 	"doc": {
@@ -20,7 +20,7 @@
 		"type": "standard",
 		"series": "ROZ",
 		"code": "001",
-		"issue_date": "2025-01-30",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {
@@ -83,7 +83,7 @@
 		"payment": {
 			"advances": [
 				{
-					"date": "2025-01-30",
+					"date": "2026-01-20",
 					"description": "Advance payment from ZAL/001",
 					"amount": "6150.00"
 				}

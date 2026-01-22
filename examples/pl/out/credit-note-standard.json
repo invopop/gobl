@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "128f9340eaaa702b9685c6d94d17672f79fd1ac10b49241430a8ad26d2fec80b"
+			"val": "220e4ecba4e613d6aee9eba9183f735afd1e57d234f3cd4cd77a583f16226aa1"
 		}
 	},
 	"doc": {
@@ -17,19 +17,19 @@
 		"type": "credit-note",
 		"series": "KOR",
 		"code": "001",
-		"issue_date": "2025-01-25",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"preceding": [
 			{
 				"type": "standard",
-				"issue_date": "2025-01-22",
+				"issue_date": "2026-01-20",
 				"series": "INVOICE",
 				"code": "001",
 				"reason": "Price correction",
 				"stamps": [
 					{
 						"prv": "favat-ksef-number",
-						"val": "1234567890-20250122-ABCD1234-EF"
+						"val": "1234567890-20260120-ABCD1234-EF"
 					}
 				],
 				"ext": {

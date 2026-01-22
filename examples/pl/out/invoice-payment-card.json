@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "771a35b07230053d47134a4a1cc3a63b861f42faa180d9e042e49531aeff4a68"
+			"val": "fbfb57a6d1ffed4f9b84c61f62661ed4a2716278ea48bb47b741a83555800b33"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"type": "standard",
 		"series": "PAY",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {

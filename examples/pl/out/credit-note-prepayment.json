@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f6fe7e64e817044f7d89e426960394a078f17d63f9fcf8347452e05b75ee504"
+			"val": "c557c24fcc9a78d2a283f4ad8ff6a86a3578c4244313e7c1d032173bb4a0b7d5"
 		}
 	},
 	"doc": {
@@ -20,19 +20,19 @@
 		"type": "credit-note",
 		"series": "KOR-ZAL",
 		"code": "001",
-		"issue_date": "2025-01-20",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"preceding": [
 			{
 				"type": "standard",
-				"issue_date": "2025-01-15",
+				"issue_date": "2026-01-20",
 				"series": "ZAL",
 				"code": "001",
 				"reason": "Advance payment cancelled",
 				"stamps": [
 					{
 						"prv": "favat-ksef-number",
-						"val": "1234567890-20250115-XYZ98765-AB"
+						"val": "1234567890-20260120-XYZ98765-AB"
 					}
 				],
 				"ext": {

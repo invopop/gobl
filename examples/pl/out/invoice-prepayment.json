@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "aa91359cb10ba797e82117e1f65dc35b6fd7ceb5b7cb4994063623d03d83992f"
+			"val": "b57f7b6b9a00e5037cd36109b6ffd992c7f2a99efbfdac0b262b4aa1cdd89d9a"
 		}
 	},
 	"doc": {
@@ -20,7 +20,7 @@
 		"type": "standard",
 		"series": "ZAL",
 		"code": "001",
-		"issue_date": "2025-01-15",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {
@@ -83,7 +83,7 @@
 		"payment": {
 			"advances": [
 				{
-					"date": "2025-01-15",
+					"date": "2026-01-20",
 					"key": "credit-transfer",
 					"description": "50% advance payment",
 					"percent": "50%",

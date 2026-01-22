@@ -7,7 +7,7 @@
   "type": "standard",
   "series": "ZAL",
   "code": "001",
-  "issue_date": "2025-01-15",
+  "issue_date": "2026-01-20",
   "currency": "PLN",
   "supplier": {
     "name": "Testowa Firma Sp. z o.o.",
@@ -61,7 +61,7 @@
       {
         "key": "credit-transfer",
         "description": "50% advance payment",
-        "date": "2025-01-15",
+        "date": "2026-01-20",
         "amount": "6150.00",
         "percent": "50%"
       }

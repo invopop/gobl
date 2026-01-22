@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d937a3c2cfd3afc15e5dcd4256c6e4d2c56d41046fe19c921703ef9bbaa4c767"
+			"val": "828c81c0cadc28182366bf3d0a08198cef4eb64b3b2c43621412cd4252745229"
 		}
 	},
 	"doc": {
@@ -20,7 +20,7 @@
 		"type": "standard",
 		"series": "RC",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {

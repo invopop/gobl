@@ -6,14 +6,14 @@
   "type": "credit-note",
   "series": "KOR",
   "code": "001",
-  "issue_date": "2025-01-25",
+  "issue_date": "2026-01-20",
   "currency": "PLN",
   "preceding": [
     {
       "type": "standard",
       "series": "INVOICE",
       "code": "001",
-      "issue_date": "2025-01-22",
+      "issue_date": "2026-01-20",
       "reason": "Price correction",
       "ext": {
         "pl-favat-effective-date": "1"
@@ -21,7 +21,7 @@
       "stamps": [
         {
           "prv": "favat-ksef-number",
-          "val": "1234567890-20250122-ABCD1234-EF"
+          "val": "1234567890-20260120-ABCD1234-EF"
         }
       ]
     }

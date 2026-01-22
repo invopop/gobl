@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f1bfd53d62f03ce1834353ad84812a762387c2d743f2c0157be19edd21b0630e"
+			"val": "189018c511316cd8777f838b7d1532e0f5cb84d797a8053a5a67cac021b29690"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"type": "standard",
 		"series": "GV",
 		"code": "001",
-		"issue_date": "2025-01-22",
+		"issue_date": "2026-01-20",
 		"currency": "PLN",
 		"tax": {
 			"ext": {
