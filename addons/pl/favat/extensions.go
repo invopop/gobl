@@ -8,19 +8,19 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyTaxCategory           cbc.Key = "pl-favat-tax-category"
-	ExtKeyEffectiveDate         cbc.Key = "pl-favat-effective-date"
-	ExtKeyPaymentMeans          cbc.Key = "pl-favat-payment-means"           // for mapping to TFormaPlatnosci's codes (type of payment means - e.g. cash, bank transfer etc)
-	ExtKeyInvoiceType           cbc.Key = "pl-favat-invoice-type"            // for mapping to TRodzajFaktury's codes (type of invoice - e.g. regular, in advance, correction etc)
-	ExtKeyCashAccounting        cbc.Key = "pl-favat-cash-accounting"         // for mapping to P_16 field, indicating cash accounting
-	ExtKeySelfBilling           cbc.Key = "pl-favat-self-billing"            // for mapping to P_17 field, indicating self-invoicing
-	ExtKeyReverseCharge         cbc.Key = "pl-favat-reverse-charge"          // for mapping to P_18, indicating reverse charge
-	ExtKeySplitPaymentMechanism cbc.Key = "pl-favat-split-payment-mechanism" // for mapping to P_18A, indicating split payment mechanism
-	ExtKeyExemption             cbc.Key = "pl-favat-exemption"               // for mapping to P_19 and its subfields (P_19A, P_19B, P_19C), indicating exemption
-	ExtKeyMarginScheme          cbc.Key = "pl-favat-margin-scheme"           // for mapping to P_PMarzy, indicating margin scheme
-	ExtKeyJST                   cbc.Key = "pl-favat-jst"                     // for mapping to JST (Subordinate Local Government Unit)
-	ExtKeyGroupVAT              cbc.Key = "pl-favat-group-vat"               // for mapping to GV (Group VAT member)
-	ExtKeyThirdPartyRole        cbc.Key = "pl-favat-third-party-role"        // for third party roles (issuer, GV member, JST member)
+	ExtKeyTaxCategory    cbc.Key = "pl-favat-tax-category"
+	ExtKeyEffectiveDate  cbc.Key = "pl-favat-effective-date"
+	ExtKeyPaymentMeans   cbc.Key = "pl-favat-payment-means"    // for mapping to TFormaPlatnosci's codes (type of payment means - e.g. cash, bank transfer etc)
+	ExtKeyInvoiceType    cbc.Key = "pl-favat-invoice-type"     // for mapping to TRodzajFaktury's codes (type of invoice - e.g. regular, in advance, correction etc)
+	ExtKeyCashAccounting cbc.Key = "pl-favat-cash-accounting"  // for mapping to P_16 field, indicating cash accounting
+	ExtKeySelfBilling    cbc.Key = "pl-favat-self-billing"     // for mapping to P_17 field, indicating self-invoicing
+	ExtKeyReverseCharge  cbc.Key = "pl-favat-reverse-charge"   // for mapping to P_18, indicating reverse charge
+	ExtKeySplitPayment   cbc.Key = "pl-favat-split-payment"    // for mapping to P_18A, indicating split payment mechanism
+	ExtKeyExemption      cbc.Key = "pl-favat-exemption"        // for mapping to P_19 and its subfields (P_19A, P_19B, P_19C), indicating exemption
+	ExtKeyMarginScheme   cbc.Key = "pl-favat-margin-scheme"    // for mapping to P_PMarzy, indicating margin scheme
+	ExtKeyJST            cbc.Key = "pl-favat-jst"              // for mapping to JST (Subordinate Local Government Unit)
+	ExtKeyGroupVAT       cbc.Key = "pl-favat-group-vat"        // for mapping to GV (Group VAT member)
+	ExtKeyThirdPartyRole cbc.Key = "pl-favat-third-party-role" // for third party roles (issuer, GV member, JST member)
 )
 
 var extensionKeys = []*cbc.Definition{
@@ -537,7 +537,7 @@ var extensionKeys = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeySplitPaymentMechanism,
+		Key: ExtKeySplitPayment,
 		Name: i18n.String{
 			i18n.EN: "Split payment mechanism flag for KSeF",
 			i18n.PL: "Flaga mechanizmu płatności rozłożonej dla KSeF (P_18A)",
