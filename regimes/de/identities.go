@@ -3,7 +3,6 @@ package de
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -38,26 +37,12 @@ func normalizeTaxNumber(id *org.Identity) {
 		return
 	}
 
-	// Check if input already has the NRW format (3/4/4)
-	// If so, preserve it as-is
-	original := id.Code.String()
-	if strings.Count(original, "/") == 2 {
-		parts := strings.Split(original, "/")
-		if len(parts) == 3 {
-			// Extract only digits from each part
-			p1 := cbc.NormalizeNumericalCode(cbc.Code(parts[0])).String()
-			p2 := cbc.NormalizeNumericalCode(cbc.Code(parts[1])).String()
-			p3 := cbc.NormalizeNumericalCode(cbc.Code(parts[2])).String()
-
-			// Check if it matches NRW format (3/4/4)
-			if len(p1) == 3 && len(p2) == 4 && len(p3) == 4 {
-				id.Code = cbc.Code(fmt.Sprintf("%s/%s/%s", p1, p2, p3))
-				return
-			}
-		}
+	// If already matches the regex, it's already in valid format
+	if taxNumberRegexPattern.MatchString(id.Code.String()) {
+		return
 	}
 
-	// Otherwise, normalize to standard format
+	// Normalize to standard format
 	code := cbc.NormalizeNumericalCode(id.Code).String()
 	if len(code) == 11 {
 		// If 11 digits, return the standard format 123/456/78901 (3/3/5)

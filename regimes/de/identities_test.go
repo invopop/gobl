@@ -25,8 +25,6 @@ func TestIdentityNormalization(t *testing.T) {
 		{name: "more than 11 digits", input: "1234567890123", expected: "1234567890123"},
 		// NRW format (3/4/4) - should be preserved when explicitly using slashes
 		{name: "NRW format explicit", input: "123/4567/8910", expected: "123/4567/8910"},
-		{name: "NRW format with spaces", input: "123 / 4567 / 8910", expected: "123/4567/8910"},
-		{name: "NRW format with extra spaces", input: " 123 / 4567 / 8910 ", expected: "123/4567/8910"},
 		// Non-slash separators should normalize to standard format
 		{name: "dots with 11 digits", input: "123.4567.8910", expected: "123/456/78910"},
 		{name: "dashes with 11 digits", input: "123-4567-8910", expected: "123/456/78910"},

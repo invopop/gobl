@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `de`: support for NW Steuernummer
+
 ## [v0.306.0] - 2026-01-19
 
 ### Changed
