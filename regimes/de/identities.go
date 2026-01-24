@@ -18,7 +18,8 @@ const (
 	IdentityKeyTaxNumber cbc.Key = "de-tax-number"
 )
 
-// Valid formats: 2/3/5 (10 digits), 3/3/5 (11 digits standard), or 3/4/4 (11 digits NRW)
+// Valid formats: 2/3/5 (10 digits), 3/3/5 (11 digits standard), or 3/4/4 (11 digits NW)
+// See: https://de.wikipedia.org/wiki/Steuernummer
 var taxNumberRegexPattern = regexp.MustCompile(`^(\d{2}/\d{3}/\d{5}|\d{3}/\d{3}/\d{5}|\d{3}/\d{4}/\d{4})$`)
 
 var identityDefinitions = []*cbc.Definition{

@@ -23,8 +23,8 @@ func TestIdentityNormalization(t *testing.T) {
 		{name: "mixed characters", input: "12a3b4c5d6e7f8g9h0i1", expected: "123/456/78901"},
 		{name: "less than 10 digits", input: "123456789", expected: "123456789"},
 		{name: "more than 11 digits", input: "1234567890123", expected: "1234567890123"},
-		// NRW format (3/4/4) - should be preserved when explicitly using slashes
-		{name: "NRW format explicit", input: "123/4567/8910", expected: "123/4567/8910"},
+		// NW format (3/4/4) - should be preserved when explicitly using slashes
+		{name: "NW format explicit", input: "123/4567/8910", expected: "123/4567/8910"},
 		// Non-slash separators should normalize to standard format
 		{name: "dots with 11 digits", input: "123.4567.8910", expected: "123/456/78910"},
 		{name: "dashes with 11 digits", input: "123-4567-8910", expected: "123/456/78910"},
@@ -53,15 +53,15 @@ func TestTaxNumberValidation(t *testing.T) {
 	}{
 		{name: "valid 10 digits (2/3/5)", code: "12/345/67890"},
 		{name: "valid 11 digits (3/3/5)", code: "123/456/78901"},
-		{name: "valid 11 digits NRW (3/4/4)", code: "123/4567/8910"},
+		{name: "valid 11 digits NW (3/4/4)", code: "123/4567/8910"},
 
 		// Invalid formats
 		{name: "too short", code: "12/345/678", err: "code: must be in a valid format."},
 		{name: "too long", code: "1234/567/89012", err: "code: must be in a valid format."},
 		{name: "non-numeric", code: "12/3AB/67890", err: "code: must be in a valid format."},
 		{name: "invalid separator", code: "12-345-67890", err: "code: must be in a valid format."},
-		{name: "wrong NRW middle length", code: "123/456/8910", err: "code: must be in a valid format."},
-		{name: "wrong NRW last length", code: "123/4567/89101", err: "code: must be in a valid format."},
+		{name: "wrong NW middle length", code: "123/456/8910", err: "code: must be in a valid format."},
+		{name: "wrong NW last length", code: "123/4567/89101", err: "code: must be in a valid format."},
 	}
 
 	for _, tt := range tests {
