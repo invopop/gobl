@@ -1,0 +1,92 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c4d",
+  "type": "standard",
+  "series": "INVOICE",
+  "code": "001",
+  "issue_date": "2026-01-20",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "kontakt@testowa.pl"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Klient Testowy Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "1111111111"
+    },
+    "addresses": [
+      {
+        "street": "ul. Testowa 10",
+        "locality": "Kraków",
+        "code": "30-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "10",
+      "item": {
+        "name": "Software Development Services",
+        "price": "100.00",
+        "unit": "h"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "quantity": "5",
+      "item": {
+        "name": "Consulting Services",
+        "price": "150.00",
+        "unit": "h"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "reduced"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "instructions": {
+      "key": "credit-transfer",
+      "detail": "Transfer payment to our bank account",
+      "credit_transfer": [
+        {
+          "iban": "PL61109010140000071219812874",
+          "name": "Testowa Firma Sp. z o.o."
+        }
+      ]
+    }
+  }
+}

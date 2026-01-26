@@ -76,8 +76,8 @@
             "title": "Mexican SAT CFDI v4.X"
           },
           {
-            "const": "pl-favat-v2",
-            "title": "Polish KSeF FA_VAT v2.x"
+            "const": "pl-favat-v3",
+            "title": "Polish KSeF FA_VAT FA(3)"
           },
           {
             "const": "pt-saft-v1",
