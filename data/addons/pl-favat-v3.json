@@ -163,7 +163,7 @@
         "pl": "Kod rodzaju faktury dla KSeF"
       },
       "desc": {
-        "en": "The `pl-favat-invoice-type` extension specifies the type of invoice for Polish FA_VAT/KSeF.\nThis extension is used in the **invoice tax section** (`tax.ext`) and is automatically\nnormalized by GOBL based on the invoice type and tags during the `scenarios` normalization step.\n\nAutomatic mapping from GOBL invoice structure:\n\n| Code    | GOBL invoice type | Tags         | Description          |\n|---------|-------------------|--------------|----------------------|\n| VAT     | `standard`        | -            | Regular invoice      |\n| ZAL     | `standard`        | `partial`    | Prepayment invoice   |\n| ROZ     | `standard`        | `settlement` | Settlement invoice   |\n| UPR     | `standard`        | `simplified` | Simplified invoice   |\n| KOR     | `credit-note`     | -            | Credit note          |\n| KOR_ZAL | `credit-note`     | `partial`    | Prepayment credit    |\n| KOR_ROZ | `credit-note`     | `settlement` | Settlement credit    |\n\nExample of a prepayment invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"$tags\": [\"partial\"],\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t// Extension automatically set to \"ZAL\"\n\t\t\"ext\": {\n\t\t\t\"pl-favat-invoice-type\": \"ZAL\"\n\t\t}\n\t}\n}\n```"
+        "en": "The `pl-favat-invoice-type` extension specifies the type of invoice for Polish FA_VAT/KSeF.\nThis extension is used in the **invoice tax section** (`tax.ext`) and is automatically\nnormalized by GOBL based on the invoice type and tags during the `scenarios` normalization step.\n\nAutomatic mapping from GOBL invoice structure:\n\n| Tags         | GOBL invoice type | Code    | Description          |\n|--------------|-------------------|---------|----------------------|\n| -            | `standard`        | VAT     | Regular invoice      |\n| `partial`    | `standard`        | ZAL     | Advance invoice   |\n| `settlement` | `standard`        | ROZ     | Settlement invoice   |\n| `simplified` | `standard`        | UPR     | Simplified invoice   |\n| -            | `credit-note`     | KOR     | Credit note          |\n| `partial`    | `credit-note`     | KOR_ZAL | Advance credit note    |\n| `settlement` | `credit-note`     | KOR_ROZ | Settlement credit note    |\n\nExample of an advance invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"$tags\": [\"partial\"],\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t// Extension automatically set to \"ZAL\"\n\t\t\"ext\": {\n\t\t\t\"pl-favat-invoice-type\": \"ZAL\"\n\t\t}\n\t}\n}\n```"
       },
       "values": [
         {
@@ -180,7 +180,7 @@
         {
           "code": "ZAL",
           "name": {
-            "en": "Prepayment Invoice",
+            "en": "Advance Invoice",
             "pl": "Faktura Zaliczkowa"
           },
           "desc": {
@@ -206,8 +206,8 @@
             "pl": "Faktura Uproszczona"
           },
           "desc": {
-            "en": "Invoice, as referred to in article 106e paragraph 5 point 3 of the act. Receipt up to 450 zł gross (100 euro) containing the buyer's NIP.",
-            "pl": "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy. Paragon fiskalny do kwoty 450 zł brutto (100 euro) zawierający NIP nabywcy."
+            "en": "Invoice, as referred to in article 106e paragraph 5 point 3 of the act.",
+            "pl": "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy."
           }
         },
         {
@@ -224,11 +224,11 @@
         {
           "code": "KOR_ZAL",
           "name": {
-            "en": "Prepayment credit note",
+            "en": "advance credit note",
             "pl": "Faktura korygująca fakturę zaliczkową"
           },
           "desc": {
-            "en": "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the prepayment invoice (ZAL).",
+            "en": "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the advance invoice (ZAL).",
             "pl": "Faktura korygująca fakturę dokumentującą otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz fakturę wystawioną w związku z art. 106f ust. 4 ustawy (faktura korygująca fakturę zaliczkową). Poprawia fakturę zaliczkową (ZAL)."
           }
         },
@@ -356,7 +356,7 @@
         "pl": "Kod oznaczający zwolnienie od podatku dla KSeF"
       },
       "desc": {
-        "en": "Extension used to indicate the type of reason for tax exemption code for KSeF. When the `exempt` tag\nis used in the invoice, having `ext` map's `pl-favat-exemption` property is required. Also, it is\nrequired to add descriptive text for the legal basis for exemption. To do this in GOBL, add a note\nto the invoice with the exemption reason, in the following format:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\n\t\"ext\": {\n\t\t\"pl-favat-exemption\": \"A\"\n\t\t// ...\n\t},\n\t\"notes\": [\n\t\t{\n\t\t\t\"key\": \"legal\",\n\t\t\t\"code\": \"A\",\n\t\t\t\"src\": \"pl-favat-exemption\",\n\t\t\t\"text\": \"Art. 25a ust. 1 pkt 9 ustawy o VAT\"\n\t\t}\n\t]\n}\n```\n\nIn notes, code must match the code from the extension."
+        "en": "Extension used to indicate the type of reason for tax exemption code for KSeF. When the `exempt` tag\nis used in the invoice, having `ext` map's `pl-favat-exemption` property is required. Also, it is\nrequired to add descriptive text for the legal basis for exemption. To do this in GOBL, add a note\nto the invoice with the exemption reason, in the following format:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-exemption\": \"A\"\n\t\t\t// ...\n\t\t}\n\t},\n\t\"notes\": [\n\t\t{\n\t\t\t\"key\": \"legal\",\n\t\t\t\"code\": \"A\",\n\t\t\t\"src\": \"pl-favat-exemption\",\n\t\t\t\"text\": \"Art. 25a ust. 1 pkt 9 ustawy o VAT\"\n\t\t}\n\t]\n}\n```\n\nIn notes, code must match the code from the extension."
       },
       "values": [
         {

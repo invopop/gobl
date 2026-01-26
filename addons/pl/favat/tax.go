@@ -6,7 +6,6 @@ import (
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
-
 	switch tc.Key {
 	case tax.KeyStandard:
 		switch tc.Rate {

@@ -240,17 +240,17 @@ var extensionKeys = []*cbc.Definition{
 
 				Automatic mapping from GOBL invoice structure:
 
-				| Code    | GOBL invoice type | Tags         | Description          |
-				|---------|-------------------|--------------|----------------------|
-				| VAT     | ~standard~        | -            | Regular invoice      |
-				| ZAL     | ~standard~        | ~partial~    | Prepayment invoice   |
-				| ROZ     | ~standard~        | ~settlement~ | Settlement invoice   |
-				| UPR     | ~standard~        | ~simplified~ | Simplified invoice   |
-				| KOR     | ~credit-note~     | -            | Credit note          |
-				| KOR_ZAL | ~credit-note~     | ~partial~    | Prepayment credit    |
-				| KOR_ROZ | ~credit-note~     | ~settlement~ | Settlement credit    |
+				| Tags         | GOBL invoice type | Code    | Description          |
+				|--------------|-------------------|---------|----------------------|
+				| -            | ~standard~        | VAT     | Regular invoice      |
+				| ~partial~    | ~standard~        | ZAL     | Advance invoice   |
+				| ~settlement~ | ~standard~        | ROZ     | Settlement invoice   |
+				| ~simplified~ | ~standard~        | UPR     | Simplified invoice   |
+				| -            | ~credit-note~     | KOR     | Credit note          |
+				| ~partial~    | ~credit-note~     | KOR_ZAL | Advance credit note    |
+				| ~settlement~ | ~credit-note~     | KOR_ROZ | Settlement credit note    |
 
-				Example of a prepayment invoice:
+				Example of an advance invoice:
 
 				~~~js
 				{
@@ -284,7 +284,7 @@ var extensionKeys = []*cbc.Definition{
 			{
 				Code: "ZAL",
 				Name: i18n.String{
-					i18n.EN: "Prepayment Invoice",
+					i18n.EN: "Advance Invoice",
 					i18n.PL: `Faktura Zaliczkowa`,
 				},
 				Desc: i18n.String{
@@ -310,8 +310,8 @@ var extensionKeys = []*cbc.Definition{
 					i18n.PL: "Faktura Uproszczona",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Invoice, as referred to in article 106e paragraph 5 point 3 of the act. Receipt up to 450 zł gross (100 euro) containing the buyer's NIP.",
-					i18n.PL: "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy. Paragon fiskalny do kwoty 450 zł brutto (100 euro) zawierający NIP nabywcy.",
+					i18n.EN: "Invoice, as referred to in article 106e paragraph 5 point 3 of the act.",
+					i18n.PL: "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy.",
 				},
 			},
 			{
@@ -328,11 +328,11 @@ var extensionKeys = []*cbc.Definition{
 			{
 				Code: "KOR_ZAL",
 				Name: i18n.String{
-					i18n.EN: "Prepayment credit note",
+					i18n.EN: "advance credit note",
 					i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 				},
 				Desc: i18n.String{
-					i18n.EN: "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the prepayment invoice (ZAL).",
+					i18n.EN: "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the advance invoice (ZAL).",
 					i18n.PL: "Faktura korygująca fakturę dokumentującą otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz fakturę wystawioną w związku z art. 106f ust. 4 ustawy (faktura korygująca fakturę zaliczkową). Poprawia fakturę zaliczkową (ZAL).",
 				},
 			},
@@ -622,9 +622,11 @@ var extensionKeys = []*cbc.Definition{
 					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					// ...
 
-					"ext": {
-						"pl-favat-exemption": "A"
-						// ...
+					"tax": {
+						"ext": {
+							"pl-favat-exemption": "A"
+							// ...
+						}
 					},
 					"notes": [
 						{
