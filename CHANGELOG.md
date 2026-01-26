@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `dk`: Added the Danish regime
 - `de`: support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
