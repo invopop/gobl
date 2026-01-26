@@ -2,6 +2,7 @@
 package pl
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
@@ -33,6 +34,8 @@ func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	}
 	return nil
 }

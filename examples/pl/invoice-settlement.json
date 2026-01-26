@@ -1,0 +1,74 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "$tags": ["settlement"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c6f",
+  "type": "standard",
+  "series": "ROZ",
+  "code": "001",
+  "issue_date": "2026-01-20",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Klient Testowy Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Testowa 10",
+        "locality": "Kraków",
+        "code": "30-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Project Completion - Final Invoice",
+        "price": "10000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "advances": [
+      {
+        "description": "Advance payment from ZAL/001",
+        "date": "2026-01-20",
+        "amount": "6150.00"
+      }
+    ]
+  },
+  "notes": [
+    {
+      "key": "general",
+      "text": "This is a settlement invoice that finalizes the transaction including all previous advance payments."
+    }
+  ]
+}

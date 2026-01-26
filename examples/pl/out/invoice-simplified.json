@@ -1,0 +1,102 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "6a903cd41a1827d9f83010c899810a13d3f8cc58113536897725815833de68e0"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v3"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c7a",
+		"type": "standard",
+		"series": "UPR",
+		"code": "001",
+		"issue_date": "2026-01-20",
+		"currency": "PLN",
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "UPR"
+			}
+		},
+		"supplier": {
+			"name": "Sklep Testowy",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Handlowa 5",
+					"locality": "Warsaw",
+					"code": "00-001",
+					"country": "PL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Coffee",
+					"price": "15.00"
+				},
+				"sum": "30.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "8.0%",
+						"ext": {
+							"pl-favat-tax-category": "2"
+						}
+					}
+				],
+				"total": "30.00"
+			}
+		],
+		"totals": {
+			"sum": "30.00",
+			"total": "30.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pl-favat-tax-category": "2"
+								},
+								"base": "30.00",
+								"percent": "8.0%",
+								"amount": "2.40"
+							}
+						],
+						"amount": "2.40"
+					}
+				],
+				"sum": "2.40"
+			},
+			"tax": "2.40",
+			"total_with_tax": "32.40",
+			"payable": "32.40"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Simplified invoice for small transactions up to 450 PLN."
+			}
+		]
+	}
+}

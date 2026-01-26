@@ -1,0 +1,825 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "pl-favat-v3",
+  "name": {
+    "en": "Polish KSeF FA_VAT FA(3)"
+  },
+  "extensions": [
+    {
+      "key": "pl-favat-tax-category",
+      "name": {
+        "en": "Tax categories for KSeF",
+        "pl": "Kategorie podatkowe dla KSeF"
+      },
+      "desc": {
+        "en": "The `pl-favat-tax-category` extension specifies tax categories for Polish FA_VAT/KSeF invoices.\nEach category corresponds to a field in the FA_VAT XML schema (P_13_*, P_14_*, etc.).\n\nThis extension is used at the **line tax level** (`lines[].taxes[]`) and is automatically\nnormalized by GOBL based on the tax combo `key` and `rate` fields. The extension is required\nfor all line items.\n\nAutomatic mapping from GOBL tax combos:\n\n| GOBL Tax Key          | GOBL Rate        | FA_VAT Category | VAT % |\n| --------------------- | ---------------- | --------------- | ----- |\n| `standard`            | `general`        | 1               | 23%   |\n| `standard`            | `reduced`        | 2               | 8%    |\n| `standard`            | `super-reduced`  | 3               | 5%    |\n| `zero`                | -                | 6.1             | 0%    |\n| `intra-community`     | -                | 6.2             | 0%    |\n| `export`              | -                | 6.3             | 0%    |\n| `exempt`              | -                | 7               | -     |\n| `outside-scope`       | -                | 8               | -     |\n| `reverse-charge`      | -                | 9               | -     |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"taxes\": [\n\t\t\t\t{\n\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\"key\": \"standard\",\n\t\t\t\t\t\"rate\": \"general\",\n\t\t\t\t\t\"percent\": \"23.0%\",\n\t\t\t\t\t// Extension automatically set to \"1\"\n\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\"pl-favat-tax-category\": \"1\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```\n\nThe ones that are not automatically mapped can be set manually."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Base rate",
+            "pl": "Stawka podstawowa"
+          },
+          "desc": {
+            "en": "Sales of goods and services subject to VAT rate of 23%.",
+            "pl": "Sprzedaż towarów i usług objętych stawką podatku VAT 23%."
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "First reduced rate",
+            "pl": "Stawka obniżona pierwsza"
+          },
+          "desc": {
+            "en": "Sales of goods and services subject to VAT rate of 8%.",
+            "pl": "Sprzedaż towarów i usług objętych stawką podatku VAT 8%."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Second reduced rate",
+            "pl": "Stawka obniżona druga"
+          },
+          "desc": {
+            "en": "Sales of goods and services subject to VAT rate of 5%.",
+            "pl": "Sprzedaż towarów i usług objętych stawką podatku VAT 5%."
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Taxi Rate",
+            "pl": "Ryczałt dla taksówek"
+          },
+          "desc": {
+            "en": "Special flat rate for taxi drivers.",
+            "pl": "Specjalna stawka ryczałtu dla taksówkarzy."
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "OSS (one stop shop)",
+            "pl": "Punkt kompleksowej obsługi (OSS)"
+          },
+          "desc": {
+            "en": "Special European Union procedure for the supply of certain goods and services",
+            "pl": "Specjalna procedura unijna dla sprzedaży niektórych towarów i usług"
+          }
+        },
+        {
+          "code": "6.1",
+          "name": {
+            "en": "0% VAT",
+            "pl": "0% WDT"
+          },
+          "desc": {
+            "en": "Zero VAT excluding intra-community supply of goods and export",
+            "pl": "Zerowa stawka podatku VAT, z wyłączeniem wewnątrzwspólnotowej dostawy towarów i eksportu"
+          }
+        },
+        {
+          "code": "6.2",
+          "name": {
+            "en": "0% VAT for intra-community supply of goods",
+            "pl": "0% VAT dla dostawy towarów wewnątrzwspólnotowych"
+          }
+        },
+        {
+          "code": "6.3",
+          "name": {
+            "en": "0% VAT for export",
+            "pl": "0% VAT dla eksportu"
+          },
+          "desc": {
+            "en": "Zero VAT, export outside the European Union",
+            "pl": "Zerowa stawka podatku VAT, eksport poza Unii Europejskiej"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Exempt",
+            "pl": "Zwolnienie"
+          },
+          "desc": {
+            "en": "Sales exempt from VAT",
+            "pl": "Sprzedaż zwolniona od podatku VAT"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Foreign sales outside scope of Polish VAT",
+            "pl": "Sprzedaż zagraniczna poza zakresem polskiego VAT"
+          },
+          "desc": {
+            "en": "Total value of sales for the supply of goods and provision of services outside the country, excluding the amounts shown for values 5 and 9",
+            "pl": "Wartość sprzedaży towarów oraz świadczenia usług poza terytorium kraju, z wyłączeniem wartości pokazanych dla wartości 5 i 9"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "EU Reverse Charge",
+            "pl": "Odwrotne obciążenie UE"
+          },
+          "desc": {
+            "en": "Services provided within the European Union, where services are taxed in the customer's country",
+            "pl": "Świadczenia usług w Unii Europejskiej, gdzie usługi są opodatkowane w kraju nabywcy (VAT UE)"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Domestic Reverse charge",
+            "pl": "Odwrotne obciążenie krajowe"
+          },
+          "desc": {
+            "en": "Obligation to account for tax by the purchaser",
+            "pl": "Obowiązek rozliczenia podatku przez nabywcę"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Margin scheme",
+            "pl": "Schemat marży"
+          },
+          "desc": {
+            "en": "Tax only on the margin, which the seller has calculated - applies to tourism services, sale of used goods, antiques, works of art",
+            "pl": "Podatek tylko od marży, którą naliczył sprzedawca - dotyczy usług turystycznych, sprzedaży towarów używanych, przedmiotów kolekcjonerskich i antyków, dzieł sztuki"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-invoice-type",
+      "name": {
+        "en": "Invoice type code for KSeF",
+        "pl": "Kod rodzaju faktury dla KSeF"
+      },
+      "desc": {
+        "en": "The `pl-favat-invoice-type` extension specifies the type of invoice for Polish FA_VAT/KSeF.\nThis extension is used in the **invoice tax section** (`tax.ext`) and is automatically\nnormalized by GOBL based on the invoice type and tags during the `scenarios` normalization step.\n\nAutomatic mapping from GOBL invoice structure:\n\n| Tags         | GOBL invoice type | Code    | Description          |\n|--------------|-------------------|---------|----------------------|\n| -            | `standard`        | VAT     | Regular invoice      |\n| `partial`    | `standard`        | ZAL     | Advance invoice   |\n| `settlement` | `standard`        | ROZ     | Settlement invoice   |\n| `simplified` | `standard`        | UPR     | Simplified invoice   |\n| -            | `credit-note`     | KOR     | Credit note          |\n| `partial`    | `credit-note`     | KOR_ZAL | Advance credit note    |\n| `settlement` | `credit-note`     | KOR_ROZ | Settlement credit note    |\n\nExample of an advance invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"$tags\": [\"partial\"],\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t// Extension automatically set to \"ZAL\"\n\t\t\"ext\": {\n\t\t\t\"pl-favat-invoice-type\": \"ZAL\"\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "VAT",
+          "name": {
+            "en": "Regular Invoice",
+            "pl": "Faktura Podstawowa"
+          },
+          "desc": {
+            "en": "Most commonly used invoice type.",
+            "pl": "Najczęściej używany typ faktury."
+          }
+        },
+        {
+          "code": "ZAL",
+          "name": {
+            "en": "Advance Invoice",
+            "pl": "Faktura Zaliczkowa"
+          },
+          "desc": {
+            "en": "Invoice documenting receipt of payment or part of payment before performing the act, as well as an invoice issued in connection with article 106f paragraph 4 of the act (advance invoice)",
+            "pl": "Faktura dokumentująca otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz faktura wystawiona w związku z art. 106f ust. 4 ustawy (faktura zaliczkowa)"
+          }
+        },
+        {
+          "code": "ROZ",
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          },
+          "desc": {
+            "en": "Invoice issued in connection with article 106f paragraph 3 of the act. Final invoice, which concludes the contract or transaction, includes all previous advance invoices and contains a full list of payments and transaction amount.",
+            "pl": "Faktura wystawiona w związku z art. 106f ust. 3 ustawy. Kończy umowę lub transakcję, uwzględnia wszystkie poprzednie faktury zaliczkowe, zawiera pełną listę płatności i kwotę transakcji."
+          }
+        },
+        {
+          "code": "UPR",
+          "name": {
+            "en": "Simplified Invoice",
+            "pl": "Faktura Uproszczona"
+          },
+          "desc": {
+            "en": "Invoice, as referred to in article 106e paragraph 5 point 3 of the act.",
+            "pl": "Faktura, o której mowa w art. 106e ust. 5 pkt 3 ustawy."
+          }
+        },
+        {
+          "code": "KOR",
+          "name": {
+            "en": "Credit note",
+            "pl": "Faktura korygująca"
+          },
+          "desc": {
+            "en": "Corrects the original invoice.",
+            "pl": "Poprawia fakturę oryginalną."
+          }
+        },
+        {
+          "code": "KOR_ZAL",
+          "name": {
+            "en": "advance credit note",
+            "pl": "Faktura korygująca fakturę zaliczkową"
+          },
+          "desc": {
+            "en": "Invoice issued in connection with article 106f paragraph 4 of the act. Corrects the advance invoice (ZAL).",
+            "pl": "Faktura korygująca fakturę dokumentującą otrzymanie zapłaty lub jej części przed dokonaniem czynności oraz fakturę wystawioną w związku z art. 106f ust. 4 ustawy (faktura korygująca fakturę zaliczkową). Poprawia fakturę zaliczkową (ZAL)."
+          }
+        },
+        {
+          "code": "KOR_ROZ",
+          "name": {
+            "en": "Settlement credit note",
+            "pl": "Faktura korygująca fakturę rozliczeniową"
+          },
+          "desc": {
+            "en": "Invoice issued in connection with article 106f paragraph 3 of the act. Corrects the settlement invoice (ROZ).",
+            "pl": "Faktura korygująca fakturę wystawioną w związku z art. 106f ust. 3 ustawy. Poprawia fakturę rozliczeniową (ROZ)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-cash-accounting",
+      "name": {
+        "en": "Cash accounting flag for KSeF",
+        "pl": "Flaga księgowania gotówki dla KSeF (P_16)"
+      },
+      "desc": {
+        "en": "The `pl-favat-cash-accounting` extension indicates whether an invoice uses cash accounting\nfor VAT purposes (kasowa metoda rozliczenia VAT). This extension is used in the **invoice\ntax section** (`tax.ext`).\n\nThis extension is **not normalized automatically** and must be set manually by the user\nwhen the cash accounting method applies. According to Polish VAT law (Article 19a sec. 5\nitem 1 or Article 21 sec. 1), certain small businesses may account for VAT on a cash\nbasis rather than accrual basis.\n\nValues:\n- \"1\": Cash accounting applies\n- \"2\": Normal accounting (accrual basis) - default\n\nExample with cash accounting:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-cash-accounting\": \"1\"\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Cash accounting",
+            "pl": "Księgowanie gotówkowe"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "No cash accounting",
+            "pl": "Bez księgowania gotówki"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-self-billing",
+      "name": {
+        "en": "Self-invoicing flag for KSeF",
+        "pl": "Flaga samofakturowania dla KSeF (P_17)"
+      },
+      "desc": {
+        "en": "The `pl-favat-self-billing` extension indicates whether an invoice is self-billed\n(samofakturowanie), where the buyer issues the invoice on behalf of the supplier.\nThis extension is used in the **invoice tax section** (`tax.ext`).\n\nThis extension is **automatically normalized** by GOBL:\n- When the invoice has the `self-billed` tag, the value is set to \"1\"\n- Otherwise, the value defaults to \"2\"\n\nSelf-billing is permitted under Article 106d sec. 1 of the Polish VAT Act when\nthere is a prior agreement between the parties.\n\nValues:\n- \"1\": Self-billed invoice\n- \"2\": Regular invoice - default\n\nExample of a self-billed invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"$tags\": [\"self-billed\"],\n\t// ...\n\t\"tax\": {\n\t\t// Extension automatically set to \"1\"\n\t\t\"ext\": {\n\t\t\t\"pl-favat-self-billing\": \"1\"\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Self-invoicing",
+            "pl": "Samofakturowanie"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Not self-invoicing",
+            "pl": "Bez samofakturowania"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-reverse-charge",
+      "name": {
+        "en": "Reverse charge code for KSeF",
+        "pl": "Kod odwrotnego obciążenia dla KSeF (P_18)"
+      },
+      "desc": {
+        "en": "The `pl-favat-reverse-charge` extension indicates whether the reverse charge mechanism\napplies to an invoice. This extension is used in the **invoice tax section** (`tax.ext`).\n\nThis extension is **automatically normalized** by GOBL:\n- When the invoice has the `reverse-charge` tag, the value is set to \"1\"\n- Otherwise, the value defaults to \"2\"\n\nUnder the reverse charge mechanism (odwrotne obciążenie), the buyer rather than the\nseller is responsible for accounting for the VAT. This applies to:\n- EU intra-community services (B2B cross-border services)\n- Domestic reverse charge for specific goods and services listed in Polish VAT law\n- Imports of services from outside the EU\n\nWhen using reverse charge, the line items should use the `reverse-charge` tax key,\nwhich automatically sets the tax category to \"9\" (EU Reverse Charge) or \"10\"\n(Domestic Reverse Charge) depending on the scenario.\n\nValues:\n- \"1\": Reverse charge applies\n- \"2\": Normal charge - default\n\nExample of an EU reverse charge invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"$tags\": [\"reverse-charge\"],\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"taxes\": [\n\t\t\t\t{\n\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\"key\": \"reverse-charge\"\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t],\n\t\"tax\": {\n\t\t// Extension automatically set to \"1\"\n\t\t\"ext\": {\n\t\t\t\"pl-favat-reverse-charge\": \"1\"\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Reverse charge",
+            "pl": "Odwrotne obciążenie"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "No reverse charge",
+            "pl": "Bez odwrotnego obciążenia"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-split-payment",
+      "name": {
+        "en": "Split payment mechanism flag for KSeF",
+        "pl": "Flaga mechanizmu płatności rozłożonej dla KSeF (P_18A)"
+      },
+      "desc": {
+        "en": "The `pl-favat-split-payment-mechanism` extension indicates whether the mandatory split\npayment mechanism (mechanizm podzielonej płatności, MPP) applies to an invoice.\nThis extension is used in the **invoice tax section** (`tax.ext`).\n\nThis extension is **not normalized automatically** and must be set manually when the\nsplit payment mechanism applies.\n\nAccording to Polish VAT law, split payment is mandatory when ALL of the following\nconditions are met:\n- The invoice amount exceeds PLN 15,000 (or equivalent in foreign currency)\n- The invoice covers goods or services listed in Annex 15 to the VAT Act\n- The transaction is B2B (business to business)\n- The invoice bears the note \"split payment mechanism\"\n\nUnder split payment, the buyer pays the VAT portion to a separate VAT account rather\nthan to the seller directly.\n\nValues:\n- \"1\": Split payment mechanism applies\n- \"2\": Normal payment - default\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-split-payment-mechanism\": \"1\"\n\t\t}\n\t},\n\t\"notes\": [\n\t\t{\n\t\t\t\"key\": \"general\",\n\t\t\t\"text\": \"Mechanizm podzielonej płatności\"\n\t\t}\n\t]\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Split payment mechanism",
+            "pl": "Mechanizm płatności rozłożonej"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "No split payment mechanism",
+            "pl": "Bez mechanizmu płatności rozłożonej"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-exemption",
+      "name": {
+        "en": "Tax exemption code for KSeF",
+        "pl": "Kod oznaczający zwolnienie od podatku dla KSeF"
+      },
+      "desc": {
+        "en": "Extension used to indicate the type of reason for tax exemption code for KSeF. When the `exempt` tag\nis used in the invoice, having `ext` map's `pl-favat-exemption` property is required. Also, it is\nrequired to add descriptive text for the legal basis for exemption. To do this in GOBL, add a note\nto the invoice with the exemption reason, in the following format:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-exemption\": \"A\"\n\t\t\t// ...\n\t\t}\n\t},\n\t\"notes\": [\n\t\t{\n\t\t\t\"key\": \"legal\",\n\t\t\t\"code\": \"A\",\n\t\t\t\"src\": \"pl-favat-exemption\",\n\t\t\t\"text\": \"Art. 25a ust. 1 pkt 9 ustawy o VAT\"\n\t\t}\n\t]\n}\n```\n\nIn notes, code must match the code from the extension."
+      },
+      "values": [
+        {
+          "code": "A",
+          "name": {
+            "en": "Law or act issued under the Polish law",
+            "pl": "Ustawa lub akt wydany na podstawie ustawy"
+          }
+        },
+        {
+          "code": "B",
+          "name": {
+            "en": "Directive 2006/112/EC",
+            "pl": "Dyrektywa 2006/112/WE"
+          }
+        },
+        {
+          "code": "C",
+          "name": {
+            "en": "Other legal basis",
+            "pl": "Inna podstawa prawna"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-margin-scheme",
+      "name": {
+        "en": "Margin scheme code for KSeF",
+        "pl": "Kod oznaczający procedurę marży dla KSeF (P_PMarzy)"
+      },
+      "desc": {
+        "en": "The `pl-favat-margin-scheme` extension specifies the type of margin scheme (procedura\nmarży) applied to an invoice. This extension is used in the **invoice tax section**\n(`tax.ext`).\n\nThis extension is **not normalized automatically** and must be set manually when a\nmargin scheme applies.\n\nUnder margin schemes, VAT is calculated only on the seller's margin (profit) rather\nthan on the full sale price. This applies to specific business sectors in Poland:\n- Travel agencies (tour operators)\n- Sales of second-hand goods\n- Sales of works of art\n- Sales of collector's items and antiques\n\nWhen using a margin scheme, the tax category should typically be set to \"11\"\n(Margin scheme) in line items.\n\nExample for a travel agency:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-margin-scheme\": \"2\"\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "2",
+          "name": {
+            "en": "Travel agency",
+            "pl": "Biuro podróży"
+          }
+        },
+        {
+          "code": "3.1",
+          "name": {
+            "en": "Second-hand goods",
+            "pl": "Towary używane"
+          }
+        },
+        {
+          "code": "3.2",
+          "name": {
+            "en": "Works of art",
+            "pl": "Dzieła sztuki"
+          }
+        },
+        {
+          "code": "3.3",
+          "name": {
+            "en": "Antiques and collectibles",
+            "pl": "Przedmioty kolekcjonerskie i antyki"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-payment-means",
+      "name": {
+        "en": "Payment method code for KSeF",
+        "pl": "Kod formy płatności dla KSeF (TFormaPlatnosci)"
+      },
+      "desc": {
+        "en": "The `pl-favat-payment-means` extension specifies the payment method used in an invoice.\nThis extension is used in **payment instructions** (`payment.instructions.ext`) or\n**payment advances** (`payment.advances[].ext`).\n\nThis extension is **automatically normalized** by GOBL based on the payment means key.\nThe following table shows the mapping:\n\n| Code | FA_VAT Name     | GOBL Payment Means Key    |\n| ---- | --------------- | ------------------------- |\n| 1    | Cash            | `cash`                    |\n| 2    | Card            | `card`                    |\n| 3    | Voucher         | `other+voucher`           |\n| 4    | Cheque          | `cheque`                  |\n| 5    | Credit/Loan     | `other+credit`            |\n| 6    | Credit Transfer | `credit-transfer`         |\n| 7    | Mobile          | `online`                  |\n\nExample with bank transfer payment:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"payment\": {\n\t\t\"instructions\": {\n\t\t\t\"key\": \"credit-transfer\",\n\t\t\t// Extension automatically set to \"6\"\n\t\t\t\"ext\": {\n\t\t\t\t\"pl-favat-payment-means\": \"6\"\n\t\t\t},\n\t\t\t\"credit_transfer\": [\n\t\t\t\t{\n\t\t\t\t\t\"iban\": \"PL61109010140000071219812874\",\n\t\t\t\t\t\"name\": \"Company Name\"\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Cash",
+            "pl": "Gotówka"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Card",
+            "pl": "Karta"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Coupon",
+            "pl": "Bon"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Cheque",
+            "pl": "Czek"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Loan",
+            "pl": "Kredyt"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Wire Transfer",
+            "pl": "Przelew"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Mobile",
+            "pl": "Mobilna"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-jst",
+      "name": {
+        "en": "Subordinate Local Government Unit flag",
+        "pl": "Flaga jednostki samorządu terytorialnego (P_22)"
+      },
+      "desc": {
+        "en": "The `pl-favat-jst` extension indicates whether the customer is a Subordinate Local\nGovernment Unit (Jednostka Samorządu Terytorialnego - JST). This extension is used\nin the **customer party section** (`customer.ext`).\n\nThis extension is **not normalized automatically** and must be set manually.\n\nWhen this extension is set to \"1\" (customer is JST), GOBL validates that the customer\nhas an identity with role \"8\" (Local Government Unit - recipient) in the `customer.identities`\narray. This identity must include a `code` field with the JST identifier.\n\nValues:\n- \"1\": Customer is a Subordinate Local Government Unit\n- \"2\": Customer is not a JST - default\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"customer\": {\n\t\t\"name\": \"Gmina Warszawa\",\n\t\t\"tax_id\": {\n\t\t\t\"country\": \"PL\",\n\t\t\t\"code\": \"5252548806\"\n\t\t},\n\t\t\"ext\": {\n\t\t\t\"pl-favat-jst\": \"1\"\n\t\t},\n\t\t\"identities\": [\n\t\t\t{\n\t\t\t\t\"code\": \"146501\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pl-favat-third-party-role\": \"8\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Customer is a Subordinate Local Government Unit",
+            "pl": "Nabywca jest jednostką samorządu terytorialnego"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Customer is not a Subordinate Local Government Unit",
+            "pl": "Nabywca nie jest jednostką samorządu terytorialnego"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-group-vat",
+      "name": {
+        "en": "Group VAT member flag",
+        "pl": "Flaga członka grupy podatkowej (P_23)"
+      },
+      "desc": {
+        "en": "The `pl-favat-group-vat` extension indicates whether the customer is a member of a VAT\ngroup (Grupa VAT - GV). This extension is used in the **customer party section**\n(`customer.ext`).\n\nThis extension is **not normalized automatically** and must be set manually.\n\nVAT groups in Poland allow multiple legal entities to be treated as a single taxpayer\nfor VAT purposes. When this extension is set to \"1\" (customer is a GV member), GOBL\nvalidates that the customer has an identity with role \"10\" (GV member - recipient) in\nthe `customer.identities` array. This identity must include a `code` field with the\nVAT group member identifier.\n\nValues:\n- \"1\": Customer is a VAT Group member\n- \"2\": Customer is not a VAT Group member - default\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t// ...\n\t\"customer\": {\n\t\t\"name\": \"Member Company Ltd.\",\n\t\t\"tax_id\": {\n\t\t\t\"country\": \"PL\",\n\t\t\t\"code\": \"1234567890\"\n\t\t},\n\t\t\"ext\": {\n\t\t\t\"pl-favat-group-vat\": \"1\"\n\t\t},\n\t\t\"identities\": [\n\t\t\t{\n\t\t\t\t\"code\": \"GV-12345\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pl-favat-third-party-role\": \"10\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Customer is a Group VAT member",
+            "pl": "Nabywca jest członkiem grupy podatkowej"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Customer is not a Group VAT member",
+            "pl": "Nabywca nie jest członkiem grupy podatkowej"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-third-party-role",
+      "name": {
+        "en": "Third party role",
+        "pl": "Rola trzeciej strony (RolaPodmiotu)"
+      },
+      "desc": {
+        "en": "The `pl-favat-third-party-role` extension specifies the role of a third party or\nadditional entity in an invoice transaction. This extension is used in **party\nidentities** (`customer.identities[].ext`, `supplier.identities[].ext`, or in\nadditional parties).\n\nThis extension is **not normalized automatically** and must be set manually based on\nthe role of the entity in the transaction.\n\nCommon use cases:\n- Role \"8\": Required when customer has `pl-favat-jst` = \"1\" (Local Government Unit)\n- Role \"10\": Required when customer has `pl-favat-group-vat` = \"1\" (VAT Group member)\n- Role \"5\": When invoice is issued by an entity on behalf of the taxpayer\n- Other roles: For factoring, recipients, payers, etc.\n\nEach identity with this extension should also include a `code` field with the\nidentifier of the third party.\n\nExample with JST customer:\n\n```js\n{\n\t\"customer\": {\n\t\t// ...\n\t\t\"ext\": {\n\t\t\t\"pl-favat-jst\": \"1\"\n\t\t},\n\t\t\"identities\": [\n\t\t\t{\n\t\t\t\t\"code\": \"146501\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pl-favat-third-party-role\": \"8\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Factor",
+            "pl": "Faktor"
+          },
+          "desc": {
+            "en": "When the invoice includes the factoring company details"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Recipient",
+            "pl": "Odbiorca"
+          },
+          "desc": {
+            "en": "When the invoice includes internal units, branches, or divisions of the purchaser, which do not\nthemselves qualify as purchasers under the Act."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Original entity",
+            "pl": "Podmiot pierwotny"
+          },
+          "desc": {
+            "en": "When the invoice includes the details of an entity that was taken over or transformed and originally\nsupplied the goods or services (excluding cases referred to in Article 106j sec. 2 item 3 of the Act,\nwhere these details are shown in section Podmiot1K)."
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Additional Purchaser",
+            "pl": "Dodatkowy nabywca"
+          },
+          "desc": {
+            "en": "When the invoice includes details of further purchasers (other than the one indicated in Customer)."
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Invoice Issuer",
+            "pl": "Wystawca faktury"
+          },
+          "desc": {
+            "en": "When the invoice includes details of the\nentity issuing the invoice on behalf of the taxpayer."
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Payer",
+            "pl": "Zapłacający"
+          },
+          "desc": {
+            "en": "When the invoice includes details of the\nentity paying the tax on behalf of the taxpayer."
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Local Government Unit (LGU) - issuer",
+            "pl": "Jednostka samorządu terytorialnego (JST) - wystawca"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Local Government Unit (LGU) - recipient",
+            "pl": "Jednostka samorządu terytorialnego (JST) - odbiorca"
+          },
+          "desc": {
+            "en": "When the invoice includes details of the\nentity receiving the goods or services from the Local Government Unit."
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "GV member - issuer",
+            "pl": "Członek grupy podatkowej - wystawca"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "GV member - recipient",
+            "pl": "Członek grupy podatkowej - odbiorca"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Employee",
+            "pl": "Pracownik"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-effective-date",
+      "name": {
+        "en": "Effective date code",
+        "pl": "Kod daty wejścia w życie (OkresFaKorygowanej)"
+      },
+      "desc": {
+        "en": "The `pl-favat-effective-date` extension specifies when a correction invoice (credit note)\nbecomes effective for VAT purposes. This extension is used in **credit note tax section**\n(`tax.ext`) when `type` is `credit-note`.\n\nThis extension is **not normalized automatically** and it is not mandatory. It can be set manually for credit\nnotes based on when the correction should take effect.\n\nAccording to Polish VAT regulations, a correction invoice can be effective:\n- On the date of the original invoice (code \"1\")\n- On the date of the correction invoice itself (code \"2\")\n- On another specific date, or different dates for different line items (code \"3\")\n\nValues:\n- \"1\": Effective according to original invoice date\n- \"2\": Effective according to correction date\n- \"3\": Effective on another date (or multiple dates)\n\nExample of a credit note effective on correction date:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"pl-favat-v3\"],\n\t\"type\": \"credit-note\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pl-favat-invoice-type\": \"KOR\",\n\t\t\t\"pl-favat-effective-date\": \"2\"\n\t\t}\n\t},\n\t\"preceding\": [\n\t\t{\n\t\t\t\"code\": \"INVOICE-001\",\n\t\t\t\"issue_date\": \"2025-01-15\"\n\t\t}\n\t]\n}\n```"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Original",
+            "pl": "Pierwotna"
+          },
+          "desc": {
+            "en": "Effective according to date of the original invoice.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury pierwotnej."
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Correction",
+            "pl": "Korygująca"
+          },
+          "desc": {
+            "en": "Effective according to date of correction.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury korygującej."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Other",
+            "pl": "Inna"
+          },
+          "desc": {
+            "en": "Correction has legal consequences in another date or the dates are different for different position on the invoice",
+            "pl": "Faktura skutkująca w innej dacie. W tym gdy dla różnych pozycji faktury korygującej data jest różna."
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "settlement",
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "name": {
+            "en": "Regular Invoice",
+            "pl": "Faktura Podstawowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "VAT"
+          }
+        },
+        {
+          "name": {
+            "en": "Prepayment Invoice",
+            "pl": "Faktura Zaliczkowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "ZAL"
+          }
+        },
+        {
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "ROZ"
+          }
+        },
+        {
+          "name": {
+            "en": "Simplified Invoice",
+            "pl": "Faktura Uproszczona"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "UPR"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit note",
+            "pl": "Faktura korygująca"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "KOR"
+          }
+        },
+        {
+          "name": {
+            "en": "Prepayment credit note",
+            "pl": "Faktura korygująca fakturę zaliczkową"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "KOR_ZAL"
+          }
+        },
+        {
+          "name": {
+            "en": "Settlement credit note",
+            "pl": "Faktura korygująca fakturę rozliczeniową"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "ext": {
+            "pl-favat-invoice-type": "KOR_ROZ"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "stamps": [
+        "favat-ksef-number"
+      ]
+    }
+  ]
+}
