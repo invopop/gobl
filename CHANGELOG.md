@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.307.0] - 2026-01-27
+
 ### Added
 
 - `dk`: Added the Danish regime
@@ -15,7 +17,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `l10n`: `UnionDef` method `HasMemberOn` now correctly handles empty codes
-
 
 ## [v0.306.0] - 2026-01-19
 
