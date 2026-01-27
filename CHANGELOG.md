@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `cbc`: Allow codes to start with separators.
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
