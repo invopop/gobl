@@ -1,0 +1,65 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AU",
+  "uuid": "01927891-2f45-73d0-bd42-8a9c7e654321",
+  "type": "standard",
+  "code": "INV-EXP-100",
+  "currency": "AUD",
+  "issue_date": "2024-01-25",
+  "supplier": {
+    "name": "Australian Exporter Pty Ltd",
+    "tax_id": {
+      "country": "AU",
+      "code": "51824753556"
+    },
+    "addresses": [
+      {
+        "num": "789",
+        "street": "Export Drive",
+        "locality": "Perth",
+        "region": "WA",
+        "code": "6000",
+        "country": "AU"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "exports@au-exporter.com.au"
+      }
+    ]
+  },
+  "customer": {
+    "name": "International Buyer Ltd",
+    "addresses": [
+      {
+        "street": "123 Foreign Street",
+        "locality": "Singapore",
+        "code": "123456",
+        "country": "SG"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1000",
+      "item": {
+        "name": "Exported Goods - Food Products",
+        "price": "15.00",
+        "unit": "kg"
+      },
+      "sum": "15000.00",
+      "taxes": [
+        {
+          "cat": "GST",
+          "percent": "0%"
+        }
+      ],
+      "notes": [
+        {
+          "text": "GST-free export to Singapore as per ATO export provisions"
+        }
+      ]
+    }
+  ]
+}
