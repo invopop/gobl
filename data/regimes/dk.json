@@ -8,6 +8,15 @@
   "country": "DK",
   "currency": "DKK",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "cvr",
+      "name": {
+        "da": "CVR-nummer",
+        "en": "CVR Number"
+      }
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
