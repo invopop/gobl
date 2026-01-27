@@ -253,6 +253,12 @@ func TestValidateBillDiscount(t *testing.T) {
 		l := &bill.Discount{
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
 		}
 		err := ad.Validator(l)
 		assert.NoError(t, err)
@@ -264,6 +270,12 @@ func TestValidateBillDiscount(t *testing.T) {
 				untdid.ExtKeyAllowance: "67",
 			},
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
 		}
 		err := ad.Validator(l)
 		assert.NoError(t, err)
@@ -272,6 +284,12 @@ func TestValidateBillDiscount(t *testing.T) {
 	t.Run("without reason or extension", func(t *testing.T) {
 		l := &bill.Discount{
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
 		}
 		err := ad.Validator(l)
 		assert.ErrorContains(t, err, "either a reason or an allowance type extension is required")
@@ -284,9 +302,24 @@ func TestValidateBillDiscount(t *testing.T) {
 				untdid.ExtKeyAllowance: "67",
 			},
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
 		}
 		err := ad.Validator(l)
 		assert.NoError(t, err)
+	})
+
+	t.Run("without taxes (BR-32)", func(t *testing.T) {
+		l := &bill.Discount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.ErrorContains(t, err, "taxes are required (BR-32)")
 	})
 }
 
