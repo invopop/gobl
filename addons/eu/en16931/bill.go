@@ -227,8 +227,12 @@ func validateBillCharge(charge *bill.Charge) error {
 }
 
 func validateBillDiscount(discount *bill.Discount) error {
-	// BR-33
+	// BR-32 & BR-33
 	return validation.ValidateStruct(discount,
+		validation.Field(&discount.Taxes,
+			validation.Required.Error("taxes are required (BR-32)"), // BR-32
+			validation.Skip,
+		),
 		validation.Field(&discount.Reason,
 			validation.When(
 				!discount.Ext.Has(untdid.ExtKeyAllowance),

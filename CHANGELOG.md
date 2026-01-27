@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
