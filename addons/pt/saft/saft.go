@@ -57,10 +57,11 @@ func newAddon() *tax.AddonDef {
 				ContentType: "application/pdf",
 			},
 		},
-		Extensions: extensions,
-		Normalizer: normalize,
-		Scenarios:  scenarios,
-		Validator:  validate,
+		Extensions:  extensions,
+		Normalizer:  normalize,
+		Scenarios:   scenarios,
+		Validator:   validate,
+		Corrections: corrections,
 	}
 }
 

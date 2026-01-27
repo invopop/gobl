@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `dk`: Added the Danish regime
 - `de`: support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
+- `pt-saft-v1`: Added correction defininitions
 
 ### Fixed
 
