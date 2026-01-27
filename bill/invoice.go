@@ -254,10 +254,21 @@ func (inv *Invoice) Invert() error {
 			row.Amount = row.Amount.Invert()
 		}
 	}
-	inv.Totals = nil
 
+	// Temporarily remove bypass tag to allow recalculation
+	hadBypass := inv.HasTags(tax.TagBypass)
+	if hadBypass {
+		inv.RemoveTags(tax.TagBypass)
+	}
+
+	inv.Totals = nil
 	if err := inv.Calculate(); err != nil {
 		return err
+	}
+
+	// Restore bypass tag if it was present
+	if hadBypass {
+		inv.SetTags(tax.TagBypass)
 	}
 
 	// The following check tries to ensure that any future fields do not cause
