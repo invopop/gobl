@@ -6,12 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
 
 - `dk`: Added the Danish regime
-- `de`: support for NW Steuernummer
+- `de`: Added support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
 ### Fixed
