@@ -393,7 +393,7 @@
             "pt": "Lei n.º 17/2023, de 14 de abril"
           },
           "desc": {
-            "en": "“IVA Zero” food-basket scheme allowed VAT exemption with right to\ndeduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. "
+            "en": "“IVA Zero” food-basket scheme allowed VAT exemption with right to\ndeduction. Active 18 Apr 2023 to 4 Jan 2024, now expired."
           }
         },
         {
@@ -433,7 +433,7 @@
             "pt": "Artigo 2.º n.º 1 alínea m) do CIVA"
           },
           "desc": {
-            "en": "Reverse-charge on raw cork, wood, pine-cones with shell — \npurchaser accounts for VAT."
+            "en": "Reverse-charge on raw cork, wood, pine-cones with shell —\npurchaser accounts for VAT."
           }
         },
         {
@@ -484,6 +484,36 @@
           },
           "desc": {
             "en": "Reverse-charge on investment gold transactions that are not\nVAT-exempt under special gold regulations; buyer reports VAT."
+          }
+        },
+        {
+          "code": "M44",
+          "name": {
+            "en": "Article 6.º of the CIVA – Specific rules",
+            "pt": "Artigo 6.º do CIVA – Regras específicas"
+          },
+          "desc": {
+            "en": "To be used in services not provided in Portugal under the terms of\nparagraphs 7 and following of article 6.º of the VAT Code."
+          }
+        },
+        {
+          "code": "M45",
+          "name": {
+            "en": "Art 58º-A of the CIVA (IVA - cross-border exemption regime)",
+            "pt": "Art 58º-A do CIVA (IVA - regime transfronteiriço de isenção)"
+          },
+          "desc": {
+            "en": "To be used in operations located in another Member State of the European\nUnion that are exempt from VAT there, by virtue of the supplier of goods\nor provider of services having adhered to the Cross-Border Exemption\nRegime for operations carried out in that Member State."
+          }
+        },
+        {
+          "code": "M46",
+          "name": {
+            "en": "Decree-Law No. 19/2017, of February 14",
+            "pt": "Decreto-lei n.º 19/2017, de 14 de fevereiro"
+          },
+          "desc": {
+            "en": "To be used in the transfer of goods in the personal luggage of travelers\nwithout domicile in the European Union (a.k.a. tax free), under the\nterms of the mentioned decree-law."
           }
         },
         {

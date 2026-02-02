@@ -1,0 +1,127 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "220e4ecba4e613d6aee9eba9183f735afd1e57d234f3cd4cd77a583f16226aa1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v3"
+		],
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c8b",
+		"type": "credit-note",
+		"series": "KOR",
+		"code": "001",
+		"issue_date": "2026-01-20",
+		"currency": "PLN",
+		"preceding": [
+			{
+				"type": "standard",
+				"issue_date": "2026-01-20",
+				"series": "INVOICE",
+				"code": "001",
+				"reason": "Price correction",
+				"stamps": [
+					{
+						"prv": "favat-ksef-number",
+						"val": "1234567890-20260120-ABCD1234-EF"
+					}
+				],
+				"ext": {
+					"pl-favat-effective-date": "1"
+				}
+			}
+		],
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "KOR"
+			}
+		},
+		"supplier": {
+			"name": "Testowa Firma Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Główna 1",
+					"locality": "Warsaw",
+					"code": "00-001",
+					"country": "PL"
+				}
+			]
+		},
+		"customer": {
+			"name": "Klient Testowy Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Testowa 10",
+					"locality": "Kraków",
+					"code": "30-001",
+					"country": "PL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Software Development Services",
+					"price": "10.00",
+					"unit": "h"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pl-favat-tax-category": "1"
+						}
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"totals": {
+			"sum": "100.00",
+			"total": "100.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pl-favat-tax-category": "1"
+								},
+								"base": "100.00",
+								"percent": "23.0%",
+								"amount": "23.00"
+							}
+						],
+						"amount": "23.00"
+					}
+				],
+				"sum": "23.00"
+			},
+			"tax": "23.00",
+			"total_with_tax": "123.00",
+			"payable": "123.00"
+		}
+	}
+}

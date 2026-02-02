@@ -10,10 +10,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-verifactu-v1`: Automatic addition of legal notes to line items when exemption codes are present. Notes are added during normalization with Spanish text from extension definitions, matching the exemption code. Validation ensures exemption notes are present when required and match the corresponding exemption codes.
 
+## [v0.307.0] - 2026-01-27
+
+### Added
+
+- `dk`: Added the Danish regime
+- `de`: support for NW Steuernummer
+- `pl-favat-v3`: Added Poland FAVAT V3 addon
+
+### Fixed
+
+- `l10n`: `UnionDef` method `HasMemberOn` now correctly handles empty codes
+
+## [v0.306.0] - 2026-01-19
+
 ### Changed
 
 - `bill`: `Line` and `SubLine` now normalize negative item prices to quantity.
 - `org`: `Item` requires zero or positive price.
+
+### Added
+
+- `head`: `Link` support for category and improved file support.
+- `pt-saft-v1`: Add new exemption codes (M44, M45, M46)
 
 ## [v0.305.1] - 2026-01-09
 

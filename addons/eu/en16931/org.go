@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/dk"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -46,6 +47,7 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGLN:  "0088",
 	org.IdentityKeyGTIN: "0160",
+	dk.IdentityKeyCVR:   "0184", // Danish CVR-nummer (DK regime)
 }
 
 var (

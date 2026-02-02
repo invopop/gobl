@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Document tag keys
+// FA_VAT specific tags for invoice types
 const (
 	TagSettlement cbc.Key = "settlement"
 )
@@ -39,7 +39,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Regular Invoice",
 				i18n.PL: "Faktura Podstawowa",
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "VAT",
 			},
 		},
@@ -50,7 +50,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment Invoice",
 				i18n.PL: `Faktura Zaliczkowa`,
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "ZAL",
 			},
 		},
@@ -61,7 +61,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement Invoice",
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "ROZ",
 			},
 		},
@@ -72,7 +72,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Invoice",
 				i18n.PL: "Faktura Uproszczona",
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "UPR",
 			},
 		},
@@ -82,7 +82,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Credit note",
 				i18n.PL: "Faktura korygująca",
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "KOR",
 			},
 		},
@@ -93,7 +93,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment credit note",
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "KOR_ZAL",
 			},
 		},
@@ -104,7 +104,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement credit note",
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
-			Codes: cbc.CodeMap{
+			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "KOR_ROZ",
 			},
 		},

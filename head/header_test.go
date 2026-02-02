@@ -61,13 +61,24 @@ func TestHeaderAddLink(t *testing.T) {
 }
 
 func TestHeaderLink(t *testing.T) {
-	h := head.NewHeader()
-	h.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
-	l := h.Link("foo")
-	assert.NotNil(t, l)
-	assert.Equal(t, "bar.com", l.URL)
-	l = h.Link("baa")
-	assert.Nil(t, l)
+	t.Run("without category", func(t *testing.T) {
+		h := head.NewHeader()
+		h.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
+		l := h.Link("", "foo")
+		assert.NotNil(t, l)
+		assert.Equal(t, "bar.com", l.URL)
+		l = h.Link("", "baa")
+		assert.Nil(t, l)
+	})
+	t.Run("with category", func(t *testing.T) {
+		h := head.NewHeader()
+		h.AddLink(&head.Link{Category: head.LinkCategoryKeyPortal, Key: "foo", URL: "bar.com"})
+		l := h.Link(head.LinkCategoryKeyPortal, "foo")
+		assert.NotNil(t, l)
+		assert.Equal(t, "bar.com", l.URL)
+		l = h.Link(head.LinkCategoryKeyPortal, "baa")
+		assert.Nil(t, l)
+	})
 }
 
 func TestHeaderStamp(t *testing.T) {
