@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -149,12 +148,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 }
 
 func validateBillLine(line *bill.Line) error {
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Taxes,
-			tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
-			validation.Skip,
-		),
-	)
+	return validateLine(line)
 }
 
 func validateInvoiceCustomer(val any) error {

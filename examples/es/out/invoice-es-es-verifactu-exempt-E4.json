@@ -1,0 +1,126 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "dee15451741783daa832c4912abc1d3ac64f79c1e78ce045bc8d1731a0ea9199"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852e4",
+		"type": "standard",
+		"series": "FT",
+		"code": "E4-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Customs Warehouse S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			]
+		},
+		"customer": {
+			"name": "Trading Company",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Avenida Siempre Viva",
+					"locality": "Barcelona",
+					"region": "Barcelona",
+					"code": "08001",
+					"country": "ES"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "50",
+				"item": {
+					"name": "Goods in customs warehouse",
+					"price": "25.00",
+					"unit": "box"
+				},
+				"sum": "1250.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "export",
+						"ext": {
+							"es-verifactu-exempt": "E4",
+							"es-verifactu-regime": "02"
+						}
+					}
+				],
+				"total": "1250.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "E4",
+						"src": "es-verifactu-exempt",
+						"text": "Exenta: por los artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "1250.00",
+			"total": "1250.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "export",
+								"ext": {
+									"es-verifactu-exempt": "E4",
+									"es-verifactu-regime": "02"
+								},
+								"base": "1250.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1250.00",
+			"payable": "1250.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Goods under customs/fiscal regime - exempt pursuant to Articles 23 and 24 of LIVA"
+			}
+		]
+	}
+}
