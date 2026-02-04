@@ -84,6 +84,17 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 }
 
+func TestNZBNAsTaxIdentityFails(t *testing.T) {
+	r := nz.New()
+	tID := &tax.Identity{
+		Country: "NZ",
+		Code:    "9429041234563",
+	}
+	r.Normalizer(tID)
+	err := r.Validator(tID)
+	assert.Error(t, err, "NZBN should not be accepted as a tax identity")
+}
+
 func TestIdentityKeys(t *testing.T) {
 	r := nz.New()
 	require.NotNil(t, r.Identities)

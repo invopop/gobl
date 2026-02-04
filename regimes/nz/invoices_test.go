@@ -75,7 +75,7 @@ func TestBoundaryExactly200NoSupplierTaxCode(t *testing.T) {
 	inv := validInvoice()
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(200, 0)
-	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero}}
+	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero, Key: tax.KeyZero}}
 	inv.Supplier.TaxID = &tax.Identity{Country: "NZ"}
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, "200.00", inv.Totals.TotalWithTax.String())
@@ -86,7 +86,7 @@ func TestBoundaryJustOver200RequiresSupplierTaxCode(t *testing.T) {
 	inv := validInvoice()
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(20001, 2) // $200.01
-	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero}}
+	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero, Key: tax.KeyZero}}
 	inv.Supplier.TaxID = &tax.Identity{Country: "NZ"}
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, "200.01", inv.Totals.TotalWithTax.String())
@@ -99,7 +99,7 @@ func TestBoundaryExactly1000NoCustomer(t *testing.T) {
 	inv := validInvoice()
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(1000, 0)
-	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero}}
+	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero, Key: tax.KeyZero}}
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, "1000.00", inv.Totals.TotalWithTax.String())
@@ -110,7 +110,7 @@ func TestBoundaryJustOver1000RequiresCustomer(t *testing.T) {
 	inv := validInvoice()
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(100001, 2) // $1,000.01
-	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero}}
+	inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST, Rate: tax.RateZero, Key: tax.KeyZero}}
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, "1000.01", inv.Totals.TotalWithTax.String())

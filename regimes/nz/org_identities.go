@@ -30,8 +30,9 @@ func normalizeOrgIdentity(id *org.Identity) {
 	if id == nil || id.Key != org.IdentityKeyGLN {
 		return
 	}
-	code := id.Code.String()
-	code = strings.ReplaceAll(cbc.NormalizeString(code), "-", "")
+	code := cbc.NormalizeString(id.Code.String())
+	code = strings.ReplaceAll(code, "-", "")
+	code = strings.ReplaceAll(code, " ", "")
 	id.Code = cbc.Code(code)
 }
 
