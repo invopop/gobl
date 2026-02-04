@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `org`: Fixed panic when `identities` array contains `null` values in multiple addons (`es-verifactu`, `es-sii`, `mx-cfdi`, `fr-choruspro`) and core identity functions.
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
