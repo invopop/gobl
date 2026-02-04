@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// nzbnGS1Prefix is the GS1 prefix assigned to New Zealand.
 const nzbnGS1Prefix = "94"
 
 var orgIdentityDefinitions = []*cbc.Definition{

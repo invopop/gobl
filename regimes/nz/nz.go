@@ -14,7 +14,6 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
-// New provides the tax regime definition for New Zealand.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:   "NZ",
@@ -42,7 +41,6 @@ func New() *tax.RegimeDef {
 	}
 }
 
-// Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
@@ -55,7 +53,6 @@ func Validate(doc any) error {
 	return nil
 }
 
-// Normalize will attempt to clean the object passed to it.
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:

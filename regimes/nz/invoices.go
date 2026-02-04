@@ -8,16 +8,14 @@ import (
 	"github.com/invopop/validation"
 )
 
-// NZ GST thresholds (GST-inclusive) per Taxable Supply Information rules.
 var (
-	thresholdMid  = num.MakeAmount(200, 0)  // $200 NZD
-	thresholdHigh = num.MakeAmount(1000, 0) // $1,000 NZD
+	thresholdMid  = num.MakeAmount(200, 0)
+	thresholdHigh = num.MakeAmount(1000, 0)
 )
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
-			// Supplier TaxID required for supplies over $200.
 			validation.When(
 				invoiceTotalExceeds(inv, thresholdMid),
 				validation.By(validateSupplierTaxID),
@@ -25,7 +23,6 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			// Customer name + identifier required for supplies over $1,000.
 			validation.When(
 				invoiceTotalExceeds(inv, thresholdHigh),
 				validation.Required,
@@ -62,8 +59,6 @@ func validateCustomerDetails(value any) error {
 	if !ok || p == nil {
 		return nil
 	}
-	// For supplies over $1,000, buyer name is required plus at least
-	// one identifier: address, phone, email, or website.
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Addresses,
@@ -76,8 +71,6 @@ func validateCustomerDetails(value any) error {
 	)
 }
 
-// hasCustomerIdentifier returns true if the customer has at least one
-// identifier beyond their name (address, phone, email, website).
 func hasCustomerIdentifier(p *org.Party) bool {
 	return len(p.Addresses) > 0 ||
 		len(p.Telephones) > 0 ||

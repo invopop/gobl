@@ -12,8 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// validInvoice returns a high-value invoice (> $1,000 incl. GST) that
-// satisfies all three tiers of NZ taxable supply information requirements.
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Supplier: &org.Party{
@@ -63,13 +61,9 @@ func validInvoice() *bill.Invoice {
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
-	// Total = $1,000 + 15% GST = $1,150 (high-value tier)
 	assert.Equal(t, "1150.00", inv.Totals.TotalWithTax.String())
 	require.NoError(t, inv.Validate())
 }
-
-// --- Boundary tests ---
-// Use zero-rated items so TotalWithTax = price × quantity (no GST math).
 
 func TestBoundaryExactly200NoSupplierTaxCode(t *testing.T) {
 	inv := validInvoice()
@@ -119,15 +113,12 @@ func TestBoundaryJustOver1000RequiresCustomer(t *testing.T) {
 	assert.Contains(t, err.Error(), "customer")
 }
 
-// --- Low-value tier tests (≤ $200 incl. GST) ---
-
 func TestLowValueInvoiceNoSupplierTaxCode(t *testing.T) {
 	inv := validInvoice()
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(100, 0)
 	inv.Supplier.TaxID = &tax.Identity{Country: "NZ"}
 	require.NoError(t, inv.Calculate())
-	// Total = $100 + $15 GST = $115 (low-value)
 	assert.Equal(t, "115.00", inv.Totals.TotalWithTax.String())
 	require.NoError(t, inv.Validate())
 }
@@ -141,8 +132,6 @@ func TestLowValueInvoiceNoCustomer(t *testing.T) {
 	assert.Equal(t, "115.00", inv.Totals.TotalWithTax.String())
 	require.NoError(t, inv.Validate())
 }
-
-// --- Mid-value tier tests ($200 – $1,000 incl. GST) ---
 
 func TestMidValueInvoiceRequiresSupplierTaxCode(t *testing.T) {
 	inv := validInvoice()
@@ -179,8 +168,6 @@ func TestMidValueInvoiceMissingSupplierTaxCode(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "supplier")
 }
-
-// --- High-value tier tests (> $1,000 incl. GST) ---
 
 func TestHighValueInvoiceRequiresCustomer(t *testing.T) {
 	inv := validInvoice()
