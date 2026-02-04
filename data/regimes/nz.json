@@ -16,12 +16,6 @@
           "name": {
             "en": "Export"
           }
-        },
-        {
-          "key": "second-hand-goods",
-          "name": {
-            "en": "Second-hand goods"
-          }
         }
       ]
     }
@@ -115,7 +109,7 @@
             "en": "Standard Rate"
           },
           "desc": {
-            "en": "Standard GST rate applicable to most goods and services."
+            "en": "Applies to all taxable supplies of goods and services that are not zero-rated or exempt."
           },
           "values": [
             {
@@ -141,7 +135,7 @@
             "en": "Zero Rate"
           },
           "desc": {
-            "en": "Zero-rated supplies including exports, international services, and certain land transactions between GST-registered parties."
+            "en": "Applies to exported goods and services, international transport, land transactions between GST-registered parties, going concern sales, and duty-free goods."
           },
           "values": [
             {
@@ -158,7 +152,7 @@
             "en": "Long-term Accommodation"
           },
           "desc": {
-            "en": "Reduced rate for commercial accommodation provided for 28 or more consecutive days."
+            "en": "Applies to commercial accommodation provided for 28 or more consecutive days. Effective from 1 April 2024."
           },
           "values": [
             {

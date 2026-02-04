@@ -35,10 +35,6 @@ func New() *tax.RegimeDef {
 	}
 }
 
-const (
-	TagSecondHandGoods cbc.Key = "second-hand-goods"
-)
-
 func invoiceTags() *tax.TagSet {
 	return &tax.TagSet{
 		Schema: bill.ShortSchemaInvoice,
@@ -47,12 +43,6 @@ func invoiceTags() *tax.TagSet {
 				Key: tax.TagExport,
 				Name: i18n.String{
 					i18n.EN: "Export",
-				},
-			},
-			{
-				Key: TagSecondHandGoods,
-				Name: i18n.String{
-					i18n.EN: "Second-hand goods",
 				},
 			},
 		},

@@ -28,7 +28,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Standard Rate",
 				},
 				Description: i18n.String{
-					i18n.EN: "Standard GST rate applicable to most goods and services.",
+					i18n.EN: "Applies to all taxable supplies of goods and services that are not zero-rated or exempt.",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -52,7 +52,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Zero Rate",
 				},
 				Description: i18n.String{
-					i18n.EN: "Zero-rated supplies including exports, international services, and certain land transactions between GST-registered parties.",
+					i18n.EN: "Applies to exported goods and services, international transport, land transactions between GST-registered parties, going concern sales, and duty-free goods.",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -67,7 +67,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Long-term Accommodation",
 				},
 				Description: i18n.String{
-					i18n.EN: "Reduced rate for commercial accommodation provided for 28 or more consecutive days.",
+					i18n.EN: "Applies to commercial accommodation provided for 28 or more consecutive days. Effective from 1 April 2024.",
 				},
 				Values: []*tax.RateValueDef{
 					{

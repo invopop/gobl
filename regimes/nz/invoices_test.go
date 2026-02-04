@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/nz"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -331,33 +330,3 @@ func TestExportInvoiceRequiresCustomerName(t *testing.T) {
 	assert.Contains(t, err.Error(), "name")
 }
 
-func TestSecondHandGoodsValid(t *testing.T) {
-	inv := validInvoice()
-	inv.SetTags(nz.TagSecondHandGoods)
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-}
-
-func TestSecondHandGoodsRequiresSupplierAddress(t *testing.T) {
-	inv := validInvoice()
-	inv.SetTags(nz.TagSecondHandGoods)
-	inv.Supplier.Addresses = nil
-	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
-	inv.Lines[0].Item.Price = num.NewAmount(50, 0)
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "addresses")
-}
-
-func TestSecondHandGoodsRequiresSupplierName(t *testing.T) {
-	inv := validInvoice()
-	inv.SetTags(nz.TagSecondHandGoods)
-	inv.Supplier.Name = ""
-	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
-	inv.Lines[0].Item.Price = num.NewAmount(50, 0)
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "name")
-}

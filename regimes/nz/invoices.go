@@ -20,10 +20,6 @@ func validateInvoice(inv *bill.Invoice) error {
 				invoiceTotalExceeds(inv, thresholdMid),
 				validation.By(validateSupplierTaxID),
 			),
-			validation.When(
-				inv.HasTags(TagSecondHandGoods),
-				validation.By(validatePartyAddress),
-			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,

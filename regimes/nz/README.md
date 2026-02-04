@@ -70,8 +70,6 @@ The NZBN is a globally unique 13-digit identifier based on the GS1 Global Locati
 | Peppol Format | `0088:` + NZBN |
 | Identity Key | `gln` |
 
-NZBN is validated using the standard GS1 check digit algorithm provided by the `pkg/gs1` package.
-
 NZBN is **not mandatory** for tax invoices. The IRD number remains the primary tax identifier. NZBN is required only for Peppol network participation (using the `0088:` prefix).
 
 Businesses registered on the NZBN can also create [Organization Parts](https://www.nzbn.govt.nz/whats-an-nzbn/identifying-different-parts-of-your-business/) to identify divisions, branches, or departments. Each Organization Part receives its own unique 13-digit GLN.
@@ -83,41 +81,24 @@ New Zealand replaced the term "tax invoice" with **Taxable Supply Information (T
 ### Required Information by Transaction Value
 
 #### Supplies up to $200 NZD (inclusive of GST)
-- Seller's name or trade name
-- Date of invoice or supply
-- Description of goods/services
-- Total amount payable
+
+![Supplies up to $200](resources/tsi/200$orless.png)
 
 #### Supplies over $200 up to $1,000 NZD (inclusive of GST)
-All of the above, plus:
-- **Seller's GST number** (IRD number)
-- GST breakdown: either
-  - GST-exclusive amount + GST amount + GST-inclusive total, OR
-  - GST-inclusive amount + statement "includes GST"
+
+![Supplies over $200 up to $1,000](resources/tsi/morethan200$andupto1000$.png)
 
 #### Supplies over $1,000 NZD (inclusive of GST)
-All of the above, plus:
-- **Buyer's name**
-- **Buyer's identifier** (at least one of):
-  - Address
-  - Phone number
-  - Email
-  - Trading name
-  - NZBN
-  - Website
+
+![Supplies over $1,000](resources/tsi/morethan1000$.png)
 
 #### Exported Goods and Services
-For zero-rated exports, the taxable supply information must also include:
-- The quantity or volume of goods or services supplied
-- The buyer's name and address (for goods) or business details (for services)
+
+![Exported goods and services](resources/tsi/importedgoodsandservices.png)
 
 #### Secondhand Goods
-When purchasing secondhand goods from an unregistered seller, the buyer must record:
-- Name and address of the supplier
-- Date of purchase
-- Description of goods
-- Quantity or volume
-- Price paid
+
+Not implemented as an invoice scenario. Second-hand goods purchases from unregistered sellers are a record-keeping requirement for the buyer to claim input tax credits, not a supplier-issued TSI.
 
 ### Record Retention
 
@@ -183,4 +164,3 @@ B2B e-invoicing remains voluntary with no current mandates.
 ## TODO
 
 - [ ] Study Peppol / PINT A-NZ requirements in detail
-- [ ] Replace TSI text descriptions with screenshots from official documentation
