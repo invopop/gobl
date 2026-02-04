@@ -44,20 +44,16 @@ The IRD number is the primary tax identifier in New Zealand, issued by Inland Re
 |-----------|---------------|
 | Format | 8 or 9 digits |
 | Display | `XXX-XXX-XXX` (with hyphens) |
-| Valid Range | 10,000,000 to 150,000,000 |
+| Valid Range | 10,000,000 to 200,000,000 |
 | Identity Key | `nz-ird` |
 
 #### Validation Approach
 
 Inland Revenue provides a [SOAP-based IRD Number Validation Service](https://www.ird.govt.nz/digital-service-providers/services-catalogue/customer-and-account/ird-number-validation) for asynchronous validation. However, this requires network calls and API registration.
 
-The validation algorithm itself is specified in the "Non-Resident Withholding Tax and Resident Withholding Tax Specification Document" (Inland Revenue, 31 March 2016). This document is not publicly available online but is distributed to registered Digital Service Providers. To request it, contact: **sdlu@ird.govt.nz**
+The validation algorithm is specified in the [Investment Income Reporting File Upload Specification](https://www.ird.govt.nz/-/media/project/ir/home/documents/digital-service-providers/iir-file-upload-specification/investment-income-reporting-file-upload-specification.pdf) (Inland Revenue).
 
-The algorithm has been independently implemented and verified by multiple open-source projects:
-- [nz-ird-validator (npm)](https://github.com/jarden-digital/nz-ird-validator)
-- [Spectrum.Ird (.NET)](https://github.com/twoteesbrett/Spectrum.Ird)
-
-This regime implements synchronous local validation using the modulo-11 check digit algorithm derived from these sources, instead of relying on asynchronous calls to the government SOAP endpoint.
+This regime implements synchronous local validation using this algorithm, instead of relying on asynchronous calls to the government SOAP endpoint. Check out IRD Validation Service source.
 
 ## Organization Identities
 
@@ -157,19 +153,32 @@ B2B e-invoicing remains voluntary with no current mandates.
 
 ## Official Sources
 
+### Tax Identities
+
 | Source | URL | Description |
 |--------|-----|-------------|
-| GST Rates (Wikipedia) | https://en.wikipedia.org/wiki/Goods_and_Services_Tax_(New_Zealand) | Historical rate changes |
-| Taxually GST Guide | https://www.taxually.com/manuals/new-zealand | Comprehensive GST guide |
-| Tax Accountant NZ | https://taxaccountant.kiwi.nz/gst-zero-rated-supplies | Zero-rated supply categories |
-| nz-ird-validator (npm) | https://github.com/jarden-digital/nz-ird-validator | IRD validation algorithm implementation |
-| Spectrum.Ird (.NET) | https://github.com/twoteesbrett/Spectrum.Ird | IRD validation algorithm implementation |
+| IRD Numbers Overview | https://www.ird.govt.nz/managing-my-tax/ird-numbers | Official IRD number information |
+| IRD Check Digit Algorithm | https://www.ird.govt.nz/-/media/project/ir/home/documents/digital-service-providers/iir-file-upload-specification/investment-income-reporting-file-upload-specification.pdf | Official IRD validation spec (IIR File Upload Specification) |
+| IRD Validation Service | https://www.ird.govt.nz/digital-service-providers/services-catalogue/customer-and-account/ird-number-validation | API-based validation (for reference) |
+| NZBN Official | https://www.nzbn.govt.nz/whats-an-nzbn/about/ | Official NZBN information |
 | GS1 Check Digit | https://www.gs1.org/services/check-digit-calculator | GS1 mod-10 algorithm |
-| Global VAT Compliance | https://www.globalvatcompliance.com/globalvatnews/new-zealand-mandates-peppol-e-invoicing-for-fovernment-agencies-2026/ | Mandate timeline |
+
+### Invoice Requirements
+
+| Source | URL | Description |
+|--------|-----|-------------|
+| Taxable Supply Information | https://www.ird.govt.nz/gst/tax-invoices-for-gst/how-tax-invoices-for-gst-work | Official TSI requirements |
+
+### E-Invoicing / Peppol
+
+| Source | URL | Description |
+|--------|-----|-------------|
+| NZ E-Invoicing Portal | https://www.einvoicing.govt.nz/peppol | Official government e-invoicing site |
+| MBIE Peppol Authority | https://www.mbie.govt.nz | Ministry of Business, Innovation and Employment |
 
 ## TODO
 
 - [ ] Find official source for Peppol mandate timeline (current source is third-party)
 - [ ] Study Peppol / PINT A-NZ requirements in detail
 - [ ] Replace TSI text descriptions with screenshots from official documentation
-- [ ] Implement validation for "Exported Goods and Services" and "Secondhand Goods" invoice requirements
+- [ ] NZBN Organization part

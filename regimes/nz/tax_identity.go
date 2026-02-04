@@ -54,8 +54,8 @@ func validateIRD(code string) error {
 		return errors.New("IRD number must contain only digits")
 	}
 
-	if num < 10000000 || num > 150000000 {
-		return errors.New("IRD number out of valid range (10,000,000 to 150,000,000)")
+	if num < 10000000 || num > 200000000 {
+		return errors.New("IRD number out of valid range (10,000,000 to 200,000,000)")
 	}
 
 	baseDigits := make([]int, 8)
