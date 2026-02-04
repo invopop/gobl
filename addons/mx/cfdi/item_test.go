@@ -64,3 +64,34 @@ func TestItemIdentityMigration(t *testing.T) {
 	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
 	assert.Equal(t, "1234", inv.Lines[0].Item.Identities[0].Code.String())
 }
+
+func TestItemNilIdentityHandling(t *testing.T) {
+	t.Run("item with nil identity in array", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Identities = []*org.Identity{nil}
+		require.NoError(t, inv.Calculate())
+		// Should not panic with nil identity
+	})
+
+	t.Run("item with mixed nil and valid identities", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Ext = nil
+		inv.Lines[0].Item.Identities = []*org.Identity{
+			nil,
+			{
+				Key:  cfdi.ExtKeyProdServ,
+				Code: "01010101",
+			},
+			nil,
+			{
+				Key:  "other",
+				Code: "5678",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// Should not panic and should migrate valid identities
+		assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+		assert.Len(t, inv.Lines[0].Item.Identities, 1)
+		assert.Equal(t, "5678", inv.Lines[0].Item.Identities[0].Code.String())
+	})
+}

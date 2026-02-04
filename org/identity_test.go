@@ -273,6 +273,20 @@ func TestIdentityForExtKey(t *testing.T) {
 		assert.Equal(t, "qux", id.Ext["baz"].String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
+	t.Run("nil identity in array", func(t *testing.T) {
+		idents := []*org.Identity{
+			nil,
+			{
+				Code: "5678",
+				Ext: tax.Extensions{
+					cbc.Key("baz"): "qux",
+				},
+			},
+		}
+		id := org.IdentityForExtKey(idents, "baz")
+		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
+	})
 }
 
 func TestIdentityJSONSchema(t *testing.T) {
