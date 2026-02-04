@@ -181,6 +181,9 @@ func IdentityForKey(in []*Identity, key ...cbc.Key) *Identity {
 // IdentityForExtKey helps return the identity with the first matching extension key.
 func IdentityForExtKey(in []*Identity, key cbc.Key) *Identity {
 	for _, v := range in {
+		if v == nil {
+			continue
+		}
 		if v.Ext.Get(key) != cbc.CodeEmpty {
 			return v
 		}

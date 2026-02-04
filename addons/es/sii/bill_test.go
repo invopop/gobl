@@ -51,6 +51,13 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		// Should not cause any issues
 	})
 
+	t.Run("customer with nil identity in array", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{nil}
+		require.NoError(t, inv.Calculate())
+		// Should not panic with nil identity
+	})
+
 	t.Run("passport identity normalization", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Identities = []*org.Identity{

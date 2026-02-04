@@ -49,6 +49,9 @@ func normalizeItem(item *org.Item) {
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)
 	for _, v := range item.Identities {
+		if v == nil {
+			continue
+		}
 		if v.Key.In(migratedExtensionKeys...) {
 			if item.Ext == nil {
 				item.Ext = make(tax.Extensions)
