@@ -30,7 +30,7 @@ func New() *tax.RegimeDef {
 			bill.InvoiceScenarios(),
 		},
 		Categories: taxCategories,
-		Identities: append(taxIdentities, orgIdentityDefinitions...),
+		Identities: append(identityKeyDefinitions, orgIdentityDefinitions...),
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -50,7 +50,7 @@ func Validate(doc any) error {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:
-		return validateOrgIdentity(obj)
+		return validateIdentity(obj)
 	}
 	return nil
 }
@@ -61,6 +61,6 @@ func Normalize(doc any) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
 	case *org.Identity:
-		normalizeOrgIdentity(obj)
+		normalizeIdentity(obj)
 	}
 }

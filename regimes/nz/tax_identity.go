@@ -7,28 +7,15 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
-
-// IdentityKeyIRD is the tax identity key for the NZ Inland Revenue Department number.
-const IdentityKeyIRD cbc.Key = "nz-ird"
 
 var (
 	irdPattern          = regexp.MustCompile(`^\d{8,9}$`)
 	irdPrimaryWeights   = []int{3, 2, 7, 6, 5, 4, 3, 2}
 	irdSecondaryWeights = []int{7, 4, 3, 2, 5, 2, 7, 6}
 )
-
-var taxIdentities = []*cbc.Definition{
-	{
-		Key: IdentityKeyIRD,
-		Name: i18n.String{
-			i18n.EN: "IRD Number",
-		},
-	},
-}
 
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil || tID.Code == "" {

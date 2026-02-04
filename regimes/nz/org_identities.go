@@ -2,17 +2,17 @@ package nz
 
 import (
 	"errors"
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/gs1"
 	"github.com/invopop/validation"
 )
 
-var nzbnPattern = regexp.MustCompile(`^\d{13}$`)
+// nzbnGS1Prefix is the GS1 prefix assigned to New Zealand.
+const nzbnGS1Prefix = "94"
 
 var orgIdentityDefinitions = []*cbc.Definition{
 	{
@@ -26,77 +26,33 @@ var orgIdentityDefinitions = []*cbc.Definition{
 	},
 }
 
-func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil || id.Key != org.IdentityKeyGLN {
-		return
-	}
+func normalizeNZBN(id *org.Identity) {
 	code := cbc.NormalizeString(id.Code.String())
 	code = strings.ReplaceAll(code, "-", "")
 	code = strings.ReplaceAll(code, " ", "")
 	id.Code = cbc.Code(code)
 }
 
-func validateOrgIdentity(id *org.Identity) error {
-	if id == nil || id.Key != org.IdentityKeyGLN {
-		return nil
-	}
+func validateNZBNIdentity(id *org.Identity) error {
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Code,
 			validation.Required,
-			validation.By(validateNZBNCode),
+			validation.By(checkNZBN),
 			validation.Skip,
 		),
 	)
 }
 
-func validateNZBNCode(value interface{}) error {
+func checkNZBN(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
 	}
-	return validateNZBN(code.String())
-}
-
-func validateNZBN(code string) error {
-	if !nzbnPattern.MatchString(code) {
-		return errors.New("NZBN must be exactly 13 digits")
+	if !gs1.CheckGLN(code) {
+		return errors.New("invalid NZBN: must be a valid 13-digit GLN")
 	}
-
-	if code[0:2] != "94" {
+	if !gs1.HasPrefix(code, nzbnGS1Prefix) {
 		return errors.New("NZBN must start with '94' (New Zealand GS1 prefix)")
 	}
-
-	digits := make([]int, 13)
-	for i := 0; i < 13; i++ {
-		var err error
-		digits[i], err = strconv.Atoi(string(code[i]))
-		if err != nil {
-			return errors.New("NZBN must contain only digits")
-		}
-	}
-
-	calculatedCheck := calculateGS1CheckDigit(digits[:12])
-
-	if calculatedCheck != digits[12] {
-		return errors.New("invalid NZBN: check digit mismatch")
-	}
-
 	return nil
-}
-
-func calculateGS1CheckDigit(digits []int) int {
-	sum := 0
-	for i := 0; i < 12; i++ {
-		if i%2 == 0 {
-			sum += digits[i] * 1
-		} else {
-			sum += digits[i] * 3
-		}
-	}
-
-	remainder := sum % 10
-	if remainder == 0 {
-		return 0
-	}
-	return 10 - remainder
 }

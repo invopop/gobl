@@ -1,0 +1,57 @@
+package nz
+
+import (
+	"strings"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/validation"
+)
+
+// IdentityKeyIRD is the identity key for the NZ Inland Revenue Department number.
+const IdentityKeyIRD cbc.Key = "nz-ird"
+
+var identityKeyDefinitions = []*cbc.Definition{
+	{
+		Key: IdentityKeyIRD,
+		Name: i18n.String{
+			i18n.EN: "IRD Number",
+		},
+	},
+}
+
+// normalizeIdentity handles normalization for org.Identity objects.
+func normalizeIdentity(id *org.Identity) {
+	if id == nil {
+		return
+	}
+	switch id.Key {
+	case IdentityKeyIRD:
+		code := id.Code.String()
+		code = strings.ReplaceAll(code, "-", "")
+		code = strings.ReplaceAll(code, " ", "")
+		id.Code = cbc.Code(code)
+	case org.IdentityKeyGLN:
+		normalizeNZBN(id)
+	}
+}
+
+// validateIdentity checks org.Identity objects for valid IRD or NZBN codes.
+func validateIdentity(id *org.Identity) error {
+	if id == nil {
+		return nil
+	}
+	switch id.Key {
+	case IdentityKeyIRD:
+		return validation.ValidateStruct(id,
+			validation.Field(&id.Code,
+				validation.By(validateTaxCode),
+				validation.Skip,
+			),
+		)
+	case org.IdentityKeyGLN:
+		return validateNZBNIdentity(id)
+	}
+	return nil
+}
