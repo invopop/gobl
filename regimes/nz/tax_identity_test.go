@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/nz"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -99,16 +100,16 @@ func TestIdentityKeys(t *testing.T) {
 	r := nz.New()
 	require.NotNil(t, r.Identities)
 
-	var foundIRD, foundGLN bool
+	var foundIRD, foundNZBN bool
 	for _, id := range r.Identities {
 		if id.Key == nz.IdentityKeyIRD {
 			foundIRD = true
 		}
-		if id.Key == "gln" {
-			foundGLN = true
+		if id.Key == org.IdentityKeyGLN {
+			foundNZBN = true
 		}
 	}
 
-	assert.True(t, foundIRD, "Should have nz-ird identity")
-	assert.True(t, foundGLN, "Should have gln identity")
+	assert.True(t, foundIRD, "Should have IRD identity")
+	assert.True(t, foundNZBN, "Should have NZBN identity")
 }
