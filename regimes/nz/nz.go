@@ -25,21 +25,40 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Pacific/Auckland",
 		Validator:  Validate,
 		Normalizer: Normalize,
-		Scenarios: []*tax.ScenarioSet{
-			bill.InvoiceScenarios(),
+		Tags: []*tax.TagSet{
+			invoiceTags(),
 		},
+		Scenarios: scenarios(),
 		Categories: taxCategories,
 		Identities: append(identityKeyDefinitions, orgIdentityDefinitions...),
-		Corrections: []*tax.CorrectionDefinition{
+		Corrections: corrections(),
+	}
+}
+
+const (
+	TagSecondHandGoods cbc.Key = "second-hand-goods"
+)
+
+func invoiceTags() *tax.TagSet {
+	return &tax.TagSet{
+		Schema: bill.ShortSchemaInvoice,
+		List: []*cbc.Definition{
 			{
-				Schema: bill.ShortSchemaInvoice,
-				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
+				Key: tax.TagExport,
+				Name: i18n.String{
+					i18n.EN: "Export",
+				},
+			},
+			{
+				Key: TagSecondHandGoods,
+				Name: i18n.String{
+					i18n.EN: "Second-hand goods",
 				},
 			},
 		},
 	}
 }
+
 
 func Validate(doc any) error {
 	switch obj := doc.(type) {

@@ -20,6 +20,10 @@ func validateInvoice(inv *bill.Invoice) error {
 				invoiceTotalExceeds(inv, thresholdMid),
 				validation.By(validateSupplierTaxID),
 			),
+			validation.When(
+				inv.HasTags(TagSecondHandGoods),
+				validation.By(validatePartyAddress),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
@@ -27,6 +31,11 @@ func validateInvoice(inv *bill.Invoice) error {
 				invoiceTotalExceeds(inv, thresholdHigh),
 				validation.Required,
 				validation.By(validateCustomerDetails),
+			),
+			validation.When(
+				inv.HasTags(tax.TagExport),
+				validation.Required,
+				validation.By(validatePartyAddress),
 			),
 			validation.Skip,
 		),
@@ -68,6 +77,17 @@ func validateCustomerDetails(value any) error {
 			),
 			validation.Skip,
 		),
+	)
+}
+
+func validatePartyAddress(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name, validation.Required),
+		validation.Field(&p.Addresses, validation.Required),
 	)
 }
 

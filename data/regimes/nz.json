@@ -7,6 +7,25 @@
   "country": "NZ",
   "currency": "NZD",
   "tax_scheme": "GST",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          }
+        },
+        {
+          "key": "second-hand-goods",
+          "name": {
+            "en": "Second-hand goods"
+          }
+        }
+      ]
+    }
+  ],
   "identities": [
     {
       "key": "nz-ird",
