@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`.
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
