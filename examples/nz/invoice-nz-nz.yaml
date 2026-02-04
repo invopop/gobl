@@ -1,0 +1,79 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e110"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "INV"
+code: "2024-001"
+
+supplier:
+  name: "Kiwi Software Solutions Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "123"
+      street: "Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: NZ
+  emails:
+    - addr: "billing@kiwisoftware.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "40"
+    item:
+      name: "Software Development Services"
+      price: "150.00"
+    taxes:
+      - cat: GST
+        rate: general
+
+  - i: 2
+    quantity: "1"
+    item:
+      name: "Annual Support License"
+      price: "2500.00"
+    taxes:
+      - cat: GST
+        rate: general
+
+  - i: 3
+    quantity: "1"
+    item:
+      name: "Export Consulting (International Client)"
+      price: "1000.00"
+    taxes:
+      - cat: GST
+        key: zero
+        rate: zero
+
+payment:
+  terms:
+    due_dates:
+      - date: "2024-07-15"
+        amount: "9775.00"
+    notes: "Payment due within 30 days"
+  instructions:
+    key: credit-transfer
+    detail: "Please pay by bank transfer"
+    ref: "INV-2024-001"
+
+notes:
+  - key: general
+    text: "Thank you for your business!"

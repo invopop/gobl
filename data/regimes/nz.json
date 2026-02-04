@@ -1,0 +1,154 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "New Zealand"
+  },
+  "time_zone": "Pacific/Auckland",
+  "country": "NZ",
+  "currency": "NZD",
+  "tax_scheme": "GST",
+  "identities": [
+    {
+      "key": "nz-ird",
+      "name": {
+        "en": "IRD Number"
+      }
+    },
+    {
+      "key": "gln",
+      "name": {
+        "en": "NZ Business Number"
+      },
+      "desc": {
+        "en": "13-digit identifier based on the GS1 Global Location Number (GLN) standard, starting with NZ prefix 94."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "en": "Standard GST rate applicable to most goods and services."
+          },
+          "values": [
+            {
+              "since": "2010-10-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "1989-07-01",
+              "percent": "12.5%"
+            },
+            {
+              "since": "1986-10-01",
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Zero-rated supplies including exports, international services, and certain land transactions between GST-registered parties."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "accommodation",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Long-term Accommodation"
+          },
+          "desc": {
+            "en": "Reduced rate for commercial accommodation provided for 28 or more consecutive days."
+          },
+          "values": [
+            {
+              "since": "2024-04-01",
+              "percent": "9.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
