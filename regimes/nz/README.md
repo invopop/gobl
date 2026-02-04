@@ -74,6 +74,8 @@ NZBN is validated using the standard GS1 check digit algorithm provided by the `
 
 NZBN is **not mandatory** for tax invoices. The IRD number remains the primary tax identifier. NZBN is required only for Peppol network participation (using the `0088:` prefix).
 
+Businesses registered on the NZBN can also create [Organization Parts](https://www.nzbn.govt.nz/whats-an-nzbn/identifying-different-parts-of-your-business/) to identify divisions, branches, or departments. Each Organization Part receives its own unique 13-digit GLN.
+
 ## Invoice Requirements
 
 New Zealand replaced the term "tax invoice" with **Taxable Supply Information (TSI)** on 1 April 2023. Required information can come from multiple sources rather than a single document.
@@ -141,6 +143,8 @@ Example: `0088:9429041234567`
 
 ### Mandate Timeline
 
+Disclaimer: based on multiple third-party sources. No official source found yet.
+
 | Date | Requirement |
 |------|-------------|
 | October 2019 | Peppol framework adopted |
@@ -178,7 +182,5 @@ B2B e-invoicing remains voluntary with no current mandates.
 
 ## TODO
 
-- [ ] Find official source for Peppol mandate timeline (current source is third-party)
 - [ ] Study Peppol / PINT A-NZ requirements in detail
 - [ ] Replace TSI text descriptions with screenshots from official documentation
-- [ ] NZBN Organization part
