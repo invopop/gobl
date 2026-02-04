@@ -58,6 +58,21 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		// Should not panic with nil identity
 	})
 
+	t.Run("nil identity followed by valid identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			nil,
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// Should not panic and should not normalize the second identity
+		// since only the first identity is processed (which is nil)
+		assert.Empty(t, inv.Customer.Identities[1].Ext)
+	})
+
 	t.Run("passport identity normalization", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Identities = []*org.Identity{
