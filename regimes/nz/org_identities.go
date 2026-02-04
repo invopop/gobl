@@ -2,7 +2,6 @@ package nz
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -27,10 +26,7 @@ var orgIdentityDefinitions = []*cbc.Definition{
 }
 
 func normalizeNZBN(id *org.Identity) {
-	code := cbc.NormalizeString(id.Code.String())
-	code = strings.ReplaceAll(code, "-", "")
-	code = strings.ReplaceAll(code, " ", "")
-	id.Code = cbc.Code(code)
+	id.Code = cbc.Code(normalizeCodeString(cbc.NormalizeString(id.Code.String())))
 }
 
 func validateNZBNIdentity(id *org.Identity) error {

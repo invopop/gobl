@@ -4,7 +4,6 @@ import (
 	"errors"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -21,10 +20,7 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil || tID.Code == "" {
 		return
 	}
-	code := tID.Code.String()
-	code = strings.ReplaceAll(code, "-", "")
-	code = strings.ReplaceAll(code, " ", "")
-	tID.Code = cbc.Code(code)
+	tID.Code = cbc.Code(normalizeCodeString(tID.Code.String()))
 }
 
 func validateTaxIdentity(tID *tax.Identity) error {
@@ -39,7 +35,7 @@ func validateTaxCode(value interface{}) error {
 		return nil
 	}
 
-	str := strings.ReplaceAll(cbc.NormalizeString(code.String()), "-", "")
+	str := normalizeCodeString(cbc.NormalizeString(code.String()))
 
 	if !irdPattern.MatchString(str) {
 		return errors.New("invalid tax ID format: must be 8-9 digit IRD number")

@@ -21,6 +21,12 @@ var identityKeyDefinitions = []*cbc.Definition{
 	},
 }
 
+func normalizeCodeString(code string) string {
+	code = strings.ReplaceAll(code, "-", "")
+	code = strings.ReplaceAll(code, " ", "")
+	return code
+}
+
 // normalizeIdentity handles normalization for org.Identity objects.
 func normalizeIdentity(id *org.Identity) {
 	if id == nil {
@@ -28,10 +34,7 @@ func normalizeIdentity(id *org.Identity) {
 	}
 	switch id.Key {
 	case IdentityKeyIRD:
-		code := id.Code.String()
-		code = strings.ReplaceAll(code, "-", "")
-		code = strings.ReplaceAll(code, " ", "")
-		id.Code = cbc.Code(code)
+		id.Code = cbc.Code(normalizeCodeString(id.Code.String()))
 	case org.IdentityKeyGLN:
 		normalizeNZBN(id)
 	}
