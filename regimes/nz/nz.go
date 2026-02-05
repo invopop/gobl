@@ -14,6 +14,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
+// New provides the tax region definition for New Zealand.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:   "NZ",
@@ -28,9 +29,9 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			invoiceTags(),
 		},
-		Scenarios: scenarios(),
-		Categories: taxCategories,
-		Identities: append(identityKeyDefinitions, orgIdentityDefinitions...),
+		Scenarios:   scenarios(),
+		Categories:  taxCategories,
+		Identities:  append(identityKeyDefinitions, orgIdentityDefinitions...),
 		Corrections: corrections(),
 	}
 }
@@ -49,7 +50,7 @@ func invoiceTags() *tax.TagSet {
 	}
 }
 
-
+// Validate checks the document type and runs validation checks.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
@@ -62,6 +63,7 @@ func Validate(doc any) error {
 	return nil
 }
 
+// Normalize performs normalization on the document.
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:

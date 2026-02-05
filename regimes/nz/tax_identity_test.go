@@ -13,11 +13,11 @@ import (
 
 func TestValidIRDNumbers(t *testing.T) {
 	tests := []string{
-		"49091850",    // Spec ex.1: primary weights, remainder 0, check digit 0
+		"49091850", // Spec ex.1: primary weights, remainder 0, check digit 0
 		"49-091-850",
-		"35901981",    // Spec ex.2: primary weights, remainder 10, 11-10=1
-		"49098576",    // Spec ex.3: primary gives 10, secondary gives 6
-		"136410132",   // Spec ex.4: 9-digit, secondary weights
+		"35901981",  // Spec ex.2: primary weights, remainder 10, 11-10=1
+		"49098576",  // Spec ex.3: primary gives 10, secondary gives 6
+		"136410132", // Spec ex.4: 9-digit, secondary weights
 		"136-410-132",
 	}
 

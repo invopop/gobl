@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// TaxRateAccommodation is the key for the long-term accommodation rate.
 const TaxRateAccommodation cbc.Key = "accommodation"
 
 var taxCategories = []*tax.CategoryDef{

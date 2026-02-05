@@ -329,4 +329,3 @@ func TestExportInvoiceRequiresCustomerName(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "name")
 }
-
