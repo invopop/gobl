@@ -1,0 +1,157 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ee4c1514ad7b444f6e7cd32cb495448a2ad15bd03af9ab3f11899911c27bc3dd"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e203",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-003",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"supplier": {
+			"name": "NZ Medical Supplies Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"num": "50",
+					"street": "Victoria Street",
+					"locality": "Christchurch",
+					"code": "8013",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "sales@nzmedical.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Regional Hospital",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"addresses": [
+				{
+					"num": "49",
+					"street": "Riddiford Street",
+					"locality": "Wellington",
+					"code": "6021",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "procurement@wrhospital.govt.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "100",
+				"item": {
+					"name": "Medical Diagnostic Equipment",
+					"price": "250.00",
+					"unit": "one"
+				},
+				"sum": "25000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "25000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "500",
+				"item": {
+					"name": "Sterile Surgical Supplies",
+					"price": "15.00",
+					"unit": "one"
+				},
+				"sum": "7500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "7500.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Installation and Training Services",
+					"price": "2000.00"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "2000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Payment due within 45 days - Government terms"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Please pay by bank transfer",
+				"ref": "INV-2024-003"
+			}
+		},
+		"totals": {
+			"sum": "34500.00",
+			"total": "34500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "zero",
+								"base": "34500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "34500.00",
+			"payable": "34500.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Medical supplies and services - zero-rated under section 11 of the GST Act."
+			}
+		]
+	}
+}

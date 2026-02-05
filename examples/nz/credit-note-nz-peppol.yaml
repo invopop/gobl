@@ -1,0 +1,73 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e210"
+$addons:
+  - "eu-en16931-v2017"
+type: credit-note
+currency: NZD
+issue_date: "2024-07-01"
+series: "CN"
+code: "2024-002"
+
+preceding:
+  - uuid: "3d7fdbdc-d037-11eb-a948-77cde488e111"
+    type: standard
+    series: "INV"
+    code: "2024-002"
+    issue_date: "2024-06-15"
+
+supplier:
+  name: "Kiwi Software Solutions Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  inboxes:
+    - key: peppol
+      code: "0088:9429041234567"
+  addresses:
+    - num: "123"
+      street: "Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: NZ
+  emails:
+    - addr: "billing@kiwisoftware.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  inboxes:
+    - key: peppol
+      code: "0088:9429049876543"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: "Annual Support License - Partial Refund"
+      price: "500.00"
+    taxes:
+      - cat: GST
+        rate: general
+
+payment:
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - iban: "NZ0012345678901234567890"
+        name: "ANZ Bank"
+  terms:
+    notes: "Credit to be applied to account"
+
+notes:
+  - key: general
+    text: "Credit note for partial refund on support license - customer downgraded plan."

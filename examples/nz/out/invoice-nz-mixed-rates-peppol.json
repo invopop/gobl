@@ -1,0 +1,277 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9327079986e5ab22cb076f84cf95ae036286a116f5509c61e3e77ef7a66968c8"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e208",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-008",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Kiwi Hospitality Group Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0088",
+					"code": "9429041234567"
+				}
+			],
+			"addresses": [
+				{
+					"num": "55",
+					"street": "Princes Street",
+					"locality": "Dunedin",
+					"code": "9016",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@kiwihospitality.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Tech Enterprises",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0088",
+					"code": "9429049876543"
+				}
+			],
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@wellingtontech.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "30",
+				"item": {
+					"name": "Executive Suite - Long Stay (30 nights)",
+					"price": "250.00",
+					"unit": "day"
+				},
+				"sum": "7500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "accommodation",
+						"percent": "9.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "7500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "20",
+				"item": {
+					"name": "Conference Room Hire",
+					"price": "500.00",
+					"unit": "day"
+				},
+				"sum": "10000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "10000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Catering Services - Corporate Event",
+					"price": "3500.00",
+					"unit": "one"
+				},
+				"sum": "3500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "3500.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Medical First Aid Training",
+					"price": "1500.00",
+					"unit": "one"
+				},
+				"sum": "1500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "1500.00"
+			},
+			{
+				"i": 5,
+				"quantity": "1",
+				"item": {
+					"name": "Insurance Coverage (Building)",
+					"price": "2000.00",
+					"unit": "one"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "exempt",
+						"ext": {
+							"cef-vatex": "VATEX-EU-79-C",
+							"untdid-tax-category": "E"
+						}
+					}
+				],
+				"total": "2000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2024-07-30",
+						"amount": "27200.00",
+						"percent": "100%"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "NZ0012345678901234567890",
+						"name": "ANZ Bank"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "24500.00",
+			"total": "24500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "7500.00",
+								"percent": "9.0%",
+								"amount": "675.00"
+							},
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "13500.00",
+								"percent": "15.0%",
+								"amount": "2025.00"
+							},
+							{
+								"key": "zero",
+								"ext": {
+									"untdid-tax-category": "Z"
+								},
+								"base": "1500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"cef-vatex": "VATEX-EU-79-C",
+									"untdid-tax-category": "E"
+								},
+								"base": "2000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "2700.00"
+					}
+				],
+				"sum": "2700.00"
+			},
+			"tax": "2700.00",
+			"total_with_tax": "27200.00",
+			"payable": "27200.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice includes multiple GST treatments:\n- Long-term accommodation (30+ days): 9% GST\n- Conference and catering: 15% GST (standard)\n- Medical training: 0% GST (zero-rated)\n- Insurance: Exempt from GST\n"
+			}
+		]
+	}
+}

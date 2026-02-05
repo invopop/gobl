@@ -4,28 +4,28 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6297268256626b834a2aeb9048c0f6d7753d14990bc37f41c4ba8f578ee8d125"
+			"val": "041745fe6e890769f03ced64e3be1ac8dc2de2d14729f29433fce8a5039018bb"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "NZ",
-		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e110",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e206",
 		"type": "standard",
-		"series": "INV",
+		"series": "ACC",
 		"code": "2024-001",
 		"issue_date": "2024-06-15",
 		"currency": "NZD",
 		"supplier": {
-			"name": "Kiwi Software Solutions Ltd",
+			"name": "Auckland Serviced Apartments Ltd",
 			"tax_id": {
 				"country": "NZ",
 				"code": "49091850"
 			},
 			"addresses": [
 				{
-					"num": "123",
-					"street": "Queen Street",
+					"num": "88",
+					"street": "Albert Street",
 					"locality": "Auckland",
 					"code": "1010",
 					"country": "NZ"
@@ -33,7 +33,7 @@
 			],
 			"emails": [
 				{
-					"addr": "billing@kiwisoftware.co.nz"
+					"addr": "accounts@aucklandserviced.co.nz"
 				}
 			]
 		},
@@ -61,30 +61,50 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "40",
+				"quantity": "35",
 				"item": {
-					"name": "Software Development Services",
-					"price": "150.00"
+					"name": "Corporate Apartment Rental - Unit 5A (35 nights)",
+					"price": "200.00",
+					"unit": "day"
 				},
-				"sum": "6000.00",
+				"sum": "7000.00",
 				"taxes": [
 					{
 						"cat": "GST",
 						"key": "standard",
-						"rate": "general",
-						"percent": "15.0%"
+						"rate": "accommodation",
+						"percent": "9.0%"
 					}
 				],
-				"total": "6000.00"
+				"total": "7000.00"
 			},
 			{
 				"i": 2,
-				"quantity": "1",
+				"quantity": "35",
 				"item": {
-					"name": "Annual Support License",
-					"price": "2500.00"
+					"name": "Utilities and Internet (included)",
+					"price": "25.00",
+					"unit": "day"
 				},
-				"sum": "2500.00",
+				"sum": "875.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "accommodation",
+						"percent": "9.0%"
+					}
+				],
+				"total": "875.00"
+			},
+			{
+				"i": 3,
+				"quantity": "2",
+				"item": {
+					"name": "Professional Cleaning Service",
+					"price": "150.00"
+				},
+				"sum": "300.00",
 				"taxes": [
 					{
 						"cat": "GST",
@@ -93,46 +113,22 @@
 						"percent": "15.0%"
 					}
 				],
-				"total": "2500.00"
-			},
-			{
-				"i": 3,
-				"quantity": "1",
-				"item": {
-					"name": "Export Consulting (International Client)",
-					"price": "1000.00"
-				},
-				"sum": "1000.00",
-				"taxes": [
-					{
-						"cat": "GST",
-						"key": "zero",
-						"rate": "zero",
-						"percent": "0.0%"
-					}
-				],
-				"total": "1000.00"
+				"total": "300.00"
 			}
 		],
 		"payment": {
 			"terms": {
-				"due_dates": [
-					{
-						"date": "2024-07-15",
-						"amount": "9775.00"
-					}
-				],
 				"notes": "Payment due within 30 days"
 			},
 			"instructions": {
 				"key": "credit-transfer",
 				"detail": "Please pay by bank transfer",
-				"ref": "INV-2024-001"
+				"ref": "ACC-2024-001"
 			}
 		},
 		"totals": {
-			"sum": "9500.00",
-			"total": "9500.00",
+			"sum": "8175.00",
+			"total": "8175.00",
 			"taxes": {
 				"categories": [
 					{
@@ -140,30 +136,30 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "8500.00",
-								"percent": "15.0%",
-								"amount": "1275.00"
+								"base": "7875.00",
+								"percent": "9.0%",
+								"amount": "708.75"
 							},
 							{
-								"key": "zero",
-								"base": "1000.00",
-								"percent": "0.0%",
-								"amount": "0.00"
+								"key": "standard",
+								"base": "300.00",
+								"percent": "15.0%",
+								"amount": "45.00"
 							}
 						],
-						"amount": "1275.00"
+						"amount": "753.75"
 					}
 				],
-				"sum": "1275.00"
+				"sum": "753.75"
 			},
-			"tax": "1275.00",
-			"total_with_tax": "10775.00",
-			"payable": "10775.00"
+			"tax": "753.75",
+			"total_with_tax": "8928.75",
+			"payable": "8928.75"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "Thank you for your business!"
+				"text": "Long-term commercial accommodation (35+ consecutive days) - GST at 9% rate effective from 1 April 2024. Cleaning services charged at standard 15% GST rate."
 			}
 		]
 	}

@@ -1,0 +1,64 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e209"
+type: credit-note
+currency: NZD
+issue_date: "2024-07-01"
+series: "CN"
+code: "2024-001"
+
+preceding:
+  - uuid: "3d7fdbdc-d037-11eb-a948-77cde488e110"
+    type: standard
+    series: "INV"
+    code: "2024-001"
+    issue_date: "2024-06-15"
+
+supplier:
+  name: "Kiwi Software Solutions Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "123"
+      street: "Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: NZ
+  emails:
+    - addr: "billing@kiwisoftware.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "10"
+    item:
+      name: "Software Development Services - Adjustment"
+      price: "150.00"
+      unit: "h"
+    taxes:
+      - cat: GST
+        rate: general
+
+payment:
+  terms:
+    notes: "Credit to be applied to next invoice"
+  instructions:
+    key: credit-transfer
+    detail: "Credit note - no payment required"
+
+notes:
+  - key: general
+    text: "Credit note issued for overbilled hours on original invoice INV/2024-001."

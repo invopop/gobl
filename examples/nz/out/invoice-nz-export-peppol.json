@@ -1,0 +1,185 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "100101d2dac375b5ae42ac90c29499501410bdd0ddbcbc8a0acae45eb79fe2a9"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e202",
+		"type": "standard",
+		"series": "EXP",
+		"code": "2024-002",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Kiwi Software Solutions Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0088",
+					"code": "9429041234567"
+				}
+			],
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Queen Street",
+					"locality": "Auckland",
+					"code": "1010",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@kiwisoftware.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sydney Tech Pty Ltd",
+			"tax_id": {
+				"country": "AU",
+				"code": "12345678901"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0151",
+					"code": "12345678901"
+				}
+			],
+			"addresses": [
+				{
+					"num": "100",
+					"street": "George Street",
+					"locality": "Sydney",
+					"region": "NSW",
+					"code": "2000",
+					"country": "AU"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@sydneytech.com.au"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "80",
+				"item": {
+					"name": "Software Development Services",
+					"price": "150.00",
+					"unit": "h"
+				},
+				"sum": "12000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "12000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Cloud Infrastructure Setup",
+					"price": "5000.00",
+					"unit": "one"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2024-07-15",
+						"amount": "17000.00",
+						"percent": "100%"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "NZ0012345678901234567890",
+						"name": "ANZ Bank"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "17000.00",
+			"total": "17000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "zero",
+								"ext": {
+									"untdid-tax-category": "Z"
+								},
+								"base": "17000.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "17000.00",
+			"payable": "17000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Export of services - GST zero-rated under section 11A(1) of the GST Act."
+			}
+		]
+	}
+}
