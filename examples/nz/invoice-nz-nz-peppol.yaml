@@ -1,0 +1,74 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e111"
+$addons:
+  - "eu-en16931-v2017"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "INV"
+code: "2024-002"
+
+supplier:
+  name: "Kiwi Software Solutions Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  inboxes:
+    - key: peppol
+      code: "0088:9429041234567"
+  addresses:
+    - num: "123"
+      street: "Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: NZ
+  emails:
+    - addr: "billing@kiwisoftware.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  inboxes:
+    - key: peppol
+      code: "0088:9429049876543"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "40"
+    item:
+      name: "Software Development Services"
+      price: "150.00"
+      unit: "h"
+    taxes:
+      - cat: GST
+        rate: general
+
+  - i: 2
+    quantity: "1"
+    item:
+      name: "Annual Support License"
+      price: "2500.00"
+    taxes:
+      - cat: GST
+        rate: general
+
+payment:
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - iban: "NZ0012345678901234567890"
+        name: "ANZ Bank"
+  terms:
+    due_dates:
+      - date: "2024-07-15"
+        percent: "100%"

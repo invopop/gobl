@@ -90,14 +90,34 @@ func TestTaxComboNormalization(t *testing.T) {
 		assert.Equal(t, "Z", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 
-	t.Run("sales tax", func(t *testing.T) {
+	t.Run("GST standard", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryGST,
-			Percent:  num.NewPercentage(19, 2),
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(15, 2),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.Equal(t, "19%", c.Percent.String())
+		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "15%", c.Percent.String())
+	})
+
+	t.Run("GST zero", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryGST,
+			Key:      tax.KeyZero,
+			Percent:  num.NewPercentage(0, 2),
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "Z", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("GST export", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryGST,
+			Key:      tax.KeyExport,
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 }
 

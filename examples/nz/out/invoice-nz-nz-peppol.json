@@ -1,0 +1,180 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ff0bf408c756f9945d033df730900536df7a4a4bae296036b3646ce1800d0fa3"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e111",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-002",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Kiwi Software Solutions Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0088",
+					"code": "9429041234567"
+				}
+			],
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Queen Street",
+					"locality": "Auckland",
+					"code": "1010",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@kiwisoftware.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Tech Enterprises",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0088",
+					"code": "9429049876543"
+				}
+			],
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@wellingtontech.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"name": "Software Development Services",
+					"price": "150.00",
+					"unit": "h"
+				},
+				"sum": "6000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "6000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Annual Support License",
+					"price": "2500.00",
+					"unit": "one"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "2500.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2024-07-15",
+						"amount": "9775.00",
+						"percent": "100%"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "NZ0012345678901234567890",
+						"name": "ANZ Bank"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "8500.00",
+			"total": "8500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "8500.00",
+								"percent": "15.0%",
+								"amount": "1275.00"
+							}
+						],
+						"amount": "1275.00"
+					}
+				],
+				"sum": "1275.00"
+			},
+			"tax": "1275.00",
+			"total_with_tax": "9775.00",
+			"payable": "9775.00"
+		}
+	}
+}

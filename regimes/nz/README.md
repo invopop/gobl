@@ -163,4 +163,4 @@ B2B e-invoicing remains voluntary with no current mandates.
 
 ## TODO
 
-- [ ] Study Peppol / PINT A-NZ requirements in detail
+- [ ] Provide more sample invoices for different kinds

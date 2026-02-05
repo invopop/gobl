@@ -33,6 +33,16 @@ var vatKeyMap = tax.Extensions{
 	tax.KeyOutsideScope:   TaxCategoryOutsideScope,
 }
 
+// GST key mapping from GOBL tax keys to UNTDID 5305 codes.
+// GST (Goods and Services Tax) is used in CA, IN, AU, NZ and other countries.
+var gstKeyMap = tax.Extensions{
+	tax.KeyStandard:     TaxCategoryStandard,
+	tax.KeyZero:         TaxCategoryZero,
+	tax.KeyExempt:       TaxCategoryExempt,
+	tax.KeyExport:       TaxCategoryExport,
+	tax.KeyOutsideScope: TaxCategoryOutsideScope,
+}
+
 func normalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
 	case tax.CategoryVAT:
@@ -45,6 +55,16 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Key = k
 		}
 		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, vatKeyMap.Get(tc.Key))
+	case tax.CategoryGST:
+		if tc.Key.IsEmpty() {
+			// Try doing a reverse map of the GST category key
+			k := gstKeyMap.Lookup(tc.Ext.Get(untdid.ExtKeyTaxCategory))
+			if k.IsEmpty() {
+				k = tax.KeyStandard
+			}
+			tc.Key = k
+		}
+		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, gstKeyMap.Get(tc.Key))
 	case es.TaxCategoryIGIC:
 		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, TaxCategoryIGIC)
 	case es.TaxCategoryIPSI:
@@ -67,6 +87,10 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, vatKeyMap.Values()...),
 			),
 			validation.When(
+				tc.Category == tax.CategoryGST,
+				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, gstKeyMap.Values()...),
+			),
+			validation.When(
 				tc.Category == es.TaxCategoryIGIC,
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIGIC),
 			),
@@ -75,7 +99,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIPSI),
 			),
 			validation.When(
-				!tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
+				!tc.Category.In(tax.CategoryVAT, tax.CategoryGST, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryOutsideScope),
 			),
 			validation.When(
