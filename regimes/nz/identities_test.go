@@ -97,8 +97,6 @@ func TestNonGLNIdentitySkipped(t *testing.T) {
 	assert.NoError(t, err, "Non-GLN identities should be skipped")
 }
 
-// --- IRD as org.Identity tests ---
-
 func TestValidIRDAsOrgIdentity(t *testing.T) {
 	tests := []string{
 		"49091850",

@@ -139,7 +139,6 @@ func TestMidValueInvoiceRequiresSupplierTaxCode(t *testing.T) {
 	inv.Lines[0].Item.Price = num.NewAmount(500, 0)
 	inv.Supplier.TaxID = &tax.Identity{Country: "NZ"}
 	require.NoError(t, inv.Calculate())
-	// Total = $500 + $75 GST = $575 (mid-value)
 	assert.Equal(t, "575.00", inv.Totals.TotalWithTax.String())
 	err := inv.Validate()
 	require.Error(t, err)
@@ -287,7 +286,6 @@ func TestExportInvoiceRequiresCustomer(t *testing.T) {
 	inv := validInvoice()
 	inv.SetTags(tax.TagExport)
 	inv.Customer = nil
-	// Use low value to isolate tag validation from threshold
 	inv.Lines[0].Quantity = num.MakeAmount(1, 0)
 	inv.Lines[0].Item.Price = num.NewAmount(50, 0)
 	require.NoError(t, inv.Calculate())

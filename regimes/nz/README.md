@@ -154,6 +154,8 @@ B2B e-invoicing remains voluntary with no current mandates.
 |--------|-----|-------------|
 | Taxable Supply Information | https://www.ird.govt.nz/gst/tax-invoices-for-gst/how-tax-invoices-for-gst-work | Official TSI requirements |
 | Charging GST | https://www.ird.govt.nz/gst/charging-gst | Official requirements |
+| Exempt Supplies | https://www.ird.govt.nz/gst/charging-gst/exempt-supplies | Financial services, residential rent, fine metals |
+| Zero-rated Supplies | https://www.ird.govt.nz/gst/charging-gst/zero-rated-supplies | Exports, land transactions, going concerns |
 | GST for overseas business | https://www.ird.govt.nz/gst/gst-for-overseas-businesses | Overseas business |
 
 ### E-Invoicing / Peppol

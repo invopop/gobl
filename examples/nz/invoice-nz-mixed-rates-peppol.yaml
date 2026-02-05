@@ -91,7 +91,11 @@ lines:
       - cat: GST
         key: exempt
         ext:
-          cef-vatex: "VATEX-EU-79-C" # TODO: Using VATEX code to indicate GST exemption for insurance in New Zealand is wrong. Need to define a proper code for GST exemption in New Zealand.
+          # TODO: VATEX codes are European (EU Directive 2006/112/EC) and incorrect for NZ GST.
+          # PINT A-NZ does NOT require (not present here) - only UNTDID 5305
+          # category codes (E, S, Z, G, O) are needed. This VATEX is only here because the
+          # eu-en16931-v2017 addon enforces BR-E-10 which requires VATEX for category "E".
+          cef-vatex: "VATEX-EU-79-C"
 
 payment:
   instructions:
