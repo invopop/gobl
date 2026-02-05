@@ -138,7 +138,7 @@ B2B e-invoicing remains voluntary with no current mandates.
 
 ## Official Sources
 
-### Tax Identities
+### Identities and Tax identities
 
 | Source | URL | Description |
 |--------|-----|-------------|
@@ -148,11 +148,13 @@ B2B e-invoicing remains voluntary with no current mandates.
 | NZBN Official | https://www.nzbn.govt.nz/whats-an-nzbn/about/ | Official NZBN information |
 | GS1 Check Digit | https://www.gs1.org/services/check-digit-calculator | GS1 mod-10 algorithm |
 
-### Invoice Requirements
+### GST
 
 | Source | URL | Description |
 |--------|-----|-------------|
 | Taxable Supply Information | https://www.ird.govt.nz/gst/tax-invoices-for-gst/how-tax-invoices-for-gst-work | Official TSI requirements |
+| Charging GST | https://www.ird.govt.nz/gst/charging-gst | Official requirements |
+| GST for overseas business | https://www.ird.govt.nz/gst/gst-for-overseas-businesses | Overseas business |
 
 ### E-Invoicing / Peppol
 
@@ -160,7 +162,3 @@ B2B e-invoicing remains voluntary with no current mandates.
 |--------|-----|-------------|
 | NZ E-Invoicing Portal | https://www.einvoicing.govt.nz/peppol | Official government e-invoicing site |
 | MBIE Peppol Authority | https://www.mbie.govt.nz | Ministry of Business, Innovation and Employment |
-
-## TODO
-
-- [ ] Provide more sample invoices for different kinds
