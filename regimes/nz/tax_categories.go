@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,6 +20,29 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Title: i18n.String{
 			i18n.EN: "Goods and Services Tax",
+		},
+		Description: &i18n.String{
+			i18n.EN: here.Doc(`
+				New Zealand's Goods and Services Tax (GST) is a consumption tax applied to
+				most goods and services sold in New Zealand. Introduced in 1986, it operates
+				as a value-added tax collected at each stage of the supply chain. Businesses
+				registered for GST charge the tax on their sales and can claim back GST paid
+				on business purchases. The current standard rate is 15%.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Goods and Services Tax Act 1985",
+				},
+				URL: "https://www.legislation.govt.nz/act/public/1985/0141/latest/DLM81035.html",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "IRD - Charging GST",
+				},
+				URL: "https://www.ird.govt.nz/gst/charging-gst",
+			},
 		},
 		Keys: tax.GlobalGSTKeys(),
 		Rates: []*tax.RateDef{

@@ -25,7 +25,18 @@
       "key": "nz-ird",
       "name": {
         "en": "IRD Number"
-      }
+      },
+      "desc": {
+        "en": "The IRD number is the primary tax identifier in New Zealand, issued by\nInland Revenue to individuals, companies, trusts, and other entities.\nFormat: 8 or 9 digits (XXX-XXX-XXX when displayed). Valid range:\n10,000,000 to 200,000,000. For GST-registered businesses, the IRD\nnumber also serves as their GST number."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "IRD Numbers Overview"
+          },
+          "url": "https://www.ird.govt.nz/managing-my-tax/ird-numbers"
+        }
+      ]
     },
     {
       "key": "gln",
@@ -33,8 +44,22 @@
         "en": "NZ Business Number"
       },
       "desc": {
-        "en": "13-digit identifier based on the GS1 Global Location Number (GLN) standard, starting with NZ prefix 94."
-      }
+        "en": "The NZBN is a globally unique 13-digit identifier automatically assigned to\ncompanies registered with the New Zealand Companies Office. Other entities\ncan apply voluntarily. Based on the GS1 Global Location Number (GLN) standard,\nit always starts with the New Zealand GS1 prefix '94'. For Peppol e-invoicing,\nthe NZBN is used with the '0088:' scheme identifier (e.g., 0088:9429041234567)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "NZBN Official"
+          },
+          "url": "https://www.nzbn.govt.nz/whats-an-nzbn/about/"
+        },
+        {
+          "title": {
+            "en": "GS1 Check Digit Calculator"
+          },
+          "url": "https://www.gs1.org/services/check-digit-calculator"
+        }
+      ]
     }
   ],
   "scenarios": [
@@ -70,6 +95,9 @@
       },
       "title": {
         "en": "Goods and Services Tax"
+      },
+      "desc": {
+        "en": "New Zealand's Goods and Services Tax (GST) is a consumption tax applied to\nmost goods and services sold in New Zealand. Introduced in 1986, it operates\nas a value-added tax collected at each stage of the supply chain. Businesses\nregistered for GST charge the tax on their sales and can claim back GST paid\non business purchases. The current standard rate is 15%."
       },
       "keys": [
         {
@@ -160,6 +188,20 @@
               "percent": "9.0%"
             }
           ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Goods and Services Tax Act 1985"
+          },
+          "url": "https://www.legislation.govt.nz/act/public/1985/0141/latest/DLM81035.html"
+        },
+        {
+          "title": {
+            "en": "IRD - Charging GST"
+          },
+          "url": "https://www.ird.govt.nz/gst/charging-gst"
         }
       ]
     }
