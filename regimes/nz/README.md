@@ -51,9 +51,37 @@ The IRD number is the primary tax identifier in New Zealand, issued by Inland Re
 
 Inland Revenue provides a [SOAP-based IRD Number Validation Service](https://www.ird.govt.nz/digital-service-providers/services-catalogue/customer-and-account/ird-number-validation) for asynchronous validation. However, this requires network calls and API registration.
 
-The validation algorithm is specified in the [Investment Income Reporting File Upload Specification](https://www.ird.govt.nz/-/media/project/ir/home/documents/digital-service-providers/iir-file-upload-specification/investment-income-reporting-file-upload-specification.pdf) (Inland Revenue).
+This regime implements synchronous local validation using the algorithm specified in the [Investment Income Reporting File Upload Specification](https://www.ird.govt.nz/-/media/project/ir/home/documents/digital-service-providers/iir-file-upload-specification/investment-income-reporting-file-upload-specification.pdf) (Inland Revenue), instead of relying on asynchronous calls to the government SOAP endpoint.
 
-This regime implements synchronous local validation using this algorithm, instead of relying on asynchronous calls to the government SOAP endpoint. Check out IRD Validation Service source.
+#### IRD Number Validation Algorithm
+
+1. **Check the valid range**
+   - If the IRD number is < 10,000,000 or > 200,000,000 then the number is invalid
+
+2. **Form the eight digit base number**
+   - Remove the trailing check digit
+   - If the resulting number is seven digits long, pad to eight digits by adding a leading zero
+
+3. **Calculate the check digit**
+   - Assign weight factors to each of the 8 base digits (left to right): 3, 2, 7, 6, 5, 4, 3, 2
+   - Sum the products of each digit and its weight factor
+   - Divide the sum by 11
+   - If remainder is 0, the calculated check digit is 0
+   - If remainder is not 0, subtract the remainder from 11 to get the calculated check digit
+   - If calculated check digit is 0-9, go to step 5
+   - If calculated check digit is 10, continue with step 4
+
+4. **Re-calculate the check digit** (only if step 3 yielded 10)
+   - Assign secondary weight factors (left to right): 7, 4, 3, 2, 5, 2, 7, 6
+   - Sum the products of each digit and its weight factor
+   - Divide the sum by 11
+   - If remainder is 0, the calculated check digit is 0
+   - If remainder is not 0, subtract the remainder from 11
+   - If calculated check digit is 10, the IRD number is invalid
+
+5. **Compare the check digit**
+   - Compare the calculated check digit to the last digit of the original IRD number
+   - If they match, the IRD number is valid
 
 ## Organization Identities
 
@@ -80,25 +108,57 @@ New Zealand replaced the term "tax invoice" with **Taxable Supply Information (T
 
 ### Required Information by Transaction Value
 
-#### Supplies up to $200 NZD (inclusive of GST)
+#### Supplies $200 or less (inclusive of GST)
 
-![Supplies up to $200](resources/tsi/200$orless.png)
+| Information Type | Details Required |
+|------------------|------------------|
+| Seller's details | Name or trade name |
+| Buyer's details | Not required |
+| Date | Date of invoice, or time of supply if no invoice issued |
+| Goods/services | Description of the goods or services |
+| Payment | The consideration for the supply |
 
-#### Supplies over $200 up to $1,000 NZD (inclusive of GST)
+#### Supplies over $200 and up to $1,000 (inclusive of GST)
 
-![Supplies over $200 up to $1,000](resources/tsi/morethan200$andupto1000$.png)
+| Information Type | Details Required |
+|------------------|------------------|
+| Seller's details | Name or trade name, GST number |
+| Buyer's details | Not required |
+| Date | Date of invoice, or time of supply if no invoice issued |
+| Goods/services | Description of the goods or services |
+| Payment | Either: (1) GST-exclusive amount + GST amount + GST-inclusive amount; OR (2) GST-inclusive amount + statement that GST is included |
 
-#### Supplies over $1,000 NZD (inclusive of GST)
+#### Supplies over $1,000 (inclusive of GST)
 
-![Supplies over $1,000](resources/tsi/morethan1000$.png)
+| Information Type | Details Required |
+|------------------|------------------|
+| Seller's details | Name or trade name, GST number |
+| Buyer's details | Name + at least one identifier: address (physical/postal), phone, email, trading name, NZBN, or website URL |
+| Date | Date of invoice, or time of supply if no invoice issued |
+| Goods/services | Description of the goods or services |
+| Payment | Either: (1) GST-exclusive amount + GST amount + GST-inclusive amount; OR (2) GST-inclusive amount + statement that GST is included |
 
-#### Exported Goods and Services
+#### Imported Goods and Services
 
-![Exported goods and services](resources/tsi/importedgoodsandservices.png)
+| Information Type | Details Required |
+|------------------|------------------|
+| Seller's details | Name or trade name, Address |
+| Buyer's details | Not required |
+| Date | Date of invoice, or time of supply if no invoice issued |
+| Goods/services | Description of the goods or services |
+| Payment | The consideration + any salary/wages paid to employees of seller (or commonly owned group) + any interest incurred by seller (or commonly owned group) |
 
 #### Secondhand Goods
 
-Not implemented as an invoice scenario. Second-hand goods purchases from unregistered sellers are a record-keeping requirement for the buyer to claim input tax credits, not a supplier-issued TSI.
+| Information Type | Details Required |
+|------------------|------------------|
+| Seller's details | Name or trade name, Address |
+| Buyer's details | Not required |
+| Date | Date on which goods were supplied |
+| Goods/services | Description + quantity or volume of the goods |
+| Payment | The consideration for the supply |
+
+Note: Not implemented as an invoice scenario. Secondhand goods purchases from unregistered sellers are a record-keeping requirement for the buyer to claim input tax credits, not a supplier-issued TSI.
 
 ### Record Retention
 
