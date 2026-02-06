@@ -53,18 +53,6 @@ func newAddon() *tax.AddonDef {
 				| export | G | Export outside the EU |
 				| outside-scope | O | Not subject to VAT |
 
-				### GST
-
-				GST (Goods and Services Tax) is supported for countries like India, Canada, Australia, New Zealand and other countries:
-
-				| GOBL Tax Key | UNTDID 5305 Code | Description |
-				|--------------|------------------|-------------|
-				| standard | S | Standard rate |
-				| zero | Z | Zero rated goods |
-				| exempt | E | Exempt from tax |
-				| export | G | Free export |
-				| outside-scope | O | Not subject to GST |
-
 				### Other
 
 				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
