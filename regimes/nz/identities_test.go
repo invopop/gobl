@@ -76,3 +76,16 @@ func TestNormalizeIRDAsOrgIdentity(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeIdentityNil(_ *testing.T) {
+	r := nz.New()
+	var id *org.Identity
+	r.Normalizer(id)
+}
+
+func TestValidateIdentityNil(t *testing.T) {
+	r := nz.New()
+	var id *org.Identity
+	err := r.Validator(id)
+	assert.NoError(t, err, "nil identity should pass validation")
+}

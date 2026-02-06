@@ -22,15 +22,17 @@ func TestValidNZBNNumbers(t *testing.T) {
 
 func TestInvalidNZBNNumbers(t *testing.T) {
 	tests := []struct {
-		name string
-		nzbn string
+		name   string
+		nzbn   string
+		errMsg string
 	}{
-		{"WrongPrefix", "9329041234567"},
-		{"TooShort", "942904123456"},
-		{"TooLong", "94290412345638"},
-		{"BadCheckDigit", "9429041234560"},
-		{"Letters", "942904123456A"},
-		{"SpecialChars", "942904!123456"},
+		{"TooShort", "942904123456", "invalid NZBN"},
+		{"TooLong", "94290412345638", "invalid NZBN"},
+		{"BadCheckDigit", "9429041234560", "invalid NZBN"},
+		{"Letters", "942904123456A", "invalid NZBN"},
+		{"SpecialChars", "942904!123456", "invalid NZBN"},
+		// Valid GLN but wrong GS1 prefix (UK "50" instead of NZ "94")
+		{"WrongPrefix", "5012345678900", "must start with '94'"},
 	}
 
 	r := nz.New()
@@ -43,6 +45,7 @@ func TestInvalidNZBNNumbers(t *testing.T) {
 			r.Normalizer(id)
 			err := r.Validator(id)
 			assert.Error(t, err, "NZBN %s should be invalid", tt.nzbn)
+			assert.Contains(t, err.Error(), tt.errMsg)
 		})
 	}
 }

@@ -37,18 +37,21 @@ func TestValidIRDNumbers(t *testing.T) {
 
 func TestInvalidIRDNumbers(t *testing.T) {
 	tests := []struct {
-		name string
-		ird  string
+		name   string
+		ird    string
+		errMsg string
 	}{
-		{"TooShort", "1234567"},
-		{"TooLong", "1234567890"},
-		{"OutOfRangeLow", "09999999"},
-		{"OutOfRangeHigh", "200000001"},
-		{"BadCheckDigit", "49091851"},
-		{"BadCheckDigitSecondary", "136410133"}, // Spec ex.5: secondary check digit mismatch
-		{"BelowRange", "9125568"},               // Spec ex.6: below valid range
-		{"AllZeros", "00000000"},
-		{"Letters", "4909185A"},
+		{"TooShort", "1234567", "must be 8-9 digit"},
+		{"TooLong", "1234567890", "must be 8-9 digit"},
+		{"OutOfRangeLow", "09999999", "out of valid range"},
+		{"OutOfRangeHigh", "200000001", "out of valid range"},
+		{"BadCheckDigit", "49091851", "check digit mismatch"},
+		{"BadCheckDigitSecondary", "136410133", "check digit mismatch"}, // Spec ex.5: secondary check digit mismatch
+		{"BelowRange", "9125568", "must be 8-9 digit"},                  // Spec ex.6: below valid range
+		{"AllZeros", "00000000", "out of valid range"},
+		{"Letters", "4909185A", "must be 8-9 digit"},
+		// Both primary and secondary weights give checkDigit == 10
+		{"BothWeightsGive10", "10000050", "check digit calculation failed"},
 	}
 
 	r := nz.New()
@@ -61,6 +64,7 @@ func TestInvalidIRDNumbers(t *testing.T) {
 			r.Normalizer(tID)
 			err := r.Validator(tID)
 			assert.Error(t, err, "IRD %s should be invalid", tt.ird)
+			assert.Contains(t, err.Error(), tt.errMsg)
 		})
 	}
 }
@@ -116,4 +120,24 @@ func TestIdentityKeys(t *testing.T) {
 
 	assert.True(t, foundIRD, "Should have IRD identity")
 	assert.True(t, foundNZBN, "Should have NZBN identity")
+}
+
+func TestNormalizeTaxIdentityNil(_ *testing.T) {
+	r := nz.New()
+	var tID *tax.Identity
+	r.Normalizer(tID)
+}
+
+func TestNormalizeTaxIdentityEmptyCode(t *testing.T) {
+	r := nz.New()
+	tID := &tax.Identity{Country: "NZ", Code: ""}
+	r.Normalizer(tID)
+	assert.Equal(t, "", tID.Code.String())
+}
+
+func TestValidateTaxIdentityEmptyCode(t *testing.T) {
+	r := nz.New()
+	tID := &tax.Identity{Country: "NZ", Code: ""}
+	err := r.Validator(tID)
+	assert.NoError(t, err, "Empty code should pass validation")
 }
