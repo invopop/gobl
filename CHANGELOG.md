@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## [v0.308.0] - 2026-02-05
-
 ### Added
 
 - `nz`: Added the New Zealand regime
