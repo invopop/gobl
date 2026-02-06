@@ -95,7 +95,7 @@ notes:
   - key: general
     text: |
       Invoice includes multiple GST treatments:
-      - Long-term accommodation (30+ days): 9% GST
+      - Long-term accommodation (28+ days): 9% GST
       - Conference and catering: 15% GST (standard)
       - Medical training: 0% GST (zero-rated)
       - Insurance: Exempt from GST
