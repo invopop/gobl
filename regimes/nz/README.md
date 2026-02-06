@@ -164,7 +164,7 @@ Note: Not implemented as an invoice scenario. Secondhand goods purchases from un
 
 GST records must be retained for **7 years**.
 
-## E-Invoicing (Peppol)
+## [TODO] E-Invoicing (Peppol)
 
 New Zealand adopted the Peppol framework in October 2019, with MBIE (Ministry of Business, Innovation and Employment) serving as the Peppol Authority.
 
