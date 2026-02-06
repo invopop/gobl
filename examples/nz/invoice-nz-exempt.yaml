@@ -1,0 +1,75 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e204"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "INV"
+code: "2024-004"
+
+supplier:
+  name: "NZ Financial Services Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "1"
+      street: "Willis Street"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "billing@nzfinancial.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: "Financial Advisory Services - Q2 2024"
+      price: "5000.00"
+    taxes:
+      - cat: GST
+        key: exempt
+
+  - i: 2
+    quantity: "1"
+    item:
+      name: "Investment Management Fee"
+      price: "2500.00"
+    taxes:
+      - cat: GST
+        key: exempt
+
+  - i: 3
+    quantity: "1"
+    item:
+      name: "Insurance Brokerage Services"
+      price: "1500.00"
+    taxes:
+      - cat: GST
+        key: exempt
+
+payment:
+  terms:
+    notes: "Payment due within 30 days"
+  instructions:
+    key: credit-transfer
+    detail: "Please pay by bank transfer"
+    ref: "INV-2024-004"
+
+notes:
+  - key: general
+    text: "Financial services - exempt from GST under section 14 of the GST Act."

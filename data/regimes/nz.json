@@ -1,0 +1,209 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "New Zealand"
+  },
+  "time_zone": "Pacific/Auckland",
+  "country": "NZ",
+  "currency": "NZD",
+  "tax_scheme": "GST",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "nz-ird",
+      "name": {
+        "en": "IRD Number"
+      },
+      "desc": {
+        "en": "The IRD number is the primary tax identifier in New Zealand, issued by\nInland Revenue to individuals, companies, trusts, and other entities.\nFormat: 8 or 9 digits (XXX-XXX-XXX when displayed). Valid range:\n10,000,000 to 200,000,000. For GST-registered businesses, the IRD\nnumber also serves as their GST number."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "IRD Numbers Overview"
+          },
+          "url": "https://www.ird.govt.nz/managing-my-tax/ird-numbers"
+        }
+      ]
+    },
+    {
+      "key": "gln",
+      "name": {
+        "en": "NZ Business Number"
+      },
+      "desc": {
+        "en": "The NZBN is a globally unique 13-digit identifier automatically assigned to\ncompanies registered with the New Zealand Companies Office. Other entities\ncan apply voluntarily. Based on the GS1 Global Location Number (GLN) standard,\nit always starts with the New Zealand GS1 prefix '94'. For Peppol e-invoicing,\nthe NZBN is used with the '0088:' scheme identifier (e.g., 0088:9429041234567)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "NZBN Official"
+          },
+          "url": "https://www.nzbn.govt.nz/whats-an-nzbn/about/"
+        },
+        {
+          "title": {
+            "en": "GS1 Check Digit Calculator"
+          },
+          "url": "https://www.gs1.org/services/check-digit-calculator"
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "desc": {
+        "en": "New Zealand's Goods and Services Tax (GST) is a consumption tax applied to\nmost goods and services sold in New Zealand. Introduced in 1986, it operates\nas a value-added tax collected at each stage of the supply chain. Businesses\nregistered for GST charge the tax on their sales and can claim back GST paid\non business purchases. The current standard rate is 15%."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "en": "Applies to all taxable supplies of goods and services that are not zero-rated or exempt."
+          },
+          "values": [
+            {
+              "since": "2010-10-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "1989-07-01",
+              "percent": "12.5%"
+            },
+            {
+              "since": "1986-10-01",
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Applies to exported goods and services, international transport, land transactions between GST-registered parties, going concern sales, and duty-free goods."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "accommodation",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Long-term Accommodation"
+          },
+          "desc": {
+            "en": "Applies to commercial accommodation provided for 28 or more consecutive days. Effective from 1 April 2024."
+          },
+          "values": [
+            {
+              "since": "2024-04-01",
+              "percent": "9.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Goods and Services Tax Act 1985"
+          },
+          "url": "https://www.legislation.govt.nz/act/public/1985/0141/latest/DLM81035.html"
+        },
+        {
+          "title": {
+            "en": "IRD - Charging GST"
+          },
+          "url": "https://www.ird.govt.nz/gst/charging-gst"
+        }
+      ]
+    }
+  ]
+}

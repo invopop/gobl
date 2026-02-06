@@ -1,0 +1,77 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e206"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "ACC"
+code: "2024-001"
+
+supplier:
+  name: "Auckland Serviced Apartments Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "88"
+      street: "Albert Street"
+      locality: "Auckland"
+      code: "1010"
+      country: NZ
+  emails:
+    - addr: "accounts@aucklandserviced.co.nz"
+
+customer:
+  name: "Wellington Tech Enterprises"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "456"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@wellingtontech.co.nz"
+
+lines:
+  - i: 1
+    quantity: "35"
+    item:
+      name: "Corporate Apartment Rental - Unit 5A (35 nights)"
+      price: "200.00"
+      unit: "day"
+    taxes:
+      - cat: GST
+        rate: accommodation
+
+  - i: 2
+    quantity: "35"
+    item:
+      name: "Utilities and Internet (included)"
+      price: "25.00"
+      unit: "day"
+    taxes:
+      - cat: GST
+        rate: accommodation
+
+  - i: 3
+    quantity: "2"
+    item:
+      name: "Professional Cleaning Service"
+      price: "150.00"
+    taxes:
+      - cat: GST
+        rate: general
+
+payment:
+  terms:
+    notes: "Payment due within 30 days"
+  instructions:
+    key: credit-transfer
+    detail: "Please pay by bank transfer"
+    ref: "ACC-2024-001"
+
+notes:
+  - key: general
+    text: "Long-term commercial accommodation (28+ consecutive days) - GST at 9% rate effective from 1 April 2024. Cleaning services charged at standard 15% GST rate."

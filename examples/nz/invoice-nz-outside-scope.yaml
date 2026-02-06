@@ -1,0 +1,66 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e205"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "INV"
+code: "2024-005"
+
+supplier:
+  name: "Kiwi Holdings Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "200"
+      street: "Customhouse Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "accounts@kiwiholdings.co.nz"
+
+customer:
+  name: "Kiwi Subsidiary Ltd"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "200"
+      street: "Customhouse Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: "finance@kiwisubsidiary.co.nz"
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: "Inter-company Management Fee Allocation"
+      price: "25000.00"
+    taxes:
+      - cat: GST
+        key: outside-scope
+
+  - i: 2
+    quantity: "1"
+    item:
+      name: "Shared Services Cost Recharge"
+      price: "15000.00"
+    taxes:
+      - cat: GST
+        key: outside-scope
+
+payment:
+  terms:
+    notes: "Inter-company settlement - end of month"
+  instructions:
+    key: credit-transfer
+    detail: "Inter-company transfer"
+    ref: "IC-2024-005"
+
+notes:
+  - key: general
+    text: "Inter-company transactions between related parties - outside the scope of GST."

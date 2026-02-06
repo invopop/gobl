@@ -1,0 +1,210 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "b676322936cedd1fc4593f7df0826ebf1a123f8a2d79e3e10a77cced3f6f9eb2"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e207",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-007",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"supplier": {
+			"name": "Kiwi Hospitality Group Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"num": "55",
+					"street": "Princes Street",
+					"locality": "Dunedin",
+					"code": "9016",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@kiwihospitality.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Tech Enterprises",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@wellingtontech.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "30",
+				"item": {
+					"name": "Executive Suite - Long Stay (30 nights)",
+					"price": "250.00",
+					"unit": "day"
+				},
+				"sum": "7500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "accommodation",
+						"percent": "9.0%"
+					}
+				],
+				"total": "7500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "20",
+				"item": {
+					"name": "Conference Room Hire",
+					"price": "500.00",
+					"unit": "day"
+				},
+				"sum": "10000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "10000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Catering Services - Corporate Event",
+					"price": "3500.00"
+				},
+				"sum": "3500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "3500.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Medical First Aid Training",
+					"price": "1500.00"
+				},
+				"sum": "1500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "1500.00"
+			},
+			{
+				"i": 5,
+				"quantity": "1",
+				"item": {
+					"name": "Insurance Coverage (Building)",
+					"price": "2000.00"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "exempt"
+					}
+				],
+				"total": "2000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Payment due within 45 days"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Please pay by bank transfer",
+				"ref": "INV-2024-007"
+			}
+		},
+		"totals": {
+			"sum": "24500.00",
+			"total": "24500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "7500.00",
+								"percent": "9.0%",
+								"amount": "675.00"
+							},
+							{
+								"key": "standard",
+								"base": "13500.00",
+								"percent": "15.0%",
+								"amount": "2025.00"
+							},
+							{
+								"key": "zero",
+								"base": "1500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							},
+							{
+								"key": "exempt",
+								"base": "2000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "2700.00"
+					}
+				],
+				"sum": "2700.00"
+			},
+			"tax": "2700.00",
+			"total_with_tax": "27200.00",
+			"payable": "27200.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice includes multiple GST treatments:\n- Long-term accommodation (30+ days): 9% GST\n- Conference and catering: 15% GST (standard)\n- Medical training: 0% GST (zero-rated)\n- Insurance: Exempt from GST\n"
+			}
+		]
+	}
+}

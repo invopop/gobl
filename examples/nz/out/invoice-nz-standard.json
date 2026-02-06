@@ -1,0 +1,169 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5a6a84c5ead5bf747d6cfaf3c7df4e41bce1ca05aee0a7c8450972a9af395638"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e110",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-001",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"supplier": {
+			"name": "Kiwi Software Solutions Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Queen Street",
+					"locality": "Auckland",
+					"code": "1010",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@kiwisoftware.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Tech Enterprises",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@wellingtontech.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"name": "Software Development Services",
+					"price": "150.00"
+				},
+				"sum": "6000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "6000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Annual Support License",
+					"price": "2500.00"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "2500.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Export Consulting (International Client)",
+					"price": "1000.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2024-07-15",
+						"amount": "9775.00"
+					}
+				],
+				"notes": "Payment due within 30 days"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Please pay by bank transfer",
+				"ref": "INV-2024-001"
+			}
+		},
+		"totals": {
+			"sum": "9500.00",
+			"total": "9500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "8500.00",
+								"percent": "15.0%",
+								"amount": "1275.00"
+							},
+							{
+								"key": "zero",
+								"base": "1000.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "1275.00"
+					}
+				],
+				"sum": "1275.00"
+			},
+			"tax": "1275.00",
+			"total_with_tax": "10775.00",
+			"payable": "10775.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Thank you for your business!"
+			}
+		]
+	}
+}

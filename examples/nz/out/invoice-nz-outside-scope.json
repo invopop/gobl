@@ -1,0 +1,135 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "34ac4d00142b2568c233fd77b0f2f8e64b82f82d7f65ccfb2ea4a38abfd0c5c4"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e205",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-005",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"supplier": {
+			"name": "Kiwi Holdings Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"num": "200",
+					"street": "Customhouse Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@kiwiholdings.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Kiwi Subsidiary Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"addresses": [
+				{
+					"num": "200",
+					"street": "Customhouse Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "finance@kiwisubsidiary.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Inter-company Management Fee Allocation",
+					"price": "25000.00"
+				},
+				"sum": "25000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "outside-scope"
+					}
+				],
+				"total": "25000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Shared Services Cost Recharge",
+					"price": "15000.00"
+				},
+				"sum": "15000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "outside-scope"
+					}
+				],
+				"total": "15000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Inter-company settlement - end of month"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Inter-company transfer",
+				"ref": "IC-2024-005"
+			}
+		},
+		"totals": {
+			"sum": "40000.00",
+			"total": "40000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "outside-scope",
+								"base": "40000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "40000.00",
+			"payable": "40000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Inter-company transactions between related parties - outside the scope of GST."
+			}
+		]
+	}
+}

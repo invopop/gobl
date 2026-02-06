@@ -1,0 +1,151 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d12a0d5e2f76555efc836a80570b650bf7d008373d9f96796b06ef9bee43c262"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "3d7fdbdc-d037-11eb-a948-77cde488e204",
+		"type": "standard",
+		"series": "INV",
+		"code": "2024-004",
+		"issue_date": "2024-06-15",
+		"currency": "NZD",
+		"supplier": {
+			"name": "NZ Financial Services Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Willis Street",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@nzfinancial.co.nz"
+				}
+			]
+		},
+		"customer": {
+			"name": "Wellington Tech Enterprises",
+			"tax_id": {
+				"country": "NZ",
+				"code": "136410132"
+			},
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			],
+			"emails": [
+				{
+					"addr": "accounts@wellingtontech.co.nz"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Financial Advisory Services - Q2 2024",
+					"price": "5000.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "exempt"
+					}
+				],
+				"total": "5000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Investment Management Fee",
+					"price": "2500.00"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "exempt"
+					}
+				],
+				"total": "2500.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Insurance Brokerage Services",
+					"price": "1500.00"
+				},
+				"sum": "1500.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "exempt"
+					}
+				],
+				"total": "1500.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Payment due within 30 days"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Please pay by bank transfer",
+				"ref": "INV-2024-004"
+			}
+		},
+		"totals": {
+			"sum": "9000.00",
+			"total": "9000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "9000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "9000.00",
+			"payable": "9000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Financial services - exempt from GST under section 14 of the GST Act."
+			}
+		]
+	}
+}

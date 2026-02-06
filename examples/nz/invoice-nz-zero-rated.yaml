@@ -1,0 +1,80 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3d7fdbdc-d037-11eb-a948-77cde488e203"
+type: standard
+currency: NZD
+issue_date: "2024-06-15"
+series: "INV"
+code: "2024-003"
+
+supplier:
+  name: "NZ Medical Supplies Ltd"
+  tax_id:
+    country: NZ
+    code: "49-091-850"
+  addresses:
+    - num: "50"
+      street: "Victoria Street"
+      locality: "Christchurch"
+      code: "8013"
+      country: NZ
+  emails:
+    - addr: "sales@nzmedical.co.nz"
+
+customer:
+  name: "Wellington Regional Hospital"
+  tax_id:
+    country: NZ
+    code: "136-410-132"
+  addresses:
+    - num: "49"
+      street: "Riddiford Street"
+      locality: "Wellington"
+      code: "6021"
+      country: NZ
+  emails:
+    - addr: "procurement@wrhospital.govt.nz"
+
+lines:
+  - i: 1
+    quantity: "100"
+    item:
+      name: "Medical Diagnostic Equipment"
+      price: "250.00"
+      unit: "one"
+    taxes:
+      - cat: GST
+        key: zero
+        percent: "0%"
+
+  - i: 2
+    quantity: "500"
+    item:
+      name: "Sterile Surgical Supplies"
+      price: "15.00"
+      unit: "one"
+    taxes:
+      - cat: GST
+        key: zero
+        percent: "0%"
+
+  - i: 3
+    quantity: "1"
+    item:
+      name: "Installation and Training Services"
+      price: "2000.00"
+    taxes:
+      - cat: GST
+        key: zero
+        percent: "0%"
+
+payment:
+  terms:
+    notes: "Payment due within 45 days - Government terms"
+  instructions:
+    key: credit-transfer
+    detail: "Please pay by bank transfer"
+    ref: "INV-2024-003"
+
+notes:
+  - key: general
+    text: "Medical supplies and services - zero-rated under section 11 of the GST Act."
