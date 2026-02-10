@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -62,23 +61,6 @@ func normalizeParty(party *org.Party) {
 	normalizeInboxes(party)
 }
 
-// normalizeIdentity handles normalization for a single identity
-func normalizeIdentity(id *org.Identity) {
-	if id == nil {
-		return
-	}
-
-	// Set ISO scheme ID 0224 for private-id key (CTC-specific)
-	if id.Key == identityKeyPrivateID {
-		if id.Ext == nil {
-			id.Ext = make(tax.Extensions)
-		}
-		id.Ext[iso.ExtKeySchemeID] = identitySchemeIDPrivate
-	}
-
-	// Note: Type ↔ ISO scheme ID mapping for SIREN/SIRET is handled by EN16931 addon
-}
-
 // normalizeIdentities handles all identity-related normalizations
 func normalizeIdentities(party *org.Party) {
 	if party == nil || len(party.Identities) == 0 {
@@ -132,33 +114,64 @@ func normalizeIdentities(party *org.Party) {
 	}
 }
 
+// normalizeIdentity handles normalization for a single identity
+func normalizeIdentity(id *org.Identity) {
+	if id == nil {
+		return
+	}
+
+	// Set ISO scheme ID 0224 for private-id key (CTC-specific)
+	if id.Key == identityKeyPrivateID {
+		if id.Ext == nil {
+			id.Ext = make(tax.Extensions)
+		}
+		id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDPrivate)
+	}
+	// Note: Type ↔ ISO scheme ID mapping for SIREN/SIRET is handled by EN16931 addon
+}
+
+// normalizeInboxes handles all inbox-related normalizations
+func normalizeInboxes(party *org.Party) {
+	if party == nil || len(party.Inboxes) == 0 {
+		return
+	}
+
+	// Check if any inbox already has the peppol key
+	hasPeppol := false
+	var sirenInbox *org.Inbox
+	for _, inbox := range party.Inboxes {
+		if inbox == nil {
+			continue
+		}
+		if inbox.Key == "peppol" {
+			hasPeppol = true
+		}
+		if inbox.Scheme == inboxSchemeSIREN {
+			sirenInbox = inbox
+		}
+	}
+
+	// If no inbox has peppol key and we have a SIREN inbox, set it
+	if !hasPeppol && sirenInbox != nil {
+		sirenInbox.Key = "peppol"
+	}
+}
+
 // validateIdentity validates a single identity
 func validateIdentity(id *org.Identity) error {
 	if id == nil {
 		return nil
 	}
 
-	// Check if identity has ISO scheme ID 0224 (private-id)
-	if id.Ext != nil {
-		if schemeID, ok := id.Ext[iso.ExtKeySchemeID]; ok && schemeID == identitySchemeIDPrivate {
-			code := string(id.Code)
-			if code == "" {
-				return nil
-			}
-
-			// Validate length: max 100 characters
-			if len(code) > 100 {
-				return errors.New("identity with ISO scheme ID 0224 (private-id) must not exceed 100 characters")
-			}
-
-			// Validate format: alphanumeric plus +, -, _, /
-			if !sirenInboxFormatRegex.MatchString(code) {
-				return errors.New("identity with ISO scheme ID 0224 (private-id) must contain only alphanumeric characters and +, -, _, /")
-			}
-		}
-	}
-
-	return nil
+	return validation.ValidateStruct(&id,
+		validation.Field(&id.Code,
+			validation.When(
+				id.Ext != nil && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDPrivate,
+				validation.Length(0, 100),
+				validation.Match(sirenInboxFormatRegex),
+			),
+		),
+	)
 }
 
 func validateParty(party *org.Party) error {
@@ -173,7 +186,7 @@ func validateParty(party *org.Party) error {
 			validation.Skip,
 		),
 		validation.Field(&party.Inboxes,
-			validation.By(validateInboxes(party)),
+			validation.Each(validation.By(validateInbox)),
 			validation.Skip,
 		),
 	)
@@ -264,132 +277,23 @@ func validateSIRETSIRENCoherence(value any) error {
 	return nil
 }
 
-// validateInboxes validates electronic addresses with party context
-func validateInboxes(party *org.Party) validation.RuleFunc {
-	return func(value any) error {
-		inboxes, ok := value.([]*org.Inbox)
-		if !ok || len(inboxes) == 0 {
-			return nil
-		}
-
-		for i, inbox := range inboxes {
-			if inbox == nil {
-				continue
-			}
-
-			if err := validateInbox(inbox); err != nil {
-				return validation.Errors{
-					strconv.Itoa(i): err,
-				}
-			}
-		}
-		return nil
-	}
-}
-
-// hasSIRENIdentity checks if a party has a SIREN identity
-func hasSIRENIdentity(party *org.Party) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-
-	for _, id := range party.Identities {
-		if id != nil && id.Type == fr.IdentityTypeSIREN {
-			return true
-		}
-	}
-
-	return false
-}
-
-// isFrenchParty checks if a party is French based on tax ID or address
-func isFrenchParty(party *org.Party) bool {
-	if party == nil {
-		return false
-	}
-
-	// Check tax ID country
-	if party.TaxID != nil && party.TaxID.Country.In("FR") {
-		return true
-	}
-
-	// Check if party has French addresses
-	for _, addr := range party.Addresses {
-		if addr != nil && addr.Country.In("FR") {
-			return true
-		}
-	}
-
-	return false
-}
-
-// getPartySIREN extracts the SIREN from the party's SIREN identity
-func getPartySIREN(party *org.Party) string {
-	if party == nil {
-		return ""
-	}
-
-	// SIREN identity - check by type or ISO scheme ID 0002
-	for _, id := range party.Identities {
-		if id != nil && (id.Type == fr.IdentityTypeSIREN || (id.Ext != nil && id.Ext[iso.ExtKeySchemeID] == identitySchemeIDSIREN)) {
-			return string(id.Code)
-		}
-	}
-
-	return ""
-}
-
 // validateInbox validates a single inbox with the expected SIREN
-func validateInbox(inbox *org.Inbox) error {
-	if inbox == nil {
+func validateInbox(value any) error {
+	inbox, ok := value.(*org.Inbox)
+	if !ok || inbox == nil {
 		return nil
 	}
 
-	code := string(inbox.Code)
-	if code == "" {
-		return nil
-	}
-
-	if inbox.Scheme == inboxSchemeSIREN {
-		// Validate length: max 125 characters
-		if len(code) > 125 {
-			return errors.New("SIREN-based electronic address (scheme 0225) must not exceed 125 characters")
-		}
-
-		// Validate format: alphanumeric plus +, -, _, /
-		if !sirenInboxFormatRegex.MatchString(code) {
-			return errors.New("SIREN-based electronic address (scheme 0225) must contain only alphanumeric characters and +, -, _, /")
-		}
-	}
-
-	return nil
-}
-
-// normalizeInboxes handles all inbox-related normalizations
-func normalizeInboxes(party *org.Party) {
-	if party == nil || len(party.Inboxes) == 0 {
-		return
-	}
-
-	// Check if any inbox already has the peppol key
-	hasPeppol := false
-	var sirenInbox *org.Inbox
-	for _, inbox := range party.Inboxes {
-		if inbox == nil {
-			continue
-		}
-		if inbox.Key == "peppol" {
-			hasPeppol = true
-		}
-		if inbox.Scheme == inboxSchemeSIREN {
-			sirenInbox = inbox
-		}
-	}
-
-	// If no inbox has peppol key and we have a SIREN inbox, set it
-	if !hasPeppol && sirenInbox != nil {
-		sirenInbox.Key = "peppol"
-	}
+	return validation.ValidateStruct(&inbox,
+		validation.Field(&inbox.Code,
+			validation.When(
+				inbox.Scheme == inboxSchemeSIREN,
+				validation.Length(0, 125),
+				validation.Match(sirenInboxFormatRegex),
+			),
+			validation.Skip,
+		),
+	)
 }
 
 // validateOrgAttachments validates attachment descriptions and uniqueness constraints (BR-FR-17/18)

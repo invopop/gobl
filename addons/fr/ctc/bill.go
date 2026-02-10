@@ -14,6 +14,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -706,4 +707,20 @@ func isFinalInvoice(inv *bill.Invoice) bool {
 
 func isFactoredExtension(bm cbc.Code) bool {
 	return bm == BillingModeB4 || bm == BillingModeS4 || bm == BillingModeM4
+}
+
+// getPartySIREN extracts the SIREN from the party's SIREN identity
+func getPartySIREN(party *org.Party) string {
+	if party == nil {
+		return ""
+	}
+
+	// SIREN identity - check by type or ISO scheme ID 0002
+	for _, id := range party.Identities {
+		if id != nil && (id.Type == fr.IdentityTypeSIREN || (id.Ext != nil && id.Ext[iso.ExtKeySchemeID] == identitySchemeIDSIREN)) {
+			return string(id.Code)
+		}
+	}
+
+	return ""
 }
