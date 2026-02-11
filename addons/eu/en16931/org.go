@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/dk"
+	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -17,6 +18,9 @@ import (
 var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyGoods:          "AAA",
 	org.NoteKeyPayment:        "PMT",
+	org.NoteKeyPaymentMethod:  "PMD",
+	org.NoteKeyPaymentTerm:    "AAB",
+	org.NoteKeyGeneral:        "AAB", // General information
 	org.NoteKeyLegal:          "ABY",
 	org.NoteKeyDangerousGoods: "AAC",
 	org.NoteKeyAck:            "AAE",
@@ -26,7 +30,6 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyCustomer:       "CUR",
 	org.NoteKeyGlossary:       "ACZ",
 	org.NoteKeyCustoms:        "CUS",
-	org.NoteKeyGeneral:        "AAI",
 	org.NoteKeyHandling:       "HAN",
 	org.NoteKeyPackaging:      "PKG",
 	org.NoteKeyLoading:        "LOI",
@@ -47,7 +50,14 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGLN:  "0088",
 	org.IdentityKeyGTIN: "0160",
-	dk.IdentityKeyCVR:   "0184", // Danish CVR-nummer (DK regime)
+}
+
+// Map of GOBL Identity types (codes) to the corresponding ISO/IEC 6523 code.
+// This is used for regime-specific identity types that use Type instead of Key.
+var orgIdentityTypeSchemeMap = map[cbc.Code]cbc.Code{
+	fr.IdentityTypeSIREN: "0002", // French SIREN (legal identifier)
+	fr.IdentityTypeSIRET: "0009", // French SIRET (private identifier)
+	dk.IdentityTypeCVR:   "0184", // Danish CVR-nummer
 }
 
 var (
@@ -78,14 +88,27 @@ func normalizeOrgItem(item *org.Item) {
 }
 
 func normalizeOrgIdentity(i *org.Identity) {
-	if i == nil || i.Key == cbc.KeyEmpty {
+	if i == nil {
 		return
 	}
 
-	if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
-		i.Ext = i.Ext.Merge(tax.Extensions{
-			iso.ExtKeySchemeID: scheme,
-		})
+	// Check for key-based identity mapping first
+	if i.Key != cbc.KeyEmpty {
+		if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
+			i.Ext = i.Ext.Merge(tax.Extensions{
+				iso.ExtKeySchemeID: scheme,
+			})
+			return
+		}
+	}
+
+	// Check for type-based identity mapping (used by some regimes like France)
+	if i.Type != cbc.CodeEmpty {
+		if scheme, ok := orgIdentityTypeSchemeMap[i.Type]; ok {
+			i.Ext = i.Ext.Merge(tax.Extensions{
+				iso.ExtKeySchemeID: scheme,
+			})
+		}
 	}
 }
 

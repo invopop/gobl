@@ -163,7 +163,7 @@ func validateIdentity(id *org.Identity) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(&id,
+	return validation.ValidateStruct(id,
 		validation.Field(&id.Code,
 			validation.When(
 				id.Ext != nil && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDPrivate,
@@ -284,7 +284,7 @@ func validateInbox(value any) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(&inbox,
+	return validation.ValidateStruct(inbox,
 		validation.Field(&inbox.Code,
 			validation.When(
 				inbox.Scheme == inboxSchemeSIREN,

@@ -20,6 +20,10 @@ const (
 	NoteKeyGoods cbc.Key = "goods"
 	// Terms of Payment
 	NoteKeyPayment cbc.Key = "payment"
+	// Payment method or remittance information
+	NoteKeyPaymentMethod cbc.Key = "payment-method"
+	// Payment term details
+	NoteKeyPaymentTerm cbc.Key = "payment-term"
 	// Legal or regulatory information
 	NoteKeyLegal cbc.Key = "legal"
 	// Dangerous goods additional information
@@ -82,6 +86,16 @@ var NoteKeyDefinitions = []cbc.Definition{
 		Key:  NoteKeyPayment,
 		Name: i18n.NewString("Payment"),
 		Desc: i18n.NewString("Terms of Payment"),
+	},
+	{
+		Key:  NoteKeyPaymentMethod,
+		Name: i18n.NewString("Payment Method"),
+		Desc: i18n.NewString("Payment method or remittance information"),
+	},
+	{
+		Key:  NoteKeyPaymentTerm,
+		Name: i18n.NewString("Payment Term"),
+		Desc: i18n.NewString("Payment term details"),
 	},
 	{
 		Key:  NoteKeyLegal,

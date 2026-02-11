@@ -1,0 +1,175 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "82ab1e118ffbcd604b4d0813d178f469a62e17dbeedb421bc4d28a39cf7ee9a3"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-ctc-v1"
+		],
+		"uuid": "d4e5f6a7-8901-23de-f012-456789012abc",
+		"type": "standard",
+		"series": "FAC",
+		"code": "2024-INT-001",
+		"issue_date": "2024-06-15",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"fr-ctc-bar-treatment": "B2BINT",
+				"fr-ctc-billing-mode": "B8",
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Fournisseur France SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0225",
+					"code": "732829320"
+				}
+			],
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Rue de la Paix",
+					"locality": "Paris",
+					"code": "75001",
+					"country": "FR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturation@fournisseur.fr"
+				}
+			]
+		},
+		"customer": {
+			"name": "Kunde Deutschland GmbH",
+			"tax_id": {
+				"country": "DE",
+				"code": "111111125"
+			},
+			"inboxes": [
+				{
+					"email": "buchhaltung@kunde.de"
+				}
+			],
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Berliner Strasse",
+					"locality": "Berlin",
+					"code": "10117",
+					"country": "DE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "buchhaltung@kunde.de"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Consulting services",
+					"price": "200.00",
+					"unit": "h"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt",
+						"ext": {
+							"cef-vatex": "VATEX-EU-IC",
+							"untdid-tax-category": "E"
+						}
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Payment within 30 days"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "FR7630006000011234567890189",
+						"name": "Fournisseur France SARL"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"cef-vatex": "VATEX-EU-IC",
+									"untdid-tax-category": "E"
+								},
+								"base": "1000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1000.00",
+			"payable": "1000.00"
+		},
+		"notes": [
+			{
+				"key": "payment",
+				"text": "Payment within 30 days",
+				"ext": {
+					"untdid-text-subject": "PMT"
+				}
+			},
+			{
+				"key": "payment-method",
+				"text": "Bank transfer",
+				"ext": {
+					"untdid-text-subject": "PMD"
+				}
+			},
+			{
+				"key": "payment-term",
+				"text": "Invoice issued in accordance with CTC specifications",
+				"ext": {
+					"untdid-text-subject": "AAB"
+				}
+			}
+		]
+	}
+}

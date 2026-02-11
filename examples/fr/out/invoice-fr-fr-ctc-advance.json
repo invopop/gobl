@@ -1,0 +1,181 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d9be3a3edcc76fef565779706e02ef5533d4052e991486400570a3c01126a7c4"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-ctc-v1"
+		],
+		"$tags": [
+			"advance-payment"
+		],
+		"uuid": "c3d4e5f6-7890-12cd-ef01-345678901abc",
+		"type": "standard",
+		"series": "FAC",
+		"code": "2024-AV-001",
+		"issue_date": "2024-06-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"fr-ctc-bar-treatment": "B2B",
+				"fr-ctc-billing-mode": "B1",
+				"untdid-document-type": "386"
+			}
+		},
+		"supplier": {
+			"name": "Fournisseur Example SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0225",
+					"code": "732829320"
+				}
+			],
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Rue de la Paix",
+					"locality": "Paris",
+					"code": "75001",
+					"country": "FR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "facturation@fournisseur.fr"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Example SAS",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0225",
+					"code": "356000000"
+				}
+			],
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Avenue des Champs-Elysees",
+					"locality": "Paris",
+					"code": "75008",
+					"country": "FR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "comptabilite@client.fr"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Acompte - Projet de developpement",
+					"price": "5000.00",
+					"unit": "one"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "20%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Paiement immediat"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "FR7630006000011234567890189",
+						"name": "Fournisseur Example SARL"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "5000.00",
+								"percent": "20%",
+								"amount": "1000.00"
+							}
+						],
+						"amount": "1000.00"
+					}
+				],
+				"sum": "1000.00"
+			},
+			"tax": "1000.00",
+			"total_with_tax": "6000.00",
+			"payable": "6000.00"
+		},
+		"notes": [
+			{
+				"key": "payment",
+				"text": "Paiement immediat",
+				"ext": {
+					"untdid-text-subject": "PMT"
+				}
+			},
+			{
+				"key": "payment-method",
+				"text": "Virement bancaire",
+				"ext": {
+					"untdid-text-subject": "PMD"
+				}
+			},
+			{
+				"key": "payment-term",
+				"text": "Facture d'acompte emise conformement aux specifications CTC",
+				"ext": {
+					"untdid-text-subject": "AAB"
+				}
+			}
+		]
+	}
+}

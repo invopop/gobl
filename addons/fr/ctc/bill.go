@@ -36,7 +36,7 @@ var allowedDocumentTypes = []cbc.Code{
 	"472", // Self-billed prepaid amount
 	"473", // Stand-alone credit note
 	"261", // Self-billed credit note
-	"262", // Self-billed overall discount
+	"262", // Consolidated credit note
 	"381", // Credit note
 	"396", // Factored credit note
 	"502", // Self-billed corrective
@@ -175,7 +175,13 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateOrdering),
 			validation.When(
 				isPartyIdentitySTC(inv.Supplier),
+				validation.Required.Error("ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 				validation.By(validateOrderingSeller),
+			),
+			validation.When(
+				isConsolidatedCreditNote(inv),
+				validation.Required.Error("ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)"),
+				validation.By(validateOrderingContracts),
 			),
 			validation.Skip,
 		),
@@ -186,7 +192,16 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.When(
 				isFinalInvoice(inv),
+				validation.Required.Error("payment details are required for final invoices (BR-FR-CO-09)"),
 				validation.By(validatePaymentDueDatePresent),
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Delivery,
+			validation.When(
+				isConsolidatedCreditNote(inv),
+				validation.Required.Error("delivery details are required for consolidated credit notes (BR-FR-CO-03)"),
+				validation.By(validateDelivery),
 			),
 			validation.Skip,
 		),
@@ -378,7 +393,7 @@ func validateOrderingIdentities(value any) error {
 		return nil
 	}
 
-	// BR-FR-29: Check for duplicate UNTDID reference schemes AFL and AWW
+	// BR-FR-30: Check for duplicate UNTDID reference schemes AFL and AWW
 	// The value requirement for code is forced at an identity level
 	var afl, aww bool
 
@@ -391,15 +406,15 @@ func validateOrderingIdentities(value any) error {
 		ref := id.Ext.Get(untdid.ExtKeyReference)
 		switch ref.String() {
 		case "AFL":
-			// BR-FR-29: Only one identity with UNTDID reference AFL allowed
+			// BR-FR-30: Only one identity with UNTDID reference AFL allowed
 			if afl {
-				return errors.New("only one ordering identity with UNTDID reference 'AFL' is allowed (BR-FR-29)")
+				return errors.New("only one ordering identity with UNTDID reference 'AFL' is allowed (BR-FR-30)")
 			}
 			afl = true
 		case "AWW":
-			// BR-FR-29: Only one identity with UNTDID reference AWW allowed
+			// BR-FR-30: Only one identity with UNTDID reference AWW allowed
 			if aww {
-				return errors.New("only one ordering identity with UNTDID reference 'AWW' is allowed (BR-FR-29)")
+				return errors.New("only one ordering identity with UNTDID reference 'AWW' is allowed (BR-FR-30)")
 			}
 			aww = true
 		}
@@ -415,7 +430,7 @@ func validateOrderingSeller(value any) error {
 	}
 
 	// BR-FR-29: If the supplier is STC, then the seller tax ID must be present
-	return validation.ValidateStruct(&ordering,
+	return validation.ValidateStruct(ordering,
 		validation.Field(&ordering.Seller,
 			validation.Required.Error("seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.By(validateSeller),
@@ -430,7 +445,7 @@ func validateSeller(value any) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(&seller,
+	return validation.ValidateStruct(seller,
 		validation.Field(&seller.TaxID,
 			validation.Required.Error("tax ID is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.By(validateSellerTaxID),
@@ -445,9 +460,25 @@ func validateSellerTaxID(value any) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(&taxID,
+	return validation.ValidateStruct(taxID,
 		validation.Field(&taxID.Code,
 			validation.Required.Error("code is required when supplier is under STC scheme (BR-FR-CO-15)"),
+		),
+	)
+}
+
+func validateOrderingContracts(value any) error {
+	ordering, ok := value.(*bill.Ordering)
+	if !ok || ordering == nil {
+		return nil
+	}
+
+	// BR-FR-CO-03: For consolidated credit notes, at least one contract reference is required in the ordering details
+	return validation.ValidateStruct(ordering,
+		validation.Field(&ordering.Contracts,
+			validation.Required.Error("at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)"),
+			validation.Length(1, 0).Error("at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)"),
+			validation.Skip,
 		),
 	)
 }
@@ -478,7 +509,23 @@ func validateTerms(issueDate cal.Date) validation.RuleFunc {
 
 		return validation.ValidateStruct(terms,
 			validation.Field(&terms.DueDates,
-				validation.Each(cal.DateAfter(issueDate)),
+				validation.Each(validation.By(validateDueDate(issueDate))),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateDueDate(issueDate cal.Date) validation.RuleFunc {
+	return func(value any) error {
+		dueDate, ok := value.(*pay.DueDate)
+		if !ok || dueDate == nil {
+			return nil // No due date, rule doesn't apply
+		}
+
+		return validation.ValidateStruct(dueDate,
+			validation.Field(&dueDate.Date,
+				cal.DateAfter(issueDate),
 				validation.Skip,
 			),
 		)
@@ -491,7 +538,7 @@ func validatePaymentDueDatePresent(value any) error {
 		return nil // Let required validation handle missing payment details
 	}
 
-	return validation.ValidateStruct(&payment,
+	return validation.ValidateStruct(payment,
 		validation.Field(&payment.Terms,
 			validation.Required.Error("payment terms required for final invoices (BR-FR-CO-09)"),
 			validation.By(validateTermsDueDatePresent),
@@ -506,9 +553,23 @@ func validateTermsDueDatePresent(value any) error {
 		return nil // Let required validation handle missing terms
 	}
 
-	return validation.ValidateStruct(&terms,
+	return validation.ValidateStruct(terms,
 		validation.Field(&terms.DueDates,
 			validation.Required.Error("at least one due date required for final invoices (BR-FR-CO-09)"),
+			validation.Skip,
+		),
+	)
+}
+
+func validateDelivery(value any) error {
+	delivery, ok := value.(*bill.DeliveryDetails)
+	if !ok || delivery == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(delivery,
+		validation.Field(&delivery.Period,
+			validation.Required.Error("delivery period is required for consolidated credit notes (BR-FR-CO-03)"),
 			validation.Skip,
 		),
 	)
@@ -521,7 +582,7 @@ func validateTotals(value any) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(&totals,
+	return validation.ValidateStruct(totals,
 		validation.Field(&totals.TotalWithTax,
 			num.Equals(totals.Advances),
 			validation.Skip,
@@ -677,13 +738,20 @@ func isPartyIdentitySTC(party *org.Party) bool {
 	return false
 }
 
-// isCreditNote checks if the invoice is a credit note type (BR-FR-CO-05)
 func isCreditNote(inv *bill.Invoice) bool {
 	if inv.Tax == nil || inv.Tax.Ext == nil {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
 	return slices.Contains(creditNoteTypes, cbc.Code(docType))
+}
+
+func isConsolidatedCreditNote(inv *bill.Invoice) bool {
+	if inv.Tax == nil || inv.Tax.Ext == nil {
+		return false
+	}
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	return docType == "262" // Consolidated credit note
 }
 
 func isAdvancedInvoice(inv *bill.Invoice) bool {

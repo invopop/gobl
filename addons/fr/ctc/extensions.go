@@ -46,20 +46,6 @@ const (
 	BillingModeM4 cbc.Code = "M4"
 )
 
-// BAR treatment codes (Base d'Archive et de Reporting)
-const (
-	// BARTreatmentB2B: Domestic B2B e-invoicing (both parties French)
-	BARTreatmentB2B cbc.Code = "B2B"
-	// BARTreatmentB2BINT: International B2B reporting (one party French, one not)
-	BARTreatmentB2BINT cbc.Code = "B2BINT"
-	// BARTreatmentB2C: B2C reporting only (no customer or customer not B2B)
-	BARTreatmentB2C cbc.Code = "B2C"
-	// BARTreatmentOUTOFSCOPE: Outside reform scope (neither party French)
-	BARTreatmentOUTOFSCOPE cbc.Code = "OUTOFSCOPE"
-	// BARTreatmentARCHIVEONLY: Internal cancellation credit note
-	BARTreatmentARCHIVEONLY cbc.Code = "ARCHIVEONLY"
-)
-
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyBillingMode,

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-v1",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "France CTC Flow 2",
+    "fr": "France CTC Flux 2"
+  },
+  "description": {
+    "en": "Support for the French CTC (Cycle de Traitement de la Commande) Flow 2 B2B\ne-invoicing requirements from the French electronic invoicing reform.\n\nThis addon provides the necessary structures and validations to ensure compliance\nwith the French CTC specifications for B2B electronic invoicing.\n\nIt requires the EN16931 addon as it extends the European standard with French-specific\nrequirements for the e-invoicing reform.",
+    "fr": "Support pour le CTC (Cycle de Traitement de la Commande) français Flux 2\npour les exigences de facturation électronique B2B de la réforme française.\n\nCet addon fournit les structures et validations nécessaires pour assurer la\nconformité avec les spécifications CTC françaises pour la facturation électronique B2B.\n\nIl nécessite l'addon EN16931 car il étend le standard européen avec des exigences\nspécifiques françaises pour la réforme de la facturation électronique."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "French CTC Specifications",
+        "fr": "Spécifications CTC françaises"
+      },
+      "url": "https://www.impots.gouv.fr/e-invoicing-et-e-reporting-702-evolutions"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-ctc-billing-mode",
+      "name": {
+        "en": "Billing Mode",
+        "fr": "Cadre de Facturation"
+      },
+      "desc": {
+        "en": "Code used to describe the billing framework of the invoice. The billing mode\nindicates the nature of goods/services and the payment context.\n\nCode prefixes indicate the invoice nature:\n- \"B\": Goods invoice (Biens)\n- \"S\": Services invoice\n- \"M\": Mixed/dual invoice (goods and services that are not accessory to each other)\n\nThe numeric suffix indicates the payment type (1=deposit, 2=already paid,\n4=final after down payment, 5=subcontractor, 6=co-contractor, 7=e-reporting).",
+        "fr": "Code utilisé pour décrire le cadre de facturation de la facture. Le mode de\nfacturation indique la nature des biens/services et le contexte de paiement.\n\nLes préfixes de code indiquent la nature de la facture :\n- \"B\" : Facture de biens\n- \"S\" : Facture de services\n- \"M\" : Facture mixte (biens et services qui ne sont pas accessoires l'un de l'autre)\n\nLe suffixe numérique indique le type de paiement (1=dépôt, 2=déjà payée,\n4=définitive après acompte, 5=sous-traitant, 6=cotraitant, 7=e-reporting)."
+      },
+      "values": [
+        {
+          "code": "B1",
+          "name": {
+            "en": "Goods - Deposit invoice",
+            "fr": "Biens - Facture de dépôt"
+          }
+        },
+        {
+          "code": "B2",
+          "name": {
+            "en": "Goods - Already paid invoice",
+            "fr": "Biens - Facture déjà payée"
+          }
+        },
+        {
+          "code": "B4",
+          "name": {
+            "en": "Goods - Final invoice (after down payment)",
+            "fr": "Biens - Facture définitive (après acompte)"
+          }
+        },
+        {
+          "code": "B7",
+          "name": {
+            "en": "Goods - E-reporting (VAT already collected)",
+            "fr": "Biens - E-reporting (TVA déjà collectée)"
+          }
+        },
+        {
+          "code": "S1",
+          "name": {
+            "en": "Services - Deposit invoice",
+            "fr": "Services - Facture de dépôt"
+          }
+        },
+        {
+          "code": "S2",
+          "name": {
+            "en": "Services - Already paid invoice",
+            "fr": "Services - Facture déjà payée"
+          }
+        },
+        {
+          "code": "S4",
+          "name": {
+            "en": "Services - Final invoice (after down payment)",
+            "fr": "Services - Facture définitive (après acompte)"
+          }
+        },
+        {
+          "code": "S5",
+          "name": {
+            "en": "Services - Subcontractor invoice",
+            "fr": "Services - Facture de sous-traitance"
+          }
+        },
+        {
+          "code": "S6",
+          "name": {
+            "en": "Services - Co-contractor invoice",
+            "fr": "Services - Facture de cotraitance"
+          }
+        },
+        {
+          "code": "S7",
+          "name": {
+            "en": "Services - E-reporting (VAT already collected)",
+            "fr": "Services - E-reporting (TVA déjà collectée)"
+          }
+        },
+        {
+          "code": "M1",
+          "name": {
+            "en": "Mixed - Deposit invoice",
+            "fr": "Mixte - Facture de dépôt"
+          }
+        },
+        {
+          "code": "M2",
+          "name": {
+            "en": "Mixed - Already paid invoice",
+            "fr": "Mixte - Facture déjà payée"
+          }
+        },
+        {
+          "code": "M4",
+          "name": {
+            "en": "Mixed - Final invoice (after down payment)",
+            "fr": "Mixte - Facture définitive (après acompte)"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "final",
+          "name": {
+            "en": "Final Invoice",
+            "fr": "Facture définitive"
+          }
+        },
+        {
+          "key": "b2b-int",
+          "name": {
+            "en": "International B2B",
+            "fr": "B2B International"
+          }
+        },
+        {
+          "key": "archive-only",
+          "name": {
+            "en": "Archive Only",
+            "fr": "Archivage uniquement"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": null
+}

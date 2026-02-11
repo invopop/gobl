@@ -36,7 +36,7 @@ func TestOrgNoteNormalize(t *testing.T) {
 		assert.NotPanics(t, func() {
 			ad.Normalizer(n)
 		})
-		assert.Equal(t, "AAI", n.Ext[untdid.ExtKeyTextSubject].String())
+		assert.Equal(t, "AAB", n.Ext[untdid.ExtKeyTextSubject].String())
 	})
 }
 
