@@ -2548,3 +2548,70 @@ func TestNilCodeValidation(t *testing.T) {
 		_ = inv.Validate() // Code is only required for signing
 	})
 }
+
+func TestValidationNilChecks(t *testing.T) {
+	ad := tax.AddonForKey(ctc.V1)
+
+	t.Run("invoice with nil payment terms", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		// Set a standard billing mode (not advance or final invoice)
+		// so validatePayment will be called
+		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeS1
+		inv.Payment.Terms = nil // Nil terms should be handled gracefully
+		require.NoError(t, inv.Calculate())
+		err := ad.Validator(inv)
+		// Should not crash, may have other validation errors but shouldn't panic on nil
+		_ = err
+	})
+
+	t.Run("invoice with nil payment due dates array element", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		// First calculate with valid data
+		require.NoError(t, inv.Calculate())
+
+		// Then set nil due date after calculation
+		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeS1
+		var nilDueDate *pay.DueDate
+		inv.Payment.Terms.DueDates = []*pay.DueDate{nilDueDate}
+
+		// CTC validation should handle nil due date gracefully
+		err := ad.Validator(inv)
+		// validateDueDate should return nil for nil due date
+		_ = err
+	})
+
+	t.Run("final invoice with nil totals returns error", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		// Set to final invoice billing mode to trigger validateTotals
+		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB2
+		inv.Totals = nil
+		require.NoError(t, inv.Calculate())
+		err := ad.Validator(inv)
+		// Will error because totals are required for final invoices
+		// but validateTotals should handle nil gracefully
+		assert.Error(t, err)
+	})
+
+	t.Run("consolidated credit note with nil delivery", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		// Set to consolidated credit note to trigger validateDelivery
+		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "262"
+		inv.Delivery = nil
+		require.NoError(t, inv.Calculate())
+		err := ad.Validator(inv)
+		// validateDelivery should handle nil gracefully and not panic
+		// (may have validation errors but won't crash)
+		_ = err
+	})
+
+	t.Run("self-billed invoice helper with nil invoice", func(t *testing.T) {
+		// These helper functions are not directly exposed but we can test
+		// them indirectly through invoice validation
+		inv := testInvoiceB2BStandard(t)
+		inv.Tax = nil
+		require.NoError(t, inv.Calculate())
+		err := ad.Validator(inv)
+		// Tax is required, but the helpers should handle nil gracefully
+		assert.Error(t, err)
+	})
+}
