@@ -5,9 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/fr/ctc"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/iso"
-	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
@@ -15,44 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// testInvoiceWithSupplier creates a minimal invoice for testing supplier validation
-func testInvoiceWithSupplier(supplier *org.Party) *bill.Invoice {
-	return &bill.Invoice{
-		Tax: &bill.Tax{
-			Ext: tax.Extensions{
-				untdid.ExtKeyDocumentType: "380",
-			},
-		},
-		Supplier: supplier,
-		Notes: []*org.Note{
-			{
-				Key: org.NoteKeyPaymentMethod,
-				Ext: tax.Extensions{
-					untdid.ExtKeyTextSubject: "PMD",
-				},
-			},
-			{
-				Key: org.NoteKeyPayment,
-				Ext: tax.Extensions{
-					untdid.ExtKeyTextSubject: "PMT",
-				},
-			},
-			{
-				Key: org.NoteKeyGeneral,
-				Ext: tax.Extensions{
-					untdid.ExtKeyTextSubject: "AAB",
-				},
-			},
-		},
-	}
-}
-
-// testInvoiceWithCustomer creates a minimal invoice for testing customer validation
-func testInvoiceWithCustomer(customer *org.Party) *bill.Invoice {
-	inv := testInvoiceWithSupplier(&org.Party{})
-	inv.Customer = customer
-	return inv
-}
 
 func TestElectronicAddressValidation(t *testing.T) {
 	ad := tax.AddonForKey(ctc.V1)
@@ -645,7 +605,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 }
 
 func TestNormalizePartyEdgeCases(t *testing.T) {
-	t.Run("normalize nil party", func(t *testing.T) {
+	t.Run("normalize nil party", func(_ *testing.T) {
 		ad := tax.AddonForKey(ctc.V1)
 		ad.Normalizer((*org.Party)(nil))
 		// Should not crash

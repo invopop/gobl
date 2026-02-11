@@ -384,7 +384,7 @@ func TestInvoiceValidation(t *testing.T) {
 			Text: "B2B",
 		})
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "Party must have endpoint ID with scheme 0225")
+		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21")
 	})
 
@@ -475,7 +475,7 @@ func TestInvoiceValidation(t *testing.T) {
 			Text: "B2B",
 		})
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "Party must have endpoint ID with scheme 0225")
+		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21/22")
 	})
 

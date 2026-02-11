@@ -43,23 +43,6 @@ var allowedDocumentTypes = []cbc.Code{
 	"503", // Self-billed credit for claim
 }
 
-// Allowed billing mode values for French CTC
-var allowedBillingModes = []cbc.Code{
-	BillingModeB1, // Advance payment
-	BillingModeS1, // Self-billed advance payment
-	BillingModeM1, // Mixed advance payment
-	BillingModeB2, // Final invoice
-	BillingModeS2, // Self-billed final invoice
-	BillingModeM2, // Mixed final invoice
-	BillingModeB4, // Factored invoice
-	BillingModeS4, // Self-billed factored invoice
-	BillingModeM4, // Mixed factored invoice
-	BillingModeS5, // Credit note dispute
-	BillingModeS6, // Self-billed corrective
-	BillingModeB7, // Self-billed for claim
-	BillingModeS7, // Commercial invoice
-}
-
 // Allowed BAR treatment values for French CTC
 var allowedBARTreatments = []string{
 	"B2B",
@@ -311,13 +294,13 @@ func validateSirenInbox(value any) error {
 			hasSIRENInbox = true
 			// Validate that inbox code starts with SIREN
 			if !strings.HasPrefix(string(inbox.Code), siren) {
-				return errors.New("Party endpoint ID scheme inbox (0225) must start with SIREN (BR-FR-21/22)")
+				return errors.New("party endpoint ID scheme inbox (0225) must start with SIREN (BR-FR-21/22)")
 			}
 		}
 	}
 
 	if !hasSIRENInbox {
-		return errors.New("Party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)")
+		return errors.New("party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)")
 	}
 
 	return nil
@@ -613,7 +596,7 @@ func validateMandatoryNotes(value any) error {
 	for _, note := range notes {
 		if note != nil && note.Ext != nil {
 			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code != cbc.CodeEmpty {
-				counts[cbc.Code(code)]++
+				counts[code]++
 			}
 		}
 	}
@@ -706,7 +689,7 @@ func isSelfBilledInvoice(inv *bill.Invoice) bool {
 		return false
 	}
 
-	return slices.Contains(selfBilledDocumentTypes, cbc.Code(docType))
+	return slices.Contains(selfBilledDocumentTypes, docType)
 }
 
 // isCorrectiveInvoice checks if the invoice is corrective based on document type
@@ -720,7 +703,7 @@ func isCorrectiveInvoice(inv *bill.Invoice) bool {
 		return false
 	}
 
-	return slices.Contains(correctiveInvoiceTypes, cbc.Code(docType))
+	return slices.Contains(correctiveInvoiceTypes, docType)
 }
 
 func isPartyIdentitySTC(party *org.Party) bool {
@@ -743,7 +726,7 @@ func isCreditNote(inv *bill.Invoice) bool {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	return slices.Contains(creditNoteTypes, cbc.Code(docType))
+	return slices.Contains(creditNoteTypes, docType)
 }
 
 func isConsolidatedCreditNote(inv *bill.Invoice) bool {
@@ -760,7 +743,7 @@ func isAdvancedInvoice(inv *bill.Invoice) bool {
 	}
 
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	return slices.Contains(advancePaymentDocumentTypes, cbc.Code(docType))
+	return slices.Contains(advancePaymentDocumentTypes, docType)
 }
 
 // isFinalInvoice checks if the invoice is a final invoice based on billing mode (B2, S2, M2)

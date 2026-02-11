@@ -38,7 +38,7 @@ func validateItemMeta(value any) error {
 		// Check if value is blank (empty or whitespace only)
 		if strings.TrimSpace(val) == "" {
 			return validation.Errors{
-				key.String(): errors.New("Value cannot be blank (BR-FR-28)"),
+				key.String(): errors.New("value cannot be blank (BR-FR-28)"),
 			}
 		}
 	}
