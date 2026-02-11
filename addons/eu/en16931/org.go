@@ -20,7 +20,7 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyPayment:        "PMT",
 	org.NoteKeyPaymentMethod:  "PMD",
 	org.NoteKeyPaymentTerm:    "AAB",
-	org.NoteKeyGeneral:        "AAB", // General information
+	org.NoteKeyGeneral:        "AAI", // General information
 	org.NoteKeyLegal:          "ABY",
 	org.NoteKeyDangerousGoods: "AAC",
 	org.NoteKeyAck:            "AAE",
