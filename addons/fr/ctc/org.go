@@ -209,7 +209,7 @@ func validateIdentitySchemeFormat(value any) error {
 		schemeID := id.Ext[iso.ExtKeySchemeID]
 
 		if schemeID == cbc.CodeEmpty {
-			// All identites must have an ISO scheme ID
+			// All identities must have an ISO scheme ID
 			return errors.New("all identities must have an ISO scheme ID defined in extensions BR-FR-CO-10")
 		}
 

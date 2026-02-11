@@ -357,7 +357,7 @@ func validateCustomer(value any) error {
 	// BR-FR-13: Buyer electronic address is required for B2B
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.Inboxes,
-			validation.Required.Error("buyer electronic address required for French B2B invoices (BR-FR-12)"),
+			validation.Required.Error("buyer electronic address required for French B2B invoices (BR-FR-13)"),
 			validation.Skip,
 		),
 	)
@@ -452,7 +452,7 @@ func validateOrderingIdentities(value any) error {
 
 func validateOrderingSeller(value any) error {
 	ordering, ok := value.(*bill.Ordering)
-	if !ok || ordering == nil || len(ordering.Identities) == 0 {
+	if !ok || ordering == nil {
 		return nil
 	}
 
@@ -622,8 +622,8 @@ func validateTotals(value any) error {
 	}
 
 	return validation.ValidateStruct(totals,
-		validation.Field(&totals.TotalWithTax,
-			num.Equals(totals.Advances),
+		validation.Field(&totals.Payable,
+			num.Equals(num.AmountZero),
 			validation.Skip,
 		),
 		validation.Field(&totals.Due,
@@ -637,7 +637,7 @@ func validateTotals(value any) error {
 // BR-FR-05: French CTC requires three mandatory note types:
 // - PMT: for the mention of a flat-rate penalty of 40 EUROS for collection costs (org.NoteKeyPayment)
 // - PMD: penalty corresponding to the payment terms specific to each company (org.NoteKeyPaymentMethod)
-// - AAB: mention of discount or no discount (in BT-22) (org.NoteKeyPaymentTerms)
+// - AAB: mention of discount or no discount (in BT-22) (org.NoteKeyPaymentTerm)
 // BR-FR-06: Each code (PMT, PMD, AAB, TXD) should appear at most once.
 // BR-FR-30: BAR code should appear at most once.
 func validateMandatoryNotes(value any) error {
@@ -710,7 +710,7 @@ func validateNoteTXD(value any) error {
 		}
 	}
 
-	return errors.New("for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-28)")
+	return errors.New("for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-CO-14)")
 }
 
 // isB2BTransaction determines if the transaction is B2B (business to business)
@@ -723,8 +723,8 @@ func isB2BTransaction(inv *bill.Invoice) bool {
 	for _, note := range inv.Notes {
 		if note != nil && note.Ext != nil {
 			if code, ok := note.Ext[untdid.ExtKeyTextSubject]; ok && code == "BAR" {
-				// Check if note text equals "B2B"
-				if note.Text == "B2B" {
+				// Check if note text indicates B2B transaction (B2B or B2BINT)
+				if note.Text == "B2B" || note.Text == "B2BINT" {
 					return true
 				}
 			}
