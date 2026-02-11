@@ -619,6 +619,45 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		assert.Len(t, party.Identities, 0)
 	})
 
+	t.Run("normalize party with nil identity in array", func(t *testing.T) {
+		var id *org.Identity
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				id, // Nil identity should be skipped via continue
+				{
+					Type: fr.IdentityTypeSIRET,
+					Code: "12345678901234",
+				},
+			},
+		}
+		ad := tax.AddonForKey(ctc.V1)
+		ad.Normalizer(party)
+
+		// Should have generated SIREN from SIRET, plus the original SIRET, plus 1 nil
+		// Total: 3 elements (1 nil + SIRET + generated SIREN)
+		assert.Len(t, party.Identities, 3)
+
+		// Count non-nil identities
+		nonNilCount := 0
+		var hasSIREN, hasSIRET bool
+		for _, id := range party.Identities {
+			if id != nil {
+				nonNilCount++
+				if id.Type == fr.IdentityTypeSIREN {
+					hasSIREN = true
+				}
+				if id.Type == fr.IdentityTypeSIRET {
+					hasSIRET = true
+				}
+			}
+		}
+
+		assert.Equal(t, 2, nonNilCount, "should have 2 non-nil identities (SIRET + generated SIREN)")
+		assert.True(t, hasSIREN, "should have generated SIREN")
+		assert.True(t, hasSIRET, "should have original SIRET")
+	})
+
 	t.Run("normalize party with SIRET generates SIREN with legal scope", func(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
@@ -720,6 +759,41 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
 		assert.NotEqual(t, cbc.Key("peppol"), party.Inboxes[1].Key)
 	})
+
+	t.Run("normalize inbox with nil element in array", func(t *testing.T) {
+		var nilInbox *org.Inbox
+		party := &org.Party{
+			Name: "Test Party",
+			Inboxes: []*org.Inbox{
+				nilInbox, // Nil inbox should be skipped via continue
+				{
+					Scheme: "0225",
+					Code:   "123456789:test",
+				},
+				nilInbox, // Another nil for good measure
+			},
+		}
+		ad := tax.AddonForKey(ctc.V1)
+		ad.Normalizer(party)
+
+		// Should still have 3 elements (2 nils + 1 valid inbox)
+		assert.Len(t, party.Inboxes, 3)
+
+		// Count non-nil inboxes and verify peppol key was set
+		nonNilCount := 0
+		hasPeppol := false
+		for _, inbox := range party.Inboxes {
+			if inbox != nil {
+				nonNilCount++
+				if inbox.Key == "peppol" {
+					hasPeppol = true
+				}
+			}
+		}
+
+		assert.Equal(t, 1, nonNilCount, "should have 1 non-nil inbox")
+		assert.True(t, hasPeppol, "SIREN inbox should have peppol key set")
+	})
 }
 
 func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
@@ -771,6 +845,48 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
 		assert.ErrorContains(t, err, "duplicate")
+	})
+
+	t.Run("nil identity in array is skipped", func(t *testing.T) {
+		var nilID *org.Identity
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				nilID, // Nil identity should be skipped via continue
+				{
+					Code: "123",
+					Ext: tax.Extensions{
+						iso.ExtKeySchemeID: "0002",
+					},
+				},
+			},
+		}
+		ad := tax.AddonForKey(ctc.V1)
+		err := ad.Validator(party)
+		assert.NoError(t, err, "validation should skip nil identity and succeed with valid identity")
+	})
+
+	t.Run("private-id (0224) with empty code is skipped", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				{
+					Code: "", // Empty code should be skipped via continue
+					Ext: tax.Extensions{
+						iso.ExtKeySchemeID: "0224", // private-id scheme
+					},
+				},
+				{
+					Code: "valid-id",
+					Ext: tax.Extensions{
+						iso.ExtKeySchemeID: "0002",
+					},
+				},
+			},
+		}
+		ad := tax.AddonForKey(ctc.V1)
+		err := ad.Validator(party)
+		assert.NoError(t, err, "validation should skip empty code for private-id and succeed with other valid identity")
 	})
 }
 
