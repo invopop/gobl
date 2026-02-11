@@ -6,9 +6,9 @@ import (
 	"github.com/invopop/gobl/addons/fr/ctc"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -131,21 +131,21 @@ func testInvoiceB2BStandard(t *testing.T) *bill.Invoice {
 		Notes: []*org.Note{
 			{
 				Key:  org.NoteKeyPayment,
-				Text: "Payment terms: 30 days",
+				Text: "A fixed penalty of 40 EUR will apply to any late payment.",
 				Ext: tax.Extensions{
 					untdid.ExtKeyTextSubject: "PMT",
 				},
 			},
 			{
 				Key:  org.NoteKeyPaymentMethod,
-				Text: "Payment method: Bank transfer",
+				Text: "Late payment penalties apply as per our general terms of sale.",
 				Ext: tax.Extensions{
 					untdid.ExtKeyTextSubject: "PMD",
 				},
 			},
 			{
 				Key:  org.NoteKeyPaymentTerm,
-				Text: "General information about the invoice",
+				Text: "No discount offered for early payment.",
 				Ext: tax.Extensions{
 					untdid.ExtKeyTextSubject: "AAB",
 				},

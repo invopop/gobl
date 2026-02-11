@@ -162,15 +162,6 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Notes,
-			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
-			validation.By(validateMandatoryNotes),
-			validation.When(
-				isPartyIdentitySTC(inv.Supplier),
-				validation.By(validateNoteTXD),
-			),
-			validation.Skip,
-		),
 		validation.Field(&inv.Ordering,
 			validation.By(validateOrdering),
 			validation.When(
@@ -209,6 +200,15 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.When(
 				isFinalInvoice(inv),
 				validation.By(validateTotals),
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Notes,
+			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
+			validation.By(validateMandatoryNotes),
+			validation.When(
+				isPartyIdentitySTC(inv.Supplier),
+				validation.By(validateNoteTXD),
 			),
 			validation.Skip,
 		),
@@ -596,9 +596,9 @@ func validateTotals(value any) error {
 
 // validateMandatoryNotes validates that required notes are present and unique (BR-FR-05, BR-FR-06, BR-FR-30)
 // BR-FR-05: French CTC requires three mandatory note types:
-// - PMT: Payment terms (org.NoteKeyPayment)
-// - PMD: Payment method (org.NoteKeyPaymentMethod)
-// - AAB: General information (org.NoteKeyGeneral)
+// - PMT: for the mention of a flat-rate penalty of 40 EUROS for collection costs (org.NoteKeyPayment)
+// - PMD: penalty corresponding to the payment terms specific to each company (org.NoteKeyPaymentMethod)
+// - AAB: mention of discount or no discount (in BT-22) (org.NoteKeyPaymentTerms)
 // BR-FR-06: Each code (PMT, PMD, AAB, TXD) should appear at most once.
 // BR-FR-30: BAR code should appear at most once.
 func validateMandatoryNotes(value any) error {
