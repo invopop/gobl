@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2df9234043213a242323a0542667b048de4ec16abc8d6438509526ed1e15b08d"
+			"val": "1da32a0c88fa97f85c8221a86d57a3ce9ff704835c27140a29257ca3fb2db2ea"
 		}
 	},
 	"doc": {
@@ -29,9 +29,9 @@
 			}
 		],
 		"tax": {
+			"rounding": "currency",
 			"ext": {
-				"fr-ctc-bar-treatment": "B2B",
-				"fr-ctc-billing-mode": "B8",
+				"fr-ctc-billing-mode": "B7",
 				"untdid-document-type": "381"
 			}
 		},
@@ -41,6 +41,16 @@
 				"country": "FR",
 				"code": "44732829320"
 			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
 			"inboxes": [
 				{
 					"key": "peppol",
@@ -69,6 +79,16 @@
 				"country": "FR",
 				"code": "39356000000"
 			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "SIREN",
+					"code": "356000000",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
 			"inboxes": [
 				{
 					"key": "peppol",
@@ -159,21 +179,21 @@
 		"notes": [
 			{
 				"key": "payment",
-				"text": "Remboursement sous 30 jours",
+				"text": "Une penalite fixe de 40 EUR sera appliquee en cas de retard de paiement.",
 				"ext": {
 					"untdid-text-subject": "PMT"
 				}
 			},
 			{
 				"key": "payment-method",
-				"text": "Virement bancaire",
+				"text": "Des penalites de retard s'appliquent conformement a nos conditions generales de vente.",
 				"ext": {
 					"untdid-text-subject": "PMD"
 				}
 			},
 			{
 				"key": "payment-term",
-				"text": "Avoir emis conformement aux specifications CTC",
+				"text": "Aucun escompte n'est offert pour paiement anticipe.",
 				"ext": {
 					"untdid-text-subject": "AAB"
 				}

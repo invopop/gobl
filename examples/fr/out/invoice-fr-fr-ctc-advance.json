@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d9be3a3edcc76fef565779706e02ef5533d4052e991486400570a3c01126a7c4"
+			"val": "88e6adbbfa299c63e5a74927d3b87d55d640404ad7072245b4203e334bf69581"
 		}
 	},
 	"doc": {
@@ -14,9 +14,6 @@
 			"eu-en16931-v2017",
 			"fr-ctc-v1"
 		],
-		"$tags": [
-			"advance-payment"
-		],
 		"uuid": "c3d4e5f6-7890-12cd-ef01-345678901abc",
 		"type": "standard",
 		"series": "FAC",
@@ -24,10 +21,10 @@
 		"issue_date": "2024-06-01",
 		"currency": "EUR",
 		"tax": {
+			"rounding": "currency",
 			"ext": {
-				"fr-ctc-bar-treatment": "B2B",
 				"fr-ctc-billing-mode": "B1",
-				"untdid-document-type": "386"
+				"untdid-document-type": "380"
 			}
 		},
 		"supplier": {
@@ -36,6 +33,16 @@
 				"country": "FR",
 				"code": "44732829320"
 			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
 			"inboxes": [
 				{
 					"key": "peppol",
@@ -64,6 +71,16 @@
 				"country": "FR",
 				"code": "39356000000"
 			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "SIREN",
+					"code": "356000000",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
 			"inboxes": [
 				{
 					"key": "peppol",
@@ -157,21 +174,21 @@
 		"notes": [
 			{
 				"key": "payment",
-				"text": "Paiement immediat",
+				"text": "Une penalite fixe de 40 EUR sera appliquee en cas de retard de paiement.",
 				"ext": {
 					"untdid-text-subject": "PMT"
 				}
 			},
 			{
 				"key": "payment-method",
-				"text": "Virement bancaire",
+				"text": "Des penalites de retard s'appliquent conformement a nos conditions generales de vente.",
 				"ext": {
 					"untdid-text-subject": "PMD"
 				}
 			},
 			{
 				"key": "payment-term",
-				"text": "Facture d'acompte emise conformement aux specifications CTC",
+				"text": "Aucun escompte n'est offert pour paiement anticipe.",
 				"ext": {
 					"untdid-text-subject": "AAB"
 				}

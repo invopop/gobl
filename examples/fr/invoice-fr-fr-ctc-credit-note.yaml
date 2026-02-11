@@ -8,6 +8,11 @@ issue_date: "2024-06-20"
 series: "AV"
 code: "2024-001"
 
+tax:
+  ext:
+    fr-ctc-billing-mode: "B7"
+    untdid-document-type: "381"
+
 preceding:
   - type: standard
     series: "FAC"
@@ -18,6 +23,11 @@ supplier:
   tax_id:
     country: "FR"
     code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
   name: "Fournisseur Example SARL"
   inboxes:
     - key: peppol
@@ -36,6 +46,11 @@ customer:
   tax_id:
     country: "FR"
     code: "356000000"
+  identities:
+    - type: "SIREN"
+      code: "356000000"
+      ext:
+        iso-scheme-id: "0002"
   name: "Client Example SAS"
   inboxes:
     - key: peppol
@@ -62,11 +77,17 @@ lines:
 
 notes:
   - key: payment
-    text: "Remboursement sous 30 jours"
+    text: "Une penalite fixe de 40 EUR sera appliquee en cas de retard de paiement."
+    ext:
+      untdid-text-subject: "PMT"
   - key: payment-method
-    text: "Virement bancaire"
+    text: "Des penalites de retard s'appliquent conformement a nos conditions generales de vente."
+    ext:
+      untdid-text-subject: "PMD"
   - key: payment-term
-    text: "Avoir emis conformement aux specifications CTC"
+    text: "Aucun escompte n'est offert pour paiement anticipe."
+    ext:
+      untdid-text-subject: "AAB"
 
 payment:
   instructions:

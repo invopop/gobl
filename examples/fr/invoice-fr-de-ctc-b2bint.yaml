@@ -7,10 +7,20 @@ issue_date: "2024-06-15"
 series: "FAC"
 code: "2024-INT-001"
 
+tax:
+  ext:
+    fr-ctc-billing-mode: "B7"
+    untdid-document-type: "380"
+
 supplier:
   tax_id:
     country: "FR"
     code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
   name: "Fournisseur France SARL"
   inboxes:
     - key: peppol
@@ -56,11 +66,17 @@ lines:
 
 notes:
   - key: payment
-    text: "Payment within 30 days"
+    text: "A fixed penalty of 40 EUR will apply to any late payment."
+    ext:
+      untdid-text-subject: "PMT"
   - key: payment-method
-    text: "Bank transfer"
+    text: "Late payment penalties apply as per our general terms of sale."
+    ext:
+      untdid-text-subject: "PMD"
   - key: payment-term
-    text: "Invoice issued in accordance with CTC specifications"
+    text: "No discount offered for early payment."
+    ext:
+      untdid-text-subject: "AAB"
 
 payment:
   instructions:
