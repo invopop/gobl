@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestElectronicAddressValidation(t *testing.T) {
 	ad := tax.AddonForKey(ctc.V1)
 
