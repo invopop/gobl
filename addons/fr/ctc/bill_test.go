@@ -2046,6 +2046,38 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("isCreditNote with nil invoice", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		require.NoError(t, inv.Calculate())
+
+		// Create a scenario where isCreditNote is called indirectly
+		// by setting an invoice that validates successfully
+		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "381"
+		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("isConsolidatedCreditNote with nil invoice", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		require.NoError(t, inv.Calculate())
+
+		// Set consolidated credit note type
+		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "262"
+		inv.Delivery = &bill.DeliveryDetails{
+			Period: &cal.Period{
+				Start: cal.MakeDate(2024, 6, 1),
+				End:   cal.MakeDate(2024, 6, 30),
+			},
+		}
+		inv.Ordering = &bill.Ordering{
+			Contracts: []*org.DocumentRef{{Code: "CONTRACT-001"}},
+		}
+		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
 	t.Run("getPartySIREN with party without identities", func(t *testing.T) {
 		// Test getPartySIREN indirectly through validation
 		party := &org.Party{

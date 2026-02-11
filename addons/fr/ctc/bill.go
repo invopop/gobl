@@ -722,7 +722,7 @@ func isPartyIdentitySTC(party *org.Party) bool {
 }
 
 func isCreditNote(inv *bill.Invoice) bool {
-	if inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
@@ -730,7 +730,7 @@ func isCreditNote(inv *bill.Invoice) bool {
 }
 
 func isConsolidatedCreditNote(inv *bill.Invoice) bool {
-	if inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)

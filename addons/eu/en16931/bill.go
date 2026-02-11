@@ -45,10 +45,6 @@ func normalizeBillInvoice(m *bill.Invoice) {
 	if m.Tax == nil {
 		m.Tax = &bill.Tax{}
 	}
-	// Normalize notes to add UNTDID text subject codes
-	for _, note := range m.Notes {
-		normalizeOrgNote(note)
-	}
 }
 
 func normalizeBillDiscount(m *bill.Discount) {
