@@ -104,11 +104,17 @@ func normalizeInvoice(inv *bill.Invoice) {
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Code,
-			validation.By(validateCode(inv.Series)),
+			validation.By(
+				validateCode(inv.Series),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
-			validation.Each(validation.By(validatePrecedingDocument)),
+			validation.Each(
+				validation.By(
+					validatePrecedingDocument,
+				),
+			),
 			validation.When(
 				isCorrectiveInvoice(inv),
 				validation.Required.Error("corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)"),
@@ -122,52 +128,74 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Tax,
 			validation.Required,
-			validation.By(validateBillInvoiceTax),
+			validation.By(
+				validateBillInvoiceTax,
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(validateSupplier),
+			validation.By(
+				validateSupplier,
+			),
 			validation.When(
 				isB2BTransaction(inv) && !isSelfBilledInvoice(inv),
-				validation.By(validateSirenInbox),
+				validation.By(
+					validateSirenInbox,
+				),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(validateCustomer),
+			validation.By(
+				validateCustomer,
+			),
 			validation.When(
 				isB2BTransaction(inv),
-				validation.By(validateB2BCustomer),
+				validation.By(
+					validateB2BCustomer,
+				),
 			),
 			validation.When(
 				isB2BTransaction(inv) && isSelfBilledInvoice(inv),
-				validation.By(validateSirenInbox),
+				validation.By(
+					validateSirenInbox,
+				),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Ordering,
-			validation.By(validateOrdering),
+			validation.By(
+				validateOrdering,
+			),
 			validation.When(
 				isPartyIdentitySTC(inv.Supplier),
 				validation.Required.Error("ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
-				validation.By(validateOrderingSeller),
+				validation.By(
+					validateOrderingSeller,
+				),
 			),
 			validation.When(
 				isConsolidatedCreditNote(inv),
 				validation.Required.Error("ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)"),
-				validation.By(validateOrderingContracts),
+				validation.By(
+					validateOrderingContracts,
+				),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
 			validation.When(
 				!isAdvancedInvoice(inv) && !isFinalInvoice(inv),
-				validation.By(validatePayment(inv.IssueDate)),
+				validation.By(
+					validatePayment(inv.IssueDate),
+				),
 			),
 			validation.When(
 				isFinalInvoice(inv),
 				validation.Required.Error("payment details are required for final invoices (BR-FR-CO-09)"),
-				validation.By(validatePaymentDueDatePresent),
+				validation.By(
+					validatePaymentDueDatePresent,
+				),
 			),
 			validation.Skip,
 		),
@@ -175,23 +203,31 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.When(
 				isConsolidatedCreditNote(inv),
 				validation.Required.Error("delivery details are required for consolidated credit notes (BR-FR-CO-03)"),
-				validation.By(validateDelivery),
+				validation.By(
+					validateDelivery,
+				),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Totals,
 			validation.When(
 				isFinalInvoice(inv),
-				validation.By(validateTotals),
+				validation.By(
+					validateTotals,
+				),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
 			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
-			validation.By(validateMandatoryNotes),
+			validation.By(
+				validateMandatoryNotes,
+			),
 			validation.When(
 				isPartyIdentitySTC(inv.Supplier),
-				validation.By(validateNoteTXD),
+				validation.By(
+					validateNoteTXD,
+				),
 			),
 			validation.Skip,
 		),
@@ -229,7 +265,9 @@ func validatePrecedingDocument(value any) error {
 
 	return validation.ValidateStruct(docRef,
 		validation.Field(&docRef.Code,
-			validation.By(validateCode(docRef.Series)),
+			validation.By(
+				validateCode(docRef.Series),
+			),
 			validation.Skip,
 		),
 	)
@@ -267,7 +305,9 @@ func validateSupplier(value any) error {
 			validation.Skip,
 		),
 		validation.Field(&supplier.Identities,
-			validation.By(validateSirenPresent),
+			validation.By(
+				validateSirenPresent,
+			),
 			validation.Skip,
 		),
 	)
@@ -332,7 +372,9 @@ func validateB2BCustomer(value any) error {
 	// BR-FR-14: For B2B transactions, customer must have a SIREN identity (iso-scheme-id: 0002)
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.Identities,
-			validation.By(validateSirenPresent),
+			validation.By(
+				validateSirenPresent,
+			),
 			validation.Skip,
 		),
 	)
@@ -364,7 +406,9 @@ func validateOrdering(value any) error {
 
 	return validation.ValidateStruct(ordering,
 		validation.Field(&ordering.Identities,
-			validation.By(validateOrderingIdentities),
+			validation.By(
+				validateOrderingIdentities,
+			),
 			validation.Skip,
 		),
 	)
@@ -416,7 +460,9 @@ func validateOrderingSeller(value any) error {
 	return validation.ValidateStruct(ordering,
 		validation.Field(&ordering.Seller,
 			validation.Required.Error("seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
-			validation.By(validateSeller),
+			validation.By(
+				validateSeller,
+			),
 			validation.Skip,
 		),
 	)
@@ -431,7 +477,9 @@ func validateSeller(value any) error {
 	return validation.ValidateStruct(seller,
 		validation.Field(&seller.TaxID,
 			validation.Required.Error("tax ID is required when supplier is under STC scheme (BR-FR-CO-15)"),
-			validation.By(validateSellerTaxID),
+			validation.By(
+				validateSellerTaxID,
+			),
 			validation.Skip,
 		),
 	)
@@ -476,7 +524,9 @@ func validatePayment(issueDate cal.Date) validation.RuleFunc {
 
 		return validation.ValidateStruct(payment,
 			validation.Field(&payment.Terms,
-				validation.By(validateTerms(issueDate)),
+				validation.By(
+					validateTerms(issueDate),
+				),
 				validation.Skip,
 			),
 		)
@@ -492,7 +542,11 @@ func validateTerms(issueDate cal.Date) validation.RuleFunc {
 
 		return validation.ValidateStruct(terms,
 			validation.Field(&terms.DueDates,
-				validation.Each(validation.By(validateDueDate(issueDate))),
+				validation.Each(
+					validation.By(
+						validateDueDate(issueDate),
+					),
+				),
 				validation.Skip,
 			),
 		)
@@ -524,7 +578,9 @@ func validatePaymentDueDatePresent(value any) error {
 	return validation.ValidateStruct(payment,
 		validation.Field(&payment.Terms,
 			validation.Required.Error("payment terms required for final invoices (BR-FR-CO-09)"),
-			validation.By(validateTermsDueDatePresent),
+			validation.By(
+				validateTermsDueDatePresent,
+			),
 			validation.Skip,
 		),
 	)
