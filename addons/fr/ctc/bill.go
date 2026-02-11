@@ -127,10 +127,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
-			validation.Required,
 			validation.By(
 				validateBillInvoiceTax,
 			),
+			validation.Required,
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
@@ -169,17 +169,17 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.When(
 				isPartyIdentitySTC(inv.Supplier),
-				validation.Required.Error("ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 				validation.By(
 					validateOrderingSeller,
 				),
+				validation.Required.Error("ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			),
 			validation.When(
 				isConsolidatedCreditNote(inv),
-				validation.Required.Error("ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)"),
 				validation.By(
 					validateOrderingContracts,
 				),
+				validation.Required.Error("ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)"),
 			),
 			validation.Skip,
 		),
@@ -192,20 +192,20 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.When(
 				isFinalInvoice(inv),
-				validation.Required.Error("payment details are required for final invoices (BR-FR-CO-09)"),
 				validation.By(
 					validatePaymentDueDatePresent,
 				),
+				validation.Required.Error("payment details are required for final invoices (BR-FR-CO-09)"),
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Delivery,
 			validation.When(
 				isConsolidatedCreditNote(inv),
-				validation.Required.Error("delivery details are required for consolidated credit notes (BR-FR-CO-03)"),
 				validation.By(
 					validateDelivery,
 				),
+				validation.Required.Error("delivery details are required for consolidated credit notes (BR-FR-CO-03)"),
 			),
 			validation.Skip,
 		),
@@ -219,7 +219,6 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
-			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
 			validation.By(
 				validateMandatoryNotes,
 			),
@@ -229,6 +228,7 @@ func validateInvoice(inv *bill.Invoice) error {
 					validateNoteTXD,
 				),
 			),
+			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
 			validation.Skip,
 		),
 	)
@@ -459,10 +459,10 @@ func validateOrderingSeller(value any) error {
 	// BR-FR-29: If the supplier is STC, then the seller tax ID must be present
 	return validation.ValidateStruct(ordering,
 		validation.Field(&ordering.Seller,
-			validation.Required.Error("seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.By(
 				validateSeller,
 			),
+			validation.Required.Error("seller is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.Skip,
 		),
 	)
@@ -476,10 +476,10 @@ func validateSeller(value any) error {
 
 	return validation.ValidateStruct(seller,
 		validation.Field(&seller.TaxID,
-			validation.Required.Error("tax ID is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.By(
 				validateSellerTaxID,
 			),
+			validation.Required.Error("tax ID is required when supplier is under STC scheme (BR-FR-CO-15)"),
 			validation.Skip,
 		),
 	)
@@ -577,10 +577,10 @@ func validatePaymentDueDatePresent(value any) error {
 
 	return validation.ValidateStruct(payment,
 		validation.Field(&payment.Terms,
-			validation.Required.Error("payment terms required for final invoices (BR-FR-CO-09)"),
 			validation.By(
 				validateTermsDueDatePresent,
 			),
+			validation.Required.Error("payment terms required for final invoices (BR-FR-CO-09)"),
 			validation.Skip,
 		),
 	)
