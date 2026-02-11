@@ -89,4 +89,9 @@ func TestValidateIdentity(t *testing.T) {
 		err := fr.Validate(id)
 		assert.NoError(t, err)
 	})
+
+	t.Run("nil identity", func(t *testing.T) {
+		err := fr.Validate(nil)
+		assert.NoError(t, err)
+	})
 }

@@ -2451,3 +2451,53 @@ func TestAdditionalBillingModes(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+func TestMissingRequiredNoteCodes(t *testing.T) {
+	t.Run("missing PMT note code (BR-FR-05)", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Notes = []*org.Note{
+			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMD"}},
+			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "AAB"}},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "missing required note codes: PMT")
+		assert.ErrorContains(t, err, "BR-FR-05")
+	})
+
+	t.Run("missing PMD note code (BR-FR-05)", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Notes = []*org.Note{
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMT"}},
+			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "AAB"}},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "missing required note codes: PMD")
+		assert.ErrorContains(t, err, "BR-FR-05")
+	})
+
+	t.Run("missing AAB note code (BR-FR-05)", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Notes = []*org.Note{
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMT"}},
+			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMD"}},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "missing required note codes: AAB")
+		assert.ErrorContains(t, err, "BR-FR-05")
+	})
+
+	t.Run("missing multiple note codes (BR-FR-05)", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Notes = []*org.Note{
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMT"}},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "missing required note codes")
+		assert.ErrorContains(t, err, "PMD")
+		assert.ErrorContains(t, err, "AAB")
+		assert.ErrorContains(t, err, "BR-FR-05")
+	})
+}
