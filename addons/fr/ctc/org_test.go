@@ -14,7 +14,7 @@ import (
 )
 
 func TestElectronicAddressValidation(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(ctc.Flow2)
 
 	t.Run("valid SIREN inbox matching VAT", func(t *testing.T) {
 		party := &org.Party{
@@ -167,7 +167,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 }
 
 func TestPeppolKeyNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(ctc.Flow2)
 
 	t.Run("peppol key set on SIREN inbox when none exist", func(t *testing.T) {
 		party := &org.Party{
@@ -267,7 +267,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 }
 
 func TestIdentitySchemeFormatValidation(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(ctc.Flow2)
 
 	t.Run("valid identity with scheme 0224 - alphanumeric", func(t *testing.T) {
 		party := &org.Party{
@@ -385,7 +385,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 }
 
 func TestPrivateIDNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(ctc.Flow2)
 
 	t.Run("private-id key sets ISO scheme ID 0224", func(t *testing.T) {
 		party := &org.Party{
@@ -452,7 +452,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 }
 
 func TestSIRENGenerationFromSIRET(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(ctc.Flow2)
 
 	t.Run("generated SIREN from SIRET", func(t *testing.T) {
 		party := &org.Party{
@@ -523,7 +523,7 @@ func TestSIRENGenerationFromSIRET(t *testing.T) {
 // Additional edge cases for better coverage
 func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("nil identity returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator((*org.Identity)(nil))
 		assert.NoError(t, err)
 	})
@@ -535,7 +535,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 				iso.ExtKeySchemeID: "0224",
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(id)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "must be no more than 100")
@@ -548,7 +548,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 				iso.ExtKeySchemeID: "0224",
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(id)
 		assert.NoError(t, err)
 	})
@@ -556,7 +556,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 
 func TestValidatePartyEdgeCases(t *testing.T) {
 	t.Run("nil party returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator((*org.Party)(nil))
 		assert.NoError(t, err)
 	})
@@ -581,7 +581,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-09/10")
@@ -597,7 +597,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.Error(t, err)
 	})
@@ -605,7 +605,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 
 func TestNormalizePartyEdgeCases(t *testing.T) {
 	t.Run("normalize nil party", func(_ *testing.T) {
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer((*org.Party)(nil))
 		// Should not crash
 	})
@@ -614,7 +614,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 		assert.Len(t, party.Identities, 0)
 	})
@@ -631,7 +631,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN from SIRET, plus the original SIRET, plus 1 nil
@@ -671,7 +671,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN
@@ -710,7 +710,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 
 		// Should not generate duplicate SIREN
@@ -733,7 +733,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
 	})
@@ -753,7 +753,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 		// First inbox should keep its peppol key, second should not get it
 		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
@@ -773,7 +773,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				nilInbox, // Another nil for good measure
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		ad.Normalizer(party)
 
 		// Should still have 3 elements (2 nils + 1 valid inbox)
@@ -802,7 +802,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 			Name:       "Test Party",
 			Identities: []*org.Identity{},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.NoError(t, err)
 	})
@@ -816,7 +816,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
@@ -840,7 +840,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
@@ -861,7 +861,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.NoError(t, err, "validation should skip nil identity and succeed with valid identity")
 	})
@@ -884,7 +884,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(party)
 		assert.NoError(t, err, "validation should skip empty code for private-id and succeed with other valid identity")
 	})
@@ -892,7 +892,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 
 func TestValidateInboxEdgeCases(t *testing.T) {
 	t.Run("nil inbox returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator((*org.Inbox)(nil))
 		assert.NoError(t, err)
 	})
@@ -902,7 +902,7 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 			Scheme: "0225",
 			Code:   "123456789-valid-code",
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(inbox)
 		assert.NoError(t, err)
 	})
@@ -912,7 +912,7 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 			Scheme: "9999",
 			Code:   "ANY-CODE-FORMAT", // Different scheme, CTC doesn't validate it
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(inbox)
 		assert.NoError(t, err)
 	})
@@ -921,7 +921,7 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 func TestValidateAttachmentsEdgeCases(t *testing.T) {
 	t.Run("empty attachments returns nil", func(t *testing.T) {
 		attachments := []*org.Attachment{}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(attachments)
 		assert.NoError(t, err)
 	})
@@ -933,7 +933,7 @@ func TestValidateAttachmentsEdgeCases(t *testing.T) {
 				Description: "RIB",
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(attachments)
 		assert.NoError(t, err)
 	})
@@ -944,7 +944,7 @@ func TestValidateAttachmentsEdgeCases(t *testing.T) {
 				Description: "",
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(attachments)
 		assert.NoError(t, err)
 	})
@@ -955,7 +955,7 @@ func TestValidateAttachmentsEdgeCases(t *testing.T) {
 				Description: "   ",
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(ctc.Flow2)
 		err := ad.Validator(attachments)
 		// Whitespace gets trimmed to empty string, which violates BR-FR-17
 		assert.Error(t, err)
