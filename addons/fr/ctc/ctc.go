@@ -5,7 +5,6 @@ package ctc
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
@@ -106,8 +105,6 @@ func validate(doc any) error {
 		return validateInbox(obj)
 	case *org.Item:
 		return validateItem(obj)
-	case *cal.Date:
-		return validateDate(obj)
 	case []*org.Attachment:
 		return validateOrgAttachments(obj)
 	}
