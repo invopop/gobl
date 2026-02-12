@@ -400,7 +400,7 @@ func validateSirenPresent(value any) error {
 // validateOrdering validates the ordering details (BR-FR-29)
 func validateOrdering(value any) error {
 	ordering, ok := value.(*bill.Ordering)
-	if !ok || ordering == nil || len(ordering.Identities) == 0 {
+	if !ok || ordering == nil {
 		return nil
 	}
 
@@ -614,7 +614,10 @@ func validateDelivery(value any) error {
 	)
 }
 
-// validateTotals validates that for final invoices (B2, S2, M2), the advance amount equals the total tax-inclusive amount and the amount due must be 0  (BR-FR-CO-09)
+// validateTotals validates that for final invoices (B2, S2, M2):
+// - BR-FR-CO-09 BT-23-1: the advance amount (BT-113) must equal the tax-inclusive total (BT-112)
+// - BR-FR-CO-09 BT-23-2: the payable amount (BT-115) must be 0
+// BT-115 maps to Due if present, otherwise Payable.
 func validateTotals(value any) error {
 	totals, ok := value.(*bill.Totals)
 	if !ok || totals == nil {
@@ -622,12 +625,22 @@ func validateTotals(value any) error {
 	}
 
 	return validation.ValidateStruct(totals,
-		validation.Field(&totals.Payable,
+		// BT-23-1: PrepaidAmount (Advances) must equal TaxInclusiveAmount (TotalWithTax)
+		validation.Field(&totals.Advances,
+			validation.Required.Error("advance amount is required for already-paid invoices (BR-FR-CO-09)"),
+			num.Equals(totals.TotalWithTax),
+			validation.Skip,
+		),
+		// BT-23-2: PayableAmount must be 0
+		// PayableAmount maps to Due if present, otherwise Payable
+		validation.Field(&totals.Due,
 			num.Equals(num.AmountZero),
 			validation.Skip,
 		),
-		validation.Field(&totals.Due,
-			num.Equals(num.AmountZero),
+		validation.Field(&totals.Payable,
+			validation.When(totals.Due == nil,
+				num.Equals(num.AmountZero),
+			),
 			validation.Skip,
 		),
 	)
@@ -722,11 +735,9 @@ func isB2BTransaction(inv *bill.Invoice) bool {
 
 	for _, note := range inv.Notes {
 		if note != nil && note.Ext != nil {
-			if code, ok := note.Ext[untdid.ExtKeyTextSubject]; ok && code == "BAR" {
+			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" && note.Text == "B2B" {
 				// Check if note text indicates B2B transaction (B2B or B2BINT)
-				if note.Text == "B2B" || note.Text == "B2BINT" {
-					return true
-				}
+				return true
 			}
 		}
 	}

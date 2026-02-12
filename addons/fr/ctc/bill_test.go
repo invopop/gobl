@@ -1722,7 +1722,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 
 		err := inv.Validate()
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "must be equal to")
+		assert.ErrorContains(t, err, "advance amount is required for already-paid invoices")
 	})
 
 	t.Run("final invoice B2 with incorrect advance amount is invalid (BR-FR-CO-09)", func(t *testing.T) {
@@ -1763,7 +1763,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 
 		err := inv.Validate()
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "must be equal to")
+		assert.ErrorContains(t, err, "must be equal to 0")
 	})
 
 	t.Run("final invoice M2 without due date is invalid (BR-FR-CO-09)", func(t *testing.T) {
