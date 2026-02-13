@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- `pkg/template`: removed as no longer used.
+
 ### Added
 
 - `fr-ctc-v1`: French CTC Flow 2 B2B e-invoicing addon
