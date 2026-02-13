@@ -1,6 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
-  - "fr-ctc-v1"
+  - "fr-ctc-flow2-v1"
 uuid: "b2c3d4e5-6789-01bc-def0-234567890abc"
 type: "credit-note"
 currency: "EUR"

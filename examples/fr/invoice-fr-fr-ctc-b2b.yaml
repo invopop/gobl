@@ -1,6 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
-  - "fr-ctc-v1"
+  - "fr-ctc-flow2-v1"
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "EUR"
 issue_date: "2024-06-13"
