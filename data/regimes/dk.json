@@ -1,0 +1,108 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "da": "Danmark",
+    "en": "Denmark"
+  },
+  "time_zone": "Europe/Copenhagen",
+  "country": "DK",
+  "currency": "DKK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "cvr",
+      "name": {
+        "da": "CVR-nummer",
+        "en": "CVR Number"
+      }
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "da": "moms",
+        "en": "VAT"
+      },
+      "title": {
+        "da": "Merværdiafgift",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "da": "Standardsats",
+            "en": "General Rate"
+          },
+          "values": [
+            {
+              "since": "1992-01-01",
+              "percent": "25.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Danish Tax Agency - VAT rates"
+          },
+          "url": "https://skat.dk/erhverv/moms"
+        }
+      ]
+    }
+  ]
+}

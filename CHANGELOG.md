@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- `pkg/template`: removed as no longer used.
+
+## [v0.307.0] - 2026-01-27
+
 ### Added
 
+- `dk`: Added the Danish regime
+- `de`: support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
 ### Fixed

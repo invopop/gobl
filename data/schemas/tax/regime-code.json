@@ -39,6 +39,10 @@
       "title": "Germany"
     },
     {
+      "const": "DK",
+      "title": "Denmark"
+    },
+    {
       "const": "EL",
       "title": "Greece"
     },
