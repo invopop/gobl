@@ -917,4 +917,3 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-
