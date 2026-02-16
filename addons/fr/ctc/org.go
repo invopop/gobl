@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -28,26 +27,7 @@ const (
 	identityKeyPrivateID cbc.Key = "private-id"
 	// identitySchemeIDPrivate is the ISO scheme ID for identities requiring alphanumeric format
 	identitySchemeIDPrivate = "0224"
-
-	// Attachment for format category for BR-FR-18
-	attachmentFormat = "LISIBLE"
 )
-
-// Allowed attachment description values for French CTC (BR-FR-17)
-var allowedAttachmentDescriptions = []cbc.Code{
-	"RIB",                        // Bank account details (Relevé d'Identité Bancaire)
-	"LISIBLE",                    // Human-readable representation of the invoice
-	"FEUILLE_DE_STYLE",           // Style sheet for document presentation
-	"PJA",                        // Additional supporting document (Pièce Jointe Additionnelle)
-	"BON_LIVRAISON",              // Delivery note
-	"BON_COMMANDE",               // Purchase order
-	"DOCUMENT_ANNEXE",            // Annex document
-	"BORDEREAU_SUIVI",            // Follow-up form
-	"BORDEREAU_SUIVI_VALIDATION", // Validated follow-up form
-	"ETAT_ACOMPTE",               // Payment status statement
-	"FACTURE_PAIEMENT_DIRECT",    // Direct payment invoice
-	"RECAPITULATIF_COTRAITANCE",  // Co-contracting summary
-}
 
 func normalizeParty(party *org.Party) {
 	if party == nil {
@@ -294,47 +274,4 @@ func validateInbox(value any) error {
 			validation.Skip,
 		),
 	)
-}
-
-// validateOrgAttachments validates attachment descriptions and uniqueness constraints (BR-FR-17/18)
-// BR-FR-17: Description must be in list of valid descriptions
-// BR-FR-18: Only one attachment can have the "LISIBLE" description per invoice
-//
-// When creating attachments via API, use a value from the allowed list in the description field.
-func validateOrgAttachments(attachments []*org.Attachment) error {
-	if len(attachments) == 0 {
-		return nil
-	}
-
-	lisibleCount := 0
-
-	for _, att := range attachments {
-		if att == nil {
-			continue
-		}
-
-		// BR-FR-17: Validate that description is one of the allowed values
-		if att.Description != "" {
-			desc := cbc.Code(strings.TrimSpace(att.Description))
-			if !slices.Contains(allowedAttachmentDescriptions, desc) {
-				allowed := make([]string, len(allowedAttachmentDescriptions))
-				for i, code := range allowedAttachmentDescriptions {
-					allowed[i] = string(code)
-				}
-				return fmt.Errorf("attachment description '%s' is not allowed, must be one of: %v (BR-FR-17)", desc, allowed)
-			}
-
-			// BR-FR-18: Count LISIBLE attachments
-			if desc == attachmentFormat {
-				lisibleCount++
-			}
-		}
-	}
-
-	// BR-FR-18: Only one LISIBLE attachment allowed
-	if lisibleCount > 1 {
-		return errors.New("only one attachment with description 'LISIBLE' is allowed per invoice (BR-FR-18)")
-	}
-
-	return nil
 }

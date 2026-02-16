@@ -670,23 +670,24 @@ func TestAttachmentValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("invalid attachment description - arbitrary value", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		attachments := []*org.Attachment{
+	t.Run("invoice validation catches invalid attachment description", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Attachments = []*org.Attachment{
 			{
 				Code:        "ATT001",
 				Description: "INVALID_TYPE",
 				URL:         "https://example.com/doc.pdf",
 			},
 		}
-		err := ad.Validator(attachments)
-		assert.ErrorContains(t, err, "attachment description 'INVALID_TYPE' is not allowed")
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-17")
 	})
 
-	t.Run("multiple LISIBLE attachments rejected (BR-FR-18)", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		attachments := []*org.Attachment{
+	t.Run("invoice validation catches multiple LISIBLE attachments", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Attachments = []*org.Attachment{
 			{
 				Code:        "ATT001",
 				Description: "LISIBLE",
@@ -698,61 +699,39 @@ func TestAttachmentValidation(t *testing.T) {
 				URL:         "https://example.com/invoice2.pdf",
 			},
 		}
-		err := ad.Validator(attachments)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
 		assert.ErrorContains(t, err, "only one attachment with description 'LISIBLE' is allowed")
 		assert.ErrorContains(t, err, "BR-FR-18")
 	})
 
-	t.Run("empty attachment description allowed", func(t *testing.T) {
+	t.Run("addon validator skips nil attachments gracefully", func(t *testing.T) {
+		// Create an invoice with nil attachments to test addon validator behavior
 		inv := testInvoiceB2BStandard(t)
+		var att *org.Attachment
 		inv.Attachments = []*org.Attachment{
+			att,
 			{
 				Code:        "ATT001",
-				Description: "",
-				URL:         "https://example.com/doc.pdf",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
-	})
-
-	t.Run("attachment description with whitespace trimmed", func(t *testing.T) {
-		inv := testInvoiceB2BStandard(t)
-		inv.Attachments = []*org.Attachment{
-			{
-				Code:        "ATT001",
-				Description: "  LISIBLE  ",
+				Description: "LISIBLE",
 				URL:         "https://example.com/invoice.pdf",
 			},
+			att,
+			{
+				Code:        "ATT002",
+				Description: "RIB",
+				URL:         "https://example.com/rib.pdf",
+			},
 		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
-	})
 
-	t.Run("multiple attachments with empty descriptions allowed", func(t *testing.T) {
-		inv := testInvoiceB2BStandard(t)
-		inv.Attachments = []*org.Attachment{
-			{Code: "ATT01", Description: "", URL: "https://example.com/1.pdf"},
-			{Code: "ATT02", Description: "", URL: "https://example.com/2.pdf"},
-			{Code: "ATT03", Description: "", URL: "https://example.com/3.pdf"},
-		}
+		// Get the addon and call validator directly with the invoice
+		ad := tax.AddonForKey(ctc.Flow2V1)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
-	})
 
-	t.Run("one LISIBLE with empty descriptions allowed", func(t *testing.T) {
-		inv := testInvoiceB2BStandard(t)
-		inv.Attachments = []*org.Attachment{
-			{Code: "ATT01", Description: "LISIBLE", URL: "https://example.com/invoice.pdf"},
-			{Code: "ATT02", Description: "", URL: "https://example.com/2.pdf"},
-			{Code: "ATT03", Description: "", URL: "https://example.com/3.pdf"},
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
+		// The addon validator should handle nil attachments gracefully
+		err := ad.Validator(inv)
+		assert.NoError(t, err, "addon validator should skip nil attachments when validating invoice")
 	})
 }
 

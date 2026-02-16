@@ -112,8 +112,6 @@ func validate(doc any) error {
 		return validateInbox(obj)
 	case *org.Item:
 		return validateItem(obj)
-	case []*org.Attachment:
-		return validateOrgAttachments(obj)
 	}
 	return nil
 }

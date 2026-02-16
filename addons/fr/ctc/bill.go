@@ -86,6 +86,27 @@ var advancePaymentDocumentTypes = []cbc.Code{
 	"503", // Self-billed credit for claim
 }
 
+// Allowed attachment description values for French CTC (BR-FR-17)
+var allowedAttachmentDescriptions = []string{
+	"RIB",                        // Bank account details (Relevé d'Identité Bancaire)
+	"LISIBLE",                    // Human-readable representation of the invoice
+	"FEUILLE_DE_STYLE",           // Style sheet for document presentation
+	"PJA",                        // Additional supporting document (Pièce Jointe Additionnelle)
+	"BON_LIVRAISON",              // Delivery note
+	"BON_COMMANDE",               // Purchase order
+	"DOCUMENT_ANNEXE",            // Annex document
+	"BORDEREAU_SUIVI",            // Follow-up form
+	"BORDEREAU_SUIVI_VALIDATION", // Validated follow-up form
+	"ETAT_ACOMPTE",               // Payment status statement
+	"FACTURE_PAIEMENT_DIRECT",    // Direct payment invoice
+	"RECAPITULATIF_COTRAITANCE",  // Co-contracting summary
+}
+
+const (
+	// attachmentFormatLisible is the attachment format category for BR-FR-18
+	attachmentFormatLisible = "LISIBLE"
+)
+
 // normalizeInvoice ensures invoice settings comply with French CTC requirements
 func normalizeInvoice(inv *bill.Invoice) {
 	if inv == nil {
@@ -229,6 +250,17 @@ func validateInvoice(inv *bill.Invoice) error {
 				),
 			),
 			validation.Required.Error("notes are required for French CTC invoices (BR-FR-05)"),
+			validation.Skip,
+		),
+		validation.Field(&inv.Attachments,
+			validation.Each(
+				validation.By(
+					validateAttachmentDescription,
+				),
+			),
+			validation.By(
+				validateAttachmentUniqueness,
+			),
 			validation.Skip,
 		),
 	)
@@ -724,6 +756,48 @@ func validateNoteTXD(value any) error {
 	}
 
 	return errors.New("for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-CO-14)")
+}
+
+// validateAttachmentDescription validates individual attachment descriptions (BR-FR-17)
+// BR-FR-17: Description must be provided and be in list of valid descriptions
+func validateAttachmentDescription(value any) error {
+	att, ok := value.(*org.Attachment)
+	if !ok || att == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(att,
+		validation.Field(&att.Description,
+			validation.Required.Error("must be one of the allowed attachment descriptions (BR-FR-17)"),
+			validation.In(allowedAttachmentDescriptions...).Error("must be one of the allowed attachment descriptions (BR-FR-17)"),
+		),
+	)
+}
+
+// validateAttachmentUniqueness validates that only one LISIBLE attachment exists (BR-FR-18)
+// BR-FR-18: Only one attachment can have the "LISIBLE" description per invoice
+func validateAttachmentUniqueness(value any) error {
+	attachments, ok := value.([]*org.Attachment)
+	if !ok || len(attachments) == 0 {
+		return nil
+	}
+
+	lisibleCount := 0
+	for _, att := range attachments {
+		if att == nil || att.Description == "" {
+			continue
+		}
+
+		if att.Description == attachmentFormatLisible {
+			lisibleCount++
+		}
+	}
+
+	if lisibleCount > 1 {
+		return errors.New("only one attachment with description 'LISIBLE' is allowed per invoice (BR-FR-18)")
+	}
+
+	return nil
 }
 
 // isB2BTransaction determines if the transaction is B2B (business to business)
