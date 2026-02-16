@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
+
 ### Removed
 
 - `pkg/template`: removed as no longer used.
