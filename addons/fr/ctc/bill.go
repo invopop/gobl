@@ -27,7 +27,7 @@ var invoiceCodeRegexp = regexp.MustCompile(`^[A-Za-z0-9\-\+_/]{1,35}$`)
 var allowedDocumentTypes = []cbc.Code{
 	"380", // Commercial invoice
 	"389", // Self-billed invoice
-	"393", // Factored invoice
+	"393", // Factoring invoice
 	"501", // Final invoice
 	"386", // Advance payment invoice
 	"500", // Self-billed advance payment
@@ -38,7 +38,7 @@ var allowedDocumentTypes = []cbc.Code{
 	"261", // Self-billed credit note
 	"262", // Consolidated credit note
 	"381", // Credit note
-	"396", // Factored credit note
+	"396", // Factoring credit note
 	"502", // Self-billed corrective
 	"503", // Self-billed credit for claim
 }
@@ -75,7 +75,7 @@ var correctiveInvoiceTypes = []cbc.Code{
 var creditNoteTypes = []cbc.Code{
 	"261", // Self-billed credit note
 	"381", // Credit note
-	"396", // Factored credit note
+	"396", // Factoring credit note
 	"502", // Self-billed corrective
 	"503", // Self-billed credit for claim
 }
@@ -284,7 +284,7 @@ func validateBillInvoiceTax(value any) error {
 			tax.ExtensionsRequire(ExtKeyBillingMode),
 			validation.When(
 				// BR-FR-CO-08
-				isFactoredExtension(tx.Ext.Get(ExtKeyBillingMode)),
+				isFactoringExtension(tx.Ext.Get(ExtKeyBillingMode)),
 				tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, advancePaymentDocumentTypes...),
 			),
 			validation.Skip,
@@ -823,7 +823,7 @@ func isFinalInvoice(inv *bill.Invoice) bool {
 	return bm == BillingModeB2 || bm == BillingModeS2 || bm == BillingModeM2
 }
 
-func isFactoredExtension(bm cbc.Code) bool {
+func isFactoringExtension(bm cbc.Code) bool {
 	return bm == BillingModeB4 || bm == BillingModeS4 || bm == BillingModeM4
 }
 

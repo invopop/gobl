@@ -552,9 +552,9 @@ func TestDocumentTypeScenarios(t *testing.T) {
 		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
 	})
 
-	t.Run("factored invoice", func(t *testing.T) {
+	t.Run("factoring invoice", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		inv.SetTags(tax.TagFactored)
+		inv.SetTags(tax.TagFactoring)
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "393", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
 	})
@@ -595,10 +595,10 @@ func TestDocumentTypeScenarios(t *testing.T) {
 		assert.Equal(t, "384", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
 	})
 
-	t.Run("factored credit note", func(t *testing.T) {
+	t.Run("factoring credit note", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.SetTags(tax.TagFactored)
+		inv.SetTags(tax.TagFactoring)
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "396", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
 	})
@@ -1598,10 +1598,10 @@ func TestPaymentDueDateValidation(t *testing.T) {
 }
 
 func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
-	t.Run("factored billing mode B4 with advance payment type 386 is invalid (BR-FR-CO-08)", func(t *testing.T) {
+	t.Run("factoring billing mode B4 with advance payment type 386 is invalid (BR-FR-CO-08)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		// Set factored billing mode B4
+		// Set factoring billing mode B4
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
@@ -1613,10 +1613,10 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		assert.ErrorContains(t, err, "value '386' not allowed")
 	})
 
-	t.Run("factored billing mode S4 with advance payment type 500 is invalid (BR-FR-CO-08)", func(t *testing.T) {
+	t.Run("factoring billing mode S4 with advance payment type 500 is invalid (BR-FR-CO-08)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		// Set factored billing mode S4
+		// Set factoring billing mode S4
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
@@ -1628,10 +1628,10 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		assert.ErrorContains(t, err, "value '500' not allowed")
 	})
 
-	t.Run("factored billing mode M4 with advance payment type 503 is invalid (BR-FR-CO-08)", func(t *testing.T) {
+	t.Run("factoring billing mode M4 with advance payment type 503 is invalid (BR-FR-CO-08)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		// Set factored billing mode M4
+		// Set factoring billing mode M4
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
@@ -1643,10 +1643,10 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		assert.ErrorContains(t, err, "value '503' not allowed")
 	})
 
-	t.Run("factored billing mode B4 with standard invoice type 380 is valid (BR-FR-CO-08)", func(t *testing.T) {
+	t.Run("factoring billing mode B4 with standard invoice type 380 is valid (BR-FR-CO-08)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		// Set factored billing mode B4
+		// Set factoring billing mode B4
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
@@ -1657,10 +1657,10 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("non-factored billing mode B2 with advance payment type 386 is valid (BR-FR-CO-08)", func(t *testing.T) {
+	t.Run("non-factoring billing mode B2 with advance payment type 386 is valid (BR-FR-CO-08)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		// Set non-factored billing mode B2
+		// Set non-factoring billing mode B2
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
@@ -1916,11 +1916,11 @@ func TestCreditNoteValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("factored credit note (396) requires preceding", func(t *testing.T) {
+	t.Run("factoring credit note (396) requires preceding", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
 
-		// Set factored credit note document type (396)
+		// Set factoring credit note document type (396)
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "396"
 
 		// Should require preceding

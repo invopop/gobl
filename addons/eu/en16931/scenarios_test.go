@@ -63,7 +63,7 @@ func TestScenarios(t *testing.T) {
 				},
 			},
 		}
-		inv.SetTags(tax.TagFactored)
+		inv.SetTags(tax.TagFactoring)
 
 		err := inv.Calculate()
 		require.NoError(t, err)
@@ -89,7 +89,7 @@ func TestScenarios(t *testing.T) {
 				},
 			},
 		}
-		inv.SetTags(tax.TagFactored)
+		inv.SetTags(tax.TagFactoring)
 
 		err := inv.Calculate()
 		require.NoError(t, err)

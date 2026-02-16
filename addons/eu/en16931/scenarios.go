@@ -108,7 +108,7 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeStandard,
 				},
 				Tags: []cbc.Key{
-					tax.TagFactored,
+					tax.TagFactoring,
 				},
 				Ext: tax.Extensions{
 					untdid.ExtKeyDocumentType: "393",
@@ -119,7 +119,7 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeCreditNote,
 				},
 				Tags: []cbc.Key{
-					tax.TagFactored,
+					tax.TagFactoring,
 				},
 				Ext: tax.Extensions{
 					untdid.ExtKeyDocumentType: "396",

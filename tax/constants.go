@@ -49,7 +49,7 @@ const (
 	TagExport        cbc.Key = "export"
 	TagEEA           cbc.Key = "eea" // European Economic Area
 	TagPrepayment    cbc.Key = "prepayment"
-	TagFactored      cbc.Key = "factored"
+	TagFactoring     cbc.Key = "factoring"
 )
 
 // globalCategories defines the tax categories that can be applied anywhere that
