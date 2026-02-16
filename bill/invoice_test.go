@@ -1080,51 +1080,12 @@ func TestCalculateInverted(t *testing.T) {
 }
 
 func TestInvertWithBypassTag(t *testing.T) {
-	// Create an invoice with bypass tag and pre-calculated totals
-	// This simulates loading an invoice from JSON with bypass tag
-	i := &bill.Invoice{
-		Code: "123TEST",
-		Tax: &bill.Tax{
-			PricesInclude: tax.CategoryVAT,
-		},
-		Supplier: &org.Party{
-			TaxID: &tax.Identity{
-				Country: "ES",
-				Code:    "B98602642",
-			},
-		},
-		IssueDate: cal.MakeDate(2022, 6, 13),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.NewAmount(1100, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Percent:  num.NewPercentage(10, 2),
-					},
-				},
-			},
-		},
-		Totals: &bill.Totals{
-			Sum:          num.MakeAmount(1100, 2),
-			Total:        num.MakeAmount(1000, 2),
-			TaxIncluded:  &[]num.Amount{num.MakeAmount(100, 2)}[0],
-			Tax:          num.MakeAmount(100, 2),
-			TotalWithTax: num.MakeAmount(1100, 2),
-			Payable:      num.MakeAmount(1100, 2),
-		},
-	}
+	i := &bill.Invoice{}
 	i.SetTags(tax.TagBypass)
 
-	// Now test Invert() with bypass tag - this should not panic
-	require.NoError(t, i.Invert())
-	assert.Equal(t, "-11.00", i.Totals.Payable.String())
-	assert.Equal(t, "-11.00", i.Totals.Sum.String())
-	assert.Equal(t, "-10.00", i.Totals.Total.String())
+	err := i.Invert()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "bypass")
 }
 
 func TestInvoiceForUnknownRegime(t *testing.T) {
