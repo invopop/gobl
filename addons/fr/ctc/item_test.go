@@ -11,7 +11,7 @@ import (
 )
 
 func TestItemMetaValidation(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2)
+	ad := tax.AddonForKey(ctc.Flow2V1)
 
 	t.Run("valid item with meta values", func(t *testing.T) {
 		item := &org.Item{

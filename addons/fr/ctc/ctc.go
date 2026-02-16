@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	// Flow2 is the key for the French CTC addon
-	Flow2 cbc.Key = "fr-ctc-flow2-v1"
+	// Flow2V1 is the key for the French CTC addon
+	Flow2V1 cbc.Key = "fr-ctc-flow2-v1"
 )
 
 func init() {
@@ -23,7 +23,7 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key: Flow2,
+		Key: Flow2V1,
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 2",
 			i18n.FR: "France CTC Flux 2",

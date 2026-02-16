@@ -22,7 +22,7 @@ func testInvoiceB2BStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
 		Regime:   tax.WithRegime("FR"),
-		Addons:   tax.WithAddons(ctc.Flow2),
+		Addons:   tax.WithAddons(ctc.Flow2V1),
 		Code:     "FAC-2024-001",
 		Currency: "EUR",
 		Type:     bill.InvoiceTypeStandard,
@@ -671,7 +671,7 @@ func TestAttachmentValidation(t *testing.T) {
 	})
 
 	t.Run("invalid attachment description - arbitrary value", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2)
+		ad := tax.AddonForKey(ctc.Flow2V1)
 		attachments := []*org.Attachment{
 			{
 				Code:        "ATT001",
@@ -685,7 +685,7 @@ func TestAttachmentValidation(t *testing.T) {
 	})
 
 	t.Run("multiple LISIBLE attachments rejected (BR-FR-18)", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2)
+		ad := tax.AddonForKey(ctc.Flow2V1)
 		attachments := []*org.Attachment{
 			{
 				Code:        "ATT001",
@@ -2008,7 +2008,7 @@ func TestFinalInvoiceTypes(t *testing.T) {
 }
 
 func TestInvoiceNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2)
+	ad := tax.AddonForKey(ctc.Flow2V1)
 
 	t.Run("normalizes invoice with existing tax", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
@@ -2038,7 +2038,7 @@ func TestInvoiceNormalization(t *testing.T) {
 }
 
 func TestHelperFunctionEdgeCases(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2)
+	ad := tax.AddonForKey(ctc.Flow2V1)
 
 	t.Run("validate unsupported type returns nil", func(t *testing.T) {
 		// Test with a type that isn't in the switch statement
@@ -2148,7 +2148,7 @@ func TestValidatePrecedingDocument(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// CTC addon validation should return nil for nil document ref
-		ad := tax.AddonForKey(ctc.Flow2)
+		ad := tax.AddonForKey(ctc.Flow2V1)
 		err := ad.Validator(inv)
 		assert.NoError(t, err, "CTC addon should return nil for nil preceding document element")
 	})
@@ -2533,7 +2533,7 @@ func TestNilCodeValidation(t *testing.T) {
 
 		// CTC addon validation should return nil for empty code
 		// Base GOBL validation will catch the missing code
-		ad := tax.AddonForKey(ctc.Flow2)
+		ad := tax.AddonForKey(ctc.Flow2V1)
 		err := ad.Validator(inv)
 		assert.NoError(t, err, "CTC addon should return nil for empty code, letting base validation handle it")
 	})
@@ -2550,7 +2550,7 @@ func TestNilCodeValidation(t *testing.T) {
 }
 
 func TestValidationNilChecks(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2)
+	ad := tax.AddonForKey(ctc.Flow2V1)
 
 	t.Run("invoice with nil payment terms", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
