@@ -3,7 +3,6 @@ package bill
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
@@ -234,7 +233,7 @@ func partyHasTaxIDCode(party *org.Party) bool {
 // an error.
 func (inv *Invoice) Invert() error {
 	if inv.HasTags(tax.TagBypass) {
-		return errors.New("cannot invert an invoice with tag bypass")
+		return fmt.Errorf("cannot invert an invoice with tag bypass")
 	}
 
 	payable := inv.Totals.Payable.Invert()
