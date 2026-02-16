@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "66f5a3737a4afcdfb5a00380be73b70f9b38e2d78819b291ab5e2fe6afff9e50"
+			"val": "78405effccdcc2a4f907bc59501dd0a023ba81ade4fe155169f0609c173012c2"
 		}
 	},
 	"doc": {
@@ -33,8 +33,11 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"key": "cvr",
-					"code": "13585628"
+					"type": "CVR",
+					"code": "13585628",
+					"ext": {
+						"iso-scheme-id": "0184"
+					}
 				}
 			],
 			"inboxes": [
@@ -69,8 +72,11 @@
 			"identities": [
 				{
 					"scope": "legal",
-					"key": "cvr",
-					"code": "88146328"
+					"type": "CVR",
+					"code": "88146328",
+					"ext": {
+						"iso-scheme-id": "0184"
+					}
 				}
 			],
 			"inboxes": [
