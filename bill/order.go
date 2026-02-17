@@ -265,6 +265,8 @@ func (ord *Order) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, ord.Charges)
 	tax.Normalize(normalizers, ord.Payment)
 	tax.Normalize(normalizers, ord.Delivery)
+	tax.Normalize(normalizers, ord.Notes)
+	tax.Normalize(normalizers, ord.Attachments)
 
 	normalizers.Each(ord)
 }
