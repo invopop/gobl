@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
 
+## [v0.308.0] - 2026-02-17
+
+### Removed
+
+- `pkg/template`: removed as no longer used.
+
+### Added
+
+- `fr-ctc-v1`: French CTC Flow 2 B2B e-invoicing addon
+- `fr`: SIREN and SIRET identity types format validation
+- `org`: New note keys: `payment-method` and `payment-term`
+
+### Changed
+
+- `eu-en16931-v2017`: Identity normalization now supports type-based identities
+- `dk`: Updated CVR identity to use Type instead of Key
+
+### Fixed
+
+- `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
+- `bill`: Invoice and Order now normalize Attachments fields
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added

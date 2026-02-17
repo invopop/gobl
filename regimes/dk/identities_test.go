@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIdentityKeyDefinitions(t *testing.T) {
-	// Test that the CVR identity key constant is correctly defined
-	assert.Equal(t, "cvr", string(dk.IdentityKeyCVR))
+func TestIdentityTypeDefinitions(t *testing.T) {
+	// Test that the CVR identity type constant is correctly defined
+	assert.Equal(t, "CVR", string(dk.IdentityTypeCVR))
 }
 
 func TestValidateIdentity(t *testing.T) {
@@ -22,28 +22,28 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "valid CVR 1",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "13585628",
 			},
 		},
 		{
 			name: "valid CVR 2",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "88146328",
 			},
 		},
 		{
 			name: "valid CVR 3",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "25063864",
 			},
 		},
 		{
 			name: "empty code",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "",
 			},
 			err: "",
@@ -51,7 +51,7 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "too short",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "1234567",
 			},
 			err: "invalid format",
@@ -59,7 +59,7 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "too long",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "123456789",
 			},
 			err: "invalid format",
@@ -67,7 +67,7 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "contains letters",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "1234567A",
 			},
 			err: "invalid format",
@@ -75,7 +75,7 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "bad checksum",
 			identity: &org.Identity{
-				Key:  "cvr",
+				Type: "CVR",
 				Code: "13585627",
 			},
 			err: "checksum mismatch",
@@ -83,7 +83,7 @@ func TestValidateIdentity(t *testing.T) {
 		{
 			name: "non-CVR identity",
 			identity: &org.Identity{
-				Key:  "other",
+				Type: "other",
 				Code: "invalid",
 			},
 		},
