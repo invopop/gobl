@@ -24,7 +24,7 @@ func New() *tax.RegimeDef {
 			i18n.DA: "Danmark",
 		},
 		TimeZone:   "Europe/Copenhagen",
-		Identities: identityKeyDefinitions,
+		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
 		Validator:  Validate,
 		Normalizer: Normalize,

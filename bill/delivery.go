@@ -295,6 +295,7 @@ func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, dlv.Lines)
 	tax.Normalize(normalizers, dlv.Discounts)
 	tax.Normalize(normalizers, dlv.Charges)
+	tax.Normalize(normalizers, dlv.Notes)
 	normalizers.Each(dlv)
 }
 
