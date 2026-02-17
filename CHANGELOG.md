@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [v0.308.0] - 2026-02-17
 
+### Added
+
+- `pt-saft-v1`: Added correction definitions
+
 ### Removed
 
 - `pkg/template`: removed as no longer used.
@@ -35,7 +39,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `dk`: Added the Danish regime
 - `de`: support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
-- `pt-saft-v1`: Added correction definitions
 
 ### Fixed
 
