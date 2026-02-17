@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.308.0] - 2026-02-17
+
 ### Removed
 
 - `pkg/template`: removed as no longer used.
