@@ -56,6 +56,10 @@
             "title": "Chorus Pro"
           },
           {
+            "const": "fr-ctc-flow2-v1",
+            "title": "France CTC Flow 2"
+          },
+          {
             "const": "fr-facturx-v1",
             "title": "French Factur-X v1"
           },

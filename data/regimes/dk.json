@@ -10,7 +10,7 @@
   "tax_scheme": "VAT",
   "identities": [
     {
-      "key": "cvr",
+      "code": "CVR",
       "name": {
         "da": "CVR-nummer",
         "en": "CVR Number"
