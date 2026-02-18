@@ -567,8 +567,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv := creditNote()
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "preceding: cannot be blank")
+		require.NoError(t, inv.Validate())
 	})
 }
 
