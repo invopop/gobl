@@ -173,6 +173,29 @@ func validateInvoiceCustomer(val any) error {
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
+		validation.Field(&p.Identities,
+			validation.Each(
+				validation.By(validateIdentityCountry),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateIdentityCountry(val any) error {
+	id, ok := val.(*org.Identity)
+	if !ok || id == nil {
+		return nil
+	}
+	return validation.ValidateStruct(id,
+		validation.Field(&id.Country,
+			validation.When(
+				id.Ext.Has(ExtKeyIdentityType) && !id.Ext.Get(ExtKeyIdentityType).In(ExtCodeIdentityTypeVAT),
+				validation.Required.Error("required when identity type is not NIF-VAT (02)"),
+			),
+			validation.Skip,
+		),
 	)
 }
 
