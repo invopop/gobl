@@ -33,42 +33,158 @@ func newAddon() *tax.AddonDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Support for the French CTC (Continuous Transaction Control) Flow 2 B2B
-				e-invoicing requirements from the French electronic invoicing reform.
+				Support for the French CTC (Continuous Transaction Controls) Flow 2 B2B
+				e-invoicing mandate from the French electronic invoicing reform.
 
-				This addon provides the necessary structures and validations to ensure compliance
-				with the French CTC specifications for B2B electronic invoicing.
+				This addon extends the EN 16931 European standard with French-specific rules for
+				regulated B2B invoices — that is, invoices exchanged between two parties registered
+				for VAT in France. It should not be used for invoices that are subject only to
+				e-reporting (for example, B2C or cross-border transactions).
 
-				It requires the EN16931 addon as it extends the European standard with French-specific
-				requirements for the e-invoicing reform.
+				## Billing Mode
 
-				This addon is required for regulated invoice. This refers to invoices between two parties 
-				registered for VAT in France. This addon should not be used for invoices which should be reported.
+				Every invoice must carry a **billing mode** extension (` + "`" + `fr-ctc-billing-mode` + "`" + `) that
+				describes the nature of the supply and the payment context. The code is made up of
+				a letter prefix and a numeric suffix:
 
-				Note on currency conversion (BR-FR-CO-12): When an invoice is issued in a non-EUR
-				currency, the gobl.ubl library will automatically handle the conversion to EUR and
-				present the invoice with both the original currency and EUR equivalents for tax
-				amounts, ensuring compliance with French accounting requirements.
+				| Prefix | Meaning |
+				|--------|---------|
+				| B | Goods (Biens) |
+				| S | Services |
+				| M | Mixed (goods and services that are not accessory to each other) |
+
+				| Suffix | Meaning |
+				|--------|---------|
+				| 1 | Standard deposit invoice |
+				| 2 | Already-paid invoice (payable amount = 0) |
+				| 4 | Final invoice after one or more advance payments |
+				| 5 | Subcontractor invoice (services only) |
+				| 6 | Co-contractor invoice (services only) |
+				| 7 | E-reporting invoice (VAT already collected) |
+
+				## Identities
+
+				A **SIREN** identity (9 digits) must be present on both the supplier and the customer
+				for B2B invoices. The **SIRET** (14 digits) is optional; if provided without a SIREN,
+				the addon will automatically derive the SIREN from the first nine digits of the SIRET.
+
+				The SIREN is automatically assigned the ` + "`" + `legal` + "`" + ` scope when no other identity on
+				the party already carries that scope.
+
+				Private identifiers can be included using the ` + "`" + `private-id` + "`" + ` key; the addon will
+				assign ISO scheme ID ` + "`" + `0224` + "`" + ` to these automatically.
+
+				## Electronic Addresses (Inboxes)
+
+				Both the supplier and customer must have an electronic address for B2B invoices.
+				Addresses using SIREN scheme ` + "`" + `0225` + "`" + ` must contain only alphanumeric characters
+				and the symbols ` + "`" + `+` + "`" + `, ` + "`" + `-` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `. If the party has a SIREN identity and no inbox
+				carries a ` + "`" + `peppol` + "`" + ` key, the addon will assign the ` + "`" + `peppol` + "`" + ` key to the SIREN inbox
+				automatically.
+
+				## Required Notes
+
+				Three invoice-level notes with specific UNTDID text-subject codes are mandatory:
+
+				| Code | Purpose |
+				|------|---------|
+				| ` + "`" + `PMT` + "`" + ` | Payment terms |
+				| ` + "`" + `PMD` + "`" + ` | Payment means |
+				| ` + "`" + `AAB` + "`" + ` | Buyer accounting reference (BAR) |
+
+				The BAR note must contain one of the following treatment values: ` + "`" + `B2B` + "`" + `, ` + "`" + `B2BINT` + "`" + `,
+				` + "`" + `B2C` + "`" + `, ` + "`" + `OUTOFSCOPE` + "`" + `, or ` + "`" + `ARCHIVEONLY` + "`" + `.
+
+				## Invoice Code
+
+				The invoice series and code must each be at most 35 characters and may only contain
+				alphanumeric characters and the symbols ` + "`" + `-` + "`" + `, ` + "`" + `+` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `.
+
+				## Currency Conversion
+
+				When the invoice is issued in a currency other than EUR, the gobl.ubl conversion
+				library will automatically add EUR equivalents for the tax totals, satisfying the
+				BR-FR-CO-12 requirement without any extra input from the user.
 			`),
 			i18n.FR: here.Doc(`
-				Support pour le CTC (Contrôle Continu des Transactions) français Flux 2
-				pour les exigences de facturation électronique B2B de la réforme française.
+				Support pour le mandat de facturation électronique CTC (Contrôle Continu des
+				Transactions) français Flux 2 B2B, issu de la réforme française de la facturation
+				électronique.
 
-				Cet addon fournit les structures et validations nécessaires pour assurer la
-				conformité avec les spécifications CTC françaises pour la facturation électronique B2B.
+				Cet addon étend le standard européen EN 16931 avec des règles spécifiques à la
+				France pour les factures B2B réglementées — c'est-à-dire les factures échangées
+				entre deux parties assujetties à la TVA en France. Il ne doit pas être utilisé pour
+				les factures soumises uniquement à l'e-reporting (par exemple, B2C ou transactions
+				transfrontalières).
 
-				Il nécessite l'addon EN16931 car il étend le standard européen avec des exigences
-				spécifiques françaises pour la réforme de la facturation électronique.
+				## Cadre de facturation
 
-				Cet addon est requis pour les factures réglementées. Cela concerne les factures entre                           
-      			deux parties assujetties à la TVA en France. Cet addon ne doit pas être utilisé pour                                   
-            	les factures qui doivent être déclarées.                                                                                                                               
+				Chaque facture doit comporter une extension **cadre de facturation**
+				(` + "`" + `fr-ctc-billing-mode` + "`" + `) décrivant la nature de la prestation et le contexte de
+				paiement. Le code est composé d'un préfixe lettré et d'un suffixe numérique :
 
-				Note sur la conversion de devises (BR-FR-CO-12) : Lorsqu'une facture est émise dans
-				une devise autre que l'EUR, la bibliothèque gobl.ubl gère automatiquement la conversion
-				en EUR et présente la facture avec à la fois la devise d'origine et les équivalents en
-				EUR pour les montants de TVA, garantissant la conformité avec les exigences comptables
-				françaises.
+				| Préfixe | Signification |
+				|---------|---------------|
+				| B | Biens |
+				| S | Services |
+				| M | Mixte (biens et services non accessoires les uns aux autres) |
+
+				| Suffixe | Signification |
+				|---------|---------------|
+				| 1 | Facture de dépôt standard |
+				| 2 | Facture déjà payée (montant exigible = 0) |
+				| 4 | Facture définitive après un ou plusieurs acomptes |
+				| 5 | Facture de sous-traitance (services uniquement) |
+				| 6 | Facture de cotraitance (services uniquement) |
+				| 7 | Facture e-reporting (TVA déjà collectée) |
+
+				## Identifiants
+
+				Un identifiant **SIREN** (9 chiffres) doit être présent chez le fournisseur et le
+				client pour les factures B2B. Le **SIRET** (14 chiffres) est facultatif ; s'il est
+				fourni sans SIREN, l'addon dérive automatiquement le SIREN des neuf premiers chiffres
+				du SIRET.
+
+				Le SIREN reçoit automatiquement la portée ` + "`" + `legal` + "`" + ` lorsqu'aucun autre identifiant de
+				la partie ne porte déjà cette portée.
+
+				Les identifiants privés peuvent être inclus avec la clé ` + "`" + `private-id` + "`" + ` ; l'addon leur
+				attribue automatiquement l'identifiant de schéma ISO ` + "`" + `0224` + "`" + `.
+
+				## Adresses électroniques (boîtes de réception)
+
+				Le fournisseur et le client doivent tous deux disposer d'une adresse électronique
+				pour les factures B2B. Les adresses utilisant le schéma SIREN ` + "`" + `0225` + "`" + ` ne doivent
+				contenir que des caractères alphanumériques et les symboles ` + "`" + `+` + "`" + `, ` + "`" + `-` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `. Si la
+				partie possède un identifiant SIREN et qu'aucune boîte de réception ne porte la clé
+				` + "`" + `peppol` + "`" + `, l'addon assigne automatiquement cette clé à la boîte SIREN.
+
+				## Notes obligatoires
+
+				Trois notes au niveau de la facture avec des codes objet de texte UNTDID spécifiques
+				sont obligatoires :
+
+				| Code | Objet |
+				|------|-------|
+				| ` + "`" + `PMT` + "`" + ` | Conditions de paiement |
+				| ` + "`" + `PMD` + "`" + ` | Moyens de paiement |
+				| ` + "`" + `AAB` + "`" + ` | Référence comptable acheteur (BAR) |
+
+				La note BAR doit contenir l'une des valeurs de traitement suivantes : ` + "`" + `B2B` + "`" + `,
+				` + "`" + `B2BINT` + "`" + `, ` + "`" + `B2C` + "`" + `, ` + "`" + `OUTOFSCOPE` + "`" + ` ou ` + "`" + `ARCHIVEONLY` + "`" + `.
+
+				## Code de facture
+
+				La série et le code de la facture doivent chacun comporter au maximum 35 caractères
+				et ne peuvent contenir que des caractères alphanumériques et les symboles ` + "`" + `-` + "`" + `, ` + "`" + `+` + "`" + `,
+				` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `.
+
+				## Conversion de devises
+
+				Lorsque la facture est émise dans une devise autre que l'EUR, la bibliothèque de
+				conversion gobl.ubl ajoute automatiquement les équivalents en EUR pour les totaux
+				de TVA, satisfaisant l'exigence BR-FR-CO-12 sans intervention supplémentaire de
+				l'utilisateur.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -81,9 +197,6 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
-		Tags: []*tax.TagSet{
-			invoiceTags,
-		},
 		Normalizer: normalize,
 		Validator:  validate,
 	}
