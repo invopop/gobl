@@ -37,7 +37,7 @@ func newAddon() *tax.AddonDef {
 				e-invoicing mandate from the French electronic invoicing reform.
 
 				This addon extends the EN 16931 European standard with French-specific rules for
-				regulated B2B invoices — that is, invoices exchanged between two parties registered
+				regulated B2B invoices, that is, invoices exchanged between two parties registered
 				for VAT in France. It should not be used for invoices that are subject only to
 				e-reporting (for example, B2C or cross-border transactions).
 
@@ -112,7 +112,7 @@ func newAddon() *tax.AddonDef {
 				électronique.
 
 				Cet addon étend le standard européen EN 16931 avec des règles spécifiques à la
-				France pour les factures B2B réglementées — c'est-à-dire les factures échangées
+				France pour les factures B2B réglementées, c'est-à-dire les factures échangées
 				entre deux parties assujetties à la TVA en France. Il ne doit pas être utilisé pour
 				les factures soumises uniquement à l'e-reporting (par exemple, B2C ou transactions
 				transfrontalières).
