@@ -43,24 +43,9 @@ func newAddon() *tax.AddonDef {
 
 				## Billing Mode
 
-				Every invoice must carry a **billing mode** extension (` + "`" + `fr-ctc-billing-mode` + "`" + `) that
-				describes the nature of the supply and the payment context. The code is made up of
-				a letter prefix and a numeric suffix:
-
-				| Prefix | Meaning |
-				|--------|---------|
-				| B | Goods (Biens) |
-				| S | Services |
-				| M | Mixed (goods and services that are not accessory to each other) |
-
-				| Suffix | Meaning |
-				|--------|---------|
-				| 1 | Standard deposit invoice |
-				| 2 | Already-paid invoice (payable amount = 0) |
-				| 4 | Final invoice after one or more advance payments |
-				| 5 | Subcontractor invoice (services only) |
-				| 6 | Co-contractor invoice (services only) |
-				| 7 | E-reporting invoice (VAT already collected) |
+				Every invoice must carry a **billing mode** extension (` + "`fr-ctc-billing-mode`" + `) that
+				describes the nature of the supply and the payment context. See the extension
+				definition for the full list of accepted values.
 
 				## Identities
 
@@ -68,37 +53,43 @@ func newAddon() *tax.AddonDef {
 				for B2B invoices. The **SIRET** (14 digits) is optional; if provided without a SIREN,
 				the addon will automatically derive the SIREN from the first nine digits of the SIRET.
 
-				The SIREN is automatically assigned the ` + "`" + `legal` + "`" + ` scope when no other identity on
+				Note that the SIREN is not currently derived from the party's VAT number; it must
+				be supplied explicitly as a separate identity. This may be added in a future release.
+
+				The SIREN is automatically assigned the ` + "`legal`" + ` scope when no other identity on
 				the party already carries that scope.
 
-				Private identifiers can be included using the ` + "`" + `private-id` + "`" + ` key; the addon will
-				assign ISO scheme ID ` + "`" + `0224` + "`" + ` to these automatically.
+				Private identifiers can be included using the ` + "`private-id`" + ` key; the addon will
+				assign ISO scheme ID ` + "`0224`" + ` to these automatically.
 
 				## Electronic Addresses (Inboxes)
 
 				Both the supplier and customer must have an electronic address for B2B invoices.
-				Addresses using SIREN scheme ` + "`" + `0225` + "`" + ` must contain only alphanumeric characters
-				and the symbols ` + "`" + `+` + "`" + `, ` + "`" + `-` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `. If the party has a SIREN identity and no inbox
-				carries a ` + "`" + `peppol` + "`" + ` key, the addon will assign the ` + "`" + `peppol` + "`" + ` key to the SIREN inbox
+				Addresses using SIREN scheme ` + "`0225`" + ` must contain only alphanumeric characters
+				and the symbols ` + "`+`" + `, ` + "`-`" + `, ` + "`_`" + `, ` + "`/`" + `. If the party has a SIREN identity and no inbox
+				carries a ` + "`peppol`" + ` key, the addon will assign the ` + "`peppol`" + ` key to the SIREN inbox
 				automatically.
 
 				## Required Notes
 
-				Three invoice-level notes with specific UNTDID text-subject codes are mandatory:
+				Every invoice must include at least three notes (BG-1) with the following
+				UNTDID text-subject codes (BT-21):
 
-				| Code | Purpose |
-				|------|---------|
-				| ` + "`" + `PMT` + "`" + ` | Payment terms |
-				| ` + "`" + `PMD` + "`" + ` | Payment means |
-				| ` + "`" + `AAB` + "`" + ` | Buyer accounting reference (BAR) |
+				- ` + "`PMT`" + `: A mandatory mention of the 40 EUR flat-fee penalty for recovery costs
+				  that applies to late payments (BT-22).
+				- ` + "`PMD`" + `: The late-payment penalty conditions that apply to each individual
+				  company's payment terms (BT-22).
+				- ` + "`AAB`" + `: A mention of any early-payment discount offered, or an explicit
+				  statement that no discount applies (BT-22).
 
-				The BAR note must contain one of the following treatment values: ` + "`" + `B2B` + "`" + `, ` + "`" + `B2BINT` + "`" + `,
-				` + "`" + `B2C` + "`" + `, ` + "`" + `OUTOFSCOPE` + "`" + `, or ` + "`" + `ARCHIVEONLY` + "`" + `.
+				An optional ` + "`BAR`" + ` note can be used to indicate the routing treatment of the
+				invoice. Its text must be one of: ` + "`B2B`" + `, ` + "`B2BINT`" + `, ` + "`B2C`" + `, ` + "`OUTOFSCOPE`" + `, or
+				` + "`ARCHIVEONLY`" + `.
 
 				## Invoice Code
 
 				The invoice series and code must each be at most 35 characters and may only contain
-				alphanumeric characters and the symbols ` + "`" + `-` + "`" + `, ` + "`" + `+` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `.
+				alphanumeric characters and the symbols ` + "`-`" + `, ` + "`+`" + `, ` + "`_`" + `, ` + "`/`" + `.
 
 				## Currency Conversion
 
@@ -120,23 +111,9 @@ func newAddon() *tax.AddonDef {
 				## Cadre de facturation
 
 				Chaque facture doit comporter une extension **cadre de facturation**
-				(` + "`" + `fr-ctc-billing-mode` + "`" + `) décrivant la nature de la prestation et le contexte de
-				paiement. Le code est composé d'un préfixe lettré et d'un suffixe numérique :
-
-				| Préfixe | Signification |
-				|---------|---------------|
-				| B | Biens |
-				| S | Services |
-				| M | Mixte (biens et services non accessoires les uns aux autres) |
-
-				| Suffixe | Signification |
-				|---------|---------------|
-				| 1 | Facture de dépôt standard |
-				| 2 | Facture déjà payée (montant exigible = 0) |
-				| 4 | Facture définitive après un ou plusieurs acomptes |
-				| 5 | Facture de sous-traitance (services uniquement) |
-				| 6 | Facture de cotraitance (services uniquement) |
-				| 7 | Facture e-reporting (TVA déjà collectée) |
+				(` + "`fr-ctc-billing-mode`" + `) décrivant la nature de la prestation et le contexte de
+				paiement. Consultez la définition de l'extension pour la liste complète des valeurs
+				acceptées.
 
 				## Identifiants
 
@@ -145,39 +122,45 @@ func newAddon() *tax.AddonDef {
 				fourni sans SIREN, l'addon dérive automatiquement le SIREN des neuf premiers chiffres
 				du SIRET.
 
-				Le SIREN reçoit automatiquement la portée ` + "`" + `legal` + "`" + ` lorsqu'aucun autre identifiant de
+				Le SIREN n'est pas actuellement dérivé du numéro de TVA de la partie ; il doit être
+				fourni explicitement comme identifiant séparé. Cette fonctionnalité pourra être
+				ajoutée dans une version future.
+
+				Le SIREN reçoit automatiquement la portée ` + "`legal`" + ` lorsqu'aucun autre identifiant de
 				la partie ne porte déjà cette portée.
 
-				Les identifiants privés peuvent être inclus avec la clé ` + "`" + `private-id` + "`" + ` ; l'addon leur
-				attribue automatiquement l'identifiant de schéma ISO ` + "`" + `0224` + "`" + `.
+				Les identifiants privés peuvent être inclus avec la clé ` + "`private-id`" + ` ; l'addon leur
+				attribue automatiquement l'identifiant de schéma ISO ` + "`0224`" + `.
 
 				## Adresses électroniques (boîtes de réception)
 
 				Le fournisseur et le client doivent tous deux disposer d'une adresse électronique
-				pour les factures B2B. Les adresses utilisant le schéma SIREN ` + "`" + `0225` + "`" + ` ne doivent
-				contenir que des caractères alphanumériques et les symboles ` + "`" + `+` + "`" + `, ` + "`" + `-` + "`" + `, ` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `. Si la
+				pour les factures B2B. Les adresses utilisant le schéma SIREN ` + "`0225`" + ` ne doivent
+				contenir que des caractères alphanumériques et les symboles ` + "`+`" + `, ` + "`-`" + `, ` + "`_`" + `, ` + "`/`" + `. Si la
 				partie possède un identifiant SIREN et qu'aucune boîte de réception ne porte la clé
-				` + "`" + `peppol` + "`" + `, l'addon assigne automatiquement cette clé à la boîte SIREN.
+				` + "`peppol`" + `, l'addon assigne automatiquement cette clé à la boîte SIREN.
 
 				## Notes obligatoires
 
-				Trois notes au niveau de la facture avec des codes objet de texte UNTDID spécifiques
-				sont obligatoires :
+				Toute facture doit comporter au moins trois notes (BG-1) avec les codes objet de
+				texte UNTDID (BT-21) suivants :
 
-				| Code | Objet |
-				|------|-------|
-				| ` + "`" + `PMT` + "`" + ` | Conditions de paiement |
-				| ` + "`" + `PMD` + "`" + ` | Moyens de paiement |
-				| ` + "`" + `AAB` + "`" + ` | Référence comptable acheteur (BAR) |
+				- ` + "`PMT`" + ` : Mention obligatoire de l'indemnité forfaitaire de 40 EUR pour frais de
+				  recouvrement applicable en cas de retard de paiement (BT-22).
+				- ` + "`PMD`" + ` : Mention des pénalités de retard correspondant aux conditions de paiement
+				  propres à chaque entreprise (BT-22).
+				- ` + "`AAB`" + ` : Mention d'escompte proposé ou mention explicite de l'absence d'escompte
+				  (BT-22).
 
-				La note BAR doit contenir l'une des valeurs de traitement suivantes : ` + "`" + `B2B` + "`" + `,
-				` + "`" + `B2BINT` + "`" + `, ` + "`" + `B2C` + "`" + `, ` + "`" + `OUTOFSCOPE` + "`" + ` ou ` + "`" + `ARCHIVEONLY` + "`" + `.
+				Une note ` + "`BAR`" + ` facultative peut être utilisée pour indiquer le traitement de
+				routage de la facture. Son texte doit être l'une des valeurs suivantes : ` + "`B2B`" + `,
+				` + "`B2BINT`" + `, ` + "`B2C`" + `, ` + "`OUTOFSCOPE`" + ` ou ` + "`ARCHIVEONLY`" + `.
 
 				## Code de facture
 
 				La série et le code de la facture doivent chacun comporter au maximum 35 caractères
-				et ne peuvent contenir que des caractères alphanumériques et les symboles ` + "`" + `-` + "`" + `, ` + "`" + `+` + "`" + `,
-				` + "`" + `_` + "`" + `, ` + "`" + `/` + "`" + `.
+				et ne peuvent contenir que des caractères alphanumériques et les symboles ` + "`-`" + `, ` + "`+`" + `,
+				` + "`_`" + `, ` + "`/`" + `.
 
 				## Conversion de devises
 

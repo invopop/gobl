@@ -65,6 +65,10 @@ var extensions = []*cbc.Definition{
 
 				The numeric suffix indicates the payment type (1=deposit, 2=already paid,
 				4=final after down payment, 5=subcontractor, 6=co-contractor, 7=e-reporting).
+
+				The value is currently trusted as provided and is not normalised from other invoice
+				fields. Automatic inference from document type and payment context may be added in
+				a future release.
 			`),
 			i18n.FR: here.Doc(`
 				Code utilisé pour décrire le cadre de facturation de la facture. Le mode de
@@ -77,6 +81,10 @@ var extensions = []*cbc.Definition{
 
 				Le suffixe numérique indique le type de paiement (1=dépôt, 2=déjà payée,
 				4=définitive après acompte, 5=sous-traitant, 6=cotraitant, 7=e-reporting).
+
+				La valeur est actuellement utilisée telle quelle et n'est pas normalisée à partir
+				des autres champs de la facture. Une inférence automatique à partir du type de
+				document et du contexte de paiement pourra être ajoutée dans une version future.
 			`),
 		},
 		Values: []*cbc.Definition{
