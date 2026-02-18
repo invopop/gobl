@@ -36,10 +36,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			bill.InvoiceTypeCreditNote,
 		)),
 		validation.Field(&inv.Preceding,
-			validation.When(
-				inv.Type.In(bill.InvoiceTypeCreditNote),
-				validation.Required,
-			),
 			validation.Each(validation.By(validateBillInvoicePreceding)),
 			validation.Skip,
 		),
