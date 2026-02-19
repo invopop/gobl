@@ -57,6 +57,62 @@ func newAddon() *tax.AddonDef {
 
 				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
 				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
+
+				## Note Key Mappings
+
+				The following table shows how GOBL note keys are mapped to UNTDID 4451 text subject qualifier codes.
+				The mapped code is set in the **untdid-text-subject** extension field.
+
+				| GOBL Note Key | UNTDID 4451 Code | Description |
+				|---------------|------------------|-------------|
+				| goods | AAA | Goods description |
+				| payment | PMT | Terms of payment |
+				| payment-method | PMD | Payment method or remittance information |
+				| payment-term | AAB | Payment term details |
+				| general | AAI | General information |
+				| legal | ABY | Legal or regulatory information |
+				| dangerous-goods | AAC | Dangerous goods additional information |
+				| ack | AAE | Acknowledgement description |
+				| rate | AAF | Rate additional information |
+				| reason | ACD | Explanation of something relevant to the document |
+				| dispute | ACE | Details on a dispute |
+				| customer | CUR | Customer remarks |
+				| glossary | ACZ | Glossary of terms |
+				| customs | CUS | Customs declaration information |
+				| handling | HAN | Handling instructions |
+				| packaging | PKG | Packaging information |
+				| loading | LOI | Loading instructions |
+				| price | AAK | Price conditions |
+				| priority | PRI | Priority information |
+				| regulatory | REG | Regulatory information |
+				| safety | SAF | Safety instructions |
+				| ship-line | SLR | Ship line |
+				| supplier | SUR | Supplier remarks |
+				| transport | TRA | Transportation information |
+				| delivery | DEL | Delivery information |
+				| quarantine | QIN | Quarantine information |
+				| tax | TXD | Tax declaration |
+				| other | ZZZ | Mutually defined |
+
+				## Identity Scheme Mappings
+
+				The following tables show how GOBL identity keys and types are mapped to ISO/IEC 6523 scheme codes,
+				set in the **iso-scheme-id** extension field.
+
+				### Identity Keys
+
+				| GOBL Identity Key | ISO/IEC 6523 Code | Description |
+				|-------------------|-------------------|-------------|
+				| gln | 0088 | GS1 Global Location Number |
+				| gtin | 0160 | GS1 Global Trade Item Number |
+
+				### Identity Types (regime-specific)
+
+				| GOBL Identity Type | ISO/IEC 6523 Code | Description |
+				|--------------------|-------------------|-------------|
+				| SIREN | 0002 | French SIREN (legal entity identifier) |
+				| SIRET | 0009 | French SIRET (establishment identifier) |
+				| CVR | 0184 | Danish CVR-nummer |
 			`),
 		},
 		Scenarios:  scenarios,

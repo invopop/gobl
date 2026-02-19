@@ -73,7 +73,8 @@ func newAddon() *tax.AddonDef {
 				## Required Notes
 
 				Every invoice must include at least three notes (BG-1) with the following
-				UNTDID text-subject codes (BT-21):
+				UNTDID text-subject codes (BT-21). For the full mapping of GOBL note keys to
+				UNTDID 4451 codes, see the EN 16931 addon (` + "`eu-en16931-v2017`" + `) documentation.
 
 				- ` + "`PMT`" + `: A mandatory mention of the 40 EUR flat-fee penalty for recovery costs
 				  that applies to late payments (BT-22).
@@ -143,7 +144,9 @@ func newAddon() *tax.AddonDef {
 				## Notes obligatoires
 
 				Toute facture doit comporter au moins trois notes (BG-1) avec les codes objet de
-				texte UNTDID (BT-21) suivants :
+				texte UNTDID (BT-21) suivants. Pour la correspondance complète entre les clés de
+				notes GOBL et les codes UNTDID 4451, consultez la documentation de l'addon
+				EN 16931 (` + "`eu-en16931-v2017`" + `).
 
 				- ` + "`PMT`" + ` : Mention obligatoire de l'indemnité forfaitaire de 40 EUR pour frais de
 				  recouvrement applicable en cas de retard de paiement (BT-22).
