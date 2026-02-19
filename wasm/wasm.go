@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"syscall/js"
+	_ "time/tzdata" // embed IANA timezone database so time.LoadLocation works in WASM
 
 	"github.com/invopop/gobl/internal/cli"
 )
