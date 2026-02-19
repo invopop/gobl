@@ -58,9 +58,13 @@ func TestTaxComboNormalization(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
+			Ext: tax.Extensions{
+				en16931.ExtKeyExemptionReason: "Exempt under Article 132",
+			},
 		}
 		ad.Normalizer(c)
 		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.NoError(t, ad.Validator(c))
 	})
 	t.Run("missing rate, without percent", func(t *testing.T) {
 		c := &tax.Combo{
@@ -119,6 +123,9 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
+			Ext: tax.Extensions{
+				en16931.ExtKeyExemptionReason: "Reverse charge",
+			},
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
@@ -130,6 +137,9 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyIntraCommunity,
+			Ext: tax.Extensions{
+				en16931.ExtKeyExemptionReason: "Intra-community supply",
+			},
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
@@ -141,6 +151,9 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExport,
+			Ext: tax.Extensions{
+				en16931.ExtKeyExemptionReason: "Export outside the EU",
+			},
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
@@ -151,6 +164,9 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
+			Ext: tax.Extensions{
+				en16931.ExtKeyExemptionReason: "Not subject to VAT",
+			},
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))

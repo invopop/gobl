@@ -79,9 +79,23 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryOutsideScope),
 			),
 			validation.When(
-				tc.Ext[untdid.ExtKeyTaxCategory] == TaxCategoryExempt,
-				// we enforce BT-121 to simplify future xml validation. BR-E-10
-				tax.ExtensionsRequire(cef.ExtKeyVATEX),
+				// BR-S-10, BR-Z-10: standard and zero-rated shall NOT have an exemption reason
+				tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero),
+				tax.ExtensionsExclude(cef.ExtKeyVATEX, ExtKeyExemptionReason),
+			),
+			validation.When(
+				// BR-E-10, BR-AE-10, BR-IC-10, BR-G-10, BR-O-10: all other non-standard
+				// categories shall have either a CEF VATEX code or a free-text reason.
+				tc.Ext.Get(untdid.ExtKeyTaxCategory).In(
+					TaxCategoryExempt, TaxCategoryReverseCharge, TaxCategoryIntraCommunity,
+					TaxCategoryExport, TaxCategoryOutsideScope,
+				),
+
+				validation.When(
+					tc.Ext.Get(cef.ExtKeyVATEX).IsEmpty(),
+					tax.ExtensionsRequire(ExtKeyExemptionReason),
+				),
+				tax.ExtensionsAllowOneOf(cef.ExtKeyVATEX, ExtKeyExemptionReason),
 			),
 			validation.Skip,
 		),

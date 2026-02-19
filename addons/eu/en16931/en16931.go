@@ -59,6 +59,7 @@ func newAddon() *tax.AddonDef {
 				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
 			`),
 		},
+		Extensions: extensions,
 		Scenarios:  scenarios,
 		Normalizer: normalize,
 		Validator:  validate,
