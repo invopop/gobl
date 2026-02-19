@@ -63,7 +63,9 @@ lines:
         reason: "Special discount"
     taxes:
       - cat: VAT
-        rate: exempt+reverse-charge
+        key: reverse-charge
+        ext:
+          en16931-exemption-reason: "Reverse Charge"
 
 payment:
   instructions:

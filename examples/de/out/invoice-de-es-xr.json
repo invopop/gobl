@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e28b6a411d11e37f644f5fb8d2f51eff25d9ba1b06423c3bdf7ea104ab3fd84"
+			"val": "b0cf6356391b0b0c88813f315e355e877decde424a131296f561c58bfd055a5c"
 		}
 	},
 	"doc": {
@@ -123,6 +123,7 @@
 						"cat": "VAT",
 						"key": "reverse-charge",
 						"ext": {
+							"en16931-exemption-reason": "Reverse Charge",
 							"untdid-tax-category": "AE"
 						}
 					}
@@ -166,6 +167,7 @@
 							{
 								"key": "reverse-charge",
 								"ext": {
+									"en16931-exemption-reason": "Reverse Charge",
 									"untdid-tax-category": "AE"
 								},
 								"base": "1620.00",
