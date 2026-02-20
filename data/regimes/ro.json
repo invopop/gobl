@@ -1,0 +1,157 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Romania",
+    "ro": "România"
+  },
+  "time_zone": "Europe/Bucharest",
+  "country": "RO",
+  "currency": "RON",
+  "tax_scheme": "VAT",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ro": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ro": "Taxa pe Valoarea Adăugată"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "ro": "Cota Standard"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "24.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "First Reduced Rate",
+            "ro": "Prima Cota Redusă"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11.0%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "9.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Second Reduced Rate",
+            "ro": "A Doua Cota Redusă"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11.0%"
+            },
+            {
+              "since": "2011-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Romanian VAT rates",
+            "ro": "Cotele TVA din România"
+          },
+          "url": "https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures",
+          "at": "2026-02-20T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Romanian RO_CIUS rules",
+            "ro": "Regulile RO_CIUS din România"
+          },
+          "url": "https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf",
+          "at": "2026-02-20T00:00:00"
+        }
+      ]
+    }
+  ]
+}
