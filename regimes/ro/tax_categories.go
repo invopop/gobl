@@ -79,7 +79,25 @@ var taxCategories = []*tax.CategoryDef{
 						Since:   cal.NewDate(2011, 1, 1),
 					},					
 				},
-			},			
+			},
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Romanian VAT rates",
+					i18n.RO: "Cotele TVA din România",
+				},
+				URL: "https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures",
+				At:  cal.NewDateTime(2026, 2, 20, 0, 0, 0),
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Romanian RO_CIUS rules",
+					i18n.RO: "Regulile RO_CIUS din România",
+				},
+				URL: "https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf",
+				At:  cal.NewDateTime(2026, 2, 20, 0, 0, 0),
+			}
 		},
 	},
 }
