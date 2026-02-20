@@ -133,6 +133,24 @@
             }
           ]
         }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Romanian VAT rates",
+            "ro": "Cotele TVA din România"
+          },
+          "url": "https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures",
+          "at": "2026-02-20T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Romanian RO_CIUS rules",
+            "ro": "Regulile RO_CIUS din România"
+          },
+          "url": "https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf",
+          "at": "2026-02-20T00:00:00"
+        }
       ]
     }
   ]
