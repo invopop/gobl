@@ -20,14 +20,14 @@ func init() {
 
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
+		Country:   l10n.TaxCountryCode("XX"),
+		Currency:  currency.XXX,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Template",
 			// Add official local name here.
 			// i18n.XX: "Template",
-		},
-		Country:   l10n.TaxCountryCode("XX"),
-		Currency:  currency.XXX,
-		TaxScheme: tax.CategoryVAT,
+		},		
 		TimeZone:  "Europe/London",
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
