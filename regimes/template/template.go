@@ -27,7 +27,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Template",
 			// Add official local name here.
 			// i18n.XX: "Template",
-		},		
+		},
 		TimeZone:  "Europe/London",
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
