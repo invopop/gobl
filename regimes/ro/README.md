@@ -91,7 +91,7 @@ Source: [OPANAF 1366/2021](https://mfinante.gov.ro/documents/35673/1120722/ordin
 
 - [ANAF e-Factura Portal](https://efactura.mfinante.gov.ro/)
 - [Romanian Ministry of Finance — e-Factura presentation](https://mfinante.gov.ro/static/10/eFactura/PrezentareE-factura.pdf)
-- [RO_CIUS specification (OPANAF 1714/2024)](https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf)
+- [RO_CIUS specification](https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf)
 - [Romanian VAT rates — ANAF](https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures)
 
 ## TODO
