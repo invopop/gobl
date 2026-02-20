@@ -1,0 +1,37 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "4bfb8c67-6ae9-5cfc-a1ce-0d0391e963b1"
+issue_date: "2026-02-21"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "RO"
+    code: "13547272"
+  name: "Romanian Tech SRL"
+  addresses:
+    - street: "Calea Floreasca 169A"
+      locality: "București"
+      code: "014459"
+      country: "RO"
+
+customer:
+  tax_id:
+    country: "RO"
+    code: "10864098"
+  name: "Global Logistics SRL"
+  addresses:
+    - street: "Șoseaua Bucuresti-Ploiești 1A"
+      locality: "București"
+      code: "013681"
+      country: "RO"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Consulting services"
+      price: "500.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
