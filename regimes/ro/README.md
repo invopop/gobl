@@ -19,7 +19,7 @@ Romania uses Value Added Tax (TVA — Taxa pe Valoarea Adăugată). The followin
 | Zero                      | 0%         | —             | Exports, intra-community supplies         |
 | Exempt                    | —          | —             | Healthcare, education, financial services |
 
-> **Note:** As of 1 August 2025, the standard rate increased from 19% to 21%, the first reduced rate from 9% to 11%, and the second reduced rate from 5% to 11%. Both reduced were consolidated. Historical rates are supported for retrospective invoicing.
+> **Note:** As of 1 August 2025, the standard rate increased from 19% to 21%, the first reduced rate from 9% to 11%, and the second reduced rate from 5% to 11%. Both reduced rates were consolidated. Historical rates are supported for retrospective invoicing.
 
 ## Supplier Tax ID (CUI)
 
