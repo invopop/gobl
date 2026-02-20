@@ -4,7 +4,7 @@ package ro
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/i18n"	
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -20,8 +20,8 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Romania",
 			i18n.RO: "România",
-		},			
-		TimeZone:  "Europe/Bucharest",				
+		},
+		TimeZone:   "Europe/Bucharest",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,

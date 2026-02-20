@@ -63,4 +63,3 @@ func TestValidateTaxIdentity(t *testing.T) {
 		})
 	}
 }
-

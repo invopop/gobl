@@ -53,11 +53,11 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Percent: num.MakePercentage(110, 3), 
+						Percent: num.MakePercentage(110, 3),
 						Since:   cal.NewDate(2025, 8, 1),
 					},
 					{
-						Percent: num.MakePercentage(90, 3), 
+						Percent: num.MakePercentage(90, 3),
 						Since:   cal.NewDate(2017, 1, 1),
 					},
 				},
@@ -71,13 +71,13 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Percent: num.MakePercentage(110, 3), 
+						Percent: num.MakePercentage(110, 3),
 						Since:   cal.NewDate(2025, 8, 1),
 					},
 					{
 						Percent: num.MakePercentage(50, 3),
 						Since:   cal.NewDate(2011, 1, 1),
-					},					
+					},
 				},
 			},
 		},
@@ -97,7 +97,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				URL: "https://mfinante.gov.ro/documents/35673/1120722/ordin1366_MO10658112021.pdf",
 				At:  cal.NewDateTime(2026, 2, 20, 0, 0, 0),
-			}
+			},
 		},
 	},
 }

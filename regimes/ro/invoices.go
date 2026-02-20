@@ -1,5 +1,5 @@
 package ro
-	
+
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
