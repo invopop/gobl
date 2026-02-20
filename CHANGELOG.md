@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `ro`: Added the Romanian regime with CUI tax identity validation and VAT(ATV) categories
+- `ro`: Added the Romanian regime with CUI tax identity validation and VAT (TVA) categories
 
 ### Fixed
 
