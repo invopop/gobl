@@ -1,0 +1,70 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "HR"
+uuid: "019035bd-4522-7eb3-83bf-9185ead05ee1"
+type: standard
+series: "S2025"
+code: "001"
+issue_date: "2025-02-01"
+currency: "EUR"
+
+supplier:
+  tax_id:
+    country: "HR"
+    code: "12345678903"
+  name: "Random supplier"
+  addresses:
+    - num: "10"
+      street: "Ilica"
+      locality: "Zagreb"
+      region: "Grad Zagreb"
+      code: "10000"
+      country: "HR"
+  emails:
+    - addr: "john@example.com"
+
+customer:
+  tax_id:
+    country: "HR"
+    code: "11111111119"
+  name: "Random customer"
+  addresses:
+    - num: "5"
+      street: "Vukovarska"
+      locality: "Split"
+      region: "Splitsko-dalmatinska"
+      code: "21000"
+      country: "HR"
+  emails:
+    - addr: "bob@example.com"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Telecom services"
+      price: "90.00"
+      unit: h
+    discounts:
+      - percent: "10%"
+        reason: "Special discounts"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+  - quantity: 1
+    item:
+      name: "Fiber optic cable"
+      price: "100.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced
+
+payment:
+  instructions:
+    key: "credit-transfer+sepa"
+    credit_transfer:
+      - iban: "HR1210010051863000160"
+        name: "Hrvatska poštanska banka"
+  terms:
+    due_dates:
+      - date: "2025-02-15"
+        percent: "100%"
