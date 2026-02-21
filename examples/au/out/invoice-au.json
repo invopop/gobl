@@ -1,0 +1,113 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d85c2c82a692c3771473789cc9918a8dcf52c3c147aeba3bc39efab131ef1e3d"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AU",
+		"uuid": "019c80b3-2967-70a8-8a4f-2fcec887797a",
+		"type": "standard",
+		"code": "001",
+		"issue_date": "2026-02-21",
+		"currency": "AUD",
+		"supplier": {
+			"name": "Example Ltd",
+			"tax_id": {
+				"country": "AU",
+				"code": "51824753556"
+			},
+			"addresses": [
+				{
+					"num": "88",
+					"street": "George Street",
+					"locality": "Sydney",
+					"region": "NSW",
+					"code": "2000",
+					"country": "AU"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Customer Example",
+			"tax_id": {
+				"country": "AU",
+				"code": "51824053452"
+			},
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Smith Street",
+					"locality": "Melbourne",
+					"region": "VIC",
+					"code": "3000",
+					"country": "AU"
+				}
+			],
+			"emails": [
+				{
+					"addr": "customer@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Example Item",
+					"price": "90.00"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "10%",
+								"amount": "162.00"
+							}
+						],
+						"amount": "162.00"
+					}
+				],
+				"sum": "162.00"
+			},
+			"tax": "162.00",
+			"total_with_tax": "1782.00",
+			"payable": "1782.00"
+		}
+	}
+}
