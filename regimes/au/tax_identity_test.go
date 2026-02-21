@@ -43,4 +43,9 @@ func TestValidateIdentity(t *testing.T) {
 		err := au.Validate(id)
 		assert.NoError(t, err)
 	})
+
+	t.Run("non tax identity", func(t *testing.T) {
+		err := au.Validate(struct{}{})
+		assert.NoError(t, err)
+	})
 }
