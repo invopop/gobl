@@ -162,4 +162,9 @@ func TestValidateOtherDocuments(t *testing.T) {
 
 	err = cl.Validate(nil)
 	assert.NoError(t, err)
+
+	// Test with nil tax.Identity specifically
+	var nilIdentity *tax.Identity
+	err = cl.Validate(nilIdentity)
+	assert.NoError(t, err)
 }
