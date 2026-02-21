@@ -79,6 +79,10 @@
       "title": "The Netherlands"
     },
     {
+      "const": "NZ",
+      "title": "New Zealand"
+    },
+    {
       "const": "PL",
       "title": "Poland"
     },

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "New Zealand"
+  },
+  "time_zone": "Pacific/Auckland",
+  "country": "NZ",
+  "currency": "NZD",
+  "tax_scheme": "GST",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero rate"
+          },
+          "desc": {
+            "en": "Some supplies can be zero-rated or exempt under GST rules."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate"
+          },
+          "desc": {
+            "en": "Most taxable supplies are charged at 15% GST."
+          },
+          "values": [
+            {
+              "percent": "15%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Charging GST"
+          },
+          "url": "https://www.ird.govt.nz/gst/charging-gst"
+        }
+      ]
+    }
+  ]
+}
