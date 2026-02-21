@@ -53,7 +53,7 @@ When processing a RUT, GOBL automatically:
 
 **Examples**:
 - `71.325.497-5` → `713254975`
-- `7.766.820-8K` → `77668208K`
+- `77.668.208-k` → `77668208K`
 - `12.345.678-5` → `123456785`
 
 ## Electronic Invoicing
