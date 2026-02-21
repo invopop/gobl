@@ -26,7 +26,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: here.Doc(`
 				Chile's tax system is administered by the SII (Servicio de Impuestos Internos), which oversees the collection of IVA (Impuesto al Valor Agregado), the country's value-added tax.
 
-				Taxpayers are identified using the RUT (Rol Único Tributario), an 8-digit number with a check digit calculated using the modulo 11 algorithm. The check digit can be 0-9 or K, and RUTs are formatted as XX.XXX.XXX-Y.
+				Taxpayers are identified using the RUT (Rol Único Tributario), an 6-8 digits number with a check digit calculated using the modulo 11 algorithm. The check digit can be 0-9 or K, and RUTs are formatted as XX.XXX.XXX-Y.
 
 				Chile applies a single standard IVA rate of 19%, effective since October 1, 2003, when it was increased from 18% by Ley 19888. Unlike many other countries, Chile does not have reduced or super-reduced VAT rates.
 
@@ -37,7 +37,7 @@ func New() *tax.RegimeDef {
 			i18n.ES: here.Doc(`
 				El sistema tributario de Chile es administrado por el SII (Servicio de Impuestos Internos), que supervisa la recaudación del IVA (Impuesto al Valor Agregado).
 
-				Los contribuyentes se identifican mediante el RUT (Rol Único Tributario), un número de 8 dígitos con un dígito verificador calculado mediante el algoritmo módulo 11. El dígito verificador puede ser 0-9 o K, y los RUT se formatean como XX.XXX.XXX-Y.
+				Los contribuyentes se identifican mediante el RUT (Rol Único Tributario), un número de 6-8 dígitos con un dígito verificador calculado mediante el algoritmo módulo 11. El dígito verificador puede ser 0-9 o K, y los RUT se formatean como XX.XXX.XXX-Y.
 
 				Chile aplica una tasa única de IVA del 19%, vigente desde el 1 de octubre de 2003, cuando fue aumentada del 18% mediante la Ley 19888. A diferencia de muchos otros países, Chile no tiene tasas reducidas o super-reducidas de IVA.
 
