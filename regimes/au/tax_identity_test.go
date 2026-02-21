@@ -1,10 +1,9 @@
-package au_test
+package au
 
 import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/au"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +28,7 @@ func TestValidateIdentity(t *testing.T) {
 				Country: "AU",
 				Code:    tt.code,
 			}
-			err := au.Validate(id)
+			err := Validate(id)
 			if tt.err {
 				assert.Error(t, err)
 			} else {
@@ -40,12 +39,17 @@ func TestValidateIdentity(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var id *tax.Identity
-		err := au.Validate(id)
+		err := Validate(id)
 		assert.NoError(t, err)
 	})
 
 	t.Run("non tax identity", func(t *testing.T) {
-		err := au.Validate(struct{}{})
+		err := Validate(struct{}{})
 		assert.NoError(t, err)
+	})
+
+	t.Run("checksum validation", func(t *testing.T) {
+		assert.NoError(t, validateTaxCode(cbc.Code("51824753556")))
+		assert.Error(t, validateTaxCode(cbc.Code("51824753555")))
 	})
 }

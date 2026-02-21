@@ -22,7 +22,7 @@ supplier:
 customer:
   tax_id:
     country: "AU"
-    code: "51824053452"
+    code: "72787502421"
   name: "Customer Example"
   emails:
     - addr: "customer@example.com"

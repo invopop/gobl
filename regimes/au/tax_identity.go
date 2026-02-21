@@ -30,8 +30,30 @@ func validateTaxCode(value any) error {
 	if !ok || code == "" {
 		return nil
 	}
-	if !regexpABN.MatchString(code.String()) {
+	val := code.String()
+	if !regexpABN.MatchString(val) {
 		return errors.New("invalid format")
 	}
+	if !validABNChecksum(val) {
+		return errors.New("invalid checksum")
+	}
 	return nil
+}
+
+func validABNChecksum(abn string) bool {
+	// ABN checksum: subtract 1 from first digit, multiply by weights,
+	// sum, and ensure divisible by 89.
+	weights := []int{10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
+	if len(abn) != len(weights) {
+		return false
+	}
+	sum := 0
+	for i := 0; i < len(weights); i++ {
+		d := int(abn[i] - '0')
+		if i == 0 {
+			d--
+		}
+		sum += d * weights[i]
+	}
+	return sum%89 == 0
 }
