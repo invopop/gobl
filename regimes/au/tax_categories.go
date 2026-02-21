@@ -9,7 +9,6 @@ import (
 )
 
 var taxCategories = []*tax.CategoryDef{
-	// GST
 	{
 		Code: tax.CategoryGST,
 		Name: i18n.String{
