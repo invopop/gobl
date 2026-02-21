@@ -4,13 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d85c2c82a692c3771473789cc9918a8dcf52c3c147aeba3bc39efab131ef1e3d"
+			"val": "7a56c5b361a8bd385f447b21f1df37885c4228a29a3ca19da00d8bfd4ee146e6"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "AU",
-		"uuid": "019c80b3-2967-70a8-8a4f-2fcec887797a",
+		"uuid": "e59a888a-08db-4827-b143-e78b062b94ce",
 		"type": "standard",
 		"code": "001",
 		"issue_date": "2026-02-21",

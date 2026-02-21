@@ -1,4 +1,5 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "e59a888a-08db-4827-b143-e78b062b94ce"
 issue_date: "2026-02-21"
 code: "001"
 currency: "AUD"
