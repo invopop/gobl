@@ -15,8 +15,9 @@ var (
 	// rutPattern matches normalized Chilean RUT format (no separators).
 	// Format: 6-8 digits followed by a check digit (0-9 or K/k), for a total of 7-9 characters.
 	// Modern RUTs typically have 8-9 digits total; older RUTs may have 7.
+	// Leading zeros are not allowed as real Chilean RUTs don't start with zero.
 	// Examples: "713254975" (9), "77668208K" (9), "10000009" (8)
-	rutPattern = regexp.MustCompile(`^(\d{6,8})([\dKk])$`)
+	rutPattern = regexp.MustCompile(`^([1-9]\d{5,7})([\dKk])$`)
 )
 
 // validateTaxIdentity checks to ensure the RUT code looks okay.
@@ -106,21 +107,18 @@ func validateRUT(value interface{}) error {
 //
 //	The calculated check digit as a string ("0"-"9" or "K"), or an error if conversion fails
 func calculateRUTCheckDigit(rut string) (string, error) {
-	num, err := strconv.Atoi(rut)
-	if err != nil {
-		return "", err
-	}
-
-	// Apply modulo 11 algorithm
-	// Process digits from right to left, multiplying by factors 2-7 cyclically
 	sum := 0
 	multiplier := 2
 
-	for num > 0 {
-		digit := num % 10
-		sum += digit * multiplier
+	// Process digits from right to left
+	for i := len(rut) - 1; i >= 0; i-- {
+		digit := int(rut[i] - '0')
 
-		num /= 10
+		if digit < 0 || digit > 9 {
+			return "", strconv.ErrSyntax
+		}
+
+		sum += digit * multiplier
 
 		multiplier++
 		if multiplier > 7 {

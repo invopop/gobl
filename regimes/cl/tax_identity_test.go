@@ -124,6 +124,12 @@ func TestValidateTaxIdentity(t *testing.T) {
 			err:     "invalid RUT format",
 		},
 		{
+			name:    "leading zero not allowed",
+			country: "CL",
+			code:    "012345674",
+			err:     "invalid RUT format",
+		},
+		{
 			name:    "wrong check digit K when should be number",
 			country: "CL",
 			code:    "12345678K",
