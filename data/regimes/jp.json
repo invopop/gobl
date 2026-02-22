@@ -1,0 +1,393 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Japan",
+    "ja": "日本"
+  },
+  "time_zone": "Asia/Tokyo",
+  "country": "JP",
+  "currency": "JPY",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "export",
+          "name": {
+            "en": "Export",
+            "ja": "輸出"
+          },
+          "desc": {
+            "en": "Zero-rated export invoice. All consumption tax lines must use the zero rate.",
+            "ja": "輸出免税請求書。すべての消費税行はゼロ税率を使用する必要があります。"
+          }
+        },
+        {
+          "key": "simplified",
+          "name": {
+            "en": "Simplified Invoice",
+            "ja": "簡易適格請求書"
+          },
+          "desc": {
+            "en": "Simplified qualified invoice for retail, restaurant, taxi and similar businesses. Buyer name is not required.",
+            "ja": "小売、飲食店、タクシーなどの事業者向けの簡易適格請求書。購入者名は不要です。"
+          }
+        },
+        {
+          "key": "self-billing",
+          "name": {
+            "en": "Self-billed Invoice",
+            "ja": "仕入明細書"
+          },
+          "desc": {
+            "en": "Buyer-issued invoice that substitutes for a qualified invoice once confirmed by the supplier.",
+            "ja": "供給者の確認後、適格請求書の代わりとなる購入者発行の請求書。"
+          }
+        }
+      ]
+    }
+  ],
+  "extensions": [
+    {
+      "key": "jp-reduced-rate",
+      "name": {
+        "en": "Reduced Rate Item",
+        "ja": "軽減税率対象品目"
+      },
+      "desc": {
+        "en": "Extensions for items subject to the reduced consumption tax rate (8%).\n\nItems subject to the reduced tax rate include:\n1. Food and drink excluding alcoholic beverages and dining out\n2. Newspapers issued at least twice a week by subscription\n\nUse these extensions to identify line items that qualify for the 8% rate\ninstead of the standard 10% rate.",
+        "ja": "軽減税率（8%）の対象となる品目の拡張。\n\n軽減税率の対象品目：\n1. アルコール飲料および外食を除く飲食料品\n2. 定期購読契約により週2回以上発行される新聞\n\nこれらの拡張を使用して、標準税率10%ではなく8%の対象となる\n明細項目を識別します。"
+      },
+      "values": [
+        {
+          "code": "food-beverage",
+          "name": {
+            "en": "Food and Non-Alcoholic Beverages (Takeaway)",
+            "ja": "飲食料品（テイクアウト）"
+          },
+          "desc": {
+            "en": "Food and drink excluding alcoholic beverages and dining out. Applies to takeaway, delivery, and grocery purchases.",
+            "ja": "アルコール飲料および外食を除く飲食料品。テイクアウト、配達、食料品の購入に適用されます。"
+          }
+        },
+        {
+          "code": "newspaper",
+          "name": {
+            "en": "Newspaper Subscription",
+            "ja": "新聞購読"
+          },
+          "desc": {
+            "en": "Newspapers issued at least twice a week by subscription contract.",
+            "ja": "定期購読契約により週2回以上発行される新聞。"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "code": "CN",
+      "name": {
+        "en": "Corporate Number",
+        "ja": "法人番号"
+      },
+      "desc": {
+        "en": "The Corporate Number (法人番号, Hōjin Bangō) is a 13-digit unique\nidentification number assigned by the National Tax Agency to corporations,\nother organizations, and businesses registered in Japan.\n\nAll companies registered in Japan receive a Corporate Number, which is used\nfor tax filing, social security procedures, and other administrative purposes.\n\nThe Corporate Number can be verified at the National Tax Agency's\nCorporate Number Publication Site: https://www.houjin-bangou.nta.go.jp/en/",
+        "ja": "法人番号は、国税庁が日本に登録されている法人その他の団体や事業者に割り当てる\n13桁の固有識別番号です。\n\n日本に登録されているすべての企業は法人番号を受け取り、\n税務申告、社会保険手続き、その他の行政目的に使用されます。\n\n法人番号は国税庁の法人番号公表サイトで確認できます：\nhttps://www.houjin-bangou.nta.go.jp/"
+      }
+    },
+    {
+      "code": "QII",
+      "name": {
+        "en": "Qualified Invoice Issuer Registration Number",
+        "ja": "適格請求書発行事業者登録番号"
+      },
+      "desc": {
+        "en": "The Qualified Invoice Issuer Registration Number is issued to businesses\nregistered under the Qualified Invoice System introduced on October 1, 2023.\n\nFormat: The letter \"T\" followed by a 13-digit Corporate Number.\nExample: T1234567890123\n\nThis number must be included on qualified invoices (適格請求書) for\nrecipients to claim input tax credits. The registration number can\nbe verified on the National Tax Agency's Qualified Invoice Issuer\nPublication System.",
+        "ja": "適格請求書発行事業者登録番号は、2023年10月1日に導入された\n適格請求書保存方式に登録された事業者に発行されます。\n\n形式：英字「T」に続く13桁の法人番号\n例：T1234567890123\n\nこの番号は、受け手が仕入税額控除を請求するために適格請求書に\n記載する必要があります。登録番号は国税庁の適格請求書発行事業者\n公表システムで確認できます。"
+      }
+    },
+    {
+      "code": "MN",
+      "name": {
+        "en": "Individual Number (My Number)",
+        "ja": "個人番号（マイナンバー）"
+      },
+      "desc": {
+        "en": "The Individual Number (個人番号), commonly known as \"My Number\" (マイナンバー),\nis a 12-digit identification number assigned to all residents of Japan,\nincluding foreign residents.\n\nIt is used for tax, social security, and disaster response administrative\nprocedures. Due to privacy concerns, handling of My Number requires\nstrict compliance with the Act on the Use of Numbers to Identify\nSpecific Individuals in Administrative Procedures.\n\nNote: For business and invoicing purposes, the Corporate Number or\nQualified Invoice Issuer Registration Number is typically used instead.",
+        "ja": "個人番号（マイナンバー）は、外国人居住者を含む日本のすべての居住者に\n割り当てられる12桁の識別番号です。\n\n税務、社会保障、災害対策の行政手続きに使用されます。\nプライバシーの観点から、マイナンバーの取扱いには\n行政手続における特定の個人を識別するための番号の利用等に関する法律\n（マイナンバー法）への厳格な準拠が必要です。\n\n注：ビジネスおよび請求書発行の目的では、通常、法人番号または\n適格請求書発行事業者登録番号が使用されます。"
+      }
+    },
+    {
+      "code": "RR",
+      "name": {
+        "en": "Resident Registration Code",
+        "ja": "住民票コード"
+      },
+      "desc": {
+        "en": "The Resident Registration Code (住民票コード) is an 11-digit number\nassigned to residents for local government administrative purposes.\nIt appears on resident registration certificates (住民票).",
+        "ja": "住民票コードは、地方自治体の行政目的で居住者に割り当てられる\n11桁の番号です。住民票に記載されます。"
+      }
+    },
+    {
+      "key": "passport",
+      "name": {
+        "en": "Passport",
+        "ja": "旅券"
+      }
+    },
+    {
+      "key": "foreign",
+      "name": {
+        "en": "Foreign ID Card (Residence Card)",
+        "ja": "在留カード"
+      }
+    },
+    {
+      "key": "resident",
+      "name": {
+        "en": "Certificate of Residence",
+        "ja": "住民票"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "export"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "export",
+            "text": "Export - Zero rated consumption tax / 輸出取引（免税）"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Qualified Invoice / 簡易適格請求書"
+          }
+        },
+        {
+          "tags": [
+            "self-billing"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "self-billing",
+            "text": "Self-billed invoice / 仕入明細書"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "JCT",
+        "ja": "消費税"
+      },
+      "title": {
+        "en": "Japanese Consumption Tax",
+        "ja": "消費税"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "ja": "標準税率"
+          },
+          "desc": {
+            "en": "The standard consumption tax rate applies to most goods and services\nin Japan, including electronics, clothing, professional services,\nrestaurant meals, and alcoholic beverages.\n\nTotal: 10% (National: 7.8% + Local: 2.2%)",
+            "ja": "標準税率は、電化製品、衣類、専門サービス、外食、\nアルコール飲料を含む日本のほとんどの商品およびサービスに適用されます。\n\n合計：10%（国税：7.8% + 地方税：2.2%）"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "10%"
+            },
+            {
+              "since": "2014-04-01",
+              "percent": "8%"
+            },
+            {
+              "since": "1997-04-01",
+              "percent": "5%"
+            },
+            {
+              "since": "1989-04-01",
+              "percent": "3%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ja": "軽減税率"
+          },
+          "desc": {
+            "en": "The reduced consumption tax rate applies to specific goods and services:\n\n- Food products (excluding restaurant meals and alcoholic beverages)\n- Non-alcoholic beverages\n- Newspaper subscriptions (published at least twice weekly)\n\nTotal: 8% (National: 6.24% + Local: 1.76%)\n\nNote: Dining in at restaurants is subject to the standard 10% rate,\nwhile takeout and delivery of food items may qualify for the reduced 8% rate.",
+            "ja": "軽減税率は、以下の特定の商品およびサービスに適用されます：\n\n- 食料品（外食およびアルコール飲料を除く）\n- 非アルコール飲料\n- 新聞購読（週2回以上発行）\n\n合計：8%（国税：6.24% + 地方税：1.76%）\n\n注：レストランでの店内飲食は標準税率10%の対象ですが、\nテイクアウトやデリバリーは軽減税率8%の対象となる場合があります。"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "8%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate (Export)",
+            "ja": "輸出等（免税）"
+          },
+          "desc": {
+            "en": "Exports and certain international transactions are subject to a zero\nconsumption tax rate. This includes:\n\n- Export of goods\n- International transportation services\n- Services provided to non-residents\n\nBusinesses can still claim input tax credits on purchases related\nto zero-rated supplies.",
+            "ja": "輸出および特定の国際取引は、消費税0%の対象となります。これには以下が含まれます：\n\n- 貨物の輸出\n- 国際輸送サービス\n- 非居住者に提供されるサービス\n\n事業者は、免税取引に関連する購入について、\n仕入税額控除を請求することができます。"
+          },
+          "values": [
+            {
+              "since": "1989-04-01",
+              "percent": "0%"
+            }
+          ]
+        },
+        {
+          "rate": "exempt",
+          "keys": [
+            "exempt"
+          ],
+          "name": {
+            "en": "Exempt",
+            "ja": "非課税"
+          },
+          "desc": {
+            "en": "Certain transactions are exempt from consumption tax, including:\n\n- Financial services (banking, insurance, securities)\n- Medical services under health insurance\n- Educational services\n- Land sale and leasing\n- Postal services\n\nBusinesses making only exempt supplies cannot claim input tax credits.",
+            "ja": "特定の取引は消費税の非課税対象となります。これには以下が含まれます：\n\n- 金融サービス（銀行、保険、証券）\n- 健康保険下の医療サービス\n- 教育サービス\n- 土地の売買および賃貸\n- 郵便サービス\n\n非課税取引のみを行う事業者は、仕入税額控除を受けることができません。"
+          },
+          "values": [
+            {
+              "since": "1989-04-01",
+              "percent": "0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "National Tax Agency - Consumption Tax",
+            "ja": "国税庁 - 消費税"
+          },
+          "url": "https://www.nta.go.jp/english/taxes/consumption_tax/"
+        },
+        {
+          "title": {
+            "en": "Qualified Invoice System",
+            "ja": "適格請求書保存方式"
+          },
+          "url": "https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu1.htm"
+        },
+        {
+          "title": {
+            "en": "NTA — Invoice system (reduced tax rate)",
+            "ja": "国税庁 — インボイス制度（軽減税率）"
+          },
+          "url": "https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice.htm"
+        },
+        {
+          "title": {
+            "en": "Japan Customs — Consumption tax exemption on exports",
+            "ja": "税関 — 輸出品に対する消費税の免除"
+          },
+          "url": "https://www.customs.go.jp/english/c-answer_e/extsukan/5003_e.htm"
+        },
+        {
+          "title": {
+            "en": "NTA — Qualified invoice issuer registration",
+            "ja": "国税庁 — 適格請求書発行事業者の登録"
+          },
+          "url": "https://www.invoice-kohyo.nta.go.jp"
+        }
+      ]
+    }
+  ]
+}
