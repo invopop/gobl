@@ -1,0 +1,157 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Croatia",
+    "hr": "Hrvatska"
+  },
+  "time_zone": "Europe/Zagreb",
+  "country": "HR",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "OIB",
+      "name": {
+        "en": "Personal Identification Number",
+        "hr": "Osobni identifikacijski broj"
+      }
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "hr": "PDV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "hr": "Porez na dodanu vrijednost"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "hr": "Opća stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-17",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "hr": "Snižena stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-17",
+              "percent": "13.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super Reduced Rate",
+            "hr": "Super snižena stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-17",
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Zero Rate",
+            "hr": "Nulta stopa"
+          },
+          "values": [
+            {
+              "since": "2013-07-17",
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Croatian Tax Administration - VAT",
+            "hr": "Porezna uprava - Porez na dodanu vrijednost"
+          },
+          "url": "https://porezna-uprava.gov.hr/en/vat/7362"
+        }
+      ]
+    }
+  ]
+}
