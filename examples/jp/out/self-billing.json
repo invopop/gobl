@@ -1,0 +1,106 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "bd4e7eded6b88b5e1573ab5cfe5ab8a1d17343684eccbb0e04065d9e14a59fac"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"self-billing"
+		],
+		"uuid": "8b0c2d4e-3d5a-7b9c-f567-1a2b3c4d5e6f",
+		"type": "standard",
+		"series": "JP",
+		"code": "006",
+		"issue_date": "2024-11-01",
+		"currency": "JPY",
+		"supplier": {
+			"name": "個人事業主 山田太郎",
+			"tax_id": {
+				"country": "JP",
+				"code": "T3000012060005"
+			},
+			"addresses": [
+				{
+					"street": "新宿区西新宿一丁目1番1号",
+					"locality": "新宿区",
+					"region": "東京都",
+					"code": "160-0023",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "株式会社サンプル",
+			"tax_id": {
+				"country": "JP",
+				"code": "T7000012050002"
+			},
+			"addresses": [
+				{
+					"street": "千代田区丸の内一丁目1番1号",
+					"locality": "千代田区",
+					"region": "東京都",
+					"code": "100-0005",
+					"country": "JP"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "業務委託料（10月分）",
+					"price": "300000"
+				},
+				"sum": "300000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "300000"
+			}
+		],
+		"totals": {
+			"sum": "300000",
+			"total": "300000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "300000",
+								"percent": "10%",
+								"amount": "30000"
+							}
+						],
+						"amount": "30000"
+					}
+				],
+				"sum": "30000"
+			},
+			"tax": "30000",
+			"total_with_tax": "330000",
+			"payable": "330000"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "self-billing",
+				"text": "Self-billed invoice / 仕入明細書"
+			}
+		]
+	}
+}

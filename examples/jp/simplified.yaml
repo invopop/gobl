@@ -1,0 +1,40 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: 7c3f1a2b-4d8e-5f9a-b123-6a7b8c9d0e1f
+series: JP
+code: "002"
+currency: JPY
+issue_date: "2024-11-01"
+type: standard
+$tags: [simplified]
+supplier:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: 株式会社サンプル
+  addresses:
+    - street: 千代田区丸の内一丁目1番1号
+      locality: 千代田区
+      region: 東京都
+      code: "100-0005"
+      country: JP
+
+lines:
+  - i: 1
+    quantity: "2"
+    item:
+      name: ランチセット
+      price: "1200"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - i: 2
+    quantity: "1"
+    item:
+      name: テイクアウト弁当
+      price: "800"
+    taxes:
+      - cat: VAT
+        rate: reduced
+        #ext:
+        #  jp-reduced-rate: "food-beverage"

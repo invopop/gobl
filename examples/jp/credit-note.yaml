@@ -1,0 +1,45 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: 5a7b9c1d-2c4f-6e8a-e456-0a1b2c3d4e5f
+series: JP
+code: "005"
+currency: JPY
+issue_date: "2024-11-15"
+type: credit-note
+
+preceding:
+  - series: JP
+    code: "001"
+    issue_date: "2024-11-01"
+    reason: 返品のため
+
+supplier:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: 株式会社サンプル
+  addresses:
+    - street: 千代田区丸の内一丁目1番1号
+      locality: 千代田区
+      region: 東京都
+      code: "100-0005"
+      country: JP
+
+customer:
+  name: 合同会社テスト商事
+  addresses:
+    - street: 北区王子一丁目1番1号
+      locality: 北区
+      region: 東京都
+      code: "114-0001"
+      country: JP
+
+lines:
+  - i: 1
+    quantity: "2"
+    item:
+      name: 事務用品（返品）
+      price: "1000"
+    taxes:
+      - cat: VAT
+        rate: standard

@@ -1,0 +1,47 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: 2d4f6a8b-1b3e-5c7d-d345-9a0b1c2d3e4f
+series: JP
+code: "004"
+currency: JPY
+issue_date: "2024-11-01"
+type: standard
+
+supplier:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: サンプル金融株式会社
+  addresses:
+    - street: 中央区日本橋二丁目2番2号
+      locality: 中央区
+      region: 東京都
+      code: "103-0027"
+      country: JP
+
+customer:
+  name: 株式会社クライアント
+  addresses:
+    - street: 渋谷区渋谷一丁目1番1号
+      locality: 渋谷区
+      region: 東京都
+      code: "150-0002"
+      country: JP
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: 融資手数料
+      price: "50000"
+    taxes:
+      - cat: VAT
+        key: exempt
+  - i: 2
+    quantity: "1"
+    item:
+      name: コンサルティング料
+      price: "100000"
+    taxes:
+      - cat: VAT
+        rate: standard

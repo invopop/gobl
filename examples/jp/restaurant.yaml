@@ -1,0 +1,39 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+series: JP
+code: "007"
+currency: JPY
+issue_date: "2024-11-01"
+type: standard
+$tags: [simplified]
+
+supplier:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: レストラン桜
+  addresses:
+    - street: 渋谷区神南一丁目2番3号
+      locality: 渋谷区
+      region: 東京都
+      code: "150-0041"
+      country: JP
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: ランチコース（店内飲食）
+      price: "2500"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - i: 2
+    quantity: "2"
+    item:
+      name: 生ビール
+      price: "650"
+    taxes:
+      - cat: VAT
+        rate: standard

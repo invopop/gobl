@@ -1,0 +1,101 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3775f7e2be232f475348037f38774bb60e48ca33293d9a4527025fff047d7dbd"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"export"
+		],
+		"uuid": "9e5a3b1c-6f2d-4a4b-c234-8a9b0c1d2e3f",
+		"type": "standard",
+		"series": "JP",
+		"code": "003",
+		"issue_date": "2024-11-01",
+		"currency": "JPY",
+		"supplier": {
+			"name": "株式会社サンプル",
+			"tax_id": {
+				"country": "JP",
+				"code": "T7000012050002"
+			},
+			"addresses": [
+				{
+					"street": "千代田区丸の内一丁目1番1号",
+					"locality": "千代田区",
+					"region": "東京都",
+					"code": "100-0005",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Trading Co., Ltd.",
+			"addresses": [
+				{
+					"street": "123 Example Street",
+					"locality": "San Francisco",
+					"region": "CA",
+					"code": "94102",
+					"country": "US"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Electronic Components",
+					"price": "20000"
+				},
+				"sum": "100000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "100000"
+			}
+		],
+		"totals": {
+			"sum": "100000",
+			"total": "100000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"base": "100000",
+								"percent": "0%",
+								"amount": "0"
+							}
+						],
+						"amount": "0"
+					}
+				],
+				"sum": "0"
+			},
+			"tax": "0",
+			"total_with_tax": "100000",
+			"payable": "100000"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "export",
+				"text": "Export - Zero rated consumption tax / 輸出取引（免税）"
+			}
+		]
+	}
+}

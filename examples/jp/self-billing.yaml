@@ -1,0 +1,43 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: 8b0c2d4e-3d5a-7b9c-f567-1a2b3c4d5e6f
+series: JP
+code: "006"
+currency: JPY
+issue_date: "2024-11-01"
+type: standard
+$tags: [self-billing]
+
+supplier:
+  tax_id:
+    country: JP
+    code: T3000012060005
+  name: 個人事業主 山田太郎
+  addresses:
+    - street: 新宿区西新宿一丁目1番1号
+      locality: 新宿区
+      region: 東京都
+      code: "160-0023"
+      country: JP
+
+customer:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: 株式会社サンプル
+  addresses:
+    - street: 千代田区丸の内一丁目1番1号
+      locality: 千代田区
+      region: 東京都
+      code: "100-0005"
+      country: JP
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: 業務委託料（10月分）
+      price: "300000"
+    taxes:
+      - cat: VAT
+        rate: standard

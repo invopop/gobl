@@ -1,0 +1,60 @@
+---
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "JP"
+uuid: 4b8e2f1a-3c7d-4e9b-a012-5f6d7e8c9b0a
+series: SANPURU-A
+code: "001"
+currency: JPY
+issue_date: "2024-11-01"
+supplier:
+  tax_id:
+    country: JP
+    code: T7000012050002
+  name: 株式会社サンプル
+  addresses:
+    - street: 千代田区丸の内一丁目1番1号
+      locality: 千代田区
+      region: 東京都
+      code: "100-0005"
+      country: JP
+customer:
+  name: 合同会社テスト商事
+  tax_id:
+    country: JP
+    code: T7000012050002
+  addresses:
+    - street: 北区王子一丁目1番1号
+      locality: 北区
+      region: 東京都
+      code: "114-0001"
+      country: JP
+lines:
+  - i: 1
+    quantity: "10"
+    item:
+      name: 事務用品
+      price: "1000"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - i: 2
+    quantity: "3"
+    item:
+      name: お茶（飲み物）、箱
+      price: "500"
+    taxes:
+      - cat: VAT
+        rate: reduced
+        ext:
+          jp-reduced-rate: "food-beverage"
+  - i: 3
+    quantity: "1"
+    item:
+      name: 朝日新聞、月額購読
+      price: "4530"
+    taxes:
+      - cat: VAT
+        rate: reduced
+        ext:
+          jp-reduced-rate: "newspaper"
+
