@@ -14,8 +14,8 @@ import (
 // See: https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/
 var taxCodeWeights = []int{3, 2, 7, 6, 5, 4, 3, 2}
 
-// normalizeTaxIdentity removes whitespace, "NO" prefix, and "MVA" suffix
-// from the tax identity code.
+// normalizeTaxIdentity performs standard tax identity normalization, and then
+// removes the "MVA" suffix common in Norwegian VAT numbers.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
 		return
