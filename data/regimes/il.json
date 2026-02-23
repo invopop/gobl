@@ -1,0 +1,171 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Israel",
+    "he": "ישראל"
+  },
+  "time_zone": "Asia/Jerusalem",
+  "country": "IL",
+  "currency": "ILS",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "he": "מע\"מ"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "he": "מס ערך מוסף"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "he": "שיעור כללי"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless specified otherwise.",
+            "he": "חל על רוב הסחורות והשירותים אלא אם צוין אחרת."
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "18%"
+            },
+            {
+              "since": "2015-10-01",
+              "percent": "17%"
+            },
+            {
+              "since": "2013-06-02",
+              "percent": "18%"
+            },
+            {
+              "since": "2012-09-01",
+              "percent": "17%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "16%"
+            },
+            {
+              "since": "2009-07-01",
+              "percent": "16.5%"
+            },
+            {
+              "since": "2006-07-01",
+              "percent": "15.5%"
+            },
+            {
+              "since": "2005-09-01",
+              "percent": "16.5%"
+            },
+            {
+              "since": "2004-03-01",
+              "percent": "17%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Israel Tax Authority - VAT Law 1975",
+            "he": "רשות המסים בישראל - חוק מס ערך מוסף תשל\"ו-1975"
+          },
+          "url": "https://www.gov.il/en/departments/israel_tax_authority"
+        }
+      ]
+    }
+  ]
+}
