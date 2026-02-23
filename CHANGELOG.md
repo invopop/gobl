@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `no`: Norwegian tax regime with VAT categories, mod-11 organisasjonsnummer validation, reverse-charge and foretaksregisteret scenario injection, and credit/debit note correction support.
+
 ### Changed
 
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
