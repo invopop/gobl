@@ -23,8 +23,8 @@ Croatia assigns every legal and natural person a unique 11-digit **Osobni identi
 
 Croatian VAT is called **PDV** (_Porez na dodanu vrijednost_) and is regulated at the national level by the Croatian Tax Administration. Croatia applies four VAT rates.
 
-| Rate | GOBL Key | Percent | Since |
-| ---- | -------- | ------- | ----- |
+| Rate | GOBL Rate | Percent | Since |
+| ---- | --------- | ------- | ----- |
 | General (_Opća stopa_) | `standard` | 25% | 2013-07-17 |
 | Reduced (_Snižena stopa_) | `reduced` | 13% | 2013-07-17 |
 | Super Reduced (_Super snižena stopa_) | `super-reduced` | 5% | 2013-07-17 |
