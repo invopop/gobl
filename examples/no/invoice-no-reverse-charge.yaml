@@ -1,0 +1,38 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "5cfb9d78-7afa-4ded-b2df-a0a402f074c2"
+currency: NOK
+$tags: [reverse-charge]
+series: "2025"
+code: "0003"
+issue_date: "2025-06-20"
+
+supplier:
+  name: Eksempel AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+  addresses:
+    - street: Eksempelveien 1
+      locality: Oslo
+      code: "0150"
+      country: "NO"
+
+customer:
+  name: Foreign Customer Ltd
+  tax_id:
+    country: "GB"
+    code: "000472631"
+  addresses:
+    - street: 123 Main St
+      locality: London
+      country: "GB"
+
+lines:
+  - quantity: "5"
+    item:
+      name: Konsulenttjenester
+      price: "2000.00"
+    taxes:
+      - cat: VAT
+        key: reverse-charge

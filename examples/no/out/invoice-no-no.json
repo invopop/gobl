@@ -1,0 +1,152 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "51dd470823ee713ad54b6fab42b162762439ae1119baceda88d216e6798f6afc"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"$tags": [
+			"foretaksregisteret"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "2025",
+		"code": "0001",
+		"issue_date": "2025-06-15",
+		"currency": "NOK",
+		"supplier": {
+			"name": "Eksempel AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			},
+			"addresses": [
+				{
+					"street": "Eksempelveien 1",
+					"locality": "Oslo",
+					"code": "0150",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Mottaker AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Kundeveien 42",
+					"locality": "Bergen",
+					"code": "5003",
+					"country": "NO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Konsulenttjenester",
+					"price": "1500.00"
+				},
+				"sum": "15000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "15000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Fersk laks",
+					"price": "250.00"
+				},
+				"sum": "1250.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "15.0%"
+					}
+				],
+				"total": "1250.00"
+			},
+			{
+				"i": 3,
+				"quantity": "2",
+				"item": {
+					"name": "Fersk torsk (via fiskesalgslag)",
+					"price": "300.00"
+				},
+				"sum": "600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "special",
+						"percent": "11.11%"
+					}
+				],
+				"total": "600.00"
+			}
+		],
+		"totals": {
+			"sum": "16850.00",
+			"total": "16850.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "15000.00",
+								"percent": "25.0%",
+								"amount": "3750.00"
+							},
+							{
+								"key": "standard",
+								"base": "1250.00",
+								"percent": "15.0%",
+								"amount": "187.50"
+							},
+							{
+								"key": "standard",
+								"base": "600.00",
+								"percent": "11.11%",
+								"amount": "66.66"
+							}
+						],
+						"amount": "4004.16"
+					}
+				],
+				"sum": "4004.16"
+			},
+			"tax": "4004.16",
+			"total_with_tax": "20854.16",
+			"payable": "20854.16"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "foretaksregisteret",
+				"text": "Foretaksregisteret"
+			}
+		]
+	}
+}

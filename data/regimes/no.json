@@ -1,0 +1,231 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Norway",
+    "nb": "Norge"
+  },
+  "time_zone": "Europe/Oslo",
+  "country": "NO",
+  "currency": "NOK",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "foretaksregisteret",
+          "name": {
+            "en": "Registered in the Register of Business Enterprises",
+            "nb": "Registrert i Foretaksregisteret"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "code": "ON",
+      "name": {
+        "en": "Organization Number",
+        "nb": "Organisasjonsnummer"
+      },
+      "desc": {
+        "en": "Norwegian organization number assigned by Brønnøysundregistrene.",
+        "nb": "Norsk organisasjonsnummer tildelt av Brønnøysundregistrene."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
+          }
+        },
+        {
+          "tags": [
+            "foretaksregisteret"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "foretaksregisteret",
+            "text": "Foretaksregisteret"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "nb": "MVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "nb": "Merverdiavgift"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "nb": "Alminnelig sats"
+          },
+          "values": [
+            {
+              "since": "2005-01-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "nb": "Redusert sats"
+          },
+          "desc": {
+            "en": "Food, beverages, water and wastewater services",
+            "nb": "Næringsmidler, vann og avløpstjenester"
+          },
+          "values": [
+            {
+              "since": "2005-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-reduced Rate",
+            "nb": "Lav sats"
+          },
+          "desc": {
+            "en": "Transport, accommodation, cinema, broadcasting",
+            "nb": "Transport, overnatting, kino, kringkasting"
+          },
+          "values": [
+            {
+              "since": "2005-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "special",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Special Rate",
+            "nb": "Særskilt sats"
+          },
+          "desc": {
+            "en": "Raw fish (wild marine resources via fiskesalgslag)",
+            "nb": "Råfisk (viltlevende marine ressurser via fiskesalgslag)"
+          },
+          "values": [
+            {
+              "since": "1970-01-01",
+              "percent": "11.11%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Skatteetaten - VAT rates",
+            "nb": "Skatteetaten - Satser for merverdiavgift"
+          },
+          "url": "https://www.skatteetaten.no/en/rates/value-added-tax/",
+          "at": "2025-06-15T00:00:00"
+        },
+        {
+          "title": {
+            "nb": "Lovdata - merverdiavgiftsloven"
+          },
+          "url": "https://lovdata.no/dokument/NL/lov/2009-06-19-58",
+          "at": "2025-06-15T00:00:00"
+        }
+      ]
+    }
+  ]
+}
