@@ -1,0 +1,43 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "d2f3a1b4-89c7-4e5d-a6b8-1c2d3e4f5a6b"
+type: debit-note
+currency: NOK
+series: "2025"
+code: "0004"
+issue_date: "2025-07-15"
+
+preceding:
+  - code: "2025/0001"
+    issue_date: "2025-06-15"
+
+supplier:
+  name: Eksempel AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+  addresses:
+    - street: Eksempelveien 1
+      locality: Oslo
+      code: "0150"
+      country: "NO"
+
+customer:
+  name: Mottaker AS
+  tax_id:
+    country: "NO"
+    code: "987654325"
+  addresses:
+    - street: Kundeveien 42
+      locality: Bergen
+      code: "5003"
+      country: "NO"
+
+lines:
+  - quantity: "1"
+    item:
+      name: Tilleggsfakturering konsulentarbeid
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        rate: standard

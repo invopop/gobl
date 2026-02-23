@@ -1,0 +1,100 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4d6aef078889b606e13c44cac07fdf4a6aaa8da843c99f1345f59c3373fae2b7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "d2f3a1b4-89c7-4e5d-a6b8-1c2d3e4f5a6b",
+		"type": "debit-note",
+		"series": "2025",
+		"code": "0004",
+		"issue_date": "2025-07-15",
+		"currency": "NOK",
+		"preceding": [
+			{
+				"issue_date": "2025-06-15",
+				"code": "2025/0001"
+			}
+		],
+		"supplier": {
+			"name": "Eksempel AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			},
+			"addresses": [
+				{
+					"street": "Eksempelveien 1",
+					"locality": "Oslo",
+					"code": "0150",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Mottaker AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Kundeveien 42",
+					"locality": "Bergen",
+					"code": "5003",
+					"country": "NO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Tilleggsfakturering konsulentarbeid",
+					"price": "500.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "500.00",
+			"total": "500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "500.00",
+								"percent": "25.0%",
+								"amount": "125.00"
+							}
+						],
+						"amount": "125.00"
+					}
+				],
+				"sum": "125.00"
+			},
+			"tax": "125.00",
+			"total_with_tax": "625.00",
+			"payable": "625.00"
+		}
+	}
+}
