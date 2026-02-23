@@ -25,6 +25,10 @@ var invoiceTags = &tax.TagSet{
 				i18n.EN: "Registered in the Register of Business Enterprises",
 				i18n.NB: "Registrert i Foretaksregisteret",
 			},
+			Desc: i18n.String{
+				i18n.EN: "Mandatory for AS, ASA, and NUF entities per foretaksregisterloven §10-2.",
+				i18n.NB: "Påkrevd for AS, ASA og NUF etter foretaksregisterloven §10-2.",
+			},
 		},
 	},
 }

@@ -29,6 +29,10 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "General Rate",
 					i18n.NB: "Alminnelig sats",
 				},
+				Description: i18n.String{
+					i18n.EN: "Standard rate for most goods and services.",
+					i18n.NB: "Alminnelig sats for de fleste varer og tjenester.",
+				},
 				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(250, 3),
@@ -44,8 +48,8 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Redusert sats",
 				},
 				Description: i18n.String{
-					i18n.EN: "Food, beverages, water and wastewater services",
-					i18n.NB: "Næringsmidler, vann og avløpstjenester",
+					i18n.EN: "Food, beverages, water and wastewater services.",
+					i18n.NB: "Næringsmidler, vann og avløpstjenester.",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -62,13 +66,25 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Lav sats",
 				},
 				Description: i18n.String{
-					i18n.EN: "Transport, accommodation, cinema, broadcasting",
-					i18n.NB: "Transport, overnatting, kino, kringkasting",
+					i18n.EN: "Transport, accommodation, cinema, broadcasting.",
+					i18n.NB: "Transport, overnatting, kino, kringkasting.",
 				},
 				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2005, 1, 1),
+						Since:   cal.NewDate(2022, 10, 1),
+					},
+					{
+						Percent: num.MakePercentage(60, 3), // COVID temporary reduction
+						Since:   cal.NewDate(2020, 4, 1),
+					},
+					{
+						Percent: num.MakePercentage(120, 3),
+						Since:   cal.NewDate(2012, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(80, 3),
+						Since:   cal.NewDate(2004, 1, 1),
 					},
 				},
 			},
@@ -80,16 +96,14 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Særskilt sats",
 				},
 				Description: i18n.String{
-					i18n.EN: "Raw fish (wild marine resources via fiskesalgslag)",
-					i18n.NB: "Råfisk (viltlevende marine ressurser via fiskesalgslag)",
+					i18n.EN: "Raw fish (wild marine resources via fiskesalgslag).",
+					i18n.NB: "Råfisk (viltlevende marine ressurser via fiskesalgslag).",
 				},
 				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(1111, 4),
-						// Exact historical start date is not traceable in current
-						// Skatteetaten documentation; 1970-01-01 is a conservative
-						// lower bound.
-						Since: cal.NewDate(1970, 1, 1),
+						// §5-8 merverdiavgiftsloven (2009 Act)
+						Since: cal.NewDate(2009, 1, 1),
 					},
 				},
 			},
