@@ -17,6 +17,10 @@
           "name": {
             "en": "Registered in the Register of Business Enterprises",
             "nb": "Registrert i Foretaksregisteret"
+          },
+          "desc": {
+            "en": "Mandatory for AS, ASA, and NUF entities per foretaksregisterloven §10-2.",
+            "nb": "Påkrevd for AS, ASA og NUF etter foretaksregisterloven §10-2."
           }
         }
       ]
@@ -141,6 +145,10 @@
             "en": "General Rate",
             "nb": "Alminnelig sats"
           },
+          "desc": {
+            "en": "Standard rate for most goods and services.",
+            "nb": "Alminnelig sats for de fleste varer og tjenester."
+          },
           "values": [
             {
               "since": "2005-01-01",
@@ -158,8 +166,8 @@
             "nb": "Redusert sats"
           },
           "desc": {
-            "en": "Food, beverages, water and wastewater services",
-            "nb": "Næringsmidler, vann og avløpstjenester"
+            "en": "Food, beverages, water and wastewater services.",
+            "nb": "Næringsmidler, vann og avløpstjenester."
           },
           "values": [
             {
@@ -178,13 +186,25 @@
             "nb": "Lav sats"
           },
           "desc": {
-            "en": "Transport, accommodation, cinema, broadcasting",
-            "nb": "Transport, overnatting, kino, kringkasting"
+            "en": "Transport, accommodation, cinema, broadcasting.",
+            "nb": "Transport, overnatting, kino, kringkasting."
           },
           "values": [
             {
-              "since": "2005-01-01",
+              "since": "2022-10-01",
               "percent": "12.0%"
+            },
+            {
+              "since": "2020-04-01",
+              "percent": "6.0%"
+            },
+            {
+              "since": "2012-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "2004-01-01",
+              "percent": "8.0%"
             }
           ]
         },
@@ -198,12 +218,12 @@
             "nb": "Særskilt sats"
           },
           "desc": {
-            "en": "Raw fish (wild marine resources via fiskesalgslag)",
-            "nb": "Råfisk (viltlevende marine ressurser via fiskesalgslag)"
+            "en": "Raw fish (wild marine resources via fiskesalgslag).",
+            "nb": "Råfisk (viltlevende marine ressurser via fiskesalgslag)."
           },
           "values": [
             {
-              "since": "1970-01-01",
+              "since": "2009-01-01",
               "percent": "11.11%"
             }
           ]

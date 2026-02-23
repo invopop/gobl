@@ -1,0 +1,45 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4a"
+currency: NOK
+series: "2025"
+code: "0004"
+issue_date: "2025-06-25"
+
+supplier:
+  name: Eksempel AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+  addresses:
+    - street: Eksempelveien 1
+      locality: Oslo
+      code: "0150"
+      country: "NO"
+
+customer:
+  name: Mottaker AS
+  tax_id:
+    country: "NO"
+    code: "987654325"
+  addresses:
+    - street: Kundeveien 42
+      locality: Bergen
+      code: "5003"
+      country: "NO"
+
+lines:
+  - quantity: "20"
+    item:
+      name: Konsulenttjenester
+      price: "1500.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "3"
+    item:
+      name: Programvarelisens
+      price: "5000.00"
+    taxes:
+      - cat: VAT
+        rate: standard
