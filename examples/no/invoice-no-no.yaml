@@ -1,0 +1,53 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: NOK
+$tags: [foretaksregisteret]
+series: "2025"
+code: "0001"
+issue_date: "2025-06-15"
+
+supplier:
+  name: Eksempel AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+  addresses:
+    - street: Eksempelveien 1
+      locality: Oslo
+      code: "0150"
+      country: "NO"
+
+customer:
+  name: Mottaker AS
+  tax_id:
+    country: "NO"
+    code: "987654325"
+  addresses:
+    - street: Kundeveien 42
+      locality: Bergen
+      code: "5003"
+      country: "NO"
+
+lines:
+  - quantity: "10"
+    item:
+      name: Konsulenttjenester
+      price: "1500.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "5"
+    item:
+      name: Fersk laks
+      price: "250.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: "2"
+    item:
+      name: Fersk torsk (via fiskesalgslag)
+      price: "300.00"
+    taxes:
+      - cat: VAT
+        rate: special
