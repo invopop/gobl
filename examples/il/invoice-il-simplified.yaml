@@ -1,0 +1,36 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "ILS"
+issue_date: "2025-06-15"
+series: "SAMPLE"
+code: "001"
+tax:
+  tags:
+    - "simplified"
+
+supplier:
+  tax_id:
+    country: "IL"
+    code: "516179157"
+  name: "Provide One Ltd"
+  emails:
+    - addr: "billing@example.co.il"
+  addresses:
+    - num: "42"
+      street: "Rothschild Boulevard"
+      locality: "Tel Aviv"
+      code: "6688312"
+      country: "IL"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: "standard"
