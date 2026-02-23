@@ -38,6 +38,14 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(250, 3),
 						Since:   cal.NewDate(2005, 1, 1),
 					},
+					{
+						Percent: num.MakePercentage(240, 3),
+						Since:   cal.NewDate(2001, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(230, 3),
+						Since:   cal.NewDate(1995, 1, 1),
+					},
 				},
 			},
 			{
@@ -54,7 +62,23 @@ var taxCategories = []*tax.CategoryDef{
 				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(150, 3),
+						Since:   cal.NewDate(2012, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(140, 3),
+						Since:   cal.NewDate(2007, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(130, 3),
+						Since:   cal.NewDate(2006, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(110, 3),
 						Since:   cal.NewDate(2005, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(120, 3),
+						Since:   cal.NewDate(2001, 7, 1),
 					},
 				},
 			},
@@ -72,7 +96,7 @@ var taxCategories = []*tax.CategoryDef{
 				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2022, 10, 1),
+						Since:   cal.NewDate(2021, 10, 1),
 					},
 					{
 						Percent: num.MakePercentage(60, 3), // COVID temporary reduction
@@ -80,11 +104,23 @@ var taxCategories = []*tax.CategoryDef{
 					},
 					{
 						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2012, 1, 1),
+						Since:   cal.NewDate(2018, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(100, 3),
+						Since:   cal.NewDate(2016, 1, 1),
 					},
 					{
 						Percent: num.MakePercentage(80, 3),
-						Since:   cal.NewDate(2004, 1, 1),
+						Since:   cal.NewDate(2006, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(70, 3),
+						Since:   cal.NewDate(2005, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(60, 3),
+						Since:   cal.NewDate(2004, 3, 1),
 					},
 				},
 			},
