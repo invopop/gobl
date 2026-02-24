@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cbb4ffe501ac2cb307e858db3f6b352acd9984b0f3ee7a81b67a5947afe88a6c"
+			"val": "81ad5f24b488954461cdc2cb3a65ce36647c655855ae61da3bf6c0c9825d0866"
 		}
 	},
 	"doc": {
@@ -21,25 +21,24 @@
 		"currency": "JPY",
 		"tax": {},
 		"supplier": {
-			"name": "株式会社グローバルテック",
+			"name": "Acme Cloud Services Inc.",
 			"tax_id": {
-				"country": "JP",
-				"code": "5010401067252"
+				"country": "US",
+				"code": "123456789"
 			},
-			"identities": [
-				{
-					"key": "jp-invoice-registration-number",
-					"code": "T5010401067252"
-				}
-			],
 			"addresses": [
 				{
-					"num": "1-1",
-					"street": "六本木",
-					"locality": "港区",
-					"region": "東京都",
-					"code": "106-0032",
-					"country": "JP"
+					"num": "500",
+					"street": "Market Street",
+					"locality": "San Francisco",
+					"region": "CA",
+					"code": "94105",
+					"country": "US"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@acmecloud.com"
 				}
 			]
 		},
@@ -49,6 +48,12 @@
 				"country": "JP",
 				"code": "1130001011420"
 			},
+			"identities": [
+				{
+					"key": "jp-invoice-registration-number",
+					"code": "T1130001011420"
+				}
+			],
 			"addresses": [
 				{
 					"num": "4-5-6",
