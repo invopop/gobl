@@ -52,4 +52,16 @@ func TestValidateIdentity(t *testing.T) {
 		assert.NoError(t, validateTaxCode(cbc.Code("51824753556")))
 		assert.Error(t, validateTaxCode(cbc.Code("51824753555")))
 	})
+
+	t.Run("tax code validator ignores unsupported value type", func(t *testing.T) {
+		assert.NoError(t, validateTaxCode("not-a-cbc-code"))
+	})
+
+	t.Run("tax code validator ignores empty code", func(t *testing.T) {
+		assert.NoError(t, validateTaxCode(cbc.Code("")))
+	})
+
+	t.Run("checksum rejects invalid length", func(t *testing.T) {
+		assert.False(t, validABNChecksum("5182475355"))
+	})
 }
