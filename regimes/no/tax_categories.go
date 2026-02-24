@@ -35,7 +35,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Keys: []cbc.Key{tax.KeyReduced},
+				Keys: []cbc.Key{tax.KeyStandard},
 				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate (Foodstuffs)",
@@ -46,7 +46,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Keys: []cbc.Key{tax.KeySuperReduced},
+				Keys: []cbc.Key{tax.KeyStandard},
 				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate (Passenger transport / accommodation / cinema)",
