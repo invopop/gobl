@@ -1,0 +1,102 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ca762e9704ad6dcab7427ff369faa3ac1d8338dc59caf395540ee713b6727ded"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AD",
+		"uuid": "019c8f4b-5d5e-7be3-b459-53d33e0c7de8",
+		"type": "standard",
+		"series": "2024",
+		"code": "0001",
+		"issue_date": "2024-01-01",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Empresa Andorrana",
+			"tax_id": {
+				"country": "AD",
+				"code": "L123456A"
+			}
+		},
+		"customer": {
+			"name": "Client Particular",
+			"tax_id": {
+				"country": "AD",
+				"code": "F121212B"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Producte Estàndard",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "4.5%"
+					}
+				],
+				"total": "100.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Llibre (Tipus Reduït)",
+					"price": "20.00"
+				},
+				"sum": "40.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "1.0%"
+					}
+				],
+				"total": "40.00"
+			}
+		],
+		"totals": {
+			"sum": "140.00",
+			"total": "140.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "100.00",
+								"percent": "4.5%",
+								"amount": "4.50"
+							},
+							{
+								"key": "standard",
+								"base": "40.00",
+								"percent": "1.0%",
+								"amount": "0.40"
+							}
+						],
+						"amount": "4.90"
+					}
+				],
+				"sum": "4.90"
+			},
+			"tax": "4.90",
+			"total_with_tax": "144.90",
+			"payable": "144.90"
+		}
+	}
+}
