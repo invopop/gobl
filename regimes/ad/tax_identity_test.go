@@ -54,7 +54,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "invalid first letter",
-			code: "X 123456 A",
+			code: "X123456A",
 			err:  "code: must be in a valid format",
 		},
 	}
