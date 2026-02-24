@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.oecd.org)",
+      "WebFetch(domain:taxdo.com)",
+      "WebFetch(domain:en.workflow-sample.net)",
+      "WebFetch(domain:qiita.com)",
+      "WebFetch(domain:stripe.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.nta.go.jp)",
+      "WebFetch(domain:support.sollective.jp)",
+      "WebFetch(domain:www.rsm.global)",
+      "WebFetch(domain:taxsummaries.pwc.com)",
+      "WebFetch(domain:www.bridgewaterjapan.com)",
+      "WebFetch(domain:www.jetro.go.jp)",
+      "WebFetch(domain:www.tkpartners.or.jp)",
+      "WebFetch(domain:www.eu-japan.eu)",
+      "WebFetch(domain:hls-global.jp)",
+      "WebFetch(domain:www.houjin-bangou.nta.go.jp)",
+      "Bash(go generate:*)",
+      "Bash(go test:*)",
+      "Bash(uuidgen:*)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:design.tax.service.gov.uk)",
+      "WebFetch(domain:discover.hubpages.com)",
+      "WebFetch(domain:deeksvat.co.uk)",
+      "WebFetch(domain:gist.github.com)"
+    ]
+  }
+}

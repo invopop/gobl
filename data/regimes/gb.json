@@ -22,7 +22,7 @@
           "note": {
             "key": "legal",
             "src": "reverse-charge",
-            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+            "text": "Reverse charge: VAT Act 1994 Section 55A applies."
           }
         }
       ]
@@ -32,7 +32,8 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "credit-note"
+        "credit-note",
+        "debit-note"
       ]
     }
   ],
@@ -101,12 +102,27 @@
             "standard"
           ],
           "name": {
-            "en": "General Rate"
+            "en": "Standard rate"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless specifically exempted or subject to a reduced or zero rate."
           },
           "values": [
             {
               "since": "2011-01-04",
               "percent": "20.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "17.5%"
+            },
+            {
+              "since": "2008-12-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "1991-04-01",
+              "percent": "17.5%"
             }
           ]
         },
@@ -116,14 +132,43 @@
             "standard"
           ],
           "name": {
-            "en": "Reduced Rate"
+            "en": "Reduced rate"
+          },
+          "desc": {
+            "en": "Applies to certain goods and services including domestic fuel and power, children's car seats, and some energy-saving materials."
           },
           "values": [
             {
-              "since": "2011-01-04",
+              "since": "1997-09-01",
               "percent": "5.0%"
             }
           ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero rate"
+          },
+          "desc": {
+            "en": "Applies to most food, children's clothing, books, newspapers, and public transport."
+          },
+          "values": [
+            {
+              "since": "1973-04-01",
+              "percent": "0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2024)"
+          },
+          "url": "https://www.oecd.org/tax/tax-policy/tax-database/"
         }
       ]
     }
