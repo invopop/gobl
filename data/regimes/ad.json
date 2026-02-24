@@ -150,7 +150,7 @@
         {
           "rate": "super-reduced",
           "keys": [
-            "standard"
+            "zero"
           ],
           "name": {
             "ca": "Tipus superreduït",

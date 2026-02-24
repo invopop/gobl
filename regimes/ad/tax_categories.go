@@ -87,7 +87,7 @@ func taxCategories() []*tax.CategoryDef {
 					},
 				},
 				{
-					Keys: []cbc.Key{tax.KeyStandard},
+					Keys: []cbc.Key{tax.KeyZero},
 					Rate: tax.RateSuperReduced,
 					Name: i18n.String{
 						i18n.EN: "Super-Reduced Rate",
