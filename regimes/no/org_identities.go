@@ -1,8 +1,8 @@
-//go:build ignore
-
-package template
+package no
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
@@ -10,61 +10,39 @@ import (
 )
 
 const (
-	// IdentityTypeTemplate defines the key for the template identity.
-	IdentityTypeTemplate cbc.Code = "Template" // Find official international keys
+	// IdentityTypeOrgNr defines the key for the Norwegian Organization Number (Organisasjonsnummer).
+	IdentityTypeOrgNr cbc.Code = "ON"
 )
 
-func identityTypeDefinitions() []*cbc.Definition {
-	return []*cbc.Definition{
-		{
-			Code: IdentityTypeTemplate,
-			Name: i18n.String{
-				i18n.EN: "Template",
-				// Add official local name here.
-				// i18n.XX: "Template",
-			},
-			Desc: i18n.String{
-				i18n.EN: "A template identity description",
-				// Add official local description here.
-				// i18n.XX: "A template identity description",
-			},
+var identityTypeDefinitions = []*cbc.Definition{
+	{
+		Code: IdentityTypeOrgNr,
+		Name: i18n.String{
+			i18n.EN: "Organization Number",
+			i18n.NO: "Organisasjonsnummer",
 		},
-	}
+		Desc: i18n.String{
+			i18n.EN: "Norwegian organization number (9 digits).",
+			i18n.NO: "Norsk organisasjonsnummer (9 siffer).",
+		},
+	},
 }
 
-// normalizeOrgIdentity performs normalization specific to the regime.
-//
-//   - Explanation 1
-//   - Explanation 2
-//
-// Some edge cases.
+// normalizeOrgIdentity normalizes Norwegian org identity codes.
 func normalizeOrgIdentity(id *org.Identity) {
 	if id == nil {
 		return
 	}
-
-	switch id.Type {
-	case IdentityTypeTemplate:
-		// Handle normalization here for each Identity type. This is just an example.
-		// cbc has extra methods to help with this.
-		code := cbc.NormalizeNumericalCode(id.Code).String()
-
-		id.Code = cbc.Code(code)
-
-	default:
+	if id.Type != IdentityTypeOrgNr {
 		return
+	}
+
+	digits, ok := cleanNorwayOrgNr(id.Code)
+	if ok {
+		id.Code = cbc.Code(digits)
 	}
 }
 
-// validateOrgIdentity performs validation for the regime.
-// Assumes the code has already been normalized.
-//
-//   - Explanation 1
-//   - Explanation 2
-//
-// If the number is not valid, it returns an error.
-//
-// If the identity type is not valid, it returns nil.
 func validateOrgIdentity(id *org.Identity) error {
 	if id == nil {
 		return nil
@@ -77,19 +55,47 @@ func validateOrgIdentity(id *org.Identity) error {
 				if !ok || code == "" {
 					return nil
 				}
-
-				// Handle validation here for each Identity type. This is just an example.
-
-				switch id.Type {
-				case IdentityTypeTemplate:
-					// ...
-				default:
+				if id.Type != IdentityTypeOrgNr {
 					return nil
 				}
 
+				digits, ok := cleanNorwayOrgNr(code)
+				if !ok {
+					return errors.New("invalid organization number format")
+				}
+				if !validOrgNrMod11(digits) {
+					return errors.New("invalid organization number checksum")
+				}
 				return nil
 			}),
 			validation.Skip,
 		),
 	)
+}
+
+// MOD11 checksum for Norwegian organization number.
+// Weights: 3,2,7,6,5,4,3,2 (for first 8 digits). Check digit is 9th.
+func validOrgNrMod11(s string) bool {
+	if len(s) != 9 {
+		return false
+	}
+	weights := []int{3, 2, 7, 6, 5, 4, 3, 2}
+	sum := 0
+	for i := 0; i < 8; i++ {
+		d := int(s[i] - '0')
+		if d < 0 || d > 9 {
+			return false
+		}
+		sum += d * weights[i]
+	}
+	rem := sum % 11
+	cd := 11 - rem
+	if cd == 11 {
+		cd = 0
+	}
+	if cd == 10 {
+		return false
+	}
+	check := int(s[8] - '0')
+	return check == cd
 }

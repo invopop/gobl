@@ -1,0 +1,117 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "019c9169-b634-73c8-a67b-001df8848909",
+		"dig": {
+			"alg": "sha256",
+			"val": "abb76519b53c2d42b7a3e2ce9d2651b171c12c7bf5bd6832f910455db948e197"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "3b5d2c0e-2f4a-4d8b-9c19-4c6c8b1a9f01",
+		"type": "standard",
+		"series": "2026",
+		"code": "TOSL108",
+		"issue_date": "2026-01-14",
+		"currency": "NOK",
+		"supplier": {
+			"name": "The Sellercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "974760673MVA"
+			},
+			"addresses": [
+				{
+					"street": "Main street 34",
+					"locality": "Big city",
+					"region": "RegionA",
+					"code": "54321",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "antonio@salescompany.no"
+				}
+			]
+		},
+		"customer": {
+			"name": "Buyercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325MVA"
+			},
+			"addresses": [
+				{
+					"street": "Anystreet 8",
+					"locality": "Anytown",
+					"region": "RegionB",
+					"code": "101",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "john@buyercompany.no"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Laptop computer",
+					"price": "1273.00",
+					"unit": "one"
+				},
+				"sum": "1273.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"percent": "25%"
+					}
+				],
+				"total": "1273.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2026-01-14",
+						"amount": "1591.25",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1273.00",
+			"total": "1273.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1273.00",
+								"percent": "25%",
+								"amount": "318.25"
+							}
+						],
+						"amount": "318.25"
+					}
+				],
+				"sum": "318.25"
+			},
+			"tax": "318.25",
+			"total_with_tax": "1591.25",
+			"payable": "1591.25"
+		}
+	}
+}

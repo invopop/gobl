@@ -1,8 +1,5 @@
-//go:build ignore
-// +build ignore
-
-// Package template provides a template for creating new regimes.
-package template
+// Package no provides a regime definition for Norway.
+package no
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -10,7 +7,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,31 +14,38 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
+// New instantiates a new Norwegian regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Name: i18n.String{
-			i18n.EN: "Template",
-			// Add official local name here.
-			// i18n.XX: "Template",
-		},
-		Country:   l10n.TaxCountryCode("XX"),
-		Currency:  currency.XXX,
+		Country:   l10n.NO.Tax(),
+		Currency:  currency.NOK,
 		TaxScheme: tax.CategoryVAT,
-		TimeZone:  "Europe/London",
-		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
+		Name: i18n.String{
+			i18n.EN: "Norway",
+			i18n.NO: "Norge",
 		},
-		Identities: identityTypeDefinitions(), // org_identities.go
-		Categories: taxCategories(),           // tax_categories.go
-		Scenarios:  scenarios(),               // scenarios.go
-		Corrections: []*tax.CorrectionDefinition{
-			{
-				Schema: bill.ShortSchemaInvoice,
-			},
+		TimeZone:   "Europe/Oslo",
+		Identities: identityTypeDefinitions,
+		Categories: taxCategories,
+		Scenarios: []*tax.ScenarioSet{
+			bill.InvoiceScenarios(),
 		},
-		Normalizer: Normalize,
 		Validator:  Validate,
+		Normalizer: Normalize,
 	}
+}
+
+// Validate checks the document type and determines if it can be validated.
+func Validate(doc any) error {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateBillInvoice(obj)
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateOrgIdentity(obj)
+	}
+	return nil
 }
 
 // Normalize will perform any regime specific calculations.
@@ -53,17 +56,4 @@ func Normalize(doc any) {
 	case *org.Identity:
 		normalizeOrgIdentity(obj)
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateOrgIdentity(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	}
-	return nil
 }
