@@ -1,0 +1,135 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "cbb4ffe501ac2cb307e858db3f6b352acd9984b0f3ee7a81b67a5947afe88a6c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "95224c34-d841-4790-8430-9176b4847f4b",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "004",
+		"issue_date": "2024-05-20",
+		"currency": "JPY",
+		"tax": {},
+		"supplier": {
+			"name": "株式会社グローバルテック",
+			"tax_id": {
+				"country": "JP",
+				"code": "5010401067252"
+			},
+			"identities": [
+				{
+					"key": "jp-invoice-registration-number",
+					"code": "T5010401067252"
+				}
+			],
+			"addresses": [
+				{
+					"num": "1-1",
+					"street": "六本木",
+					"locality": "港区",
+					"region": "東京都",
+					"code": "106-0032",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "テスト株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "1130001011420"
+			},
+			"addresses": [
+				{
+					"num": "4-5-6",
+					"street": "梅田",
+					"locality": "大阪市北区",
+					"region": "大阪府",
+					"code": "530-0001",
+					"country": "JP"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cloud platform subscription (annual)",
+					"price": "2400000",
+					"unit": "service"
+				},
+				"sum": "2400000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "2400000"
+			},
+			{
+				"i": 2,
+				"quantity": "12",
+				"item": {
+					"name": "Technical support (monthly)",
+					"price": "50000",
+					"unit": "service"
+				},
+				"sum": "600000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "600000"
+			}
+		],
+		"totals": {
+			"sum": "3000000",
+			"total": "3000000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "3000000",
+								"percent": "10%",
+								"amount": "300000"
+							}
+						],
+						"amount": "300000"
+					}
+				],
+				"sum": "300000"
+			},
+			"tax": "300000",
+			"total_with_tax": "3300000",
+			"payable": "3300000"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse Charge: The recipient is liable for the consumption tax on this transaction"
+			}
+		]
+	}
+}

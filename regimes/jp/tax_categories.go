@@ -25,7 +25,7 @@ var taxCategories = []*tax.CategoryDef{
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
-					i18n.EN: "Consumption Tax Trends - Japan",
+					i18n.EN: "Consumption Tax Japan",
 				},
 				URL: "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm#c01",
 			},

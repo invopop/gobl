@@ -1,0 +1,42 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "235b8e6d-d581-48aa-bb61-7710cfcb66ac"
+currency: "JPY"
+issue_date: "2024-04-01"
+series: "SAMPLE"
+code: "003"
+tax:
+  tags:
+    - simplified
+
+supplier:
+  tax_id:
+    country: "JP"
+    code: "5010401067252"
+  identities:
+    - key: "jp-invoice-registration-number"
+      code: "T5010401067252"
+  name: "サンプル食堂"
+  addresses:
+    - num: "10-11"
+      street: "新宿"
+      locality: "新宿区"
+      region: "東京都"
+      code: "160-0022"
+      country: "JP"
+
+lines:
+  - quantity: 2
+    item:
+      name: "ランチセット（店内飲食）"
+      price: "1200"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+  - quantity: 3
+    item:
+      name: "ペットボトル飲料（持ち帰り）"
+      price: "160"
+    taxes:
+      - cat: VAT
+        rate: reduced

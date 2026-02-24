@@ -1,0 +1,56 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "95224c34-d841-4790-8430-9176b4847f4b"
+currency: "JPY"
+issue_date: "2024-05-20"
+series: "SAMPLE"
+code: "004"
+tax:
+  tags:
+    - reverse-charge
+
+supplier:
+  tax_id:
+    country: "JP"
+    code: "5010401067252"
+  identities:
+    - key: "jp-invoice-registration-number"
+      code: "T5010401067252"
+  name: "株式会社グローバルテック"
+  addresses:
+    - num: "1-1"
+      street: "六本木"
+      locality: "港区"
+      region: "東京都"
+      code: "106-0032"
+      country: "JP"
+
+customer:
+  tax_id:
+    country: "JP"
+    code: "1130001011420"
+  name: "テスト株式会社"
+  addresses:
+    - num: "4-5-6"
+      street: "梅田"
+      locality: "大阪市北区"
+      region: "大阪府"
+      code: "530-0001"
+      country: "JP"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Cloud platform subscription (annual)"
+      price: "2400000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 12
+    item:
+      name: "Technical support (monthly)"
+      price: "50000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard
