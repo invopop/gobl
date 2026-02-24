@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `jp`: New Japanese regime, including consumption tax and withholding income tax
+- `doc`: Added README.md file with instructions about how to create new regimes
+
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`

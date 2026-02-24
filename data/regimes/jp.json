@@ -28,7 +28,7 @@
           "note": {
             "key": "legal",
             "src": "reverse-charge",
-            "text": "Reverse Charge: The recipient is liable for the consumption tax on this transaction. / リバースチャージ方式：本取引の消費税は受領者が申告納付義務を負います。"
+            "text": "Reverse Charge: The recipient is liable for the consumption tax on this transaction"
           }
         },
         {
@@ -38,7 +38,7 @@
           "note": {
             "key": "legal",
             "src": "simplified",
-            "text": "Simplified Invoice / 簡易インボイス"
+            "text": "Simplified Invoice"
           }
         }
       ]
@@ -166,9 +166,9 @@
       "sources": [
         {
           "title": {
-            "en": "Consumption Tax Trends - Japan"
+            "en": "Consumption Tax Japan"
           },
-          "url": "https://www.oecd.org/tax/consumption/consumption-tax-trends-japan.pdf"
+          "url": "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm#c01"
         }
       ]
     },
