@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `ro`: Added the Romanian tax regime
+
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
