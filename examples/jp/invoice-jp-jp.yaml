@@ -1,0 +1,57 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "JPY"
+issue_date: "2024-02-13"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "JP"
+    code: "5010401067252"
+  identities:
+    - key: "jp-invoice-registration-number"
+      code: "T5010401067252"
+  name: "株式会社サンプルテック"
+  emails:
+    - addr: "billing@sampletech.jp"
+  addresses:
+    - num: "1-2-3"
+      street: "丸の内"
+      locality: "千代田区"
+      region: "東京都"
+      code: "100-0005"
+      country: "JP"
+
+customer:
+  tax_id:
+    country: "JP"
+    code: "1130001011420"
+  name: "テスト株式会社"
+  emails:
+    - addr: "info@testcorp.jp"
+  addresses:
+    - num: "4-5-6"
+      street: "梅田"
+      locality: "大阪市北区"
+      region: "大阪府"
+      code: "530-0001"
+      country: "JP"
+
+lines:
+  - quantity: 40
+    item:
+      name: "Software development services"
+      price: "8000"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 100
+    item:
+      name: "Bottled green tea"
+      price: "150"
+      unit: "pkg"
+    taxes:
+      - cat: VAT
+        rate: reduced

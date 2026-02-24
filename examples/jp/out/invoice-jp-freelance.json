@@ -1,0 +1,172 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "04f8780c913deb54de301049a7e2a0573a3fb73ea7f886c41595667a93154aec"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"uuid": "5ca49c5f-22ef-40b6-883a-400055e57030",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2024-03-15",
+		"currency": "JPY",
+		"supplier": {
+			"name": "田中太郎デザイン事務所",
+			"tax_id": {
+				"country": "JP",
+				"code": "5010401067252"
+			},
+			"identities": [
+				{
+					"key": "jp-invoice-registration-number",
+					"code": "T5010401067252"
+				}
+			],
+			"addresses": [
+				{
+					"num": "7-8-9",
+					"street": "渋谷",
+					"locality": "渋谷区",
+					"region": "東京都",
+					"code": "150-0002",
+					"country": "JP"
+				}
+			],
+			"emails": [
+				{
+					"addr": "tanaka@design-office.jp"
+				}
+			]
+		},
+		"customer": {
+			"name": "テスト株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "1130001011420"
+			},
+			"addresses": [
+				{
+					"num": "4-5-6",
+					"street": "梅田",
+					"locality": "大阪市北区",
+					"region": "大阪府",
+					"code": "530-0001",
+					"country": "JP"
+				}
+			],
+			"emails": [
+				{
+					"addr": "info@testcorp.jp"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Website design services",
+					"price": "800000",
+					"unit": "service"
+				},
+				"sum": "800000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					},
+					{
+						"cat": "WHT",
+						"rate": "pro",
+						"percent": "10.21%"
+					}
+				],
+				"total": "800000"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Logo design",
+					"price": "150000",
+					"unit": "service"
+				},
+				"sum": "150000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					},
+					{
+						"cat": "WHT",
+						"rate": "pro",
+						"percent": "10.21%"
+					}
+				],
+				"total": "150000"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "end-of-month"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"number": "1234567",
+						"name": "三菱UFJ銀行"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "950000",
+			"total": "950000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "950000",
+								"percent": "10%",
+								"amount": "95000"
+							}
+						],
+						"amount": "95000"
+					},
+					{
+						"code": "WHT",
+						"retained": true,
+						"rates": [
+							{
+								"base": "950000",
+								"percent": "10.21%",
+								"amount": "96995"
+							}
+						],
+						"amount": "96995"
+					}
+				],
+				"sum": "95000",
+				"retained": "96995"
+			},
+			"tax": "95000",
+			"total_with_tax": "1045000",
+			"retained_tax": "96995",
+			"payable": "948005"
+		}
+	}
+}

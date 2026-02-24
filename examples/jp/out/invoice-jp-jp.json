@@ -1,0 +1,140 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "e118781f8484d4080a2cb1c145c64bdff1a0801c1bac790e966a97b3847079bf"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2024-02-13",
+		"currency": "JPY",
+		"supplier": {
+			"name": "株式会社サンプルテック",
+			"tax_id": {
+				"country": "JP",
+				"code": "5010401067252"
+			},
+			"identities": [
+				{
+					"key": "jp-invoice-registration-number",
+					"code": "T5010401067252"
+				}
+			],
+			"addresses": [
+				{
+					"num": "1-2-3",
+					"street": "丸の内",
+					"locality": "千代田区",
+					"region": "東京都",
+					"code": "100-0005",
+					"country": "JP"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@sampletech.jp"
+				}
+			]
+		},
+		"customer": {
+			"name": "テスト株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "1130001011420"
+			},
+			"addresses": [
+				{
+					"num": "4-5-6",
+					"street": "梅田",
+					"locality": "大阪市北区",
+					"region": "大阪府",
+					"code": "530-0001",
+					"country": "JP"
+				}
+			],
+			"emails": [
+				{
+					"addr": "info@testcorp.jp"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"name": "Software development services",
+					"price": "8000",
+					"unit": "h"
+				},
+				"sum": "320000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "320000"
+			},
+			{
+				"i": 2,
+				"quantity": "100",
+				"item": {
+					"name": "Bottled green tea",
+					"price": "150",
+					"unit": "pkg"
+				},
+				"sum": "15000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "8%"
+					}
+				],
+				"total": "15000"
+			}
+		],
+		"totals": {
+			"sum": "335000",
+			"total": "335000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "320000",
+								"percent": "10%",
+								"amount": "32000"
+							},
+							{
+								"key": "standard",
+								"base": "15000",
+								"percent": "8%",
+								"amount": "1200"
+							}
+						],
+						"amount": "33200"
+					}
+				],
+				"sum": "33200"
+			},
+			"tax": "33200",
+			"total_with_tax": "368200",
+			"payable": "368200"
+		}
+	}
+}

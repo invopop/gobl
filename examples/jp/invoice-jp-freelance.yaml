@@ -1,0 +1,71 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "5ca49c5f-22ef-40b6-883a-400055e57030"
+currency: "JPY"
+issue_date: "2024-03-15"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "JP"
+    code: "5010401067252"
+  identities:
+    - key: "jp-invoice-registration-number"
+      code: "T5010401067252"
+  name: "田中太郎デザイン事務所"
+  emails:
+    - addr: "tanaka@design-office.jp"
+  addresses:
+    - num: "7-8-9"
+      street: "渋谷"
+      locality: "渋谷区"
+      region: "東京都"
+      code: "150-0002"
+      country: "JP"
+
+customer:
+  tax_id:
+    country: "JP"
+    code: "1130001011420"
+  name: "テスト株式会社"
+  emails:
+    - addr: "info@testcorp.jp"
+  addresses:
+    - num: "4-5-6"
+      street: "梅田"
+      locality: "大阪市北区"
+      region: "大阪府"
+      code: "530-0001"
+      country: "JP"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Website design services"
+      price: "800000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: WHT
+        rate: pro
+
+  - quantity: 1
+    item:
+      name: "Logo design"
+      price: "150000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: WHT
+        rate: pro
+
+payment:
+  terms:
+    key: end-of-month
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - name: "三菱UFJ銀行"
+        number: "1234567"

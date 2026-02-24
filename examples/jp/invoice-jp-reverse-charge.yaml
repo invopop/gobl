@@ -1,0 +1,62 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "JP"
+uuid: "95224c34-d841-4790-8430-9176b4847f4b"
+currency: "JPY"
+issue_date: "2024-05-20"
+series: "SAMPLE"
+code: "004"
+tax:
+  tags:
+    - reverse-charge
+
+# Foreign supplier providing B2B digital services to a Japanese business.
+# Under Japan's reverse charge mechanism, the Japanese customer (buyer)
+# is responsible for self-assessing and remitting the consumption tax.
+supplier:
+  tax_id:
+    country: "US"
+    code: "123456789"
+  name: "Acme Cloud Services Inc."
+  emails:
+    - addr: "billing@acmecloud.com"
+  addresses:
+    - num: "500"
+      street: "Market Street"
+      locality: "San Francisco"
+      region: "CA"
+      code: "94105"
+      country: "US"
+
+customer:
+  tax_id:
+    country: "JP"
+    code: "1130001011420"
+  identities:
+    - key: "jp-invoice-registration-number"
+      code: "T1130001011420"
+  name: "テスト株式会社"
+  addresses:
+    - num: "4-5-6"
+      street: "梅田"
+      locality: "大阪市北区"
+      region: "大阪府"
+      code: "530-0001"
+      country: "JP"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Cloud platform subscription (annual)"
+      price: "2400000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 12
+    item:
+      name: "Technical support (monthly)"
+      price: "50000"
+      unit: "service"
+    taxes:
+      - cat: VAT
+        rate: standard

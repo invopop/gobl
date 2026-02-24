@@ -1,0 +1,240 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Japan",
+    "ja": "日本"
+  },
+  "time_zone": "Asia/Tokyo",
+  "country": "JP",
+  "currency": "JPY",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "jp-invoice-registration-number",
+      "name": {
+        "en": "Invoice Registration Number",
+        "ja": "適格請求書発行事業者登録番号"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge: The recipient is liable for the consumption tax on this transaction"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "CT",
+        "ja": "消費税"
+      },
+      "title": {
+        "en": "Consumption Tax",
+        "ja": "消費税"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard rate",
+            "ja": "標準税率"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "10%"
+            },
+            {
+              "since": "2014-04-01",
+              "percent": "8%"
+            },
+            {
+              "since": "1997-04-01",
+              "percent": "5%"
+            },
+            {
+              "since": "1989-04-01",
+              "percent": "3%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced rate",
+            "ja": "軽減税率"
+          },
+          "desc": {
+            "en": "Applies to food and beverages (excluding dining out and alcohol) and newspaper subscriptions.",
+            "ja": "飲食料品（外食・酒類を除く）及び新聞の定期購読に適用。"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "8%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Consumption Tax Japan"
+          },
+          "url": "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm#c01"
+        }
+      ]
+    },
+    {
+      "code": "WHT",
+      "name": {
+        "en": "WHT",
+        "ja": "源泉徴収"
+      },
+      "title": {
+        "en": "Withholding Income Tax",
+        "ja": "源泉徴収所得税"
+      },
+      "retained": true,
+      "rates": [
+        {
+          "rate": "pro",
+          "name": {
+            "en": "Professional Rate",
+            "ja": "専門家報酬"
+          },
+          "desc": {
+            "en": "Applies to professional service fees of ¥1,000,000 or less per payment. Includes 2.1% reconstruction surtax (2013-2037).",
+            "ja": "1回の支払金額が100万円以下の専門家報酬に適用。復興特別所得税2.1%を含む（2013年〜2037年）。"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "10.21%"
+            },
+            {
+              "since": "1989-04-01",
+              "percent": "10%"
+            }
+          ]
+        },
+        {
+          "rate": "pro-over",
+          "name": {
+            "en": "Professional Rate (over ¥1M)",
+            "ja": "専門家報酬（100万円超）"
+          },
+          "desc": {
+            "en": "Applies to professional service fees exceeding ¥1,000,000 per payment. Includes 2.1% reconstruction surtax (2013-2037).",
+            "ja": "1回の支払金額が100万円を超える専門家報酬に適用。復興特別所得税2.1%を含む（2013年〜2037年）。"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "20.42%"
+            },
+            {
+              "since": "1989-04-01",
+              "percent": "20%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Japan Withholding Taxes - PwC"
+          },
+          "url": "https://taxsummaries.pwc.com/japan/corporate/withholding-taxes"
+        }
+      ]
+    }
+  ]
+}

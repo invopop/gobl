@@ -1,0 +1,122 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "aa03dea2037fe1107fa6213aab2df0c3e8a27f5cb28e23ad7838ccdfdf7ec8f5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "235b8e6d-d581-48aa-bb61-7710cfcb66ac",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2024-04-01",
+		"currency": "JPY",
+		"tax": {},
+		"supplier": {
+			"name": "サンプル食堂",
+			"tax_id": {
+				"country": "JP",
+				"code": "5010401067252"
+			},
+			"identities": [
+				{
+					"key": "jp-invoice-registration-number",
+					"code": "T5010401067252"
+				}
+			],
+			"addresses": [
+				{
+					"num": "10-11",
+					"street": "新宿",
+					"locality": "新宿区",
+					"region": "東京都",
+					"code": "160-0022",
+					"country": "JP"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "ランチセット（店内飲食）",
+					"price": "1200"
+				},
+				"sum": "2400",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "2400"
+			},
+			{
+				"i": 2,
+				"quantity": "3",
+				"item": {
+					"name": "ペットボトル飲料（持ち帰り）",
+					"price": "160"
+				},
+				"sum": "480",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "8%"
+					}
+				],
+				"total": "480"
+			}
+		],
+		"totals": {
+			"sum": "2880",
+			"total": "2880",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2400",
+								"percent": "10%",
+								"amount": "240"
+							},
+							{
+								"key": "standard",
+								"base": "480",
+								"percent": "8%",
+								"amount": "38"
+							}
+						],
+						"amount": "278"
+					}
+				],
+				"sum": "278"
+			},
+			"tax": "278",
+			"total_with_tax": "3158",
+			"payable": "3158"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "simplified",
+				"text": "Simplified Invoice"
+			}
+		]
+	}
+}
