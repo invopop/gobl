@@ -12,7 +12,7 @@
 - [ ] Reviewed and fixed all linter warnings.
 - [ ] Been obsessive with pointer nil checks to avoid panics.
 - [ ] Updated the CHANGELOG.md with an overview of my changes.
-- [ ] Marked this PR as ready for review
+- [ ] Marked this PR as ready for review.
 
 And if you are part of the org:
 - [ ] Requested a review from Copilot and fixed or dismissed (with a reason) all the feedback raised.
