@@ -1,0 +1,166 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Norway",
+    "no": "Norge"
+  },
+  "time_zone": "Europe/Oslo",
+  "country": "NO",
+  "currency": "NOK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "ON",
+      "name": {
+        "en": "Organization Number",
+        "no": "Organisasjonsnummer"
+      },
+      "desc": {
+        "en": "Norwegian organization number (9 digits).",
+        "no": "Norsk organisasjonsnummer (9 siffer)."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "no": "MVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "no": "Merverdiavgift"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Normal Rate",
+            "no": "Normalsats"
+          },
+          "values": [
+            {
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (Foodstuffs)",
+            "no": "Redusert sats (mat)"
+          },
+          "values": [
+            {
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (Passenger transport / accommodation / cinema)",
+            "no": "Redusert sats (transport/overnatting)"
+          },
+          "values": [
+            {
+              "percent": "12.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "The Norwegian Tax Administration - VAT rates"
+          },
+          "url": "https://www.skatteetaten.no/en/rates/value-added-tax/",
+          "at": "2026-02-24T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Altinn - Value added tax (VAT) rates"
+          },
+          "url": "https://info.altinn.no/en/start-and-run-business/direct-and-indirect-taxes/indirect-taxes/value-added-tax/",
+          "at": "2026-02-24T00:00:00"
+        }
+      ]
+    }
+  ]
+}
