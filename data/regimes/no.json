@@ -4,28 +4,13 @@
     "en": "Norway",
     "nb": "Norge"
   },
+  "description": {
+    "en": "The Norwegian tax regime covers VAT (merverdiavgift) with four\nrates: general (25%), reduced (15%), super-reduced (12%), and\nspecial (11.11%). Identity validation supports\norganisasjonsnummer with mod-11 check digits."
+  },
   "time_zone": "Europe/Oslo",
   "country": "NO",
   "currency": "NOK",
   "tax_scheme": "VAT",
-  "tags": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "key": "foretaksregisteret",
-          "name": {
-            "en": "Registered in the Register of Business Enterprises",
-            "nb": "Registrert i Foretaksregisteret"
-          },
-          "desc": {
-            "en": "Mandatory for AS, ASA, and NUF entities per foretaksregisterloven §10-2.",
-            "nb": "Påkrevd for AS, ASA og NUF etter foretaksregisterloven §10-2."
-          }
-        }
-      ]
-    }
-  ],
   "identities": [
     {
       "code": "ON",
@@ -51,16 +36,6 @@
             "key": "legal",
             "src": "reverse-charge",
             "text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
-          }
-        },
-        {
-          "tags": [
-            "foretaksregisteret"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "foretaksregisteret",
-            "text": "Foretaksregisteret"
           }
         }
       ]

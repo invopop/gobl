@@ -4,15 +4,12 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b0d12808cdd92195fcbd326467eae8feff9f028226938a1761bfafd9f60269ac"
+			"val": "c8e62e8385dcc752dd76836a8b93fb03e713737541c886cf1e1b946bcbfa420a"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "NO",
-		"$tags": [
-			"foretaksregisteret"
-		],
 		"uuid": "b5d2e3f4-6a7b-8c9d-0e1f-2a3b4c5d6e7f",
 		"type": "standard",
 		"series": "2025",
@@ -140,13 +137,6 @@
 			"tax": "5076.00",
 			"total_with_tax": "29876.00",
 			"payable": "29876.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "foretaksregisteret",
-				"text": "Foretaksregisteret"
-			}
-		]
+		}
 	}
 }
