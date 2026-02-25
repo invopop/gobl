@@ -2,6 +2,7 @@
 package sa
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
@@ -27,6 +28,10 @@ func New() *tax.RegimeDef {
 		Normalizer: Normalize,
 		Categories: taxCategories,
 		Identities: identityDefinitions,
+		Scenarios: []*tax.ScenarioSet{
+			bill.InvoiceScenarios(),
+			invoiceScenarios,
+		},
 	}
 }
 
