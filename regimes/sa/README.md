@@ -1,0 +1,51 @@
+# 🇸🇦 GOBL Saudi Arabia Tax Regime
+
+Saudi Arabia tax regime for GOBL covering VAT, tax identification, and ZATCA e-invoicing requirements.
+
+## VAT Rates
+
+| Rate     | Since      | Percent | Reference                  |
+|----------|------------|---------|----------------------------|
+| Standard | 2020-07-01 | 15%     | Royal Decree No. A/638     |
+| Standard | 2018-01-01 | 5%      | GCC Unified VAT Agreement  |
+
+Zero-rated and exempt categories are supported via global VAT keys.
+
+## Identity Types
+
+### Seller (BT-29-1)
+
+| Code | Name                           |
+|------|--------------------------------|
+| CRN  | Commercial Registration Number |
+| MOM  | MOMRA License                  |
+| MLS  | MHRSD License                  |
+| 700  | 700 Number (Unified Number)    |
+| SAG  | MISA License                   |
+
+### Buyer (BT-46-1)
+
+| Code | Name        |
+|------|-------------|
+| NAT  | National ID |
+| IQA  | Iqama       |
+| PAS  | Passport    |
+| GCC  | GCC ID      |
+| OTH  | Other ID    |
+
+## Invoice Validation
+
+- Supplier name and TIN required on all invoices (BR-KSA-39, BR-KSA-40)
+- Customer name required on standard invoices (BR-KSA-42)
+- Simplified invoices (B2C) skip customer requirement
+
+## ZATCA Integration
+
+Phase 2 integration (Fatoora platform, XML signing, QR codes) is handled by [gobl.zatca](https://github.com/invopop/gobl.zatca).
+
+## References
+
+- [ZATCA E-Invoicing](https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/What-is-e-invoicing.aspx)
+- [SA TIN Guide](https://lookuptax.com/docs/tax-identification-number/saudi-arabia-tax-id-guide)
+
+Find example SA GOBL files in the [`examples`](../../examples/sa) (uncalculated documents) and [`examples/sa/out`](../../examples/sa/out) (calculated envelopes) subdirectories.

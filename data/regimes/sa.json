@@ -1,0 +1,231 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "ar": "المملكة العربية السعودية",
+    "en": "Kingdom of Saudi Arabia"
+  },
+  "time_zone": "Asia/Riyadh",
+  "country": "SA",
+  "currency": "SAR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "CRN",
+      "name": {
+        "ar": "رقم السجل التجاري",
+        "en": "Commercial Registration Number"
+      }
+    },
+    {
+      "code": "MOM",
+      "name": {
+        "ar": "ترخيص وزارة البلديات والإسكان",
+        "en": "MOMRA License"
+      }
+    },
+    {
+      "code": "MLS",
+      "name": {
+        "ar": "ترخيص وزارة الموارد البشرية",
+        "en": "MHRSD License"
+      }
+    },
+    {
+      "code": "700",
+      "name": {
+        "ar": "الرقم الموحد",
+        "en": "700 Number"
+      }
+    },
+    {
+      "code": "SAG",
+      "name": {
+        "ar": "ترخيص وزارة الاستثمار",
+        "en": "MISA License"
+      }
+    },
+    {
+      "code": "NAT",
+      "name": {
+        "ar": "الهوية الوطنية",
+        "en": "National ID"
+      }
+    },
+    {
+      "code": "IQA",
+      "name": {
+        "ar": "الإقامة",
+        "en": "Iqama"
+      }
+    },
+    {
+      "code": "PAS",
+      "name": {
+        "ar": "جواز السفر",
+        "en": "Passport"
+      }
+    },
+    {
+      "code": "GCC",
+      "name": {
+        "ar": "هوية مواطني دول مجلس التعاون",
+        "en": "GCC ID"
+      }
+    },
+    {
+      "code": "OTH",
+      "name": {
+        "ar": "هوية أخرى",
+        "en": "Other ID"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    },
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge / آلية الاحتساب العكسي"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice / فاتورة ضريبية مبسطة"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "VAT"
+      },
+      "title": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ar": "المعدل القياسي",
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "ar": "ينطبق على معظم السلع والخدمات.",
+            "en": "Applies to most goods and services."
+          },
+          "values": [
+            {
+              "since": "2020-07-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2018-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "ar": "هيئة الزكاة والضريبة والجمارك - ضريبة القيمة المضافة",
+            "en": "Zakat, Tax and Customs Authority - VAT"
+          },
+          "url": "https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/What-is-e-invoicing.aspx"
+        }
+      ]
+    }
+  ]
+}
