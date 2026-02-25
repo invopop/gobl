@@ -29,7 +29,7 @@ Israeli businesses are classified into the following categories based on their a
 
 ### Tax ID Validation
 
-Israeli VAT-registered businesses are identified by a **Mispar Osek Morshe** (מספר עוסק מורשה), a 9-digit numeric identifier assigned by the ITA upon registration.
+Israeli VAT-registered businesses are identified by a **Mispar Osek Murshe** (מספר עוסק מורשה), a 9-digit numeric identifier assigned by the ITA upon registration.
 
 For sole proprietors (Osek Murshe), the Mispar Osek is typically the same as the personal **Mispar Zehut** (מספר זהות / Teudat Zehut), a 9-digit national ID number. For companies and other legal entities, the Mispar Osek corresponds to the entity's registration number issued by the **Corporations Authority** (רשות התאגידים), where the first two digits indicate the entity type:
 - `50` — Public institutions

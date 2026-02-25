@@ -10,7 +10,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Israeli business tax ID (Mispar Osek Morshe / מספר עוסק מורשה) is a 9-digit number.
+// Israeli business tax ID (Mispar Osek Murshe / מספר עוסק מורשה) is a 9-digit number.
 //
 // Format: 9 numeric digits, no separators.
 //
@@ -27,7 +27,7 @@ var (
 	osekRegex = regexp.MustCompile(`^\d{9}$`)
 )
 
-// validateTaxIdentity checks to ensure the Israeli Osek Morshe format is correct.
+// validateTaxIdentity checks to ensure the Israeli Osek Murshe format is correct.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateOsekCode)),

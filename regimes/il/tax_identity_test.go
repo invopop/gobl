@@ -1,4 +1,4 @@
-// Package il_test provides tests for the Israeli Osek Morshe tax ID validation.
+// Package il_test provides tests for the Israeli Osek Murshe tax ID validation.
 package il_test
 
 import (
