@@ -2,10 +2,8 @@
 package il
 
 import (
-	"errors"
 	"regexp"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -30,20 +28,8 @@ var (
 // validateTaxIdentity checks to ensure the Israeli Osek Murshe format is correct.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateOsekCode)),
+		validation.Field(&tID.Code,
+			validation.Match(osekRegex).Error("must be a 9-digit number"),
+		),
 	)
-}
-
-// validateOsekCode checks that the tax ID is a valid 9-digit format.
-func validateOsekCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	val := code.String()
-
-	if !osekRegex.MatchString(val) {
-		return errors.New("must be a 9-digit number")
-	}
-	return nil
 }
