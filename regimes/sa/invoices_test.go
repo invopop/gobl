@@ -30,6 +30,10 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Code:    "300075588700003",
+				Country: "SA",
+			},
 		},
 		Code:     "INV-001",
 		Currency: "SAR",
@@ -94,6 +98,10 @@ func TestStandardInvoiceRequiresCustomerName(t *testing.T) {
 	inv := validInvoice()
 	inv.Customer = &org.Party{
 		Name: "",
+		TaxID: &tax.Identity{
+			Code:    "300075588700003",
+			Country: "SA",
+		},
 	}
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
@@ -101,13 +109,43 @@ func TestStandardInvoiceRequiresCustomerName(t *testing.T) {
 	assert.Contains(t, err.Error(), "name")
 }
 
-func TestStandardInvoiceWithCustomerPasses(t *testing.T) {
+func TestStandardInvoiceWithCustomerTaxID(t *testing.T) {
+	inv := validInvoice()
+	inv.Customer = &org.Party{
+		Name: "Buyer Co.",
+		TaxID: &tax.Identity{
+			Code:    "300075588700003",
+			Country: "SA",
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+}
+
+func TestStandardInvoiceWithCustomerIdentity(t *testing.T) {
+	inv := validInvoice()
+	inv.Customer = &org.Party{
+		Name: "Buyer Co.",
+		Identities: []*org.Identity{
+			{
+				Type: sa.IdentityTypeNAT,
+				Code: "1234567890",
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+}
+
+func TestStandardInvoiceCustomerRequiresIdentification(t *testing.T) {
 	inv := validInvoice()
 	inv.Customer = &org.Party{
 		Name: "Buyer Co.",
 	}
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	err := inv.Validate()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "identities")
 }
 
 func TestSimplifiedInvoiceWithoutCustomer(t *testing.T) {

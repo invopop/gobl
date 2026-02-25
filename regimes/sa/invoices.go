@@ -19,6 +19,10 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 				validation.By(validateCustomer),
 			),
+			// NOTE: BR-KSA-25 requires buyer name and National ID on simplified
+			// invoices for education (VATEX-SA-EDU) and healthcare (VATEX-SA-HEA)
+			// exemptions. This is handled by the gobl.zatca addon which defines
+			// the VATEX-SA extension codes.
 			validation.Skip,
 		),
 	)
@@ -30,12 +34,13 @@ func validateSupplier(value any) error {
 		return nil
 	}
 	return validation.ValidateStruct(p,
-		// ZATCA requires supplier tax ID and name on all invoices.
+		// BR-KSA-39: Supplier VAT registration number required on all invoices.
 		validation.Field(&p.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
+		// BR-06: Seller name required on all invoices.
 		validation.Field(&p.Name,
 			validation.Required,
 		),
@@ -48,13 +53,38 @@ func validateCustomer(value any) error {
 		return nil
 	}
 	return validation.ValidateStruct(p,
-		// Standard invoices require a customer name.
+		// BR-KSA-42: Standard invoices require a customer name.
 		validation.Field(&p.Name,
 			validation.Required,
+		),
+		// BR-KSA-81: Buyer must have either a VAT registration number (TaxID)
+		// or an alternative buyer identification (org.Identity).
+		validation.Field(&p.TaxID,
+			validation.When(
+				!hasIdentities(p),
+				validation.Required,
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
+		validation.Field(&p.Identities,
+			validation.When(
+				!hasTaxIDCode(p),
+				validation.Required,
+			),
+			validation.Skip,
 		),
 	)
 }
 
 func isSimplified(inv *bill.Invoice) bool {
 	return inv.HasTags(tax.TagSimplified)
+}
+
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasIdentities(party *org.Party) bool {
+	return party != nil && len(party.Identities) > 0
 }

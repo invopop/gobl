@@ -27,6 +27,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "SA",
+				Code:    "300075588700003",
+			},
 		},
 		IssueDate: cal.MakeDate(2024, 1, 15),
 		Lines: []*bill.Line{
