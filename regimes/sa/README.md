@@ -4,10 +4,10 @@ Saudi Arabia tax regime for GOBL covering VAT, tax identification, and ZATCA e-i
 
 ## VAT Rates
 
-| Rate     | Since      | Percent | Reference                  |
-|----------|------------|---------|----------------------------|
-| Standard | 2020-07-01 | 15%     | Royal Decree No. A/638     |
-| Standard | 2018-01-01 | 5%      | GCC Unified VAT Agreement  |
+| Rate     | Since      | Percent | Reference                             |
+|----------|------------|---------|---------------------------------------|
+| Standard | 2020-07-01 | 15%     | Royal Order No. A/638                 |
+| Standard | 2018-01-01 | 5%      | GCC VAT Framework Agreement           |
 
 Zero-rated and exempt categories are supported via global VAT keys.
 
@@ -18,25 +18,30 @@ Zero-rated and exempt categories are supported via global VAT keys.
 | Code | Name                           |
 |------|--------------------------------|
 | CRN  | Commercial Registration Number |
-| MOM  | MOMRA License                  |
+| MOM  | MOMRAH License                 |
 | MLS  | MHRSD License                  |
 | 700  | 700 Number (Unified Number)    |
 | SAG  | MISA License                   |
 
 ### Buyer (BT-46-1)
 
-| Code | Name        |
-|------|-------------|
-| NAT  | National ID |
-| IQA  | Iqama       |
-| PAS  | Passport    |
-| GCC  | GCC ID      |
-| OTH  | Other ID    |
+| Code | Name                        |
+|------|-----------------------------|
+| TIN  | Tax Identification Number   |
+| NAT  | National ID                 |
+| IQA  | Iqama                       |
+| PAS  | Passport                    |
+| GCC  | GCC ID                      |
+| OTH  | Other ID                    |
+
+Seller codes (CRN, MOM, MLS, 700, SAG, OTH) are also valid for buyers per BR-KSA-14.
 
 ## Invoice Validation
 
-- Supplier name and TIN required on all invoices (BR-KSA-39, BR-KSA-40)
+- Supplier VAT registration number required on all invoices (BR-KSA-39)
+- Supplier name required on all invoices (BR-06)
 - Customer name required on standard invoices (BR-KSA-42)
+- Customer identification (TaxID or org identity) required on standard invoices (BR-KSA-81)
 - Simplified invoices (B2C) skip customer requirement
 
 ## ZATCA Integration
