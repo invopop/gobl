@@ -24,6 +24,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Asia/Riyadh",
 		Validator:  Validate,
 		Normalizer: Normalize,
+		Categories: taxCategories,
 	}
 }
 
