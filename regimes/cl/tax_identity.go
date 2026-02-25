@@ -35,8 +35,18 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	)
 }
 
-// normalizeTaxIdentity will remove any whitespace or separation characters from
-// the tax code and also make sure the default type is set.
+// normalizeTaxIdentity removes formatting characters from Chilean RUT numbers.
+//
+// Normalization process:
+//  1. Removes all dots (.) and hyphens (-)
+//  2. Converts lowercase 'k' to uppercase 'K' for check digits
+//
+// Examples:
+//   - "71.325.497-5" → "713254975"
+//   - "77.668.208-k" → "77668208K"
+//   - "12.345.678-5" → "123456785"
+//
+// Reference: https://en.wikipedia.org/wiki/National_identification_number#Chile
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
 		return
@@ -56,6 +66,10 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 //  3. Compare the calculated check digit with the provided one
 //
 // Returns nil if valid, or an error describing the validation failure.
+//
+// References:
+//   - RUT Format: https://es.wikipedia.org/wiki/Rol_%C3%9Anico_Tributario
+//   - RUT Length Updates (7-9 digits): https://help.getcirrus.com/es/articles/8515715-modificaciones-para-manejo-de-rut-de-7-a-9-digitos-chile
 func validateRUT(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
@@ -106,6 +120,8 @@ func validateRUT(value interface{}) error {
 // Returns:
 //
 //	The calculated check digit as a string ("0"-"9" or "K"), or an error if conversion fails
+//
+// Reference: https://es.wikipedia.org/wiki/Rol_%C3%9Anico_Tributario#Algoritmo
 func calculateRUTCheckDigit(rut string) (string, error) {
 	sum := 0
 	multiplier := 2
