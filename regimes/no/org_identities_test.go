@@ -37,3 +37,14 @@ func TestValidateOrgIdentity(t *testing.T) {
 		t.Fatalf("expected validation error")
 	}
 }
+
+func TestNormalizeOrgIdentityDoesNothingForOtherTypes(t *testing.T) {
+	id := &org.Identity{
+		Type: cbc.Code("XX"),
+		Code: cbc.Code("974 760 673"),
+	}
+	normalizeOrgIdentity(id)
+	if id.Code != "974 760 673" {
+		t.Fatalf("expected code to remain unchanged, got %s", id.Code)
+	}
+}

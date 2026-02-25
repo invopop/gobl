@@ -7,6 +7,10 @@ import (
 	"github.com/invopop/validation"
 )
 
+// validateBillInvoice applies minimal Norway-specific invoice validation rules:
+// - Supplier is always required and must include TaxID.
+// - Customer can be omitted for simplified invoices.
+// - For reverse charge invoices, customer TaxID is required.
 func validateBillInvoice(inv *bill.Invoice) error {
 	if inv == nil {
 		return nil
@@ -18,7 +22,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
 			validation.Required,
-			validation.By(validateBillInvoiceParty(!simplified, reverseCharge)),
+			validation.By(validateBillInvoiceParty(!simplified)),
 			validation.By(validateBillInvoiceSupplier),
 			validation.Skip,
 		),
@@ -28,7 +32,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 				validation.Empty,
 			).Else(
 				validation.Required,
-				validation.By(validateBillInvoiceParty(true, reverseCharge)),
+				validation.By(validateBillInvoiceParty(true)),
 				validation.By(validateBillInvoiceCustomer(reverseCharge)),
 			),
 			validation.Skip,
@@ -36,7 +40,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 	)
 }
 
-func validateBillInvoiceParty(withAddress bool, reverseCharge bool) validation.RuleFunc {
+func validateBillInvoiceParty(withAddress bool) validation.RuleFunc {
 	return func(value any) error {
 		party, ok := value.(*org.Party)
 		if !ok || party == nil {

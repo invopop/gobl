@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	// IdentityTypeOrgNr defines the key for the Norwegian Organization Number (Organisasjonsnummer).
+	// IdentityTypeOrgNr defines the code for the Norwegian Organization Number (Organisasjonsnummer).
 	IdentityTypeOrgNr cbc.Code = "ON"
 )
 

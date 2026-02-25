@@ -31,7 +31,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					// Current rate snapshot (historical changes out of scope)
-					{Percent: num.MakePercentage(250, 3)},
+					{Percent: num.MakePercentage(250, 3)}, // 25.0%
 				},
 			},
 			{
@@ -42,7 +42,8 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NO: "Redusert sats (mat)",
 				},
 				Values: []*tax.RateValueDef{
-					{Percent: num.MakePercentage(150, 3)},
+					// Current rate snapshot (historical changes out of scope)
+					{Percent: num.MakePercentage(150, 3)}, // 15.0%
 				},
 			},
 			{
@@ -53,7 +54,8 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NO: "Redusert sats (transport/overnatting)",
 				},
 				Values: []*tax.RateValueDef{
-					{Percent: num.MakePercentage(120, 3)},
+					// Current rate snapshot (historical changes out of scope)
+					{Percent: num.MakePercentage(120, 3)}, // 12.0%
 				},
 			},
 		},

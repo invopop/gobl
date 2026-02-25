@@ -1,12 +1,12 @@
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: NO
-uuid: 3b5d2c0e-2f4a-4d8b-9c19-4c6c8b1a9f01
+uuid: 5c77a3b2-6d8d-44cf-bc9b-2c8f3380e0a1
 type: standard
 series: "2026"
-code: "TOSL108"
-issue_date: "2026-01-14"
+code: "EX001"
+issue_date: "2026-02-03"
 currency: NOK
-note: Ordered in our booth at the convention.
+note: VAT exempt supply (example).
 
 supplier:
   name: The Sellercompany ASA
@@ -31,7 +31,7 @@ customer:
     - street: "Anystreet 8"
       locality: "Anytown"
       region: "RegionB"
-      code: "101"
+      code: "0101"
       country: NO
   emails:
     - addr: "john@buyercompany.no"
@@ -39,15 +39,15 @@ customer:
 payment:
   terms:
     due_dates:
-      - date: "2026-01-14"
+      - date: "2026-02-03"
         percent: "100%"
 
 lines:
-  - quantity: "1"
+  - quantity: "3"
     item:
-      name: "Laptop computer"
-      price: "1273.00"
+      name: "Exempt service"
+      price: "900.00"
       unit: "one"
     taxes:
       - cat: VAT
-        rate: standard
+        key: exempt

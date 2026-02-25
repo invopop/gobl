@@ -1,12 +1,14 @@
 $schema: https://gobl.org/draft-0/bill/invoice
 $regime: NO
-uuid: 3b5d2c0e-2f4a-4d8b-9c19-4c6c8b1a9f01
+uuid: 4c0a0a86-0f10-4ed0-9d75-0a4d0a6c40aa
 type: standard
 series: "2026"
-code: "TOSL108"
-issue_date: "2026-01-14"
+code: "RC001"
+issue_date: "2026-02-01"
 currency: NOK
-note: Ordered in our booth at the convention.
+tags:
+  - reverse-charge
+note: Reverse charge invoice (customer accounts for VAT).
 
 supplier:
   name: The Sellercompany ASA
@@ -31,7 +33,7 @@ customer:
     - street: "Anystreet 8"
       locality: "Anytown"
       region: "RegionB"
-      code: "101"
+      code: "0101"
       country: NO
   emails:
     - addr: "john@buyercompany.no"
@@ -39,15 +41,15 @@ customer:
 payment:
   terms:
     due_dates:
-      - date: "2026-01-14"
+      - date: "2026-02-01"
         percent: "100%"
 
 lines:
-  - quantity: "1"
+  - quantity: "8"
     item:
-      name: "Laptop computer"
-      price: "1273.00"
-      unit: "one"
+      name: "Consulting services"
+      price: "500.00"
+      unit: "h"
     taxes:
       - cat: VAT
-        rate: standard
+        key: reverse-charge

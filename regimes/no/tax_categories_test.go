@@ -1,6 +1,10 @@
 package no
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/invopop/gobl/num"
+)
 
 func TestNorwayVATRates(t *testing.T) {
 	if len(taxCategories) != 1 {
@@ -11,13 +15,31 @@ func TestNorwayVATRates(t *testing.T) {
 		t.Fatalf("expected 3 vat rates, got %d", len(cat.Rates))
 	}
 
-	if cat.Rates[0].Values[0].Percent.String() != "25.0%" {
-		t.Fatalf("expected standard rate 25.0%%, got %s", cat.Rates[0].Values[0].Percent.String())
+	tests := []struct {
+		name string
+		got  string
+		want string
+	}{
+		{
+			name: "general",
+			got:  cat.Rates[0].Values[0].Percent.String(),
+			want: num.MakePercentage(250, 3).String(),
+		},
+		{
+			name: "reduced_food",
+			got:  cat.Rates[1].Values[0].Percent.String(),
+			want: num.MakePercentage(150, 3).String(),
+		},
+		{
+			name: "reduced_transport",
+			got:  cat.Rates[2].Values[0].Percent.String(),
+			want: num.MakePercentage(120, 3).String(),
+		},
 	}
-	if cat.Rates[1].Values[0].Percent.String() != "15.0%" {
-		t.Fatalf("expected reduced rate 15.0%%, got %s", cat.Rates[1].Values[0].Percent.String())
-	}
-	if cat.Rates[2].Values[0].Percent.String() != "12.0%" {
-		t.Fatalf("expected reduced rate 12.0%%, got %s", cat.Rates[2].Values[0].Percent.String())
+
+	for _, tc := range tests {
+		if tc.got != tc.want {
+			t.Fatalf("expected %s rate %s, got %s", tc.name, tc.want, tc.got)
+		}
 	}
 }

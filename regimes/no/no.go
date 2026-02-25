@@ -11,6 +11,7 @@ import (
 )
 
 func init() {
+	// Register the regime on package import (see regimes/regimes.go).
 	tax.RegisterRegimeDef(New())
 }
 

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
 )
 
 func TestValidateTaxCodeAcceptsMVASuffix(t *testing.T) {
@@ -28,12 +27,8 @@ func TestValidateTaxCodeAcceptsNOPrefixAndMVASuffix(t *testing.T) {
 	}
 }
 
-func TestNormalizeTaxIdentityCanonicalDigits(t *testing.T) {
-	id := &tax.Identity{
-		Code: "NO974760673MVA",
-	}
-	normalizeTaxIdentity(id)
-	if id.Code != "974760673" {
-		t.Fatalf("expected normalized code to be 974760673, got %s", id.Code)
+func TestValidateTaxCodeInvalidChecksum(t *testing.T) {
+	if err := validateTaxCode(cbc.Code("974760674MVA")); err == nil {
+		t.Fatalf("expected error for invalid checksum")
 	}
 }

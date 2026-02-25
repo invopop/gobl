@@ -38,3 +38,21 @@ func TestValidateBillInvoiceSupplierWithTaxIDPasses(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 }
+
+func TestSimplifiedInvoiceAllowsEmptyCustomer(t *testing.T) {
+	inv := &bill.Invoice{
+		Supplier: &org.Party{
+			Name: "Supplier",
+			TaxID: &tax.Identity{
+				Country: l10n.TaxCountryCode(l10n.NO),
+				Code:    "974760673MVA",
+			},
+		},
+		Customer: nil, // allowed when simplified
+	}
+	inv.Tags.SetTags(tax.TagSimplified)
+
+	if err := validateBillInvoice(inv); err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+}

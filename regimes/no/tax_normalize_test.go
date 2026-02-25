@@ -3,30 +3,51 @@ package no
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 )
 
-func TestNormalizeTaxIdentityStripsPrefixAndSuffix(t *testing.T) {
-	id := &tax.Identity{
-		Country: l10n.TaxCountryCode(l10n.NO),
-		Code:    " NO 974 760 673 mva ",
+func TestNormalizeTaxIdentityCases(t *testing.T) {
+	tests := []struct {
+		name string
+		in   cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "strips_no_prefix_spaces_and_mva_suffix",
+			in:   cbc.Code(" NO 974 760 673 mva "),
+			want: cbc.Code("974760673"),
+		},
+		{
+			name: "strips_no_prefix_and_mva_suffix",
+			in:   cbc.Code("NO974760673MVA"),
+			want: cbc.Code("974760673"),
+		},
+		{
+			name: "digits_only_kept",
+			in:   cbc.Code("974760673"),
+			want: cbc.Code("974760673"),
+		},
+		{
+			name: "unknown_format_unchanged",
+			in:   cbc.Code("SOMETHING"),
+			want: cbc.Code("SOMETHING"),
+		},
 	}
 
-	normalizeTaxIdentity(id)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			id := &tax.Identity{
+				Country: l10n.TaxCountryCode(l10n.NO),
+				Code:    tc.in,
+			}
 
-	if id.Code != "974760673" {
-		t.Fatalf("expected normalized code to be 974760673, got %s", id.Code)
-	}
-}
+			normalizeTaxIdentity(id)
 
-func TestNormalizeTaxIdentityLeavesUnknownFormats(t *testing.T) {
-	id := &tax.Identity{
-		Country: l10n.TaxCountryCode(l10n.NO),
-		Code:    "SOMETHING",
-	}
-	normalizeTaxIdentity(id)
-	if id.Code != "SOMETHING" {
-		t.Fatalf("expected code to remain unchanged, got %s", id.Code)
+			if id.Code != tc.want {
+				t.Fatalf("expected normalized code to be %s, got %s", tc.want, id.Code)
+			}
+		})
 	}
 }

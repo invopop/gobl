@@ -4,17 +4,17 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4cddf30b7a9d6768dab992850073e93e14923364a9eec17b7b85eed22ce83825"
+			"val": "ce4af30719e80cdfcaabc1a15c216b8900e730fef0cbbe1d1b84f6a8cbb6cabc"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "NO",
-		"uuid": "3b5d2c0e-2f4a-4d8b-9c19-4c6c8b1a9f01",
+		"uuid": "5c77a3b2-6d8d-44cf-bc9b-2c8f3380e0a1",
 		"type": "standard",
 		"series": "2026",
-		"code": "TOSL108",
-		"issue_date": "2026-01-14",
+		"code": "EX001",
+		"issue_date": "2026-02-03",
 		"currency": "NOK",
 		"supplier": {
 			"name": "The Sellercompany ASA",
@@ -48,7 +48,7 @@
 					"street": "Anystreet 8",
 					"locality": "Anytown",
 					"region": "RegionB",
-					"code": "101",
+					"code": "0101",
 					"country": "NO"
 				}
 			],
@@ -61,58 +61,55 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "1",
+				"quantity": "3",
 				"item": {
-					"name": "Laptop computer",
-					"price": "1273.00",
+					"name": "Exempt service",
+					"price": "900.00",
 					"unit": "one"
 				},
-				"sum": "1273.00",
+				"sum": "2700.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "standard",
-						"rate": "general",
-						"percent": "25.0%"
+						"key": "exempt"
 					}
 				],
-				"total": "1273.00"
+				"total": "2700.00"
 			}
 		],
 		"payment": {
 			"terms": {
 				"due_dates": [
 					{
-						"date": "2026-01-14",
-						"amount": "1591.25",
+						"date": "2026-02-03",
+						"amount": "2700.00",
 						"percent": "100%"
 					}
 				]
 			}
 		},
 		"totals": {
-			"sum": "1273.00",
-			"total": "1273.00",
+			"sum": "2700.00",
+			"total": "2700.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
-								"base": "1273.00",
-								"percent": "25.0%",
-								"amount": "318.25"
+								"key": "exempt",
+								"base": "2700.00",
+								"amount": "0.00"
 							}
 						],
-						"amount": "318.25"
+						"amount": "0.00"
 					}
 				],
-				"sum": "318.25"
+				"sum": "0.00"
 			},
-			"tax": "318.25",
-			"total_with_tax": "1591.25",
-			"payable": "1591.25"
+			"tax": "0.00",
+			"total_with_tax": "2700.00",
+			"payable": "2700.00"
 		}
 	}
 }
