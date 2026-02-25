@@ -57,7 +57,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.ibge.gov.br/explica/codigos-dos-municipios.php",
 			},
 		},
-		TimeZone: "America/Sao_Paulo",
+		TimeZone:   "America/Sao_Paulo",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Extensions: extensions,

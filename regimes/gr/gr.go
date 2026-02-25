@@ -67,7 +67,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.gsis.gr/sites/default/files/eInvoice/Instructions%20to%20B2G%20Suppliers%20and%20certified%20PEPPOL%20Providers%20for%20the%20Greek%20PEPPOL%20BIS-EN-%20v1.0.pdf",
 			},
 		},
-		TimeZone: "Europe/Athens",
+		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
 		Corrections:            corrections,

@@ -71,7 +71,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.afip.gob.ar/sire/percepciones-retenciones/",
 			},
 		},
-		TimeZone: "America/Argentina/Buenos_Aires",
+		TimeZone:    "America/Argentina/Buenos_Aires",
 		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories(),

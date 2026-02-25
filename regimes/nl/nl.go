@@ -45,6 +45,7 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone:   "Europe/Amsterdam",
+		Identities: identityDefinitions,
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
@@ -68,6 +69,8 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	}
 	return nil
 }
