@@ -23,7 +23,7 @@ Current VAT rates (effective 1 August 2025):
 
 Previous standard rate was 19% (Jan 2017 - Jul 2025). Reduced was 9%, super-reduced was 5%.
 
-**Limitation**: Historical VAT rates are only tracked back to January 2017. Invoices dated before 2017 (e.g. during the 20% standard rate period of 2016, or the 24% period of 2010-2015) are supported on a best-effort basis for the standard rate only. The reduced and super-reduced rates do not have entries before 2017.
+**Limitation**: Reduced and super-reduced VAT rate histories are only tracked back to January 2017. The standard rate history is tracked further back (including the 20% standard rate period of 2016 and the 24% period of 2010-2015), but invoices dated before 2017 are still supported only on a best-effort basis.
 
 VAT rates are the same across all organization types (SRL, SA, PFA, micro-enterprise) and depend only on the goods/services category. There is a VAT registration threshold (RON 395,000) for exemption, but that is a binary status, not a different rate.
 
