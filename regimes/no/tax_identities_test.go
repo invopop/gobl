@@ -66,3 +66,15 @@ func TestValidateTaxCodeEmptyIsNoop(t *testing.T) {
 		t.Fatalf("expected no error for empty code, got %v", err)
 	}
 }
+
+func TestValidateTaxCodeRejectsNonNumericCharacters(t *testing.T) {
+	if err := validateTaxCode(cbc.Code("NO97476067AMVA")); err == nil {
+		t.Fatalf("expected error for non-numeric tax code")
+	}
+}
+
+func TestValidateTaxCodeRejectsTooManyDigits(t *testing.T) {
+	if err := validateTaxCode(cbc.Code("NO9747606730MVA")); err == nil {
+		t.Fatalf("expected error for invalid length")
+	}
+}
