@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 
 	assert.Equal(t, "SA", r.Country.String())
 	assert.Equal(t, "SAR", string(r.Currency))
-	assert.Equal(t, "Asia/Riyadh", string(r.TimeZone))
+	assert.Equal(t, "Asia/Riyadh", r.TimeZone)
 	assert.Equal(t, tax.CategoryVAT, r.TaxScheme)
 
 	assert.NotEmpty(t, r.Categories)

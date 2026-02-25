@@ -17,8 +17,8 @@ func init() {
 // New provides the tax regime definition for SA.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "SA",
-		Currency: currency.SAR,
+		Country:   "SA",
+		Currency:  currency.SAR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Kingdom of Saudi Arabia",
