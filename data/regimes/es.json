@@ -4,6 +4,17 @@
     "en": "Spain",
     "es": "España"
   },
+  "description": {
+    "en": "Spain's tax system is administered by the Agencia Tributaria (AEAT). As an\nEU member state, Spain follows the EU VAT Directive with locally adapted rates.\n\nIVA (Impuesto sobre el Valor Añadido) rates include a 21% general rate for\nmost goods and services, a 10% reduced rate for food, passenger transport,\nand hotel services, and a 4% super-reduced rate for basic necessities such\nas bread, milk, medicines, and books. The Canary Islands use IGIC (Impuesto\nGeneral Indirecto Canario) instead of IVA, while Ceuta and Melilla use IPSI\n(Impuesto sobre la Producción, los Servicios y la Importación).\n\nBusinesses are identified by their NIF (Número de Identificación Fiscal) or\nCIF for companies. IRPF (Impuesto sobre la Renta de las Personas Físicas)\nretention taxes apply to freelancer invoices at varying rates.\n\nAccording to Real Decreto 1619/2012, only rectified (rectificativa) invoices\nare recognized in Spanish law. GOBL maps corrective invoices to \"rectificación\nmodelo íntegro\" (complete replacement) and credit notes to \"rectificación por\ndiferencias\" (correction by differences, with quantities inverted during\nconversion). The FacturaE format is used for B2G e-invoicing, with TicketBAI\nrequired in the Basque Country, VeriFactu being rolled out nationally, and the\nSII (Suministro Inmediato de Información) system providing near-real-time\nreporting of invoicing data to the AEAT."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Real Decreto 1619/2012 - Invoicing Regulation"
+      },
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696"
+    }
+  ],
   "time_zone": "Europe/Madrid",
   "country": "ES",
   "currency": "EUR",

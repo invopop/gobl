@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -21,6 +22,29 @@ func New() *tax.RegimeDef {
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Belgium",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Belgium's tax system is administered by the Federal Public Service Finance
+				(Service Public Fédéral Finances / Federale Overheidsdienst Financiën).
+				As an EU member state, Belgium follows the EU VAT Directive.
+
+				VAT (Taxe sur la Valeur Ajoutée, TVA / Belasting over de Toegevoegde Waarde,
+				BTW) rates include a 21% standard rate for most goods and services, a 12%
+				intermediate rate for certain goods including social housing, restaurant
+				services, and some food products, and a 6% reduced rate for basic necessities
+				such as food, water, pharmaceuticals, books, and passenger transport.
+
+				Businesses are identified by their VAT number (Numéro de TVA / BTW-nummer)
+				in the format BE followed by 10 digits. Belgium supports credit notes for
+				invoice corrections.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("BOSA - Electronic Invoicing"),
+				URL:   "https://bosa.belgium.be/fr/themes/administration-numerique/facturation-electronique",
+			},
 		},
 		TimeZone:   "Europe/Brussels",
 		Validator:  Validate,
@@ -43,8 +67,6 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}

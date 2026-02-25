@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -41,7 +42,46 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
-		TimeZone:    "America/Mexico_City",
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Mexico's tax system is administered by the SAT (Servicio de Administración
+				Tributaria). Electronic invoicing through CFDI (Comprobante Fiscal Digital por
+				Internet) version 4.0 is mandatory for all businesses.
+
+				IVA (Impuesto al Valor Agregado) rates include a 16% general rate for most
+				goods and services, 0% for food, medicine, and exports, and exempt categories
+				for educational and medical services.
+
+				Businesses are identified by their RFC (Registro Federal de Contribuyentes),
+				a 12-character code for companies or 13-character code for individuals, which
+				includes a date component and check digits. Every supplier and customer must
+				be associated with a fiscal regime code (RegimenFiscal).
+
+				CFDI invoices require specific fields including issue place (LugarExpedicion),
+				CFDI use (UsoCFDI), payment method (MetodoPago distinguishing between fully
+				paid PUE and pending PPD invoices), payment means (FormaPago), and
+				product/service codes (ClaveProdServ) from the SAT catalog. For B2C sales,
+				the simplified tag triggers use of the generic RFC code for final consumers.
+				For foreign customers, their country and local tax code are mapped
+				automatically. Invoices can include complements for fuel account balances and
+				food vouchers among others.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("SAT - Anexo 20 (Invoice Format)"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm",
+			},
+			{
+				Title: i18n.NewString("SAT - CFDI 4.0 Filling Guide"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/Anexo_20_Guia_de_llenado_CFDI.pdf",
+			},
+			{
+				Title: i18n.NewString("SAT - Global CFDI 4.0 Filling Guide"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf",
+			},
+		},
+		TimeZone: "America/Mexico_City",
 		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories,

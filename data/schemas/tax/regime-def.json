@@ -263,6 +263,14 @@
           "title": "Description",
           "description": "Introductory details about the regime."
         },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Sources is a list of references to tax authority or other relevant documentation."
+        },
         "time_zone": {
           "type": "string",
           "title": "Time Zone",

@@ -3,6 +3,7 @@ package ar
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -24,22 +25,56 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Argentina's tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero), which oversees the collection of IVA (Impuesto al Valor Agregado), the country's value-added tax.
+				Argentina's tax system is administered by ARCA (Agencia de Recaudación
+				y Control Aduanero), which oversees the collection of IVA (Impuesto al
+				Valor Agregado), the country's value-added tax.
 
-				Taxpayers are identified using three main types of tax identification numbers: CUIT (Clave Única de Identificación Tributaria) - 11 digits (XX-XXXXXXXX-X) used by companies and legal entities with prefixes 30, 33 (conflict resolution), and 34 (foreign entities); CUIL (Clave Única de Identificación Laboral) - 11 digits (XX-XXXXXXXX-X) used by individuals and employees with prefixes 20 (males), 27 (females), and 23 (conflict resolution); and CDI (Clave de Identificación) for foreign residents without CUIT/CUIL (not validated).
+				Taxpayers are identified using three main types of tax identification
+				numbers: CUIT (Clave Única de Identificación Tributaria), 11 digits
+				(XX-XXXXXXXX-X) used by companies and legal entities with prefixes 30,
+				33, and 34; CUIL (Clave Única de Identificación Laboral), 11 digits used
+				by individuals with prefixes 20, 27, and 23; and CDI (Clave de
+				Identificación) for foreign residents without CUIT/CUIL.
 
-				IVA rates include 27% increased rate for gas, water and telecom services, 21% general rate for most goods and services, and 10.5% reduced rate for essential goods such as construction, medicine, transportation, and food products.
+				IVA rates include a 27% increased rate for gas, water, and telecom
+				services, a 21% general rate for most goods and services, and a 10.5%
+				reduced rate for essential goods such as construction, medicine,
+				transportation, and food products.
 
-				Argentina applies several retention taxes: IVA Retenido (Retained VAT) with variable rates based on taxpayer category and registration status (reference: AFIP RG 2854/2010 and modifications); Ganancias (Income Tax Withholding) applied to payments for services with rates ranging from 0.5% to 35% depending on service type (reference: AFIP RG 830/2000, RG 4003/2017); and Ingresos Brutos (Gross Income Tax), a provincial tax with rates set by each jurisdiction, typically 1% to 5% depending on province and activity.
+				Argentina applies several retention taxes: IVA Retenido (Retained VAT)
+				with variable rates based on taxpayer category; Ganancias (Income Tax
+				Withholding) with rates from 0.5% to 35% depending on service type; and
+				Ingresos Brutos (Gross Income Tax), a provincial tax typically 1% to 5%.
 
-				Electronic invoicing through ARCA's system is required for most transactions. Electronic invoices must include CAE/CAI (Código de Autorización Electrónico - Electronic Authorization Code) and Point of Sale (Punto de Venta) for invoice numbering.
+				Electronic invoicing through ARCA is required for most transactions.
+				Invoices must include a CAE (Código de Autorización Electrónico) and
+				Point of Sale (Punto de Venta) number.
 
-				Common invoice types include Tipo A (issued by Responsable Inscripto to another Responsable Inscripto), Tipo B (issued by Responsable Inscripto to Monotributista or final consumer), Tipo C (issued by Monotributista or exempt entities), Tipo E (export invoices), and Credit Notes (Notas de Crédito - corrective documents).
+				Common invoice types include Tipo A (between Responsable Inscripto
+				parties), Tipo B (to Monotributista or final consumer), Tipo C (from
+				Monotributista or exempt entities), Tipo E (exports), and Credit Notes
+				(Notas de Crédito).
 
-				Argentina has different tax regime classifications: Responsable Inscripto (registered taxpayer with full IVA obligations), Monotributo (simplified tax regime for small businesses), Exento (exempt from IVA), No Responsable (not responsible for IVA collection), and Consumidor Final (final consumer - no tax ID required).
+				Tax regime classifications include Responsable Inscripto (full IVA
+				obligations), Monotributo (simplified regime for small businesses),
+				Exento (exempt from IVA), and Consumidor Final (no tax ID required).
 			`),
 		},
-		TimeZone:    "America/Argentina/Buenos_Aires",
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("AFIP - Administración Federal de Ingresos Públicos"),
+				URL:   "https://www.afip.gob.ar/",
+			},
+			{
+				Title: i18n.NewString("Invoice type and mandatory information"),
+				URL:   "https://www.argentina.gob.ar/normativa/recurso/54461/259-98a/htm",
+			},
+			{
+				Title: i18n.NewString("AFIP SIRE - Percepciones y Retenciones"),
+				URL:   "https://www.afip.gob.ar/sire/percepciones-retenciones/",
+			},
+		},
+		TimeZone: "America/Argentina/Buenos_Aires",
 		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories(),

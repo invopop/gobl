@@ -3,6 +3,9 @@
   "name": {
     "en": "United Kingdom"
   },
+  "description": {
+    "en": "The United Kingdom's tax system is administered by His Majesty's Revenue and\nCustoms (HMRC). Following Brexit, the UK operates its own VAT system\nindependently of the EU VAT Directive.\n\nVAT rates include a 20% standard rate for most goods and services, a 5%\nreduced rate for domestic fuel, children's car seats, and certain other goods,\nand a 0% zero rate for food, children's clothing, books, and newspapers.\nSome supplies are exempt from VAT, including financial services, education,\nand healthcare.\n\nBusinesses with taxable turnover exceeding GBP 90,000 must register for VAT.\nCompanies are identified by their VAT Registration Number (VRN) in the format\nGB followed by 9 digits, and optionally by their Company Registration Number\n(CRN) from Companies House.\n\nNorthern Ireland (country code XI) has special arrangements for goods under\nthe Windsor Framework, remaining aligned with EU VAT rules for goods while\nfollowing UK rules for services. Credit notes are supported for invoice\ncorrections."
+  },
   "time_zone": "Europe/London",
   "country": "GB",
   "alt_country_codes": [

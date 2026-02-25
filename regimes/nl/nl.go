@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -24,6 +24,27 @@ func New() *tax.RegimeDef {
 			i18n.EN: "The Netherlands",
 			i18n.NL: "Nederland",
 		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				The Netherlands' tax system is administered by the Belastingdienst (Tax and
+				Customs Administration). As an EU member state, the Netherlands follows the
+				EU VAT Directive with locally adapted rates.
+
+				BTW (Belasting over de Toegevoegde Waarde) rates include a 21% standard rate
+				for most goods and services, and a 9% reduced rate for food, water,
+				pharmaceuticals, books, passenger transport, hotel accommodation, and
+				cultural and sporting events.
+
+				Businesses are identified by their BTW-nummer (VAT number) in the format NL
+				followed by 9 digits, the letter B, and 2 check digits (e.g.
+				NL123456789B01). The KVK (Kamer van Koophandel) number is the commercial
+				register number.
+
+				The Netherlands supports credit notes for invoice corrections. E-invoicing
+				via PEPPOL is commonly used, and is mandatory for B2G transactions with the
+				central government.
+			`),
+		},
 		TimeZone:   "Europe/Amsterdam",
 		Validator:  Validate,
 		Normalizer: Normalize,
@@ -38,52 +59,7 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Categories: []*tax.CategoryDef{
-			//
-			// VAT
-			//
-			{
-				Code: tax.CategoryVAT,
-				Name: i18n.String{
-					i18n.EN: "VAT",
-					i18n.NL: "BTW",
-				},
-				Title: i18n.String{
-					i18n.EN: "Value Added Tax",
-					i18n.NL: "Belasting Toegevoegde Waarde",
-				},
-				Retained: false,
-				Keys:     tax.GlobalVATKeys(),
-				Rates: []*tax.RateDef{
-					{
-						Keys: []cbc.Key{tax.KeyStandard},
-						Rate: tax.RateGeneral,
-						Name: i18n.String{
-							i18n.EN: "General Rate",
-							i18n.NL: "Algemeen Tarief",
-						},
-						Values: []*tax.RateValueDef{
-							{
-								Percent: num.MakePercentage(210, 3),
-							},
-						},
-					},
-					{
-						Keys: []cbc.Key{tax.KeyStandard},
-						Rate: tax.RateReduced,
-						Name: i18n.String{
-							i18n.EN: "Reduced Rate",
-							i18n.NL: "Gereduceerd Tarief",
-						},
-						Values: []*tax.RateValueDef{
-							{
-								Percent: num.MakePercentage(90, 3),
-							},
-						},
-					},
-				},
-			},
-		},
+		Categories: taxCategories,
 	}
 
 }
@@ -93,8 +69,6 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	}
 	return nil
 }

@@ -6,10 +6,12 @@ package template
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -24,6 +26,20 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Template",
 			// Add official local name here.
 			// i18n.XX: "Template",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Provide a concise overview of the country's tax system covering: the tax
+				authority, main tax scheme and rates, business identification numbers,
+				e-invoicing requirements, and supported correction methods (credit notes,
+				debit notes, corrective invoices). Should be used instead of a README.md.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("Tax Authority - Main Reference"),
+				URL:   "https://example.com",
+			},
 		},
 		Country:   l10n.TaxCountryCode("XX"),
 		Currency:  currency.XXX,

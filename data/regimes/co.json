@@ -4,6 +4,23 @@
     "en": "Colombia",
     "es": "Colombia"
   },
+  "description": {
+    "en": "Colombia's tax system is administered by the DIAN (Dirección de Impuestos y\nAduanas Nacionales). Electronic invoicing is mandatory for most businesses\nthrough the DIAN's e-invoicing platform.\n\nBusinesses are identified by their NIT (Número de Identificación Tributaria),\nwhich includes a check digit. For B2C transactions (using the simplified tag),\ncustomers may be identified using various document types including Registro\ncivil, Tarjeta de identidad, Cédula de ciudadanía, Tarjeta de extranjería,\nCédula de extranjería, Pasaporte, PEP, or NUIP. If no customer identity is\nprovided for simplified invoices, the reserved final consumer code is used\nautomatically.\n\nIVA (Impuesto sobre el Valor Agregado) rates include a 19% general rate for\nmost goods and services, a 5% reduced rate for certain goods, and 0% for\nexports and certain basic goods. Some goods and services are excluded or\nexempt from IVA.\n\nInvoice series must be pre-registered with the DIAN. Municipality codes are\nrequired for addresses. Both credit notes and debit notes are supported for\ninvoice corrections, each requiring a specific correction cause code from the\nDIAN (e.g. partial refund, revoked, discount, adjustment for credit notes;\ninterest, pending charges, change in value for debit notes)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "DIAN - Invoice numbering authorization"
+      },
+      "url": "https://www.dian.gov.co/impuestos/sociedades/presentacionclientes/Solicitud_de_Autorizacion_de_Numeracion_de_Facturacion.pdf"
+    },
+    {
+      "title": {
+        "en": "DIAN - Municipality codes"
+      },
+      "url": "https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf"
+    }
+  ],
   "time_zone": "America/Bogota",
   "country": "CO",
   "currency": "COP",

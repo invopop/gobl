@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -40,6 +41,29 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Portugal",
 			i18n.PT: "Portugal",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Portugal's tax system is administered by the Autoridade Tributária e Aduaneira
+				(AT). As an EU member state, Portugal follows the EU VAT Directive with
+				locally adapted rates that vary by region.
+
+				IVA (Imposto sobre o Valor Acrescentado) rates on the mainland include a 23%
+				standard rate, a 13% intermediate rate for food and beverages in restaurants,
+				and a 6% reduced rate for basic food items, books, and pharmaceuticals. The
+				autonomous regions of Açores and Madeira apply reduced rates (16%/9%/4% and
+				22%/12%/5% respectively).
+
+				Businesses are identified by their NIF (Número de Identificação Fiscal), a
+				9-digit number. The Portuguese VAT number uses the format PT followed by the
+				NIF.
+
+				Portugal requires all invoicing software to be certified by the AT and
+				invoices must include a unique document identifier (ATCUD) and a hash chain
+				linking sequential documents. The SAF-T (Standard Audit File for Tax Purposes)
+				format is used for tax reporting. Both credit notes and debit notes are
+				supported for invoice corrections.
+			`),
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,

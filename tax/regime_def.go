@@ -29,6 +29,9 @@ type RegimeDef struct {
 	// Introductory details about the regime.
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
+	// Sources is a list of references to tax authority or other relevant documentation.
+	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
 	// Location name for the country's central time zone. Accepted
 	// values from IANA Time Zone Database (https://iana.org/time-zones).
 	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`

@@ -4,6 +4,9 @@
     "en": "The Netherlands",
     "nl": "Nederland"
   },
+  "description": {
+    "en": "The Netherlands' tax system is administered by the Belastingdienst (Tax and\nCustoms Administration). As an EU member state, the Netherlands follows the\nEU VAT Directive with locally adapted rates.\n\nBTW (Belasting over de Toegevoegde Waarde) rates include a 21% standard rate\nfor most goods and services, and a 9% reduced rate for food, water,\npharmaceuticals, books, passenger transport, hotel accommodation, and\ncultural and sporting events.\n\nBusinesses are identified by their BTW-nummer (VAT number) in the format NL\nfollowed by 9 digits, the letter B, and 2 check digits (e.g.\nNL123456789B01). The KVK (Kamer van Koophandel) number is the commercial\nregister number.\n\nThe Netherlands supports credit notes for invoice corrections. E-invoicing\nvia PEPPOL is commonly used, and is mandatory for B2G transactions with the\ncentral government."
+  },
   "time_zone": "Europe/Amsterdam",
   "country": "NL",
   "currency": "EUR",
