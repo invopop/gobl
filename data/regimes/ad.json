@@ -5,6 +5,9 @@
     "en": "Andorra",
     "es": "Andorra"
   },
+  "description": {
+    "en": "The main indirect tax in Andorra is the 'Impost General Indirecte (IGI)', and it is enforced since 1st of January 2013.\nIt has different rates:\n- General: 4.5% (general goods and services)\n- Reduced: 1.0% (food products, books, newspapers, magazines, medicines, etc.)\n- Super-reduced: 0.0% (health, education, social services)\n- Special: 2.5% (transportation, cultural goods and services)\n- Increased: 9.5% (banking and financial services)\n\nThe NRT (Número de Registre Tributari) is the tax identification number for companies in Andorra. It has the following format: 'X-999999-X'\n- A leading letter (identifying the type of person/entity):\n  - F: Individual Residents\n  - E: Non-resident Individuals\n  - L: Limited Liability Companies (S.L.)\n  - A: Joint-stock Corporations (S.A.)\n- Six digits.\n- A trailing control letter.\n\nInvoices allow corrections through credit notes (Nota d'Abonament) and debit notes and (Nota de Càrrec).\n\nInvoice presentation reqirements are:\n- Quarterly: Companies with a turnover of more than €250,000 (April, July, October, January).\n- Semestral: Companies with a turnover of less than €250,000 (July, January).\n- Start of activity: Generally declared semestrally (July and January), unless the special regime applies.\n\nSources:\n- [Departament de Tributs i de Fronteres - Andorra](https://www.impostos.ad)\n- [Andorra NRT number guide](https://lookuptax.com/docs/tax-identification-number/andorra-tax-id-guide)"
+  },
   "time_zone": "Europe/Andorra",
   "country": "AD",
   "currency": "EUR",
