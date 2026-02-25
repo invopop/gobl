@@ -40,7 +40,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: here.Doc(`
 				Chile's tax system is administered by the SII (Servicio de Impuestos Internos), which oversees the collection of IVA (Impuesto al Valor Agregado), the country's value-added tax.
 
-				Taxpayers are identified using the RUT (Rol Único Tributario), a 6-8 digits number with a check digit calculated using the modulo 11 algorithm. The check digit can be 0-9 or K, and RUTs are formatted as XX.XXX.XXX-Y. Both supplier and customer RUT are mandatory for Facturas Electrónicas (B2B invoices), while customer RUT is optional for Boletas Electrónicas (B2C receipts). Supplier address is always required, and customer address is required for B2B transactions.
+				Taxpayers are identified using the RUT (Rol Único Tributario), a 6-8 digit number with a check digit calculated using the modulo 11 algorithm. The check digit can be 0-9 or K, and RUTs are formatted as XX.XXX.XXX-Y. Both supplier and customer RUT are mandatory for Facturas Electrónicas (B2B invoices), while customer RUT is optional for Boletas Electrónicas (B2C receipts). Supplier address is always required, and customer address is required for B2B transactions.
 
 				Chile applies a single standard IVA rate of 19%, effective since October 1, 2003, when it was increased from 18% by Ley 19888. Unlike many other countries, Chile does not have reduced or super-reduced VAT rates.
 

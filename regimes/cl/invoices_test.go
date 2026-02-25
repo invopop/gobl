@@ -113,7 +113,7 @@ func TestInvoiceValidation(t *testing.T) {
 				inv.SetRegime("CL")
 				inv.Supplier.TaxID.Code = "713254976" // Invalid check digit
 			},
-			expectError: "invalid RUT check digit",
+			expectError: "invalid check digit",
 		},
 		{
 			name: "supplier without address",
@@ -220,7 +220,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 					Code:    "77668208X", // Invalid check digit
 				}
 			},
-			expectError: "invalid RUT",
+			expectError: "invalid format",
 		},
 		{
 			name: "B2B invoice - customer without address",

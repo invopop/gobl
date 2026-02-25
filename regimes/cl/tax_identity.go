@@ -80,7 +80,7 @@ func validateRUT(value interface{}) error {
 
 	matches := rutPattern.FindStringSubmatch(str)
 	if matches == nil {
-		return errors.New("invalid RUT format")
+		return errors.New("invalid format")
 	}
 
 	number := matches[1]
@@ -92,7 +92,7 @@ func validateRUT(value interface{}) error {
 	}
 
 	if expected != checkDigit {
-		return errors.New("invalid RUT check digit")
+		return errors.New("invalid check digit")
 	}
 
 	return nil
