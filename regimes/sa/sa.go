@@ -4,6 +4,7 @@ package sa
 import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -25,6 +26,7 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
+		Identities: identityDefinitions,
 	}
 }
 
@@ -33,6 +35,8 @@ func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateIdentity(obj)
 	}
 	return nil
 }
@@ -42,5 +46,7 @@ func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
+	case *org.Identity:
+		normalizeIdentity(obj)
 	}
 }
