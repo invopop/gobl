@@ -24,10 +24,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Germany",
 			i18n.DE: "Deutschland",
 		},
-		TimeZone: "Europe/Berlin",
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
+		TimeZone:   "Europe/Berlin",
 		Identities: identityDefinitions, // identities.go
 		Corrections: []*tax.CorrectionDefinition{
 			{

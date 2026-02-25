@@ -1,8 +1,12 @@
 package en16931
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -98,12 +102,20 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.By(validateBillInvoiceParty),
 			validation.Skip,
 		),
+		validation.Field(&inv.Notes,
+			validation.By(validateExemptionNotes(inv)),
+			validation.Skip,
+		),
 		validation.Field(&inv.Payment,
 			validation.When(
 				isDue(inv) && inv.Type.In(bill.InvoiceTypeStandard),
 				validation.Required.Error("payment details are required when amount is due (BR-CO-25)"), // BR-CO-25
 				validation.By(validateBillPayment),
 			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Totals,
+			validation.By(validateBillTotals),
 			validation.Skip,
 		),
 	)
@@ -256,6 +268,126 @@ func validateBillPayment(value any) error {
 			validation.Required.Error("payment terms are required when amount is due (BR-CO-25)"),
 		),
 	)
+}
+
+func validateBillTotals(value any) error {
+	totals, ok := value.(*bill.Totals)
+	if !ok || totals == nil {
+		return nil
+	}
+	return validation.ValidateStruct(totals,
+		validation.Field(&totals.Taxes,
+			validation.By(validateTotalsTaxes),
+		),
+	)
+}
+
+func validateTotalsTaxes(value any) error {
+	taxes, ok := value.(*tax.Total)
+	if !ok || taxes == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(taxes,
+		validation.Field(&taxes.Categories,
+			validation.Each(validation.By(validateTaxCategory)),
+		),
+	)
+}
+
+func validateTaxCategory(value any) error {
+	cat, ok := value.(*tax.CategoryTotal)
+	if !ok || cat == nil {
+		return nil
+	}
+
+	seen := make(map[cbc.Code]bool)
+	for _, rt := range cat.Rates {
+		taxCat := rt.Ext.Get(untdid.ExtKeyTaxCategory)
+		if !taxCat.In(exemptTaxCategories...) {
+			continue // S, L, M can appear multiple times with different percents as well as empty
+		}
+		if seen[taxCat] {
+			return errors.New("UNTDID tax category " + taxCat.String() + " appears more than once (BR-" + taxCat.String() + "-01)")
+		}
+		seen[taxCat] = true
+	}
+	if seen[TaxCategoryOutsideScope] && len(seen) > 1 {
+		return errors.New("outside scope (O) cannot be combined with other VAT categories (BR-O-11)")
+	}
+	return nil
+}
+
+// validateExemptionNotes returns a validation function that checks:
+//   - For each exempt tax category, there must be a VATEX code, a note, or both.
+//   - No more than one exemption note per tax category.
+//   - No exemption notes for categories not present in the invoice.
+func validateExemptionNotes(inv *bill.Invoice) validation.RuleFunc {
+	return func(_ any) error {
+		// Collect all non-standard UNTDID tax categories present in VAT totals,
+		// and track which ones already have a VATEX code.
+		present, hasVATEX := exemptTaxCats(inv)
+		if len(present) == 0 {
+			return nil
+		}
+
+		// Scan notes for exemption entries (has untdid-tax-category, no text-subject).
+		noteCats := make(map[cbc.Code]bool)
+		for _, n := range inv.Notes {
+			cat := n.Ext.Get(untdid.ExtKeyTaxCategory)
+			if cat.IsEmpty() {
+				continue
+			}
+
+			// No note for a category not present
+			if !present[cat] {
+				return errors.New("exemption note with untdid tax category " + cat.String() + " does not match any tax category in the invoice")
+			}
+
+			// No more than one note per category
+			if noteCats[cat] {
+				return errors.New("only one exemption note allowed per tax category " + cat.String())
+			}
+			noteCats[cat] = true
+		}
+
+		// Each non-standard category needs a VATEX code or a note
+		for cat := range present {
+			if !hasVATEX[cat] && !noteCats[cat] {
+				return errors.New("tax category " + cat.String() + " requires either a cef-vatex code or an exemption note (BR-" + cat.String() + "-10)")
+			}
+		}
+
+		return nil
+	}
+}
+
+// exemptTaxCats returns two sets from the invoice's VAT totals:
+//   - present: all non-standard UNTDID tax categories found
+//   - hasVATEX: subset of present that already have a cef-vatex code
+func exemptTaxCats(inv *bill.Invoice) (present map[cbc.Code]bool, hasVATEX map[cbc.Code]bool) {
+	if inv.Totals == nil || inv.Totals.Taxes == nil {
+		return nil, nil
+	}
+
+	present = make(map[cbc.Code]bool)
+	hasVATEX = make(map[cbc.Code]bool)
+	for _, cat := range inv.Totals.Taxes.Categories {
+		switch cat.Code {
+		case tax.CategoryVAT:
+			for _, rt := range cat.Rates {
+				taxCat := rt.Ext.Get(untdid.ExtKeyTaxCategory)
+				if !taxCat.In(exemptTaxCategories...) {
+					continue
+				}
+				present[taxCat] = true
+				if !rt.Ext.Get(cef.ExtKeyVATEX).IsEmpty() {
+					hasVATEX[taxCat] = true
+				}
+			}
+		}
+	}
+	return present, hasVATEX
 }
 
 func isDue(inv *bill.Invoice) bool {

@@ -58,13 +58,9 @@ func TestTaxComboNormalization(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.Extensions{
-				en16931.ExtKeyExemptionReason: "Exempt under Article 132",
-			},
 		}
 		ad.Normalizer(c)
 		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.NoError(t, ad.Validator(c))
 	})
 	t.Run("missing rate, without percent", func(t *testing.T) {
 		c := &tax.Combo{
@@ -119,59 +115,36 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 
-	t.Run("exempt reverse charge", func(t *testing.T) {
+	t.Run("exempt with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+	})
+
+	t.Run("exempt without vatex", func(t *testing.T) {
+		// At the combo level, no error — exemption note is checked at invoice level
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+	})
+
+	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
-			Ext: tax.Extensions{
-				en16931.ExtKeyExemptionReason: "Reverse charge",
-			},
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
 		assert.Equal(t, "AE", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.Nil(t, c.Percent)
-	})
-
-	t.Run("intra-community", func(t *testing.T) {
-		c := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Key:      tax.KeyIntraCommunity,
-			Ext: tax.Extensions{
-				en16931.ExtKeyExemptionReason: "Intra-community supply",
-			},
-		}
-		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
-		assert.Equal(t, "K", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.Nil(t, c.Percent)
-	})
-
-	t.Run("export", func(t *testing.T) {
-		c := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Key:      tax.KeyExport,
-			Ext: tax.Extensions{
-				en16931.ExtKeyExemptionReason: "Export outside the EU",
-			},
-		}
-		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
-		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.Nil(t, c.Percent)
-	})
-	t.Run("outside-scope", func(t *testing.T) {
-		c := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Key:      tax.KeyOutsideScope,
-			Ext: tax.Extensions{
-				en16931.ExtKeyExemptionReason: "Not subject to VAT",
-			},
-		}
-		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
-		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
-		assert.Nil(t, c.Percent)
 	})
 
 	t.Run("VAT and IPSI mismatch", func(t *testing.T) {
@@ -186,6 +159,33 @@ func TestTaxComboValidation(t *testing.T) {
 		err := ad.Validator(c)
 		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("zero with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyZero,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "cef-vatex: must be blank")
+	})
+
+	t.Run("standard with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(19, 2),
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "cef-vatex: must be blank")
 	})
 
 	t.Run("nil", func(t *testing.T) {

@@ -57,9 +57,23 @@ func newAddon() *tax.AddonDef {
 
 				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
 				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
+
+				## Exemption Notes
+
+				Exempt tax categories (E, AE, K, G, O) require either a CEF VATEX code
+				(` + "`cef-vatex`" + `) on the tax combo, or a note explaining the exemption reason.
+
+				Exemption notes are identified by the ` + "`untdid-tax-category`" + ` extension in their
+				` + "`ext`" + ` field. This can be set directly or derived automatically during normalization
+				by setting the note's ` + "`src`" + ` field to the corresponding tax key (e.g. ` + "`exempt`" + `,
+				` + "`reverse-charge`" + `).
+
+				Rules:
+				- Each exempt tax category must have a VATEX code, an exemption note, or both.
+				- Only one exemption note is allowed per tax category.
+				- Exemption notes must not reference a tax category that is not present in the invoice.
 			`),
 		},
-		Extensions: extensions,
 		Scenarios:  scenarios,
 		Normalizer: normalize,
 		Validator:  validate,
