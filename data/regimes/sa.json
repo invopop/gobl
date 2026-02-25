@@ -73,6 +73,13 @@
       }
     },
     {
+      "code": "TIN",
+      "name": {
+        "ar": "رقم التعريف الضريبي",
+        "en": "Tax Identification Number"
+      }
+    },
+    {
       "code": "OTH",
       "name": {
         "ar": "هوية أخرى",

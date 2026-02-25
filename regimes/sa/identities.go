@@ -30,6 +30,8 @@ const (
 	IdentityTypePAS cbc.Code = "PAS"
 	// IdentityTypeGCC is a GCC member state national ID.
 	IdentityTypeGCC cbc.Code = "GCC"
+	// IdentityTypeTIN is a Tax Identification Number (buyer-only).
+	IdentityTypeTIN cbc.Code = "TIN"
 	// IdentityTypeOTH is any other form of identification.
 	IdentityTypeOTH cbc.Code = "OTH"
 )
@@ -103,6 +105,13 @@ var identityDefinitions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "GCC ID",
 			i18n.AR: "هوية مواطني دول مجلس التعاون",
+		},
+	},
+	{
+		Code: IdentityTypeTIN,
+		Name: i18n.String{
+			i18n.EN: "Tax Identification Number",
+			i18n.AR: "رقم التعريف الضريبي",
 		},
 	},
 	{

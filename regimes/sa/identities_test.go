@@ -18,6 +18,7 @@ func TestIdentityTypeDefinitions(t *testing.T) {
 	assert.Equal(t, "IQA", string(sa.IdentityTypeIQA))
 	assert.Equal(t, "PAS", string(sa.IdentityTypePAS))
 	assert.Equal(t, "GCC", string(sa.IdentityTypeGCC))
+	assert.Equal(t, "TIN", string(sa.IdentityTypeTIN))
 	assert.Equal(t, "OTH", string(sa.IdentityTypeOTH))
 }
 
