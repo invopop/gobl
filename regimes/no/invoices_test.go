@@ -206,15 +206,14 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("simplified invoice forbids customer", func(t *testing.T) {
+	t.Run("simplified invoice allows customer", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
 		inv.Customer = &org.Party{
-			Name: "Should not be here",
+			Name: "Optional Kunde AS",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: must be blank.")
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("simplified invoice does not require supplier address", func(t *testing.T) {

@@ -16,12 +16,10 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				simplified,
-				validation.Empty,
-			).Else(
+				!simplified,
 				validation.Required,
-				validation.By(validateBillInvoiceCustomer),
 			),
+			validation.By(validateBillInvoiceCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
