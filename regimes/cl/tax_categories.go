@@ -63,6 +63,11 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
+						Since:    cal.NewDate(1990, 7, 1),
+						Percent:  num.MakePercentage(18, 2),
+						Disabled: true,
+					},
+					{
 						Since:   cal.NewDate(2003, 10, 1),
 						Percent: num.MakePercentage(19, 2),
 					},

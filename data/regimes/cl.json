@@ -88,6 +88,11 @@
           },
           "values": [
             {
+              "since": "1990-07-01",
+              "percent": "18%",
+              "disabled": true
+            },
+            {
               "since": "2003-10-01",
               "percent": "19%"
             }
