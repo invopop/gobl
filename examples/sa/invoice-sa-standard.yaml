@@ -1,0 +1,50 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "SAR"
+issue_date: "2024-02-15"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "300075588700003"
+  name: "Acme Trading Co."
+  identities:
+    - type: "CRN"
+      code: "1234567890"
+  emails:
+    - addr: "billing@acme.sa"
+  addresses:
+    - street: "King Fahd Road"
+      locality: "Riyadh"
+      code: "12211"
+      country: "SA"
+
+customer:
+  name: "National Services Ltd."
+  tax_id:
+    country: "SA"
+    code: "310122393500003"
+  addresses:
+    - street: "Prince Sultan Street"
+      locality: "Jeddah"
+      code: "21462"
+      country: "SA"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Consulting services"
+      price: "500.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Exported technical report"
+      price: "2000.00"
+    taxes:
+      - cat: VAT
+        key: zero

@@ -1,0 +1,129 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5f630cf356fc028c60fd3b945d3fe8294bb27b1329007a1312c96f5b01f2c9ba"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2024-02-15",
+		"currency": "SAR",
+		"supplier": {
+			"name": "Acme Trading Co.",
+			"tax_id": {
+				"country": "SA",
+				"code": "300075588700003"
+			},
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "1234567890"
+				}
+			],
+			"addresses": [
+				{
+					"street": "King Fahd Road",
+					"locality": "Riyadh",
+					"code": "12211",
+					"country": "SA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@acme.sa"
+				}
+			]
+		},
+		"customer": {
+			"name": "National Services Ltd.",
+			"tax_id": {
+				"country": "SA",
+				"code": "310122393500003"
+			},
+			"addresses": [
+				{
+					"street": "Prince Sultan Street",
+					"locality": "Jeddah",
+					"code": "21462",
+					"country": "SA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Consulting services",
+					"price": "500.00",
+					"unit": "h"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "5000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Exported technical report",
+					"price": "2000.00"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "2000.00"
+			}
+		],
+		"totals": {
+			"sum": "7000.00",
+			"total": "7000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5000.00",
+								"percent": "15.0%",
+								"amount": "750.00"
+							},
+							{
+								"key": "zero",
+								"base": "2000.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "750.00"
+					}
+				],
+				"sum": "750.00"
+			},
+			"tax": "750.00",
+			"total_with_tax": "7750.00",
+			"payable": "7750.00"
+		}
+	}
+}

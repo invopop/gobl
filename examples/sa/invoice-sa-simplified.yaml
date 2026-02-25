@@ -1,0 +1,39 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b1"
+currency: "SAR"
+issue_date: "2024-02-15"
+series: "POS"
+code: "042"
+tax:
+  tags:
+    - "simplified"
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "300075588700003"
+  name: "Quick Mart"
+  identities:
+    - type: "CRN"
+      code: "1234567890"
+  addresses:
+    - street: "Olaya Street"
+      locality: "Riyadh"
+      code: "12211"
+      country: "SA"
+
+lines:
+  - quantity: 2
+    item:
+      name: "Bottled water (pack)"
+      price: "5.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Sandwich"
+      price: "15.00"
+    taxes:
+      - cat: VAT
+        rate: standard
