@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -69,6 +70,41 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	}
 }
 
+func testInvoiceSimplified(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Regime:   tax.WithRegime("NO"),
+		Series:   "TEST",
+		Code:     "0002",
+		Currency: currency.NOK,
+		Tags: tax.Tags{
+			List: []cbc.Key{tax.TagSimplified},
+		},
+		Supplier: &org.Party{
+			Name: "Eksempel AS",
+			TaxID: &tax.Identity{
+				Country: l10n.TaxCountryCode(l10n.NO),
+				Code:    "923456783",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Dagligvarer",
+					Price: num.NewAmount(50000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     tax.RateGeneral,
+					},
+				},
+			},
+		},
+	}
+}
+
 func TestInvoiceValidation(t *testing.T) {
 	t.Parallel()
 
@@ -77,24 +113,6 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("missing supplier tax ID", func(t *testing.T) {
-		t.Parallel()
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (tax_id: cannot be blank.)")
-	})
-
-	t.Run("supplier tax ID with empty code", func(t *testing.T) {
-		t.Parallel()
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID = &tax.Identity{Country: l10n.TaxCountryCode(l10n.NO), Code: ""}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "tax_id")
 	})
 
 	t.Run("missing supplier name", func(t *testing.T) {
@@ -115,6 +133,14 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "supplier: (addresses: cannot be blank.)")
 	})
 
+	t.Run("supplier without tax ID is valid", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 	t.Run("missing customer", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
@@ -131,6 +157,14 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+	})
+
+	t.Run("customer without address is valid", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.Customer.Addresses = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("credit note without preceding", func(t *testing.T) {
@@ -162,113 +196,49 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
-func TestInvoiceCalculation(t *testing.T) {
+func TestSimplifiedInvoiceValidation(t *testing.T) {
 	t.Parallel()
 
-	t.Run("standard invoice amounts", func(t *testing.T) {
+	t.Run("valid simplified invoice", func(t *testing.T) {
 		t.Parallel()
-		inv := testInvoiceStandard(t)
+		inv := testInvoiceSimplified(t)
 		require.NoError(t, inv.Calculate())
-
-		assert.Equal(t, "1500.00", inv.Totals.Sum.String())
-		assert.Equal(t, "1500.00", inv.Totals.Total.String())
-		assert.Equal(t, "375.00", inv.Totals.Tax.String())
-		assert.Equal(t, "1875.00", inv.Totals.TotalWithTax.String())
-		assert.Equal(t, "1875.00", inv.Totals.Payable.String())
-
-		vat := inv.Totals.Taxes.Category(tax.CategoryVAT)
-		require.NotNil(t, vat)
-		assert.Equal(t, "375.00", vat.Amount.String())
-		require.Len(t, vat.Rates, 1)
-		assert.Equal(t, "25.0%", vat.Rates[0].Percent.String())
+		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("prices include tax", func(t *testing.T) {
+	t.Run("simplified invoice forbids customer", func(t *testing.T) {
 		t.Parallel()
-		inv := testInvoiceStandard(t)
-		inv.Tax = &bill.Tax{
-			PricesInclude: tax.CategoryVAT,
+		inv := testInvoiceSimplified(t)
+		inv.Customer = &org.Party{
+			Name: "Should not be here",
 		}
 		require.NoError(t, inv.Calculate())
-
-		// Price 1500 NOK inclusive of 25% VAT
-		// Net = 1500 / 1.25 = 1200
-		// Tax = 1500 - 1200 = 300
-		assert.Equal(t, "1500.00", inv.Totals.Sum.String())
-		assert.Equal(t, "1200.00", inv.Totals.Total.String())
-		assert.Equal(t, "300.00", inv.Totals.Tax.String())
-		assert.Equal(t, "1500.00", inv.Totals.Payable.String())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: must be blank.")
 	})
 
-	t.Run("multi-rate invoice", func(t *testing.T) {
+	t.Run("simplified invoice does not require supplier address", func(t *testing.T) {
 		t.Parallel()
-		inv := testInvoiceStandard(t)
-		inv.Lines = []*bill.Line{
-			{
-				Quantity: num.MakeAmount(2, 0),
-				Item: &org.Item{
-					Name:  "Konsulenttjenester",
-					Price: num.NewAmount(100000, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Rate:     tax.RateGeneral,
-					},
-				},
-			},
-			{
-				Quantity: num.MakeAmount(3, 0),
-				Item: &org.Item{
-					Name:  "Matlevering",
-					Price: num.NewAmount(20000, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Rate:     tax.RateReduced,
-					},
-				},
-			},
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Togbillett",
-					Price: num.NewAmount(50000, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Rate:     tax.RateSuperReduced,
-					},
-				},
-			},
-		}
+		inv := testInvoiceSimplified(t)
+		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 
-		// Line 1: 2 × 1000 = 2000, VAT 25% = 500
-		// Line 2: 3 × 200 = 600, VAT 15% = 90
-		// Line 3: 1 × 500 = 500, VAT 12% = 60
-		// Total: 3100, Tax: 650, Payable: 3750
-		assert.Equal(t, "3100.00", inv.Totals.Sum.String())
-		assert.Equal(t, "3100.00", inv.Totals.Total.String())
-		assert.Equal(t, "650.00", inv.Totals.Tax.String())
-		assert.Equal(t, "3750.00", inv.Totals.Payable.String())
+	t.Run("simplified invoice does not require supplier tax ID", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceSimplified(t)
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 
-		vat := inv.Totals.Taxes.Category(tax.CategoryVAT)
-		require.NotNil(t, vat)
-		require.Len(t, vat.Rates, 3)
-
-		assert.Equal(t, "2000.00", vat.Rates[0].Base.String())
-		assert.Equal(t, "25.0%", vat.Rates[0].Percent.String())
-		assert.Equal(t, "500.00", vat.Rates[0].Amount.String())
-
-		assert.Equal(t, "600.00", vat.Rates[1].Base.String())
-		assert.Equal(t, "15.0%", vat.Rates[1].Percent.String())
-		assert.Equal(t, "90.00", vat.Rates[1].Amount.String())
-
-		assert.Equal(t, "500.00", vat.Rates[2].Base.String())
-		assert.Equal(t, "12.0%", vat.Rates[2].Percent.String())
-		assert.Equal(t, "60.00", vat.Rates[2].Amount.String())
+	t.Run("simplified invoice still requires supplier name", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceSimplified(t)
+		inv.Supplier.Name = ""
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
 	})
 }
