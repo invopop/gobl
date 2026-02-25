@@ -48,11 +48,9 @@ func New() *tax.RegimeDef {
 				(AT). As an EU member state, Portugal follows the EU VAT Directive with
 				locally adapted rates that vary by region.
 
-				IVA (Imposto sobre o Valor Acrescentado) rates on the mainland include a 23%
-				standard rate, a 13% intermediate rate for food and beverages in restaurants,
-				and a 6% reduced rate for basic food items, books, and pharmaceuticals. The
-				autonomous regions of Açores and Madeira apply reduced rates (16%/9%/4% and
-				22%/12%/5% respectively).
+				IVA (Imposto sobre o Valor Acrescentado) applies at standard, intermediate,
+				and reduced rates on the mainland. The autonomous regions of Açores and
+				Madeira apply their own reduced rates.
 
 				Businesses are identified by their NIF (Número de Identificação Fiscal), a
 				9-digit number. The Portuguese VAT number uses the format PT followed by the

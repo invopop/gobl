@@ -29,10 +29,9 @@ func New() *tax.RegimeDef {
 				(National Revenue Administration, KAS). As an EU member state, Poland follows
 				the EU VAT Directive with locally adapted rates.
 
-				VAT (Podatek od towarów i usług, PTU) rates include a 23% standard rate for
-				most goods and services, an 8% reduced rate for certain food products,
-				pharmaceutical products, and hotel services, a 5% rate for basic food items,
-				books, and periodicals, and 0% for exports and intra-community supplies.
+				VAT (Podatek od towarów i usług, PTU) applies at standard, reduced, and
+				super-reduced rates. Zero-rated supplies include exports and intra-community
+				supplies.
 
 				Businesses are identified by their NIP (Numer Identyfikacji Podatkowej), a
 				10-digit tax identification number. The Polish VAT number uses the format PL

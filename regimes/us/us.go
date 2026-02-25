@@ -33,10 +33,10 @@ func New() *tax.RegimeDef {
 				services tax (GST). Instead, sales taxes are levied at the state and local
 				level, with rates and rules varying significantly across jurisdictions.
 
-				Sales tax rates range from 0% in states with no sales tax (e.g. Oregon,
-				Montana, Delaware, New Hampshire) to combined state and local rates exceeding
-				10% in some areas. Sales tax is generally collected by the seller at the point
-				of sale and remitted to the relevant state tax authority.
+				Sales tax rates vary significantly by jurisdiction, with some states having
+				no sales tax at all (e.g. Oregon, Montana, Delaware, New Hampshire). Sales
+				tax is generally collected by the seller at the point of sale and remitted to
+				the relevant state tax authority.
 
 				Businesses are identified by their EIN (Employer Identification Number), a
 				9-digit number assigned by the IRS (Internal Revenue Service) in the format

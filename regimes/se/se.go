@@ -32,11 +32,8 @@ func New() *tax.RegimeDef {
 				(Skatteverket). As an EU member state, Sweden follows the EU VAT Directive
 				with locally adapted rates.
 
-				Moms (Mervärdesskatt) rates include a 25% standard rate for most goods and
-				services, a 12% reduced rate for food, hotel accommodation, restaurant
-				services, and certain repair services, and a 6% heavily reduced rate for
-				passenger transport, books, newspapers, cultural events, and intellectual
-				property. Exports and certain financial and healthcare services are exempt.
+				Moms (Mervärdesskatt) applies at standard, reduced, and heavily reduced
+				rates. Exports and certain financial and healthcare services are exempt.
 
 				Businesses are identified by their Organisationsnummer (organization number),
 				a 10-digit number validated with the Luhn algorithm. The Swedish VAT number

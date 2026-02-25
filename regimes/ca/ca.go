@@ -31,22 +31,22 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Canada's tax system is administered by the Canada Revenue Agency (CRA). The
-				country uses a multi-layered sales tax system consisting of the federal Goods
-				and Services Tax (GST) and various provincial taxes.
+				Canada's tax system is administered by the Canada Revenue Agency
+				(CRA). The country uses a multi-layered sales tax system consisting
+				of the federal Goods and Services Tax (GST) and various provincial
+				taxes.
 
-				GST applies at a 5% rate on the supply of most goods and services in Canada.
-				The Harmonized Sales Tax (HST) combines GST and provincial sales tax in
-				participating provinces (e.g. Ontario at 13%, Nova Scotia at 15%). Non-participating
-				provinces levy a separate Provincial Sales Tax (PST) at varying rates.
+				The Harmonized Sales Tax (HST) combines GST and provincial sales
+				tax in participating provinces. Non-participating provinces levy a
+				separate Provincial Sales Tax (PST) at varying rates. Zero-rated
+				supplies include basic groceries, agricultural products, and
+				exports. Exempt supplies include certain financial services,
+				educational services, and healthcare services.
 
-				Zero-rated supplies include basic groceries, agricultural products, prescription
-				drugs, and exports. Exempt supplies include certain financial services, educational
-				services, and healthcare services.
-
-				Businesses with annual taxable revenues exceeding CAD 30,000 must register for
-				GST/HST. Tax identification is through the Business Number (BN) assigned by
-				the CRA. Canada supports both credit notes and debit notes for invoice corrections.
+				Businesses with annual taxable revenues exceeding CAD 30,000 must
+				register for GST/HST. Tax identification is through the Business
+				Number (BN) assigned by the CRA. Canada supports both credit notes
+				and debit notes for invoice corrections.
 			`),
 		},
 		TimeZone:   "America/Toronto", // Toronto

@@ -48,9 +48,9 @@ func New() *tax.RegimeDef {
 				Tributaria). Electronic invoicing through CFDI (Comprobante Fiscal Digital por
 				Internet) version 4.0 is mandatory for all businesses.
 
-				IVA (Impuesto al Valor Agregado) rates include a 16% general rate for most
-				goods and services, 0% for food, medicine, and exports, and exempt categories
-				for educational and medical services.
+				IVA (Impuesto al Valor Agregado) applies at general, zero, and exempt rates.
+				Zero-rated supplies include food, medicine, and exports, while educational
+				and medical services are exempt.
 
 				Businesses are identified by their RFC (Registro Federal de Contribuyentes),
 				a 12-character code for companies or 13-character code for individuals, which

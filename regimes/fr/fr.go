@@ -41,10 +41,8 @@ func New() *tax.RegimeDef {
 				Publiques (DGFiP). As an EU member state, France follows the EU VAT Directive
 				with locally adapted rates.
 
-				TVA (Taxe sur la Valeur Ajoutée) rates include a 20% standard rate for most
-				goods and services, a 10% intermediate rate for restaurants, transport, and
-				home improvements, a 5.5% reduced rate for food, books, and energy, and a
-				2.1% super-reduced rate for medicines and press publications.
+				TVA (Taxe sur la Valeur Ajoutée) applies at standard, intermediate, reduced,
+				and super-reduced rates covering various categories of goods and services.
 
 				Businesses are identified by three closely related numbers: the VAT code
 				(numéro de TVA intracommunautaire), an 11-digit number starting with a

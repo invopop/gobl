@@ -31,8 +31,8 @@ func New() *tax.RegimeDef {
 				Denmark's tax system is administered by the Danish Tax Agency (Skattestyrelsen).
 				As an EU member state, Denmark follows the EU VAT Directive.
 
-				VAT (Moms, short for Merværdiafgift) applies at a single standard rate of 25%
-				on most goods and services. Unlike many other EU countries, Denmark does not
+				VAT (Moms, short for Merværdiafgift) applies at a single standard rate on
+				most goods and services. Unlike many other EU countries, Denmark does not
 				have reduced VAT rates, making it one of the simplest VAT systems in Europe.
 				Certain supplies are zero-rated (e.g. exports, newspapers) or exempt (e.g.
 				healthcare, education, financial services).

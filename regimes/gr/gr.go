@@ -42,11 +42,9 @@ func New() *tax.RegimeDef {
 				Revenue (IAPR / AADE). As an EU member state, Greece follows the EU VAT
 				Directive with locally adapted rates.
 
-				FPA (Fóros Prostithémenis Axías) rates include a 24% standard rate for most
-				goods and services, a 13% reduced rate for food, energy, and hotel
-				accommodation, and a 6% super-reduced rate for pharmaceuticals, books, and
-				theatre tickets. The islands of Leros, Lesbos, Kos, Samos, and Chios benefit
-				from a 30% reduction on all standard rates.
+				FPA (Fóros Prostithémenis Axías) applies at standard, reduced, and
+				super-reduced rates. The islands of Leros, Lesbos, Kos, Samos, and Chios
+				benefit from a reduction on all standard rates.
 
 				Businesses are identified by their AFM (Arithmós Forologikoú Mitróou), a
 				9-digit tax identification number. The Greek VAT number uses the format EL

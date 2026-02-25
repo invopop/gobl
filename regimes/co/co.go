@@ -37,10 +37,8 @@ func New() *tax.RegimeDef {
 				provided for simplified invoices, the reserved final consumer code is used
 				automatically.
 
-				IVA (Impuesto sobre el Valor Agregado) rates include a 19% general rate for
-				most goods and services, a 5% reduced rate for certain goods, and 0% for
-				exports and certain basic goods. Some goods and services are excluded or
-				exempt from IVA.
+				IVA (Impuesto sobre el Valor Agregado) applies at general, reduced, and zero
+				rates. Some goods and services are excluded or exempt from IVA.
 
 				Invoice series must be pre-registered with the DIAN. Municipality codes are
 				required for addresses. Both credit notes and debit notes are supported for

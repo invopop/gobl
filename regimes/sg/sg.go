@@ -34,11 +34,10 @@ func New() *tax.RegimeDef {
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Singapore's tax system includes a Goods and Services Tax (GST) administered
-				by the Inland Revenue Authority of Singapore (IRAS). The current standard GST
-				rate is 9% (since January 2024). Zero-rated supplies apply to international
-				services and exports. Exempt supplies include financial services, sale and
-				lease of residential properties, digital payment tokens, and investment
-				precious metals.
+				by the Inland Revenue Authority of Singapore (IRAS). Zero-rated supplies apply
+				to international services and exports. Exempt supplies include financial
+				services, sale and lease of residential properties, digital payment tokens,
+				and investment precious metals.
 
 				Businesses are identified by their Unique Entity Number (UEN). GST-registered
 				suppliers must display their GST Registration Number on all tax invoices,

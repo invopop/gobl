@@ -30,10 +30,10 @@ func New() *tax.RegimeDef {
 				As an EU member state, Belgium follows the EU VAT Directive.
 
 				VAT (Taxe sur la Valeur Ajoutée, TVA / Belasting over de Toegevoegde Waarde,
-				BTW) rates include a 21% standard rate for most goods and services, a 12%
-				intermediate rate for certain goods including social housing, restaurant
-				services, and some food products, and a 6% reduced rate for basic necessities
-				such as food, water, pharmaceuticals, books, and passenger transport.
+				BTW) applies at standard, intermediate, and reduced rates. The intermediate
+				rate covers certain goods including social housing, restaurant services, and
+				some food products, while the reduced rate applies to basic necessities such
+				as food, water, pharmaceuticals, books, and passenger transport.
 
 				Businesses are identified by their VAT number (Numéro de TVA / BTW-nummer)
 				in the format BE followed by 10 digits. Belgium supports credit notes for

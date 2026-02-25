@@ -31,9 +31,8 @@ func New() *tax.RegimeDef {
 				(Bundeszentralamt für Steuern, BZSt). As an EU member state, Germany follows
 				the EU VAT Directive with locally adapted rates.
 
-				VAT (Umsatzsteuer, USt) rates include a 19% standard rate for most goods and
-				services, and a 7% reduced rate for food, books, newspapers, public transport,
-				and cultural events.
+				VAT (Umsatzsteuer, USt) applies at standard and reduced rates. The reduced
+				rate covers food, books, newspapers, public transport, and cultural events.
 
 				Businesses are identified by their Umsatzsteuer-Identifikationsnummer (USt-IdNr)
 				in the format DE followed by 9 digits for cross-border transactions, and by

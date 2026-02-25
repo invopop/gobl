@@ -29,9 +29,9 @@ func New() *tax.RegimeDef {
 				(Eidgenössische Steuerverwaltung, ESTV). Although not an EU member, Switzerland
 				operates its own VAT system (Mehrwertsteuer, MWST).
 
-				VAT rates include an 8.1% standard rate for most goods and services, a 2.6%
-				reduced rate for everyday goods such as food, non-alcoholic beverages, books,
-				newspapers, and medicines, and a 3.8% special rate for accommodation services.
+				VAT applies at standard, reduced, and special rates. The reduced rate covers
+				everyday goods such as food, non-alcoholic beverages, books, newspapers, and
+				medicines, while a special rate applies to accommodation services.
 
 				Businesses with annual taxable revenues exceeding CHF 100,000 must register
 				for VAT. Tax identification uses the UID (Unternehmens-Identifikationsnummer)

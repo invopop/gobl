@@ -37,11 +37,9 @@ func New() *tax.RegimeDef {
 				model, tax rate allocations between central and state must be managed at the
 				application level.
 
-				GST rates vary by goods and services: 0.25%-3% for precious metals, 5% for
-				basic goods, 12%-18% for standard goods and services, and 28% for luxury
-				items. Exports and supplies to Special Economic Zones are zero-rated. Exempt
-				supplies include fresh fruits and vegetables, educational services, and public
-				road tolls.
+				GST rates vary by goods and services across multiple rate slabs. Exports and
+				supplies to Special Economic Zones are zero-rated. Exempt supplies include
+				fresh fruits and vegetables, educational services, and public road tolls.
 
 				Businesses are identified by their GSTIN (Goods and Services Tax Identification
 				Number), a unique 15-digit identifier with format and checksum validation.

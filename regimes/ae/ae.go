@@ -26,22 +26,19 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				The UAE tax system is administered by the Federal Tax Authority (FTA). VAT was
-				introduced on January 1, 2018, with a standard rate of 5% applying to most goods
-				and services.
+				The UAE tax system is administered by the Federal Tax Authority (FTA).
+				VAT was introduced on January 1, 2018, with standard, zero, and
+				exempt rate categories.
 
-				Businesses must register for VAT if taxable supplies and imports exceed AED 375,000
-				in a 12-month period, with voluntary registration available above AED 187,500.
-				Registered businesses receive a Tax Registration Number (TRN) which must be included
-				on all tax invoices.
+				Businesses must register for VAT if taxable supplies and imports
+				exceed AED 375,000 in a 12-month period, with voluntary registration
+				available above AED 187,500. Registered businesses receive a Tax
+				Registration Number (TRN) which must be included on all tax invoices.
 
-				VAT rates include 5% standard rate for most goods and services, 0% for certain
-				essential goods, exports, and specific services, and exempt supplies covering some
-				financial services and residential real estate.
-
-				Simplified VAT invoices may be used when the recipient is not VAT registered, or
-				when the transaction value does not exceed AED 10,000 for VAT-registered recipients.
-				Credit notes are supported for correcting invoices.
+				Simplified VAT invoices may be used when the recipient is not VAT
+				registered, or when the transaction value does not exceed AED 10,000
+				for VAT-registered recipients. Credit notes are supported for
+				correcting invoices.
 			`),
 		},
 		Sources: []*cbc.Source{

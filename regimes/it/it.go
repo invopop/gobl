@@ -31,10 +31,8 @@ func New() *tax.RegimeDef {
 				Agency). All invoices must comply with the FatturaPA electronic format,
 				transmitted through the Sistema di Interscambio (SDI).
 
-				IVA (Imposta sul Valore Aggiunto) rates include a 22% standard rate for most
-				goods and services, a 10% reduced rate for tourism, certain food products, and
-				construction, a 5% rate for certain health and social services, and a 4%
-				minimum rate for basic food items, books, and newspapers.
+				IVA (Imposta sul Valore Aggiunto) applies at standard, reduced, intermediate,
+				and minimum rates covering various categories of goods and services.
 
 				Businesses are identified by their Partita IVA (VAT number), an 11-digit code,
 				and by the Codice Fiscale (fiscal code) for individuals and entities. The

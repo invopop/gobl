@@ -30,10 +30,9 @@ func New() *tax.RegimeDef {
 				Customs Administration). As an EU member state, the Netherlands follows the
 				EU VAT Directive with locally adapted rates.
 
-				BTW (Belasting over de Toegevoegde Waarde) rates include a 21% standard rate
-				for most goods and services, and a 9% reduced rate for food, water,
-				pharmaceuticals, books, passenger transport, hotel accommodation, and
-				cultural and sporting events.
+				BTW (Belasting over de Toegevoegde Waarde) applies at standard and reduced
+				rates. The reduced rate covers food, water, pharmaceuticals, books, passenger
+				transport, hotel accommodation, and cultural and sporting events.
 
 				Businesses are identified by their BTW-nummer (VAT number) in the format NL
 				followed by 9 digits, the letter B, and 2 check digits (e.g.

@@ -36,15 +36,12 @@ func New() *tax.RegimeDef {
 				by individuals with prefixes 20, 27, and 23; and CDI (Clave de
 				Identificación) for foreign residents without CUIT/CUIL.
 
-				IVA rates include a 27% increased rate for gas, water, and telecom
-				services, a 21% general rate for most goods and services, and a 10.5%
-				reduced rate for essential goods such as construction, medicine,
-				transportation, and food products.
-
-				Argentina applies several retention taxes: IVA Retenido (Retained VAT)
-				with variable rates based on taxpayer category; Ganancias (Income Tax
-				Withholding) with rates from 0.5% to 35% depending on service type; and
-				Ingresos Brutos (Gross Income Tax), a provincial tax typically 1% to 5%.
+				IVA has increased, general, and reduced rates. Argentina also
+				applies several retention taxes: IVA Retenido (Retained VAT) with
+				variable rates based on taxpayer category; Ganancias (Income Tax
+				Withholding) applied to payments for services; and Ingresos Brutos
+				(Gross Income Tax), a provincial tax with rates set by each
+				jurisdiction.
 
 				Electronic invoicing through ARCA is required for most transactions.
 				Invoices must include a CAE (Código de Autorización Electrónico) and

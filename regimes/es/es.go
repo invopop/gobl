@@ -63,12 +63,10 @@ func New() *tax.RegimeDef {
 				Spain's tax system is administered by the Agencia Tributaria (AEAT). As an
 				EU member state, Spain follows the EU VAT Directive with locally adapted rates.
 
-				IVA (Impuesto sobre el Valor Añadido) rates include a 21% general rate for
-				most goods and services, a 10% reduced rate for food, passenger transport,
-				and hotel services, and a 4% super-reduced rate for basic necessities such
-				as bread, milk, medicines, and books. The Canary Islands use IGIC (Impuesto
-				General Indirecto Canario) instead of IVA, while Ceuta and Melilla use IPSI
-				(Impuesto sobre la Producción, los Servicios y la Importación).
+				IVA (Impuesto sobre el Valor Añadido) applies at general, reduced, and
+				super-reduced rates. The Canary Islands use IGIC (Impuesto General Indirecto
+				Canario) instead of IVA, while Ceuta and Melilla use IPSI (Impuesto sobre la
+				Producción, los Servicios y la Importación).
 
 				Businesses are identified by their NIF (Número de Identificación Fiscal) or
 				CIF for companies. IRPF (Impuesto sobre la Renta de las Personas Físicas)
