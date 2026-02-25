@@ -1,0 +1,55 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: NO
+uuid: 4c0a0a86-0f10-4ed0-9d75-0a4d0a6c40aa
+type: standard
+series: "2026"
+code: "RC001"
+issue_date: "2026-02-01"
+currency: NOK
+tags:
+  - reverse-charge
+note: Reverse charge invoice (customer accounts for VAT).
+
+supplier:
+  name: The Sellercompany ASA
+  tax_id:
+    country: NO
+    code: "NO974760673MVA"
+  addresses:
+    - street: "Main street 34"
+      locality: "Big city"
+      region: "RegionA"
+      code: "54321"
+      country: NO
+  emails:
+    - addr: "antonio@salescompany.no"
+
+customer:
+  name: Buyercompany ASA
+  tax_id:
+    country: NO
+    code: "NO987654325MVA"
+  addresses:
+    - street: "Anystreet 8"
+      locality: "Anytown"
+      region: "RegionB"
+      code: "0101"
+      country: NO
+  emails:
+    - addr: "john@buyercompany.no"
+
+payment:
+  terms:
+    due_dates:
+      - date: "2026-02-01"
+        percent: "100%"
+
+lines:
+  - quantity: "8"
+    item:
+      name: "Consulting services"
+      price: "500.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        key: reverse-charge

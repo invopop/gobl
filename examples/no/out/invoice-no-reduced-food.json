@@ -1,0 +1,108 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9c2334d3f83413bbd1ad0d30f0bbbf05fc63d4d3647305586fe886d417179e15"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "0f2d0b3a-7c3a-4dd2-8f29-913a3b6ce7aa",
+		"type": "standard",
+		"series": "2026",
+		"code": "FOOD001",
+		"issue_date": "2026-01-16",
+		"currency": "NOK",
+		"supplier": {
+			"name": "The Sellercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "974760673"
+			},
+			"addresses": [
+				{
+					"street": "Main street 34",
+					"locality": "Big city",
+					"region": "RegionA",
+					"code": "54321",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Buyercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Anystreet 8",
+					"locality": "Anytown",
+					"region": "RegionB",
+					"code": "0101",
+					"country": "NO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Pack of food items",
+					"price": "100.00",
+					"unit": "one"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "15.0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2026-01-16",
+						"amount": "1150.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000.00",
+								"percent": "15.0%",
+								"amount": "150.00"
+							}
+						],
+						"amount": "150.00"
+					}
+				],
+				"sum": "150.00"
+			},
+			"tax": "150.00",
+			"total_with_tax": "1150.00",
+			"payable": "1150.00"
+		}
+	}
+}

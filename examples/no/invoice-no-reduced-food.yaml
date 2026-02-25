@@ -1,0 +1,50 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: NO
+uuid: 0f2d0b3a-7c3a-4dd2-8f29-913a3b6ce7aa
+type: standard
+series: "2026"
+code: "FOOD001"
+issue_date: "2026-01-16"
+currency: NOK
+note: Grocery supplies (reduced VAT).
+
+supplier:
+  name: The Sellercompany ASA
+  tax_id:
+    country: NO
+    code: "NO974760673MVA"
+  addresses:
+    - street: "Main street 34"
+      locality: "Big city"
+      region: "RegionA"
+      code: "54321"
+      country: NO
+
+customer:
+  name: Buyercompany ASA
+  tax_id:
+    country: NO
+    code: "NO987654325MVA"
+  addresses:
+    - street: "Anystreet 8"
+      locality: "Anytown"
+      region: "RegionB"
+      code: "0101"
+      country: NO
+
+payment:
+  terms:
+    due_dates:
+      - date: "2026-01-16"
+        percent: "100%"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Pack of food items"
+      price: "100.00"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: reduced
+        

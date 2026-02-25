@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "479138919b6735f838a213b25f2e2ca25a6e906b54ea53aa0f9e597cfff7d837"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "4c0a0a86-0f10-4ed0-9d75-0a4d0a6c40aa",
+		"type": "standard",
+		"series": "2026",
+		"code": "RC001",
+		"issue_date": "2026-02-01",
+		"currency": "NOK",
+		"supplier": {
+			"name": "The Sellercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "974760673"
+			},
+			"addresses": [
+				{
+					"street": "Main street 34",
+					"locality": "Big city",
+					"region": "RegionA",
+					"code": "54321",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "antonio@salescompany.no"
+				}
+			]
+		},
+		"customer": {
+			"name": "Buyercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Anystreet 8",
+					"locality": "Anytown",
+					"region": "RegionB",
+					"code": "0101",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "john@buyercompany.no"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "8",
+				"item": {
+					"name": "Consulting services",
+					"price": "500.00",
+					"unit": "h"
+				},
+				"sum": "4000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "4000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2026-02-01",
+						"amount": "4000.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "4000.00",
+			"total": "4000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "4000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "4000.00",
+			"payable": "4000.00"
+		}
+	}
+}

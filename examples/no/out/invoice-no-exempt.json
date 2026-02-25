@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ce4af30719e80cdfcaabc1a15c216b8900e730fef0cbbe1d1b84f6a8cbb6cabc"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "5c77a3b2-6d8d-44cf-bc9b-2c8f3380e0a1",
+		"type": "standard",
+		"series": "2026",
+		"code": "EX001",
+		"issue_date": "2026-02-03",
+		"currency": "NOK",
+		"supplier": {
+			"name": "The Sellercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "974760673"
+			},
+			"addresses": [
+				{
+					"street": "Main street 34",
+					"locality": "Big city",
+					"region": "RegionA",
+					"code": "54321",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "antonio@salescompany.no"
+				}
+			]
+		},
+		"customer": {
+			"name": "Buyercompany ASA",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Anystreet 8",
+					"locality": "Anytown",
+					"region": "RegionB",
+					"code": "0101",
+					"country": "NO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "john@buyercompany.no"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "3",
+				"item": {
+					"name": "Exempt service",
+					"price": "900.00",
+					"unit": "one"
+				},
+				"sum": "2700.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "2700.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2026-02-03",
+						"amount": "2700.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "2700.00",
+			"total": "2700.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "2700.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "2700.00",
+			"payable": "2700.00"
+		}
+	}
+}
