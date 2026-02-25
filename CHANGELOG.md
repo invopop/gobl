@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `eu-en16935-v1`: Exemption reason extension (BT-120).
+- `eu-en16935-v1`: Exemption reason notes (BT-120).
 
 ### Fixed
 

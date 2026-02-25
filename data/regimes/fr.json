@@ -11,23 +11,6 @@
   "country": "FR",
   "currency": "EUR",
   "tax_scheme": "VAT",
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "reverse-charge",
-            "text": "Reverse Charge / Autoliquidation de la TVA - Article 283-1 du CGI. Le client est redevable de la TVA."
-          }
-        }
-      ]
-    }
-  ],
   "corrections": [
     {
       "schema": "bill/invoice",
