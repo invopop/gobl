@@ -14,9 +14,9 @@ import (
 const (
 	// IdentityTypeCRN is the Commercial Registration Number (10 digits).
 	IdentityTypeCRN cbc.Code = "CRN"
-	// IdentityTypeMOM is a MOMRA / Ministry of Municipalities license.
+	// IdentityTypeMOM is a MOMRAH / Ministry of Municipalities and Housing license.
 	IdentityTypeMOM cbc.Code = "MOM"
-	// IdentityTypeMLS is an MHRSD / Ministry of Human Resources license.
+	// IdentityTypeMLS is an MHRSD / Ministry of Human Resources and Social Development license.
 	IdentityTypeMLS cbc.Code = "MLS"
 	// IdentityType700 is the Unified Number (10 digits starting with 7).
 	IdentityType700 cbc.Code = "700"
@@ -52,7 +52,7 @@ var identityDefinitions = []*cbc.Definition{
 	{
 		Code: IdentityTypeMOM,
 		Name: i18n.String{
-			i18n.EN: "MOMRA License",
+			i18n.EN: "MOMRAH License",
 			i18n.AR: "ترخيص وزارة البلديات والإسكان",
 		},
 	},
@@ -60,7 +60,7 @@ var identityDefinitions = []*cbc.Definition{
 		Code: IdentityTypeMLS,
 		Name: i18n.String{
 			i18n.EN: "MHRSD License",
-			i18n.AR: "ترخيص وزارة الموارد البشرية",
+			i18n.AR: "ترخيص وزارة الموارد البشرية والتنمية الاجتماعية",
 		},
 	},
 	{
