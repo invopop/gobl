@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -75,6 +76,267 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.NoError(t, err)
+	})
+}
+
+func TestTotalsTaxValidation(t *testing.T) {
+	t.Run("duplicate exempt code", func(t *testing.T) {
+		// Two exempt lines with different rate total rows for (VAT, E) — should be rejected.
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item A", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item B", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-143",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "E")
+	})
+
+	t.Run("same exempt code consolidated", func(t *testing.T) {
+		// Two exempt lines with the same VATEX code merge into one row — valid.
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item A", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item B", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("outside scope combined with exempt", func(t *testing.T) {
+		// O (outside scope) must not appear alongside any other category code.
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Outside scope item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyOutsideScope,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-O",
+						},
+					},
+				},
+			},
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "outside scope")
+	})
+}
+
+func TestExemptionNoteValidation(t *testing.T) {
+	t.Run("exempt with matching note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes, &org.Note{
+			Src:  cbc.Key("exempt"),
+			Text: "Exempt under Article 132",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("exempt without note or vatex", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "tax category E requires either a cef-vatex code or an exemption note")
+	})
+
+	t.Run("exempt with vatex code no note needed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("duplicate exemption notes for same src", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes,
+			&org.Note{
+				Src:  cbc.Key("exempt"),
+				Text: "Reason A",
+			},
+			&org.Note{
+				Src:  cbc.Key("exempt"),
+				Text: "Reason B",
+			},
+		)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "only one exemption note allowed per tax category E")
+	})
+
+	t.Run("reverse charge with matching note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Reverse charge item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyReverseCharge,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes, &org.Note{
+			Src:  cbc.Key("reverse-charge"),
+			Text: "Reverse charge applies",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("note normalization adds tax category", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes, &org.Note{
+			Src:  cbc.Key("exempt"),
+			Text: "Exempt under Article 132",
+		})
+		require.NoError(t, inv.Calculate())
+		// After calculation, the note should have the UNTDID tax category set
+		var exemptNote *org.Note
+		for _, n := range inv.Notes {
+			if n.Src == cbc.Key("exempt") {
+				exemptNote = n
+				break
+			}
+		}
+		require.NotNil(t, exemptNote)
+		assert.Equal(t, "E", exemptNote.Ext.Get(untdid.ExtKeyTaxCategory).String())
+	})
+
+	t.Run("standard rate does not need note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 	})
 }
 

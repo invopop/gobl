@@ -68,9 +68,16 @@ func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
 	}
-	if n.Key == cbc.KeyEmpty {
+
+	// src takes presedence over key so that the reverse-charge note
+	// that was being set by some regimes is correctly handled
+	if code := vatKeyMap.Get(n.Src); !code.IsEmpty() {
+		n.Ext = n.Ext.Merge(tax.Extensions{
+			untdid.ExtKeyTaxCategory: code,
+		})
 		return
 	}
+
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
 		n.Ext = n.Ext.Merge(tax.Extensions{
 			untdid.ExtKeyTextSubject: code,

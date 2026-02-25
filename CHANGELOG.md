@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16935-v1`: Exemption reason notes (BT-120).
+
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`

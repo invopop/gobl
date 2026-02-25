@@ -6,9 +6,6 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
-tax:
-  tags:
-    - reverse-charge
 supplier:
   tax_id:
     country: "DE"
@@ -63,7 +60,7 @@ lines:
         reason: "Special discount"
     taxes:
       - cat: VAT
-        rate: exempt+reverse-charge
+        key: reverse-charge
 
 payment:
   instructions:
@@ -78,3 +75,7 @@ payment:
 
 ordering:
   code: "12345"
+
+notes:
+  - src: "reverse-charge"
+    text: "Reverse charge applies according to Article 44 and Article 196 of the EU VAT Directive."
