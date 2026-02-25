@@ -90,8 +90,8 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.RO: "Cota super-redusă",
 				},
 				Description: i18n.String{
-					i18n.EN: "Applicable to social housing, cultural events, and other specified goods and services.",
-					i18n.RO: "Aplicabilă pentru locuințe sociale, evenimente culturale și alte bunuri și servicii specificate.",
+					i18n.EN: "Applicable to social housing, museums, zoos, botanical gardens, historic monuments, and other specified goods and services.",
+					i18n.RO: "Aplicabilă pentru locuințe sociale, muzee, grădini zoologice, grădini botanice, monumente istorice și alte bunuri și servicii specificate.",
 				},
 				Values: []*tax.RateValueDef{
 					{

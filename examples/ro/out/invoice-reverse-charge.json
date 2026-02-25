@@ -1,0 +1,116 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "15d5f171e7c95d2c70167b3ad7e63a925be040802a3442ae4a6a185d7290317a"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "RO",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+		"type": "standard",
+		"series": "RC",
+		"code": "001",
+		"issue_date": "2024-02-13",
+		"currency": "RON",
+		"tax": {},
+		"supplier": {
+			"name": "Exemplu Furnizor S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "14399840"
+			},
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Strada Exemplu",
+					"locality": "București",
+					"region": "Sector 1",
+					"code": "010101",
+					"country": "RO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Test S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "18547290"
+			},
+			"addresses": [
+				{
+					"num": "25",
+					"street": "Bulevardul Unirii",
+					"locality": "Cluj-Napoca",
+					"code": "400015",
+					"country": "RO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Construction services",
+					"price": "25000.00"
+				},
+				"sum": "25000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "25000.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "RO49AAAA1B31007593840000",
+						"name": "Banca Exemplu"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "25000.00",
+			"total": "25000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "25000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "25000.00",
+			"payable": "25000.00"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse Charge / Taxare inversă."
+			}
+		]
+	}
+}
