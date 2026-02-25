@@ -51,3 +51,29 @@ func TestNormalizeTaxIdentityCases(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeTaxIdentityNilNoop(_ *testing.T) {
+	normalizeTaxIdentity(nil)
+}
+
+func TestNormalizeTaxIdentityEmptyCodeNoop(t *testing.T) {
+	id := &tax.Identity{
+		Country: l10n.TaxCountryCode(l10n.NO),
+		Code:    "",
+	}
+	normalizeTaxIdentity(id)
+	if id.Code != "" {
+		t.Fatalf("expected code to remain empty, got %s", id.Code)
+	}
+}
+
+func TestNormalizeTaxIdentityKeepsUnknownFormat(t *testing.T) {
+	id := &tax.Identity{
+		Country: l10n.TaxCountryCode(l10n.NO),
+		Code:    cbc.Code("SOMETHING"),
+	}
+	normalizeTaxIdentity(id)
+	if id.Code != "SOMETHING" {
+		t.Fatalf("expected code to remain unchanged, got %s", id.Code)
+	}
+}

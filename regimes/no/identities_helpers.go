@@ -26,14 +26,10 @@ func cleanNorwayTaxCode(code cbc.Code) (string, bool) {
 	s := strings.TrimSpace(strings.ToUpper(code.String()))
 
 	// Allow optional country prefix "NO" (common in e-invoicing payloads)
-	if strings.HasPrefix(s, "NO") {
-		s = strings.TrimPrefix(s, "NO")
-	}
+	s = strings.TrimPrefix(s, "NO")
 
 	// Allow optional "MVA" suffix
-	if strings.HasSuffix(s, "MVA") {
-		s = strings.TrimSuffix(s, "MVA")
-	}
+	s = strings.TrimSuffix(s, "MVA")
 
 	return cleanNorwayOrgNr(cbc.Code(s))
 }
