@@ -18,6 +18,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	return &bill.Invoice{
 		Code:     "TEST-001",
 		Currency: "CLP",
+		Regime:   tax.WithRegime("CL"),
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
@@ -86,7 +87,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "missing supplier",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier = nil
 			},
 			expectError: "supplier: cannot be blank",
@@ -94,7 +94,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "supplier without tax ID",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier.TaxID = nil
 			},
 			expectError: "tax_id: cannot be blank",
@@ -102,7 +101,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "supplier with tax ID but no code",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier.TaxID.Code = ""
 			},
 			expectError: "code: cannot be blank",
@@ -110,7 +108,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "invalid RUT check digit",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier.TaxID.Code = "713254976" // Invalid check digit
 			},
 			expectError: "invalid check digit",
@@ -118,7 +115,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "supplier without address",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier.Addresses = nil
 			},
 			expectError: "addresses",
@@ -126,7 +122,6 @@ func TestInvoiceValidation(t *testing.T) {
 		{
 			name: "supplier with empty addresses array",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Supplier.Addresses = []*org.Address{}
 			},
 			expectError: "addresses",
@@ -186,7 +181,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer without RUT",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.TaxID = nil
 			},
 			expectError: "tax_id: cannot be blank",
@@ -194,7 +188,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer with RUT but no code",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.TaxID = &tax.Identity{
 					Country: "CL",
 				}
@@ -204,7 +197,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer with valid RUT",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.TaxID = &tax.Identity{
 					Country: "CL",
 					Code:    "77668208K",
@@ -214,7 +206,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer with invalid RUT check digit",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.TaxID = &tax.Identity{
 					Country: "CL",
 					Code:    "77668208X", // Invalid check digit
@@ -225,7 +216,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer without address",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.Addresses = nil
 			},
 			expectError: "addresses",
@@ -233,7 +223,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2B invoice - customer with empty addresses array",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.Customer.Addresses = []*org.Address{}
 			},
 			expectError: "addresses",
@@ -241,7 +230,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2C boleta - no customer required",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.SetTags(tax.TagSimplified)
 				inv.Customer = nil
 			},
@@ -249,7 +237,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2C boleta - customer without RUT is valid",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.SetTags(tax.TagSimplified)
 				inv.Customer.TaxID = nil
 			},
@@ -257,7 +244,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2C boleta - customer with RUT is also valid",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.SetTags(tax.TagSimplified)
 				inv.Customer.TaxID = &tax.Identity{
 					Country: "CL",
@@ -268,7 +254,6 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		{
 			name: "B2C boleta - customer without address is valid",
 			setupInv: func(inv *bill.Invoice) {
-				inv.SetRegime("CL")
 				inv.SetTags(tax.TagSimplified)
 				inv.Customer.Addresses = nil
 			},
