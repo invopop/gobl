@@ -34,7 +34,7 @@ The GOBL repository is organized into key directories, each serving a distinct r
 - **org**: Data structures for organizations, parties, and related business entities.
 - **pay**: Payment methods, terms, and processing logic.
 - **pkg**: Shared utility packages used across multiple parts of the codebase.
-- **regimes** (Tax Regimes): Country-specific tax rules, rates, and validation logic. You can find a `README.md` inside each regime for more details.
+- **regimes** (Tax Regimes): Country-specific tax rules, rates, and validation logic.
 - **schema**: JSON schema generation and validation logic.
 - **tax**: Core tax structures and logic, used in documents and by regimes or addons.
 - **uuid**: Utilities for generating and handling UUIDs.
