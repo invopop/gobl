@@ -41,11 +41,7 @@ func New() *tax.RegimeDef {
 	}
 }
 
-// Validate checks the document type to determine if validation is required.
-// Note that, under the IL tax regime, validation of the tax identity verifies
-// only the 9-digit numeric format of the Mispar Osek Murshe. Full verification
-// of whether a number is registered with the ITA must be performed directly
-// through the official government entity register at gov.il.
+// Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
