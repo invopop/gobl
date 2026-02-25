@@ -3,6 +3,7 @@ package sa
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
@@ -32,12 +33,23 @@ func New() *tax.RegimeDef {
 			bill.InvoiceScenarios(),
 			invoiceScenarios,
 		},
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				},
+			},
+		},
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:
