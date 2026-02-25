@@ -1,0 +1,75 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "68a205e6cff7a6e62f55fd8ef6f8df207d635cf1aac91447329ad9a8e988b4bb"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+		"type": "standard",
+		"series": "2025",
+		"code": "0010",
+		"issue_date": "2025-06-15",
+		"currency": "NOK",
+		"tax": {},
+		"supplier": {
+			"name": "Eksempel AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Dagligvarer",
+					"price": "200.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000.00",
+								"percent": "25.0%",
+								"amount": "250.00"
+							}
+						],
+						"amount": "250.00"
+					}
+				],
+				"sum": "250.00"
+			},
+			"tax": "250.00",
+			"total_with_tax": "1250.00",
+			"payable": "1250.00"
+		}
+	}
+}

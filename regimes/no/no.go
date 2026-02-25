@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -25,12 +26,17 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Norway",
 			i18n.NB: "Norge",
 		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				The Norwegian tax regime covers VAT (merverdiavgift) with four
+				rates: general (25%), reduced (15%), super-reduced (12%), and
+				special (11.11%). Identity validation supports
+				organisasjonsnummer with mod-11 check digits.
+			`),
+		},
 		TimeZone:   "Europe/Oslo",
 		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
-		Tags: []*tax.TagSet{
-			invoiceTags,
-		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -41,7 +47,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios(),
+			invoiceScenarios,
 		},
 		Validator:  Validate,
 		Normalizer: Normalize,

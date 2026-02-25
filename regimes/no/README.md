@@ -39,7 +39,7 @@ Available as org identity type `ON`. Uses the same 9-digit format and mod-11 val
 | Tag | Description |
 |-----|-------------|
 | `reverse-charge` | Reverse charge / Omvendt avgiftsplikt |
-| `foretaksregisteret` | Supplier is registered in the Register of Business Enterprises (mandatory for AS/ASA/NUF per foretaksregisterloven §10-2) |
+| `simplified` | Simplified invoice — customer not required, supplier address relaxed |
 
 ## Correction Types
 
@@ -51,4 +51,3 @@ The following are not included in this regime and may be addressed in future wor
 
 - **SAF-T Norway**: Standard Audit File for Tax — a reporting format, not a transaction-level invoice format.
 - **EHF / Peppol**: Norwegian e-invoicing format (EHF, based on Peppol BIS 3.0). B2B mandatory e-invoicing is proposed from 2028 but not yet law.
-- **Simplified invoices**: Not separately handled; all invoices require a customer.

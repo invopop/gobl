@@ -1,0 +1,26 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+currency: NOK
+series: "2025"
+code: "0010"
+issue_date: "2025-06-15"
+
+tax:
+  tags:
+    - "simplified"
+
+supplier:
+  name: Eksempel AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+
+lines:
+  - quantity: "5"
+    item:
+      name: Dagligvarer
+      price: "200.00"
+    taxes:
+      - cat: VAT
+        rate: standard
