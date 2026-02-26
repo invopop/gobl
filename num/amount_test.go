@@ -152,6 +152,15 @@ func TestAmountNewFromString(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "123.456", a.String())
 
+	// 18-digit integer with decimals should truncate all decimals
+	a, err = num.AmountFromString("123456789012345678.99")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789012345678", a.String())
+
+	// Empty string should return error
+	_, err = num.AmountFromString("")
+	assert.Error(t, err)
+
 	// Very long integer should fail
 	_, err = num.AmountFromString("99999999999999999999")
 	assert.ErrorContains(t, err, "too many digits")
@@ -160,6 +169,23 @@ func TestAmountNewFromString(t *testing.T) {
 	a, err = num.AmountFromString("1.99999999999999999999")
 	assert.NoError(t, err)
 	assert.Equal(t, "1.99999999999999999", a.String())
+
+	// Integer part with exactly 18 digits and a decimal: decimal should be ignored
+	a, err = num.AmountFromString("999999999999999999.1")
+	assert.NoError(t, err)
+	assert.Equal(t, "999999999999999999", a.String())
+
+	// Negative numbers around the 18-digit limit
+	a, err = num.AmountFromString("-123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "-123456789012345678", a.String())
+
+	a, err = num.AmountFromString("-123456789.123456789")
+	assert.NoError(t, err)
+	assert.Equal(t, "-123456789.123456789", a.String())
+
+	_, err = num.AmountFromString("-1234567890123456789")
+	assert.ErrorContains(t, err, "too many digits")
 }
 
 func TestAmountFromFloat64(t *testing.T) {

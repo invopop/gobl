@@ -82,10 +82,14 @@ func AmountFromString(val string) (Amount, error) {
 	}
 
 	// Truncate the decimal part so that total significant digits fit in int64.
+	// If truncation removes all decimal digits, treat the value as an integer.
 	if l == 2 {
 		maxDecimal := maxAmountDigits - sigMajor
 		if len(x[1]) > maxDecimal {
 			x[1] = x[1][:maxDecimal]
+		}
+		if len(x[1]) == 0 {
+			l = 1
 		}
 	}
 
