@@ -4,10 +4,37 @@
     "en": "The Netherlands",
     "nl": "Nederland"
   },
+  "description": {
+    "en": "The Netherlands' tax system is administered by the Belastingdienst (Tax and\nCustoms Administration). As an EU member state, the Netherlands follows the\nEU VAT Directive with locally adapted rates.\n\nBTW (Belasting over de Toegevoegde Waarde) applies at standard and reduced\nrates. The reduced rate covers food, water, pharmaceuticals, books, passenger\ntransport, hotel accommodation, and cultural and sporting events.\n\nBusinesses are identified by their BTW-nummer (VAT number) in the format NL\nfollowed by 9 digits, the letter B, and 2 check digits (e.g.\nNL123456789B01). The KVK (Kamer van Koophandel) number is the commercial\nregister number.\n\nThe Netherlands supports credit notes for invoice corrections. E-invoicing\nvia PEPPOL is commonly used, and is mandatory for B2G transactions with the\ncentral government."
+  },
   "time_zone": "Europe/Amsterdam",
   "country": "NL",
   "currency": "EUR",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "KVK",
+      "name": {
+        "en": "KVK Number",
+        "nl": "KVK-nummer"
+      }
+    },
+    {
+      "code": "OIN",
+      "name": {
+        "en": "OIN Number",
+        "nl": "OIN-nummer"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "OIN Stelsel - Samenstelling OIN"
+          },
+          "url": "https://gitdocumentatie.logius.nl/publicatie/dk/oin/2.2.1/#samenstelling-oin"
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

@@ -23,7 +23,7 @@ type Definition struct {
 	// with the key.
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Where the information was sourced from.
+	// Where the information was sourced from and where it can be reviewed for updates in the future.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
 	// Values defines the possible values associated with the key, which themselves will
