@@ -61,8 +61,8 @@ func AmountFromFloat64(val float64, exp uint32) Amount {
 // commas, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
 // maxAmountDigits is the maximum total number of digits (major + decimal)
-// allowed in an amount string. This ensures values fit safely in int64 after
-// the major * 10^exp + decimal combination.
+// allowed in an amount string. This ensures values fit safely in int64
+// and do not overflow.
 const maxAmountDigits = 18
 
 func AmountFromString(val string) (Amount, error) {
