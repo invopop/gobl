@@ -59,6 +59,9 @@
       "rates": [
         {
           "rate": "zero",
+          "keys": [
+            "zero"
+          ],
           "name": {
             "en": "Zero rate"
           },

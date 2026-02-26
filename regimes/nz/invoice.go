@@ -36,14 +36,17 @@ func validateInvoiceSupplier(inv *bill.Invoice) validation.RuleFunc {
 			return nil
 		}
 
+		if inv.Totals == nil {
+			return validation.NewError("validation_totals_missing", "invoice totals must be calculated before NZ regime validation")
+		}
 		total := inv.Totals.TotalWithTax
-		if total.IsZero() || total.Compare(threshold200) < 0 {
+		if total.IsZero() || total.Compare(threshold200) <= 0 {
 			return nil
 		}
 
 		return validation.ValidateStruct(p,
 			validation.Field(&p.TaxID,
-				validation.Required.Error("supplier must have GST number for invoices ≥ $200"),
+				validation.Required.Error("supplier must have GST number for invoices > $200"),
 				tax.RequireIdentityCode,
 			),
 		)
@@ -57,8 +60,11 @@ func validateInvoiceCustomer(inv *bill.Invoice) validation.RuleFunc {
 			return nil
 		}
 
+		if inv.Totals == nil {
+			return validation.NewError("validation_totals_missing", "invoice totals must be calculated before NZ regime validation")
+		}
 		total := inv.Totals.TotalWithTax
-		if total.IsZero() || total.Compare(threshold1000) < 0 {
+		if total.IsZero() || total.Compare(threshold1000) <= 0 {
 			return nil
 		}
 

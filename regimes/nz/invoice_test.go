@@ -91,7 +91,7 @@ func TestInvoice200WithoutGSTNumber(t *testing.T) {
 	inv.Supplier.TaxID = nil
 	err := nz.Validate(inv)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier must have GST number for invoices ≥ $200")
+	assert.Contains(t, err.Error(), "supplier must have GST number for invoices > $200")
 }
 
 func TestInvoice500WithoutGSTNumber(t *testing.T) {
@@ -100,7 +100,7 @@ func TestInvoice500WithoutGSTNumber(t *testing.T) {
 	inv.Supplier.TaxID = nil
 	err := nz.Validate(inv)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier must have GST number for invoices ≥ $200")
+	assert.Contains(t, err.Error(), "supplier must have GST number for invoices > $200")
 }
 
 func TestValidInvoiceOver1000(t *testing.T) {
@@ -244,4 +244,20 @@ func TestInvoiceWithEmptyTaxID(t *testing.T) {
 	err := nz.Validate(inv)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot be blank")
+}
+
+func TestValidateInvoiceSupplierTotalsNil(t *testing.T) {
+	inv := validInvoice("500.00")
+	inv.Totals = nil
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invoice totals must be calculated before NZ regime validation")
+}
+
+func TestValidateInvoiceCustomerTotalsNil(t *testing.T) {
+	inv := validInvoice("1500.00")
+	inv.Totals = nil
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invoice totals must be calculated before NZ regime validation")
 }
