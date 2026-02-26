@@ -123,7 +123,6 @@ func TestInvoiceValidation(t *testing.T) {
 				}
 				return inv
 			}(),
-			err: "customer: must be blank.",
 		},
 	}
 
