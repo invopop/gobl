@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/note/message",
+  "$ref": "#/$defs/Message",
+  "$defs": {
+    "Message": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Summary of the message content"
+        },
+        "content": {
+          "type": "string",
+          "title": "Content",
+          "description": "Details of what exactly this message wants to communicate."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta Data",
+          "description": "Any additional semi-structured data that might be useful."
+        }
+      },
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "description": "Message represents a simple message object with a title and some content meant.",
+      "examples": [
+        {
+          "content": "This is an example message.",
+          "title": "Example Title"
+        }
+      ]
+    }
+  }
+}

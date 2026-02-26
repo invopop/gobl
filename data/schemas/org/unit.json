@@ -1,0 +1,350 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/unit",
+  "$ref": "#/$defs/Unit",
+  "$defs": {
+    "Unit": {
+      "oneOf": [
+        {
+          "const": "mg",
+          "title": "Milligrams"
+        },
+        {
+          "const": "g",
+          "title": "Metric grams"
+        },
+        {
+          "const": "kg",
+          "title": "Metric kilograms"
+        },
+        {
+          "const": "t",
+          "title": "Metric tons"
+        },
+        {
+          "const": "mm",
+          "title": "Milimetres"
+        },
+        {
+          "const": "cm",
+          "title": "Centimetres"
+        },
+        {
+          "const": "dm",
+          "title": "Decimetres",
+          "description": "A unit of length equal to one-tenth of a metre."
+        },
+        {
+          "const": "m",
+          "title": "Metres"
+        },
+        {
+          "const": "km",
+          "title": "Kilometers"
+        },
+        {
+          "const": "in",
+          "title": "Inches"
+        },
+        {
+          "const": "ft",
+          "title": "Feet"
+        },
+        {
+          "const": "mm2",
+          "title": "Square millimetres"
+        },
+        {
+          "const": "cm2",
+          "title": "Square centimetres"
+        },
+        {
+          "const": "dm2",
+          "title": "Square decimetres"
+        },
+        {
+          "const": "m2",
+          "title": "Square metres"
+        },
+        {
+          "const": "ac",
+          "title": "Acres",
+          "description": "A unit of area equal to 43,560 square feet."
+        },
+        {
+          "const": "ha",
+          "title": "Hectares",
+          "description": "A unit of area equal to 10,000 square metres."
+        },
+        {
+          "const": "mm3",
+          "title": "Cubic millimetres"
+        },
+        {
+          "const": "cm3",
+          "title": "Cubic centimetres"
+        },
+        {
+          "const": "dm3",
+          "title": "Cubic decimetres"
+        },
+        {
+          "const": "m3",
+          "title": "Cubic metres"
+        },
+        {
+          "const": "ml",
+          "title": "Millilitres"
+        },
+        {
+          "const": "cl",
+          "title": "Centilitres"
+        },
+        {
+          "const": "l",
+          "title": "Litres"
+        },
+        {
+          "const": "w",
+          "title": "Watts"
+        },
+        {
+          "const": "kw",
+          "title": "Kilowatts"
+        },
+        {
+          "const": "kwh",
+          "title": "Kilowatt Hours"
+        },
+        {
+          "const": "rate",
+          "title": "Rate",
+          "description": "A unit of quantity expressed as a rate for usage of a facility or service."
+        },
+        {
+          "const": "mon",
+          "title": "Months",
+          "description": "Unit of time equal to 1/12 of a year of 365,25 days."
+        },
+        {
+          "const": "day",
+          "title": "Days"
+        },
+        {
+          "const": "s",
+          "title": "Seconds"
+        },
+        {
+          "const": "h",
+          "title": "Hours"
+        },
+        {
+          "const": "min",
+          "title": "Minutes"
+        },
+        {
+          "const": "piece",
+          "title": "Pieces",
+          "description": "A unit of count defining the number of pieces (piece: a single item, article or exemplar)."
+        },
+        {
+          "const": "item",
+          "title": "Items",
+          "description": " A unit of count defining the number of items regarded as separate units."
+        },
+        {
+          "const": "pair",
+          "title": "Pairs",
+          "description": "A unit of count defining the number of pairs (pair: item described by two's)."
+        },
+        {
+          "const": "dozen",
+          "title": "Dozens",
+          "description": "A unit of count defining the number of units in multiples of 12."
+        },
+        {
+          "const": "assortment",
+          "title": "Assortments",
+          "description": "A unit of count defining the number of assortments (assortment: a collection of items or components of a single product packaged together)."
+        },
+        {
+          "const": "service",
+          "title": "Service Units",
+          "description": "A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply)."
+        },
+        {
+          "const": "job",
+          "title": "Jobs",
+          "description": "A unit of count defining the number of jobs."
+        },
+        {
+          "const": "activity",
+          "title": "Activities",
+          "description": "A unit of count defining the number of activities (activity: a unit of work or action)."
+        },
+        {
+          "const": "trip",
+          "title": "Trips",
+          "description": "A unit of count defining the number of trips (trip: a journey to a place and back again)."
+        },
+        {
+          "const": "group",
+          "title": "Groups",
+          "description": "A unit of count defining the number of groups (group: set of items classified together)."
+        },
+        {
+          "const": "outfit",
+          "title": "Outfits",
+          "description": "A unit of count defining the number of outfits (outfit: a complete set of equipment / materials / objects used for a specific purpose)."
+        },
+        {
+          "const": "kit",
+          "title": "Kits",
+          "description": "A unit of count defining the number of kits (kit: tub, barrel or pail)."
+        },
+        {
+          "const": "basebox",
+          "title": "Base Boxes",
+          "description": "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches."
+        },
+        {
+          "const": "pk",
+          "title": "Bulk Packs",
+          "description": "A unit of count defining the number of items per bulk pack."
+        },
+        {
+          "const": "one",
+          "title": "One",
+          "description": "A single generic unit of a service or product."
+        },
+        {
+          "const": "bag",
+          "title": "Bags"
+        },
+        {
+          "const": "box",
+          "title": "Boxes"
+        },
+        {
+          "const": "bin",
+          "title": "Bins"
+        },
+        {
+          "const": "can",
+          "title": "Cans"
+        },
+        {
+          "const": "tub",
+          "title": "Tubs"
+        },
+        {
+          "const": "case",
+          "title": "Cases"
+        },
+        {
+          "const": "tray",
+          "title": "Trays"
+        },
+        {
+          "const": "portion",
+          "title": "Portions"
+        },
+        {
+          "const": "set",
+          "title": "Sets",
+          "description": "A unit of count defining the number of sets (set: a number of objects grouped together)."
+        },
+        {
+          "const": "roll",
+          "title": "Rolls"
+        },
+        {
+          "const": "carton",
+          "title": "Cartons"
+        },
+        {
+          "const": "cylinder",
+          "title": "Cylinders"
+        },
+        {
+          "const": "barrel",
+          "title": "Barrels"
+        },
+        {
+          "const": "jerrican",
+          "title": "Jerricans",
+          "description": "Jerrican, cylindrical"
+        },
+        {
+          "const": "carboy",
+          "title": "Carboys"
+        },
+        {
+          "const": "demijohn",
+          "title": "Demijohn"
+        },
+        {
+          "const": "bottle",
+          "title": "Bottles"
+        },
+        {
+          "const": "6pack",
+          "title": "Six Packs"
+        },
+        {
+          "const": "canister",
+          "title": "Canisters"
+        },
+        {
+          "const": "pkg",
+          "title": "Packages",
+          "description": "Standard packaging unit."
+        },
+        {
+          "const": "bunch",
+          "title": "Bunches"
+        },
+        {
+          "const": "tetrabrik",
+          "title": "Tetra-Briks"
+        },
+        {
+          "const": "pallet",
+          "title": "Pallets"
+        },
+        {
+          "const": "reel",
+          "title": "Reels"
+        },
+        {
+          "const": "sack",
+          "title": "Sacks"
+        },
+        {
+          "const": "sheet",
+          "title": "Sheets"
+        },
+        {
+          "const": "envelope",
+          "title": "Envelopes"
+        },
+        {
+          "const": "lot",
+          "title": "Lot"
+        },
+        {
+          "const": "unit",
+          "title": "Unit",
+          "description": "A type of package composed of a single item or object, not otherwise specified as a unit of transport equipment."
+        },
+        {
+          "pattern": "^[A-Z0-9]{2,3}$",
+          "description": "UN/ECE Unit Code from Recommendations 20 and 21"
+        }
+      ],
+      "type": "string",
+      "title": "Unit",
+      "description": "Unit defines how the quantity of the product should be interpreted either using a GOBL lower-case key (e.g. 'kg'), or UN/ECE code upper-case code (e.g. 'KGM')."
+    }
+  }
+}

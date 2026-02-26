@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/addon-def",
+  "$ref": "#/$defs/AddonDef",
+  "$defs": {
+    "AddonDef": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key that defines how to uniquely idenitfy the add-on."
+        },
+        "requires": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Requires",
+          "description": "Requires defines any additional addons that this one depends on to operate\ncorrectly."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the add-on"
+        },
+        "description": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description of the add-on"
+        },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Sources is a list of sources that are used to provide the data for the add-on."
+        },
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extensions defines the list of extensions that are associated with an add-on."
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/TagSet"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags is slice of tag sets that define what can be assigned to each document schema."
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/ScenarioSet"
+          },
+          "type": "array",
+          "title": "Scenarios",
+          "description": "Scenarios are applied to documents after normalization and before\nvalidation to ensure that form specific extensions have been added\nto the document."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities that are specific for the add-on and may be validated against or\nused during conversion processes."
+        },
+        "inboxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Inboxes",
+          "description": "Inboxes is a list of keys that are used to identify where copies of\ndocuments can be sent."
+        },
+        "corrections": {
+          "$ref": "#/$defs/CorrectionSet",
+          "title": "Corrections",
+          "description": "Corrections is used to provide a map of correction definitions that\nare supported by the add-on."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "name",
+        "extensions",
+        "scenarios",
+        "corrections"
+      ],
+      "description": "AddonDef is an interface that defines the methods that a tax add-on must implement."
+    },
+    "CorrectionDefinition": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Partial or complete schema URL for the document type supported by correction."
+        },
+        "types": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Types",
+          "description": "The types of sub-documents supported by the regime"
+        },
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extension keys that can be included"
+        },
+        "reason_required": {
+          "type": "boolean",
+          "title": "Reason Required",
+          "description": "ReasonRequired when true implies that a reason must be provided"
+        },
+        "stamps": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Stamps that must be copied from the preceding document."
+        },
+        "copy_tax": {
+          "type": "boolean",
+          "title": "Copy Tax Totals",
+          "description": "Copy tax from the preceding document to the document ref."
+        }
+      },
+      "type": "object",
+      "required": [
+        "schema"
+      ],
+      "description": "CorrectionDefinition contains details about what can be defined in ."
+    },
+    "CorrectionSet": {
+      "items": {
+        "$ref": "#/$defs/CorrectionDefinition"
+      },
+      "type": "array",
+      "description": "CorrectionSet defines a set of correction definitions for a selection of schemas."
+    },
+    "Scenario": {
+      "properties": {
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the scenario for further information."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description of the scenario for documentation purposes."
+        },
+        "type": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Type",
+          "description": "Type of document, if present."
+        },
+        "tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Array of tags that have been applied to the document."
+        },
+        "ext_key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Extension Key",
+          "description": "Extension key that must be present in the document."
+        },
+        "ext_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Extension Code",
+          "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
+        },
+        "note": {
+          "$ref": "#/$defs/ScenarioNote",
+          "title": "Note",
+          "description": "A note to be added to the document if the scenario is applied."
+        },
+        "codes": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Codes",
+          "description": "Codes is used to define additional codes for regime specific\nsituations."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext represents a set of tax extensions that should be applied to\nthe document in the appropriate \"tax\" context."
+        }
+      },
+      "type": "object",
+      "description": "Scenario is used to describe a tax scenario of a document based on the combination of document type and tag used."
+    },
+    "ScenarioNote": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key specifying subject of the text"
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code used for additional data that may be required to identify the note."
+        },
+        "src": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Source",
+          "description": "Source of this note, especially useful when auto-generated."
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The contents of the note"
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension data"
+        }
+      },
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "description": "ScenarioNote represents the structure of the note that needs to be added to the document."
+    },
+    "ScenarioSet": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Partial or complete schema URL for the document type"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/$defs/Scenario"
+          },
+          "type": "array",
+          "title": "List",
+          "description": "List of scenarios for the schema"
+        }
+      },
+      "type": "object",
+      "required": [
+        "schema",
+        "list"
+      ],
+      "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
+    },
+    "TagSet": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Schema that the tags are associated with."
+        },
+        "list": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "List",
+          "description": "List of tags for the schema"
+        }
+      },
+      "type": "object",
+      "required": [
+        "schema",
+        "list"
+      ],
+      "description": "TagSet defines a set of tags and their descriptions that can be used for a specific schema in the context of a Regime or Addon."
+    }
+  }
+}

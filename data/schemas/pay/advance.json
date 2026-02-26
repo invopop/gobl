@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/advance",
+  "$ref": "#/$defs/Advance",
+  "$defs": {
+    "Advance": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "When the advance was made."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "anyOf": [
+            {
+              "const": "any",
+              "title": "Any",
+              "description": "Any method available, no preference."
+            },
+            {
+              "const": "card",
+              "title": "Card",
+              "description": "Payment card."
+            },
+            {
+              "const": "credit-transfer",
+              "title": "Credit Transfer",
+              "description": "Sender initiated bank or wire transfer."
+            },
+            {
+              "const": "credit-transfer+sepa",
+              "title": "SEPA Credit Transfer",
+              "description": "Sender initiated bank or wire transfer via SEPA."
+            },
+            {
+              "const": "debit-transfer",
+              "title": "Debit Transfer",
+              "description": "Receiver initiated bank or wire transfer."
+            },
+            {
+              "const": "cash",
+              "title": "Cash",
+              "description": "Cash in hand."
+            },
+            {
+              "const": "cheque",
+              "title": "Cheque",
+              "description": "Cheque from bank."
+            },
+            {
+              "const": "bank-draft",
+              "title": "Draft",
+              "description": "Bankers Draft or Bank Cheque."
+            },
+            {
+              "const": "direct-debit",
+              "title": "Direct Debit",
+              "description": "Direct debit from the customers bank account."
+            },
+            {
+              "const": "direct-debit+sepa",
+              "title": "SEPA Direct Debit",
+              "description": "Direct debit from the customers bank account via SEPA."
+            },
+            {
+              "const": "online",
+              "title": "Online",
+              "description": "Online or web payment."
+            },
+            {
+              "const": "promissory-note",
+              "title": "Promissory Note",
+              "description": "Promissory note contract."
+            },
+            {
+              "const": "netting",
+              "title": "Netting",
+              "description": "Intercompany clearing or clearing between partners."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Other or mutually defined means of payment."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Regime Specific Key"
+            }
+          ],
+          "title": "Key",
+          "description": "The payment means used to make the advance."
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference",
+          "description": "ID or reference for the advance."
+        },
+        "grant": {
+          "type": "boolean",
+          "title": "Grant",
+          "description": "If this \"advance\" payment has come from a public grant or subsidy, set this to true."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Details about the advance."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percentage of the total amount payable that was paid. Note that\nmultiple advances with percentages may lead to rounding errors,\nespecially when the total advances sums to 100%. We recommend only\nincluding one advance with a percent value per document."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much was paid."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        },
+        "card": {
+          "$ref": "#/$defs/Card",
+          "title": "Card",
+          "description": "Details of the payment that was made via a credit or debit card."
+        },
+        "credit_transfer": {
+          "$ref": "#/$defs/CreditTransfer",
+          "title": "Credit Transfer",
+          "description": "Details about how the payment was made by credit (bank) transfer."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Tax extensions required by tax regimes or addons."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional details useful for the parties involved."
+        }
+      },
+      "type": "object",
+      "required": [
+        "description",
+        "amount"
+      ],
+      "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
+    },
+    "Card": {
+      "properties": {
+        "first6": {
+          "type": "string",
+          "title": "First 6",
+          "description": "First 6 digits of the card's Primary Account Number (PAN)."
+        },
+        "last4": {
+          "type": "string",
+          "title": "Last 4",
+          "description": "Last 4 digits of the card's Primary Account Number (PAN)."
+        },
+        "holder": {
+          "type": "string",
+          "title": "Holder Name",
+          "description": "Name of the person whom the card belongs to."
+        }
+      },
+      "type": "object",
+      "description": "Card contains simplified card holder data as a reference for the customer."
+    },
+    "CreditTransfer": {
+      "properties": {
+        "iban": {
+          "type": "string",
+          "title": "IBAN",
+          "description": "International Bank Account Number"
+        },
+        "bic": {
+          "type": "string",
+          "title": "BIC",
+          "description": "Bank Identifier Code used for international transfers."
+        },
+        "number": {
+          "type": "string",
+          "title": "Number",
+          "description": "Account number, if IBAN not available."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the bank."
+        },
+        "branch": {
+          "$ref": "https://gobl.org/draft-0/org/address",
+          "title": "Branch",
+          "description": "Bank office branch address, not normally required."
+        }
+      },
+      "type": "object",
+      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
+    }
+  }
+}

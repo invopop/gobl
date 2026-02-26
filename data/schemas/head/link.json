@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/head/link",
+  "$ref": "#/$defs/Link",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "category": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "format",
+              "title": "Format",
+              "description": "Alternative formats of the same document, such as PDF, HTML, or XML."
+            },
+            {
+              "const": "portal",
+              "title": "Portal",
+              "description": "Websites that provide access to alternative versions of this document or request\nmodifications. May also allow access to other or previous business documents."
+            },
+            {
+              "const": "request",
+              "title": "Request",
+              "description": "Documents related to requests submitted to other systems."
+            },
+            {
+              "const": "response",
+              "title": "Response",
+              "description": "Response documents sent from third party systems often in reply to requests."
+            },
+            {
+              "const": "agreement",
+              "title": "Agreement",
+              "description": "Contracts or agreements related to this document."
+            },
+            {
+              "const": "verification",
+              "title": "Verification",
+              "description": "Evidence or verification documents that can be used to validate the authenticity\nof this document."
+            },
+            {
+              "const": "attachment",
+              "title": "Attachment",
+              "description": "General attachments for related information such as spread sheets, letters,\npresentations, specifications, etc."
+            }
+          ],
+          "title": "Category",
+          "description": "Category helps classify the link according to a fixed list. This is optional\nbut highly recommended as it helps receivers better understand the purpose\nof the link and potentially how it should be presented."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "description": "Key is a unique identifier for the link within the header and category\nif provided."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code used to identify the contents of the link."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title of the resource to use when presenting to users."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description of the resource to use when presenting to users."
+        },
+        "mime": {
+          "type": "string",
+          "title": "MIME Type",
+          "description": "Expected MIME type of the link's content when the content is a file. Can only\nbe one of the allowed types defined by EN 16931-1:2017 plus XML itself."
+        },
+        "digest": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest",
+          "description": "Digest is used to verify the integrity of the destination document\nwhen downloaded from the URL."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL of the resource."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Metadata",
+          "description": "Meta contains additional metadata about the link."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "url"
+      ],
+      "description": "Link defines a link between this document and another resource."
+    }
+  }
+}

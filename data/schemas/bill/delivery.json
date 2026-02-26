@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/delivery",
+  "$ref": "#/$defs/Delivery",
+  "$defs": {
+    "Delivery": {
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/tax/regime-code",
+          "title": "Tax Regime",
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
+        },
+        "$addons": {
+          "$ref": "https://gobl.org/draft-0/tax/addon-list",
+          "title": "Addons",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
+        "$tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags are used to help identify specific tax scenarios or requirements that may\napply changes to the contents of the document or imply a specific meaning.\nConverters may use tags to help identify specific situations that do not have\na specific extension, for example; self-billed or partial invoices may be\nidentified by their respective tags."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "advice",
+              "title": "Delivery Advice",
+              "description": "A delivery or despatch advice document send by the supplier to indicate how\nan order is to be delivered."
+            },
+            {
+              "const": "note",
+              "title": "Delivery Note",
+              "description": "A delivery note is a document accompanying a shipment of goods that lists the\nitems included in the shipment."
+            },
+            {
+              "const": "waybill",
+              "title": "Waybill",
+              "description": "A waybill is a document issued by a carrier giving details and instructions\nrelating to the shipment of a consignment of goods."
+            },
+            {
+              "const": "receipt",
+              "title": "Delivery Receipt",
+              "description": "A delivery receipt is a document that is signed by the person who receives\ngoods to confirm that they have been received."
+            }
+          ],
+          "title": "Type",
+          "description": "Type of delivery document.",
+          "enum": "advice"
+        },
+        "series": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Series",
+          "description": "Series is used to identify groups of deliveries by date, business area, project,\ntype, customer, a combination of any, or other company specific data.\nIf the output format does not support the series as a separate field, it will be\nprepended to the code for presentation with a dash (`-`) for separation."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code is a sequential identifier that uniquely identifies the delivery. The code can\nbe left empty initially, but is **required** to **sign** the document."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "When the delivery document is to be issued.",
+          "calculated": true
+        },
+        "issue_time": {
+          "$ref": "https://gobl.org/draft-0/cal/time",
+          "title": "Issue Time",
+          "description": "IssueTime is an optional field that may be useful to indicate the time of day when\nthe delivery was issued. Some regions and formats may require this field to be set.\nAn empty string will be automatically updated to reflect the current time, otherwise\nthe field can be left with a nil value.",
+          "calculated": true
+        },
+        "value_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Value Date",
+          "description": "When the taxes of this delivery become accountable, if none set, the issue date is used."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency for all delivery totals.",
+          "calculated": true
+        },
+        "exchange_rates": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
+          },
+          "type": "array",
+          "title": "Exchange Rates",
+          "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
+        },
+        "ordering": {
+          "$ref": "https://gobl.org/draft-0/bill/ordering",
+          "title": "Ordering",
+          "description": "Ordering details for the delivery, including links to other documents."
+        },
+        "preceding": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Preceding Details",
+          "description": "Key information regarding previous delivery documents that this one will either\nextend or replace."
+        },
+        "tracking": {
+          "$ref": "#/$defs/Tracking",
+          "title": "Tracking",
+          "description": "Tracking is used to define specific codes or IDs that may be used to\nidentify and track delivery."
+        },
+        "despatch_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Despatch Date",
+          "description": "DespatchDate is the date when the goods are expected to be despatched."
+        },
+        "receive_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Receive Date",
+          "description": "ReceiveDate is the date when the goods are expected to be received."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/bill/tax",
+          "title": "Tax",
+          "description": "Special tax configuration for calculating totals."
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier",
+          "description": "The entity supplying the goods or services and usually responsible for paying taxes."
+        },
+        "customer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Customer",
+          "description": "Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices."
+        },
+        "despatcher": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Despatcher",
+          "description": "The party who will despatch the goods defined in the invoice."
+        },
+        "receiver": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Receiver",
+          "description": "The party who will receive delivery of the goods defined in the invoice."
+        },
+        "courier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Courier",
+          "description": "The courier responsible for delivering the goods."
+        },
+        "lines": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/line"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "List of lines representing each of the items to be ordered."
+        },
+        "discounts": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/discount"
+          },
+          "type": "array",
+          "title": "Discounts",
+          "description": "Discounts or allowances applied to order totals"
+        },
+        "charges": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/charge"
+          },
+          "type": "array",
+          "title": "Charges",
+          "description": "Charges or surcharges applied to order totals"
+        },
+        "totals": {
+          "$ref": "https://gobl.org/draft-0/bill/totals",
+          "title": "Totals",
+          "description": "Summary of all the order totals, including taxes (calculated).",
+          "calculated": true
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Unstructured information that is relevant to the delivery, such as correction or additional\nlegal details."
+        },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/object"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Additional complementary objects that add relevant information to the delivery."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional semi-structured data that doesn't fit into the body of the delivery."
+        },
+        "attachments": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/attachment"
+          },
+          "type": "array",
+          "title": "Attachments",
+          "description": "Attachments provide additional information or supporting documents that are not included\nin the main document. It is important that attachments are not used for alternative\nversions of the PDF, for that, see \"links\" inside the envelope headers."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "issue_date",
+        "supplier"
+      ],
+      "description": "Delivery document used to describe the delivery of goods or potentially also services.",
+      "recommended": [
+        "$regime",
+        "series",
+        "code",
+        "lines"
+      ]
+    },
+    "Tracking": {
+      "properties": {
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code used for tracking"
+        },
+        "website": {
+          "$ref": "https://gobl.org/draft-0/org/website",
+          "title": "Website",
+          "description": "Website to access for more tracking details"
+        }
+      },
+      "type": "object",
+      "description": "Tracking stores tracking information about a delivery."
+    }
+  }
+}

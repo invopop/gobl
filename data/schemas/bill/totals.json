@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/totals",
+  "$ref": "#/$defs/Totals",
+  "$defs": {
+    "Totals": {
+      "properties": {
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Total of all line item amounts."
+        },
+        "discount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Discount",
+          "description": "Total of all discounts applied at the document level."
+        },
+        "charge": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Charge",
+          "description": "Total of all charges applied at the document level."
+        },
+        "tax_included": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax Included",
+          "description": "Total tax amount included in the prices, if prices are tax-inclusive."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Net total amount after subtracting discounts and adding charges, excluding tax."
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax Totals",
+          "description": "Detailed breakdown of all taxes applied to the invoice."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax",
+          "description": "Total indirect tax amount to be applied to the invoice."
+        },
+        "total_with_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total with Tax",
+          "description": "Final total amount after applying indirect taxes."
+        },
+        "retained_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Retained Tax",
+          "description": "Total tax amount retained or withheld by the customer to be paid to the tax authority."
+        },
+        "rounding": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Rounding",
+          "description": "Adjustment amount applied to the invoice totals to meet rounding rules or expectations."
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable",
+          "description": "Final amount to be paid after retained taxes and rounding adjustments."
+        },
+        "advance": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Advance",
+          "description": "Total amount already paid in advance by the customer."
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due",
+          "description": "Remaining amount that needs to be paid."
+        }
+      },
+      "type": "object",
+      "required": [
+        "sum",
+        "total",
+        "total_with_tax",
+        "payable"
+      ],
+      "description": "Totals contains the summaries of all calculations for the invoice."
+    }
+  }
+}

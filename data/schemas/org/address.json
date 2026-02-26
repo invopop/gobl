@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/address",
+  "$ref": "#/$defs/Address",
+  "$defs": {
+    "Address": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Useful identifier, such as home, work, etc.",
+          "examples": [
+            "Office"
+          ]
+        },
+        "po_box": {
+          "type": "string",
+          "title": "Post Office Box",
+          "description": "Box number or code for the post office box located at the address."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "House or building number in the street."
+        },
+        "floor": {
+          "type": "string",
+          "title": "Floor",
+          "description": "Floor number within the building."
+        },
+        "block": {
+          "type": "string",
+          "title": "Block",
+          "description": "Block number within the building."
+        },
+        "door": {
+          "type": "string",
+          "title": "Door",
+          "description": "Door number within the building."
+        },
+        "street": {
+          "type": "string",
+          "title": "Street",
+          "description": "First line of street."
+        },
+        "street_extra": {
+          "type": "string",
+          "title": "Extended Street",
+          "description": "Additional street address details."
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality",
+          "description": "Name of a village, town, district, or city, typically inside a region."
+        },
+        "region": {
+          "type": "string",
+          "title": "Region",
+          "description": "Name of a city, province, county, or state, inside a country."
+        },
+        "state": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "State",
+          "description": "State or province code for countries that require it."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Post or ZIP code."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
+          "title": "Country",
+          "description": "ISO country code."
+        },
+        "coords": {
+          "$ref": "https://gobl.org/draft-0/org/coordinates",
+          "title": "Coordinates",
+          "description": "When the postal address is not sufficient, coordinates help locate the address more precisely."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional semi-structure details about the address."
+        }
+      },
+      "type": "object",
+      "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address.",
+      "recommended": [
+        "number",
+        "street",
+        "locality",
+        "region",
+        "code",
+        "country"
+      ]
+    }
+  }
+}

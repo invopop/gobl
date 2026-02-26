@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/document-ref",
+  "$ref": "#/$defs/DocumentRef",
+  "$defs": {
+    "DocumentRef": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Schema of the referenced document if different from that of the parent."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Type",
+          "description": "Type of the document referenced according to the defined schema or that of the\nparent document."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "IssueDate reflects the date the document was issued."
+        },
+        "series": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Series",
+          "description": "Series the referenced document belongs to."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Source document's code or other identifier."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency used in the document, if different from the parent's currency."
+        },
+        "lines": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "Line index numbers inside the document, if relevant."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "List of additional codes, IDs, or SKUs which can be used to identify the document or its contents, agreed upon by the supplier and customer."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "Tax period in which the referred document had an effect required by some tax regimes and formats."
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Human readable description on why this reference is here or needs to be used."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Additional details about the document."
+        },
+        "stamps": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/head/stamp"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Seals of approval from other organizations that may need to be listed."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "Link to the source document."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Tax total breakdown from the original document in the provided currency. Should\nonly be included if required by a specific tax regime or addon."
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable",
+          "description": "Payable is the total amount that is payable in the referenced document. Only needed\nfor specific tax regimes or addons. This may also be used in some scenarios\nto determine the proportion of the referenced document that has been paid, and\ncalculate the remaining amount due and taxes."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for additional codes that may be required."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the document."
+        }
+      },
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "description": "DocumentRef is used to describe an existing document or a specific part of it's contents."
+    }
+  }
+}

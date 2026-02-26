@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/catalogue-def",
+  "$ref": "#/$defs/CatalogueDef",
+  "$defs": {
+    "CatalogueDef": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "description": "Key defines a unique identifier for the catalogue."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "description": "Name is the name of the catalogue."
+        },
+        "description": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "description": "Description is a human readable description of the catalogue."
+        },
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "description": "Extensions defines all the extensions offered by the catalogue."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "name",
+        "extensions"
+      ],
+      "description": "A CatalogueDef contains a set of re-useable extensions, scenarios, and validators that can be used by addons or tax regimes."
+    }
+  }
+}
