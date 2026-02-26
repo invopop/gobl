@@ -222,6 +222,7 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
+		validation.Field(&r.Sources),
 		validation.Field(&r.Categories, validation.Required),
 	)
 	return err
