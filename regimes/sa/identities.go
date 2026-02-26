@@ -142,21 +142,13 @@ func validateIdentity(id *org.Identity) error {
 	}
 	switch id.Type {
 	case IdentityTypeCRN:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.Match(crnRegex).Error("must be a 10-digit number")),
-		)
+		return validation.Match(crnRegex).Error("must be a 10-digit number").Validate(id.Code)
 	case IdentityType700:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.Match(num700Regex).Error("must be a 10-digit number starting with 7")),
-		)
+		return validation.Match(num700Regex).Error("must be a 10-digit number starting with 7").Validate(id.Code)
 	case IdentityTypeNAT:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.Match(natRegex).Error("must be a 10-digit number starting with 1")),
-		)
+		return validation.Match(natRegex).Error("must be a 10-digit number starting with 1").Validate(id.Code)
 	case IdentityTypeIQA:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.Match(iqaRegex).Error("must be a 10-digit number starting with 2")),
-		)
+		return validation.Match(iqaRegex).Error("must be a 10-digit number starting with 2").Validate(id.Code)
 	default:
 		return nil
 	}
