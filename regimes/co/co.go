@@ -57,7 +57,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf",
 			},
 		},
-		TimeZone: "America/Bogota",
+		TimeZone:   "America/Bogota",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{

@@ -81,7 +81,7 @@ func New() *tax.RegimeDef {
 				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf",
 			},
 		},
-		TimeZone: "America/Mexico_City",
+		TimeZone:    "America/Mexico_City",
 		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories,

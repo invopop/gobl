@@ -63,7 +63,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.agenziaentrate.gov.it/portale/documents/20143/451259/Guida_compilazione-FE-Esterometro-V_1.9_2024-03-05.pdf",
 			},
 		},
-		TimeZone: "Europe/Rome",
+		TimeZone:   "Europe/Rome",
 		Identities: identityKeyDefinitions, // identities.go
 		Scenarios:  scenarios,              // scenarios.go
 		Validator:  Validate,
