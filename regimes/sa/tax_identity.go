@@ -27,5 +27,9 @@ var (
 
 // validateTaxIdentity checks to ensure the SA TIN format is correct.
 func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.Match(tinRegex).Error("must be a 15-digit number starting and ending with 3").Validate(&tID.Code)
+	return validation.ValidateStruct(tID,
+		validation.Field(&tID.Code,
+			validation.Match(tinRegex).Error("must be a 15-digit number starting and ending with 3"),
+		),
+	)
 }
