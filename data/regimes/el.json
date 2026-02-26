@@ -4,6 +4,23 @@
     "el": "Ελλάδα",
     "en": "Greece"
   },
+  "description": {
+    "en": "Greece's tax system is administered by the Independent Authority for Public\nRevenue (IAPR / AADE). As an EU member state, Greece follows the EU VAT\nDirective with locally adapted rates.\n\nFPA (Fóros Prostithémenis Axías) applies at standard, reduced, and\nsuper-reduced rates. The islands of Leros, Lesbos, Kos, Samos, and Chios\nbenefit from a reduction on all standard rates.\n\nBusinesses are identified by their AFM (Arithmós Forologikoú Mitróou), a\n9-digit tax identification number. The Greek VAT number uses the format EL\nfollowed by the 9-digit AFM.\n\nGreece uses the myDATA platform for tax reporting, where invoices must be\nclassified with specific invoice type codes, VAT category codes, income\nclassifications, and exemption codes. Payment method codes must also be\nreported. PEPPOL BIS Billing 3.0 is used for B2G e-invoicing. Credit notes\nare supported for invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "myDATA API Documentation v1.0.7"
+      },
+      "url": "https://www.aade.gr/sites/default/files/2023-10/myDATA%20API%20Documentation_v1.0.7_eng.pdf"
+    },
+    {
+      "title": {
+        "en": "Greek PEPPOL BIS Billing 3.0"
+      },
+      "url": "https://www.gsis.gr/sites/default/files/eInvoice/Instructions%20to%20B2G%20Suppliers%20and%20certified%20PEPPOL%20Providers%20for%20the%20Greek%20PEPPOL%20BIS-EN-%20v1.0.pdf"
+    }
+  ],
   "time_zone": "Europe/Athens",
   "country": "EL",
   "alt_country_codes": [

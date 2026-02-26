@@ -3,6 +3,17 @@
   "name": {
     "en": "Austria"
   },
+  "description": {
+    "en": "Austria's tax system is administered by the Federal Ministry of\nFinance (Bundesministerium für Finanzen). As an EU member state,\nAustria follows the EU VAT Directive with standard, reduced, and\nintermediate rates.\n\nVAT (Umsatzsteuer, USt) applies to most goods and services.\nBusinesses are identified by their UID-Nummer (VAT identification\nnumber) in the format ATU followed by 8 digits. Austria supports\ncredit notes for invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "E-Rechnung - Austrian E-Invoicing"
+      },
+      "url": "https://www.erechnung.gv.at/erb"
+    }
+  ],
   "time_zone": "Europe/Vienna",
   "country": "AT",
   "currency": "EUR",

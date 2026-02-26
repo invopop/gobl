@@ -24,24 +24,31 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Singapore",
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("IRAS - GST General Guide for Businesses"),
+				URL:   "https://www.iras.gov.sg/media/docs/default-source/e-tax/etaxguide_gst_gst-general-guide-for-businesses(1).pdf",
+			},
+		},
 		TimeZone: "Asia/Singapore",
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
+				Singapore's tax system includes a Goods and Services Tax (GST) administered
+				by the Inland Revenue Authority of Singapore (IRAS). Zero-rated supplies apply
+				to international services and exports. Exempt supplies include financial
+				services, sale and lease of residential properties, digital payment tokens,
+				and investment precious metals.
 
-				For GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:
+				Businesses are identified by their Unique Entity Number (UEN). GST-registered
+				suppliers must display their GST Registration Number on all tax invoices,
+				which in most cases is the same as the UEN.
 
-				1. The supply must be made in Singapore
-				2. The supply is a taxable supply
-				3. The supply is made by a taxable person
-				4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
-
-				GST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:
-
-				1. Importation of investment precious metals.
-				2. Importation of goods that are specifically given GST reliefs5 under the GST Act.
-				3. Importation of goods into Zero-GST/Licensed warehouses administered by Singapore Customs.
-				4. Importation of goods by GST-registered businesses that are under Major Exporter Scheme or other approved schemes.
+				Three invoicing methods are supported: tax invoices (standard, requiring full
+				supplier and customer details), simplified tax invoices (for transactions
+				up to 1000 SGD inclusive of GST), and receipts (for non-GST-registered
+				customers). Credit notes are supported for correcting invoices; debit notes
+				in Singapore are used for requesting payment on non-GST transactions, not
+				for invoice corrections.
 			`),
 		},
 		Identities: identityDefinitions, // identities.go

@@ -4,6 +4,29 @@
     "en": "Mexico",
     "es": "México"
   },
+  "description": {
+    "en": "Mexico's tax system is administered by the SAT (Servicio de Administración\nTributaria). Electronic invoicing through CFDI (Comprobante Fiscal Digital por\nInternet) version 4.0 is mandatory for all businesses.\n\nIVA (Impuesto al Valor Agregado) applies at general, zero, and exempt rates.\nZero-rated supplies include food, medicine, and exports, while educational\nand medical services are exempt.\n\nBusinesses are identified by their RFC (Registro Federal de Contribuyentes),\na 12-character code for companies or 13-character code for individuals, which\nincludes a date component and check digits. Every supplier and customer must\nbe associated with a fiscal regime code (RegimenFiscal).\n\nCFDI invoices require specific fields including issue place (LugarExpedicion),\nCFDI use (UsoCFDI), payment method (MetodoPago distinguishing between fully\npaid PUE and pending PPD invoices), payment means (FormaPago), and\nproduct/service codes (ClaveProdServ) from the SAT catalog. For B2C sales,\nthe simplified tag triggers use of the generic RFC code for final consumers.\nFor foreign customers, their country and local tax code are mapped\nautomatically. Invoices can include complements for fuel account balances and\nfood vouchers among others."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SAT - Anexo 20 (Invoice Format)"
+      },
+      "url": "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm"
+    },
+    {
+      "title": {
+        "en": "SAT - CFDI 4.0 Filling Guide"
+      },
+      "url": "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/Anexo_20_Guia_de_llenado_CFDI.pdf"
+    },
+    {
+      "title": {
+        "en": "SAT - Global CFDI 4.0 Filling Guide"
+      },
+      "url": "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf"
+    }
+  ],
   "time_zone": "America/Mexico_City",
   "country": "MX",
   "currency": "MXN",
