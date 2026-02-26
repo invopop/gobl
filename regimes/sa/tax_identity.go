@@ -15,7 +15,7 @@ import (
 //
 //   - Position 1:     GCC member state code (always 3 for Saudi Arabia)
 //   - Positions 2-9:  Taxpayer serial number
-//   - Position 10:    Check digit
+//   - Position 10:    Check digit (algorithm undisclosed)
 //   - Positions 11-13: Subsidiary/branch code
 //   - Positions 14-15: Tax type indicator
 
