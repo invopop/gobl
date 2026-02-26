@@ -36,7 +36,7 @@
           },
           "type": "array",
           "title": "Sources",
-          "description": "Where the information was sourced from."
+          "description": "Where the information was sourced from and where it can be reviewed for updates in the future."
         },
         "values": {
           "items": {
