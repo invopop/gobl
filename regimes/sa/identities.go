@@ -143,65 +143,21 @@ func validateIdentity(id *org.Identity) error {
 	switch id.Type {
 	case IdentityTypeCRN:
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validateCRNCode)),
+			validation.Field(&id.Code, validation.Match(crnRegex).Error("must be a 10-digit number")),
 		)
 	case IdentityType700:
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validate700Code)),
+			validation.Field(&id.Code, validation.Match(num700Regex).Error("must be a 10-digit number starting with 7")),
 		)
 	case IdentityTypeNAT:
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validateNATCode)),
+			validation.Field(&id.Code, validation.Match(natRegex).Error("must be a 10-digit number starting with 1")),
 		)
 	case IdentityTypeIQA:
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validateIQACode)),
+			validation.Field(&id.Code, validation.Match(iqaRegex).Error("must be a 10-digit number starting with 2")),
 		)
 	default:
 		return nil
 	}
-}
-
-func validateCRNCode(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	if !crnRegex.MatchString(code.String()) {
-		return validation.NewError("validation_crn_format", "must be a 10-digit number")
-	}
-	return nil
-}
-
-func validate700Code(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	if !num700Regex.MatchString(code.String()) {
-		return validation.NewError("validation_700_format", "must be a 10-digit number starting with 7")
-	}
-	return nil
-}
-
-func validateNATCode(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	if !natRegex.MatchString(code.String()) {
-		return validation.NewError("validation_nat_format", "must be a 10-digit number starting with 1")
-	}
-	return nil
-}
-
-func validateIQACode(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	if !iqaRegex.MatchString(code.String()) {
-		return validation.NewError("validation_iqa_format", "must be a 10-digit number starting with 2")
-	}
-	return nil
 }

@@ -28,8 +28,7 @@ var taxCategories = []*tax.CategoryDef{
 				URL: "https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/What-is-e-invoicing.aspx",
 			},
 		},
-		Retained: false,
-		Keys:     tax.GlobalVATKeys(),
+		Keys: tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
