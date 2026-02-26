@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `sa`: New Saudi Arabia tax regime with 15% VAT, TIN validation, seller/buyer identity types, and invoice validation rules (BR-KSA-39, BR-KSA-42, BR-KSA-81)
+
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`

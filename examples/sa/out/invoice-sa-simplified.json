@@ -1,0 +1,114 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4572c87dfde3ec62ea6cac804e002545de905f66251a027cc3713a35d9b09069"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852b1",
+		"type": "standard",
+		"series": "POS",
+		"code": "042",
+		"issue_date": "2024-02-15",
+		"currency": "SAR",
+		"tax": {},
+		"supplier": {
+			"name": "Quick Mart",
+			"tax_id": {
+				"country": "SA",
+				"code": "300075588700003"
+			},
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "1234567890"
+				}
+			],
+			"addresses": [
+				{
+					"street": "Olaya Street",
+					"locality": "Riyadh",
+					"code": "12211",
+					"country": "SA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Bottled water (pack)",
+					"price": "5.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "10.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Sandwich",
+					"price": "15.00"
+				},
+				"sum": "15.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "15.00"
+			}
+		],
+		"totals": {
+			"sum": "25.00",
+			"total": "25.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "25.00",
+								"percent": "15.0%",
+								"amount": "3.75"
+							}
+						],
+						"amount": "3.75"
+					}
+				],
+				"sum": "3.75"
+			},
+			"tax": "3.75",
+			"total_with_tax": "28.75",
+			"payable": "28.75"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "simplified",
+				"text": "Simplified Tax Invoice / فاتورة ضريبية مبسطة"
+			}
+		]
+	}
+}

@@ -1,0 +1,113 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1e5a94775ab2fc2287f0d09f8d01b6d8cfce71d228a5f3d2d6c0c3e58fc9b938"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a4",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2024-02-15",
+		"currency": "SAR",
+		"supplier": {
+			"name": "Healthcare Provider Co.",
+			"tax_id": {
+				"country": "SA",
+				"code": "300075588700003"
+			},
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "1234567890"
+				}
+			],
+			"addresses": [
+				{
+					"street": "King Abdulaziz Road",
+					"locality": "Riyadh",
+					"code": "12211",
+					"country": "SA"
+				}
+			]
+		},
+		"customer": {
+			"name": "National Hospital Group",
+			"tax_id": {
+				"country": "SA",
+				"code": "310122393500003"
+			},
+			"addresses": [
+				{
+					"street": "Prince Sultan Street",
+					"locality": "Jeddah",
+					"code": "21462",
+					"country": "SA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Medical consultation",
+					"price": "200.00"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "2000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Laboratory tests",
+					"price": "500.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "2500.00",
+			"total": "2500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "2500.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "2500.00",
+			"payable": "2500.00"
+		}
+	}
+}
