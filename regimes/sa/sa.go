@@ -52,9 +52,6 @@ func New() *tax.RegimeDef {
 				are required on standard B2B invoices (BR-KSA-42, BR-KSA-81), while simplified B2C
 				invoices skip customer requirements.
 
-				ZATCA Phase 2 e-invoicing compliance (Fatoora platform, XML signing, QR codes) is
-				supported through the sa-zatca-v2 addon, which provides UNTDID 5305 tax category
-				mappings, document type scenarios, and VATEX-SA exemption reason codes.
 			`),
 		},
 		TimeZone:   "Asia/Riyadh",

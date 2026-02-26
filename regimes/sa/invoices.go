@@ -21,8 +21,7 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			// NOTE: BR-KSA-25 requires buyer name and National ID on simplified
 			// invoices for education (VATEX-SA-EDU) and healthcare (VATEX-SA-HEA)
-			// exemptions. This is handled by the ZATCA addon which defines
-			// the VATEX-SA extension codes.
+			// exemptions when VATEX-SA extension codes are used.
 			validation.Skip,
 		),
 	)
