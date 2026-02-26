@@ -2,6 +2,7 @@ package nz
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -31,16 +32,18 @@ func validateInvoice(inv *bill.Invoice) error {
 
 func validateInvoiceSupplier(inv *bill.Invoice) validation.RuleFunc {
 	return func(value any) error {
+		nzdTotal, err := getNZDTotal(inv)
+		if err != nil {
+			return err
+		}
 		p, ok := value.(*org.Party)
 		if !ok || p == nil {
-			return nil
+			if nzdTotal.IsZero() || nzdTotal.Compare(threshold200) <= 0 {
+				return nil
+			}
+			return validation.NewError("validation_supplier_missing", "supplier details required for invoices > $200")
 		}
-
-		if inv.Totals == nil {
-			return validation.NewError("validation_totals_missing", "invoice totals must be calculated before NZ regime validation")
-		}
-		total := inv.Totals.TotalWithTax
-		if total.IsZero() || total.Compare(threshold200) <= 0 {
+		if nzdTotal.IsZero() || nzdTotal.Compare(threshold200) <= 0 {
 			return nil
 		}
 
@@ -55,16 +58,18 @@ func validateInvoiceSupplier(inv *bill.Invoice) validation.RuleFunc {
 
 func validateInvoiceCustomer(inv *bill.Invoice) validation.RuleFunc {
 	return func(value any) error {
+		nzdTotal, err := getNZDTotal(inv)
+		if err != nil {
+			return err
+		}
 		p, ok := value.(*org.Party)
 		if !ok || p == nil {
-			return nil
+			if nzdTotal.IsZero() || nzdTotal.Compare(threshold1000) <= 0 {
+				return nil
+			}
+			return validation.NewError("validation_customer_missing", "customer details required for invoices > $1,000")
 		}
-
-		if inv.Totals == nil {
-			return validation.NewError("validation_totals_missing", "invoice totals must be calculated before NZ regime validation")
-		}
-		total := inv.Totals.TotalWithTax
-		if total.IsZero() || total.Compare(threshold1000) <= 0 {
+		if nzdTotal.IsZero() || nzdTotal.Compare(threshold1000) <= 0 {
 			return nil
 		}
 
@@ -111,4 +116,19 @@ func hasCustomerIdentifier(p *org.Party) bool {
 		return true
 	}
 	return false
+}
+
+func getNZDTotal(inv *bill.Invoice) (*num.Amount, error) {
+	if inv.Totals == nil {
+		return nil, validation.NewError("validation_totals_missing", "invoice totals must be calculated before NZ regime validation")
+	}
+	total := inv.Totals.TotalWithTax
+	if inv.Currency == "NZD" {
+		return &total, nil
+	}
+	nzdTotal := currency.Convert(inv.ExchangeRates, inv.Currency, currency.NZD, total)
+	if nzdTotal == nil {
+		return nil, validation.NewError("validation_currency_conversion", "cannot convert invoice total to NZD for threshold validation")
+	}
+	return nzdTotal, nil
 }

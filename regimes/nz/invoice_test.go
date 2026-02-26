@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -219,19 +220,33 @@ func TestNilInvoice(t *testing.T) {
 }
 
 func TestInvoiceWithNilSupplier(t *testing.T) {
-	inv := validInvoice("500.00")
+	inv := validInvoice("150.00")
 	require.NoError(t, inv.Calculate())
 	inv.Supplier = nil
 	err := nz.Validate(inv)
-	assert.NoError(t, err, "nil supplier should not cause panic")
+	assert.NoError(t, err, "nil supplier should not cause error below threshold")
+
+	inv = validInvoice("500.00")
+	require.NoError(t, inv.Calculate())
+	inv.Supplier = nil
+	err = nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "supplier details required for invoices > $200")
 }
 
 func TestInvoiceWithNilCustomer(t *testing.T) {
-	inv := validInvoice("1500.00")
+	inv := validInvoice("500.00")
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
 	err := nz.Validate(inv)
-	assert.NoError(t, err, "nil customer should not cause panic")
+	assert.NoError(t, err, "nil customer should not cause error below threshold")
+
+	inv = validInvoice("1500.00")
+	inv.Customer = nil
+	require.NoError(t, inv.Calculate())
+	err = nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "customer details required for invoices > $1,000")
 }
 
 func TestInvoiceWithEmptyTaxID(t *testing.T) {
@@ -260,4 +275,60 @@ func TestValidateInvoiceCustomerTotalsNil(t *testing.T) {
 	err := nz.Validate(inv)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invoice totals must be calculated before NZ regime validation")
+}
+
+func TestSupplierThresholdWithForeignCurrencyConvertible(t *testing.T) {
+	inv := validInvoice("150.00")
+	inv.Currency = "USD"
+	inv.ExchangeRates = []*currency.ExchangeRate{
+		{
+			From:   "USD",
+			To:     "NZD",
+			Amount: num.MakeAmount(170, 2), // 1 USD = 1.70 NZD
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	// $150 USD * 1.70 = $255 NZD, should require GST number
+	inv.Supplier.TaxID = nil
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "supplier must have GST number for invoices > $200")
+}
+
+func TestSupplierThresholdWithForeignCurrencyNoRate(t *testing.T) {
+	inv := validInvoice("150.00")
+	inv.Currency = "USD"
+	inv.ExchangeRates = nil // No exchange rate provided
+	require.NoError(t, inv.Calculate())
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot convert invoice total to NZD for threshold validation")
+}
+
+func TestCustomerThresholdWithForeignCurrencyConvertible(t *testing.T) {
+	inv := validInvoice("1000.00")
+	inv.Currency = "EUR"
+	inv.ExchangeRates = []*currency.ExchangeRate{
+		{
+			From:   "EUR",
+			To:     "NZD",
+			Amount: num.MakeAmount(200, 2), // 1 EUR = 2.00 NZD
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	// €1000 * 2.00 = $2000 NZD, should require customer name/identifier
+	inv.Customer.Name = ""
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "customer name required for invoices > $1,000")
+}
+
+func TestCustomerThresholdWithForeignCurrencyNoRate(t *testing.T) {
+	inv := validInvoice("1000.00")
+	inv.Currency = "EUR"
+	inv.ExchangeRates = nil // No exchange rate provided
+	require.NoError(t, inv.Calculate())
+	err := nz.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot convert invoice total to NZD for threshold validation")
 }
