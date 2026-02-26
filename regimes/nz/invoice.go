@@ -50,7 +50,10 @@ func validateInvoiceSupplier(inv *bill.Invoice) validation.RuleFunc {
 		return validation.ValidateStruct(p,
 			validation.Field(&p.TaxID,
 				validation.Required.Error("supplier must have GST number for invoices > $200"),
-				tax.RequireIdentityCode,
+				validation.By(func(value any) error {
+					tID, _ := value.(*tax.Identity)
+					return validateTaxIdentity(tID)
+				}),
 			),
 		)
 	}

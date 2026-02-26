@@ -258,7 +258,7 @@ func TestInvoiceWithEmptyTaxID(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err := nz.Validate(inv)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "cannot be blank")
+	assert.Contains(t, err.Error(), "tax identity code is required")
 }
 
 func TestValidateInvoiceSupplierTotalsNil(t *testing.T) {

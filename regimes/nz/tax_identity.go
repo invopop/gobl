@@ -19,6 +19,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	}
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
+			validation.Required.Error("tax identity code is required"),
 			validation.Match(irdRegex).Error("must be 8 or 9 digits"),
 		),
 	)
