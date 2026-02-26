@@ -122,7 +122,7 @@ func TestStandardInvoiceWithCustomerIdentity(t *testing.T) {
 		Name: "Buyer Co.",
 		Identities: []*org.Identity{
 			{
-				Type: sa.IdentityTypeNAT,
+				Type: sa.IdentityTypeCRN,
 				Code: "1234567890",
 			},
 		},

@@ -10,9 +10,13 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Party identification scheme codes for seller (BT-29-1) and buyer (BT-46-1).
+// Seller identification scheme codes used for Saudi business registrations.
+//
+// Source: ZATCA XML Implementation Standard v1.2
+// https://zatca.gov.sa/ar/E-Invoicing/SystemsDevelopers/Documents/20230519_ZATCA_Electronic_Invoice_XML_Implementation_Standard_%20vF.pdf
 const (
-	// IdentityTypeCRN is the Commercial Registration Number (10 digits).
+	// IdentityTypeCRN is the Commercial Registration Number (10 digits)
+	// issued by the Ministry of Commerce.
 	IdentityTypeCRN cbc.Code = "CRN"
 	// IdentityTypeMOM is a MOMRAH / Ministry of Municipalities and Housing license.
 	IdentityTypeMOM cbc.Code = "MOM"
@@ -22,25 +26,11 @@ const (
 	IdentityType700 cbc.Code = "700"
 	// IdentityTypeSAG is a MISA / Ministry of Investment license.
 	IdentityTypeSAG cbc.Code = "SAG"
-	// IdentityTypeNAT is the Saudi National ID (10 digits starting with 1).
-	IdentityTypeNAT cbc.Code = "NAT"
-	// IdentityTypeIQA is the Iqama residency permit (10 digits starting with 2).
-	IdentityTypeIQA cbc.Code = "IQA"
-	// IdentityTypePAS is a passport number.
-	IdentityTypePAS cbc.Code = "PAS"
-	// IdentityTypeGCC is a GCC member state national ID.
-	IdentityTypeGCC cbc.Code = "GCC"
-	// IdentityTypeTIN is a Tax Identification Number (buyer-only).
-	IdentityTypeTIN cbc.Code = "TIN"
-	// IdentityTypeOTH is any other form of identification.
-	IdentityTypeOTH cbc.Code = "OTH"
 )
 
 var (
 	crnRegex    = regexp.MustCompile(`^\d{10}$`)
 	num700Regex = regexp.MustCompile(`^7\d{9}$`)
-	natRegex    = regexp.MustCompile(`^1\d{9}$`)
-	iqaRegex    = regexp.MustCompile(`^2\d{9}$`)
 )
 
 var identityDefinitions = []*cbc.Definition{
@@ -79,48 +69,6 @@ var identityDefinitions = []*cbc.Definition{
 			i18n.AR: "ترخيص وزارة الاستثمار",
 		},
 	},
-	{
-		Code: IdentityTypeNAT,
-		Name: i18n.String{
-			i18n.EN: "National ID",
-			i18n.AR: "الهوية الوطنية",
-		},
-	},
-	{
-		Code: IdentityTypeIQA,
-		Name: i18n.String{
-			i18n.EN: "Iqama",
-			i18n.AR: "الإقامة",
-		},
-	},
-	{
-		Code: IdentityTypePAS,
-		Name: i18n.String{
-			i18n.EN: "Passport",
-			i18n.AR: "جواز السفر",
-		},
-	},
-	{
-		Code: IdentityTypeGCC,
-		Name: i18n.String{
-			i18n.EN: "GCC ID",
-			i18n.AR: "هوية مواطني دول مجلس التعاون",
-		},
-	},
-	{
-		Code: IdentityTypeTIN,
-		Name: i18n.String{
-			i18n.EN: "Tax Identification Number",
-			i18n.AR: "رقم التعريف الضريبي",
-		},
-	},
-	{
-		Code: IdentityTypeOTH,
-		Name: i18n.String{
-			i18n.EN: "Other ID",
-			i18n.AR: "هوية أخرى",
-		},
-	},
 }
 
 // normalizeIdentity removes non-alphanumeric characters from identity codes.
@@ -129,7 +77,7 @@ func normalizeIdentity(id *org.Identity) {
 		return
 	}
 	switch id.Type {
-	case IdentityTypeCRN, IdentityType700, IdentityTypeNAT, IdentityTypeIQA:
+	case IdentityTypeCRN, IdentityType700:
 		code := tax.IdentityCodeBadCharsRegexp.ReplaceAllString(id.Code.String(), "")
 		id.Code = cbc.Code(code)
 	}
@@ -145,10 +93,6 @@ func validateIdentity(id *org.Identity) error {
 		return validation.Match(crnRegex).Error("must be a 10-digit number").Validate(id.Code)
 	case IdentityType700:
 		return validation.Match(num700Regex).Error("must be a 10-digit number starting with 7").Validate(id.Code)
-	case IdentityTypeNAT:
-		return validation.Match(natRegex).Error("must be a 10-digit number starting with 1").Validate(id.Code)
-	case IdentityTypeIQA:
-		return validation.Match(iqaRegex).Error("must be a 10-digit number starting with 2").Validate(id.Code)
 	default:
 		return nil
 	}

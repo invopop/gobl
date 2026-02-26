@@ -14,12 +14,6 @@ func TestIdentityTypeDefinitions(t *testing.T) {
 	assert.Equal(t, "MLS", string(sa.IdentityTypeMLS))
 	assert.Equal(t, "700", string(sa.IdentityType700))
 	assert.Equal(t, "SAG", string(sa.IdentityTypeSAG))
-	assert.Equal(t, "NAT", string(sa.IdentityTypeNAT))
-	assert.Equal(t, "IQA", string(sa.IdentityTypeIQA))
-	assert.Equal(t, "PAS", string(sa.IdentityTypePAS))
-	assert.Equal(t, "GCC", string(sa.IdentityTypeGCC))
-	assert.Equal(t, "TIN", string(sa.IdentityTypeTIN))
-	assert.Equal(t, "OTH", string(sa.IdentityTypeOTH))
 }
 
 func TestValidateIdentity(t *testing.T) {
@@ -66,45 +60,6 @@ func TestValidateIdentity(t *testing.T) {
 				Code: "",
 			},
 		},
-		// NAT validation
-		{
-			name: "valid NAT",
-			identity: &org.Identity{
-				Type: "NAT",
-				Code: "1234567890",
-			},
-		},
-		{
-			name: "NAT wrong start digit",
-			identity: &org.Identity{
-				Type: "NAT",
-				Code: "2234567890",
-			},
-			err: "must be a 10-digit number starting with 1",
-		},
-		{
-			name: "NAT too short",
-			identity: &org.Identity{
-				Type: "NAT",
-				Code: "123456789",
-			},
-			err: "must be a 10-digit number starting with 1",
-		},
-		{
-			name: "NAT too long",
-			identity: &org.Identity{
-				Type: "NAT",
-				Code: "12345678901",
-			},
-			err: "must be a 10-digit number starting with 1",
-		},
-		{
-			name: "NAT empty code",
-			identity: &org.Identity{
-				Type: "NAT",
-				Code: "",
-			},
-		},
 		// 700 validation
 		{
 			name: "valid 700",
@@ -144,64 +99,25 @@ func TestValidateIdentity(t *testing.T) {
 				Code: "",
 			},
 		},
-		// IQA validation
+		// Other types skip validation
 		{
-			name: "valid IQA",
+			name: "MOM skips validation",
 			identity: &org.Identity{
-				Type: "IQA",
-				Code: "2345678901",
-			},
-		},
-		{
-			name: "IQA wrong start digit",
-			identity: &org.Identity{
-				Type: "IQA",
-				Code: "1345678901",
-			},
-			err: "must be a 10-digit number starting with 2",
-		},
-		{
-			name: "IQA too short",
-			identity: &org.Identity{
-				Type: "IQA",
-				Code: "234567890",
-			},
-			err: "must be a 10-digit number starting with 2",
-		},
-		{
-			name: "IQA too long",
-			identity: &org.Identity{
-				Type: "IQA",
-				Code: "23456789012",
-			},
-			err: "must be a 10-digit number starting with 2",
-		},
-		// PAS, GCC, OTH skip validation
-		{
-			name: "PAS skips validation",
-			identity: &org.Identity{
-				Type: "PAS",
-				Code: "AB1234567",
-			},
-		},
-		{
-			name: "GCC skips validation",
-			identity: &org.Identity{
-				Type: "GCC",
-				Code: "GCC-12345",
-			},
-		},
-		{
-			name: "OTH skips validation",
-			identity: &org.Identity{
-				Type: "OTH",
+				Type: "MOM",
 				Code: "anything",
 			},
 		},
 		{
-			name: "non-CRN identity skips validation",
+			name: "MLS skips validation",
 			identity: &org.Identity{
-				Type: "MOM",
+				Type: "MLS",
+				Code: "anything",
+			},
+		},
+		{
+			name: "SAG skips validation",
+			identity: &org.Identity{
+				Type: "SAG",
 				Code: "anything",
 			},
 		},
@@ -249,15 +165,6 @@ func TestNormalizeIdentity(t *testing.T) {
 		assert.Equal(t, "1234567890", id.Code.String())
 	})
 
-	t.Run("normalize NAT with bad chars", func(t *testing.T) {
-		id := &org.Identity{
-			Type: sa.IdentityTypeNAT,
-			Code: "1-234-567 890",
-		}
-		r.NormalizeObject(id)
-		assert.Equal(t, "1234567890", id.Code.String())
-	})
-
 	t.Run("normalize 700 with bad chars", func(t *testing.T) {
 		id := &org.Identity{
 			Type: sa.IdentityType700,
@@ -267,30 +174,12 @@ func TestNormalizeIdentity(t *testing.T) {
 		assert.Equal(t, "7000012345", id.Code.String())
 	})
 
-	t.Run("normalize IQA with bad chars", func(t *testing.T) {
-		id := &org.Identity{
-			Type: sa.IdentityTypeIQA,
-			Code: "2-345.678 901",
-		}
-		r.NormalizeObject(id)
-		assert.Equal(t, "2345678901", id.Code.String())
-	})
-
-	t.Run("non-CRN not normalized", func(t *testing.T) {
+	t.Run("MOM not normalized", func(t *testing.T) {
 		id := &org.Identity{
 			Type: sa.IdentityTypeMOM,
 			Code: "12-345",
 		}
 		r.NormalizeObject(id)
 		assert.Equal(t, "12-345", id.Code.String())
-	})
-
-	t.Run("PAS not normalized", func(t *testing.T) {
-		id := &org.Identity{
-			Type: sa.IdentityTypePAS,
-			Code: "AB-1234",
-		}
-		r.NormalizeObject(id)
-		assert.Equal(t, "AB-1234", id.Code.String())
 	})
 }
