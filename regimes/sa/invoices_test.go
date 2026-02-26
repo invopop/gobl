@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/sa"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -21,12 +20,6 @@ func validInvoice() *bill.Invoice {
 				Country: "SA",
 			},
 			Name: "Test Supplier",
-			Identities: []*org.Identity{
-				{
-					Type: sa.IdentityTypeCRN,
-					Code: "1234567890",
-				},
-			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -57,18 +50,6 @@ func validInvoice() *bill.Invoice {
 
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-}
-
-func TestValidInvoiceWithCRN(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier.Identities = []*org.Identity{
-		{
-			Type: sa.IdentityTypeCRN,
-			Code: "1234567890",
-		},
-	}
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 }
@@ -122,7 +103,6 @@ func TestStandardInvoiceWithCustomerIdentity(t *testing.T) {
 		Name: "Buyer Co.",
 		Identities: []*org.Identity{
 			{
-				Type: sa.IdentityTypeCRN,
 				Code: "1234567890",
 			},
 		},

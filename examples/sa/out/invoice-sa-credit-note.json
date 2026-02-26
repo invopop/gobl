@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "52e053dd1062c03ea8817e1e3811c2357cc46f2ebd5771195fbc1acafa21def9"
+			"val": "ffc88efc3bc52f092207f24ad98d44cb25f90156fdec564d4f3cc1b69a04f389"
 		}
 	},
 	"doc": {
@@ -28,12 +28,6 @@
 				"country": "SA",
 				"code": "300075588700003"
 			},
-			"identities": [
-				{
-					"type": "CRN",
-					"code": "1234567890"
-				}
-			],
 			"addresses": [
 				{
 					"street": "King Fahd Road",

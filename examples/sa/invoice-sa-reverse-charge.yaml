@@ -13,9 +13,6 @@ supplier:
     country: "SA"
     code: "300075588700003"
   name: "Acme Trading Co."
-  identities:
-    - type: "CRN"
-      code: "1234567890"
   addresses:
     - street: "King Fahd Road"
       locality: "Riyadh"

@@ -19,7 +19,6 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, tax.CategoryVAT, r.TaxScheme)
 
 	assert.NotEmpty(t, r.Categories)
-	assert.NotEmpty(t, r.Identities)
 	assert.NotEmpty(t, r.Scenarios)
 	assert.NotEmpty(t, r.Corrections)
 }

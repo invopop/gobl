@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4572c87dfde3ec62ea6cac804e002545de905f66251a027cc3713a35d9b09069"
+			"val": "54654edfb0535f9531da52ba1a86864631e14b538e69489fa432c926854d2ac2"
 		}
 	},
 	"doc": {
@@ -26,12 +26,6 @@
 				"country": "SA",
 				"code": "300075588700003"
 			},
-			"identities": [
-				{
-					"type": "CRN",
-					"code": "1234567890"
-				}
-			],
 			"addresses": [
 				{
 					"street": "Olaya Street",

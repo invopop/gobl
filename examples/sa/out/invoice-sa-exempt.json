@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1e5a94775ab2fc2287f0d09f8d01b6d8cfce71d228a5f3d2d6c0c3e58fc9b938"
+			"val": "173e1442173b117aea9be974e2b37be2fe19bf2725465f33c429076246fd3e88"
 		}
 	},
 	"doc": {
@@ -22,12 +22,6 @@
 				"country": "SA",
 				"code": "300075588700003"
 			},
-			"identities": [
-				{
-					"type": "CRN",
-					"code": "1234567890"
-				}
-			],
 			"addresses": [
 				{
 					"street": "King Abdulaziz Road",
