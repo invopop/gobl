@@ -118,6 +118,48 @@ func TestAmountNewFromString(t *testing.T) {
 	assert.Error(t, err)
 	_, err = num.AmountFromString("1234.bar")
 	assert.Error(t, err)
+
+	// 18 digits (9+9) should succeed without truncation
+	a, err = num.AmountFromString("123456789.123456789")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789.123456789", a.String())
+
+	// 18-digit integer should succeed
+	a, err = num.AmountFromString("123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789012345678", a.String())
+
+	// 19 digits (9+10) should truncate decimal to 9 places
+	a, err = num.AmountFromString("123456789.1234567890")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789.123456789", a.String())
+
+	// Excess decimal digits truncated to fit 18 sig figs
+	a, err = num.AmountFromString("1.12345678901234567890")
+	assert.NoError(t, err)
+	assert.Equal(t, "1.12345678901234567", a.String())
+
+	// 19-digit integer should fail (integer part alone exceeds limit)
+	_, err = num.AmountFromString("1234567890123456789")
+	assert.ErrorContains(t, err, "too many digits (19)")
+
+	// Leading zeros in major part should not count toward digit limit
+	a, err = num.AmountFromString("0.123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "0.123456789012345678", a.String())
+
+	a, err = num.AmountFromString("000123.456")
+	assert.NoError(t, err)
+	assert.Equal(t, "123.456", a.String())
+
+	// Very long integer should fail
+	_, err = num.AmountFromString("99999999999999999999")
+	assert.ErrorContains(t, err, "too many digits")
+
+	// Very long decimal should truncate, not fail
+	a, err = num.AmountFromString("1.99999999999999999999")
+	assert.NoError(t, err)
+	assert.Equal(t, "1.99999999999999999", a.String())
 }
 
 func TestAmountFromFloat64(t *testing.T) {

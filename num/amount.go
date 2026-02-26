@@ -60,6 +60,11 @@ func AmountFromFloat64(val float64, exp uint32) Amount {
 // If you're dealing with numbers from humans which may contain symbols,
 // commas, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
+// maxAmountDigits is the maximum total number of digits (major + decimal)
+// allowed in an amount string. This ensures values fit safely in int64 after
+// the major * 10^exp + decimal combination.
+const maxAmountDigits = 18
+
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
 	n := strings.HasPrefix(val, "-")
@@ -67,6 +72,21 @@ func AmountFromString(val string) (Amount, error) {
 	l := len(x)
 	if l > 2 {
 		return a, fmt.Errorf("amount must contain 0 or 1 decimal separators: %v", val)
+	}
+
+	// Check that the integer part alone doesn't exceed the digit limit.
+	// Leading zeros don't contribute to overflow risk, so we strip them.
+	sigMajor := len(strings.TrimLeft(x[0], "0"))
+	if sigMajor > maxAmountDigits {
+		return a, fmt.Errorf("amount '%v' has too many digits (%d), maximum is %d", val, sigMajor, maxAmountDigits)
+	}
+
+	// Truncate the decimal part so that total significant digits fit in int64.
+	if l == 2 {
+		maxDecimal := maxAmountDigits - sigMajor
+		if len(x[1]) > maxDecimal {
+			x[1] = x[1][:maxDecimal]
+		}
 	}
 
 	// Parse the "major" part
