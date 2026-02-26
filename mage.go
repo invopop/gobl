@@ -3,12 +3,13 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
 )
@@ -18,14 +19,48 @@ const (
 	mainBranch = "main"
 )
 
-// Schema generates the JSON Schema from the base models
-func Schema() error {
-	return errors.New("please now run `go generate .` instead")
+// Lint runs golangci-lint
+func Lint() error {
+	return runQuiet("✓ Lint passed", "golangci-lint", "run")
 }
 
-// Regimes generates JSON version of each regimes's data.
-func Regimes() error {
-	return errors.New("please now run `go generate .` instead")
+// Fix runs golangci-lint with auto-fix
+func Fix() error {
+	return runQuiet("✓ Fix complete", "golangci-lint", "run", "--fix")
+}
+
+// Test runs all tests
+func Test() error {
+	return runQuiet("✓ Tests passed", "go", "test", "./...")
+}
+
+// TestRace runs all tests with the race detector
+func TestRace() error {
+	return runQuiet("✓ Tests passed (race)", "go", "test", "-race", "./...")
+}
+
+// Generate runs go generate
+func Generate() error {
+	return runQuiet("✓ Generate complete", "go", "generate", ".")
+}
+
+// Check runs the full pipeline: lint, generate, test, and verify no uncommitted changes
+func Check() error {
+	if err := Lint(); err != nil {
+		return err
+	}
+	if err := Generate(); err != nil {
+		return err
+	}
+	if err := Test(); err != nil {
+		return err
+	}
+	// Verify generate didn't produce uncommitted changes
+	if err := runQuiet("No uncommitted changes", "git", "diff", "--exit-code"); err != nil {
+		return err
+	}
+	fmt.Println("✓ All checks passed")
+	return nil
 }
 
 // Build the binary
@@ -50,7 +85,7 @@ func build(action string) error {
 	}
 	args = append(args, flags...)
 	args = append(args, "./cmd/"+name)
-	return sh.RunV("go", args...)
+	return runQuiet("✓ "+action+" complete", "go", args...)
 }
 
 func buildFlags() ([]string, error) {
@@ -102,6 +137,22 @@ func uncommittedChanges() bool {
 
 func date() string {
 	return time.Now().UTC().Format(time.RFC3339)
+}
+
+// runQuiet buffers output and only shows it on failure, printing msg on success.
+// Use mage -v to stream everything.
+func runQuiet(msg, cmd string, args ...string) error {
+	if mg.Verbose() {
+		return sh.RunV(cmd, args...)
+	}
+	c := exec.Command(cmd, args...)
+	out, err := c.CombinedOutput()
+	if err != nil {
+		os.Stderr.Write(out)
+		return err
+	}
+	fmt.Println(msg)
+	return nil
 }
 
 func trimOutput(cmd string, args ...string) (string, error) {

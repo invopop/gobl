@@ -1,4 +1,4 @@
-package be
+package dk
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -24,7 +24,7 @@ func validateInvoiceSupplier(value any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.TaxID,
 			validation.When(
-				!hasIdentityBCE(p),
+				!hasIdentityCVR(p),
 				validation.Required,
 				tax.RequireIdentityCode,
 			),
@@ -33,7 +33,7 @@ func validateInvoiceSupplier(value any) error {
 		validation.Field(&p.Identities,
 			validation.When(
 				!hasTaxIDCode(p),
-				org.RequireIdentityType(IdentityTypeBCE),
+				org.RequireIdentityType(IdentityTypeCVR),
 			),
 			validation.Skip,
 		),
@@ -44,9 +44,9 @@ func hasTaxIDCode(party *org.Party) bool {
 	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
-func hasIdentityBCE(party *org.Party) bool {
+func hasIdentityCVR(party *org.Party) bool {
 	if party == nil || len(party.Identities) == 0 {
 		return false
 	}
-	return org.IdentityForType(party.Identities, IdentityTypeBCE) != nil
+	return org.IdentityForType(party.Identities, IdentityTypeCVR) != nil
 }

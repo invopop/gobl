@@ -70,7 +70,7 @@
           },
           "type": "array",
           "title": "Sources",
-          "description": "List of sources for the information contained in this category."
+          "description": "List of sources for the information contained in this category and most importantly,\nan official source where the tax rates can be reviewed and updated in the future."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
@@ -263,15 +263,23 @@
           "title": "Description",
           "description": "Introductory details about the regime."
         },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Sources is a list of references to tax authority or other relevant documentation that\ncan be used to validate the regime's data and be used in the future to check for updates\nand changes."
+        },
         "time_zone": {
           "type": "string",
           "title": "Time Zone",
-          "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones)."
+          "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones). If a country has multiple\ntime zones, the most common or central one should be used."
         },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Code",
-          "description": "Country code for the region"
+          "description": "Country code for tax purposes which usually coincides with the ISO 3166-1 alpha-2 code, but not\nalways."
         },
         "alt_country_codes": {
           "items": {
@@ -299,7 +307,7 @@
         "calculator_rounding_rule": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Calculator Rounding Rule",
-          "description": "Rounding rule to use when calculating the tax totals, default is always\n`sum-then-round`."
+          "description": "Rounding rule to use when calculating the tax totals. See the RoundingRule\nconstants for more details. If not provided, the default is RoundingRulePrecise."
         },
         "tags": {
           "items": {
@@ -346,7 +354,8 @@
             "$ref": "#/$defs/ScenarioSet"
           },
           "type": "array",
-          "title": "Scenarios"
+          "title": "Scenarios",
+          "description": "Scenarios are used to describe a specific set of conditions and rules that apply to a specific\ndocument schema. These provide a more generic solution for normalization and validation of documents\nin regimes with specific requirements."
         },
         "corrections": {
           "$ref": "#/$defs/CorrectionSet",
