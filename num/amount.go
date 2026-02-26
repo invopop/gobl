@@ -21,6 +21,11 @@ type Amount struct {
 	exp   uint32
 }
 
+// maxAmountDigits is the maximum total number of digits (major + decimal)
+// allowed in an amount string. This ensures values fit safely in int64
+// and do not overflow.
+const maxAmountDigits = 18
+
 var (
 	// AmountZero is a convenience variable for testing against zero amounts.
 	AmountZero = MakeAmount(0, 0)
@@ -60,11 +65,6 @@ func AmountFromFloat64(val float64, exp uint32) Amount {
 // If you're dealing with numbers from humans which may contain symbols,
 // commas, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
-// maxAmountDigits is the maximum total number of digits (major + decimal)
-// allowed in an amount string. This ensures values fit safely in int64
-// and do not overflow.
-const maxAmountDigits = 18
-
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
 	n := strings.HasPrefix(val, "-")
