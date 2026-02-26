@@ -1,0 +1,45 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+uuid: 5f4d8351-06e8-4a7f-bf1d-4c6d7db2b1a1
+type: standard
+series: NZ2026
+code: "0001"
+issue_date: "2026-02-21"
+currency: NZD
+
+supplier:
+  name: John Doe Services Ltd
+  tax_id:
+    country: NZ
+    code: "123456789"
+  addresses:
+    - num: "12"
+      street: Lambton Quay
+      locality: Wellington
+      region: Wellington
+      code: "6011"
+      country: NZ
+  emails:
+    - addr: billing@example.nz
+
+customer:
+  name: Alice Retail Ltd
+  tax_id:
+    country: NZ
+    code: "987654321"
+  addresses:
+    - num: "7"
+      street: Queen Street
+      locality: Auckland
+      region: Auckland
+      code: "1010"
+      country: NZ
+
+lines:
+  - i: 1
+    quantity: "8"
+    item:
+      name: Consulting services
+      price: "250.00"
+    taxes:
+      - cat: GST
+        rate: general
