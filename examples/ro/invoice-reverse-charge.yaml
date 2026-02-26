@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+currency: "RON"
+issue_date: "2024-02-13"
+series: "RC"
+code: "001"
+
+tax:
+  tags:
+    - reverse-charge
+
+supplier:
+  tax_id:
+    country: "RO"
+    code: "14399840"
+  name: "Exemplu Furnizor S.R.L."
+  addresses:
+    - street: "Strada Exemplu"
+      num: "10"
+      locality: "București"
+      region: "Sector 1"
+      code: "010101"
+      country: "RO"
+
+customer:
+  tax_id:
+    country: "RO"
+    code: "18547290"
+  name: "Client Test S.R.L."
+  addresses:
+    - street: "Bulevardul Unirii"
+      num: "25"
+      locality: "Cluj-Napoca"
+      code: "400015"
+      country: "RO"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Construction services"
+      price: "25000.00"
+    taxes:
+      - cat: VAT
+        key: reverse-charge
+
+payment:
+  instructions:
+    key: "credit-transfer"
+    credit_transfer:
+      - iban: "RO49AAAA1B31007593840000"
+        name: "Banca Exemplu"

@@ -1,0 +1,36 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "8f2e7c14-3b4a-4d91-a5f6-c7d8e9f01234"
+currency: "RON"
+issue_date: "2024-02-13"
+series: "SIMP"
+code: "001"
+
+tax:
+  tags:
+    - simplified
+
+supplier:
+  tax_id:
+    country: "RO"
+    code: "14399840"
+  name: "Exemplu Furnizor S.R.L."
+  addresses:
+    - street: "Strada Exemplu"
+      num: "10"
+      locality: "București"
+      region: "Sector 1"
+      code: "010101"
+      country: "RO"
+
+lines:
+  - quantity: 2
+    item:
+      name: "Cafea espresso"
+      price: "15.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+payment:
+  instructions:
+    key: "cash"

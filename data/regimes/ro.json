@@ -1,0 +1,199 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Romania",
+    "ro": "România"
+  },
+  "description": {
+    "en": "Romania's tax regime is managed by ANAF (Agenția Națională de\nAdministrare Fiscală). VAT rates as of August 2025 are: standard\n21%, reduced 11%, and super-reduced 11%.\n\nTax identity uses the CUI (Codul Unic de Înregistrare), a 2-10\ndigit number with a weighted checksum, assigned to every business\nupon registration with ONRC regardless of VAT status. The \"RO\"\nprefix indicates VAT registration and is automatically stripped\nduring normalization. Non-VAT-registered businesses (below the\nRON 395,000 annual threshold) still have a CUI and issue invoices\nwithout VAT.\n\nB2B e-invoicing is mandatory via the RO e-Factura system since\nJanuary 2024 using UBL 2.1 format. Corrections support both\ncredit and debit notes. Simplified invoices and reverse charge\nare available via tags."
+  },
+  "time_zone": "Europe/Bucharest",
+  "country": "RO",
+  "currency": "RON",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge / Taxare inversă."
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Factură simplificată / Simplified invoice."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ro": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ro": "Taxa pe valoarea adăugată"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ro": "Cota standard"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "21%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "19%"
+            },
+            {
+              "since": "2016-01-01",
+              "percent": "20%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "24%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ro": "Cota redusă"
+          },
+          "desc": {
+            "en": "Applicable to food, non-alcoholic beverages, hotel accommodation, restaurants, books, newspapers, medical products, and other specified goods and services.",
+            "ro": "Aplicabilă pentru alimente, băuturi nealcoolice, cazare hotelieră, restaurante, cărți, ziare, produse medicale și alte bunuri și servicii specificate."
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "9%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "ro": "Cota super-redusă"
+          },
+          "desc": {
+            "en": "Applicable to social housing, museums, zoos, botanical gardens, historic monuments, and other specified goods and services.",
+            "ro": "Aplicabilă pentru locuințe sociale, muzee, grădini zoologice, grădini botanice, monumente istorice și alte bunuri și servicii specificate."
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "ANAF - Tax rates",
+            "ro": "ANAF - Cote de impozitare"
+          },
+          "url": "https://www.anaf.ro/"
+        }
+      ]
+    }
+  ]
+}
