@@ -1,0 +1,183 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Türkiye",
+    "tr": "Türkiye"
+  },
+  "time_zone": "Europe/Istanbul",
+  "country": "TR",
+  "currency": "TRY",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "tr": "KDV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "tr": "Katma Değer Vergisi"
+      },
+      "desc": {
+        "en": "Known in Turkish as \"Katma Değer Vergisi\" (KDV), governed by Law No. 3065.\nApplies to the supply of goods and services in Türkiye and imports, with three\nrates: standard (20%), reduced (10%) for basic foodstuffs, textiles and books,\nand super-reduced (1%) for certain agricultural products and essential services.\nHistorical rates are recorded back to November 1999.",
+        "tr": "3065 sayılı KDV Kanunu kapsamında mal ve hizmet teslimlerinde uygulanan vergi.\nGenel oran %20, indirimli oran %10 (temel gıda, tekstil, kitap), özel indirimli\noran %1 (bazı tarım ürünleri ve zorunlu hizmetler).\nGeçmiş oranlar Kasım 1999'a kadar kayıtlıdır."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "tr": "Genel Oran"
+          },
+          "values": [
+            {
+              "since": "2023-07-10",
+              "percent": "20%"
+            },
+            {
+              "since": "2001-05-15",
+              "percent": "18%"
+            },
+            {
+              "since": "1999-11-28",
+              "percent": "17%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "tr": "İndirimli Oran"
+          },
+          "desc": {
+            "en": "Applies to goods and services in List No. II of the KDV Law, including basic foodstuffs, textiles, and books.",
+            "tr": "KDV Kanunu'nun II sayılı listesindeki mal ve hizmetlere uygulanır."
+          },
+          "values": [
+            {
+              "since": "2023-07-10",
+              "percent": "10%"
+            },
+            {
+              "since": "1999-11-28",
+              "percent": "8%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "tr": "Özel İndirimli Oran"
+          },
+          "desc": {
+            "en": "Applies to goods and services in List No. I of the KDV Law, including certain agricultural products, bread, and funeral services.",
+            "tr": "KDV Kanunu'nun I sayılı listesindeki mal ve hizmetlere uygulanır."
+          },
+          "values": [
+            {
+              "since": "1999-11-28",
+              "percent": "1%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Revenue Administration",
+            "tr": "Gelir İdaresi Başkanlığı"
+          },
+          "url": "https://www.gib.gov.tr"
+        },
+        {
+          "title": {
+            "en": "Council of Ministers Decree No. 2001/2344 - Standard rate raised from 17% to 18%",
+            "tr": "Bakanlar Kurulu Kararı 2001/2344 - Genel oran %17'den %18'e"
+          },
+          "url": "https://www.alomaliye.com/2001/05/10/bakanlar-kurulu-karari-20012344/"
+        },
+        {
+          "title": {
+            "en": "EY Tax Alert - Türkiye increases VAT rates (Decree No. 7346, July 2023)"
+          },
+          "url": "https://www.ey.com/en_gl/technical/tax-alerts/turkiye-increases-vat-rates-on-goods-and-services"
+        },
+        {
+          "title": {
+            "en": "VAT Rates in Turkey - Global VAT Compliance"
+          },
+          "url": "https://www.globalvatcompliance.com/vat-rates-in-turkey/"
+        }
+      ]
+    }
+  ]
+}
