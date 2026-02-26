@@ -10,6 +10,50 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 
 The preferred language for contributions is English (American).
 
+## Prerequisites
+
+- **Go 1.24+**
+- **[golangci-lint](https://golangci-lint.run/)** for linting and formatting
+- **[Mage](https://magefile.org/)** as the build/task runner (`go install github.com/magefile/mage@latest`)
+- Key dependencies: [invopop/validation](https://github.com/invopop/validation), [invopop/jsonschema](https://github.com/invopop/jsonschema)
+
+## Design Principles
+
+- **Minimum complexity for legal correctness** across jurisdictions — each regime or addon should implement only what the law requires.
+- **Simple > Complex > Complicated.** Readability counts.
+- **Validation is non-negotiable.** The system owns the math; rounding, totals, and tax calculations must be deterministic and correct.
+- **JSON-native, not XML.** GOBL is designed around JSON from the ground up. XML conversion is handled by companion projects.
+- **Fight entropy.** Leave the codebase better than you found it. Follow the DRY principle.
+
+## Architecture
+
+### Registration
+
+Regimes and addons self-register via `init()` functions:
+
+- **Regimes** call `tax.RegisterRegimeDef(New())` in their `init()` — see [`regimes/template/template.go`](regimes/template/template.go) for the pattern.
+- **Addons** call `tax.RegisterAddonDef(newAddon())` in their `init()`.
+- Aggregation is via blank imports in [`regimes/regimes.go`](regimes/regimes.go) and [`addons/addons.go`](addons/addons.go).
+
+### Normalizer / Validator Dispatch
+
+Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the appropriate handler based on the document type. See the `Normalize` and `Validate` functions in [`regimes/template/template.go`](regimes/template/template.go).
+
+### Scenarios
+
+Scenarios auto-inject notes, codes, or extensions based on document state (e.g., tax tags, document type). They are defined per-regime or per-addon in `scenarios.go`.
+
+### Extension Keys
+
+Extension keys follow the naming convention `<country>-<platform>-description` (e.g., `es-tbai-product`). They are defined as `cbc.Key` constants.
+
+### JSON Schema
+
+Types can customize their JSON Schema output:
+
+- `JSONSchema() *jsonschema.Schema` — full override of the generated schema.
+- `JSONSchemaExtend(s *jsonschema.Schema)` — augment the auto-generated schema (e.g., add enum values).
+
 ## Key Directories
 
 The GOBL repository is organized into key directories, each serving a distinct role:
@@ -44,22 +88,31 @@ Each directory is designed to encapsulate a specific aspect of GOBL, making it e
 
 ## Development
 
-GOBL uses the `go generate` command to automatically generate JSON schemas, definitions, and some Go code output. After any changes, be sure to run:
+GOBL uses [Mage](https://magefile.org/) as its build/task runner. Run `mage -l` to see all available targets.
+
+Common commands:
 
 ```bash
-go generate .
+mage generate   # Regenerate JSON schemas, definitions, and Go code
+mage lint       # Run golangci-lint
+mage fix        # Run golangci-lint with auto-fix
+mage test       # Run all tests
+mage testrace   # Run all tests with the race detector
+mage build      # Build the CLI binary
+mage install    # Install the CLI binary
+mage check      # Full pipeline: lint + generate + test + verify no uncommitted changes
+```
+
+To test a single regime or addon:
+
+```bash
+go test ./regimes/<cc>/...
+go test ./addons/<cc>/<format>/...
 ```
 
 ### Linting and formatting
 
 [golangci-lint](https://golangci-lint.run/) is used to check the code for errors and style issues. The configuration is in the [`.golangci.yaml`](.golangci.yaml) file.
-
-Install locally and run:
-
-```bash
-golangci-lint run
-golangci-lint run --fix # To autofix lint errors where possible
-```
 
 Note: we considered incorporating golangci-lint as a tool directly in the `go.mod`, but due the large amount of dependencies, decided not to do so.
 
@@ -116,3 +169,13 @@ All new features should come with tests. For example, `tax_identities.go` must h
   - `org_identities.go`
 - Add the new regime to the `regimes/regimes.go` file.
 - Add the new regime to the `regimes/regimes_test.go` file.
+
+## Adding a new addon
+
+Addons extend GOBL with format-specific or platform-specific normalization, validation, and scenarios.
+
+- Create a new directory under `addons/<cc>/<format>/` (e.g., `addons/es/tbai/`).
+- Implement a `newAddon()` function that returns a `*tax.AddonDef`, following the same patterns as regimes (normalizer, validator, scenarios, extension keys).
+- Self-register via `init()` with `tax.RegisterAddonDef(newAddon())`.
+- Add a blank import in [`addons/addons.go`](addons/addons.go) to ensure the addon is loaded.
+- Include tests for all normalization and validation logic.
