@@ -27,7 +27,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "New Zealand",
 		},
 		Description: i18n.String{
-			i18n.EN:  `New Zealand's Goods and Services Tax (GST) uses a standard rate of 15% for most taxable supplies.
+			i18n.EN: `New Zealand's Goods and Services Tax (GST) uses a standard rate of 15% for most taxable supplies.
 Zero-rated (0%) applies to specific supplies such as exports.
 Exempt supplies are not charged GST and do not allow input tax credits.
 

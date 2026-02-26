@@ -29,7 +29,6 @@ func taxCategories() []*tax.CategoryDef {
 			Keys:     tax.GlobalGSTKeys(),
 			Rates: []*tax.RateDef{
 				{
-					Keys: []cbc.Key{tax.KeyZero},
 					Rate: tax.RateZero,
 					Name: i18n.String{
 						i18n.EN: "Zero rate",
