@@ -39,9 +39,9 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}
 }
 
-func TestValidateTaxIdentityEmpty(t *testing.T) {
-	// empty identity
-	tID := &tax.Identity{}
+func TestValidateTaxIdentityNil(t *testing.T) {
+	// nil identity
+	var tID *tax.Identity
 	err := nz.Validate(tID)
 	assert.NoError(t, err)
 }

@@ -1,10 +1,8 @@
 package nz
 
 import (
-	"errors"
 	"regexp"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -20,21 +18,8 @@ func validateTaxIdentity(tID *tax.Identity) error {
 		return nil
 	}
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateIRDCode)),
+		validation.Field(&tID.Code,
+			validation.Match(irdRegex).Error("must be 8 or 9 digits"),
+		),
 	)
-}
-
-// validateIRDCode checks that the IRD number is a valid 8-9 digit format.
-func validateIRDCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	val := code.String()
-
-	if !irdRegex.MatchString(val) {
-		return errors.New("must be 8 or 9 digits")
-	}
-
-	return nil
 }
