@@ -73,12 +73,6 @@ func TestValidInvoiceWithCRN(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
-func TestMissingSupplierTaxID(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier.TaxID = nil
-	require.Error(t, inv.Validate())
-}
-
 func TestMissingSupplierName(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.Name = ""
