@@ -4,7 +4,7 @@
     "en": "Austria"
   },
   "description": {
-    "en": "Austria's tax system is administered by the Federal Ministry of Finance\n(Bundesministerium für Finanzen). As an EU member state, Austria follows the\nEU VAT Directive with locally adapted rates.\n\nVAT (Umsatzsteuer, USt) rates include a 20% standard rate for most goods and\nservices, a 10% reduced rate for food, books, passenger transport, and\ncultural events, and a 13% intermediate rate for certain supplies including\nwine from farms and accommodation services.\n\nBusinesses are identified by their UID-Nummer (VAT identification number)\nin the format ATU followed by 8 digits. Austria supports credit notes for\ninvoice corrections."
+    "en": "Austria's tax system is administered by the Federal Ministry of\nFinance (Bundesministerium für Finanzen). As an EU member state,\nAustria follows the EU VAT Directive with standard, reduced, and\nintermediate rates.\n\nVAT (Umsatzsteuer, USt) applies to most goods and services.\nBusinesses are identified by their UID-Nummer (VAT identification\nnumber) in the format ATU followed by 8 digits. Austria supports\ncredit notes for invoice corrections."
   },
   "sources": [
     {

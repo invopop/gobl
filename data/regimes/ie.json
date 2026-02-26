@@ -5,7 +5,7 @@
     "ga": "Éire"
   },
   "description": {
-    "en": "Ireland's tax system is administered by the Revenue Commissioners (Na\nCoimisinéirí Ioncaim). As an EU member state, Ireland follows the EU VAT\nDirective with locally adapted rates.\n\nVAT rates include a 23% standard rate for most goods and services, a 13.5%\nreduced rate for tourism, hospitality, and certain construction services,\na 9% second reduced rate for newspapers, e-publications, and sports\nfacilities, a 4.8% rate for livestock, and a 0% zero rate for food,\nchildren's clothing, oral medicines, and exports.\n\nBusinesses are identified by their VAT registration number in the format IE\nfollowed by 7 digits and 1-2 letters. The threshold for mandatory VAT\nregistration is EUR 80,000 for goods and EUR 40,000 for services.\n\nIreland supports credit notes for invoice corrections. E-invoicing via\nPEPPOL is supported for B2G transactions."
+    "en": "Ireland's tax system is administered by the Revenue Commissioners (Na\nCoimisinéirí Ioncaim). As an EU member state, Ireland follows the EU VAT\nDirective with locally adapted rates.\n\nVAT applies at standard, reduced, second reduced, livestock, and zero rates.\nZero-rated supplies include food, children's clothing, oral medicines, and\nexports.\n\nBusinesses are identified by their VAT registration number in the format IE\nfollowed by 7 digits and 1-2 letters.\n\nIreland supports credit notes for invoice corrections. E-invoicing via\nPEPPOL is supported for B2G transactions."
   },
   "time_zone": "Europe/Dublin",
   "country": "IE",

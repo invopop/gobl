@@ -83,7 +83,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.Identities = []*org.Identity{
 			{
 				Type: nl.IdentityTypeOIN,
-				Code: "00000001234567890000",
+				Code: "00000001123456789000",
 			},
 		}
 		require.NoError(t, inv.Calculate())

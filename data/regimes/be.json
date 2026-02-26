@@ -4,7 +4,7 @@
     "en": "Belgium"
   },
   "description": {
-    "en": "Belgium's tax system is administered by the Federal Public Service Finance\n(Service Public Fédéral Finances / Federale Overheidsdienst Financiën).\nAs an EU member state, Belgium follows the EU VAT Directive.\n\nVAT (Taxe sur la Valeur Ajoutée, TVA / Belasting over de Toegevoegde Waarde,\nBTW) rates include a 21% standard rate for most goods and services, a 12%\nintermediate rate for certain goods including social housing, restaurant\nservices, and some food products, and a 6% reduced rate for basic necessities\nsuch as food, water, pharmaceuticals, books, and passenger transport.\n\nBusinesses are identified by their VAT number (Numéro de TVA / BTW-nummer)\nin the format BE followed by 10 digits. Belgium supports credit notes for\ninvoice corrections."
+    "en": "Belgium's tax system is administered by the Federal Public Service Finance\n(Service Public Fédéral Finances / Federale Overheidsdienst Financiën).\nAs an EU member state, Belgium follows the EU VAT Directive.\n\nVAT (Taxe sur la Valeur Ajoutée, TVA / Belasting over de Toegevoegde Waarde,\nBTW) applies at standard, intermediate, and reduced rates. The intermediate\nrate covers certain goods including social housing, restaurant services, and\nsome food products, while the reduced rate applies to basic necessities such\nas food, water, pharmaceuticals, books, and passenger transport.\n\nBusinesses are identified by their VAT number (Numéro de TVA / BTW-nummer)\nin the format BE followed by 10 digits. Belgium supports credit notes for\ninvoice corrections."
   },
   "sources": [
     {
@@ -18,6 +18,16 @@
   "country": "BE",
   "currency": "EUR",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "BCE",
+      "name": {
+        "en": "BCE/KBO Number",
+        "fr": "Numéro BCE",
+        "nl": "KBO-nummer"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
