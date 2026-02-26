@@ -62,30 +62,20 @@ func (rc RegimeCode) String() string {
 	return string(rc)
 }
 
-/*
-// JSONSchemaExtend will add the addon options to the JSON list.
-func (r Regime) JSONSchemaExtend(js *jsonschema.Schema) {
-	props := js.Properties
-	if asl, ok := props.Get("$regime"); ok {
-		asl.Ref =
-		asl.OneOf = make([]*jsonschema.Schema, len(AllRegimeDefs()))
-		for i, rd := range AllRegimeDefs() {
-			asl.OneOf[i] = &jsonschema.Schema{
-				Const: rd.Code().String(),
-				Title: rd.Name.String(),
-			}
-		}
+// JSONSchema provides a representation of the type for usage in Schema.
+func (RegimeCode) JSONSchema() *jsonschema.Schema {
+	defs := AllRegimeDefs()
+	s := &jsonschema.Schema{
+		Title:       "Tax Regime Code",
+		Type:        "string",
+		OneOf:       make([]*jsonschema.Schema, len(defs)),
+		Description: `Identifies a GOBL tax regime`,
 	}
-}
-*/
-
-// JSONSchemaExtend will add the addon options to the JSON list.
-func (RegimeCode) JSONSchemaExtend(js *jsonschema.Schema) {
-	js.OneOf = make([]*jsonschema.Schema, len(AllRegimeDefs()))
-	for i, rd := range AllRegimeDefs() {
-		js.OneOf[i] = &jsonschema.Schema{
+	for i, rd := range defs {
+		s.OneOf[i] = &jsonschema.Schema{
 			Const: rd.Code().String(),
 			Title: rd.Name.String(),
 		}
 	}
+	return s
 }
