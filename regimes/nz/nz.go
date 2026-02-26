@@ -34,7 +34,7 @@ Exempt supplies are not charged GST and do not allow input tax credits.
 IRD numbers are 8 or 9 digits and are validated for format only.
 
 Invoice validation enforces threshold-based requirements:
-- invoices ≥ $200 require supplier GST number
+- invoices > $200 require supplier GST number
 - invoices > $1,000 require customer name and at least one identifier (address, phone, email, tax ID, or identities)
 
 Sources:

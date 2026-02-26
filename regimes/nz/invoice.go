@@ -100,20 +100,33 @@ func requireCustomerIdentifier(value any) error {
 }
 
 func hasCustomerIdentifier(p *org.Party) bool {
-	if len(p.Addresses) > 0 {
-		return true
+	// Check for at least one non-empty address
+	for _, addr := range p.Addresses {
+		if addr != nil && (addr.Street != "" || addr.Locality != "" || addr.Region != "" || string(addr.Code) != "" || string(addr.Country) != "") {
+			return true
+		}
 	}
-	if len(p.Emails) > 0 {
-		return true
+	// Check for at least one non-empty email
+	for _, email := range p.Emails {
+		if email != nil && email.Address != "" {
+			return true
+		}
 	}
-	if len(p.Telephones) > 0 {
-		return true
+	// Check for at least one non-empty telephone
+	for _, tel := range p.Telephones {
+		if tel != nil && tel.Number != "" {
+			return true
+		}
 	}
+	// Check for non-empty TaxID
 	if p.TaxID != nil && p.TaxID.Code != "" {
 		return true
 	}
-	if len(p.Identities) > 0 {
-		return true
+	// Check for at least one non-empty identity
+	for _, id := range p.Identities {
+		if id != nil && id.Code != "" {
+			return true
+		}
 	}
 	return false
 }
