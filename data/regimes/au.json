@@ -1,0 +1,123 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Australia"
+  },
+  "time_zone": "Australia/Sydney",
+  "country": "AU",
+  "currency": "AUD",
+  "tax_scheme": "GST",
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate"
+          },
+          "desc": {
+            "en": "GST is 10% on most goods and services consumed in Australia, including imports and digital products."
+          },
+          "values": [
+            {
+              "since": "2000-07-01",
+              "percent": "10%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "GST-free"
+          },
+          "desc": {
+            "en": "GST-free sales are not taxed. Common examples include basic food, some health and education services, and exports."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "exempt"
+          ],
+          "name": {
+            "en": "Input-taxed"
+          },
+          "desc": {
+            "en": "Input-taxed sales do not include GST in the price and no GST credits can be claimed."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "GST overview"
+          },
+          "url": "https://www.ato.gov.au/about-ato/research-and-statistics/in-detail/tax-gap/goods-and-services-tax-gap/overview"
+        },
+        {
+          "title": {
+            "en": "GST-free sales"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/gst-free-sales"
+        },
+        {
+          "title": {
+            "en": "Input taxed sales"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/input-taxed-sales"
+        }
+      ]
+    }
+  ]
+}

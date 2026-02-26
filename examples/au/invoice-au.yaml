@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "e59a888a-08db-4827-b143-e78b062b94ce"
+issue_date: "2026-02-21"
+code: "001"
+currency: "AUD"
+
+supplier:
+  tax_id:
+    country: "AU"
+    code: "51824753556"
+  name: "Example Ltd"
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "88"
+      street: "George Street"
+      locality: "Sydney"
+      region: "NSW"
+      code: "2000"
+      country: "AU"
+
+customer:
+  tax_id:
+    country: "AU"
+    code: "72787502421"
+  name: "Customer Example"
+  emails:
+    - addr: "customer@example.com"
+  addresses:
+    - num: "15"
+      street: "Smith Street"
+      locality: "Melbourne"
+      region: "VIC"
+      code: "3000"
+      country: "AU"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Example Item"
+      price: "90.00"
+    discounts:
+      - percent: "10%"
+    taxes:
+      - cat: "GST"
+        rate: "general"
