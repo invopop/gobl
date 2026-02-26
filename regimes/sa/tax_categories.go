@@ -25,7 +25,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Zakat, Tax and Customs Authority - VAT",
 					i18n.AR: "هيئة الزكاة والضريبة والجمارك - ضريبة القيمة المضافة",
 				},
-				URL: "https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/What-is-e-invoicing.aspx",
+				URL: "https://zatca.gov.sa/en/RulesRegulations/VAT/Pages/default.aspx",
 			},
 		},
 		Keys: tax.GlobalVATKeys(),
