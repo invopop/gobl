@@ -1,0 +1,38 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "ILS"
+issue_date: "2025-06-15"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "IL"
+  identities:
+    - key: "il-personal-id"
+      code: "036578920"
+  name: "Yael Cohen"
+  emails:
+    - addr: "yael@example.co.il"
+  addresses:
+    - num: "7"
+      street: "Dizengoff Street"
+      locality: "Tel Aviv"
+      code: "6433222"
+      country: "IL"
+
+customer:
+  name: "David Levi"
+  addresses:
+    - num: "12"
+      street: "HaNevi'im Street"
+      locality: "Jerusalem"
+      code: "9510120"
+      country: "IL"
+
+lines:
+  - quantity: 5
+    item:
+      name: "Graphic design services"
+      price: "200.00"
+      unit: "h"

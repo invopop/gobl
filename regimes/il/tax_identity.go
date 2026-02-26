@@ -2,8 +2,6 @@
 package il
 
 import (
-	"regexp"
-
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -21,15 +19,11 @@ import (
 // - ITA API Specification v1.0 (July 2023), Table 2.1: Vat_Number field defined as N9
 //   https://www.gov.il/BlobFolder/generalpage/israel-invoice-160723/he/IncomeTax_software-houses-en-040723.pdf
 
-var (
-	osekRegex = regexp.MustCompile(`^\d{9}$`)
-)
-
 // validateTaxIdentity checks to ensure the Israeli Osek Murshe format is correct.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
-			validation.Match(osekRegex).Error("must be a 9-digit number"),
+			validation.Match(nineDigitsRegex).Error("must be a 9-digit number"),
 		),
 	)
 }
