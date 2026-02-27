@@ -31,33 +31,12 @@ func TestValidateTaxIdentity(t *testing.T) {
 		code cbc.Code
 		err  string
 	}{
-		// Valid VKN (10 digits with correct checksum)
 		{name: "valid VKN", code: "4540536920"},
-
-		// Valid TCKN (11 digits with correct checksums)
-		{name: "valid TCKN", code: "12590326514"},
-
-		// Empty code — should pass (not required at identity level)
 		{name: "empty code", code: ""},
-
-		// Invalid: too short
 		{name: "too short", code: "123456789", err: "invalid format"},
-
-		// Invalid: too long
-		{name: "too long", code: "123456789012", err: "invalid format"},
-
-		// Invalid: non-numeric
-		{name: "non-numeric VKN", code: "123456789A", err: "invalid format"},
-		{name: "non-numeric TCKN", code: "1234567890A", err: "invalid format"},
-
-		// Invalid: TCKN starting with 0
-		{name: "TCKN starts with zero", code: "01234567890", err: "invalid format"},
-
-		// Invalid: VKN wrong checksum
+		{name: "too long", code: "12345678901", err: "invalid format"},
+		{name: "non-numeric", code: "123456789A", err: "invalid format"},
 		{name: "VKN wrong checksum", code: "1234567891", err: "invalid check digit"},
-
-		// Invalid: TCKN wrong checksum
-		{name: "TCKN wrong checksum", code: "12345678900", err: "invalid check digit"},
 	}
 
 	for _, tt := range tests {

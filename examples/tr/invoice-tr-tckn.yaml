@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+
+uuid: "c4d5e6f7-8a9b-4c0d-1e2f-3a4b5c6d7e8f"
+series: "ABC"
+code: "2024-006"
+issue_date: "2024-03-15"
+currency: TRY
+
+supplier:
+  name: "Ahmet Yılmaz"
+  tax_id:
+    country: TR
+  identities:
+    - type: "TCKN"
+      code: "12590326514"
+  addresses:
+    - street: "123 Test Street"
+      locality: "Levent"
+      region: "Istanbul"
+      country: TR
+
+customer:
+  name: "Test Customer Ltd."
+  tax_id:
+    country: TR
+    code: "1234567890"
+  addresses:
+    - street: "45 Business Avenue"
+      locality: "Kizilay"
+      region: "Ankara"
+      country: TR
+
+lines:
+  - quantity: 10
+    item:
+      name: "Software License"
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        rate: general

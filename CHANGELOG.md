@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `regimes/tr`: New Türkiye tax regime with VKN/TCKN validation, KDV rates (20%/10%/1%), corrective invoices, and reverse charge scenario.
+- `regimes/tr`: New Türkiye tax regime with VKN/TCKN validation, KDV rates (20%/10%/1%), corrective invoices.
 
 ### Changed
 

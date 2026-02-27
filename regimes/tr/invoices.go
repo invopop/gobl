@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/validation"
 )
 
+// validateInvoice checks the Turkish invoice for required fields.
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
@@ -16,7 +17,8 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
-// validateSupplier ensures the supplier always has a tax ID (VKN or TCKN) on Turkish invoices.
+// validateSupplier ensures the supplier has either a tax ID (VKN) or a
+// TCKN identity on Turkish invoices.
 func validateSupplier(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
@@ -24,9 +26,30 @@ func validateSupplier(value any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
+			validation.When(
+				!hasIdentityTCKN(p),
+				validation.Required,
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
+		validation.Field(&p.Identities,
+			validation.When(
+				!hasTaxIDCode(p),
+				org.RequireIdentityType(IdentityTypeTCKN),
+			),
 			validation.Skip,
 		),
 	)
+}
+
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasIdentityTCKN(party *org.Party) bool {
+	if party == nil || len(party.Identities) == 0 {
+		return false
+	}
+	return org.IdentityForType(party.Identities, IdentityTypeTCKN) != nil
 }

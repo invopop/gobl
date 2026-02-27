@@ -4,10 +4,38 @@
     "en": "Türkiye",
     "tr": "Türkiye"
   },
+  "description": {
+    "en": "GIB (Revenue Administration) is the tax authority. Businesses use a\n10-digit tax number (VKN) as their tax identity. Individuals and sole\ntraders use their 11-digit national identity number (TCKN) which serves\nas a recognized tax identifier domestically. For international trade,\na VKN is required. Either a VKN or TCKN must be provided on invoices.\n\nE-invoicing is mandatory above a revenue threshold. B2B between\nregistered parties uses e-Fatura; B2C and unregistered buyers use e-Arşiv.\nBoth use the UBL-TR XML format.\n\nCredit and debit notes are not valid; adjustments require a corrective\ninvoice that references the original.\n\nReverse charge applies only when a Turkish buyer pays a foreign supplier,\nnot to invoices issued by Turkish sellers. Exports are VAT-exempt.\n\nWithholding tax (Stopaj) and special consumption tax (ÖTV) are out of scope;\ntheir rates are product-specific and change frequently."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Revenue Administration",
+        "tr": "Gelir İdaresi Başkanlığı"
+      },
+      "url": "https://www.gib.gov.tr"
+    },
+    {
+      "title": {
+        "en": "Tax Guide - Invest in Türkiye",
+        "tr": "Vergi Rehberi - Türkiye'ye Yatırım"
+      },
+      "url": "https://www.invest.gov.tr/en/investmentguide/pages/tax-guide.aspx"
+    }
+  ],
   "time_zone": "Europe/Istanbul",
   "country": "TR",
   "currency": "TRY",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "TCKN",
+      "name": {
+        "en": "National Identity Number (TCKN)",
+        "tr": "Türkiye Cumhuriyeti Kimlik Numarası (TCKN)"
+      }
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",
@@ -28,8 +56,8 @@
         "tr": "Katma Değer Vergisi"
       },
       "desc": {
-        "en": "Known in Turkish as \"Katma Değer Vergisi\" (KDV), governed by Law No. 3065.\nApplies to the supply of goods and services in Türkiye and imports, with three\nrates: standard (20%), reduced (10%) for basic foodstuffs, textiles and books,\nand super-reduced (1%) for certain agricultural products and essential services.\nHistorical rates are recorded back to November 1999.",
-        "tr": "3065 sayılı KDV Kanunu kapsamında mal ve hizmet teslimlerinde uygulanan vergi.\nGenel oran %20, indirimli oran %10 (temel gıda, tekstil, kitap), özel indirimli\noran %1 (bazı tarım ürünleri ve zorunlu hizmetler).\nGeçmiş oranlar Kasım 1999'a kadar kayıtlıdır."
+        "en": "VAT (\"Katma Değer Vergisi\" / KDV) under Law No. 3065 applies to supplies of\ngoods and services in Türkiye and to imports, at standard, reduced, and\nsuper-reduced rates. Historical rates are available from November 1999.",
+        "tr": "3065 sayılı KDV Kanunu'na göre mal ve hizmet teslimleri ile ithalatta uygulanan\nvergidir. Genel, indirimli ve özel indirimli oranlar vardır; geçmiş oranlar\nKasım 1999'dan itibaren kayıtlıdır."
       },
       "keys": [
         {
@@ -160,22 +188,31 @@
         },
         {
           "title": {
-            "en": "Council of Ministers Decree No. 2001/2344 - Standard rate raised from 17% to 18%",
-            "tr": "Bakanlar Kurulu Kararı 2001/2344 - Genel oran %17'den %18'e"
+            "en": "Tax Guide - Invest in Türkiye",
+            "tr": "Vergi Rehberi - Türkiye'ye Yatırım"
           },
-          "url": "https://www.alomaliye.com/2001/05/10/bakanlar-kurulu-karari-20012344/"
+          "url": "https://www.invest.gov.tr/en/investmentguide/pages/tax-guide.aspx"
         },
         {
           "title": {
-            "en": "EY Tax Alert - Türkiye increases VAT rates (Decree No. 7346, July 2023)"
+            "en": "Tax Procedure Law - GIB",
+            "tr": "Vergi Usul Kanunu - GİB"
           },
-          "url": "https://www.ey.com/en_gl/technical/tax-alerts/turkiye-increases-vat-rates-on-goods-and-services"
+          "url": "https://www.gib.gov.tr/mevzuat/kanun/436"
         },
         {
           "title": {
-            "en": "VAT Rates in Turkey - Global VAT Compliance"
+            "en": "Council of Ministers Decree No. 2001/2344 - Official Gazette",
+            "tr": "Bakanlar Kurulu Kararı 2001/2344 - Resmi Gazete"
           },
-          "url": "https://www.globalvatcompliance.com/vat-rates-in-turkey/"
+          "url": "https://www.resmigazete.gov.tr/eskiler/2001/05/20010510.htm"
+        },
+        {
+          "title": {
+            "en": "Presidential Decree No. 7346 (2023) - Official Gazette",
+            "tr": "Cumhurbaşkanı Kararı 7346 (2023) - Resmi Gazete"
+          },
+          "url": "https://www.resmigazete.gov.tr/eskiler/2023/07/20230707-11.pdf"
         }
       ]
     }

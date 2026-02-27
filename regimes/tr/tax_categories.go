@@ -25,17 +25,14 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Description: &i18n.String{
 			i18n.EN: here.Doc(`
-			Known in Turkish as "Katma Değer Vergisi" (KDV), governed by Law No. 3065.
-			Applies to the supply of goods and services in Türkiye and imports, with three
-			rates: standard (20%), reduced (10%) for basic foodstuffs, textiles and books,
-			and super-reduced (1%) for certain agricultural products and essential services.
-			Historical rates are recorded back to November 1999.
+			VAT ("Katma Değer Vergisi" / KDV) under Law No. 3065 applies to supplies of
+			goods and services in Türkiye and to imports, at standard, reduced, and
+			super-reduced rates. Historical rates are available from November 1999.
 			`),
 			i18n.TR: here.Doc(`
-			3065 sayılı KDV Kanunu kapsamında mal ve hizmet teslimlerinde uygulanan vergi.
-			Genel oran %20, indirimli oran %10 (temel gıda, tekstil, kitap), özel indirimli
-			oran %1 (bazı tarım ürünleri ve zorunlu hizmetler).
-			Geçmiş oranlar Kasım 1999'a kadar kayıtlıdır.
+			3065 sayılı KDV Kanunu'na göre mal ve hizmet teslimleri ile ithalatta uygulanan
+			vergidir. Genel, indirimli ve özel indirimli oranlar vardır; geçmiş oranlar
+			Kasım 1999'dan itibaren kayıtlıdır.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -48,22 +45,31 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "Council of Ministers Decree No. 2001/2344 - Standard rate raised from 17% to 18%",
-					i18n.TR: "Bakanlar Kurulu Kararı 2001/2344 - Genel oran %17'den %18'e",
+					i18n.EN: "Tax Guide - Invest in Türkiye",
+					i18n.TR: "Vergi Rehberi - Türkiye'ye Yatırım",
 				},
-				URL: "https://www.alomaliye.com/2001/05/10/bakanlar-kurulu-karari-20012344/",
+				URL: "https://www.invest.gov.tr/en/investmentguide/pages/tax-guide.aspx",
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "EY Tax Alert - Türkiye increases VAT rates (Decree No. 7346, July 2023)",
+					i18n.EN: "Tax Procedure Law - GIB",
+					i18n.TR: "Vergi Usul Kanunu - GİB",
 				},
-				URL: "https://www.ey.com/en_gl/technical/tax-alerts/turkiye-increases-vat-rates-on-goods-and-services",
+				URL: "https://www.gib.gov.tr/mevzuat/kanun/436",
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "VAT Rates in Turkey - Global VAT Compliance",
+					i18n.EN: "Council of Ministers Decree No. 2001/2344 - Official Gazette",
+					i18n.TR: "Bakanlar Kurulu Kararı 2001/2344 - Resmi Gazete",
 				},
-				URL: "https://www.globalvatcompliance.com/vat-rates-in-turkey/",
+				URL: "https://www.resmigazete.gov.tr/eskiler/2001/05/20010510.htm",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Presidential Decree No. 7346 (2023) - Official Gazette",
+					i18n.TR: "Cumhurbaşkanı Kararı 7346 (2023) - Resmi Gazete",
+				},
+				URL: "https://www.resmigazete.gov.tr/eskiler/2023/07/20230707-11.pdf",
 			},
 		},
 		Retained: false,
