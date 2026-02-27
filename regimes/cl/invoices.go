@@ -70,16 +70,19 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 }
 
 func (v *invoiceValidator) customer(value interface{}) error {
-	obj, _ := value.(*org.Party)
-	if obj == nil {
-		return nil
-	}
-
 	inv := v.inv
 	// Facturas (B2B): RUT and address required
 	// Boletas (B2C with tax.TagSimplified): RUT and address optional
 	// Note: High-value boletas (>135 UF) will require RUT from Sep 2025
 	isB2B := !inv.Tags.HasTags(tax.TagSimplified)
+
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		if isB2B {
+			return validation.NewError("validation_required", "customer is required for B2B invoices")
+		}
+		return nil
+	}
 
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,

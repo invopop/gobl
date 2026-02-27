@@ -165,6 +165,7 @@ func TestInvoiceValidation(t *testing.T) {
 				},
 			},
 		}
+		inv.SetTags(tax.TagSimplified)
 		err := cl.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -226,6 +227,13 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 				inv.Customer.Addresses = []*org.Address{}
 			},
 			expectError: "addresses",
+		},
+		{
+			name: "B2B invoice - missing customer should fail",
+			setupInv: func(inv *bill.Invoice) {
+				inv.Customer = nil
+			},
+			expectError: "customer is required for B2B invoices",
 		},
 		{
 			name: "B2C boleta - no customer required",
