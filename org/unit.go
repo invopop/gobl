@@ -32,6 +32,7 @@ const (
 
 	// Measurement units
 	UnitMilligram        Unit = `mg`
+	UnitCentigram        Unit = `cg`
 	UnitGram             Unit = `g`
 	UnitKilogram         Unit = `kg`
 	UnitMetricTon        Unit = `t`
@@ -39,9 +40,11 @@ const (
 	UnitCentimetre       Unit = `cm`
 	UnitDecimetre        Unit = `dm`
 	UnitMetre            Unit = `m`
+	UnitLinearMetre      Unit = `lm`
 	UnitKilometre        Unit = `km`
 	UnitInch             Unit = `in`
 	UnitFoot             Unit = `ft`
+	UnitLinearFoot       Unit = `lft`
 	UnitSquareMilimetre  Unit = `mm2`
 	UnitSquareCentimetre Unit = `cm2`
 	UnitSquareDecimetre  Unit = `dm2`
@@ -54,11 +57,15 @@ const (
 	UnitCubicMetre       Unit = `m3`
 	UnitMillilitre       Unit = "ml"
 	UnitCentilitre       Unit = `cl`
+	UnitDecilitre        Unit = `dl`
 	UnitLitre            Unit = `l`
+	UnitKilolitre        Unit = `kl`
 	UnitWatt             Unit = `w`
 	UnitKilowatt         Unit = `kw`
 	UnitKilowattHour     Unit = `kwh`
+	UnitYear             Unit = `yr`
 	UnitMonth            Unit = `mon`
+	UnitWeek             Unit = `wk`
 	UnitDay              Unit = `day`
 	UnitSecond           Unit = `s`
 	UnitHour             Unit = `h`
@@ -78,6 +85,7 @@ const (
 	UnitBaseBox          Unit = `basebox`
 	UnitBulkPack         Unit = `pk`
 	UnitOne              Unit = `one`
+	UnitFlatFee          Unit = `ff`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -101,7 +109,10 @@ const (
 	UnitSixPack   Unit = `6pack` // non-standard (src: ES)
 	UnitCanister  Unit = `canister`
 	UnitPackage   Unit = `pkg`
+	UnitPacket    Unit = `pkt`
 	UnitBunch     Unit = `bunch`
+	UnitBundle    Unit = `bdl`
+	UnitBlock     Unit = `blk`
 	UnitTetraBrik Unit = `tetrabrik` // non-standard (src: ES)
 	UnitPallet    Unit = `pallet`
 	UnitReel      Unit = `reel`
@@ -130,6 +141,7 @@ var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
 	{UnitMilligram, "Milligrams", "", "MGM"},
+	{UnitCentigram, "Centigrams", "", "CGM"},
 	{UnitGram, "Metric grams", "", "GRM"},
 	{UnitKilogram, "Metric kilograms", "", "KGM"},
 	{UnitMetricTon, "Metric tons", "", "TNE"},
@@ -137,9 +149,11 @@ var UnitDefinitions = []DefUnit{
 	{UnitCentimetre, "Centimetres", "", "CMT"},
 	{UnitDecimetre, "Decimetres", "A unit of length equal to one-tenth of a metre.", "DMT"},
 	{UnitMetre, "Metres", "", "MTR"},
+	{UnitLinearMetre, "Linear metres", "A unit of length defining the number of metres of a linear item.", "LM"},
 	{UnitKilometre, "Kilometers", "", "KMT"},
 	{UnitInch, "Inches", "", "INH"},
 	{UnitFoot, "Feet", "", "FOT"},
+	{UnitLinearFoot, "Linear feet", "A unit of length defining the number of feet of a linear item.", "LF"},
 	{UnitSquareMilimetre, "Square millimetres", "", "MMK"},
 	{UnitSquareCentimetre, "Square centimetres", "", "CMK"},
 	{UnitSquareDecimetre, "Square decimetres", "", "DMK"},
@@ -152,12 +166,16 @@ var UnitDefinitions = []DefUnit{
 	{UnitCubicMetre, "Cubic metres", "", "MTQ"},
 	{UnitMillilitre, "Millilitres", "", "MLT"},
 	{UnitCentilitre, "Centilitres", "", "CLT"},
+	{UnitDecilitre, "Decilitres", "", "DLT"},
 	{UnitLitre, "Litres", "", "LTR"},
+	{UnitKilolitre, "Kilolitres", "", ""},
 	{UnitWatt, "Watts", "", "WTT"},
 	{UnitKilowatt, "Kilowatts", "", "KWT"},
 	{UnitKilowattHour, "Kilowatt Hours", "", "KWH"},
 	{UnitRate, "Rate", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
+	{UnitYear, "Years", "A unit of time equal to twelve months.", "ANN"},
 	{UnitMonth, "Months", "Unit of time equal to 1/12 of a year of 365,25 days.", "MON"},
+	{UnitWeek, "Weeks", "A unit of time equal to seven days.", "WEE"},
 	{UnitDay, "Days", "", "DAY"},
 	{UnitSecond, "Seconds", "", "SEC"},
 	{UnitHour, "Hours", "", "HUR"},
@@ -177,6 +195,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitBaseBox, "Base Boxes", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
 	{UnitBulkPack, "Bulk Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
 	{UnitOne, "One", "A single generic unit of a service or product.", "C62"},
+	{UnitFlatFee, "Flat Fee", "A fixed one-time charge.", ""},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
@@ -200,7 +219,10 @@ var UnitDefinitions = []DefUnit{
 	{UnitSixPack, "Six Packs", "", ""},    // non-standard (src: ES)
 	{UnitCanister, "Canisters", "", "XCI"},
 	{UnitPackage, "Packages", "Standard packaging unit.", "XPK"},
+	{UnitPacket, "Packets", "", "PA"},
 	{UnitBunch, "Bunches", "", "XBH"},
+	{UnitBundle, "Bundles", "", "BE"},
+	{UnitBlock, "Blocks", "", ""},
 	{UnitTetraBrik, "Tetra-Briks", "", ""}, // non-standard (src: ES)
 	{UnitPallet, "Pallets", "", "XPX"},
 	{UnitReel, "Reels", "", "XRL"},
