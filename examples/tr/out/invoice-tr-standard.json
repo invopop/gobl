@@ -1,0 +1,94 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9514e758b5eeef0ae92c9608476b495110fcb4a18fe705fd9ca537ab021e1184"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "TR",
+		"uuid": "07dffd9f-8eaa-4a33-add7-3b06c34bd414",
+		"type": "standard",
+		"series": "ABC",
+		"code": "2024-001",
+		"issue_date": "2024-03-15",
+		"currency": "TRY",
+		"supplier": {
+			"name": "Test Supplier Co.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Test Street",
+					"locality": "Levent",
+					"region": "Istanbul",
+					"country": "TR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Test Customer Ltd.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "45 Business Avenue",
+					"locality": "Kizilay",
+					"region": "Ankara",
+					"country": "TR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Software License",
+					"price": "500.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "20%"
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5000.00",
+								"percent": "20%",
+								"amount": "1000.00"
+							}
+						],
+						"amount": "1000.00"
+					}
+				],
+				"sum": "1000.00"
+			},
+			"tax": "1000.00",
+			"total_with_tax": "6000.00",
+			"payable": "6000.00"
+		}
+	}
+}
