@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
+- `es-verifactu-v1`: Country is now required on customer identities when identity type is not NIF-VAT (`02`)
 
 ## [v0.308.0] - 2026-02-17
 
