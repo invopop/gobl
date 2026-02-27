@@ -48,7 +48,8 @@ type CategoryDef struct {
 	// Map defines a set of regime specific code mappings.
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
 
-	// List of sources for the information contained in this category.
+	// List of sources for the information contained in this category and most importantly,
+	// an official source where the tax rates can be reviewed and updated in the future.
 	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
 	// Extension key-value pairs that will be copied to the tax combo if this

@@ -4,6 +4,9 @@
     "de": "Deutschland",
     "en": "Germany"
   },
+  "description": {
+    "en": "Germany's tax system is administered by the Federal Central Tax Office\n(Bundeszentralamt für Steuern, BZSt). As an EU member state, Germany follows\nthe EU VAT Directive with locally adapted rates.\n\nVAT (Umsatzsteuer, USt) applies at standard and reduced rates. The reduced\nrate covers food, books, newspapers, public transport, and cultural events.\n\nBusinesses are identified by their Umsatzsteuer-Identifikationsnummer (USt-IdNr)\nin the format DE followed by 9 digits for cross-border transactions, and by\ntheir Steuernummer (tax number) in regional formats for domestic purposes.\n\nGermany supports credit notes for invoice corrections. E-invoicing is\nprogressively becoming mandatory, with XRechnung as the standard for B2G\ntransactions and ZUGFeRD/Factur-X widely used for B2B."
+  },
   "time_zone": "Europe/Berlin",
   "country": "DE",
   "currency": "EUR",

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+
 ### Fixed
 
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
@@ -40,7 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `dk`: Added the Danish regime
-- `de`: support for NW Steuernummer
+- `de`: Added support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
 ### Fixed
