@@ -16,5 +16,8 @@
     "rules": {
         "no-unused-vars": "warn",
         "cypress/no-unnecessary-waiting": "warn"
-    }
+    },
+    "ignores": [
+        "wasm_exec.js"
+    ]
 }
