@@ -34,6 +34,20 @@ func New() *tax.RegimeDef {
 				organisasjonsnummer with mod-11 check digits.
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("Skatteetaten - VAT rates"),
+				URL:   "https://www.skatteetaten.no/en/rates/value-added-tax/",
+			},
+			{
+				Title: i18n.NewString("Brønnøysundregistrene - Organisation number"),
+				URL:   "https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/",
+			},
+			{
+				Title: i18n.NewString("Lovdata - Merverdiavgiftsloven"),
+				URL:   "https://lovdata.no/dokument/NL/lov/2009-06-19-58",
+			},
+		},
 		TimeZone:   "Europe/Oslo",
 		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
