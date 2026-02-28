@@ -7,6 +7,26 @@
   "description": {
     "en": "The Norwegian tax regime covers VAT (merverdiavgift) with four\nrates: general (25%), reduced (15%), super-reduced (12%), and\nspecial (11.11%). Identity validation supports\norganisasjonsnummer with mod-11 check digits."
   },
+  "sources": [
+    {
+      "title": {
+        "en": "Skatteetaten - VAT rates"
+      },
+      "url": "https://www.skatteetaten.no/en/rates/value-added-tax/"
+    },
+    {
+      "title": {
+        "en": "Brønnøysundregistrene - Organisation number"
+      },
+      "url": "https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/"
+    },
+    {
+      "title": {
+        "en": "Lovdata - Merverdiavgiftsloven"
+      },
+      "url": "https://lovdata.no/dokument/NL/lov/2009-06-19-58"
+    }
+  ],
   "time_zone": "Europe/Oslo",
   "country": "NO",
   "currency": "NOK",
