@@ -151,24 +151,26 @@ If you're unsure where your change belongs, feel free to open an issue or discus
 
 ## Adding a new regime
 
-All new features should come with tests. For example, `tax_identities.go` must have a `tax_identities_test.go` file.
+Duplicate [`regimes/template/`](regimes/template/) and rename the directory to the 2-letter country code. The template contains four files that cover the standard regime structure:
 
-- Duplicate the existing [`template`](./regimes/template/) directory and rename it to the 2-letter country code (regime code).
-- Try to include detailed descriptions and examples throughout regimes to help developers use the regime and prepare their own documents.
-- Update the necessary files and code as needed.
-  - Rename `template.go` to `<tax_country_code>.go`
-    - `New` function should instantiate a [`*tax.RegimeDef`](tax/regime_def.go).
-    - `Normalize` and `Validate` functions should take care of each possible element that is specific to the regime.
-  - `tax_categories.go`
-  - `tax_identity.go`
-- Use methods to create object instances when building regimes to prevent accidental overriding of data.
-- Optionally, add the following files:
-  - `scenarios.go`
-  - `corrections.go`
-  - `org_parties.go`
-  - `org_identities.go`
-- Add the new regime to the `regimes/regimes.go` file.
-- Add the new regime to the `regimes/regimes_test.go` file.
+| File                      | Purpose                                              |
+| ------------------------- | ---------------------------------------------------- |
+| `template.go` → `<cc>.go` | Regime definition, `Normalize` / `Validate` dispatch |
+| `tax_categories.go`       | Tax categories, rates, and historical values         |
+| `tax_identities.go`       | Tax ID format validation                             |
+| `invoices.go`             | Invoice-level validation (e.g., supplier tax ID)     |
+
+If the country allows non-tax identifiers on invoices (e.g. Sweden, where a business registration number may substitute for a VAT number), add an `org_identities.go` file — see [`regimes/se/`](regimes/se/) for reference.
+
+The template includes commented-out examples for less common fields and dispatch cases.
+
+Files with validation or normalization logic (tax identities, invoices, scenarios) should have corresponding `_test.go` files. Purely declarative files (`<cc>.go`, `tax_categories.go`) don't need their own tests — they're covered by the shared regime validation in [`regimes/regimes_test.go`](regimes/regimes_test.go).
+
+After implementing:
+
+1. Add a blank import in [`regimes/regimes.go`](regimes/regimes.go). The shared test in [`regimes/regimes_test.go`](regimes/regimes_test.go) will pick up the new regime automatically.
+2. Run `mage generate` to regenerate schemas and regime data.
+3. Run `go test --update ./regimes/<cc>/...` to generate test output files.
 
 ## Adding a new addon
 

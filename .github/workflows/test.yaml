@@ -20,6 +20,18 @@ jobs:
         with:
           go-version-file: "go.mod"
 
+      - name: Verify go:build ignore files exist
+        run: |
+          ls \
+            addons/generate.go \
+            catalogues/generate.go \
+            currency/generate.go \
+            regimes/generate.go \
+            regimes/template/template.go \
+            regimes/template/org_identities.go \
+            schema/generate.go \
+            > /dev/null
+
       - name: Install Dependencies
         env:
           GOPROXY: https://proxy.golang.org,direct
