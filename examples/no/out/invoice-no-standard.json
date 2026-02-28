@@ -1,0 +1,112 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "2f05cf922e557829992557bad25d26828f7f76f2b2faad3a9decfd1fdc14deaf"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4a",
+		"type": "standard",
+		"series": "2025",
+		"code": "0004",
+		"issue_date": "2025-06-25",
+		"currency": "NOK",
+		"supplier": {
+			"name": "Eksempel AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			},
+			"addresses": [
+				{
+					"street": "Eksempelveien 1",
+					"locality": "Oslo",
+					"code": "0150",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Mottaker AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Kundeveien 42",
+					"locality": "Bergen",
+					"code": "5003",
+					"country": "NO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Konsulenttjenester",
+					"price": "1500.00"
+				},
+				"sum": "30000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "30000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "3",
+				"item": {
+					"name": "Programvarelisens",
+					"price": "5000.00"
+				},
+				"sum": "15000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "15000.00"
+			}
+		],
+		"totals": {
+			"sum": "45000.00",
+			"total": "45000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "45000.00",
+								"percent": "25.0%",
+								"amount": "11250.00"
+							}
+						],
+						"amount": "11250.00"
+					}
+				],
+				"sum": "11250.00"
+			},
+			"tax": "11250.00",
+			"total_with_tax": "56250.00",
+			"payable": "56250.00"
+		}
+	}
+}
