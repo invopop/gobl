@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pa`: New Panama tax regime with RUC validation, DV checksum, ITBMS/ISC tax categories, and invoice validation
+
 ### Changed
 
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema

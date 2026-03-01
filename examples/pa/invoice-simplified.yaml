@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "PA"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b1"
+code: "0000000042"
+series: "001"
+issue_date: "2025-06-15"
+currency: "PAB"
+tax:
+  tags:
+    - simplified
+supplier:
+  name: "Tienda Ejemplo, S.A."
+  tax_id:
+    country: "PA"
+    code: "8-442-445-90"
+  addresses:
+    - street: "Vía España, Local 12"
+      locality: "Ciudad de Panamá"
+      region: "Panamá"
+      country: "PA"
+lines:
+  - quantity: "3"
+    item:
+      name: "Artículos de oficina"
+      price: "25.00"
+    taxes:
+      - cat: "VAT"
+        rate: "general"
+  - quantity: "1"
+    item:
+      name: "Servicio de impresión"
+      price: "15.00"
+    taxes:
+      - cat: "VAT"
+        rate: "general"
+payment:
+  terms:
+    due_dates:
+      - date: "2025-06-15"
+        percent: "100%"
