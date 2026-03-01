@@ -235,10 +235,7 @@ func calculateDV(ruc string) (string, error) {
 		return "", fmt.Errorf("4-segment RUC must have NT suffix in first segment")
 	}
 
-	ructb, err := buildNumericRUC(ruc, segments)
-	if err != nil {
-		return "", err
-	}
+	ructb := buildNumericRUC(ruc, segments)
 
 	oldFormat := isOldFormatRUC(ructb)
 
@@ -300,34 +297,34 @@ func dvCrossRefLookup(key string) string {
 
 // buildNumericRUC transforms a RUC into the 20-digit numeric representation
 // required by the DV algorithm. The transformation depends on the RUC type.
-func buildNumericRUC(ruc string, segments []string) (string, error) {
+func buildNumericRUC(ruc string, segments []string) string {
 	switch {
 	case ruc[0] == rucPrefixForeigner[0]:
-		return buildPersonNumeric(dvProvinceNone, dvTypeForeigner, segments[1], segments[2]), nil
+		return buildPersonNumeric(dvProvinceNone, dvTypeForeigner, segments[1], segments[2])
 
 	case strings.HasSuffix(segments[0], rucSuffixNT):
 		province := segments[0][:len(segments[0])-len(rucSuffixNT)]
-		return buildPersonNumeric(province, dvTypeNT, segments[2], segments[3]), nil
+		return buildPersonNumeric(province, dvTypeNT, segments[2], segments[3])
 
 	case strings.HasSuffix(segments[0], rucSuffixAV):
 		province := segments[0][:len(segments[0])-len(rucSuffixAV)]
-		return buildPersonNumeric(province, dvTypeAV, segments[1], segments[2]), nil
+		return buildPersonNumeric(province, dvTypeAV, segments[1], segments[2])
 
 	case strings.HasSuffix(segments[0], rucSuffixPI):
 		province := segments[0][:len(segments[0])-len(rucSuffixPI)]
-		return buildPersonNumeric(province, dvTypePI, segments[1], segments[2]), nil
+		return buildPersonNumeric(province, dvTypePI, segments[1], segments[2])
 
 	case segments[0] == rucPrefixPE:
-		return buildPersonNumeric(dvProvinceNone, dvTypePE, segments[1], segments[2]), nil
+		return buildPersonNumeric(dvProvinceNone, dvTypePE, segments[1], segments[2])
 
 	case ruc[0] == rucPrefixNaturalized[0]:
-		return buildPersonNumeric(dvProvinceNone, dvTypeNaturalized, segments[1], segments[2]), nil
+		return buildPersonNumeric(dvProvinceNone, dvTypeNaturalized, segments[1], segments[2])
 
 	case len(segments[0]) <= 2:
-		return buildPersonNumeric(segments[0], dvTypeCedula, segments[1], segments[2]), nil
+		return buildPersonNumeric(segments[0], dvTypeCedula, segments[1], segments[2])
 
 	default:
-		return buildLegalNumeric(segments[0], segments[1], segments[2]), nil
+		return buildLegalNumeric(segments[0], segments[1], segments[2])
 	}
 }
 
