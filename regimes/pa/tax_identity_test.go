@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/pa"
 	"github.com/invopop/gobl/tax"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -158,9 +157,9 @@ func TestValidateTaxIdentity(t *testing.T) {
 }
 
 func TestValidateTaxIdentityNil(t *testing.T) {
-	assert.NotPanics(t, func() {
+	require.NotPanics(t, func() {
 		err := pa.Validate((*tax.Identity)(nil))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -226,13 +225,13 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "PA", Code: tt.code}
 			pa.Normalize(tID)
-			assert.Equal(t, tt.expected, tID.Code)
+			require.Equal(t, tt.expected, tID.Code)
 		})
 	}
 }
 
 func TestNormalizeTaxIdentityNil(t *testing.T) {
-	assert.NotPanics(t, func() {
+	require.NotPanics(t, func() {
 		pa.Normalize((*tax.Identity)(nil))
 	})
 }
