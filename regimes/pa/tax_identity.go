@@ -45,12 +45,13 @@ const (
 // Tax Identity Patterns (all include the trailing -DV suffix except final consumer)
 //
 // Natural person (cédula): [Province]-[Book]-[Entry]-[DV] (e.g., 8-442-445-08)
-// Province suffixes AV/PI: [Province]AV-[Book]-[Entry]-[DV] (e.g., 1AV-432-658-96)
-// Foreigner (E): E-[Book]-[Entry]-[DV] (e.g., E-12-342-10)
-// Naturalized (N): N-[Book]-[Entry]-[DV] (e.g., N-45-832-58)
-// PE prefix: PE-[Book]-[Entry]-[DV] (e.g., PE-10-442-50)
+// AV - Antes de la Vigencia (before the current ID system): [Province]AV-[Book]-[Entry]-[DV]
+// PI - Población Indígena (indigenous population): [Province]PI-[Book]-[Entry]-[DV]
+// Foreigner - Extranjero (E): E-[Book]-[Entry]-[DV] (e.g., E-12-342-10)
+// Naturalized - Naturalizado (N): N-[Book]-[Entry]-[DV] (e.g., N-45-832-58)
+// PE - Panameño en el Exterior (Panamanian abroad): PE-[Book]-[Entry]-[DV]
 // Legal entity: [Seq]-[Section]-[Number]-[DV] (e.g., 2486589-1-816994-62)
-// NT (Número Tributario): [Province]NT-[Seq]-[Book]-[Entry]-[DV]
+// NT - Número Tributario (tax number for entities without RUC): [Province]NT-[Seq]-[Book]-[Entry]-[DV]
 // Final consumer: CIP-000-000-0000 (no DV)
 const (
 	TaxIdentityPatternNatural       = `^\d{1,2}-\d{1,4}-\d{1,6}-\d{2}$`
