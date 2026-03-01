@@ -31,13 +31,13 @@ The preferred language for contributions is English (American).
 
 Regimes and addons self-register via `init()` functions:
 
-- **Regimes** call `tax.RegisterRegimeDef(New())` in their `init()` — see [`regimes/template/template.go`](regimes/template/template.go) for the pattern.
+- **Regimes** call `tax.RegisterRegimeDef(New())` in their `init()` — see [`regimes/dk/dk.go`](regimes/dk/dk.go) for an example.
 - **Addons** call `tax.RegisterAddonDef(newAddon())` in their `init()`.
 - Aggregation is via blank imports in [`regimes/regimes.go`](regimes/regimes.go) and [`addons/addons.go`](addons/addons.go).
 
 ### Normalizer / Validator Dispatch
 
-Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the appropriate handler based on the document type. See the `Normalize` and `Validate` functions in [`regimes/template/template.go`](regimes/template/template.go).
+Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the appropriate handler based on the document type. See the `Normalize` and `Validate` functions in [`regimes/dk/dk.go`](regimes/dk/dk.go) for an example.
 
 ### Scenarios
 
@@ -151,24 +151,31 @@ If you're unsure where your change belongs, feel free to open an issue or discus
 
 ## Adding a new regime
 
-All new features should come with tests. For example, `tax_identities.go` must have a `tax_identities_test.go` file.
+Start by researching the country's tax and invoicing regulations. Prefer official governmental sources and collect the
+URLs as you go (you'll need them later).
 
-- Duplicate the existing [`template`](./regimes/template/) directory and rename it to the 2-letter country code (regime code).
-- Try to include detailed descriptions and examples throughout regimes to help developers use the regime and prepare their own documents.
-- Update the necessary files and code as needed.
-  - Rename `template.go` to `<tax_country_code>.go`
-    - `New` function should instantiate a [`*tax.RegimeDef`](tax/regime_def.go).
-    - `Normalize` and `Validate` functions should take care of each possible element that is specific to the regime.
-  - `tax_categories.go`
-  - `tax_identity.go`
-- Use methods to create object instances when building regimes to prevent accidental overriding of data.
-- Optionally, add the following files:
-  - `scenarios.go`
-  - `corrections.go`
-  - `org_parties.go`
-  - `org_identities.go`
-- Add the new regime to the `regimes/regimes.go` file.
-- Add the new regime to the `regimes/regimes_test.go` file.
+Create a new directory under `regimes/` named with the 2-letter country code. The best way to learn how a regime is
+structured is to read an existing one. Use a recent and/or similar regime (e.g. [`regimes/dk/`](regimes/dk/)) to build upon.
+
+A minimal regime needs four files:
+
+- `<cc>.go`: declares the regime and defines its metadata.
+- `tax_categories.go`: declares tax categories with rates and, optionally, historical values.
+- `tax_identity.go`: implements tax ID normalization, validation, classification, etc.
+- `invoices.go`: implements invoice-level validation (e.g. supplier must have a tax ID).
+
+Depending on the requirements you may also need:
+
+- `scenarios.go`: most regimes only need the shared baseline scenarios (`bill.InvoiceScenarios()`). Add a country-specific file when the regime requires its own mappings.
+- `corrections.go`: only needed when the country's regulation explicitly constrains which correction types are valid. Omitting the `Corrections` field entirely means any correction type is accepted.
+- `identities.go`: for non-tax identifiers that can appear on invoices as alternatives to the tax ID.
+
+After you've implemented the regime:
+
+- Include test files for any regime-specific logic. Purely declarative files don't need any: they are covered by GOBL core tests.
+- Add a blank import in [`regimes/regimes.go`](regimes/regimes.go) to register the new regime.
+- Add at least one GOBL example document in `examples/<cc>/` and run `go test --update ./...` to regenerate the output files.
+- Run `mage check` to lint, regenerate schemas, run tests, and verify a clean git state.
 
 ## Adding a new addon
 

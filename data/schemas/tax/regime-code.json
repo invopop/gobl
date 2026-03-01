@@ -54,6 +54,10 @@
           "title": "Spain"
         },
         {
+          "const": "FI",
+          "title": "Finland"
+        },
+        {
           "const": "FR",
           "title": "France"
         },
