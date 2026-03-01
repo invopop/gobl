@@ -1,0 +1,191 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Finland",
+    "fi": "Suomi"
+  },
+  "description": {
+    "en": "Finland's tax system is administered by the Finnish Tax Administration\n(Verohallinto). As an EU member state, Finland follows the EU VAT\nDirective.\n\nVAT (Arvonlisävero, ALV) applies at a standard rate of 25.5%, a reduced\nrate of 13.5% on food, restaurants, books, transport, accommodation, and\ncultural events, and a further reduced rate of 10% on newspapers and\nmagazines. The 13.5% rate took effect in 2026, replacing the previous 14%\ntier and absorbing several categories formerly at 10%. Exports and\nintra-EU sales to VAT-liable buyers are zero-rated.\n\nBusinesses are identified by their Business ID (Y-tunnus), a 7-digit\nnumber plus a check digit (format 1234567-8). The Finnish VAT number\nis formed by prefixing FI and removing the hyphen (e.g. FI12345678).\n\nInvoice corrections are not restricted to specific document types; any\ncorrective document referencing the original invoice is accepted.\n\nE-invoicing is mandatory for B2G transactions since April 2021 under\nAct 241/2019, which implements EU Directive 2014/55/EU. Finvoice and\nTEAPPSXML are the primary domestic formats; PEPPOL BIS is also supported."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Verohallinto - VAT Invoice Requirements"
+      },
+      "url": "https://www.vero.fi/en/detailed-guidance/guidance/48090/vat-invoice-requirements/"
+    },
+    {
+      "title": {
+        "en": "Verohallinto - Business ID Validation"
+      },
+      "url": "https://www.vero.fi/globalassets/tietoa-verohallinnosta/ohjelmistokehittajille/yritys--ja-yhteisötunnuksen-ja-henkilötunnuksen-tarkistusmerkin-tarkistuslaskenta.pdf"
+    },
+    {
+      "title": {
+        "en": "Valtiokonttori - Invoicing the State"
+      },
+      "url": "https://www.valtiokonttori.fi/en/services/government-e-invoices/invoicing-the-state/"
+    },
+    {
+      "title": {
+        "en": "Finlex - Act on Electronic Invoicing 241/2019"
+      },
+      "url": "https://www.finlex.fi/fi/laki/alkup/2019/20190241"
+    }
+  ],
+  "time_zone": "Europe/Helsinki",
+  "country": "FI",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "fi": "ALV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "fi": "Arvonlisävero"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "fi": "Yleinen verokanta"
+          },
+          "values": [
+            {
+              "since": "2024-09-01",
+              "percent": "25.5%"
+            },
+            {
+              "since": "2013-01-01",
+              "percent": "24.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "fi": "Ensimmäinen alennettu verokanta"
+          },
+          "values": [
+            {
+              "since": "2026-01-01",
+              "percent": "13.5%"
+            },
+            {
+              "since": "2013-01-01",
+              "percent": "14.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "fi": "Toinen alennettu verokanta"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Verohallinto - VAT Rates"
+          },
+          "url": "https://www.vero.fi/en/businesses-and-corporations/taxes-and-charges/vat/rates-of-vat/"
+        },
+        {
+          "title": {
+            "en": "Finlex - Arvonlisäverolaki 1501/1993"
+          },
+          "url": "https://www.finlex.fi/fi/laki/ajantasa/1993/19931501"
+        }
+      ]
+    }
+  ]
+}
