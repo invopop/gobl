@@ -82,6 +82,10 @@
           "title": "The Netherlands"
         },
         {
+          "const": "PA",
+          "title": "Panama"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },

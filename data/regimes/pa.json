@@ -1,0 +1,178 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Panama",
+    "es": "Panamá"
+  },
+  "description": {
+    "en": "Panama's tax system is administered by the DGI (Dirección General de Ingresos).\nElectronic invoicing is managed through the SFEP (Sistema de Factura Electrónica\nde Panamá), which requires XML documents signed with XAdES-BES and submitted\nthrough an authorized PAC (Proveedor Autorizado de Certificación).\n\nBusinesses and individuals are identified by their RUC (Registro Único de\nContribuyente) paired with a DV (Dígito Verificador), a 2-digit check digit\npre-assigned by the DGI. The RUC format varies by taxpayer type: natural persons\nuse their cédula number, foreigners use an E-prefix, and legal entities follow\nnumeric sequences from the Public Registry.\n\nITBMS (Impuesto de Transferencia de Bienes Muebles y Servicios) is Panama's\nprincipal consumption tax, functioning as a VAT. A selective consumption tax\n(ISC) applies to specific goods and must be calculated before the ITBMS."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "DGI - SFEP Portal"
+      },
+      "url": "https://dgi.mef.gob.pa/facturaelectronica"
+    },
+    {
+      "title": {
+        "en": "DGI - SFEP Technical Documentation"
+      },
+      "url": "https://dgi.mef.gob.pa/FacturaElectronica/Documentacion.html"
+    },
+    {
+      "title": {
+        "en": "Executive Decree 766 (2020) - SFEP Operational Rules"
+      },
+      "url": "https://www.gacetaoficial.gob.pa/pdfTemp/29187_A/82818.pdf"
+    }
+  ],
+  "time_zone": "America/Panama",
+  "country": "PA",
+  "currency": "PAB",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "ITBMS",
+        "es": "ITBMS"
+      },
+      "title": {
+        "en": "Transfer of Tangible Movable Goods and Services Tax",
+        "es": "Impuesto de Transferencia de Bienes Muebles y Servicios"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tasa General"
+          },
+          "values": [
+            {
+              "since": "2010-03-15",
+              "percent": "7.0%"
+            },
+            {
+              "since": "1977-03-01",
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "rate": "increased",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Increased Rate (Hotels, Alcoholic Beverages)",
+            "es": "Tasa Incrementada (Hoteles, Bebidas Alcohólicas)"
+          },
+          "values": [
+            {
+              "since": "2010-03-15",
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "special",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Special Rate (Tobacco)",
+            "es": "Tasa Especial (Tabaco)"
+          },
+          "values": [
+            {
+              "since": "2010-03-15",
+              "percent": "15.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "DGI - SFEP Technical Documentation"
+          },
+          "url": "https://dgi.mef.gob.pa/FacturaElectronica/Documentacion.html"
+        }
+      ]
+    },
+    {
+      "code": "ISC",
+      "name": {
+        "en": "ISC",
+        "es": "ISC"
+      },
+      "title": {
+        "en": "Selective Consumption Tax",
+        "es": "Impuesto Selectivo al Consumo"
+      }
+    }
+  ]
+}

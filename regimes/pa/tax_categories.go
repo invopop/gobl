@@ -40,12 +40,16 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tasa General",
 				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(70, 3),
-						Since:   cal.NewDate(2010, 3, 15),
-					},
+			Values: []*tax.RateValueDef{
+				{
+					Percent: num.MakePercentage(70, 3),
+					Since:   cal.NewDate(2010, 3, 15),
 				},
+				{
+					Percent: num.MakePercentage(50, 3),
+					Since:   cal.NewDate(1977, 3, 1),
+				},
+			},
 			},
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
