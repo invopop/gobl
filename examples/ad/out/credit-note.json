@@ -4,13 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b4b00ca3b1ec562b98ab71e048c304b45013419f3f68f73178db8f555942fda9"
+			"val": "804318f01c7eef79b66a7de009d486dba1f10c1794ee128abc1e274619bfcdb8"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "AD",
-		"uuid": "019c8f4b-5d5e-7be1-914f-d44cbc4dc9af",
+		"uuid": "019caa49-8f5c-7a79-95f3-a73ca167fe5b",
 		"type": "credit-note",
 		"series": "2024",
 		"code": "CN-0001",

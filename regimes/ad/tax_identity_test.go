@@ -39,7 +39,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "invalid - missing leading letter",
-			code: "1234567A",
+			code: "123456A",
 			err:  "code: must be in a valid format",
 		},
 		{

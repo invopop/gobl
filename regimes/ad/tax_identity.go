@@ -1,6 +1,7 @@
 package ad
 
 import (
+	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/tax"
@@ -18,10 +19,13 @@ import (
 // Followed by six digits, and ending with a control letter.
 // Example: L-123456-A (often displayed with hyphens)
 var (
-	nrtRegexp = regexp.MustCompile(`^[A,E,F,L][0-9]{6}[A-Z]$`)
+	nrtRegexp = regexp.MustCompile(`^[AEFL][0-9]{6}[A-Z]$`)
 )
 
 func validateTaxIdentity(t *tax.Identity) error {
+	if t == nil {
+		return errors.New("tax identity cannot be nil")
+	}
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Code,
 			validation.Required,
