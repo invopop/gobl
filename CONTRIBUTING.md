@@ -31,13 +31,13 @@ The preferred language for contributions is English (American).
 
 Regimes and addons self-register via `init()` functions:
 
-- **Regimes** call `tax.RegisterRegimeDef(New())` in their `init()` — see [`regimes/template/template.go`](regimes/template/template.go) for the pattern.
+- **Regimes** call `tax.RegisterRegimeDef(New())` in their `init()` — see any existing regime (e.g., [`regimes/dk/dk.go`](regimes/dk/dk.go)) for the pattern.
 - **Addons** call `tax.RegisterAddonDef(newAddon())` in their `init()`.
 - Aggregation is via blank imports in [`regimes/regimes.go`](regimes/regimes.go) and [`addons/addons.go`](addons/addons.go).
 
 ### Normalizer / Validator Dispatch
 
-Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the appropriate handler based on the document type. See the `Normalize` and `Validate` functions in [`regimes/template/template.go`](regimes/template/template.go).
+Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the appropriate handler based on the document type. See the `Normalize` and `Validate` functions in any existing regime (e.g., [`regimes/dk/dk.go`](regimes/dk/dk.go)).
 
 ### Scenarios
 
@@ -153,10 +153,10 @@ If you're unsure where your change belongs, feel free to open an issue or discus
 
 All new features should come with tests. For example, `tax_identities.go` must have a `tax_identities_test.go` file.
 
-- Duplicate the existing [`template`](./regimes/template/) directory and rename it to the 2-letter country code (regime code).
+- Use an existing regime as a reference (e.g., [`regimes/dk/`](./regimes/dk/)) and create a new directory with the 2-letter country code (regime code).
 - Try to include detailed descriptions and examples throughout regimes to help developers use the regime and prepare their own documents.
 - Update the necessary files and code as needed.
-  - Rename `template.go` to `<tax_country_code>.go`
+  - Create `<tax_country_code>.go`
     - `New` function should instantiate a [`*tax.RegimeDef`](tax/regime_def.go).
     - `Normalize` and `Validate` functions should take care of each possible element that is specific to the regime.
   - `tax_categories.go`

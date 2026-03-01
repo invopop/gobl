@@ -64,7 +64,7 @@ var (
 
 	// IdentityCodeValidationIgnore is a list of countries that should not have their tax identity
 	// codes validated due to local rules.
-	IdentityCodeValidationIgnore = []l10n.TaxCountryCode{"MX"}
+	IdentityCodeValidationIgnore = []l10n.TaxCountryCode{"MX", "PA"}
 )
 
 // RequireIdentityCode is an additional check to use alongside

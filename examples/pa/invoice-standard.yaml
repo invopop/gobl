@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: "PA"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+code: "0000000001"
+series: "001"
+issue_date: "2025-06-15"
+currency: "PAB"
+supplier:
+  name: "Empresa Ejemplo, S.A."
+  tax_id:
+    country: "PA"
+    code: "155596713-2-2015-59"
+  addresses:
+    - street: "Calle 50, Edificio Global Plaza"
+      locality: "Ciudad de Panamá"
+      region: "Panamá"
+      country: "PA"
+customer:
+  name: "Cliente Comercial, S.A."
+  tax_id:
+    country: "PA"
+    code: "2486589-1-816994-62"
+  addresses:
+    - street: "Ave. Balboa, Torre BAC"
+      locality: "Ciudad de Panamá"
+      region: "Panamá"
+      country: "PA"
+lines:
+  - quantity: "5"
+    item:
+      name: "Servicio de consultoría empresarial"
+      price: "1500.00"
+    taxes:
+      - cat: "VAT"
+        rate: "general"
+  - quantity: "2"
+    item:
+      name: "Licencia de software anual"
+      price: "2500.00"
+    taxes:
+      - cat: "VAT"
+        rate: "general"
+payment:
+  terms:
+    due_dates:
+      - date: "2025-07-15"
+        percent: "100%"
