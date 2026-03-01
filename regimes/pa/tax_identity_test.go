@@ -44,8 +44,17 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid legal short", code: "1000-1-1-18"},
 
 		// Valid: old-format legal entity (triggers DV cross-reference substitution)
+		{name: "valid legal old format crossref 00", code: "100-2-3-06"},
 		{name: "valid legal old format crossref 10", code: "10000-1-1-18"},
+		{name: "valid legal old format crossref 11", code: "11000-3-5-02"},
+		{name: "valid legal old format crossref 12", code: "12000-2-7-30"},
+		{name: "valid legal old format crossref 13", code: "13000-4-9-54"},
+		{name: "valid legal old format crossref 14", code: "14000-3-11-42"},
+		{name: "valid legal old format crossref 16", code: "16000-2-13-88"},
+		{name: "valid legal old format crossref 17", code: "17000-4-15-00"},
+		{name: "valid legal old format crossref 18", code: "18000-3-17-38"},
 		{name: "valid legal old format crossref 30", code: "30000-5-100-05"},
+		{name: "valid legal old format default", code: "1000-2-19-73"},
 
 		// Valid: NT (Número Tributario)
 		{name: "valid NT", code: "1NT-100-200-3000-30"},
@@ -153,6 +162,11 @@ func TestValidateTaxIdentityNil(t *testing.T) {
 		err := pa.Validate((*tax.Identity)(nil))
 		assert.NoError(t, err)
 	})
+}
+
+func TestValidateUnsupportedDocType(t *testing.T) {
+	err := pa.Validate("unsupported")
+	require.NoError(t, err)
 }
 
 func TestNormalizeTaxIdentity(t *testing.T) {
