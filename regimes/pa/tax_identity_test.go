@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/regimes/pa"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateTaxIdentity(t *testing.T) {
@@ -139,12 +140,10 @@ func TestValidateTaxIdentity(t *testing.T) {
 			tID := &tax.Identity{Country: "PA", Code: tt.code}
 			err := pa.Validate(tID)
 			if tt.err == "" {
-				assert.NoError(t, err)
-			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+				require.NoError(t, err)
+				return
 			}
+			require.ErrorContains(t, err, tt.err)
 		})
 	}
 }
