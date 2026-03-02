@@ -8,6 +8,10 @@ import (
 )
 
 func validateInvoice(inv *bill.Invoice) error {
+	if inv == nil {
+		return nil
+	}
+
 	simplified := inv.Tags.HasTags(tax.TagSimplified)
 
 	return validation.ValidateStruct(inv,

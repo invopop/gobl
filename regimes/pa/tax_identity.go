@@ -60,7 +60,7 @@ const (
 	TaxIdentityPatternPE            = `^PE-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternAV            = `^\d{1,2}AV-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternPI            = `^\d{1,2}PI-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternLegal         = `^\d{3,}-\d{1,4}-\d{1,7}-\d{2}$`
+	TaxIdentityPatternLegal         = `^\d{3,}-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternNT            = `^\d{1,2}NT-\d{1,4}-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternFinalConsumer = `^CIP-000-000-0000$`
 )
@@ -131,6 +131,7 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	c := strings.ToUpper(tID.Code.String())
 	c = taxCodeBadCharsRegexp.ReplaceAllString(c, "")
 	c = strings.TrimPrefix(c, string(l10n.PA))
+	c = strings.TrimPrefix(c, "-")
 	tID.Code = cbc.Code(c)
 }
 
@@ -153,13 +154,15 @@ func validateTaxCodeDV(value any) error {
 		return nil
 	}
 
+	if determineTaxCodeType(code).IsEmpty() {
+		return nil
+	}
+
 	codeStr := code.String()
 	if taxCodeFinalConsumerRegexp.MatchString(codeStr) {
 		return nil
 	}
 
-	// Every valid RUC format contains hyphens; reaching here without one means
-	// the format validator already flagged the code, so we skip silently.
 	lastHyphen := strings.LastIndex(codeStr, "-")
 	if lastHyphen < 0 {
 		return nil

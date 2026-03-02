@@ -136,3 +136,10 @@ func TestInvoiceValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateNilInvoice(t *testing.T) {
+	require.NotPanics(t, func() {
+		err := pa.Validate((*bill.Invoice)(nil))
+		require.NoError(t, err)
+	})
+}

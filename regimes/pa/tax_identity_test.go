@@ -94,6 +94,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 			code: "123-442-445-90",
 			err:  "code",
 		},
+		{
+			name: "invalid format does not leak internal error",
+			code: "ABC-DEF-GHI-99",
+			err:  "code",
+		},
 
 		// Invalid: DV checksum errors
 		{
@@ -182,6 +187,11 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		{
 			name:     "with PA prefix",
 			code:     "PA8-442-445-90",
+			expected: "8-442-445-90",
+		},
+		{
+			name:     "with PA prefix and hyphen",
+			code:     "PA-8-442-445-90",
 			expected: "8-442-445-90",
 		},
 		{
