@@ -188,6 +188,8 @@ func validateTaxCodeDV(value any) error {
 func determineTaxCodeType(code cbc.Code) cbc.Key {
 	codeStr := code.String()
 	switch {
+	// CIP-000-000-0000 is a generic consumer placeholder, not a real person category.
+	// Mapped to Natural as the closest match since it represents an individual consumer.
 	case taxCodeFinalConsumerRegexp.MatchString(codeStr):
 		return TaxIdentityTypeNatural
 
@@ -197,8 +199,10 @@ func determineTaxCodeType(code cbc.Code) cbc.Key {
 	case taxCodeNaturalizedRegexp.MatchString(codeStr):
 		return TaxIdentityTypeNaturalized
 
+	// PE (Panameño en el Exterior) are Panamanian citizens born abroad, not foreigners.
+	// DGI classifies them as Natural (tipo contribuyente = 1) in SFEP.
 	case taxCodePERegexp.MatchString(codeStr):
-		return TaxIdentityTypeForeigner
+		return TaxIdentityTypeNatural
 
 	case taxCodeAVRegexp.MatchString(codeStr):
 		return TaxIdentityTypeNatural
@@ -396,13 +400,13 @@ func padLeft(s string, width int) string {
 // Weights start at 2 for the rightmost digit and increment as it moves to the left,
 // a common convention in mod-11 check digit algorithms (see also BR and NL regimes).
 // Example for "456": 4*4 + 5*3 + 6*2 = 43, 43%11 = 10, 11-10 = 1.
-// For old-format RUCs, weight 12 is skipped.
+// For old-format legal entity RUCs, weight 12 is skipped. This applies to both
+// DV digit calculations (dv1 and dv2) per the DGI spec.
 func digitDV(oldFormat bool, ructb string) int {
 	weight := 2
 	sum := 0
 
 	for i := len(ructb) - 1; i >= 0; i-- {
-		// Old-format RUCs skip weight 12 in the first pass per the DGI spec.
 		if oldFormat && weight == 12 {
 			weight--
 		}

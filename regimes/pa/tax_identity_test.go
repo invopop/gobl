@@ -16,7 +16,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		err  string
 	}{
 		// Valid: natural person (cédula)
-		// Verified against juancorradine/Panama-RUC-DV-Calculator (tested with DGI ETax 2.0)
+		// Verified against DGI ETax 2.0
 		{name: "valid natural 8-769-1080", code: "8-769-1080-56"},
 		{name: "valid natural 5-257-218", code: "5-257-218-09"},
 		{name: "valid natural 6-108-289", code: "6-108-289-79"},
@@ -43,7 +43,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid PI", code: "4PI-234-123-31"},
 
 		// Valid: legal entity
-		// Verified against juancorradine/Panama-RUC-DV-Calculator (tested with DGI ETax 2.0)
+		// Verified against DGI ETax 2.0
 		{name: "valid legal 155720753-2-2022", code: "155720753-2-2022-39"},
 		{name: "valid legal 2588017-1-831938", code: "2588017-1-831938-20"},
 		{name: "valid legal 1489806-1-645353", code: "1489806-1-645353-68"},
@@ -66,7 +66,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid legal old format default", code: "1000-2-19-73"},
 
 		// Valid: NT (Número Tributario)
-		// Verified against juancorradine/Panama-RUC-DV-Calculator (tested with DGI ETax 2.0)
+		// Verified against DGI ETax 2.0
 		{name: "valid NT 8NT-0-1-24", code: "8NT-0-1-24-33"},
 		{name: "valid NT 3NT-0-465-45624", code: "3NT-0-465-45624-03"},
 		{name: "valid NT 9NT-0-2-421578", code: "9NT-0-2-421578-50"},
