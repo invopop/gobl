@@ -12,7 +12,7 @@ supplier:
   name: "Tienda Ejemplo, S.A."
   tax_id:
     country: "PA"
-    code: "8-442-445-90"
+    code: "8-769-1080-56"
   addresses:
     - street: "Vía España, Local 12"
       locality: "Ciudad de Panamá"

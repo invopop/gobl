@@ -60,7 +60,7 @@ const (
 	TaxIdentityPatternPE            = `^PE-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternAV            = `^\d{1,2}AV-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternPI            = `^\d{1,2}PI-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternLegal         = `^\d{3,}-\d{1,4}-\d{1,6}-\d{2}$`
+	TaxIdentityPatternLegal         = `^\d{3,10}-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternNT            = `^\d{1,2}NT-\d{1,4}-\d{1,4}-\d{1,6}-\d{2}$`
 	TaxIdentityPatternFinalConsumer = `^CIP-000-000-0000$`
 )
@@ -93,7 +93,7 @@ const (
 
 // DGI-defined constants used in the 20-digit DV algorithm representation.
 const (
-	dvPersonFixedSegment = "0000005"
+	dvPersonConstant = "5"
 
 	dvProvinceNone    = "00"
 	dvTypeCedula      = "00"
@@ -225,7 +225,7 @@ func determineTaxCodeType(code cbc.Code) cbc.Key {
 //
 // The algorithm:
 //  1. Transform the RUC into a 20-digit numeric string based on its type.
-//  2. For old-format legal entity RUCs, apply a cross-reference substitution.
+//  2. For old-format legal entity RUCs only, apply a cross-reference substitution.
 //  3. Compute two digits via weighted mod-11 (two passes).
 func calculateDV(ruc string) (string, error) {
 	segments := strings.Split(ruc, "-")
@@ -234,16 +234,23 @@ func calculateDV(ruc string) (string, error) {
 		return "", fmt.Errorf("invalid RUC segment count: %d", len(segments))
 	}
 
-	if len(segments) == 4 && !strings.HasSuffix(segments[0], rucSuffixNT) {
+	hasNT := strings.HasSuffix(segments[0], rucSuffixNT)
+	if len(segments) == 4 && !hasNT {
 		return "", fmt.Errorf("4-segment RUC must have NT suffix in first segment")
+	}
+
+	if hasNT && len(segments) != 4 {
+		return "", fmt.Errorf("NT RUC must have exactly 4 segments, got %d", len(segments))
 	}
 
 	ructb := buildNumericRUC(ruc, segments)
 
-	oldFormat := isOldFormatRUC(ructb)
-
-	if oldFormat {
-		ructb = applyOldFormatCrossRef(ructb)
+	var oldFormat bool
+	if isLegalEntityRUC(segments) {
+		oldFormat = isOldFormatRUC(ructb)
+		if oldFormat {
+			ructb = applyOldFormatCrossRef(ructb)
+		}
 	}
 
 	dv1 := digitDV(oldFormat, ructb)
@@ -252,16 +259,18 @@ func calculateDV(ruc string) (string, error) {
 	return fmt.Sprintf("%d%d", dv1, dv2), nil
 }
 
-// isOldFormatRUC checks whether the 20-digit numeric RUC uses the old legal entity
-// format. In the 20-digit representation, positions [3:5] == "00" and [5] < '5'
-// identify these codes.
+// isOldFormatRUC checks whether the 20-digit numeric representation of a legal entity
+// RUC uses the old format. Only applicable to legal entities; must not be called for
+// person-type RUCs. Positions [3:5] == "00" and [5] < '5' identify old-format codes.
 func isOldFormatRUC(ructb string) bool {
-	return len(ructb) >= 6 &&
+	return len(ructb) >= 7 &&
 		digitAt(ructb, 3) == 0 && digitAt(ructb, 4) == 0 && digitAt(ructb, 5) < 5
 }
 
 // applyOldFormatCrossRef substitutes the type code at positions [5:7] of the
 // 20-digit numeric RUC using the DGI cross-reference table.
+//
+// Caller gates this behind isOldFormatRUC which guarantees len(ructb) >= 7.
 func applyOldFormatCrossRef(ructb string) string {
 	key := ructb[5:7]
 	replacement := dvCrossRefLookup(key)
@@ -298,8 +307,33 @@ func dvCrossRefLookup(key string) string {
 	}
 }
 
+// isLegalEntityRUC returns true when the first segment is all-numeric and longer
+// than 2 characters, which uniquely identifies legal entity RUCs. Person-type
+// RUCs always have letters in the first segment (E, N, PE, NT, AV, PI) or are
+// 1-2 digit province codes.
+//
+// Caller (calculateDV) guarantees len(segments) >= 3.
+func isLegalEntityRUC(segments []string) bool {
+	s := segments[0]
+	return len(s) > 2 && isAllDigits(s)
+}
+
+// isAllDigits reports whether s consists entirely of ASCII decimal digits.
+func isAllDigits(s string) bool {
+	for i := range s {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+
+	return len(s) > 0
+}
+
 // buildNumericRUC transforms a RUC into the 20-digit numeric representation
 // required by the DV algorithm. The transformation depends on the RUC type.
+//
+// Caller (calculateDV) guarantees len(ruc) > 0, len(segments) >= 3,
+// and len(segments) == 4 when segments[0] has the NT suffix.
 func buildNumericRUC(ruc string, segments []string) string {
 	switch {
 	case ruc[0] == rucPrefixForeigner[0]:
@@ -332,12 +366,12 @@ func buildNumericRUC(ruc string, segments []string) string {
 }
 
 func buildPersonNumeric(province, typeCode, book, entry string) string {
-	return padLeft(book, 4) +
-		dvPersonFixedSegment +
+	inner := dvPersonConstant +
 		padLeft(province, 2) +
 		typeCode +
 		padLeft(book, 3) +
 		padLeft(entry, 5)
+	return padLeft(inner, 20)
 }
 
 func buildLegalNumeric(seq, section, number string) string {

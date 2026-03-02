@@ -22,7 +22,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Supplier: &org.Party{
 					TaxID: &tax.Identity{
 						Country: "PA",
-						Code:    "8-442-445-90",
+						Code:    "8-769-1080-56",
 					},
 				},
 				Customer: &org.Party{
@@ -40,7 +40,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Supplier: &org.Party{
 					TaxID: &tax.Identity{
 						Country: "PA",
-						Code:    "8-442-445-90",
+						Code:    "8-769-1080-56",
 					},
 				},
 			},
@@ -52,7 +52,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Supplier: &org.Party{
 					TaxID: &tax.Identity{
 						Country: "PA",
-						Code:    "8-442-445-90",
+						Code:    "8-769-1080-56",
 					},
 				},
 				Customer: &org.Party{
@@ -116,7 +116,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Supplier: &org.Party{
 					TaxID: &tax.Identity{
 						Country: "PA",
-						Code:    "8-442-445-90",
+						Code:    "8-769-1080-56",
 					},
 				},
 				Customer: nil,
