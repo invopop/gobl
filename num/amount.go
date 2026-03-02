@@ -21,6 +21,11 @@ type Amount struct {
 	exp   uint32
 }
 
+// AmmountMaxDigits is the maximum total number of digits (major + decimal)
+// allowed in an amount string. This ensures values fit safely in int64
+// and do not overflow.
+const AmmountMaxDigits = 18
+
 var (
 	// AmountZero is a convenience variable for testing against zero amounts.
 	AmountZero = MakeAmount(0, 0)
@@ -67,6 +72,25 @@ func AmountFromString(val string) (Amount, error) {
 	l := len(x)
 	if l > 2 {
 		return a, fmt.Errorf("amount must contain 0 or 1 decimal separators: %v", val)
+	}
+
+	// Check that the integer part alone doesn't exceed the digit limit.
+	// Leading zeros don't contribute to overflow risk, so we strip them.
+	sigMajor := len(strings.TrimLeft(x[0], "0"))
+	if sigMajor > AmmountMaxDigits {
+		return a, fmt.Errorf("amount '%v' has too many digits (%d), maximum is %d", val, sigMajor, AmmountMaxDigits)
+	}
+
+	// Truncate the decimal part so that total significant digits fit in int64.
+	// If truncation removes all decimal digits, treat the value as an integer.
+	if l == 2 {
+		maxDecimal := AmmountMaxDigits - sigMajor
+		if len(x[1]) > maxDecimal {
+			x[1] = x[1][:maxDecimal]
+		}
+		if len(x[1]) == 0 {
+			l = 1
+		}
 	}
 
 	// Parse the "major" part
