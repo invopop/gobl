@@ -28,6 +28,8 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
+// validateInvoiceSupplier requires a TaxID with code. In Panama, all businesses
+// must have a RUC to operate — it is a general taxpayer ID, not a VAT registration.
 func validateInvoiceSupplier(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {

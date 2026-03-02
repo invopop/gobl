@@ -32,8 +32,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Transfer of Tangible Movable Goods and Services Tax",
 			i18n.ES: "Impuesto de Transferencia de Bienes Muebles y Servicios",
 		},
-		Retained: false,
-		Keys:     tax.GlobalVATKeys(),
+		Keys: tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
@@ -105,7 +104,5 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Selective Consumption Tax",
 			i18n.ES: "Impuesto Selectivo al Consumo",
 		},
-		Retained: false,
-		Rates:    []*tax.RateDef{},
 	},
 }
