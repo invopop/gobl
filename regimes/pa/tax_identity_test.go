@@ -50,20 +50,20 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid legal 1956569-1-732877", code: "1956569-1-732877-00"},
 		{name: "valid legal 797609-1-493865", code: "797609-1-493865-12"},
 		{name: "valid legal 15565624-2-2017", code: "15565624-2-2017-63"},
-		{name: "valid legal short", code: "1000-1-1-18"},
+		{name: "valid legal short", code: "1000-1-1-90"},
 
 		// Valid: old-format legal entity (triggers DV cross-reference substitution)
-		{name: "valid legal old format crossref 00", code: "100-2-3-06"},
-		{name: "valid legal old format crossref 10", code: "10000-1-1-18"},
-		{name: "valid legal old format crossref 11", code: "11000-3-5-02"},
-		{name: "valid legal old format crossref 12", code: "12000-2-7-30"},
-		{name: "valid legal old format crossref 13", code: "13000-4-9-54"},
-		{name: "valid legal old format crossref 14", code: "14000-3-11-42"},
-		{name: "valid legal old format crossref 16", code: "16000-2-13-88"},
-		{name: "valid legal old format crossref 17", code: "17000-4-15-00"},
-		{name: "valid legal old format crossref 18", code: "18000-3-17-38"},
-		{name: "valid legal old format crossref 30", code: "30000-5-100-05"},
-		{name: "valid legal old format default", code: "1000-2-19-73"},
+		{name: "valid legal old format crossref 00", code: "100-2-3-97"},
+		{name: "valid legal old format crossref 10", code: "10000-1-1-90"},
+		{name: "valid legal old format crossref 11", code: "11000-3-5-48"},
+		{name: "valid legal old format crossref 12", code: "12000-2-7-55"},
+		{name: "valid legal old format crossref 13", code: "13000-4-9-41"},
+		{name: "valid legal old format crossref 14", code: "14000-3-11-01"},
+		{name: "valid legal old format crossref 16", code: "16000-2-13-90"},
+		{name: "valid legal old format crossref 17", code: "17000-4-15-87"},
+		{name: "valid legal old format crossref 18", code: "18000-3-17-94"},
+		{name: "valid legal old format crossref 30", code: "30000-5-100-46"},
+		{name: "valid legal old format default", code: "1000-2-19-45"},
 
 		// Valid: NT (Número Tributario)
 		// Verified against DGI ETax 2.0
@@ -133,6 +133,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "invalid DV legal old format",
 			code: "10000-1-1-99",
+			err:  "dv checksum failed",
+		},
+		{
+			name: "invalid DV old format weight-12 regression",
+			code: "10000-1-1-18",
 			err:  "dv checksum failed",
 		},
 		{
