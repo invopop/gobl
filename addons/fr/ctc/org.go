@@ -77,12 +77,16 @@ func normalizeIdentities(party *org.Party) {
 	if siret != nil && siren == nil {
 		siretCode := string(siret.Code)
 		if len(siretCode) == 14 {
-			// Create SIREN identity from first 9 digits of SIRET
+			// Create SIREN identity from first 9 digits of SIRET.
+			// We must set the ISO scheme ID here because EN16931 has already
+			// processed the identities slice before FR CTC runs normalizeParty.
 			sirenCode := siretCode[:9]
 			siren = &org.Identity{
 				Type: fr.IdentityTypeSIREN,
 				Code: cbc.Code(sirenCode),
-				// Note: ISO scheme ID will be set by EN16931 addon
+				Ext: tax.Extensions{
+					iso.ExtKeySchemeID: identitySchemeIDSIREN,
+				},
 			}
 			party.Identities = append(party.Identities, siren)
 		}
