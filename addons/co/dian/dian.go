@@ -94,10 +94,10 @@ func newAddon() *tax.AddonDef {
 					},
 					"addresses": [
 						{
-						"street": "CRA 8 113 31 OF 703",
-						"locality": "Bogotá, D.C.",
-						"region": "Bogotá",
-						"country": "CO"
+							"street": "CRA 8 113 31 OF 703",
+							"locality": "Bogotá, D.C.",
+							"region": "Bogotá",
+							"country": "CO"
 						}
 					]
 				}
@@ -129,8 +129,8 @@ func newAddon() *tax.AddonDef {
 					"name": "Ángel Pérez",
 					"identities": [
 						{
-						"key": "co-passport", // DIAN type 41
-						"code": "1234567890"
+							"key": "co-passport", // DIAN type 41
+							"code": "1234567890"
 						}
 					]
 				}
@@ -186,13 +186,13 @@ func newAddon() *tax.AddonDef {
 						"issue_date": "2024-07-23",
 						"reason": "Reason",
 						"stamps": [
-						{
-							"prv": "dian-cude",
-							"val": "57601dd1ab69213ccf8cfd5894f2e9fbfe23643f3a24e2f2526a5bb88d058a0842fffcb339694b6704dc105a9d813327"
-						}
+							{
+								"prv": "dian-cude",
+								"val": "57601dd1ab69213ccf8cfd5894f2e9fbfe23643f3a24e2f2526a5bb88d058a0842fffcb339694b6704dc105a9d813327"
+							}
 						],
 						"ext": {
-						"co-dian-debit-code": "3"
+							"co-dian-debit-code": "3"
 						}
 					}
 				],
