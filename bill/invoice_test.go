@@ -1098,8 +1098,8 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 	inv := baseInvoice(t, lines...)
 
 	// Set an undefined regime
-	inv.Supplier.TaxID.Country = l10n.AD.Tax()
-	assert.Nil(t, tax.RegimeDefFor(l10n.AD), "if Andorra is defined, change this to another country")
+	inv.Supplier.TaxID.Country = l10n.AO.Tax()
+	assert.Nil(t, tax.RegimeDefFor(l10n.AO), "if Angola is defined, change this to another country")
 
 	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
 	inv.Currency = currency.USD
