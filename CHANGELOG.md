@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+- `de`: Corrected historical VAT rates
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
 
 ## [v0.308.0] - 2026-02-17

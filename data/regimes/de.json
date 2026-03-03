@@ -121,7 +121,7 @@
           },
           "values": [
             {
-              "since": "2022-01-01",
+              "since": "2021-01-01",
               "percent": "19%"
             },
             {
@@ -129,12 +129,16 @@
               "percent": "16%"
             },
             {
-              "since": "2007-07-01",
+              "since": "2007-01-01",
               "percent": "19%"
             },
             {
-              "since": "1993-01-01",
+              "since": "1998-04-01",
               "percent": "16%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "15%"
             }
           ]
         },
@@ -153,7 +157,7 @@
           },
           "values": [
             {
-              "since": "2022-01-01",
+              "since": "2021-01-01",
               "percent": "7%"
             },
             {
@@ -161,12 +165,8 @@
               "percent": "5%"
             },
             {
-              "since": "2007-07-01",
+              "since": "1983-07-01",
               "percent": "7%"
-            },
-            {
-              "since": "1993-01-01",
-              "percent": "5%"
             }
           ]
         }
@@ -174,10 +174,24 @@
       "sources": [
         {
           "title": {
-            "de": "Umsatzsteuer/Güter - und Dienstleistungssteuer (USt/GST) (1976-2023)",
-            "en": "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2023)"
+            "de": "Bundesfinanzministerium: 100 Jahre Umsatzsteuer in Deutschland",
+            "en": "Federal Ministry of Finance: 100 Years of VAT in Germany"
           },
-          "url": "https://www.oecd.org/tax/tax-policy/tax-database/"
+          "url": "https://www.bundesfinanzministerium.de/Monatsberichte/2019/12/Inhalte/Kapitel-3-Analysen/3-4-100-jahre-umsatzsteuer.html"
+        },
+        {
+          "title": {
+            "de": "Wissenschaftliche Dienste des Deutschen Bundestages: Rolle der Umsatzsteuer und ihr Beitrag zur Finanzierung der sozialen Sicherungssysteme",
+            "en": "German Bundestag Research Service: Role of VAT and its Contribution to Financing Social Security Systems"
+          },
+          "url": "https://www.bundestag.de/resource/blob/410468/8ceeef0b94cdfa0b39a9925dece2aa75/WD-4-040-10-pdf.pdf"
+        },
+        {
+          "title": {
+            "de": "Statistisches Bundesamt: Auswirkungen der Mehrwertsteuersenkung",
+            "en": "Federal Statistical Office: Effect of the VAT Reduction"
+          },
+          "url": "https://www.destatis.de/EN/Themes/Society-Environment/Income-Consumption-Living-Conditions/Consumption-Expenditure/consumption-1-VAT.html"
         }
       ]
     }
