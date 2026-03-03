@@ -47,4 +47,3 @@ lines:
     taxes:
       - cat: VAT
         rate: reduced
-        
