@@ -1,0 +1,104 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "74cd34049153dd721f0e55a5a9909f1a83628b1a8eabb6da529ef82d7443d3a5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IL",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2025-06-15",
+		"currency": "ILS",
+		"tax": {},
+		"supplier": {
+			"name": "Provide One Ltd",
+			"tax_id": {
+				"country": "IL",
+				"code": "516179157"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Rothschild Boulevard",
+					"locality": "Tel Aviv",
+					"code": "6688312",
+					"country": "IL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.co.il"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "18%"
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "18%",
+								"amount": "291.60"
+							}
+						],
+						"amount": "291.60"
+					}
+				],
+				"sum": "291.60"
+			},
+			"tax": "291.60",
+			"total_with_tax": "1911.60",
+			"payable": "1911.60"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "simplified",
+				"text": "Simplified Tax Invoice"
+			}
+		]
+	}
+}

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `il`: Israel tax regime with VAT (Ma'am) support, tax identity validation, org identity support, and invoice scenarios
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
