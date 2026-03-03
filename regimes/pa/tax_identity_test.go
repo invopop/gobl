@@ -78,8 +78,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid remainder 1", code: "E-1-1-91"},
 		{name: "valid remainder 0", code: "8-1-100-06"},
 
-		// Valid: special cases
-		{name: "valid final consumer", code: "CIP-000-000-0000"},
 		{name: "empty code", code: ""},
 
 		// Invalid: format errors
@@ -237,11 +235,6 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			name:     "preserves hyphens",
 			code:     "2486589-1-816994-62",
 			expected: "2486589-1-816994-62",
-		},
-		{
-			name:     "final consumer",
-			code:     "cip-000-000-0000",
-			expected: "CIP-000-000-0000",
 		},
 		{
 			name:     "empty",

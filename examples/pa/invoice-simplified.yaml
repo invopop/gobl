@@ -25,14 +25,14 @@ lines:
       price: "25.00"
     taxes:
       - cat: "VAT"
-        rate: "general"
+        percent: "7%"
   - quantity: "1"
     item:
       name: "Servicio de impresión"
       price: "15.00"
     taxes:
       - cat: "VAT"
-        rate: "general"
+        percent: "7%"
 payment:
   terms:
     due_dates:

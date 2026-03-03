@@ -15,12 +15,13 @@ import (
 /*
  * Sources of data:
  *
- *  - https://dgi.mef.gob.pa/facturaelectronica
- *  - https://dgi.mef.gob.pa/FacturaElectronica/Documentacion.html
+ *  - https://dgi-fep.mef.gob.pa/
+ *  - https://dgi.mef.gob.pa/_7facturaelectronica/
  *  - https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/panama-tin.pdf
  *
  * DV algorithm reference:
- *  - https://www.anip.gob.pa/documentos/DV_RUC.pdf
+ *  - https://dgi.mef.gob.pa/DV
+ *  - https://www.scribd.com/document/412279635/Calculo-Digito-Verificador-RUC (unofficial mirror, algorithm details)
  *
  * The DV (Dígito Verificador) is a 2-digit check digit pre-assigned by the DGI.
  * In the SFEP XML schema, RUC and DV are separate fields (dRuc and dDV). In GOBL,
@@ -28,11 +29,6 @@ import (
  * (e.g., "8-888-888-08") to be consistent with how all other regimes store check
  * digits. The SFEP addon splits the last segment when building XML.
  */
-
-// Tax identity codes for special cases.
-const (
-	TaxIdentityCodeFinalConsumer cbc.Code = "CIP-000-000-0000"
-)
 
 // Tax Identity Types determined from the RUC format.
 const (
@@ -42,54 +38,27 @@ const (
 	TaxIdentityTypeLegal       cbc.Key = "legal"
 )
 
-// Tax Identity Patterns (all include the trailing -DV suffix except final consumer)
-//
-// Natural person (cédula): [Province]-[Book]-[Entry]-[DV] (e.g., 8-442-445-08)
-// AV - Antes de la Vigencia (before the current ID system): [Province]AV-[Book]-[Entry]-[DV]
-// PI - Población Indígena (indigenous population): [Province]PI-[Book]-[Entry]-[DV]
-// Foreigner - Extranjero (E): E-[Book]-[Entry]-[DV] (e.g., E-12-342-10)
-// Naturalized - Naturalizado (N): N-[Book]-[Entry]-[DV] (e.g., N-45-832-58)
-// PE - Panameño en el Exterior (Panamanian abroad): PE-[Book]-[Entry]-[DV]
-// Legal entity: [Seq]-[Section]-[Number]-[DV] (e.g., 2486589-1-816994-62)
-// NT - Número Tributario (tax number for entities without RUC): [Province]NT-[Seq]-[Book]-[Entry]-[DV]
-// Final consumer: CIP-000-000-0000 (no DV)
-const (
-	TaxIdentityPatternNatural       = `^\d{1,2}-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternForeigner     = `^E-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternNaturalized   = `^N-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternPE            = `^PE-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternAV            = `^\d{1,2}AV-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternPI            = `^\d{1,2}PI-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternLegal         = `^\d{3,10}-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternNT            = `^\d{1,2}NT-\d{1,4}-\d{1,4}-\d{1,6}-\d{2}$`
-	TaxIdentityPatternFinalConsumer = `^CIP-000-000-0000$`
-)
-
-var (
-	taxCodeNaturalRegexp       = regexp.MustCompile(TaxIdentityPatternNatural)
-	taxCodeForeignerRegexp     = regexp.MustCompile(TaxIdentityPatternForeigner)
-	taxCodeNaturalizedRegexp   = regexp.MustCompile(TaxIdentityPatternNaturalized)
-	taxCodePERegexp            = regexp.MustCompile(TaxIdentityPatternPE)
-	taxCodeAVRegexp            = regexp.MustCompile(TaxIdentityPatternAV)
-	taxCodePIRegexp            = regexp.MustCompile(TaxIdentityPatternPI)
-	taxCodeLegalRegexp         = regexp.MustCompile(TaxIdentityPatternLegal)
-	taxCodeNTRegexp            = regexp.MustCompile(TaxIdentityPatternNT)
-	taxCodeFinalConsumerRegexp = regexp.MustCompile(TaxIdentityPatternFinalConsumer)
-
-	// Keeps hyphens since they are structural separators in Panamanian RUC codes,
-	// unlike other regimes where separators are cosmetic.
-	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9-]+`)
-)
-
 // RUC type identifiers as they appear in the RUC string itself.
 const (
-	rucPrefixForeigner   = "E"  // Extranjero (foreigner)
-	rucPrefixNaturalized = "N"  // Naturalizado (naturalized citizen)
-	rucPrefixPE          = "PE" // Panameño en el Exterior (Panamanian abroad)
-	rucSuffixNT          = "NT" // Número Tributario (tax number for entities without RUC)
-	rucSuffixAV          = "AV" // Antes de la Vigencia (before the current ID system)
-	rucSuffixPI          = "PI" // Población Indígena (indigenous population)
+	rucPrefixForeigner   = "E"
+	rucPrefixNaturalized = "N"
+	rucPrefixPE          = "PE"
+	rucSuffixNT          = "NT"
+	rucSuffixAV          = "AV"
+	rucSuffixPI          = "PI"
 )
+
+// Single regex matching all valid RUC formats:
+//   - Non-NT (4 segments): [First]-[Book]-[Entry]-[DV]
+//   - NT     (5 segments): [Province]NT-[Seq]-[Book]-[Entry]-[DV]
+var taxCodeFormatRegexp = regexp.MustCompile(
+	fmt.Sprintf(
+		`^(?:(?:\d{1,2}(?:%s|%s)?|%s|%s|%s|\d{3,10})-\d{1,4}-\d{1,6}-\d{2}|\d{1,2}%s-\d{1,4}-\d{1,4}-\d{1,6}-\d{2})$`,
+		rucSuffixAV, rucSuffixPI, rucPrefixForeigner, rucPrefixNaturalized, rucPrefixPE, rucSuffixNT,
+	),
+)
+
+var taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9-]+`)
 
 // DGI-defined constants used in the 20-digit DV algorithm representation.
 const (
@@ -117,8 +86,11 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	}
 
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCodeFormat)),
-		validation.Field(&tID.Code, validation.By(validateTaxCodeDV)),
+		validation.Field(&tID.Code,
+			validation.By(validateTaxCodeFormat),
+			validation.By(validateTaxCodeDV),
+			validation.Skip,
+		),
 	)
 }
 
@@ -159,9 +131,6 @@ func validateTaxCodeDV(value any) error {
 	}
 
 	codeStr := code.String()
-	if taxCodeFinalConsumerRegexp.MatchString(codeStr) {
-		return nil
-	}
 
 	lastHyphen := strings.LastIndex(codeStr, "-")
 	if lastHyphen < 0 {
@@ -187,40 +156,22 @@ func validateTaxCodeDV(value any) error {
 // if the code does not match any recognized format.
 func determineTaxCodeType(code cbc.Code) cbc.Key {
 	codeStr := code.String()
-	switch {
-	// CIP-000-000-0000 is a generic consumer placeholder, not a real person category.
-	// Mapped to Natural as the closest match since it represents an individual consumer.
-	case taxCodeFinalConsumerRegexp.MatchString(codeStr):
-		return TaxIdentityTypeNatural
-
-	case taxCodeForeignerRegexp.MatchString(codeStr):
-		return TaxIdentityTypeForeigner
-
-	case taxCodeNaturalizedRegexp.MatchString(codeStr):
-		return TaxIdentityTypeNaturalized
-
-	// PE (Panameño en el Exterior) are Panamanian citizens born abroad, not foreigners.
-	// DGI classifies them as Natural (tipo contribuyente = 1) in SFEP.
-	case taxCodePERegexp.MatchString(codeStr):
-		return TaxIdentityTypeNatural
-
-	case taxCodeAVRegexp.MatchString(codeStr):
-		return TaxIdentityTypeNatural
-
-	case taxCodePIRegexp.MatchString(codeStr):
-		return TaxIdentityTypeNatural
-
-	case taxCodeNTRegexp.MatchString(codeStr):
-		return TaxIdentityTypeLegal
-
-	case taxCodeNaturalRegexp.MatchString(codeStr):
-		return TaxIdentityTypeNatural
-
-	case taxCodeLegalRegexp.MatchString(codeStr):
-		return TaxIdentityTypeLegal
-
-	default:
+	if !taxCodeFormatRegexp.MatchString(codeStr) {
 		return cbc.KeyEmpty
+	}
+
+	first := codeStr[:strings.Index(codeStr, "-")]
+	switch {
+	case first == rucPrefixForeigner:
+		return TaxIdentityTypeForeigner
+	case first == rucPrefixNaturalized:
+		return TaxIdentityTypeNaturalized
+	case strings.HasSuffix(first, rucSuffixNT):
+		return TaxIdentityTypeLegal
+	case len(first) > 2 && isAllDigits(first):
+		return TaxIdentityTypeLegal
+	default:
+		return TaxIdentityTypeNatural
 	}
 }
 

@@ -46,11 +46,11 @@ func New() *tax.RegimeDef {
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.NewString("DGI - SFEP Portal"),
-				URL:   "https://dgi.mef.gob.pa/facturaelectronica",
+				URL:   "https://dgi-fep.mef.gob.pa/",
 			},
 			{
 				Title: i18n.NewString("DGI - SFEP Technical Documentation"),
-				URL:   "https://dgi.mef.gob.pa/FacturaElectronica/Documentacion.html",
+				URL:   "https://dgi.mef.gob.pa/_7facturaelectronica/source/F-T%C3%A9cnica%20de%20Factura%20Electr%C3%B3nica%20para%20los%20Proveedores%20de%20Autorizaci%C3%B3n%20Calificados%20V1.00-Abril2025.pdf",
 			},
 			{
 				Title: i18n.NewString("Executive Decree 766 (2020) - SFEP Operational Rules"),

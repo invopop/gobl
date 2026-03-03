@@ -58,7 +58,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Customer: &org.Party{
 					TaxID: &tax.Identity{
 						Country: "PA",
-						Code:    "CIP-000-000-0000",
+						Code:    "155596713-2-2015-59",
 					},
 				},
 			},

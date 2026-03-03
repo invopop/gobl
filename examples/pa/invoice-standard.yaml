@@ -32,14 +32,14 @@ lines:
       price: "1500.00"
     taxes:
       - cat: "VAT"
-        rate: "general"
+        percent: "7%"
   - quantity: "2"
     item:
       name: "Licencia de software anual"
       price: "2500.00"
     taxes:
       - cat: "VAT"
-        rate: "general"
+        percent: "7%"
 payment:
   terms:
     due_dates:
