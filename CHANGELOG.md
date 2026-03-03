@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `fi`: Added the Finnish regime
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
