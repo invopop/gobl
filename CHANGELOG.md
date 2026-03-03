@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `no`: Norwegian tax regime with VAT categories, mod-11 organisasjonsnummer validation, reverse-charge scenario injection, simplified invoice support, and credit/debit note correction support.
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
