@@ -304,18 +304,36 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code("123456789012345678901234567890AB"),
 		},
 		{
-			name:    "dot at start",
-			code:    cbc.Code(".B123"),
-			wantErr: "valid format",
+			name: "dot at start",
+			code: cbc.Code(".B123"),
+		},
+		{
+			name: "dash at start",
+			code: cbc.Code("-B123"),
+		},
+		{
+			name: "colon at start",
+			code: cbc.Code(":ABC123"),
+		},
+		{
+			name: "slash at start",
+			code: cbc.Code("/TEST-42"),
+		},
+		{
+			name: "underscore at start",
+			code: cbc.Code("_FOO"),
+		},
+		{
+			name: "comma at start",
+			code: cbc.Code(",VALUE"),
+		},
+		{
+			name: "space at start",
+			code: cbc.Code(" TEST"),
 		},
 		{
 			name:    "dot at end",
 			code:    cbc.Code("B123."),
-			wantErr: "valid format",
-		},
-		{
-			name:    "dash at start",
-			code:    cbc.Code("-B123"),
 			wantErr: "valid format",
 		},
 		{
