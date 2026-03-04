@@ -10,8 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16935-v1`: Exemption reason notes (BT-120).
 
+### Changed
+
+- `num`: `AmountFromString` now limits precision to 18 significant digits.
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+
 ### Fixed
 
+- `tax`: Fixed `Since` date comparison to be inclusive
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
 
 ## [v0.308.0] - 2026-02-17
@@ -41,7 +47,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `dk`: Added the Danish regime
-- `de`: support for NW Steuernummer
+- `de`: Added support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
 ### Fixed

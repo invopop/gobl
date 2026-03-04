@@ -4,6 +4,9 @@
     "da": "Danmark",
     "en": "Denmark"
   },
+  "description": {
+    "en": "Denmark's tax system is administered by the Danish Tax Agency (Skattestyrelsen).\nAs an EU member state, Denmark follows the EU VAT Directive.\n\nVAT (Moms, short for Merværdiafgift) applies at a single standard rate on\nmost goods and services. Unlike many other EU countries, Denmark does not\nhave reduced VAT rates, making it one of the simplest VAT systems in Europe.\nCertain supplies are zero-rated (e.g. exports, newspapers) or exempt (e.g.\nhealthcare, education, financial services).\n\nBusinesses are identified by their CVR number (Det Centrale Virksomhedsregister),\nan 8-digit number. The Danish VAT number uses the format DK followed by the\n8-digit CVR number. E-invoicing via the NemHandel/PEPPOL network is mandatory\nfor all B2G transactions."
+  },
   "time_zone": "Europe/Copenhagen",
   "country": "DK",
   "currency": "DKK",
@@ -15,6 +18,14 @@
         "da": "CVR-nummer",
         "en": "CVR Number"
       }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
     }
   ],
   "categories": [
