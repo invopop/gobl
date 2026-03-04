@@ -101,6 +101,29 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
+	t.Run("normalizes type", func(t *testing.T) {
+		id := &org.Identity{
+			Type: "SIREN",
+			Code: "1234567890123",
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "SIREN", id.Type.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0002", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("overrides key", func(t *testing.T) {
+		id := &org.Identity{
+			Type: "SIREN",
+			Code: "1234567890123",
+			Ext: tax.Extensions{
+				iso.ExtKeySchemeID: "9999",
+			},
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "SIREN", id.Type.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0002", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
 }
 
 func TestOrgInboxNormalize(t *testing.T) {

@@ -320,6 +320,9 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Charges)
 	tax.Normalize(normalizers, inv.Ordering)
 	tax.Normalize(normalizers, inv.Payment)
+	tax.Normalize(normalizers, inv.Delivery)
+	tax.Normalize(normalizers, inv.Notes)
+	tax.Normalize(normalizers, inv.Attachments)
 
 	normalizers.Each(inv)
 }

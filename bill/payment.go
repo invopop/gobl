@@ -236,6 +236,7 @@ func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, pmt.Preceding)
 	tax.Normalize(normalizers, pmt.Lines)
 	tax.Normalize(normalizers, pmt.Ordering)
+	tax.Normalize(normalizers, pmt.Notes)
 
 	normalizers.Each(pmt)
 }
