@@ -280,6 +280,40 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "only one exemption note allowed per tax category E")
 	})
 
+	t.Run("exemption note for category not in invoice", func(t *testing.T) {
+		// Invoice has a reverse-charge (AE) line, so only AE is in present.
+		// A note tagged with E (exempt) should be rejected because E is not
+		// present in the invoice totals.
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Reverse charge item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyReverseCharge,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes,
+			&org.Note{
+				Src:  cbc.Key("reverse-charge"),
+				Text: "Reverse charge applies",
+			},
+			&org.Note{
+				Text: "Spurious exempt note",
+				Ext: tax.Extensions{
+					untdid.ExtKeyTaxCategory: "E",
+				},
+			},
+		)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "exemption note with untdid tax category E does not match any tax category in the invoice")
+	})
+
 	t.Run("reverse charge with matching note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{

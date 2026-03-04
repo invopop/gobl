@@ -69,7 +69,7 @@ func normalizeOrgNote(n *org.Note) {
 		return
 	}
 
-	// src takes presedence over key so that the reverse-charge note
+	// src takes precedence over key so that the reverse-charge note
 	// that was being set by some regimes is correctly handled
 	if code := vatKeyMap.Get(n.Src); !code.IsEmpty() {
 		n.Ext = n.Ext.Merge(tax.Extensions{
