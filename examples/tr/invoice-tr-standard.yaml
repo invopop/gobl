@@ -1,0 +1,38 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+
+uuid: "07dffd9f-8eaa-4a33-add7-3b06c34bd414"
+series: "ABC"
+code: "2024-001"
+issue_date: "2024-03-15"
+currency: TRY
+
+supplier:
+  name: "Test Supplier Co."
+  tax_id:
+    country: TR
+    code: "1234567890" # valid VKN (checksum verified)
+  addresses:
+    - street: "123 Test Street"
+      locality: "Levent"
+      region: "Istanbul"
+      country: TR
+
+customer:
+  name: "Test Customer Ltd."
+  tax_id:
+    country: TR
+    code: "1234567890" # valid VKN
+  addresses:
+    - street: "45 Business Avenue"
+      locality: "Kizilay"
+      region: "Ankara"
+      country: TR
+
+lines:
+  - quantity: 10
+    item:
+      name: "Software License"
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        rate: general

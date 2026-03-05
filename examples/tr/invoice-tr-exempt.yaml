@@ -1,0 +1,39 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+
+uuid: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+
+series: "ABC"
+code: "2024-005"
+issue_date: "2024-03-15"
+currency: TRY
+
+supplier:
+  name: "Test Supplier Co."
+  tax_id:
+    country: TR
+    code: "1234567890" # valid VKN (checksum verified)
+  addresses:
+    - street: "123 Test Street"
+      locality: "Levent"
+      region: "Istanbul"
+      country: TR
+
+customer:
+  name: "Test Customer Ltd."
+  tax_id:
+    country: TR
+    code: "1234567890" # valid VKN
+  addresses:
+    - street: "45 Business Avenue"
+      locality: "Kizilay"
+      region: "Ankara"
+      country: TR
+
+lines:
+  - quantity: 1
+    item:
+      name: "Professional Training Course"
+      price: "5000.00"
+    taxes:
+      - cat: VAT
+        rate: exempt

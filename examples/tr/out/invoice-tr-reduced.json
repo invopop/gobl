@@ -1,0 +1,94 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "003f47be60e653e54b78981102862d083fd4a1baef92a6abcf19e80faad727d2"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "TR",
+		"uuid": "2f99e9e5-8f9a-4b27-ba24-82a54d6e07bb",
+		"type": "standard",
+		"series": "ABC",
+		"code": "2024-003",
+		"issue_date": "2024-03-15",
+		"currency": "TRY",
+		"supplier": {
+			"name": "Test Supplier Co.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Test Street",
+					"locality": "Levent",
+					"region": "Istanbul",
+					"country": "TR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Test Customer Ltd.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "45 Business Avenue",
+					"locality": "Kizilay",
+					"region": "Ankara",
+					"country": "TR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "50",
+				"item": {
+					"name": "Textbook",
+					"price": "80.00"
+				},
+				"sum": "4000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "10%"
+					}
+				],
+				"total": "4000.00"
+			}
+		],
+		"totals": {
+			"sum": "4000.00",
+			"total": "4000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "4000.00",
+								"percent": "10%",
+								"amount": "400.00"
+							}
+						],
+						"amount": "400.00"
+					}
+				],
+				"sum": "400.00"
+			},
+			"tax": "400.00",
+			"total_with_tax": "4400.00",
+			"payable": "4400.00"
+		}
+	}
+}

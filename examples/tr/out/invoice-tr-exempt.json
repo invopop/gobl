@@ -1,0 +1,91 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "60c664dddd865e5a3ecf76fdb33c0bc381259f060b7ed475b24e82f6ea117dc5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "TR",
+		"uuid": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+		"type": "standard",
+		"series": "ABC",
+		"code": "2024-005",
+		"issue_date": "2024-03-15",
+		"currency": "TRY",
+		"supplier": {
+			"name": "Test Supplier Co.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Test Street",
+					"locality": "Levent",
+					"region": "Istanbul",
+					"country": "TR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Test Customer Ltd.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "45 Business Avenue",
+					"locality": "Kizilay",
+					"region": "Ankara",
+					"country": "TR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Professional Training Course",
+					"price": "5000.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "5000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "5000.00",
+			"payable": "5000.00"
+		}
+	}
+}

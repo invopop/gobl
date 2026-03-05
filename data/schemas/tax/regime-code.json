@@ -98,6 +98,10 @@
           "title": "Singapore"
         },
         {
+          "const": "TR",
+          "title": "Türkiye"
+        },
+        {
           "const": "US",
           "title": "United States of America"
         }

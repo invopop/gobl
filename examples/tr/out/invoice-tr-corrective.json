@@ -1,0 +1,102 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "801acbf71e5d20d481181c0162430e6df5b8a9d197087ba1bdbd755a5777f5a1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "TR",
+		"uuid": "8a3ae291-41b1-40d9-bbf1-5b02c324a3a6",
+		"type": "corrective",
+		"series": "ABC",
+		"code": "2024-002",
+		"issue_date": "2024-03-20",
+		"currency": "TRY",
+		"preceding": [
+			{
+				"issue_date": "2024-03-15",
+				"series": "ABC",
+				"code": "2024-001",
+				"reason": "Price correction"
+			}
+		],
+		"supplier": {
+			"name": "Test Supplier Co.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Test Street",
+					"locality": "Levent",
+					"region": "Istanbul",
+					"country": "TR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Test Customer Ltd.",
+			"tax_id": {
+				"country": "TR",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "45 Business Avenue",
+					"locality": "Kizilay",
+					"region": "Ankara",
+					"country": "TR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Software License",
+					"price": "450.00"
+				},
+				"sum": "4500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "20%"
+					}
+				],
+				"total": "4500.00"
+			}
+		],
+		"totals": {
+			"sum": "4500.00",
+			"total": "4500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "4500.00",
+								"percent": "20%",
+								"amount": "900.00"
+							}
+						],
+						"amount": "900.00"
+					}
+				],
+				"sum": "900.00"
+			},
+			"tax": "900.00",
+			"total_with_tax": "5400.00",
+			"payable": "5400.00"
+		}
+	}
+}

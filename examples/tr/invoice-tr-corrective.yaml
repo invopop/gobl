@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+
+uuid: "8a3ae291-41b1-40d9-bbf1-5b02c324a3a6"
+type: corrective
+series: "ABC"
+code: "2024-002"
+issue_date: "2024-03-20"
+currency: TRY
+
+preceding:
+  - series: "ABC"
+    code: "2024-001"
+    issue_date: "2024-03-15"
+    reason: "Price correction"
+
+supplier:
+  name: "Test Supplier Co."
+  tax_id:
+    country: TR
+    code: "1234567890"
+  addresses:
+    - street: "123 Test Street"
+      locality: "Levent"
+      region: "Istanbul"
+      country: TR
+
+customer:
+  name: "Test Customer Ltd."
+  tax_id:
+    country: TR
+    code: "1234567890"
+  addresses:
+    - street: "45 Business Avenue"
+      locality: "Kizilay"
+      region: "Ankara"
+      country: TR
+
+lines:
+  - quantity: 10
+    item:
+      name: "Software License"
+      price: "450.00"
+    taxes:
+      - cat: VAT
+        rate: general

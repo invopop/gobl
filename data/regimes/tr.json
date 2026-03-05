@@ -1,0 +1,220 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Türkiye",
+    "tr": "Türkiye"
+  },
+  "description": {
+    "en": "GIB (Revenue Administration) is the tax authority. Businesses use a\n10-digit tax number (VKN) as their tax identity. Individuals and sole\ntraders use their 11-digit national identity number (TCKN) which serves\nas a recognized tax identifier domestically. For international trade,\na VKN is required. Either a VKN or TCKN must be provided on invoices.\n\nE-invoicing is mandatory above a revenue threshold. B2B between\nregistered parties uses e-Fatura; B2C and unregistered buyers use e-Arşiv.\nBoth use the UBL-TR XML format.\n\nCredit and debit notes are not valid; adjustments require a corrective\ninvoice that references the original.\n\nReverse charge applies only when a Turkish buyer pays a foreign supplier,\nnot to invoices issued by Turkish sellers. Exports are VAT-exempt.\n\nWithholding tax (Stopaj) and special consumption tax (ÖTV) are out of scope;\ntheir rates are product-specific and change frequently."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Revenue Administration",
+        "tr": "Gelir İdaresi Başkanlığı"
+      },
+      "url": "https://www.gib.gov.tr"
+    },
+    {
+      "title": {
+        "en": "Tax Guide - Invest in Türkiye",
+        "tr": "Vergi Rehberi - Türkiye'ye Yatırım"
+      },
+      "url": "https://www.invest.gov.tr/en/investmentguide/pages/tax-guide.aspx"
+    }
+  ],
+  "time_zone": "Europe/Istanbul",
+  "country": "TR",
+  "currency": "TRY",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "TCKN",
+      "name": {
+        "en": "National Identity Number (TCKN)",
+        "tr": "Türkiye Cumhuriyeti Kimlik Numarası (TCKN)"
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "tr": "KDV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "tr": "Katma Değer Vergisi"
+      },
+      "desc": {
+        "en": "VAT (\"Katma Değer Vergisi\" / KDV) under Law No. 3065 applies to supplies of\ngoods and services in Türkiye and to imports, at standard, reduced, and\nsuper-reduced rates. Historical rates are available from November 1999.",
+        "tr": "3065 sayılı KDV Kanunu'na göre mal ve hizmet teslimleri ile ithalatta uygulanan\nvergidir. Genel, indirimli ve özel indirimli oranlar vardır; geçmiş oranlar\nKasım 1999'dan itibaren kayıtlıdır."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "tr": "Genel Oran"
+          },
+          "values": [
+            {
+              "since": "2023-07-10",
+              "percent": "20%"
+            },
+            {
+              "since": "2001-05-15",
+              "percent": "18%"
+            },
+            {
+              "since": "1999-11-28",
+              "percent": "17%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "tr": "İndirimli Oran"
+          },
+          "desc": {
+            "en": "Applies to goods and services in List No. II of the KDV Law, including basic foodstuffs, textiles, and books.",
+            "tr": "KDV Kanunu'nun II sayılı listesindeki mal ve hizmetlere uygulanır."
+          },
+          "values": [
+            {
+              "since": "2023-07-10",
+              "percent": "10%"
+            },
+            {
+              "since": "1999-11-28",
+              "percent": "8%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate",
+            "tr": "Özel İndirimli Oran"
+          },
+          "desc": {
+            "en": "Applies to goods and services in List No. I of the KDV Law, including certain agricultural products, bread, and funeral services.",
+            "tr": "KDV Kanunu'nun I sayılı listesindeki mal ve hizmetlere uygulanır."
+          },
+          "values": [
+            {
+              "since": "1999-11-28",
+              "percent": "1%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Revenue Administration",
+            "tr": "Gelir İdaresi Başkanlığı"
+          },
+          "url": "https://www.gib.gov.tr"
+        },
+        {
+          "title": {
+            "en": "Tax Guide - Invest in Türkiye",
+            "tr": "Vergi Rehberi - Türkiye'ye Yatırım"
+          },
+          "url": "https://www.invest.gov.tr/en/investmentguide/pages/tax-guide.aspx"
+        },
+        {
+          "title": {
+            "en": "Tax Procedure Law - GIB",
+            "tr": "Vergi Usul Kanunu - GİB"
+          },
+          "url": "https://www.gib.gov.tr/mevzuat/kanun/436"
+        },
+        {
+          "title": {
+            "en": "Council of Ministers Decree No. 2001/2344 - Official Gazette",
+            "tr": "Bakanlar Kurulu Kararı 2001/2344 - Resmi Gazete"
+          },
+          "url": "https://www.resmigazete.gov.tr/eskiler/2001/05/20010510.htm"
+        },
+        {
+          "title": {
+            "en": "Presidential Decree No. 7346 (2023) - Official Gazette",
+            "tr": "Cumhurbaşkanı Kararı 7346 (2023) - Resmi Gazete"
+          },
+          "url": "https://www.resmigazete.gov.tr/eskiler/2023/07/20230707-11.pdf"
+        }
+      ]
+    }
+  ]
+}

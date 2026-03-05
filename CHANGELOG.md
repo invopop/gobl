@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/tr`: New Türkiye tax regime with VKN/TCKN validation, KDV rates (20%/10%/1%), corrective invoices.
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
