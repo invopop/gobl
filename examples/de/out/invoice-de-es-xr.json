@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e28b6a411d11e37f644f5fb8d2f51eff25d9ba1b06423c3bdf7ea104ab3fd84"
+			"val": "c0bd8bf079330c8ac13488699187f8a56e9ae5298191b7f6fa1b1c0147832384"
 		}
 	},
 	"doc": {
@@ -13,9 +13,6 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"de-xrechnung-v3"
-		],
-		"$tags": [
-			"reverse-charge"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -183,9 +180,11 @@
 		},
 		"notes": [
 			{
-				"key": "legal",
 				"src": "reverse-charge",
-				"text": "Reverse Charge / Umkehr der Steuerschuld."
+				"text": "Reverse charge applies according to Article 44 and Article 196 of the EU VAT Directive.",
+				"ext": {
+					"untdid-tax-category": "AE"
+				}
 			}
 		]
 	}

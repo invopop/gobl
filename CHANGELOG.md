@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16935-v2017`: Exemption reason notes (BT-120).
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.

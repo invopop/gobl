@@ -58,9 +58,6 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone: "Europe/Paris",
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
