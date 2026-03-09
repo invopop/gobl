@@ -1,0 +1,23 @@
+{
+  "id": "GOBL-CBC",
+  "name": "cbc",
+  "subsets": [
+    {
+      "id": "CODE",
+      "name": "Code",
+      "schema": "https://gobl.org/draft-0/cbc/code",
+      "assert": [
+        {
+          "id": "GOBL-CBC-CODE-010",
+          "test": "len(this) > 64",
+          "desc": "codes must be no longer than 64 characters"
+        },
+        {
+          "id": "GOBL-CBC-CODE-020",
+          "test": "len(this) > 0 && !(this matches '^[A-Za-z0-9]+([\\.\\-\\:/,_ ]?[A-Za-z0-9]+)*$')",
+          "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space"
+        }
+      ]
+    }
+  ]
+}

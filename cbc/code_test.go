@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -245,6 +246,121 @@ func TestNormalizeNumericalCode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, cbc.NormalizeNumericalCode(tt.code))
+		})
+	}
+}
+
+func TestCode_Rules(t *testing.T) {
+	tests := []struct {
+		name        string
+		code        cbc.Code
+		wantCode    rules.Code
+		wantMessage string
+	}{
+		{
+			name: "valid 1",
+			code: cbc.Code("ABC123"),
+		},
+		{
+			name: "valid 2",
+			code: cbc.Code("12345678901234567890ABCD"),
+		},
+		{
+			name: "valid with lower",
+			code: cbc.Code("ABC abc/123"),
+		},
+		{
+			name: "valid with dot",
+			code: cbc.Code("B3.12"),
+		},
+		{
+			name: "valid with dash",
+			code: cbc.Code("B3-12"),
+		},
+		{
+			name: "valid with multiple dots",
+			code: cbc.Code("B3.1.2"),
+		},
+		{
+			name: "valid with multiple dashes",
+			code: cbc.Code("B3-1-2"),
+		},
+		{
+			name: "valid with slash",
+			code: cbc.Code("B3/12"),
+		},
+		{
+			name: "valid with space",
+			code: cbc.Code("FR 12/BX"),
+		},
+		{
+			name: "valid with colon",
+			code: cbc.Code("FR:12/BX"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+		},
+		{
+			name: "almost too long",
+			code: cbc.Code("123456789012345678901234567890AB"),
+		},
+		{
+			name:     "dot at start",
+			code:     cbc.Code(".B123"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "dot at end",
+			code:     cbc.Code("B123."),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "dash at start",
+			code:     cbc.Code("-B123"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "dash at end",
+			code:     cbc.Code("B123-"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "multiple symbols",
+			code:     cbc.Code("AB/.CD"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "character return",
+			code:     cbc.Code("AB\nCD"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "character return",
+			code:     cbc.Code("\n"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "multi-dash",
+			code:     cbc.Code("AB--CD"),
+			wantCode: "GOBL-CBC-CODE-020",
+		},
+		{
+			name:     "too long",
+			code:     cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
+			wantCode: "GOBL-CBC-CODE-010",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			faults := rules.Validate(tt.code)
+			if tt.wantCode == "" {
+				assert.NoError(t, faults)
+			} else {
+				require.NotNil(t, faults)
+				assert.Equal(t, 1, faults.Len())
+				assert.Equal(t, tt.wantCode, faults.First().Code())
+			}
 		})
 	}
 }

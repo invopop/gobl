@@ -1,0 +1,23 @@
+{
+  "id": "GOBL-ORG",
+  "name": "org",
+  "subsets": [
+    {
+      "id": "EMAIL",
+      "name": "Email",
+      "schema": "https://gobl.org/draft-0/org/email",
+      "subsets": [
+        {
+          "assert": [
+            {
+              "id": "GOBL-ORG-EMAIL-010",
+              "name": "addr",
+              "test": "!isEmailFormat(addr)",
+              "desc": "expected a valid email address"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

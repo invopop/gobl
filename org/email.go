@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -29,6 +30,15 @@ func (e *Email) Normalize() {
 	uuid.Normalize(&e.UUID)
 	e.Label = cbc.NormalizeString(e.Label)
 	e.Address = cbc.NormalizeString(e.Address)
+}
+
+// Rules returns the validation rules for the Email struct.
+func (e *Email) Rules() *rules.Set {
+	return rules.ForStruct(e,
+		rules.Field(&e.Address,
+			rules.Assert("010", `!isEmailFormat(addr)`, "expected a valid email address"),
+		),
+	)
 }
 
 // Validate ensures email address looks valid.

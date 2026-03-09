@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -74,4 +75,14 @@ func TestEmailValidate(t *testing.T) {
 		assert.Error(t, e.Validate())
 	})
 
+}
+
+func TestEmailRules(t *testing.T) {
+	t.Run("missing address", func(t *testing.T) {
+		e := &org.Email{}
+		faults := rules.Validate(e)
+		assert.Error(t, faults)
+		assert.Contains(t, faults.Error(), "expected a valid email address")
+		assert.True(t, faults.HasCode("GOBL-ORG-EMAIL-010"))
+	})
 }

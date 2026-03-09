@@ -9,6 +9,7 @@ require (
 	github.com/LastPossum/kamino v0.0.2
 	github.com/Masterminds/semver/v3 v3.3.0
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
+	github.com/expr-lang/expr v1.17.8
 	github.com/go-jose/go-jose/v4 v4.0.5
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
@@ -51,3 +52,5 @@ require (
 // replace github.com/invopop/jsonschema => ../jsonschema
 
 // replace github.com/invopop/validation => ../validation
+
+replace github.com/expr-lang/expr => ../expr
