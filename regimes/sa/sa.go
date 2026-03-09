@@ -31,7 +31,6 @@ func New() *tax.RegimeDef {
 				under the GCC VAT Framework Agreement.
 
 				Tax identification uses 15-digit TIN (Tax Identification Number) codes issued by ZATCA.
-				GOBL validates the basic structure of these identifiers.
 
 				The standard VAT rate is 15%, effective since July 2020 under Royal Order No. A/638,
 				increased from the original 5% rate introduced in January 2018. Zero-rated supplies cover
@@ -39,10 +38,6 @@ func New() *tax.RegimeDef {
 				equipment, qualifying metals, and private education and healthcare for citizens. Exempt
 				supplies include financial services and life insurance (Article 29) and real estate
 				transactions (Article 30).
-
-				Invoice validation enforces supplier name (BR-06), customer name and identification
-				on standard B2B invoices (BR-KSA-42, BR-KSA-81), while simplified B2C invoices skip
-				customer requirements.
 			`),
 		},
 		TimeZone:   "Asia/Riyadh",
@@ -68,8 +63,6 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}
