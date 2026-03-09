@@ -43,6 +43,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Asia/Riyadh",
 		Validator:  Validate,
 		Normalizer: Normalize,
+		Tags:       invoiceTags,
 		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
