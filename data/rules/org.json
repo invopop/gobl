@@ -12,8 +12,8 @@
             {
               "id": "GOBL-ORG-EMAIL-010",
               "name": "addr",
-              "test": "!isEmailFormat(addr)",
-              "desc": "expected a valid email address"
+              "desc": "expected a valid email address",
+              "tests": "required, email-format"
             }
           ]
         }

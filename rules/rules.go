@@ -4,13 +4,12 @@
 package rules
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
 
-	"github.com/expr-lang/expr"
-	"github.com/expr-lang/expr/vm"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -32,13 +31,12 @@ type Set struct {
 	// Schema identifies the schema that this set of rules applies to. It is optional and can be used to further specify the context of the rules, but it is not required for validation to work.
 	Schema schema.ID `json:"schema,omitempty"`
 	// Test is an optional expression that determines when this set of rules should be applied. If provided, the set will only be applied when the expression evaluates to true. The expression can reference any exported field from the struct associated with this set of rules.
-	Test string `json:"test,omitempty"`
+	Test Test `json:"test,omitempty"`
 	// Assert is a list of assertions to evaluate directly on the struct associated with this set of rules.
 	Assert []*Assertion `json:"assert,omitempty"`
 	// Subsets are additional sets of rules to apply recursively to the struct associated with this set of rules. They will be applied in order, and their assertions will be evaluated after the assertions in this set. Subsets can also have their own Test conditions, which will be evaluated independently.
 	Subsets []*Set `json:"subsets,omitempty"`
 
-	expr    *vm.Program
 	objType reflect.Type
 }
 
@@ -46,54 +44,36 @@ type Set struct {
 type Assertion struct {
 	// ID defines a globally unique code for this assertion.
 	ID Code `json:"id"`
-	// Name of the field to test
+	// Name of the field or object to test
 	Name string `json:"name,omitempty"`
-	// Test is the expression to evaluate for this assertion. A true result indicates a failure.
-	Test string `json:"test"`
 	// Desc is the human-readable message to include in faults when this assertion fails.
 	Desc string `json:"desc,omitempty"`
+	// Tests is a list of tests to evaluate for this assertion. A false result indicates a failure.
+	Tests []Test `json:"tests"`
 
+	// field will be present internally when testing against a single field.
 	field any
-	expr  *vm.Program
 }
 
-// Rulable is an interface that structs can implement to provide their own validation rules.
-type Rulable interface {
-	Rules() *Set
+// Test defines an interface expected for a test condition.
+type Test interface {
+	Check(val any) bool
+	String() string
 }
 
-// Register is used to register a set of rules for a given namespace. Namespaces
-func Register(name string, pkg Code, objs ...Rulable) {
+type compilableTest interface {
+	compile(val any) error
+}
+
+// Register is used to register a set of rules for a given namespace.
+func Register(name string, pkg Code, sets ...*Set) {
 	set := &Set{
-		ID:   pkg,
-		Name: name,
-	}
-	for _, obj := range objs {
-		subset := obj.Rules()
-		prependToAssertions(pkg, []*Set{subset})
-		set.Subsets = append(set.Subsets, subset)
-	}
-	globalRegistry = append(globalRegistry, set)
-}
-
-// When allows us to create a new set of rules that will only be applied when the provided test expression evaluates to true. The test expression can reference any exported field from the struct associated with this set of rules.
-func When(obj any, test string, sets ...*Set) *Set {
-	t := reflect.TypeOf(obj)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	env := reflect.New(t).Elem().Interface()
-	prog, err := expr.Compile(test, expr.AsBool(), expr.WithTag("json"), expr.Env(env))
-	if err != nil {
-		panic("invalid rules condition: " + err.Error())
-	}
-	compileSetAssertions(env, sets...)
-	return &Set{
-		Test:    test,
+		ID:      pkg,
+		Name:    name,
 		Subsets: sets,
-		expr:    prog,
-		objType: t,
 	}
+	prependToSets(pkg, sets)
+	globalRegistry = append(globalRegistry, set)
 }
 
 // ForValue creates a new set of rules for the provided value. Each assertion will be
@@ -105,8 +85,7 @@ func ForValue(obj any, asserts ...*Assertion) *Set {
 		t = t.Elem()
 	}
 	setID := typeSetID(t)
-	env := buildEnv(t, reflect.New(t).Elem())
-	compileAssertions(env, asserts...)
+	compileAssertions(obj, asserts...)
 	for _, a := range asserts {
 		// Prepend the type name to the assertion ID, mirroring ForStruct behaviour.
 		if a.ID != "" {
@@ -131,7 +110,7 @@ func ForStruct(obj any, subsets ...*Set) *Set {
 		t = t.Elem()
 	}
 	setID := typeSetID(t)
-	prependToAssertions(setID, subsets)
+	prependToSets(setID, subsets)
 	out := &Set{
 		ID:      setID,
 		Name:    t.Name(),
@@ -149,54 +128,27 @@ func ForStruct(obj any, subsets ...*Set) *Set {
 			}
 		}
 	}
-	env := buildEnv(t, reflect.New(t).Elem())
-	compileSetAssertions(env, subsets...)
+	compileSetAssertions(obj, subsets...)
+
+	// Ensure all the subset tests are compiled too.
+	for _, ss := range subsets {
+		if ss.Test != nil {
+			if ct, ok := ss.Test.(compilableTest); ok {
+				if err := ct.compile(obj); err != nil {
+					panic("invalid rules condition: " + err.Error())
+				}
+			}
+		}
+	}
+
 	return out
 }
 
-// compileSubAssertions compiles any uncompiled assertions in the direct Assert
-// slices of each provided set, using env for type-aware compilation. It does not
-// recurse into sub-subsets: When and For each compile their own immediate assertions.
-func compileSetAssertions(env any, set ...*Set) {
-	for _, ss := range set {
-		compileAssertions(env, ss.Assert...)
-	}
-}
-
-func compileAssertions(env any, asserts ...*Assertion) {
-	for _, a := range asserts {
-		if a.expr != nil {
-			continue
-		}
-		// Backslashes in tests must be doubled for embedding inside an expr
-		// double-quoted string literal (expr interprets \\ as a single \).
-		et := strings.ReplaceAll(a.Test, `\`, `\\`)
-		opts := append(isHelpers, expr.AsBool(), expr.WithTag("json"), expr.Env(env))
-		prog, err := expr.Compile(et, opts...)
-		if err != nil {
-			panic(fmt.Sprintf("invalid assertion %s (%q): %s", a.ID, a.Test, err.Error()))
-		}
-		a.expr = prog
-	}
-}
-
-// typeSetID derives a set ID from the type name, converted to upper case.
-// For example, Email becomes EMAIL. The package namespace is contributed
-// separately by Register, so only the type name is used here.
-func typeSetID(t reflect.Type) Code {
-	return Code(strings.ToUpper(t.Name()))
-}
-
-// prependToAssertions recursively prepends code to all assertion IDs within the
-// provided sets and their subsets.
-func prependToAssertions(code Code, subsets []*Set) {
-	for _, ss := range subsets {
-		for _, a := range ss.Assert {
-			if a.ID != "" {
-				a.ID = code.Add(a.ID)
-			}
-		}
-		prependToAssertions(code, ss.Subsets)
+// Object creates a new set of assertions that will all be evaluated in the context of the
+// parent object.
+func Object(assert ...*Assertion) *Set {
+	return &Set{
+		Assert: assert,
 	}
 }
 
@@ -216,17 +168,62 @@ func Field(field any, assert ...*Assertion) *Set {
 	}
 }
 
+// compileSubAssertions compiles any uncompiled assertions in the direct Assert
+// slices of each provided set, using env for type-aware compilation. It does not
+// recurse into sub-subsets: When and For each compile their own immediate assertions.
+func compileSetAssertions(env any, set ...*Set) {
+	for _, ss := range set {
+		compileAssertions(env, ss.Assert...)
+	}
+}
+
+func compileAssertions(env any, asserts ...*Assertion) {
+	for _, a := range asserts {
+		for _, t := range a.Tests {
+			if ct, ok := t.(compilableTest); ok {
+				if err := ct.compile(env); err != nil {
+					panic(fmt.Sprintf("failed to compile assertion %s: %s", a.ID, err.Error()))
+				}
+			}
+		}
+	}
+}
+
+// typeSetID derives a set ID from the type name, converted to upper case.
+// For example, Email becomes EMAIL. The package namespace is contributed
+// separately by Register, so only the type name is used here.
+func typeSetID(t reflect.Type) Code {
+	return Code(strings.ToUpper(t.Name()))
+}
+
+func prependToSets(code Code, sets []*Set) {
+	for _, s := range sets {
+		prependToAssertions(code, s.Assert)
+		prependToSets(code, s.Subsets)
+	}
+}
+
+// prependToAssertions recursively prepends code to all assertion IDs within the
+// provided sets and their subsets.
+func prependToAssertions(code Code, asserts []*Assertion) {
+	for _, a := range asserts {
+		if a.ID != "" {
+			a.ID = code.Add(a.ID)
+		}
+	}
+}
+
 // Assert creates a new assertion with the provided code, test expression,
 // and description. Positive test results will cause this assertion to be
 // considered a failure, and the provided code and description will be included
 // in validation faults. The expression is compiled lazily when the assertion
 // is embedded in a For or When call, which provides the parent struct type
 // for field validation.
-func Assert(id Code, test string, desc string) *Assertion {
+func Assert(id Code, desc string, tests ...Test) *Assertion {
 	return &Assertion{
-		ID:   id,
-		Test: test,
-		Desc: desc,
+		ID:    id,
+		Tests: tests,
+		Desc:  desc,
 	}
 }
 
@@ -295,6 +292,23 @@ func Validate(obj any) Faults {
 	return newFaults(faults)
 }
 
+// When is a chainable method that will insert a test condition into
+// the set that determines when the set's assertions should be applied.
+func (s *Set) When(test Test) *Set {
+	if s.objType == nil {
+		panic("cannot apply When to a set without an associated struct type")
+	}
+	ns := *s
+	if ts, ok := test.(compilableTest); ok {
+		env := reflect.New(s.objType).Elem().Interface()
+		if err := ts.compile(env); err != nil {
+			panic(err.Error())
+		}
+	}
+	ns.Test = test
+	return &ns
+}
+
 // Validate validates an object against the set's rules. If the set has a test
 // condition (from When), it is evaluated first and the set is skipped when false.
 // Expressions reference exported Go field names on the struct directly.
@@ -312,32 +326,49 @@ func (s *Set) Validate(obj any) Faults {
 		return nil
 	}
 
-	env := buildEnv(rv.Type(), rv)
-
 	// Evaluate the When condition; skip the set if it doesn't match.
-	if s.expr != nil {
-		result, err := expr.Run(s.expr, env)
-		if err != nil {
-			panic("expression runtime error: " + err.Error())
-		}
-		if !result.(bool) {
-			return nil
-		}
+	if s.Test != nil && !s.Test.Check(obj) {
+		return nil
 	}
 
 	var faults []*Fault
 
 	// Run assertions: a positive (true) result indicates a failure.
 	for _, a := range s.Assert {
-		if a.expr == nil {
-			panic(fmt.Sprintf("assertion %s (%q) was not compiled; wrap it in For() or When()", a.ID, a.Test))
+		var val any
+		val = obj
+
+		// If this assertion is associated with a specific field, extract the
+		// field value from the actual object being validated (not the prototype).
+		if a.Name != "" && rv.Kind() == reflect.Struct {
+			rt := rv.Type()
+			for i := range rt.NumField() {
+				if jsonFieldName(rt.Field(i)) == a.Name {
+					fv := rv.Field(i)
+					if fv.Kind() == reflect.Ptr {
+						val = fv.Interface()
+					} else {
+						val = fv.Interface()
+					}
+					break
+				}
+			}
 		}
-		result, err := expr.Run(a.expr, env)
-		if err != nil {
-			panic(fmt.Sprintf("assertion %s (%q) runtime error: %s", a.ID, a.Test, err.Error()))
+
+		if len(a.Tests) == 0 {
+			panic(fmt.Sprintf("assertion %s (%q) tests missing", a.ID, a.Tests))
 		}
-		if result.(bool) {
-			faults = append(faults, newFault(a.Name, a.ID, a.Desc))
+		for _, t := range a.Tests {
+			// Expr tests are compiled against the parent struct type, so they must
+			// always receive the struct as context rather than the extracted field value.
+			testVal := val
+			if _, ok := t.(*exprTest); ok && a.Name != "" {
+				testVal = obj
+			}
+			if !t.Check(testVal) {
+				faults = append(faults, newFault(a.Name, a.ID, a.Desc))
+				break
+			}
 		}
 	}
 
@@ -386,46 +417,6 @@ func validateFieldValue(fv reflect.Value) []*Fault {
 	return nil
 }
 
-// buildEnv constructs the expression environment for the given type and value.
-// Struct values are returned directly so that expressions can reference fields
-// by their json tag names. Non-struct types are exposed as a map with a single
-// "this" key holding the underlying primitive value, so that assertion
-// expressions can reference the value uniformly regardless of type.
-func buildEnv(t reflect.Type, rv reflect.Value) any {
-	if t.Kind() == reflect.Struct {
-		return rv.Interface()
-	}
-	_, fieldVal := underlyingTypeAndValue(t, rv)
-	return map[string]any{"this": fieldVal.Interface()}
-}
-
-// underlyingTypeAndValue converts a named type to its underlying Go primitive
-// type so that expr operators work correctly. For example, cbc.Code (a named
-// string type) becomes plain string. Unnamed types are returned unchanged.
-func underlyingTypeAndValue(t reflect.Type, rv reflect.Value) (reflect.Type, reflect.Value) {
-	if t.PkgPath() == "" {
-		return t, rv // already an unnamed/built-in type
-	}
-	switch t.Kind() {
-	case reflect.String:
-		ut := reflect.TypeOf("")
-		return ut, rv.Convert(ut)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		ut := reflect.TypeOf(int64(0))
-		return ut, rv.Convert(ut)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		ut := reflect.TypeOf(uint64(0))
-		return ut, rv.Convert(ut)
-	case reflect.Float32, reflect.Float64:
-		ut := reflect.TypeOf(float64(0))
-		return ut, rv.Convert(ut)
-	case reflect.Bool:
-		ut := reflect.TypeOf(false)
-		return ut, rv.Convert(ut)
-	}
-	return t, rv
-}
-
 // resolveAttributeName returns the JSON field name for field within the struct
 // type t. field may be a Go or JSON field name string, or a pointer to a field
 // of obj (which must be a pointer to a struct of type t). In the pointer case
@@ -464,4 +455,67 @@ func jsonFieldName(f reflect.StructField) string {
 		return f.Name
 	}
 	return name
+}
+
+type funcTest struct {
+	desc string
+	test func(any) bool
+}
+
+func Func(desc string, test func(any) bool) Test {
+	return &funcTest{
+		desc: desc,
+		test: test,
+	}
+}
+
+func (ft *funcTest) String() string {
+	return ft.desc
+}
+
+func (ft *funcTest) Check(val any) bool {
+	return ft.test(val)
+}
+
+// MarshalJSON serializes Set to JSON, converting the Test field to its string representation.
+func (s Set) MarshalJSON() ([]byte, error) {
+	type alias struct {
+		ID      Code         `json:"id,omitempty"`
+		Name    string       `json:"name,omitempty"`
+		Schema  schema.ID    `json:"schema,omitempty"`
+		Test    string       `json:"test,omitempty"`
+		Assert  []*Assertion `json:"assert,omitempty"`
+		Subsets []*Set       `json:"subsets,omitempty"`
+	}
+	a := alias{
+		ID:      s.ID,
+		Name:    s.Name,
+		Schema:  s.Schema,
+		Assert:  s.Assert,
+		Subsets: s.Subsets,
+	}
+	if s.Test != nil {
+		a.Test = s.Test.String()
+	}
+	return json.Marshal(a)
+}
+
+// MarshalJSON serializes Assertion to JSON, converting Tests to a comma-joined string.
+func (a Assertion) MarshalJSON() ([]byte, error) {
+	type alias struct {
+		ID    Code   `json:"id"`
+		Name  string `json:"name,omitempty"`
+		Desc  string `json:"desc,omitempty"`
+		Tests string `json:"tests,omitempty"`
+	}
+	parts := make([]string, len(a.Tests))
+	for i, t := range a.Tests {
+		parts[i] = t.String()
+	}
+	return json.Marshal(alias{
+		ID:    a.ID,
+		Name:  a.Name,
+		Desc:  a.Desc,
+		Tests: strings.Join(parts, ", "),
+	})
 }

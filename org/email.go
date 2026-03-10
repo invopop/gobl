@@ -1,14 +1,10 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // Email describes the electronic mailing details.
@@ -32,23 +28,14 @@ func (e *Email) Normalize() {
 	e.Address = cbc.NormalizeString(e.Address)
 }
 
-// Rules returns the validation rules for the Email struct.
-func (e *Email) Rules() *rules.Set {
+func emailRules() *rules.Set {
+	e := new(Email)
 	return rules.ForStruct(e,
 		rules.Field(&e.Address,
-			rules.Assert("010", `!isEmailFormat(addr)`, "expected a valid email address"),
+			rules.Assert("010", "expected a valid email address",
+				rules.Required,
+				is.EmailFormat,
+			),
 		),
-	)
-}
-
-// Validate ensures email address looks valid.
-func (e *Email) Validate() error {
-	return e.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures email address looks valid inside the provided context.
-func (e *Email) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, e,
-		validation.Field(&e.Address, validation.Required, is.EmailFormat),
 	)
 }

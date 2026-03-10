@@ -20,6 +20,6 @@ func init() {
 	rules.Register(
 		"cbc",
 		rules.GOBL.Add("CBC"),
-		Code(""),
+		codeRules(),
 	)
 }

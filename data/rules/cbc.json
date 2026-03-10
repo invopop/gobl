@@ -9,13 +9,13 @@
       "assert": [
         {
           "id": "GOBL-CBC-CODE-010",
-          "test": "len(this) > 64",
-          "desc": "codes must be no longer than 64 characters"
+          "desc": "codes must be no longer than 64 characters",
+          "tests": "length between 0 and 64"
         },
         {
           "id": "GOBL-CBC-CODE-020",
-          "test": "len(this) > 0 && !(this matches '^[A-Za-z0-9]+([\\.\\-\\:/,_ ]?[A-Za-z0-9]+)*$')",
-          "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space"
+          "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space",
+          "tests": "matches ^[A-Za-z0-9]+([\\.\\-\\:/,_ ]?[A-Za-z0-9]+)*$"
         }
       ]
     }

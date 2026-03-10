@@ -81,20 +81,20 @@ func NormalizeNumericalCode(c Code) Code {
 	return Code(code)
 }
 
-// Rules returns the validation rules for the Code type.
-func (c Code) Rules() *rules.Set {
-	return rules.ForValue(c,
-		rules.Assert("010", fmt.Sprintf(`len(this) > %d`, CodeMaxLength), fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength)),
-		rules.Assert("020", fmt.Sprintf(`len(this) > 0 && !(this matches '%s')`, CodePattern), "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space"),
+func codeRules() *rules.Set {
+	return rules.ForValue(Code(""),
+		rules.Assert("010", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
+			rules.Length(0, int(CodeMaxLength)),
+		),
+		rules.Assert("020", "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space",
+			rules.Matches(CodePattern),
+		),
 	)
 }
 
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
-	return validation.Validate(string(c),
-		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(CodePatternRegexp),
-	)
+	return rules.Validate(c)
 }
 
 // IsEmpty returns true if no code is specified.

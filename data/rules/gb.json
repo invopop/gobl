@@ -1,0 +1,30 @@
+{
+  "id": "GOBL-GB",
+  "name": "gb",
+  "subsets": [
+    {
+      "id": "IDENTITY",
+      "name": "Identity",
+      "schema": "https://gobl.org/draft-0/tax/identity",
+      "test": "code in [GB]",
+      "subsets": [
+        {
+          "assert": [
+            {
+              "id": "GOBL-GB-IDENTITY-010",
+              "name": "code",
+              "desc": "invalid tax identity code format",
+              "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
+            },
+            {
+              "id": "GOBL-GB-IDENTITY-020",
+              "name": "code",
+              "desc": "invalid tax identity code checksum",
+              "tests": "checksum"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

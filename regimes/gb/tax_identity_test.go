@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/gb"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -58,7 +58,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "GB", Code: tt.code}
-			err := gb.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -25,18 +26,25 @@ type Email struct {
 	Addr string `json:"addr"`
 }
 
-func (p *Person) Rules() *rules.Set {
+func personRules() *rules.Set {
+	p := new(Person)
 	return rules.ForStruct(p,
-		rules.Field(&p.Address,
-			rules.Assert("001", `(address?.city ?? "") == ""`, "person address must have a city"),
+		rules.Object(
+			rules.Assert("001", "person address must have a city",
+				rules.Expr(`(address?.city ?? "") != ""`),
+			),
 		),
 	)
 }
 
-func (e *Email) Rules() *rules.Set {
+func emailRules() *rules.Set {
+	e := new(Email)
 	return rules.ForStruct(e,
 		rules.Field(&e.Addr,
-			rules.Assert("010", `!isEmailFormat(addr)`, "expected a valid email address"),
+			rules.Assert("010", "expected a valid email address",
+				rules.Required,
+				is.EmailFormat,
+			),
 		),
 	)
 }
@@ -45,8 +53,8 @@ func init() {
 	rules.Register(
 		"test",
 		rules.GOBL.Add("TEST"),
-		&Email{},
-		&Person{},
+		emailRules(),
+		personRules(),
 	)
 }
 
@@ -54,7 +62,7 @@ func TestValidate(t *testing.T) {
 	t.Run("passes with valid email", func(t *testing.T) {
 		e := &Email{Addr: "test@example.com"}
 		faults := rules.Validate(e)
-		assert.Nil(t, faults)
+		assert.NoError(t, faults)
 	})
 
 	t.Run("fails with blank email address", func(t *testing.T) {
@@ -80,9 +88,8 @@ func TestValidate(t *testing.T) {
 		}
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
-		assert.True(t, faults.HasPath("address"), "expected fault at address")
 		assert.True(t, faults.HasPath("emails[1].addr"), "expected fault at emails[1].addr")
-		assert.Equal(t, "[GOBL-TEST-PERSON-001] address: person address must have a city; [GOBL-TEST-EMAIL-010] emails[1].addr: expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-PERSON-001] person address must have a city; [GOBL-TEST-EMAIL-010] emails[1].addr: expected a valid email address", faults.Error())
 	})
 
 	t.Run("recurses into pointer fields", func(t *testing.T) {
@@ -105,10 +112,14 @@ func TestValidate(t *testing.T) {
 // TestCode is a named string type used to test ForValue.
 type TestCode string
 
-func (c TestCode) Rules() *rules.Set {
-	return rules.ForValue(c,
-		rules.Assert("001", `len(this) == 0`, "code must not be empty"),
-		rules.Assert("002", `len(this) > 10`, "code must not exceed 10 characters"),
+func testCodeRules() *rules.Set {
+	return rules.ForValue(TestCode(""),
+		rules.Assert("001", "code must not be empty",
+			rules.Required,
+		),
+		rules.Assert("002", "code must not exceed 10 characters",
+			rules.Expr(`len(this) <= 10`),
+		),
 	)
 }
 
@@ -116,28 +127,28 @@ func init() {
 	rules.Register(
 		"test",
 		rules.GOBL.Add("TEST"),
-		TestCode(""),
+		testCodeRules(),
 	)
 }
 
 func TestForValue(t *testing.T) {
 	t.Run("passes with valid code", func(t *testing.T) {
-		set := TestCode("").Rules()
+		set := testCodeRules()
 		faults := set.Validate(TestCode("ABC"))
 		assert.Nil(t, faults)
 	})
 
 	t.Run("fails when empty", func(t *testing.T) {
-		set := TestCode("").Rules()
+		set := testCodeRules()
 		faults := set.Validate(TestCode(""))
-		require.NotNil(t, faults)
+		require.Error(t, faults)
 		assert.Equal(t, 1, faults.Len())
 		assert.Equal(t, rules.Code("TESTCODE-001"), faults.First().Code())
 		assert.Equal(t, "code must not be empty", faults.First().Message())
 	})
 
 	t.Run("fails when too long", func(t *testing.T) {
-		set := TestCode("").Rules()
+		set := testCodeRules()
 		faults := set.Validate(TestCode("ABCDEFGHIJK"))
 		require.NotNil(t, faults)
 		assert.Equal(t, 1, faults.Len())
@@ -158,7 +169,9 @@ func TestForValue(t *testing.T) {
 	t.Run("panics on invalid expression", func(t *testing.T) {
 		assert.Panics(t, func() {
 			rules.ForValue(TestCode(""),
-				rules.Assert("bad", `this ===`, "bad expr"),
+				rules.Assert("bad", "bad expr",
+					rules.Expr(`this ===`),
+				),
 			)
 		})
 	})
@@ -169,7 +182,9 @@ func TestSetValidate(t *testing.T) {
 		type Other struct{ X string }
 		set := rules.ForStruct(new(Email),
 			rules.Field(new(string),
-				rules.Assert("001", `true`, "always fails"),
+				rules.Assert("001", "always fails",
+					rules.Expr(`false`),
+				),
 			),
 		)
 		faults := set.Validate(&Other{X: "hello"})
@@ -181,16 +196,17 @@ func TestSetValidate(t *testing.T) {
 			Active bool   `json:"active"`
 			Name   string `json:"name"`
 		}
-		set := rules.When(&Item{}, `active`,
-			rules.ForStruct(new(Item),
-				rules.Field(new(string),
-					rules.Assert("001", `name == ""`, "name required when active"),
+		proto := new(Item)
+		set := rules.ForStruct(proto,
+			rules.Field(&proto.Name,
+				rules.Assert("001", "name required when active",
+					rules.Required,
 				),
 			),
-		)
+		).When(rules.Expr(`active`))
 		// Active is false: set should be skipped.
 		faults := set.Validate(&Item{Active: false, Name: ""})
-		assert.Nil(t, faults)
+		assert.NoError(t, faults)
 	})
 
 	t.Run("when condition runs assertions when true", func(t *testing.T) {
@@ -201,12 +217,33 @@ func TestSetValidate(t *testing.T) {
 		proto := new(Item)
 		inner := rules.ForStruct(proto,
 			rules.Field(&proto.Name,
-				rules.Assert("001", `name == ""`, "name required when active"),
+				rules.Assert("001", "name required when active",
+					rules.Required,
+				),
 			),
 		)
-		set := rules.When(proto, `active`, inner)
+		set := inner.When(rules.Expr(`active`))
 		// Active is true, Name is blank: should fail.
 		faults := set.Validate(&Item{Active: true, Name: ""})
-		require.NotNil(t, faults)
+		require.Error(t, faults)
+	})
+
+	t.Run("when condition runs assertions when true with expr", func(t *testing.T) {
+		type Item struct {
+			Active bool   `json:"active"`
+			Name   string `json:"name"`
+		}
+		proto := new(Item)
+		inner := rules.ForStruct(proto,
+			rules.Object(
+				rules.Assert("001", "name required when active",
+					rules.Expr(`name != ""`),
+				),
+			),
+		)
+		set := inner.When(rules.Expr(`active`))
+		// Active is true, Name is blank: should fail.
+		faults := set.Validate(&Item{Active: true, Name: ""})
+		require.Error(t, faults)
 	})
 }

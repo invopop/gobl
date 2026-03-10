@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 
@@ -169,6 +170,26 @@ func (id *Identity) Validate() error {
 // the given date.
 func (id *Identity) InEU(date cal.Date) bool {
 	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
+}
+
+// IdentityIn provides a rules test that checks if a tax identity's country code is one of the provided codes.
+func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
+	var str string
+	for i, c := range codes {
+		if i > 0 {
+			str += ", "
+		}
+		str += string(c)
+	}
+	return rules.By("code in ["+str+"]",
+		func(value any) bool {
+			id, ok := value.(*Identity)
+			if id == nil || !ok {
+				return true // skip
+			}
+			return id.Country.In(codes...)
+		},
+	)
 }
 
 func (v validateTaxID) Validate(value any) error {

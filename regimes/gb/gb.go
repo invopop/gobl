@@ -8,11 +8,17 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register(
+		"gb",
+		rules.GOBL.Add("GB"),
+		taxIdentityRules(),
+	)
 }
 
 // Identification code types unique to the United Kingdom.
@@ -56,8 +62,8 @@ func New() *tax.RegimeDef {
 				corrections.
 			`),
 		},
-		TimeZone:   "Europe/London",
-		Validator:  Validate,
+		TimeZone: "Europe/London",
+		// Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -76,6 +82,7 @@ func New() *tax.RegimeDef {
 
 // Validate checks the document type and determines if it can be validated. Note that in
 // the GB tax regime we don't need to validate the presence of the supplier's tax ID.
+/*
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
@@ -83,6 +90,7 @@ func Validate(doc interface{}) error {
 	}
 	return nil
 }
+*/
 
 // Normalize will attempt to clean the object passed to it.
 func Normalize(doc interface{}) {
