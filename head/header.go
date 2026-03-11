@@ -1,14 +1,10 @@
 package head
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Header defines the metadata of the body. The header is used as the payload
@@ -60,30 +56,47 @@ func headerRules() *rules.Set {
 				rules.Required,
 			),
 		),
-	)
-}
-
-// Validate checks that the header contains the basic information we need to function.
-func (h *Header) Validate() error {
-	return h.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks that the header contains the basic information we need to function.
-func (h *Header) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, h,
-		validation.Field(&h.UUID, validation.Required, uuid.HasTimestamp),
-		validation.Field(&h.Digest, validation.Required),
-		validation.Field(&h.Stamps,
-			validation.When(
-				!internal.IsSigned(ctx),
-				validation.Empty,
+		rules.Field(&h.Stamps,
+			rules.Assert("03", "duplicate stamp providers are not allowed",
+				rules.By("no duplicate stamps", hasNoDuplicateStamps),
 			),
-			validation.By(detectDuplicateStamps),
 		),
-		validation.Field(&h.Links,
-			DetectDuplicateLinks,
+		rules.Field(&h.Links,
+			rules.Assert("04", "duplicate link keys are not allowed",
+				rules.By("no duplicate links", hasNoDuplicateLinks),
+			),
 		),
 	)
+}
+
+func hasNoDuplicateStamps(val any) bool {
+	stamps, ok := val.([]*Stamp)
+	if !ok {
+		return true
+	}
+	seen := make([]*Stamp, 0, len(stamps))
+	for _, s := range stamps {
+		if s.In(seen) {
+			return false
+		}
+		seen = append(seen, s)
+	}
+	return true
+}
+
+func hasNoDuplicateLinks(val any) bool {
+	links, ok := val.([]*Link)
+	if !ok {
+		return true
+	}
+	seen := make([]*Link, 0, len(links))
+	for _, l := range links {
+		if LinkByCategoryAndKey(seen, l.Category, l.Key) != nil {
+			return false
+		}
+		seen = append(seen, l)
+	}
+	return true
 }
 
 // AddStamp adds a new stamp to the header. If the stamp already exists,

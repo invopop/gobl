@@ -30,14 +30,6 @@ func stampRules() *rules.Set {
 	)
 }
 
-// Validate checks that the header contains the basic information we need to function.
-func (s *Stamp) Validate() error {
-	return validation.ValidateStruct(s,
-		validation.Field(&s.Provider, validation.Required),
-		validation.Field(&s.Value, validation.Required),
-	)
-}
-
 // In checks if the stamp is in the list of stamps.
 func (s *Stamp) In(ss []*Stamp) bool {
 	for _, r := range ss {
