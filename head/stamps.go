@@ -109,23 +109,23 @@ func NormalizeStamps(in []*Stamp) []*Stamp {
 
 // StampsHas provides a validation rule that checks if a list of stamps includes
 // one for the given provider.
-func StampsHas(provider cbc.Key) validation.Rule {
-	return &stampsHasRule{provider: provider}
+func StampsHas(provider cbc.Key) rules.Test {
+	return &stampsHasRule{desc: fmt.Sprintf("stamps have %s", provider), provider: provider}
 }
 
 type stampsHasRule struct {
+	desc     string
 	provider cbc.Key
 }
 
-func (r *stampsHasRule) Validate(value any) error {
+func (r *stampsHasRule) String() string {
+	return r.desc
+}
+
+func (r *stampsHasRule) Check(value any) bool {
 	in, ok := value.([]*Stamp)
 	if !ok {
-		return nil
+		return false // invalid type
 	}
-
-	if GetStamp(in, r.provider) != nil {
-		return nil
-	}
-
-	return fmt.Errorf("missing %s stamp", r.provider)
+	return GetStamp(in, r.provider) != nil
 }
