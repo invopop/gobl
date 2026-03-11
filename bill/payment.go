@@ -137,6 +137,12 @@ type Payment struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// CanSign returns a boolean indicating whether the payment is ready to be signed
+// or not.
+func (pmt *Payment) CanSign() bool {
+	return !pmt.Code.IsEmpty()
+}
+
 // Validate runs the validation rules for the payment without the context.
 func (pmt *Payment) Validate() error {
 	return pmt.ValidateWithContext(context.Background())

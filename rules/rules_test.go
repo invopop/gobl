@@ -28,20 +28,18 @@ type Email struct {
 
 func personRules() *rules.Set {
 	p := new(Person)
-	return rules.ForStruct(p,
-		rules.Object(
-			rules.Assert("001", "person address must have a city",
-				rules.Expr(`(address?.city ?? "") != ""`),
-			),
+	return rules.For(p,
+		rules.Assert("01", "person address must have a city",
+			rules.Expr(`(address?.city ?? "") != ""`),
 		),
 	)
 }
 
 func emailRules() *rules.Set {
 	e := new(Email)
-	return rules.ForStruct(e,
+	return rules.For(e,
 		rules.Field(&e.Addr,
-			rules.Assert("010", "expected a valid email address",
+			rules.Assert("01", "expected a valid email address",
 				rules.Required,
 				is.EmailFormat,
 			),
@@ -58,6 +56,42 @@ func init() {
 	)
 }
 
+func TestFor(t *testing.T) {
+	t.Run("name includes go package name", func(t *testing.T) {
+		set := emailRules()
+		assert.Equal(t, "rules.Email", set.Name)
+	})
+
+	t.Run("id is pkg-typename before registration", func(t *testing.T) {
+		// Email is in package rules_test (short name "rules"), so the base ID is RULES-EMAIL.
+		set := emailRules()
+		assert.Equal(t, rules.Code("RULES-EMAIL"), set.ID)
+	})
+
+	t.Run("id gets namespace prepended by register", func(t *testing.T) {
+		// emailRules() is registered under GOBL-TEST in init(), so the
+		// global registry holds a subset with ID "GOBL-TEST-RULES-EMAIL".
+		var found *rules.Set
+		for _, ns := range rules.Registry() {
+			for _, sub := range ns.Subsets {
+				if sub.Name == "rules.Email" {
+					found = sub
+					break
+				}
+			}
+		}
+		require.NotNil(t, found, "expected to find rules.Email set in registry")
+		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL"), found.ID)
+	})
+
+	t.Run("assertion code includes full namespace after registration", func(t *testing.T) {
+		e := &Email{Addr: ""}
+		faults := rules.Validate(e)
+		require.NotNil(t, faults)
+		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), faults.First().Code())
+	})
+}
+
 func TestValidate(t *testing.T) {
 	t.Run("passes with valid email", func(t *testing.T) {
 		e := &Email{Addr: "test@example.com"}
@@ -69,11 +103,11 @@ func TestValidate(t *testing.T) {
 		e := &Email{Addr: ""}
 		faults := rules.Validate(e)
 		require.NotNil(t, faults)
-		assert.Equal(t, "[GOBL-TEST-EMAIL-010] addr: expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] addr: expected a valid email address", faults.Error())
 		assert.True(t, faults.HasPath("addr"))
 		f := faults.First()
 		assert.Equal(t, "expected a valid email address", f.Message())
-		assert.Equal(t, rules.Code("GOBL-TEST-EMAIL-010"), f.Code())
+		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), f.Code())
 		assert.Equal(t, "addr", f.Path())
 	})
 
@@ -89,7 +123,7 @@ func TestValidate(t *testing.T) {
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
 		assert.True(t, faults.HasPath("emails[1].addr"), "expected fault at emails[1].addr")
-		assert.Equal(t, "[GOBL-TEST-PERSON-001] person address must have a city; [GOBL-TEST-EMAIL-010] emails[1].addr: expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] emails[1].addr: expected a valid email address", faults.Error())
 	})
 
 	t.Run("recurses into pointer fields", func(t *testing.T) {
@@ -109,15 +143,15 @@ func TestValidate(t *testing.T) {
 	})
 }
 
-// TestCode is a named string type used to test ForValue.
+// TestCode is a named string type used to test For with a value type.
 type TestCode string
 
 func testCodeRules() *rules.Set {
-	return rules.ForValue(TestCode(""),
-		rules.Assert("001", "code must not be empty",
+	return rules.For(TestCode(""),
+		rules.Assert("01", "code must not be empty",
 			rules.Required,
 		),
-		rules.Assert("002", "code must not exceed 10 characters",
+		rules.Assert("02", "code must not exceed 10 characters",
 			rules.Expr(`len(this) <= 10`),
 		),
 	)
@@ -143,7 +177,7 @@ func TestForValue(t *testing.T) {
 		faults := set.Validate(TestCode(""))
 		require.Error(t, faults)
 		assert.Equal(t, 1, faults.Len())
-		assert.Equal(t, rules.Code("TESTCODE-001"), faults.First().Code())
+		assert.Equal(t, rules.Code("RULES-TESTCODE-01"), faults.First().Code())
 		assert.Equal(t, "code must not be empty", faults.First().Message())
 	})
 
@@ -152,13 +186,13 @@ func TestForValue(t *testing.T) {
 		faults := set.Validate(TestCode("ABCDEFGHIJK"))
 		require.NotNil(t, faults)
 		assert.Equal(t, 1, faults.Len())
-		assert.Equal(t, rules.Code("TESTCODE-002"), faults.First().Code())
+		assert.Equal(t, rules.Code("RULES-TESTCODE-02"), faults.First().Code())
 	})
 
 	t.Run("global Validate finds value type rules", func(t *testing.T) {
 		faults := rules.Validate(TestCode(""))
 		require.NotNil(t, faults)
-		assert.Equal(t, rules.Code("GOBL-TEST-TESTCODE-001"), faults.First().Code())
+		assert.Equal(t, rules.Code("GOBL-TEST-RULES-TESTCODE-01"), faults.First().Code())
 	})
 
 	t.Run("global Validate passes valid value", func(t *testing.T) {
@@ -168,7 +202,7 @@ func TestForValue(t *testing.T) {
 
 	t.Run("panics on invalid expression", func(t *testing.T) {
 		assert.Panics(t, func() {
-			rules.ForValue(TestCode(""),
+			rules.For(TestCode(""),
 				rules.Assert("bad", "bad expr",
 					rules.Expr(`this ===`),
 				),
@@ -180,9 +214,9 @@ func TestForValue(t *testing.T) {
 func TestSetValidate(t *testing.T) {
 	t.Run("skips set when type does not match", func(t *testing.T) {
 		type Other struct{ X string }
-		set := rules.ForStruct(new(Email),
+		set := rules.For(new(Email),
 			rules.Field(new(string),
-				rules.Assert("001", "always fails",
+				rules.Assert("01", "always fails",
 					rules.Expr(`false`),
 				),
 			),
@@ -197,13 +231,15 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		proto := new(Item)
-		set := rules.ForStruct(proto,
-			rules.Field(&proto.Name,
-				rules.Assert("001", "name required when active",
-					rules.Required,
+		set := rules.For(proto,
+			rules.When(rules.Expr(`active`),
+				rules.Field(&proto.Name,
+					rules.Assert("01", "name required when active",
+						rules.Required,
+					),
 				),
 			),
-		).When(rules.Expr(`active`))
+		)
 		// Active is false: set should be skipped.
 		faults := set.Validate(&Item{Active: false, Name: ""})
 		assert.NoError(t, faults)
@@ -215,14 +251,15 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		proto := new(Item)
-		inner := rules.ForStruct(proto,
-			rules.Field(&proto.Name,
-				rules.Assert("001", "name required when active",
-					rules.Required,
+		set := rules.For(proto,
+			rules.When(rules.Expr(`active`),
+				rules.Field(&proto.Name,
+					rules.Assert("01", "name required when active",
+						rules.Required,
+					),
 				),
 			),
 		)
-		set := inner.When(rules.Expr(`active`))
 		// Active is true, Name is blank: should fail.
 		faults := set.Validate(&Item{Active: true, Name: ""})
 		require.Error(t, faults)
@@ -234,14 +271,13 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		proto := new(Item)
-		inner := rules.ForStruct(proto,
-			rules.Object(
-				rules.Assert("001", "name required when active",
+		set := rules.For(proto,
+			rules.When(rules.Expr(`active`),
+				rules.Assert("01", "name required when active",
 					rules.Expr(`name != ""`),
 				),
 			),
 		)
-		set := inner.When(rules.Expr(`active`))
 		// Active is true, Name is blank: should fail.
 		faults := set.Validate(&Item{Active: true, Name: ""})
 		require.Error(t, faults)

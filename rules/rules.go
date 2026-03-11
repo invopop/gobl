@@ -21,6 +21,11 @@ var globalRegistry = make([]*Set, 0)
 // Code defines a unique code to use for rules.
 type Code string
 
+// Def is a function that modifies a Set during construction.
+// Assert, Field, Object, and When all return Def values that compose
+// as arguments to For.
+type Def func(s *Set)
+
 // Set represents a collection of rules grouped by a namespace
 // an associated with a specific struct.
 type Set struct {
@@ -65,6 +70,11 @@ type compilableTest interface {
 	compile(val any) error
 }
 
+// Registry returns the global registry of rule sets.
+func Registry() []*Set {
+	return globalRegistry
+}
+
 // Register is used to register a set of rules for a given namespace.
 func Register(name string, pkg Code, sets ...*Set) {
 	set := &Set{
@@ -76,104 +86,109 @@ func Register(name string, pkg Code, sets ...*Set) {
 	globalRegistry = append(globalRegistry, set)
 }
 
-// ForValue creates a new set of rules for the provided value. Each assertion will be
-// evaluated with a `this` variable in the expression environment that holds the
-// underlying primitive value of obj.
-func ForValue(obj any, asserts ...*Assertion) *Set {
+// For creates a new set of rules for the provided object (struct or value type).
+// Each Def is applied in order to build up the set's assertions and subsets.
+// Assert, Field, Object, and When all return Def values that can be passed here.
+func For(obj any, defs ...Def) *Set {
 	t := reflect.TypeOf(obj)
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
 	setID := typeSetID(t)
-	compileAssertions(obj, asserts...)
-	for _, a := range asserts {
-		// Prepend the type name to the assertion ID, mirroring ForStruct behaviour.
-		if a.ID != "" {
-			a.ID = setID.Add(a.ID)
-		}
+	name := t.Name()
+	if pkg := pkgShortName(t); pkg != "" {
+		name = pkg + "." + name
 	}
-	return &Set{
+	s := &Set{
 		ID:      setID,
-		Name:    t.Name(),
+		Name:    name,
 		Schema:  schema.Lookup(obj),
 		objType: t,
-		Assert:  asserts,
+	}
+	for _, def := range defs {
+		def(s)
+	}
+	prependToAssertions(setID, s.Assert)
+	prependToSets(setID, s.Subsets)
+	compileAndResolve(t, obj, s)
+	return s
+}
+
+// Assert returns a Def that adds a single assertion to the parent set.
+// The assertion is evaluated against the parent object (or extracted field
+// value when used inside Field).
+func Assert(id Code, desc string, tests ...Test) Def {
+	a := &Assertion{
+		ID:    id,
+		Desc:  desc,
+		Tests: tests,
+	}
+	return func(s *Set) {
+		s.Assert = append(s.Assert, a)
 	}
 }
 
-// ForStruct creates a new set of rules for the provided struct, attaching the provided
-// subsets (from Field or When) and resolving assertion field names. obj must be
-// a pointer. Field pointer assertions are resolved by byte offset.
-func ForStruct(obj any, subsets ...*Set) *Set {
-	t := reflect.TypeOf(obj)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
+// Object returns a Def that groups assertions evaluated against the whole
+// object. It is equivalent to passing the assertions directly to For or When,
+// and exists for organisational clarity.
+func Object(defs ...Def) Def {
+	return func(s *Set) {
+		for _, def := range defs {
+			def(s)
+		}
 	}
-	setID := typeSetID(t)
-	prependToSets(setID, subsets)
-	out := &Set{
-		ID:      setID,
-		Name:    t.Name(),
-		Schema:  schema.Lookup(obj),
-		objType: t,
-		Subsets: subsets,
+}
+
+// Field returns a Def that attaches its child assertions to a specific field.
+// field may be a Go or JSON field name string, or a pointer to the field
+// (e.g. &myStruct.FieldName) for compile-time typo prevention. The field name
+// is resolved to the JSON tag name when For processes the set.
+func Field(field any, defs ...Def) Def {
+	return func(s *Set) {
+		temp := &Set{}
+		for _, def := range defs {
+			def(temp)
+		}
+		for _, a := range temp.Assert {
+			a.field = field
+		}
+		s.Assert = append(s.Assert, temp.Assert...)
 	}
+}
+
+// When returns a Def that conditionally applies its sub-definitions only when
+// test evaluates to true. The test expression is compiled by the parent For call.
+func When(test Test, defs ...Def) Def {
+	return func(s *Set) {
+		subset := &Set{Test: test}
+		for _, def := range defs {
+			def(subset)
+		}
+		s.Subsets = append(s.Subsets, subset)
+	}
+}
+
+// compileAndResolve recursively resolves field names, compiles assertions,
+// and compiles test conditions throughout the set tree using obj as the
+// prototype environment.
+func compileAndResolve(t reflect.Type, obj any, s *Set) {
 	if t.Kind() == reflect.Struct {
-		// Resolve the JSON field name for each assertion that carries a field identifier.
-		for _, ss := range subsets {
-			for _, a := range ss.Assert {
-				if a.field != nil {
-					a.Name = resolveAttributeName(t, obj, a.field)
-				}
+		for _, a := range s.Assert {
+			if a.field != nil {
+				a.Name = resolveAttributeName(t, obj, a.field)
 			}
 		}
 	}
-	compileSetAssertions(obj, subsets...)
-
-	// Ensure all the subset tests are compiled too.
-	for _, ss := range subsets {
-		if ss.Test != nil {
-			if ct, ok := ss.Test.(compilableTest); ok {
-				if err := ct.compile(obj); err != nil {
-					panic("invalid rules condition: " + err.Error())
-				}
+	compileAssertions(obj, s.Assert...)
+	if s.Test != nil {
+		if ct, ok := s.Test.(compilableTest); ok {
+			if err := ct.compile(obj); err != nil {
+				panic("invalid rules condition: " + err.Error())
 			}
 		}
 	}
-
-	return out
-}
-
-// Object creates a new set of assertions that will all be evaluated in the context of the
-// parent object.
-func Object(assert ...*Assertion) *Set {
-	return &Set{
-		Assert: assert,
-	}
-}
-
-// Field helps define a set of assertions associated with a specific field
-// embedded inside a struct. field may be either a Go or JSON field name string,
-// or a pointer to the field (e.g. &myStruct.FieldName) for compile-time typo
-// prevention. The field name is resolved to the JSON tag name when the set is
-// embedded in a For call.
-func Field(field any, assert ...*Assertion) *Set {
-	rules := make([]*Assertion, len(assert))
-	for i, a := range assert {
-		a.field = field
-		rules[i] = a
-	}
-	return &Set{
-		Assert: rules,
-	}
-}
-
-// compileSubAssertions compiles any uncompiled assertions in the direct Assert
-// slices of each provided set, using env for type-aware compilation. It does not
-// recurse into sub-subsets: When and For each compile their own immediate assertions.
-func compileSetAssertions(env any, set ...*Set) {
-	for _, ss := range set {
-		compileAssertions(env, ss.Assert...)
+	for _, ss := range s.Subsets {
+		compileAndResolve(t, obj, ss)
 	}
 }
 
@@ -189,15 +204,37 @@ func compileAssertions(env any, asserts ...*Assertion) {
 	}
 }
 
-// typeSetID derives a set ID from the type name, converted to upper case.
-// For example, Email becomes EMAIL. The package namespace is contributed
-// separately by Register, so only the type name is used here.
+// typeSetID derives a set ID from the type, including the Go package short name
+// when present. For example, tax.Identity becomes TAX-IDENTITY and Email (no
+// package) becomes EMAIL. The GOBL prefix and registry namespace are contributed
+// by Register, which prepends its code avoiding duplication.
 func typeSetID(t reflect.Type) Code {
-	return Code(strings.ToUpper(t.Name()))
+	pkg := pkgShortName(t)
+	if pkg == "" {
+		return Code(strings.ToUpper(t.Name()))
+	}
+	return Code(strings.ToUpper(pkg)).Add(Code(strings.ToUpper(t.Name())))
+}
+
+// pkgShortName returns the short package name for a type, stripping any "_test"
+// suffix added by Go's external test packages. Returns "" for built-in types.
+func pkgShortName(t reflect.Type) string {
+	path := t.PkgPath()
+	if path == "" {
+		return ""
+	}
+	name := path
+	if idx := strings.LastIndex(path, "/"); idx >= 0 {
+		name = path[idx+1:]
+	}
+	return strings.TrimSuffix(name, "_test")
 }
 
 func prependToSets(code Code, sets []*Set) {
 	for _, s := range sets {
+		if s.ID != "" {
+			s.ID = code.Prepend(s.ID)
+		}
 		prependToAssertions(code, s.Assert)
 		prependToSets(code, s.Subsets)
 	}
@@ -208,28 +245,34 @@ func prependToSets(code Code, sets []*Set) {
 func prependToAssertions(code Code, asserts []*Assertion) {
 	for _, a := range asserts {
 		if a.ID != "" {
-			a.ID = code.Add(a.ID)
+			a.ID = code.Prepend(a.ID)
 		}
-	}
-}
-
-// Assert creates a new assertion with the provided code, test expression,
-// and description. Positive test results will cause this assertion to be
-// considered a failure, and the provided code and description will be included
-// in validation faults. The expression is compiled lazily when the assertion
-// is embedded in a For or When call, which provides the parent struct type
-// for field validation.
-func Assert(id Code, desc string, tests ...Test) *Assertion {
-	return &Assertion{
-		ID:    id,
-		Tests: tests,
-		Desc:  desc,
 	}
 }
 
 // Add allows us to create a new code by appending a suffix to the existing code.
 func (c Code) Add(code Code) Code {
 	return c + "-" + code
+}
+
+// Prepend prepends c to id, deduplicating the last segment of c when it
+// matches the first segment of id. This avoids double-encoding the package
+// name when the registry namespace already contains it.
+// For example: Code("GOBL-ORG").Prepend("ORG-EMAIL") → "GOBL-ORG-EMAIL"
+// but: Code("GOBL-GB").Prepend("TAX-IDENTITY") → "GOBL-GB-TAX-IDENTITY"
+func (c Code) Prepend(id Code) Code {
+	codeStr := string(c)
+	idStr := string(id)
+	// Extract last segment of c.
+	suffix := codeStr
+	if i := strings.LastIndex(codeStr, "-"); i >= 0 {
+		suffix = codeStr[i+1:]
+	}
+	// Drop the leading segment of id when it duplicates the suffix.
+	if strings.HasPrefix(idStr, suffix+"-") {
+		return c + "-" + Code(idStr[len(suffix)+1:])
+	}
+	return c.Add(id)
 }
 
 // AllSets returns all rule sets registered in the global registry.
@@ -290,23 +333,6 @@ func Validate(obj any) Faults {
 	}
 
 	return newFaults(faults)
-}
-
-// When is a chainable method that will insert a test condition into
-// the set that determines when the set's assertions should be applied.
-func (s *Set) When(test Test) *Set {
-	if s.objType == nil {
-		panic("cannot apply When to a set without an associated struct type")
-	}
-	ns := *s
-	if ts, ok := test.(compilableTest); ok {
-		env := reflect.New(s.objType).Elem().Interface()
-		if err := ts.compile(env); err != nil {
-			panic(err.Error())
-		}
-	}
-	ns.Test = test
-	return &ns
 }
 
 // Validate validates an object against the set's rules. If the set has a test

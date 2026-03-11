@@ -82,11 +82,11 @@ func NormalizeNumericalCode(c Code) Code {
 }
 
 func codeRules() *rules.Set {
-	return rules.ForValue(Code(""),
-		rules.Assert("010", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
+	return rules.For(Code(""),
+		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
 			rules.Length(0, int(CodeMaxLength)),
 		),
-		rules.Assert("020", "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space",
+		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space",
 			rules.Matches(CodePattern),
 		),
 	)

@@ -173,6 +173,12 @@ type Tracking struct {
 	Website *org.Website `json:"website,omitempty" jsonschema:"title=Website"`
 }
 
+// CanSign returns a boolean indicating whether the delivery is ready to be signed
+// or not.
+func (dlv *Delivery) CanSign() bool {
+	return !dlv.Code.IsEmpty()
+}
+
 // Validate the delivery document
 func (dlv *Delivery) Validate() error {
 	return dlv.ValidateWithContext(context.Background())

@@ -8,11 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// patternCode is a named string type used to exercise Matches via ForValue.
+// patternCode is a named string type used to exercise Matches via For.
 type patternCode string
 
 func matchSet(pattern string) *rules.Set {
-	return rules.ForValue(patternCode(""),
+	return rules.For(patternCode(""),
 		rules.Assert("001", "must match pattern",
 			rules.Matches(pattern),
 		),
@@ -42,7 +42,7 @@ func TestMatches(t *testing.T) {
 			Code *string `json:"code"`
 		}
 		proto := new(Thing)
-		set := rules.ForStruct(proto,
+		set := rules.For(proto,
 			rules.Field(&proto.Code,
 				rules.Assert("001", "must match",
 					rules.Matches(`^\d+$`),
@@ -58,7 +58,7 @@ func TestMatches(t *testing.T) {
 			Data []byte `json:"data"`
 		}
 		proto := new(Blob)
-		set := rules.ForStruct(proto,
+		set := rules.For(proto,
 			rules.Field(&proto.Data,
 				rules.Assert("001", "must match",
 					rules.Matches(`^\d+$`),
@@ -76,7 +76,7 @@ func TestMatches(t *testing.T) {
 
 	t.Run("panics on invalid regex pattern", func(t *testing.T) {
 		assert.Panics(t, func() {
-			rules.ForValue(patternCode(""),
+			rules.For(patternCode(""),
 				rules.Assert("001", "bad pattern",
 					rules.Matches(`[invalid`),
 				),

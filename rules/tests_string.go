@@ -20,8 +20,8 @@ func ByString(desc string, test func(string) bool) StringTest {
 }
 
 func (t StringTest) Check(value any) bool {
-	str, ok := value.(string)
-	if !ok {
+	isString, str, _, _ := StringOrBytes(value)
+	if !isString {
 		return false
 	}
 	return t.test(str)

@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -45,6 +46,23 @@ func NewHeader() *Header {
 	return h
 }
 
+func headerRules() *rules.Set {
+	h := new(Header)
+	return rules.For(h,
+		rules.Field(&h.UUID,
+			rules.Assert("01", "header must contain a UUID v1 or v7 with timestamp",
+				rules.Required,
+				uuid.HasTimestamp,
+			),
+		),
+		rules.Field(&h.Digest,
+			rules.Assert("02", "header must have a digest",
+				rules.Required,
+			),
+		),
+	)
+}
+
 // Validate checks that the header contains the basic information we need to function.
 func (h *Header) Validate() error {
 	return h.ValidateWithContext(context.Background())
@@ -60,7 +78,7 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 				!internal.IsSigned(ctx),
 				validation.Empty,
 			),
-			DetectDuplicateStamps,
+			validation.By(detectDuplicateStamps),
 		),
 		validation.Field(&h.Links,
 			DetectDuplicateLinks,

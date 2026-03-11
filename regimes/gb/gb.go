@@ -62,8 +62,7 @@ func New() *tax.RegimeDef {
 				corrections.
 			`),
 		},
-		TimeZone: "Europe/London",
-		// Validator:  Validate,
+		TimeZone:   "Europe/London",
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -79,18 +78,6 @@ func New() *tax.RegimeDef {
 		},
 	}
 }
-
-// Validate checks the document type and determines if it can be validated. Note that in
-// the GB tax regime we don't need to validate the presence of the supplier's tax ID.
-/*
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
-}
-*/
 
 // Normalize will attempt to clean the object passed to it.
 func Normalize(doc interface{}) {

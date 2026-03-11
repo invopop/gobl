@@ -3,23 +3,29 @@
   "name": "gb",
   "subsets": [
     {
-      "id": "IDENTITY",
-      "name": "Identity",
+      "id": "GOBL-GB-TAX-IDENTITY",
+      "name": "tax.Identity",
       "schema": "https://gobl.org/draft-0/tax/identity",
-      "test": "code in [GB]",
       "subsets": [
         {
+          "test": "code in [GB]",
           "assert": [
             {
-              "id": "GOBL-GB-IDENTITY-010",
+              "id": "GOBL-GB-TAX-IDENTITY-01",
               "name": "code",
-              "desc": "invalid tax identity code format",
+              "desc": "invalid tax identity format",
               "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
             },
             {
-              "id": "GOBL-GB-IDENTITY-020",
+              "id": "GOBL-GB-TAX-IDENTITY-02",
               "name": "code",
-              "desc": "invalid tax identity code checksum",
+              "desc": "all-zero tax identity codes are not allowed",
+              "tests": "not-zeros"
+            },
+            {
+              "id": "GOBL-GB-TAX-IDENTITY-03",
+              "name": "code",
+              "desc": "tax identity checksum mismatch",
               "tests": "checksum"
             }
           ]

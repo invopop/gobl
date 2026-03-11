@@ -34,6 +34,11 @@ func TestIn(t *testing.T) {
 		assert.False(t, rules.In(true).Check(false))
 	})
 
+	t.Run("integer values", func(t *testing.T) {
+		assert.True(t, rules.In(1, 2, 3).Check(2))
+		assert.False(t, rules.In(1, 2, 3).Check(4))
+	})
+
 	t.Run("empty set always fails for non-nil value", func(t *testing.T) {
 		assert.False(t, rules.In().Check("anything"))
 	})
@@ -42,8 +47,8 @@ func TestIn(t *testing.T) {
 		assert.Equal(t, "one of [A, B, C]", rules.In("A", "B", "C").String())
 	})
 
-	t.Run("named types in set compiled via ForValue", func(t *testing.T) {
-		set := rules.ForValue(taxCode(""),
+	t.Run("named types in set compiled via For", func(t *testing.T) {
+		set := rules.For(taxCode(""),
 			rules.Assert("001", "must be valid",
 				rules.In(taxCode("standard"), taxCode("reduced")),
 			),
@@ -52,9 +57,9 @@ func TestIn(t *testing.T) {
 		assert.NotNil(t, set.Validate(taxCode("exempt")))
 	})
 
-	t.Run("integer set compiled via ForValue", func(t *testing.T) {
+	t.Run("integer set compiled via For", func(t *testing.T) {
 		type level int
-		set := rules.ForValue(level(0),
+		set := rules.For(level(0),
 			rules.Assert("001", "must be valid",
 				rules.In(1, 2, 3),
 			),

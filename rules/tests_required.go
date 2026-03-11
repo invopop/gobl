@@ -22,13 +22,10 @@ var (
 
 func (r requiredTest) Check(value any) bool {
 	value, isNil := Indirect(value)
-	if r.skipNil && !isNil && IsEmpty(value) || !r.skipNil && (isNil || IsEmpty(value)) {
-		if r.skipNil {
-			return false
-		}
-		return false
+	if r.skipNil {
+		return isNil || !IsEmpty(value)
 	}
-	return true
+	return !isNil && !IsEmpty(value)
 }
 
 func (r requiredTest) String() string {

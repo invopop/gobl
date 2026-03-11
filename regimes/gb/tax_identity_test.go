@@ -3,6 +3,7 @@ package gb_test
 import (
 	"testing"
 
+	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -26,32 +27,32 @@ func TestTaxIdentityRules(t *testing.T) {
 		{
 			name: "zeros",
 			code: "000000000",
-			err:  "zeros",
+			err:  "020",
 		},
 		{
 			name: "bad mid length",
 			code: "12345678910",
-			err:  "invalid format",
+			err:  "010",
 		},
 		{
 			name: "too long",
 			code: "1234567890123",
-			err:  "invalid format",
+			err:  "010",
 		},
 		{
 			name: "too short",
 			code: "123456",
-			err:  "invalid format",
+			err:  "010",
 		},
 		{
 			name: "not normalized",
 			code: "12.449.965-4",
-			err:  "invalid format",
+			err:  "010",
 		},
 		{
 			name: "bad checksum",
 			code: "999999991",
-			err:  "checksum mismatch",
+			err:  "030",
 		},
 	}
 

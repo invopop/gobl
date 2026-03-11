@@ -26,48 +26,66 @@ var (
 
 func taxIdentityRules() *rules.Set {
 	tID := new(tax.Identity)
-	return rules.ForStruct(tID,
-		rules.Field(&tID.Code,
-			rules.Assert("010", "invalid tax identity code format",
-				rules.Matches(taxIdentityCodePattern),
+	return rules.For(tID,
+		rules.When(tax.IdentityIn("GB"),
+			rules.Field(&tID.Code,
+				rules.Assert("01", "invalid tax identity format",
+					rules.Matches(taxIdentityCodePattern),
+				),
+				rules.Assert("02", "all-zero tax identity codes are not allowed",
+					rules.ByString("not-zeros", taxCodeNotZeros),
+				),
+				rules.Assert("03", "tax identity checksum mismatch",
+					rules.ByString("checksum", taxCodeChecksumValid),
+				),
 			),
-			rules.Assert("020", "invalid tax identity code checksum",
-				rules.ByString("checksum", invalidTaxIdentityChecksum),
-			),
-		).When(tax.IdentityIn("GB")))
+		),
+	)
 }
 
-func invalidTaxIdentityChecksum(code string) bool {
+func taxCodeNotZeros(code string) bool {
+	if strings.HasPrefix(code, "GD") || strings.HasPrefix(code, "HA") {
+		return true
+	}
+	z, _ := strconv.Atoi(code)
+	return z != 0
+}
+
+func taxCodeChecksumValid(code string) bool {
 	if strings.HasPrefix(code, "GD") {
-		return invalidGovernmentDepartmentID(code)
+		return validGovernmentDepartmentID(code)
 	}
 
 	if strings.HasPrefix(code, "HA") {
-		return invalidHealthAuthorityID(code)
+		return validHealthAuthorityID(code)
 	}
 
-	return invalidCommercialID(code)
+	return validCommercialID(code)
 }
 
-func invalidGovernmentDepartmentID(val string) bool {
-	const expect = 499 // from 000
+func validGovernmentDepartmentID(val string) bool {
+	const max = 499 // range 000-499
 	val = val[2:]
 	num, _ := strconv.Atoi(val)
-	return num > expect
+	return num <= max
 }
 
-func invalidHealthAuthorityID(val string) bool {
-	const expect = 500 // to 999
+func validHealthAuthorityID(val string) bool {
+	const min = 500 // range 500-999
 	val = val[2:]
 	num, _ := strconv.Atoi(val)
-	return num > expect
+	return num >= min
 }
 
 // Specific file used as example: https://github.com/ltns35/go-vat/blob/main/countries/united_kingdom.go
-func invalidCommercialID(val string) bool {
+func validCommercialID(val string) bool {
+	if len(val) < 9 {
+		return false
+	}
+
 	// 0 VAT numbers disallowed!
 	if z, _ := strconv.Atoi(val); z == 0 {
-		return true
+		return false
 	}
 
 	// Check range is OK for modulus 97 calculation
@@ -101,7 +119,7 @@ func invalidCommercialID(val string) bool {
 	lastDigits, _ := strconv.Atoi(lastDigitsStr)
 
 	if checkDigit == lastDigits && num < 9990001 && (num < 100000 || num > 999999) && (num < 9490001 || num > 9700000) {
-		return false
+		return true
 	}
 
 	// Now try the new method by subtracting 55 from the check digit if we can - else add 42
@@ -112,8 +130,8 @@ func invalidCommercialID(val string) bool {
 	}
 
 	if checkDigit == lastDigits && num > 1000000 {
-		return false
+		return true
 	}
 
-	return true
+	return false // invalid
 }

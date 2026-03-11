@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/validation"
 )
 
@@ -15,6 +16,18 @@ type Stamp struct {
 	Provider cbc.Key `json:"prv" jsonschema:"title=Provider"`
 	// The serialized stamp value generated for or by the external agency
 	Value string `json:"val" jsonschema:"title=Value"`
+}
+
+func stampRules() *rules.Set {
+	s := new(Stamp)
+	return rules.For(s,
+		rules.Field(&s.Provider,
+			rules.Assert("01", "stamp provider is required", rules.Required),
+		),
+		rules.Field(&s.Value,
+			rules.Assert("02", "stamp value is required", rules.Required),
+		),
+	)
 }
 
 // Validate checks that the header contains the basic information we need to function.
@@ -39,7 +52,7 @@ func (s *Stamp) In(ss []*Stamp) bool {
 // provider keys.
 var DetectDuplicateStamps = validation.By(detectDuplicateStamps)
 
-func detectDuplicateStamps(list interface{}) error {
+func detectDuplicateStamps(list any) error {
 	values, ok := list.([]*Stamp)
 	if !ok {
 		return errors.New("must be a stamp array")
