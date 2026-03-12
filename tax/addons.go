@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -168,6 +169,22 @@ func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
 	}
 	ctx = ContextWithValidator(ctx, ad.Validator)
 	return ctx
+}
+
+type implementsAddon interface {
+	GetAddons() []cbc.Key
+}
+
+// HasAddon provides a test to check that an object provided to the test responds to the
+// GetAddons method and that the addon key provided is supported.
+func HasAddon(key cbc.Key) rules.Test {
+	return rules.By(fmt.Sprintf("has addon %v", key), func(value any) bool {
+		obj, ok := value.(implementsAddon)
+		if !ok {
+			return false // do not continue
+		}
+		return key.In(obj.GetAddons()...)
+	})
 }
 
 type addonValidation struct{}

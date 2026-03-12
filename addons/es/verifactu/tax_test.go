@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -221,7 +222,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyRegime:  "01",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -230,7 +231,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: tax.CategoryGST,
 			Rate:     tax.RateGeneral,
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -243,7 +244,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -255,7 +256,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
 	})
 
@@ -267,7 +268,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E3",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "E3")
 	})
@@ -280,7 +281,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -292,7 +293,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := rules.Validate(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "E2")
 	})

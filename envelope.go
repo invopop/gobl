@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/validation"
 
 	"github.com/invopop/gobl/c14n"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/internal"
@@ -425,4 +426,16 @@ func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, wrapError(err)
 	}
 	return opts, nil
+}
+
+// GetAddons is a convenience method that will provide a list of addon keys from the
+// embedded document if it implements the addon interface.
+func (e *Envelope) GetAddons() []cbc.Key {
+	if e.Document == nil || e.Document.IsEmpty() {
+		return nil
+	}
+	if a, ok := e.Document.Instance().(interface{ GetAddons() []cbc.Key }); ok {
+		return a.GetAddons()
+	}
+	return nil
 }

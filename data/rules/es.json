@@ -1,0 +1,69 @@
+{
+  "id": "GOBL-ES",
+  "name": "es",
+  "subsets": [
+    {
+      "id": "GOBL-ES-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "schema": "https://gobl.org/draft-0/bill/invoice",
+      "subsets": [
+        {
+          "test": "regime in [ES]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-ES-BILL-INVOICE-01",
+                  "desc": "supplier is required",
+                  "tests": "required"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-BILL-INVOICE-02",
+                      "desc": "supplier tax ID is required",
+                      "tests": "required"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-BILL-INVOICE-03",
+                          "desc": "supplier tax ID must have a code",
+                          "tests": "required"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "schema": "https://gobl.org/draft-0/tax/identity",
+      "subsets": [
+        {
+          "test": "code in [ES]",
+          "assert": [
+            {
+              "id": "GOBL-ES-TAX-IDENTITY-01",
+              "desc": "invalid tax identity format or checksum",
+              "tests": "valid"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

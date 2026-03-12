@@ -76,9 +76,16 @@ func Registry() []*Set {
 
 // Register is used to register a set of rules for a given namespace.
 func Register(name string, pkg Code, sets ...*Set) {
+	RegisterWithGuard(name, pkg, nil, sets...)
+}
+
+// RegisterWithGuard is used to register a set of rules for a given namespace
+// with an optional guard condition that determines when the rules should be applied.
+func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
 	set := &Set{
 		ID:      pkg,
 		Name:    name,
+		Test:    guard,
 		Subsets: sets,
 	}
 	prependToSets(pkg, sets)
@@ -402,10 +409,11 @@ func Validate(obj any) Faults {
 	// Find and apply all matching sets from the global registry.
 	for _, ns := range globalRegistry {
 		for _, subset := range ns.Subsets {
-			if subset.objType == objType {
-				if fs := subset.Validate(obj); fs != nil {
-					faults = append(faults, fs.List()...)
-				}
+			if subset.objType != objType {
+				continue
+			}
+			if fs := subset.Validate(obj); fs != nil {
+				faults = append(faults, fs.List()...)
 			}
 		}
 	}
