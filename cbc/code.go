@@ -61,6 +61,14 @@ func NormalizeCode(c Code) Code {
 	return Code(code)
 }
 
+// NormalizeUpperCode cleans and normalizes the code, ensuring
+// all letters are uppercase while preserving valid separators.
+func NormalizeUpperCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = strings.ToUpper(code)
+	return Code(code)
+}
+
 // NormalizeAlphanumericalCode cleans and normalizes the code,
 // ensuring all letters are uppercase while also removing
 // non-alphanumerical characters.
