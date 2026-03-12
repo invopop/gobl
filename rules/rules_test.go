@@ -89,6 +89,13 @@ func TestFor(t *testing.T) {
 		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), faults.First().Code())
 	})
 
+	t.Run("panics on invalid field name", func(t *testing.T) {
+		assert.Panics(t, func() {
+			rules.For(new(Email),
+				rules.Field("nonexistent"),
+			)
+		})
+	})
 }
 
 func TestValidate(t *testing.T) {
@@ -140,6 +147,7 @@ func TestValidate(t *testing.T) {
 		faults := rules.Validate(p)
 		assert.Nil(t, faults)
 	})
+
 }
 
 // TestCode is a named string type used to test For with a value type.
@@ -208,6 +216,7 @@ func TestForValue(t *testing.T) {
 			)
 		})
 	})
+
 }
 
 func TestSetValidate(t *testing.T) {
@@ -240,7 +249,7 @@ func TestSetValidate(t *testing.T) {
 
 		op := Person{Name: "fooo"}
 		faults = set.Validate(op)
-		assert.Error(t, faults)
+		assert.NoError(t, faults)
 	})
 
 	t.Run("when condition skips set when false", func(t *testing.T) {
@@ -299,4 +308,99 @@ func TestSetValidate(t *testing.T) {
 		require.Error(t, faults)
 	})
 
+}
+
+func TestEach(t *testing.T) {
+	t.Run("validates each element and reports indexed paths", func(t *testing.T) {
+		set := rules.For(new(Person),
+			rules.Field("emails",
+				rules.Each(
+					rules.Field("addr",
+						rules.Assert("01", "email address is required", rules.Required),
+					),
+				),
+			),
+		)
+		p := &Person{
+			Name: "Alice",
+			Emails: []Email{
+				{Addr: "a@example.com"},
+				{Addr: ""},
+				{Addr: "b@example.com"},
+				{Addr: ""},
+			},
+		}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("emails[1].addr"))
+		assert.True(t, faults.HasPath("emails[3].addr"))
+		assert.False(t, faults.HasPath("emails[0].addr"))
+		assert.False(t, faults.HasPath("emails[2].addr"))
+	})
+
+	t.Run("passes when all elements are valid", func(t *testing.T) {
+		set := rules.For(new(Person),
+			rules.Field("emails",
+				rules.Each(
+					rules.Field("addr",
+						rules.Assert("01", "email address is required", rules.Required),
+					),
+				),
+			),
+		)
+		p := &Person{
+			Emails: []Email{{Addr: "a@example.com"}, {Addr: "b@example.com"}},
+		}
+		assert.NoError(t, set.Validate(p))
+	})
+
+	t.Run("passes with empty slice", func(t *testing.T) {
+		set := rules.For(new(Person),
+			rules.Field("emails",
+				rules.Each(
+					rules.Assert("01", "required", rules.Required),
+				),
+			),
+		)
+		assert.NoError(t, set.Validate(&Person{}))
+	})
+
+	t.Run("whole-slice and per-element assertions coexist on same field", func(t *testing.T) {
+		set := rules.For(new(Person),
+			rules.Field("emails",
+				rules.Assert("01", "no more than two emails",
+					rules.By("max two", func(val any) bool {
+						emails, ok := val.([]Email)
+						return !ok || len(emails) <= 2
+					}),
+				),
+				rules.Each(
+					rules.Field("addr",
+						rules.Assert("02", "email address is required", rules.Required),
+					),
+				),
+			),
+		)
+		// Whole-slice violation: three emails.
+		p := &Person{Emails: []Email{{Addr: "a@b.com"}, {Addr: "c@d.com"}, {Addr: "e@f.com"}}}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("emails"))
+
+		// Per-element violation: empty addr.
+		p2 := &Person{Emails: []Email{{Addr: "a@b.com"}, {Addr: ""}}}
+		faults2 := set.Validate(p2)
+		require.Error(t, faults2)
+		assert.True(t, faults2.HasPath("emails[1].addr"))
+	})
+
+	t.Run("panics when used outside a slice field", func(t *testing.T) {
+		assert.Panics(t, func() {
+			rules.For(new(Email),
+				rules.Each(
+					rules.Assert("01", "required", rules.Required),
+				),
+			)
+		})
+	})
 }

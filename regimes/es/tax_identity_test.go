@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -88,6 +89,7 @@ func TestTaxIdentityKey(t *testing.T) {
 }
 
 func TestValidateTaxIdentity(t *testing.T) {
+	const errCode01 = "GOBL-ES-TAX-IDENTITY-01"
 	tests := []struct {
 		Code     cbc.Code
 		Expected string
@@ -95,142 +97,127 @@ func TestValidateTaxIdentity(t *testing.T) {
 		// *** EMPTY ***
 		{
 			Code:     "",
-			Expected: "",
+			Expected: errCode01,
 		},
 		// *** NATIONAL ***
 		{
-			Code:     "93471790C",
-			Expected: "",
+			Code: "93471790C",
 		},
 		{
-			Code:     "43596386R",
-			Expected: "",
+			Code: "43596386R",
 		},
 		{
-			Code:     "00000010X",
-			Expected: "",
+			Code: "00000010X",
 		},
 		{
 			Code:     "93471790A",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "00000000A",
-			Expected: "invalid format",
+			Expected: errCode01,
 		},
 		{
 			Code:     "0111111C",
-			Expected: "invalid format",
+			Expected: errCode01,
 		},
 		// *** FOREIGN ***
 		{
-			Code:     "X5102754C",
-			Expected: "",
+			Code: "X5102754C",
 		},
 		{
-			Code:     "Z8327649K",
-			Expected: "",
+			Code: "Z8327649K",
 		},
 		{
-			Code:     "Y4174455S",
-			Expected: "",
+			Code: "Y4174455S",
 		},
 		{
 			Code:     "X5102755C",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "X111111C",
-			Expected: "invalid format",
+			Expected: errCode01,
 		},
 		// **** Org ****
 		{
-			Code:     "A58818501",
-			Expected: "",
+			Code: "A58818501",
 		},
 		{
-			Code:     "B65410011",
-			Expected: "",
+			Code: "B65410011",
 		},
 		{
-			Code:     "V7565938C",
-			Expected: "",
+			Code: "V7565938C",
 		},
 		{
-			Code:     "V75659383",
-			Expected: "",
+			Code: "V75659383",
 		},
 		{
-			Code:     "F0605378I",
-			Expected: "",
+			Code: "F0605378I",
 		},
 		{
-			Code:     "Q2238877A",
-			Expected: "",
+			Code: "Q2238877A",
 		},
 		{
-			Code:     "D40022956",
-			Expected: "",
+			Code: "D40022956",
 		},
 		{
 			Code:     "A5881850B",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "B65410010",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "V75659382",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "V7565938B",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "F06053787",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "Q22388770",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "D4002295J",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "00000001A",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "B0111111",
-			Expected: "invalid format",
+			Expected: errCode01,
 		},
 		// *** Other ***
 		{
-			Code:     "K9514336H",
-			Expected: "",
+			Code: "K9514336H",
 		},
 		{
 			Code:     "K95143363",
-			Expected: "invalid check digit",
+			Expected: errCode01,
 		},
 		{
 			Code:     "X111111C",
-			Expected: "invalid format",
+			Expected: errCode01,
 		},
 	}
-	r := es.New()
 	for _, ts := range tests {
 		t.Run(string(ts.Code), func(t *testing.T) {
 			tID := &tax.Identity{Country: "ES", Code: ts.Code}
-			err := r.ValidateObject(tID)
+			err := rules.Validate(tID)
 			if ts.Expected == "" {
 				assert.NoError(t, err)
 			} else {
-				assert.ErrorContains(t, err, "code: "+ts.Expected)
+				assert.ErrorContains(t, err, ts.Expected)
 			}
 		})
 	}

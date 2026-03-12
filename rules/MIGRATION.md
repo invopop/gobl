@@ -18,26 +18,27 @@ the schemas they validate.
 
 ```go
 func myRules() *rules.Set {
-    obj := new(MyStruct) // prototype used only for field address resolution
-    return rules.For(obj,
+    return rules.For(new(MyStruct),
         // ... Defs
     )
 }
 ```
 
 `rules.For` accepts either a struct pointer or a named value type (e.g.
-`rules.For(MyCode(""), ...)`).
+`rules.For(MyCode(""), ...)`). The prototype value is used for type inference
+and to validate field names at initialisation time.
 
 ### `Field` — scope assertions to a field
 
 ```go
-rules.Field(&obj.Name,
+rules.Field("name",
     rules.Assert("01", "name is required", rules.Required),
 )
 ```
 
-The field pointer is resolved to its JSON name at compile time. All assertions
-inside `Field` receive the extracted field value.
+The name must match the JSON tag of a field in the parent struct. It is
+validated at initialisation — an unknown name panics immediately. All
+assertions inside `Field` receive the extracted field value.
 
 ### `Assert` — a single validation assertion
 
@@ -49,11 +50,31 @@ All tests must pass. The first failure short-circuits the assertion and emits a
 fault with the given description. Assertion codes are prefixed automatically
 during `Register` to form globally unique codes like `GOBL-ORG-EMAIL-01`.
 
+### `Each` — per-element assertions on a slice field
+
+`Each` is a nameless `Def` used inside `Field` to apply assertions to each
+element of a slice. It does not take a field name — it operates on the slice
+already extracted by the enclosing `Field`:
+
+```go
+rules.Field("lines",
+    rules.Assert("01", "no duplicate codes", rules.By("no dups", hasNoDuplicateCodes)),
+    rules.Each(
+        rules.Field("code",
+            rules.Assert("02", "line code is required", rules.Required),
+        ),
+    ),
+)
+```
+
+Faults carry indexed paths: `lines[0].code`, `lines[1].code`, etc. Using `Each`
+directly inside `For` (rather than inside a `Field` on a slice) panics at init time.
+
 ### `When` — conditional rule subsets
 
 ```go
 rules.When(conditionTest,
-    rules.Field(&obj.Code, rules.Assert("01", "code is required", rules.Required)),
+    rules.Field("code", rules.Assert("01", "code is required", rules.Required)),
 )
 ```
 
@@ -117,7 +138,7 @@ validation.Field(&obj.URL, is.URL)
 
 // After
 import "github.com/invopop/gobl/rules/is"
-rules.Field(&obj.URL,
+rules.Field("url",
     rules.Assert("03", "URL must be valid", is.URL),
 )
 ```
@@ -131,7 +152,7 @@ rules.Field(&obj.URL,
 validation.Field(&obj.Name, validation.Required)
 
 // After
-rules.Field(&obj.Name,
+rules.Field("name",
     rules.Assert("01", "name is required", rules.Required),
 )
 ```
@@ -143,7 +164,7 @@ rules.Field(&obj.Name,
 validation.Field(&obj.Address, validation.Required, is.Email)
 
 // After
-rules.Field(&obj.Address,
+rules.Field("addr",
     rules.Assert("01", "email address is required", rules.Required),
     rules.Assert("02", "email address must be valid", is.EmailFormat),
 )
@@ -161,7 +182,7 @@ Leave out `Required`. All built-in tests skip nil/empty values automatically:
 validation.Field(&obj.URL, is.URL)
 
 // After
-rules.Field(&obj.URL,
+rules.Field("url",
     rules.Assert("05", "URL must be valid", is.URL),
 )
 ```
@@ -173,7 +194,7 @@ rules.Field(&obj.URL,
 validation.Field(&obj.Category, validation.In("a", "b", "c"))
 
 // After
-rules.Field(&obj.Category,
+rules.Field("category",
     rules.Assert("02", "category is not valid", rules.In("a", "b", "c")),
 )
 ```
@@ -199,7 +220,7 @@ func isValidCategory(val any) bool {
     return false
 }
 
-rules.Field(&obj.Category,
+rules.Field("category",
     rules.Assert("02", "category is not valid",
         rules.By("valid or empty", isValidCategory),
     ),
@@ -213,7 +234,7 @@ rules.Field(&obj.Category,
 validation.Field(&obj.Code, validation.Match(regexp.MustCompile(`^\d{9}$`)))
 
 // After
-rules.Field(&obj.Code,
+rules.Field("code",
     rules.Assert("01", "invalid format", rules.Matches(`^\d{9}$`)),
 )
 ```
@@ -240,7 +261,7 @@ func myCodeChecksumValid(code string) bool {
     return isValidChecksum(code)
 }
 
-rules.Field(&obj.Code,
+rules.Field("code",
     rules.Assert("03", "code checksum mismatch",
         rules.ByString("checksum", myCodeChecksumValid),
     ),
@@ -311,7 +332,7 @@ rules.When(rules.By("not signed", func(val any) bool {
     e, ok := val.(*Envelope)
     return ok && len(e.Signatures) == 0
 }),
-    rules.Field(&obj.Stamps,
+    rules.Field("stamps",
         rules.Assert("12", "stamps not allowed before signing",
             rules.Length(0, 0),
         ),
@@ -325,6 +346,129 @@ rules.When(rules.By("not signed", func(val any) bool {
 > derived from the object's own state. Move such checks to the outermost type
 > that carries the relevant state (typically `Envelope`), and use
 > `rules.When(...)` there.
+
+### Nested struct fields
+
+The preferred approach is to define rules for each type independently and
+register them all. `rules.Validate` recurses into every exported field
+automatically, so there is no wiring required between parent and child:
+
+```go
+// address_rules.go
+func addressRules() *rules.Set {
+    return rules.For(new(Address),
+        rules.Field("city",
+            rules.Assert("01", "city is required", rules.Required),
+        ),
+    )
+}
+
+// person_rules.go
+func personRules() *rules.Set {
+    return rules.For(new(Person),
+        rules.Field("name",
+            rules.Assert("01", "name is required", rules.Required),
+        ),
+        // No wiring for Address — addressRules() is registered separately
+        // and applied automatically when rules.Validate recurses into the field.
+    )
+}
+
+func init() {
+    rules.Register("mypkg", rules.GOBL.Add("MYPKG"),
+        addressRules(),
+        personRules(),
+    )
+}
+```
+
+When you need to add rules about a nested type from the **parent's perspective**
+(e.g. regime-specific constraints that don't belong on the child type itself),
+nest `rules.Field` calls to drill down the path:
+
+```go
+// Before — regime-specific Validate method on the parent
+func (inv *Invoice) Validate() error {
+    return validation.ValidateStruct(inv,
+        validation.Field(&inv.Supplier, validation.Required),
+        // inside supplier.Validate(), further checks on TaxID...
+    )
+}
+
+// After — regime rule set drilling into nested fields
+func invoiceRules() *rules.Set {
+    return rules.For(new(Invoice),
+        rules.When(tax.RegimeIn("XX"),
+            rules.Field("supplier",
+                rules.Assert("01", "supplier is required", rules.Required),
+                rules.Field("tax_id",
+                    rules.Assert("02", "supplier tax ID is required", rules.Required),
+                    rules.Field("code",
+                        rules.Assert("03", "supplier tax ID must have a code", rules.Required),
+                    ),
+                ),
+            ),
+        ),
+    )
+}
+```
+
+Each `rules.Field` in the chain constrains the context for its children, so
+assertions and tests inside `rules.Field("tax_id", ...)` operate on the
+`TaxIdentity` struct, not the outer `Invoice`.
+
+### Slice fields (`Each`)
+
+`rules.Each` is a nameless `Def` that iterates over the elements of the current
+context. It is used **inside** a `rules.Field` that targets a slice field:
+
+```go
+// Before
+func (obj *MyStruct) Validate() error {
+    return validation.ValidateStruct(obj,
+        validation.Field(&obj.Lines,
+            validation.Each(validation.Required, validation.By(lineIsValid)),
+        ),
+    )
+}
+
+// After
+func myStructRules() *rules.Set {
+    return rules.For(new(MyStruct),
+        rules.Field("lines",
+            rules.Each(
+                rules.Assert("01", "line must not be empty", rules.Required),
+                rules.Assert("02", "line must be valid", rules.By("valid", lineIsValid)),
+            ),
+        ),
+    )
+}
+```
+
+Faults from `Each` carry a path like `lines[0]`, `lines[1]`, etc.
+
+Because `Each` is just a `Def` inside `Field`, whole-slice and per-element
+assertions can coexist on the same field naturally:
+
+```go
+rules.Field("lines",
+    rules.Assert("01", "no duplicate line codes",
+        rules.By("no duplicates", hasNoDuplicateLineCodes),
+    ),
+    rules.Each(
+        rules.Field("code",
+            rules.Assert("02", "line code is required", rules.Required),
+        ),
+    ),
+)
+```
+
+If the element type has its own registered rule set, those rules are applied
+automatically during recursive validation — `Each` is only needed when you want
+to add **additional** assertions from the parent's perspective that don't belong
+on the element type itself.
+
+`rules.Each` panics at initialisation time when used outside a slice field.
 
 ### Named value types (e.g. `cbc.Code`, `tax.Rate`)
 

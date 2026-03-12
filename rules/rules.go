@@ -151,13 +151,24 @@ func Field(name string, defs ...Def) Def {
 	}
 }
 
-// Each returns a Def that creates a field-scoped subset that iterates over
-// slice elements. name must be the JSON tag name of a slice field in the
-// parent struct. All assertions and subsets inside Each are applied to each
-// element of the slice.
-func Each(name string, defs ...Def) Def {
+// Each returns a Def that iterates over the elements of the current context,
+// which must be a slice or array. It is intended to be used inside a Field
+// that targets a slice field. All assertions and subsets inside Each are
+// applied to each element individually.
+//
+// Usage:
+//
+//	rules.Field("lines",
+//	    rules.Assert("01", "no duplicates", checkNoDups),  // whole-slice assertion
+//	    rules.Each(
+//	        rules.Assert("02", "line required", rules.Required),  // per-element
+//	    ),
+//	)
+//
+// Each panics at initialisation time if the parent context is not a slice or array.
+func Each(defs ...Def) Def {
 	return func(s *Set) {
-		subset := &Set{FieldName: name, Each: true}
+		subset := &Set{Each: true}
 		for _, def := range defs {
 			def(subset)
 		}
@@ -191,6 +202,8 @@ func compileAndResolve(t reflect.Type, obj any, s *Set) {
 	for _, ss := range s.Subsets {
 		if ss.FieldName != "" {
 			compileFieldSubset(t, ss)
+		} else if ss.Each {
+			compileEachSubset(t, ss)
 		} else {
 			compileAndResolve(t, obj, ss)
 		}
@@ -204,11 +217,25 @@ func compileFieldSubset(t reflect.Type, ss *Set) {
 	if ft == nil {
 		panic(fmt.Sprintf("rules: field %q not found in type %s", ss.FieldName, t.Name()))
 	}
-	if ss.Each {
-		if ft.Kind() == reflect.Slice || ft.Kind() == reflect.Array {
-			ft = ft.Elem()
-		}
+	if ft.Kind() == reflect.Ptr {
+		ft = ft.Elem()
 	}
+	ss.objType = ft
+	nestedProto := reflect.New(ft).Interface()
+	compileAndResolve(ft, nestedProto, ss)
+}
+
+// compileEachSubset infers the element type from the parent slice/array type and
+// recursively compiles the subset for that element type. It panics if the parent
+// type is not a slice or array.
+func compileEachSubset(t reflect.Type, ss *Set) {
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Slice && t.Kind() != reflect.Array {
+		panic(fmt.Sprintf("rules: Each used on non-slice type %s", t.Name()))
+	}
+	ft := t.Elem()
 	if ft.Kind() == reflect.Ptr {
 		ft = ft.Elem()
 	}
@@ -247,8 +274,10 @@ func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
 	return reflect.Value{}, false
 }
 
-// validateEach validates each element of a slice field against the given subset.
-func validateEach(fv reflect.Value, ss *Set, fieldName string) []*Fault {
+// validateEachValue validates each element of a slice/array value against the
+// given subset. Fault paths are reported as [0], [1], etc. (no field-name
+// prefix; the caller's Field already contributes that).
+func validateEachValue(fv reflect.Value, ss *Set) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil
@@ -262,8 +291,7 @@ func validateEach(fv reflect.Value, ss *Set, fieldName string) []*Fault {
 	for i := range fv.Len() {
 		ev := fv.Index(i)
 		if fs := ss.Validate(ev.Interface()); fs != nil {
-			prefix := fieldName + "[" + strconv.Itoa(i) + "]"
-			faults = append(faults, prependPath(prefix, fs.List())...)
+			faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs.List())...)
 		}
 	}
 	return faults
@@ -479,20 +507,20 @@ func (s *Set) Validate(obj any) Faults {
 	if !isNil {
 		for _, ss := range s.Subsets {
 			if ss.FieldName == "" {
-				if fs := ss.Validate(obj); fs != nil {
-					faults = append(faults, fs.List()...)
+				if ss.Each {
+					faults = append(faults, validateEachValue(rv, ss)...)
+				} else {
+					if fs := ss.Validate(obj); fs != nil {
+						faults = append(faults, fs.List()...)
+					}
 				}
 			} else {
 				fv, ok := fieldValueByName(rv, ss.FieldName)
 				if !ok {
 					continue
 				}
-				if ss.Each {
-					faults = append(faults, validateEach(fv, ss, ss.FieldName)...)
-				} else {
-					if fs := ss.Validate(fv.Interface()); fs != nil {
-						faults = append(faults, prependPath(ss.FieldName, fs.List())...)
-					}
+				if fs := ss.Validate(fv.Interface()); fs != nil {
+					faults = append(faults, prependPath(ss.FieldName, fs.List())...)
 				}
 			}
 		}

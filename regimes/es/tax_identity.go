@@ -11,7 +11,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Tax Identity keys that may be determined from the code.
@@ -95,28 +94,10 @@ func taxIdentityRules() *rules.Set {
 
 func isValidTaxIdentity(value any) bool {
 	tID, ok := value.(*tax.Identity)
-	if !ok {
-		return false
+	if !ok || tID == nil {
+		return true // ignore
 	}
 	return validateTaxIdentityCode(tID) == nil
-}
-
-// validateTaxIdentity looks at the provided identity's code,
-// determines the type, and performs the calculations
-// required to determine if it is valid.
-// These methods assume the code has already been normalized
-// and thus only contains upper-case letters and numbers with
-// no white space.
-func validateTaxIdentity(tID *tax.Identity) error {
-	if tID == nil || tID.Code == cbc.CodeEmpty {
-		return nil // nothing to validate
-	}
-	if err := validateTaxIdentityCode(tID); err != nil {
-		return validation.Errors{
-			"code": err,
-		}
-	}
-	return nil
 }
 
 func validateTaxIdentityCode(tID *tax.Identity) error {
