@@ -61,15 +61,14 @@ func Envelop(doc any) (*Envelope, error) {
 }
 
 func envelopeRules() *rules.Set {
-	e := new(Envelope)
-	return rules.For(e,
-		rules.Field(&e.Schema,
+	return rules.For(new(Envelope),
+		rules.Field("$schema",
 			rules.Assert("01", "envelope schema is required", rules.Required),
 		),
-		rules.Field(&e.Head,
+		rules.Field("head",
 			rules.Assert("02", "envelope header is required", rules.Required),
 		),
-		rules.Field(&e.Document,
+		rules.Field("doc",
 			rules.Assert("03", "envelope doc is required", rules.Required),
 			rules.Assert("04", "envelope doc must have a schema",
 				rules.By("has schema", documentHasSchema),
@@ -80,7 +79,7 @@ func envelopeRules() *rules.Set {
 		),
 		rules.When(rules.By("not signed", notSigned),
 			rules.Assert("12", "envelope header cannot have stamps when not signed",
-				rules.By("no stamps", hasStamps),
+				rules.By("no stamps", hasNoStamps),
 			),
 		),
 		rules.When(rules.By("has signatures", hasSignatures),
@@ -115,12 +114,12 @@ func hasSignatures(val any) bool {
 	return len(e.Signatures) > 0
 }
 
-func hasStamps(val any) bool {
+func hasNoStamps(val any) bool {
 	e, ok := val.(*Envelope)
 	if !ok {
-		return false
+		return true
 	}
-	return e.Head != nil && len(e.Head.Stamps) > 0
+	return e.Head == nil || len(e.Head.Stamps) == 0
 }
 
 type documentCanSign interface {

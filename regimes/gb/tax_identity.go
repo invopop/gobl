@@ -25,10 +25,9 @@ var (
 )
 
 func taxIdentityRules() *rules.Set {
-	tID := new(tax.Identity)
-	return rules.For(tID,
+	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn("GB"),
-			rules.Field(&tID.Code,
+			rules.Field("code",
 				rules.Assert("01", "invalid tax identity format",
 					rules.Matches(taxIdentityCodePattern),
 				),

@@ -165,7 +165,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Signatures = nil
 		err = e.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "stamps: must be blank.")
+		assert.Contains(t, err.Error(), "envelope header cannot have stamps when not signed")
 		err = e.Calculate()
 		assert.NoError(t, err)
 		assert.Len(t, e.Head.Stamps, 1)
@@ -223,7 +223,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "validation: ($schema: cannot be blank; doc: cannot be blank; head: cannot be blank.).",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] $schema: envelope schema is required; [GOBL-ENVELOPE-02] head: envelope header is required; [GOBL-ENVELOPE-03] doc: envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -261,7 +261,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "digest: mismatch",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 	}
 

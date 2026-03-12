@@ -9,6 +9,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -80,6 +81,24 @@ func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 	default:
 		return cbc.KeyEmpty
 	}
+}
+
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("ES"),
+			rules.Assert("01", "invalid tax identity format or checksum",
+				rules.By("valid", isValidTaxIdentity),
+			),
+		),
+	)
+}
+
+func isValidTaxIdentity(value any) bool {
+	tID, ok := value.(*tax.Identity)
+	if !ok {
+		return false
+	}
+	return validateTaxIdentityCode(tID) == nil
 }
 
 // validateTaxIdentity looks at the provided identity's code,

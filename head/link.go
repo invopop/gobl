@@ -116,21 +116,20 @@ type Link struct {
 }
 
 func linkRules() *rules.Set {
-	l := new(Link)
-	return rules.For(l,
-		rules.Field(&l.Key,
+	return rules.For(new(Link),
+		rules.Field("key",
 			rules.Assert("01", "link key is required", rules.Required),
 		),
-		rules.Field(&l.Category,
+		rules.Field("category",
 			rules.Assert("02", "link category is not valid",
 				rules.By("valid or empty", isValidLinkCategory),
 			),
 		),
-		rules.Field(&l.URL,
+		rules.Field("url",
 			rules.Assert("03", "link URL is required", rules.Required),
 			rules.Assert("04", "link URL must be a valid URL", ris.URL),
 		),
-		rules.Field(&l.MIME,
+		rules.Field("mime",
 			rules.Assert("05", "link MIME type is not valid",
 				rules.By("valid or empty MIME", isValidLinkMIME),
 			),

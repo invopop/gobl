@@ -9,24 +9,26 @@
       "subsets": [
         {
           "test": "code in [GB]",
-          "assert": [
+          "subsets": [
             {
-              "id": "GOBL-GB-TAX-IDENTITY-01",
-              "name": "code",
-              "desc": "invalid tax identity format",
-              "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
-            },
-            {
-              "id": "GOBL-GB-TAX-IDENTITY-02",
-              "name": "code",
-              "desc": "all-zero tax identity codes are not allowed",
-              "tests": "not-zeros"
-            },
-            {
-              "id": "GOBL-GB-TAX-IDENTITY-03",
-              "name": "code",
-              "desc": "tax identity checksum mismatch",
-              "tests": "checksum"
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-GB-TAX-IDENTITY-01",
+                  "desc": "invalid tax identity format",
+                  "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
+                },
+                {
+                  "id": "GOBL-GB-TAX-IDENTITY-02",
+                  "desc": "all-zero tax identity codes are not allowed",
+                  "tests": "not-zeros"
+                },
+                {
+                  "id": "GOBL-GB-TAX-IDENTITY-03",
+                  "desc": "tax identity checksum mismatch",
+                  "tests": "checksum"
+                }
+              ]
             }
           ]
         }

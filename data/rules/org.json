@@ -6,18 +6,21 @@
       "id": "GOBL-ORG-EMAIL",
       "name": "org.Email",
       "schema": "https://gobl.org/draft-0/org/email",
-      "assert": [
+      "subsets": [
         {
-          "id": "GOBL-ORG-EMAIL-01",
-          "name": "addr",
-          "desc": "email address is required",
-          "tests": "required"
-        },
-        {
-          "id": "GOBL-ORG-EMAIL-02",
-          "name": "addr",
-          "desc": "email address must be valid",
-          "tests": "email-format"
+          "field": "addr",
+          "assert": [
+            {
+              "id": "GOBL-ORG-EMAIL-01",
+              "desc": "email address is required",
+              "tests": "required"
+            },
+            {
+              "id": "GOBL-ORG-EMAIL-02",
+              "desc": "email address must be valid",
+              "tests": "email-format"
+            }
+          ]
         }
       ]
     }

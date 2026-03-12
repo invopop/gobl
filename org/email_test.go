@@ -39,8 +39,8 @@ func TestEmailRules(t *testing.T) {
 		e := &org.Email{}
 		faults := rules.Validate(e)
 		assert.Error(t, faults)
-		assert.Contains(t, faults.Error(), "expected a valid email address")
-		assert.True(t, faults.HasCode("GOBL-ORG-EMAIL-010"))
+		assert.Contains(t, faults.Error(), "email address is required")
+		assert.True(t, faults.HasCode("GOBL-ORG-EMAIL-01"))
 	})
 
 	t.Run("invalid format is rejected", func(t *testing.T) {

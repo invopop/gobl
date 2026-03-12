@@ -27,8 +27,7 @@ type Email struct {
 }
 
 func personRules() *rules.Set {
-	p := new(Person)
-	return rules.For(p,
+	return rules.For(new(Person),
 		rules.Assert("01", "person address must have a city",
 			rules.Expr(`(address?.city ?? "") != ""`),
 		),
@@ -36,9 +35,8 @@ func personRules() *rules.Set {
 }
 
 func emailRules() *rules.Set {
-	e := new(Email)
-	return rules.For(e,
-		rules.Field(&e.Addr,
+	return rules.For(new(Email),
+		rules.Field("addr",
 			rules.Assert("01", "expected a valid email address",
 				rules.Required,
 				is.EmailFormat,
@@ -90,6 +88,7 @@ func TestFor(t *testing.T) {
 		require.NotNil(t, faults)
 		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), faults.First().Code())
 	})
+
 }
 
 func TestValidate(t *testing.T) {
@@ -215,14 +214,33 @@ func TestSetValidate(t *testing.T) {
 	t.Run("skips set when type does not match", func(t *testing.T) {
 		type Other struct{ X string }
 		set := rules.For(new(Email),
-			rules.Field(new(string),
-				rules.Assert("01", "always fails",
-					rules.Expr(`false`),
-				),
+			rules.Assert("01", "always fails",
+				rules.Expr(`false`),
 			),
 		)
 		faults := set.Validate(&Other{X: "hello"})
 		assert.Nil(t, faults)
+	})
+
+	t.Run("provides object of same pointer type to tests", func(t *testing.T) {
+		set := rules.For(new(Person),
+			rules.Assert("01", "expected a valid name",
+				rules.By("valid", func(value any) bool {
+					p, ok := value.(*Person)
+					if !ok {
+						return false
+					}
+					return p.Name != ""
+				}),
+			),
+		)
+		p := &Person{Name: "fooo"}
+		faults := set.Validate(p)
+		assert.NoError(t, faults)
+
+		op := Person{Name: "fooo"}
+		faults = set.Validate(op)
+		assert.Error(t, faults)
 	})
 
 	t.Run("when condition skips set when false", func(t *testing.T) {
@@ -230,10 +248,9 @@ func TestSetValidate(t *testing.T) {
 			Active bool   `json:"active"`
 			Name   string `json:"name"`
 		}
-		proto := new(Item)
-		set := rules.For(proto,
+		set := rules.For(new(Item),
 			rules.When(rules.Expr(`active`),
-				rules.Field(&proto.Name,
+				rules.Field("name",
 					rules.Assert("01", "name required when active",
 						rules.Required,
 					),
@@ -250,10 +267,9 @@ func TestSetValidate(t *testing.T) {
 			Active bool   `json:"active"`
 			Name   string `json:"name"`
 		}
-		proto := new(Item)
-		set := rules.For(proto,
+		set := rules.For(new(Item),
 			rules.When(rules.Expr(`active`),
-				rules.Field(&proto.Name,
+				rules.Field("name",
 					rules.Assert("01", "name required when active",
 						rules.Required,
 					),
@@ -282,4 +298,5 @@ func TestSetValidate(t *testing.T) {
 		faults := set.Validate(&Item{Active: true, Name: ""})
 		require.Error(t, faults)
 	})
+
 }

@@ -22,7 +22,7 @@ var globalRegistry = make([]*Set, 0)
 type Code string
 
 // Def is a function that modifies a Set during construction.
-// Assert, Field, Object, and When all return Def values that compose
+// Assert, Field, Each, Object, and When all return Def values that compose
 // as arguments to For.
 type Def func(s *Set)
 
@@ -35,6 +35,10 @@ type Set struct {
 	Name string `json:"name,omitempty"`
 	// Schema identifies the schema that this set of rules applies to. It is optional and can be used to further specify the context of the rules, but it is not required for validation to work.
 	Schema schema.ID `json:"schema,omitempty"`
+	// FieldName is the JSON tag name of the field this subset is scoped to. When non-empty, Validate extracts this field from the parent object and delegates to it.
+	FieldName string `json:"field,omitempty"`
+	// Each when true causes Validate to iterate over the slice elements of the field named by FieldName.
+	Each bool `json:"each,omitempty"`
 	// Test is an optional expression that determines when this set of rules should be applied. If provided, the set will only be applied when the expression evaluates to true. The expression can reference any exported field from the struct associated with this set of rules.
 	Test Test `json:"test,omitempty"`
 	// Assert is a list of assertions to evaluate directly on the struct associated with this set of rules.
@@ -49,15 +53,10 @@ type Set struct {
 type Assertion struct {
 	// ID defines a globally unique code for this assertion.
 	ID Code `json:"id"`
-	// Name of the field or object to test
-	Name string `json:"name,omitempty"`
 	// Desc is the human-readable message to include in faults when this assertion fails.
 	Desc string `json:"desc,omitempty"`
 	// Tests is a list of tests to evaluate for this assertion. A false result indicates a failure.
 	Tests []Test `json:"tests"`
-
-	// field will be present internally when testing against a single field.
-	field any
 }
 
 // Test defines an interface expected for a test condition.
@@ -88,7 +87,7 @@ func Register(name string, pkg Code, sets ...*Set) {
 
 // For creates a new set of rules for the provided object (struct or value type).
 // Each Def is applied in order to build up the set's assertions and subsets.
-// Assert, Field, Object, and When all return Def values that can be passed here.
+// Assert, Field, Each, Object, and When all return Def values that can be passed here.
 func For(obj any, defs ...Def) *Set {
 	t := reflect.TypeOf(obj)
 	if t.Kind() == reflect.Ptr {
@@ -116,7 +115,7 @@ func For(obj any, defs ...Def) *Set {
 
 // Assert returns a Def that adds a single assertion to the parent set.
 // The assertion is evaluated against the parent object (or extracted field
-// value when used inside Field).
+// value when used inside Field or Each).
 func Assert(id Code, desc string, tests ...Test) Def {
 	a := &Assertion{
 		ID:    id,
@@ -139,20 +138,30 @@ func Object(defs ...Def) Def {
 	}
 }
 
-// Field returns a Def that attaches its child assertions to a specific field.
-// field may be a Go or JSON field name string, or a pointer to the field
-// (e.g. &myStruct.FieldName) for compile-time typo prevention. The field name
-// is resolved to the JSON tag name when For processes the set.
-func Field(field any, defs ...Def) Def {
+// Field returns a Def that creates a field-scoped subset. name must be the
+// JSON tag name of a field in the parent struct. All assertions and subsets
+// inside Field receive the extracted field value when validating.
+func Field(name string, defs ...Def) Def {
 	return func(s *Set) {
-		temp := &Set{}
+		subset := &Set{FieldName: name}
 		for _, def := range defs {
-			def(temp)
+			def(subset)
 		}
-		for _, a := range temp.Assert {
-			a.field = field
+		s.Subsets = append(s.Subsets, subset)
+	}
+}
+
+// Each returns a Def that creates a field-scoped subset that iterates over
+// slice elements. name must be the JSON tag name of a slice field in the
+// parent struct. All assertions and subsets inside Each are applied to each
+// element of the slice.
+func Each(name string, defs ...Def) Def {
+	return func(s *Set) {
+		subset := &Set{FieldName: name, Each: true}
+		for _, def := range defs {
+			def(subset)
 		}
-		s.Assert = append(s.Assert, temp.Assert...)
+		s.Subsets = append(s.Subsets, subset)
 	}
 }
 
@@ -168,17 +177,9 @@ func When(test Test, defs ...Def) Def {
 	}
 }
 
-// compileAndResolve recursively resolves field names, compiles assertions,
-// and compiles test conditions throughout the set tree using obj as the
-// prototype environment.
+// compileAndResolve recursively compiles assertions and test conditions
+// throughout the set tree using obj as the prototype environment.
 func compileAndResolve(t reflect.Type, obj any, s *Set) {
-	if t.Kind() == reflect.Struct {
-		for _, a := range s.Assert {
-			if a.field != nil {
-				a.Name = resolveAttributeName(t, obj, a.field)
-			}
-		}
-	}
 	compileAssertions(obj, s.Assert...)
 	if s.Test != nil {
 		if ct, ok := s.Test.(compilableTest); ok {
@@ -188,8 +189,84 @@ func compileAndResolve(t reflect.Type, obj any, s *Set) {
 		}
 	}
 	for _, ss := range s.Subsets {
-		compileAndResolve(t, obj, ss)
+		if ss.FieldName != "" {
+			compileFieldSubset(t, ss)
+		} else {
+			compileAndResolve(t, obj, ss)
+		}
 	}
+}
+
+// compileFieldSubset infers the nested type for a field-scoped subset by looking
+// up the field in the parent struct's reflect type, then recursively compiles it.
+func compileFieldSubset(t reflect.Type, ss *Set) {
+	ft := fieldTypeByName(t, ss.FieldName)
+	if ft == nil {
+		panic(fmt.Sprintf("rules: field %q not found in type %s", ss.FieldName, t.Name()))
+	}
+	if ss.Each {
+		if ft.Kind() == reflect.Slice || ft.Kind() == reflect.Array {
+			ft = ft.Elem()
+		}
+	}
+	if ft.Kind() == reflect.Ptr {
+		ft = ft.Elem()
+	}
+	ss.objType = ft
+	nestedProto := reflect.New(ft).Interface()
+	compileAndResolve(ft, nestedProto, ss)
+}
+
+// fieldTypeByName returns the reflect.Type for the field with the given JSON
+// tag name in struct type t. Returns nil if not found.
+func fieldTypeByName(t reflect.Type, name string) reflect.Type {
+	if t.Kind() != reflect.Struct {
+		return nil
+	}
+	for i := range t.NumField() {
+		f := t.Field(i)
+		if jsonFieldName(f) == name {
+			return f.Type
+		}
+	}
+	return nil
+}
+
+// fieldValueByName returns the reflect.Value for the field with the given JSON
+// tag name in struct value rv. Returns (zero, false) if not found.
+func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
+	if rv.Kind() != reflect.Struct {
+		return reflect.Value{}, false
+	}
+	rt := rv.Type()
+	for i := range rt.NumField() {
+		if jsonFieldName(rt.Field(i)) == name {
+			return rv.Field(i), true
+		}
+	}
+	return reflect.Value{}, false
+}
+
+// validateEach validates each element of a slice field against the given subset.
+func validateEach(fv reflect.Value, ss *Set, fieldName string) []*Fault {
+	if fv.Kind() == reflect.Ptr {
+		if fv.IsNil() {
+			return nil
+		}
+		fv = fv.Elem()
+	}
+	if fv.Kind() != reflect.Slice && fv.Kind() != reflect.Array {
+		return nil
+	}
+	var faults []*Fault
+	for i := range fv.Len() {
+		ev := fv.Index(i)
+		if fs := ss.Validate(ev.Interface()); fs != nil {
+			prefix := fieldName + "[" + strconv.Itoa(i) + "]"
+			faults = append(faults, prependPath(prefix, fs.List())...)
+		}
+	}
+	return faults
 }
 
 func compileAssertions(env any, asserts ...*Assertion) {
@@ -337,71 +414,87 @@ func Validate(obj any) Faults {
 
 // Validate validates an object against the set's rules. If the set has a test
 // condition (from When), it is evaluated first and the set is skipped when false.
-// Expressions reference exported Go field names on the struct directly.
 // Returns nil when no faults are found.
 func (s *Set) Validate(obj any) Faults {
 	rv := reflect.ValueOf(obj)
+	if !rv.IsValid() {
+		return nil
+	}
+	isNil := false
 	if rv.Kind() == reflect.Ptr {
 		if rv.IsNil() {
+			isNil = true
+		} else {
+			rv = rv.Elem()
+		}
+	}
+
+	// Skip if this set is bound to a different type.
+	if s.objType != nil {
+		var checkType reflect.Type
+		if isNil {
+			checkType = rv.Type().Elem()
+		} else {
+			checkType = rv.Type()
+		}
+		if checkType != s.objType {
 			return nil
 		}
-		rv = rv.Elem()
 	}
-	// Skip if this set is bound to a different type.
-	if s.objType != nil && rv.Type() != s.objType {
-		return nil
+
+	// Normalize obj to a pointer for consistent test calling. When the caller
+	// passes a plain struct value (e.g. via fv.Interface() on a non-pointer
+	// field), By-style tests that assert value.(*T) would otherwise fail.
+	callObj := obj
+	if !isNil && rv.Kind() == reflect.Struct {
+		if reflect.TypeOf(obj).Kind() != reflect.Ptr {
+			ptr := reflect.New(rv.Type())
+			ptr.Elem().Set(rv)
+			callObj = ptr.Interface()
+		}
 	}
 
 	// Evaluate the When condition; skip the set if it doesn't match.
-	if s.Test != nil && !s.Test.Check(obj) {
+	if s.Test != nil && !s.Test.Check(callObj) {
 		return nil
 	}
 
 	var faults []*Fault
 
-	// Run assertions: a positive (true) result indicates a failure.
+	// Run assertions. For nil pointer objects, assertions still run so that
+	// Required can detect the missing value.
 	for _, a := range s.Assert {
-		var val any
-		val = obj
-
-		// If this assertion is associated with a specific field, extract the
-		// field value from the actual object being validated (not the prototype).
-		if a.Name != "" && rv.Kind() == reflect.Struct {
-			rt := rv.Type()
-			for i := range rt.NumField() {
-				if jsonFieldName(rt.Field(i)) == a.Name {
-					fv := rv.Field(i)
-					if fv.Kind() == reflect.Ptr {
-						val = fv.Interface()
-					} else {
-						val = fv.Interface()
-					}
-					break
-				}
-			}
-		}
-
 		if len(a.Tests) == 0 {
 			panic(fmt.Sprintf("assertion %s (%q) tests missing", a.ID, a.Tests))
 		}
 		for _, t := range a.Tests {
-			// Expr tests are compiled against the parent struct type, so they must
-			// always receive the struct as context rather than the extracted field value.
-			testVal := val
-			if _, ok := t.(*exprTest); ok && a.Name != "" {
-				testVal = obj
-			}
-			if !t.Check(testVal) {
-				faults = append(faults, newFault(a.Name, a.ID, a.Desc))
+			if !t.Check(callObj) {
+				faults = append(faults, newFault("", a.ID, a.Desc))
 				break
 			}
 		}
 	}
 
-	// Recurse into subsets.
-	for _, ss := range s.Subsets {
-		if fs := ss.Validate(obj); fs != nil {
-			faults = append(faults, fs.List()...)
+	// Sub-subsets: skip field extraction when the object is nil.
+	if !isNil {
+		for _, ss := range s.Subsets {
+			if ss.FieldName == "" {
+				if fs := ss.Validate(obj); fs != nil {
+					faults = append(faults, fs.List()...)
+				}
+			} else {
+				fv, ok := fieldValueByName(rv, ss.FieldName)
+				if !ok {
+					continue
+				}
+				if ss.Each {
+					faults = append(faults, validateEach(fv, ss, ss.FieldName)...)
+				} else {
+					if fs := ss.Validate(fv.Interface()); fs != nil {
+						faults = append(faults, prependPath(ss.FieldName, fs.List())...)
+					}
+				}
+			}
 		}
 	}
 
@@ -443,31 +536,6 @@ func validateFieldValue(fv reflect.Value) []*Fault {
 	return nil
 }
 
-// resolveAttributeName returns the JSON field name for field within the struct
-// type t. field may be a Go or JSON field name string, or a pointer to a field
-// of obj (which must be a pointer to a struct of type t). In the pointer case
-// the field is identified by its byte offset from the struct base.
-func resolveAttributeName(t reflect.Type, obj any, field any) string {
-	if name, ok := field.(string); ok {
-		for i := range t.NumField() {
-			f := t.Field(i)
-			if f.Name == name || jsonFieldName(f) == name {
-				return jsonFieldName(f)
-			}
-		}
-		return name
-	}
-	baseAddr := reflect.ValueOf(obj).Pointer()
-	valAddr := reflect.ValueOf(field).Pointer()
-	offset := valAddr - baseAddr
-	for i := range t.NumField() {
-		if t.Field(i).Offset == offset {
-			return jsonFieldName(t.Field(i))
-		}
-	}
-	return ""
-}
-
 func jsonFieldName(f reflect.StructField) string {
 	tag := f.Tag.Get("json")
 	if tag == "" {
@@ -506,19 +574,23 @@ func (ft *funcTest) Check(val any) bool {
 // MarshalJSON serializes Set to JSON, converting the Test field to its string representation.
 func (s Set) MarshalJSON() ([]byte, error) {
 	type alias struct {
-		ID      Code         `json:"id,omitempty"`
-		Name    string       `json:"name,omitempty"`
-		Schema  schema.ID    `json:"schema,omitempty"`
-		Test    string       `json:"test,omitempty"`
-		Assert  []*Assertion `json:"assert,omitempty"`
-		Subsets []*Set       `json:"subsets,omitempty"`
+		ID        Code         `json:"id,omitempty"`
+		Name      string       `json:"name,omitempty"`
+		Schema    schema.ID    `json:"schema,omitempty"`
+		FieldName string       `json:"field,omitempty"`
+		Each      bool         `json:"each,omitempty"`
+		Test      string       `json:"test,omitempty"`
+		Assert    []*Assertion `json:"assert,omitempty"`
+		Subsets   []*Set       `json:"subsets,omitempty"`
 	}
 	a := alias{
-		ID:      s.ID,
-		Name:    s.Name,
-		Schema:  s.Schema,
-		Assert:  s.Assert,
-		Subsets: s.Subsets,
+		ID:        s.ID,
+		Name:      s.Name,
+		Schema:    s.Schema,
+		FieldName: s.FieldName,
+		Each:      s.Each,
+		Assert:    s.Assert,
+		Subsets:   s.Subsets,
 	}
 	if s.Test != nil {
 		a.Test = s.Test.String()
@@ -530,7 +602,6 @@ func (s Set) MarshalJSON() ([]byte, error) {
 func (a Assertion) MarshalJSON() ([]byte, error) {
 	type alias struct {
 		ID    Code   `json:"id"`
-		Name  string `json:"name,omitempty"`
 		Desc  string `json:"desc,omitempty"`
 		Tests string `json:"tests,omitempty"`
 	}
@@ -540,7 +611,6 @@ func (a Assertion) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(alias{
 		ID:    a.ID,
-		Name:  a.Name,
 		Desc:  a.Desc,
 		Tests: strings.Join(parts, ", "),
 	})

@@ -8,36 +8,47 @@
       "schema": "https://gobl.org/draft-0/envelope",
       "assert": [
         {
-          "id": "GOBL-ENVELOPE-01",
-          "name": "$schema",
-          "desc": "envelope schema is required",
-          "tests": "required"
-        },
-        {
-          "id": "GOBL-ENVELOPE-02",
-          "name": "head",
-          "desc": "envelope header is required",
-          "tests": "required"
-        },
-        {
-          "id": "GOBL-ENVELOPE-03",
-          "name": "doc",
-          "desc": "envelope doc is required",
-          "tests": "required"
-        },
-        {
-          "id": "GOBL-ENVELOPE-04",
-          "name": "doc",
-          "desc": "envelope doc must have a schema",
-          "tests": "has schema"
-        },
-        {
           "id": "GOBL-ENVELOPE-11",
           "desc": "envelope digest does not match document contents",
           "tests": "valid digest"
         }
       ],
       "subsets": [
+        {
+          "field": "$schema",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-01",
+              "desc": "envelope schema is required",
+              "tests": "required"
+            }
+          ]
+        },
+        {
+          "field": "head",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-02",
+              "desc": "envelope header is required",
+              "tests": "required"
+            }
+          ]
+        },
+        {
+          "field": "doc",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-03",
+              "desc": "envelope doc is required",
+              "tests": "required"
+            },
+            {
+              "id": "GOBL-ENVELOPE-04",
+              "desc": "envelope doc must have a schema",
+              "tests": "has schema"
+            }
+          ]
+        },
         {
           "test": "not signed",
           "assert": [

@@ -27,32 +27,32 @@ func TestTaxIdentityRules(t *testing.T) {
 		{
 			name: "zeros",
 			code: "000000000",
-			err:  "020",
+			err:  "IDENTITY-02",
 		},
 		{
 			name: "bad mid length",
 			code: "12345678910",
-			err:  "010",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too long",
 			code: "1234567890123",
-			err:  "010",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too short",
 			code: "123456",
-			err:  "010",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "not normalized",
 			code: "12.449.965-4",
-			err:  "010",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "bad checksum",
 			code: "999999991",
-			err:  "030",
+			err:  "IDENTITY-03",
 		},
 	}
 

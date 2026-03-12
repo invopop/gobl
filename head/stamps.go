@@ -19,12 +19,11 @@ type Stamp struct {
 }
 
 func stampRules() *rules.Set {
-	s := new(Stamp)
-	return rules.For(s,
-		rules.Field(&s.Provider,
+	return rules.For(new(Stamp),
+		rules.Field("prv",
 			rules.Assert("01", "stamp provider is required", rules.Required),
 		),
-		rules.Field(&s.Value,
+		rules.Field("val",
 			rules.Assert("02", "stamp value is required", rules.Required),
 		),
 	)
@@ -107,25 +106,34 @@ func NormalizeStamps(in []*Stamp) []*Stamp {
 	return out
 }
 
-// StampsHas provides a validation rule that checks if a list of stamps includes
-// one for the given provider.
-func StampsHas(provider cbc.Key) rules.Test {
-	return &stampsHasRule{desc: fmt.Sprintf("stamps have %s", provider), provider: provider}
-}
-
-type stampsHasRule struct {
+// StampsHasRule is a combined rules.Test and validation.Rule that checks if
+// a specific stamp provider is present in a list of stamps.
+type StampsHasRule struct {
 	desc     string
 	provider cbc.Key
 }
 
-func (r *stampsHasRule) String() string {
+// StampsHas provides a validation rule that checks if a list of stamps includes
+// one for the given provider.
+func StampsHas(provider cbc.Key) *StampsHasRule {
+	return &StampsHasRule{desc: fmt.Sprintf("stamps have %s", provider), provider: provider}
+}
+
+func (r *StampsHasRule) String() string {
 	return r.desc
 }
 
-func (r *stampsHasRule) Check(value any) bool {
+func (r *StampsHasRule) Check(value any) bool {
 	in, ok := value.([]*Stamp)
 	if !ok {
 		return false // invalid type
 	}
 	return GetStamp(in, r.provider) != nil
+}
+
+func (r *StampsHasRule) Validate(value any) error {
+	if !r.Check(value) {
+		return fmt.Errorf("missing %s stamp", r.provider)
+	}
+	return nil
 }

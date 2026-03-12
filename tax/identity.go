@@ -184,7 +184,7 @@ func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
 	return rules.By("code in ["+str+"]",
 		func(value any) bool {
 			id, ok := value.(*Identity)
-			if id == nil || !ok {
+			if !ok {
 				return true // skip
 			}
 			return id.Country.In(codes...)

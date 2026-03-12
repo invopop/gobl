@@ -41,9 +41,8 @@ func TestMatches(t *testing.T) {
 		type Thing struct {
 			Code *string `json:"code"`
 		}
-		proto := new(Thing)
-		set := rules.For(proto,
-			rules.Field(&proto.Code,
+		set := rules.For(new(Thing),
+			rules.Field("code",
 				rules.Assert("001", "must match",
 					rules.Matches(`^\d+$`),
 				),
@@ -57,9 +56,8 @@ func TestMatches(t *testing.T) {
 		type Blob struct {
 			Data []byte `json:"data"`
 		}
-		proto := new(Blob)
-		set := rules.For(proto,
-			rules.Field(&proto.Data,
+		set := rules.For(new(Blob),
+			rules.Field("data",
 				rules.Assert("001", "must match",
 					rules.Matches(`^\d+$`),
 				),

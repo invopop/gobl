@@ -1,7 +1,10 @@
 package tax
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 )
 
@@ -60,6 +63,23 @@ func (rc RegimeCode) Code() l10n.Code {
 // String provides the string representation of the regime code.
 func (rc RegimeCode) String() string {
 	return string(rc)
+}
+
+// RegimeIn checks if the regime's country code is in the provided list of codes.
+func RegimeIn(codes ...l10n.TaxCountryCode) rules.Test {
+	str := make([]string, len(codes))
+	for i, c := range codes {
+		str[i] = c.String()
+	}
+	return rules.By("regime in ["+strings.Join(str, ",")+"]",
+		func(value any) bool {
+			r, ok := value.(Regime)
+			if !ok {
+				return true // skip
+			}
+			return r.GetRegime().In(codes...)
+		},
+	)
 }
 
 // JSONSchema provides a representation of the type for usage in Schema.

@@ -25,7 +25,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (tax_id: cannot be blank.)")
+		assert.ErrorContains(t, err, "supplier.tax_id: supplier tax ID is required")
 	})
 
 	t.Run("missing customer tax ID", func(t *testing.T) {
