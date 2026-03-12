@@ -148,10 +148,10 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			rules.By("simplified", isSimplifiedInvoice),
 			rules.Field("customer",
-				rules.Assert("04", "tax ID must not be set for simplified invoices",
+				rules.Assert("04", "customer tax ID must not be set for simplified invoices",
 					rules.By("no tax_id", simplifiedCustomerHasNoTaxID),
 				),
-				rules.Assert("05", "identity type extension not allowed for simplified invoices",
+				rules.Assert("05", "customer identity type extension not allowed for simplified invoices",
 					rules.By("no identity type ext", simplifiedCustomerHasNoIdentityType),
 				),
 			),

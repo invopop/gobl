@@ -392,59 +392,18 @@ func AllSets() []*Set {
 	return globalRegistry
 }
 
-// Validate uses the global registry of rule sets to test the provided object against
-// all available assertions, then recursively validates all exported struct fields.
+// Validate uses the global registry of rule sets to validate the provided object.
+// Each registered namespace set is applied in order; the Set.Validate method is
+// responsible for matching the object type, evaluating guard conditions, running
+// assertions, and recursively iterating exported struct fields.
 // Returns nil when no faults are found.
 func Validate(obj any) Faults {
-	rv := reflect.ValueOf(obj)
-	if rv.Kind() == reflect.Ptr {
-		if rv.IsNil() {
-			return nil
-		}
-		rv = rv.Elem()
-	}
-	objType := rv.Type()
 	var faults []*Fault
-
-	// Find and apply all matching sets from the global registry.
 	for _, ns := range globalRegistry {
-		for _, subset := range ns.Subsets {
-			if subset.objType != objType {
-				continue
-			}
-			if fs := subset.Validate(obj); fs != nil {
-				faults = append(faults, fs.List()...)
-			}
+		if fs := ns.Validate(obj); fs != nil {
+			faults = append(faults, fs.List()...)
 		}
 	}
-
-	if rv.Kind() != reflect.Struct {
-		return newFaults(faults)
-	}
-
-	// Recurse into exported fields.
-	rt := rv.Type()
-	for i := range rv.NumField() {
-		sf := rt.Field(i)
-		if !sf.IsExported() {
-			continue
-		}
-		fv := rv.Field(i)
-		fs := validateFieldValue(fv)
-		if len(fs) == 0 {
-			continue
-		}
-		if sf.Anonymous {
-			// Promote embedded struct faults to parent level.
-			faults = append(faults, fs...)
-			continue
-		}
-		name := jsonFieldName(sf)
-		if name != "" {
-			faults = append(faults, prependPath(name, fs)...)
-		}
-	}
-
 	return newFaults(faults)
 }
 
@@ -532,14 +491,121 @@ func (s *Set) Validate(obj any) Faults {
 				}
 			}
 		}
+
+		// For namespace-level sets that own type-specific rules, iterate all
+		// exported struct fields and apply this set's rules to each nested value.
+		// This keeps field iteration scoped to the namespace so that guard tests
+		// are not re-evaluated against nested objects, and type-specific rules
+		// registered under this namespace (e.g. taxComboRules) are still applied
+		// to nested types discovered during traversal.
+		if s.isNamespace() && rv.Kind() == reflect.Struct {
+			hasTypeRules := false
+			for _, ss := range s.Subsets {
+				if ss.objType != nil {
+					hasTypeRules = true
+					break
+				}
+			}
+			if hasTypeRules {
+				rt := rv.Type()
+				for i := range rv.NumField() {
+					sf := rt.Field(i)
+					if !sf.IsExported() {
+						continue
+					}
+					fv := rv.Field(i)
+					fs := s.validateNestedFieldValue(fv)
+					if len(fs) == 0 {
+						continue
+					}
+					if sf.Anonymous {
+						faults = append(faults, fs...)
+						continue
+					}
+					name := jsonFieldName(sf)
+					if name != "" {
+						faults = append(faults, prependPath(name, fs)...)
+					}
+				}
+			}
+		}
 	}
 
 	return newFaults(faults)
 }
 
-// validateFieldValue recursively validates a field value, handling pointers,
-// structs, slices, and arrays.
-func validateFieldValue(fv reflect.Value) []*Fault {
+// validateNestedValue applies this set's type-specific subsets to obj and
+// recursively processes its exported struct fields. It is used during
+// namespace-level field iteration and does not re-check the namespace guard.
+// isNamespace reports whether s is a registered namespace set — one that has an
+// ID, is not bound to a specific type, field, or iteration, and therefore
+// owns the struct-field traversal used to apply type-specific subsets (e.g.
+// taxComboRules) to nested values discovered at runtime.
+func (s *Set) isNamespace() bool {
+	return s.ID != "" && s.objType == nil && s.FieldName == "" && !s.Each
+}
+
+func (s *Set) validateNestedValue(obj any) []*Fault {
+	rv := reflect.ValueOf(obj)
+	if rv.Kind() == reflect.Ptr {
+		if rv.IsNil() {
+			return nil
+		}
+		rv = rv.Elem()
+	}
+	if !rv.IsValid() {
+		return nil
+	}
+
+	objType := rv.Type()
+	callObj := obj
+	if rv.Kind() == reflect.Struct && reflect.TypeOf(obj).Kind() != reflect.Ptr {
+		ptr := reflect.New(rv.Type())
+		ptr.Elem().Set(rv)
+		callObj = ptr.Interface()
+	}
+
+	var faults []*Fault
+
+	// Apply matching type-specific subsets from this namespace.
+	for _, ss := range s.Subsets {
+		if ss.objType != objType {
+			continue
+		}
+		if fs := ss.Validate(callObj); fs != nil {
+			faults = append(faults, fs.List()...)
+		}
+	}
+
+	// Recurse into struct fields.
+	if rv.Kind() == reflect.Struct {
+		rt := rv.Type()
+		for i := range rv.NumField() {
+			sf := rt.Field(i)
+			if !sf.IsExported() {
+				continue
+			}
+			fv := rv.Field(i)
+			fs := s.validateNestedFieldValue(fv)
+			if len(fs) == 0 {
+				continue
+			}
+			if sf.Anonymous {
+				faults = append(faults, fs...)
+				continue
+			}
+			name := jsonFieldName(sf)
+			if name != "" {
+				faults = append(faults, prependPath(name, fs)...)
+			}
+		}
+	}
+	return faults
+}
+
+// validateNestedFieldValue handles pointers, structs, slices, and named types
+// during namespace-internal field iteration.
+func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil
@@ -548,25 +614,20 @@ func validateFieldValue(fv reflect.Value) []*Fault {
 	}
 	switch fv.Kind() {
 	case reflect.Struct:
-		if fs := Validate(fv.Interface()); fs != nil {
-			return fs.List()
-		}
-		return nil
+		return s.validateNestedValue(fv.Interface())
 	case reflect.Slice, reflect.Array:
 		var faults []*Fault
 		for i := range fv.Len() {
 			ev := fv.Index(i)
-			if fs := validateFieldValue(ev); len(fs) > 0 {
+			if fs := s.validateNestedFieldValue(ev); len(fs) > 0 {
 				faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
 			}
 		}
 		return faults
 	default:
-		// For named non-struct types (e.g. cbc.Code), check the global registry.
+		// For named non-struct types (e.g. cbc.Code), check this namespace's rules.
 		if fv.Type().PkgPath() != "" {
-			if fs := Validate(fv.Interface()); fs != nil {
-				return fs.List()
-			}
+			return s.validateNestedValue(fv.Interface())
 		}
 	}
 	return nil
@@ -585,26 +646,6 @@ func jsonFieldName(f reflect.StructField) string {
 		return f.Name
 	}
 	return name
-}
-
-type funcTest struct {
-	desc string
-	test func(any) bool
-}
-
-func Func(desc string, test func(any) bool) Test {
-	return &funcTest{
-		desc: desc,
-		test: test,
-	}
-}
-
-func (ft *funcTest) String() string {
-	return ft.desc
-}
-
-func (ft *funcTest) Check(val any) bool {
-	return ft.test(val)
 }
 
 // MarshalJSON serializes Set to JSON, converting the Test field to its string representation.

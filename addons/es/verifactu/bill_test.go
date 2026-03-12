@@ -402,7 +402,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "customer: customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified substitution R5 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -431,7 +431,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "customer: customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified invoice F2 with customer identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -445,7 +445,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has identity - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: identity type extension not allowed for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "customer: customer identity type extension not allowed for simplified invoices")
 	})
 
 	t.Run("invoice with only retained taxes fails", func(t *testing.T) {

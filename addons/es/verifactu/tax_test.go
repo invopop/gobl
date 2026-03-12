@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
-	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -213,6 +212,8 @@ func TestNormalizeTaxCombo(t *testing.T) {
 }
 
 func TestValidateTaxCombo(t *testing.T) {
+	ruleSet := taxComboRules()
+
 	t.Run("valid", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -222,7 +223,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyRegime:  "01",
 			},
 		}
-		err := rules.Validate(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -231,7 +232,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: tax.CategoryGST,
 			Rate:     tax.RateGeneral,
 		}
-		err := rules.Validate(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -244,7 +245,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := rules.Validate(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -256,7 +257,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := rules.Validate(tc)
+		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
 	})
 
@@ -268,9 +269,8 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E3",
 			},
 		}
-		err := rules.Validate(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "E3")
+		err := ruleSet.Validate(tc)
+		assert.ErrorContains(t, err, "E3")
 	})
 
 	t.Run("allows E2 exemption code with non-01 regime", func(t *testing.T) {
@@ -281,7 +281,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := rules.Validate(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -293,8 +293,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := rules.Validate(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "E2")
+		err := ruleSet.Validate(tc)
+		assert.ErrorContains(t, err, "E2")
 	})
 }

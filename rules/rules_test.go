@@ -354,6 +354,48 @@ func TestFieldNil(t *testing.T) {
 	})
 }
 
+func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
+	// Verifies that rules defined inside a When+Field block for a specific field
+	// (e.g. "address") are NOT applied to other fields of the same type
+	// (e.g. "second_address"). This guards against the namespace traversal
+	// incorrectly matching field subsets by type rather than by field name.
+	set := rules.For(new(Person),
+		rules.When(
+			rules.Expr(`name != ""`),
+			rules.Field("address",
+				rules.Assert("01", "city is required",
+					rules.By("city required", func(val any) bool {
+						a, ok := val.(*Address)
+						return !ok || a == nil || a.City != ""
+					}),
+				),
+			),
+		),
+	)
+
+	t.Run("rule is not applied to second_address field of same type", func(t *testing.T) {
+		p := &Person{
+			Name:          "Alice",
+			Address:       &Address{City: "London"}, // valid
+			SecondAddress: &Address{City: ""},       // would fail city check if rule bled
+		}
+		faults := set.Validate(p)
+		assert.NoError(t, faults)
+	})
+
+	t.Run("rule still fails when the scoped address field fails", func(t *testing.T) {
+		p := &Person{
+			Name:          "Alice",
+			Address:       &Address{City: ""},      // should fail
+			SecondAddress: &Address{City: "London"}, // should not be checked
+		}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("address"))
+		assert.False(t, faults.HasPath("second_address"))
+	})
+}
+
 func TestEach(t *testing.T) {
 	t.Run("validates each element and reports indexed paths", func(t *testing.T) {
 		set := rules.For(new(Person),
