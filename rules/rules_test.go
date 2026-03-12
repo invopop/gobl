@@ -310,6 +310,50 @@ func TestSetValidate(t *testing.T) {
 
 }
 
+func TestFieldEmpty(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Field("name",
+			rules.Assert("01", "name must not be set", rules.Empty),
+		),
+	)
+
+	t.Run("passes when field is empty string", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: ""})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("fails when field has a value", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: "Alice"})
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("name"))
+	})
+}
+
+func TestFieldNil(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Field("second_address",
+			rules.Assert("01", "second address must not be set", rules.Nil),
+		),
+	)
+
+	t.Run("passes when pointer field is nil", func(t *testing.T) {
+		faults := set.Validate(&Person{SecondAddress: nil})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("fails when pointer field is non-nil", func(t *testing.T) {
+		faults := set.Validate(&Person{SecondAddress: &Address{City: "London"}})
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("second_address"))
+	})
+
+	t.Run("fails when pointer field is non-nil but points to empty value", func(t *testing.T) {
+		faults := set.Validate(&Person{SecondAddress: new(Address)})
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("second_address"))
+	})
+}
+
 func TestEach(t *testing.T) {
 	t.Run("validates each element and reports indexed paths", func(t *testing.T) {
 		set := rules.For(new(Person),

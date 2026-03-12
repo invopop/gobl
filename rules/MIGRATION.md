@@ -115,6 +115,8 @@ any matching object type anywhere in the object graph.
 |------|----------|-------|
 | `rules.Required` | `validation.Required` | Fails if nil, zero, or empty |
 | `rules.NilOrNotEmpty` | `validation.NilOrNotEmpty` | Passes if nil pointer or non-empty |
+| `rules.Empty` | `validation.Empty` | Passes if nil or empty; fails if a value is present |
+| `rules.Nil` | `validation.Nil` | Passes only for a nil pointer; fails for any non-nil value, even empty |
 | `rules.In(vals...)` | `validation.In(vals...)` | Skips nil; works with named types |
 | `rules.NotIn(vals...)` | `validation.NotIn(vals...)` | Skips nil; works with named types |
 | `rules.Matches(pattern)` | `validation.Match(re)` | Skips nil/empty strings |
@@ -271,6 +273,33 @@ rules.Field("code",
 Keep helper functions short and named descriptively — they double as
 documentation and make `linkRules()` / `headerRules()` easy to read at a
 glance.
+
+### Field must not be set (`Empty` / `Nil`)
+
+Use `rules.Empty` when a field must be absent or zero — the inverse of `Required`:
+
+```go
+// Before
+validation.Field(&obj.Discount, validation.Empty)
+
+// After
+rules.Field("discount",
+    rules.Assert("05", "discount must not be set", rules.Empty),
+)
+```
+
+Use `rules.Nil` when the field must be a nil pointer specifically. Unlike `Empty`,
+it fails even when the pointer is non-nil but points to a zero/empty value:
+
+```go
+// Before
+validation.Field(&obj.Digest, validation.Nil)
+
+// After
+rules.Field("digest",
+    rules.Assert("06", "digest must not be set", rules.Nil),
+)
+```
 
 ### Object-level (cross-field) assertion
 
