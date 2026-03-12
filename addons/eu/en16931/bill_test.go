@@ -367,6 +367,36 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.Equal(t, "E", exemptNote.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
+	t.Run("plain notes without tax category are skipped", func(t *testing.T) {
+		// An unrelated note (no untdid-tax-category) alongside a valid exemption
+		// note should be silently skipped, not cause a validation error.
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Notes = append(inv.Notes,
+			&org.Note{
+				Src:  cbc.Key("exempt"),
+				Text: "Exempt under Article 132",
+			},
+			&org.Note{
+				Key:  org.NoteKeyGoods,
+				Text: "General delivery comment with no tax category",
+			},
+		)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
 	t.Run("standard rate does not need note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
