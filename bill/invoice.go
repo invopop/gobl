@@ -142,7 +142,12 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			cal.DateNotZero(),
 		),
 		validation.Field(&inv.OperationDate),
-		validation.Field(&inv.ValueDate),
+		validation.Field(&inv.ValueDate,
+			validation.When(
+				inv.Tax != nil && inv.Tax.When != cbc.Key(cbc.CodeEmpty),
+				validation.Empty.Error("value date cannot be set when tax.when is set"),
+			),
+		),
 		validation.Field(&inv.Currency,
 			validation.Required,
 			exRule,
