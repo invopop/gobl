@@ -58,7 +58,7 @@ func (i *Inbox) Normalize() {
 		i.Code = ""
 	}
 	i.Label = cbc.NormalizeString(i.Label)
-	i.Scheme = cbc.NormalizeAlphanumericalCode(i.Scheme)
+	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
 	i.Code = cbc.NormalizeCode(i.Code)
 
 	// Custom normalizations
