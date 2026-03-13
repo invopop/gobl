@@ -19,6 +19,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -432,7 +433,7 @@ func TestDocumentValidation(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
+	err = rules.Validate(doc.Instance())
 	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
 
 	doc = new(schema.Object)
@@ -459,7 +460,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
+	err = rules.Validate(doc)
 	data, err := json.Marshal(err)
 	require.NoError(t, err)
 	assert.Equal(t, `{"content":"cannot be blank"}`, string(data))

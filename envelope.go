@@ -71,9 +71,6 @@ func envelopeRules() *rules.Set {
 		),
 		rules.Field("doc",
 			rules.Assert("03", "envelope doc is required", rules.Present),
-			rules.Field("$schema",
-				rules.Assert("04", "envelope doc must have a $schema", rules.Present),
-			),
 		),
 		rules.Assert("11", "envelope digest does not match document contents",
 			rules.By("valid digest", validDigest),
@@ -158,7 +155,7 @@ func (e *Envelope) Validate() error {
 	}
 	// The document instance needs to be checked manually as the rules validation
 	// process is not capable of drilling down in to the schema object automatically.
-	if err := rules.Validate(e.Document.Instance()); err != nil {
+	if err := e.Document.Validate(); err != nil {
 		return err
 	}
 	return e.ValidateWithContext(context.Background())

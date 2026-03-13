@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/invopop/gobl/schema"
 )
 
 // GOBL for GOBL rules.
@@ -33,8 +31,6 @@ type Set struct {
 	ID Code `json:"id,omitempty"`
 	// Name is the name of the struct type this set of rules applies to. It is used for informational purposes and is not required to be unique.
 	Name string `json:"name,omitempty"`
-	// Schema identifies the schema that this set of rules applies to. It is optional and can be used to further specify the context of the rules, but it is not required for validation to work.
-	Schema schema.ID `json:"schema,omitempty"`
 	// FieldName is the JSON tag name of the field this subset is scoped to. When non-empty, Validate extracts this field from the parent object and delegates to it.
 	FieldName string `json:"field,omitempty"`
 	// Each when true causes Validate to iterate over the slice elements of the field named by FieldName.
@@ -108,7 +104,6 @@ func For(obj any, defs ...Def) *Set {
 	s := &Set{
 		ID:      setID,
 		Name:    name,
-		Schema:  schema.Lookup(obj),
 		objType: t,
 	}
 	for _, def := range defs {
@@ -668,7 +663,6 @@ func (s Set) MarshalJSON() ([]byte, error) {
 	type alias struct {
 		ID        Code         `json:"id,omitempty"`
 		Name      string       `json:"name,omitempty"`
-		Schema    schema.ID    `json:"schema,omitempty"`
 		FieldName string       `json:"field,omitempty"`
 		Each      bool         `json:"each,omitempty"`
 		Guard     string       `json:"guard,omitempty"`
@@ -678,7 +672,6 @@ func (s Set) MarshalJSON() ([]byte, error) {
 	a := alias{
 		ID:        s.ID,
 		Name:      s.Name,
-		Schema:    s.Schema,
 		FieldName: s.FieldName,
 		Each:      s.Each,
 		Assert:    s.Assert,
