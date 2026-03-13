@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -352,7 +353,7 @@ func TestLineValidationWithSeller(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
-		require.ErrorContains(t, validation.Validate(line), "seller: (tax_id: (code: invalid format.).)")
+		require.ErrorContains(t, rules.Validate(line), "spanish tax identity code invalid format or checksum")
 	})
 }
 

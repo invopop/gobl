@@ -39,8 +39,8 @@ type Set struct {
 	FieldName string `json:"field,omitempty"`
 	// Each when true causes Validate to iterate over the slice elements of the field named by FieldName.
 	Each bool `json:"each,omitempty"`
-	// Test is an optional expression that determines when this set of rules should be applied. If provided, the set will only be applied when the expression evaluates to true. The expression can reference any exported field from the struct associated with this set of rules.
-	Test Test `json:"test,omitempty"`
+	// Guard is an optional expression that determines when this set of rules should be applied. If provided, the set will only be applied when the expression evaluates to true. The expression can reference any exported field from the struct associated with this set of rules.
+	Guard Test `json:"guard,omitempty"`
 	// Assert is a list of assertions to evaluate directly on the struct associated with this set of rules.
 	Assert []*Assertion `json:"assert,omitempty"`
 	// Subsets are additional sets of rules to apply recursively to the struct associated with this set of rules. They will be applied in order, and their assertions will be evaluated after the assertions in this set. Subsets can also have their own Test conditions, which will be evaluated independently.
@@ -85,7 +85,7 @@ func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
 	set := &Set{
 		ID:      pkg,
 		Name:    name,
-		Test:    guard,
+		Guard:   guard,
 		Subsets: sets,
 	}
 	prependToSets(pkg, sets)
@@ -134,6 +134,21 @@ func Assert(id Code, desc string, tests ...Test) Def {
 	}
 }
 
+// AssertIfPresent returns a Def that adds an assertion that is only evaluated
+// when the current scoped value is non-nil and non-empty. Use this for
+// optional fields that have format or content constraints.
+func AssertIfPresent(id Code, desc string, tests ...Test) Def {
+	return func(s *Set) {
+		subset := &Set{Guard: Present}
+		subset.Assert = append(subset.Assert, &Assertion{
+			ID:    id,
+			Desc:  desc,
+			Tests: tests,
+		})
+		s.Subsets = append(s.Subsets, subset)
+	}
+}
+
 // Object returns a Def that groups assertions evaluated against the whole
 // object. It is equivalent to passing the assertions directly to For or When,
 // and exists for organisational clarity.
@@ -168,7 +183,7 @@ func Field(name string, defs ...Def) Def {
 //	rules.Field("lines",
 //	    rules.Assert("01", "no duplicates", checkNoDups),  // whole-slice assertion
 //	    rules.Each(
-//	        rules.Assert("02", "line required", rules.Required),  // per-element
+//	        rules.Assert("02", "line required", rules.Present),  // per-element
 //	    ),
 //	)
 //
@@ -185,9 +200,9 @@ func Each(defs ...Def) Def {
 
 // When returns a Def that conditionally applies its sub-definitions only when
 // test evaluates to true. The test expression is compiled by the parent For call.
-func When(test Test, defs ...Def) Def {
+func When(guard Test, defs ...Def) Def {
 	return func(s *Set) {
-		subset := &Set{Test: test}
+		subset := &Set{Guard: guard}
 		for _, def := range defs {
 			def(subset)
 		}
@@ -199,8 +214,8 @@ func When(test Test, defs ...Def) Def {
 // throughout the set tree using obj as the prototype environment.
 func compileAndResolve(t reflect.Type, obj any, s *Set) {
 	compileAssertions(obj, s.Assert...)
-	if s.Test != nil {
-		if ct, ok := s.Test.(compilableTest); ok {
+	if s.Guard != nil {
+		if ct, ok := s.Guard.(compilableTest); ok {
 			if err := ct.compile(obj); err != nil {
 				panic("invalid rules condition: " + err.Error())
 			}
@@ -450,7 +465,7 @@ func (s *Set) Validate(obj any) Faults {
 	}
 
 	// Evaluate the When condition; skip the set if it doesn't match.
-	if s.Test != nil && !s.Test.Check(callObj) {
+	if s.Guard != nil && !s.Guard.Check(callObj) {
 		return nil
 	}
 
@@ -656,7 +671,7 @@ func (s Set) MarshalJSON() ([]byte, error) {
 		Schema    schema.ID    `json:"schema,omitempty"`
 		FieldName string       `json:"field,omitempty"`
 		Each      bool         `json:"each,omitempty"`
-		Test      string       `json:"test,omitempty"`
+		Guard     string       `json:"guard,omitempty"`
 		Assert    []*Assertion `json:"assert,omitempty"`
 		Subsets   []*Set       `json:"subsets,omitempty"`
 	}
@@ -669,8 +684,8 @@ func (s Set) MarshalJSON() ([]byte, error) {
 		Assert:    s.Assert,
 		Subsets:   s.Subsets,
 	}
-	if s.Test != nil {
-		a.Test = s.Test.String()
+	if s.Guard != nil {
+		a.Guard = s.Guard.String()
 	}
 	return json.Marshal(a)
 }

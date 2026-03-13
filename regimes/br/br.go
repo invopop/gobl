@@ -8,11 +8,13 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("br", rules.GOBL.Add("BR"), taxIdentityRules())
 }
 
 // New provides the tax region definition
@@ -80,8 +82,6 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *org.Party:
 		return validateParty(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	}
 	return nil
 }

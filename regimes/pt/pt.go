@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("pt", rules.GOBL.Add("PT"), taxIdentityRules())
 }
 
 // Custom keys used typically in meta information
@@ -88,8 +90,6 @@ func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
 	}

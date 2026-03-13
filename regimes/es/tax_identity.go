@@ -67,7 +67,10 @@ func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 	if tID == nil || tID.Code == "" || tID.Country != l10n.ES.Tax() {
 		return cbc.KeyEmpty
 	}
-	code := tID.Code.String()
+	return taxIdentityKey(tID.Code.String())
+}
+
+func taxIdentityKey(code string) cbc.Key {
 	switch {
 	case taxCodeOrgRegexp.MatchString(code):
 		return TaxIdentityOrg
@@ -85,31 +88,33 @@ func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn("ES"),
-			rules.Assert("01", "invalid tax identity format or checksum",
-				rules.By("valid", isValidTaxIdentity),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Spanish VAT identity code format or checksum",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
 			),
 		),
 	)
 }
 
-func isValidTaxIdentity(value any) bool {
-	tID, ok := value.(*tax.Identity)
-	if !ok || tID == nil {
-		return true // ignore
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
 	}
-	return validateTaxIdentityCode(tID) == nil
+	return validateTaxIdentityCode(code) == nil
 }
 
-func validateTaxIdentityCode(tID *tax.Identity) error {
-	switch TaxIdentityKey(tID) {
+func validateTaxIdentityCode(code cbc.Code) error {
+	switch taxIdentityKey(code.String()) {
 	case TaxIdentityNational:
-		return verifyNationalCode(tID.Code)
+		return verifyNationalCode(code)
 	case TaxIdentityForeigner:
-		return verifyForeignCode(tID.Code)
+		return verifyForeignCode(code)
 	case TaxIdentityOrg:
-		return verifyOrgCode(tID.Code)
+		return verifyOrgCode(code)
 	case TaxIdentityOther:
-		return verifyOtherCode(tID.Code)
+		return verifyOtherCode(code)
 	default:
 		return errTaxIdentityCodeInvalidFormat
 	}

@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var (
@@ -41,11 +41,24 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
 }
 
-// validateTaxIdentity checks to ensure the SIRET code looks okay.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateVATTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("FR"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid French VAT identity code format or checksum",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateVATTaxCode(code) == nil
 }
 
 func validateVATTaxCode(value interface{}) error {

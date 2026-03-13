@@ -32,7 +32,7 @@ and to validate field names at initialisation time.
 
 ```go
 rules.Field("name",
-    rules.Assert("01", "name is required", rules.Required),
+    rules.Assert("01", "name is required", rules.Present),
 )
 ```
 
@@ -61,7 +61,7 @@ rules.Field("lines",
     rules.Assert("01", "no duplicate codes", rules.By("no dups", hasNoDuplicateCodes)),
     rules.Each(
         rules.Field("code",
-            rules.Assert("02", "line code is required", rules.Required),
+            rules.Assert("02", "line code is required", rules.Present),
         ),
     ),
 )
@@ -74,7 +74,7 @@ directly inside `For` (rather than inside a `Field` on a slice) panics at init t
 
 ```go
 rules.When(conditionTest,
-    rules.Field("code", rules.Assert("01", "code is required", rules.Required)),
+    rules.Field("code", rules.Assert("01", "code is required", rules.Present)),
 )
 ```
 
@@ -113,7 +113,7 @@ any matching object type anywhere in the object graph.
 
 | Test | Replaces | Notes |
 |------|----------|-------|
-| `rules.Required` | `validation.Required` | Fails if nil, zero, or empty |
+| `rules.Present` | `validation.Required` | Fails if nil, zero, or empty |
 | `rules.NilOrNotEmpty` | `validation.NilOrNotEmpty` | Passes if nil pointer or non-empty |
 | `rules.Empty` | `validation.Empty` | Passes if nil or empty; fails if a value is present |
 | `rules.Nil` | `validation.Nil` | Passes only for a nil pointer; fails for any non-nil value, even empty |
@@ -155,7 +155,7 @@ validation.Field(&obj.Name, validation.Required)
 
 // After
 rules.Field("name",
-    rules.Assert("01", "name is required", rules.Required),
+    rules.Assert("01", "name is required", rules.Present),
 )
 ```
 
@@ -167,17 +167,18 @@ validation.Field(&obj.Address, validation.Required, is.Email)
 
 // After
 rules.Field("addr",
-    rules.Assert("01", "email address is required", rules.Required),
+    rules.Assert("01", "email address is required", rules.Present),
     rules.Assert("02", "email address must be valid", is.EmailFormat),
 )
 ```
 
-Note that `Required` and the format check are **separate assertions** with
+Note that `Present` and the format check are **separate assertions** with
 separate codes, so callers can distinguish a missing value from a malformed one.
 
 ### Optional field with format check
 
-Leave out `Required`. All built-in tests skip nil/empty values automatically:
+For built-in tests (`In`, `NotIn`, `Matches`, etc.) that skip nil/empty automatically,
+leave out `Present` and use a plain `Assert`:
 
 ```go
 // Before
@@ -186,6 +187,17 @@ validation.Field(&obj.URL, is.URL)
 // After
 rules.Field("url",
     rules.Assert("05", "URL must be valid", is.URL),
+)
+```
+
+For custom validators, use `AssertIfPresent` so the assertion is skipped when
+the field is absent:
+
+```go
+rules.Field("code",
+    rules.AssertIfPresent("01", "code format invalid",
+        rules.By("valid", isValidCode),
+    ),
 )
 ```
 
@@ -205,14 +217,15 @@ rules.Field("category",
 `string("a")` and `MyType("a")`.
 
 To allow an optional field to be empty *or* one of the valid values, either
-omit `Required` (the `In` test skips nil pointers automatically) or, for
-non-pointer named types like `cbc.Key`, extract the logic into a helper:
+omit `Present` (the `In` test skips nil pointers automatically) or, for
+non-pointer named types like `cbc.Key`, use `AssertIfPresent` with a strict
+validator:
 
 ```go
 func isValidCategory(val any) bool {
     key, ok := val.(cbc.Key)
     if !ok || key == "" {
-        return true // optional
+        return false
     }
     for _, def := range validDefs {
         if def.Key == key {
@@ -223,8 +236,8 @@ func isValidCategory(val any) bool {
 }
 
 rules.Field("category",
-    rules.Assert("02", "category is not valid",
-        rules.By("valid or empty", isValidCategory),
+    rules.AssertIfPresent("02", "category is not valid",
+        rules.By("valid", isValidCategory),
     ),
 )
 ```
@@ -387,7 +400,7 @@ automatically, so there is no wiring required between parent and child:
 func addressRules() *rules.Set {
     return rules.For(new(Address),
         rules.Field("city",
-            rules.Assert("01", "city is required", rules.Required),
+            rules.Assert("01", "city is required", rules.Present),
         ),
     )
 }
@@ -396,7 +409,7 @@ func addressRules() *rules.Set {
 func personRules() *rules.Set {
     return rules.For(new(Person),
         rules.Field("name",
-            rules.Assert("01", "name is required", rules.Required),
+            rules.Assert("01", "name is required", rules.Present),
         ),
         // No wiring for Address — addressRules() is registered separately
         // and applied automatically when rules.Validate recurses into the field.
@@ -429,11 +442,11 @@ func invoiceRules() *rules.Set {
     return rules.For(new(Invoice),
         rules.When(tax.RegimeIn("XX"),
             rules.Field("supplier",
-                rules.Assert("01", "supplier is required", rules.Required),
+                rules.Assert("01", "supplier is required", rules.Present),
                 rules.Field("tax_id",
-                    rules.Assert("02", "supplier tax ID is required", rules.Required),
+                    rules.Assert("02", "supplier tax ID is required", rules.Present),
                     rules.Field("code",
-                        rules.Assert("03", "supplier tax ID must have a code", rules.Required),
+                        rules.Assert("03", "supplier tax ID must have a code", rules.Present),
                     ),
                 ),
             ),
@@ -466,7 +479,7 @@ func myStructRules() *rules.Set {
     return rules.For(new(MyStruct),
         rules.Field("lines",
             rules.Each(
-                rules.Assert("01", "line must not be empty", rules.Required),
+                rules.Assert("01", "line must not be empty", rules.Present),
                 rules.Assert("02", "line must be valid", rules.By("valid", lineIsValid)),
             ),
         ),
@@ -486,7 +499,7 @@ rules.Field("lines",
     ),
     rules.Each(
         rules.Field("code",
-            rules.Assert("02", "line code is required", rules.Required),
+            rules.Assert("02", "line code is required", rules.Present),
         ),
     ),
 )
@@ -506,7 +519,7 @@ on the element type itself.
 ```go
 func myCodeRules() *rules.Set {
     return rules.For(MyCode(""),
-        rules.Assert("01", "code must not be empty", rules.Required),
+        rules.Assert("01", "code must not be empty", rules.Present),
         rules.Assert("02", "code must be alphanumeric", is.Alphanumeric),
     )
 }

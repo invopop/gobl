@@ -223,7 +223,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] $schema: envelope schema is required; [GOBL-ENVELOPE-02] head: envelope header is required; [GOBL-ENVELOPE-03] doc: envelope doc is required",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($schema) envelope schema is required; [GOBL-ENVELOPE-02] (head) envelope header is required; [GOBL-ENVELOPE-03] (doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -232,7 +232,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "validation: (doc: (content: cannot be blank.).).",
+			want: "[GOBL-NOTE-MESSAGE-01] (content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -289,7 +289,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.ErrorContains(t, err, "validation: (doc: (content: cannot be blank.).).")
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
@@ -433,9 +433,7 @@ func TestDocumentValidation(t *testing.T) {
 	require.NoError(t, err)
 
 	err = doc.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "content: cannot be blank")
-	}
+	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
 
 	doc = new(schema.Object)
 	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
@@ -471,7 +469,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"key":"validation","fields":{"doc":{"content":"cannot be blank"}}}`, string(data))
+	assert.Equal(t, `[{"path":"content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

@@ -65,6 +65,12 @@ func (rc RegimeCode) String() string {
 	return string(rc)
 }
 
+// regimeGetter is an interface for types that expose a GetRegime method,
+// including types that embed tax.Regime.
+type regimeGetter interface {
+	GetRegime() l10n.TaxCountryCode
+}
+
 // RegimeIn checks if the regime's country code is in the provided list of codes.
 func RegimeIn(codes ...l10n.TaxCountryCode) rules.Test {
 	str := make([]string, len(codes))
@@ -73,11 +79,11 @@ func RegimeIn(codes ...l10n.TaxCountryCode) rules.Test {
 	}
 	return rules.By("regime in ["+strings.Join(str, ",")+"]",
 		func(value any) bool {
-			r, ok := value.(Regime)
+			rg, ok := value.(regimeGetter)
 			if !ok {
-				return true // skip
+				return false
 			}
-			return r.GetRegime().In(codes...)
+			return rg.GetRegime().In(codes...)
 		},
 	)
 }

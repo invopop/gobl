@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Both CNPJ and CPF are supported as tax identifiers because, in Brazil, service invoices (NFS-e) may be issued by either legal entities (CNPJ) or individuals (CPF).
@@ -16,10 +16,24 @@ import (
 // Ref: https://pt.wikipedia.org/wiki/Cadastro_de_Pessoas_F%C3%ADsicas
 // (Note: Some sources mention other variants, but Mod11 is the most consistent in practice.)
 
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("BR"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Brazilian tax identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
 }
 
 func validateTaxCode(value interface{}) error {

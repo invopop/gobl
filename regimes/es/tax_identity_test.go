@@ -96,8 +96,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}{
 		// *** EMPTY ***
 		{
-			Code:     "",
-			Expected: errCode01,
+			Code: "",
+			// No error as code is ignored.
 		},
 		// *** NATIONAL ***
 		{

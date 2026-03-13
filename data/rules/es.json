@@ -8,15 +8,15 @@
       "schema": "https://gobl.org/draft-0/bill/invoice",
       "subsets": [
         {
-          "test": "regime in [ES]",
+          "guard": "regime in [ES]",
           "subsets": [
             {
               "field": "supplier",
               "assert": [
                 {
                   "id": "GOBL-ES-BILL-INVOICE-01",
-                  "desc": "supplier is required",
-                  "tests": "required"
+                  "desc": "invoice supplier in Spain is required",
+                  "tests": "present"
                 }
               ],
               "subsets": [
@@ -25,8 +25,8 @@
                   "assert": [
                     {
                       "id": "GOBL-ES-BILL-INVOICE-02",
-                      "desc": "supplier tax ID is required",
-                      "tests": "required"
+                      "desc": "invoice supplier tax ID in Spain is required",
+                      "tests": "present"
                     }
                   ],
                   "subsets": [
@@ -35,8 +35,8 @@
                       "assert": [
                         {
                           "id": "GOBL-ES-BILL-INVOICE-03",
-                          "desc": "supplier tax ID must have a code",
-                          "tests": "required"
+                          "desc": "invoice supplier tax ID code in Spain is required",
+                          "tests": "present"
                         }
                       ]
                     }
@@ -54,12 +54,22 @@
       "schema": "https://gobl.org/draft-0/tax/identity",
       "subsets": [
         {
-          "test": "code in [ES]",
-          "assert": [
+          "guard": "code in [ES]",
+          "subsets": [
             {
-              "id": "GOBL-ES-TAX-IDENTITY-01",
-              "desc": "invalid tax identity format or checksum",
-              "tests": "valid"
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-TAX-IDENTITY-01",
+                      "desc": "invalid Spanish VAT identity code format or checksum",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

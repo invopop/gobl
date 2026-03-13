@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
 }
 
 // Official SAT codes to include in stamps.
@@ -27,9 +29,9 @@ const (
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago’s codes
-	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion’s codes
-	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto’s codes
+	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago's codes
+	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion's codes
+	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto's codes
 )
 
 // New provides the tax region definition
@@ -82,7 +84,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
-		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
@@ -95,15 +96,6 @@ func Normalize(doc any) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
 	case *tax.Identity:
-		NormalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-}
-
-// Validate validates a document against the tax regime.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return ValidateTaxIdentity(obj)
-	}
-	return nil
 }

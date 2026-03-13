@@ -5,9 +5,9 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Message represents a simple message object with a title and some
@@ -22,12 +22,11 @@ type Message struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta Data"`
 }
 
-// Validate ensures the message contains everything it should.
-func (m *Message) Validate() error {
-	return validation.ValidateStruct(m,
-		validation.Field(&m.UUID),
-		validation.Field(&m.Content, validation.Required),
-		validation.Field(&m.Meta),
+func messageRules() *rules.Set {
+	return rules.For(new(Message),
+		rules.Field("content",
+			rules.Assert("01", "message content is required", rules.Present),
+		),
 	)
 }
 

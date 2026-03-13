@@ -29,7 +29,7 @@ func TestLinkValidation(t *testing.T) {
 			Title: "Test Link Title",
 			URL:   "example",
 		}
-		require.ErrorContains(t, rules.Validate(l), "url: link URL must be a valid URL")
+		require.ErrorContains(t, rules.Validate(l), "link URL must be a valid URL")
 	})
 
 	t.Run("missing url", func(t *testing.T) {
@@ -37,7 +37,7 @@ func TestLinkValidation(t *testing.T) {
 			Key:   "test",
 			Title: "Test Link Title",
 		}
-		require.ErrorContains(t, rules.Validate(l), "url: link URL is required")
+		require.ErrorContains(t, rules.Validate(l), "link URL is required")
 	})
 
 	t.Run("missing key", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestLinkValidation(t *testing.T) {
 			Title: "Test Link Title",
 			URL:   "https://example.com",
 		}
-		require.ErrorContains(t, rules.Validate(l), "key: link key is required")
+		require.ErrorContains(t, rules.Validate(l), "link key is required")
 	})
 
 	t.Run("valid MIME types", func(t *testing.T) {
@@ -87,7 +87,7 @@ func TestLinkValidation(t *testing.T) {
 			}
 			err := rules.Validate(l)
 			require.Error(t, err, "MIME type %s should be invalid", mime)
-			require.ErrorContains(t, err, "mime:", "Error should mention mime field")
+			require.ErrorContains(t, err, "link MIME type", "Error should mention mime field")
 		}
 	})
 

@@ -6,11 +6,13 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("pl", rules.GOBL.Add("PL"), taxIdentityRules())
 }
 
 // New instantiates a new Polish regime.
@@ -52,8 +54,6 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	case *bill.Invoice:
 		return validateInvoice(obj)
 	}

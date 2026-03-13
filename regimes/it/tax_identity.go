@@ -10,8 +10,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -21,16 +21,28 @@ const (
 	taxIDCRCMod    = 26
 )
 
-// validateTaxIdentity performs checks on the tax codes according to the type
-// that was set. Additional validation is laid out at the invoice layer.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("IT"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Italian VAT identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
+}
+
 // source: https://it.wikipedia.org/wiki/Partita_IVA#Struttura_del_codice_identificativo_di_partita_IVA
-func validateTaxCode(value interface{}) error {
+func validateTaxCode(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

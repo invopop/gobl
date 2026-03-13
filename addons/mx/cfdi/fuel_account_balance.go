@@ -114,7 +114,7 @@ func (fal *FuelAccountLine) Validate() error {
 		validation.Field(&fal.PurchaseDateTime, cal.DateTimeNotZero()),
 		validation.Field(&fal.VendorTaxCode,
 			validation.Required,
-			validation.By(mx.ValidateTaxCode),
+			validation.By(validateTaxCode),
 			validation.Skip, // don't use default code validations
 		),
 		validation.Field(&fal.ServiceStationCode,

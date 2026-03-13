@@ -21,7 +21,6 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.Equal(t, "[GOBL-ES-BILL-INVOICE-02] supplier.tax_id: supplier tax ID is required", err.Error())
+		assert.ErrorContains(t, err, "[GOBL-ES-BILL-INVOICE-02]")
 	})
-
 }

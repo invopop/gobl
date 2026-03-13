@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/ae"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	_ "github.com/invopop/gobl/regimes/ae"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -21,16 +22,16 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 3", code: "100111222333444"},
 
 		// Invalid formats
-		{name: "too short", code: "12345678901234", err: "must be a 15-digit number"},
-		{name: "too long", code: "1234567890123456", err: "must be a 15-digit number"},
-		{name: "non-numeric", code: "12345678ABCD345", err: "must be a 15-digit number"},
-		{name: "not normalized", code: "1234-5678-9012-345", err: "must be a 15-digit number"},
+		{name: "too short", code: "12345678901234", err: "IDENTITY-01"},
+		{name: "too long", code: "1234567890123456", err: "IDENTITY-01"},
+		{name: "non-numeric", code: "12345678ABCD345", err: "IDENTITY-01"},
+		{name: "not normalized", code: "1234-5678-9012-345", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "AE", Code: tt.code}
-			err := ae.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

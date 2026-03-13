@@ -1,0 +1,23 @@
+{
+  "id": "GOBL-NOTE",
+  "name": "note",
+  "subsets": [
+    {
+      "id": "GOBL-NOTE-MESSAGE",
+      "name": "note.Message",
+      "schema": "https://gobl.org/draft-0/note/message",
+      "subsets": [
+        {
+          "field": "content",
+          "assert": [
+            {
+              "id": "GOBL-NOTE-MESSAGE-01",
+              "desc": "message content is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

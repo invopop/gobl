@@ -8,25 +8,40 @@
       "schema": "https://gobl.org/draft-0/tax/identity",
       "subsets": [
         {
-          "test": "code in [GB]",
+          "guard": "code in [GB]",
           "subsets": [
             {
               "field": "code",
-              "assert": [
+              "subsets": [
                 {
-                  "id": "GOBL-GB-TAX-IDENTITY-01",
-                  "desc": "invalid tax identity format",
-                  "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-01",
+                      "desc": "invalid UK VAT identity format",
+                      "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
+                    }
+                  ]
                 },
                 {
-                  "id": "GOBL-GB-TAX-IDENTITY-02",
-                  "desc": "all-zero tax identity codes are not allowed",
-                  "tests": "not-zeros"
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-02",
+                      "desc": "all-zero UK VAT identity codes are not allowed",
+                      "tests": "not-zeros"
+                    }
+                  ]
                 },
                 {
-                  "id": "GOBL-GB-TAX-IDENTITY-03",
-                  "desc": "tax identity checksum mismatch",
-                  "tests": "checksum"
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-03",
+                      "desc": "UK VAT identity checksum mismatch",
+                      "tests": "checksum"
+                    }
+                  ]
                 }
               ]
             }

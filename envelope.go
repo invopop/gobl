@@ -64,15 +64,15 @@ func Envelop(doc any) (*Envelope, error) {
 func envelopeRules() *rules.Set {
 	return rules.For(new(Envelope),
 		rules.Field("$schema",
-			rules.Assert("01", "envelope schema is required", rules.Required),
+			rules.Assert("01", "envelope schema is required", rules.Present),
 		),
 		rules.Field("head",
-			rules.Assert("02", "envelope header is required", rules.Required),
+			rules.Assert("02", "envelope header is required", rules.Present),
 		),
 		rules.Field("doc",
-			rules.Assert("03", "envelope doc is required", rules.Required),
-			rules.Assert("04", "envelope doc must have a schema",
-				rules.By("has schema", documentHasSchema),
+			rules.Assert("03", "envelope doc is required", rules.Present),
+			rules.Field("$schema",
+				rules.Assert("04", "envelope doc must have a $schema", rules.Present),
 			),
 		),
 		rules.Assert("11", "envelope digest does not match document contents",
@@ -89,14 +89,6 @@ func envelopeRules() *rules.Set {
 			),
 		),
 	)
-}
-
-func documentHasSchema(val any) bool {
-	d, ok := val.(*schema.Object)
-	if !ok || d == nil {
-		return true // ignore
-	}
-	return d.Schema != ""
 }
 
 func notSigned(val any) bool {

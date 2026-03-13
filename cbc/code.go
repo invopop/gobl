@@ -23,7 +23,7 @@ const (
 // Codes are standardized so that when validated they must contain between
 // 1 and 64 inclusive english alphabet letters or numbers with optional
 // periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
-// colons (`:`), commas (`,`), or spaces (` `) to separate blocks.
+// colons (`:`), commas (`,`), ampersand (`&`), or spaces (` `) to separate blocks.
 // Each block must only be separated by a single symbol.
 //
 // The objective is to have a code that is easy to read and understand, while
@@ -36,16 +36,17 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodeSeparators           = `\.\-\:/,_ `
-	CodePattern              = `^[A-Za-z0-9]+([` + CodeSeparators + `]?[A-Za-z0-9]+)*$`
+	CodeSeparators           = `\.\-\:/,_\& `
+	CodeDigits               = `A-ZÑa-z0-9`
+	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 64
 )
 
 var (
-	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9` + CodeSeparators + `]+`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^` + CodeDigits + `]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^` + CodeDigits + CodeSeparators + `]+`)
 	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
 	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
@@ -86,7 +87,7 @@ func codeRules() *rules.Set {
 		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
 			rules.Length(0, int(CodeMaxLength)),
 		),
-		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_ or space",
+		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
 			rules.Matches(CodePattern),
 		),
 	)

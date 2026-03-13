@@ -61,7 +61,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing type 'KVK', 'OIN'; tax_id: (code: cannot be blank.).).")
+		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing type in [KVK, OIN]; tax_id: (code: cannot be blank.).)")
 	})
 
 	t.Run("supplier with KVK identity instead of tax ID", func(t *testing.T) {

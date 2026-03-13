@@ -13,7 +13,7 @@
             {
               "id": "GOBL-ORG-EMAIL-01",
               "desc": "email address is required",
-              "tests": "required"
+              "tests": "present"
             },
             {
               "id": "GOBL-ORG-EMAIL-02",

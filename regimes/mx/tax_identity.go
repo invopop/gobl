@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 /*
@@ -37,44 +37,51 @@ const (
 
 // Tax Identity Regexp
 var (
-	TaxIdentityRegexpPerson  = regexp.MustCompile(TaxIdentityPatternPerson)
-	TaxIdentityRegexpCompany = regexp.MustCompile(TaxIdentityPatternCompany)
-	TaxCodeBadCharsRegexp    = regexp.MustCompile(`[^A-ZÑ\&0-9]+`)
+	taxIdentityRegexpPerson  = regexp.MustCompile(TaxIdentityPatternPerson)
+	taxIdentityRegexpCompany = regexp.MustCompile(TaxIdentityPatternCompany)
+	taxCodeBadCharsRegexp    = regexp.MustCompile(`[^A-ZÑ\&0-9]+`)
 )
 
-// ValidateTaxIdentity validates a tax identity for SAT.
-func ValidateTaxIdentity(tID *tax.Identity) error {
-	if tID == nil {
-		return nil
-	}
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(ValidateTaxCode),
-			validation.Skip, // don't apply regular code validation
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("MX"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Mexican RFC tax identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
 		),
 	)
 }
 
-// NormalizeTaxIdentity ensures the tax code is good for mexico
-func NormalizeTaxIdentity(tID *tax.Identity) {
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
+}
+
+// normalizeTaxIdentity ensures the tax code is good for mexico
+func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
 		return
 	}
-	tID.Code = NormalizeTaxCode(tID.Code)
+	tID.Code = normalizeTaxCode(tID.Code)
 }
 
-// NormalizeTaxCode normalizes a tax code according to SAT rules.
+// normalizeTaxCode normalizes a tax code according to SAT rules.
 // It handles special cases where company tax codes (RFC) may include an "MX" prefix.
 // For example, a valid company code could be "MXG70123123Z". The function attempts
 // to validate both with and without the "MX" prefix.
-func NormalizeTaxCode(code cbc.Code) cbc.Code {
+func normalizeTaxCode(code cbc.Code) cbc.Code {
 	c := strings.ToUpper(code.String())
-	c = TaxCodeBadCharsRegexp.ReplaceAllString(c, "")
+	c = taxCodeBadCharsRegexp.ReplaceAllString(c, "")
 
 	codeTrimmed := strings.TrimPrefix(c, "MX")
 
 	// If the trimmed code looks valid, return it
-	if typ := DetermineTaxCodeType(cbc.Code(codeTrimmed)); !typ.IsEmpty() {
+	if typ := determineTaxCodeType(cbc.Code(codeTrimmed)); !typ.IsEmpty() {
 		return cbc.Code(codeTrimmed)
 	}
 
@@ -82,27 +89,27 @@ func NormalizeTaxCode(code cbc.Code) cbc.Code {
 	return cbc.Code(c)
 }
 
-// ValidateTaxCode validates a tax code according to the rules
+// validateTaxCode validates a tax code according to the rules
 // defined by the Mexican SAT.
-func ValidateTaxCode(value interface{}) error {
+func validateTaxCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
 	}
-	if typ := DetermineTaxCodeType(code); typ.IsEmpty() {
+	if typ := determineTaxCodeType(code); typ.IsEmpty() {
 		return tax.ErrIdentityCodeInvalid
 	}
 	return nil
 }
 
-// DetermineTaxCodeType determines the type of tax code or provides
+// determineTaxCodeType determines the type of tax code or provides
 // an empty key if it looks invalid.
-func DetermineTaxCodeType(code cbc.Code) cbc.Key {
+func determineTaxCodeType(code cbc.Code) cbc.Key {
 	str := code.String()
 	switch {
-	case TaxIdentityRegexpPerson.MatchString(str):
+	case taxIdentityRegexpPerson.MatchString(str):
 		return TaxIdentityTypePerson
-	case TaxIdentityRegexpCompany.MatchString(str):
+	case taxIdentityRegexpCompany.MatchString(str):
 		return TaxIdentityTypeCompany
 	default:
 		return cbc.KeyEmpty

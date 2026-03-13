@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/invopop/validation"
-
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,17 +16,27 @@ const (
 
 var errInvalidVAT = errors.New("invalid VAT number")
 
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("NL"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Dutch VAT identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok {
-		return nil
+	if !ok || code == "" {
+		return false
 	}
+	return validateTaxCode(code) == nil
+}
+
+func validateTaxCode(code cbc.Code) error {
 	if code == "" {
 		return nil
 	}

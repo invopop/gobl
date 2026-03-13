@@ -177,9 +177,9 @@ func TestIdentitySetValidators(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = validation.Validate(idents, org.RequireIdentityType("FOO"))
-		assert.ErrorContains(t, err, "missing type 'FOO'")
+		assert.ErrorContains(t, err, "missing type in [FOO]")
 		err = validation.Validate(idents, org.RequireIdentityType("FOO", "FUZ"))
-		assert.ErrorContains(t, err, "missing type 'FOO', 'FUZ'")
+		assert.ErrorContains(t, err, "missing type in [FOO, FUZ]")
 	})
 
 	t.Run("require identity key", func(t *testing.T) {
@@ -197,9 +197,9 @@ func TestIdentitySetValidators(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = validation.Validate(idents, org.RequireIdentityKey("code"))
-		assert.ErrorContains(t, err, "missing key 'code'")
+		assert.ErrorContains(t, err, "missing key in [code]")
 		err = validation.Validate(idents, org.RequireIdentityKey("code", "another"))
-		assert.ErrorContains(t, err, "missing key 'code', 'another'")
+		assert.ErrorContains(t, err, "missing key in [code, another]")
 	})
 }
 

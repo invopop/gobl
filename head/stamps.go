@@ -21,10 +21,10 @@ type Stamp struct {
 func stampRules() *rules.Set {
 	return rules.For(new(Stamp),
 		rules.Field("prv",
-			rules.Assert("01", "stamp provider is required", rules.Required),
+			rules.Assert("01", "stamp provider is required", rules.Present),
 		),
 		rules.Field("val",
-			rules.Assert("02", "stamp value is required", rules.Required),
+			rules.Assert("02", "stamp value is required", rules.Present),
 		),
 	)
 }

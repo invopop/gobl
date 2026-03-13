@@ -114,7 +114,7 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
 			rules.Field("preceding",
-				rules.Assert("01", "preceding documents are required for corrective invoices", rules.Required),
+				rules.Assert("01", "preceding documents are required for corrective invoices", rules.Present),
 			),
 		),
 		// Code 02: each preceding issue date required
@@ -123,7 +123,7 @@ func billInvoiceRules() *rules.Set {
 				rules.When(
 					rules.By("not nil", precedingDocIsNotNil),
 					rules.Field("issue_date",
-						rules.Assert("02", "issue date is required", rules.Required),
+						rules.Assert("02", "issue date is required", rules.Present),
 					),
 				),
 			),
@@ -136,7 +136,7 @@ func billInvoiceRules() *rules.Set {
 					rules.When(
 						rules.By("not nil", precedingDocIsNotNil),
 						rules.Field("tax",
-							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", rules.Required),
+							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", rules.Present),
 						),
 					),
 				),
@@ -165,13 +165,13 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			rules.By("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
-				rules.Assert("06", "customer is required", rules.Required),
+				rules.Assert("06", "customer is required", rules.Present),
 				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
 					rules.By("has tax_id or identity", customerHasTaxIDOrIdentity),
 				),
 				rules.Field("tax_id",
 					rules.Field("code",
-						rules.Assert("08", "tax ID must have a code", rules.Required),
+						rules.Assert("08", "tax ID must have a code", rules.Present),
 					),
 				),
 			),
@@ -181,7 +181,7 @@ func billInvoiceRules() *rules.Set {
 		// Code 10: doc_type required
 		// Code 13: correction_type required when credit/debit doc type
 		rules.Field("tax",
-			rules.Assert("09", "tax is required", rules.Required),
+			rules.Assert("09", "tax is required", rules.Present),
 			rules.Field("ext",
 				rules.Assert("10", "doc type is required",
 					tax.ExtensionsRequire(ExtKeyDocType),

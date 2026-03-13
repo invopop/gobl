@@ -118,7 +118,7 @@ type Link struct {
 func linkRules() *rules.Set {
 	return rules.For(new(Link),
 		rules.Field("key",
-			rules.Assert("01", "link key is required", rules.Required),
+			rules.Assert("01", "link key is required", rules.Present),
 		),
 		rules.Field("category",
 			rules.Assert("02", "link category is not valid",
@@ -126,7 +126,7 @@ func linkRules() *rules.Set {
 			),
 		),
 		rules.Field("url",
-			rules.Assert("03", "link URL is required", rules.Required),
+			rules.Assert("03", "link URL is required", rules.Present),
 			rules.Assert("04", "link URL must be a valid URL", ris.URL),
 		),
 		rules.Field("mime",

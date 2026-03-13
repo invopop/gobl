@@ -5,8 +5,8 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Reference: https://mytax.iras.gov.sg/ESVWeb/default.aspx?target=GSTListingSearch
@@ -22,22 +22,28 @@ var regexpsGSTCode = append(
 	regexp.MustCompile(`^M[A-Z0-9]\d{7}[A-Z]$`),
 )
 
-// validateTaxIdentity checks to ensure the NIT code looks okay.
-func validateTaxIdentity(tID *tax.Identity) error {
-	if tID == nil {
-		return nil
-	}
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
-			validation.Skip,
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("SG"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Singaporean tax identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
 		),
 	)
 }
 
-func validateTaxCode(value any) error {
+func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
+}
+
+func validateTaxCode(code cbc.Code) error {
+	if code == "" {
 		return nil
 	}
 	val := code.String()

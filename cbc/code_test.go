@@ -308,47 +308,47 @@ func TestCode_Rules(t *testing.T) {
 		{
 			name:     "dot at start",
 			code:     cbc.Code(".B123"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "dot at end",
 			code:     cbc.Code("B123."),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "dash at start",
 			code:     cbc.Code("-B123"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "dash at end",
 			code:     cbc.Code("B123-"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "multiple symbols",
 			code:     cbc.Code("AB/.CD"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "character return",
 			code:     cbc.Code("AB\nCD"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "character return",
 			code:     cbc.Code("\n"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "multi-dash",
 			code:     cbc.Code("AB--CD"),
-			wantCode: "GOBL-CBC-CODE-020",
+			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
 			name:     "too long",
 			code:     cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
-			wantCode: "GOBL-CBC-CODE-010",
+			wantCode: "GOBL-CBC-CODE-01",
 		},
 	}
 	for _, tt := range tests {
@@ -422,47 +422,47 @@ func TestCode_Validate(t *testing.T) {
 		{
 			name:    "dot at start",
 			code:    cbc.Code(".B123"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "dot at end",
 			code:    cbc.Code("B123."),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "dash at start",
 			code:    cbc.Code("-B123"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "dash at end",
 			code:    cbc.Code("B123-"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "multiple symbols",
 			code:    cbc.Code("AB/.CD"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "character return",
 			code:    cbc.Code("AB\nCD"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "character return",
 			code:    cbc.Code("\n"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "multi-dash",
 			code:    cbc.Code("AB--CD"),
-			wantErr: "valid format",
+			wantErr: "codes must only contain",
 		},
 		{
 			name:    "too long",
 			code:    cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
-			wantErr: "length must be between",
+			wantErr: "codes must be no longer than",
 		},
 	}
 	for _, tt := range tests {

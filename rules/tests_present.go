@@ -1,26 +1,26 @@
 package rules
 
-type requiredTest struct {
+type presenceTest struct {
 	desc    string
 	skipNil bool
 }
 
 var (
-	// Required provides a validation rule that checks if a value is present and not empty.
+	// Present checks if a value is non-nil and non-empty.
 	// A value is considered not empty if
 	// - integer, float: not zero
 	// - bool: true
 	// - string, array, slice, map: len() > 0
 	// - interface, pointer: not nil and the referenced value is not empty
 	// - any other types
-	Required Test = requiredTest{"required", false}
+	Present Test = presenceTest{"present", false}
 
 	// NilOrNotEmpty checks if a value is a nil pointer or a value that is not empty.
-	// NilOrNotEmpty differs from Required in that it treats a nil pointer as valid.
-	NilOrNotEmpty Test = requiredTest{"nil or not empty", true}
+	// NilOrNotEmpty differs from Present in that it treats a nil pointer as valid.
+	NilOrNotEmpty Test = presenceTest{"nil or not empty", true}
 )
 
-func (r requiredTest) Check(value any) bool {
+func (r presenceTest) Check(value any) bool {
 	value, isNil := Indirect(value)
 	if r.skipNil {
 		return isNil || !IsEmpty(value)
@@ -28,6 +28,6 @@ func (r requiredTest) Check(value any) bool {
 	return !isNil && !IsEmpty(value)
 }
 
-func (r requiredTest) String() string {
+func (r presenceTest) String() string {
 	return r.desc
 }

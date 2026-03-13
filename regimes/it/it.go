@@ -8,11 +8,13 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules())
 }
 
 // New instantiates a new Italian regime.
@@ -84,8 +86,6 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	case *org.Identity:
 		return validateIdentity(obj)
 	}

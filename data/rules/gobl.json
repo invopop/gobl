@@ -20,7 +20,7 @@
             {
               "id": "GOBL-ENVELOPE-01",
               "desc": "envelope schema is required",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         },
@@ -30,7 +30,7 @@
             {
               "id": "GOBL-ENVELOPE-02",
               "desc": "envelope header is required",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         },
@@ -40,17 +40,24 @@
             {
               "id": "GOBL-ENVELOPE-03",
               "desc": "envelope doc is required",
-              "tests": "required"
-            },
+              "tests": "present"
+            }
+          ],
+          "subsets": [
             {
-              "id": "GOBL-ENVELOPE-04",
-              "desc": "envelope doc must have a schema",
-              "tests": "has schema"
+              "field": "$schema",
+              "assert": [
+                {
+                  "id": "GOBL-ENVELOPE-04",
+                  "desc": "envelope doc must have a $schema",
+                  "tests": "present"
+                }
+              ]
             }
           ]
         },
         {
-          "test": "not signed",
+          "guard": "not signed",
           "assert": [
             {
               "id": "GOBL-ENVELOPE-12",
@@ -60,7 +67,7 @@
           ]
         },
         {
-          "test": "has signatures",
+          "guard": "has signatures",
           "assert": [
             {
               "id": "GOBL-ENVELOPE-13",

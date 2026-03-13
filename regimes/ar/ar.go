@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("ar", rules.GOBL.Add("AR"), taxIdentityRules())
 }
 
 // New provides the tax region definition for Argentina
@@ -84,8 +86,6 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	}
 	return nil
 }

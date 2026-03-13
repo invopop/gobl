@@ -8,8 +8,8 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var (
@@ -25,13 +25,27 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tID.Country = "IN"
 }
 
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("IN"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Indian tax identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
+}
+
+func validateTaxCode(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

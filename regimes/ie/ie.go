@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("ie", rules.GOBL.Add("IE"), taxIdentityRules())
 }
 
 // New instantiates a new Irish regime.
@@ -46,18 +48,8 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will perform any regime specific calculations.

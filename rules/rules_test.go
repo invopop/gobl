@@ -38,7 +38,7 @@ func emailRules() *rules.Set {
 	return rules.For(new(Email),
 		rules.Field("addr",
 			rules.Assert("01", "expected a valid email address",
-				rules.Required,
+				rules.Present,
 				is.EmailFormat,
 			),
 		),
@@ -109,7 +109,7 @@ func TestValidate(t *testing.T) {
 		e := &Email{Addr: ""}
 		faults := rules.Validate(e)
 		require.NotNil(t, faults)
-		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] addr: expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] (addr) expected a valid email address", faults.Error())
 		assert.True(t, faults.HasPath("addr"))
 		f := faults.First()
 		assert.Equal(t, "expected a valid email address", f.Message())
@@ -129,7 +129,7 @@ func TestValidate(t *testing.T) {
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
 		assert.True(t, faults.HasPath("emails[1].addr"), "expected fault at emails[1].addr")
-		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] emails[1].addr: expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] (emails[1].addr) expected a valid email address", faults.Error())
 	})
 
 	t.Run("recurses into pointer fields", func(t *testing.T) {
@@ -156,7 +156,7 @@ type TestCode string
 func testCodeRules() *rules.Set {
 	return rules.For(TestCode(""),
 		rules.Assert("01", "code must not be empty",
-			rules.Required,
+			rules.Present,
 		),
 		rules.Assert("02", "code must not exceed 10 characters",
 			rules.Expr(`len(this) <= 10`),
@@ -261,7 +261,7 @@ func TestSetValidate(t *testing.T) {
 			rules.When(rules.Expr(`active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
-						rules.Required,
+						rules.Present,
 					),
 				),
 			),
@@ -280,7 +280,7 @@ func TestSetValidate(t *testing.T) {
 			rules.When(rules.Expr(`active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
-						rules.Required,
+						rules.Present,
 					),
 				),
 			),
@@ -386,7 +386,7 @@ func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
 	t.Run("rule still fails when the scoped address field fails", func(t *testing.T) {
 		p := &Person{
 			Name:          "Alice",
-			Address:       &Address{City: ""},      // should fail
+			Address:       &Address{City: ""},       // should fail
 			SecondAddress: &Address{City: "London"}, // should not be checked
 		}
 		faults := set.Validate(p)
@@ -402,7 +402,7 @@ func TestEach(t *testing.T) {
 			rules.Field("emails",
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("01", "email address is required", rules.Required),
+						rules.Assert("01", "email address is required", rules.Present),
 					),
 				),
 			),
@@ -429,7 +429,7 @@ func TestEach(t *testing.T) {
 			rules.Field("emails",
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("01", "email address is required", rules.Required),
+						rules.Assert("01", "email address is required", rules.Present),
 					),
 				),
 			),
@@ -444,7 +444,7 @@ func TestEach(t *testing.T) {
 		set := rules.For(new(Person),
 			rules.Field("emails",
 				rules.Each(
-					rules.Assert("01", "required", rules.Required),
+					rules.Assert("01", "required", rules.Present),
 				),
 			),
 		)
@@ -462,7 +462,7 @@ func TestEach(t *testing.T) {
 				),
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("02", "email address is required", rules.Required),
+						rules.Assert("02", "email address is required", rules.Present),
 					),
 				),
 			),
@@ -484,7 +484,7 @@ func TestEach(t *testing.T) {
 		assert.Panics(t, func() {
 			rules.For(new(Email),
 				rules.Each(
-					rules.Assert("01", "required", rules.Required),
+					rules.Assert("01", "required", rules.Present),
 				),
 			)
 		})

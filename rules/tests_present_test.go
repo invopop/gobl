@@ -7,56 +7,56 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRequired(t *testing.T) {
+func TestPresent(t *testing.T) {
 	t.Run("passes for non-empty string", func(t *testing.T) {
-		assert.True(t, rules.Required.Check("hello"))
+		assert.True(t, rules.Present.Check("hello"))
 	})
 
 	t.Run("fails for empty string", func(t *testing.T) {
-		assert.False(t, rules.Required.Check(""))
+		assert.False(t, rules.Present.Check(""))
 	})
 
 	t.Run("passes for non-zero int", func(t *testing.T) {
-		assert.True(t, rules.Required.Check(42))
+		assert.True(t, rules.Present.Check(42))
 	})
 
 	t.Run("fails for zero int", func(t *testing.T) {
-		assert.False(t, rules.Required.Check(0))
+		assert.False(t, rules.Present.Check(0))
 	})
 
 	t.Run("passes for true bool", func(t *testing.T) {
-		assert.True(t, rules.Required.Check(true))
+		assert.True(t, rules.Present.Check(true))
 	})
 
 	t.Run("fails for false bool", func(t *testing.T) {
-		assert.False(t, rules.Required.Check(false))
+		assert.False(t, rules.Present.Check(false))
 	})
 
 	t.Run("passes for non-empty slice", func(t *testing.T) {
-		assert.True(t, rules.Required.Check([]string{"a"}))
+		assert.True(t, rules.Present.Check([]string{"a"}))
 	})
 
 	t.Run("fails for empty slice", func(t *testing.T) {
-		assert.False(t, rules.Required.Check([]string{}))
+		assert.False(t, rules.Present.Check([]string{}))
 	})
 
 	t.Run("fails for nil pointer", func(t *testing.T) {
 		var s *string
-		assert.False(t, rules.Required.Check(s))
+		assert.False(t, rules.Present.Check(s))
 	})
 
 	t.Run("passes for non-nil pointer to non-empty value", func(t *testing.T) {
 		s := "hello"
-		assert.True(t, rules.Required.Check(&s))
+		assert.True(t, rules.Present.Check(&s))
 	})
 
 	t.Run("fails for non-nil pointer to empty value", func(t *testing.T) {
 		s := ""
-		assert.False(t, rules.Required.Check(&s))
+		assert.False(t, rules.Present.Check(&s))
 	})
 
-	t.Run("String returns required", func(t *testing.T) {
-		assert.Equal(t, "required", rules.Required.String())
+	t.Run("String returns present", func(t *testing.T) {
+		assert.Equal(t, "present", rules.Present.String())
 	})
 }
 

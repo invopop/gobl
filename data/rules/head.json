@@ -13,7 +13,7 @@
             {
               "id": "GOBL-HEAD-HEADER-01",
               "desc": "header must contain a UUID v1 or v7 with timestamp",
-              "tests": "required, has timestamp"
+              "tests": "present, has timestamp"
             }
           ]
         },
@@ -23,7 +23,7 @@
             {
               "id": "GOBL-HEAD-HEADER-02",
               "desc": "header must have a digest",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         },
@@ -60,7 +60,7 @@
             {
               "id": "GOBL-HEAD-STAMP-01",
               "desc": "stamp provider is required",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         },
@@ -70,7 +70,7 @@
             {
               "id": "GOBL-HEAD-STAMP-02",
               "desc": "stamp value is required",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         }
@@ -94,7 +94,7 @@
             {
               "id": "GOBL-HEAD-LINK-01",
               "desc": "link key is required",
-              "tests": "required"
+              "tests": "present"
             }
           ]
         },
@@ -114,7 +114,7 @@
             {
               "id": "GOBL-HEAD-LINK-03",
               "desc": "link URL is required",
-              "tests": "required"
+              "tests": "present"
             },
             {
               "id": "GOBL-HEAD-LINK-04",
