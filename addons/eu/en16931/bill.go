@@ -290,7 +290,9 @@ func validateTotalsTaxes(value any) error {
 
 	return validation.ValidateStruct(taxes,
 		validation.Field(&taxes.Categories,
-			validation.Each(validation.By(validateTaxCategory)),
+			validation.Each(
+				validation.By(validateTaxCategory),
+			),
 		),
 	)
 }

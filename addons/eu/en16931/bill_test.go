@@ -79,6 +79,22 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
+func TestTotalsTaxValidationNilGuards(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("nil totals", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Totals = nil
+		assert.NoError(t, ad.Validator(inv))
+	})
+	t.Run("nil totals taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Totals.Taxes = nil
+		assert.NoError(t, ad.Validator(inv))
+	})
+}
+
 func TestTotalsTaxValidation(t *testing.T) {
 	t.Run("duplicate exempt code", func(t *testing.T) {
 		// Two exempt lines with different rate total rows for (VAT, E) — should be rejected.
