@@ -21,7 +21,7 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyPaymentMethod:  "PMD",
 	org.NoteKeyPaymentTerm:    "AAB",
 	org.NoteKeyGeneral:        "AAI", // General information
-	org.NoteKeyLegal:          "ABY",
+	org.NoteKeyLegal:          "ABL", // Government information
 	org.NoteKeyDangerousGoods: "AAC",
 	org.NoteKeyAck:            "AAE",
 	org.NoteKeyRate:           "AAF",
@@ -68,9 +68,16 @@ func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
 	}
-	if n.Key == cbc.KeyEmpty {
+
+	// src takes precedence over key so that the reverse-charge note
+	// that was being set by some regimes is correctly handled
+	if code := vatKeyMap.Get(n.Src); !code.IsEmpty() {
+		n.Ext = n.Ext.Merge(tax.Extensions{
+			untdid.ExtKeyTaxCategory: code,
+		})
 		return
 	}
+
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
 		n.Ext = n.Ext.Merge(tax.Extensions{
 			untdid.ExtKeyTextSubject: code,

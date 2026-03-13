@@ -20,23 +20,6 @@
       }
     }
   ],
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "reverse-charge",
-            "text": "Reverse Charge / Umkehr der Steuerschuld."
-          }
-        }
-      ]
-    }
-  ],
   "corrections": [
     {
       "schema": "bill/invoice",
