@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: `When` field on `Tax` to define the tax point date (issue, delivery, paid).
+
 ### Changed
 
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
