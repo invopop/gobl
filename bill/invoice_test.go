@@ -1209,7 +1209,7 @@ func TestValidation(t *testing.T) {
 
 	t.Run("tax when without value date", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
-		inv.Tax.When = bill.TaxWhenDelivery
+		inv.Tax.When = tax.WhenDelivery
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
@@ -1218,7 +1218,7 @@ func TestValidation(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		vd := cal.MakeDate(2022, 6, 20)
 		inv.ValueDate = &vd
-		inv.Tax.When = bill.TaxWhenDelivery
+		inv.Tax.When = tax.WhenDelivery
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "value_date: value date cannot be set when tax.when is set")

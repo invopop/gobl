@@ -96,7 +96,7 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 			cbc.InKeyDefs(tax.RoundingRules),
 		),
 		validation.Field(&t.When,
-			cbc.InKeyDefs(TaxWhenDefs),
+			cbc.InKeyDefs(tax.WhenDefs),
 		),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),
@@ -132,8 +132,8 @@ func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
 		}
 	}
 	if p, ok := schema.Properties.Get("when"); ok {
-		p.OneOf = make([]*jsonschema.Schema, len(TaxWhenDefs))
-		for i, w := range TaxWhenDefs {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.WhenDefs))
+		for i, w := range tax.WhenDefs {
 			p.OneOf[i] = &jsonschema.Schema{
 				Const:       w.Key.String(),
 				Title:       w.Name.String(),

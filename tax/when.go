@@ -1,4 +1,4 @@
-package bill
+package tax
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -6,27 +6,27 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Tax When keys define when the tax point occurs, i.e. when the tax liability
+// When keys define when the tax point occurs, i.e. when the tax liability
 // is triggered. These correspond to UNCL 2005 date/time/period function codes
 // used in BT-8 of the EN 16931 standard.
 const (
-	// TaxWhenIssue indicates tax is due on the invoice issue date.
+	// WhenIssue indicates tax is due on the invoice issue date.
 	// Corresponds to UNCL 2005 code 3.
-	TaxWhenIssue cbc.Key = "issue"
+	WhenIssue cbc.Key = "issue"
 
-	// TaxWhenDelivery indicates tax is due on the delivery date.
+	// WhenDelivery indicates tax is due on the delivery date.
 	// Corresponds to UNCL 2005 code 35.
-	TaxWhenDelivery cbc.Key = "delivery"
+	WhenDelivery cbc.Key = "delivery"
 
-	// TaxWhenPaid indicates tax is due when payment is received.
+	// WhenPaid indicates tax is due when payment is received.
 	// Corresponds to UNCL 2005 code 432.
-	TaxWhenPaid cbc.Key = "paid"
+	WhenPaid cbc.Key = "paid"
 )
 
-// TaxWhenDefs lists the supported tax when keys and their descriptions.
-var TaxWhenDefs = []*cbc.Definition{
+// WhenDefs lists the supported tax when keys and their descriptions.
+var WhenDefs = []*cbc.Definition{
 	{
-		Key: TaxWhenIssue,
+		Key: WhenIssue,
 		Name: i18n.String{
 			i18n.EN: "Issue Date",
 		},
@@ -37,7 +37,7 @@ var TaxWhenDefs = []*cbc.Definition{
 		},
 	},
 	{
-		Key: TaxWhenDelivery,
+		Key: WhenDelivery,
 		Name: i18n.String{
 			i18n.EN: "Delivery Date",
 		},
@@ -48,7 +48,7 @@ var TaxWhenDefs = []*cbc.Definition{
 		},
 	},
 	{
-		Key: TaxWhenPaid,
+		Key: WhenPaid,
 		Name: i18n.String{
 			i18n.EN: "Paid Date",
 		},
