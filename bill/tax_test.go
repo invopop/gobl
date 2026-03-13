@@ -30,6 +30,19 @@ func TestTaxValidation(t *testing.T) {
 		err := tx.ValidateWithContext(context.Background())
 		assert.ErrorContains(t, err, "rounding: must be a valid value")
 	})
+	t.Run("with when", func(t *testing.T) {
+		tx := &bill.Tax{
+			When: "delivery",
+		}
+		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+	})
+	t.Run("with invalid when", func(t *testing.T) {
+		tx := &bill.Tax{
+			When: "invalid",
+		}
+		err := tx.ValidateWithContext(context.Background())
+		assert.ErrorContains(t, err, "when: must be a valid value")
+	})
 }
 
 func TestTaxNormalize(t *testing.T) {
@@ -204,20 +217,31 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 			"rounding": {
 				"type": "string",
 				"title": "Rounding"
-			}	
+			},
+			"when": {
+				"type": "string",
+				"title": "When"
+			}
 		}
 	}`
 	schema := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(eg), schema))
 
-	tax := new(bill.Tax)
-	tax.JSONSchemaExtend(schema)
+	tx := new(bill.Tax)
+	tx.JSONSchemaExtend(schema)
 
 	prop, ok := schema.Properties.Get("rounding")
 	require.True(t, ok)
 	assert.Len(t, prop.OneOf, 2)
 	assert.Equal(t, "precise", prop.OneOf[0].Const)
 	assert.Equal(t, "currency", prop.OneOf[1].Const)
+
+	prop, ok = schema.Properties.Get("when")
+	require.True(t, ok)
+	assert.Len(t, prop.OneOf, 3)
+	assert.Equal(t, "issue", prop.OneOf[0].Const)
+	assert.Equal(t, "delivery", prop.OneOf[1].Const)
+	assert.Equal(t, "paid", prop.OneOf[2].Const)
 }
 
 func TestTaxGetExt(t *testing.T) {
