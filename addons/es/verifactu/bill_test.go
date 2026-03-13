@@ -161,7 +161,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: customer is required")
+		require.ErrorContains(t, rules.Validate(inv), "(customer) customer is required")
 	})
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -181,7 +181,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "text: general note text must be 500 characters or less")
+		require.ErrorContains(t, err, "(text) general note text must be 500 characters or less")
 	})
 
 	t.Run("note with wrong key", func(t *testing.T) {
@@ -223,7 +223,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
-		assertValidationError(t, inv, "preceding: preceding documents are required for corrective invoices")
+		assertValidationError(t, inv, "(preceding) preceding documents are required for corrective invoices")
 	})
 	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -250,8 +250,8 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "issue_date: issue date is required")
-		require.ErrorContains(t, err, "tax: preceding invoice tax data is required")
+		require.ErrorContains(t, err, "(preceding[0].issue_date) issue date is required")
+		require.ErrorContains(t, err, "(preceding[0].tax) preceding invoice tax data is required")
 	})
 
 	t.Run("corrective invoice with preceding", func(t *testing.T) {
@@ -321,8 +321,8 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "issue_date: issue date is required")
-		require.ErrorContains(t, err, "tax: preceding invoice tax data is required")
+		require.ErrorContains(t, err, "(issue_date) issue date is required")
+		require.ErrorContains(t, err, "(tax) preceding invoice tax data is required")
 	})
 
 	t.Run("customer nil", func(t *testing.T) {
@@ -336,14 +336,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "customer: must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'")
+		assert.ErrorContains(t, rules.Validate(inv), "(customer) must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'")
 	})
 	t.Run("customer with missing Tax ID code", func(t *testing.T) {
 		// VERI*FACTU has no way to handle just a country without an actual code.
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "customer: tax ID must have a code")
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-08] (customer.tax_id.code) tax ID must have a code")
 	})
 	t.Run("customer with identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -402,7 +402,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: customer tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "(customer) customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified substitution R5 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -431,7 +431,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: customer tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "(customer) customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified invoice F2 with customer identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -445,7 +445,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has identity - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: customer identity type extension not allowed for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "(customer) customer identity type extension not allowed for simplified invoices")
 	})
 
 	t.Run("invoice with only retained taxes fails", func(t *testing.T) {
@@ -459,7 +459,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "taxes: must include at least one of VAT, IGIC, or IPSI")
+		require.ErrorContains(t, err, "(lines[0].taxes) must include at least one of VAT, IGIC, or IPSI")
 	})
 
 	t.Run("invoice with VAT and IRPF passes", func(t *testing.T) {

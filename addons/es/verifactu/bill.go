@@ -112,7 +112,7 @@ func billInvoiceRules() *rules.Set {
 		// Preceding documents
 		// Code 01: preceding required when corrective
 		rules.When(
-			rules.By("corrective", invoiceTypeIsCorrective),
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
 			rules.Field("preceding",
 				rules.Assert("01", "preceding documents are required for corrective invoices", rules.Required),
 			),
@@ -130,7 +130,7 @@ func billInvoiceRules() *rules.Set {
 		),
 		// Code 03: each preceding tax required when corrective
 		rules.When(
-			rules.By("corrective", invoiceTypeIsCorrective),
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
 			rules.Field("preceding",
 				rules.Each(
 					rules.When(
@@ -148,8 +148,10 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			rules.By("simplified", isSimplifiedInvoice),
 			rules.Field("customer",
-				rules.Assert("04", "customer tax ID must not be set for simplified invoices",
-					rules.By("no tax_id", simplifiedCustomerHasNoTaxID),
+				rules.Field("tax_id",
+					rules.Assert("04", "customer tax ID must not be set for simplified invoices",
+						rules.Nil,
+					),
 				),
 				rules.Assert("05", "customer identity type extension not allowed for simplified invoices",
 					rules.By("no identity type ext", simplifiedCustomerHasNoIdentityType),
@@ -167,8 +169,10 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
 					rules.By("has tax_id or identity", customerHasTaxIDOrIdentity),
 				),
-				rules.Assert("08", "tax ID must have a code",
-					rules.By("tax_id has code", customerTaxIDHasCode),
+				rules.Field("tax_id",
+					rules.Field("code",
+						rules.Assert("08", "tax ID must have a code", rules.Required),
+					),
 				),
 			),
 		),
@@ -180,34 +184,34 @@ func billInvoiceRules() *rules.Set {
 			rules.Assert("09", "tax is required", rules.Required),
 			rules.Field("ext",
 				rules.Assert("10", "doc type is required",
-					rules.By("has doc type", extHasDocType),
+					tax.ExtensionsRequire(ExtKeyDocType),
 				),
 				rules.When(
-					rules.By("credit/debit doc type", extDocTypeIsCreditDebit),
-					rules.Assert("13", "correction type is required",
-						rules.By("has correction type", extHasCorrectionType),
+					tax.ExtensionsHasCodes(ExtKeyDocType, "R1", "R2", "R3", "R4", "R5"),
+					rules.Assert("13", "correction type extension is required",
+						tax.ExtensionsRequire(ExtKeyCorrectionType),
 					),
 				),
 			),
 		),
 		// Code 11: standard invoice doc type must be F1, F2, or F3
 		rules.When(
-			rules.By("standard invoice type", invoiceTypeIsStandard),
+			bill.InvoiceTypeIn(bill.InvoiceTypeStandard),
 			rules.Field("tax",
 				rules.Field("ext",
-					rules.Assert("11", "doc type for standard invoices must be F1, F2, or F3",
-						rules.By("standard doc type", extDocTypeInStandard),
+					rules.Assert("11", "doc type extension for standard invoices must be F1, F2, or F3",
+						tax.ExtensionsHasCodes(ExtKeyDocType, "F1", "F2", "F3"),
 					),
 				),
 			),
 		),
 		// Code 12: corrective invoice doc type must be R1-R5
 		rules.When(
-			rules.By("corrective invoice type", invoiceTypeIsCorrectiveType),
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
 			rules.Field("tax",
 				rules.Field("ext",
-					rules.Assert("12", "doc type for corrective invoices must be R1, R2, R3, R4, or R5",
-						rules.By("corrective doc type", extDocTypeInCreditDebit),
+					rules.Assert("12", "doc type extension for corrective invoices must be R1, R2, R3, R4, or R5",
+						tax.ExtensionsHasCodes(ExtKeyDocType, "R1", "R2", "R3", "R4", "R5"),
 					),
 				),
 			),
@@ -230,7 +234,7 @@ func billInvoiceRules() *rules.Set {
 			rules.Each(
 				rules.Field("taxes",
 					rules.Assert("15", "must include at least one of VAT, IGIC, or IPSI",
-						rules.By("has required tax category", lineHasRequiredTax),
+						tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
 					),
 				),
 			),
@@ -247,53 +251,9 @@ func isNotSimplifiedInvoice(val any) bool {
 	return !isSimplifiedInvoice(val)
 }
 
-func invoiceTypeIsCorrective(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && inv.Type == bill.InvoiceTypeCorrective
-}
-
-func invoiceTypeIsStandard(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && inv.Type == bill.InvoiceTypeStandard
-}
-
-func invoiceTypeIsCorrectiveType(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && inv.Type.In(bill.InvoiceTypeCorrective, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote)
-}
-
 func precedingDocIsNotNil(val any) bool {
 	ref, ok := val.(*org.DocumentRef)
 	return ok && ref != nil
-}
-
-func extHasDocType(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext.Has(ExtKeyDocType)
-}
-
-func extDocTypeInStandard(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext.Get(ExtKeyDocType).In("F1", "F2", "F3")
-}
-
-func extDocTypeInCreditDebit(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext.Get(ExtKeyDocType).In("R1", "R2", "R3", "R4", "R5")
-}
-
-func extDocTypeIsCreditDebit(val any) bool {
-	return extDocTypeInCreditDebit(val)
-}
-
-func extHasCorrectionType(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext.Has(ExtKeyCorrectionType)
-}
-
-func simplifiedCustomerHasNoTaxID(val any) bool {
-	p, ok := val.(*org.Party)
-	return !ok || p == nil || p.TaxID == nil
 }
 
 func simplifiedCustomerHasNoIdentityType(val any) bool {
@@ -312,28 +272,7 @@ func customerHasTaxIDOrIdentity(val any) bool {
 	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
 }
 
-func customerTaxIDHasCode(val any) bool {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return true
-	}
-	return p.TaxID == nil || !p.TaxID.Code.IsEmpty()
-}
-
 func isGeneralNote(val any) bool {
 	note, ok := val.(*org.Note)
 	return ok && note != nil && note.Key == org.NoteKeyGeneral
-}
-
-func lineHasRequiredTax(val any) bool {
-	ts, ok := val.(tax.Set)
-	if !ok {
-		return false
-	}
-	for _, c := range ts {
-		if c != nil && c.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI) {
-			return true
-		}
-	}
-	return false
 }

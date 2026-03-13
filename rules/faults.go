@@ -37,7 +37,7 @@ func (f *Fault) Message() string {
 func (f *Fault) Error() string {
 	msg := f.message
 	if f.path != "" {
-		msg = f.path + ": " + msg
+		msg = "(" + f.path + ") " + msg
 	}
 	return fmt.Sprintf("[%s] %s", f.code, msg)
 }

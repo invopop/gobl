@@ -115,21 +115,35 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 // RequireIdentityType provides a validation rule that will determine if at least one
 // of the identities defined includes one with the defined type.
 func RequireIdentityType(typ ...cbc.Code) validation.Rule {
-	return validateIdentitySet{typs: typ}
+	return IdentitiesTest{
+		desc: fmt.Sprintf("type in [%s]", strings.Join(cbc.CodeStrings(typ), ", ")),
+		typs: typ,
+	}
 }
 
 // RequireIdentityKey provides a validation rule that will determine if at least one
 // of the identities defined includes one with one of the defined keys.
 func RequireIdentityKey(key ...cbc.Key) validation.Rule {
-	return validateIdentitySet{keys: key}
+	return IdentitiesTest{
+		desc: fmt.Sprintf("key in [%s]", strings.Join(cbc.KeyStrings(key), ", ")),
+		keys: key,
+	}
 }
 
-type validateIdentitySet struct {
+// IdentitiesTest defines a validation test instance to use with identity arrays.
+type IdentitiesTest struct {
+	desc string
 	typs []cbc.Code
 	keys []cbc.Key
 }
 
-func (v validateIdentitySet) Validate(value interface{}) error {
+// String provides a description of the test being performed.
+func (v IdentitiesTest) String() string {
+	return v.desc
+}
+
+// Validate checks that the value is an array of identities and that at least one of them matches the criteria defined in the test.
+func (v IdentitiesTest) Validate(value any) error {
 	ids, ok := value.([]*Identity)
 	if !ok {
 		return nil
@@ -142,20 +156,9 @@ func (v validateIdentitySet) Validate(value interface{}) error {
 	return fmt.Errorf("missing %s", v)
 }
 
-func (v validateIdentitySet) matches(row *Identity) bool {
+func (v IdentitiesTest) matches(row *Identity) bool {
 	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
 		(len(v.keys) == 0 || row.Key.In(v.keys...))
-}
-
-func (v validateIdentitySet) String() string {
-	var parts []string
-	if len(v.typs) != 0 {
-		parts = append(parts, fmt.Sprintf("type '%s'", strings.Join(cbc.CodeStrings(v.typs), "', '")))
-	}
-	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), "', '")))
-	}
-	return strings.Join(parts, ", ")
 }
 
 // IdentityForType helps return the identity with a matching type code.
