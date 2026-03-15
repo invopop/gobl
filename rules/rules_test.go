@@ -490,3 +490,62 @@ func TestEach(t *testing.T) {
 		})
 	})
 }
+
+// Wrapper and Inner types for Embeddable tests.
+type Inner struct {
+	Name string `json:"name"`
+}
+
+type Wrapper struct {
+	inner *Inner
+}
+
+func (w *Wrapper) Embedded() any {
+	return w.inner
+}
+
+func innerRules() *rules.Set {
+	return rules.For(new(Inner),
+		rules.Field("name",
+			rules.Assert("01", "inner name is required", rules.Present),
+		),
+	)
+}
+
+// Container holds a Wrapper in a JSON field to test path prefixing.
+type Container struct {
+	Doc *Wrapper `json:"doc"`
+}
+
+func init() {
+	rules.Register("embeddable-test", rules.GOBL.Add("EMBTEST"), innerRules())
+}
+
+func TestEmbeddable(t *testing.T) {
+	t.Run("faults from embedded payload carry no extra prefix", func(t *testing.T) {
+		w := &Wrapper{inner: &Inner{Name: ""}}
+		set := innerRules()
+		faults := set.Validate(w)
+		// The set is scoped to Inner; Wrapper itself has no matching rules.
+		assert.Nil(t, faults)
+	})
+
+	t.Run("global Validate traverses Embeddable and prefixes path correctly", func(t *testing.T) {
+		c := &Container{Doc: &Wrapper{inner: &Inner{Name: ""}}}
+		faults := rules.Validate(c)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("doc.name"), "expected fault at doc.name, got: %v", faults)
+	})
+
+	t.Run("global Validate passes when embedded payload is valid", func(t *testing.T) {
+		c := &Container{Doc: &Wrapper{inner: &Inner{Name: "Alice"}}}
+		faults := rules.Validate(c)
+		assert.Nil(t, faults)
+	})
+
+	t.Run("nil embedded payload is skipped", func(t *testing.T) {
+		c := &Container{Doc: &Wrapper{inner: nil}}
+		faults := rules.Validate(c)
+		assert.Nil(t, faults)
+	})
+}

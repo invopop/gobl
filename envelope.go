@@ -153,11 +153,6 @@ func (e *Envelope) Validate() error {
 	if err := rules.Validate(e); err != nil {
 		return err
 	}
-	// The document instance needs to be checked manually as the rules validation
-	// process is not capable of drilling down in to the schema object automatically.
-	if err := e.Document.Validate(); err != nil {
-		return err
-	}
 	return e.ValidateWithContext(context.Background())
 }
 

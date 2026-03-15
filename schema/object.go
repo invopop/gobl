@@ -74,7 +74,7 @@ func objectRules() *rules.Set {
 // and return them as a list of faults. This will only check the
 // payload of the object, which would not otherwise be verified.
 func (d *Object) Validate() rules.Faults {
-	return rules.Validate(d.Instance())
+	return rules.Validate(d)
 }
 
 // IsEmpty returns true if no payload has been set yet.
@@ -84,6 +84,12 @@ func (d *Object) IsEmpty() bool {
 
 // Instance returns a prepared version of the document's content.
 func (d *Object) Instance() interface{} {
+	return d.payload
+}
+
+// Embedded returns the document payload so that the rules traversal can validate
+// it at the same JSON level as the Object wrapper, maintaining correct paths.
+func (d *Object) Embedded() any {
 	return d.payload
 }
 

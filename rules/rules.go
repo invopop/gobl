@@ -61,6 +61,14 @@ type Test interface {
 	String() string
 }
 
+// Embeddable is implemented by types that wrap a private payload whose rules
+// should be validated as if the payload were at the same JSON level as the wrapper.
+// When the rules traversal encounters a struct that implements Embeddable, it calls
+// Embedded() and recurses into the result without adding any path prefix.
+type Embeddable interface {
+	Embedded() any
+}
+
 type compilableTest interface {
 	compile(val any) error
 }
@@ -610,6 +618,14 @@ func (s *Set) validateNestedValue(obj any) []*Fault {
 			}
 		}
 	}
+
+	// If the object exposes an embedded payload, validate it at the same path level.
+	if emb, ok := callObj.(Embeddable); ok {
+		if inner := emb.Embedded(); inner != nil {
+			faults = append(faults, s.validateNestedValue(inner)...)
+		}
+	}
+
 	return faults
 }
 

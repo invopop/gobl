@@ -233,7 +233,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "[GOBL-NOTE-MESSAGE-01] (content) message content is required",
+			want: "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -290,7 +290,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
