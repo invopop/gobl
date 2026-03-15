@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +21,7 @@ func TestLinkValidation(t *testing.T) {
 			Title: "Test Link Title",
 			URL:   "https://example.com",
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 	t.Run("invalid link", func(t *testing.T) {
 		l := &head.Link{
@@ -28,7 +29,7 @@ func TestLinkValidation(t *testing.T) {
 			Title: "Test Link Title",
 			URL:   "example",
 		}
-		require.ErrorContains(t, l.Validate(), "url: must be a valid URL")
+		require.ErrorContains(t, rules.Validate(l), "link URL must be a valid URL")
 	})
 
 	t.Run("missing url", func(t *testing.T) {
@@ -36,7 +37,7 @@ func TestLinkValidation(t *testing.T) {
 			Key:   "test",
 			Title: "Test Link Title",
 		}
-		require.ErrorContains(t, l.Validate(), "url: cannot be blank")
+		require.ErrorContains(t, rules.Validate(l), "link URL is required")
 	})
 
 	t.Run("missing key", func(t *testing.T) {
@@ -44,7 +45,7 @@ func TestLinkValidation(t *testing.T) {
 			Title: "Test Link Title",
 			URL:   "https://example.com",
 		}
-		require.ErrorContains(t, l.Validate(), "key: cannot be blank")
+		require.ErrorContains(t, rules.Validate(l), "link key is required")
 	})
 
 	t.Run("valid MIME types", func(t *testing.T) {
@@ -66,7 +67,7 @@ func TestLinkValidation(t *testing.T) {
 				MIME: mime,
 				URL:  "https://example.com",
 			}
-			assert.NoError(t, l.Validate(), "MIME type %s should be valid", mime)
+			assert.NoError(t, rules.Validate(l), "MIME type %s should be valid", mime)
 		}
 	})
 
@@ -84,9 +85,9 @@ func TestLinkValidation(t *testing.T) {
 				MIME: mime,
 				URL:  "https://example.com",
 			}
-			err := l.Validate()
+			err := rules.Validate(l)
 			require.Error(t, err, "MIME type %s should be invalid", mime)
-			require.ErrorContains(t, err, "mime:", "Error should mention mime field")
+			require.ErrorContains(t, err, "link MIME type", "Error should mention mime field")
 		}
 	})
 
@@ -96,7 +97,7 @@ func TestLinkValidation(t *testing.T) {
 			MIME: "",
 			URL:  "https://example.com",
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 }
 
@@ -111,7 +112,7 @@ func TestLinkDigestValidation(t *testing.T) {
 			},
 			URL: "https://example.com",
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 
 	t.Run("digest without MIME type should fail", func(t *testing.T) {
@@ -123,9 +124,9 @@ func TestLinkDigestValidation(t *testing.T) {
 			},
 			URL: "https://example.com",
 		}
-		err := l.Validate()
+		err := rules.Validate(l)
 		require.Error(t, err)
-		require.ErrorContains(t, err, "must be nil when MIME type is not provided")
+		require.ErrorContains(t, err, "link digest must be nil when MIME type is not provided")
 	})
 
 	t.Run("no digest without MIME type is valid", func(t *testing.T) {
@@ -133,7 +134,7 @@ func TestLinkDigestValidation(t *testing.T) {
 			Key: "test",
 			URL: "https://example.com",
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 }
 

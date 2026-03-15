@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
@@ -276,45 +277,6 @@ func CleanExtensions(em Extensions) Extensions {
 	return nem
 }
 
-// ExtensionsRequire returns a validation rule that ensures that all of
-// the provided keys are present.
-func ExtensionsRequire(keys ...cbc.Key) validation.Rule {
-	return validateExtCodeMap{
-		operator: extCodeOpAnd,
-		keys:     keys,
-	}
-}
-
-// ExtensionsRequireAllOrNone returns a validation rule that performs an XNOR
-// operation on the provided keys. If one of the keys is present, then
-// all of them must be present. If none of the keys are present,
-// then all of them must be absent.
-func ExtensionsRequireAllOrNone(keys ...cbc.Key) validation.Rule {
-	return validateExtCodeMap{
-		operator: extCodeOpXNOr,
-		keys:     keys,
-	}
-}
-
-// ExtensionsExclude returns a validation rule that ensures that
-// an extensions map does **not** include the provided keys.
-func ExtensionsExclude(keys ...cbc.Key) validation.Rule {
-	return validateExtCodeMap{
-		operator: extCodeOpNot,
-		keys:     keys,
-	}
-}
-
-// ExtensionsAllowOneOf returns a validation rule that ensures at most
-// one of the provided keys is present in the extensions map. This is useful
-// for mutually exclusive options where none or one is allowed.
-func ExtensionsAllowOneOf(keys ...cbc.Key) validation.Rule {
-	return validateExtCodeMap{
-		operator: extCodeOpOneOf,
-		keys:     keys,
-	}
-}
-
 type extCodeOp int
 
 const (
@@ -323,21 +285,97 @@ const (
 	extCodeOpNot
 	extCodeOpXNOr
 	extCodeOpOneOf
+	extCodeOpHasCodes
+	extCodeOpExcludeCodes
 )
 
-type validateExtCodeMap struct {
-	keys     []cbc.Key
-	operator extCodeOp
+// ExtensionsRule is a validation rule for extension maps. It implements both
+// validation.Rule (for use with the invopop/validation package) and the
+// rules.Test interface (Check + String), so it can be used in rules.When
+// conditions and rules.Assert tests as well as regular validation.
+type ExtensionsRule struct {
+	desc   string
+	op     extCodeOp
+	keys   []cbc.Key  // used by key-based operators
+	key    cbc.Key    // used by code-based operators
+	values []cbc.Code // used by code-based operators
 }
 
-func (v validateExtCodeMap) Validate(value interface{}) error {
+// ExtensionsRequire returns a validation rule that ensures that all of
+// the provided keys are present.
+func ExtensionsRequire(keys ...cbc.Key) ExtensionsRule {
+	return ExtensionsRule{
+		op:   extCodeOpAnd,
+		keys: keys,
+		desc: "extensions require " + extKeyList(keys),
+	}
+}
+
+// ExtensionsRequireAllOrNone returns a validation rule that performs an XNOR
+// operation on the provided keys. If one of the keys is present, then
+// all of them must be present. If none of the keys are present,
+// then all of them must be absent.
+func ExtensionsRequireAllOrNone(keys ...cbc.Key) ExtensionsRule {
+	return ExtensionsRule{
+		op:   extCodeOpXNOr,
+		keys: keys,
+		desc: "extensions require all or none of " + extKeyList(keys),
+	}
+}
+
+// ExtensionsExclude returns a validation rule that ensures that
+// an extensions map does **not** include the provided keys.
+func ExtensionsExclude(keys ...cbc.Key) ExtensionsRule {
+	return ExtensionsRule{
+		op:   extCodeOpNot,
+		keys: keys,
+		desc: "extensions exclude " + extKeyList(keys),
+	}
+}
+
+// ExtensionsAllowOneOf returns a validation rule that ensures at most
+// one of the provided keys is present in the extensions map. This is useful
+// for mutually exclusive options where none or one is allowed.
+func ExtensionsAllowOneOf(keys ...cbc.Key) ExtensionsRule {
+	return ExtensionsRule{
+		op:   extCodeOpOneOf,
+		keys: keys,
+		desc: "extensions allow one of " + extKeyList(keys),
+	}
+}
+
+// ExtensionsHasCodes returns a validation rule that ensures the extension map's
+// key has one of the provided **codes**.
+func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
+	return ExtensionsRule{
+		op:     extCodeOpHasCodes,
+		key:    key,
+		values: codes,
+		desc:   "extensions[" + key.String() + "] in " + extCodeList(codes),
+	}
+}
+
+// ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
+// key does not have any of the provided **codes**.
+func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
+	return ExtensionsRule{
+		op:     extCodeOpExcludeCodes,
+		key:    key,
+		values: codes,
+		desc:   "extensions[" + key.String() + "] not in " + extCodeList(codes),
+	}
+}
+
+// Validate implements the validation.Rule interface. It returns an error when
+// the extensions map does not satisfy the rule.
+func (v ExtensionsRule) Validate(value any) error {
 	em, ok := value.(Extensions)
 	if !ok {
 		return nil
 	}
 	err := make(validation.Errors)
 
-	switch v.operator {
+	switch v.op {
 	case extCodeOpAnd:
 		for _, k := range v.keys {
 			if _, ok := em[k]; !ok {
@@ -379,50 +417,8 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 				present = true
 			}
 		}
-	}
-
-	if len(err) > 0 {
-		return err
-	}
-	return nil
-}
-
-// ExtensionsHasCodes returns a validation rule that ensures the extension map's
-// key has one of the provided **codes**.
-func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCodes{
-		key:       key,
-		values:    codes,
-		inclusion: true,
-	}
-}
-
-// ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
-// key does not have any of the provided **codes**.
-func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCodes{
-		key:       key,
-		values:    codes,
-		inclusion: false,
-	}
-}
-
-type validateExtCodes struct {
-	key       cbc.Key
-	values    []cbc.Code
-	inclusion bool
-}
-
-func (v validateExtCodes) Validate(value interface{}) error {
-	em, ok := value.(Extensions)
-	if !ok {
-		return nil
-	}
-	err := make(validation.Errors)
-
-	if ev, ok := em[v.key]; ok {
-		if v.inclusion {
-			// Inclusion mode: value must be in the list
+	case extCodeOpHasCodes:
+		if ev, ok := em[v.key]; ok {
 			match := false
 			for _, val := range v.values {
 				if ev == val {
@@ -433,8 +429,9 @@ func (v validateExtCodes) Validate(value interface{}) error {
 			if !match {
 				err[v.key.String()] = errors.New("invalid value")
 			}
-		} else {
-			// Exclusion mode: value must NOT be in the list
+		}
+	case extCodeOpExcludeCodes:
+		if ev, ok := em[v.key]; ok {
 			for _, val := range v.values {
 				if ev == val {
 					err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
@@ -448,6 +445,34 @@ func (v validateExtCodes) Validate(value interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// Check implements the rules.Test interface. It returns true when the
+// extensions map satisfies the rule (i.e. validation passes).
+func (v ExtensionsRule) Check(val any) bool {
+	return v.Validate(val) == nil
+}
+
+// String implements the rules.Test interface, returning the human-readable
+// description set when the rule was constructed.
+func (v ExtensionsRule) String() string {
+	return v.desc
+}
+
+func extKeyList(keys []cbc.Key) string {
+	parts := make([]string, len(keys))
+	for i, k := range keys {
+		parts[i] = k.String()
+	}
+	return "[" + strings.Join(parts, ", ") + "]"
+}
+
+func extCodeList(codes []cbc.Code) string {
+	parts := make([]string, len(codes))
+	for i, c := range codes {
+		parts[i] = c.String()
+	}
+	return "[" + strings.Join(parts, ", ") + "]"
 }
 
 // JSONSchemaExtend provides extra details about the extension map which are

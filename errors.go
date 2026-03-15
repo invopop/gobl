@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/validation"
 )
@@ -77,7 +78,7 @@ func wrapError(err error) error {
 		return ErrUnknownSchema
 	}
 	switch err.(type) {
-	case validation.Errors:
+	case validation.Errors, rules.Faults:
 		return ErrValidation.WithCause(err)
 	}
 	return ErrInternal.WithCause(err)

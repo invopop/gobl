@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -27,7 +28,21 @@ var (
 	CURPRegexp           = regexp.MustCompile(CURPPattern)
 	SocialSecurityRegexp = regexp.MustCompile(SocialSecurityPattern)
 	PostCodeRegexp       = regexp.MustCompile(PostCodePattern)
+	taxCodeRegexpPerson  = regexp.MustCompile(mx.TaxIdentityPatternPerson)
+	taxCodeRegexpCompany = regexp.MustCompile(mx.TaxIdentityPatternCompany)
 )
+
+func validateTaxCode(value interface{}) error {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return nil
+	}
+	str := code.String()
+	if taxCodeRegexpPerson.MatchString(str) || taxCodeRegexpCompany.MatchString(str) {
+		return nil
+	}
+	return tax.ErrIdentityCodeInvalid
+}
 
 // FoodVouchers carries the data to produce a CFDI's "Complemento de
 // Vales de Despensa" (version 1.0) providing detailed information about food
@@ -107,7 +122,7 @@ func (fve *FoodVouchersEmployee) Validate() error {
 	return validation.ValidateStruct(fve,
 		validation.Field(&fve.TaxCode,
 			validation.Required,
-			validation.By(mx.ValidateTaxCode),
+			validation.By(validateTaxCode),
 		),
 		validation.Field(&fve.CURP,
 			validation.Required,

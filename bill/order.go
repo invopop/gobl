@@ -151,6 +151,12 @@ type Order struct {
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
+// CanSign returns a boolean indicating whether the order is ready to be signed
+// or not.
+func (ord *Order) CanSign() bool {
+	return !ord.Code.IsEmpty()
+}
+
 // Validate runs the validation rules for the order without the context.
 func (ord *Order) Validate() error {
 	return ord.ValidateWithContext(context.Background())

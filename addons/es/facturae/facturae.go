@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -15,6 +16,11 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V3.String(),
+		rules.GOBL.Add("ES-FACTURAE-v3"),
+		tax.HasAddon(V3),
+	)
 }
 
 func newAddon() *tax.AddonDef {

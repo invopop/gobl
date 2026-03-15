@@ -1,17 +1,16 @@
 package gb
 
 import (
-	"errors"
-	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Source: https://github.com/ltns35/go-vat
+
+const taxIdentityCodePattern = `^(\d{9}|\d{12}|GD\d{3}|HA\d{3})$`
 
 var (
 	taxCodeMultipliers = []int{
@@ -23,75 +22,69 @@ var (
 		3,
 		2,
 	}
-	taxCodeRegexps = []*regexp.Regexp{
-		regexp.MustCompile(`^\d{9}$`),
-		regexp.MustCompile(`^\d{12}$`),
-		regexp.MustCompile(`^GD\d{3}$`),
-		regexp.MustCompile(`^HA\d{3}$`),
-	}
 )
 
-// validateTaxIdentity checks to ensure the NIT code looks okay.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("GB"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid UK VAT identity format",
+					rules.Matches(taxIdentityCodePattern),
+				),
+				rules.AssertIfPresent("02", "all-zero UK VAT identity codes are not allowed",
+					rules.ByString("not-zeros", taxCodeNotZeros),
+				),
+				rules.AssertIfPresent("03", "UK VAT identity checksum mismatch",
+					rules.ByString("checksum", taxCodeChecksumValid),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
+func taxCodeNotZeros(code string) bool {
+	if strings.HasPrefix(code, "GD") || strings.HasPrefix(code, "HA") {
+		return true
 	}
-	val := code.String()
-
-	match := false
-	for _, re := range taxCodeRegexps {
-		if re.MatchString(val) {
-			match = true
-			break
-		}
-	}
-	if !match {
-		return errors.New("invalid format")
-	}
-
-	if strings.HasPrefix(val, "GD") {
-		return governmentDepartmentCheck(val)
-	}
-
-	if strings.HasPrefix(val, "HA") {
-		return healthAuthorityCheck(val)
-	}
-
-	return commercialCheck(val)
+	z, _ := strconv.Atoi(code)
+	return z != 0
 }
 
-func governmentDepartmentCheck(val string) error {
-	const expect = 499 // from 000
-	val = val[2:]
-	num, _ := strconv.Atoi(val)
-	if num > expect {
-		return errors.New("invalid government department number")
+func taxCodeChecksumValid(code string) bool {
+	if strings.HasPrefix(code, "GD") {
+		return validGovernmentDepartmentID(code)
 	}
-	return nil
+
+	if strings.HasPrefix(code, "HA") {
+		return validHealthAuthorityID(code)
+	}
+
+	return validCommercialID(code)
 }
 
-func healthAuthorityCheck(val string) error {
-	const expect = 500 // to 999
+func validGovernmentDepartmentID(val string) bool {
+	const max = 499 // range 000-499
 	val = val[2:]
 	num, _ := strconv.Atoi(val)
-	if num < expect {
-		return errors.New("invalid health authority number")
-	}
-	return nil
+	return num <= max
+}
+
+func validHealthAuthorityID(val string) bool {
+	const min = 500 // range 500-999
+	val = val[2:]
+	num, _ := strconv.Atoi(val)
+	return num >= min
 }
 
 // Specific file used as example: https://github.com/ltns35/go-vat/blob/main/countries/united_kingdom.go
-func commercialCheck(val string) error {
+func validCommercialID(val string) bool {
+	if len(val) < 9 {
+		return false
+	}
+
 	// 0 VAT numbers disallowed!
 	if z, _ := strconv.Atoi(val); z == 0 {
-		return errors.New("cannot be only zeros")
+		return false
 	}
 
 	// Check range is OK for modulus 97 calculation
@@ -125,7 +118,7 @@ func commercialCheck(val string) error {
 	lastDigits, _ := strconv.Atoi(lastDigitsStr)
 
 	if checkDigit == lastDigits && num < 9990001 && (num < 100000 || num > 999999) && (num < 9490001 || num > 9700000) {
-		return nil
+		return true
 	}
 
 	// Now try the new method by subtracting 55 from the check digit if we can - else add 42
@@ -136,8 +129,8 @@ func commercialCheck(val string) error {
 	}
 
 	if checkDigit == lastDigits && num > 1000000 {
-		return nil
+		return true
 	}
 
-	return errors.New("checksum mismatch")
+	return false // invalid
 }

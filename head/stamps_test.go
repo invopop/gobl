@@ -117,20 +117,16 @@ func TestNormalizeStamp(t *testing.T) {
 
 func TestStampsHas(t *testing.T) {
 	r := head.StampsHas(cbc.Key("foo"))
-	err := r.Validate([]*head.Stamp{
+	assert.True(t, r.Check([]*head.Stamp{
 		{
 			Provider: "foo",
 			Value:    "bar",
 		},
-	})
-	assert.NoError(t, err)
-
-	err = r.Validate([]*head.Stamp{
+	}))
+	assert.False(t, r.Check([]*head.Stamp{
 		{
 			Provider: "foo2",
 			Value:    "bar",
 		},
-	})
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "missing foo stamp")
+	}))
 }

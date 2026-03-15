@@ -9,11 +9,13 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules())
 }
 
 // New instantiates a new Swedish regime.
@@ -81,8 +83,6 @@ func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateBillInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	case *org.Identity:
 		return validateOrgIdentity(obj)
 	}

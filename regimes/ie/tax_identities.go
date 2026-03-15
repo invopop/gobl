@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Irish VAT numbers can be in two formats:
@@ -23,14 +23,24 @@ var (
 	taxCodeCheckChars = "WABCDEFGHIJKLMNOPQRSTUV"
 )
 
-// validateTaxIdentity performs validation specific to Irish tax IDs.
-// Assumes the code has already been normalized.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("IE"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Irish VAT identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
 		),
 	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
 }
 
 // validateTaxCode validates the tax code for Irish tax identities.

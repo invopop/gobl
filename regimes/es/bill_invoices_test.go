@@ -3,6 +3,7 @@ package es_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -19,8 +20,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetRegime("ES")
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (tax_id: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-ES-BILL-INVOICE-02]")
 	})
-
 }

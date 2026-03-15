@@ -105,6 +105,12 @@ type Invoice struct {
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
+// CanSign returns a boolean indicating whether the invoice is ready to be signed
+// or not.
+func (inv *Invoice) CanSign() bool {
+	return !inv.Code.IsEmpty()
+}
+
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate() error {
 	return inv.ValidateWithContext(context.Background())

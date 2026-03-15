@@ -87,23 +87,44 @@ func (s Set) Key(cat cbc.Code) cbc.Key {
 	return ""
 }
 
-type setValidation struct {
+// SetTest defines a validation rule for tax sets, checking for the presence of certain categories.
+type SetTest struct {
+	desc       string
 	categories []cbc.Code
 	oneOf      bool
 }
 
 // SetHasCategory validates that the set contains the given category.
-func SetHasCategory(categories ...cbc.Code) validation.Rule {
-	return &setValidation{categories: categories}
+func SetHasCategory(categories ...cbc.Code) *SetTest {
+	return &SetTest{
+		desc:       fmt.Sprintf("all of [%s]", strings.Join(cbc.CodeStrings(categories), ", ")),
+		categories: categories,
+	}
 }
 
 // SetHasOneOf checks that the tax set has at least one of the provided
 // categories.
-func SetHasOneOf(categories ...cbc.Code) validation.Rule {
-	return &setValidation{categories: categories, oneOf: true}
+func SetHasOneOf(categories ...cbc.Code) *SetTest {
+	return &SetTest{
+		desc:       fmt.Sprintf("one of [%s]", strings.Join(cbc.CodeStrings(categories), ", ")),
+		categories: categories,
+		oneOf:      true,
+	}
 }
 
-func (sv *setValidation) Validate(value any) error {
+// Check returns true if the value passes the validation.
+func (sv *SetTest) Check(value any) bool {
+	return sv.Validate(value) == nil
+}
+
+// String returns a description of the rule.
+func (sv *SetTest) String() string {
+	return sv.desc
+}
+
+// Validate checks that the tax set contains the required categories, and if oneOf is true,
+// that at least one of them is present.
+func (sv *SetTest) Validate(value any) error {
 	s, ok := value.(Set)
 	if !ok {
 		return nil

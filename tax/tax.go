@@ -2,6 +2,7 @@
 package tax
 
 import (
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -16,5 +17,10 @@ func init() {
 		RegimeDef{},
 		AddonDef{},
 		CatalogueDef{},
+	)
+	rules.Register(
+		"tax",
+		rules.GOBL.Add("TAX"),
+		identityRules(),
 	)
 }

@@ -1,0 +1,33 @@
+{
+  "id": "GOBL-TAX",
+  "name": "tax",
+  "subsets": [
+    {
+      "id": "GOBL-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "schema": "https://gobl.org/draft-0/tax/identity",
+      "subsets": [
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-TAX-IDENTITY-01",
+              "desc": "tax id country code is always required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-TAX-IDENTITY-02",
+              "desc": "tax id code must have a valid format",
+              "tests": "matches ^[A-Z0-9Ñ\\\u0026]+$"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

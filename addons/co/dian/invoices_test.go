@@ -29,7 +29,6 @@ func baseInvoice() *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: "CO",
 				Code:    "412615332",
-				Zone:    "11001",
 			},
 			Addresses: []*org.Address{
 				{
@@ -38,6 +37,7 @@ func baseInvoice() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
+				dian.ExtKeyMunicipality:         "11001",
 				dian.ExtKeyFiscalResponsibility: "O-13",
 			},
 		},
@@ -46,7 +46,6 @@ func baseInvoice() *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: "CO",
 				Code:    "124499654",
-				Zone:    "08638",
 			},
 			Addresses: []*org.Address{
 				{
@@ -55,6 +54,7 @@ func baseInvoice() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
+				dian.ExtKeyMunicipality:         "08638",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			},
 		},
@@ -93,7 +93,6 @@ func creditNote() *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: "CO",
 				Code:    "412615332",
-				Zone:    "11001",
 			},
 			Addresses: []*org.Address{
 				{
@@ -102,6 +101,7 @@ func creditNote() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
+				dian.ExtKeyMunicipality:         "11001",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			},
 		},
@@ -110,7 +110,6 @@ func creditNote() *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: "CO",
 				Code:    "124499654",
-				Zone:    "08638",
 			},
 			Addresses: []*org.Address{
 				{
@@ -119,6 +118,7 @@ func creditNote() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
+				dian.ExtKeyMunicipality:         "08638",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			},
 		},

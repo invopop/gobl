@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var (
@@ -17,19 +17,28 @@ var (
 		"77": true, "78": true, "79": true, "90": true, "91": true, "98": true, "99": true}
 )
 
-// validateTaxIdentity checks to ensure the NIT code looks okay.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("PT"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Portuguese NIF tax identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
-// based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal
-func validateTaxCode(value interface{}) error {
+func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok {
-		return nil
+	if !ok || code == "" {
+		return false
 	}
+	return validateTaxCode(code) == nil
+}
+
+// based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal
+func validateTaxCode(code cbc.Code) error {
 	if code == "" {
 		return nil
 	}

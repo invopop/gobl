@@ -32,17 +32,6 @@ func TestNormalizeInvoice(t *testing.T) {
 		assert.Equal(t, cbc.Code("22000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
-	t.Run("migrate issue place from supplier tax ID zone", func(t *testing.T) {
-		inv := baseInvoice()
-		inv.Supplier.Ext = nil
-		inv.Supplier.TaxID.Zone = "21000" //nolint:staticcheck
-		inv.Tax = &bill.Tax{}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
-		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
-	})
 	t.Run("does not migrate issue place from address when already present", func(t *testing.T) {
 		inv := baseInvoice()
 		delete(inv.Supplier.Ext, "mx-cfdi-post-code")
@@ -77,15 +66,6 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Customer.Ext = tax.Extensions{
 			"mx-cfdi-post-code": "12345",
 		}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		require.NotNil(t, inv.Customer.Addresses)
-		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code.String())
-		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
-	})
-	t.Run("migrate customer post code from zone", func(t *testing.T) {
-		inv := baseInvoice()
-		inv.Customer.TaxID.Zone = "12345" //nolint:staticcheck
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Customer.Addresses)

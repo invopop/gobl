@@ -1,14 +1,12 @@
 package verifactu
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
@@ -109,175 +107,172 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 	}
 }
 
-func validateBillInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Preceding,
-			validation.When(
-				// When an invoice is a "sustitutiva", the taxes from the preceding invoice must be included.
-				inv.Type.In(bill.InvoiceTypeCorrective),
-				validation.Required,
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		// Preceding documents
+		// Code 01: preceding required when corrective
+		rules.When(
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
+			rules.Field("preceding",
+				rules.Assert("01", "preceding documents are required for corrective invoices", rules.Present),
 			),
-			validation.Each(
-				validation.By(validateInvoicePreceding(inv)),
-				validation.Skip,
-			),
-			validation.Skip,
 		),
-		validation.Field(&inv.Customer,
-			validation.When(
-				inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // Simplified
-				validation.By(validateInvoiceSimplifiedCustomer),
-			).Else(
-				validation.Required,
-				validation.By(validateInvoiceCustomer),
-			),
-			validation.Skip,
-		),
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateInvoiceTax(inv.Type)),
-			validation.Skip,
-		),
-		validation.Field(&inv.Notes,
-			validation.Each(
-				validation.By(validateNote),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateBillLine(line *bill.Line) error {
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Taxes,
-			tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceCustomer(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	if p.TaxID == nil && org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) == nil {
-		return fmt.Errorf("must have a tax_id, or an identity with ext '%s'", ExtKeyIdentityType)
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.TaxID,
-			// VERI*FACTU requires all Tax IDs to have a code. Sales into
-			// countries without a specific Tax ID code will have to enter
-			// something here regardless, or issue simplified invoices.
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceSimplifiedCustomer(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.TaxID,
-			validation.Nil,
-			validation.Skip,
-		),
-		validation.Field(&p.Identities,
-			validation.Each(
-				validation.By(validateOrgIdentitiesForSimplified),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateOrgIdentitiesForSimplified(obj any) error {
-	id, ok := obj.(*org.Identity)
-	if !ok || id == nil {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Ext,
-			tax.ExtensionsExclude(ExtKeyIdentityType),
-			validation.Skip,
-		),
-	)
-}
-
-var docTypesStandard = []cbc.Code{ // Standard invoices
-	"F1", "F2", "F3",
-}
-var docTypesCreditDebit = []cbc.Code{ // Credit or Debit notes
-	"R1", "R2", "R3", "R4", "R5",
-}
-
-func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
-	return func(val any) error {
-		obj := val.(*bill.Tax)
-		return validation.ValidateStruct(obj,
-			validation.Field(&obj.Ext,
-				tax.ExtensionsRequire(ExtKeyDocType),
-				validation.When(
-					it.In(bill.InvoiceTypeStandard),
-					tax.ExtensionsHasCodes(
-						ExtKeyDocType,
-						docTypesStandard...,
+		// Code 02: each preceding issue date required
+		rules.Field("preceding",
+			rules.Each(
+				rules.When(
+					rules.By("not nil", precedingDocIsNotNil),
+					rules.Field("issue_date",
+						rules.Assert("02", "issue date is required", rules.Present),
 					),
 				),
-				validation.When(
-					it.In(bill.InvoiceTypeCorrective, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
-					tax.ExtensionsHasCodes(
-						ExtKeyDocType,
-						docTypesCreditDebit...,
+			),
+		),
+		// Code 03: each preceding tax required when corrective
+		rules.When(
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
+			rules.Field("preceding",
+				rules.Each(
+					rules.When(
+						rules.By("not nil", precedingDocIsNotNil),
+						rules.Field("tax",
+							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", rules.Present),
+						),
 					),
 				),
-				validation.When(
-					obj.Ext.Get(ExtKeyDocType).In(docTypesCreditDebit...),
-					tax.ExtensionsRequire(ExtKeyCorrectionType),
-				),
-				validation.Skip,
 			),
-		)
-	}
+		),
+		// Customer - simplified invoices (F2 or R5)
+		// Code 04: no tax_id on simplified customer
+		// Code 05: no identity type ext on simplified customer
+		rules.When(
+			rules.By("simplified", isSimplifiedInvoice),
+			rules.Field("customer",
+				rules.Field("tax_id",
+					rules.Assert("04", "customer tax ID must not be set for simplified invoices",
+						rules.Nil,
+					),
+				),
+				rules.Assert("05", "customer identity type extension not allowed for simplified invoices",
+					rules.By("no identity type ext", simplifiedCustomerHasNoIdentityType),
+				),
+			),
+		),
+		// Customer - standard invoices
+		// Code 06: customer required
+		// Code 07: customer must have tax_id or identity
+		// Code 08: customer tax_id must have code
+		rules.When(
+			rules.By("not simplified", isNotSimplifiedInvoice),
+			rules.Field("customer",
+				rules.Assert("06", "customer is required", rules.Present),
+				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
+					rules.By("has tax_id or identity", customerHasTaxIDOrIdentity),
+				),
+				rules.Field("tax_id",
+					rules.Field("code",
+						rules.Assert("08", "tax ID must have a code", rules.Present),
+					),
+				),
+			),
+		),
+		// Invoice tax extensions
+		// Code 09: tax required
+		// Code 10: doc_type required
+		// Code 13: correction_type required when credit/debit doc type
+		rules.Field("tax",
+			rules.Assert("09", "tax is required", rules.Present),
+			rules.Field("ext",
+				rules.Assert("10", "doc type is required",
+					tax.ExtensionsRequire(ExtKeyDocType),
+				),
+				rules.When(
+					tax.ExtensionsHasCodes(ExtKeyDocType, "R1", "R2", "R3", "R4", "R5"),
+					rules.Assert("13", "correction type extension is required",
+						tax.ExtensionsRequire(ExtKeyCorrectionType),
+					),
+				),
+			),
+		),
+		// Code 11: standard invoice doc type must be F1, F2, or F3
+		rules.When(
+			bill.InvoiceTypeIn(bill.InvoiceTypeStandard),
+			rules.Field("tax",
+				rules.Field("ext",
+					rules.Assert("11", "doc type extension for standard invoices must be F1, F2, or F3",
+						tax.ExtensionsHasCodes(ExtKeyDocType, "F1", "F2", "F3"),
+					),
+				),
+			),
+		),
+		// Code 12: corrective invoice doc type must be R1-R5
+		rules.When(
+			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
+			rules.Field("tax",
+				rules.Field("ext",
+					rules.Assert("12", "doc type extension for corrective invoices must be R1, R2, R3, R4, or R5",
+						tax.ExtensionsHasCodes(ExtKeyDocType, "R1", "R2", "R3", "R4", "R5"),
+					),
+				),
+			),
+		),
+		// Notes
+		// Code 14: general note text max 500 characters
+		rules.Field("notes",
+			rules.Each(
+				rules.When(
+					rules.By("general note", isGeneralNote),
+					rules.Field("text",
+						rules.Assert("14", "general note text must be 500 characters or less", rules.Length(0, 500)),
+					),
+				),
+			),
+		),
+		// Lines
+		// Code 15: each line must have at least one of VAT, IGIC, or IPSI
+		rules.Field("lines",
+			rules.Each(
+				rules.Field("taxes",
+					rules.Assert("15", "must include at least one of VAT, IGIC, or IPSI",
+						tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
+					),
+				),
+			),
+		),
+	)
 }
 
-func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
-	return func(val any) error {
-		p, ok := val.(*org.DocumentRef)
-		if !ok || p == nil {
-			return nil
-		}
-		return validation.ValidateStruct(p,
-			validation.Field(&p.IssueDate,
-				validation.Required,
-				validation.Skip,
-			),
-			validation.Field(&p.Tax,
-				// Tax data of previous invoices is required for substitutions
-				validation.When(
-					inv.Type.In(bill.InvoiceTypeCorrective),
-					validation.Required,
-				),
-				validation.Skip,
-			),
-		)
-	}
+func isSimplifiedInvoice(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	return ok && inv != nil && inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5")
 }
 
-func validateNote(val any) error {
+func isNotSimplifiedInvoice(val any) bool {
+	return !isSimplifiedInvoice(val)
+}
+
+func precedingDocIsNotNil(val any) bool {
+	ref, ok := val.(*org.DocumentRef)
+	return ok && ref != nil
+}
+
+func simplifiedCustomerHasNoIdentityType(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true
+	}
+	return org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) == nil
+}
+
+func customerHasTaxIDOrIdentity(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true // nil customer handled by Required check
+	}
+	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
+}
+
+func isGeneralNote(val any) bool {
 	note, ok := val.(*org.Note)
-	if !ok || note == nil || note.Key != org.NoteKeyGeneral {
-		return nil
-	}
-	return validation.ValidateStruct(note,
-		validation.Field(&note.Text,
-			validation.Length(0, 500),
-			validation.Skip,
-		),
-	)
+	return ok && note != nil && note.Key == org.NoteKeyGeneral
 }

@@ -14,28 +14,11 @@ const (
 )
 
 func normalizeInvoice(inv *bill.Invoice) {
-	migrateTaxIDZoneToExtPostCode(inv.Supplier)
-	migrateTaxIDZoneToExtPostCode(inv.Customer)
-
 	migrateSupplierExtPostCodeToInvoice(inv)
 	migrateCustomerExtPostCodeToAddress(inv)
 
 	deleteExtPostCode(inv.Supplier)
 	deleteExtPostCode(inv.Customer)
-}
-
-// 2024-03-14: Migrate Tax ID Zone to extensions "mx-cfdi-post-code"
-func migrateTaxIDZoneToExtPostCode(p *org.Party) {
-	if p == nil {
-		return
-	}
-	if p.TaxID != nil && p.TaxID.Zone != "" { //nolint:staticcheck
-		if p.Ext == nil {
-			p.Ext = make(tax.Extensions)
-		}
-		p.Ext[extKeyPostCode] = cbc.Code(p.TaxID.Zone) //nolint:staticcheck
-		p.TaxID.Zone = ""                              //nolint:staticcheck
-	}
 }
 
 // 2024-04-26: copy suppliers post code to invoice, if not alread set.

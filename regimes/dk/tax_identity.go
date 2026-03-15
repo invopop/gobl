@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Reference: https://github.com/ltns35/go-vat
@@ -18,11 +18,24 @@ var (
 	}
 )
 
-// validateTaxIdentity checks to ensure the Danish CVR code is valid.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("DK"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Danish VAT identity code",
+					rules.By("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
 }
 
 func validateTaxCode(value any) error {

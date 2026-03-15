@@ -8,11 +8,13 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("in", rules.GOBL.Add("IN"), taxIdentityRules())
 }
 
 // New provides the tax region definition for India.
@@ -76,8 +78,6 @@ func New() *tax.RegimeDef {
 // Validate function assesses the document type to determine if validation is required.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
 	case *org.Identity:
 		return validateOrgIdentity(obj)
 	case *org.Item:

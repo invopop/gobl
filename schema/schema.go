@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -38,7 +39,11 @@ func init() {
 	Register(GOBL.Add("schema"),
 		Object{},
 	)
-
+	rules.Register(
+		"schema",
+		rules.GOBL.Add("SCHEMA"),
+		objectRules(),
+	)
 }
 
 // ID contains the official schema URL.

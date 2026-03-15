@@ -3,8 +3,8 @@ package verifactu
 import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -64,30 +64,35 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-		return nil
-	}
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			// Regime is always required for VAT and IGIC
-			tax.ExtensionsRequire(ExtKeyRegime),
-			validation.When(
-				tc.Percent != nil, // Taxed
-				tax.ExtensionsRequire(ExtKeyOpClass),
-				validation.Required,
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			// Guard: only apply to VAT/IGIC combos that have been processed by verifactu
+			// normalization (which always sets ExtKeyRegime via SetIfEmpty).
+			rules.By("verifactu vat/igic", comboIsVerifactuVATorIGIC),
+			rules.Field("ext",
+				rules.Assert("01", "regime is required", rules.By("has regime", extHasRegime)),
 			),
-			validation.When(
-				// Cannot use both exempt and operation class at same time.
-				tc.Ext.Has(ExtKeyOpClass),
-				tax.ExtensionsExclude(ExtKeyExempt),
+			rules.Assert("10", "cannot use both op_class and exempt at the same time",
+				rules.By("not both op_class and exempt", comboNotBothOpClassAndExempt),
+			),
+			rules.When(
+				rules.By("has percent", comboHasPercent),
+				rules.Field("ext",
+					rules.Assert("02", "op_class is required for taxed operations",
+						rules.By("has op_class", extHasOpClass),
+					),
+				),
 			),
 			// https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf (Page 10, section 15.5)
-			validation.When(
-				tc.Ext.Get(ExtKeyRegime).In("01"),
-				tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
+			rules.When(
+				rules.By("regime 01", comboRegimeIs01),
+				rules.Field("ext",
+					rules.Assert("11", "exempt codes E2 and E3 not allowed with regime 01",
+						rules.By("no E2/E3", extExcludesE2E3),
+					),
+				),
 			),
-			validation.Skip,
 		),
 	)
 }
@@ -116,4 +121,42 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	if tc.Key.IsEmpty() {
 		tc.Key = tax.KeyStandard // "S1" fallback
 	}
+}
+
+func comboIsVerifactuVATorIGIC(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) && tc.Ext.Has(ExtKeyRegime)
+}
+
+func extHasRegime(val any) bool {
+	ext, ok := val.(tax.Extensions)
+	return ok && ext.Has(ExtKeyRegime)
+}
+
+func comboHasPercent(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Percent != nil
+}
+
+func extHasOpClass(val any) bool {
+	ext, ok := val.(tax.Extensions)
+	return ok && ext.Has(ExtKeyOpClass)
+}
+
+func comboNotBothOpClassAndExempt(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	if !ok || tc == nil {
+		return true
+	}
+	return !(tc.Ext.Has(ExtKeyOpClass) && tc.Ext.Has(ExtKeyExempt))
+}
+
+func comboRegimeIs01(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Ext.Get(ExtKeyRegime).In("01")
+}
+
+func extExcludesE2E3(val any) bool {
+	ext, ok := val.(tax.Extensions)
+	return ok && !ext.Get(ExtKeyExempt).In("E2", "E3")
 }

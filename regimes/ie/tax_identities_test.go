@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/ie"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,9 +23,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	assert.Equal(t, "3628739L", tID.Code.String())
 }
 
-func TestValidateTaxIdentity(t *testing.T) {
-	regime := ie.New()
-
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    cbc.Code
@@ -85,12 +84,15 @@ func TestValidateTaxIdentity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{
-				Country: regime.Country,
+				Country: "IE",
 				Code:    tt.code,
 			}
-			err := regime.Validator(tID)
+			err := rules.Validate(tID)
 			if tt.wantErr {
 				assert.Error(t, err, "expected error for code: %s", tt.code)
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), "IDENTITY-01")
+				}
 			} else {
 				require.NoError(t, err, "unexpected error for code: %s", tt.code)
 			}

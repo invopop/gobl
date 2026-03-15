@@ -10,28 +10,29 @@ import (
 
 var (
 	// Valid confirms the UUID is valid
-	Valid = versionRule{}
+	Valid = versionRule{desc: "is valid UUID"}
 	// IsV1 confirms the UUID is version 1
-	IsV1 = versionRule{version: 1}
+	IsV1 = versionRule{desc: "is UUIDv1", version: 1}
 	// IsV3 confirms the UUID is version 3
-	IsV3 = versionRule{version: 3}
+	IsV3 = versionRule{desc: "is UUIDv3", version: 3}
 	// IsV4 confirms the UUID is version 4
-	IsV4 = versionRule{version: 4}
+	IsV4 = versionRule{desc: "is UUIDv4", version: 4}
 	// IsV5 confirms the UUID is version 5
-	IsV5 = versionRule{version: 5}
+	IsV5 = versionRule{desc: "is UUIDv5", version: 5}
 	// IsV6 confirms the UUID is version 6
-	IsV6 = versionRule{version: 6}
+	IsV6 = versionRule{desc: "is UUIDv6", version: 6}
 	// IsV7 confirms the UUID is version 7
-	IsV7 = versionRule{version: 7}
+	IsV7 = versionRule{desc: "is UUIDv7", version: 7}
 	// HasTimestamp confirms the UUID is based on a timestamp version
-	HasTimestamp = versionRule{hasTimestamp: true}
+	HasTimestamp = versionRule{desc: "has timestamp", hasTimestamp: true}
 	// Timeless confirms the UUID is not based on a timestamp version
-	Timeless = versionRule{timeless: true}
+	Timeless = versionRule{desc: "is timeless", timeless: true}
 	// IsNotZero confirms the UUID is not zero
-	IsNotZero = versionRule{notZero: true}
+	IsNotZero = versionRule{desc: "is not zero", notZero: true}
 )
 
 type versionRule struct {
+	desc         string
 	version      uuid.Version
 	hasTimestamp bool
 	timeless     bool
@@ -48,9 +49,20 @@ const (
 // current time minus the ttl. A tolerance is allowed for future timestamps.
 func Within(ttl time.Duration) validation.Rule {
 	return versionRule{
+		desc:         "is within acceptable time range",
 		hasTimestamp: true,
 		ttl:          ttl,
 	}
+}
+
+// Check provides a boolean response.
+func (r versionRule) Check(value any) bool {
+	return r.Validate(value) == nil
+}
+
+// String provides a string representation of the rule.
+func (r versionRule) String() string {
+	return r.desc
 }
 
 func (r versionRule) Validate(value interface{}) error {

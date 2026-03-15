@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/validation"
 )
 
@@ -17,11 +18,14 @@ type Stamp struct {
 	Value string `json:"val" jsonschema:"title=Value"`
 }
 
-// Validate checks that the header contains the basic information we need to function.
-func (s *Stamp) Validate() error {
-	return validation.ValidateStruct(s,
-		validation.Field(&s.Provider, validation.Required),
-		validation.Field(&s.Value, validation.Required),
+func stampRules() *rules.Set {
+	return rules.For(new(Stamp),
+		rules.Field("prv",
+			rules.Assert("01", "stamp provider is required", rules.Present),
+		),
+		rules.Field("val",
+			rules.Assert("02", "stamp value is required", rules.Present),
+		),
 	)
 }
 
@@ -39,7 +43,7 @@ func (s *Stamp) In(ss []*Stamp) bool {
 // provider keys.
 var DetectDuplicateStamps = validation.By(detectDuplicateStamps)
 
-func detectDuplicateStamps(list interface{}) error {
+func detectDuplicateStamps(list any) error {
 	values, ok := list.([]*Stamp)
 	if !ok {
 		return errors.New("must be a stamp array")
@@ -102,25 +106,34 @@ func NormalizeStamps(in []*Stamp) []*Stamp {
 	return out
 }
 
-// StampsHas provides a validation rule that checks if a list of stamps includes
-// one for the given provider.
-func StampsHas(provider cbc.Key) validation.Rule {
-	return &stampsHasRule{provider: provider}
-}
-
-type stampsHasRule struct {
+// StampsHasRule is a combined rules.Test and validation.Rule that checks if
+// a specific stamp provider is present in a list of stamps.
+type StampsHasRule struct {
+	desc     string
 	provider cbc.Key
 }
 
-func (r *stampsHasRule) Validate(value any) error {
+// StampsHas provides a validation rule that checks if a list of stamps includes
+// one for the given provider.
+func StampsHas(provider cbc.Key) *StampsHasRule {
+	return &StampsHasRule{desc: fmt.Sprintf("stamps have %s", provider), provider: provider}
+}
+
+func (r *StampsHasRule) String() string {
+	return r.desc
+}
+
+func (r *StampsHasRule) Check(value any) bool {
 	in, ok := value.([]*Stamp)
 	if !ok {
-		return nil
+		return false // invalid type
 	}
+	return GetStamp(in, r.provider) != nil
+}
 
-	if GetStamp(in, r.provider) != nil {
-		return nil
+func (r *StampsHasRule) Validate(value any) error {
+	if !r.Check(value) {
+		return fmt.Errorf("missing %s stamp", r.provider)
 	}
-
-	return fmt.Errorf("missing %s stamp", r.provider)
+	return nil
 }

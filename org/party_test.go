@@ -11,18 +11,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-func TestEmailValidation(t *testing.T) {
-	valid := org.Email{
-		Address: "foobar@invopop.example.com",
-	}
-	assert.NoError(t, valid.Validate())
-
-	invalid := org.Email{
-		Address: "foobar",
-	}
-	assert.EqualError(t, invalid.Validate(), "addr: must be a valid email address.")
-}
-
 func TestPartyNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var p *org.Party

@@ -5,11 +5,12 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/dk"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -26,29 +27,29 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "too short",
 			code: "1234567",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too long",
 			code: "123456789",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "contains letters",
 			code: "1234567A",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "bad checksum",
 			code: "13585627",
-			err:  "checksum mismatch",
+			err:  "IDENTITY-01",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "DK", Code: tt.code}
-			err := dk.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

@@ -10,9 +10,11 @@ import (
 	"github.com/invopop/validation"
 
 	"github.com/invopop/gobl/c14n"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -51,7 +53,7 @@ func NewEnvelope() *Envelope {
 // Envelop is a convenience method that will build a new envelope and insert
 // the contents document provided in a single swoop. The resulting envelope
 // will still need to be signed afterwards.
-func Envelop(doc interface{}) (*Envelope, error) {
+func Envelop(doc any) (*Envelope, error) {
 	e := NewEnvelope()
 	if err := e.Insert(doc); err != nil {
 		return nil, err
@@ -59,8 +61,98 @@ func Envelop(doc interface{}) (*Envelope, error) {
 	return e, nil
 }
 
-// Validate ensures that the envelope contains everything it should to be considered valid GoBL.
+func envelopeRules() *rules.Set {
+	return rules.For(new(Envelope),
+		rules.Field("$schema",
+			rules.Assert("01", "envelope schema is required", rules.Present),
+		),
+		rules.Field("head",
+			rules.Assert("02", "envelope header is required", rules.Present),
+		),
+		rules.Field("doc",
+			rules.Assert("03", "envelope doc is required", rules.Present),
+		),
+		rules.Assert("11", "envelope digest does not match document contents",
+			rules.By("valid digest", validDigest),
+		),
+		rules.When(rules.By("not signed", notSigned),
+			rules.Assert("12", "envelope header cannot have stamps when not signed",
+				rules.By("no stamps", hasNoStamps),
+			),
+		),
+		rules.When(rules.By("has signatures", hasSignatures),
+			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
+				rules.By("ready to sign", isDocumentReadyToSign),
+			),
+		),
+	)
+}
+
+func notSigned(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) == 0
+}
+
+func hasSignatures(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) > 0
+}
+
+func hasNoStamps(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return true
+	}
+	return e.Head == nil || len(e.Head.Stamps) == 0
+}
+
+type documentCanSign interface {
+	CanSign() bool
+}
+
+// isDocumentReadyToSign is used to determine if the embedded document is reporting itself as ready to
+// sign. This is used by the signing rules to ensure that documents have all the
+// necessary information.
+func isDocumentReadyToSign(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return true // ignore
+	}
+	if e.Document == nil {
+		return true // ignore
+	}
+	obj, ok := e.Document.Instance().(documentCanSign)
+	if ok {
+		return obj.CanSign()
+	}
+	// assume all other documents are ready
+	return true
+}
+
+func validDigest(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok || e.Head == nil {
+		return false
+	}
+	d1 := e.Head.Digest
+	d2, err := e.Digest()
+	if err != nil {
+		return false
+	}
+	return d1.Equals(d2) == nil
+}
+
+// Validate ensures that the envelope contains everything it should to be considered valid GOBL.
 func (e *Envelope) Validate() error {
+	if err := rules.Validate(e); err != nil {
+		return err
+	}
 	return e.ValidateWithContext(context.Background())
 }
 
@@ -318,4 +410,16 @@ func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, wrapError(err)
 	}
 	return opts, nil
+}
+
+// GetAddons is a convenience method that will provide a list of addon keys from the
+// embedded document if it implements the addon interface.
+func (e *Envelope) GetAddons() []cbc.Key {
+	if e.Document == nil || e.Document.IsEmpty() {
+		return nil
+	}
+	if a, ok := e.Document.Instance().(interface{ GetAddons() []cbc.Key }); ok {
+		return a.GetAddons()
+	}
+	return nil
 }

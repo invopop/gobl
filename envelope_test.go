@@ -19,6 +19,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -165,7 +166,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Signatures = nil
 		err = e.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "stamps: must be blank.")
+		assert.Contains(t, err.Error(), "envelope header cannot have stamps when not signed")
 		err = e.Calculate()
 		assert.NoError(t, err)
 		assert.Len(t, e.Head.Stamps, 1)
@@ -223,7 +224,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "validation: ($schema: cannot be blank; doc: cannot be blank; head: cannot be blank.).",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($schema) envelope schema is required; [GOBL-ENVELOPE-02] (head) envelope header is required; [GOBL-ENVELOPE-03] (doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -232,7 +233,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "validation: (doc: (content: cannot be blank.).).",
+			want: "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -261,7 +262,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "digest: mismatch",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 	}
 
@@ -289,7 +290,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.ErrorContains(t, err, "validation: (doc: (content: cannot be blank.).).")
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
@@ -432,10 +433,8 @@ func TestDocumentValidation(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "content: cannot be blank")
-	}
+	err = rules.Validate(doc.Instance())
+	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
 
 	doc = new(schema.Object)
 	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
@@ -461,7 +460,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
+	err = rules.Validate(doc)
 	data, err := json.Marshal(err)
 	require.NoError(t, err)
 	assert.Equal(t, `{"content":"cannot be blank"}`, string(data))
@@ -471,7 +470,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"key":"validation","fields":{"doc":{"content":"cannot be blank"}}}`, string(data))
+	assert.Equal(t, `[{"path":"content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

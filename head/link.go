@@ -7,10 +7,11 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	ris "github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // Link category keys defined for use inside link categories.
@@ -114,44 +115,82 @@ type Link struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Metadata"`
 }
 
-// Validate checks that the link contains the basic information we need to function.
-func (l *Link) Validate() error {
-	return validation.ValidateStruct(l,
-		validation.Field(&l.UUID),
-		validation.Field(&l.Category,
-			validation.In(cbc.DefinitionKeys(LinkCategoryDefs)...),
+func linkRules() *rules.Set {
+	return rules.For(new(Link),
+		rules.Field("key",
+			rules.Assert("01", "link key is required", rules.Present),
 		),
-		validation.Field(&l.Key,
-			validation.Required,
-		),
-		validation.Field(&l.Code),
-		validation.Field(&l.Title),
-		validation.Field(&l.Description),
-		validation.Field(&l.MIME,
-			validation.In(
-				// Allow EN16931-1:2017 defined MIME types
-				"application/pdf",
-				"image/jpeg",
-				"image/png",
-				"text/csv",
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-				"application/vnd.oasis.opendocument.spreadsheet",
-				// Alternative types
-				"text/html",
-				"application/xml",
-				"text/xml",
-				"application/json",
+		rules.Field("category",
+			rules.Assert("02", "link category is not valid",
+				rules.By("valid or empty", isValidLinkCategory),
 			),
 		),
-		validation.Field(&l.Digest,
-			validation.When(
-				l.MIME == "",
-				validation.Nil.Error("must be nil when MIME type is not provided"),
+		rules.Field("url",
+			rules.Assert("03", "link URL is required", rules.Present),
+			rules.Assert("04", "link URL must be a valid URL", ris.URL),
+		),
+		rules.Field("mime",
+			rules.Assert("05", "link MIME type is not valid",
+				rules.By("valid or empty MIME", isValidLinkMIME),
 			),
 		),
-		validation.Field(&l.URL, validation.Required, is.URL),
-		validation.Field(&l.Meta),
+		rules.Assert("06", "link digest must be nil when MIME type is not provided",
+			rules.By("no digest without MIME", hasNoDigestWithoutMIME),
+		),
 	)
+}
+
+func isValidLinkCategory(val any) bool {
+	key, ok := val.(cbc.Key)
+	if !ok || key == "" {
+		return true
+	}
+	for _, def := range LinkCategoryDefs {
+		if def.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
+func isValidLinkMIME(val any) bool {
+	mime, ok := val.(string)
+	if !ok || mime == "" {
+		return true
+	}
+	switch mime {
+	case
+		// EN 16931-1:2017 defined MIME types
+		"application/pdf",
+		"image/jpeg",
+		"image/png",
+		"text/csv",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		"application/vnd.oasis.opendocument.spreadsheet",
+		// Alternative types
+		"text/html",
+		"application/xml",
+		"text/xml",
+		"application/json":
+		return true
+	}
+	return false
+}
+
+func hasNoDigestWithoutMIME(val any) bool {
+	var l *Link
+	switch v := val.(type) {
+	case *Link:
+		l = v
+	case Link:
+		l = &v
+	default:
+		return true
+	}
+	if l == nil {
+		return true
+	}
+	return l.MIME != "" || l.Digest == nil
 }
 
 // LinkByCategoryAndKey finds the link with the given category and key from the provided list.

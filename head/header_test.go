@@ -1,12 +1,11 @@
 package head_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,22 +22,39 @@ func TestNewHeader(t *testing.T) {
 }
 
 func TestHeaderValidation(t *testing.T) {
-	h := head.NewHeader()
-	h.Stamps = []*head.Stamp{
-		{Provider: "foo", Value: "bar"},
-	}
-	err := h.Validate()
-	assert.ErrorContains(t, err, "dig: cannot be blank; stamps: must be blank")
+	t.Run("missing digest", func(t *testing.T) {
+		h := head.NewHeader()
+		err := rules.Validate(h)
+		assert.ErrorContains(t, err, "header must have a digest")
+	})
 
-	h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+	t.Run("valid header", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		assert.NoError(t, rules.Validate(h))
+	})
 
-	ctx := internal.SignedContext(context.Background())
-	err = h.ValidateWithContext(ctx)
-	assert.NoError(t, err)
+	t.Run("duplicate stamps", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		h.Stamps = []*head.Stamp{
+			{Provider: "foo", Value: "bar"},
+			{Provider: "foo", Value: "bar"},
+		}
+		err := rules.Validate(h)
+		assert.ErrorContains(t, err, "duplicate stamp providers are not allowed")
+	})
 
-	h.Stamps = append(h.Stamps, &head.Stamp{Provider: "foo", Value: "bar"})
-	err = h.ValidateWithContext(ctx)
-	assert.ErrorContains(t, err, "stamps: duplicate stamp 'foo'")
+	t.Run("duplicate links", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		h.Links = []*head.Link{
+			{Key: "foo", URL: "https://example.com"},
+			{Key: "foo", URL: "https://example.com/2"},
+		}
+		err := rules.Validate(h)
+		assert.ErrorContains(t, err, "duplicate link keys are not allowed")
+	})
 }
 
 func TestHeaderAddStamp(t *testing.T) {
