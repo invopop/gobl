@@ -28,8 +28,6 @@
       },
       "type": "object",
       "required": [
-        "cat",
-        "key",
         "text"
       ],
       "description": "Note represents a tax-related note, typically used for exemption reasons or other tax-specific explanations that need to be associated with a particular tax category."

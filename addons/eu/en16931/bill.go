@@ -55,6 +55,11 @@ func normalizeTaxNote(n *tax.Note) {
 	if n == nil {
 		return
 	}
+
+	if n.Category != tax.CategoryVAT {
+		return
+	}
+
 	if code := vatKeyMap.Get(n.Key); !code.IsEmpty() {
 		n.Ext = n.Ext.Merge(tax.Extensions{
 			untdid.ExtKeyTaxCategory: code,
@@ -291,6 +296,11 @@ func validateExemptionNotes(inv *bill.Invoice) validation.RuleFunc {
 		noteCats := make(map[cbc.Code]bool)
 		if inv.Tax != nil {
 			for _, n := range inv.Tax.Notes {
+
+				if n == nil {
+					continue
+				}
+
 				cat := n.Ext.Get(untdid.ExtKeyTaxCategory)
 				if !cat.IsEmpty() {
 					noteCats[cat] = true
