@@ -175,6 +175,17 @@ func TestExemptionNoteValidation(t *testing.T) {
 		})
 	})
 
+	t.Run("non-VAT note skips normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: "IGIC",
+			Key:      "exempt",
+			Text:     "Some IGIC exemption",
+		}
+		ad.Normalizer(n)
+		assert.False(t, n.Ext.Has(untdid.ExtKeyTaxCategory))
+	})
+
 	t.Run("note normalization adds tax category", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{
