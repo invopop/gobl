@@ -3,6 +3,17 @@
   "name": {
     "en": "India"
   },
+  "description": {
+    "en": "India follows a dual GST (Goods and Services Tax) model, where both the Central\nand State Governments levy taxes. CGST (Central GST) is levied by the Central\nGovernment, SGST/UTGST (State/Union Territory GST) by state governments, and\nIGST (Integrated GST) on interstate supplies and imports.\n\nFor intrastate supplies, CGST and SGST/UTGST apply in equal proportions. For\ninterstate supplies and imports, IGST applies at a rate equivalent to CGST plus\nSGST. A Compensation Cess may apply on luxury and sin goods. Due to the dual\nmodel, tax rate allocations between central and state must be managed at the\napplication level.\n\nGST rates vary by goods and services across multiple rate slabs. Exports and\nsupplies to Special Economic Zones are zero-rated. Exempt supplies include\nfresh fruits and vegetables, educational services, and public road tolls.\n\nBusinesses are identified by their GSTIN (Goods and Services Tax Identification\nNumber), a unique 15-digit identifier with format and checksum validation.\nItems on invoices must include HSN (Harmonized System of Nomenclature) codes\nfor goods classification. India supports both credit notes and debit notes for\ninvoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "GST Portal"
+      },
+      "url": "https://www.gst.gov.in/"
+    }
+  ],
   "time_zone": "Asia/Kolkata",
   "country": "IN",
   "currency": "INR",

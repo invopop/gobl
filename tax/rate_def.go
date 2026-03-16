@@ -102,7 +102,7 @@ func (r *RateDef) Value(date cal.Date, ext Extensions) *RateValueDef {
 				continue
 			}
 		}
-		if rv.Since == nil || !rv.Since.IsValid() || rv.Since.Before(date.Date) {
+		if rv.Since == nil || !rv.Since.IsValid() || !rv.Since.After(date.Date) {
 			return rv
 		}
 	}
