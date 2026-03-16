@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/validation"
 )
 
@@ -14,8 +13,6 @@ import (
 type Note struct {
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
-	// Country code override when issuing with taxes applied from different countries.
-	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Key identifies the tax situation this note applies to (e.g. "exempt", "reverse-charge").
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Text contains the exemption reason or explanation.
@@ -35,19 +32,13 @@ func (n *Note) Normalize(normalizers Normalizers) {
 
 // ValidateWithContext ensures the note is valid.
 func (n *Note) ValidateWithContext(ctx context.Context) error {
-	var r *RegimeDef
-	if n.Country.Empty() {
-		r = RegimeDefFromContext(ctx)
-	} else {
-		r = RegimeDefFor(n.Country.Code())
-	}
+	rd := RegimeDefFromContext(ctx)
 	return ValidateStructWithContext(ctx, n,
 		validation.Field(&n.Category,
-			r.InCategories(),
+			rd.InCategories(),
 		),
-		validation.Field(&n.Country),
 		validation.Field(&n.Key,
-			r.InCategoryKeys(n.Category),
+			rd.InCategoryKeys(n.Category),
 		),
 		validation.Field(&n.Text, validation.Required),
 		validation.Field(&n.Ext),

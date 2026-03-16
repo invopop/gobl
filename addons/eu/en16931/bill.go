@@ -122,10 +122,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Totals,
-			validation.By(validateBillTotals),
-			validation.Skip,
-		),
 	)
 }
 
@@ -280,56 +276,6 @@ func validateBillPayment(value any) error {
 			validation.Required.Error("payment terms are required when amount is due (BR-CO-25)"),
 		),
 	)
-}
-
-func validateBillTotals(value any) error {
-	totals, ok := value.(*bill.Totals)
-	if !ok || totals == nil {
-		return nil
-	}
-	return validation.ValidateStruct(totals,
-		validation.Field(&totals.Taxes,
-			validation.By(validateTotalsTaxes),
-		),
-	)
-}
-
-func validateTotalsTaxes(value any) error {
-	taxes, ok := value.(*tax.Total)
-	if !ok || taxes == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(taxes,
-		validation.Field(&taxes.Categories,
-			validation.Each(
-				validation.By(validateTaxCategory),
-			),
-		),
-	)
-}
-
-func validateTaxCategory(value any) error {
-	cat, ok := value.(*tax.CategoryTotal)
-	if !ok || cat == nil {
-		return nil
-	}
-
-	seen := make(map[cbc.Code]bool)
-	for _, rt := range cat.Rates {
-		taxCat := rt.Ext.Get(untdid.ExtKeyTaxCategory)
-		if !taxCat.In(exemptTaxCategories...) {
-			continue // S, L, M can appear multiple times with different percents as well as empty
-		}
-		if seen[taxCat] {
-			return errors.New("UNTDID tax category " + taxCat.String() + " appears more than once (BR-" + taxCat.String() + "-01)")
-		}
-		seen[taxCat] = true
-	}
-	if seen[TaxCategoryOutsideScope] && len(seen) > 1 {
-		return errors.New("outside scope (O) cannot be combined with other VAT categories (BR-O-11)")
-	}
-	return nil
 }
 
 // validateExemptionNotes returns a validation function that checks that

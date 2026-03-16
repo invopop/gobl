@@ -73,16 +73,6 @@ func TestNoteValidation(t *testing.T) {
 		err := n.ValidateWithContext(ctx)
 		assert.ErrorContains(t, err, "key")
 	})
-
-	t.Run("country override", func(t *testing.T) {
-		n := &tax.Note{
-			Category: "VAT",
-			Country:  "ES",
-			Key:      "exempt",
-			Text:     "Exempt under Spanish law",
-		}
-		assert.NoError(t, n.ValidateWithContext(ctx))
-	})
 }
 
 func TestNoteNormalize(t *testing.T) {
