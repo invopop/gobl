@@ -61,17 +61,15 @@ func newAddon() *tax.AddonDef {
 				## Exemption Notes
 
 				Exempt tax categories (E, AE, K, G, O) require either a CEF VATEX code
-				(` + "`cef-vatex`" + `) on the tax combo, or a note explaining the exemption reason.
+				(` + "`cef-vatex`" + `) on the tax combo, or an exemption note in ` + "`tax.notes`" + `.
 
-				Exemption notes are identified by the ` + "`untdid-tax-category`" + ` extension in their
-				` + "`ext`" + ` field. This can be set directly or derived automatically during normalization
-				by setting the note's ` + "`src`" + ` field to the corresponding tax key (e.g. ` + "`exempt`" + `,
-				` + "`reverse-charge`" + `).
+				Exemption notes use the ` + "`tax.Note`" + ` struct with ` + "`cat`" + `, ` + "`key`" + `, and ` + "`text`" + ` fields.
+				During normalization, the note's ` + "`key`" + ` is mapped to the corresponding
+				` + "`untdid-tax-category`" + ` extension (e.g. ` + "`exempt`" + ` → ` + "`E`" + `,
+				` + "`reverse-charge`" + ` → ` + "`AE`" + `).
 
-				Rules:
-				- Each exempt tax category must have a VATEX code, an exemption note, or both.
-				- Only one exemption note is allowed per tax category.
-				- Exemption notes must not reference a tax category that is not present in the invoice.
+				Each exempt tax category without a VATEX code must have at least one
+				exemption note covering it.
 			`),
 		},
 		Scenarios:  scenarios,
