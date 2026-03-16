@@ -10,12 +10,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 
+### Changed
+
+- `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
+- `num`: `AmountFromString` now limits precision to 18 significant digits.
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+
+### Fixed
+
+- `tax`: Fixed `Since` date comparison to be inclusive
+- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
+
+## [v0.308.0] - 2026-02-17
+
+### Removed
+
+- `pkg/template`: removed as no longer used.
+
+### Added
+
+- `fr-ctc-v1`: French CTC Flow 2 B2B e-invoicing addon
+- `fr`: SIREN and SIRET identity types format validation
+- `org`: New note keys: `payment-method` and `payment-term`
+
+### Changed
+
+- `eu-en16931-v2017`: Identity normalization now supports type-based identities
+- `dk`: Updated CVR identity to use Type instead of Key
+
+### Fixed
+
+- `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
+- `bill`: Invoice and Order now normalize Attachments fields
+
+
 ## [v0.307.0] - 2026-01-27
 
 ### Added
 
 - `dk`: Added the Danish regime
-- `de`: support for NW Steuernummer
+- `de`: Added support for NW Steuernummer
 - `pl-favat-v3`: Added Poland FAVAT V3 addon
 
 ### Fixed

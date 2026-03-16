@@ -84,6 +84,39 @@
           "ext": {
             "untdid-document-type": "261"
           }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "386"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "393"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "396"
+          }
         }
       ]
     }

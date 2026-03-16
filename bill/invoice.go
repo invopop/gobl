@@ -232,6 +232,10 @@ func partyHasTaxIDCode(party *org.Party) bool {
 // After inverting the invoice is recalculated and any differences will raise
 // an error.
 func (inv *Invoice) Invert() error {
+	if inv.HasTags(tax.TagBypass) {
+		return fmt.Errorf("cannot invert an invoice with tag bypass")
+	}
+
 	payable := inv.Totals.Payable.Invert()
 
 	for _, row := range inv.Lines {
@@ -254,8 +258,8 @@ func (inv *Invoice) Invert() error {
 			row.Amount = row.Amount.Invert()
 		}
 	}
-	inv.Totals = nil
 
+	inv.Totals = nil
 	if err := inv.Calculate(); err != nil {
 		return err
 	}
@@ -320,6 +324,9 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Charges)
 	tax.Normalize(normalizers, inv.Ordering)
 	tax.Normalize(normalizers, inv.Payment)
+	tax.Normalize(normalizers, inv.Delivery)
+	tax.Normalize(normalizers, inv.Notes)
+	tax.Normalize(normalizers, inv.Attachments)
 
 	normalizers.Each(inv)
 }

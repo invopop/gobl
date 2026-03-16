@@ -8,15 +8,14 @@ import (
 )
 
 const (
-	// IdentityKeyCVR is the type of identity that represents the Danish
-	// "CVR-nummer" (Centrale Virksomhedsregister), the Central Business Register
-	// number used to identify businesses in Denmark.
-	IdentityKeyCVR cbc.Key = "cvr"
+	// IdentityTypeCVR represents the Danish "CVR-nummer" (Centrale Virksomhedsregister),
+	// the Central Business Register number used to identify businesses in Denmark.
+	IdentityTypeCVR cbc.Code = "CVR"
 )
 
-var identityKeyDefinitions = []*cbc.Definition{
+var identityTypeDefinitions = []*cbc.Definition{
 	{
-		Key: IdentityKeyCVR,
+		Code: IdentityTypeCVR,
 		Name: i18n.String{
 			i18n.EN: "CVR Number",
 			i18n.DA: "CVR-nummer",
@@ -26,7 +25,7 @@ var identityKeyDefinitions = []*cbc.Definition{
 
 // validateIdentity checks to ensure the CVR identity code is valid.
 func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Key != IdentityKeyCVR {
+	if id == nil || id.Type != IdentityTypeCVR {
 		return nil
 	}
 	return validation.ValidateStruct(id,

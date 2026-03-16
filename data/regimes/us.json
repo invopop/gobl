@@ -3,6 +3,9 @@
   "name": {
     "en": "United States of America"
   },
+  "description": {
+    "en": "The United States does not have a federal value-added tax (VAT) or goods and\nservices tax (GST). Instead, sales taxes are levied at the state and local\nlevel, with rates and rules varying significantly across jurisdictions.\n\nSales tax rates vary significantly by jurisdiction, with some states having\nno sales tax at all (e.g. Oregon, Montana, Delaware, New Hampshire). Sales\ntax is generally collected by the seller at the point of sale and remitted to\nthe relevant state tax authority.\n\nBusinesses are identified by their EIN (Employer Identification Number), a\n9-digit number assigned by the IRS (Internal Revenue Service) in the format\nXX-XXXXXXX. State-level tax registration is separate and varies by\njurisdiction.\n\nThere is no federal e-invoicing mandate. Both credit notes and debit notes\nare supported for invoice corrections."
+  },
   "time_zone": "America/Chicago",
   "country": "US",
   "currency": "USD",

@@ -4,6 +4,17 @@
     "ar": "الإمارات العربية المتحدة",
     "en": "United Arab Emirates"
   },
+  "description": {
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Federal Tax Authority - VAT"
+      },
+      "url": "https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx"
+    }
+  ],
   "time_zone": "Asia/Dubai",
   "country": "AE",
   "currency": "AED",

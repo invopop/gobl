@@ -23,9 +23,30 @@ func validateInvoiceSupplier(value any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
+			validation.When(
+				!hasIdentityBCE(p),
+				validation.Required,
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
+		validation.Field(&p.Identities,
+			validation.When(
+				!hasTaxIDCode(p),
+				org.RequireIdentityType(IdentityTypeBCE),
+			),
 			validation.Skip,
 		),
 	)
+}
+
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasIdentityBCE(party *org.Party) bool {
+	if party == nil || len(party.Identities) == 0 {
+		return false
+	}
+	return org.IdentityForType(party.Identities, IdentityTypeBCE) != nil
 }

@@ -25,6 +25,16 @@
               "description": "Terms of Payment"
             },
             {
+              "const": "payment-method",
+              "title": "Payment Method",
+              "description": "Payment method or remittance information"
+            },
+            {
+              "const": "payment-term",
+              "title": "Payment Term",
+              "description": "Payment term details"
+            },
+            {
               "const": "legal",
               "title": "Legal",
               "description": "Legal or regulatory information"

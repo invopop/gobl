@@ -231,6 +231,48 @@
           }
         },
         {
+          "code": "471",
+          "name": {
+            "en": "Request for payment with prepaid amount deducted"
+          }
+        },
+        {
+          "code": "472",
+          "name": {
+            "en": "Self-billed request for payment with prepaid amount deducted"
+          }
+        },
+        {
+          "code": "473",
+          "name": {
+            "en": "Standalone credit note"
+          }
+        },
+        {
+          "code": "500",
+          "name": {
+            "en": "Self-billed prepayment invoice"
+          }
+        },
+        {
+          "code": "501",
+          "name": {
+            "en": "Final invoice after prepayments"
+          }
+        },
+        {
+          "code": "502",
+          "name": {
+            "en": "Self-billed corrected invoice"
+          }
+        },
+        {
+          "code": "503",
+          "name": {
+            "en": "Self-billed credit note for claim"
+          }
+        },
+        {
           "code": "420",
           "name": {
             "en": "Optical Character Reading (OCR) payment credit note"

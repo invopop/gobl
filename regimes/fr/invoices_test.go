@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -49,12 +50,53 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	t.Run("valid with tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 
-	inv = validInvoice()
-	inv.Supplier.TaxID.Code = ""
-	require.NoError(t, inv.Calculate())
-	assert.ErrorContains(t, inv.Validate(), "supplier: (tax_id: (code: cannot be blank.).)")
+	t.Run("missing tax ID code requires SIREN or SIRET", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "identities: missing type")
+	})
+
+	t.Run("valid with SIREN identity instead of tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Regime = tax.WithRegime("FR")
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: fr.IdentityTypeSIREN,
+				Code: "732829320",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("valid with SIRET identity instead of tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Regime = tax.WithRegime("FR")
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: fr.IdentityTypeSIRET,
+				Code: "73282932000015",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("missing both tax ID and identity", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Regime = tax.WithRegime("FR")
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "tax_id: cannot be blank")
+	})
 }
