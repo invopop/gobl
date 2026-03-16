@@ -24,10 +24,10 @@ type Tax struct {
 	// the rounding model used.
 	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
-	// When defines the date on which the tax becomes liable, also known as the
-	// tax point or value date code. This is mutually exclusive with the
-	// invoice's value date; set one or the other, not both.
-	When cbc.Key `json:"when,omitempty" jsonschema:"title=When"`
+	// Date defines the date on which the tax becomes liable, also known as the
+	// tax point or value date code. It is not a date field,
+	// but rather a code that indicates the relevant date for tax purposes.
+	Date cbc.Key `json:"date,omitempty" jsonschema:"title=Date"`
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
@@ -95,8 +95,8 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&t.Rounding,
 			cbc.InKeyDefs(tax.RoundingRules),
 		),
-		validation.Field(&t.When,
-			cbc.InKeyDefs(tax.WhenDefs),
+		validation.Field(&t.Date,
+			cbc.InKeyDefs(tax.DateDefs),
 		),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),
@@ -131,9 +131,9 @@ func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
 			}
 		}
 	}
-	if p, ok := schema.Properties.Get("when"); ok {
-		p.OneOf = make([]*jsonschema.Schema, len(tax.WhenDefs))
-		for i, w := range tax.WhenDefs {
+	if p, ok := schema.Properties.Get("date"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.DateDefs))
+		for i, w := range tax.DateDefs {
 			p.OneOf[i] = &jsonschema.Schema{
 				Const:       w.Key.String(),
 				Title:       w.Name.String(),

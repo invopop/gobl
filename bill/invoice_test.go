@@ -1216,21 +1216,21 @@ func TestValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "lines: (0: (item: (price: cannot be blank.).).)")
 	})
 
-	t.Run("tax when without value date", func(t *testing.T) {
+	t.Run("tax date without value date", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
-		inv.Tax.When = tax.WhenDelivery
+		inv.Tax.Date = tax.DateDelivery
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
 
-	t.Run("tax when with value date rejected", func(t *testing.T) {
+	t.Run("tax date with value date rejected", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		vd := cal.MakeDate(2022, 6, 20)
 		inv.ValueDate = &vd
-		inv.Tax.When = tax.WhenDelivery
+		inv.Tax.Date = tax.DateDelivery
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "value_date: value date cannot be set when tax.when is set")
+		assert.ErrorContains(t, err, "value_date: value date cannot be set when tax.date is set")
 	})
 
 	t.Run("missing lines with charge", func(t *testing.T) {

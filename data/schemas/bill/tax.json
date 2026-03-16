@@ -27,7 +27,7 @@
           "title": "Rounding Model",
           "description": "Rounding model used to perform tax calculations on the invoice. This\nwill be configured automatically based on the tax regime, or\n`sum-then-round` by default, but you can override here if needed.\nUse with caution, as some conversion tools may make assumptions about\nthe rounding model used."
         },
-        "when": {
+        "date": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "oneOf": [
             {
@@ -46,8 +46,8 @@
               "description": "Tax point is the date on which payment is made. Corresponds to UNCL 2005 code 432."
             }
           ],
-          "title": "When",
-          "description": "When defines the date on which the tax becomes liable, also known as the\ntax point or value date code. This is mutually exclusive with the\ninvoice's value date; set one or the other, not both."
+          "title": "Date",
+          "description": "Date defines the date on which the tax becomes liable, also known as the\ntax point or value date code. This is mutually exclusive with the\ninvoice's value date; set one or the other, not both."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

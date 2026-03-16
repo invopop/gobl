@@ -144,8 +144,8 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.OperationDate),
 		validation.Field(&inv.ValueDate,
 			validation.When(
-				inv.Tax != nil && inv.Tax.When != cbc.Key(cbc.CodeEmpty),
-				validation.Empty.Error("value date cannot be set when tax.when is set"),
+				inv.Tax != nil && inv.Tax.Date != cbc.KeyEmpty,
+				validation.Empty.Error("value date cannot be set when tax.date is set"),
 			),
 		),
 		validation.Field(&inv.Currency,
