@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -219,10 +218,11 @@ func TestExemptionNoteValidation(t *testing.T) {
 				},
 			},
 		}
-		inv.Notes = append(inv.Notes, &org.Note{
-			Src:  cbc.Key("exempt"),
-			Text: "Exempt under Article 132",
-		})
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
@@ -267,69 +267,6 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.NoError(t, inv.Validate())
 	})
 
-	t.Run("duplicate exemption notes for same src", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines = []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Key:      tax.KeyExempt,
-					},
-				},
-			},
-		}
-		inv.Notes = append(inv.Notes,
-			&org.Note{
-				Src:  cbc.Key("exempt"),
-				Text: "Reason A",
-			},
-			&org.Note{
-				Src:  cbc.Key("exempt"),
-				Text: "Reason B",
-			},
-		)
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "only one exemption note allowed per tax category E")
-	})
-
-	t.Run("exemption note for category not in invoice", func(t *testing.T) {
-		// Invoice has a reverse-charge (AE) line, so only AE is in present.
-		// A note tagged with E (exempt) should be rejected because E is not
-		// present in the invoice totals.
-		inv := testInvoiceStandard(t)
-		inv.Lines = []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item:     &org.Item{Name: "Reverse charge item", Price: num.NewAmount(100, 2)},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Key:      tax.KeyReverseCharge,
-					},
-				},
-			},
-		}
-		inv.Notes = append(inv.Notes,
-			&org.Note{
-				Src:  cbc.Key("reverse-charge"),
-				Text: "Reverse charge applies",
-			},
-			&org.Note{
-				Text: "Spurious exempt note",
-				Ext: tax.Extensions{
-					untdid.ExtKeyTaxCategory: "E",
-				},
-			},
-		)
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "exemption note with untdid tax category E does not match any tax category in the invoice")
-	})
-
 	t.Run("reverse charge with matching note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{
@@ -344,10 +281,11 @@ func TestExemptionNoteValidation(t *testing.T) {
 				},
 			},
 		}
-		inv.Notes = append(inv.Notes, &org.Note{
-			Src:  cbc.Key("reverse-charge"),
-			Text: "Reverse charge applies",
-		})
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "reverse-charge", Text: "Reverse charge applies"},
+			},
+		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
@@ -366,26 +304,19 @@ func TestExemptionNoteValidation(t *testing.T) {
 				},
 			},
 		}
-		inv.Notes = append(inv.Notes, &org.Note{
-			Src:  cbc.Key("exempt"),
-			Text: "Exempt under Article 132",
-		})
-		require.NoError(t, inv.Calculate())
-		// After calculation, the note should have the UNTDID tax category set
-		var exemptNote *org.Note
-		for _, n := range inv.Notes {
-			if n.Src == cbc.Key("exempt") {
-				exemptNote = n
-				break
-			}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
 		}
-		require.NotNil(t, exemptNote)
-		assert.Equal(t, "E", exemptNote.Ext.Get(untdid.ExtKeyTaxCategory).String())
+		require.NoError(t, inv.Calculate())
+		// After calculation, the tax note should have the UNTDID tax category set
+		require.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "E", inv.Tax.Notes[0].Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
-	t.Run("plain notes without tax category are skipped", func(t *testing.T) {
-		// An unrelated note (no untdid-tax-category) alongside a valid exemption
-		// note should be silently skipped, not cause a validation error.
+	t.Run("plain invoice notes alongside tax notes", func(t *testing.T) {
+		// Regular invoice notes should not interfere with tax exemption notes.
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{
 			{
@@ -399,14 +330,15 @@ func TestExemptionNoteValidation(t *testing.T) {
 				},
 			},
 		}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
 		inv.Notes = append(inv.Notes,
 			&org.Note{
-				Src:  cbc.Key("exempt"),
-				Text: "Exempt under Article 132",
-			},
-			&org.Note{
 				Key:  org.NoteKeyGoods,
-				Text: "General delivery comment with no tax category",
+				Text: "General delivery comment",
 			},
 		)
 		require.NoError(t, inv.Calculate())

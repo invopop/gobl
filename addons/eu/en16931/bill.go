@@ -51,6 +51,17 @@ func normalizeBillInvoice(m *bill.Invoice) {
 	}
 }
 
+func normalizeTaxNote(n *tax.Note) {
+	if n == nil {
+		return
+	}
+	if code := vatKeyMap.Get(n.Key); !code.IsEmpty() {
+		n.Ext = n.Ext.Merge(tax.Extensions{
+			untdid.ExtKeyTaxCategory: code,
+		})
+	}
+}
+
 func normalizeBillDiscount(m *bill.Discount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
 		m.Ext = m.Ext.Merge(tax.Extensions{
@@ -88,6 +99,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateBillInvoiceTax),
+			validation.By(validateExemptionNotes(inv)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -100,10 +112,6 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.By(validateBillInvoiceParty),
-			validation.Skip,
-		),
-		validation.Field(&inv.Notes,
-			validation.By(validateExemptionNotes(inv)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -320,42 +328,29 @@ func validateTaxCategory(value any) error {
 	return nil
 }
 
-// validateExemptionNotes returns a validation function that checks:
-//   - For each exempt tax category, there must be a VATEX code, a note, or both.
-//   - No more than one exemption note per tax category.
-//   - No exemption notes for categories not present in the invoice.
+// validateExemptionNotes returns a validation function that checks that
+// each exempt tax category has either a VATEX code or an exemption note.
 func validateExemptionNotes(inv *bill.Invoice) validation.RuleFunc {
 	return func(_ any) error {
-		// Collect all non-standard UNTDID tax categories present in VAT totals,
-		// and track which ones already have a VATEX code.
-		present, hasVATEX := exemptTaxCats(inv)
-		if len(present) == 0 {
+		needNote := exemptTaxCatsWithoutVATEX(inv)
+		if len(needNote) == 0 {
 			return nil
 		}
 
-		// Scan notes for exemption entries (has untdid-tax-category, no text-subject).
+		// Build set of tax categories covered by notes.
 		noteCats := make(map[cbc.Code]bool)
-		for _, n := range inv.Notes {
-			cat := n.Ext.Get(untdid.ExtKeyTaxCategory)
-			if cat.IsEmpty() {
-				continue
+		if inv.Tax != nil {
+			for _, n := range inv.Tax.Notes {
+				cat := n.Ext.Get(untdid.ExtKeyTaxCategory)
+				if !cat.IsEmpty() {
+					noteCats[cat] = true
+				}
 			}
-
-			// No note for a category not present
-			if !present[cat] {
-				return errors.New("exemption note with untdid tax category " + cat.String() + " does not match any tax category in the invoice")
-			}
-
-			// No more than one note per category
-			if noteCats[cat] {
-				return errors.New("only one exemption note allowed per tax category " + cat.String())
-			}
-			noteCats[cat] = true
 		}
 
-		// Each non-standard category needs a VATEX code or a note
-		for cat := range present {
-			if !hasVATEX[cat] && !noteCats[cat] {
+		// Check that exempt tax categories without VATEX codes are covered by notes.
+		for cat := range needNote {
+			if !noteCats[cat] {
 				return errors.New("tax category " + cat.String() + " requires either a cef-vatex code or an exemption note (BR-" + cat.String() + "-10)")
 			}
 		}
@@ -364,32 +359,29 @@ func validateExemptionNotes(inv *bill.Invoice) validation.RuleFunc {
 	}
 }
 
-// exemptTaxCats returns two sets from the invoice's VAT totals:
-//   - present: all non-standard UNTDID tax categories found
-//   - hasVATEX: subset of present that already have a cef-vatex code
-func exemptTaxCats(inv *bill.Invoice) (present map[cbc.Code]bool, hasVATEX map[cbc.Code]bool) {
+// exemptTaxCatsWithoutVATEX returns the set of exempt UNTDID tax categories
+// from the invoice's VAT totals that do not already have a cef-vatex code.
+func exemptTaxCatsWithoutVATEX(inv *bill.Invoice) map[cbc.Code]bool {
 	if inv.Totals == nil || inv.Totals.Taxes == nil {
-		return nil, nil
+		return nil
 	}
 
-	present = make(map[cbc.Code]bool)
-	hasVATEX = make(map[cbc.Code]bool)
+	needNote := make(map[cbc.Code]bool)
 	for _, cat := range inv.Totals.Taxes.Categories {
-		switch cat.Code {
-		case tax.CategoryVAT:
-			for _, rt := range cat.Rates {
-				taxCat := rt.Ext.Get(untdid.ExtKeyTaxCategory)
-				if !taxCat.In(exemptTaxCategories...) {
-					continue
-				}
-				present[taxCat] = true
-				if !rt.Ext.Get(cef.ExtKeyVATEX).IsEmpty() {
-					hasVATEX[taxCat] = true
-				}
+		if cat.Code != tax.CategoryVAT {
+			continue
+		}
+		for _, rt := range cat.Rates {
+			taxCat := rt.Ext.Get(untdid.ExtKeyTaxCategory)
+			if !taxCat.In(exemptTaxCategories...) {
+				continue
+			}
+			if rt.Ext.Get(cef.ExtKeyVATEX).IsEmpty() {
+				needNote[taxCat] = true
 			}
 		}
 	}
-	return present, hasVATEX
+	return needNote
 }
 
 func isDue(inv *bill.Invoice) bool {

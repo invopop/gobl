@@ -3,6 +3,42 @@
   "$id": "https://gobl.org/draft-0/bill/tax",
   "$ref": "#/$defs/Tax",
   "$defs": {
+    "Note": {
+      "properties": {
+        "cat": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Category",
+          "description": "Tax category code from those available inside a region."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "title": "Country",
+          "description": "Country code override when issuing with taxes applied from different countries."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key identifies the tax situation this note applies to (e.g. \"exempt\", \"reverse-charge\")."
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "Text contains the exemption reason or explanation."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for additional structured data."
+        }
+      },
+      "type": "object",
+      "required": [
+        "cat",
+        "key",
+        "text"
+      ],
+      "description": "Note represents a tax-related note, typically used for exemption reasons or other tax-specific explanations that need to be associated with a particular tax category."
+    },
     "Tax": {
       "properties": {
         "prices_include": {
@@ -31,6 +67,14 @@
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
           "description": "Additional extensions that are applied to the invoice as a whole as opposed to specific\nsections."
+        },
+        "notes": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Notes contains tax-related notes, typically used for exemption reasons\nor other tax-specific explanations associated with particular tax categories."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

@@ -28,6 +28,10 @@ type Tax struct {
 	// sections.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
+	// Notes contains tax-related notes, typically used for exemption reasons
+	// or other tax-specific explanations associated with particular tax categories.
+	Notes []*tax.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -80,6 +84,7 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 		t.Rounding = tax.RoundingRuleCurrency
 	}
 	t.Ext = tax.CleanExtensions(t.Ext)
+	tax.Normalize(normalizers, t.Notes)
 	normalizers.Each(t)
 }
 
@@ -91,6 +96,7 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 			cbc.InKeyDefs(tax.RoundingRules),
 		),
 		validation.Field(&t.Ext),
+		validation.Field(&t.Notes),
 		validation.Field(&t.Meta),
 	)
 }

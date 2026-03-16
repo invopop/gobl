@@ -6,6 +6,11 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
+tax:
+  notes:
+    - cat: VAT
+      key: "reverse-charge"
+      text: "Reverse charge applies according to Article 44 and Article 196 of the EU VAT Directive."
 supplier:
   tax_id:
     country: "DE"
@@ -75,7 +80,3 @@ payment:
 
 ordering:
   code: "12345"
-
-notes:
-  - src: "reverse-charge"
-    text: "Reverse charge applies according to Article 44 and Article 196 of the EU VAT Directive."

@@ -96,6 +96,8 @@ func normalize(doc any) {
 		normalizeBillCharge(obj)
 	case *bill.LineCharge:
 		normalizeBillLineCharge(obj)
+	case *tax.Note:
+		normalizeTaxNote(obj)
 	case *org.Note:
 		normalizeOrgNote(obj)
 	case *org.Item:
