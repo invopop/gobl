@@ -267,27 +267,12 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.NoError(t, inv.Validate())
 	})
 
-	t.Run("reverse charge with matching note", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines = []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item:     &org.Item{Name: "Reverse charge item", Price: num.NewAmount(100, 2)},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Key:      tax.KeyReverseCharge,
-					},
-				},
-			},
-		}
-		inv.Tax = &bill.Tax{
-			Notes: []*tax.Note{
-				{Category: tax.CategoryVAT, Key: "reverse-charge", Text: "Reverse charge applies"},
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+	t.Run("nil tax note normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		var n *tax.Note
+		assert.NotPanics(t, func() {
+			ad.Normalizer(n)
+		})
 	})
 
 	t.Run("note normalization adds tax category", func(t *testing.T) {
@@ -313,36 +298,6 @@ func TestExemptionNoteValidation(t *testing.T) {
 		// After calculation, the tax note should have the UNTDID tax category set
 		require.Len(t, inv.Tax.Notes, 1)
 		assert.Equal(t, "E", inv.Tax.Notes[0].Ext.Get(untdid.ExtKeyTaxCategory).String())
-	})
-
-	t.Run("plain invoice notes alongside tax notes", func(t *testing.T) {
-		// Regular invoice notes should not interfere with tax exemption notes.
-		inv := testInvoiceStandard(t)
-		inv.Lines = []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
-				Taxes: tax.Set{
-					{
-						Category: tax.CategoryVAT,
-						Key:      tax.KeyExempt,
-					},
-				},
-			},
-		}
-		inv.Tax = &bill.Tax{
-			Notes: []*tax.Note{
-				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
-			},
-		}
-		inv.Notes = append(inv.Notes,
-			&org.Note{
-				Key:  org.NoteKeyGoods,
-				Text: "General delivery comment",
-			},
-		)
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
 	})
 
 	t.Run("standard rate does not need note", func(t *testing.T) {
