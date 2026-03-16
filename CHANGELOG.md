@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
 
