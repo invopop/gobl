@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+
 ### Changed
 
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
@@ -38,6 +42,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
 - `bill`: Invoice and Order now normalize Attachments fields
+
 
 ## [v0.307.0] - 2026-01-27
 
