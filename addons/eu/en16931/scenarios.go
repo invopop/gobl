@@ -92,6 +92,39 @@ var scenarios = []*tax.ScenarioSet{
 					untdid.ExtKeyDocumentType: "261",
 				},
 			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
+				},
+				Tags: []cbc.Key{
+					tax.TagPrepayment,
+				},
+				Ext: tax.Extensions{
+					untdid.ExtKeyDocumentType: "386",
+				},
+			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
+				},
+				Tags: []cbc.Key{
+					tax.TagFactoring,
+				},
+				Ext: tax.Extensions{
+					untdid.ExtKeyDocumentType: "393",
+				},
+			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				Tags: []cbc.Key{
+					tax.TagFactoring,
+				},
+				Ext: tax.Extensions{
+					untdid.ExtKeyDocumentType: "396",
+				},
+			},
 		},
 	},
 }

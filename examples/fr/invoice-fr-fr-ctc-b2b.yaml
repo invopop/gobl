@@ -1,0 +1,102 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "fr-ctc-flow2-v1"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-06-13"
+series: "FAC"
+code: "2024-001"
+
+tax:
+  ext:
+    fr-ctc-billing-mode: "B7"
+    untdid-document-type: "380"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Fournisseur Example SARL"
+  inboxes:
+    - key: peppol
+      scheme: "0225"
+      code: "732829320"
+  emails:
+    - addr: "facturation@fournisseur.fr"
+  addresses:
+    - num: "123"
+      street: "Rue de la Paix"
+      locality: "Paris"
+      code: "75001"
+      country: "FR"
+  telephones:
+    - num: "+33100200300"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "356000000"
+  identities:
+    - type: "SIREN"
+      code: "356000000"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Client Example SAS"
+  inboxes:
+    - key: peppol
+      scheme: "0225"
+      code: "356000000"
+  emails:
+    - addr: "comptabilite@client.fr"
+  addresses:
+    - num: "456"
+      street: "Avenue des Champs-Elysees"
+      locality: "Paris"
+      code: "75008"
+      country: "FR"
+  telephones:
+    - num: "+33100200400"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Services de conseil"
+      price: "100.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Remise fidelite"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+ordering:
+  code: "PO-2024-001"
+
+notes:
+  - key: payment
+    text: "Une penalite fixe de 40 EUR sera appliquee en cas de retard de paiement."
+    ext:
+      untdid-text-subject: "PMT"
+  - key: payment-method
+    text: "Des penalites de retard s'appliquent conformement a nos conditions generales de vente."
+    ext:
+      untdid-text-subject: "PMD"
+  - key: payment-term
+    text: "Aucun escompte n'est offert pour paiement anticipe."
+    ext:
+      untdid-text-subject: "AAB"
+
+payment:
+  instructions:
+    key: "credit-transfer"
+    credit_transfer:
+      - iban: "FR7630006000011234567890189"
+        name: "Fournisseur Example SARL"
+  terms:
+    detail: "Paiement a 30 jours"

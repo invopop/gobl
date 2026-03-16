@@ -17,7 +17,7 @@
 		"identities": [
 			{
 				"scope": "legal",
-				"key": "cvr",
+				"type": "CVR",
 				"code": "13585628"
 			}
 		],
@@ -52,7 +52,7 @@
 		"identities": [
 			{
 				"scope": "legal",
-				"key": "cvr",
+				"type": "CVR",
 				"code": "88146328"
 			}
 		],

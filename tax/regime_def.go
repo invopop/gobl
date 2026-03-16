@@ -29,11 +29,18 @@ type RegimeDef struct {
 	// Introductory details about the regime.
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
+	// Sources is a list of references to tax authority or other relevant documentation that
+	// can be used to validate the regime's data and be used in the future to check for updates
+	// and changes.
+	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
 	// Location name for the country's central time zone. Accepted
-	// values from IANA Time Zone Database (https://iana.org/time-zones).
+	// values from IANA Time Zone Database (https://iana.org/time-zones). If a country has multiple
+	// time zones, the most common or central one should be used.
 	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`
 
-	// Country code for the region
+	// Country code for tax purposes which usually coincides with the ISO 3166-1 alpha-2 code, but not
+	// always.
 	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Code"`
 
 	// Alternative localization codes that may be used to identify the tax regime
@@ -53,8 +60,8 @@ type RegimeDef struct {
 	// consequence will not use tax identities, like the US.
 	TaxScheme cbc.Code `json:"tax_scheme,omitempty" jsonschema:"title=Tax Scheme"`
 
-	// Rounding rule to use when calculating the tax totals, default is always
-	// `sum-then-round`.
+	// Rounding rule to use when calculating the tax totals. See the RoundingRule
+	// constants for more details. If not provided, the default is RoundingRulePrecise.
 	CalculatorRoundingRule cbc.Key `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
 
 	// Tags that can be applied at the document level to identify additional
@@ -78,6 +85,9 @@ type RegimeDef struct {
 	// should be forwarded to.
 	InboxKeys []*cbc.Definition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
+	// Scenarios are used to describe a specific set of conditions and rules that apply to a specific
+	// document schema. These provide a more generic solution for normalization and validation of documents
+	// in regimes with specific requirements.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for corrections to be used with correction options.
@@ -219,6 +229,7 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
+		validation.Field(&r.Sources),
 		validation.Field(&r.Categories, validation.Required),
 	)
 	return err

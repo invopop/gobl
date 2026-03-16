@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/be"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,6 +14,7 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
+		Regime: tax.WithRegime("BE"),
 		Series: "TEST",
 		Code:   "0002",
 		Supplier: &org.Party{
@@ -26,7 +28,7 @@ func validInvoice() *bill.Invoice {
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: "BE",
-				Code:    "897222383",
+				Code:    "0897222383",
 			},
 		},
 		Lines: []*bill.Line{
@@ -49,12 +51,42 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	t.Run("valid invoice with tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 
-	inv = validInvoice()
-	inv.Supplier.TaxID.Code = ""
-	require.NoError(t, inv.Calculate())
-	assert.ErrorContains(t, inv.Validate(), "supplier: (tax_id: (code: cannot be blank.).)")
+	t.Run("missing supplier tax ID code", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing type 'BCE'; tax_id: (code: cannot be blank.).).")
+	})
+
+	t.Run("supplier with BCE identity instead of tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID.Code = ""
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: be.IdentityTypeBCE,
+				Code: "0413172884",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("supplier with nil tax ID and BCE identity", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: be.IdentityTypeBCE,
+				Code: "0413172884",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 }
