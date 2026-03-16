@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+
+### Removed
+
+- `pl-favat-v3`: Preceding no longer required when it is a credit note
+
 ### Added
 
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
