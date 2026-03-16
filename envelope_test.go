@@ -448,10 +448,8 @@ func TestDocumentValidation(t *testing.T) {
 	assert.NoError(t, doc.Validate())
 	inv.IssueDate = cal.Date{}
 	err = doc.Validate()
-	if assert.Error(t, err) {
-		// Double check to make sure validation working
-		assert.Contains(t, err.Error(), "issue_date: required")
-	}
+	// Double check to make sure validation working
+	assert.ErrorContains(t, err, "issue_date: required")
 }
 
 func TestDocumentValidationOutput(t *testing.T) {

@@ -124,8 +124,19 @@ func (e *Error) Key() cbc.Key {
 	return e.key
 }
 
+// Faults returns the errors that are mapped as rule Faults directly
+// so that they can be serialised as a structured response.
+func (e *Error) Faults() rules.Faults {
+	if fe, ok := e.cause.(rules.Faults); ok {
+		return fe
+	}
+	return nil
+}
+
 // Fields returns the errors that are associated with specific fields
 // or nil if there are no field errors available.
+// Deprecated: Use [Fields] instead which provides an array of
+// Fault objects instead of a map.
 func (e *Error) Fields() FieldErrors {
 	if fe, ok := e.cause.(FieldErrors); ok {
 		return fe
@@ -133,9 +144,7 @@ func (e *Error) Fields() FieldErrors {
 	return nil
 }
 
-// Message returns a string representation of the error if it cannot
-// be serialised as a map of field names to sub-errors, see also the
-// [Fields] method.
+// Message returns a string representation of the underlying error.
 func (e *Error) Message() string {
 	if e.cause == nil {
 		return ""

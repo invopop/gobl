@@ -181,7 +181,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "(text) general note text must be 500 characters or less")
+		require.ErrorContains(t, err, "(notes[0].text) general note text must be 500 characters or less")
 	})
 
 	t.Run("note with wrong key", func(t *testing.T) {
@@ -321,8 +321,8 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "(issue_date) issue date is required")
-		require.ErrorContains(t, err, "(tax) preceding invoice tax data is required")
+		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-02] (preceding[0].issue_date) issue date is required")
+		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-03] (preceding[0].tax) preceding invoice tax data is required")
 	})
 
 	t.Run("customer nil", func(t *testing.T) {
@@ -402,7 +402,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "(customer) customer tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "(customer.tax_id) customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified substitution R5 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -431,7 +431,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "(customer) customer tax ID must not be set for simplified invoices")
+		require.ErrorContains(t, rules.Validate(inv), "(customer.tax_id) customer tax ID must not be set for simplified invoices")
 	})
 	t.Run("simplified invoice F2 with customer identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)

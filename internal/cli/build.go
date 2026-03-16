@@ -48,7 +48,7 @@ func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 		}
 
 		if err := doc.Validate(); err != nil {
-			err = gobl.ErrValidation.WithCause(err)
+			err := gobl.ErrValidation.WithCause(err)
 			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 
