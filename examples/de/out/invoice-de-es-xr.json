@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7b064cc9d95b530aa07f14898d981bb0790fe802f0ceddca9f706bcf241e2806"
+			"val": "15600dc6bb9d76c04f8b93e9fc9c49a7f5a899811ab8827dd07298b886fa2954"
 		}
 	},
 	"doc": {
@@ -31,7 +31,7 @@
 				{
 					"cat": "VAT",
 					"key": "reverse-charge",
-					"text": "Reverse charge applies according to Article 44 and Article 196 of the EU VAT Directive.",
+					"text": "Reverse charge applies according to EU VAT Directive.",
 					"ext": {
 						"untdid-tax-category": "AE"
 					}
