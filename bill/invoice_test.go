@@ -1079,6 +1079,15 @@ func TestCalculateInverted(t *testing.T) {
 	assert.Equal(t, i.Totals.Due.String(), "-700.00")
 }
 
+func TestInvertWithBypassTag(t *testing.T) {
+	i := &bill.Invoice{}
+	i.SetTags(tax.TagBypass)
+
+	err := i.Invert()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "bypass")
+}
+
 func TestInvoiceForUnknownRegime(t *testing.T) {
 	lines := []*bill.Line{
 		{

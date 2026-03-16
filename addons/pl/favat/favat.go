@@ -16,9 +16,9 @@ const (
 
 // KSeF official codes to include.
 const (
-	StampKSEFNumber cbc.Key = "favat-ksef-number"
-	StampHash       cbc.Key = "favat-hash"
-	StampQR         cbc.Key = "favat-qr"
+	StampKSeFNumber          cbc.Key = "favat-ksef-number"
+	StampKSeFAcquisitionDate cbc.Key = "favat-ksef-acquisition-date"
+	StampQR                  cbc.Key = "favat-qr"
 )
 
 func init() {
@@ -74,7 +74,7 @@ var corrections = tax.CorrectionSet{
 			bill.InvoiceTypeCreditNote,
 		},
 		Stamps: []cbc.Key{
-			StampKSEFNumber,
+			StampKSeFNumber,
 		},
 	},
 }

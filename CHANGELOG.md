@@ -8,10 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `bill`: `When` field on `Tax` to define the tax point date (issue, delivery, paid).
+- `bill`: `Date` field on `Tax` to define the tax point date (issue, delivery, paid).
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+
+### Removed
+
+- `pl-favat-v3`: Preceding no longer required when it is a credit note
 
 ### Changed
 
+- `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
 
@@ -41,6 +47,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
 - `bill`: Invoice and Order now normalize Attachments fields
+
 
 ## [v0.307.0] - 2026-01-27
 
