@@ -868,6 +868,9 @@
   "corrections": [
     {
       "schema": "bill/invoice",
+      "doc_extensions": [
+        "ar-arca-doc-type"
+      ],
       "copy_ext": true
     }
   ]
