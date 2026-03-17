@@ -309,6 +309,11 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	cd := inv.correctionDef()
+	if cd != nil && cd.CopyExt && inv.Tax != nil && len(inv.Tax.Ext) > 0 {
+		// Copy the invoice's tax extensions to preceding, then merge
+		// user-provided options on top (so they take precedence).
+		pre.Ext = inv.Tax.Ext.Merge(pre.Ext)
+	}
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err
 	}

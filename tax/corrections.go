@@ -25,6 +25,9 @@ type CorrectionDefinition struct {
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Copy tax from the preceding document to the document ref.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
+	// CopyExt when set will copy the tax extensions from the document to
+	// the preceding document reference.
+	CopyExt bool `json:"copy_ext,omitempty" jsonschema:"title=Copy Tax Extensions"`
 }
 
 // Def provides the correction definition in the set for the
@@ -55,6 +58,9 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	if other.CopyTax {
 		cd.CopyTax = other.CopyTax
 	}
+	if other.CopyExt {
+		cd.CopyExt = other.CopyExt
+	}
 	cd = &CorrectionDefinition{
 		Schema:         cd.Schema,
 		Types:          append(cd.Types, other.Types...),
@@ -62,6 +68,7 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         append(cd.Stamps, other.Stamps...),
 		CopyTax:        cd.CopyTax,
+		CopyExt:        cd.CopyExt,
 	}
 	return cd
 }

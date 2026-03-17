@@ -130,6 +130,11 @@
           "type": "boolean",
           "title": "Copy Tax Totals",
           "description": "Copy tax from the preceding document to the document ref."
+        },
+        "copy_ext": {
+          "type": "boolean",
+          "title": "Copy Tax Extensions",
+          "description": "CopyExt when set will copy the tax extensions from the document to\nthe preceding document reference."
         }
       },
       "type": "object",

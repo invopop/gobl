@@ -48,4 +48,15 @@ func TestCorrections(t *testing.T) {
 	assert.Contains(t, cd3.Extensions, facturae.ExtKeyCorrection)
 	assert.Contains(t, cd3.Extensions, tbai.ExtKeyCorrection)
 	assert.True(t, cd3.CopyTax)
+	assert.False(t, cd3.CopyExt)
+
+	cds3 := tax.CorrectionSet{
+		{
+			Schema:  bill.ShortSchemaInvoice,
+			CopyExt: true,
+		},
+	}
+	cd4 := cd3.Merge(cds3.Def(bill.ShortSchemaInvoice))
+	assert.True(t, cd4.CopyExt)
+	assert.True(t, cd4.CopyTax) // preserved from previous merge
 }
