@@ -201,13 +201,14 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	}
 
 	// Try to add all the specific options for the extensions
-	if len(cd.Extensions) > 0 {
+	allExtKeys := append(cd.Extensions, cd.DocExtensions...)
+	if len(allExtKeys) > 0 {
 		if ext, ok := cos.Properties.Get("ext"); ok {
 			ext.Ref = "" // remove the ref
 			ext.Type = "object"
 			ext.Properties = jsonschema.NewProperties()
 			rcmd := make([]string, 0)
-			for _, pk := range cd.Extensions {
+			for _, pk := range allExtKeys {
 				re := tax.ExtensionForKey(pk)
 				if re == nil {
 					continue
@@ -283,6 +284,22 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return errors.New("cannot correct an invoice without a code")
 	}
 
+	cd := inv.correctionDef()
+
+	// Separate doc-level extension keys from preceding-level extensions.
+	// DocExtension values are routed to inv.Tax.Ext after CopyExt preserves
+	// the original values in preceding.
+	preExt := o.Ext
+	docExt := make(tax.Extensions)
+	if cd != nil && len(cd.DocExtensions) > 0 {
+		for _, key := range cd.DocExtensions {
+			if val, ok := o.Ext[key]; ok {
+				docExt[key] = val
+				preExt = preExt.Delete(key)
+			}
+		}
+	}
+
 	// Copy and prepare the basic fields
 	pre := &org.DocumentRef{
 		Identify:  uuid.Identify{UUID: inv.UUID},
@@ -291,7 +308,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
-		Ext:       o.Ext,
+		Ext:       preExt,
 	}
 	if o.CopyTax && inv.Totals != nil {
 		pre.Tax = inv.Totals.Taxes.Clone()
@@ -308,11 +325,17 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
-	cd := inv.correctionDef()
 	if cd != nil && cd.CopyExt && inv.Tax != nil && len(inv.Tax.Ext) > 0 {
 		// Copy the invoice's tax extensions to preceding, then merge
 		// user-provided options on top (so they take precedence).
 		pre.Ext = inv.Tax.Ext.Merge(pre.Ext)
+	}
+	// Now apply doc-level extensions to the invoice
+	for key, val := range docExt {
+		if inv.Tax == nil {
+			inv.Tax = new(Tax)
+		}
+		inv.Tax.Ext = inv.Tax.Ext.Set(key, val)
 	}
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err

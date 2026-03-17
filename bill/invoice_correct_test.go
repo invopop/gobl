@@ -154,7 +154,10 @@ func TestCorrectWithCopyExt(t *testing.T) {
 		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
 		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyConcept])
 
-		err := inv.Correct(bill.Credit)
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"), // Credit Note A
+		)
 		require.NoError(t, err)
 
 		// Original extensions copied to preceding
@@ -162,7 +165,7 @@ func TestCorrectWithCopyExt(t *testing.T) {
 		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
 		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
 
-		// Invoice doc type re-derived for credit note
+		// Invoice doc type set via DocExtensions
 		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
 	})
 
@@ -172,14 +175,33 @@ func TestCorrectWithCopyExt(t *testing.T) {
 
 		err := inv.Correct(
 			bill.Credit,
-			bill.WithExtension(arca.ExtKeyDocType, "6"), // Override
+			bill.WithExtension(arca.ExtKeyDocType, "8"), // Credit Note B
 		)
 		require.NoError(t, err)
 
-		// User override wins for preceding
-		assert.Equal(t, cbc.Code("6"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
+		// DocExtension routes to inv.Tax.Ext
+		assert.Equal(t, cbc.Code("8"), inv.Tax.Ext[arca.ExtKeyDocType])
+		// Original doc type still copied to preceding via CopyExt
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
 		// Concept still copied
 		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyConcept])
+	})
+
+	t.Run("doc extension routes to invoice tax ext", func(t *testing.T) {
+		inv := testInvoiceARForCorrection(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"), // Credit Note A
+		)
+		require.NoError(t, err)
+
+		// User-provided doc type routed to invoice via DocExtensions
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+		// Original doc type in preceding via CopyExt
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
 	})
 }
 

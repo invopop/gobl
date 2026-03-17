@@ -19,6 +19,10 @@ type CorrectionDefinition struct {
 	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
 	// Extension keys that can be included
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
+	// DocExtensions lists extension keys that should be set on the invoice's
+	// Tax.Ext (rather than on the preceding document reference) when provided
+	// in the correction options.
+	DocExtensions []cbc.Key `json:"doc_extensions,omitempty" jsonschema:"title=Document Extensions"`
 	// ReasonRequired when true implies that a reason must be provided
 	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
@@ -65,6 +69,7 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		Schema:         cd.Schema,
 		Types:          append(cd.Types, other.Types...),
 		Extensions:     append(cd.Extensions, other.Extensions...),
+		DocExtensions:  append(cd.DocExtensions, other.DocExtensions...),
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         append(cd.Stamps, other.Stamps...),
 		CopyTax:        cd.CopyTax,
@@ -81,12 +86,21 @@ func (cd *CorrectionDefinition) HasType(t cbc.Key) bool {
 	return t.In(cd.Types...)
 }
 
-// HasExtension returns true if the correction definition has the change key provided.
+// HasExtension returns true if the correction definition has the change key provided,
+// either as a regular extension or a document extension.
 func (cd *CorrectionDefinition) HasExtension(key cbc.Key) bool {
 	if cd == nil {
 		return false // no correction definitions
 	}
-	return key.In(cd.Extensions...)
+	return key.In(cd.Extensions...) || key.In(cd.DocExtensions...)
+}
+
+// HasDocExtension returns true if the key is defined as a document extension.
+func (cd *CorrectionDefinition) HasDocExtension(key cbc.Key) bool {
+	if cd == nil {
+		return false
+	}
+	return key.In(cd.DocExtensions...)
 }
 
 // Validate ensures the key definition looks correct in the context of the regime.
@@ -96,6 +110,7 @@ func (cd *CorrectionDefinition) Validate() error {
 		validation.Field(&cd.Types),
 		validation.Field(&cd.Stamps),
 		validation.Field(&cd.Extensions),
+		validation.Field(&cd.DocExtensions),
 	)
 	return err
 }

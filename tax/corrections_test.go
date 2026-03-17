@@ -59,4 +59,23 @@ func TestCorrections(t *testing.T) {
 	cd4 := cd3.Merge(cds3.Def(bill.ShortSchemaInvoice))
 	assert.True(t, cd4.CopyExt)
 	assert.True(t, cd4.CopyTax) // preserved from previous merge
+
+	// Test DocExtensions merge
+	cds4 := tax.CorrectionSet{
+		{
+			Schema:        bill.ShortSchemaInvoice,
+			DocExtensions: []cbc.Key{"doc-ext-1"},
+		},
+	}
+	cd5 := cd4.Merge(cds4.Def(bill.ShortSchemaInvoice))
+	assert.Len(t, cd5.DocExtensions, 1)
+	assert.Contains(t, cd5.DocExtensions, cbc.Key("doc-ext-1"))
+
+	// Test HasExtension covers DocExtensions
+	assert.True(t, cd5.HasExtension("doc-ext-1"))
+	assert.True(t, cd5.HasExtension(facturae.ExtKeyCorrection)) // regular extension
+
+	// Test HasDocExtension
+	assert.True(t, cd5.HasDocExtension("doc-ext-1"))
+	assert.False(t, cd5.HasDocExtension(facturae.ExtKeyCorrection))
 }
