@@ -24,8 +24,9 @@ const (
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	{
-		Schema:  bill.ShortSchemaInvoice,
-		CopyExt: true,
+		Schema:        bill.ShortSchemaInvoice,
+		CopyExt:       true,
+		DocExtensions: []cbc.Key{ExtKeyDocType},
 	},
 }
 
@@ -92,15 +93,8 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 		inv.Tax = new(bill.Tax)
 	}
 
-	// If doc type is already set and consistent with the invoice type, keep it.
-	// Otherwise clear it so it gets re-derived below. This handles cases like
-	// corrections (where the type changes but the old doc type remains),
-	// API uploads with mismatched values, or any other source.
-	if existing := inv.Tax.GetExt(ExtKeyDocType); existing != "" {
-		if isDocTypeConsistent(existing, inv.Type) {
-			return
-		}
-		inv.Tax.Ext = inv.Tax.Ext.Delete(ExtKeyDocType)
+	if inv.Tax.GetExt(ExtKeyDocType) != "" {
+		return
 	}
 
 	// Determine the doc type category (A, B, or C)
@@ -165,20 +159,6 @@ func getDocTypeForCategory(category string, invType cbc.Key) cbc.Code {
 		}
 	}
 	return ""
-}
-
-// isDocTypeConsistent checks if the existing doc type matches the invoice type.
-func isDocTypeConsistent(docType cbc.Code, invType cbc.Key) bool {
-	switch invType {
-	case bill.InvoiceTypeCreditNote:
-		return docType.In(DocTypesCreditNote...)
-	case bill.InvoiceTypeDebitNote:
-		return docType.In(DocTypesDebitNote...)
-	case bill.InvoiceTypeStandard:
-		return !docType.In(DocTypesCreditNote...) && !docType.In(DocTypesDebitNote...)
-	default:
-		return true
-	}
 }
 
 func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {

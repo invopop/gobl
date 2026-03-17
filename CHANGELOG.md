@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `tax`: Added `DocExtensions` field to `CorrectionDefinition` to route extension keys to the invoice's `Tax.Ext` during corrections.
 - `tax`: Added `CopyExt` field to `CorrectionDefinition` to automatically copy tax extensions from the invoice to preceding.
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 
@@ -24,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `ar-arca-v4`: Fixed correction flow to automatically copy tax extensions to preceding, removing need for manual extension input.
+- `ar-arca-v4`: Correction flow uses `DocExtensions` and `CopyExt`
 - `tax`: Fixed `Since` date comparison to be inclusive
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
 
