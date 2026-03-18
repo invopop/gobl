@@ -11,7 +11,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			tax.RegimeIn(l10n.BE.Tax()),
+			rules.HasContext(tax.RegimeIn(l10n.BE.Tax())),
 			rules.Field("supplier",
 				rules.When(
 					rules.By("no BCE identity", supplierNoBCEIdentity),

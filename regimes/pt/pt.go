@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -13,8 +14,14 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("pt", rules.GOBL.Add("PT"), taxIdentityRules())
+	rules.Register("pt", rules.GOBL.Add("PT"),
+		taxComboRules(),
+		taxIdentityRules(),
+	)
 }
+
+// CountryCode is the tax country code for Portugal.
+const CountryCode l10n.TaxCountryCode = "PT"
 
 // Custom keys used typically in meta information
 const (
@@ -37,7 +44,7 @@ const (
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "PT",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

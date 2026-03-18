@@ -1,12 +1,11 @@
 package nl
 
 import (
-	"regexp"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -42,24 +41,29 @@ var identityDefinitions = []*cbc.Definition{
 	},
 }
 
-// oinRegexp validates the OIN format: 6-zero prefix, 2-digit register code, 9-digit identifier, 3-zero suffix (20 digits).
-var oinRegexp = regexp.MustCompile(`^0{6}(0[1-9]|10|99)\d{9}0{3}$`)
+// oinPattern validates the OIN format: 6-zero prefix, 2-digit register code, 9-digit identifier, 3-zero suffix (20 digits).
+var oinPattern = `^0{6}(0[1-9]|10|99)\d{9}0{3}$`
 
-func validateIdentity(id *org.Identity) error {
-	if id == nil {
-		return nil
-	}
-	switch id.Type {
-	case IdentityTypeKVK:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.Length(8, 8)),
-		)
-	case IdentityTypeOIN:
-		return validation.ValidateStruct(id,
-			validation.Field(&id.Code,
-				validation.Match(oinRegexp),
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			rules.HasContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeKVK),
+				rules.Field("code",
+					rules.Assert("01", "identity code for type KVK must be valid",
+						rules.Length(8, 8),
+					),
+				),
 			),
-		)
-	}
-	return nil
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeOIN),
+				rules.Field("code",
+					rules.Assert("02", "identity code for type OIN must be valid",
+						rules.Matches(oinPattern),
+					),
+				),
+			),
+		),
+	)
 }

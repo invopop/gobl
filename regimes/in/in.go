@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -14,17 +15,21 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("in", rules.GOBL.Add("IN"),
+	rules.Register("in",
+		rules.GOBL.Add("IN"),
 		orgIdentityRules(),
 		orgItemRules(),
 		taxIdentityRules(),
 	)
 }
 
+// CountryCode is the tax country code for India.
+const CountryCode l10n.TaxCountryCode = "IN"
+
 // New provides the tax region definition for India.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "IN",
+		Country:   CountryCode,
 		Currency:  currency.INR,
 		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{

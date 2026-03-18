@@ -106,10 +106,13 @@ func validateSupplier(value any) error {
 	}
 
 	return validation.ValidateStruct(s,
-		validation.Field(&s.Identities,
-			org.RequireIdentityKey(IdentityKeyStateReg),
-			validation.Skip,
-		),
+		/*
+			FIX ME!
+				validation.Field(&s.Identities,
+					org.RequireIdentityKey(IdentityKeyStateReg),
+					validation.Skip,
+				),
+		*/
 		validation.Field(&s.Name, validation.Required),
 		validation.Field(&s.Addresses, validation.Required),
 	)

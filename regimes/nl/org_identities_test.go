@@ -5,6 +5,8 @@ import (
 
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/nl"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +30,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeKVK,
 				Code: "1234567",
 			},
-			err: "code: the length must be exactly 8",
+			err: "[GOBL-NL-ORG-IDENTITY-01] ($.code) identity code for type KVK must be valid",
 		},
 		{
 			name: "KVK too long",
@@ -36,7 +38,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeKVK,
 				Code: "123456789",
 			},
-			err: "code: the length must be exactly 8",
+			err: "[GOBL-NL-ORG-IDENTITY-01]",
 		},
 		// OIN tests
 		{
@@ -66,7 +68,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeOIN,
 				Code: "00000000123456789000",
 			},
-			err: "must be in a valid format",
+			err: "[GOBL-NL-ORG-IDENTITY-02] ($.code) identity code for type OIN must be valid",
 		},
 		{
 			name: "OIN invalid register code 11",
@@ -74,7 +76,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeOIN,
 				Code: "00000011123456789000",
 			},
-			err: "must be in a valid format",
+			err: "[GOBL-NL-ORG-IDENTITY-02]",
 		},
 		{
 			name: "OIN invalid prefix",
@@ -82,7 +84,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeOIN,
 				Code: "12345601123456789000",
 			},
-			err: "must be in a valid format",
+			err: "[GOBL-NL-ORG-IDENTITY-02]",
 		},
 		{
 			name: "OIN invalid suffix",
@@ -90,7 +92,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeOIN,
 				Code: "00000001123456789123",
 			},
-			err: "must be in a valid format",
+			err: "[GOBL-NL-ORG-IDENTITY-02]",
 		},
 		{
 			name: "OIN non-numeric",
@@ -98,7 +100,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: nl.IdentityTypeOIN,
 				Code: "00000001ABCDEFGHI000",
 			},
-			err: "must be in a valid format",
+			err: "[GOBL-NL-ORG-IDENTITY-02]",
 		},
 		// Other identity type
 		{
@@ -110,9 +112,12 @@ func TestValidateIdentity(t *testing.T) {
 		},
 	}
 
+	opts := []rules.WithContext{
+		tax.RegimeContext(nl.CountryCode),
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := nl.Validate(tt.identity)
+			err := rules.Validate(tt.identity, opts...)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

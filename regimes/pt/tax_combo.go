@@ -3,9 +3,19 @@ package pt
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
+
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			rules.HasContext(tax.RegimeIn(CountryCode)),
+			// TODO
+		),
+	)
+}
 
 func validateTaxCombo(tc *tax.Combo) error {
 	if tc == nil {

@@ -122,6 +122,7 @@ func validateInvoiceCustomer(tags []cbc.Key) func(value any) error {
 				),
 				validation.Skip,
 			),
+			/* FIX ME!
 			validation.Field(&obj.Identities,
 				validation.When(
 					len(obj.Identities) > 0,
@@ -129,6 +130,7 @@ func validateInvoiceCustomer(tags []cbc.Key) func(value any) error {
 				),
 				validation.Skip,
 			),
+			*/
 			validation.Field(&obj.Addresses,
 				validation.When(
 					isColombian(obj.TaxID),

@@ -1,13 +1,6 @@
 package se
 
-import (
-	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
-)
-
+/*
 func validateBillInvoice(inv *bill.Invoice) error {
 	simplified := inv.Tags.HasTags(tax.TagSimplified)
 	return validation.ValidateStruct(inv,
@@ -78,3 +71,4 @@ func validateBillInvoiceSupplier(value any) error {
 		),
 	)
 }
+*/

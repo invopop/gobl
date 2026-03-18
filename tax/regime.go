@@ -71,6 +71,27 @@ type regimeGetter interface {
 	GetRegime() l10n.TaxCountryCode
 }
 
+// RulesContext implements rules.ContextAdder so that any struct embedding
+// Regime automatically injects the regime code into the validation context.
+// This allows guards like rules.HasContext(tax.RegimeIn("ES")) to work on
+// nested objects without needing access to the root document.
+func (r Regime) RulesContext() rules.WithContext {
+	return func(rc *rules.RunCtx) {
+		rc.Add(r)
+	}
+}
+
+// RegimeContext returns a rules.WithContext option that injects the given
+// regime code(s) into the validation context. Useful for testing rules against
+// specific regimes without a fully calculated document.
+func RegimeContext(codes ...l10n.TaxCountryCode) rules.WithContext {
+	return func(rc *rules.RunCtx) {
+		for _, code := range codes {
+			rc.Add(Regime{Country: RegimeCode(code)})
+		}
+	}
+}
+
 // RegimeIn checks if the regime's country code is in the provided list of codes.
 func RegimeIn(codes ...l10n.TaxCountryCode) rules.Test {
 	str := make([]string, len(codes))

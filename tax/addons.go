@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -80,7 +81,7 @@ func (as *Addons) SetAddons(addons ...cbc.Key) {
 }
 
 // GetAddons provides the list of addon keys in use.
-func (as *Addons) GetAddons() []cbc.Key {
+func (as Addons) GetAddons() []cbc.Key {
 	return as.List
 }
 
@@ -174,6 +175,16 @@ func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
 	return ctx
 }
 
+// RulesContext implements rules.ContextAdder so that any struct embedding
+// Addons automatically injects the addon list into the validation context.
+// This allows guards like rules.HasContext(tax.AddonIn(key)) to work on
+// nested objects without needing access to the root document.
+func (as Addons) RulesContext() rules.WithContext {
+	return func(rc *rules.RunCtx) {
+		rc.Add(as)
+	}
+}
+
 type implementsAddon interface {
 	GetAddons() []cbc.Key
 }
@@ -188,6 +199,37 @@ func HasAddon(key cbc.Key) rules.Test {
 		}
 		return key.In(obj.GetAddons()...)
 	})
+}
+
+// AddonIn returns a Test that checks whether the value has the given addon key.
+// It is symmetric with RegimeIn and works both on document objects (via GetAddons)
+// and on Addons structs stored in the validation context.
+func AddonIn(keys ...cbc.Key) rules.Test {
+	parts := make([]string, len(keys))
+	for i, k := range keys {
+		parts[i] = k.String()
+	}
+	return rules.By("addon in ["+strings.Join(parts, ",")+"]", func(value any) bool {
+		obj, ok := value.(implementsAddon)
+		if !ok {
+			return false
+		}
+		for _, key := range keys {
+			if key.In(obj.GetAddons()...) {
+				return true
+			}
+		}
+		return false
+	})
+}
+
+// AddonContext returns a rules.WithContext option that injects the given addon
+// key(s) into the validation context. Useful for testing rules against specific
+// addons without a fully calculated document.
+func AddonContext(keys ...cbc.Key) rules.WithContext {
+	return func(rc *rules.RunCtx) {
+		rc.Add(WithAddons(keys...))
+	}
 }
 
 // addonRegistered will check that an add-on with the key to be validated

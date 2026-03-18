@@ -1,4 +1,4 @@
-package fr
+package nl
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -11,10 +11,10 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(l10n.FR.Tax())),
+			rules.HasContext(tax.RegimeIn(l10n.NL.Tax())),
 			rules.Field("supplier",
-				rules.Assert("01", "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
-					rules.By("has tax ID code or SIREN/SIRET identity", hasSupplierTaxIDOrIdentity),
+				rules.Assert("01", "invoice supplier must have a tax ID code or a KVK/OIN identity",
+					rules.By("has tax ID code or KVK/OIN identity", hasSupplierTaxIDOrIdentity),
 				),
 			),
 		),
@@ -35,7 +35,7 @@ func hasSupplierIdentity(party *org.Party) bool {
 		return false
 	}
 	for _, id := range party.Identities {
-		if id.Type == IdentityTypeSIREN || id.Type == IdentityTypeSIRET {
+		if id.Type == IdentityTypeKVK || id.Type == IdentityTypeOIN {
 			return true
 		}
 	}

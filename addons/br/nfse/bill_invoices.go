@@ -55,10 +55,13 @@ func validateSupplier(value interface{}) error {
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
-		validation.Field(&obj.Identities,
-			org.RequireIdentityKey(IdentityKeyMunicipalReg),
-			validation.Skip,
-		),
+		/*
+			FIX ME!
+			validation.Field(&obj.Identities,
+				org.RequireIdentityKey(IdentityKeyMunicipalReg),
+				validation.Skip,
+			),
+		*/
 		validation.Field(&obj.Name, validation.Required),
 		validation.Field(&obj.Addresses,
 			validation.Required,

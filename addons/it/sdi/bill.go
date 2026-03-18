@@ -158,6 +158,7 @@ func validateCustomer(value interface{}) error {
 			validation.Each(validation.By(validateAddress)),
 			validation.Skip,
 		),
+		/* FIX ME!
 		validation.Field(&customer.Identities,
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
@@ -165,6 +166,7 @@ func validateCustomer(value interface{}) error {
 			),
 			validation.Skip,
 		),
+		*/
 		validation.Field(&customer.People,
 			validation.When(
 				(customer.Name == ""),

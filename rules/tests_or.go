@@ -30,6 +30,17 @@ func (t orTest) Check(obj any) bool {
 	return false
 }
 
+// checkWithContext implements contextualTest so that Or(HasContext(...), ...)
+// correctly threads the context through to each inner test.
+func (t orTest) checkWithContext(rc *RunCtx, val any) bool {
+	for _, test := range t.tests {
+		if runTest(rc, test, val) {
+			return true
+		}
+	}
+	return false
+}
+
 // String provides the string representation of the test
 func (t orTest) String() string {
 	return t.desc

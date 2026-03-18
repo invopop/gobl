@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -14,13 +15,16 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules())
+	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules(), orgIdentityRules())
 }
+
+// CountryCode is the tax country code for Italy.
+const CountryCode l10n.TaxCountryCode = "IT"
 
 // New instantiates a new Italian regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "IT",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -68,7 +72,6 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Rome",
 		Identities: identityKeyDefinitions, // identities.go
 		Scenarios:  scenarios,              // scenarios.go
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: categories, // categories.go
 		Corrections: []*tax.CorrectionDefinition{
@@ -81,15 +84,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *org.Identity:
-		return validateIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will perform any regime specific calculations.

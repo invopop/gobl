@@ -1,8 +1,6 @@
 package it
 
 import (
-	"errors"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -10,8 +8,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -44,43 +42,64 @@ func normalizeIdentity(id *org.Identity) {
 	id.Code = cbc.Code(code)
 }
 
-// validateIdentities helps confirm that an identity of a specific type is valid.
-func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Key != IdentityKeyFiscalCode {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code,
-			validation.Required,
-			validation.By(validateFiscalCode),
-			validation.Skip,
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			rules.HasContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityKeyIn(IdentityKeyFiscalCode),
+				rules.Field("code",
+					rules.Assert("01", "fiscal code is required", rules.Present),
+					rules.AssertIfPresent("02", "invalid fiscal code format",
+						rules.By("valid format", isFiscalCodeFormatValid),
+					),
+					rules.AssertIfPresent("03", "invalid fiscal code check digit",
+						rules.By("valid checksum", isFiscalCodeChecksumValid),
+					),
+				),
+			),
 		),
 	)
 }
 
 // Based on details at https://en.wikipedia.org/wiki/Italian_fiscal_code
-func validateFiscalCode(value interface{}) error {
-	val, ok := value.(cbc.Code)
-	if !ok || val == cbc.CodeEmpty {
-		return nil
+func isFiscalCodeFormatValid(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
 	}
-	code := val.String()
-
+	str := code.String()
 	// Codice fiscale can belong to either a person or a company. Companies use
-	// the regular VAT code, so we test the length or assume that we're
+	// the regular VAT code (11 digits), so we test the length or assume that we're
 	// dealing with a physical person's details.
-	if len(code) == 11 {
-		return validateTaxCode(value)
+	if len(str) == 11 {
+		for _, v := range str {
+			if v < '0' || v > '9' {
+				return false
+			}
+		}
+		return true
 	}
+	return taxIDPersonRegexPattern.MatchString(str)
+}
 
-	matched := taxIDPersonRegexPattern.MatchString(code)
-	if !matched {
-		return errors.New("invalid format")
+func isFiscalCodeChecksumValid(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
 	}
-
+	str := code.String()
+	if len(str) == 11 {
+		chk := computeLuhnCheckDigit(str[:10])
+		return chk == str[10:]
+	}
+	if len(str) != 16 {
+		return false
+	}
+	// Person code checksum (16 chars)
 	var sum int
 	for i := 0; i < 15; i++ {
-		c := strings.Index(taxIDCharCode, string(code[i]))
+		c := strings.Index(taxIDCharCode, string(str[i]))
 		if c < 10 {
 			c += 10 // move numbers to letters
 		}
@@ -90,11 +109,6 @@ func validateFiscalCode(value interface{}) error {
 			sum += strings.Index(taxIDOddChars, string(taxIDCharCode[c]))
 		}
 	}
-
 	x := string(taxIDCharCode[(sum%taxIDCRCMod)+10])
-	if x != string(code[15]) {
-		return fmt.Errorf("invalid check digit, expected '%s'", x)
-	}
-
-	return nil
+	return x == string(str[15])
 }

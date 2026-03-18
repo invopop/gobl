@@ -9,7 +9,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			tax.RegimeIn("ES"),
+			rules.HasContext(tax.RegimeIn("ES")),
 			rules.Field("supplier",
 				rules.Assert("01", "invoice supplier in Spain is required", rules.Present),
 				rules.Field("tax_id",

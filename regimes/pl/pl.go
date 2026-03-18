@@ -2,9 +2,9 @@
 package pl
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -12,13 +12,19 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("pl", rules.GOBL.Add("PL"), taxIdentityRules())
+	rules.Register("pl", rules.GOBL.Add("PL"),
+		billInvoiceRules(),
+		taxIdentityRules(),
+	)
 }
+
+// CountryCode is the tax country code for Poland.
+const CountryCode l10n.TaxCountryCode = "PL"
 
 // New instantiates a new Polish regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "PL",
+		Country:   CountryCode,
 		Currency:  currency.PLN,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -45,19 +51,9 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone:   "Europe/Warsaw",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories, // tax_categories.go
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize will perform any regime specific normalizations.

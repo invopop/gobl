@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -42,17 +43,20 @@ func normalizeOrgIdentity(id *org.Identity) {
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			org.IdentityTypeIn(IdentityTypePAN),
-			rules.Field("code",
-				rules.Assert("01", "identity code must be a valid PAN format",
-					rules.Matches(identityPatternPAN)),
+			rules.HasContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypePAN),
+				rules.Field("code",
+					rules.Assert("01", "identity code must be a valid PAN format",
+						rules.Matches(identityPatternPAN)),
+				),
 			),
-		),
-		rules.When(
-			org.IdentityTypeIn(IdentityTypeHSN),
-			rules.Field("code",
-				rules.Assert("02", "identity code must be a valid HSN format",
-					rules.Matches(identityPatternHSN)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeHSN),
+				rules.Field("code",
+					rules.Assert("02", "identity code must be a valid HSN format",
+						rules.Matches(identityPatternHSN)),
+				),
 			),
 		),
 	)

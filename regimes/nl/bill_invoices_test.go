@@ -7,8 +7,8 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/nl"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -62,7 +62,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "supplier: (identities: missing type in [KVK, OIN]; tax_id: (code: cannot be blank.).)")
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-NL-BILL-INVOICE-01] ($.supplier) invoice supplier must have a tax ID code or a KVK/OIN identity")
 	})
 
 	t.Run("supplier with KVK identity instead of tax ID", func(t *testing.T) {

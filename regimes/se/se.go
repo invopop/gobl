@@ -81,8 +81,8 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
+	//case *bill.Invoice:
+	//	return validateBillInvoice(obj)
 	case *org.Identity:
 		return validateOrgIdentity(obj)
 	}

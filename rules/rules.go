@@ -303,7 +303,7 @@ func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
 // validateEachValue validates each element of a slice/array value against the
 // given subset. Fault paths are reported as [0], [1], etc. (no field-name
 // prefix; the caller's Field already contributes that).
-func validateEachValue(fv reflect.Value, ss *Set) []*Fault {
+func validateEachValue(rc *RunCtx, fv reflect.Value, ss *Set) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil
@@ -316,7 +316,7 @@ func validateEachValue(fv reflect.Value, ss *Set) []*Fault {
 	var faults []*Fault
 	for i := range fv.Len() {
 		ev := fv.Index(i)
-		if fs := ss.Validate(ev.Interface()); fs != nil {
+		if fs := ss.validate(rc, ev.Interface()); fs != nil {
 			faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs.List())...)
 		}
 	}
@@ -416,10 +416,19 @@ func AllSets() []*Set {
 // responsible for matching the object type, evaluating guard conditions, running
 // assertions, and recursively iterating exported struct fields.
 // Returns nil when no faults are found.
-func Validate(obj any) Faults {
+//
+// Optional WithContext values inject additional context into the validation
+// session. Context is also collected automatically from the root object's
+// exported fields that implement ContextAdder (e.g. tax.Regime, tax.Addons).
+func Validate(obj any, opts ...WithContext) Faults {
+	rc := &RunCtx{}
+	for _, opt := range opts {
+		opt(rc)
+	}
+	collectContext(rc, obj)
 	var faults []*Fault
 	for _, ns := range globalRegistry {
-		if fs := ns.Validate(obj); fs != nil {
+		if fs := ns.validate(rc, obj); fs != nil {
 			faults = append(faults, fs.List()...)
 		}
 	}
@@ -430,6 +439,11 @@ func Validate(obj any) Faults {
 // condition (from When), it is evaluated first and the set is skipped when false.
 // Returns nil when no faults are found.
 func (s *Set) Validate(obj any) Faults {
+	return s.validate(nil, obj)
+}
+
+// validate is the internal context-aware implementation of Validate.
+func (s *Set) validate(rc *RunCtx, obj any) Faults {
 	rv := reflect.ValueOf(obj)
 	if !rv.IsValid() {
 		return nil
@@ -469,7 +483,7 @@ func (s *Set) Validate(obj any) Faults {
 	}
 
 	// Evaluate the When condition; skip the set if it doesn't match.
-	if s.Guard != nil && !s.Guard.Check(callObj) {
+	if s.Guard != nil && !runTest(rc, s.Guard, callObj) {
 		return nil
 	}
 
@@ -482,7 +496,7 @@ func (s *Set) Validate(obj any) Faults {
 			panic(fmt.Sprintf("assertion %s (%q) tests missing", a.ID, a.Tests))
 		}
 		for _, t := range a.Tests {
-			if !t.Check(callObj) {
+			if !runTest(rc, t, callObj) {
 				faults = append(faults, newFault("", a.ID, a.Desc))
 				break
 			}
@@ -494,9 +508,9 @@ func (s *Set) Validate(obj any) Faults {
 		for _, ss := range s.Subsets {
 			if ss.FieldName == "" {
 				if ss.Each {
-					faults = append(faults, validateEachValue(rv, ss)...)
+					faults = append(faults, validateEachValue(rc, rv, ss)...)
 				} else {
-					if fs := ss.Validate(obj); fs != nil {
+					if fs := ss.validate(rc, obj); fs != nil {
 						faults = append(faults, fs.List()...)
 					}
 				}
@@ -505,7 +519,7 @@ func (s *Set) Validate(obj any) Faults {
 				if !ok {
 					continue
 				}
-				if fs := ss.Validate(fv.Interface()); fs != nil {
+				if fs := ss.validate(rc, fv.Interface()); fs != nil {
 					faults = append(faults, prependPath(ss.FieldName, fs.List())...)
 				}
 			}
@@ -533,7 +547,7 @@ func (s *Set) Validate(obj any) Faults {
 						continue
 					}
 					fv := rv.Field(i)
-					fs := s.validateNestedFieldValue(fv)
+					fs := s.validateNestedFieldValue(rc, fv)
 					if len(fs) == 0 {
 						continue
 					}
@@ -564,7 +578,7 @@ func (s *Set) isNamespace() bool {
 	return s.ID != "" && s.objType == nil && s.FieldName == "" && !s.Each
 }
 
-func (s *Set) validateNestedValue(obj any) []*Fault {
+func (s *Set) validateNestedValue(rc *RunCtx, obj any) []*Fault {
 	rv := reflect.ValueOf(obj)
 	if rv.Kind() == reflect.Ptr {
 		if rv.IsNil() {
@@ -591,7 +605,7 @@ func (s *Set) validateNestedValue(obj any) []*Fault {
 		if ss.objType != objType {
 			continue
 		}
-		if fs := ss.Validate(callObj); fs != nil {
+		if fs := ss.validate(rc, callObj); fs != nil {
 			faults = append(faults, fs.List()...)
 		}
 	}
@@ -605,7 +619,7 @@ func (s *Set) validateNestedValue(obj any) []*Fault {
 				continue
 			}
 			fv := rv.Field(i)
-			fs := s.validateNestedFieldValue(fv)
+			fs := s.validateNestedFieldValue(rc, fv)
 			if len(fs) == 0 {
 				continue
 			}
@@ -623,7 +637,7 @@ func (s *Set) validateNestedValue(obj any) []*Fault {
 	// If the object exposes an embedded payload, validate it at the same path level.
 	if emb, ok := callObj.(Embeddable); ok {
 		if inner := emb.Embedded(); inner != nil {
-			faults = append(faults, s.validateNestedValue(inner)...)
+			faults = append(faults, s.validateNestedValue(rc, inner)...)
 		}
 	}
 
@@ -632,7 +646,7 @@ func (s *Set) validateNestedValue(obj any) []*Fault {
 
 // validateNestedFieldValue handles pointers, structs, slices, and named types
 // during namespace-internal field iteration.
-func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
+func (s *Set) validateNestedFieldValue(rc *RunCtx, fv reflect.Value) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil
@@ -641,12 +655,12 @@ func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
 	}
 	switch fv.Kind() {
 	case reflect.Struct:
-		return s.validateNestedValue(fv.Interface())
+		return s.validateNestedValue(rc, fv.Interface())
 	case reflect.Slice, reflect.Array:
 		var faults []*Fault
 		for i := range fv.Len() {
 			ev := fv.Index(i)
-			if fs := s.validateNestedFieldValue(ev); len(fs) > 0 {
+			if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
 				faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
 			}
 		}
@@ -671,13 +685,13 @@ func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
 			k := keyByStr[ks]
 			// Validate named key types (e.g. cbc.Key).
 			if k.Type().PkgPath() != "" {
-				if fs := s.validateNestedValue(k.Interface()); len(fs) > 0 {
+				if fs := s.validateNestedValue(rc, k.Interface()); len(fs) > 0 {
 					faults = append(faults, prependPath(ks, fs)...)
 				}
 			}
 			// Validate map values recursively.
 			ev := fv.MapIndex(k)
-			if fs := s.validateNestedFieldValue(ev); len(fs) > 0 {
+			if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
 				faults = append(faults, prependPath(ks, fs)...)
 			}
 		}
@@ -685,7 +699,7 @@ func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
 	default:
 		// For named non-struct types (e.g. cbc.Code), check this namespace's rules.
 		if fv.Type().PkgPath() != "" {
-			return s.validateNestedValue(fv.Interface())
+			return s.validateNestedValue(rc, fv.Interface())
 		}
 	}
 	return nil
