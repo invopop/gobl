@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,7 +13,10 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("br", rules.GOBL.Add("BR"), taxIdentityRules())
+	rules.Register("br", rules.GOBL.Add("BR"),
+		orgPartyRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition
@@ -60,7 +62,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "America/Sao_Paulo",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Extensions: extensions,
 		Categories: taxCategories,
@@ -73,17 +74,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Party:
-		return validateParty(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

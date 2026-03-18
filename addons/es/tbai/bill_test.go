@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -98,21 +99,21 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
 	})
 
@@ -120,7 +121,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -128,7 +129,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Series = ""
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("without notes", func(t *testing.T) {
@@ -145,7 +146,7 @@ func TestInvoiceValidation(t *testing.T) {
 			bill.WithExtension(tbai.ExtKeyCorrection, "R4"),
 		))
 		assert.Len(t, inv.Preceding, 1)
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -180,7 +181,7 @@ func TestBillLineNormalization(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.ErrorContains(t, err, expected)
 }
 

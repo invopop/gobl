@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,7 +19,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("does not migrate issue place when already present", func(t *testing.T) {
 		inv := baseInvoice()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
@@ -27,7 +28,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := baseInvoice()
 		inv.Tax = &bill.Tax{}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("22000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
@@ -42,7 +43,7 @@ func TestNormalizeInvoice(t *testing.T) {
 			},
 		)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
@@ -57,7 +58,7 @@ func TestNormalizeInvoice(t *testing.T) {
 			},
 		)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
@@ -67,7 +68,7 @@ func TestNormalizeInvoice(t *testing.T) {
 			"mx-cfdi-post-code": "12345",
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Customer.Addresses)
 		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code.String())
 		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
@@ -76,7 +77,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := baseInvoice()
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Nil(t, inv.Customer)
 	})
 }

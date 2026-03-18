@@ -21,6 +21,9 @@ func init() {
 	rules.Register(
 		"tax",
 		rules.GOBL.Add("TAX"),
+		addonRules(),
+		addonDefRules(),
 		identityRules(),
+		categoryDefRules(),
 	)
 }

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -647,6 +648,37 @@ func (s *Set) validateNestedFieldValue(fv reflect.Value) []*Fault {
 			ev := fv.Index(i)
 			if fs := s.validateNestedFieldValue(ev); len(fs) > 0 {
 				faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
+			}
+		}
+		return faults
+	case reflect.Map:
+		if fv.IsNil() {
+			return nil
+		}
+		// Collect and sort keys for deterministic output.
+		keys := fv.MapKeys()
+		sorted := make([]string, len(keys))
+		for i, k := range keys {
+			sorted[i] = fmt.Sprintf("%v", k.Interface())
+		}
+		sort.Strings(sorted)
+		keyByStr := make(map[string]reflect.Value, len(keys))
+		for _, k := range keys {
+			keyByStr[fmt.Sprintf("%v", k.Interface())] = k
+		}
+		var faults []*Fault
+		for _, ks := range sorted {
+			k := keyByStr[ks]
+			// Validate named key types (e.g. cbc.Key).
+			if k.Type().PkgPath() != "" {
+				if fs := s.validateNestedValue(k.Interface()); len(fs) > 0 {
+					faults = append(faults, prependPath(ks, fs)...)
+				}
+			}
+			// Validate map values recursively.
+			ev := fv.MapIndex(k)
+			if fs := s.validateNestedFieldValue(ev); len(fs) > 0 {
+				faults = append(faults, prependPath(ks, fs)...)
 			}
 		}
 		return faults

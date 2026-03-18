@@ -2,14 +2,16 @@ package in
 
 import (
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
-func validateOrgItem(it *org.Item) error {
-	return validation.ValidateStruct(it,
-		validation.Field(&it.Identities,
-			org.RequireIdentityType(IdentityTypeHSN),
-			validation.Skip,
+func orgItemRules() *rules.Set {
+	return rules.For(new(org.Item),
+		rules.Field("identities",
+			rules.Assert("01", "all items must have an HSN identity code",
+				org.IdentitiesTypeIn(IdentityTypeHSN),
+			),
 		),
 	)
+
 }

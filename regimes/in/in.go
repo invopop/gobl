@@ -14,7 +14,11 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("in", rules.GOBL.Add("IN"), taxIdentityRules())
+	rules.Register("in", rules.GOBL.Add("IN"),
+		orgIdentityRules(),
+		orgItemRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition for India.
@@ -69,21 +73,9 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
-}
-
-// Validate function assesses the document type to determine if validation is required.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *org.Identity:
-		return validateOrgIdentity(obj)
-	case *org.Item:
-		return validateOrgItem(obj)
-	}
-	return nil
 }
 
 // Normalize attempts to clean up the object passed to it.

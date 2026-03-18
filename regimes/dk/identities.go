@@ -4,7 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
 const (
@@ -23,12 +23,24 @@ var identityTypeDefinitions = []*cbc.Definition{
 	},
 }
 
-// validateIdentity checks to ensure the CVR identity code is valid.
-func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Type != IdentityTypeCVR {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxCode)),
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			rules.By("is CVR", isCVRIdentity),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Danish CVR identity code",
+					rules.By("valid", isValidCVRCode)),
+			),
+		),
 	)
+}
+
+func isCVRIdentity(val any) bool {
+	id, _ := val.(*org.Identity)
+	return id != nil && id.Type == IdentityTypeCVR
+}
+
+func isValidCVRCode(val any) bool {
+	code, _ := val.(cbc.Code)
+	return validateTaxCode(code) == nil
 }

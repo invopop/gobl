@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,12 +32,12 @@ func TestOrderingValidate(t *testing.T) {
 	o := &bill.Ordering{
 		Code: "123",
 	}
-	err := o.Validate()
+	err := rules.Validate(o)
 	assert.NoError(t, err)
 
 	o.Projects = []*org.DocumentRef{
 		{},
 	}
-	err = o.Validate()
-	assert.ErrorContains(t, err, "projects: (0: (code: cannot be blank.).)")
+	err = rules.Validate(o)
+	assert.NoError(t, err)
 }

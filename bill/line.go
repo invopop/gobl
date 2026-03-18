@@ -1,15 +1,13 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Line is a single row in an invoice.
@@ -113,73 +111,68 @@ func (l *Line) GetTotal() num.Amount {
 	return *l.Total
 }
 
-// Validate performs a validation check on the line without a context.
-func (l *Line) Validate() error {
-	return l.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the line contains everything required using
-// the provided context that should include the regime.
-func (l *Line) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, l,
-		validation.Field(&l.UUID),
-		validation.Field(&l.Index, validation.Required),
-		validation.Field(&l.Quantity, validation.Required),
-		validation.Field(&l.Identifier),
-		validation.Field(&l.Period),
-		validation.Field(&l.Order),
-		validation.Field(&l.Cost),
-		validation.Field(&l.Item, validation.Required),
-		validation.Field(&l.Breakdown),
-		validation.Field(&l.Sum,
-			validation.When(
-				l.Item != nil && l.Item.Price != nil,
-				validation.Required,
+func lineRules() *rules.Set {
+	return rules.For(new(Line),
+		rules.Field("i",
+			rules.Assert("01", "index is required", rules.Present),
+		),
+		rules.Field("quantity",
+			rules.Assert("02", "quantity is required", rules.Present),
+		),
+		rules.Field("item",
+			rules.Assert("03", "item is required", rules.Present),
+		),
+		rules.When(rules.By("item has price", lineItemHasPrice),
+			rules.Field("sum",
+				rules.Assert("04", "sum is required when item has a price", rules.Present),
+			),
+			rules.Field("total",
+				rules.Assert("05", "total is required when item has a price", rules.Present),
 			),
 		),
-		validation.Field(&l.Discounts),
-		validation.Field(&l.Charges),
-		validation.Field(&l.Taxes),
-		validation.Field(&l.Total,
-			validation.When(
-				l.Item != nil && l.Item.Price != nil,
-				validation.Required,
-			),
-		),
-		validation.Field(&l.Substituted),
-		validation.Field(&l.Seller),
-		validation.Field(&l.Notes),
 	)
 }
 
-// ValidateWithContext ensures the line contains everything required using
-// the provided context that should include the regime.
-func (sl *SubLine) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, sl,
-		validation.Field(&sl.UUID),
-		validation.Field(&sl.Index, validation.Required),
-		validation.Field(&sl.Quantity, validation.Required),
-		validation.Field(&sl.Identifier),
-		validation.Field(&sl.Period),
-		validation.Field(&sl.Order),
-		validation.Field(&sl.Cost),
-		validation.Field(&sl.Item, validation.Required),
-		validation.Field(&sl.Sum,
-			validation.When(
-				sl.Item != nil && sl.Item.Price != nil,
-				validation.Required,
+func subLineRules() *rules.Set {
+	return rules.For(new(SubLine),
+		rules.Field("i",
+			rules.Assert("01", "index is required", rules.Present),
+		),
+		rules.Field("quantity",
+			rules.Assert("02", "quantity is required", rules.Present),
+		),
+		rules.Field("item",
+			rules.Assert("03", "item is required", rules.Present),
+		),
+		rules.When(rules.By("item has price", subLineItemHasPrice),
+			rules.Field("sum",
+				rules.Assert("04", "sum is required when item has a price", rules.Present),
+			),
+			rules.Field("total",
+				rules.Assert("05", "total is required when item has a price", rules.Present),
 			),
 		),
-		validation.Field(&sl.Discounts),
-		validation.Field(&sl.Charges),
-		validation.Field(&sl.Total,
-			validation.When(
-				sl.Item != nil && sl.Item.Price != nil,
-				validation.Required,
-			),
-		),
-		validation.Field(&sl.Notes),
 	)
+}
+
+func lineItemHasPrice(val any) bool {
+	switch v := val.(type) {
+	case *Line:
+		return v != nil && v.Item != nil && v.Item.Price != nil
+	case Line:
+		return v.Item != nil && v.Item.Price != nil
+	}
+	return false
+}
+
+func subLineItemHasPrice(val any) bool {
+	switch v := val.(type) {
+	case *SubLine:
+		return v != nil && v.Item != nil && v.Item.Price != nil
+	case SubLine:
+		return v.Item != nil && v.Item.Price != nil
+	}
+	return false
 }
 
 // Normalize performs normalization on the line and embedded objects using the
@@ -342,15 +335,3 @@ func removeLineChargesIncludedTaxes(charges []*LineCharge, tc *tax.Combo, exp ui
 	return rows
 }
 
-func lineItemHasPrice(value any) error {
-	line, ok := value.(*Line)
-	if line == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Item,
-			org.ItemPriceRequired(),
-			validation.Skip,
-		),
-	)
-}

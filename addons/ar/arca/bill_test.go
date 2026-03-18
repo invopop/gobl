@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -706,7 +707,7 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "00001"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("series below range fails", func(t *testing.T) {
@@ -725,14 +726,14 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "1"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("series at upper bound is valid", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "99998"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("series with very large number overflows", func(t *testing.T) {
@@ -746,21 +747,21 @@ func TestInvoiceTaxValidation(t *testing.T) {
 	t.Run("valid standard invoice", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing tax fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax = nil
-		require.ErrorContains(t, inv.Validate(), "tax: cannot be blank")
+		require.ErrorContains(t, rules.Validate(inv), "tax: cannot be blank")
 	})
 
 	t.Run("missing doc type fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
-		require.ErrorContains(t, inv.Validate(), "ar-arca-doc-type: required")
+		require.ErrorContains(t, rules.Validate(inv), "ar-arca-doc-type: required")
 	})
 }
 
@@ -770,7 +771,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		// With AR customer, should automatically become type A
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "1", inv.Tax.Ext[arca.ExtKeyDocType].String())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("B2C invoice automatically gets type B without customer", func(t *testing.T) {
@@ -780,13 +781,13 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Tax.Ext = nil // Clear doc type so it can be auto-detected
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "6", inv.Tax.Ext[arca.ExtKeyDocType].String())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer not required for invoice type B (006)", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer not required for debit note type B (007)", func(t *testing.T) {
@@ -795,7 +796,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "7"
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer not required for credit note type B (008)", func(t *testing.T) {
@@ -804,13 +805,13 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "8"
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer with tax ID is valid", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer with identity and ext is valid for type B", func(t *testing.T) {
@@ -826,7 +827,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer without tax ID or identity ext fails", func(t *testing.T) {
@@ -869,7 +870,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			arca.ExtKeyVATStatus: "5", // Final Consumer
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("doc type 49 with registered company VAT status fails", func(t *testing.T) {
@@ -879,7 +880,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			arca.ExtKeyVATStatus: "1", // Registered VAT Company
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)")
 	})
@@ -891,7 +892,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			arca.ExtKeyVATStatus: "6", // Monotributo Responsible
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)")
 	})
@@ -907,7 +908,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 			arca.ExtKeyVATStatus: "9", // Foreign Customer
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)")
 	})
@@ -917,7 +918,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = arca.TypeUsedGoodsPurchaseInvoice // 49
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -937,7 +938,7 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 	t.Run("services with valid ordering passes", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("services require payment terms", func(t *testing.T) {
@@ -965,7 +966,7 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 		inv.Ordering = nil
 		inv.Payment = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("products with payment due dates fails", func(t *testing.T) {
@@ -982,14 +983,14 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("products with empty payment passes", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Payment = &bill.PaymentDetails{}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("mixed goods and services requires ordering and payment", func(t *testing.T) {
@@ -1020,7 +1021,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Tax.Ext = nil // Clear doc type so it can be auto-detected
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "3", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
@@ -1030,7 +1031,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Tax.Ext = nil // Clear doc type so it can be auto-detected
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "8", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 }
@@ -1042,7 +1043,7 @@ func TestDebitNoteValidation(t *testing.T) {
 		inv.Tax.Ext = nil // Clear doc type so it can be auto-detected
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "2", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 
@@ -1052,7 +1053,7 @@ func TestDebitNoteValidation(t *testing.T) {
 		inv.Tax.Ext = nil // Clear doc type so it can be auto-detected
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "7", inv.Tax.Ext[arca.ExtKeyDocType].String())
 	})
 }
@@ -1064,7 +1065,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "3" // Credit Note A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note with standard doc type fails", func(t *testing.T) {
@@ -1073,7 +1074,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "1" // Standard Invoice A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "invoice type is credit-note but ar-arca-doc-type is not a credit note")
 	})
@@ -1084,7 +1085,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "2" // Debit Note A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("debit note with standard doc type fails", func(t *testing.T) {
@@ -1093,7 +1094,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "1" // Standard Invoice A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "invoice type is debit-note but ar-arca-doc-type is not a debit note")
 	})
@@ -1103,7 +1104,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext[arca.ExtKeyDocType] = "3" // Credit Note A
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "ar-arca-doc-type is a credit note but invoice type is not credit-note")
 	})
@@ -1113,7 +1114,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext[arca.ExtKeyDocType] = "2" // Debit Note A
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "doc type is a debit note but invoice type is not debit-note")
 	})
@@ -1124,7 +1125,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "203" // MiPyMEs Electronic Credit Note (FCE) A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("debit note with FCE debit note doc type passes", func(t *testing.T) {
@@ -1133,7 +1134,7 @@ func TestInvoiceTypeDocTypeValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "202" // MiPyMEs Electronic Debit Note (FCE) A
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -1157,7 +1158,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note with valid preceding passes", func(t *testing.T) {
@@ -1174,7 +1175,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("debit note with valid preceding passes", func(t *testing.T) {
@@ -1191,7 +1192,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note with preceding missing doc type fails", func(t *testing.T) {
@@ -1302,7 +1303,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 	t.Run("type C invoice without taxes on lines passes", func(t *testing.T) {
 		inv := testInvoiceTypeC(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type C invoice with taxes on lines fails", func(t *testing.T) {
@@ -1322,7 +1323,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "12" // Debit Note C
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type C debit note with taxes on lines fails", func(t *testing.T) {
@@ -1345,7 +1346,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Tax.Ext[arca.ExtKeyDocType] = "13" // Credit Note C
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type C credit note with taxes on lines fails", func(t *testing.T) {
@@ -1366,7 +1367,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv := testInvoiceTypeC(t)
 		inv.Tax.Ext[arca.ExtKeyDocType] = "211" // FCE Invoice C
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("FCE type C invoice with taxes on lines fails", func(t *testing.T) {
@@ -1385,14 +1386,14 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		// Type A invoice (doc type "1") should allow taxes
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type B invoice with taxes on lines passes", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		// Type B invoice (doc type "6") should allow taxes
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type C invoice with multiple lines without taxes passes", func(t *testing.T) {
@@ -1406,7 +1407,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 			},
 		})
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("type C invoice with taxes on second line fails", func(t *testing.T) {
@@ -1434,7 +1435,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.ErrorContains(t, err, expected)
 }
 

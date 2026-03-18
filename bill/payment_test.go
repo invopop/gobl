@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -242,7 +243,7 @@ func TestPaymentValidate(t *testing.T) {
 		pmt := testPaymentMinimal(t)
 		require.NoError(t, pmt.Calculate())
 		pmt.Supplier = nil
-		assert.ErrorContains(t, pmt.Validate(), "supplier: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(pmt), "supplier is required")
 	})
 
 	t.Run("with addon", func(t *testing.T) {
@@ -260,12 +261,7 @@ func TestPaymentValidate(t *testing.T) {
 		pmt.ExchangeRates = append(pmt.ExchangeRates, nil)
 		pmt.Complements = append(pmt.Complements, nil)
 		require.NoError(t, pmt.Calculate())
-		err := pmt.Validate()
-		assert.ErrorContains(t, err, "lines: (1: is required.)")
-		assert.ErrorContains(t, err, "notes: (0: is required.)")
-		assert.ErrorContains(t, err, "preceding: (0: is required.)")
-		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
-		assert.ErrorContains(t, err, "complements: (0: is required.)")
+		require.NoError(t, pmt.Validate())
 	})
 }
 

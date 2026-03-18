@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -50,7 +51,7 @@ func TestPayInstructions(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "30", inv.Payment.Instructions.Ext[untdid.ExtKeyPaymentMeans].String())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }

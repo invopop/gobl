@@ -30,8 +30,7 @@ func TestMeta(t *testing.T) {
 		cbc.Key("bad_key"): "bar",
 	}
 	err = v.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "Meta: (bad_key: must be in a valid format.)")
+	assert.ErrorContains(t, err, "Meta: (bad_key: must be in a valid format.)")
 }
 
 func TestMetaEquals(t *testing.T) {

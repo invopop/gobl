@@ -1,16 +1,14 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Discount keys for identifying the type of discount being applied.
@@ -134,22 +132,13 @@ func (m *Discount) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, m.Taxes)
 }
 
-// ValidateWithContext checks the discount's fields.
-func (m *Discount) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, m,
-		validation.Field(&m.UUID),
-		validation.Field(&m.Code),
-		validation.Field(&m.Base),
-		validation.Field(&m.Percent,
-			validation.When(
-				m.Base != nil,
-				validation.Required,
+func discountRules() *rules.Set {
+	return rules.For(new(Discount),
+		rules.When(rules.Expr("base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", rules.Present),
 			),
 		),
-		validation.Field(&m.Amount),
-		validation.Field(&m.Taxes),
-		validation.Field(&m.Ext),
-		validation.Field(&m.Meta),
 	)
 }
 

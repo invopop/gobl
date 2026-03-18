@@ -2,7 +2,6 @@
 package ar
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
@@ -13,7 +12,10 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ar", rules.GOBL.Add("AR"), taxIdentityRules())
+	rules.Register("ar", rules.GOBL.Add("AR"),
+		billInvoiceRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition for Argentina
@@ -74,20 +76,10 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Argentina/Buenos_Aires",
-		Validator:   Validate,
 		Normalizer:  Normalize,
 		Categories:  taxCategories(),
 		Corrections: correctionDefinitions(),
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

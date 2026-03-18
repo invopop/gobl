@@ -1,11 +1,11 @@
 package bill_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -15,20 +15,20 @@ import (
 func TestTaxValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		tx := &bill.Tax{}
-		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(tx))
 	})
 	t.Run("with rounding", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "precise",
 		}
-		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(tx))
 	})
 	t.Run("with invalid rounding", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "currency-foo",
 		}
-		err := tx.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "rounding: must be a valid value")
+		err := rules.Validate(tx)
+		assert.ErrorContains(t, err, "rounding model is not valid")
 	})
 }
 

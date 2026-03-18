@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/dk"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -54,14 +55,15 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("valid invoice with tax ID", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier tax ID code", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing type in [CVR]; tax_id: (code: cannot be blank.).).")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-DK-BILL-INVOICE-01]")
 	})
 
 	t.Run("supplier with CVR identity instead of tax ID", func(t *testing.T) {
@@ -74,7 +76,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier with nil tax ID and CVR identity", func(t *testing.T) {
@@ -87,6 +89,6 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 }

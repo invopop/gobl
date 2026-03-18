@@ -5,7 +5,6 @@
     {
       "id": "GOBL-TAX-IDENTITY",
       "name": "tax.Identity",
-      "schema": "https://gobl.org/draft-0/tax/identity",
       "subsets": [
         {
           "field": "country",
@@ -24,6 +23,49 @@
               "id": "GOBL-TAX-IDENTITY-02",
               "desc": "tax id code must have a valid format",
               "tests": "matches ^[A-Z0-9Ñ\\\u0026]+$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-CATEGORYDEF",
+      "name": "tax.CategoryDef",
+      "assert": [
+        {
+          "id": "GOBL-TAX-CATEGORYDEF-04",
+          "desc": "category def cannot be retained and informative",
+          "tests": "!retained || !informative"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-01",
+              "desc": "category def code is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-02",
+              "desc": "category def name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-03",
+              "desc": "category def title is required",
+              "tests": "present"
             }
           ]
         }

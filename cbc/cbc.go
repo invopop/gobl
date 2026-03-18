@@ -21,5 +21,9 @@ func init() {
 		"cbc",
 		rules.GOBL.Add("CBC"),
 		codeRules(),
+		codeMapRules(),
+		keyRules(),
+		definitionRules(),
+		sourceRules(),
 	)
 }

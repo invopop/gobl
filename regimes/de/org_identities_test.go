@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/de"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -56,24 +57,22 @@ func TestTaxNumberValidation(t *testing.T) {
 		{name: "valid 11 digits NW (3/4/4)", code: "123/4567/8910"},
 
 		// Invalid formats
-		{name: "too short", code: "12/345/678", err: "code: must be in a valid format."},
-		{name: "too long", code: "1234/567/89012", err: "code: must be in a valid format."},
-		{name: "non-numeric", code: "12/3AB/67890", err: "code: must be in a valid format."},
-		{name: "invalid separator", code: "12-345-67890", err: "code: must be in a valid format."},
-		{name: "wrong NW middle length", code: "123/456/8910", err: "code: must be in a valid format."},
-		{name: "wrong NW last length", code: "123/4567/89101", err: "code: must be in a valid format."},
+		{name: "too short", code: "12/345/678", err: "[GOBL-DE-ORG-IDENTITY-01]"},
+		{name: "too long", code: "1234/567/89012", err: "[GOBL-DE-ORG-IDENTITY-01]"},
+		{name: "non-numeric", code: "12/3AB/67890", err: "[GOBL-DE-ORG-IDENTITY-01]"},
+		{name: "invalid separator", code: "12-345-67890", err: "[GOBL-DE-ORG-IDENTITY-01]"},
+		{name: "wrong NW middle length", code: "123/456/8910", err: "[GOBL-DE-ORG-IDENTITY-01]"},
+		{name: "wrong NW last length", code: "123/4567/89101", err: "[GOBL-DE-ORG-IDENTITY-01]"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Key: de.IdentityKeyTaxNumber, Code: tt.code}
-			err := de.Validate(id)
+			err := rules.Validate(id)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+				assert.ErrorContains(t, err, tt.err)
 			}
 		})
 	}

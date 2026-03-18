@@ -1,4 +1,4 @@
-package fr_test
+package de_test
 
 import (
 	"testing"
@@ -6,7 +6,8 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/regimes/de"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -14,20 +15,21 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
+		Regime: tax.WithRegime("DE"),
 		Series: "TEST",
 		Code:   "0002",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: "FR",
-				Code:    "44732829320",
+				Country: "DE",
+				Code:    "111111125",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: "FR",
-				Code:    "44391838042",
+				Country: "DE",
+				Code:    "282741168",
 			},
 		},
 		Lines: []*bill.Line{
@@ -50,53 +52,51 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	t.Run("valid with tax ID", func(t *testing.T) {
+	t.Run("normal invoice", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("missing tax ID code requires SIREN or SIRET", func(t *testing.T) {
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-DE-BILL-INVOICE-01]")
+	})
+
+	t.Run("simplified invoice", func(t *testing.T) {
+		inv := validInvoice()
+		inv.SetTags("simplified")
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("regular invoice - only tax number", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "identities: missing type")
-	})
-
-	t.Run("valid with SIREN identity instead of tax ID", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Regime = tax.WithRegime("FR")
-		inv.Supplier.TaxID = nil
 		inv.Supplier.Identities = []*org.Identity{
 			{
-				Type: fr.IdentityTypeSIREN,
-				Code: "732829320",
+				Key:  de.IdentityKeyTaxNumber,
+				Code: "92/345/67894",
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("valid with SIRET identity instead of tax ID", func(t *testing.T) {
+	t.Run("regular invoice - only tax number nil tax ID", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Regime = tax.WithRegime("FR")
 		inv.Supplier.TaxID = nil
 		inv.Supplier.Identities = []*org.Identity{
 			{
-				Type: fr.IdentityTypeSIRET,
-				Code: "73282932000015",
+				Key:  de.IdentityKeyTaxNumber,
+				Code: "92/345/67894",
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("missing both tax ID and identity", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Regime = tax.WithRegime("FR")
-		inv.Supplier.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "tax_id: cannot be blank")
+		assert.NoError(t, rules.Validate(inv))
 	})
 }

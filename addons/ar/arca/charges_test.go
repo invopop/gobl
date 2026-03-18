@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -115,7 +116,7 @@ func TestChargeIntegration(t *testing.T) {
 	t.Run("charge on invoice is validated", func(t *testing.T) {
 		inv := testInvoiceWithCharge(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 
 		require.Len(t, inv.Charges, 1)
 		assert.Equal(t, "5", inv.Charges[0].Ext[arca.ExtKeyTaxType].String())
@@ -131,7 +132,7 @@ func TestChargeIntegration(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
 	})
 
@@ -141,7 +142,7 @@ func TestChargeIntegration(t *testing.T) {
 
 		inv.Charges[0].Percent = nil
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "percent: cannot be blank")
 	})
 
@@ -154,7 +155,7 @@ func TestChargeIntegration(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 

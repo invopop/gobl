@@ -5,7 +5,6 @@
     {
       "id": "GOBL-NOTE-MESSAGE",
       "name": "note.Message",
-      "schema": "https://gobl.org/draft-0/note/message",
       "subsets": [
         {
           "field": "content",

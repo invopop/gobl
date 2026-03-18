@@ -5,7 +5,6 @@
     {
       "id": "GOBL-CBC-CODE",
       "name": "cbc.Code",
-      "schema": "https://gobl.org/draft-0/cbc/code",
       "assert": [
         {
           "id": "GOBL-CBC-CODE-01",
@@ -16,6 +15,116 @@
           "id": "GOBL-CBC-CODE-02",
           "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_\u0026 or space",
           "tests": "matches ^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-CODEMAP",
+      "name": "cbc.CodeMap",
+      "assert": [
+        {
+          "id": "GOBL-CBC-CODEMAP-01",
+          "desc": "all code map keys must be valid",
+          "tests": "valid keys"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-KEY",
+      "name": "cbc.Key",
+      "assert": [
+        {
+          "id": "GOBL-CBC-KEY-01",
+          "desc": "key must be between 1 and 64 characters long",
+          "tests": "length between 1 and 64"
+        },
+        {
+          "id": "GOBL-CBC-KEY-02",
+          "desc": "key must match the required pattern",
+          "tests": "matches ^([a-z]([a-z0-9-]*[a-z0-9])?)(\\+([a-z]([a-z0-9-]*[a-z0-9])?))*$"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-META",
+      "name": "cbc.Meta",
+      "assert": [
+        {
+          "id": "GOBL-CBC-META-01",
+          "desc": "all meta keys must be valid",
+          "tests": "valid keys"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-DEFINITION",
+      "name": "cbc.Definition",
+      "subsets": [
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-CBC-DEFINITION-01",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "string(code) == ''",
+          "subsets": [
+            {
+              "field": "key",
+              "assert": [
+                {
+                  "id": "GOBL-CBC-DEFINITION-02",
+                  "desc": "key is required when code is not set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "string(key) == ''",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-CBC-DEFINITION-03",
+                  "desc": "code must be empty when key is present",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "pattern",
+          "assert": [
+            {
+              "id": "GOBL-CBC-DEFINITION-04",
+              "desc": "pattern must be a valid regular expression",
+              "tests": "is a regexp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-SOURCE",
+      "name": "cbc.Source",
+      "subsets": [
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-CBC-SOURCE-01",
+              "desc": "url is required and must be a URL",
+              "tests": "present, url"
+            }
+          ]
         }
       ]
     }

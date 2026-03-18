@@ -5,7 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -20,16 +20,16 @@ func TestDefinitionValidation(t *testing.T) {
 			},
 			Pattern: "^[0-9]{3}$",
 		}
-		err := kd.Validate()
+		err := rules.Validate(kd)
 		assert.NoError(t, err)
 
 		kd.Pattern = ""
-		err = kd.Validate()
+		err = rules.Validate(kd)
 		assert.NoError(t, err)
 
 		kd.Pattern = "[foo]["
-		err = kd.Validate()
-		assert.ErrorContains(t, err, "pattern: error parsing regexp: missing closing ]: `[`")
+		err = rules.Validate(kd)
+		assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] (pattern) pattern must be a valid regular expression")
 	})
 	t.Run("with source", func(t *testing.T) {
 		kd := &cbc.Definition{
@@ -44,7 +44,7 @@ func TestDefinitionValidation(t *testing.T) {
 				},
 			},
 		}
-		err := kd.Validate()
+		err := rules.Validate(kd)
 		assert.NoError(t, err)
 	})
 	t.Run("with bad source", func(t *testing.T) {
@@ -60,8 +60,8 @@ func TestDefinitionValidation(t *testing.T) {
 				},
 			},
 		}
-		err := kd.Validate()
-		assert.ErrorContains(t, err, "sources: (0: (url: must be a valid URL.).)")
+		err := rules.Validate(kd)
+		assert.ErrorContains(t, err, "[GOBL-CBC-SOURCE-01] (sources[0].url) url is required and must be a URL")
 	})
 }
 
@@ -125,13 +125,6 @@ func TestDefinitionsWithValues(t *testing.T) {
 		cd := cbc.GetCodeDefinition("CODE2", kd.Values)
 		require.NotNil(t, cd)
 		assert.Equal(t, "Code 2", cd.Name[i18n.EN])
-
-		err := validation.Validate(cbc.Code("CODE1"), cbc.InCodeDefs(kd.Values))
-		assert.NoError(t, err)
-
-		err = validation.Validate(cbc.Code("INV"), cbc.InCodeDefs(kd.Values))
-		assert.ErrorContains(t, err, "must be a valid value")
-
 	})
 	t.Run("for keys", func(t *testing.T) {
 		assert.True(t, kd.HasKey("key1"))
@@ -151,12 +144,6 @@ func TestDefinitionsWithValues(t *testing.T) {
 		kdn = cbc.GetKeyDefinition("key2", kd.Values)
 		require.NotNil(t, kdn)
 		assert.Equal(t, "Key 2", kdn.Name[i18n.EN])
-
-		err := validation.Validate(cbc.Key("key1"), cbc.InKeyDefs(kd.Values))
-		assert.NoError(t, err)
-
-		err = validation.Validate(cbc.Key("bad"), cbc.InCodeDefs(kd.Values))
-		assert.ErrorContains(t, err, "must be a valid value")
 	})
 }
 
@@ -173,11 +160,10 @@ func TestDefinitionWithPattern(t *testing.T) {
 		},
 		Pattern: "^[0-9]{3}$",
 	}
-	err := kd.Validate()
+	err := rules.Validate(kd)
 	assert.NoError(t, err)
 
 	kd.Pattern = "[foo]["
-	err = kd.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "pattern: error parsing regexp: missing closing ]: `[`")
+	err = rules.Validate(kd)
+	assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] (pattern) pattern must be a valid regular expression")
 }

@@ -1,11 +1,9 @@
 package in
 
 import (
-	"regexp"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
 const (
@@ -25,8 +23,8 @@ const (
 )
 
 var (
-	identityRegexpPAN = regexp.MustCompile(`^[A-Z]{5}[0-9]{4}[A-Z]$`)
-	identityRegexpHSN = regexp.MustCompile(`^(?:\d{4}|\d{6}|\d{8})$`)
+	identityPatternPAN = `^[A-Z]{5}[0-9]{4}[A-Z]$`
+	identityPatternHSN = `^(?:\d{4}|\d{6}|\d{8})$`
 )
 
 func normalizeOrgIdentity(id *org.Identity) {
@@ -41,21 +39,21 @@ func normalizeOrgIdentity(id *org.Identity) {
 	}
 }
 
-func validateOrgIdentity(id *org.Identity) error {
-	if id == nil {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code,
-			validation.When(
-				id.Type == IdentityTypePAN,
-				validation.Match(identityRegexpPAN),
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			org.IdentityTypeIn(IdentityTypePAN),
+			rules.Field("code",
+				rules.Assert("01", "identity code must be a valid PAN format",
+					rules.Matches(identityPatternPAN)),
 			),
-			validation.When(
-				id.Type == IdentityTypeHSN,
-				validation.Match(identityRegexpHSN).Error("must be a 4, 6, or 8 digit number"),
+		),
+		rules.When(
+			org.IdentityTypeIn(IdentityTypeHSN),
+			rules.Field("code",
+				rules.Assert("02", "identity code must be a valid HSN format",
+					rules.Matches(identityPatternHSN)),
 			),
-			validation.Skip,
 		),
 	)
 }

@@ -1,16 +1,15 @@
 package org
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Common identity keys that may be used to identify something, like an item, document,
@@ -83,80 +82,95 @@ func (i *Identity) Normalize() {
 	i.Ext = tax.CleanExtensions(i.Ext)
 }
 
-// Validate ensures the identity looks valid.
-func (i *Identity) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the identity looks valid inside the provided context.
-func (i *Identity) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.Label),
-		validation.Field(&i.Scope,
-			validation.In(
-				IdentityScopeTax,
-				IdentityScopeLegal,
+func identityRules() *rules.Set {
+	return rules.For(new(Identity),
+		rules.Field("code",
+			rules.Assert("01", "identity code must be provided", rules.Present),
+		),
+		rules.Field("scope",
+			rules.AssertIfPresent("02", "identity scope when provided must be either 'tax' or 'legal'",
+				rules.In(IdentityScopeTax, IdentityScopeLegal),
 			),
 		),
-		validation.Field(&i.Country),
-		validation.Field(&i.Key),
-		validation.Field(&i.Type,
-			validation.When(i.Key != "",
-				validation.Empty.Error("must be empty when key is set"),
-			),
+		rules.Assert("03", "identity must have either a key or type defined, but not both",
+			identityHasKeyOrTypeNotBoth(),
 		),
-		validation.Field(&i.Code,
-			validation.Required,
-		),
-		validation.Field(&i.Ext),
 	)
 }
 
-// RequireIdentityType provides a validation rule that will determine if at least one
-// of the identities defined includes one with the defined type.
-func RequireIdentityType(typ ...cbc.Code) validation.Rule {
-	return IdentitiesTest{
+func identityHasKeyOrTypeNotBoth() rules.Test {
+	return rules.By("key and type must not be used together", func(value any) bool {
+		id, _ := value.(*Identity)
+		if id == nil {
+			return false
+		}
+		return id.Key == "" || id.Type == ""
+	})
+}
+
+// IdentityTypeIn provides a test that will determine if the identity defined has a type with one of the defined codes.
+func IdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return identitiesTest{
 		desc: fmt.Sprintf("type in [%s]", strings.Join(cbc.CodeStrings(typ), ", ")),
 		typs: typ,
 	}
 }
 
-// RequireIdentityKey provides a validation rule that will determine if at least one
-// of the identities defined includes one with one of the defined keys.
-func RequireIdentityKey(key ...cbc.Key) validation.Rule {
-	return IdentitiesTest{
+// IdentityKeyIn provides a test that will determine if the identity defined has a key with one of the defined keys.
+func IdentityKeyIn(key ...cbc.Key) rules.Test {
+	return identitiesTest{
 		desc: fmt.Sprintf("key in [%s]", strings.Join(cbc.KeyStrings(key), ", ")),
 		keys: key,
 	}
 }
 
-// IdentitiesTest defines a validation test instance to use with identity arrays.
-type IdentitiesTest struct {
+// IdentitiesTypeIn provides a test that will determine if at least one
+// of the identities defined includes one with the defined type.
+func IdentitiesTypeIn(typ ...cbc.Code) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("has a type in [%s]", strings.Join(cbc.CodeStrings(typ), ", ")),
+		typs: typ,
+	}
+}
+
+// IdentitiesKeyIn provides a test that will determine if at least one
+// of the identities defined includes one with one of the defined keys.
+func IdentitiesKeyIn(key ...cbc.Key) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("has a key in [%s]", strings.Join(cbc.KeyStrings(key), ", ")),
+		keys: key,
+	}
+}
+
+type identitiesTest struct {
 	desc string
 	typs []cbc.Code
 	keys []cbc.Key
 }
 
+// Check will determine if the provided identities array complies with the criteria.
+func (v identitiesTest) Check(value any) bool {
+	switch obj := value.(type) {
+	case *Identity:
+		return v.matches(obj)
+	case []*Identity:
+		for _, row := range obj {
+			if v.matches(row) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
 // String provides a description of the test being performed.
-func (v IdentitiesTest) String() string {
+func (v identitiesTest) String() string {
 	return v.desc
 }
 
-// Validate checks that the value is an array of identities and that at least one of them matches the criteria defined in the test.
-func (v IdentitiesTest) Validate(value any) error {
-	ids, ok := value.([]*Identity)
-	if !ok {
-		return nil
-	}
-	for _, row := range ids {
-		if v.matches(row) {
-			return nil
-		}
-	}
-	return fmt.Errorf("missing %s", v)
-}
-
-func (v IdentitiesTest) matches(row *Identity) bool {
+func (v identitiesTest) matches(row *Identity) bool {
 	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
 		(len(v.keys) == 0 || row.Key.In(v.keys...))
 }

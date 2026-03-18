@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -89,7 +90,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("test correction", func(t *testing.T) {
@@ -107,7 +108,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Value:    "1234567890",
 			},
 		})))
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 
 		json, err := json.MarshalIndent(inv, "", "  ")
 		require.NoError(t, err)
@@ -123,7 +124,7 @@ func TestSupplierValidation(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "code: contains invalid characters")
 	})
@@ -132,7 +133,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Supplier = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "supplier: cannot be blank.")
 	})
@@ -149,7 +150,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 			},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.EqualError(t, err, "lines: (2: (taxes: missing category VAT.).).")
 	})
 
@@ -168,7 +169,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 			},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "lines: (2: (taxes: (0: (percent: required for 'standard' in 'VAT'.).).).)")
 	})
 
@@ -222,7 +223,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 			require.NoError(t, inv.Calculate())
 			assert.Equal(t, row.ExpectedKey, inv.Lines[2].Taxes[0].Key)
 			assert.Equal(t, row.Code, inv.Lines[2].Taxes[0].Ext.Get(ticket.ExtKeyExempt))
-			assert.NoError(t, inv.Validate())
+			assert.NoError(t, rules.Validate(inv))
 		}
 	})
 
@@ -283,7 +284,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 			},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.EqualError(t, err, "lines: (2: (taxes: (0: (percent: must be a valid value.).).).).")
 	})
 }
@@ -293,7 +294,7 @@ func TestInvoiceTax(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.PricesInclude = tax.CategoryGST
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.EqualError(t, err, "tax: (prices_include: must be a valid value.).")
 	})
 
@@ -301,28 +302,28 @@ func TestInvoiceTax(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.PricesInclude = ""
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing Tax", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lottery code length", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567"
 		require.NoError(t, inv.Calculate())
-		require.EqualError(t, inv.Validate(), "tax: (ext: (it-ticket-lottery: does not match pattern.).).")
+		require.EqualError(t, rules.Validate(inv), "tax: (ext: (it-ticket-lottery: does not match pattern.).).")
 	})
 
 	t.Run("lottery code empty", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.Ext[ticket.ExtKeyLottery] = ""
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lottery code uppercase", func(t *testing.T) {

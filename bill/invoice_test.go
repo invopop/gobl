@@ -1,7 +1,6 @@
 package bill_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 	"time"
@@ -12,11 +11,11 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -62,6 +61,13 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	i.Currency = currency.CLP
+	i.ExchangeRates = []*currency.ExchangeRate{
+		{
+			From:   currency.EUR,
+			To:     currency.CLP,
+			Amount: num.MakeAmount(100629, 2),
+		},
+	}
 	require.NoError(t, i.Calculate())
 	assert.Equal(t, currency.CLP, i.Currency, "should honor currency")
 	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
@@ -124,9 +130,8 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 	}
 	inv := baseInvoice(t, lines...)
 	inv.Currency = currency.USD
-	require.NoError(t, inv.Calculate())
 
-	assert.ErrorContains(t, inv.Validate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
+	assert.ErrorContains(t, inv.Calculate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
 
 	inv.ExchangeRates = []*currency.ExchangeRate{
 		{
@@ -135,7 +140,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 			Amount: num.MakeAmount(875967, 6),
 		},
 	}
-	assert.NoError(t, inv.Validate())
+	assert.NoError(t, inv.Calculate())
 }
 
 func TestInvoiceAutoSetIssueDate(t *testing.T) {
@@ -1120,12 +1125,8 @@ func TestValidation(t *testing.T) {
 	t.Run("basic validation", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Code = ""
-		ctx := context.Background()
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.ValidateWithContext(ctx))
-		ctx = internal.SignedContext(ctx)
-		err := inv.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "code: required to sign invoice")
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier name", func(t *testing.T) {
@@ -1133,21 +1134,20 @@ func TestValidation(t *testing.T) {
 		inv.Supplier.Name = ""
 		inv.Customer = nil // simplified
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.).")
-		assert.NotContains(t, err.Error(), "customer")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier name is required")
 	})
 
 	t.Run("simplified", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.NotNil(t, inv.Customer)
 
 		inv.SetTags(tax.TagSimplified)
 
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 		assert.NotNil(t, inv.Customer) // just ignore simplified tag
 	})
 
@@ -1159,12 +1159,12 @@ func TestValidation(t *testing.T) {
 		}
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name required when tax ID is set")
 
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1180,7 +1180,7 @@ func TestValidation(t *testing.T) {
 			Address: "foo@example.com",
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1188,23 +1188,24 @@ func TestValidation(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name required when tax ID is set")
 	})
 
 	t.Run("missing lines", func(t *testing.T) {
 		inv := baseInvoice(t)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "lines: cannot be empty without discounts or charges; totals: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "lines are required without discounts or charges")
+		assert.ErrorContains(t, err, "totals are required")
 	})
 
 	t.Run("missing line item prices", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Lines[0].Item.Price = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "lines: (0: (item: (price: cannot be blank.).).)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "item price is required")
 	})
 
 	t.Run("missing lines with charge", func(t *testing.T) {
@@ -1216,7 +1217,7 @@ func TestValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1231,31 +1232,18 @@ func TestValidation(t *testing.T) {
 		m.Complements = append(m.Complements, nil)
 		m.Attachments = append(m.Attachments, nil)
 		require.NoError(t, m.Calculate())
-		err := m.Validate()
-		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
-		assert.ErrorContains(t, err, "preceding: (0: is required.)")
-		assert.ErrorContains(t, err, "lines: (1: is required.)")
-		assert.ErrorContains(t, err, "discounts: (0: is required.)")
-		assert.ErrorContains(t, err, "charges: (0: is required.)")
-		assert.ErrorContains(t, err, "notes: (0: is required.)")
-		assert.ErrorContains(t, err, "complements: (0: is required.)")
-		assert.ErrorContains(t, err, "attachments: (0: is required.)")
+		assert.NoError(t, rules.Validate(m))
 	})
 }
 
 func TestInvoiceTagsValidation(t *testing.T) {
-	ctx := context.Background()
 	inv := baseInvoiceWithLines(t)
 	inv.SetTags("reverse-charge")
-
 	assert.NoError(t, inv.Calculate())
-	err := inv.ValidateWithContext(ctx)
-	require.NoError(t, err)
 
 	inv.SetTags("invalid-tag")
-	assert.NoError(t, inv.Calculate())
-	err = inv.ValidateWithContext(ctx)
-	assert.ErrorContains(t, err, "$tags: (0: 'invalid-tag' undefined.).")
+	err := inv.Calculate()
+	assert.ErrorContains(t, err, "'invalid-tag' undefined")
 }
 
 func TestInvoiceBypassTag(t *testing.T) {

@@ -2,7 +2,6 @@ package cbc
 
 import (
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Meta defines a structure for data about the data being defined.
@@ -16,21 +15,6 @@ import (
 // We need to always use strings for values so that meta-data is easy to convert
 // into other formats, such as protobuf which has strict type requirements.
 type Meta map[Key]string
-
-// Validate ensures the meta data looks correct.
-func (m Meta) Validate() error {
-	// we're only interested in checking the keys
-	err := make(validation.Errors)
-	for k := range m {
-		if e := k.Validate(); e != nil {
-			err[k.String()] = e
-		}
-	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
-}
 
 // Equals checks if the meta data is the same.
 func (m Meta) Equals(m2 Meta) bool {

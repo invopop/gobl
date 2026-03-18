@@ -1,11 +1,14 @@
 package num
 
 import (
+	"fmt"
+
 	"github.com/invopop/validation"
 )
 
 // ThresholdRule is a validator for Amounts and Percentages
 type ThresholdRule struct {
+	desc      string
 	threshold Amount
 	operator  int
 	err       validation.Error
@@ -39,15 +42,28 @@ var (
 	ZeroOrNegative = Max(MakeAmount(0, 0))
 	// NotZero validates that the value is not zero.
 	NotZero = ThresholdRule{
+		desc:      "not zero",
 		threshold: Amount{0, 0},
 		operator:  notZero,
 		err:       ErrIsZero,
 	}
 )
 
+// Check returns true if the value satisfies the threshold rule.
+func (r ThresholdRule) Check(value any) bool {
+	return r.Validate(value) == nil
+}
+
+// String returns the string representation of the threshold rule,
+// which is part of the rules.Test interface.
+func (r ThresholdRule) String() string {
+	return r.desc
+}
+
 // Min checks if the value is greater than or equal to the provided amount or percentage
 func Min(value any) ThresholdRule {
 	return ThresholdRule{
+		desc:      fmt.Sprintf("min %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  greaterEqualThan,
 		err:       validation.ErrMinGreaterEqualThanRequired,
@@ -57,6 +73,7 @@ func Min(value any) ThresholdRule {
 // Max checks if the value is less than or equal to the provided amount or percentage
 func Max(value any) ThresholdRule {
 	return ThresholdRule{
+		desc:      fmt.Sprintf("max %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  lessEqualThan,
 		err:       validation.ErrMaxLessEqualThanRequired,
@@ -66,6 +83,7 @@ func Max(value any) ThresholdRule {
 // Equals checks if the value is equal to the provided amount or percentage
 func Equals(value any) ThresholdRule {
 	return ThresholdRule{
+		desc:      fmt.Sprintf("equals %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  equals,
 		err:       ErrNotEqual,
@@ -110,7 +128,7 @@ func (r ThresholdRule) Validate(value interface{}) error {
 
 	a := interfaceToAmount(value)
 	if !r.compare(a) {
-		return r.err.SetParams(map[string]interface{}{"threshold": r.threshold.String()})
+		return r.err.SetParams(map[string]any{"threshold": r.threshold.String()})
 	}
 
 	return nil

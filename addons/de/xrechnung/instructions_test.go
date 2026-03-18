@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -35,7 +36,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid invoice with missing IBAN for SEPA credit transfer", func(t *testing.T) {
@@ -54,7 +55,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment: (instructions: (credit_transfer: (0: (number: cannot be blank.).).).)")
 	})
 
@@ -70,7 +71,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("valid invoice with SEPA direct debit", func(t *testing.T) {
@@ -89,7 +90,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid invoice with missing mandate reference for direct debit", func(t *testing.T) {
@@ -107,7 +108,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment: (instructions: (direct_debit: (ref: cannot be blank.).).)")
 	})
 
@@ -122,7 +123,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment: (instructions: (key: must be or start with a valid key.).)")
 	})
 }

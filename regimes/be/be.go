@@ -13,7 +13,7 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("be", rules.GOBL.Add("BE"), taxIdentityRules())
+	rules.Register("be", rules.GOBL.Add("BE"), taxIdentityRules(), billInvoiceRules())
 }
 
 // New provides the tax region definition
@@ -49,7 +49,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "Europe/Brussels",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Identities: identityDefinitions,
 		Scenarios: []*tax.ScenarioSet{
@@ -65,15 +64,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

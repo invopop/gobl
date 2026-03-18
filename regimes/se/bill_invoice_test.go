@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/se"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -127,7 +128,7 @@ func TestInvoiceValidation(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier", func(t *testing.T) {
@@ -135,7 +136,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier = nil
 		require.NoError(t, inv.Calculate())
-		require.Error(t, inv.Validate())
+		require.Error(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer", func(t *testing.T) {
@@ -143,7 +144,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.Error(t, inv.Validate())
+		require.Error(t, se.Validate(inv))
 	})
 
 	t.Run("missing supplier tax ID", func(t *testing.T) {
@@ -151,7 +152,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := se.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (tax_id: cannot be blank.)")
 	})
 
@@ -160,7 +161,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier name", func(t *testing.T) {
@@ -168,8 +169,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier name is required")
 	})
 
 	t.Run("missing customer name", func(t *testing.T) {
@@ -177,8 +178,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name required when tax ID is set")
 	})
 
 	t.Run("missing supplier address", func(t *testing.T) {
@@ -186,7 +187,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := se.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (addresses: cannot be blank.)")
 	})
 
@@ -195,7 +196,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := se.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (addresses: cannot be blank.)")
 	})
 
@@ -204,10 +205,10 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Identities = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		inv.Supplier.Identities = []*org.Identity{}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer identity", func(t *testing.T) {
@@ -215,10 +216,10 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		inv.Customer.Identities = []*org.Identity{}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier identity", func(t *testing.T) {
@@ -226,7 +227,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Identities[0].Type = "A"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("customer with only identity", func(t *testing.T) {
@@ -234,7 +235,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer identity", func(t *testing.T) {
@@ -243,13 +244,13 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.TaxID.Code = ""
 		inv.Customer.Identities[0].Type = "A"
 		require.NoError(t, inv.Calculate())
-		require.Error(t, inv.Validate())
+		require.Error(t, se.Validate(inv))
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }

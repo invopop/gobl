@@ -4,9 +4,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // LineCharge represents an amount added to the line, and will be
@@ -45,42 +45,31 @@ func (lc *LineCharge) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(lc)
 }
 
-// Validate checks the line charge's fields.
-func (lc *LineCharge) Validate() error {
-	return validation.ValidateStruct(lc,
-		validation.Field(&lc.Key),
-		validation.Field(&lc.Code),
-		validation.Field(&lc.Base),
-		validation.Field(&lc.Percent,
-			validation.When(
-				lc.Base != nil,
-				validation.Required,
+func lineChargeRules() *rules.Set {
+	return rules.For(new(LineCharge),
+		rules.When(rules.Expr("base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", rules.Present),
 			),
 		),
-		validation.Field(&lc.Quantity,
-			validation.When(
-				lc.Base != nil || lc.Percent != nil,
-				validation.Empty.Error("must be blank with base or percent"),
+		rules.When(rules.Expr("base != nil || percent != nil"),
+			rules.Field("quantity",
+				rules.Assert("02", "quantity must be blank with base or percent", rules.Empty),
+			),
+			rules.Field("rate",
+				rules.Assert("03", "rate must be blank with base or percent", rules.Empty),
 			),
 		),
-		validation.Field(&lc.Unit,
-			validation.When(
-				lc.Quantity == nil,
-				validation.Empty.Error("must be blank without quantity"),
+		rules.When(rules.Expr("quantity == nil"),
+			rules.Field("unit",
+				rules.Assert("04", "unit must be blank without quantity", rules.Empty),
 			),
 		),
-		validation.Field(&lc.Rate,
-			validation.When(
-				lc.Base != nil || lc.Percent != nil,
-				validation.Empty.Error("must be blank with base or percent"),
-			),
-			validation.When(
-				lc.Quantity != nil,
-				validation.Required.Error("cannot be blank with quantity"),
+		rules.When(rules.Expr("quantity != nil"),
+			rules.Field("rate",
+				rules.Assert("05", "rate is required when quantity is set", rules.Present),
 			),
 		),
-		validation.Field(&lc.Amount),
-		validation.Field(&lc.Ext),
 	)
 }
 

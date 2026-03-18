@@ -24,7 +24,10 @@ const (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("fr", rules.GOBL.Add("FR"), taxIdentityRules())
+	rules.Register("fr", rules.GOBL.Add("FR"),
+		billInvoiceRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition
@@ -82,8 +85,6 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *org.Identity:
 		return validateIdentity(obj)
 	}

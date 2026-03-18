@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/dk"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -54,7 +55,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: "CVR",
 				Code: "1234567",
 			},
-			err: "invalid format",
+			err: "[GOBL-DK-ORG-IDENTITY-01]",
 		},
 		{
 			name: "too long",
@@ -62,7 +63,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: "CVR",
 				Code: "123456789",
 			},
-			err: "invalid format",
+			err: "[GOBL-DK-ORG-IDENTITY-01]",
 		},
 		{
 			name: "contains letters",
@@ -70,7 +71,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: "CVR",
 				Code: "1234567A",
 			},
-			err: "invalid format",
+			err: "[GOBL-DK-ORG-IDENTITY-01]",
 		},
 		{
 			name: "bad checksum",
@@ -78,7 +79,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: "CVR",
 				Code: "13585627",
 			},
-			err: "checksum mismatch",
+			err: "[GOBL-DK-ORG-IDENTITY-01]",
 		},
 		{
 			name: "non-CVR identity",
@@ -91,13 +92,11 @@ func TestValidateIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := dk.Validate(tt.identity)
+			err := rules.Validate(tt.identity)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+				assert.ErrorContains(t, err, tt.err)
 			}
 		})
 	}

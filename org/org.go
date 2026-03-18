@@ -30,6 +30,7 @@ func init() {
 		"org",
 		rules.GOBL.Add("ORG"),
 		emailRules(),
+		identityRules(),
 	)
 }
 

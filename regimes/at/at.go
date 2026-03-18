@@ -45,7 +45,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "Europe/Vienna",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -60,15 +59,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

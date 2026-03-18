@@ -1,6 +1,7 @@
 package rules_test
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/invopop/gobl/rules"
@@ -80,5 +81,25 @@ func TestMatches(t *testing.T) {
 				),
 			)
 		})
+	})
+}
+
+func TestMatchesRegexp(t *testing.T) {
+	re := regexp.MustCompile(`^\d+$`)
+
+	t.Run("passes when string matches", func(t *testing.T) {
+		assert.True(t, rules.MatchesRegexp(re).Check(patternCode("123")))
+	})
+
+	t.Run("fails when string does not match", func(t *testing.T) {
+		assert.False(t, rules.MatchesRegexp(re).Check(patternCode("abc")))
+	})
+
+	t.Run("passes when string is empty", func(t *testing.T) {
+		assert.True(t, rules.MatchesRegexp(re).Check(patternCode("")))
+	})
+
+	t.Run("String returns pattern description", func(t *testing.T) {
+		assert.Equal(t, `matches ^\d+$`, rules.MatchesRegexp(re).String())
 	})
 }

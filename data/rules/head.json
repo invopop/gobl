@@ -5,7 +5,6 @@
     {
       "id": "GOBL-HEAD-HEADER",
       "name": "head.Header",
-      "schema": "https://gobl.org/draft-0/head/header",
       "subsets": [
         {
           "field": "uuid",
@@ -52,7 +51,6 @@
     {
       "id": "GOBL-HEAD-STAMP",
       "name": "head.Stamp",
-      "schema": "https://gobl.org/draft-0/head/stamp",
       "subsets": [
         {
           "field": "prv",
@@ -79,7 +77,6 @@
     {
       "id": "GOBL-HEAD-LINK",
       "name": "head.Link",
-      "schema": "https://gobl.org/draft-0/head/link",
       "assert": [
         {
           "id": "GOBL-HEAD-LINK-06",

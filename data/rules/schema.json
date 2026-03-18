@@ -1,0 +1,22 @@
+{
+  "id": "GOBL-SCHEMA",
+  "name": "schema",
+  "subsets": [
+    {
+      "id": "GOBL-SCHEMA-OBJECT",
+      "name": "schema.Object",
+      "subsets": [
+        {
+          "field": "$schema",
+          "assert": [
+            {
+              "id": "GOBL-SCHEMA-OBJECT-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

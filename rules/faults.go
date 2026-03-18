@@ -17,10 +17,10 @@ func newFault(path string, id Code, message string) *Fault {
 	return &Fault{path: path, code: id, message: message}
 }
 
-// Path returns the JSON path to the location where this fault occurred.
-// May be empty if the fault is at the root.
+// Path returns the JSON Path (RFC 6901) location where this fault occurred.
+// Returns "$" if the fault is at the root.
 func (f *Fault) Path() string {
-	return f.path
+	return publicPath(f.path)
 }
 
 // Code returns the assertion code that produced this fault.
@@ -37,7 +37,7 @@ func (f *Fault) Message() string {
 func (f *Fault) Error() string {
 	msg := f.message
 	if f.path != "" {
-		msg = "(" + f.path + ") " + msg
+		msg = "(" + publicPath(f.path) + ") " + msg
 	}
 	return fmt.Sprintf("[%s] %s", f.code, msg)
 }
@@ -45,10 +45,10 @@ func (f *Fault) Error() string {
 // MarshalJSON encodes the fault as a JSON object with path, code, and message fields.
 func (f *Fault) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Path    string `json:"path,omitempty"`
+		Path    string `json:"path"`
 		Code    Code   `json:"code"`
 		Message string `json:"message"`
-	}{f.path, f.code, f.message})
+	}{publicPath(f.path), f.code, f.message})
 }
 
 // Faults is the interface for a collection of validation faults.
@@ -97,10 +97,10 @@ func (fs faultList) MarshalJSON() ([]byte, error) {
 	return json.Marshal([]*Fault(fs))
 }
 
-// HasPath reports whether any fault has exactly the given path.
+// HasPath reports whether any fault has exactly the given JSON Path.
 func (fs faultList) HasPath(path string) bool {
 	for _, f := range fs {
-		if f.path == path {
+		if publicPath(f.path) == path {
 			return true
 		}
 	}
@@ -156,6 +156,18 @@ func prependPath(prefix string, faults []*Fault) []*Fault {
 		}
 	}
 	return result
+}
+
+// publicPath converts an internal relative path to JSON Path notation.
+// An empty internal path (root-level fault) returns "$".
+func publicPath(internal string) string {
+	if internal == "" {
+		return "$"
+	}
+	if internal[0] == '[' {
+		return "$" + internal
+	}
+	return "$." + internal
 }
 
 func joinPath(prefix, suffix string) string {

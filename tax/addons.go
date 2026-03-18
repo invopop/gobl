@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // AddonList defines the slice of keys to use for addons.
@@ -110,10 +109,14 @@ func (as *Addons) normalizeAddons() {
 	as.List = list
 }
 
-// Validate ensures that the list of addons is valid. This struct is designed to be
-// embedded, so we don't perform a regular validation on the struct itself.
-func (as Addons) Validate() error {
-	return validation.Validate(as.List, validation.Each(AddonRegistered))
+func addonRules() *rules.Set {
+	return rules.For(new(Addons),
+		rules.Field("$addons",
+			rules.Each(
+				rules.Assert("01", "add-on must be registered", addonRegistered),
+			),
+		),
+	)
 }
 
 type addonCollection struct {
@@ -187,34 +190,21 @@ func HasAddon(key cbc.Key) rules.Test {
 	})
 }
 
-type addonValidation struct{}
-
-// AddonRegistered will check that an add-on with the key to be validated
+// addonRegistered will check that an add-on with the key to be validated
 // has been registered.
-var AddonRegistered = addonValidation{}
+var addonRegistered = rules.By("add-on must be registered", func(value any) bool {
+	key, _ := value.(cbc.Key)
+	return AddonForKey(key) != nil
+})
 
-func (addonValidation) Validate(value interface{}) error {
-	key, ok := value.(cbc.Key)
-	if !ok {
-		return nil
-	}
-	if AddonForKey(key) == nil {
-		return fmt.Errorf("addon '%v' not registered", key.String())
-	}
-	return nil
-}
-
-// Validate checks that the add-on has been defined correctly.
-func (ad *AddonDef) Validate() error {
-	return validation.ValidateStruct(ad,
-		validation.Field(&ad.Key, validation.Required, AddonRegistered),
-		validation.Field(&ad.Name, validation.Required),
-		validation.Field(&ad.Extensions),
-		validation.Field(&ad.Identities),
-		validation.Field(&ad.Inboxes),
-		validation.Field(&ad.Tags),
-		validation.Field(&ad.Scenarios),
-		validation.Field(&ad.Corrections),
+func addonDefRules() *rules.Set {
+	return rules.For(new(AddonDef),
+		rules.Field("key",
+			rules.Assert("01", "addon must have a key", rules.Present),
+		),
+		rules.Field("name",
+			rules.Assert("02", "addon must have a name", rules.Present),
+		),
 	)
 }
 

@@ -7,16 +7,25 @@ type matchTest struct {
 	re      *regexp.Regexp
 }
 
-// Matches provides a validation rule that checks if a string value matches the specified regular expression pattern.
+// Matches provides a validation rule that checks if a string value matches the specified regular expression
+// pattern. Patterns will be compiled when used in ForStruct() or ForValue() and cached for future use.
 func Matches(pattern string) Test {
 	return &matchTest{
 		pattern: pattern,
 	}
 }
 
+// MatchesRegexp provides a validation rule that checks if the provided Regular Expression matches the value.
+func MatchesRegexp(re *regexp.Regexp) Test {
+	return &matchTest{
+		pattern: re.String(),
+		re:      re,
+	}
+}
+
 func (t matchTest) Check(value any) bool {
 	if t.re == nil {
-		panic("match test was not compiled; wrap it in ForStruct() or ForValue()")
+		panic("match test was not compiled; use MatchesRegexp or wrap it in ForStruct() or ForValue()")
 	}
 	value, isNil := Indirect(value)
 	if isNil {
@@ -34,6 +43,9 @@ func (t matchTest) Check(value any) bool {
 }
 
 func (t *matchTest) compile(_ any) error {
+	if t.re != nil {
+		return nil
+	}
 	var err error
 	t.re, err = regexp.Compile(t.pattern)
 	if err != nil {

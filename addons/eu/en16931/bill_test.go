@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("missing tax", func(t *testing.T) {
@@ -45,35 +46,35 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("supplier and customer with addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("supplier with no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "addresses: cannot be blank")
 	})
 	t.Run("customer with no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "addresses: cannot be blank")
 	})
 	t.Run("nil customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("credit note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -479,7 +480,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment.Terms = nil
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
@@ -488,7 +489,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment = nil
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment details are required when amount is due")
 	})
 
@@ -505,7 +506,7 @@ func TestValidateBillPayment(t *testing.T) {
 
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -514,7 +515,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{} // payment details exist but no terms
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
@@ -532,7 +533,7 @@ func TestValidateBillPayment(t *testing.T) {
 		require.NoError(t, err)
 		// Remove payment details after calculation
 		inv.Payment = nil
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err) // Should pass because no amount is due
 	})
 

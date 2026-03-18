@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -66,7 +67,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 		},
 	}
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.NoError(t, err)
 
 	inv.Payment = &bill.PaymentDetails{
@@ -79,7 +80,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 		},
 	}
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "payment: (advances: (0: (ext: (it-sdi-payment-means: required.).).).)")
 
 	inv.Payment = &bill.PaymentDetails{
@@ -88,6 +89,6 @@ func TestPayInstructionsValidation(t *testing.T) {
 		},
 	}
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "payment: (instructions: (ext: (it-sdi-payment-means: required.).).)")
 }

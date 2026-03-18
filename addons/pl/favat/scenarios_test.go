@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -121,7 +122,7 @@ func TestInvoiceScenarios(t *testing.T) {
 			}
 
 			require.NoError(t, inv.Calculate())
-			require.NoError(t, inv.Validate())
+			require.NoError(t, rules.Validate(inv))
 
 			assert.Equal(t, tt.expectedExtValue, inv.Tax.Ext.Get(favat.ExtKeyInvoiceType).String(),
 				"invoice type extension should be set correctly")
@@ -172,7 +173,7 @@ func TestSettlementTag(t *testing.T) {
 
 		inv.SetTags(favat.TagSettlement)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 
 		assert.True(t, inv.HasTags(favat.TagSettlement))
 		assert.Equal(t, "ROZ", inv.Tax.Ext.Get(favat.ExtKeyInvoiceType).String())

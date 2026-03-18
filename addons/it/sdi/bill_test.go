@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -93,13 +94,13 @@ func TestInvoiceValidation(t *testing.T) {
 
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 	t.Run("missing tax extensions", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
-		require.ErrorContains(t, inv.Validate(), "tax: (ext: (it-sdi-document-type: required; it-sdi-format: required.).)")
+		require.ErrorContains(t, rules.Validate(inv), "tax: (ext: (it-sdi-document-type: required; it-sdi-format: required.).)")
 	})
 }
 
@@ -153,7 +154,7 @@ func TestSupplierValidation(t *testing.T) {
 			Office: "Rome",
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with supplier missing registration details", func(t *testing.T) {
@@ -162,7 +163,7 @@ func TestSupplierValidation(t *testing.T) {
 			Entry: "123456",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (registration: (office: cannot be blank.).).")
 	})
 
@@ -173,7 +174,7 @@ func TestSupplierValidation(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "code: contains invalid characters")
 	})
@@ -191,7 +192,7 @@ func TestSupplierValidation(t *testing.T) {
 		// Test with valid Latin-1 characters including accented characters
 		inv.Supplier.Name = "Società di Test SRL àáâãäåæçèéêë"
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid supplier name with non-Latin-1 characters", func(t *testing.T) {
@@ -199,7 +200,7 @@ func TestSupplierValidation(t *testing.T) {
 		// Test with emoji (outside Latin-1 range)
 		inv.Supplier.Name = "Test Supplier 😊"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (name: contains characters outside of Latin and Latin-1 range.).")
 	})
 
@@ -208,7 +209,7 @@ func TestSupplierValidation(t *testing.T) {
 		// Test with Greek characters (outside Latin-1 range)
 		inv.Supplier.Name = "Test Supplier αβγδε"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (name: contains characters outside of Latin and Latin-1 range.).")
 	})
 }
@@ -226,7 +227,7 @@ func TestCustomerValidation(t *testing.T) {
 		}
 		inv.Customer.Identities = append(inv.Customer.Identities, id)
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing tax_id", func(t *testing.T) {
@@ -234,7 +235,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		inv.Customer.Identities = append(inv.Customer.Identities, id)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "customer: (tax_id: cannot be blank.)")
 	})
@@ -246,7 +247,7 @@ func TestCustomerValidation(t *testing.T) {
 			Code:    "",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		// ensure contains bother errors
 		assert.ErrorContains(t, err, "identities: missing key 'it-fiscal-code'")
 		assert.ErrorContains(t, err, "tax_id: (code: cannot be blank.")
@@ -256,7 +257,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (addresses: cannot be blank.).")
 	})
 
@@ -264,7 +265,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: cannot be blank.")
 	})
 
@@ -273,7 +274,7 @@ func TestCustomerValidation(t *testing.T) {
 		// Test with valid Latin-1 characters including special symbols
 		inv.Customer.Name = "Cliente & Cia. S.p.A. ñöüß"
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid customer name with Chinese characters", func(t *testing.T) {
@@ -281,7 +282,7 @@ func TestCustomerValidation(t *testing.T) {
 		// Test with Chinese characters (outside Latin-1 range)
 		inv.Customer.Name = "测试客户"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (name: contains characters outside of Latin and Latin-1 range.).")
 	})
 
@@ -289,7 +290,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
 	})
 
@@ -299,7 +300,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv.Customer.Name = ""
 		inv.Customer.Identities = append(inv.Customer.Identities, id)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank; people: cannot be blank.).")
 	})
 
@@ -310,14 +311,14 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "A1B2C3"}}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid italian supplier telephone too short", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
 	})
 
@@ -325,14 +326,14 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("valid italian number, because normalized", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "+393331234567"}}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "3331234567", inv.Supplier.Telephones[0].Number)
 	})
 
@@ -340,7 +341,7 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "1233312345678"}}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
 	})
 
@@ -348,7 +349,7 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		// No telephones set
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("non-italian supplier telephone not validated", func(t *testing.T) {
@@ -356,14 +357,14 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv.Supplier.TaxID.Country = "FR"
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}} // Too short, but should be ignored
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("italian supplier telephone too short without prefix", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
 	})
 
@@ -371,7 +372,7 @@ func TestSupplierTelephoneValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -487,7 +488,7 @@ func TestPaymentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("payment terms missing instructions", func(t *testing.T) {
@@ -503,7 +504,7 @@ func TestPaymentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment: (instructions: cannot be blank when terms with due dates are present.).")
 	})
 
@@ -515,7 +516,7 @@ func TestPaymentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -535,7 +536,7 @@ func TestPaymentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String())
 	})
 
@@ -547,7 +548,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Supplier.Addresses = nil
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "supplier: (addresses: cannot be blank.)")
 		assert.Contains(t, err.Error(), "customer: (addresses: cannot be blank.)")
@@ -558,7 +559,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Supplier.Addresses[0].Country = ""
 		inv.Customer.Addresses[0].Country = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (addresses: (0: (country: cannot be blank.).).)")
 		assert.ErrorContains(t, err, "customer: (addresses: (0: (country: cannot be blank.).).)")
 	})
@@ -568,7 +569,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Customer.Addresses[0].Code = "123456"
 		inv.Supplier.Addresses[0].Code = "123456"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (addresses: (0: (code: must be in a valid format.).).)")
 		assert.ErrorContains(t, err, "customer: (addresses: (0: (code: must be in a valid format.).).)")
 	})
@@ -580,7 +581,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Customer.Addresses[0].Code = "1234"
 		inv.Supplier.Addresses[0].Code = "1234"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -592,14 +593,14 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Customer.Addresses[0].Street = "Rue de la Paix é"
 		inv.Customer.Addresses[0].Locality = "Saint-Étienne ç"
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid supplier address street with emoji", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses[0].Street = "Via Test 🏠"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (addresses: (0: (street: contains characters outside of Latin and Latin-1 range.).).)")
 	})
 
@@ -608,7 +609,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Supplier.Addresses[0].Street = ""
 		inv.Supplier.Addresses[0].PostOfficeBox = "post 🏠"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "contains characters outside of Latin and Latin-1 range")
 	})
 
@@ -617,7 +618,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Supplier.Addresses[0].Street = ""
 		inv.Supplier.Addresses[0].PostOfficeBox = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "either street or post office box must be set")
 	})
 
@@ -625,7 +626,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses[0].Street = "テスト通り"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (addresses: (0: (street: contains characters outside of Latin and Latin-1 range.).).)")
 	})
 
@@ -637,7 +638,7 @@ func TestAddressesValidation(t *testing.T) {
 		inv.Supplier.Addresses[0].Street = "Via Test 🏠"
 		inv.Customer.Addresses[0].Locality = "Città 한국어"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 
 		// Should contain multiple validation errors for Latin-1 violations
 		assert.ErrorContains(t, err, "contains characters outside of Latin and Latin-1 range")
@@ -660,7 +661,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 		Percent:  num.NewPercentage(20, 2),
 	})
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "lines: (0: (taxes: (1: (ext: (it-sdi-retained: required.).).).).).")
 	}
@@ -674,7 +675,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 		Percent: num.NewPercentage(20, 2),
 	})
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestInvoiceLineValidation(t *testing.T) {
@@ -749,7 +750,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "can only be set when invoice has deferred tag.")
 	})
 
@@ -765,7 +766,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("despatch with deferred tag and valid additional data", func(t *testing.T) {
@@ -781,7 +782,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("despatch with deferred tag but missing code", func(t *testing.T) {
@@ -795,7 +796,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "code: cannot be blank.")
 	})
 
@@ -810,7 +811,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "issue_date: cannot be blank.")
 	})
 
@@ -830,7 +831,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("multiple despatch with one invalid", func(t *testing.T) {
@@ -849,7 +850,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "issue_date: cannot be blank.")
 	})
 
@@ -862,7 +863,7 @@ func TestOrderingValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("ordering without despatch", func(t *testing.T) {
@@ -871,12 +872,12 @@ func TestOrderingValidation(t *testing.T) {
 			Code: "ORDER-123",
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("no ordering", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }

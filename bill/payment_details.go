@@ -1,13 +1,10 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // PaymentDetails contains details as to how the invoice should be paid.
@@ -32,16 +29,6 @@ func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, p.Advances)
 	tax.Normalize(normalizers, p.Instructions)
 	normalizers.Each(p)
-}
-
-// ValidateWithContext checks to make sure the payment data looks good
-func (p *PaymentDetails) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, p,
-		validation.Field(&p.Payee),
-		validation.Field(&p.Terms),
-		validation.Field(&p.Advances),
-		validation.Field(&p.Instructions),
-	)
 }
 
 // ResetAdvances clears the advances list.

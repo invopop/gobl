@@ -8,9 +8,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -115,7 +115,7 @@ func TestIdentityNormalize(t *testing.T) {
 	})
 }
 
-func TestIdentityValidate(t *testing.T) {
+func TestIdentityRules(t *testing.T) {
 	t.Run("with basics", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
@@ -123,8 +123,14 @@ func TestIdentityValidate(t *testing.T) {
 				iso.ExtKeySchemeID: "0004",
 			},
 		}
-		err := id.Validate()
-		assert.NoError(t, err)
+		assert.NoError(t, rules.Validate(id))
+	})
+	t.Run("missing code", func(t *testing.T) {
+		id := &org.Identity{}
+		faults := rules.Validate(id)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("GOBL-ORG-IDENTITY-01"))
+		assert.Contains(t, faults.Error(), "identity code must be provided")
 	})
 	t.Run("with both key and type", func(t *testing.T) {
 		id := &org.Identity{
@@ -132,74 +138,112 @@ func TestIdentityValidate(t *testing.T) {
 			Type: "NIF",
 			Code: "1234567890",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "type: must be empty when key is set")
+		faults := rules.Validate(id)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("GOBL-ORG-IDENTITY-03"))
+		assert.Contains(t, faults.Error(), "identity must have either a key or type defined, but not both")
 	})
-	t.Run("with valid scope", func(t *testing.T) {
+	t.Run("with valid tax scope", func(t *testing.T) {
 		id := &org.Identity{
 			Scope: org.IdentityScopeTax,
 			Code:  "1234567890",
 		}
-		err := id.Validate()
-		assert.NoError(t, err)
+		assert.NoError(t, rules.Validate(id))
+	})
+	t.Run("with valid legal scope", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: org.IdentityScopeLegal,
+			Code:  "1234567890",
+		}
+		assert.NoError(t, rules.Validate(id))
 	})
 	t.Run("with invalid scope", func(t *testing.T) {
 		id := &org.Identity{
 			Scope: "INVALID",
 			Code:  "1234567890",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "scope: must be a valid value.")
+		faults := rules.Validate(id)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("GOBL-ORG-IDENTITY-02"))
+		assert.Contains(t, faults.Error(), "identity scope when provided must be either 'tax' or 'legal'")
 	})
 	t.Run("with no scope", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "1234567890",
 		}
-		err := id.Validate()
-		assert.NoError(t, err)
+		assert.NoError(t, rules.Validate(id))
+	})
+	t.Run("with key only", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "fiscal-code",
+			Code: "1234567890",
+		}
+		assert.NoError(t, rules.Validate(id))
+	})
+	t.Run("with type only", func(t *testing.T) {
+		id := &org.Identity{
+			Type: "NIF",
+			Code: "1234567890",
+		}
+		assert.NoError(t, rules.Validate(id))
 	})
 }
 
-func TestIdentitySetValidators(t *testing.T) {
-	t.Run("ignore other types", func(t *testing.T) {
-		var idents *org.Identity
-		err := validation.Validate(idents, org.RequireIdentityType("FOO"))
-		assert.NoError(t, err)
-	})
-	t.Run("require identity type", func(t *testing.T) {
-		idents := []*org.Identity{
-			{
-				Type: "BAR",
-				Code: "FOO",
-			},
-		}
-		err := validation.Validate(idents, org.RequireIdentityType("BAR"))
-		assert.NoError(t, err)
+func TestIdentityTests(t *testing.T) {
+	idents := []*org.Identity{
+		{Type: "BAR", Code: "FOO"},
+		{Key: "fiscal-code", Code: "12345"},
+	}
 
-		err = validation.Validate(idents, org.RequireIdentityType("FOO"))
-		assert.ErrorContains(t, err, "missing type in [FOO]")
-		err = validation.Validate(idents, org.RequireIdentityType("FOO", "FUZ"))
-		assert.ErrorContains(t, err, "missing type in [FOO, FUZ]")
+	t.Run("IdentitiesTypeIn matches", func(t *testing.T) {
+		assert.True(t, org.IdentitiesTypeIn("BAR").Check(idents))
+	})
+	t.Run("IdentitiesTypeIn no match", func(t *testing.T) {
+		assert.False(t, org.IdentitiesTypeIn("FOO").Check(idents))
+	})
+	t.Run("IdentitiesTypeIn multiple types", func(t *testing.T) {
+		assert.True(t, org.IdentitiesTypeIn("FOO", "BAR").Check(idents))
+		assert.False(t, org.IdentitiesTypeIn("FOO", "FUZ").Check(idents))
+	})
+	t.Run("IdentitiesTypeIn string", func(t *testing.T) {
+		assert.Equal(t, "has a type in [BAR, FOO]", org.IdentitiesTypeIn("BAR", "FOO").String())
 	})
 
-	t.Run("require identity key", func(t *testing.T) {
-		idents := []*org.Identity{
-			{
-				Type: "BAR",
-				Code: "FOO",
-			},
-			{
-				Key:  "fiscal-code",
-				Code: "12345",
-			},
-		}
-		err := validation.Validate(idents, org.RequireIdentityKey("fiscal-code"))
-		assert.NoError(t, err)
+	t.Run("IdentitiesKeyIn matches", func(t *testing.T) {
+		assert.True(t, org.IdentitiesKeyIn("fiscal-code").Check(idents))
+	})
+	t.Run("IdentitiesKeyIn no match", func(t *testing.T) {
+		assert.False(t, org.IdentitiesKeyIn("missing-key").Check(idents))
+	})
+	t.Run("IdentitiesKeyIn multiple keys", func(t *testing.T) {
+		assert.True(t, org.IdentitiesKeyIn("missing", "fiscal-code").Check(idents))
+		assert.False(t, org.IdentitiesKeyIn("one", "two").Check(idents))
+	})
+	t.Run("IdentitiesKeyIn string", func(t *testing.T) {
+		assert.Equal(t, "has a key in [fiscal-code]", org.IdentitiesKeyIn("fiscal-code").String())
+	})
 
-		err = validation.Validate(idents, org.RequireIdentityKey("code"))
-		assert.ErrorContains(t, err, "missing key in [code]")
-		err = validation.Validate(idents, org.RequireIdentityKey("code", "another"))
-		assert.ErrorContains(t, err, "missing key in [code, another]")
+	t.Run("IdentityTypeIn matches single", func(t *testing.T) {
+		id := &org.Identity{Type: "BAR", Code: "FOO"}
+		assert.True(t, org.IdentityTypeIn("BAR").Check(id))
+		assert.False(t, org.IdentityTypeIn("FOO").Check(id))
+	})
+	t.Run("IdentityTypeIn string", func(t *testing.T) {
+		assert.Equal(t, "type in [BAR]", org.IdentityTypeIn("BAR").String())
+	})
+
+	t.Run("IdentityKeyIn matches single", func(t *testing.T) {
+		id := &org.Identity{Key: "fiscal-code", Code: "12345"}
+		assert.True(t, org.IdentityKeyIn("fiscal-code").Check(id))
+		assert.False(t, org.IdentityKeyIn("other").Check(id))
+	})
+	t.Run("IdentityKeyIn string", func(t *testing.T) {
+		assert.Equal(t, "key in [fiscal-code]", org.IdentityKeyIn("fiscal-code").String())
+	})
+
+	t.Run("non-identity type returns false", func(t *testing.T) {
+		assert.False(t, org.IdentitiesTypeIn("FOO").Check("not-an-identity"))
+		assert.False(t, org.IdentitiesTypeIn("FOO").Check(nil))
 	})
 }
 

@@ -5,7 +5,6 @@
     {
       "id": "GOBL-GR-TAX-IDENTITY",
       "name": "tax.Identity",
-      "schema": "https://gobl.org/draft-0/tax/identity",
       "subsets": [
         {
           "guard": "code in [EL]",

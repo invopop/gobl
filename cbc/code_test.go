@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -506,11 +505,11 @@ func TestCodeMap(t *testing.T) {
 	})
 
 	t.Run("validation", func(t *testing.T) {
-		assert.NoError(t, cm.Validate())
+		assert.NoError(t, rules.Validate(cm))
 		cm2 := cbc.CodeMap{
 			"Invalid": cbc.Code("01"),
 		}
-		assert.ErrorContains(t, cm2.Validate(), "Invalid: must be in a valid format")
+		assert.ErrorContains(t, rules.Validate(cm2), "[GOBL-CBC-CODEMAP-01] all code map keys must be valid")
 	})
 }
 
@@ -551,11 +550,11 @@ func TestCodeMapHas(t *testing.T) {
 		"foo": cbc.Code("01"),
 		"bar": cbc.Code("02"),
 	}
-	err := validation.Validate(cm, cbc.CodeMapHas("foo", "bar"))
-	assert.NoError(t, err)
-	assert.ErrorContains(t, validation.Validate(cm, cbc.CodeMapHas("foo", "dom")), "dom: required.")
-	err = validation.Validate(nil, cbc.CodeMapHas("foo"))
-	assert.NoError(t, err)
+	assert.True(t, cbc.CodeMapHas("foo", "bar").Check(cm))
+	assert.False(t, cbc.CodeMapHas("foo", "dom").Check(cm))
+
+	cm = nil
+	assert.False(t, cbc.CodeMapHas("foo").Check(cm))
 }
 
 func TestCodeJSONSchema(t *testing.T) {

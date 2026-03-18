@@ -1,11 +1,11 @@
 package bill
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +13,7 @@ import (
 func TestPaymentDetailsValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := &PaymentDetails{}
-		assert.NoError(t, p.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(p))
 	})
 }
 

@@ -5,7 +5,6 @@
     {
       "id": "GOBL-ORG-EMAIL",
       "name": "org.Email",
-      "schema": "https://gobl.org/draft-0/org/email",
       "subsets": [
         {
           "field": "addr",

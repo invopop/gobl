@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -81,7 +82,7 @@ func TestValidateInvoice(t *testing.T) {
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer", func(t *testing.T) {

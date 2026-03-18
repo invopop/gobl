@@ -2,6 +2,7 @@ package bill
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -56,6 +57,15 @@ func calculate(doc billable) error {
 		doc.setCurrency(r.Currency)
 	}
 	cur := doc.getCurrency()
+
+	// Check exchange rate is available if regime uses a different currency
+	if r != nil && r.Currency != currency.CodeEmpty && cur != r.Currency {
+		rates := doc.getExchangeRates()
+		if currency.MatchExchangeRate(rates, cur, r.Currency) == nil &&
+			currency.MatchExchangeRate(rates, r.Currency, cur) == nil {
+			return validation.Errors{"currency": fmt.Errorf("no exchange rate defined for '%v' to '%v'", cur, r.Currency)}
+		}
+	}
 
 	if doc.HasTags(tax.TagBypass) {
 		// Stop all further calculations

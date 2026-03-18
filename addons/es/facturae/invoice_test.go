@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,14 +18,14 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier.tax_id: supplier tax ID is required")
 	})
 
@@ -32,7 +33,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
 	})
 
@@ -40,7 +41,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "tax: (ext: (es-facturae-doc-type: required.).)")
 	})
 
@@ -51,7 +52,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	inv.Type = bill.InvoiceTypeCreditNote
 
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	assert.ErrorContains(t, err, "preceding: cannot be blank.")
 
 	inv.Preceding = []*org.DocumentRef{
@@ -60,7 +61,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 		},
 	}
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "preceding: (0: (ext: (es-facturae-correction: required.); issue_date: cannot be blank.).)")
 
 	inv.Preceding[0].Ext = tax.Extensions{
@@ -68,7 +69,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	}
 	inv.Preceding[0].IssueDate = cal.NewDate(2022, 6, 13)
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.NoError(t, err)
 }
 

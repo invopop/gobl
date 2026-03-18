@@ -154,7 +154,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F1")
 	})
 	t.Run("standard invoice without customer", func(t *testing.T) {
@@ -193,7 +193,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {
@@ -201,7 +201,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 
@@ -214,7 +214,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "F2", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax()))
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		// Should get R5 for simplified corrective
 		assert.Equal(t, "R5", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
@@ -284,7 +284,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Log(string(data))
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
 		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
@@ -294,7 +294,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags("replacement")
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("replacement with preceding", func(t *testing.T) {
@@ -308,7 +308,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
@@ -355,7 +355,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 	t.Run("simplified invoice with customer without tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -363,7 +363,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 	t.Run("simplified substitution with customer without tax ID", func(t *testing.T) {
@@ -394,7 +394,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
 	})
 	t.Run("simplified invoice F2 with customer tax ID", func(t *testing.T) {
@@ -475,7 +475,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 }

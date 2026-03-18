@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -62,7 +63,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "code: must be in a valid format",
+			err: "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "invalid Brazilian state",
@@ -74,7 +75,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "state: must be a valid value.",
+			err: "[GOBL-BR-ORG-PARTY-01] (addresses[0].state) Brazilian state must be one of the valid states",
 		},
 		{
 			name: "invalid Brazilian address with tax country only",
@@ -88,7 +89,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "code: must be in a valid format",
+			err: "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "non-Brazilian address",
@@ -105,11 +106,34 @@ func TestValidateAddresses(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "with municipality code",
+			party: &org.Party{
+				TaxID: &tax.Identity{
+					Country: "BR",
+				},
+				Ext: tax.Extensions{
+					br.ExtKeyMunicipality: "3550308", // São Paulo city code
+				},
+			},
+		},
+		{
+			name: "with invalid municipality code",
+			party: &org.Party{
+				TaxID: &tax.Identity{
+					Country: "BR",
+				},
+				Ext: tax.Extensions{
+					br.ExtKeyMunicipality: "00", // Invalid city code
+				},
+			},
+			err: "[GOBL-BR-ORG-PARTY-01] (ext) Brazilian party ext must define a valid 'br-ibge-municipality' code",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := br.Validate(tt.party)
+			err := rules.Validate(tt.party)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -137,22 +161,22 @@ func TestValidatePostCodes(t *testing.T) {
 		{
 			name: "too short",
 			code: "12345",
-			err:  "code: must be in a valid format",
+			err:  "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "too long",
 			code: "123456789",
-			err:  "code: must be in a valid format",
+			err:  "GOBL-BR-ORG-PARTY-02",
 		},
 		{
 			name: "invalid chars",
 			code: "12345-678a",
-			err:  "code: must be in a valid format",
+			err:  "GOBL-BR-ORG-PARTY-02",
 		},
 		{
 			name: "dash in wrong place",
 			code: "1234-5678",
-			err:  "code: must be in a valid format",
+			err:  "GOBL-BR-ORG-PARTY-02",
 		},
 	}
 	for _, tt := range tests {
@@ -165,7 +189,7 @@ func TestValidatePostCodes(t *testing.T) {
 					},
 				},
 			}
-			err := br.Validate(party)
+			err := rules.Validate(party)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

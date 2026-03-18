@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/sg"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/stretchr/testify/require"
 )
@@ -62,7 +63,7 @@ func validInvoice() *bill.Invoice {
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestValidInvoiceWithUEN(t *testing.T) {
@@ -74,23 +75,23 @@ func TestValidInvoiceWithUEN(t *testing.T) {
 		},
 	}
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestNilSupplier(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier = nil
-	require.Error(t, inv.Validate())
+	require.Error(t, rules.Validate(inv))
 }
 
 func TestMissingSupplierTaxID(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.TaxID = nil
-	require.Error(t, inv.Validate())
+	require.Error(t, rules.Validate(inv))
 }
 
 func TestMissingSupplierName(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.Name = ""
-	require.Error(t, inv.Validate())
+	require.Error(t, rules.Validate(inv))
 }

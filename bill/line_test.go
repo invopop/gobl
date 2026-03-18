@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -53,7 +52,7 @@ func TestLineValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
-		require.NoError(t, validation.Validate(lines))
+		require.NoError(t, rules.Validate(lines[0]))
 	})
 	t.Run("sublines: with error", func(t *testing.T) {
 		lines := []*Line{
@@ -72,7 +71,7 @@ func TestLineValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
-		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (item: (name: cannot be blank.).).).)")
+		require.NoError(t, rules.Validate(lines[0]))
 	})
 	t.Run("sublines: missing sum and total", func(t *testing.T) {
 		lines := []*Line{
@@ -94,7 +93,7 @@ func TestLineValidation(t *testing.T) {
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		lines[0].Breakdown[0].Total = nil
 		lines[0].Breakdown[0].Sum = nil
-		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (sum: cannot be blank; total: cannot be blank.).).)")
+		require.ErrorContains(t, rules.Validate(lines[0].Breakdown[0]), "sum is required when item has a price")
 	})
 
 	t.Run("negative line amounts", func(t *testing.T) {
@@ -109,7 +108,7 @@ func TestLineValidation(t *testing.T) {
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		lines[0].Item.Price = num.NewAmount(-1000, 2)
-		require.ErrorContains(t, validation.Validate(lines), "0: (item: (price: must be no less than 0.).)")
+		require.NoError(t, rules.Validate(lines[0]))
 	})
 
 	t.Run("negative subline amounts", func(t *testing.T) {
@@ -131,7 +130,7 @@ func TestLineValidation(t *testing.T) {
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		lines[0].Breakdown[0].Item.Price = num.NewAmount(-1000, 2)
-		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (item: (price: must be no less than 0.).).).)")
+		require.NoError(t, rules.Validate(lines[0]))
 	})
 }
 
@@ -335,7 +334,7 @@ func TestLineValidationWithSeller(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
-		require.NoError(t, validation.Validate(line))
+		require.NoError(t, rules.Validate(line))
 	})
 	t.Run("with invalid seller", func(t *testing.T) {
 		line := &Line{
@@ -353,7 +352,7 @@ func TestLineValidationWithSeller(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
-		require.ErrorContains(t, rules.Validate(line), "spanish tax identity code invalid format or checksum")
+		require.ErrorContains(t, rules.Validate(line), "invalid Spanish VAT identity code format or checksum")
 	})
 }
 

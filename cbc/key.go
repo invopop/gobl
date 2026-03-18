@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Key is used to define an ID or code that more closely represents
@@ -42,12 +42,14 @@ var (
 // KeyEmpty is used when no key is available.
 const KeyEmpty Key = ""
 
-// Validate ensures the key complies with the basic syntax
-// requirements.
-func (k Key) Validate() error {
-	return validation.Validate(string(k),
-		validation.Match(KeyValidationRegexp),
-		validation.Length(int(KeyMinLength), int(KeyMaxLength)),
+func keyRules() *rules.Set {
+	return rules.For(Key(""),
+		rules.Assert("01", fmt.Sprintf("key must be between %d and %d characters long", KeyMinLength, KeyMaxLength),
+			rules.Length(int(KeyMinLength), int(KeyMaxLength)),
+		),
+		rules.Assert("02", "key must match the required pattern",
+			rules.Matches(KeyPatternFull),
+		),
 	)
 }
 
@@ -140,15 +142,42 @@ func AppendUniqueKeys(keys []Key, key ...Key) []Key {
 
 // HasValidKeyIn provides a validator to check the Key's
 // value is within the provided known set.
-func HasValidKeyIn(keys ...Key) validation.Rule {
-	return hasKeyRule{elements: keys}
+func HasValidKeyIn(keys ...Key) HasKeyRule {
+	return HasKeyRule{elements: keys}
 }
 
-type hasKeyRule struct {
+// HasKeyTest defines a test that will check for the presence
+// of keys.
+type HasKeyRule struct {
 	elements []Key
 }
 
-func (r hasKeyRule) Validate(v interface{}) error {
+// String provides a string representation of the test.
+func (r HasKeyRule) String() string {
+	var ks []string
+	for _, k := range r.elements {
+		ks = append(ks, k.String())
+	}
+	return fmt.Sprintf("be or starts with one of [%s]", strings.Join(ks, ", "))
+}
+
+// Check returns true if the value satisfies the rule.
+func (r HasKeyRule) Check(value any) bool {
+	mk, ok := value.(Key)
+	if !ok || mk.IsEmpty() {
+		return false
+	}
+	for _, e := range r.elements {
+		if mk.HasPrefix(e) {
+			return true
+		}
+	}
+	return false
+}
+
+// Validate will provide an error if the value is not defined inside
+// the set of keys provided to the rule.
+func (r HasKeyRule) Validate(v interface{}) error {
 	mk, ok := v.(Key)
 	if !ok || mk == KeyEmpty {
 		return nil

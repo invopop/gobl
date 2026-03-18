@@ -60,16 +60,10 @@ func isValidTaxIdentityCode(value any) bool {
 	if !ok || code == "" {
 		return false
 	}
-	return validateTaxCode(code) == nil
+	return validateTaxCode(code.String()) == nil
 }
 
-func validateTaxCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	val := code.String()
-
+func validateTaxCode(val string) error {
 	// CUIT/CUIL must be exactly 11 digits
 	if len(val) != 11 {
 		return errors.New("must have 11 digits")

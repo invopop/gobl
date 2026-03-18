@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -139,24 +140,24 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	inv := baseInvoice()
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, inv.Type, bill.InvoiceTypeStandard)
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 	assert.Equal(t, inv.Supplier.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, inv.Supplier.Addresses[0].Region, "Bogotá")
 	assert.Equal(t, inv.Customer.Addresses[0].Locality, "Sabanalarga")
 	assert.Equal(t, inv.Customer.Addresses[0].Region, "Atlántico")
 
 	delete(inv.Supplier.Ext, dian.ExtKeyMunicipality)
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-municipality: required.).).")
 
 	inv.Supplier.Ext[dian.ExtKeyMunicipality] = "110011"
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-municipality: does not match pattern.).")
 
 	inv = baseInvoice()
 	inv.Supplier.TaxID.Code = ""
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
@@ -169,14 +170,14 @@ func TestBasicInvoiceValidation(t *testing.T) {
 		},
 	)
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.NoError(t, err)
 
 	inv = baseInvoice()
 	inv.Customer.TaxID.Country = "ES"
 	inv.Customer.TaxID.Code = "A13180492"
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.NoError(t, err)
 }
 
@@ -186,7 +187,7 @@ func TestFiscalResponsibilityExtensionValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate()) // calculate before delete to avoid normalization
 	delete(inv.Supplier.Ext, dian.ExtKeyFiscalResponsibility)
 	delete(inv.Customer.Ext, dian.ExtKeyFiscalResponsibility)
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-fiscal-responsibility: required.).)")
 	assert.ErrorContains(t, err, "customer: (ext: (co-dian-fiscal-responsibility: required.).)")
 
@@ -199,7 +200,7 @@ func TestFiscalResponsibilityExtensionValidation(t *testing.T) {
 	delete(inv.Supplier.Ext, dian.ExtKeyFiscalResponsibility)
 	delete(inv.Customer.Ext, dian.ExtKeyFiscalResponsibility)
 	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.NoError(t, err)
 }
 
@@ -208,13 +209,13 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	inv.Preceding[0].Reason = "Correcting an error"
 	err := inv.Calculate()
 	require.NoError(t, err)
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	assert.NoError(t, err)
 	assert.Contains(t, inv.Preceding[0].Ext, dian.ExtKeyCreditCode)
 	assert.Equal(t, inv.Preceding[0].Ext[dian.ExtKeyCreditCode], cbc.Code("2"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
-	err = inv.Validate()
+	err = rules.Validate(inv)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
 	}

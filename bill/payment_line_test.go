@@ -1,13 +1,13 @@
 package bill
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -305,7 +305,7 @@ func TestPaymentLineValidation(t *testing.T) {
 			Index:  1,
 			Amount: num.MakeAmount(6050, 2),
 		}
-		assert.NoError(t, pl.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(pl))
 	})
 	t.Run("big installment", func(t *testing.T) {
 		pl := &PaymentLine{
@@ -313,8 +313,8 @@ func TestPaymentLineValidation(t *testing.T) {
 			Installment: 1000,
 			Amount:      num.MakeAmount(6050, 2),
 		}
-		err := pl.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "installment: must be no greater than 999.")
+		err := rules.Validate(pl)
+		assert.ErrorContains(t, err, "installment must be between 1 and 999")
 	})
 	t.Run("min installment", func(t *testing.T) {
 		pl := &PaymentLine{
@@ -322,8 +322,8 @@ func TestPaymentLineValidation(t *testing.T) {
 			Installment: -1,
 			Amount:      num.MakeAmount(6050, 2),
 		}
-		err := pl.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "installment: must be no less than 1")
+		err := rules.Validate(pl)
+		assert.ErrorContains(t, err, "installment must be between 1 and 999")
 	})
 	t.Run("zero installment", func(t *testing.T) {
 		pl := &PaymentLine{
@@ -331,7 +331,7 @@ func TestPaymentLineValidation(t *testing.T) {
 			Installment: 0, // same as empty
 			Amount:      num.MakeAmount(6050, 2),
 		}
-		err := pl.ValidateWithContext(context.Background())
+		err := rules.Validate(pl)
 		assert.NoError(t, err)
 	})
 
@@ -342,8 +342,8 @@ func TestPaymentLineValidation(t *testing.T) {
 			Advances: num.NewAmount(7000, 2), // more than payable
 			Amount:   num.MakeAmount(6050, 2),
 		}
-		err := pl.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "advances: must be no greater than 60.50")
+		err := rules.Validate(pl)
+		assert.ErrorContains(t, err, "advances must not exceed payable")
 	})
 
 	t.Run("amount more than payable", func(t *testing.T) {
@@ -353,7 +353,7 @@ func TestPaymentLineValidation(t *testing.T) {
 			Advances: num.NewAmount(2000, 2),
 			Amount:   num.MakeAmount(6050, 2),
 		}
-		err := pl.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "amount: must be no greater than 40.50.")
+		err := rules.Validate(pl)
+		assert.ErrorContains(t, err, "amount must not exceed payable less advances")
 	})
 }

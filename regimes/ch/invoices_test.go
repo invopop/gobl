@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -51,10 +52,10 @@ func validInvoice() *bill.Invoice {
 func TestInvoiceValidation(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	assert.NoError(t, rules.Validate(inv))
 
 	inv = validInvoice()
 	inv.Supplier.TaxID.Code = ""
 	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	assert.NoError(t, rules.Validate(inv))
 }

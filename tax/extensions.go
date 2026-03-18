@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -30,7 +31,7 @@ import (
 //   `vat-cat`, `incoming-typ`, etc. The aim should be to avoid using obvious names
 //   like `code` or `key` in the name, as these are already implied through usage.
 //
-// Please look at the regimes package and othe country specific implementations for
+// Please look at the regimes package and other country specific implementations for
 // examples of how to define and use extensions.
 
 // Extensions is a map of extension keys to values.
@@ -68,6 +69,7 @@ func ExtensionForKey(key cbc.Key) *cbc.Definition {
 
 // Validate ensures the extension map data looks correct and that all keys
 // have been registered globally.
+/*
 func (em Extensions) Validate() error {
 	err := make(validation.Errors)
 	// Validate key format
@@ -106,6 +108,7 @@ func (em Extensions) Validate() error {
 	}
 	return nil
 }
+*/
 
 // Set will update the extension map with the provided key and value, and
 // return the updated map. If the map is nil, it will be created. If the
@@ -301,13 +304,49 @@ type ExtensionsRule struct {
 	values []cbc.Code // used by code-based operators
 }
 
+// ExtensionHasValidCode returns a validation rule that ensures that if the provided key is present
+// in the extensions map, that it's code matches the underlying extension's definition. Unlike other
+// tests, if the extension key is not present, the test will still pass.
+func ExtensionHasValidCode(key cbc.Key) rules.Test {
+	ed := ExtensionForKey(key)
+	if ed == nil {
+		panic("invalid ext key '" + key.String() + "' provided to ExtensionHasValidCode rule: no definition found")
+	}
+	desc := "ext '" + key.String() + "' "
+	var check rules.Test
+	if len(ed.Values) > 0 {
+		codes := cbc.DefinitionCodes(ed.Values)
+		desc = desc + "in [" + strings.Join(cbc.CodeStrings(codes), ", ") + "]"
+		check = cbc.InCodes(codes...)
+	} else if ed.Pattern != "" {
+		desc = desc + "matches pattern '" + ed.Pattern + "'"
+		re := regexp.MustCompile(ed.Pattern)
+		check = rules.MatchesRegexp(re)
+	} else {
+		panic("invalid ext definition for key '" + key.String() + "': no values or pattern defined")
+	}
+	return rules.By(
+		desc,
+		func(value any) bool {
+			em, ok := value.(Extensions)
+			if !ok {
+				return false // only valid for extensions
+			}
+			ev, ok := em[key]
+			if !ok {
+				return true // if the key is not present, we don't want to fail validation here
+			}
+			return check.Check(ev)
+		})
+}
+
 // ExtensionsRequire returns a validation rule that ensures that all of
 // the provided keys are present.
 func ExtensionsRequire(keys ...cbc.Key) ExtensionsRule {
 	return ExtensionsRule{
 		op:   extCodeOpAnd,
 		keys: keys,
-		desc: "extensions require " + extKeyList(keys),
+		desc: "ext require " + extKeyList(keys),
 	}
 }
 
@@ -319,7 +358,7 @@ func ExtensionsRequireAllOrNone(keys ...cbc.Key) ExtensionsRule {
 	return ExtensionsRule{
 		op:   extCodeOpXNOr,
 		keys: keys,
-		desc: "extensions require all or none of " + extKeyList(keys),
+		desc: "ext require all or none of " + extKeyList(keys),
 	}
 }
 
@@ -329,7 +368,7 @@ func ExtensionsExclude(keys ...cbc.Key) ExtensionsRule {
 	return ExtensionsRule{
 		op:   extCodeOpNot,
 		keys: keys,
-		desc: "extensions exclude " + extKeyList(keys),
+		desc: "ext exclude " + extKeyList(keys),
 	}
 }
 
@@ -340,7 +379,7 @@ func ExtensionsAllowOneOf(keys ...cbc.Key) ExtensionsRule {
 	return ExtensionsRule{
 		op:   extCodeOpOneOf,
 		keys: keys,
-		desc: "extensions allow one of " + extKeyList(keys),
+		desc: "ext allow one of " + extKeyList(keys),
 	}
 }
 
@@ -351,7 +390,7 @@ func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
 		op:     extCodeOpHasCodes,
 		key:    key,
 		values: codes,
-		desc:   "extensions[" + key.String() + "] in " + extCodeList(codes),
+		desc:   "ext '" + key.String() + "' in " + extCodeList(codes),
 	}
 }
 
@@ -362,7 +401,7 @@ func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
 		op:     extCodeOpExcludeCodes,
 		key:    key,
 		values: codes,
-		desc:   "extensions[" + key.String() + "] not in " + extCodeList(codes),
+		desc:   "ext '" + key.String() + "' not in " + extCodeList(codes),
 	}
 }
 

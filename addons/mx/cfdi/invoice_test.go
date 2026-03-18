@@ -15,6 +15,7 @@ import (
 	"github.com/invopop/gobl/pay"
 	_ "github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -101,7 +102,7 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 	t.Run("with global period", func(t *testing.T) {
 		inv := validInvoice()
@@ -111,7 +112,7 @@ func TestValidInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		// Order is not guaranteed, so check for each error separately
 		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
 		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
@@ -124,7 +125,7 @@ func TestValidInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
 		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
 	})
@@ -136,7 +137,7 @@ func TestValidInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
 		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
 	})
@@ -149,7 +150,7 @@ func TestValidInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, inv.Validate(), "tax: (ext: (mx-cfdi-global-year: required.).)")
+		require.ErrorContains(t, rules.Validate(inv), "tax: (ext: (mx-cfdi-global-year: required.).)")
 	})
 }
 
@@ -158,7 +159,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := validInvoice()
 		inv.Addons = tax.WithAddons(cfdi.V4)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
@@ -173,7 +174,7 @@ func TestNormalizeInvoice(t *testing.T) {
 			},
 		)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
@@ -203,7 +204,7 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		inv.Tags = tax.WithTags(cfdi.TagGlobal)
 		require.NoError(t, inv.Calculate())
 		require.Nil(t, inv.Customer)
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
 		assert.ErrorContains(t, err, "tax: (ext: (mx-cfdi-global-month: required; mx-cfdi-global-period: required; mx-cfdi-global-year: required.).)")
 		assert.ErrorContains(t, err, "payment: cannot be blank;")
@@ -228,7 +229,7 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.Nil(t, inv.Customer)
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, cbc.Code("04"), inv.Tax.Ext[cfdi.ExtKeyGlobalPeriod])
 	})
 
@@ -242,7 +243,7 @@ func TestCustomerValidation(t *testing.T) {
 
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	assert.NoError(t, rules.Validate(inv))
 }
 
 func TestCustomerAddressCodeValidation(t *testing.T) {
@@ -258,12 +259,12 @@ func TestCustomerAddressCodeValidation(t *testing.T) {
 
 	inv.Customer.Addresses[0].Code = "21000"
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 
 	inv.Customer.TaxID.Country = "US"
 	inv.Customer.Addresses = nil
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestLineValidation(t *testing.T) {
@@ -324,7 +325,7 @@ func TestPaymentTermsValidation(t *testing.T) {
 	assertValidationError(t, inv, "payment: (terms: (notes: the length must be no more than 1000.).)")
 
 	inv.Payment.Terms.Notes = strings.Repeat("x", 1000)
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestUsoCFDIScenarioValidation(t *testing.T) {
@@ -357,7 +358,7 @@ func TestPrecedingValidation(t *testing.T) {
 	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).)")
 
 	inv.Preceding[0].Stamps[0].Provider = "sat-uuid"
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestInvoiceDiscountValidation(t *testing.T) {
@@ -374,7 +375,7 @@ func TestInvoiceDiscountValidation(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)
 }
@@ -492,7 +493,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			inv.Tags = ts.tags
 			inv.Lines[0].Item = ts.item
 			require.NoError(t, inv.Calculate())
-			err := inv.Validate()
+			err := rules.Validate(inv)
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -508,7 +509,7 @@ func TestInvoiceLineItemGlobalValidation(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		inv := validInvoiceGlobal()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 	t.Run("missing ref", func(t *testing.T) {
 		inv := validInvoiceGlobal()
@@ -517,7 +518,7 @@ func TestInvoiceLineItemGlobalValidation(t *testing.T) {
 			Name:  "Test purchase",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
 	})
 }

@@ -1,7 +1,6 @@
 package cbc
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -9,7 +8,6 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -163,19 +161,38 @@ func (Code) JSONSchema() *jsonschema.Schema {
 	}
 }
 
-// Validate ensures the code maps data looks correct.
-func (cs CodeMap) Validate() error {
-	err := make(validation.Errors)
-	// values are already tested
-	for k := range cs {
-		if e := k.Validate(); e != nil {
-			err[k.String()] = e
+// InCodes provides a rules test that checks if a code's value is one of the provided codes.
+func InCodes(codes ...Code) rules.Test {
+	return rules.By("code in ["+strings.Join(CodeStrings(codes), ", ")+"]",
+		func(value any) bool {
+			c, ok := value.(Code)
+			if !ok {
+				return false
+			}
+			return c.In(codes...)
+		},
+	)
+}
+
+func codeMapRules() *rules.Set {
+	return rules.For(CodeMap{},
+		rules.Assert("01", "all code map keys must be valid",
+			rules.By("valid keys", codeMapKeysValid),
+		),
+	)
+}
+
+func codeMapKeysValid(v any) bool {
+	m, ok := v.(CodeMap)
+	if !ok {
+		return true
+	}
+	for k := range m {
+		if rules.Validate(k) != nil {
+			return false
 		}
 	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
+	return true
 }
 
 // Has returns true if the code map has values for all the provided keys.
@@ -208,32 +225,31 @@ func (cs CodeMap) Equals(other CodeMap) bool {
 
 // CodeMapHas returns a validation rule that ensures the code set contains
 // the provided keys.
-func CodeMapHas(keys ...Key) validation.Rule {
-	return validateCodeMap{keys: keys}
+func CodeMapHas(keys ...Key) rules.Test {
+	return codeMapTest{keys: keys}
 }
 
-type validateCodeMap struct {
+type codeMapTest struct {
 	keys []Key
 }
 
-func (v validateCodeMap) Validate(value interface{}) error {
+// String returns a string representation of the rule.
+func (r codeMapTest) String() string {
+	return fmt.Sprintf("have keys [%s]", strings.Join(KeyStrings(r.keys), ", "))
+}
+
+// Check returns true if the code map has all the required keys.
+func (r codeMapTest) Check(value any) bool {
 	cs, ok := value.(CodeMap)
 	if !ok {
-		return nil
+		return false
 	}
-	var err validation.Errors
-	for _, k := range v.keys {
+	for _, k := range r.keys {
 		if _, ok := cs[k]; !ok {
-			if err == nil {
-				err = make(validation.Errors)
-			}
-			err[k.String()] = errors.New("required")
+			return false
 		}
 	}
-	if len(err) > 0 {
-		return err
-	}
-	return nil
+	return true
 }
 
 // JSONSchemaExtend ensures the pattern property is set correctly.

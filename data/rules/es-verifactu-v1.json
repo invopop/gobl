@@ -6,7 +6,6 @@
     {
       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE",
       "name": "bill.Invoice",
-      "schema": "https://gobl.org/draft-0/bill/invoice",
       "subsets": [
         {
           "guard": "invoice type in [corrective]",
@@ -269,21 +268,31 @@
       "subsets": [
         {
           "guard": "verifactu vat/igic",
-          "assert": [
-            {
-              "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-10",
-              "desc": "cannot use both op_class and exempt at the same time",
-              "tests": "not both op_class and exempt"
-            }
-          ],
           "subsets": [
             {
               "field": "ext",
               "assert": [
                 {
                   "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-01",
-                  "desc": "regime is required",
-                  "tests": "has regime"
+                  "desc": "extension 'es-verifactu-regime' is required",
+                  "tests": "extensions require [es-verifactu-regime]"
+                },
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-03",
+                  "desc": "cannot use both 'es-verifactu-op-class' and 'es-verifactu-exempt' at the same time",
+                  "tests": "extensions allow one of [es-verifactu-op-class, es-verifactu-exempt]"
+                }
+              ],
+              "subsets": [
+                {
+                  "guard": "extensions[es-verifactu-regime] in [01]",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-02",
+                      "desc": "exempt codes E2 and E3 not allowed with 'es-verifactu-regime' 01",
+                      "tests": "extensions[es-verifactu-exempt] not in [E2, E3]"
+                    }
+                  ]
                 }
               ]
             },
@@ -294,24 +303,9 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-02",
-                      "desc": "op_class is required for taxed operations",
-                      "tests": "has op_class"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "guard": "regime 01",
-              "subsets": [
-                {
-                  "field": "ext",
-                  "assert": [
-                    {
-                      "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-11",
-                      "desc": "exempt codes E2 and E3 not allowed with regime 01",
-                      "tests": "no E2/E3"
+                      "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-04",
+                      "desc": "extension 'es-verifactu-op-class' is required for taxed operations",
+                      "tests": "extensions require [es-verifactu-op-class]"
                     }
                   ]
                 }

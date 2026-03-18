@@ -109,12 +109,12 @@ func TestValidate(t *testing.T) {
 		e := &Email{Addr: ""}
 		faults := rules.Validate(e)
 		require.NotNil(t, faults)
-		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] (addr) expected a valid email address", faults.Error())
-		assert.True(t, faults.HasPath("addr"))
+		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] ($.addr) expected a valid email address", faults.Error())
+		assert.True(t, faults.HasPath("$.addr"))
 		f := faults.First()
 		assert.Equal(t, "expected a valid email address", f.Message())
 		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), f.Code())
-		assert.Equal(t, "addr", f.Path())
+		assert.Equal(t, "$.addr", f.Path())
 	})
 
 	t.Run("recurses into struct fields", func(t *testing.T) {
@@ -128,8 +128,8 @@ func TestValidate(t *testing.T) {
 		}
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
-		assert.True(t, faults.HasPath("emails[1].addr"), "expected fault at emails[1].addr")
-		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] (emails[1].addr) expected a valid email address", faults.Error())
+		assert.True(t, faults.HasPath("$.emails[1].addr"), "expected fault at $.emails[1].addr")
+		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] ($.emails[1].addr) expected a valid email address", faults.Error())
 	})
 
 	t.Run("recurses into pointer fields", func(t *testing.T) {
@@ -170,6 +170,23 @@ func init() {
 		rules.GOBL.Add("TEST"),
 		testCodeRules(),
 	)
+}
+
+// Tag is a named string type used as a map key to test map key validation.
+type Tag string
+
+type Tagged struct {
+	Tags map[Tag]Email `json:"tags,omitempty"`
+}
+
+func tagRules() *rules.Set {
+	return rules.For(Tag(""),
+		rules.Assert("01", "tag must not be empty", rules.Present),
+	)
+}
+
+func init() {
+	rules.Register("test", rules.GOBL.Add("TEST"), tagRules())
 }
 
 func TestForValue(t *testing.T) {
@@ -217,6 +234,59 @@ func TestForValue(t *testing.T) {
 		})
 	})
 
+}
+
+func TestMapValidation(t *testing.T) {
+	t.Run("traverses map values and reports keyed paths", func(t *testing.T) {
+		obj := &Tagged{
+			Tags: map[Tag]Email{
+				"work": {Addr: "work@example.com"},
+				"home": {Addr: ""},
+			},
+		}
+		faults := rules.Validate(obj)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasPath("$.tags.home.addr"), "expected fault at $.tags.home.addr")
+		assert.False(t, faults.HasPath("$.tags.work.addr"), "expected no fault at $.tags.work.addr")
+	})
+
+	t.Run("validates named map keys", func(t *testing.T) {
+		obj := &Tagged{
+			Tags: map[Tag]Email{
+				"":     {Addr: "ok@example.com"},
+				"work": {Addr: "work@example.com"},
+			},
+		}
+		faults := rules.Validate(obj)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasPath("$.tags"), "expected fault at $.tags for empty key")
+	})
+
+	t.Run("key order is deterministic across multiple failing entries", func(t *testing.T) {
+		obj := &Tagged{
+			Tags: map[Tag]Email{
+				"beta":  {Addr: ""},
+				"alpha": {Addr: ""},
+			},
+		}
+		faults := rules.Validate(obj)
+		require.NotNil(t, faults)
+		require.GreaterOrEqual(t, faults.Len(), 2)
+		assert.Equal(t, "$.tags.alpha.addr", faults.At(0).Path())
+		assert.Equal(t, "$.tags.beta.addr", faults.At(1).Path())
+	})
+
+	t.Run("nil map is skipped", func(t *testing.T) {
+		obj := &Tagged{Tags: nil}
+		faults := rules.Validate(obj)
+		assert.Nil(t, faults)
+	})
+
+	t.Run("empty map passes", func(t *testing.T) {
+		obj := &Tagged{Tags: map[Tag]Email{}}
+		faults := rules.Validate(obj)
+		assert.Nil(t, faults)
+	})
 }
 
 func TestSetValidate(t *testing.T) {
@@ -325,7 +395,7 @@ func TestFieldEmpty(t *testing.T) {
 	t.Run("fails when field has a value", func(t *testing.T) {
 		faults := set.Validate(&Person{Name: "Alice"})
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("name"))
+		assert.True(t, faults.HasPath("$.name"))
 	})
 }
 
@@ -344,13 +414,13 @@ func TestFieldNil(t *testing.T) {
 	t.Run("fails when pointer field is non-nil", func(t *testing.T) {
 		faults := set.Validate(&Person{SecondAddress: &Address{City: "London"}})
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("second_address"))
+		assert.True(t, faults.HasPath("$.second_address"))
 	})
 
 	t.Run("fails when pointer field is non-nil but points to empty value", func(t *testing.T) {
 		faults := set.Validate(&Person{SecondAddress: new(Address)})
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("second_address"))
+		assert.True(t, faults.HasPath("$.second_address"))
 	})
 }
 
@@ -391,8 +461,8 @@ func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
 		}
 		faults := set.Validate(p)
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("address"))
-		assert.False(t, faults.HasPath("second_address"))
+		assert.True(t, faults.HasPath("$.address"))
+		assert.False(t, faults.HasPath("$.second_address"))
 	})
 }
 
@@ -418,10 +488,10 @@ func TestEach(t *testing.T) {
 		}
 		faults := set.Validate(p)
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("emails[1].addr"))
-		assert.True(t, faults.HasPath("emails[3].addr"))
-		assert.False(t, faults.HasPath("emails[0].addr"))
-		assert.False(t, faults.HasPath("emails[2].addr"))
+		assert.True(t, faults.HasPath("$.emails[1].addr"))
+		assert.True(t, faults.HasPath("$.emails[3].addr"))
+		assert.False(t, faults.HasPath("$.emails[0].addr"))
+		assert.False(t, faults.HasPath("$.emails[2].addr"))
 	})
 
 	t.Run("passes when all elements are valid", func(t *testing.T) {
@@ -471,13 +541,13 @@ func TestEach(t *testing.T) {
 		p := &Person{Emails: []Email{{Addr: "a@b.com"}, {Addr: "c@d.com"}, {Addr: "e@f.com"}}}
 		faults := set.Validate(p)
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("emails"))
+		assert.True(t, faults.HasPath("$.emails"))
 
 		// Per-element violation: empty addr.
 		p2 := &Person{Emails: []Email{{Addr: "a@b.com"}, {Addr: ""}}}
 		faults2 := set.Validate(p2)
 		require.Error(t, faults2)
-		assert.True(t, faults2.HasPath("emails[1].addr"))
+		assert.True(t, faults2.HasPath("$.emails[1].addr"))
 	})
 
 	t.Run("panics when used outside a slice field", func(t *testing.T) {
@@ -534,7 +604,7 @@ func TestEmbeddable(t *testing.T) {
 		c := &Container{Doc: &Wrapper{inner: &Inner{Name: ""}}}
 		faults := rules.Validate(c)
 		require.Error(t, faults)
-		assert.True(t, faults.HasPath("doc.name"), "expected fault at doc.name, got: %v", faults)
+		assert.True(t, faults.HasPath("$.doc.name"), "expected fault at $.doc.name, got: %v", faults)
 	})
 
 	t.Run("global Validate passes when embedded payload is valid", func(t *testing.T) {

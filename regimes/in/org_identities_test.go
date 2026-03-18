@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/in"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -106,7 +107,7 @@ func TestOrgIdentityValidate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Type: tt.typ, Code: tt.code}
-			err := in.Validate(id)
+			err := rules.Validate(id)
 
 			if tt.err == "" {
 				assert.NoError(t, err)

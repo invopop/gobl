@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -154,13 +155,13 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier: (identities: missing key 'de-tax-number'; tax_id: cannot be blank.).")
 	})
 	t.Run("missing supplier tax ID but has tax number", func(t *testing.T) {
@@ -175,7 +176,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -193,14 +194,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.People[0].Telephones = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier with people telephones only", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier missing both party and people telephones", func(t *testing.T) {
@@ -208,7 +209,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.Telephones = nil
 		inv.Supplier.People[0].Telephones = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "either party.telephones or party.people[0].telephones is required")
 	})
 
@@ -217,14 +218,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.People[0].Emails = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier with people emails only", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Emails = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier missing both party and people emails", func(t *testing.T) {
@@ -232,7 +233,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.Emails = nil
 		inv.Supplier.People[0].Emails = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "either party.emails or party.people[0].emails is required")
 	})
 
@@ -240,7 +241,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Ordering = &bill.Ordering{}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "code: cannot be blank.")
 	})
 
@@ -261,14 +262,14 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("delivery with missing receiver", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Delivery = &bill.DeliveryDetails{}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "receiver: cannot be blank.")
 	})
 
@@ -280,7 +281,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "addresses: cannot be blank.")
 	})
 
@@ -288,7 +289,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Delivery = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 }
