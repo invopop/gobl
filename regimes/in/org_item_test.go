@@ -13,6 +13,7 @@ import (
 func TestOrgItemValidation(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		i := &org.Item{
+			Name: "Test Item",
 			Identities: []*org.Identity{
 				{
 					Type: in.IdentityTypeHSN,

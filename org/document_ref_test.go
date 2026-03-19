@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,8 +17,7 @@ func TestDocumentRefValidation(t *testing.T) {
 	dr.Code = "FOO"
 	dr.IssueDate = cal.NewDate(2022, 11, 6)
 
-	err := dr.Validate()
-	assert.NoError(t, err)
+	assert.NoError(t, rules.Validate(dr))
 }
 
 func TestDocumentRefNormalize(t *testing.T) {

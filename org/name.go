@@ -1,12 +1,10 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Name represents what a human is called. This is a complex subject, see this
@@ -48,25 +46,17 @@ func (n *Name) Normalize() {
 	n.Suffix = cbc.NormalizeString(n.Suffix)
 }
 
-// Validate ensures the name looks valid.
-func (n *Name) Validate() error {
-	return n.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the name looks valid inside the provided context.
-func (n *Name) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, n,
-		validation.Field(&n.UUID),
-		validation.Field(&n.Given,
-			validation.When(n.Surname == "",
-				validation.Required,
+func nameRules() *rules.Set {
+	return rules.For(new(Name),
+		rules.When(is.Expr(`surname == ""`),
+			rules.Field("given",
+				rules.Assert("01", "given name is required when surname is absent", is.Present),
 			),
 		),
-		validation.Field(&n.Surname,
-			validation.When(n.Given == "",
-				validation.Required,
+		rules.When(is.Expr(`given == ""`),
+			rules.Field("surname",
+				rules.Assert("02", "surname is required when given name is absent", is.Present),
 			),
 		),
-		validation.Field(&n.Meta),
 	)
 }

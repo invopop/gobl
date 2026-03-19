@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -43,8 +44,7 @@ func TestNameValidation(t *testing.T) {
 		{
 			name: "empty",
 			n:    &org.Name{},
-
-			err: "given: cannot be blank; surname: cannot be blank.",
+			err:  "given name is required when surname is absent",
 		},
 		{
 			name: "given",
@@ -69,7 +69,7 @@ func TestNameValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.n.Validate()
+			err := rules.Validate(tt.n)
 			if tt.err == "" {
 				require.NoError(t, err)
 				return

@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -58,17 +59,17 @@ func TestNotesValidation(t *testing.T) {
 	n := new(org.Note)
 	n.Text = "This is a general note test"
 
-	err := n.Validate()
+	err := rules.Validate(n)
 	assert.NoError(t, err) // empty key ok
 
 	n.Key = org.NoteKeyGeneral
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.NoError(t, err)
 
 	n.Key = cbc.Key("fooo")
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "key: must be a valid value")
+	assert.Contains(t, err.Error(), "note key must be a valid value")
 }
 
 func TestNoteFromScenario(t *testing.T) {

@@ -57,7 +57,7 @@ var isBrazilianParty = is.Func("is Brazilian party",
 			return true
 		}
 		for _, addr := range party.Addresses {
-			if addr.Country == l10n.BR.ISO() {
+			if addr != nil && addr.Country == l10n.BR.ISO() {
 				return true
 			}
 		}

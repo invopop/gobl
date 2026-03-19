@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -50,31 +51,31 @@ func TestItemValidation(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
 		}
-		assert.NoError(t, i.Validate())
+		assert.NoError(t, rules.Validate(i))
 	})
 	t.Run("missing name", func(t *testing.T) {
 		i := new(org.Item)
-		assert.ErrorContains(t, i.Validate(), "name: cannot be blank.")
+		assert.ErrorContains(t, rules.Validate(i), "item name is required")
 	})
 	t.Run("without key", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
 		}
-		assert.NoError(t, i.Validate())
+		assert.NoError(t, rules.Validate(i))
 	})
 	t.Run("with key", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
 			Key:  org.ItemKeyServices,
 		}
-		assert.NoError(t, i.Validate())
+		assert.NoError(t, rules.Validate(i))
 	})
 	t.Run("invalid key", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
 			Key:  "invalid_key",
 		}
-		assert.ErrorContains(t, i.Validate(), "key: must be in a valid format.")
+		assert.ErrorContains(t, rules.Validate(i), "key must match the required pattern")
 	})
 }
 

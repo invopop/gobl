@@ -31,8 +31,19 @@ func init() {
 		rules.GOBL.Add("ORG"),
 		attachmentRules(),
 		coordinatesRules(),
+		documentRefRules(),
 		emailRules(),
 		identityRules(),
+		imageRules(),
+		inboxRules(),
+		itemRules(),
+		nameRules(),
+		noteRules(),
+		personRules(),
+		registrationRules(),
+		telephoneRules(),
+		unitRules(),
+		websiteRules(),
 	)
 }
 

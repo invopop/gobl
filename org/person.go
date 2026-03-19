@@ -1,12 +1,11 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Person represents a human, and how to contact them electronically.
@@ -55,23 +54,10 @@ func (p *Person) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(p)
 }
 
-// Validate validates the person.
-func (p *Person) Validate() error {
-	return p.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext validates the person with the given context.
-func (p *Person) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, p,
-		validation.Field(&p.UUID),
-		validation.Field(&p.Label),
-		validation.Field(&p.Key),
-		validation.Field(&p.Name, validation.Required),
-		validation.Field(&p.Identities),
-		validation.Field(&p.Addresses),
-		validation.Field(&p.Emails),
-		validation.Field(&p.Telephones),
-		validation.Field(&p.Avatars),
-		validation.Field(&p.Meta),
+func personRules() *rules.Set {
+	return rules.For(new(Person),
+		rules.Field("name",
+			rules.Assert("01", "person name is required", is.Present),
+		),
 	)
 }
