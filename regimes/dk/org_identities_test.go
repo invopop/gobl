@@ -47,7 +47,7 @@ func TestValidateIdentity(t *testing.T) {
 				Type: "CVR",
 				Code: "",
 			},
-			err: "",
+			err: "[GOBL-ORG-IDENTITY-01]",
 		},
 		{
 			name: "too short",

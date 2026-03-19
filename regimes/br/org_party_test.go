@@ -63,7 +63,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
+			err: "[GOBL-BR-ORG-PARTY-03] ($.addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "invalid Brazilian state",
@@ -75,7 +75,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "[GOBL-BR-ORG-PARTY-01] (addresses[0].state) Brazilian state must be one of the valid states",
+			err: "[GOBL-BR-ORG-PARTY-02] ($.addresses[0].state) Brazilian state must be one of the valid states",
 		},
 		{
 			name: "invalid Brazilian address with tax country only",
@@ -89,7 +89,7 @@ func TestValidateAddresses(t *testing.T) {
 					},
 				},
 			},
-			err: "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
+			err: "[GOBL-BR-ORG-PARTY-03] ($.addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "non-Brazilian address",
@@ -127,7 +127,7 @@ func TestValidateAddresses(t *testing.T) {
 					br.ExtKeyMunicipality: "00", // Invalid city code
 				},
 			},
-			err: "[GOBL-BR-ORG-PARTY-01] (ext) Brazilian party ext must define a valid 'br-ibge-municipality' code",
+			err: "[GOBL-BR-ORG-PARTY-01] ($.ext) Brazilian party ext must define a valid 'br-ibge-municipality' code",
 		},
 	}
 
@@ -161,22 +161,22 @@ func TestValidatePostCodes(t *testing.T) {
 		{
 			name: "too short",
 			code: "12345",
-			err:  "[GOBL-BR-ORG-PARTY-02] (addresses[0].code) Brazilian postal code must match the valid format",
+			err:  "[GOBL-BR-ORG-PARTY-03] ($.addresses[0].code) Brazilian postal code must match the valid format",
 		},
 		{
 			name: "too long",
 			code: "123456789",
-			err:  "GOBL-BR-ORG-PARTY-02",
+			err:  "GOBL-BR-ORG-PARTY-03",
 		},
 		{
 			name: "invalid chars",
 			code: "12345-678a",
-			err:  "GOBL-BR-ORG-PARTY-02",
+			err:  "GOBL-BR-ORG-PARTY-03",
 		},
 		{
 			name: "dash in wrong place",
 			code: "1234-5678",
-			err:  "GOBL-BR-ORG-PARTY-02",
+			err:  "GOBL-BR-ORG-PARTY-03",
 		},
 	}
 	for _, tt := range tests {

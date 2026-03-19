@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/sg"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +27,7 @@ func TestIdentityNormalization(t *testing.T) {
 func TestValidateUENIdentity(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var id *org.Identity
-		err := sg.Validate(id)
+		err := rules.Validate(id, tax.RegimeContext(sg.CountryCode))
 		assert.NoError(t, err)
 	})
 
@@ -52,7 +53,7 @@ func TestValidateUENIdentity(t *testing.T) {
 				Type: sg.IdentityTypeUEN,
 				Code: cbc.Code(tt.code),
 			}
-			err := sg.Validate(id)
+			err := rules.Validate(id, tax.RegimeContext(sg.CountryCode))
 			if tt.err {
 				assert.Error(t, err)
 			} else {

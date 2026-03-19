@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/validation"
 )
 
@@ -21,10 +22,10 @@ type Stamp struct {
 func stampRules() *rules.Set {
 	return rules.For(new(Stamp),
 		rules.Field("prv",
-			rules.Assert("01", "stamp provider is required", rules.Present),
+			rules.Assert("01", "stamp provider is required", is.Present),
 		),
 		rules.Field("val",
-			rules.Assert("02", "stamp value is required", rules.Present),
+			rules.Assert("02", "stamp value is required", is.Present),
 		),
 	)
 }

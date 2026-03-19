@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -26,7 +27,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V1.String(),
 		rules.GOBL.Add("ES-VERIFACTU-V1"),
-		rules.HasContext(tax.AddonIn(V1)),
+		is.HasContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		taxComboRules(),
 	)

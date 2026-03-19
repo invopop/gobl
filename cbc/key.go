@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -45,10 +46,10 @@ const KeyEmpty Key = ""
 func keyRules() *rules.Set {
 	return rules.For(Key(""),
 		rules.Assert("01", fmt.Sprintf("key must be between %d and %d characters long", KeyMinLength, KeyMaxLength),
-			rules.Length(int(KeyMinLength), int(KeyMaxLength)),
+			is.Length(int(KeyMinLength), int(KeyMaxLength)),
 		),
 		rules.Assert("02", "key must match the required pattern",
-			rules.Matches(KeyPatternFull),
+			is.Matches(KeyPatternFull),
 		),
 	)
 }

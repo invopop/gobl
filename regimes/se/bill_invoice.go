@@ -1,74 +1,50 @@
 package se
 
-/*
-func validateBillInvoice(inv *bill.Invoice) error {
-	simplified := inv.Tags.HasTags(tax.TagSimplified)
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Supplier,
-			validation.By(validateBillInvoiceParty(!simplified)),
-			validation.By(validateBillInvoiceSupplier),
-			validation.Skip,
-		),
-		validation.Field(&inv.Customer,
-			validation.When(
-				simplified,
-				validation.Empty,
-			).Else(
-				validation.Required,
-				validation.By(validateBillInvoiceParty(true)),
+import (
+	"fmt"
+
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+)
+
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.When(
+			is.HasContext(tax.RegimeIn(l10n.SE.Tax())),
+			rules.Field("supplier",
+				rules.Assert("01", fmt.Sprintf("invoice SE supplier must have either tax ID code or identity with %s, %s, or %s type", IdentityTypeOrgNr, IdentityTypePersonNr, IdentityTypeCoordinationNr),
+					is.Func(
+						fmt.Sprintf("has tax ID code or identity with type in [%s, %s, %s]", IdentityTypeOrgNr, IdentityTypePersonNr, IdentityTypeCoordinationNr),
+						hasSupplierTaxIDOrIdentity,
+					),
+				),
 			),
-			validation.Skip,
 		),
 	)
 }
 
-func validateBillInvoiceParty(withAddress bool) validation.RuleFunc {
-	return func(value any) error {
-		party, ok := value.(*org.Party)
-		if !ok || party == nil {
-			return nil
-		}
-
-		// Name and addresses are always required.
-		return validation.ValidateStruct(party,
-			validation.Field(&party.Name,
-				validation.Required,
-				validation.Skip,
-			),
-			validation.Field(&party.Addresses,
-				validation.When(withAddress,
-					validation.Required,
-				),
-				validation.Skip,
-			),
-			validation.Field(&party.Identities,
-				// If the party is registered in Sweden for tax purposes,
-				// then its identities must be one of the allowed types.
-				validation.When(
-					isSwedishParty(party) && party.TaxID.Code == "",
-					org.RequireIdentityType(IdentityTypeOrgNr, IdentityTypePersonNr, IdentityTypeCoordinationNr),
-				),
-				validation.Skip,
-			),
-		)
-	}
+func hasSupplierTaxIDOrIdentity(value any) bool {
+	party, _ := value.(*org.Party)
+	return hasTaxIDCode(party) || hasSupplierIdentity(party)
 }
 
-func isSwedishParty(party *org.Party) bool {
-	if party == nil || party.TaxID == nil {
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasSupplierIdentity(party *org.Party) bool {
+	if party == nil || len(party.Identities) == 0 {
 		return false
 	}
-	return party.TaxID.Country == l10n.TaxCountryCode(l10n.SE)
+	for _, id := range party.Identities {
+		switch id.Type {
+		case IdentityTypeOrgNr, IdentityTypePersonNr, IdentityTypeCoordinationNr:
+			return true
+		}
+	}
+	return false
 }
-
-func validateBillInvoiceSupplier(value any) error {
-	party, _ := value.(*org.Party)
-	return validation.ValidateStruct(party,
-		validation.Field(&party.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-	)
-}
-*/

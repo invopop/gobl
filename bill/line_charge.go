@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
@@ -47,27 +48,27 @@ func (lc *LineCharge) Normalize(normalizers tax.Normalizers) {
 
 func lineChargeRules() *rules.Set {
 	return rules.For(new(LineCharge),
-		rules.When(rules.Expr("base != nil"),
+		rules.When(is.Expr("base != nil"),
 			rules.Field("percent",
-				rules.Assert("01", "percent is required when base is set", rules.Present),
+				rules.Assert("01", "percent is required when base is set", is.Present),
 			),
 		),
-		rules.When(rules.Expr("base != nil || percent != nil"),
+		rules.When(is.Expr("base != nil || percent != nil"),
 			rules.Field("quantity",
-				rules.Assert("02", "quantity must be blank with base or percent", rules.Empty),
+				rules.Assert("02", "quantity must be blank with base or percent", is.Empty),
 			),
 			rules.Field("rate",
-				rules.Assert("03", "rate must be blank with base or percent", rules.Empty),
+				rules.Assert("03", "rate must be blank with base or percent", is.Empty),
 			),
 		),
-		rules.When(rules.Expr("quantity == nil"),
+		rules.When(is.Expr("quantity == nil"),
 			rules.Field("unit",
-				rules.Assert("04", "unit must be blank without quantity", rules.Empty),
+				rules.Assert("04", "unit must be blank without quantity", is.Empty),
 			),
 		),
-		rules.When(rules.Expr("quantity != nil"),
+		rules.When(is.Expr("quantity != nil"),
 			rules.Field("rate",
-				rules.Assert("05", "rate is required when quantity is set", rules.Present),
+				rules.Assert("05", "rate is required when quantity is set", is.Present),
 			),
 		),
 	)

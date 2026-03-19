@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -47,12 +48,12 @@ var oinPattern = `^0{6}(0[1-9]|10|99)\d{9}0{3}$`
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(CountryCode)),
+			is.HasContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				org.IdentityTypeIn(IdentityTypeKVK),
 				rules.Field("code",
 					rules.Assert("01", "identity code for type KVK must be valid",
-						rules.Length(8, 8),
+						is.Length(8, 8),
 					),
 				),
 			),
@@ -60,7 +61,7 @@ func orgIdentityRules() *rules.Set {
 				org.IdentityTypeIn(IdentityTypeOIN),
 				rules.Field("code",
 					rules.Assert("02", "identity code for type OIN must be valid",
-						rules.Matches(oinPattern),
+						is.Matches(oinPattern),
 					),
 				),
 			),

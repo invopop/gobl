@@ -8,6 +8,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -321,11 +322,11 @@ func ExtensionHasValidCode(key cbc.Key) rules.Test {
 	} else if ed.Pattern != "" {
 		desc = desc + "matches pattern '" + ed.Pattern + "'"
 		re := regexp.MustCompile(ed.Pattern)
-		check = rules.MatchesRegexp(re)
+		check = is.MatchesRegexp(re)
 	} else {
 		panic("invalid ext definition for key '" + key.String() + "': no values or pattern defined")
 	}
-	return rules.By(
+	return is.Func(
 		desc,
 		func(value any) bool {
 			em, ok := value.(Extensions)

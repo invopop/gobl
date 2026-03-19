@@ -1,4 +1,4 @@
-package rules
+package is
 
 import (
 	"fmt"
@@ -12,12 +12,12 @@ type notInTest struct {
 // NotIn provides a validation rule that checks if a value is absent from the provided set.
 // Named types (e.g. type Code string) are compared against their underlying primitive,
 // so NotIn("A", "B") will reject both string("A") and Code("A").
-// Nil values are skipped; use Required to enforce presence.
+// Nil values are skipped; use Present to enforce presence.
 func NotIn(set ...any) *notInTest {
 	return &notInTest{set: set}
 }
 
-func (t *notInTest) compile(_ any) error {
+func (t *notInTest) Compile(_ any) error {
 	for i, v := range t.set {
 		t.set[i] = normalizeValue(v)
 	}

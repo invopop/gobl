@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
@@ -25,7 +26,7 @@ type Message struct {
 func messageRules() *rules.Set {
 	return rules.For(new(Message),
 		rules.Field("content",
-			rules.Assert("01", "message content is required", rules.Present),
+			rules.Assert("01", "message content is required", is.Present),
 		),
 	)
 }

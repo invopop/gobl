@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -145,23 +146,23 @@ func (pmt *Payment) CanSign() bool {
 func paymentRules() *rules.Set {
 	return rules.For(new(Payment),
 		rules.Field("type",
-			rules.Assert("01", "payment type is required", rules.Present),
+			rules.Assert("01", "payment type is required", is.Present),
 			rules.Assert("02", "payment type is not valid", isValidPaymentType),
 		),
 		rules.Field("method",
-			rules.Assert("03", "payment method is required", rules.Present),
+			rules.Assert("03", "payment method is required", is.Present),
 		),
 		rules.Field("issue_date",
-			rules.Assert("04", "payment issue date is required", rules.Present),
+			rules.Assert("04", "payment issue date is required", is.Present),
 		),
 		rules.Field("currency",
-			rules.Assert("05", "payment currency is required", rules.Present),
+			rules.Assert("05", "payment currency is required", is.Present),
 		),
 		rules.Field("supplier",
-			rules.Assert("06", "payment supplier is required", rules.Present),
+			rules.Assert("06", "payment supplier is required", is.Present),
 		),
 		rules.Field("lines",
-			rules.Assert("07", "payment lines are required", rules.Present),
+			rules.Assert("07", "payment lines are required", is.Present),
 		),
 	)
 }

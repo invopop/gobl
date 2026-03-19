@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -48,7 +49,7 @@ func taxIdentityRules() *rules.Set {
 		rules.When(tax.IdentityIn("AR"),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "invalid Argentine tax identity code",
-					rules.By("valid", isValidTaxIdentityCode),
+					is.Func("valid", isValidTaxIdentityCode),
 				),
 			),
 		),

@@ -32,7 +32,7 @@ and to validate field names at initialisation time.
 
 ```go
 rules.Field("name",
-    rules.Assert("01", "name is required", rules.Present),
+    rules.Assert("01", "name is required", is.Present),
 )
 ```
 
@@ -58,10 +58,10 @@ already extracted by the enclosing `Field`:
 
 ```go
 rules.Field("lines",
-    rules.Assert("01", "no duplicate codes", rules.By("no dups", hasNoDuplicateCodes)),
+    rules.Assert("01", "no duplicate codes", is.Func("no dups", hasNoDuplicateCodes)),
     rules.Each(
         rules.Field("code",
-            rules.Assert("02", "line code is required", rules.Present),
+            rules.Assert("02", "line code is required", is.Present),
         ),
     ),
 )
@@ -74,19 +74,19 @@ directly inside `For` (rather than inside a `Field` on a slice) panics at init t
 
 ```go
 rules.When(conditionTest,
-    rules.Field("code", rules.Assert("01", "code is required", rules.Present)),
+    rules.Field("code", rules.Assert("01", "code is required", is.Present)),
 )
 ```
 
 The subset is only evaluated when `conditionTest.Check(obj)` returns `true`.
-The condition receives the full parent struct. Use `rules.Expr(...)`,
-`rules.By(...)`, or any `Test` implementation.
+The condition receives the full parent struct. Use `is.Expr(...)`,
+`is.Func(...)`, or any `Test` implementation.
 
 ### `Object` — group object-level assertions
 
 ```go
 rules.Object(
-    rules.Assert("10", "cross-field constraint", rules.Expr(`field_a != "" || field_b == nil`)),
+    rules.Assert("10", "cross-field constraint", is.Expr(`field_a != "" || field_b == nil`)),
 )
 ```
 
@@ -111,27 +111,38 @@ any matching object type anywhere in the object graph.
 
 ## Available tests
 
-| Test | Replaces | Notes |
-|------|----------|-------|
-| `rules.Present` | `validation.Required` | Fails if nil, zero, or empty |
-| `rules.NilOrNotEmpty` | `validation.NilOrNotEmpty` | Passes if nil pointer or non-empty |
-| `rules.Empty` | `validation.Empty` | Passes if nil or empty; fails if a value is present |
-| `rules.Nil` | `validation.Nil` | Passes only for a nil pointer; fails for any non-nil value, even empty |
-| `rules.In(vals...)` | `validation.In(vals...)` | Skips nil; works with named types |
-| `rules.NotIn(vals...)` | `validation.NotIn(vals...)` | Skips nil; works with named types |
-| `rules.Matches(pattern)` | `validation.Match(re)` | Skips nil/empty strings |
-| `rules.Length(min, max)` | `validation.Length(min, max)` | `max=0` means no upper bound |
-| `rules.RuneLength(min, max)` | `validation.RuneLength(min, max)` | Unicode-aware |
-| `rules.Min(v)` / `rules.Max(v)` | `validation.Min(v)` / `validation.Max(v)` | int, uint, float, time |
-| `rules.Expr(expr)` | — | CEL-like expression; fields accessed by JSON name |
-| `rules.By(desc, func(any) bool)` | `validation.By(func)` | Custom boolean function |
-| `rules.ByString(desc, func(string) bool)` | — | Convenience for string-typed fields |
-| `rules.ByError(desc, func(any) error)` | `validation.By(func)` (error variant) | Error message is discarded; use `desc` |
-| `rules.Func(desc, func(any) bool)` | — | Equivalent to `By`; prefer `By` for consistency |
+All tests live in the `github.com/invopop/gobl/rules/is` package. Import it alongside `rules`:
+
+```go
+import (
+    "github.com/invopop/gobl/rules"
+    "github.com/invopop/gobl/rules/is"
+)
+```
+
+| Test                                                  | Replaces                                  | Notes                                                                  |
+| ----------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| `is.Present`                                          | `validation.Required`                     | Fails if nil, zero, or empty                                           |
+| `is.NilOrNotEmpty`                                    | `validation.NilOrNotEmpty`                | Passes if nil pointer or non-empty                                     |
+| `is.Empty`                                            | `validation.Empty`                        | Passes if nil or empty; fails if a value is present                    |
+| `is.Nil`                                              | `validation.Nil`                          | Passes only for a nil pointer; fails for any non-nil value, even empty |
+| `is.In(vals...)`                                      | `validation.In(vals...)`                  | Skips nil; works with named types                                      |
+| `is.NotIn(vals...)`                                   | `validation.NotIn(vals...)`               | Skips nil; works with named types                                      |
+| `is.Matches(pattern)`                                 | `validation.Match(re)`                    | Skips nil/empty strings                                                |
+| `is.Length(min, max)`                                 | `validation.Length(min, max)`             | `max=0` means no upper bound                                           |
+| `is.RuneLength(min, max)`                             | `validation.RuneLength(min, max)`         | Unicode-aware                                                          |
+| `is.Min(v)` / `is.Max(v)`                             | `validation.Min(v)` / `validation.Max(v)` | int, uint, float, time                                                 |
+| `is.Expr(expr)`                                       | —                                         | CEL-like expression; fields accessed by JSON name                      |
+| `is.Func(desc, func(any) bool)`                       | `validation.By(func)`                     | Custom boolean function                                                |
+| `is.StringFunc(desc, func(string) bool)`              | —                                         | Convenience for string-typed fields                                    |
+| `is.FuncError(desc, func(any) error)`                 | `validation.By(func)` (error variant)     | Error message is discarded; use `desc`                                 |
+| `is.FuncContext(desc, func(rules.Context, any) bool)` | —                                         | Context-aware custom function                                          |
+| `is.Or(tests...)`                                     | —                                         | Passes if any test passes                                              |
+| `is.HasContext(test)`                                 | —                                         | Passes when any context value satisfies the inner test                 |
 
 ### The `rules/is` package
 
-`github.com/invopop/gobl/rules/is` mirrors `github.com/invopop/validation/is`:
+`github.com/invopop/gobl/rules/is` mirrors `github.com/invopop/validation/is` and also provides all general-purpose tests:
 
 ```go
 // Before
@@ -155,7 +166,7 @@ validation.Field(&obj.Name, validation.Required)
 
 // After
 rules.Field("name",
-    rules.Assert("01", "name is required", rules.Present),
+    rules.Assert("01", "name is required", is.Present),
 )
 ```
 
@@ -167,7 +178,7 @@ validation.Field(&obj.Address, validation.Required, is.Email)
 
 // After
 rules.Field("addr",
-    rules.Assert("01", "email address is required", rules.Present),
+    rules.Assert("01", "email address is required", is.Present),
     rules.Assert("02", "email address must be valid", is.EmailFormat),
 )
 ```
@@ -196,7 +207,7 @@ the field is absent:
 ```go
 rules.Field("code",
     rules.AssertIfPresent("01", "code format invalid",
-        rules.By("valid", isValidCode),
+        is.Func("valid", isValidCode),
     ),
 )
 ```
@@ -209,14 +220,14 @@ validation.Field(&obj.Category, validation.In("a", "b", "c"))
 
 // After
 rules.Field("category",
-    rules.Assert("02", "category is not valid", rules.In("a", "b", "c")),
+    rules.Assert("02", "category is not valid", is.In("a", "b", "c")),
 )
 ```
 
 `rules.In` normalises named string/int types so `In("a", "b")` matches both
 `string("a")` and `MyType("a")`.
 
-To allow an optional field to be empty *or* one of the valid values, either
+To allow an optional field to be empty _or_ one of the valid values, either
 omit `Present` (the `In` test skips nil pointers automatically) or, for
 non-pointer named types like `cbc.Key`, use `AssertIfPresent` with a strict
 validator:
@@ -237,7 +248,7 @@ func isValidCategory(val any) bool {
 
 rules.Field("category",
     rules.AssertIfPresent("02", "category is not valid",
-        rules.By("valid", isValidCategory),
+        is.Func("valid", isValidCategory),
     ),
 )
 ```
@@ -250,14 +261,14 @@ validation.Field(&obj.Code, validation.Match(regexp.MustCompile(`^\d{9}$`)))
 
 // After
 rules.Field("code",
-    rules.Assert("01", "invalid format", rules.Matches(`^\d{9}$`)),
+    rules.Assert("01", "invalid format", is.Matches(`^\d{9}$`)),
 )
 ```
 
 ### Custom validation logic
 
-Extract the logic into a named private function and use `rules.By`,
-`rules.ByString`, or `rules.ByError`:
+Extract the logic into a named private function and use `rules.Func`,
+`rules.ByString`, or `rules.FuncError`:
 
 ```go
 // Before
@@ -278,7 +289,7 @@ func myCodeChecksumValid(code string) bool {
 
 rules.Field("code",
     rules.Assert("03", "code checksum mismatch",
-        rules.ByString("checksum", myCodeChecksumValid),
+        is.StringFunc("checksum", myCodeChecksumValid),
     ),
 )
 ```
@@ -289,7 +300,7 @@ glance.
 
 ### Field must not be set (`Empty` / `Nil`)
 
-Use `rules.Empty` when a field must be absent or zero — the inverse of `Required`:
+Use `is.Empty` when a field must be absent or zero — the inverse of `Required`:
 
 ```go
 // Before
@@ -297,11 +308,11 @@ validation.Field(&obj.Discount, validation.Empty)
 
 // After
 rules.Field("discount",
-    rules.Assert("05", "discount must not be set", rules.Empty),
+    rules.Assert("05", "discount must not be set", is.Empty),
 )
 ```
 
-Use `rules.Nil` when the field must be a nil pointer specifically. Unlike `Empty`,
+Use `is.Nil` when the field must be a nil pointer specifically. Unlike `Empty`,
 it fails even when the pointer is non-nil but points to a zero/empty value:
 
 ```go
@@ -310,7 +321,7 @@ validation.Field(&obj.Digest, validation.Nil)
 
 // After
 rules.Field("digest",
-    rules.Assert("06", "digest must not be set", rules.Nil),
+    rules.Assert("06", "digest must not be set", is.Nil),
 )
 ```
 
@@ -325,27 +336,22 @@ validation.Field(&obj.Digest,
     validation.When(obj.MIME == "", validation.Nil.Error("must be nil when MIME not set")),
 )
 
-// After (using Expr — field names by JSON tag)
+// After (using is.Expr — field names by JSON tag)
 rules.Assert("06", "digest must be nil when MIME type is not provided",
-    rules.Expr(`mime != "" || digest == nil`),
+    is.Expr(`mime != "" || digest == nil`),
 )
 
-// After (using By — handles both *T and T receiver shapes)
-func digestRequiresMIME(val any) bool {
-    var obj *MyStruct
-    switch v := val.(type) {
-    case *MyStruct:
-        obj = v
-    case MyStruct:
-        obj = &v
-    default:
-        return true
+// After (using is.Func ensures pointer is always provided)
+func digestHasMIME(val any) bool {
+    obj, ok := val.(*MyStruct)
+    if !ok || obj == nil {
+        return false // false implies this test fails
     }
-    return obj == nil || obj.MIME != "" || obj.Digest == nil
+    return obj.MIME != "" || obj.Digest == nil
 }
 
 rules.Assert("06", "digest must be nil when MIME type is not provided",
-    rules.By("no digest without MIME", digestRequiresMIME),
+    is.Func("no digest without MIME", digestHasMIME),
 )
 ```
 
@@ -370,13 +376,13 @@ validation.Field(&obj.Stamps,
 )
 
 // After — condition derived from the object itself
-rules.When(rules.By("not signed", func(val any) bool {
+rules.When(is.Func("not signed", func(val any) bool {
     e, ok := val.(*Envelope)
     return ok && len(e.Signatures) == 0
 }),
     rules.Field("stamps",
         rules.Assert("12", "stamps not allowed before signing",
-            rules.Length(0, 0),
+            is.Length(0, 0),
         ),
     ),
 )
@@ -400,7 +406,7 @@ automatically, so there is no wiring required between parent and child:
 func addressRules() *rules.Set {
     return rules.For(new(Address),
         rules.Field("city",
-            rules.Assert("01", "city is required", rules.Present),
+            rules.Assert("01", "city is required", is.Present),
         ),
     )
 }
@@ -409,7 +415,7 @@ func addressRules() *rules.Set {
 func personRules() *rules.Set {
     return rules.For(new(Person),
         rules.Field("name",
-            rules.Assert("01", "name is required", rules.Present),
+            rules.Assert("01", "name is required", is.Present),
         ),
         // No wiring for Address — addressRules() is registered separately
         // and applied automatically when rules.Validate recurses into the field.
@@ -442,11 +448,11 @@ func invoiceRules() *rules.Set {
     return rules.For(new(Invoice),
         rules.When(tax.RegimeIn("XX"),
             rules.Field("supplier",
-                rules.Assert("01", "supplier is required", rules.Present),
+                rules.Assert("01", "supplier is required", is.Present),
                 rules.Field("tax_id",
-                    rules.Assert("02", "supplier tax ID is required", rules.Present),
+                    rules.Assert("02", "supplier tax ID is required", is.Present),
                     rules.Field("code",
-                        rules.Assert("03", "supplier tax ID must have a code", rules.Present),
+                        rules.Assert("03", "supplier tax ID must have a code", is.Present),
                     ),
                 ),
             ),
@@ -479,8 +485,8 @@ func myStructRules() *rules.Set {
     return rules.For(new(MyStruct),
         rules.Field("lines",
             rules.Each(
-                rules.Assert("01", "line must not be empty", rules.Present),
-                rules.Assert("02", "line must be valid", rules.By("valid", lineIsValid)),
+                rules.Assert("01", "line must not be empty", is.Present),
+                rules.Assert("02", "line must be valid", is.Func("valid", lineIsValid)),
             ),
         ),
     )
@@ -495,11 +501,11 @@ assertions can coexist on the same field naturally:
 ```go
 rules.Field("lines",
     rules.Assert("01", "no duplicate line codes",
-        rules.By("no duplicates", hasNoDuplicateLineCodes),
+        is.Func("no duplicates", hasNoDuplicateLineCodes),
     ),
     rules.Each(
         rules.Field("code",
-            rules.Assert("02", "line code is required", rules.Present),
+            rules.Assert("02", "line code is required", is.Present),
         ),
     ),
 )
@@ -519,7 +525,7 @@ on the element type itself.
 ```go
 func myCodeRules() *rules.Set {
     return rules.For(MyCode(""),
-        rules.Assert("01", "code must not be empty", rules.Present),
+        rules.Assert("01", "code must not be empty", is.Present),
         rules.Assert("02", "code must be alphanumeric", is.Alphanumeric),
     )
 }
@@ -529,7 +535,7 @@ Inside `Expr`, the value is exposed as `this`:
 
 ```go
 rules.Assert("02", "code must not exceed 10 characters",
-    rules.Expr(`len(this) <= 10`),
+    is.Expr(`len(this) <= 10`),
 )
 ```
 

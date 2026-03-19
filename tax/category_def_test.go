@@ -53,7 +53,7 @@ func TestCategoryDefValidations(t *testing.T) {
 		c := baseCategoryDef()
 		c.Extensions = []cbc.Key{"INVALID"}
 		err := rules.Validate(c)
-		assert.ErrorContains(t, err, "[GOBL-CBC-KEY-02] (extensions[0]) key must match the required pattern")
+		assert.ErrorContains(t, err, "[GOBL-CBC-KEY-02] ($.extensions[0]) key must match the required pattern")
 	})
 }
 

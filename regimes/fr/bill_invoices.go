@@ -5,16 +5,17 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(l10n.FR.Tax())),
+			is.HasContext(tax.RegimeIn(l10n.FR.Tax())),
 			rules.Field("supplier",
 				rules.Assert("01", "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
-					rules.By("has tax ID code or SIREN/SIRET identity", hasSupplierTaxIDOrIdentity),
+					is.Func("has tax ID code or SIREN/SIRET identity", hasSupplierTaxIDOrIdentity),
 				),
 			),
 		),

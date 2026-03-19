@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 const (
@@ -26,10 +27,10 @@ var identityTypeDefinitions = []*cbc.Definition{
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			rules.By("is CVR", isCVRIdentity),
+			is.Func("is CVR", isCVRIdentity),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "invalid Danish CVR identity code",
-					rules.By("valid", isValidCVRCode)),
+					is.Func("valid", isValidCVRCode)),
 			),
 		),
 	)

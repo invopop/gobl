@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -114,16 +115,16 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
 			rules.Field("preceding",
-				rules.Assert("01", "preceding documents are required for corrective invoices", rules.Present),
+				rules.Assert("01", "preceding documents are required for corrective invoices", is.Present),
 			),
 		),
 		// Code 02: each preceding issue date required
 		rules.Field("preceding",
 			rules.Each(
 				rules.When(
-					rules.By("not nil", precedingDocIsNotNil),
+					is.Func("not nil", precedingDocIsNotNil),
 					rules.Field("issue_date",
-						rules.Assert("02", "issue date is required", rules.Present),
+						rules.Assert("02", "issue date is required", is.Present),
 					),
 				),
 			),
@@ -134,9 +135,9 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("preceding",
 				rules.Each(
 					rules.When(
-						rules.By("not nil", precedingDocIsNotNil),
+						is.Func("not nil", precedingDocIsNotNil),
 						rules.Field("tax",
-							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", rules.Present),
+							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", is.Present),
 						),
 					),
 				),
@@ -146,15 +147,15 @@ func billInvoiceRules() *rules.Set {
 		// Code 04: no tax_id on simplified customer
 		// Code 05: no identity type ext on simplified customer
 		rules.When(
-			rules.By("simplified", isSimplifiedInvoice),
+			is.Func("simplified", isSimplifiedInvoice),
 			rules.Field("customer",
 				rules.Field("tax_id",
 					rules.Assert("04", "customer tax ID must not be set for simplified invoices",
-						rules.Nil,
+						is.Nil,
 					),
 				),
 				rules.Assert("05", "customer identity type extension not allowed for simplified invoices",
-					rules.By("no identity type ext", simplifiedCustomerHasNoIdentityType),
+					is.Func("no identity type ext", simplifiedCustomerHasNoIdentityType),
 				),
 			),
 		),
@@ -163,15 +164,15 @@ func billInvoiceRules() *rules.Set {
 		// Code 07: customer must have tax_id or identity
 		// Code 08: customer tax_id must have code
 		rules.When(
-			rules.By("not simplified", isNotSimplifiedInvoice),
+			is.Func("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
-				rules.Assert("06", "customer is required", rules.Present),
+				rules.Assert("06", "customer is required", is.Present),
 				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
-					rules.By("has tax_id or identity", customerHasTaxIDOrIdentity),
+					is.Func("has tax_id or identity", customerHasTaxIDOrIdentity),
 				),
 				rules.Field("tax_id",
 					rules.Field("code",
-						rules.Assert("08", "tax ID must have a code", rules.Present),
+						rules.Assert("08", "tax ID must have a code", is.Present),
 					),
 				),
 			),
@@ -181,7 +182,7 @@ func billInvoiceRules() *rules.Set {
 		// Code 10: doc_type required
 		// Code 13: correction_type required when credit/debit doc type
 		rules.Field("tax",
-			rules.Assert("09", "tax is required", rules.Present),
+			rules.Assert("09", "tax is required", is.Present),
 			rules.Field("ext",
 				rules.Assert("10", "doc type is required",
 					tax.ExtensionsRequire(ExtKeyDocType),
@@ -221,9 +222,9 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("notes",
 			rules.Each(
 				rules.When(
-					rules.By("general note", isGeneralNote),
+					is.Func("general note", isGeneralNote),
 					rules.Field("text",
-						rules.Assert("14", "general note text must be 500 characters or less", rules.Length(0, 500)),
+						rules.Assert("14", "general note text must be 500 characters or less", is.Length(0, 500)),
 					),
 				),
 			),

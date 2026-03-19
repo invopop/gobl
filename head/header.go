@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -46,23 +47,23 @@ func headerRules() *rules.Set {
 	return rules.For(new(Header),
 		rules.Field("uuid",
 			rules.Assert("01", "header must contain a UUID v1 or v7 with timestamp",
-				rules.Present,
+				is.Present,
 				uuid.HasTimestamp,
 			),
 		),
 		rules.Field("dig",
 			rules.Assert("02", "header must have a digest",
-				rules.Present,
+				is.Present,
 			),
 		),
 		rules.Field("stamps",
 			rules.Assert("03", "duplicate stamp providers are not allowed",
-				rules.By("no duplicate stamps", hasNoDuplicateStamps),
+				is.Func("no duplicate stamps", hasNoDuplicateStamps),
 			),
 		),
 		rules.Field("links",
 			rules.Assert("04", "duplicate link keys are not allowed",
-				rules.By("no duplicate links", hasNoDuplicateLinks),
+				is.Func("no duplicate links", hasNoDuplicateLinks),
 			),
 		),
 	)

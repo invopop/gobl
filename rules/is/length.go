@@ -1,4 +1,4 @@
-package rules
+package is
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type lengthTest struct {
 
 // Length returns a validation rule that checks if a value's length is within the specified range.
 // For strings, it counts bytes. If max is 0, there is no upper bound.
-// Empty values are skipped; use Required to enforce presence.
+// Empty values are skipped; use Present to enforce presence.
 func Length(min, max int) lengthTest {
 	return lengthTest{
 		min: min,
@@ -24,7 +24,7 @@ func Length(min, max int) lengthTest {
 // RuneLength returns a validation rule that checks if a string's rune (character) count is
 // within the specified range. Unlike Length, it correctly handles multi-byte Unicode characters.
 // For non-string types, it behaves identically to Length. If max is 0, there is no upper bound.
-// Empty values are skipped; use Required to enforce presence.
+// Empty values are skipped; use Present to enforce presence.
 func RuneLength(min, max int) lengthTest {
 	return lengthTest{
 		min:  min,
@@ -35,7 +35,7 @@ func RuneLength(min, max int) lengthTest {
 
 func (t lengthTest) Check(value any) bool {
 	value, isNil := Indirect(value)
-	if isNil || IsEmpty(value) {
+	if isNil || emptyValue(value) {
 		return true // ignore
 	}
 

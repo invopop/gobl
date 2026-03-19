@@ -11,9 +11,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
+
+func init() {
+	rules.Register(
+		"uuid",
+		rules.GOBL.Add("UUID"),
+		uuidRules(),
+	)
+}
 
 // UUID defines a string wrapper for dealing with UUIDs using the google uuid
 // package for parsing and specific method support. This implementation has

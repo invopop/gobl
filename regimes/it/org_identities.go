@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -45,16 +46,16 @@ func normalizeIdentity(id *org.Identity) {
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(CountryCode)),
+			is.HasContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				org.IdentityKeyIn(IdentityKeyFiscalCode),
 				rules.Field("code",
-					rules.Assert("01", "fiscal code is required", rules.Present),
+					rules.Assert("01", "fiscal code is required", is.Present),
 					rules.AssertIfPresent("02", "invalid fiscal code format",
-						rules.By("valid format", isFiscalCodeFormatValid),
+						is.Func("valid format", isFiscalCodeFormatValid),
 					),
 					rules.AssertIfPresent("03", "invalid fiscal code check digit",
-						rules.By("valid checksum", isFiscalCodeChecksumValid),
+						is.Func("valid checksum", isFiscalCodeChecksumValid),
 					),
 				),
 			),

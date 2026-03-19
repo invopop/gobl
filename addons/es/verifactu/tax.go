@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -71,7 +72,7 @@ func taxComboRules() *rules.Set {
 		rules.When(
 			// Guard: only apply to VAT/IGIC combos that have been processed by verifactu
 			// normalization (which always sets ExtKeyRegime via SetIfEmpty).
-			rules.By("verifactu vat/igic", taxComboForVATorIGIC),
+			is.Func("verifactu vat/igic", taxComboForVATorIGIC),
 			rules.Field("ext",
 				rules.Assert("01", fmt.Sprintf("extension '%s' is required", ExtKeyRegime),
 					tax.ExtensionsRequire(ExtKeyRegime),
@@ -87,7 +88,7 @@ func taxComboRules() *rules.Set {
 				),
 			),
 			rules.When(
-				rules.By("has percent", taxComboHasPercent),
+				is.Func("has percent", taxComboHasPercent),
 				rules.Field("ext",
 					rules.Assert("04", fmt.Sprintf("extension '%s' is required for taxed operations", ExtKeyOpClass),
 						tax.ExtensionsRequire(ExtKeyOpClass),

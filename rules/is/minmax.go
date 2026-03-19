@@ -1,4 +1,4 @@
-package rules
+package is
 
 import (
 	"fmt"
@@ -45,7 +45,7 @@ func (t minMaxTest) Exclusive() minMaxTest {
 
 func (t minMaxTest) Check(value any) bool {
 	value, isNil := Indirect(value)
-	if isNil || IsEmpty(value) {
+	if isNil || emptyValue(value) {
 		return true
 	}
 

@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -32,12 +33,12 @@ func orgPartyRules() *rules.Set {
 			rules.Field("addresses",
 				rules.Each(
 					rules.When(
-						rules.Expr("string(country) in ['','BR']"),
+						is.Expr("string(country) in ['','BR']"),
 						rules.Field("state",
 							rules.AssertIfPresent("02", "Brazilian state must be one of the valid states", cbc.InCodes(validStates...)),
 						),
 						rules.Field("code",
-							rules.AssertIfPresent("03", "Brazilian postal code must match the valid format", rules.Matches(validPostCode)),
+							rules.AssertIfPresent("03", "Brazilian postal code must match the valid format", is.Matches(validPostCode)),
 						),
 					),
 				),
@@ -46,7 +47,7 @@ func orgPartyRules() *rules.Set {
 	)
 }
 
-var isBrazilianParty = rules.By("is Brazilian party",
+var isBrazilianParty = is.Func("is Brazilian party",
 	func(value any) bool {
 		party, _ := value.(*org.Party)
 		if party == nil {

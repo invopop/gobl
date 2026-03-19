@@ -1,4 +1,4 @@
-package rules
+package is
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/expr-lang/expr"
 	"github.com/expr-lang/expr/vm"
+	"github.com/invopop/gobl/rules"
 )
 
 type exprTest struct {
@@ -14,8 +15,8 @@ type exprTest struct {
 	test string
 }
 
-// Expr returns a new expression-base test
-func Expr(test string, args ...any) Test {
+// Expr returns a new expression-based test.
+func Expr(test string, args ...any) rules.Test {
 	return &exprTest{
 		test: fmt.Sprintf(test, args...),
 		expr: nil, // compiled lazily when embedded in a Set
@@ -28,7 +29,7 @@ func (et *exprTest) String() string {
 
 func (et *exprTest) Check(val any) bool {
 	if et.expr == nil {
-		panic("expression test was not compiled; wrap it in ForStruct() or ForValue()")
+		panic("expression test was not compiled; wrap it in rules.For()")
 	}
 	env := et.buildEnv(val)
 	result, err := expr.Run(et.expr, env)
@@ -38,7 +39,7 @@ func (et *exprTest) Check(val any) bool {
 	return result.(bool)
 }
 
-func (et *exprTest) compile(val any) error {
+func (et *exprTest) Compile(val any) error {
 	env := et.buildEnv(val)
 
 	// Backslashes in tests must be doubled for embedding inside an expr

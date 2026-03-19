@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -158,20 +159,20 @@ func (ord *Order) CanSign() bool {
 func orderRules() *rules.Set {
 	return rules.For(new(Order),
 		rules.Field("type",
-			rules.Assert("01", "type is required", rules.Present),
+			rules.Assert("01", "type is required", is.Present),
 			rules.Assert("02", "type is not valid", isValidOrderType),
 		),
 		rules.Field("issue_date",
-			rules.Assert("03", "issue date is required", rules.Present),
+			rules.Assert("03", "issue date is required", is.Present),
 		),
 		rules.Field("currency",
-			rules.Assert("04", "currency is required", rules.Present),
+			rules.Assert("04", "currency is required", is.Present),
 		),
 		rules.Field("supplier",
-			rules.Assert("05", "supplier is required", rules.Present),
+			rules.Assert("05", "supplier is required", is.Present),
 		),
 		rules.Field("lines",
-			rules.Assert("06", "lines are required", rules.Present),
+			rules.Assert("06", "lines are required", is.Present),
 		),
 	)
 }

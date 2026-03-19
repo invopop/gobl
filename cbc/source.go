@@ -27,7 +27,7 @@ func sourceRules() *rules.Set {
 	return rules.For(new(Source),
 		rules.Field("url",
 			rules.Assert("01", "url is required and must be a URL",
-				rules.Present,
+				is.Present,
 				is.URL,
 			),
 		),

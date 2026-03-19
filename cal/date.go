@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Date represents a simple date without time used most frequently
@@ -56,15 +57,22 @@ func DateOf(t time.Time) Date {
 	}
 }
 
-// Validate ensures the the date object looks valid.
-func (d Date) Validate() error {
-	if d.IsZero() {
-		return nil // there is a specific test for this
+func dateRules() *rules.Set {
+	return rules.For(new(Date),
+		rules.Assert("01", "invalid date", is.Func("valid date", dateFormatValid)),
+	)
+}
+
+func dateFormatValid(val any) bool {
+	d, ok := val.(Date)
+	if !ok {
+		dp, ok := val.(*Date)
+		if !ok || dp == nil {
+			return false
+		}
+		d = *dp
 	}
-	if !d.IsValid() {
-		return errors.New("invalid date")
-	}
-	return nil
+	return d.IsZero() || d.IsValid()
 }
 
 // Clone returns a new pointer to a copy of the date.
@@ -127,14 +135,26 @@ func (Date) JSONSchema() *jsonschema.Schema {
 	}
 }
 
-type dateValidationRule struct {
+// DateTest is used to validate a date according to the provided rules.
+type DateTest struct {
+	desc    string
 	notZero bool
 	after   *Date
 	before  *Date
 }
 
+// String provides a description of the test.
+func (d DateTest) String() string {
+	return d.desc
+}
+
+// Check will perform the defines date test on the provided value.
+func (d DateTest) Check(value any) bool {
+	return d.Validate(value) == nil
+}
+
 // Validate is used to check a dates value.
-func (d *dateValidationRule) Validate(value interface{}) error {
+func (d DateTest) Validate(value any) error {
 	in, ok := value.(Date)
 	if !ok {
 		inp, ok := value.(*Date)
@@ -165,24 +185,27 @@ func (d *dateValidationRule) Validate(value interface{}) error {
 }
 
 // DateNotZero ensures the date is not a zero value.
-func DateNotZero() validation.Rule {
-	return &dateValidationRule{
+func DateNotZero() DateTest {
+	return DateTest{
+		desc:    "not zero",
 		notZero: true,
 	}
 }
 
 // DateAfter returns a validation rule which checks to ensure the date
 // is *after* the provided date.
-func DateAfter(date Date) validation.Rule {
-	return &dateValidationRule{
+func DateAfter(date Date) DateTest {
+	return DateTest{
+		desc:  "after " + date.String(),
 		after: &date,
 	}
 }
 
 // DateBefore is used during validation to ensure the date is before
 // the value passed in.
-func DateBefore(date Date) validation.Rule {
-	return &dateValidationRule{
+func DateBefore(date Date) DateTest {
+	return DateTest{
+		desc:   "before " + date.String(),
 		before: &date,
 	}
 }

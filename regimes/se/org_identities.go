@@ -1,7 +1,6 @@
 package se
 
 import (
-	"errors"
 	"regexp"
 	"strings"
 
@@ -9,7 +8,9 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/luhn"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -133,49 +134,59 @@ func normalizeOrgIdentity(id *org.Identity) {
 	}
 }
 
-// validateOrgIdentity performs validation for Swedish organization identities.
-// Assumes the code has already been normalized.
-//
-//   - For organization numbers, it checks if the number is 10 digits long.
-//   - For individual numbers, it checks if the number is 10 digits long and if the Luhn checksum is valid.
-//
-// If the number is not valid, it returns an error.
-//
-// If the organization type is not valid, it returns nil.
-func validateOrgIdentity(id *org.Identity) error {
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code,
-			validation.By(func(value any) error {
-				return validateOrgIdentityCode(value, id)
-			}),
-			validation.Skip,
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			is.HasContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeOrgNr),
+				rules.Field("code",
+					rules.Assert("01", "invalid organization number format",
+						is.Func("valid org number", orgNrCodeValid),
+					),
+					rules.Assert("02", "invalid checksum",
+						is.Func("luhn checksum", orgNrChecksumValid),
+					),
+				),
+			),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypePersonNr, IdentityTypeCoordinationNr),
+				rules.Field("code",
+					rules.Assert("03", "invalid person or coordination number format",
+						is.Func("valid individual number", individualNrCodeValid),
+					),
+					rules.Assert("04", "invalid checksum",
+						is.Func("luhn checksum", individualNrChecksumValid),
+					),
+				),
+			),
 		),
 	)
 }
 
-func validateOrgIdentityCode(value any, id *org.Identity) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
+func orgNrCodeValid(val any) bool {
+	code, ok := val.(cbc.Code)
+	return ok && code != "" && orgNrRegex.MatchString(cbc.NormalizeNumericalCode(code).String())
+}
 
-	// Normalize to digits only for type check
-	digitsOnly := cbc.NormalizeNumericalCode(code).String()
+func orgNrChecksumValid(val any) bool {
+	code, ok := val.(cbc.Code)
+	if !ok || code == "" || !orgNrRegex.MatchString(cbc.NormalizeNumericalCode(code).String()) {
+		return true // skip if format invalid; format assertion handles that
+	}
+	return luhn.Check(cbc.NormalizeNumericalCode(code))
+}
 
-	switch id.Type {
-	case IdentityTypeOrgNr:
-		if !orgNrRegex.MatchString(digitsOnly) {
-			return errors.New("invalid organization number format")
-		}
-	case IdentityTypePersonNr, IdentityTypeCoordinationNr:
-		if !individualNrRegex.MatchString(code.String()) {
-			return errors.New("invalid person or coordination number format")
-		}
-	default:
-		return nil
+func individualNrCodeValid(val any) bool {
+	code, ok := val.(cbc.Code)
+	return ok && code != "" && individualNrRegex.MatchString(code.String())
+}
+
+func individualNrChecksumValid(val any) bool {
+	code, ok := val.(cbc.Code)
+	if !ok || code == "" || !individualNrRegex.MatchString(code.String()) {
+		return true // skip if format invalid; format assertion handles that
 	}
-	if !luhn.Check(cbc.Code(digitsOnly)) {
-		return errors.New("invalid checksum")
-	}
-	return nil
+	digitsOnly := cbc.NormalizeNumericalCode(code)
+	return luhn.Check(digitsOnly)
 }

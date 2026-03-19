@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Definition defines properties of a key, code, or other value that has a specific meaning or
@@ -42,14 +43,14 @@ type Definition struct {
 func definitionRules() *rules.Set {
 	return rules.For(new(Definition),
 		rules.Field("name",
-			rules.Assert("01", "name is required", rules.Present),
+			rules.Assert("01", "name is required", is.Present),
 		),
 		rules.Assert("02", "definition must have either a key or a code, and not both",
-			rules.Expr("string(code) != '' || string(key) != ''"),
+			is.Expr("string(code) != '' || string(key) != ''"),
 		),
 		rules.Field("pattern",
 			rules.AssertIfPresent("03", "pattern must be a valid regular expression",
-				rules.ByError("is a regexp", validRegexpPattern),
+				is.FuncError("is a regexp", validRegexpPattern),
 			),
 		),
 	)
@@ -138,7 +139,7 @@ func InKeyDefs(list []*Definition) rules.Test {
 	for i, item := range list {
 		defs[i] = item.Key
 	}
-	return rules.In(defs...)
+	return is.In(defs...)
 }
 
 // InCodeDefs prepares a validation to provide a rule that will determine
@@ -148,7 +149,7 @@ func InCodeDefs(list []*Definition) rules.Test {
 	for i, item := range list {
 		defs[i] = item.Code
 	}
-	return rules.In(defs...)
+	return is.In(defs...)
 }
 
 func validRegexpPattern(value any) error {

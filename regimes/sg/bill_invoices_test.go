@@ -4,18 +4,18 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/sg"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/require"
 )
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
+		Regime: tax.WithRegime(sg.CountryCode),
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
 				Code:    "M91234567X",
@@ -26,7 +26,7 @@ func validInvoice() *bill.Invoice {
 				{
 					Street:  "Test Street",
 					Code:    "123456",
-					Country: l10n.SG.ISO(),
+					Country: sg.CountryCode,
 				},
 			},
 		},
@@ -36,7 +36,7 @@ func validInvoice() *bill.Invoice {
 				{
 					Street:  "Test Street",
 					Code:    "123456",
-					Country: l10n.SG.ISO(),
+					Country: sg.CountryCode,
 				},
 			},
 		},
@@ -68,6 +68,7 @@ func TestValidInvoice(t *testing.T) {
 
 func TestValidInvoiceWithUEN(t *testing.T) {
 	inv := validInvoice()
+	inv.Supplier.TaxID = nil
 	inv.Supplier.Identities = []*org.Identity{
 		{
 			Type: sg.IdentityTypeUEN,
@@ -78,20 +79,18 @@ func TestValidInvoiceWithUEN(t *testing.T) {
 	require.NoError(t, rules.Validate(inv))
 }
 
-func TestNilSupplier(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier = nil
-	require.Error(t, rules.Validate(inv))
-}
-
 func TestMissingSupplierTaxID(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.TaxID = nil
-	require.Error(t, rules.Validate(inv))
+	require.NoError(t, inv.Calculate())
+	require.ErrorContains(t, rules.Validate(inv),
+		"[GOBL-SG-BILL-INVOICE-01] ($.supplier) invoice supplier in Singapore must have a GST tax ID code or a UEN identity")
 }
 
 func TestMissingSupplierName(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.Name = ""
-	require.Error(t, rules.Validate(inv))
+	require.NoError(t, inv.Calculate())
+	require.ErrorContains(t, rules.Validate(inv),
+		"[GOBL-BILL-INVOICE-06] ($.supplier.name)")
 }

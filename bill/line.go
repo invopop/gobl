@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 )
@@ -114,20 +115,20 @@ func (l *Line) GetTotal() num.Amount {
 func lineRules() *rules.Set {
 	return rules.For(new(Line),
 		rules.Field("i",
-			rules.Assert("01", "index is required", rules.Present),
+			rules.Assert("01", "index is required", is.Present),
 		),
 		rules.Field("quantity",
-			rules.Assert("02", "quantity is required", rules.Present),
+			rules.Assert("02", "quantity is required", is.Present),
 		),
 		rules.Field("item",
-			rules.Assert("03", "item is required", rules.Present),
+			rules.Assert("03", "item is required", is.Present),
 		),
-		rules.When(rules.By("item has price", lineItemHasPrice),
+		rules.When(is.Func("item has price", lineItemHasPrice),
 			rules.Field("sum",
-				rules.Assert("04", "sum is required when item has a price", rules.Present),
+				rules.Assert("04", "sum is required when item has a price", is.Present),
 			),
 			rules.Field("total",
-				rules.Assert("05", "total is required when item has a price", rules.Present),
+				rules.Assert("05", "total is required when item has a price", is.Present),
 			),
 		),
 	)
@@ -136,20 +137,20 @@ func lineRules() *rules.Set {
 func subLineRules() *rules.Set {
 	return rules.For(new(SubLine),
 		rules.Field("i",
-			rules.Assert("01", "index is required", rules.Present),
+			rules.Assert("01", "index is required", is.Present),
 		),
 		rules.Field("quantity",
-			rules.Assert("02", "quantity is required", rules.Present),
+			rules.Assert("02", "quantity is required", is.Present),
 		),
 		rules.Field("item",
-			rules.Assert("03", "item is required", rules.Present),
+			rules.Assert("03", "item is required", is.Present),
 		),
-		rules.When(rules.By("item has price", subLineItemHasPrice),
+		rules.When(is.Func("item has price", subLineItemHasPrice),
 			rules.Field("sum",
-				rules.Assert("04", "sum is required when item has a price", rules.Present),
+				rules.Assert("04", "sum is required when item has a price", is.Present),
 			),
 			rules.Field("total",
-				rules.Assert("05", "total is required when item has a price", rules.Present),
+				rules.Assert("05", "total is required when item has a price", is.Present),
 			),
 		),
 	)

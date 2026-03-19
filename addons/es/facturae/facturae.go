@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,7 +20,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V3.String(),
 		rules.GOBL.Add("ES-FACTURAE-v3"),
-		rules.HasContext(tax.AddonIn(V3)),
+		is.HasContext(tax.AddonIn(V3)),
 	)
 }
 

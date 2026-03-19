@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -83,10 +84,10 @@ func NormalizeNumericalCode(c Code) Code {
 func codeRules() *rules.Set {
 	return rules.For(Code(""),
 		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
-			rules.Length(0, int(CodeMaxLength)),
+			is.Length(0, int(CodeMaxLength)),
 		),
 		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
-			rules.Matches(CodePattern),
+			is.Matches(CodePattern),
 		),
 	)
 }
@@ -163,7 +164,7 @@ func (Code) JSONSchema() *jsonschema.Schema {
 
 // InCodes provides a rules test that checks if a code's value is one of the provided codes.
 func InCodes(codes ...Code) rules.Test {
-	return rules.By("code in ["+strings.Join(CodeStrings(codes), ", ")+"]",
+	return is.Func("code in ["+strings.Join(CodeStrings(codes), ", ")+"]",
 		func(value any) bool {
 			c, ok := value.(Code)
 			if !ok {
@@ -177,7 +178,7 @@ func InCodes(codes ...Code) rules.Test {
 func codeMapRules() *rules.Set {
 	return rules.For(CodeMap{},
 		rules.Assert("01", "all code map keys must be valid",
-			rules.By("valid keys", codeMapKeysValid),
+			is.Func("valid keys", codeMapKeysValid),
 		),
 	)
 }

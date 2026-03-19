@@ -1,7 +1,6 @@
 package sg
 
 import (
-	"errors"
 	"regexp"
 	"strings"
 
@@ -10,8 +9,9 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Reference: https://mytax.iras.gov.sg/ESVWeb/default.aspx?target=GSTListingSearch
@@ -55,23 +55,26 @@ func normalizeIdentity(id *org.Identity) {
 	id.Code = cbc.Code(strings.TrimPrefix(code, string(l10n.SG)))
 }
 
-func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Type != IdentityTypeUEN {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code,
-			validation.Required,
-			validation.By(validateUEN),
-			validation.Skip,
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			is.HasContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeUEN),
+				rules.Field("code",
+					rules.Assert("01", "identity code for type UEN must be valid",
+						is.Func("valid UEN", orgIdentityCheckUEN),
+					),
+				),
+			),
 		),
 	)
 }
 
-func validateUEN(value any) error {
+func orgIdentityCheckUEN(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
-		return nil
+		return false
 	}
 	val := code.String()
 	match := false
@@ -81,9 +84,5 @@ func validateUEN(value any) error {
 			break
 		}
 	}
-	if !match {
-		return errors.New("invalid format")
-	}
-
-	return nil
+	return match
 }

@@ -1,14 +1,18 @@
-package rules
+package is
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/invopop/gobl/rules"
+)
 
 type orTest struct {
 	desc  string
-	tests []Test
+	tests []rules.Test
 }
 
 // Or defines a test that will pass if any of the provided tests pass.
-func Or(tests ...Test) Test {
+func Or(tests ...rules.Test) rules.Test {
 	var descs []string
 	for _, t := range tests {
 		descs = append(descs, t.String())
@@ -30,18 +34,22 @@ func (t orTest) Check(obj any) bool {
 	return false
 }
 
-// checkWithContext implements contextualTest so that Or(HasContext(...), ...)
+// CheckWithContext implements rules.ContextualTest so that Or(HasContext(...), ...)
 // correctly threads the context through to each inner test.
-func (t orTest) checkWithContext(rc *RunCtx, val any) bool {
+func (t orTest) CheckWithContext(rc *rules.Context, val any) bool {
 	for _, test := range t.tests {
-		if runTest(rc, test, val) {
+		if ct, ok := test.(rules.ContextualTest); ok {
+			if ct.CheckWithContext(rc, val) {
+				return true
+			}
+		} else if test.Check(val) {
 			return true
 		}
 	}
 	return false
 }
 
-// String provides the string representation of the test
+// String provides the string representation of the test.
 func (t orTest) String() string {
 	return t.desc
 }

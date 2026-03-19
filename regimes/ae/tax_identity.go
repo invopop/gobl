@@ -3,6 +3,7 @@ package ae
 
 import (
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -16,7 +17,7 @@ func taxIdentityRules() *rules.Set {
 		rules.When(tax.IdentityIn("AE"),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "invalid UAE tax identity code",
-					rules.Matches(trnPattern),
+					is.Matches(trnPattern),
 				),
 			),
 		),

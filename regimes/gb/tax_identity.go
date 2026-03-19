@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -29,13 +30,13 @@ func taxIdentityRules() *rules.Set {
 		rules.When(tax.IdentityIn("GB"),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "invalid UK VAT identity format",
-					rules.Matches(taxIdentityCodePattern),
+					is.Matches(taxIdentityCodePattern),
 				),
 				rules.AssertIfPresent("02", "all-zero UK VAT identity codes are not allowed",
-					rules.ByString("not-zeros", taxCodeNotZeros),
+					is.StringFunc("not-zeros", taxCodeNotZeros),
 				),
 				rules.AssertIfPresent("03", "UK VAT identity checksum mismatch",
-					rules.ByString("checksum", taxCodeChecksumValid),
+					is.StringFunc("checksum", taxCodeChecksumValid),
 				),
 			),
 		),

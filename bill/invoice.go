@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -114,25 +115,25 @@ func (inv *Invoice) CanSign() bool {
 func invoiceRules() *rules.Set {
 	return rules.For(new(Invoice),
 		rules.Field("type",
-			rules.Assert("01", "invoice type is required", rules.Present),
+			rules.Assert("01", "invoice type is required", is.Present),
 			rules.Assert("02", "invoice type is not valid", isValidInvoiceType),
 		),
 		rules.Field("issue_date",
-			rules.Assert("03", "invoice issue date is required", rules.Present),
+			rules.Assert("03", "invoice issue date is required", is.Present),
 		),
 		rules.Field("currency",
-			rules.Assert("04", "invoice currency is required", rules.Present),
+			rules.Assert("04", "invoice currency is required", is.Present),
 		),
 		rules.Field("supplier",
-			rules.Assert("05", "invoice supplier is required", rules.Present),
+			rules.Assert("05", "invoice supplier is required", is.Present),
 			rules.Field("name",
-				rules.Assert("06", "invoice supplier name is required", rules.Present),
+				rules.Assert("06", "invoice supplier name is required", is.Present),
 			),
 		),
 		rules.Field("customer",
-			rules.When(rules.By("has tax ID code", customerHasTaxIDCode),
+			rules.When(is.Func("has tax ID code", customerHasTaxIDCode),
 				rules.Field("name",
-					rules.Assert("07", "invoice customer name required when tax ID is set", rules.Present),
+					rules.Assert("07", "invoice customer name required when tax ID is set", is.Present),
 				),
 			),
 		),
@@ -140,17 +141,17 @@ func invoiceRules() *rules.Set {
 			rules.Each(
 				rules.Field("item",
 					rules.Field("price",
-						rules.Assert("08", "invoice line item price is required", rules.Present),
+						rules.Assert("08", "invoice line item price is required", is.Present),
 					),
 				),
 			),
 		),
 		rules.Field("totals",
-			rules.Assert("09", "invoice totals are required", rules.Present),
+			rules.Assert("09", "invoice totals are required", is.Present),
 		),
-		rules.When(rules.By("no discounts or charges", invoiceNeedsLines),
+		rules.When(is.Func("no discounts or charges", invoiceNeedsLines),
 			rules.Field("lines",
-				rules.Assert("10", "invoice lines are required without discounts or charges", rules.Present),
+				rules.Assert("10", "invoice lines are required without discounts or charges", is.Present),
 			),
 		),
 	)

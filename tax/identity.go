@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 
@@ -133,10 +134,10 @@ func (id *Identity) Normalize() {
 func identityRules() *rules.Set {
 	return rules.For(new(Identity),
 		rules.Field("country",
-			rules.Assert("01", "tax id country code is always required", rules.Present),
+			rules.Assert("01", "tax id country code is always required", is.Present),
 		),
 		rules.Field("code",
-			rules.Assert("02", "tax id code must have a valid format", rules.Matches(IdentityCodePattern)),
+			rules.Assert("02", "tax id code must have a valid format", is.Matches(IdentityCodePattern)),
 		),
 	)
 }
@@ -156,7 +157,7 @@ func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
 		}
 		str += string(c)
 	}
-	return rules.By("code in ["+str+"]",
+	return is.Func("code in ["+str+"]",
 		func(value any) bool {
 			id, ok := value.(*Identity)
 			if !ok {

@@ -12,15 +12,22 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Singapore
+const CountryCode = "SG"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("sg", rules.GOBL.Add("SG"), taxIdentityRules())
+	rules.Register("sg", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		orgIdentityRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "SG",
+		Country:   CountryCode,
 		Currency:  currency.SGD,
 		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{
@@ -64,21 +71,9 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories(),
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Identity:
-		return validateIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

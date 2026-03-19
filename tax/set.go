@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.
@@ -70,7 +71,7 @@ func (s Set) Key(cat cbc.Code) cbc.Key {
 func setRules() *rules.Set {
 	return rules.For(new(Set),
 		rules.Assert("01", "all tax categories in a set must be unique",
-			rules.By("no duplicate categories", setNoDuplicateCategories),
+			is.Func("no duplicate categories", setNoDuplicateCategories),
 		),
 	)
 }

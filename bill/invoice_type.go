@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Predefined list of the invoice type codes officially supported.
@@ -123,7 +124,7 @@ func (inv *Invoice) UNTDID1001() cbc.Code {
 // InvoiceTypeIn returns true if the invoice's type property is in
 // one of the specified list.
 func InvoiceTypeIn(types ...cbc.Key) rules.Test {
-	return rules.By(
+	return is.Func(
 		fmt.Sprintf("invoice type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
 		func(obj any) bool {
 			inv, ok := obj.(*Invoice)

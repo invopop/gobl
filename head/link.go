@@ -8,7 +8,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
-	ris "github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -118,24 +118,24 @@ type Link struct {
 func linkRules() *rules.Set {
 	return rules.For(new(Link),
 		rules.Field("key",
-			rules.Assert("01", "link key is required", rules.Present),
+			rules.Assert("01", "link key is required", is.Present),
 		),
 		rules.Field("category",
 			rules.Assert("02", "link category is not valid",
-				rules.By("valid or empty", isValidLinkCategory),
+				is.Func("valid or empty", isValidLinkCategory),
 			),
 		),
 		rules.Field("url",
-			rules.Assert("03", "link URL is required", rules.Present),
-			rules.Assert("04", "link URL must be a valid URL", ris.URL),
+			rules.Assert("03", "link URL is required", is.Present),
+			rules.Assert("04", "link URL must be a valid URL", is.URL),
 		),
 		rules.Field("mime",
 			rules.Assert("05", "link MIME type is not valid",
-				rules.By("valid or empty MIME", isValidLinkMIME),
+				is.Func("valid or empty MIME", isValidLinkMIME),
 			),
 		),
 		rules.Assert("06", "link digest must be nil when MIME type is not provided",
-			rules.By("no digest without MIME", hasNoDigestWithoutMIME),
+			is.Func("no digest without MIME", hasNoDigestWithoutMIME),
 		),
 	)
 }

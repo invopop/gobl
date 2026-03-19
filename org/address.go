@@ -1,7 +1,6 @@
 package org
 
 import (
-	"context"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
@@ -10,7 +9,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Address defines a globally acceptable set of attributes that describes
@@ -68,23 +66,6 @@ func (a *Address) Normalize(normalizers tax.Normalizers) {
 	a.State = cbc.NormalizeAlphanumericalCode(a.State)
 	a.Code = cbc.NormalizeCode(a.Code)
 	normalizers.Each(a)
-}
-
-// Validate checks that an address looks okay.
-func (a *Address) Validate() error {
-	return a.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks that an address looks okay in the given context.
-func (a *Address) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, a,
-		validation.Field(&a.UUID),
-		validation.Field(&a.State),
-		validation.Field(&a.Code),
-		validation.Field(&a.Country),
-		validation.Field(&a.Coordinates),
-		validation.Field(&a.Meta),
-	)
 }
 
 // JSONSchemaExtend adds extra details to the Address schema.

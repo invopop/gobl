@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -63,7 +64,7 @@ func paymentLineRules() *rules.Set {
 	return rules.For(new(PaymentLine),
 		rules.Field("installment",
 			rules.Assert("01", "installment must be between 1 and 999",
-				rules.Min(1), rules.Max(999),
+				is.Min(1), is.Max(999),
 			),
 		),
 		rules.Field("payable",
@@ -87,10 +88,10 @@ func paymentLineRules() *rules.Set {
 			),
 		),
 		rules.Assert("11", "advances must not exceed payable",
-			rules.By("advances within payable", paymentLineAdvancesWithinPayable),
+			is.Func("advances within payable", paymentLineAdvancesWithinPayable),
 		),
 		rules.Assert("12", "amount must not exceed payable less advances",
-			rules.By("amount within limit", paymentLineAmountWithinLimit),
+			is.Func("amount within limit", paymentLineAmountWithinLimit),
 		),
 	)
 }

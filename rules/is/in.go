@@ -1,4 +1,4 @@
-package rules
+package is
 
 import (
 	"fmt"
@@ -12,12 +12,12 @@ type inTest struct {
 // In provides a validation rule that checks if a value is one of the provided set.
 // Named types (e.g. type Code string) are compared against their underlying primitive,
 // so In("A", "B") will match both string("A") and Code("A").
-// Nil values are skipped; use Required to enforce presence.
+// Nil values are skipped; use Present to enforce presence.
 func In(set ...any) *inTest {
 	return &inTest{set: set}
 }
 
-func (t *inTest) compile(_ any) error {
+func (t *inTest) Compile(_ any) error {
 	for i, v := range t.set {
 		t.set[i] = normalizeValue(v)
 	}
@@ -45,4 +45,3 @@ func (t inTest) String() string {
 	}
 	return "one of [" + strings.Join(parts, ", ") + "]"
 }
-

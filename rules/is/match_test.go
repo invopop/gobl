@@ -1,10 +1,11 @@
-package rules_test
+package is_test
 
 import (
 	"regexp"
 	"testing"
 
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -15,7 +16,7 @@ type patternCode string
 func matchSet(pattern string) *rules.Set {
 	return rules.For(patternCode(""),
 		rules.Assert("001", "must match pattern",
-			rules.Matches(pattern),
+			is.Matches(pattern),
 		),
 	)
 }
@@ -45,7 +46,7 @@ func TestMatches(t *testing.T) {
 		set := rules.For(new(Thing),
 			rules.Field("code",
 				rules.Assert("001", "must match",
-					rules.Matches(`^\d+$`),
+					is.Matches(`^\d+$`),
 				),
 			),
 		)
@@ -60,7 +61,7 @@ func TestMatches(t *testing.T) {
 		set := rules.For(new(Blob),
 			rules.Field("data",
 				rules.Assert("001", "must match",
-					rules.Matches(`^\d+$`),
+					is.Matches(`^\d+$`),
 				),
 			),
 		)
@@ -70,14 +71,14 @@ func TestMatches(t *testing.T) {
 	})
 
 	t.Run("String returns pattern description", func(t *testing.T) {
-		assert.Equal(t, `matches ^\d+$`, rules.Matches(`^\d+$`).String())
+		assert.Equal(t, `matches ^\d+$`, is.Matches(`^\d+$`).String())
 	})
 
 	t.Run("panics on invalid regex pattern", func(t *testing.T) {
 		assert.Panics(t, func() {
 			rules.For(patternCode(""),
 				rules.Assert("001", "bad pattern",
-					rules.Matches(`[invalid`),
+					is.Matches(`[invalid`),
 				),
 			)
 		})
@@ -88,18 +89,18 @@ func TestMatchesRegexp(t *testing.T) {
 	re := regexp.MustCompile(`^\d+$`)
 
 	t.Run("passes when string matches", func(t *testing.T) {
-		assert.True(t, rules.MatchesRegexp(re).Check(patternCode("123")))
+		assert.True(t, is.MatchesRegexp(re).Check(patternCode("123")))
 	})
 
 	t.Run("fails when string does not match", func(t *testing.T) {
-		assert.False(t, rules.MatchesRegexp(re).Check(patternCode("abc")))
+		assert.False(t, is.MatchesRegexp(re).Check(patternCode("abc")))
 	})
 
 	t.Run("passes when string is empty", func(t *testing.T) {
-		assert.True(t, rules.MatchesRegexp(re).Check(patternCode("")))
+		assert.True(t, is.MatchesRegexp(re).Check(patternCode("")))
 	})
 
 	t.Run("String returns pattern description", func(t *testing.T) {
-		assert.Equal(t, `matches ^\d+$`, rules.MatchesRegexp(re).String())
+		assert.Equal(t, `matches ^\d+$`, is.MatchesRegexp(re).String())
 	})
 }

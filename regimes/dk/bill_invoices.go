@@ -7,16 +7,17 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(l10n.DK.Tax())),
+			is.HasContext(tax.RegimeIn(l10n.DK.Tax())),
 			rules.Field("supplier",
 				rules.Assert("01", fmt.Sprintf("invoice DK supplier must have either tax ID code or identity with '%s' type", IdentityTypeCVR),
-					rules.By(
+					is.Func(
 						fmt.Sprintf("has tax ID code or identity with '%s' type", IdentityTypeCVR),
 						hasTaxIDOrIdentity,
 					),

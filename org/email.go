@@ -31,7 +31,7 @@ func (e *Email) Normalize() {
 func emailRules() *rules.Set {
 	return rules.For(new(Email),
 		rules.Field("addr",
-			rules.Assert("01", "email address is required", rules.Present),
+			rules.Assert("01", "email address is required", is.Present),
 			rules.Assert("02", "email address must be valid", is.EmailFormat),
 		),
 	)

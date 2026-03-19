@@ -71,7 +71,7 @@ type Embeddable interface {
 }
 
 type compilableTest interface {
-	compile(val any) error
+	Compile(val any) error
 }
 
 // Registry returns the global registry of rule sets.
@@ -138,12 +138,23 @@ func Assert(id Code, desc string, tests ...Test) Def {
 	}
 }
 
+// presentGuard is an internal Test used by AssertIfPresent to skip nil or
+// empty values without creating a dependency on the is package.
+type presentGuard struct{}
+
+func (presentGuard) Check(value any) bool {
+	value, isNil := Indirect(value)
+	return !isNil && !IsEmpty(value)
+}
+
+func (presentGuard) String() string { return "present" }
+
 // AssertIfPresent returns a Def that adds an assertion that is only evaluated
 // when the current scoped value is non-nil and non-empty. Use this for
 // optional fields that have format or content constraints.
 func AssertIfPresent(id Code, desc string, tests ...Test) Def {
 	return func(s *Set) {
-		subset := &Set{Guard: Present}
+		subset := &Set{Guard: presentGuard{}}
 		subset.Assert = append(subset.Assert, &Assertion{
 			ID:    id,
 			Desc:  desc,
@@ -187,7 +198,7 @@ func Field(name string, defs ...Def) Def {
 //	rules.Field("lines",
 //	    rules.Assert("01", "no duplicates", checkNoDups),  // whole-slice assertion
 //	    rules.Each(
-//	        rules.Assert("02", "line required", rules.Present),  // per-element
+//	        rules.Assert("02", "line required", is.Present),  // per-element
 //	    ),
 //	)
 //
@@ -220,7 +231,7 @@ func compileAndResolve(t reflect.Type, obj any, s *Set) {
 	compileAssertions(obj, s.Assert...)
 	if s.Guard != nil {
 		if ct, ok := s.Guard.(compilableTest); ok {
-			if err := ct.compile(obj); err != nil {
+			if err := ct.Compile(obj); err != nil {
 				panic("invalid rules condition: " + err.Error())
 			}
 		}
@@ -303,7 +314,7 @@ func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
 // validateEachValue validates each element of a slice/array value against the
 // given subset. Fault paths are reported as [0], [1], etc. (no field-name
 // prefix; the caller's Field already contributes that).
-func validateEachValue(rc *RunCtx, fv reflect.Value, ss *Set) []*Fault {
+func validateEachValue(rc *Context, fv reflect.Value, ss *Set) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil
@@ -327,7 +338,7 @@ func compileAssertions(env any, asserts ...*Assertion) {
 	for _, a := range asserts {
 		for _, t := range a.Tests {
 			if ct, ok := t.(compilableTest); ok {
-				if err := ct.compile(env); err != nil {
+				if err := ct.Compile(env); err != nil {
 					panic(fmt.Sprintf("failed to compile assertion %s: %s", a.ID, err.Error()))
 				}
 			}
@@ -421,7 +432,7 @@ func AllSets() []*Set {
 // session. Context is also collected automatically from the root object's
 // exported fields that implement ContextAdder (e.g. tax.Regime, tax.Addons).
 func Validate(obj any, opts ...WithContext) Faults {
-	rc := &RunCtx{}
+	rc := &Context{}
 	for _, opt := range opts {
 		opt(rc)
 	}
@@ -443,7 +454,7 @@ func (s *Set) Validate(obj any) Faults {
 }
 
 // validate is the internal context-aware implementation of Validate.
-func (s *Set) validate(rc *RunCtx, obj any) Faults {
+func (s *Set) validate(rc *Context, obj any) Faults {
 	rv := reflect.ValueOf(obj)
 	if !rv.IsValid() {
 		return nil
@@ -588,7 +599,7 @@ func (s *Set) isNamespace() bool {
 	return s.ID != "" && s.objType == nil && s.FieldName == "" && !s.Each
 }
 
-func (s *Set) validateNestedValue(rc *RunCtx, obj any) []*Fault {
+func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 	rv := reflect.ValueOf(obj)
 	if rv.Kind() == reflect.Ptr {
 		if rv.IsNil() {
@@ -656,7 +667,7 @@ func (s *Set) validateNestedValue(rc *RunCtx, obj any) []*Fault {
 
 // validateNestedFieldValue handles pointers, structs, slices, and named types
 // during namespace-internal field iteration.
-func (s *Set) validateNestedFieldValue(rc *RunCtx, fv reflect.Value) []*Fault {
+func (s *Set) validateNestedFieldValue(rc *Context, fv reflect.Value) []*Fault {
 	if fv.Kind() == reflect.Ptr {
 		if fv.IsNil() {
 			return nil

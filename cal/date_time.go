@@ -7,8 +7,9 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // DateTime represents a combination of date and time without location
@@ -69,17 +70,6 @@ func (dt *DateTime) Clone() *DateTime {
 	return &dt2
 }
 
-// Validate ensures the date time object looks valid
-func (dt DateTime) Validate() error {
-	if dt.IsZero() {
-		return nil
-	}
-	if !dt.IsValid() {
-		return errors.New("invalid date time")
-	}
-	return nil
-}
-
 // In returns a new time.Time instance with the provided location.
 func (dt DateTime) In(loc *time.Location) time.Time {
 	return dt.DateTime.In(loc)
@@ -137,62 +127,73 @@ func (dt *DateTime) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type dateTimeValidationRule struct {
+// DateTimeTest is used to validate a date time according to the provided rules.
+type DateTimeTest struct {
+	desc    string
 	notZero bool
 	after   *DateTime
 	before  *DateTime
 }
 
+// String provides a description of the test.
+func (d DateTimeTest) String() string { return d.desc }
+
+// Check will perform the defined date time test on the provided value.
+func (d DateTimeTest) Check(value any) bool { return d.Validate(value) == nil }
+
 // Validate is used to check a date time's value.
-func (d *dateTimeValidationRule) Validate(value interface{}) error {
+func (d DateTimeTest) Validate(value any) error {
 	in, ok := value.(DateTime)
 	if !ok {
 		inp, ok := value.(*DateTime)
-		if !ok {
-			return nil
-		}
-		if inp == nil {
+		if !ok || inp == nil {
 			return nil
 		}
 		in = *inp
 	}
-	if d.notZero {
-		if in.IsZero() {
-			return errors.New("required")
-		}
+	if d.notZero && in.IsZero() {
+		return errors.New("required")
 	}
-	if d.after != nil {
-		if !in.After(d.after.DateTime) {
-			return errors.New("too early")
-		}
+	if d.after != nil && !in.After(d.after.DateTime) {
+		return errors.New("too early")
 	}
-	if d.before != nil {
-		if !in.Before(d.before.DateTime) {
-			return errors.New("too late")
-		}
+	if d.before != nil && !in.Before(d.before.DateTime) {
+		return errors.New("too late")
 	}
 	return nil
 }
 
-// DateTimeNotZero ensures the date is not a zero value.
-func DateTimeNotZero() validation.Rule {
-	return &dateTimeValidationRule{
-		notZero: true,
-	}
+func dateTimeRules() *rules.Set {
+	return rules.For(new(DateTime),
+		rules.Assert("01", "invalid date time", is.Func("valid date time", dateTimeFormatValid)),
+	)
 }
 
-// DateTimeAfter returns a validation rule which checks to ensure the date
-// is *after* the provided date.
-func DateTimeAfter(dt DateTime) validation.Rule {
-	return &dateTimeValidationRule{
-		after: &dt,
+func dateTimeFormatValid(val any) bool {
+	d, ok := val.(DateTime)
+	if !ok {
+		dp, ok := val.(*DateTime)
+		if !ok || dp == nil {
+			return false
+		}
+		d = *dp
 	}
+	return d.IsZero() || d.IsValid()
 }
 
-// DateTimeBefore is used during validation to ensure the date is before
+// DateTimeNotZero ensures the date time is not a zero value.
+func DateTimeNotZero() DateTimeTest {
+	return DateTimeTest{desc: "not zero", notZero: true}
+}
+
+// DateTimeAfter returns a validation rule which checks to ensure the date time
+// is *after* the provided date time.
+func DateTimeAfter(dt DateTime) DateTimeTest {
+	return DateTimeTest{desc: "after " + dt.String(), after: &dt}
+}
+
+// DateTimeBefore is used during validation to ensure the date time is before
 // the value passed in.
-func DateTimeBefore(dt DateTime) validation.Rule {
-	return &dateTimeValidationRule{
-		before: &dt,
-	}
+func DateTimeBefore(dt DateTime) DateTimeTest {
+	return DateTimeTest{desc: "before " + dt.String(), before: &dt}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -173,46 +174,44 @@ func (c *Combo) prepareRate(cd *CategoryDef, date cal.Date) error {
 func comboRules() *rules.Set {
 	return rules.For(new(Combo),
 		rules.Assert("01", "tax category not valid for regime",
-			rules.ByContext("category in regime", comboCategoryValid),
+			is.FuncContext("category in regime", comboCategoryValid),
 		),
 		rules.Assert("02", "tax combo key not valid for category in regime",
-			rules.ByContext("key in category", comboKeyValid),
+			is.FuncContext("key in category", comboKeyValid),
 		),
 		rules.Assert("03", "tax combo rate not valid for key in regime",
-			rules.ByContext("rate in key", comboRateValid),
+			is.FuncContext("rate in key", comboRateValid),
 		),
 		rules.Assert("04", "tax combo percent required or invalid for key in regime",
-			rules.ByContext("percent valid for key", comboPercentValid),
+			is.FuncContext("percent valid for key", comboPercentValid),
 		),
 		rules.Assert("05", "tax combo surcharge requires percent in regime",
-			rules.By("surcharge requires percent", comboSurchargeValid),
+			is.Func("surcharge requires percent", comboSurchargeValid),
 		),
 		rules.Assert("06", "tax combo extension key not defined in regime",
-			rules.By("extension keys defined", comboExtensionsValid),
+			is.Func("extension keys defined", comboExtensionsValid),
 		),
 	)
 }
 
 // regimeDefFromContext returns the RegimeDef from the validation context.
-func regimeDefFromContext(ctx []any) *RegimeDef {
-	for _, v := range ctx {
-		if r, ok := v.(Regime); ok {
-			return r.RegimeDef()
-		}
+func regimeDefFromContext(ctx rules.Context) *RegimeDef {
+	if r, ok := ctx.Value(regimeContextKey).(Regime); ok {
+		return r.RegimeDef()
 	}
 	return nil
 }
 
 // regimeDefForCombo returns the RegimeDef for the combo, using the combo's
 // Country override when set, otherwise falling back to the context regime.
-func regimeDefForCombo(ctx []any, combo *Combo) *RegimeDef {
+func regimeDefForCombo(ctx rules.Context, combo *Combo) *RegimeDef {
 	if combo != nil && !combo.Country.Empty() {
 		return RegimeDefFor(combo.Country.Code())
 	}
 	return regimeDefFromContext(ctx)
 }
 
-func comboCategoryValid(ctx []any, val any) bool {
+func comboCategoryValid(ctx rules.Context, val any) bool {
 	combo, ok := val.(*Combo)
 	if !ok {
 		return true
@@ -224,7 +223,7 @@ func comboCategoryValid(ctx []any, val any) bool {
 	return rd.CategoryDef(combo.Category) != nil
 }
 
-func comboKeyValid(ctx []any, val any) bool {
+func comboKeyValid(ctx rules.Context, val any) bool {
 	combo, ok := val.(*Combo)
 	if !ok || combo.Key == cbc.KeyEmpty {
 		return true
@@ -240,7 +239,7 @@ func comboKeyValid(ctx []any, val any) bool {
 	return cd.KeyDef(combo.Key) != nil
 }
 
-func comboRateValid(ctx []any, val any) bool {
+func comboRateValid(ctx rules.Context, val any) bool {
 	combo, ok := val.(*Combo)
 	if !ok || combo.Rate == cbc.KeyEmpty {
 		return true
@@ -256,7 +255,7 @@ func comboRateValid(ctx []any, val any) bool {
 	return cd.RateDef(combo.Key, combo.Rate) != nil
 }
 
-func comboPercentValid(ctx []any, val any) bool {
+func comboPercentValid(ctx rules.Context, val any) bool {
 	combo, ok := val.(*Combo)
 	if !ok {
 		return true

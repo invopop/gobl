@@ -2,21 +2,41 @@ package rules
 
 import "reflect"
 
-// RunCtx holds context values accumulated during a rules.Validate call.
-// It is threaded through the validation engine to allow context-aware tests
-// to check values injected from the root object or explicit options.
-type RunCtx struct {
-	values []any
+// ContextKey is the key type for Context entries.
+type ContextKey string
+
+// contextEntry holds a single key-value pair in a validation Context.
+type contextEntry struct {
+	key   ContextKey
+	value any
 }
 
-// Add appends a value to the validation context.
-func (rc *RunCtx) Add(v any) {
-	rc.values = append(rc.values, v)
+// Context holds key-value pairs accumulated during a rules.Validate call and
+// is passed to ByContext test functions. Use Set to store values and Value to
+// retrieve them.
+type Context struct {
+	entries []contextEntry
+}
+
+// Set appends a key-value pair to the validation context, preserving insertion order.
+func (c *Context) Set(key ContextKey, value any) {
+	c.entries = append(c.entries, contextEntry{key, value})
+}
+
+// Value returns the stored value for key, or nil if absent.
+// Callers do a type assertion: v, ok := ctx.Value(key).(MyType)
+func (c Context) Value(key ContextKey) any {
+	for _, e := range c.entries {
+		if e.key == key {
+			return e.value
+		}
+	}
+	return nil
 }
 
 // WithContext is a functional option for rules.Validate that injects values
 // into the validation context before validation begins.
-type WithContext func(*RunCtx)
+type WithContext func(*Context)
 
 // ContextAdder is implemented by objects that want to automatically inject
 // values into the validation context when encountered by the rules engine.
@@ -24,40 +44,54 @@ type ContextAdder interface {
 	RulesContext() WithContext
 }
 
-// contextualTest is an internal interface for tests that need access to the
-// validation context. The engine checks for this interface before falling
-// back to the standard Test.Check method.
-type contextualTest interface {
-	checkWithContext(rc *RunCtx, val any) bool
+// ContextualTest is implemented by tests that need access to the validation
+// context. The engine checks for this interface before falling back to the
+// standard Test.Check method.
+type ContextualTest interface {
+	CheckWithContext(rc *Context, val any) bool
 }
 
 // runTest evaluates test t against val. When rc is non-nil and t implements
-// contextualTest, it delegates to checkWithContext; otherwise it calls Check.
-func runTest(rc *RunCtx, t Test, val any) bool {
+// ContextualTest, it delegates to CheckWithContext; otherwise it calls Check.
+func runTest(rc *Context, t Test, val any) bool {
 	if rc != nil {
-		if ct, ok := t.(contextualTest); ok {
-			return ct.checkWithContext(rc, val)
+		if ct, ok := t.(ContextualTest); ok {
+			return ct.CheckWithContext(rc, val)
 		}
 	}
 	return t.Check(val)
+}
+
+// Each iterates over all values in the context, calling fn for each. Returns
+// true as soon as fn returns true (short-circuit), false otherwise.
+func (c Context) Each(fn func(value any) bool) bool {
+	for _, e := range c.entries {
+		if fn(e.value) {
+			return true
+		}
+	}
+	return false
 }
 
 // collectContext builds the validation context from explicit options and by
 // scanning the root object's exported fields for ContextAdder implementations.
 // Since tax.Regime and tax.Addons are always embedded at the top of document
 // structs, a single-level field scan is sufficient.
-func collectContext(rc *RunCtx, obj any) {
-	// Check the root object itself first.
-	if ca, ok := obj.(ContextAdder); ok {
-		ca.RulesContext()(rc)
-	}
-
+func collectContext(rc *Context, obj any) {
 	// Scan exported struct fields for embedded ContextAdders.
 	rv := reflect.ValueOf(obj)
 	if rv.Kind() == reflect.Ptr {
 		if rv.IsNil() {
 			return
 		}
+	}
+
+	// Check the root object itself first.
+	if ca, ok := obj.(ContextAdder); ok {
+		ca.RulesContext()(rc)
+	}
+
+	if rv.Kind() == reflect.Ptr {
 		rv = rv.Elem()
 	}
 	if rv.Kind() != reflect.Struct {

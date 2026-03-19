@@ -5,28 +5,29 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			rules.HasContext(tax.RegimeIn(l10n.BE.Tax())),
+			is.HasContext(tax.RegimeIn(l10n.BE.Tax())),
 			rules.Field("supplier",
 				rules.When(
-					rules.By("no BCE identity", supplierNoBCEIdentity),
+					is.Func("no BCE identity", supplierNoBCEIdentity),
 					rules.Field("tax_id",
-						rules.Assert("01", "supplier tax ID required for Belgian regime", rules.Present),
+						rules.Assert("01", "supplier tax ID required for Belgian regime", is.Present),
 						rules.Field("code",
-							rules.Assert("02", "supplier tax ID code required for Belgian regime", rules.Present),
+							rules.Assert("02", "supplier tax ID code required for Belgian regime", is.Present),
 						),
 					),
 				),
 				rules.When(
-					rules.By("no tax ID code", supplierNoTaxIDCode),
+					is.Func("no tax ID code", supplierNoTaxIDCode),
 					rules.Field("identities",
 						rules.Assert("03", "supplier identities must include BCE type",
-							rules.By("has BCE type", identitiesIncludeBCE)),
+							is.Func("has BCE type", identitiesIncludeBCE)),
 					),
 				),
 			),

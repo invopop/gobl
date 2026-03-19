@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
@@ -37,9 +38,9 @@ func (ld *LineDiscount) Normalize(normalizers tax.Normalizers) {
 
 func lineDiscountRules() *rules.Set {
 	return rules.For(new(LineDiscount),
-		rules.When(rules.Expr("base != nil"),
+		rules.When(is.Expr("base != nil"),
 			rules.Field("percent",
-				rules.Assert("01", "percent is required when base is set", rules.Present),
+				rules.Assert("01", "percent is required when base is set", is.Present),
 			),
 		),
 	)

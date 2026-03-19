@@ -35,7 +35,7 @@ func TestEmbeddingAddons(t *testing.T) {
 	ts.Addons = tax.WithAddons("mx-cfdi-v4", "invalid-addon")
 
 	err := rules.Validate(ts)
-	assert.ErrorContains(t, err, "[GOBL-TAX-ADDONS-01] ($addons[1]) add-on must be registered")
+	assert.ErrorContains(t, err, "[GOBL-TAX-ADDONS-01] ($.$addons[1]) add-on must be registered")
 
 	t.Run("test addon normalization", func(t *testing.T) {
 		ts.Addons.List = tax.AddonList{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}

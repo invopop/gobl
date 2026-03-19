@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
@@ -85,11 +86,11 @@ func (i *Identity) Normalize() {
 func identityRules() *rules.Set {
 	return rules.For(new(Identity),
 		rules.Field("code",
-			rules.Assert("01", "identity code must be provided", rules.Present),
+			rules.Assert("01", "identity code must be provided", is.Present),
 		),
 		rules.Field("scope",
 			rules.AssertIfPresent("02", "identity scope when provided must be either 'tax' or 'legal'",
-				rules.In(IdentityScopeTax, IdentityScopeLegal),
+				is.In(IdentityScopeTax, IdentityScopeLegal),
 			),
 		),
 		rules.Assert("03", "identity must have either a key or type defined, but not both",
@@ -99,7 +100,7 @@ func identityRules() *rules.Set {
 }
 
 func identityHasKeyOrTypeNotBoth() rules.Test {
-	return rules.By("key and type must not be used together", func(value any) bool {
+	return is.Func("key and type must not be used together", func(value any) bool {
 		id, _ := value.(*Identity)
 		if id == nil {
 			return false

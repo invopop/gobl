@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // CategoryDef contains the definition of a general type of tax inside a region.
@@ -62,16 +63,16 @@ type CategoryDef struct {
 func categoryDefRules() *rules.Set {
 	return rules.For(new(CategoryDef),
 		rules.Field("code",
-			rules.Assert("01", "category def code is required", rules.Present),
+			rules.Assert("01", "category def code is required", is.Present),
 		),
 		rules.Field("name",
-			rules.Assert("02", "category def name is required", rules.Present),
+			rules.Assert("02", "category def name is required", is.Present),
 		),
 		rules.Field("title",
-			rules.Assert("03", "category def title is required", rules.Present),
+			rules.Assert("03", "category def title is required", is.Present),
 		),
 		rules.Assert("04", "category def cannot be retained and informative",
-			rules.Expr("!retained || !informative"),
+			is.Expr("!retained || !informative"),
 		),
 	)
 }

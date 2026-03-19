@@ -29,7 +29,7 @@ type Email struct {
 func personRules() *rules.Set {
 	return rules.For(new(Person),
 		rules.Assert("01", "person address must have a city",
-			rules.Expr(`(address?.city ?? "") != ""`),
+			is.Expr(`(address?.city ?? "") != ""`),
 		),
 	)
 }
@@ -38,7 +38,7 @@ func emailRules() *rules.Set {
 	return rules.For(new(Email),
 		rules.Field("addr",
 			rules.Assert("01", "expected a valid email address",
-				rules.Present,
+				is.Present,
 				is.EmailFormat,
 			),
 		),
@@ -156,10 +156,10 @@ type TestCode string
 func testCodeRules() *rules.Set {
 	return rules.For(TestCode(""),
 		rules.Assert("01", "code must not be empty",
-			rules.Present,
+			is.Present,
 		),
 		rules.Assert("02", "code must not exceed 10 characters",
-			rules.Expr(`len(this) <= 10`),
+			is.Expr(`len(this) <= 10`),
 		),
 	)
 }
@@ -181,7 +181,7 @@ type Tagged struct {
 
 func tagRules() *rules.Set {
 	return rules.For(Tag(""),
-		rules.Assert("01", "tag must not be empty", rules.Present),
+		rules.Assert("01", "tag must not be empty", is.Present),
 	)
 }
 
@@ -228,7 +228,7 @@ func TestForValue(t *testing.T) {
 		assert.Panics(t, func() {
 			rules.For(TestCode(""),
 				rules.Assert("bad", "bad expr",
-					rules.Expr(`this ===`),
+					is.Expr(`this ===`),
 				),
 			)
 		})
@@ -294,7 +294,7 @@ func TestSetValidate(t *testing.T) {
 		type Other struct{ X string }
 		set := rules.For(new(Email),
 			rules.Assert("01", "always fails",
-				rules.Expr(`false`),
+				is.Expr(`false`),
 			),
 		)
 		faults := set.Validate(&Other{X: "hello"})
@@ -304,7 +304,7 @@ func TestSetValidate(t *testing.T) {
 	t.Run("provides object of same pointer type to tests", func(t *testing.T) {
 		set := rules.For(new(Person),
 			rules.Assert("01", "expected a valid name",
-				rules.By("valid", func(value any) bool {
+				is.Func("valid", func(value any) bool {
 					p, ok := value.(*Person)
 					if !ok {
 						return false
@@ -328,10 +328,10 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		set := rules.For(new(Item),
-			rules.When(rules.Expr(`active`),
+			rules.When(is.Expr(`active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
-						rules.Present,
+						is.Present,
 					),
 				),
 			),
@@ -347,10 +347,10 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		set := rules.For(new(Item),
-			rules.When(rules.Expr(`active`),
+			rules.When(is.Expr(`active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
-						rules.Present,
+						is.Present,
 					),
 				),
 			),
@@ -367,9 +367,9 @@ func TestSetValidate(t *testing.T) {
 		}
 		proto := new(Item)
 		set := rules.For(proto,
-			rules.When(rules.Expr(`active`),
+			rules.When(is.Expr(`active`),
 				rules.Assert("01", "name required when active",
-					rules.Expr(`name != ""`),
+					is.Expr(`name != ""`),
 				),
 			),
 		)
@@ -383,7 +383,7 @@ func TestSetValidate(t *testing.T) {
 func TestFieldEmpty(t *testing.T) {
 	set := rules.For(new(Person),
 		rules.Field("name",
-			rules.Assert("01", "name must not be set", rules.Empty),
+			rules.Assert("01", "name must not be set", is.Empty),
 		),
 	)
 
@@ -402,7 +402,7 @@ func TestFieldEmpty(t *testing.T) {
 func TestFieldNil(t *testing.T) {
 	set := rules.For(new(Person),
 		rules.Field("second_address",
-			rules.Assert("01", "second address must not be set", rules.Nil),
+			rules.Assert("01", "second address must not be set", is.Nil),
 		),
 	)
 
@@ -431,10 +431,10 @@ func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
 	// incorrectly matching field subsets by type rather than by field name.
 	set := rules.For(new(Person),
 		rules.When(
-			rules.Expr(`name != ""`),
+			is.Expr(`name != ""`),
 			rules.Field("address",
 				rules.Assert("01", "city is required",
-					rules.By("city required", func(val any) bool {
+					is.Func("city required", func(val any) bool {
 						a, ok := val.(*Address)
 						return !ok || a == nil || a.City != ""
 					}),
@@ -472,7 +472,7 @@ func TestEach(t *testing.T) {
 			rules.Field("emails",
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("01", "email address is required", rules.Present),
+						rules.Assert("01", "email address is required", is.Present),
 					),
 				),
 			),
@@ -499,7 +499,7 @@ func TestEach(t *testing.T) {
 			rules.Field("emails",
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("01", "email address is required", rules.Present),
+						rules.Assert("01", "email address is required", is.Present),
 					),
 				),
 			),
@@ -514,7 +514,7 @@ func TestEach(t *testing.T) {
 		set := rules.For(new(Person),
 			rules.Field("emails",
 				rules.Each(
-					rules.Assert("01", "required", rules.Present),
+					rules.Assert("01", "required", is.Present),
 				),
 			),
 		)
@@ -525,14 +525,14 @@ func TestEach(t *testing.T) {
 		set := rules.For(new(Person),
 			rules.Field("emails",
 				rules.Assert("01", "no more than two emails",
-					rules.By("max two", func(val any) bool {
+					is.Func("max two", func(val any) bool {
 						emails, ok := val.([]Email)
 						return !ok || len(emails) <= 2
 					}),
 				),
 				rules.Each(
 					rules.Field("addr",
-						rules.Assert("02", "email address is required", rules.Present),
+						rules.Assert("02", "email address is required", is.Present),
 					),
 				),
 			),
@@ -554,7 +554,7 @@ func TestEach(t *testing.T) {
 		assert.Panics(t, func() {
 			rules.For(new(Email),
 				rules.Each(
-					rules.Assert("01", "required", rules.Present),
+					rules.Assert("01", "required", is.Present),
 				),
 			)
 		})
@@ -577,7 +577,7 @@ func (w *Wrapper) Embedded() any {
 func innerRules() *rules.Set {
 	return rules.For(new(Inner),
 		rules.Field("name",
-			rules.Assert("01", "inner name is required", rules.Present),
+			rules.Assert("01", "inner name is required", is.Present),
 		),
 	)
 }

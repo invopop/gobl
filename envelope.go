@@ -15,6 +15,7 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -64,25 +65,25 @@ func Envelop(doc any) (*Envelope, error) {
 func envelopeRules() *rules.Set {
 	return rules.For(new(Envelope),
 		rules.Field("$schema",
-			rules.Assert("01", "envelope schema is required", rules.Present),
+			rules.Assert("01", "envelope schema is required", is.Present),
 		),
 		rules.Field("head",
-			rules.Assert("02", "envelope header is required", rules.Present),
+			rules.Assert("02", "envelope header is required", is.Present),
 		),
 		rules.Field("doc",
-			rules.Assert("03", "envelope doc is required", rules.Present),
+			rules.Assert("03", "envelope doc is required", is.Present),
 		),
 		rules.Assert("11", "envelope digest does not match document contents",
-			rules.By("valid digest", validDigest),
+			is.Func("valid digest", validDigest),
 		),
-		rules.When(rules.By("not signed", notSigned),
+		rules.When(is.Func("not signed", notSigned),
 			rules.Assert("12", "envelope header cannot have stamps when not signed",
-				rules.By("no stamps", hasNoStamps),
+				is.Func("no stamps", hasNoStamps),
 			),
 		),
-		rules.When(rules.By("has signatures", hasSignatures),
+		rules.When(is.Func("has signatures", hasSignatures),
 			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
-				rules.By("ready to sign", isDocumentReadyToSign),
+				is.Func("ready to sign", isDocumentReadyToSign),
 			),
 		),
 	)

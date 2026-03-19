@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
@@ -65,7 +66,7 @@ func NewObject(payload any) (*Object, error) {
 func objectRules() *rules.Set {
 	return rules.For(new(Object),
 		rules.Field("$schema",
-			rules.Assert("01", "schema is required", rules.Present),
+			rules.Assert("01", "schema is required", is.Present),
 		),
 	)
 }

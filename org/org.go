@@ -29,6 +29,8 @@ func init() {
 	rules.Register(
 		"org",
 		rules.GOBL.Add("ORG"),
+		attachmentRules(),
+		coordinatesRules(),
 		emailRules(),
 		identityRules(),
 	)

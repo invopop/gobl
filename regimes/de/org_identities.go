@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 const (
@@ -58,10 +59,11 @@ func normalizeTaxNumber(id *org.Identity) {
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			rules.By("is tax number", isTaxNumberIdentity),
+			is.Func("is tax number", isTaxNumberIdentity),
 			rules.Field("code",
 				rules.Assert("01", "German tax number code must be in valid format",
-					rules.MatchesRegexp(taxNumberRegexPattern)),
+					is.MatchesRegexp(taxNumberRegexPattern),
+				),
 			),
 		),
 	)

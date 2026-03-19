@@ -1,8 +1,7 @@
-package nl
+package sg
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -12,10 +11,10 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(l10n.NL.Tax())),
+			is.HasContext(tax.RegimeIn(CountryCode)),
 			rules.Field("supplier",
-				rules.Assert("01", "invoice supplier must have a tax ID code or a KVK/OIN identity",
-					is.Func("has tax ID code or KVK/OIN identity", hasSupplierTaxIDOrIdentity),
+				rules.Assert("01", "invoice supplier in Singapore must have a GST tax ID code or a UEN identity",
+					is.Func("has GST tax ID code or UEN identity", hasSupplierTaxIDOrIdentity),
 				),
 			),
 		),
@@ -36,7 +35,8 @@ func hasSupplierIdentity(party *org.Party) bool {
 		return false
 	}
 	for _, id := range party.Identities {
-		if id.Type == IdentityTypeKVK || id.Type == IdentityTypeOIN {
+		switch id.Type {
+		case IdentityTypeUEN:
 			return true
 		}
 	}

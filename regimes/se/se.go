@@ -13,9 +13,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Sweden.
+const CountryCode l10n.TaxCountryCode = "SE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules())
+	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules(), billInvoiceRules(), orgIdentityRules())
 }
 
 // New instantiates a new Swedish regime.
@@ -80,12 +83,6 @@ func New() *tax.RegimeDef {
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
-	switch obj := doc.(type) {
-	//case *bill.Invoice:
-	//	return validateBillInvoice(obj)
-	case *org.Identity:
-		return validateOrgIdentity(obj)
-	}
 	return nil
 }
 
