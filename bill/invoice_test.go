@@ -1109,7 +1109,7 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
 	inv.Currency = currency.USD
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 }
 
 func TestNormalization(t *testing.T) {

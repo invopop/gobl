@@ -3,6 +3,15 @@
   "name": "pt",
   "subsets": [
     {
+      "id": "GOBL-PT-TAX-COMBO",
+      "name": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "context: regime in [PT]"
+        }
+      ]
+    },
+    {
       "id": "GOBL-PT-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

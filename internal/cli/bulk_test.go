@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"io"
 	"os"
 	"strings"
@@ -13,7 +12,6 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
@@ -284,11 +282,9 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					SeqID:   1,
 					IsFinal: false,
 					Error: &Error{
-						Code: 422,
-						Key:  cbc.Key("validation"),
-						Fields: gobl.FieldErrors{
-							"content": errors.New("cannot be blank"),
-						},
+						Code:    422,
+						Key:     cbc.Key("validation"),
+						Message: "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required",
 					},
 				},
 				{

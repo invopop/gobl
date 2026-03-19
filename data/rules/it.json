@@ -27,6 +27,54 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-IT-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [IT]",
+          "subsets": [
+            {
+              "guard": "key in [it-fiscal-code]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-IT-ORG-IDENTITY-01",
+                      "desc": "fiscal code is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-ORG-IDENTITY-02",
+                          "desc": "invalid fiscal code format",
+                          "tests": "valid format"
+                        }
+                      ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-ORG-IDENTITY-03",
+                          "desc": "invalid fiscal code check digit",
+                          "tests": "valid checksum"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

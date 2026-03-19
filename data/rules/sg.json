@@ -3,6 +3,53 @@
   "name": "sg",
   "subsets": [
     {
+      "id": "GOBL-SG-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SG]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-SG-BILL-INVOICE-01",
+                  "desc": "invoice supplier in Singapore must have a GST tax ID code or a UEN identity",
+                  "tests": "has GST tax ID code or UEN identity"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SG-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SG]",
+          "subsets": [
+            {
+              "guard": "type in [UEN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SG-ORG-IDENTITY-01",
+                      "desc": "identity code for type UEN must be valid",
+                      "tests": "valid UEN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-SG-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

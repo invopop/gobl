@@ -1,0 +1,61 @@
+{
+  "id": "GOBL-CAL",
+  "name": "cal",
+  "subsets": [
+    {
+      "id": "GOBL-CAL-DATE",
+      "name": "cal.Date",
+      "assert": [
+        {
+          "id": "GOBL-CAL-DATE-01",
+          "desc": "invalid date",
+          "tests": "valid date"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CAL-DATETIME",
+      "name": "cal.DateTime",
+      "assert": [
+        {
+          "id": "GOBL-CAL-DATETIME-01",
+          "desc": "invalid date time",
+          "tests": "valid date time"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CAL-PERIOD",
+      "name": "cal.Period",
+      "assert": [
+        {
+          "id": "GOBL-CAL-PERIOD-10",
+          "desc": "end date must be on or after start date",
+          "tests": "end not before start"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "start",
+          "assert": [
+            {
+              "id": "GOBL-CAL-PERIOD-01",
+              "desc": "start date cannot be zero",
+              "tests": "not zero"
+            }
+          ]
+        },
+        {
+          "field": "end",
+          "assert": [
+            {
+              "id": "GOBL-CAL-PERIOD-02",
+              "desc": "end date cannot be zero",
+              "tests": "not zero"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

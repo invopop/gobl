@@ -27,6 +27,64 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-BE-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [BE]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "guard": "no BCE identity",
+                  "subsets": [
+                    {
+                      "field": "tax_id",
+                      "assert": [
+                        {
+                          "id": "GOBL-BE-BILL-INVOICE-01",
+                          "desc": "supplier tax ID required for Belgian regime",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "field": "code",
+                          "assert": [
+                            {
+                              "id": "GOBL-BE-BILL-INVOICE-02",
+                              "desc": "supplier tax ID code required for Belgian regime",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "no tax ID code",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-BE-BILL-INVOICE-03",
+                          "desc": "supplier identities must include BCE type",
+                          "tests": "has BCE type"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3,6 +3,68 @@
   "name": "nl",
   "subsets": [
     {
+      "id": "GOBL-NL-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [NL]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-NL-BILL-INVOICE-01",
+                  "desc": "invoice supplier must have a tax ID code or a KVK/OIN identity",
+                  "tests": "has tax ID code or KVK/OIN identity"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-NL-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [NL]",
+          "subsets": [
+            {
+              "guard": "type in [KVK]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-NL-ORG-IDENTITY-01",
+                      "desc": "identity code for type KVK must be valid",
+                      "tests": "length between 8 and 8"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "type in [OIN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-NL-ORG-IDENTITY-02",
+                      "desc": "identity code for type OIN must be valid",
+                      "tests": "matches ^0{6}(0[1-9]|10|99)\\d{9}0{3}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-NL-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

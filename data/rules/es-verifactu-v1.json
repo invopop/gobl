@@ -1,7 +1,7 @@
 {
   "id": "GOBL-ES-VERIFACTU-V1",
   "name": "es-verifactu-v1",
-  "guard": "has addon es-verifactu-v1",
+  "guard": "context: addon in [es-verifactu-v1]",
   "subsets": [
     {
       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE",
@@ -157,17 +157,17 @@
                 {
                   "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE-10",
                   "desc": "doc type is required",
-                  "tests": "extensions require [es-verifactu-doc-type]"
+                  "tests": "ext require [es-verifactu-doc-type]"
                 }
               ],
               "subsets": [
                 {
-                  "guard": "extensions[es-verifactu-doc-type] in [R1, R2, R3, R4, R5]",
+                  "guard": "ext 'es-verifactu-doc-type' in [R1, R2, R3, R4, R5]",
                   "assert": [
                     {
                       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE-13",
                       "desc": "correction type extension is required",
-                      "tests": "extensions require [es-verifactu-correction-type]"
+                      "tests": "ext require [es-verifactu-correction-type]"
                     }
                   ]
                 }
@@ -187,7 +187,7 @@
                     {
                       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE-11",
                       "desc": "doc type extension for standard invoices must be F1, F2, or F3",
-                      "tests": "extensions[es-verifactu-doc-type] in [F1, F2, F3]"
+                      "tests": "ext 'es-verifactu-doc-type' in [F1, F2, F3]"
                     }
                   ]
                 }
@@ -207,7 +207,7 @@
                     {
                       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE-12",
                       "desc": "doc type extension for corrective invoices must be R1, R2, R3, R4, or R5",
-                      "tests": "extensions[es-verifactu-doc-type] in [R1, R2, R3, R4, R5]"
+                      "tests": "ext 'es-verifactu-doc-type' in [R1, R2, R3, R4, R5]"
                     }
                   ]
                 }
@@ -275,22 +275,22 @@
                 {
                   "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-01",
                   "desc": "extension 'es-verifactu-regime' is required",
-                  "tests": "extensions require [es-verifactu-regime]"
+                  "tests": "ext require [es-verifactu-regime]"
                 },
                 {
                   "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-03",
                   "desc": "cannot use both 'es-verifactu-op-class' and 'es-verifactu-exempt' at the same time",
-                  "tests": "extensions allow one of [es-verifactu-op-class, es-verifactu-exempt]"
+                  "tests": "ext allow one of [es-verifactu-op-class, es-verifactu-exempt]"
                 }
               ],
               "subsets": [
                 {
-                  "guard": "extensions[es-verifactu-regime] in [01]",
+                  "guard": "ext 'es-verifactu-regime' in [01]",
                   "assert": [
                     {
                       "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-02",
                       "desc": "exempt codes E2 and E3 not allowed with 'es-verifactu-regime' 01",
-                      "tests": "extensions[es-verifactu-exempt] not in [E2, E3]"
+                      "tests": "ext 'es-verifactu-exempt' not in [E2, E3]"
                     }
                   ]
                 }
@@ -305,7 +305,7 @@
                     {
                       "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-04",
                       "desc": "extension 'es-verifactu-op-class' is required for taxed operations",
-                      "tests": "extensions require [es-verifactu-op-class]"
+                      "tests": "ext require [es-verifactu-op-class]"
                     }
                   ]
                 }

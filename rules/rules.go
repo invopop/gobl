@@ -581,6 +581,16 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 						}
 					}
 				}
+				// If the root object exposes an embedded payload, validate it at
+				// the same path level. This handles cases like schema.Object where
+				// the payload is a private field accessible only via Embedded().
+				if emb, ok := callObj.(Embeddable); ok {
+					if inner := emb.Embedded(); inner != nil {
+						if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
+							faults = append(faults, fs...)
+						}
+					}
+				}
 			}
 		}
 	}

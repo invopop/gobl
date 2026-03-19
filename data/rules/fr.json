@@ -3,6 +3,27 @@
   "name": "fr",
   "subsets": [
     {
+      "id": "GOBL-FR-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [FR]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-FR-BILL-INVOICE-01",
+                  "desc": "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
+                  "tests": "has tax ID code or SIREN/SIRET identity"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-FR-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

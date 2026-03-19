@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +28,7 @@ func TestOrderValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		ord := baseOrderWithLines(t)
 		require.NoError(t, ord.Calculate())
-		require.NoError(t, ord.Validate())
+		require.NoError(t, rules.Validate(ord))
 	})
 
 	t.Run("with nil array entries", func(t *testing.T) {
@@ -41,7 +42,7 @@ func TestOrderValidation(t *testing.T) {
 		ord.Complements = append(ord.Complements, nil)
 		ord.Attachments = append(ord.Attachments, nil)
 		require.NoError(t, ord.Calculate())
-		require.NoError(t, ord.Validate())
+		require.NoError(t, rules.Validate(ord))
 	})
 }
 

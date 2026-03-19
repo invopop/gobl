@@ -42,7 +42,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			in:  strings.NewReader(`{}`),
-			err: "code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
+			err: "code=422, message=[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "read from file",

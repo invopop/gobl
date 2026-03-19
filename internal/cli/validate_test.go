@@ -59,7 +59,7 @@ func TestValidate(t *testing.T) {
 	tests.Add("without totals", func(t *testing.T) interface{} {
 		return tt{
 			in:  testFileReader(t, "testdata/nototals.json"),
-			err: "code=422, message=doc: (totals: cannot be blank.).",
+			err: "code=422, message=[GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		}
 	})
 

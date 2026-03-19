@@ -3,6 +3,32 @@
   "name": "ar",
   "subsets": [
     {
+      "id": "GOBL-AR-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [AR]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-BILL-INVOICE-01",
+                      "desc": "invoice supplier tax ID required for Argentine regime",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-AR-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

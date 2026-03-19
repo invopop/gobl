@@ -107,7 +107,7 @@ func Test_validate(t *testing.T) {
 					}
 				},
 			}`),
-			err: "code=422, message=doc: cannot be blank.",
+			err: "code=422, message=[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "invalid doc",
@@ -137,7 +137,7 @@ func Test_validate(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "code=422, message=doc: ($schema: cannot be blank.).",
+			err: "code=422, message=[GOBL-SCHEMA-OBJECT-01] ($.doc.$schema) schema is required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 		{
 			name: "input file",
@@ -146,7 +146,7 @@ func Test_validate(t *testing.T) {
 		{
 			name: "without totals",
 			args: []string{"testdata/nototals.json"},
-			err:  "code=422, message=doc: (totals: cannot be blank.).",
+			err:  "code=422, message=[GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 		{
 			name:   "output file",

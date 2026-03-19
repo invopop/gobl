@@ -46,7 +46,7 @@ func TestReplicate(t *testing.T) {
 					Input: testFileReader(t, "testdata/noname.json"),
 				},
 			},
-			err: "supplier: (name: cannot be blank",
+			err: "[GOBL-BILL-INVOICE-06]",
 		}
 	})
 
@@ -57,7 +57,7 @@ func TestReplicate(t *testing.T) {
 					Input: testFileReaderForDoc(t, "testdata/noname.json"),
 				},
 			},
-			err: "supplier: (name: cannot be blank",
+			err: "[GOBL-BILL-INVOICE-06]",
 		}
 	})
 

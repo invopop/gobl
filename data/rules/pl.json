@@ -3,6 +3,37 @@
   "name": "pl",
   "subsets": [
     {
+      "id": "GOBL-PL-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [PL]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-PL-BILL-INVOICE-01",
+                          "desc": "supplier tax ID code required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-PL-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

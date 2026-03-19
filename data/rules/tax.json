@@ -3,6 +3,53 @@
   "name": "tax",
   "subsets": [
     {
+      "id": "GOBL-TAX-ADDONS",
+      "name": "tax.Addons",
+      "subsets": [
+        {
+          "field": "$addons",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-TAX-ADDONS-01",
+                  "desc": "add-on must be registered",
+                  "tests": "add-on must be registered"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-ADDONDEF",
+      "name": "tax.AddonDef",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-TAX-ADDONDEF-01",
+              "desc": "addon must have a key",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-ADDONDEF-02",
+              "desc": "addon must have a name",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [
@@ -68,6 +115,53 @@
               "tests": "present"
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-SET",
+      "name": "tax.Set",
+      "assert": [
+        {
+          "id": "GOBL-TAX-SET-01",
+          "desc": "all tax categories in a set must be unique",
+          "tests": "no duplicate categories"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-COMBO",
+      "name": "tax.Combo",
+      "assert": [
+        {
+          "id": "GOBL-TAX-COMBO-01",
+          "desc": "tax category not valid for regime",
+          "tests": "category in regime"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-02",
+          "desc": "tax combo key not valid for category in regime",
+          "tests": "key in category"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-03",
+          "desc": "tax combo rate not valid for key in regime",
+          "tests": "rate in key"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-04",
+          "desc": "tax combo percent required or invalid for key in regime",
+          "tests": "percent valid for key"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-05",
+          "desc": "tax combo surcharge requires percent in regime",
+          "tests": "surcharge requires percent"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-06",
+          "desc": "tax combo extension key not defined in regime",
+          "tests": "extension keys defined"
         }
       ]
     }

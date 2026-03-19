@@ -67,7 +67,7 @@ func TestPaymentCalculate(t *testing.T) {
 		pmt.Lines[0].Refund = true
 		pmt.Lines[0].Amount = num.MakeAmount(5000, 2)
 		require.NoError(t, pmt.Calculate())
-		require.NoError(t, pmt.Validate())
+		require.NoError(t, rules.Validate(pmt))
 		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 
@@ -236,7 +236,7 @@ func TestPaymentValidate(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := testPaymentMinimal(t)
 		require.NoError(t, p.Calculate())
-		require.NoError(t, p.Validate())
+		require.NoError(t, rules.Validate(p))
 	})
 
 	t.Run("with error", func(t *testing.T) {
@@ -250,7 +250,7 @@ func TestPaymentValidate(t *testing.T) {
 		pmt := testPaymentMinimal(t)
 		pmt.Addons.SetAddons(tbai.V1)
 		require.NoError(t, pmt.Calculate())
-		require.NoError(t, pmt.Validate())
+		require.NoError(t, rules.Validate(pmt))
 	})
 
 	t.Run("with nil array entries", func(t *testing.T) {
@@ -261,7 +261,7 @@ func TestPaymentValidate(t *testing.T) {
 		pmt.ExchangeRates = append(pmt.ExchangeRates, nil)
 		pmt.Complements = append(pmt.Complements, nil)
 		require.NoError(t, pmt.Calculate())
-		require.NoError(t, pmt.Validate())
+		require.NoError(t, rules.Validate(pmt))
 	})
 }
 

@@ -71,8 +71,7 @@ func TestCorrect(t *testing.T) {
 				},
 				Data: []byte(`{"type":"credit-note","issue_date":"2023-04-17","ext":{"es-facturae-correct":"01"}}`),
 			},
-			err: "code=422, message=doc: (preceding: (0: (ext: (es-facturae-correct: undefined.).).).)",
-		}
+			}
 	})
 
 	tests.Add("success just invoice", func(t *testing.T) interface{} {

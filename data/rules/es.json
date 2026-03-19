@@ -7,7 +7,7 @@
       "name": "bill.Invoice",
       "subsets": [
         {
-          "guard": "regime in [ES]",
+          "guard": "context: regime in [ES]",
           "subsets": [
             {
               "field": "supplier",

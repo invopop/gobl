@@ -27,6 +27,78 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-SE-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SE]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-SE-BILL-INVOICE-01",
+                  "desc": "invoice SE supplier must have either tax ID code or identity with ON, PN, or CN type",
+                  "tests": "has tax ID code or identity with type in [ON, PN, CN]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SE-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SE]",
+          "subsets": [
+            {
+              "guard": "type in [ON]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SE-ORG-IDENTITY-01",
+                      "desc": "invalid organization number format",
+                      "tests": "valid org number"
+                    },
+                    {
+                      "id": "GOBL-SE-ORG-IDENTITY-02",
+                      "desc": "invalid checksum",
+                      "tests": "luhn checksum"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "type in [PN, CN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SE-ORG-IDENTITY-03",
+                      "desc": "invalid person or coordination number format",
+                      "tests": "valid individual number"
+                    },
+                    {
+                      "id": "GOBL-SE-ORG-IDENTITY-04",
+                      "desc": "invalid checksum",
+                      "tests": "luhn checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
