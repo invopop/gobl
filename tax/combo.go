@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"context"
 	"encoding/json"
 	"strings"
 
@@ -9,8 +8,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Combo represents the tax combination of a category code and rate key. The percent
@@ -37,40 +36,6 @@ type Combo struct {
 	retained bool `json:"-"`
 	// Copied from the category definition, implies this tax combo is informative
 	informative bool `json:"-"`
-}
-
-// ValidateWithContext ensures the Combo has the correct details.
-func (c *Combo) ValidateWithContext(ctx context.Context) error {
-	// First perform combo validation with the regime from the context,
-	// or the country override.
-
-	var r *RegimeDef
-	if c.Country.Empty() {
-		r = RegimeDefFromContext(ctx)
-	} else {
-		r = RegimeDefFor(c.Country.Code())
-	}
-	return ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Category,
-			validation.Required,
-			r.InCategories(),
-		),
-		validation.Field(&c.Country),
-		validation.Field(&c.Key,
-			r.InCategoryKeys(c.Category),
-		),
-		validation.Field(&c.Rate,
-			r.InCategoryRates(c.Category, c.Key),
-		),
-		validation.Field(&c.Percent,
-			r.RequiresPercent(c.Category, c.Key),
-		),
-		validation.Field(&c.Surcharge, validation.When(
-			c.Percent == nil,
-			validation.Nil.Error("required with percent"),
-		)),
-		validation.Field(&c.Ext),
-	)
 }
 
 // Normalize tries to normalize the data inside the tax combo.
@@ -203,6 +168,143 @@ func (c *Combo) prepareRate(cd *CategoryDef, date cal.Date) error {
 	}
 
 	return nil
+}
+
+func comboRules() *rules.Set {
+	return rules.For(new(Combo),
+		rules.Assert("01", "tax category not valid for regime",
+			rules.ByContext("category in regime", comboCategoryValid),
+		),
+		rules.Assert("02", "tax combo key not valid for category in regime",
+			rules.ByContext("key in category", comboKeyValid),
+		),
+		rules.Assert("03", "tax combo rate not valid for key in regime",
+			rules.ByContext("rate in key", comboRateValid),
+		),
+		rules.Assert("04", "tax combo percent required or invalid for key in regime",
+			rules.ByContext("percent valid for key", comboPercentValid),
+		),
+		rules.Assert("05", "tax combo surcharge requires percent in regime",
+			rules.By("surcharge requires percent", comboSurchargeValid),
+		),
+		rules.Assert("06", "tax combo extension key not defined in regime",
+			rules.By("extension keys defined", comboExtensionsValid),
+		),
+	)
+}
+
+// regimeDefFromContext returns the RegimeDef from the validation context.
+func regimeDefFromContext(ctx []any) *RegimeDef {
+	for _, v := range ctx {
+		if r, ok := v.(Regime); ok {
+			return r.RegimeDef()
+		}
+	}
+	return nil
+}
+
+// regimeDefForCombo returns the RegimeDef for the combo, using the combo's
+// Country override when set, otherwise falling back to the context regime.
+func regimeDefForCombo(ctx []any, combo *Combo) *RegimeDef {
+	if combo != nil && !combo.Country.Empty() {
+		return RegimeDefFor(combo.Country.Code())
+	}
+	return regimeDefFromContext(ctx)
+}
+
+func comboCategoryValid(ctx []any, val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok {
+		return true
+	}
+	rd := regimeDefForCombo(ctx, combo)
+	if rd == nil {
+		return true
+	}
+	return rd.CategoryDef(combo.Category) != nil
+}
+
+func comboKeyValid(ctx []any, val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok || combo.Key == cbc.KeyEmpty {
+		return true
+	}
+	rd := regimeDefForCombo(ctx, combo)
+	if rd == nil {
+		return true
+	}
+	cd := rd.CategoryDef(combo.Category)
+	if cd == nil {
+		return true
+	}
+	return cd.KeyDef(combo.Key) != nil
+}
+
+func comboRateValid(ctx []any, val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok || combo.Rate == cbc.KeyEmpty {
+		return true
+	}
+	rd := regimeDefForCombo(ctx, combo)
+	if rd == nil {
+		return true
+	}
+	cd := rd.CategoryDef(combo.Category)
+	if cd == nil {
+		return true
+	}
+	return cd.RateDef(combo.Key, combo.Rate) != nil
+}
+
+func comboPercentValid(ctx []any, val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok {
+		return true
+	}
+	rd := regimeDefForCombo(ctx, combo)
+	if rd == nil {
+		return true
+	}
+	cd := rd.CategoryDef(combo.Category)
+	if cd == nil {
+		return true
+	}
+	// No key: percent is always required.
+	if combo.Key == cbc.KeyEmpty {
+		return combo.Percent != nil
+	}
+	kd := cd.KeyDef(combo.Key)
+	if kd == nil {
+		return true // unknown key, skip percent check
+	}
+	if kd.NoPercent {
+		return combo.Percent == nil
+	}
+	return combo.Percent != nil
+}
+
+func comboSurchargeValid(val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok {
+		return true
+	}
+	if combo.Surcharge != nil && combo.Percent == nil {
+		return false
+	}
+	return true
+}
+
+func comboExtensionsValid(val any) bool {
+	combo, ok := val.(*Combo)
+	if !ok {
+		return true
+	}
+	for k := range combo.Ext {
+		if ExtensionForKey(k) == nil {
+			return false
+		}
+	}
+	return true
 }
 
 // UnmarshalJSON is a migration helper that will prepare the Combo's

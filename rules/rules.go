@@ -531,7 +531,7 @@ func (s *Set) validate(rc *RunCtx, obj any) Faults {
 		// are not re-evaluated against nested objects, and type-specific rules
 		// registered under this namespace (e.g. taxComboRules) are still applied
 		// to nested types discovered during traversal.
-		if s.isNamespace() && rv.Kind() == reflect.Struct {
+		if s.isNamespace() {
 			hasTypeRules := false
 			for _, ss := range s.Subsets {
 				if ss.objType != nil {
@@ -540,24 +540,34 @@ func (s *Set) validate(rc *RunCtx, obj any) Faults {
 				}
 			}
 			if hasTypeRules {
-				rt := rv.Type()
-				for i := range rv.NumField() {
-					sf := rt.Field(i)
-					if !sf.IsExported() {
-						continue
+				switch rv.Kind() {
+				case reflect.Struct:
+					rt := rv.Type()
+					for i := range rv.NumField() {
+						sf := rt.Field(i)
+						if !sf.IsExported() {
+							continue
+						}
+						fv := rv.Field(i)
+						fs := s.validateNestedFieldValue(rc, fv)
+						if len(fs) == 0 {
+							continue
+						}
+						if sf.Anonymous {
+							faults = append(faults, fs...)
+							continue
+						}
+						name := jsonFieldName(sf)
+						if name != "" {
+							faults = append(faults, prependPath(name, fs)...)
+						}
 					}
-					fv := rv.Field(i)
-					fs := s.validateNestedFieldValue(rc, fv)
-					if len(fs) == 0 {
-						continue
-					}
-					if sf.Anonymous {
-						faults = append(faults, fs...)
-						continue
-					}
-					name := jsonFieldName(sf)
-					if name != "" {
-						faults = append(faults, prependPath(name, fs)...)
+				case reflect.Slice, reflect.Array:
+					for i := range rv.Len() {
+						ev := rv.Index(i)
+						if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
+							faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
+						}
 					}
 				}
 			}
@@ -658,6 +668,11 @@ func (s *Set) validateNestedFieldValue(rc *RunCtx, fv reflect.Value) []*Fault {
 		return s.validateNestedValue(rc, fv.Interface())
 	case reflect.Slice, reflect.Array:
 		var faults []*Fault
+		// For named slice types (e.g. tax.Set), apply type-specific rules to
+		// the whole slice before iterating its elements.
+		if fv.Type().PkgPath() != "" {
+			faults = append(faults, s.validateNestedValue(rc, fv.Interface())...)
+		}
 		for i := range fv.Len() {
 			ev := fv.Index(i)
 			if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {

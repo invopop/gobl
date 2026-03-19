@@ -25,5 +25,7 @@ func init() {
 		addonDefRules(),
 		identityRules(),
 		categoryDefRules(),
+		setRules(),
+		comboRules(),
 	)
 }

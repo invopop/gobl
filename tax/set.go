@@ -1,12 +1,11 @@
 package tax
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.
@@ -28,25 +27,6 @@ func CleanSet(s Set) Set {
 		return nil
 	}
 	return ns
-}
-
-// ValidateWithContext ensures the set of tax combos looks correct
-func (s Set) ValidateWithContext(ctx context.Context) error {
-	combos := make(map[cbc.Code]cbc.Key)
-	for i, c := range s {
-		if _, ok := combos[c.Category]; ok {
-			return validation.Errors{
-				fmt.Sprintf("%d", i): fmt.Errorf("category %v is duplicated", c.Category),
-			}
-		}
-		if err := c.ValidateWithContext(ctx); err != nil {
-			return validation.Errors{
-				fmt.Sprintf("%d", i): err,
-			}
-		}
-		combos[c.Category] = c.Key
-	}
-	return nil
 }
 
 // Equals returns true if the sets match, regardless of order.
@@ -85,6 +65,32 @@ func (s Set) Key(cat cbc.Code) cbc.Key {
 		}
 	}
 	return ""
+}
+
+func setRules() *rules.Set {
+	return rules.For(new(Set),
+		rules.Assert("01", "all tax categories in a set must be unique",
+			rules.By("no duplicate categories", setNoDuplicateCategories),
+		),
+	)
+}
+
+func setNoDuplicateCategories(val any) bool {
+	s, ok := val.(Set)
+	if !ok {
+		return true
+	}
+	seen := make(map[cbc.Code]bool)
+	for _, c := range s {
+		if c == nil {
+			continue
+		}
+		if seen[c.Category] {
+			return false
+		}
+		seen[c.Category] = true
+	}
+	return true
 }
 
 // SetTest defines a validation rule for tax sets, checking for the presence of certain categories.

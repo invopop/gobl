@@ -3,6 +3,7 @@ package be_test
 import (
 	"testing"
 
+	_ "github.com/invopop/gobl/regimes/be"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
