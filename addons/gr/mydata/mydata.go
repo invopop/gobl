@@ -8,6 +8,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,6 +20,16 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("GR-MYDATA-V1"),
+		is.HasContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		billChargeRules(),
+		taxComboRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -51,7 +63,6 @@ func newAddon() *tax.AddonDef {
 		},
 		Normalizer: normalize,
 		Scenarios:  scenarios,
-		Validator:  validate,
 	}
 }
 
@@ -68,18 +79,3 @@ func normalize(doc any) {
 	}
 }
 
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	}
-	return nil
-}

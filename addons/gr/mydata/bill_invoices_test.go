@@ -73,24 +73,24 @@ func TestInvoiceValidation(t *testing.T) {
 
 	// Make it invalid
 	inv.Series = ""
-	inv.Supplier.TaxID.Code = ""
+	inv.Supplier.TaxID = nil
 	inv.Customer.Addresses = nil
 	inv.Lines[0].Quantity = num.MakeAmount(0, 0)
 
 	require.NoError(t, inv.Calculate())
 
 	err := rules.Validate(inv)
-	assert.ErrorContains(t, err, "series: cannot be blank")
-	assert.ErrorContains(t, err, "supplier: (tax_id: (code: cannot be blank")
-	assert.ErrorContains(t, err, "customer: (addresses: cannot be blank")
-	assert.ErrorContains(t, err, "lines: (0: (total: must be greater than 0")
+	assert.ErrorContains(t, err, "series is required")
+	assert.ErrorContains(t, err, "supplier tax ID is required")
+	assert.ErrorContains(t, err, "customer addresses are required")
+	assert.ErrorContains(t, err, "line total must be positive")
 
 	// Go in two parts as the payment errors are independent
 	inv.Payment.Instructions.Key = "debit-transfer"
 	inv.Payment.Instructions.Ext = nil
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "payment: (instructions: (ext: (gr-mydata-payment-means: required.).).)")
+	assert.ErrorContains(t, err, "payment instructions require 'gr-mydata-payment-means' extension")
 }
 
 func TestSimplifiedInvoiceValidation(t *testing.T) {
@@ -137,7 +137,7 @@ func TestPrecedingValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 
 	err := rules.Validate(inv)
-	assert.ErrorContains(t, err, "preceding: (0: (stamps: missing iapr-mark stamp.).)")
+	assert.ErrorContains(t, err, "preceding document requires 'iapr-mark' stamp")
 
 	inv.Preceding[0].Stamps[0].Provider = "iapr-mark"
 	require.NoError(t, rules.Validate(inv))
@@ -156,7 +156,7 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 			mydata.ExtKeyIncomeCat: "category1_1",
 		}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "lines: (0: (item: (ext: (gr-mydata-income-type: required.).).).)")
+		assert.ErrorContains(t, rules.Validate(inv), "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present")
 	})
 
 	t.Run("income type, no cat", func(t *testing.T) {
@@ -165,7 +165,7 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 			mydata.ExtKeyIncomeType: "E3_106",
 		}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "lines: (0: (item: (ext: (gr-mydata-income-cat: required.).).).)")
+		assert.ErrorContains(t, rules.Validate(inv), "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present")
 	})
 
 	t.Run("income cat with type", func(t *testing.T) {

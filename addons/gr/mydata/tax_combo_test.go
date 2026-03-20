@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,10 +21,10 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(4, 2),
 		}
-		err := ad.Validator(tc)
-		assert.ErrorContains(t, err, "ext: (gr-mydata-vat-rate: required.)")
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "VAT combo requires 'gr-mydata-vat-rate' extension")
 		ad.Normalizer(tc)
-		assert.NoError(t, ad.Validator(tc))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 
 	t.Run("exemption presence", func(t *testing.T) {
@@ -32,13 +33,13 @@ func TestValidateTaxCombo(t *testing.T) {
 			Key:      tax.KeyExempt,
 		}
 		ad.Normalizer(tc)
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, withAddonContext())
 		assert.NoError(t, err)
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
-		assert.NoError(t, ad.Validator(tc))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 
 	t.Run("non-vat category", func(t *testing.T) {
@@ -46,9 +47,10 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: "FOO",
 			Percent:  num.NewPercentage(4, 2),
 		}
-		assert.NoError(t, ad.Validator(tc))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 }
+
 
 func TestNormalizeTaxCombo(t *testing.T) {
 	ad := tax.AddonForKey(mydata.V1)

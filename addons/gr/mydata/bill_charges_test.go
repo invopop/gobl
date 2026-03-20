@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -117,11 +118,9 @@ func TestNormalizeCharge(t *testing.T) {
 }
 
 func TestValidateCharge(t *testing.T) {
-	ad := tax.AddonForKey(mydata.V1)
-
 	t.Run("nil charge", func(t *testing.T) {
 		var c *bill.Charge
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -133,7 +132,7 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyFee:     "13",
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -145,7 +144,7 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyOtherTax: "8",
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -157,7 +156,7 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyStampDuty: "1",
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -168,9 +167,9 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "gr-mydata-fee: required")
+		assert.Contains(t, err.Error(), "charge with fee tax type requires 'gr-mydata-fee' extension")
 	})
 
 	t.Run("missing other tax extension for other tax type", func(t *testing.T) {
@@ -180,9 +179,9 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyTaxType: mydata.TaxTypeOtherTax,
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "gr-mydata-other-tax: required")
+		assert.Contains(t, err.Error(), "charge with other-tax type requires 'gr-mydata-other-tax' extension")
 	})
 
 	t.Run("missing stamp duty extension for stamp duty type", func(t *testing.T) {
@@ -192,9 +191,9 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyTaxType: mydata.TaxTypeStampDuty,
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "gr-mydata-stamp-duty: required")
+		assert.Contains(t, err.Error(), "charge with stamp-duty type requires 'gr-mydata-stamp-duty' extension")
 	})
 
 	t.Run("multiple specific extensions", func(t *testing.T) {
@@ -206,9 +205,15 @@ func TestValidateCharge(t *testing.T) {
 				mydata.ExtKeyOtherTax: "8",
 			},
 		}
-		err := ad.Validator(c)
+		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "gr-mydata-other-tax: only one allowed")
-		assert.Contains(t, err.Error(), "gr-mydata-fee: only one allowed")
+		assert.Contains(t, err.Error(), "only one of fee, other-tax, or stamp-duty allowed")
+		// The "only one" rule covers all three extensions together
 	})
+}
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(mydata.V1), tax.AddonForKey(mydata.V1))
+	}
 }
