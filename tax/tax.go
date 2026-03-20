@@ -28,6 +28,7 @@ func init() {
 		correctionDefinitionRules(),
 		rateDefRules(),
 		regimeDefRules(),
+		scenarioSetRules(),
 		setRules(),
 		comboRules(),
 	)

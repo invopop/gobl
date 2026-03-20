@@ -1,7 +1,6 @@
 package tax_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
@@ -60,24 +59,6 @@ func TestAddonForKey(t *testing.T) {
 func TestAllAddonDefs(t *testing.T) {
 	as := tax.AllAddonDefs()
 	assert.NotEmpty(t, as)
-}
-
-func TestAddonWithContext(t *testing.T) {
-	t.Run("with validator", func(t *testing.T) {
-		ad := tax.AddonForKey("mx-cfdi-v4")
-		ctx := ad.WithContext(context.Background())
-
-		vs := tax.Validators(ctx)
-		assert.Len(t, vs, 1)
-		// no reliable way to check the function is actually the same :-(
-	})
-	t.Run("without validator", func(t *testing.T) {
-		ad := new(tax.AddonDef)
-		ctx := ad.WithContext(context.Background())
-		vs := tax.Validators(ctx)
-		assert.Empty(t, vs)
-	})
-
 }
 
 func TestAddonsJSONSchemaEmbed(t *testing.T) {

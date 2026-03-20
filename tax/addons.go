@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"context"
 	"fmt"
 	"sort"
 	"strings"
@@ -164,16 +163,6 @@ func AllAddonDefs() []*AddonDef {
 		all[i] = addons.list[ao]
 	}
 	return all
-}
-
-// WithContext adds this addon to the given context, alongside
-// its validator.
-func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
-	if ad == nil {
-		return ctx
-	}
-	ctx = ContextWithValidator(ctx, ad.Validator)
-	return ctx
 }
 
 // RulesContext implements rules.ContextAdder so that any struct embedding

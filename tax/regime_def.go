@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"context"
 	"errors"
 	"strings"
 	"time"
@@ -12,11 +11,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
-)
-
-const (
-	// KeyRegime is used in the context to store the tax regime during validation.
-	keyRegime contextKey = "regime"
 )
 
 // RegimeDef defines the holding structure for the definitions of taxes inside a country
@@ -100,16 +94,6 @@ type RegimeDef struct {
 	Normalizer Normalizer `json:"-"`
 }
 
-// WithContext adds this regime to the given context, alongside
-// its validator and tags in the contexts.
-func (r *RegimeDef) WithContext(ctx context.Context) context.Context {
-	if r == nil {
-		return ctx
-	}
-	ctx = context.WithValue(ctx, keyRegime, r)
-	return ctx
-}
-
 // Normalizers returns the normalizers for this regime, if any,
 // handling any potential for nil pointers.
 func (r *RegimeDef) Normalizers() Normalizers {
@@ -117,15 +101,6 @@ func (r *RegimeDef) Normalizers() Normalizers {
 		return nil
 	}
 	return Normalizers{r.Normalizer}
-}
-
-// RegimeDefFromContext returns the regime from the given context, or nil.
-func RegimeDefFromContext(ctx context.Context) *RegimeDef {
-	r, ok := ctx.Value(keyRegime).(*RegimeDef)
-	if !ok {
-		return nil
-	}
-	return r
 }
 
 // Code provides a unique code for this tax regime based on the country.
