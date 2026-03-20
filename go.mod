@@ -53,4 +53,4 @@ require (
 
 // replace github.com/invopop/validation => ../validation
 
-replace github.com/expr-lang/expr => ../expr
+replace github.com/expr-lang/expr => github.com/invopop/expr v0.0.0-20260306122517-c23ccc78012d
