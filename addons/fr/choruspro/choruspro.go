@@ -8,6 +8,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,6 +20,13 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("FR-CHORUSPRO-V1"),
+		is.HasContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		orgPartyRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -58,19 +67,8 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
-		Validator:  validate,
 		Normalizer: normalize,
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	}
-	return nil
 }
 
 func normalize(doc any) {

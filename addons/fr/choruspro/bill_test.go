@@ -77,8 +77,6 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestValidateInvoice(t *testing.T) {
-	addon := tax.AddonForKey(choruspro.V1)
-
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
@@ -89,7 +87,7 @@ func TestValidateInvoice(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		inv.Customer = nil
-		err := addon.Validator(inv)
+		err := rules.Validate(inv)
 		assert.NoError(t, err) // Customer validation only runs if customer exists
 	})
 
@@ -99,8 +97,8 @@ func TestValidateInvoice(t *testing.T) {
 		inv.Customer.Ext = tax.Extensions{
 			choruspro.ExtKeyScheme: "2",
 		}
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "invalid value")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer scheme extension must be '1'")
 	})
 
 	t.Run("customer with SIRET with correct scheme", func(t *testing.T) {
@@ -115,7 +113,7 @@ func TestValidateInvoice(t *testing.T) {
 		inv.Customer.Ext = tax.Extensions{
 			choruspro.ExtKeyScheme: "1",
 		}
-		err := addon.Validator(inv)
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -123,8 +121,8 @@ func TestValidateInvoice(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		inv.Customer.Identities = nil
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "identities: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer identities are required")
 	})
 
 	t.Run("missing framework extension", func(t *testing.T) {
@@ -134,8 +132,8 @@ func TestValidateInvoice(t *testing.T) {
 		if inv.Tax != nil && inv.Tax.Ext != nil {
 			delete(inv.Tax.Ext, choruspro.ExtKeyFramework)
 		}
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "required")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "framework extension is required")
 	})
 
 	t.Run("framework A2 with unpaid invoice", func(t *testing.T) {
@@ -151,8 +149,8 @@ func TestValidateInvoice(t *testing.T) {
 		}
 		inv.Tax.Ext[choruspro.ExtKeyFramework] = "A2"
 
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "totals: must be paid in full for framework 'A2'.")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "must be paid in full for framework 'A2'")
 	})
 
 	t.Run("framework A2 with paid invoice", func(t *testing.T) {
@@ -165,12 +163,13 @@ func TestValidateInvoice(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
-					Percent: num.NewPercentage(100, 2),
+					Description: "Paid in advance",
+					Percent:     num.NewPercentage(100, 2),
 				},
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := addon.Validator(inv)
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 		assert.Equal(t, cbc.Code("A2"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})

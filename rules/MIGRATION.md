@@ -294,9 +294,11 @@ rules.Field("code",
 )
 ```
 
-Keep helper functions short and named descriptively — they double as
-documentation and make `linkRules()` / `headerRules()` easy to read at a
-glance.
+**Prefer private named functions over inline anonymous functions** in all
+`is.Func`, `is.StringFunc`, `is.FuncError`, and `is.FuncContext` calls — even
+when the logic is trivial. Named functions are easier to test in isolation,
+appear in stack traces, and keep the rule set readable at a glance. Inline
+closures should be the exception, not the rule.
 
 ### Field must not be set (`Empty` / `Nil`)
 
@@ -375,11 +377,13 @@ validation.Field(&obj.Stamps,
     validation.When(!internal.IsSigned(ctx), validation.Empty),
 )
 
-// After — condition derived from the object itself
-rules.When(is.Func("not signed", func(val any) bool {
+// After — condition derived from the object itself (use a private func, not an inline closure)
+func envelopeNotSigned(val any) bool {
     e, ok := val.(*Envelope)
     return ok && len(e.Signatures) == 0
-}),
+}
+
+rules.When(is.Func("not signed", envelopeNotSigned),
     rules.Field("stamps",
         rules.Assert("12", "stamps not allowed before signing",
             is.Length(0, 0),
@@ -464,6 +468,14 @@ func invoiceRules() *rules.Set {
 Each `rules.Field` in the chain constrains the context for its children, so
 assertions and tests inside `rules.Field("tax_id", ...)` operate on the
 `TaxIdentity` struct, not the outer `Invoice`.
+
+> **Message convention for nested fields:** When writing assertions inside
+> nested `Field` calls, phrase the message to include the full logical path
+> from the root object so the origin is obvious without inspecting the fault
+> path. For example, inside `rules.Field("supplier", rules.Field("tax_id", ...))`,
+> write `"supplier tax ID is required"` rather than just `"tax ID is required"`.
+> This makes the message self-explanatory in logs and UIs that display only the
+> text.
 
 ### Slice fields (`Each`)
 

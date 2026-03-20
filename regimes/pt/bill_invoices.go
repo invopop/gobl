@@ -43,7 +43,7 @@ func billInvoiceRules() *rules.Set {
 				)),
 			),
 			rules.When(
-				is.Func("is credit or debit note", isCreditOrDebitNote),
+				bill.InvoiceTypeIn(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
 				rules.Field("preceding",
 					rules.Assert("02", "preceding is required for credit and debit notes", is.Present),
 				),
@@ -92,23 +92,8 @@ func billInvoiceRules() *rules.Set {
 	)
 }
 
-func isCreditOrDebitNote(val any) bool {
-	inv, _ := val.(*bill.Invoice)
-	return inv != nil && (inv.Type == bill.InvoiceTypeCreditNote || inv.Type == bill.InvoiceTypeDebitNote)
-}
-
-func invoiceFrom(val any) *bill.Invoice {
-	switch v := val.(type) {
-	case *bill.Invoice:
-		return v
-	case bill.Invoice:
-		return &v
-	}
-	return nil
-}
-
 func valueDateNotAfterIssueDate(val any) bool {
-	inv := invoiceFrom(val)
+	inv := val.(*bill.Invoice)
 	if inv == nil || inv.ValueDate == nil {
 		return true
 	}
@@ -116,7 +101,7 @@ func valueDateNotAfterIssueDate(val any) bool {
 }
 
 func operationDateNotAfterIssueDate(val any) bool {
-	inv := invoiceFrom(val)
+	inv := val.(*bill.Invoice)
 	if inv == nil || inv.OperationDate == nil {
 		return true
 	}
@@ -124,7 +109,7 @@ func operationDateNotAfterIssueDate(val any) bool {
 }
 
 func precedingDatesNotAfterIssueDate(val any) bool {
-	inv := invoiceFrom(val)
+	inv := val.(*bill.Invoice)
 	if inv == nil {
 		return true
 	}
@@ -140,7 +125,7 @@ func precedingDatesNotAfterIssueDate(val any) bool {
 }
 
 func advanceDatesNotAfterIssueDate(val any) bool {
-	inv := invoiceFrom(val)
+	inv := val.(*bill.Invoice)
 	if inv == nil || inv.Payment == nil {
 		return true
 	}
@@ -156,7 +141,7 @@ func advanceDatesNotAfterIssueDate(val any) bool {
 }
 
 func dueDatesNotBeforeIssueDate(val any) bool {
-	inv := invoiceFrom(val)
+	inv := val.(*bill.Invoice)
 	if inv == nil || inv.Payment == nil || inv.Payment.Terms == nil {
 		return true
 	}

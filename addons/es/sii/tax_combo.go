@@ -1,10 +1,13 @@
 package sii
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -55,30 +58,42 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-		return nil
-	}
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			validation.Required,
-			// Regime is always required for VAT and IGIC
-			tax.ExtensionsRequire(ExtKeyRegime),
-			validation.When(
-				tc.Percent != nil,
-				tax.ExtensionsExclude(ExtKeyExempt),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			// Guard: only apply to VAT/IGIC combos processed by SII normalization
+			// (which always sets ExtKeyRegime via SetIfEmpty).
+			is.Func("sii vat/igic", taxComboForVATorIGIC),
+			rules.Field("ext",
+				// Code 01: regime is always required for VAT and IGIC
+				rules.Assert("01", fmt.Sprintf("extension '%s' is required", ExtKeyRegime),
+					tax.ExtensionsRequire(ExtKeyRegime),
+				),
+				// Code 03: outside scope and exempt are mutually exclusive
+				rules.When(
+					is.Func("has outside scope", taxComboExtHasOutsideScope),
+					rules.Assert("03", fmt.Sprintf("extension '%s' must not be set when '%s' is set", ExtKeyExempt, ExtKeyOutsideScope),
+						tax.ExtensionsExclude(ExtKeyExempt),
+					),
+				),
+				// Code 04: E2 and E3 exempt codes not allowed with regime 01
+				// https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/G417/FicherosSuministros/V_1_1/Validaciones_ErroresSII_v1.1.pdf (Page 51, point 11)
+				rules.When(
+					tax.ExtensionsHasCodes(ExtKeyRegime, "01"),
+					rules.Assert("04", fmt.Sprintf("exempt codes E2 and E3 not allowed with '%s' 01", ExtKeyRegime),
+						tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
+					),
+				),
 			),
-			validation.When(
-				// ExtKeyOutsideScope and ExtKeyExempt are mutually exclusive
-				tc.Ext.Has(ExtKeyOutsideScope),
-				tax.ExtensionsExclude(ExtKeyExempt),
+			// Code 02: exempt must not be set when percent is set
+			rules.When(
+				is.Func("has percent", taxComboHasPercent),
+				rules.Field("ext",
+					rules.Assert("02", fmt.Sprintf("extension '%s' must not be set when percent is set", ExtKeyExempt),
+						tax.ExtensionsExclude(ExtKeyExempt),
+					),
+				),
 			),
-			// https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/G417/FicherosSuministros/V_1_1/Validaciones_ErroresSII_v1.1.pdf (Page 51, point 11)
-			validation.When(
-				tc.Ext.Get(ExtKeyRegime).In("01"),
-				tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
-			),
-			validation.Skip,
 		),
 	)
 }
@@ -104,4 +119,19 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	if tc.Key.IsEmpty() {
 		tc.Key = tax.KeyStandard
 	}
+}
+
+func taxComboForVATorIGIC(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC)
+}
+
+func taxComboHasPercent(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Percent != nil
+}
+
+func taxComboExtHasOutsideScope(val any) bool {
+	ext, ok := val.(tax.Extensions)
+	return ok && ext.Has(ExtKeyOutsideScope)
 }

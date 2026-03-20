@@ -62,7 +62,7 @@ type AddonDef struct {
 	// Normalizer performs the normalization rules for the add-on.
 	Normalizer func(doc any) `json:"-"`
 
-	// Validator performs the validation rules for the add-on.
+	// TODO: REMOVE!
 	Validator func(doc any) error `json:"-"`
 
 	// Corrections is used to provide a map of correction definitions that

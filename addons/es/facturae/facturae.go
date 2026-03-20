@@ -21,6 +21,7 @@ func init() {
 		V3.String(),
 		rules.GOBL.Add("ES-FACTURAE-v3"),
 		is.HasContext(tax.AddonIn(V3)),
+		billInvoiceRules(),
 	)
 }
 
@@ -33,7 +34,6 @@ func newAddon() *tax.AddonDef {
 		Extensions:  extensions,
 		Normalizer:  normalize,
 		Scenarios:   scenarios,
-		Validator:   validate,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
@@ -43,12 +43,4 @@ func normalize(doc any) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }

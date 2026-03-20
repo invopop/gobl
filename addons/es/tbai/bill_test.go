@@ -114,7 +114,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		assert.ErrorContains(t, err, "customer tax ID is required")
 	})
 
 	t.Run("with exemption reason", func(t *testing.T) {
@@ -135,7 +135,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("without notes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
-		assertValidationError(t, inv, "notes: with key 'general' missing")
+		assertValidationError(t, inv, "with key 'general' missing")
 	})
 
 	t.Run("correction", func(t *testing.T) {

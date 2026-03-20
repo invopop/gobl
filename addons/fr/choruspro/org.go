@@ -1,12 +1,10 @@
 package choruspro
 
 import (
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeOrgParty(party *org.Party) {
@@ -54,123 +52,4 @@ func normalizeOrgParty(party *org.Party) {
 			return
 		}
 	}
-}
-
-func validateOrgParty(value interface{}) error {
-	party, ok := value.(*org.Party)
-	if !ok || party == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(party,
-		validation.Field(&party.Ext,
-			tax.ExtensionsRequire(ExtKeyScheme),
-			validation.Skip,
-		),
-		validation.Field(&party.Identities,
-			validation.When(
-				party.Ext != nil,
-				validation.By(validateOrgIdentities(party.Ext.Get(ExtKeyScheme))),
-			),
-			validation.Skip,
-		),
-		validation.Field(&party.TaxID,
-			validation.When(
-				party.Ext != nil,
-				validation.By(validateOrgPartyTaxID(party.Ext.Get(ExtKeyScheme))),
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateOrgIdentities(scheme cbc.Code) validation.RuleFunc {
-	return func(value interface{}) error {
-		identities, ok := value.([]*org.Identity)
-		if !ok || identities == nil {
-			return nil
-		}
-
-		foundSIRET := false
-
-		for _, identity := range identities {
-			if identity.Type == fr.IdentityTypeSIRET {
-				foundSIRET = true
-				break
-			}
-		}
-
-		if scheme == "1" && !foundSIRET {
-			return validation.NewError("identities", "No SIRET identity found")
-		}
-		if scheme != "1" && foundSIRET {
-			return validation.NewError("identities", "SIRET identity not allowed for this extension")
-		}
-		return nil
-	}
-}
-
-func validateOrgPartyTaxID(scheme cbc.Code) validation.RuleFunc {
-	return func(value interface{}) error {
-		taxID, ok := value.(*tax.Identity)
-		if !ok || taxID == nil {
-			return nil
-		}
-
-		switch scheme {
-		case "1":
-			return validation.ValidateStruct(taxID,
-				validation.Field(&taxID.Country,
-					validation.Required,
-					validation.In(l10n.TaxCountryCode(l10n.FR)).Error("Customer must be a French company"),
-					validation.Skip,
-				),
-			)
-		case "2":
-			return validation.ValidateStruct(taxID,
-				validation.Field(&taxID.Country,
-					validation.Required,
-					validation.NotIn(l10n.TaxCountryCode(l10n.FR)).Error("Customer must be a non-French, EU company"),
-					validation.By(validateEUCompany),
-					validation.Skip,
-				),
-			)
-		case "3":
-			return validation.ValidateStruct(taxID,
-				validation.Field(&taxID.Country,
-					validation.Required,
-					validation.NotIn(l10n.TaxCountryCode(l10n.FR)).Error("Customer must be a non-EU company"),
-					validation.By(validateNonEUCompany),
-					validation.Skip,
-				),
-			)
-		}
-		return nil
-	}
-}
-
-func validateEUCompany(value interface{}) error {
-	country, ok := value.(l10n.TaxCountryCode)
-	if !ok || country == "" {
-		return nil
-	}
-
-	if !l10n.Unions().Code(l10n.EU).HasMember(l10n.Code(country)) {
-		return validation.NewError("taxID", "Customer must be a member of the EU")
-	}
-
-	return nil
-}
-
-func validateNonEUCompany(value interface{}) error {
-	country, ok := value.(l10n.TaxCountryCode)
-	if !ok || country == "" {
-		return nil
-	}
-
-	if l10n.Unions().Code(l10n.EU).HasMember(l10n.Code(country)) {
-		return validation.NewError("taxID", "Customer must be a non-EU company")
-	}
-
-	return nil
 }

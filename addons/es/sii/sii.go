@@ -6,6 +6,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -16,6 +18,13 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("ES-SII-V1"),
+		is.HasContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		taxComboRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -50,7 +59,6 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
-		Validator:   validate,
 		Scenarios:   scenarios,
 		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
@@ -66,14 +74,4 @@ func normalize(doc any) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }

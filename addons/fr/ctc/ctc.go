@@ -9,6 +9,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,6 +21,16 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Flow2V1.String(),
+		rules.GOBL.Add("FR-CTC-FLOW2-V1"),
+		is.HasContext(tax.AddonIn(Flow2V1)),
+		billInvoiceRules(),
+		orgPartyRules(),
+		orgIdentityRules(),
+		orgInboxRules(),
+		orgItemRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -42,7 +54,7 @@ func newAddon() *tax.AddonDef {
 				It requires the EN16931 addon as it extends the European standard with French-specific
 				requirements for the e-invoicing reform.
 
-				This addon is required for regulated invoice. This refers to invoices between two parties 
+				This addon is required for regulated invoice. This refers to invoices between two parties
 				registered for VAT in France. This addon should not be used for invoices which should be reported.
 
 				Note on currency conversion (BR-FR-CO-12): When an invoice is issued in a non-EUR
@@ -60,9 +72,9 @@ func newAddon() *tax.AddonDef {
 				Il nécessite l'addon EN16931 car il étend le standard européen avec des exigences
 				spécifiques françaises pour la réforme de la facturation électronique.
 
-				Cet addon est requis pour les factures réglementées. Cela concerne les factures entre                           
-      			deux parties assujetties à la TVA en France. Cet addon ne doit pas être utilisé pour                                   
-            	les factures qui doivent être déclarées.                                                                                                                               
+				Cet addon est requis pour les factures réglementées. Cela concerne les factures entre
+      			deux parties assujetties à la TVA en France. Cet addon ne doit pas être utilisé pour
+            	les factures qui doivent être déclarées.
 
 				Note sur la conversion de devises (BR-FR-CO-12) : Lorsqu'une facture est émise dans
 				une devise autre que l'EUR, la bibliothèque gobl.ubl gère automatiquement la conversion
@@ -85,7 +97,6 @@ func newAddon() *tax.AddonDef {
 			invoiceTags,
 		},
 		Normalizer: normalize,
-		Validator:  validate,
 	}
 }
 
@@ -98,20 +109,4 @@ func normalize(doc any) {
 	case *org.Identity:
 		normalizeIdentity(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Party:
-		return validateParty(obj)
-	case *org.Identity:
-		return validateIdentity(obj)
-	case *org.Inbox:
-		return validateInbox(obj)
-	case *org.Item:
-		return validateItem(obj)
-	}
-	return nil
 }

@@ -190,14 +190,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "customer: cannot be blank.")
+		require.ErrorContains(t, rules.Validate(inv), "customer is required")
 	})
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "es-sii-doc-type: required")
+		require.ErrorContains(t, err, "extension 'es-sii-doc-type' is required")
 	})
 
 	t.Run("note too long", func(t *testing.T) {
@@ -210,7 +210,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "text: the length must be no more than 500")
+		require.ErrorContains(t, err, "general note text must be 500 characters or less")
 	})
 
 	t.Run("note with wrong key", func(t *testing.T) {
@@ -250,23 +250,21 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
-		assertValidationError(t, inv, "preceding: cannot be blank")
+		assertValidationError(t, inv, "preceding documents are required for corrective invoices")
 	})
 	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note needs no preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("corrective invoice preceding requires issue date and tax", func(t *testing.T) {
@@ -277,7 +275,10 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "123",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "preceding issue date is required")
+		require.ErrorContains(t, err, "preceding invoice tax data is required")
 	})
 
 	t.Run("corrective invoice with preceding", func(t *testing.T) {
@@ -345,7 +346,10 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "123",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "preceding issue date is required")
+		require.ErrorContains(t, err, "preceding invoice tax data is required")
 	})
 
 	t.Run("customer nil", func(t *testing.T) {
@@ -353,21 +357,20 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 	t.Run("customer with missing ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "customer: must have a tax_id, or an identity with ext 'es-sii-identity-type'")
+		assert.ErrorContains(t, rules.Validate(inv), "must have a tax_id, or an identity with ext 'es-sii-identity-type'")
 	})
 	t.Run("customer with missing Tax ID code", func(t *testing.T) {
 		// SII has no way to handle just a country without an actual code.
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "customer: (tax_id: (code: cannot be blank.).)")
+		assert.ErrorContains(t, rules.Validate(inv), "customer tax ID must have a code")
 	})
 	t.Run("customer with identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)

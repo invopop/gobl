@@ -8,8 +8,8 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,7 +26,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier.tax_id: supplier tax ID is required")
+		assert.ErrorContains(t, err, "[GOBL-ES-BILL-INVOICE-02] ($.supplier.tax_id) invoice supplier tax ID in Spain is required")
 	})
 
 	t.Run("missing customer tax ID", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		assert.NoError(t, err, "if there is no country, customer tax ID code is not required")
 	})
 
 	t.Run("missing ext key doc type", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "tax: (ext: (es-facturae-doc-type: required.).)")
+		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
 	})
 
 }
@@ -53,7 +53,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 
 	require.NoError(t, inv.Calculate())
 	err := rules.Validate(inv)
-	assert.ErrorContains(t, err, "preceding: cannot be blank.")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-04] ($.preceding) preceding document reference is required for credit-note, corrective, debit-note invoices")
 
 	inv.Preceding = []*org.DocumentRef{
 		{
@@ -62,7 +62,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "preceding: (0: (ext: (es-facturae-correction: required.); issue_date: cannot be blank.).)")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-v3-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
 
 	inv.Preceding[0].Ext = tax.Extensions{
 		facturae.ExtKeyCorrection: "01",

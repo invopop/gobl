@@ -10,6 +10,9 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-2 code for Spain.
+const CountryCode = "ES"
+
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register(
@@ -57,7 +60,7 @@ const (
 // New provides the Spanish tax regime definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "ES",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

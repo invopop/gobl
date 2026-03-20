@@ -56,7 +56,7 @@ func TestValidateInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "payment: (instructions: (credit_transfer: (0: (number: cannot be blank.).).).)")
+		assert.ErrorContains(t, err, "account number is required when IBAN is not provided")
 	})
 
 	t.Run("valid invoice with card payment", func(t *testing.T) {
@@ -109,7 +109,7 @@ func TestValidateInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "payment: (instructions: (direct_debit: (ref: cannot be blank.).).)")
+		assert.ErrorContains(t, err, "direct debit mandate reference is required")
 	})
 
 	t.Run("invalid invoice with invalid payment key", func(t *testing.T) {
@@ -124,6 +124,7 @@ func TestValidateInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "payment: (instructions: (key: must be or start with a valid key.).)")
+		// This validation comes from the pay package's own rules
+		assert.ErrorContains(t, err, "key")
 	})
 }
