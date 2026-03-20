@@ -5,6 +5,8 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -25,6 +27,14 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V4.String(),
+		rules.GOBL.Add("AR-ARCA-V4"),
+		is.HasContext(tax.AddonIn(V4)),
+		billInvoiceRules(),
+		billChargeRules(),
+		taxComboRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -49,8 +59,7 @@ func newAddon() *tax.AddonDef {
 			invoiceTags,
 		},
 		Corrections: invoiceCorrectionDefinitions,
-		Normalizer:  normalize,
-		Validator:   validate,
+		Normalizer: normalize,
 	}
 }
 
@@ -61,16 +70,4 @@ func normalize(doc any) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }

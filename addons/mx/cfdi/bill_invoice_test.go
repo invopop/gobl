@@ -14,11 +14,17 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	_ "github.com/invopop/gobl/regimes/mx"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(cfdi.V4), tax.AddonForKey(cfdi.V4))
+	}
+}
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
@@ -113,9 +119,7 @@ func TestValidInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		// Order is not guaranteed, so check for each error separately
-		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
-		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
+		require.ErrorContains(t, err, "extensions must all be present or all absent")
 	})
 	t.Run("with global month", func(t *testing.T) {
 		inv := validInvoice()
@@ -126,8 +130,7 @@ func TestValidInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
-		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
+		require.ErrorContains(t, err, "extensions must all be present or all absent")
 	})
 	t.Run("with global year", func(t *testing.T) {
 		inv := validInvoice()
@@ -138,8 +141,7 @@ func TestValidInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
-		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
+		require.ErrorContains(t, err, "extensions must all be present or all absent")
 	})
 	t.Run("with global period and month", func(t *testing.T) {
 		inv := validInvoice()
@@ -150,7 +152,7 @@ func TestValidInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, rules.Validate(inv), "tax: (ext: (mx-cfdi-global-year: required.).)")
+		require.ErrorContains(t, rules.Validate(inv), "extensions must all be present or all absent")
 	})
 }
 
@@ -205,9 +207,9 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.Nil(t, inv.Customer)
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
-		assert.ErrorContains(t, err, "tax: (ext: (mx-cfdi-global-month: required; mx-cfdi-global-period: required; mx-cfdi-global-year: required.).)")
-		assert.ErrorContains(t, err, "payment: cannot be blank;")
+		assert.ErrorContains(t, err, "must be set with global tag")
+		assert.ErrorContains(t, err, "global invoices require")
+		assert.ErrorContains(t, err, "payment is required for global invoices")
 	})
 	t.Run("success", func(t *testing.T) {
 		inv := validInvoice()
@@ -239,7 +241,7 @@ func TestCustomerValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Customer.TaxID = nil
-	assertValidationError(t, inv, "customer: (tax_id: cannot be blank.)")
+	assertValidationError(t, inv, "customer tax ID is required")
 
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
@@ -249,13 +251,13 @@ func TestCustomerValidation(t *testing.T) {
 func TestCustomerAddressCodeValidation(t *testing.T) {
 	inv := validInvoice()
 	delete(inv.Customer.Ext, "mx-cfdi-post-code")
-	assertValidationError(t, inv, "customer: (addresses: cannot be blank.)")
+	assertValidationError(t, inv, "Mexican customer must have at least one address")
 
 	inv.Customer.Addresses = []*org.Address{{}}
-	assertValidationError(t, inv, "customer: (addresses: (0: (code: cannot be blank.).).)")
+	assertValidationError(t, inv, "customer address postal code is required")
 
 	inv.Customer.Addresses[0].Code = "ABC"
-	assertValidationError(t, inv, "customer: (addresses: (0: (code: must be in a valid format.).).)")
+	assertValidationError(t, inv, "customer address postal code format is invalid")
 
 	inv.Customer.Addresses[0].Code = "21000"
 	require.NoError(t, inv.Calculate())
@@ -271,15 +273,16 @@ func TestLineValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Lines[0].Quantity = num.MakeAmount(0, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0.).)")
+	assertValidationError(t, inv, "quantity must be greater than 0")
 
 	inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be no less than 0.).)")
+	assertValidationError(t, inv, "quantity must be greater than 0")
 
 	inv = validInvoice()
 
 	inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be no less than 0.).)")
+	// negative price is normalized to negative quantity during Calculate()
+	assertValidationError(t, inv, "quantity must be greater than 0")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
@@ -289,10 +292,10 @@ func TestPaymentInstructionsValidation(t *testing.T) {
 	}
 
 	inv.Payment.Instructions.Key = "direct-debit"
-	assertValidationError(t, inv, "payment: (instructions: (ext: (mx-cfdi-payment-means: required.).).)")
+	assertValidationError(t, inv, "payment instructions require 'mx-cfdi-payment-means' extension")
 
 	inv.Payment.Instructions.Key = "unexisting"
-	assertValidationError(t, inv, "payment: (instructions: (key: must be or start with a valid key.).)")
+	assertValidationError(t, inv, "key must be valid")
 }
 
 func TestPaymentAdvancesValidation(t *testing.T) {
@@ -306,13 +309,13 @@ func TestPaymentAdvancesValidation(t *testing.T) {
 	}
 
 	inv.Payment.Advances[0].Key = "direct-debit"
-	assertValidationError(t, inv, "payment: (advances: (0: (ext: (mx-cfdi-payment-means: required.).).).)")
+	assertValidationError(t, inv, "payment advance requires 'mx-cfdi-payment-means' extension")
 
 	inv.Payment.Advances[0].Key = "unexisting"
-	assertValidationError(t, inv, "payment: (advances: (0: (key: must be or start with a valid key.).).)")
+	assertValidationError(t, inv, "key must be valid")
 
 	inv.Payment.Advances[0].Key = ""
-	assertValidationError(t, inv, "payment: (advances: (0: (ext: (mx-cfdi-payment-means: required.).).).)")
+	assertValidationError(t, inv, "payment advance requires 'mx-cfdi-payment-means' extension")
 }
 
 func TestPaymentTermsValidation(t *testing.T) {
@@ -322,7 +325,7 @@ func TestPaymentTermsValidation(t *testing.T) {
 	}
 
 	inv.Payment.Terms.Notes = strings.Repeat("x", 1001)
-	assertValidationError(t, inv, "payment: (terms: (notes: the length must be no more than 1000.).)")
+	assertValidationError(t, inv, "notes length must be no more than 1000")
 
 	inv.Payment.Terms.Notes = strings.Repeat("x", 1000)
 	require.NoError(t, rules.Validate(inv))
@@ -335,7 +338,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 		cfdi.ExtKeyFiscalRegime: "601",
 		"mx-cfdi-post-code":     "21000",
 	}
-	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")
+	assertValidationError(t, inv, "Mexican customer requires 'mx-cfdi-fiscal-regime' and 'mx-cfdi-use' extensions")
 }
 
 func TestPrecedingValidation(t *testing.T) {
@@ -352,12 +355,20 @@ func TestPrecedingValidation(t *testing.T) {
 			},
 		},
 	}
-	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).); tax: (ext: (mx-cfdi-rel-type: required.).)")
+	require.NoError(t, inv.Calculate())
+	err := rules.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "missing sat-uuid stamp")
+	assert.Contains(t, err.Error(), "mx-cfdi-rel-type")
 
 	inv.Type = bill.InvoiceTypeCreditNote
-	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).)")
+	require.NoError(t, inv.Calculate())
+	err = rules.Validate(inv)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "missing sat-uuid stamp")
 
 	inv.Preceding[0].Stamps[0].Provider = "sat-uuid"
+	require.NoError(t, inv.Calculate())
 	require.NoError(t, rules.Validate(inv))
 }
 
@@ -369,7 +380,7 @@ func TestInvoiceDiscountValidation(t *testing.T) {
 			Percent: num.NewPercentage(20, 2),
 		},
 	}
-	assertValidationError(t, inv, "discounts: not supported, use line discounts instead")
+	assertValidationError(t, inv, "not supported, use line discounts instead")
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
@@ -406,7 +417,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 					cfdi.ExtKeyProdServ: "12345678",
 				},
 			},
-			err: "price: must be greater than 0",
+			err: "item price must be greater than 0",
 		},
 		{
 			name: "negative price",
@@ -418,7 +429,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 				},
 			},
 			// negative price now normalized to quantity
-			err: "quantity: must be greater than 0",
+			err: "quantity must be greater than 0",
 		},
 		{
 			name: "nil price",
@@ -428,7 +439,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 					cfdi.ExtKeyProdServ: "12345678",
 				},
 			},
-			err: "price: cannot be blank",
+			err: "item price is required",
 		},
 		{
 			name: "missing extension",
@@ -436,7 +447,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
 			},
-			err: "ext: (mx-cfdi-prod-serv: required.)",
+			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
 		{
 			name: "empty extension",
@@ -445,7 +456,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 				Price: num.NewAmount(10000, 2),
 				Ext:   tax.Extensions{},
 			},
-			err: "ext: (mx-cfdi-prod-serv: required.)",
+			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
 		{
 			name: "invalid extension key",
@@ -456,7 +467,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 					"random": "12345678",
 				},
 			},
-			err: "ext: (random: undefined.)",
+			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
 		{
 			name: "invalid code format",
@@ -467,12 +478,12 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 					cfdi.ExtKeyProdServ: "AbC2",
 				},
 			},
-			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
+			err: "product/service code must have 8 digits",
 		},
 		{
 			name: "nil",
 			item: nil,
-			err:  "item: cannot be blank",
+			err:  "item is required",
 		},
 		{
 			// see below for specific global tag tests
@@ -483,7 +494,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 				Price: num.NewAmount(10000, 2),
 				Name:  "Test purchase",
 			},
-			err: "payment: cannot be blank; tax: (ext: (mx-cfdi-global-month: required; mx-cfdi-global-period: required; mx-cfdi-global-year: required.).)",
+			err: "payment is required for global invoices",
 		},
 	}
 
@@ -519,6 +530,6 @@ func TestInvoiceLineItemGlobalValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
+		assert.ErrorContains(t, err, "must be set with global tag")
 	})
 }

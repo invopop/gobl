@@ -9,6 +9,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
@@ -36,6 +38,18 @@ func init() {
 	schema.Register(schema.GOBL.Add("regimes/mx"),
 		FuelAccountBalance{},
 		FoodVouchers{},
+	)
+
+	rules.RegisterWithGuard(
+		V4.String(),
+		rules.GOBL.Add("MX-CFDI-V4"),
+		is.HasContext(tax.AddonIn(V4)),
+		billInvoiceRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+		payTermsRules(),
+		foodVouchersRules(),
+		fuelAccountBalanceRules(),
 	)
 }
 
@@ -65,7 +79,6 @@ func newAddon() *tax.AddonDef {
 		},
 		Scenarios:  scenarios,
 		Normalizer: normalize,
-		Validator:  validate,
 	}
 }
 
@@ -84,16 +97,3 @@ func normalize(doc any) {
 	}
 }
 
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
-	}
-	return nil
-}

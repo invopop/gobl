@@ -694,13 +694,13 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 	t.Run("missing series fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = ""
-		assertValidationError(t, inv, "series: cannot be blank")
+		assertValidationError(t, inv, "series is required")
 	})
 
 	t.Run("non-numeric series fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "ABC"
-		assertValidationError(t, inv, "series: must be a number")
+		assertValidationError(t, inv, "series must be a valid number between 1 and 99998")
 	})
 
 	t.Run("series with leading zeros is valid", func(t *testing.T) {
@@ -713,13 +713,13 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 	t.Run("series below range fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "0"
-		assertValidationError(t, inv, "series: must be between 1 and 99998")
+		assertValidationError(t, inv, "series must be a valid number between 1 and 99998")
 	})
 
 	t.Run("series above range fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "99999"
-		assertValidationError(t, inv, "series: must be between 1 and 99998")
+		assertValidationError(t, inv, "series must be a valid number between 1 and 99998")
 	})
 
 	t.Run("series at lower bound is valid", func(t *testing.T) {
@@ -739,7 +739,7 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 	t.Run("series with very large number overflows", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Series = "9999999999999999999999999" // number too large for strconv
-		assertValidationError(t, inv, "series: must be a number")
+		assertValidationError(t, inv, "series must be a valid number between 1 and 99998")
 	})
 }
 
@@ -754,14 +754,14 @@ func TestInvoiceTaxValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax = nil
-		require.ErrorContains(t, rules.Validate(inv), "tax: cannot be blank")
+		require.ErrorContains(t, rules.Validate(inv), "tax is required")
 	})
 
 	t.Run("missing doc type fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
-		require.ErrorContains(t, rules.Validate(inv), "ar-arca-doc-type: required")
+		require.ErrorContains(t, rules.Validate(inv), "tax requires 'ar-arca-doc-type' extension")
 	})
 }
 
@@ -834,7 +834,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Customer.TaxID = nil
 		inv.Customer.Identities = nil
-		assertValidationError(t, inv, "customer: must have a tax_id, or an identity with ext 'ar-arca-identity-type'")
+		assertValidationError(t, inv, "must have a tax_id, or an identity with ext 'ar-arca-identity-type'")
 	})
 
 	t.Run("customer with identity but no ext fails", func(t *testing.T) {
@@ -845,13 +845,16 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 				Code: "12345678", // No ext
 			},
 		}
-		assertValidationError(t, inv, "customer: must have a tax_id, or an identity with ext 'ar-arca-identity-type'")
+		assertValidationError(t, inv, "must have a tax_id, or an identity with ext 'ar-arca-identity-type'")
 	})
 
-	t.Run("customer with tax ID but missing code fails", func(t *testing.T) {
+	t.Run("customer with tax ID but missing code passes addon validation", func(t *testing.T) {
+		// The ARCA addon does not enforce tax ID code presence;
+		// that is handled by core tax.Identity rules.
 		inv := testInvoiceWithGoods(t)
 		inv.Customer.TaxID.Code = ""
-		assertValidationError(t, inv, "customer: (tax_id: (code: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("doc type 49 with final consumer VAT status passes", func(t *testing.T) {
@@ -926,13 +929,13 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 	t.Run("services require ordering with period", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		inv.Ordering = nil
-		assertValidationError(t, inv, "ordering: cannot be blank")
+		assertValidationError(t, inv, "ordering is required for services")
 	})
 
 	t.Run("services require ordering period", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		inv.Ordering = &bill.Ordering{}
-		assertValidationError(t, inv, "ordering: (period: cannot be blank.).")
+		assertValidationError(t, inv, "ordering period is required for services")
 	})
 
 	t.Run("services with valid ordering passes", func(t *testing.T) {
@@ -944,13 +947,13 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 	t.Run("services require payment terms", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		inv.Payment = nil
-		assertValidationError(t, inv, "payment: cannot be blank")
+		assertValidationError(t, inv, "payment is required for services")
 	})
 
 	t.Run("services require payment terms object", func(t *testing.T) {
 		inv := testInvoiceWithServices(t)
 		inv.Payment = &bill.PaymentDetails{}
-		assertValidationError(t, inv, "payment: (terms: cannot be blank.).")
+		assertValidationError(t, inv, "payment terms are required for services")
 	})
 
 	t.Run("services require payment due dates", func(t *testing.T) {
@@ -958,7 +961,7 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Terms: &pay.Terms{},
 		}
-		assertValidationError(t, inv, "payment: (terms: (due_dates: cannot be blank.).).")
+		assertValidationError(t, inv, "payment due dates are required for services")
 	})
 
 	t.Run("products do not require ordering or payment", func(t *testing.T) {
@@ -972,7 +975,7 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 	t.Run("products with payment due dates fails", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Payment = testPayment()
-		assertValidationError(t, inv, "payment: (due_dates: must be blank.).")
+		assertValidationError(t, inv, "payment due dates must not be set for goods")
 	})
 
 	t.Run("products with payment but no due dates passes", func(t *testing.T) {
@@ -1010,7 +1013,7 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 			},
 		})
 		inv.Ordering = nil
-		assertValidationError(t, inv, "ordering: cannot be blank")
+		assertValidationError(t, inv, "ordering is required for services")
 	})
 }
 
@@ -1143,14 +1146,14 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Preceding = nil
-		assertValidationError(t, inv, "preceding: cannot be blank")
+		assertValidationError(t, inv, "preceding documents are required for credit/debit notes")
 	})
 
 	t.Run("debit note requires preceding", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Preceding = nil
-		assertValidationError(t, inv, "preceding: cannot be blank")
+		assertValidationError(t, inv, "preceding documents are required for credit/debit notes")
 	})
 
 	t.Run("standard invoice does not require preceding", func(t *testing.T) {
@@ -1205,7 +1208,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				Code:   "100",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
+		assertValidationError(t, inv, "preceding document requires 'ar-arca-doc-type' extension")
 	})
 
 	t.Run("debit note with preceding missing doc type fails", func(t *testing.T) {
@@ -1218,7 +1221,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				Code:   "100",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
+		assertValidationError(t, inv, "preceding document requires 'ar-arca-doc-type' extension")
 	})
 
 	t.Run("credit note with multiple preceding validates all", func(t *testing.T) {
@@ -1239,7 +1242,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				// Missing doc type
 			},
 		}
-		assertValidationError(t, inv, "preceding: (1: (ext: (ar-arca-doc-type: required.).).).")
+		assertValidationError(t, inv, "preceding document requires 'ar-arca-doc-type' extension")
 	})
 
 	t.Run("standard invoice with preceding validates doc type", func(t *testing.T) {
@@ -1252,19 +1255,16 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 				// Missing doc type
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
+		assertValidationError(t, inv, "preceding document requires 'ar-arca-doc-type' extension")
 	})
 }
 
 func TestValidateFunctionsWithNilValues(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
-
 	t.Run("validate with nil tax", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax = nil
-		// Call validator directly
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "tax: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "tax is required")
 	})
 
 	t.Run("validate ordering with nil for services", func(t *testing.T) {
@@ -1272,8 +1272,8 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 		// Need to set concept to "2" (services) to trigger ordering validation
 		inv.Tax.Ext[arca.ExtKeyConcept] = "2"
 		inv.Ordering = nil
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "ordering: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "ordering is required for services")
 	})
 
 	t.Run("validate payment with nil for services", func(t *testing.T) {
@@ -1281,8 +1281,8 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 		// Need to set concept to "2" (services) to trigger payment validation
 		inv.Tax.Ext[arca.ExtKeyConcept] = "2"
 		inv.Payment = nil
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "payment: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "payment is required for services")
 	})
 }
 
@@ -1314,7 +1314,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
+		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
 	})
 
 	t.Run("type C debit note without taxes on lines passes", func(t *testing.T) {
@@ -1337,7 +1337,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
+		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
 	})
 
 	t.Run("type C credit note without taxes on lines passes", func(t *testing.T) {
@@ -1360,7 +1360,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
+		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
 	})
 
 	t.Run("FCE type C invoice without taxes on lines passes", func(t *testing.T) {
@@ -1379,7 +1379,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				Rate:     "standard",
 			},
 		}
-		assertValidationError(t, inv, "lines: (0: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
+		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
 	})
 
 	t.Run("type A invoice with taxes on lines passes", func(t *testing.T) {
@@ -1426,7 +1426,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 				},
 			},
 		})
-		assertValidationError(t, inv, "lines: (1: (taxes: type C invoices (simplified tax scheme) must not have taxes on lines.).).")
+		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
 	})
 }
 

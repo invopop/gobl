@@ -7,8 +7,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/mx"
-	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Constants for the precision of the complement's amounts
@@ -31,18 +31,6 @@ var (
 	taxCodeRegexpPerson  = regexp.MustCompile(mx.TaxIdentityPatternPerson)
 	taxCodeRegexpCompany = regexp.MustCompile(mx.TaxIdentityPatternCompany)
 )
-
-func validateTaxCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	str := code.String()
-	if taxCodeRegexpPerson.MatchString(str) || taxCodeRegexpCompany.MatchString(str) {
-		return nil
-	}
-	return tax.ErrIdentityCodeInvalid
-}
 
 // FoodVouchers carries the data to produce a CFDI's "Complemento de
 // Vales de Despensa" (version 1.0) providing detailed information about food
@@ -90,54 +78,6 @@ type FoodVouchersEmployee struct {
 	SocialSecurity cbc.Code `json:"social_security,omitempty" jsonschema:"title=Employee's Social Security Number"`
 }
 
-// Validate checks the FoodVouchers data according to the SAT's
-// rules for the "Complemento de Vales de Despensa".
-func (fvc *FoodVouchers) Validate() error {
-	return validation.ValidateStruct(fvc,
-		validation.Field(&fvc.EmployerRegistration, validation.Length(0, 20)),
-		validation.Field(&fvc.AccountNumber,
-			validation.Required,
-			validation.Length(0, 20),
-		),
-		validation.Field(&fvc.Total, validation.Required),
-		validation.Field(&fvc.Lines, validation.Required),
-	)
-}
-
-// Validate checks the FoodVouchersLine data is valid.
-func (fvl *FoodVouchersLine) Validate() error {
-	return validation.ValidateStruct(fvl,
-		validation.Field(&fvl.EWalletID,
-			validation.Required,
-			validation.Length(0, 20),
-		),
-		validation.Field(&fvl.IssueDateTime, cal.DateTimeNotZero()),
-		validation.Field(&fvl.Employee, validation.Required),
-		validation.Field(&fvl.Amount, validation.Required),
-	)
-}
-
-// Validate checks the FoodVouchersEmployee data is valid.
-func (fve *FoodVouchersEmployee) Validate() error {
-	return validation.ValidateStruct(fve,
-		validation.Field(&fve.TaxCode,
-			validation.Required,
-			validation.By(validateTaxCode),
-		),
-		validation.Field(&fve.CURP,
-			validation.Required,
-			validation.Match(CURPRegexp),
-		),
-		validation.Field(&fve.Name,
-			validation.Required,
-			validation.Length(0, 100),
-		),
-		validation.Field(&fve.SocialSecurity,
-			validation.Match(SocialSecurityRegexp),
-		),
-	)
-}
-
 // Calculate performs the complement's calculations and normalisations.
 func (fvc *FoodVouchers) Calculate() error {
 	fvc.Total = num.MakeAmount(0, FoodVouchersFinalPrecision)
@@ -150,4 +90,56 @@ func (fvc *FoodVouchers) Calculate() error {
 	}
 
 	return nil
+}
+
+func foodVouchersRules() *rules.Set {
+	return rules.For(new(FoodVouchers),
+		rules.Field("employer_registration",
+			rules.Assert("01", "employer registration must be no more than 20 characters", is.Length(0, 20)),
+		),
+		rules.Field("account_number",
+			rules.Assert("02", "account number is required", is.Present),
+			rules.Assert("03", "account number must be no more than 20 characters", is.Length(0, 20)),
+		),
+		rules.Field("total",
+			rules.Assert("04", "total is required", is.Present),
+		),
+		rules.Field("lines",
+			rules.Assert("05", "lines are required", is.Present),
+			rules.Each(
+				rules.Field("e_wallet_id",
+					rules.Assert("06", "line e-wallet ID is required", is.Present),
+					rules.Assert("07", "line e-wallet ID must be no more than 20 characters", is.Length(0, 20)),
+				),
+				rules.Field("issue_date_time",
+					rules.Assert("08", "line issue date and time is required", cal.DateTimeNotZero()),
+				),
+				rules.Field("employee",
+					rules.Assert("09", "line employee is required", is.Present),
+					rules.Field("tax_code",
+						rules.Assert("10", "employee tax code (RFC) is required", is.Present),
+						rules.Assert("11", "employee tax code (RFC) must be valid",
+							mx.IsValidTaxIdentityCode,
+						),
+					),
+					rules.Field("curp",
+						rules.Assert("12", "employee CURP is required", is.Present),
+						rules.Assert("13", "employee CURP format must be valid", is.Matches(CURPPattern)),
+					),
+					rules.Field("name",
+						rules.Assert("14", "employee name is required", is.Present),
+						rules.Assert("15", "employee name must be no more than 100 characters", is.Length(0, 100)),
+					),
+					rules.Field("social_security",
+						rules.Assert("16", "employee social security number format is invalid",
+							is.Matches(SocialSecurityPattern),
+						),
+					),
+				),
+				rules.Field("amount",
+					rules.Assert("17", "line amount is required", is.Present),
+				),
+			),
+		),
+	)
 }

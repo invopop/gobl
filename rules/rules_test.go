@@ -54,6 +54,71 @@ func init() {
 	)
 }
 
+func TestCodePrepend(t *testing.T) {
+	tests := []struct {
+		name string
+		c    rules.Code
+		id   rules.Code
+		want rules.Code
+	}{
+		{
+			name: "deduplicates last segment matching first segment of id",
+			c:    "GOBL-ORG",
+			id:   "ORG-EMAIL",
+			want: "GOBL-ORG-EMAIL",
+		},
+		{
+			name: "no deduplication when suffix does not match id prefix",
+			c:    "GOBL-GB",
+			id:   "TAX-IDENTITY",
+			want: "GOBL-GB-TAX-IDENTITY",
+		},
+		{
+			name: "deduplicates when c has no hyphen and matches id prefix",
+			c:    "ORG",
+			id:   "ORG-EMAIL",
+			want: "ORG-EMAIL",
+		},
+		{
+			name: "no deduplication when c has no hyphen and does not match id prefix",
+			c:    "GOBL",
+			id:   "ORG-EMAIL",
+			want: "GOBL-ORG-EMAIL",
+		},
+		{
+			name: "no deduplication when id has no hyphen",
+			c:    "GOBL-ORG",
+			id:   "EMAIL",
+			want: "GOBL-ORG-EMAIL",
+		},
+		{
+			name: "partial match of suffix does not deduplicate",
+			c:    "GOBL-ORGX",
+			id:   "ORG-EMAIL",
+			want: "GOBL-ORGX-ORG-EMAIL",
+		},
+		{
+			name: "suffix equals full id without trailing segment does not deduplicate",
+			c:    "GOBL-ORG",
+			id:   "ORG",
+			want: "GOBL-ORG-ORG",
+		},
+		{
+			name: "multi-segment deduplication uses only last segment of c",
+			c:    "GOBL-TAX-ORG",
+			id:   "ORG-PARTY",
+			want: "GOBL-TAX-ORG-PARTY",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.c.Prepend(tt.id)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestFor(t *testing.T) {
 	t.Run("name includes go package name", func(t *testing.T) {
 		set := emailRules()

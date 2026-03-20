@@ -6,8 +6,9 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Constants for the precision of complement's amounts
@@ -94,86 +95,6 @@ type FuelAccountTax struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 }
 
-// Validate ensures that the complement's data is valid.
-func (fab *FuelAccountBalance) Validate() error {
-	return validation.ValidateStruct(fab,
-		validation.Field(&fab.AccountNumber,
-			validation.Required,
-			validation.Length(1, 50),
-		),
-		validation.Field(&fab.Subtotal, validation.Required),
-		validation.Field(&fab.Total, validation.Required),
-		validation.Field(&fab.Lines, validation.Required),
-	)
-}
-
-// Validate ensures that the line's data is valid.
-func (fal *FuelAccountLine) Validate() error {
-	return validation.ValidateStruct(fal,
-		validation.Field(&fal.EWalletID, validation.Required),
-		validation.Field(&fal.PurchaseDateTime, cal.DateTimeNotZero()),
-		validation.Field(&fal.VendorTaxCode,
-			validation.Required,
-			validation.By(validateTaxCode),
-			validation.Skip, // don't use default code validations
-		),
-		validation.Field(&fal.ServiceStationCode,
-			validation.Required,
-			validation.Length(1, 20),
-		),
-		validation.Field(&fal.Quantity, num.Positive),
-		validation.Field(&fal.Item, validation.Required),
-
-		validation.Field(&fal.PurchaseCode,
-			validation.Required,
-			validation.Length(1, 50),
-		),
-		validation.Field(&fal.Total, isValidLineTotal(fal)),
-		validation.Field(&fal.Taxes, validation.Required),
-	)
-}
-
-// Validate ensures that the item's data is valid.
-func (fai *FuelAccountItem) Validate() error {
-	return validation.ValidateStruct(fai,
-		validation.Field(&fai.Type, validation.Required),
-		validation.Field(&fai.Name,
-			validation.Required,
-			validation.Length(1, 300),
-		),
-		validation.Field(&fai.Price, num.Positive),
-	)
-}
-
-// Validate ensures that the tax's data is valid.
-func (fat *FuelAccountTax) Validate() error {
-	return validation.ValidateStruct(fat,
-		validation.Field(&fat.Category,
-			validation.Required,
-			validation.In(FuelAccountValidTaxCodes...),
-		),
-		validation.Field(&fat.Rate,
-			num.Positive,
-			validation.When(
-				fat.Percent == nil,
-				validation.Required,
-			),
-		),
-		validation.Field(&fat.Percent),
-		validation.Field(&fat.Amount, num.Positive),
-	)
-}
-
-func isValidLineTotal(line *FuelAccountLine) validation.Rule {
-	if line.Item == nil {
-		return validation.Skip
-	}
-
-	expected := line.Quantity.Multiply(line.Item.Price).Rescale(2)
-
-	return validation.In(expected).Error("must be quantity x unit_price")
-}
-
 // Calculate performs the complement's calculations and normalisations.
 func (fab *FuelAccountBalance) Calculate() error {
 	// Subtotal an tax total need to be calculated using the expected
@@ -209,4 +130,101 @@ func (fab *FuelAccountBalance) Calculate() error {
 	fab.Total = fab.Subtotal.Add(taxtotal)
 
 	return nil
+}
+
+func fuelAccountBalanceRules() *rules.Set {
+	return rules.For(new(FuelAccountBalance),
+		rules.Field("account_number",
+			rules.Assert("01", "account number is required", is.Present),
+			rules.Assert("02", "account number must be between 1 and 50 characters", is.Length(1, 50)),
+		),
+		rules.Field("subtotal",
+			rules.Assert("03", "subtotal is required", is.Present),
+		),
+		rules.Field("total",
+			rules.Assert("04", "total is required", is.Present),
+		),
+		rules.Field("lines",
+			rules.Assert("05", "lines are required", is.Present),
+			rules.Each(
+				rules.Field("e_wallet_id",
+					rules.Assert("06", "line e-wallet ID is required", is.Present),
+				),
+				rules.Field("purchase_date_time",
+					rules.Assert("07", "line purchase date and time is required", cal.DateTimeNotZero()),
+				),
+				rules.Field("vendor_tax_code",
+					rules.Assert("08", "line vendor tax code is required", is.Present),
+					rules.Assert("09", "line vendor tax identity code is invalid",
+						mx.IsValidTaxIdentityCode,
+					),
+				),
+				rules.Field("service_station_code",
+					rules.Assert("10", "line service station code is required", is.Present),
+					rules.Assert("11", "line service station code must be between 1 and 20 characters", is.Length(1, 20)),
+				),
+				rules.Field("quantity",
+					rules.Assert("12", "line quantity must be greater than 0", num.Positive),
+				),
+				rules.Field("item",
+					rules.Assert("13", "line item is required", is.Present),
+					rules.Field("type",
+						rules.Assert("14", "line item type is required", is.Present),
+					),
+					rules.Field("name",
+						rules.Assert("15", "line item name is required", is.Present),
+						rules.Assert("16", "line item name must be between 1 and 300 characters", is.Length(1, 300)),
+					),
+					rules.Field("price",
+						rules.Assert("17", "line item price must be greater than 0", num.Positive),
+					),
+				),
+				rules.Field("purchase_code",
+					rules.Assert("18", "line purchase code is required", is.Present),
+					rules.Assert("19", "line purchase code must be between 1 and 50 characters", is.Length(1, 50)),
+				),
+				rules.Assert("20", "line total must be quantity x unit_price",
+					is.Func("valid line total", fuelAccountLineTotalValid),
+				),
+				rules.Field("taxes",
+					rules.Assert("21", "line taxes are required", is.Present),
+					rules.Each(
+						rules.Field("cat",
+							rules.Assert("22", "tax category is required", is.Present),
+							rules.Assert("23", "tax category must be a valid value",
+								is.In(FuelAccountValidTaxCodes...),
+							),
+						),
+						rules.When(is.Func("no percent", fuelAccountTaxNoPercent),
+							rules.Field("rate",
+								rules.Assert("24", "tax rate is required when percent is not set", is.Present),
+							),
+						),
+						rules.Field("rate",
+							rules.AssertIfPresent("25", "tax rate must be greater than 0", num.Positive),
+						),
+						rules.Field("amount",
+							rules.Assert("26", "tax amount must be greater than 0", num.Positive),
+						),
+					),
+				),
+			),
+		),
+	)
+}
+
+// fuelAccountLineTotalValid checks that the line total equals quantity * item price.
+func fuelAccountLineTotalValid(val any) bool {
+	line, ok := val.(*FuelAccountLine)
+	if !ok || line == nil || line.Item == nil {
+		return true
+	}
+	expected := line.Quantity.Multiply(line.Item.Price).Rescale(2)
+	return line.Total.Equals(expected)
+}
+
+// fuelAccountTaxNoPercent checks if a fuel account tax has no percent set.
+func fuelAccountTaxNoPercent(val any) bool {
+	fat, ok := val.(*FuelAccountTax)
+	return ok && fat != nil && fat.Percent == nil
 }

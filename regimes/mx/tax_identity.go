@@ -48,12 +48,20 @@ func taxIdentityRules() *rules.Set {
 		rules.When(tax.IdentityIn("MX"),
 			rules.Field("code",
 				rules.AssertIfPresent("01", "invalid Mexican RFC tax identity code",
-					is.Func("valid", isValidTaxIdentityCode),
+					IsValidTaxIdentityCode,
 				),
 			),
 		),
 	)
 }
+
+// IsValidTaxIdentityCode returns a rules.Test that checks if a tax
+// identity code is valid for Mexico. This is used by addons to
+// ensure valid tax codes are used.
+var IsValidTaxIdentityCode = is.Func(
+	"valid RFC",
+	isValidTaxIdentityCode,
+)
 
 func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)

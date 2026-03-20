@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // SAT item identity codes (ClaveProdServ) regular expression.
@@ -14,24 +13,6 @@ var (
 	itemExtensionValidCodeRegexp        = regexp.MustCompile(`^\d{8}$`)
 	itemExtensionNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
 )
-
-func validItemExtensions(value interface{}) error {
-	ext, ok := value.(tax.Extensions)
-	if !ok {
-		return nil
-	}
-	for k, v := range ext {
-		if k == ExtKeyProdServ {
-			if itemExtensionValidCodeRegexp.MatchString(string(v)) {
-				return nil
-			}
-			return validation.Errors{
-				k.String(): validation.NewError("invalid", "must have 8 digits"),
-			}
-		}
-	}
-	return nil
-}
 
 // extension keys that have been migrated from identities to
 // extensions.

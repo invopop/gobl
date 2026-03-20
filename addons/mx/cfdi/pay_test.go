@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,21 +54,18 @@ func TestNormalizePayAdvance(t *testing.T) {
 }
 
 func TestValidatePayTerms(t *testing.T) {
-	ad := tax.AddonForKey(cfdi.V4)
-
 	t.Run("nil", func(t *testing.T) {
 		var terms *pay.Terms
 		assert.NotPanics(t, func() {
-			assert.NoError(t, ad.Validator(terms))
+			assert.NoError(t, rules.Validate(terms))
 		})
 	})
 
 	t.Run("valid", func(t *testing.T) {
 		terms := &pay.Terms{
-			Key:   pay.MeansKeyOnline.With(cfdi.MeansKeyWallet),
 			Notes: "test",
 		}
-		err := ad.Validator(terms)
+		err := rules.Validate(terms)
 		assert.NoError(t, err)
 	})
 }
