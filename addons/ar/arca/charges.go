@@ -2,29 +2,45 @@ package arca
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-func validateBillCharge(charge *bill.Charge) error {
-	return validation.ValidateStruct(charge,
-		validation.Field(&charge.Ext,
-			validation.When(
-				charge.Key.Has(bill.ChargeKeyTax),
-				tax.ExtensionsRequire(ExtKeyTaxType),
+func billChargeRules() *rules.Set {
+	return rules.For(new(bill.Charge),
+		// Tax charges require the tax type extension
+		rules.When(is.Func("has tax key", chargeHasTaxKey),
+			rules.Field("ext",
+				rules.Assert("01", "ar-arca-tax-type: required", tax.ExtensionsRequire(ExtKeyTaxType)),
 			),
 		),
-		validation.Field(&charge.Percent,
-			validation.When(
-				charge.Ext.Has(ExtKeyTaxType),
-				validation.Required,
+		// When tax type extension is set, percent is required
+		rules.When(is.Func("has tax type ext", chargeHasTaxTypeExt),
+			rules.Field("percent",
+				rules.Assert("02", "cannot be blank", is.Present),
 			),
 		),
-		validation.Field(&charge.Reason,
-			validation.When(
-				charge.Ext.Get(ExtKeyTaxType) == "99", // Other
-				validation.Required.Error("reason is required when tax type is 'other'"),
+		// When tax type is "other" (99), reason is required
+		rules.When(is.Func("tax type other", chargeHasTaxTypeOther),
+			rules.Field("reason",
+				rules.Assert("03", "reason is required when tax type is 'other'", is.Present),
 			),
 		),
 	)
+}
+
+func chargeHasTaxKey(val any) bool {
+	c, ok := val.(*bill.Charge)
+	return ok && c != nil && c.Key.Has(bill.ChargeKeyTax)
+}
+
+func chargeHasTaxTypeExt(val any) bool {
+	c, ok := val.(*bill.Charge)
+	return ok && c != nil && c.Ext.Has(ExtKeyTaxType)
+}
+
+func chargeHasTaxTypeOther(val any) bool {
+	c, ok := val.(*bill.Charge)
+	return ok && c != nil && c.Ext.Get(ExtKeyTaxType) == "99"
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/regimes/ar"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -80,8 +81,6 @@ func TestNormalizeTaxCombo(t *testing.T) {
 }
 
 func TestValidateTaxCombo(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
-
 	t.Run("valid VAT combo with rate extension", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -89,7 +88,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				arca.ExtKeyVATRate: "5",
 			},
 		}
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, tax.AddonContext(arca.V4))
 		assert.NoError(t, err)
 	})
 
@@ -97,7 +96,7 @@ func TestValidateTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 		}
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, tax.AddonContext(arca.V4))
 		assert.ErrorContains(t, err, "ar-arca-vat-rate: required")
 	})
 
@@ -105,7 +104,7 @@ func TestValidateTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: "OTHER",
 		}
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, tax.AddonContext(arca.V4))
 		assert.NoError(t, err)
 	})
 }

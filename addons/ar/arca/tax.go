@@ -2,8 +2,9 @@ package arca
 
 import (
 	"github.com/invopop/gobl/regimes/ar"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -26,13 +27,17 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			validation.When(
-				tc.Category == tax.CategoryVAT,
-				tax.ExtensionsRequire(ExtKeyVATRate),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(is.Func("vat", taxComboIsVAT),
+			rules.Field("ext",
+				rules.Assert("01", "ar-arca-vat-rate: required", tax.ExtensionsRequire(ExtKeyVATRate)),
 			),
 		),
 	)
+}
+
+func taxComboIsVAT(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == tax.CategoryVAT
 }

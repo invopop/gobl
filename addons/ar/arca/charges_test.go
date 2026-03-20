@@ -6,16 +6,14 @@ import (
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestChargeValidation(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
-
 	t.Run("valid tax charge", func(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
@@ -24,7 +22,7 @@ func TestChargeValidation(t *testing.T) {
 				arca.ExtKeyTaxType: "1", // National Taxes
 			},
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		require.NoError(t, err)
 	})
 
@@ -34,7 +32,7 @@ func TestChargeValidation(t *testing.T) {
 			Percent: num.NewPercentage(10, 2),
 			// No ext
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
 	})
 
@@ -46,7 +44,7 @@ func TestChargeValidation(t *testing.T) {
 				"other-ext": "value",
 			},
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		assert.ErrorContains(t, err, "ar-arca-tax-type: required")
 	})
 
@@ -58,8 +56,8 @@ func TestChargeValidation(t *testing.T) {
 			},
 			// No percent
 		}
-		err := ad.Validator(charge)
-		assert.ErrorContains(t, err, "percent: cannot be blank")
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
+		assert.ErrorContains(t, err, "percent) cannot be blank")
 	})
 
 	t.Run("non-tax charge does not require ext or percent", func(t *testing.T) {
@@ -68,7 +66,7 @@ func TestChargeValidation(t *testing.T) {
 			Reason: "Some custom charge",
 			// No percent and no ext
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		require.NoError(t, err)
 	})
 
@@ -81,7 +79,7 @@ func TestChargeValidation(t *testing.T) {
 			},
 			// No reason
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		assert.ErrorContains(t, err, "reason is required when tax type is 'other'")
 	})
 
@@ -94,7 +92,7 @@ func TestChargeValidation(t *testing.T) {
 				arca.ExtKeyTaxType: "99", // TaxTypeOther
 			},
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		require.NoError(t, err)
 	})
 
@@ -107,7 +105,7 @@ func TestChargeValidation(t *testing.T) {
 			},
 			// No reason provided
 		}
-		err := ad.Validator(charge)
+		err := rules.Validate(charge, tax.AddonContext(arca.V4))
 		require.NoError(t, err)
 	})
 }
@@ -143,7 +141,7 @@ func TestChargeIntegration(t *testing.T) {
 		inv.Charges[0].Percent = nil
 
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "percent: cannot be blank")
+		assert.ErrorContains(t, err, "percent) cannot be blank")
 	})
 
 	t.Run("invoice with non-tax charge passes", func(t *testing.T) {
