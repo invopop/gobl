@@ -54,86 +54,21 @@ func init() {
 	)
 }
 
-func TestCodePrepend(t *testing.T) {
-	tests := []struct {
-		name string
-		c    rules.Code
-		id   rules.Code
-		want rules.Code
-	}{
-		{
-			name: "deduplicates last segment matching first segment of id",
-			c:    "GOBL-ORG",
-			id:   "ORG-EMAIL",
-			want: "GOBL-ORG-EMAIL",
-		},
-		{
-			name: "no deduplication when suffix does not match id prefix",
-			c:    "GOBL-GB",
-			id:   "TAX-IDENTITY",
-			want: "GOBL-GB-TAX-IDENTITY",
-		},
-		{
-			name: "deduplicates when c has no hyphen and matches id prefix",
-			c:    "ORG",
-			id:   "ORG-EMAIL",
-			want: "ORG-EMAIL",
-		},
-		{
-			name: "no deduplication when c has no hyphen and does not match id prefix",
-			c:    "GOBL",
-			id:   "ORG-EMAIL",
-			want: "GOBL-ORG-EMAIL",
-		},
-		{
-			name: "no deduplication when id has no hyphen",
-			c:    "GOBL-ORG",
-			id:   "EMAIL",
-			want: "GOBL-ORG-EMAIL",
-		},
-		{
-			name: "partial match of suffix does not deduplicate",
-			c:    "GOBL-ORGX",
-			id:   "ORG-EMAIL",
-			want: "GOBL-ORGX-ORG-EMAIL",
-		},
-		{
-			name: "suffix equals full id without trailing segment does not deduplicate",
-			c:    "GOBL-ORG",
-			id:   "ORG",
-			want: "GOBL-ORG-ORG",
-		},
-		{
-			name: "multi-segment deduplication uses only last segment of c",
-			c:    "GOBL-TAX-ORG",
-			id:   "ORG-PARTY",
-			want: "GOBL-TAX-ORG-PARTY",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := tt.c.Prepend(tt.id)
-			assert.Equal(t, tt.want, got)
-		})
-	}
-}
-
 func TestFor(t *testing.T) {
 	t.Run("name includes go package name", func(t *testing.T) {
 		set := emailRules()
 		assert.Equal(t, "rules.Email", set.Name)
 	})
 
-	t.Run("id is pkg-typename before registration", func(t *testing.T) {
-		// Email is in package rules_test (short name "rules"), so the base ID is RULES-EMAIL.
+	t.Run("id omits package when For is called from the same package", func(t *testing.T) {
+		// emailRules() is defined and called in package rules_test, same as Email.
 		set := emailRules()
-		assert.Equal(t, rules.Code("RULES-EMAIL"), set.ID)
+		assert.Equal(t, rules.Code("EMAIL"), set.ID)
 	})
 
 	t.Run("id gets namespace prepended by register", func(t *testing.T) {
 		// emailRules() is registered under GOBL-TEST in init(), so the
-		// global registry holds a subset with ID "GOBL-TEST-RULES-EMAIL".
+		// global registry holds a subset with ID "GOBL-TEST-EMAIL".
 		var found *rules.Set
 		for _, ns := range rules.Registry() {
 			for _, sub := range ns.Subsets {
@@ -144,14 +79,14 @@ func TestFor(t *testing.T) {
 			}
 		}
 		require.NotNil(t, found, "expected to find rules.Email set in registry")
-		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL"), found.ID)
+		assert.Equal(t, rules.Code("GOBL-TEST-EMAIL"), found.ID)
 	})
 
 	t.Run("assertion code includes full namespace after registration", func(t *testing.T) {
 		e := &Email{Addr: ""}
 		faults := rules.Validate(e)
 		require.NotNil(t, faults)
-		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), faults.First().Code())
+		assert.Equal(t, rules.Code("GOBL-TEST-EMAIL-01"), faults.First().Code())
 	})
 
 	t.Run("panics on invalid field name", func(t *testing.T) {
@@ -174,11 +109,11 @@ func TestValidate(t *testing.T) {
 		e := &Email{Addr: ""}
 		faults := rules.Validate(e)
 		require.NotNil(t, faults)
-		assert.Equal(t, "[GOBL-TEST-RULES-EMAIL-01] ($.addr) expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-EMAIL-01] ($.addr) expected a valid email address", faults.Error())
 		assert.True(t, faults.HasPath("$.addr"))
 		f := faults.First()
 		assert.Equal(t, "expected a valid email address", f.Message())
-		assert.Equal(t, rules.Code("GOBL-TEST-RULES-EMAIL-01"), f.Code())
+		assert.Equal(t, rules.Code("GOBL-TEST-EMAIL-01"), f.Code())
 		assert.Equal(t, "$.addr", f.Path())
 	})
 
@@ -194,7 +129,7 @@ func TestValidate(t *testing.T) {
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
 		assert.True(t, faults.HasPath("$.emails[1].addr"), "expected fault at $.emails[1].addr")
-		assert.Equal(t, "[GOBL-TEST-RULES-PERSON-01] person address must have a city; [GOBL-TEST-RULES-EMAIL-01] ($.emails[1].addr) expected a valid email address", faults.Error())
+		assert.Equal(t, "[GOBL-TEST-PERSON-01] person address must have a city; [GOBL-TEST-EMAIL-01] ($.emails[1].addr) expected a valid email address", faults.Error())
 	})
 
 	t.Run("recurses into pointer fields", func(t *testing.T) {
@@ -266,7 +201,7 @@ func TestForValue(t *testing.T) {
 		faults := set.Validate(TestCode(""))
 		require.Error(t, faults)
 		assert.Equal(t, 1, faults.Len())
-		assert.Equal(t, rules.Code("RULES-TESTCODE-01"), faults.First().Code())
+		assert.Equal(t, rules.Code("TESTCODE-01"), faults.First().Code())
 		assert.Equal(t, "code must not be empty", faults.First().Message())
 	})
 
@@ -275,13 +210,13 @@ func TestForValue(t *testing.T) {
 		faults := set.Validate(TestCode("ABCDEFGHIJK"))
 		require.NotNil(t, faults)
 		assert.Equal(t, 1, faults.Len())
-		assert.Equal(t, rules.Code("RULES-TESTCODE-02"), faults.First().Code())
+		assert.Equal(t, rules.Code("TESTCODE-02"), faults.First().Code())
 	})
 
 	t.Run("global Validate finds value type rules", func(t *testing.T) {
 		faults := rules.Validate(TestCode(""))
 		require.NotNil(t, faults)
-		assert.Equal(t, rules.Code("GOBL-TEST-RULES-TESTCODE-01"), faults.First().Code())
+		assert.Equal(t, rules.Code("GOBL-TEST-TESTCODE-01"), faults.First().Code())
 	})
 
 	t.Run("global Validate passes valid value", func(t *testing.T) {

@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -56,34 +57,36 @@ func TestValidatePay(t *testing.T) {
 	t.Run("advance nil", func(t *testing.T) {
 		var adv *pay.Advance
 		assert.NotPanics(t, func() {
-			assert.NoError(t, ad.Validator(adv))
+			assert.NoError(t, rules.Validate(adv, withAddonContext()))
 		})
 	})
 
 	t.Run("advance valid with date", func(t *testing.T) {
 		adv := &pay.Advance{
-			Key:  pay.MeansKeyOther.With(favat.MeansKeyCredit),
-			Date: cal.NewDate(2022, 12, 27),
+			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Date:        cal.NewDate(2022, 12, 27),
+			Description: "Advance payment",
 		}
 		ad.Normalizer(adv)
-		err := ad.Validator(adv)
+		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)
 	})
 
 	t.Run("advance missing date", func(t *testing.T) {
 		adv := &pay.Advance{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Description: "Advance payment",
 		}
 		ad.Normalizer(adv)
-		err := ad.Validator(adv)
+		err := rules.Validate(adv, withAddonContext())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "date")
+		assert.Contains(t, err.Error(), "advance payment date is required")
 	})
 
 	t.Run("instructions nil", func(t *testing.T) {
 		var instr *pay.Instructions
 		assert.NotPanics(t, func() {
-			assert.NoError(t, ad.Validator(instr))
+			assert.NoError(t, rules.Validate(instr, withAddonContext()))
 		})
 	})
 
@@ -92,10 +95,11 @@ func TestValidatePay(t *testing.T) {
 			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
 		}
 		ad.Normalizer(instr)
-		err := ad.Validator(instr)
+		err := rules.Validate(instr, withAddonContext())
 		assert.NoError(t, err)
 	})
 }
+
 
 func TestPaymentMeansMapping(t *testing.T) {
 	ad := tax.AddonForKey(favat.V3)

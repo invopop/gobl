@@ -15,18 +15,16 @@ func TestInvalidFoodVouchers(t *testing.T) {
 
 	err := rules.Validate(fvc, withAddonContext())
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "account number is required")
-	assert.Contains(t, err.Error(), "lines are required")
+	assert.ErrorContains(t, err, "account number is required")
+	assert.ErrorContains(t, err, "lines are required")
 
 	fvc.EmployerRegistration = "123456789012345678901"
 	fvc.AccountNumber = "012345678901234567891"
 
 	err = rules.Validate(fvc, withAddonContext())
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "employer registration must be no more than 20 characters")
-	assert.Contains(t, err.Error(), "account number must be no more than 20 characters")
+	assert.ErrorContains(t, err, "employer registration must be no more than 20 characters")
+	assert.ErrorContains(t, err, "account number must be no more than 20 characters")
 }
 
 func TestInvalidFoodVouchersLine(t *testing.T) {
@@ -53,7 +51,7 @@ func TestInvalidFoodVouchersEmployee(t *testing.T) {
 	err := rules.Validate(fvc, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "employee tax code is required")
+	assert.Contains(t, err.Error(), "employee tax code (RFC) is required")
 	assert.Contains(t, err.Error(), "employee CURP is required")
 	assert.Contains(t, err.Error(), "employee name is required")
 
@@ -63,8 +61,8 @@ func TestInvalidFoodVouchersEmployee(t *testing.T) {
 
 	err = rules.Validate(fvc, withAddonContext())
 
-	assert.ErrorContains(t, err, "employee tax identity code is invalid")
-	assert.ErrorContains(t, err, "employee CURP format is invalid")
+	assert.ErrorContains(t, err, "employee tax code (RFC) must be valid")
+	assert.ErrorContains(t, err, "employee CURP format must be valid")
 	assert.ErrorContains(t, err, "employee social security number format is invalid")
 }
 

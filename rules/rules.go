@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -100,12 +101,33 @@ func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
 // For creates a new set of rules for the provided object (struct or value type).
 // Each Def is applied in order to build up the set's assertions and subsets.
 // Assert, Field, Each, Object, and When all return Def values that can be passed here.
+//
+// We let the compiler know that this function should not be "inlined"
+// so that the package the caller is in can be detected reliably at runtime.
+//
+//go:noinline
 func For(obj any, defs ...Def) *Set {
+	// Detect whether the direct caller is in the same package as obj. When true,
+	// the package segment is omitted from the set ID, since the registration
+	// namespace will supply it. This avoids double-encoding, e.g. org.Email
+	// registered under GOBL-ORG yields GOBL-ORG-EMAIL, not GOBL-ORG-ORG-EMAIL.
+	var callerPkg string
+	if pc, _, _, ok := runtime.Caller(1); ok {
+		if fn := runtime.FuncForPC(pc); fn != nil {
+			name := fn.Name() // e.g. "github.com/invopop/gobl/org.init"
+			if i := strings.LastIndex(name, "."); i >= 0 {
+				callerPkg = name[:i]
+			}
+		}
+	}
+
 	t := reflect.TypeOf(obj)
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
-	setID := typeSetID(t)
+	normPkg := func(p string) string { return strings.TrimSuffix(p, "_test") }
+	samePackage := callerPkg != "" && normPkg(callerPkg) == normPkg(t.PkgPath())
+	setID := typeSetID(t, samePackage)
 	name := t.Name()
 	if pkg := pkgShortName(t); pkg != "" {
 		name = pkg + "." + name
@@ -346,11 +368,16 @@ func compileAssertions(env any, asserts ...*Assertion) {
 	}
 }
 
-// typeSetID derives a set ID from the type, including the Go package short name
-// when present. For example, tax.Identity becomes TAX-IDENTITY and Email (no
-// package) becomes EMAIL. The GOBL prefix and registry namespace are contributed
-// by Register, which prepends its code avoiding duplication.
-func typeSetID(t reflect.Type) Code {
+// typeSetID derives a set ID from the type. When samePackage is true (the For
+// caller is in the same package as the type), the package segment is omitted so
+// that the registration namespace supplies it without duplication.
+// For example: tax.Identity called from outside → TAX-IDENTITY;
+//
+//	tax.Identity called from within tax → IDENTITY.
+func typeSetID(t reflect.Type, samePackage bool) Code {
+	if samePackage {
+		return Code(strings.ToUpper(t.Name()))
+	}
 	pkg := pkgShortName(t)
 	if pkg == "" {
 		return Code(strings.ToUpper(t.Name()))
@@ -375,7 +402,7 @@ func pkgShortName(t reflect.Type) string {
 func prependToSets(code Code, sets []*Set) {
 	for _, s := range sets {
 		if s.ID != "" {
-			s.ID = code.Prepend(s.ID)
+			s.ID = code.Add(s.ID)
 		}
 		prependToAssertions(code, s.Assert)
 		prependToSets(code, s.Subsets)
@@ -387,7 +414,7 @@ func prependToSets(code Code, sets []*Set) {
 func prependToAssertions(code Code, asserts []*Assertion) {
 	for _, a := range asserts {
 		if a.ID != "" {
-			a.ID = code.Prepend(a.ID)
+			a.ID = code.Add(a.ID)
 		}
 	}
 }
@@ -395,26 +422,6 @@ func prependToAssertions(code Code, asserts []*Assertion) {
 // Add allows us to create a new code by appending a suffix to the existing code.
 func (c Code) Add(code Code) Code {
 	return c + "-" + code
-}
-
-// Prepend prepends c to id, deduplicating the last segment of c when it
-// matches the first segment of id. This avoids double-encoding the package
-// name when the registry namespace already contains it.
-// For example: Code("GOBL-ORG").Prepend("ORG-EMAIL") → "GOBL-ORG-EMAIL"
-// but: Code("GOBL-GB").Prepend("TAX-IDENTITY") → "GOBL-GB-TAX-IDENTITY"
-func (c Code) Prepend(id Code) Code {
-	codeStr := string(c)
-	idStr := string(id)
-	// Extract last segment of c.
-	suffix := codeStr
-	if i := strings.LastIndex(codeStr, "-"); i >= 0 {
-		suffix = codeStr[i+1:]
-	}
-	// Drop the leading segment of id when it duplicates the suffix.
-	if strings.HasPrefix(idStr, suffix+"-") {
-		return c + "-" + Code(idStr[len(suffix)+1:])
-	}
-	return c.Add(id)
 }
 
 // AllSets returns all rule sets registered in the global registry.

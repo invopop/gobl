@@ -127,12 +127,6 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	err = rules.Validate(inv)
 	assert.NoError(t, err)
 	assert.Equal(t, inv.Preceding[0].Ext[favat.ExtKeyEffectiveDate], cbc.Code("1"))
-
-	inv.Preceding[0].Ext["foo"] = "bar"
-	err = rules.Validate(inv)
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
-	}
 }
 
 func TestBasicStandardInvoiceValidation(t *testing.T) {
@@ -230,7 +224,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
+		assert.ErrorContains(t, err, "supplier name is required")
 	})
 
 	t.Run("missing addresses", func(t *testing.T) {
@@ -238,7 +232,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier: (addresses: cannot be blank.)")
+		assert.ErrorContains(t, err, "supplier addresses are required")
 	})
 
 	t.Run("empty addresses array", func(t *testing.T) {
@@ -246,7 +240,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv.Supplier.Addresses = []*org.Address{}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier: (addresses: cannot be blank.)")
+		assert.ErrorContains(t, err, "supplier addresses are required")
 	})
 
 	t.Run("missing country in first address", func(t *testing.T) {
@@ -259,7 +253,7 @@ func TestSupplierValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier: (addresses: (country: cannot be blank.).).")
+		assert.ErrorContains(t, err, "supplier first address must have a country")
 	})
 
 	t.Run("missing street in first address", func(t *testing.T) {
@@ -272,7 +266,7 @@ func TestSupplierValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier: (addresses: (street: cannot be blank.).).")
+		assert.ErrorContains(t, err, "supplier first address must have a street")
 	})
 
 	t.Run("missing both country and street in first address", func(t *testing.T) {
@@ -284,8 +278,8 @@ func TestSupplierValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "country: cannot be blank")
-		assert.ErrorContains(t, err, "street: cannot be blank")
+		assert.ErrorContains(t, err, "supplier first address must have a country")
+		assert.ErrorContains(t, err, "supplier first address must have a street")
 	})
 }
 
@@ -317,7 +311,7 @@ func TestCustomerJSTValidation(t *testing.T) {
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '8' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '8' and code for JST")
 	})
 
 	t.Run("JST customer with identity missing code", func(t *testing.T) {
@@ -335,8 +329,8 @@ func TestCustomerJSTValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		// Identity's own validation catches empty code first
-		assert.ErrorContains(t, err, "code: cannot be blank")
+		// Identity's own validation catches empty code
+		assert.ErrorContains(t, err, "identity code must be provided")
 	})
 
 	t.Run("JST customer with wrong role identity", func(t *testing.T) {
@@ -354,7 +348,7 @@ func TestCustomerJSTValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '8' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '8' and code for JST")
 	})
 
 	t.Run("non-JST customer does not require identity", func(t *testing.T) {
@@ -398,7 +392,7 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '10' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '10' and code for GroupVAT")
 	})
 
 	t.Run("GroupVAT customer with identity missing code", func(t *testing.T) {
@@ -416,8 +410,8 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		// Identity's own validation catches empty code first
-		assert.ErrorContains(t, err, "code: cannot be blank")
+		// Identity's own validation catches empty code
+		assert.ErrorContains(t, err, "identity code must be provided")
 	})
 
 	t.Run("GroupVAT customer with wrong role identity", func(t *testing.T) {
@@ -435,7 +429,7 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '10' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '10' and code for GroupVAT")
 	})
 
 	t.Run("non-GroupVAT customer does not require identity", func(t *testing.T) {
@@ -493,7 +487,7 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '8' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '8' and code for JST")
 	})
 
 	t.Run("customer with both JST and GroupVAT missing GroupVAT identity", func(t *testing.T) {
@@ -512,7 +506,7 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (identities: missing identity with role '10' and code.)")
+		assert.ErrorContains(t, err, "customer requires identity with role '10' and code for GroupVAT")
 	})
 
 	t.Run("customer without JST and GroupVAT does not require identities", func(t *testing.T) {
@@ -569,7 +563,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding: cannot be blank")
+		assert.ErrorContains(t, err, "preceding documents are required for credit notes")
 	})
 }
 
@@ -588,7 +582,7 @@ func TestSimplifiedInvoiceCustomerValidation(t *testing.T) {
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: cannot be blank")
+		assert.ErrorContains(t, err, "customer is required")
 	})
 }
 
@@ -598,7 +592,7 @@ func TestCustomerTaxIDValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		assert.ErrorContains(t, err, "customer tax ID is required")
 	})
 }
 
@@ -608,7 +602,7 @@ func TestPrecedingValidation(t *testing.T) {
 		inv.Preceding[0].IssueDate = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding: (0: (issue_date: cannot be blank.).")
+		assert.ErrorContains(t, err, "preceding issue date is required")
 	})
 
 	t.Run("preceding without code", func(t *testing.T) {
@@ -616,19 +610,17 @@ func TestPrecedingValidation(t *testing.T) {
 		inv.Preceding[0].Code = ""
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding: (0: (code: cannot be blank.).")
+		assert.ErrorContains(t, err, "preceding code is required")
 	})
 }
 
 func TestNilValidation(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
-
 	t.Run("nil supplier", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Supplier = nil
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "supplier: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier is required")
 	})
 }
 
@@ -648,7 +640,7 @@ func TestValidationEdgeCases(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "missing identity with role '8' and code")
+		assert.ErrorContains(t, err, "customer requires identity with role '8' and code for JST")
 	})
 
 	t.Run("customer with identity matching role but no code", func(t *testing.T) {

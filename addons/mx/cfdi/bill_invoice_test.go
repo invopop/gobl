@@ -358,14 +358,14 @@ func TestPrecedingValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err := rules.Validate(inv)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "missing sat-uuid stamp")
+	assert.Contains(t, err.Error(), "missing 'sat-uuid' stamp")
 	assert.Contains(t, err.Error(), "mx-cfdi-rel-type")
 
 	inv.Type = bill.InvoiceTypeCreditNote
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "missing sat-uuid stamp")
+	assert.Contains(t, err.Error(), "missing 'sat-uuid' stamp")
 
 	inv.Preceding[0].Stamps[0].Provider = "sat-uuid"
 	require.NoError(t, inv.Calculate())
