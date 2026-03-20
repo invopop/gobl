@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -152,55 +153,63 @@ func TestOrgInboxNormalize(t *testing.T) {
 }
 
 func TestOrgItemValidate(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("missing unit", func(t *testing.T) {
-		item := &org.Item{}
-		assert.ErrorContains(t, ad.Validator(item), "unit: cannot be blank (BR-23).")
+		item := &org.Item{Name: "Test"}
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "unit is required (BR-23)")
 	})
 
 	t.Run("validates unit", func(t *testing.T) {
 		item := &org.Item{
+			Name: "Test",
 			Unit: org.UnitOne,
 		}
-		assert.NoError(t, ad.Validator(item))
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 
 	t.Run("negative price", func(t *testing.T) {
 		item := &org.Item{
+			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(-100, 0),
 		}
-		assert.ErrorContains(t, ad.Validator(item), "price: must be no less than 0")
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "zero or positive")
 	})
 
 	t.Run("0 price", func(t *testing.T) {
 		item := &org.Item{
+			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(0, 0),
 		}
-		assert.NoError(t, ad.Validator(item))
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 }
 
 func TestOrgAttachmentValidation(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("blank", func(t *testing.T) {
 		a := &org.Attachment{}
-		assert.ErrorContains(t, ad.Validator(a), "code: cannot be blank.")
+		err := rules.Validate(a, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "code is required")
 	})
 	t.Run("with code", func(t *testing.T) {
 		a := &org.Attachment{
 			Code: "123",
+			URL:  "https://example.com/attachment.pdf",
 		}
-		assert.NoError(t, ad.Validator(a))
+		err := rules.Validate(a, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 }
 
 func TestOrgPartyValidate(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("no inboxes", func(t *testing.T) {
 		p := &org.Party{}
-		assert.NoError(t, ad.Validator(p))
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 
 	t.Run("one inbox", func(t *testing.T) {
@@ -212,7 +221,8 @@ func TestOrgPartyValidate(t *testing.T) {
 				},
 			},
 		}
-		assert.NoError(t, ad.Validator(p))
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 
 	t.Run("multiple inboxes", func(t *testing.T) {
@@ -228,30 +238,32 @@ func TestOrgPartyValidate(t *testing.T) {
 				},
 			},
 		}
-		assert.ErrorContains(t, ad.Validator(p), "inboxes: cannot have more than one inbox (BT-34, BT-49).")
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "cannot have more than one inbox (BT-34, BT-49)")
 	})
 }
 
 func TestOrgInboxValidate(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("missing scheme and code", func(t *testing.T) {
 		i := &org.Inbox{}
 		// Not specific for addon, but this is important to check
-		assert.ErrorContains(t, i.Validate(), "code: cannot be blank without url or email")
+		assert.ErrorContains(t, rules.Validate(i), "inbox requires a code, url, or email")
 	})
 
 	t.Run("missing scheme", func(t *testing.T) {
 		i := &org.Inbox{
 			Code: "code1",
 		}
-		assert.ErrorContains(t, ad.Validator(i), "scheme: cannot be blank with code (BR-62, BR-63)")
+		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "scheme cannot be blank when code is set (BR-62, BR-63)")
 	})
 
 	t.Run("missing code", func(t *testing.T) {
 		i := &org.Inbox{
 			Scheme: "scheme1",
 		}
-		assert.ErrorContains(t, ad.Validator(i), "code: cannot be blank")
+		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "code cannot be blank when scheme is set")
 	})
 
 	t.Run("valid inbox", func(t *testing.T) {
@@ -259,6 +271,7 @@ func TestOrgInboxValidate(t *testing.T) {
 			Scheme: "scheme1",
 			Code:   "code1",
 		}
-		assert.NoError(t, ad.Validator(i))
+		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 	})
 }

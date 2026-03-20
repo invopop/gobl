@@ -6,12 +6,12 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/dk"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Map of GOBL Note keys to the corresponding UNTDID 4451 code.
@@ -122,61 +122,61 @@ func normalizeOrgInbox(i *org.Inbox) {
 	}
 }
 
-func validateOrgItem(item *org.Item) error {
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Unit,
-			validation.Required.Error("cannot be blank (BR-23)"),
-			validation.Skip,
-		),
-		validation.Field(&item.Price,
-			// Must not be negative (BR-27)
-			num.ZeroOrPositive,
-			validation.Skip,
+func orgItemRules() *rules.Set {
+	return rules.For(new(org.Item),
+		rules.Field("unit",
+			// BR-23: unit of measure is required
+			rules.Assert("01", "unit is required (BR-23)", is.Present),
 		),
 	)
 }
 
-func validateOrgAttachment(a *org.Attachment) error {
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Code,
-			validation.Required,
-			validation.Skip,
+func orgAttachmentRules() *rules.Set {
+	return rules.For(new(org.Attachment),
+		rules.Field("code",
+			rules.Assert("01", "code is required", is.Present),
 		),
 	)
 }
 
-func validateOrgParty(p *org.Party) error {
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Inboxes,
-			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
-			validation.Skip,
-		),
-	)
-}
-
-func validateOrgInbox(i *org.Inbox) error {
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Scheme,
-			validation.When(i.Code != cbc.CodeEmpty,
-				validation.Required.Error("cannot be blank with code (BR-62, BR-63)"),
+func orgPartyRules() *rules.Set {
+	return rules.For(new(org.Party),
+		rules.Field("inboxes",
+			rules.Assert("01", "cannot have more than one inbox (BT-34, BT-49)",
+				is.Length(0, 1),
 			),
-			validation.Skip,
-		),
-		validation.Field(&i.Code,
-			validation.When(i.Scheme != cbc.CodeEmpty,
-				validation.Required.Error("cannot be blank with scheme"),
-			),
-			validation.Skip,
 		),
 	)
 }
 
-func validateOrgAddress(a *org.Address) error {
-	return validation.ValidateStruct(a,
-		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
-		validation.Field(&a.Country,
-			validation.Required,
-			validation.Skip,
+func orgInboxRules() *rules.Set {
+	return rules.For(new(org.Inbox),
+		// BR-62, BR-63: scheme required when code is present
+		rules.Assert("01", "scheme cannot be blank when code is set (BR-62, BR-63)",
+			is.Func("scheme required with code", orgInboxSchemeRequiredWithCode),
+		),
+		// code required when scheme is present
+		rules.Assert("02", "code cannot be blank when scheme is set",
+			is.Func("code required with scheme", orgInboxCodeRequiredWithScheme),
+		),
+	)
+}
+
+func orgInboxSchemeRequiredWithCode(val any) bool {
+	i, ok := val.(*org.Inbox)
+	return !ok || i == nil || i.Code == cbc.CodeEmpty || i.Scheme != cbc.CodeEmpty
+}
+
+func orgInboxCodeRequiredWithScheme(val any) bool {
+	i, ok := val.(*org.Inbox)
+	return !ok || i == nil || i.Scheme == cbc.CodeEmpty || i.Code != cbc.CodeEmpty
+}
+
+func orgAddressRules() *rules.Set {
+	return rules.For(new(org.Address),
+		rules.Field("country",
+			// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
+			rules.Assert("01", "country is required (BR-9, BR-11, BR-20, BR-57)", is.Present),
 		),
 	)
 }

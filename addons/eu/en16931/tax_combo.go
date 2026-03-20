@@ -5,8 +5,9 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Official subset of UNTDID 5305 category codes recognized by the EN 16931
@@ -55,35 +56,73 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if tc == nil {
-		return nil
-	}
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			tax.ExtensionsRequire(untdid.ExtKeyTaxCategory),
-			validation.When(
-				tc.Category == tax.CategoryVAT,
-				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, vatKeyMap.Values()...),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.Field("ext",
+			rules.Assert("01", "tax category extension is required",
+				tax.ExtensionsRequire(untdid.ExtKeyTaxCategory),
 			),
-			validation.When(
-				tc.Category == es.TaxCategoryIGIC,
-				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIGIC),
+		),
+		rules.When(is.Func("is VAT", taxComboIsVAT),
+			rules.Field("ext",
+				rules.Assert("02", "VAT category code must be valid",
+					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, vatKeyMap.Values()...),
+				),
 			),
-			validation.When(
-				tc.Category == es.TaxCategoryIPSI,
-				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIPSI),
+		),
+		rules.When(is.Func("is IGIC", taxComboIsIGIC),
+			rules.Field("ext",
+				rules.Assert("03", "must use IGIC category code",
+					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIGIC),
+				),
 			),
-			validation.When(
-				!tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
-				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryOutsideScope),
+		),
+		rules.When(is.Func("is IPSI", taxComboIsIPSI),
+			rules.Field("ext",
+				rules.Assert("04", "must use IPSI category code",
+					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryIPSI),
+				),
 			),
-			validation.When(
-				tc.Ext[untdid.ExtKeyTaxCategory] == TaxCategoryExempt,
-				// we enforce BT-121 to simplify future xml validation. BR-E-10
-				tax.ExtensionsRequire(cef.ExtKeyVATEX),
+		),
+		rules.When(is.Func("is outside scope", taxComboIsOutsideScope),
+			rules.Field("ext",
+				rules.Assert("05", "must use outside scope category code",
+					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryOutsideScope),
+				),
 			),
-			validation.Skip,
+		),
+		rules.When(is.Func("is exempt", taxComboIsExempt),
+			rules.Field("ext",
+				// BR-E-10: VATEX extension required for exempt tax
+				rules.Assert("06", "VATEX extension is required for exempt tax (BR-E-10)",
+					tax.ExtensionsRequire(cef.ExtKeyVATEX),
+				),
+			),
 		),
 	)
+}
+
+func taxComboIsVAT(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == tax.CategoryVAT
+}
+
+func taxComboIsIGIC(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == es.TaxCategoryIGIC
+}
+
+func taxComboIsIPSI(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == es.TaxCategoryIPSI
+}
+
+func taxComboIsOutsideScope(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI)
+}
+
+func taxComboIsExempt(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory) == TaxCategoryExempt
 }

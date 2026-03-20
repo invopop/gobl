@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -110,7 +111,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "19%", c.Percent.String())
 	})
@@ -121,7 +123,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyReverseCharge,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "AE", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -132,7 +135,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyIntraCommunity,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "K", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -143,7 +147,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyExport,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -153,7 +158,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyOutsideScope,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -167,14 +173,14 @@ func TestTaxComboValidation(t *testing.T) {
 			},
 		}
 		ad.Normalizer(c)
-		err := ad.Validator(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -185,8 +191,7 @@ func TestTaxComboValidation(t *testing.T) {
 		}
 		ad.Normalizer(c)
 		c.Ext = nil // override
-		err := ad.Validator(c)
-		assert.ErrorContains(t, err, "ext: (untdid-tax-category: required.)")
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "tax category extension is required")
 	})
-
 }

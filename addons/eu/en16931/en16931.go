@@ -9,6 +9,8 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,6 +21,24 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V2017.String(),
+		rules.GOBL.Add("EU-EN16931-V2017"),
+		is.HasContext(tax.AddonIn(V2017)),
+		billInvoiceRules(),
+		billDiscountRules(),
+		billLineDiscountRules(),
+		billChargeRules(),
+		billLineChargeRules(),
+		payInstructionsRules(),
+		payTermsRules(),
+		orgItemRules(),
+		orgAttachmentRules(),
+		orgPartyRules(),
+		orgInboxRules(),
+		orgAddressRules(),
+		taxComboRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -61,7 +81,6 @@ func newAddon() *tax.AddonDef {
 		},
 		Scenarios:  scenarios,
 		Normalizer: normalize,
-		Validator:  validate,
 	}
 }
 
@@ -90,34 +109,4 @@ func normalize(doc any) {
 	case *org.Inbox:
 		normalizeOrgInbox(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Line:
-		return validateBillLine(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Discount:
-		return validateBillDiscount(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	case *org.Item:
-		return validateOrgItem(obj)
-	case *org.Attachment:
-		return validateOrgAttachment(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	case *org.Inbox:
-		return validateOrgInbox(obj)
-	case *org.Address:
-		return validateOrgAddress(obj)
-	}
-	return nil
 }
