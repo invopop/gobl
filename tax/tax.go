@@ -4,6 +4,7 @@ package tax
 import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/validation"
 )
 
 func init() {
@@ -33,3 +34,6 @@ func init() {
 		comboRules(),
 	)
 }
+
+// Placeholder until migration is complete
+var RequireIdentityCode = validation.Skip

@@ -163,6 +163,9 @@ func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 		return
 	}
 	for _, dd := range t.DueDates {
+		if dd == nil {
+			continue
+		}
 		if dd.Percent != nil && !dd.Percent.IsZero() {
 			dd.Amount = dd.Percent.Of(sum)
 		}

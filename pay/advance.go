@@ -73,7 +73,7 @@ func (a *Advance) Normalize() {
 // CalculateFrom will update the amount using the rate of the provided
 // total, if defined.
 func (a *Advance) CalculateFrom(payable num.Amount) {
-	if a.Percent != nil {
+	if a != nil && a.Percent != nil {
 		a.Amount = a.Percent.Of(payable)
 	}
 }

@@ -16,7 +16,6 @@ func TestDocumentRefValidation(t *testing.T) {
 	dr := new(org.DocumentRef)
 	dr.Code = "FOO"
 	dr.IssueDate = cal.NewDate(2022, 11, 6)
-
 	assert.NoError(t, rules.Validate(dr))
 }
 

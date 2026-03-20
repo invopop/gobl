@@ -120,4 +120,17 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		assert.Equal(t, "20.85", p.Advances[0].Amount.String())
 		assert.Equal(t, "20.85", a.String())
 	})
+
+	t.Run("with nil advances", func(t *testing.T) {
+		p := &PaymentDetails{
+			Advances: []*pay.Advance{
+				nil,
+			},
+		}
+		assert.NotPanics(t, func() {
+			p.calculateAdvances(zero, total)
+			a := p.totalAdvance(zero)
+			assert.Equal(t, "0.00", a.String())
+		})
+	})
 }

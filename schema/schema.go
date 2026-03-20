@@ -55,7 +55,7 @@ type document struct {
 
 func idRules() *rules.Set {
 	return rules.For(ID(""),
-		rules.Assert("01", "schema ID must be a valid URL", is.URL),
+		rules.AssertIfPresent("01", "schema ID must be a valid URL", is.URL),
 	)
 }
 

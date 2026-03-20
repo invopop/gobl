@@ -13,7 +13,7 @@ func taxComboRules() *rules.Set {
 		rules.When(
 			is.HasContext(tax.RegimeIn(CountryCode)),
 			rules.When(
-				is.Expr(`cat == "VAT"`),
+				is.Expr(`string(cat) == "VAT"`),
 				rules.Field("ext",
 					rules.Assert("01", "pt-region extension is required for VAT", tax.ExtensionsRequire(ExtKeyRegion)),
 				),
