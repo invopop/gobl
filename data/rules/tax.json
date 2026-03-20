@@ -119,6 +119,159 @@
       ]
     },
     {
+      "id": "GOBL-TAX-CORRECTIONDEFINITION",
+      "name": "tax.CorrectionDefinition",
+      "subsets": [
+        {
+          "field": "schema",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CORRECTIONDEFINITION-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-RATEDEF",
+      "name": "tax.RateDef",
+      "subsets": [
+        {
+          "field": "rate",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-01",
+              "desc": "rate is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-02",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "values",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-03",
+              "desc": "rate values must be in descending chronological order",
+              "tests": "date order"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "percent",
+                  "assert": [
+                    {
+                      "id": "GOBL-TAX-RATEDEF-01",
+                      "desc": "rate value percent is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-REGIMEDEF",
+      "name": "tax.RegimeDef",
+      "subsets": [
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-01",
+              "desc": "country code is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-02",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "time_zone",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-03",
+              "desc": "time zone is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-TAX-REGIMEDEF-04",
+                  "desc": "time zone must be valid",
+                  "tests": "valid time zone"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "categories",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-05",
+              "desc": "at least one category is required",
+              "tests": "length between 1 and 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-SCENARIOSET",
+      "name": "tax.ScenarioSet",
+      "subsets": [
+        {
+          "field": "schema",
+          "assert": [
+            {
+              "id": "GOBL-TAX-SCENARIOSET-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "list",
+          "assert": [
+            {
+              "id": "GOBL-TAX-SCENARIOSET-02",
+              "desc": "at least one scenario is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-TAX-SET",
       "name": "tax.Set",
       "assert": [

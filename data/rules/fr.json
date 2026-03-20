@@ -24,6 +24,47 @@
       ]
     },
     {
+      "id": "GOBL-FR-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [FR]",
+          "subsets": [
+            {
+              "guard": "has a type in [SIREN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-ORG-IDENTITY-01",
+                      "desc": "identity code for type SIREN must be valid",
+                      "tests": "matches ^\\d{9}$"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "has a type in [SIRET]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-ORG-IDENTITY-02",
+                      "desc": "identity code for type SIRET must be valid",
+                      "tests": "matches ^\\d{14}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-FR-TAX-IDENTITY",
       "name": "tax.Identity",
       "subsets": [

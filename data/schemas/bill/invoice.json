@@ -44,6 +44,14 @@
                 "title": "Bypass"
               },
               {
+                "const": "prepayment",
+                "title": "Prepayment"
+              },
+              {
+                "const": "factoring",
+                "title": "Factoring"
+              },
+              {
                 "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
                 "title": "Any"
               }

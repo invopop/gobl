@@ -1,0 +1,186 @@
+{
+  "id": "GOBL-FR-CHORUSPRO-V1",
+  "name": "fr-choruspro-v1",
+  "guard": "context: addon in [fr-choruspro-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-01",
+                  "desc": "customer scheme extension must be '1'",
+                  "tests": "ext 'fr-choruspro-scheme' in [1]"
+                }
+              ]
+            },
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-02",
+                  "desc": "customer identities are required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-03",
+              "desc": "tax object is required with extensions",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-04",
+                  "desc": "tax extensions are required",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-05",
+                  "desc": "framework extension is required",
+                  "tests": "ext require [fr-choruspro-framework]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "framework is paid",
+          "subsets": [
+            {
+              "field": "totals",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE-06",
+                  "desc": "must be paid in full for framework 'A2'",
+                  "tests": "paid"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY",
+      "name": "org.Party",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-01",
+              "desc": "scheme extension is required",
+              "tests": "ext require [fr-choruspro-scheme]"
+            }
+          ]
+        },
+        {
+          "guard": "party scheme is 1",
+          "subsets": [
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-02",
+                  "desc": "identities must have a SIRET entry for scheme '1'",
+                  "tests": "has SIRET"
+                }
+              ]
+            },
+            {
+              "field": "tax_id",
+              "subsets": [
+                {
+                  "field": "country",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-03",
+                      "desc": "tax ID must be 'FR' for scheme '1'",
+                      "tests": "one of [FR]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "party scheme is not 1",
+          "subsets": [
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-04",
+                  "desc": "identities cannot have a SIRET entry when not '1' scheme",
+                  "tests": "no SIRET"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "party scheme is 2",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "subsets": [
+                {
+                  "field": "country",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-05",
+                      "desc": "tax ID country must be a non-French, EU company with scheme '2'",
+                      "tests": "not one of [FR]"
+                    },
+                    {
+                      "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-06",
+                      "desc": "tax ID country must be a member of the EU with scheme '2'",
+                      "tests": "EU member"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "party scheme is 3",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "subsets": [
+                {
+                  "field": "country",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY-07",
+                      "desc": "tax ID country must be a non-EU company with scheme '3'",
+                      "tests": "non-EU"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

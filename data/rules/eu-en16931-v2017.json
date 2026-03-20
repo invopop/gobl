@@ -1,0 +1,344 @@
+{
+  "id": "GOBL-EU-EN16931-V2017",
+  "name": "eu-en16931-v2017",
+  "guard": "context: addon in [eu-en16931-v2017]",
+  "subsets": [
+    {
+      "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-01",
+              "desc": "tax details are required with ext and UNTDID document type",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-02",
+                  "desc": "document type extension is required",
+                  "tests": "ext require [untdid-document-type]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-03",
+              "desc": "at least one line is required (BR-16)",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-04",
+                  "desc": "supplier addresses are required (BR-8)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-05",
+                  "desc": "customer addresses are required (BR-10)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is due standard invoice",
+          "subsets": [
+            {
+              "field": "payment",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-06",
+                  "desc": "payment details are required when amount is due (BR-CO-25)",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "terms",
+                  "assert": [
+                    {
+                      "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-07",
+                      "desc": "payment terms are required when amount is due (BR-CO-25)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT",
+      "name": "bill.Discount",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT-01",
+          "desc": "either a reason or an allowance type extension is required (BR-33)",
+          "tests": "reason or allowance"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-BILL-LINEDISCOUNT",
+      "name": "bill.LineDiscount",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-BILL-LINEDISCOUNT-01",
+          "desc": "either a reason or an allowance type extension is required (BR-41)",
+          "tests": "reason or allowance"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-BILL-CHARGE",
+      "name": "bill.Charge",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-BILL-CHARGE-01",
+          "desc": "either a reason or a charge type extension is required (BR-36)",
+          "tests": "reason or charge"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-BILL-LINECHARGE",
+      "name": "bill.LineCharge",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-BILL-LINECHARGE-01",
+          "desc": "either a reason or a charge type extension is required (BR-44)",
+          "tests": "reason or charge"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-PAY-INSTRUCTIONS",
+      "name": "pay.Instructions",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-PAY-INSTRUCTIONS-01",
+              "desc": "payment means extension is required (BR-49)",
+              "tests": "ext require [untdid-payment-means]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-PAY-TERMS",
+      "name": "pay.Terms",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-PAY-TERMS-01",
+          "desc": "either due_dates or notes must be provided (BR-CO-25)",
+          "tests": "has due dates or notes"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-ORG-ITEM",
+      "name": "org.Item",
+      "subsets": [
+        {
+          "field": "unit",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-ORG-ITEM-01",
+              "desc": "unit is required (BR-23)",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-ORG-ATTACHMENT",
+      "name": "org.Attachment",
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-ORG-ATTACHMENT-01",
+              "desc": "code is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-ORG-PARTY",
+      "name": "org.Party",
+      "subsets": [
+        {
+          "field": "inboxes",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-ORG-PARTY-01",
+              "desc": "cannot have more than one inbox (BT-34, BT-49)",
+              "tests": "length between 0 and 1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-ORG-INBOX",
+      "name": "org.Inbox",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-ORG-INBOX-01",
+          "desc": "scheme cannot be blank when code is set (BR-62, BR-63)",
+          "tests": "scheme required with code"
+        },
+        {
+          "id": "GOBL-EU-EN16931-V2017-ORG-INBOX-02",
+          "desc": "code cannot be blank when scheme is set",
+          "tests": "code required with scheme"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-ORG-ADDRESS",
+      "name": "org.Address",
+      "subsets": [
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-ORG-ADDRESS-01",
+              "desc": "country is required (BR-9, BR-11, BR-20, BR-57)",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-V2017-TAX-COMBO",
+      "name": "tax.Combo",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-01",
+              "desc": "tax category extension is required",
+              "tests": "ext require [untdid-tax-category]"
+            }
+          ]
+        },
+        {
+          "guard": "is VAT",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-02",
+                  "desc": "VAT category code must be valid",
+                  "tests": "ext 'untdid-tax-category' in [G, O, S, Z, E, AE, K]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is IGIC",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-03",
+                  "desc": "must use IGIC category code",
+                  "tests": "ext 'untdid-tax-category' in [L]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is IPSI",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-04",
+                  "desc": "must use IPSI category code",
+                  "tests": "ext 'untdid-tax-category' in [M]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is outside scope",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-05",
+                  "desc": "must use outside scope category code",
+                  "tests": "ext 'untdid-tax-category' in [O]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is exempt",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-06",
+                  "desc": "VATEX extension is required for exempt tax (BR-E-10)",
+                  "tests": "ext require [cef-vatex]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

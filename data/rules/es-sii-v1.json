@@ -1,0 +1,282 @@
+{
+  "id": "GOBL-ES-SII-V1",
+  "name": "es-sii-v1",
+  "guard": "context: addon in [es-sii-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-ES-SII-V1-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "invoice type in [corrective]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "assert": [
+                {
+                  "id": "GOBL-ES-SII-V1-BILL-INVOICE-01",
+                  "desc": "preceding documents are required for corrective invoices",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "preceding",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "issue_date",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-BILL-INVOICE-02",
+                      "desc": "preceding issue date is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [corrective]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "tax",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-SII-V1-BILL-INVOICE-03",
+                          "desc": "preceding invoice tax data is required for corrective invoices",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "not simplified",
+          "subsets": [
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-ES-SII-V1-BILL-INVOICE-04",
+                  "desc": "customer is required",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-ES-SII-V1-BILL-INVOICE-05",
+                  "desc": "must have a tax_id, or an identity with ext 'es-sii-identity-type'",
+                  "tests": "has tax_id or identity"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-SII-V1-BILL-INVOICE-06",
+                          "desc": "customer tax ID must have a code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-ES-SII-V1-BILL-INVOICE-07",
+              "desc": "tax object is required with extensions",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-ES-SII-V1-BILL-INVOICE-08",
+                  "desc": "tax extension 'es-sii-doc-type' is required",
+                  "tests": "ext require [es-sii-doc-type]"
+                }
+              ],
+              "subsets": [
+                {
+                  "guard": "ext 'es-sii-doc-type' in [R1, R2, R3, R4, R5]",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-BILL-INVOICE-09",
+                      "desc": "tax extension 'es-sii-correction-type' is required",
+                      "tests": "ext require [es-sii-correction-type]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [standard]",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-BILL-INVOICE-10",
+                      "desc": "tax extension 'es-sii-doc-type' for standard invoices must be F1, F2, or F3",
+                      "tests": "ext 'es-sii-doc-type' in [F1, F2, F3]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [corrective, credit-note, debit-note]",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-BILL-INVOICE-11",
+                      "desc": "doc type extension for corrective invoices must be R1, R2, R3, R4, or R5",
+                      "tests": "ext 'es-sii-doc-type' in [R1, R2, R3, R4, R5]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "notes",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "guard": "general note",
+                  "subsets": [
+                    {
+                      "field": "text",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-SII-V1-BILL-INVOICE-12",
+                          "desc": "general note text must be 500 characters or less",
+                          "tests": "length between 0 and 500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-ES-SII-V1-BILL-INVOICE-13",
+              "desc": "'es-sii-product' must be present in all tax combos or none",
+              "tests": "consistent product"
+            },
+            {
+              "id": "GOBL-ES-SII-V1-BILL-INVOICE-14",
+              "desc": "'es-sii-regime' must be the same in all tax combos",
+              "tests": "same regime"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-SII-V1-TAX-COMBO",
+      "name": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "sii vat/igic",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-ES-SII-V1-TAX-COMBO-01",
+                  "desc": "extension 'es-sii-regime' is required",
+                  "tests": "ext require [es-sii-regime]"
+                }
+              ],
+              "subsets": [
+                {
+                  "guard": "has outside scope",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-TAX-COMBO-03",
+                      "desc": "extension 'es-sii-exempt' must not be set when 'es-sii-outside-scope' is set",
+                      "tests": "ext exclude [es-sii-exempt]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "ext 'es-sii-regime' in [01]",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-TAX-COMBO-04",
+                      "desc": "exempt codes E2 and E3 not allowed with 'es-sii-regime' 01",
+                      "tests": "ext 'es-sii-exempt' not in [E2, E3]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "has percent",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-SII-V1-TAX-COMBO-02",
+                      "desc": "extension 'es-sii-exempt' must not be set when percent is set",
+                      "tests": "ext exclude [es-sii-exempt]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
