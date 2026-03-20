@@ -6,30 +6,18 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
 		rules.When(
 			is.HasContext(tax.RegimeIn(CountryCode)),
-			// TODO
-		),
-	)
-}
-
-func validateTaxCombo(tc *tax.Combo) error {
-	if tc == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			validation.When(
-				tc.Category == tax.CategoryVAT,
-				tax.ExtensionsRequire(ExtKeyRegion),
+			rules.When(
+				is.Expr(`cat == "VAT"`),
+				rules.Field("ext",
+					rules.Assert("01", "pt-region extension is required for VAT", tax.ExtensionsRequire(ExtKeyRegion)),
+				),
 			),
-			validation.Skip,
 		),
 	)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +35,7 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "empty extensions",
@@ -42,7 +43,7 @@ func TestTaxComboValidation(t *testing.T) {
 				Category: tax.CategoryVAT,
 				Ext:      tax.Extensions{},
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "missing extension",
@@ -52,7 +53,7 @@ func TestTaxComboValidation(t *testing.T) {
 					"random": "12345678",
 				},
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "other category",
@@ -64,7 +65,7 @@ func TestTaxComboValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := pt.Validate(tt.tc)
+			err := rules.Validate(tt.tc, tax.RegimeContext(l10n.PT.Tax()))
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
