@@ -477,6 +477,39 @@ assertions and tests inside `rules.Field("tax_id", ...)` operate on the
 > This makes the message self-explanatory in logs and UIs that display only the
 > text.
 
+> **Message convention for extensions:** When an assertion references an
+> extension key, always include the actual key string in single quotes using
+> `fmt.Sprintf`. This makes messages actionable without requiring the reader
+> to look up which extension is involved:
+>
+> ```go
+> // Bad — vague, requires reader to check the code
+> rules.Assert("01", "supplier requires a municipality extension", ...)
+>
+> // Good — key is visible in the message
+> rules.Assert("01",
+>     fmt.Sprintf("supplier requires '%s' extension", br.ExtKeyMunicipality),
+>     ...,
+> )
+>
+> // Multiple keys
+> rules.Assert("02",
+>     fmt.Sprintf("tax requires '%s' and '%s' extensions", ExtKeyModel, ExtKeyPresence),
+>     ...,
+> )
+> ```
+>
+> The same applies when mentioning extension *values* that may not be
+> self-explanatory:
+>
+> ```go
+> rules.Assert("03",
+>     fmt.Sprintf("NF-e invoices do not support '%s' for '%s'",
+>         PresenceDelivery, ExtKeyPresence),
+>     ...,
+> )
+> ```
+
 ### Slice fields (`Each`)
 
 `rules.Each` is a nameless `Def` that iterates over the elements of the current
@@ -632,3 +665,20 @@ The fully-qualified code is constructed as:
 
 For example, a `"03"` assertion on `head.Header` registered under `GOBL-HEAD`
 becomes `GOBL-HEAD-HEADER-03`.
+
+## Assertion message conventions
+
+Write assertion messages so they are self-explanatory without inspecting the
+fault path or the source code:
+
+1. **Include the parent context** for nested fields — write
+   `"supplier tax ID is required"`, not `"tax ID is required"`.
+2. **Include extension keys in single quotes** using `fmt.Sprintf` — write
+   `fmt.Sprintf("tax requires '%s' extension", ExtKeyModel)`, not
+   `"tax requires a model extension"`.
+3. **Include extension values** when the code alone is ambiguous — write
+   `fmt.Sprintf("NF-e does not support '%s' for '%s'", PresenceDelivery, ExtKeyPresence)`
+   so the reader sees the actual value that was rejected.
+4. **Preserve business rule codes** (e.g. `BR-FR-30`) in messages when the
+   original validation included them — they are the primary reference for
+   spec compliance.

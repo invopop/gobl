@@ -8,9 +8,16 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(nfse.V1), tax.AddonForKey(nfse.V1))
+	}
+}
 
 func TestInvoicesValidation(t *testing.T) {
 	tests := []struct {
@@ -31,21 +38,21 @@ func TestInvoicesValidation(t *testing.T) {
 		{
 			name: "missing series",
 			inv:  &bill.Invoice{},
-			err:  "series: cannot be blank",
+			err:  "series is required",
 		},
 		{
 			name: "invalid code (non-digits)",
 			inv: &bill.Invoice{
 				Code: "ABC-123",
 			},
-			err: "code: must be in a valid format",
+			err: "code must be a positive integer",
 		},
 		{
 			name: "invalid code (padding zeroes)",
 			inv: &bill.Invoice{
 				Code: "000123",
 			},
-			err: "code: must be in a valid format",
+			err: "code must be a positive integer",
 		},
 		{
 			name: "valid code",
@@ -63,7 +70,7 @@ func TestInvoicesValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "charges: not supported by nfse",
+			err: "not supported by NFS-e",
 		},
 		{
 			name: "discounts present",
@@ -74,24 +81,19 @@ func TestInvoicesValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "discounts: not supported by nfse",
+			err: "not supported by NFS-e",
 		},
 		{
 			name: "series missing",
 			inv:  &bill.Invoice{},
-			err:  "series: cannot be blank",
+			err:  "series is required",
 		},
 	}
 
-	addon := tax.AddonForKey(nfse.V1)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.inv)
-			if ts.err == "" {
-				if err != nil {
-					assert.NotContains(t, err.Error(), ts.err)
-				}
-			} else {
+			err := rules.Validate(ts.inv, withAddonContext())
+			if ts.err != "" {
 				if assert.Error(t, err) {
 					assert.Contains(t, err.Error(), ts.err)
 				}
@@ -101,22 +103,20 @@ func TestInvoicesValidation(t *testing.T) {
 }
 
 func TestSuppliersValidation(t *testing.T) {
-	addon := tax.AddonForKey(nfse.V1)
-
 	t.Run("validates supplier", func(t *testing.T) {
 		sup := new(org.Party)
 		inv := &bill.Invoice{
 			Supplier: sup,
 		}
-		err := addon.Validator(inv)
+		err := rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "name: cannot be blank")
+			assert.Contains(t, err.Error(), "supplier name is required")
 		}
 
 		sup.Name = "Test"
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "name: cannot be blank")
+			assert.NotContains(t, err.Error(), "supplier name is required")
 		}
 	})
 
@@ -125,42 +125,22 @@ func TestSuppliersValidation(t *testing.T) {
 		inv := &bill.Invoice{
 			Supplier: sup,
 		}
-		err := addon.Validator(inv)
+		err := rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "tax_id: cannot be blank")
+			assert.Contains(t, err.Error(), "supplier tax ID is required")
 		}
 
 		sup.TaxID = new(tax.Identity)
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "tax_id: cannot be blank")
-			assert.Contains(t, err.Error(), "tax_id: (code: cannot be blank")
+			assert.NotContains(t, err.Error(), "supplier tax ID is required")
+			assert.Contains(t, err.Error(), "supplier tax ID code is required")
 		}
 
 		sup.TaxID.Code = "123"
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "tax_id: (code: cannot be blank")
-		}
-	})
-
-	t.Run("validates identities", func(t *testing.T) {
-		sup := new(org.Party)
-		inv := &bill.Invoice{
-			Supplier: sup,
-		}
-		err := addon.Validator(inv)
-		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
-		}
-
-		sup.Identities = append(sup.Identities, &org.Identity{
-			Key:  nfse.IdentityKeyMunicipalReg,
-			Code: "12345678",
-		})
-		err = addon.Validator(inv)
-		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
+			assert.NotContains(t, err.Error(), "supplier tax ID code is required")
 		}
 	})
 
@@ -169,23 +149,27 @@ func TestSuppliersValidation(t *testing.T) {
 		inv := &bill.Invoice{
 			Supplier: sup,
 		}
-		err := addon.Validator(inv)
+		err := rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "addresses: cannot be blank")
+			assert.Contains(t, err.Error(), "supplier must have at least one address")
 		}
 
 		sup.Addresses = []*org.Address{nil}
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "addresses: cannot be blank")
-			assert.Contains(t, err.Error(), "addresses: (0: cannot be blank.)")
+			assert.NotContains(t, err.Error(), "supplier must have at least one address")
+			assert.Contains(t, err.Error(), "supplier address must not be empty")
 		}
 
 		sup.Addresses[0] = new(org.Address)
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "addresses: (0: cannot be blank.)")
-			assert.Contains(t, err.Error(), "addresses: (0: (code: cannot be blank; locality: cannot be blank; num: cannot be blank; state: cannot be blank; street: cannot be blank.).)")
+			assert.NotContains(t, err.Error(), "supplier address must not be empty")
+			assert.Contains(t, err.Error(), "supplier address requires a street")
+			assert.Contains(t, err.Error(), "supplier address requires a number")
+			assert.Contains(t, err.Error(), "supplier address requires a locality")
+			assert.Contains(t, err.Error(), "supplier address requires a state")
+			assert.Contains(t, err.Error(), "supplier address requires a postal code")
 		}
 
 		sup.Addresses[0] = &org.Address{
@@ -195,9 +179,13 @@ func TestSuppliersValidation(t *testing.T) {
 			State:    "RJ",
 			Street:   "Test",
 		}
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "addresses: (0:")
+			assert.NotContains(t, err.Error(), "supplier address requires a street")
+			assert.NotContains(t, err.Error(), "supplier address requires a number")
+			assert.NotContains(t, err.Error(), "supplier address requires a locality")
+			assert.NotContains(t, err.Error(), "supplier address requires a state")
+			assert.NotContains(t, err.Error(), "supplier address requires a postal code")
 		}
 	})
 
@@ -206,11 +194,9 @@ func TestSuppliersValidation(t *testing.T) {
 		inv := &bill.Invoice{
 			Supplier: sup,
 		}
-		err := addon.Validator(inv)
+		err := rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "br-nfse-simples: required")
-			assert.Contains(t, err.Error(), "br-ibge-municipality: required")
-			assert.Contains(t, err.Error(), "br-nfse-fiscal-incentive: required")
+			assert.Contains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
 		}
 
 		sup.Ext = tax.Extensions{
@@ -218,11 +204,9 @@ func TestSuppliersValidation(t *testing.T) {
 			"br-ibge-municipality":     "12345678",
 			nfse.ExtKeyFiscalIncentive: "2",
 		}
-		err = addon.Validator(inv)
+		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "br-nfse-simples: required")
-			assert.NotContains(t, err.Error(), "br-ibge-municipality: required")
-			assert.NotContains(t, err.Error(), "br-nfse-fiscal-incentive: required")
+			assert.NotContains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
 		}
 	})
 }

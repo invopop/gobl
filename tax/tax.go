@@ -35,5 +35,6 @@ func init() {
 	)
 }
 
-// Placeholder until migration is complete
+// Deprecated: do not use. Ensure a rule exists to check for the
+// tax Identity Code.
 var RequireIdentityCode = validation.Skip
