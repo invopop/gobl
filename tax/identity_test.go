@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -125,14 +124,6 @@ func TestIdentityGetScheme(t *testing.T) {
 		assert.Equal(t, cbc.CodeEmpty, tID.GetScheme())
 	})
 
-}
-
-func TestValidationRules(t *testing.T) {
-	tID := &tax.Identity{
-		Country: "ES",
-	}
-	err := validation.Validate(tID, tax.RequireIdentityCode)
-	assert.ErrorContains(t, err, "code: cannot be blank")
 }
 
 func TestNormalizeIdentity(t *testing.T) {

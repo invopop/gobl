@@ -4,7 +4,8 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // CorrectionSet defines a set of correction definitions for
@@ -25,6 +26,15 @@ type CorrectionDefinition struct {
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Copy tax from the preceding document to the document ref.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
+}
+
+func correctionDefinitionRules() *rules.Set {
+	return rules.For(new(CorrectionDefinition),
+		rules.Field("schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+	)
+
 }
 
 // Def provides the correction definition in the set for the
@@ -80,15 +90,4 @@ func (cd *CorrectionDefinition) HasExtension(key cbc.Key) bool {
 		return false // no correction definitions
 	}
 	return key.In(cd.Extensions...)
-}
-
-// Validate ensures the key definition looks correct in the context of the regime.
-func (cd *CorrectionDefinition) Validate() error {
-	err := validation.ValidateStruct(cd,
-		validation.Field(&cd.Schema, validation.Required),
-		validation.Field(&cd.Types),
-		validation.Field(&cd.Stamps),
-		validation.Field(&cd.Extensions),
-	)
-	return err
 }

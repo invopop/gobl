@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -17,20 +18,20 @@ import (
 func TestTermsValidation(t *testing.T) {
 	tm := new(pay.Terms)
 	tm.Key = cbc.Key("foo")
-	err := tm.Validate()
+	err := rules.Validate(tm)
 	assert.Error(t, err, "expected validation error")
 
 	tm.Key = cbc.Key("due_date")
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.Error(t, err, "expected validation error")
-	assert.Contains(t, err.Error(), "key: must be a valid value")
+	assert.Contains(t, err.Error(), "key must be valid")
 
 	tm.Key = pay.TermKeyAdvanced
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.NoError(t, err)
 
 	tm.Key = ""
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.NoError(t, err)
 
 	t.Run("with due dates and missing amount", func(t *testing.T) {
@@ -41,8 +42,8 @@ func TestTermsValidation(t *testing.T) {
 				Date: cal.NewDate(2021, 11, 10),
 			},
 		}
-		err := tm.Validate()
-		assert.ErrorContains(t, err, "due_dates: (0: (amount: must not be zero.).)")
+		err := rules.Validate(tm)
+		assert.ErrorContains(t, err, "amount must not be zero")
 	})
 }
 

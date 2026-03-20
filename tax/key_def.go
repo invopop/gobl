@@ -1,11 +1,8 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
 )
 
 // KeyDef defines a key that can be used inside a tax category. Rates may also be
@@ -22,12 +19,4 @@ type KeyDef struct {
 	// NoPercent when true implies that the rate when used in a tax Combo should
 	// not define a percent value.
 	NoPercent bool `json:"no_percent,omitempty" jsonschema:"title=No Percent"`
-}
-
-// ValidateWithContext checks that the rate set is valid.
-func (r *KeyDef) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, r,
-		validation.Field(&r.Key),
-		validation.Field(&r.Name),
-	)
 }

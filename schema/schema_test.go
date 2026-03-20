@@ -3,6 +3,7 @@ package schema_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,10 +21,8 @@ func TestID(t *testing.T) {
 	assert.EqualValues(t, base+"/test/bar#new", id)
 
 	id = schema.ID("bad-url")
-	err := id.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "valid URL")
-
+	err := rules.Validate(id)
+	assert.ErrorContains(t, err, "[GOBL-SCHEMA-ID-01] schema ID must be a valid URL")
 }
 
 func TestExtract(t *testing.T) {

@@ -64,6 +64,7 @@ func TestLineValidation(t *testing.T) {
 					{
 						Quantity: num.MakeAmount(1, 0),
 						Item: &org.Item{
+							Name:  "Test Breakdown Item",
 							Price: num.NewAmount(1000, 2),
 						},
 					},
@@ -107,7 +108,7 @@ func TestLineValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
-		lines[0].Item.Price = num.NewAmount(-1000, 2)
+		lines[0].Quantity = num.MakeAmount(-1, 0)
 		require.NoError(t, rules.Validate(lines[0]))
 	})
 
@@ -129,7 +130,7 @@ func TestLineValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
-		lines[0].Breakdown[0].Item.Price = num.NewAmount(-1000, 2)
+		lines[0].Breakdown[0].Quantity = num.MakeAmount(-1, 0)
 		require.NoError(t, rules.Validate(lines[0]))
 	})
 }

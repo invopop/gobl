@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -40,7 +41,7 @@ func TestOnline(t *testing.T) {
 			},
 		},
 	}
-	require.NoError(t, instr.Validate())
+	require.NoError(t, rules.Validate(instr))
 	assert.Equal(t, "Test", instr.Online[0].Label)
 	assert.Equal(t, "https://example.com", instr.Online[0].URL)
 

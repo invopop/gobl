@@ -76,14 +76,8 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	return nil
 }
 
 // Normalize will perform any regime specific calculations.

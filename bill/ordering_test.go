@@ -39,5 +39,5 @@ func TestOrderingValidate(t *testing.T) {
 		{},
 	}
 	err = rules.Validate(o)
-	assert.NoError(t, err)
+	assert.ErrorContains(t, err, "GOBL-ORG-DOCUMENTREF-01")
 }

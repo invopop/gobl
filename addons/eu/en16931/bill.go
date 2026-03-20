@@ -83,7 +83,7 @@ func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		// Tax details
 		rules.Field("tax",
-			rules.Assert("01", "tax details are required", is.Present),
+			rules.Assert("01", "tax details are required with ext and UNTDID document type", is.Present),
 			rules.Field("ext",
 				rules.Assert("02", "document type extension is required",
 					tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
@@ -97,13 +97,13 @@ func billInvoiceRules() *rules.Set {
 		// Supplier: BR-8 requires addresses
 		rules.Field("supplier",
 			rules.Field("addresses",
-				rules.Assert("04", "addresses are required (BR-8)", is.Present),
+				rules.Assert("04", "supplier addresses are required (BR-8)", is.Present),
 			),
 		),
 		// Customer: BR-10 requires addresses when customer is provided
 		rules.Field("customer",
 			rules.Field("addresses",
-				rules.Assert("05", "addresses are required (BR-10)", is.Present),
+				rules.Assert("05", "customer addresses are required (BR-10)", is.Present),
 			),
 		),
 		// Payment: BR-CO-25 requires payment details when amount is due

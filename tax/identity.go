@@ -13,8 +13,6 @@ import (
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
-
-	"github.com/invopop/validation"
 )
 
 // Identity stores the details required to identify an entity for tax
@@ -58,15 +56,6 @@ var (
 	// IdentityCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
 	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9Ñ\&]+`)
 )
-
-// RequireIdentityCode is an additional check to use alongside
-// regular validation that will ensure the tax ID has a code
-// value set.
-var RequireIdentityCode = validateTaxID{requireCode: true}
-
-type validateTaxID struct {
-	requireCode bool
-}
 
 // ParseIdentity will attempt to parse a tax identity from a string making
 // the assumption that the first two characters are the country code and
@@ -166,23 +155,6 @@ func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
 			return id.Country.In(codes...)
 		},
 	)
-}
-
-func (v validateTaxID) Validate(value any) error {
-	id, ok := value.(*Identity)
-	if id == nil || !ok {
-		return nil
-	}
-	rules := []*validation.FieldRules{}
-	if v.requireCode {
-		rules = append(rules,
-			validation.Field(&id.Code,
-				validation.Required,
-				validation.Skip,
-			),
-		)
-	}
-	return validation.ValidateStruct(id, rules...)
 }
 
 // JSONSchemaExtend adds extra details to the schema.

@@ -12,7 +12,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -89,39 +88,6 @@ func TestRegimeGetRoundingRule(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var r *tax.RegimeDef
 		assert.Equal(t, tax.RoundingRulePrecise, r.GetRoundingRule())
-	})
-}
-
-func TestRegimeInCategoryRates(t *testing.T) {
-	var r *tax.RegimeDef // nil regime
-	rate := cbc.Key("general")
-	err := validation.Validate(rate, r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
-	assert.ErrorContains(t, err, "must be blank when regime is undefine")
-}
-
-func TestRegimeInCategoryRule(t *testing.T) {
-	t.Run("no rates", func(t *testing.T) {
-		r := es.New()
-		err := validation.Validate(tax.RateGeneral, r.InCategoryRates(es.TaxCategoryIPSI, cbc.KeyEmpty))
-		assert.ErrorContains(t, err, "must be blank for category 'IPSI' with no key")
-	})
-	t.Run("invalid rate", func(t *testing.T) {
-		r := es.New()
-		err := validation.Validate(cbc.Key("foo"), r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
-		assert.ErrorContains(t, err, "'foo' not defined in 'VAT' category for key 'standard'")
-	})
-}
-
-func TestRegimeDefValidateObject(t *testing.T) {
-	t.Run("nil regime", func(t *testing.T) {
-		var r *tax.RegimeDef
-		err := r.ValidateObject(&org.Note{})
-		assert.Nil(t, err)
-	})
-	t.Run("without validator", func(t *testing.T) {
-		r := new(tax.RegimeDef)
-		err := r.ValidateObject(&org.Note{})
-		assert.Nil(t, err)
 	})
 }
 
