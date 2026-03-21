@@ -1,14 +1,15 @@
 package sdi_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -81,7 +82,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "payment: (advances: (0: (ext: (it-sdi-payment-means: required.).).).)")
+	assert.ErrorContains(t, err, fmt.Sprintf("payment advance requires '%s' extension", sdi.ExtKeyPaymentMeans))
 
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
@@ -90,5 +91,5 @@ func TestPayInstructionsValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "payment: (instructions: (ext: (it-sdi-payment-means: required.).).)")
+	assert.ErrorContains(t, err, fmt.Sprintf("payment instructions require '%s' extension", sdi.ExtKeyPaymentMeans))
 }

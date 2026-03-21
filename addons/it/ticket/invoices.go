@@ -1,11 +1,13 @@
 package ticket
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
@@ -30,81 +32,49 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 }
 
-func validateInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateInvoiceTax),
-			validation.Skip,
-		),
-		validation.Field(&inv.Supplier,
-			validation.By(validateInvoiceSupplier),
-			validation.Skip,
-		),
-		validation.Field(&inv.Preceding,
-			validation.When(
-				inv.Type.In(bill.InvoiceTypeCorrective),
-				validation.Required,
-			),
-			validation.Skip,
-		),
-		validation.Field(&inv.Lines,
-			validation.Each(
-				bill.RequireLineTaxCategory(tax.CategoryVAT),
-				validation.By(validateInvoiceLine(inv.Type)),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceLine(invType cbc.Key) validation.RuleFunc {
-	return func(value interface{}) error {
-		line, ok := value.(*bill.Line)
-		if !ok || line == nil {
-			return nil
-		}
-		if invType.In(bill.InvoiceTypeCorrective) {
-			return validation.ValidateStruct(line,
-				validation.Field(&line.Ext,
-					tax.ExtensionsRequire(ExtKeyLine),
-					validation.Skip,
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.Field("tax",
+			rules.Assert("01", "tax is required", is.Present),
+			rules.Field("prices_include",
+				rules.Assert("02", "prices_include is required", is.Present),
+				rules.Assert("03", "prices_include must be VAT",
+					is.In(tax.CategoryVAT),
 				),
-			)
-		}
-		return nil
-	}
-}
-
-func validateInvoiceSupplier(value interface{}) error {
-	supplier, ok := value.(*org.Party)
-	if !ok || supplier == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(supplier,
-		validation.Field(&supplier.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
-			validation.Skip,
+			),
+		),
+		rules.Field("supplier",
+			rules.Field("tax_id",
+				rules.Assert("04", "supplier tax ID is required", is.Present),
+			),
+		),
+		rules.When(bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
+			rules.Field("preceding",
+				rules.Assert("05", "preceding documents are required for corrective invoices", is.Present),
+			),
+		),
+		rules.Field("lines",
+			rules.Each(
+				rules.Assert("06", "line taxes must include VAT category",
+					is.FuncError("has VAT", lineHasVATCategory),
+				),
+			),
+		),
+		rules.When(bill.InvoiceTypeIn(bill.InvoiceTypeCorrective),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("ext",
+						rules.Assert("07",
+							fmt.Sprintf("corrective invoice lines require '%s' extension", ExtKeyLine),
+							tax.ExtensionsRequire(ExtKeyLine),
+						),
+					),
+				),
+			),
 		),
 	)
 }
 
-// This done because the format requires tax to be calculated at item level
-// By forcing this we can ensure that the price already has the tax included
-func validateInvoiceTax(value interface{}) error {
-	t, ok := value.(*bill.Tax)
-	if !ok || t == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(t,
-		validation.Field(&t.PricesInclude,
-			validation.Required,
-			validation.In(tax.CategoryVAT),
-			validation.Skip,
-		),
-	)
+func lineHasVATCategory(val any) error {
+	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }

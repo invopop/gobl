@@ -7,6 +7,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -28,6 +30,13 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("IT-TICKET-V1"),
+		is.HasContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		taxComboRules(),
+	)
 }
 
 // This validation follows the rules of the Italian Agenzia delle Entrate
@@ -51,9 +60,8 @@ func newAddon() *tax.AddonDef {
 				ContentType: "application/pdf",
 			},
 		},
-		Extensions:  extensions,
-		Validator:   validate,
-		Normalizer:  normalize,
+		Extensions: extensions,
+		Normalizer: normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
@@ -69,12 +77,3 @@ func normalize(doc any) {
 	}
 }
 
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
-}

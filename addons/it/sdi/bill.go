@@ -2,14 +2,15 @@ package sdi
 
 import (
 	"errors"
-	"regexp"
+	"fmt"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeInvoice(inv *bill.Invoice) {
@@ -37,256 +38,323 @@ func normalizeSupplier(party *org.Party) {
 	}
 }
 
-func validateInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateTax),
-			validation.Skip,
-		),
-		validation.Field(&inv.Supplier,
-			validation.By(validateSupplier),
-			validation.Skip,
-		),
-		validation.Field(&inv.Customer,
-			validation.Required,
-			validation.By(validateCustomer),
-			validation.Skip,
-		),
-		validation.Field(&inv.Lines,
-			validation.Each(
-				validation.By(validateLine),
-				bill.RequireLineTaxCategory(tax.CategoryVAT),
-				validation.Skip,
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.Field("tax",
+			rules.Assert("01", "tax is required", is.Present),
+			rules.Field("ext",
+				rules.Assert("02",
+					fmt.Sprintf("tax requires '%s' and '%s' extensions", ExtKeyDocumentType, ExtKeyFormat),
+					tax.ExtensionsRequire(
+						ExtKeyFormat,
+						ExtKeyDocumentType,
+					),
+				),
 			),
-			validation.Skip,
 		),
-		validation.Field(&inv.Ordering,
-			// Need to access tagas so we pass the invoice directly
-			validation.By(validateInvoiceOrdering(inv)),
-			validation.Skip,
+		rules.Field("supplier",
+			rules.Field("name",
+				rules.Assert("03", "supplier name must use Latin-1 characters",
+					is.FuncError("latin1", validateLatin1String),
+				),
+			),
+			rules.Field("addresses",
+				rules.Assert("04", "supplier addresses are required", is.Present),
+				rules.Each(
+					billAddressAssertions()...,
+				),
+			),
+			rules.Field("ext",
+				rules.Assert("05",
+					fmt.Sprintf("supplier requires '%s' extension", ExtKeyFiscalRegime),
+					tax.ExtensionsRequire(ExtKeyFiscalRegime),
+				),
+			),
+			rules.Field("registration",
+				rules.Field("entry",
+					rules.Assert("06", "supplier registration entry is required when registration is present",
+						is.Present,
+					),
+				),
+				rules.Field("office",
+					rules.Assert("07", "supplier registration office is required when registration is present",
+						is.Present,
+					),
+				),
+			),
 		),
-		validation.Field(&inv.Payment,
-			validation.By(validateInvoicePaymentDetails),
-			validation.Skip,
+		rules.When(is.Func("supplier is Italian", invoiceSupplierIsItalian),
+			rules.Field("supplier",
+				rules.Field("telephones",
+					rules.Each(
+						rules.Field("num",
+							rules.Assert("08", "Italian telephone number length must be between 5 and 12",
+								is.Length(5, 12),
+							),
+						),
+					),
+				),
+			),
+		),
+		rules.Field("customer",
+			rules.Assert("09", "customer is required", is.Present),
+			rules.Field("name",
+				rules.Assert("10", "customer name must use Latin-1 characters",
+					is.FuncError("latin1", validateLatin1String),
+				),
+			),
+			rules.Field("tax_id",
+				rules.Assert("11", "customer tax ID is required", is.Present),
+			),
+			rules.Field("addresses",
+				rules.Assert("12", "customer addresses are required", is.Present),
+				rules.Each(
+					billAddressAssertions()...,
+				),
+			),
+		),
+		// Customer name required when tax_id code is present or people is nil
+		rules.Assert("13", "customer name is required",
+			is.Func("customer name check", invoiceCustomerHasNameOrPeople),
+		),
+		// Customer people required when name is empty
+		rules.Assert("14", "customer people are required when name is empty",
+			is.Func("customer people check", invoiceCustomerHasPeopleOrName),
+		),
+		// Customer tax_id code required for Italian parties without fiscal code
+		rules.When(is.Func("Italian customer without fiscal code", invoiceCustomerIsItalianWithoutFiscalCode),
+			rules.Field("customer",
+				rules.Field("tax_id",
+					rules.Field("code",
+						rules.Assert("15", "customer tax ID code is required for Italian parties without fiscal code",
+							is.Present,
+						),
+					),
+				),
+			),
+		),
+		// Customer identity required for Italian parties without tax ID code
+		rules.When(is.Func("Italian customer without tax ID code", invoiceCustomerIsItalianWithoutTaxIDCode),
+			rules.Field("customer",
+				rules.Field("identities",
+					rules.Assert("16",
+						fmt.Sprintf("customer requires identity with key '%s'", it.IdentityKeyFiscalCode),
+						is.Func("has fiscal code", invoiceCustomerHasFiscalCodeIdentity),
+					),
+				),
+			),
+		),
+		rules.Field("lines",
+			rules.Each(
+				rules.Assert("17", "line must have VAT tax category",
+					is.FuncError("has VAT category", lineHasVATCategory),
+				),
+				rules.Field("item",
+					rules.Field("name",
+						rules.Assert("18", "item name must use Latin-1 characters",
+							is.FuncError("latin1", validateLatin1String),
+						),
+					),
+				),
+			),
+		),
+		// Ordering despatch validation
+		rules.When(is.Func("has deferred tag", invoiceHasDeferredTag),
+			rules.Field("ordering",
+				rules.Field("despatch",
+					rules.Each(
+						rules.Field("issue_date",
+							rules.Assert("19", "despatch issue date is required", is.Present),
+						),
+					),
+				),
+			),
+		),
+		rules.When(is.Func("no deferred tag", invoiceDoesNotHaveDeferredTag),
+			rules.Field("ordering",
+				rules.Field("despatch",
+					rules.Assert("20", "despatch can only be set when invoice has deferred tag", is.Empty),
+				),
+			),
+		),
+		// Payment: instructions required when terms have due dates
+		rules.Assert("21", "payment instructions are required when terms with due dates are present",
+			is.Func("payment instructions check", invoicePaymentInstructionsPresent),
 		),
 	)
 }
 
-func validateTax(value any) error {
-	obj, ok := value.(*bill.Tax)
+func billAddressAssertions() []rules.Def {
+	return []rules.Def{
+		rules.Assert("30", "address either street or post office box must be set",
+			is.Func("street or postbox", addressHasStreetOrPostBox),
+		),
+		rules.Field("street",
+			rules.Assert("31", "address street must use Latin-1 characters",
+				is.FuncError("latin1", validateLatin1String),
+			),
+		),
+		rules.Field("po_box",
+			rules.Assert("32", "address post office box must use Latin-1 characters",
+				is.FuncError("latin1", validateLatin1String),
+			),
+		),
+		rules.Field("country",
+			rules.Assert("33", "address country is required", is.Present),
+		),
+		rules.Field("locality",
+			rules.Assert("34", "address locality is required", is.Present),
+			rules.Assert("35", "address locality must use Latin-1 characters",
+				is.FuncError("latin1", validateLatin1String),
+			),
+		),
+		rules.When(is.Func("Italian address", addressIsItalian),
+			rules.Field("code",
+				rules.Assert("36", "Italian address code is required", is.Present),
+				rules.Assert("37", "Italian address code must be 5 digits", is.Matches(`^\d{5}$`)),
+			),
+		),
+	}
+}
+
+func billChargeRules() *rules.Set {
+	return rules.For(new(bill.Charge),
+		rules.When(is.Func("is fund contribution", chargeIsFundContribution),
+			rules.Field("percent",
+				rules.Assert("01", "fund contribution charge requires a percentage", is.Present),
+			),
+			rules.Field("ext",
+				rules.Assert("02",
+					fmt.Sprintf("fund contribution charge requires '%s' extension", ExtKeyFundType),
+					tax.ExtensionsRequire(ExtKeyFundType),
+				),
+			),
+			rules.Field("taxes",
+				rules.Assert("03", "fund contribution charge must have VAT tax category",
+					tax.SetHasCategory(tax.CategoryVAT),
+				),
+			),
+		),
+	)
+}
+
+// --- Helper functions for rules ---
+
+func invoiceSupplierIsItalian(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return false
+	}
+	return isItalianParty(inv.Supplier)
+}
+
+func invoiceCustomerHasNameOrPeople(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Customer == nil {
+		return true
+	}
+	c := inv.Customer
+	// Name required when tax_id code is present or people is nil
+	if (c.TaxID != nil && c.TaxID.Code != cbc.CodeEmpty) || c.People == nil {
+		return c.Name != ""
+	}
+	return true
+}
+
+func invoiceCustomerHasPeopleOrName(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Customer == nil {
+		return true
+	}
+	c := inv.Customer
+	if c.Name == "" {
+		return len(c.People) > 0
+	}
+	return true
+}
+
+func invoiceCustomerIsItalianWithoutFiscalCode(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Customer == nil {
+		return false
+	}
+	return isItalianParty(inv.Customer) && !hasFiscalCode(inv.Customer)
+}
+
+func invoiceCustomerIsItalianWithoutTaxIDCode(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Customer == nil {
+		return false
+	}
+	return isItalianParty(inv.Customer) && !hasTaxIDCode(inv.Customer)
+}
+
+func invoiceCustomerHasFiscalCodeIdentity(val any) bool {
+	ids, ok := val.([]*org.Identity)
 	if !ok {
-		return nil
+		return false
 	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Ext,
-			tax.ExtensionsRequire(
-				ExtKeyFormat,
-				ExtKeyDocumentType,
-			),
-			validation.Skip,
-		),
-	)
+	return org.IdentityForKey(ids, it.IdentityKeyFiscalCode) != nil
 }
 
-func validateSupplier(value interface{}) error {
-	supplier, ok := value.(*org.Party)
-	if !ok || supplier == nil {
-		return nil
+func invoiceHasDeferredTag(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return false
 	}
-
-	return validation.ValidateStruct(supplier,
-		validation.Field(&supplier.Name,
-			validation.By(validateLatin1String),
-			validation.Skip,
-		),
-		validation.Field(&supplier.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-		validation.Field(&supplier.Addresses,
-			validation.Required,
-			validation.Each(validation.By(validateAddress)),
-			validation.Skip,
-		),
-		validation.Field(&supplier.Telephones,
-			validation.When(
-				isItalianParty(supplier),
-				validation.Each(validation.By(validateItalianTelephone)),
-			),
-			validation.Skip,
-		),
-		validation.Field(&supplier.Registration,
-			validation.By(validateInvoiceSupplierRegistration),
-			validation.Skip,
-		),
-		validation.Field(&supplier.Ext,
-			tax.ExtensionsRequire(ExtKeyFiscalRegime),
-			validation.Skip,
-		),
-	)
+	return inv.HasTags(TagDeferred)
 }
 
-func validateCustomer(value interface{}) error {
-	customer, ok := value.(*org.Party)
-	if !ok {
-		return nil
+func invoiceDoesNotHaveDeferredTag(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return true
 	}
-
-	// Customers must have either a Tax ID (PartitaIVA)
-	// or fiscal identity (codice fiscale)
-	return validation.ValidateStruct(customer,
-		validation.Field(&customer.Name,
-			validation.By(validateLatin1String),
-			validation.When(
-				(customer.TaxID != nil && customer.TaxID.Code != cbc.CodeEmpty) || customer.People == nil,
-				validation.Required,
-			),
-			validation.Skip,
-		),
-		validation.Field(&customer.TaxID,
-			validation.Required,
-			validation.When(
-				isItalianParty(customer) && !hasFiscalCode(customer),
-				tax.RequireIdentityCode,
-			),
-			validation.Skip,
-		),
-		validation.Field(&customer.Addresses,
-			validation.Required,
-			validation.Each(validation.By(validateAddress)),
-			validation.Skip,
-		),
-		/* FIX ME!
-		validation.Field(&customer.Identities,
-			validation.When(
-				isItalianParty(customer) && !hasTaxIDCode(customer),
-				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
-			),
-			validation.Skip,
-		),
-		*/
-		validation.Field(&customer.People,
-			validation.When(
-				(customer.Name == ""),
-				validation.Required,
-			),
-			validation.Skip,
-		),
-	)
+	return !inv.HasTags(TagDeferred)
 }
 
-func validateLine(val any) error {
-	line, _ := val.(*bill.Line)
-	if line == nil {
-		return nil
+func invoicePaymentInstructionsPresent(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Payment == nil {
+		return true
 	}
-
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Item,
-			validation.By(validateItem),
-			validation.Skip,
-		),
-	)
+	p := inv.Payment
+	if p.Terms != nil && len(p.Terms.DueDates) > 0 {
+		return p.Instructions != nil
+	}
+	return true
 }
 
-func validateItem(val any) error {
-	item, _ := val.(*org.Item)
-	if item == nil {
+func lineHasVATCategory(val any) error {
+	line, ok := val.(*bill.Line)
+	if !ok || line == nil {
 		return nil
 	}
-
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Name,
-			validation.By(validateLatin1String),
-			validation.Skip,
-		),
-	)
+	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }
 
-func validateBillCharge(val any) error {
-	charge, _ := val.(*bill.Charge)
-	if charge == nil || !charge.Key.Has(KeyFundContribution) {
-		return nil
+func chargeIsFundContribution(val any) bool {
+	c, ok := val.(*bill.Charge)
+	if !ok || c == nil {
+		return false
 	}
-
-	return validation.ValidateStruct(charge,
-		validation.Field(&charge.Percent,
-			validation.Required,
-			validation.Skip,
-		),
-		validation.Field(&charge.Ext,
-			tax.ExtensionsRequire(ExtKeyFundType),
-			validation.Skip,
-		),
-		validation.Field(&charge.Taxes,
-			tax.SetHasCategory(tax.CategoryVAT),
-			validation.Skip,
-		),
-	)
+	return c.Key.Has(KeyFundContribution)
 }
 
-func validateInvoicePaymentDetails(val any) error {
-	p, _ := val.(*bill.PaymentDetails)
-	if p == nil {
-		return nil
+func addressIsItalian(val any) bool {
+	a, ok := val.(*org.Address)
+	if !ok || a == nil {
+		return false
 	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Instructions,
-			validation.When(
-				(p.Terms != nil && len(p.Terms.DueDates) > 0),
-				validation.Required.Error("cannot be blank when terms with due dates are present"),
-			),
-			validation.Skip,
-		),
-	)
+	return a.Country.In("IT")
 }
 
-func validateInvoiceOrdering(inv *bill.Invoice) validation.RuleFunc {
-	return func(value any) error {
-		o, _ := value.(*bill.Ordering)
-		if o == nil {
-			return nil
-		}
-
-		return validation.ValidateStruct(o,
-			validation.Field(&o.Despatch,
-				validation.When(
-					inv.HasTags(TagDeferred),
-					validation.Each(validation.By(validateDespatch)),
-				).Else(
-					validation.Nil.Error("can only be set when invoice has deferred tag")),
-				validation.Skip,
-			),
-		)
+func addressHasStreetOrPostBox(val any) bool {
+	a, ok := val.(*org.Address)
+	if !ok || a == nil {
+		return true
 	}
-}
-
-func validateDespatch(value any) error {
-	d, ok := value.(*org.DocumentRef)
-	if !ok || d == nil {
-		return nil
-	}
-	return validation.ValidateStruct(d,
-		validation.Field(&d.IssueDate,
-			validation.Required,
-			validation.Skip,
-		),
-	)
-}
-
-func validateItalianTelephone(value any) error {
-	t, ok := value.(*org.Telephone)
-	if !ok {
-		return nil
-	}
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Number,
-			validation.Length(5, 12),
-			validation.Skip,
-		),
-	)
+	return a.Street != "" || a.PostOfficeBox != ""
 }
 
 func hasTaxIDCode(party *org.Party) bool {
@@ -308,46 +376,6 @@ func isItalianParty(party *org.Party) bool {
 	return party.TaxID.Country.In("IT")
 }
 
-func validateAddress(value interface{}) error {
-	v, ok := value.(*org.Address)
-	if !ok {
-		return nil
-	}
-	// Post code and street in addition to the locality are required in Italian invoices.
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Street,
-			validation.When(v.PostOfficeBox == "",
-				validation.Required.Error("either street or post office box must be set"),
-			),
-			validation.By(validateLatin1String),
-			validation.Skip,
-		),
-		validation.Field(&v.PostOfficeBox,
-			validation.When(v.Street == "",
-				validation.Required.Error("either street or post office box must be set"),
-			),
-			validation.By(validateLatin1String),
-			validation.Skip,
-		),
-		validation.Field(&v.Country,
-			validation.Required,
-			validation.Skip,
-		),
-		validation.Field(&v.Locality,
-			validation.Required,
-			validation.By(validateLatin1String),
-			validation.Skip,
-		),
-		validation.Field(&v.Code,
-			validation.When(v.Country.In("IT"),
-				validation.Required,
-				validation.Match(regexp.MustCompile(`^\d{5}$`)),
-			),
-			validation.Skip,
-		),
-	)
-}
-
 // validateLatin1String ensures that the item name only contains characters
 // from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
 func validateLatin1String(val any) error {
@@ -361,21 +389,4 @@ func validateLatin1String(val any) error {
 		}
 	}
 	return nil
-}
-
-func validateInvoiceSupplierRegistration(value interface{}) error {
-	v, ok := value.(*org.Registration)
-	if v == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Entry,
-			validation.Required,
-			validation.Skip,
-		),
-		validation.Field(&v.Office,
-			validation.Required,
-			validation.Skip,
-		),
-	)
 }
