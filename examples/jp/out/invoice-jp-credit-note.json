@@ -1,0 +1,105 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "da1385def37750972a46a203da8385e292f511f5daebf231cae22c47f1120b49"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"uuid": "4b128d92-7b1a-4e3c-a5f6-2d8a0e5c9b17",
+		"type": "credit-note",
+		"series": "CN",
+		"code": "2025-001",
+		"issue_date": "2025-03-20",
+		"currency": "JPY",
+		"preceding": [
+			{
+				"type": "standard",
+				"issue_date": "2025-03-15",
+				"series": "INV",
+				"code": "2025-001",
+				"reason": "Returned defective items"
+			}
+		],
+		"supplier": {
+			"name": "Sakura Tech Co., Ltd.",
+			"tax_id": {
+				"country": "JP",
+				"code": "9700150098417"
+			},
+			"addresses": [
+				{
+					"street": "Marunouchi 1-9-2",
+					"locality": "Chiyoda-ku",
+					"region": "Tokyo",
+					"code": "100-0005",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "Fuji Solutions K.K.",
+			"tax_id": {
+				"country": "JP",
+				"code": "5050005005266"
+			},
+			"addresses": [
+				{
+					"street": "Umeda 3-1-1",
+					"locality": "Kita-ku",
+					"region": "Osaka",
+					"code": "530-0001",
+					"country": "JP"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Bento lunch boxes (catering)",
+					"price": "1080"
+				},
+				"sum": "5400",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "8%"
+					}
+				],
+				"total": "5400"
+			}
+		],
+		"totals": {
+			"sum": "5400",
+			"total": "5400",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5400",
+								"percent": "8%",
+								"amount": "432"
+							}
+						],
+						"amount": "432"
+					}
+				],
+				"sum": "432"
+			},
+			"tax": "432",
+			"total_with_tax": "5832",
+			"payable": "5832"
+		}
+	}
+}

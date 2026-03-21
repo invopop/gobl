@@ -1,0 +1,43 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "JPY"
+issue_date: "2025-03-15"
+series: "INV"
+code: "2025-001"
+supplier:
+  tax_id:
+    country: "JP"
+    code: "9700150098417"
+  name: "Sakura Tech Co., Ltd."
+  addresses:
+    - street: "Marunouchi 1-9-2"
+      locality: "Chiyoda-ku"
+      region: "Tokyo"
+      code: "100-0005"
+      country: "JP"
+customer:
+  tax_id:
+    country: "JP"
+    code: "5050005005266"
+  name: "Fuji Solutions K.K."
+  addresses:
+    - street: "Umeda 3-1-1"
+      locality: "Kita-ku"
+      region: "Osaka"
+      code: "530-0001"
+      country: "JP"
+lines:
+  - quantity: 1
+    item:
+      name: "Cloud hosting (March 2025)"
+      price: "500000"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 10
+    item:
+      name: "Bento lunch boxes (catering)"
+      price: "1080"
+    taxes:
+      - cat: VAT
+        rate: reduced

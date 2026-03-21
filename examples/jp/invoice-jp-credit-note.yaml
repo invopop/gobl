@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "4b128d92-7b1a-4e3c-a5f6-2d8a0e5c9b17"
+currency: "JPY"
+type: credit-note
+issue_date: "2025-03-20"
+series: "CN"
+code: "2025-001"
+
+preceding:
+  - type: standard
+    issue_date: "2025-03-15"
+    series: "INV"
+    code: "2025-001"
+    reason: "Returned defective items"
+
+supplier:
+  tax_id:
+    country: "JP"
+    code: "9700150098417"
+  name: "Sakura Tech Co., Ltd."
+  addresses:
+    - street: "Marunouchi 1-9-2"
+      locality: "Chiyoda-ku"
+      region: "Tokyo"
+      code: "100-0005"
+      country: "JP"
+customer:
+  tax_id:
+    country: "JP"
+    code: "5050005005266"
+  name: "Fuji Solutions K.K."
+  addresses:
+    - street: "Umeda 3-1-1"
+      locality: "Kita-ku"
+      region: "Osaka"
+      code: "530-0001"
+      country: "JP"
+lines:
+  - quantity: 5
+    item:
+      name: "Bento lunch boxes (catering)"
+      price: "1080"
+    taxes:
+      - cat: VAT
+        rate: reduced
