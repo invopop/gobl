@@ -1,0 +1,118 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "67b484fdbb62747f84f1dd1d252428939a2cf0b401aa497a07180a42221e9436"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CZ",
+		"uuid": "8c042838-29e4-4f96-b202-15f0e1c3e224",
+		"type": "standard",
+		"series": "2025",
+		"code": "001",
+		"issue_date": "2025-06-15",
+		"currency": "CZK",
+		"supplier": {
+			"name": "Příklad s.r.o.",
+			"tax_id": {
+				"country": "CZ",
+				"code": "00177041"
+			},
+			"addresses": [
+				{
+					"street": "Vodičkova 791/41",
+					"locality": "Praha",
+					"code": "110 00",
+					"country": "CZ"
+				}
+			]
+		},
+		"customer": {
+			"name": "Zákazník a.s.",
+			"tax_id": {
+				"country": "CZ",
+				"code": "45274649"
+			},
+			"addresses": [
+				{
+					"street": "Duhová 1444/2",
+					"locality": "Praha",
+					"code": "140 53",
+					"country": "CZ"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Softwarové poradenství",
+					"price": "1500.00"
+				},
+				"sum": "15000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "15000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Knihy",
+					"price": "250.00"
+				},
+				"sum": "1250.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "12.0%"
+					}
+				],
+				"total": "1250.00"
+			}
+		],
+		"totals": {
+			"sum": "16250.00",
+			"total": "16250.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "15000.00",
+								"percent": "21.0%",
+								"amount": "3150.00"
+							},
+							{
+								"key": "standard",
+								"base": "1250.00",
+								"percent": "12.0%",
+								"amount": "150.00"
+							}
+						],
+						"amount": "3300.00"
+					}
+				],
+				"sum": "3300.00"
+			},
+			"tax": "3300.00",
+			"total_with_tax": "19550.00",
+			"payable": "19550.00"
+		}
+	}
+}

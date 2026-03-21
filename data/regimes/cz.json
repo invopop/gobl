@@ -1,0 +1,181 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "cs": "Česká republika",
+    "en": "Czech Republic"
+  },
+  "description": {
+    "en": "The Czech Republic's tax system is administered by the Financial\nAdministration of the Czech Republic (Finanční správa ČR). As an EU member\nstate, the Czech Republic follows the EU VAT Directive.\n\nVAT (DPH — Daň z přidané hodnoty) applies at a standard rate of 21% and a\nsingle reduced rate of 12% (since January 2024, when the previous first\nreduced rate of 15% and second reduced rate of 10% were merged). Certain\nsupplies are zero-rated (e.g. exports) or exempt (e.g. healthcare,\neducation, financial services).\n\nBusinesses are identified by their DIČ (Daňové identifikační číslo), which\nconsists of the prefix CZ followed by 8 to 10 digits. For legal entities\nthe DIČ is 8 digits with a modulo-11 checksum; for individuals it is\nderived from the birth number (Rodné číslo) and is 9 or 10 digits."
+  },
+  "time_zone": "Europe/Prague",
+  "country": "CZ",
+  "currency": "CZK",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "cs": "DPH",
+        "en": "VAT"
+      },
+      "title": {
+        "cs": "Daň z přidané hodnoty",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "cs": "Základní sazba",
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "20.0%"
+            },
+            {
+              "since": "2004-05-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "cs": "Snížená sazba",
+            "en": "Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "2013-01-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2012-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "10.0%"
+            },
+            {
+              "since": "2008-01-01",
+              "percent": "9.0%"
+            },
+            {
+              "since": "2004-05-01",
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "cs": "Druhá snížená sazba",
+            "en": "Second Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Czech Republic - General rules and VAT rates"
+          },
+          "url": "https://portal.gov.cz/en/informace/general-rules-and-vat-rates-INF-205"
+        },
+        {
+          "title": {
+            "en": "Financial Administration of the Czech Republic"
+          },
+          "url": "https://financnisprava.gov.cz/en/index"
+        }
+      ]
+    }
+  ]
+}
