@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 - `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
+- `jp`: New tax regime for Japan with Consumption Tax (10%/8%), Corporate Number validation, and reverse charge support.
 
 ### Changed
 
@@ -54,7 +55,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
 - `bill`: Invoice and Order now normalize Attachments fields
-
 
 ## [v0.307.0] - 2026-01-27
 
