@@ -9,6 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNew(t *testing.T) {
+	r := cz.New()
+	assert.NotNil(t, r)
+	assert.NoError(t, r.Validate())
+}
+
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string

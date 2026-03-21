@@ -82,8 +82,10 @@ func validateLegalEntityCode(val string) error {
 // validateIndividualCode validates a 10-digit individual DIČ (derived from
 // Rodné číslo). Must be divisible by 11.
 func validateIndividualCode(val string) error {
-	// The regex already ensures only digits; ParseUint will not fail.
-	n, _ := strconv.ParseUint(val, 10, 64)
+	n, err := strconv.ParseUint(val, 10, 64)
+	if err != nil {
+		return errInvalidFormat
+	}
 
 	if n%11 != 0 {
 		return errChecksumMismatch
