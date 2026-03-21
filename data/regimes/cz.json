@@ -11,6 +11,15 @@
   "country": "CZ",
   "currency": "CZK",
   "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "cz-ico",
+      "name": {
+        "cs": "Identifikační číslo osoby",
+        "en": "Business Registration Number"
+      }
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",
@@ -171,9 +180,9 @@
         },
         {
           "title": {
-            "en": "Financial Administration of the Czech Republic"
+            "en": "Registering for VAT in the Czech Republic"
           },
-          "url": "https://financnisprava.gov.cz/en/index"
+          "url": "https://portal.gov.cz/en/informace/registering-for-vat-INF-204"
         }
       ]
     }

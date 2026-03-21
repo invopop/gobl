@@ -109,9 +109,9 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "Financial Administration of the Czech Republic",
+					i18n.EN: "Registering for VAT in the Czech Republic",
 				},
-				URL: "https://financnisprava.gov.cz/en/index",
+				URL: "https://portal.gov.cz/en/informace/registering-for-vat-INF-204",
 			},
 		},
 	},
