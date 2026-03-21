@@ -10,17 +10,20 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Reference: https://github.com/ltns35/go-vat
+// Reference: https://arthurdejong.org/python-stdnum/doc/1.17/stdnum.cz.dic
 
 var (
 	taxCodePattern = regexp.MustCompile(`^\d{8,10}$`)
 
-	errTaxCodeInvalidFormat    = errors.New("invalid format")
-	errTaxCodeChecksumMismatch = errors.New("checksum mismatch")
+	errInvalidFormat    = errors.New("invalid format")
+	errChecksumMismatch = errors.New("checksum mismatch")
 )
 
 // validateTaxIdentity checks to ensure the Czech DIČ code is valid.
 func validateTaxIdentity(tID *tax.Identity) error {
+	if tID == nil {
+		return nil
+	}
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
@@ -34,7 +37,7 @@ func validateTaxCode(value any) error {
 	val := code.String()
 
 	if !taxCodePattern.MatchString(val) {
-		return errTaxCodeInvalidFormat
+		return errInvalidFormat
 	}
 
 	switch len(val) {
@@ -70,7 +73,7 @@ func validateLegalEntityCode(val string) error {
 
 	checkDigit := int(val[7] - '0')
 	if checkDigit != expected {
-		return errTaxCodeChecksumMismatch
+		return errChecksumMismatch
 	}
 
 	return nil
@@ -83,7 +86,7 @@ func validateIndividualCode(val string) error {
 	n, _ := strconv.ParseUint(val, 10, 64)
 
 	if n%11 != 0 {
-		return errTaxCodeChecksumMismatch
+		return errChecksumMismatch
 	}
 
 	return nil

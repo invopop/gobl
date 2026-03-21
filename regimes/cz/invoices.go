@@ -9,7 +9,7 @@ import (
 
 // validateInvoice checks the Czech invoice requirements.
 // Simplified invoices skip supplier validation since businesses
-// below the CZK 2,000,000 VAT threshold may not have a DIČ.
+// below the VAT threshold may not have a DIČ.
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,

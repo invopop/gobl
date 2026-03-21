@@ -95,4 +95,15 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
+
+	t.Run("simplified invoice with customer", func(t *testing.T) {
+		inv := validInvoice()
+		inv.SetTags(tax.TagSimplified)
+		inv.Supplier.TaxID = nil
+		inv.Customer = &org.Party{
+			Name: "Test Customer",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 }

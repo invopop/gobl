@@ -47,7 +47,7 @@ func validateICO(value any) error {
 	}
 	s := code.String()
 	if len(s) != 8 {
-		return errTaxCodeInvalidFormat
+		return errInvalidFormat
 	}
 	return validateLegalEntityCode(s)
 }

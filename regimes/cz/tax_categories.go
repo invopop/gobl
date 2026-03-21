@@ -80,7 +80,7 @@ var taxCategories = []*tax.CategoryDef{
 					},
 				},
 			},
-			// Second reduced rate (existed 2015-2023, merged into single reduced rate in 2024)
+			// Second reduced rate (abolished 2024-01-01, merged into single 12% reduced rate)
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
 				Rate: tax.RateSuperReduced,
@@ -89,10 +89,6 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.CS: "Druhá snížená sazba",
 				},
 				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2024, 1, 1),
-					},
 					{
 						Percent: num.MakePercentage(100, 3),
 						Since:   cal.NewDate(2015, 1, 1),
