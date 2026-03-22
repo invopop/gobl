@@ -43,8 +43,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 		err  string
 	}{
 		// Valid Corporate Numbers
-		{name: "valid NTA example", code: "9700150098417"},
-		{name: "valid with check digit 1", code: "5050005005266"},
+		{name: "valid checksum (1st digit) for real NTA example", code: "9700150098417"},
+		{name: "valid checksum (1st digit)", code: "5050005005266"},
 		{name: "empty code", code: ""},
 
 		// Invalid formats
@@ -54,7 +54,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "with hyphens", code: "9700-150-09841", err: "must be a 13-digit number"},
 
 		// Invalid checksum
-		{name: "bad checksum", code: "1700150098417", err: "invalid checksum"},
+		{name: "bad checksum (1st digit) for real NTA example", code: "1700150098417", err: "invalid checksum"},
+		{name: "bad checksum (1st digit)", code: "9050005005266", err: "invalid checksum"},
 	}
 
 	for _, tt := range tests {
