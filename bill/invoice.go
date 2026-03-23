@@ -119,7 +119,7 @@ func invoiceRules() *rules.Set {
 			rules.Assert("02", "invoice type is not valid", isValidInvoiceType),
 		),
 		rules.Field("issue_date",
-			rules.Assert("03", "invoice issue date is required", is.Present),
+			rules.Assert("03", "invoice issue date is required", cal.DateNotZero()),
 		),
 		rules.Field("currency",
 			rules.Assert("04", "invoice currency is required", is.Present),

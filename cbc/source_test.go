@@ -20,7 +20,7 @@ func TestSourceValidation(t *testing.T) {
 	t.Run("missing URL", func(t *testing.T) {
 		src := &cbc.Source{}
 		assert.ErrorContains(t, rules.Validate(src),
-			"[GOBL-CBC-SOURCE-01] (url) url is required and must be a URL")
+			"[GOBL-CBC-SOURCE-01] ($.url) url is required and must be a URL")
 	})
 
 	t.Run("invalid URL", func(t *testing.T) {
@@ -29,6 +29,6 @@ func TestSourceValidation(t *testing.T) {
 			URL:   "http:\\example",
 		}
 		assert.ErrorContains(t, rules.Validate(src),
-			"[GOBL-CBC-SOURCE-01] (url) url is required and must be a URL")
+			"[GOBL-CBC-SOURCE-01] ($.url) url is required and must be a URL")
 	})
 }

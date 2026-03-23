@@ -224,7 +224,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($schema) envelope schema is required; [GOBL-ENVELOPE-02] (head) envelope header is required; [GOBL-ENVELOPE-03] (doc) envelope doc is required",
+			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -233,7 +233,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required",
+			want: "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -290,7 +290,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (doc.content) message content is required")
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
@@ -434,7 +434,7 @@ func TestDocumentValidation(t *testing.T) {
 	require.NoError(t, err)
 
 	err = rules.Validate(doc.Instance())
-	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] (content) message content is required")
+	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required")
 
 	doc = new(schema.Object)
 	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
@@ -449,7 +449,7 @@ func TestDocumentValidation(t *testing.T) {
 	inv.IssueDate = cal.Date{}
 	err = doc.Validate()
 	// Double check to make sure validation working
-	assert.ErrorContains(t, err, "issue_date: required")
+	assert.ErrorContains(t, err, "[GOBL-BILL-INVOICE-03] ($.issue_date) invoice issue date is required")
 }
 
 func TestDocumentValidationOutput(t *testing.T) {
@@ -461,14 +461,14 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = rules.Validate(doc)
 	data, err := json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"content":"cannot be blank"}`, string(data))
+	assert.Equal(t, `[{"path":"$.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
 
 	env := gobl.NewEnvelope()
 	require.NoError(t, env.Insert(msg))
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `[{"path":"content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
+	assert.Equal(t, `[{"path":"$.doc.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

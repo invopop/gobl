@@ -29,7 +29,7 @@ func TestDefinitionValidation(t *testing.T) {
 
 		kd.Pattern = "[foo]["
 		err = rules.Validate(kd)
-		assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] (pattern) pattern must be a valid regular expression")
+		assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] ($.pattern) pattern must be a valid regular expression")
 	})
 	t.Run("with source", func(t *testing.T) {
 		kd := &cbc.Definition{
@@ -61,7 +61,7 @@ func TestDefinitionValidation(t *testing.T) {
 			},
 		}
 		err := rules.Validate(kd)
-		assert.ErrorContains(t, err, "[GOBL-CBC-SOURCE-01] (sources[0].url) url is required and must be a URL")
+		assert.ErrorContains(t, err, "[GOBL-CBC-SOURCE-01] ($.sources[0].url) url is required and must be a URL")
 	})
 }
 
@@ -165,5 +165,5 @@ func TestDefinitionWithPattern(t *testing.T) {
 
 	kd.Pattern = "[foo]["
 	err = rules.Validate(kd)
-	assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] (pattern) pattern must be a valid regular expression")
+	assert.ErrorContains(t, err, "[GOBL-CBC-DEFINITION-03] ($.pattern) pattern must be a valid regular expression")
 }

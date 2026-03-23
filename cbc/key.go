@@ -49,7 +49,7 @@ func keyRules() *rules.Set {
 			is.Length(int(KeyMinLength), int(KeyMaxLength)),
 		),
 		rules.Assert("02", "key must match the required pattern",
-			is.Matches(KeyPatternFull),
+			is.Matches(KeyPattern),
 		),
 	)
 }
