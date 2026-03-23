@@ -78,4 +78,3 @@ func normalize(doc any) {
 		normalizeBillCharge(obj)
 	}
 }
-

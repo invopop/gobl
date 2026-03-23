@@ -64,17 +64,17 @@ func taxCodeChecksumValid(code string) bool {
 }
 
 func validGovernmentDepartmentID(val string) bool {
-	const max = 499 // range 000-499
+	const maxNum = 499 // range 000-499
 	val = val[2:]
 	num, _ := strconv.Atoi(val)
-	return num <= max
+	return num <= maxNum
 }
 
 func validHealthAuthorityID(val string) bool {
-	const min = 500 // range 500-999
+	const minNum = 500 // range 500-999
 	val = val[2:]
 	num, _ := strconv.Atoi(val)
-	return num >= min
+	return num >= minNum
 }
 
 // Specific file used as example: https://github.com/ltns35/go-vat/blob/main/countries/united_kingdom.go

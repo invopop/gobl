@@ -60,8 +60,8 @@ func newAddon() *tax.AddonDef {
 				ContentType: "application/pdf",
 			},
 		},
-		Extensions: extensions,
-		Normalizer: normalize,
+		Extensions:  extensions,
+		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
@@ -76,4 +76,3 @@ func normalize(doc any) {
 		normalizeTaxCombo(obj)
 	}
 }
-

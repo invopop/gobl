@@ -2,28 +2,30 @@ package is
 
 import "regexp"
 
-type matchTest struct {
+// MatchTest is a Test that checks if a string matches a regular expression.
+type MatchTest struct {
 	pattern string
 	re      *regexp.Regexp
 }
 
 // Matches provides a validation rule that checks if a string value matches the specified regular expression
 // pattern. Patterns will be compiled when used in rules.For() or rules.ForValue() and cached for future use.
-func Matches(pattern string) *matchTest {
-	return &matchTest{
+func Matches(pattern string) *MatchTest {
+	return &MatchTest{
 		pattern: pattern,
 	}
 }
 
 // MatchesRegexp provides a validation rule that checks if the provided Regular Expression matches the value.
-func MatchesRegexp(re *regexp.Regexp) *matchTest {
-	return &matchTest{
+func MatchesRegexp(re *regexp.Regexp) *MatchTest {
+	return &MatchTest{
 		pattern: re.String(),
 		re:      re,
 	}
 }
 
-func (t matchTest) Check(value any) bool {
+// Check returns true if the value matches the regular expression.
+func (t MatchTest) Check(value any) bool {
 	if t.re == nil {
 		panic("match test was not compiled; use MatchesRegexp or wrap it in rules.For()")
 	}
@@ -42,7 +44,8 @@ func (t matchTest) Check(value any) bool {
 	return false
 }
 
-func (t *matchTest) Compile(_ any) error {
+// Compile compiles the pattern string into a regular expression.
+func (t *MatchTest) Compile(_ any) error {
 	if t.re != nil {
 		return nil
 	}
@@ -54,6 +57,6 @@ func (t *matchTest) Compile(_ any) error {
 	return nil
 }
 
-func (t matchTest) String() string {
+func (t MatchTest) String() string {
 	return "matches " + t.pattern
 }

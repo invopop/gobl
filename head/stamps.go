@@ -124,6 +124,7 @@ func (r *StampsHasRule) String() string {
 	return r.desc
 }
 
+// Check returns true if the stamp with the given provider is present.
 func (r *StampsHasRule) Check(value any) bool {
 	in, ok := value.([]*Stamp)
 	if !ok {
@@ -132,6 +133,7 @@ func (r *StampsHasRule) Check(value any) bool {
 	return GetStamp(in, r.provider) != nil
 }
 
+// Validate returns an error if the stamp with the given provider is absent.
 func (r *StampsHasRule) Validate(value any) error {
 	if !r.Check(value) {
 		return fmt.Errorf("missing %s stamp", r.provider)

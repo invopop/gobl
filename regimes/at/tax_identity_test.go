@@ -3,12 +3,11 @@ package at_test
 import (
 	"testing"
 
-	_ "github.com/invopop/gobl/regimes/at"
 	"github.com/invopop/gobl/cbc"
+	_ "github.com/invopop/gobl/regimes/at"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	_ "github.com/invopop/gobl/regimes/at"
 )
 
 func TestTaxIdentityRules(t *testing.T) {

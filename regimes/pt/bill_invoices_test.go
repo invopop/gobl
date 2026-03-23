@@ -130,7 +130,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Supplier = nil
 		assert.NotPanics(t, func() {
-			rules.Validate(inv)
+			_ = rules.Validate(inv)
 		})
 	})
 

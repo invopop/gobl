@@ -28,8 +28,6 @@ var (
 	CURPRegexp           = regexp.MustCompile(CURPPattern)
 	SocialSecurityRegexp = regexp.MustCompile(SocialSecurityPattern)
 	PostCodeRegexp       = regexp.MustCompile(PostCodePattern)
-	taxCodeRegexpPerson  = regexp.MustCompile(mx.TaxIdentityPatternPerson)
-	taxCodeRegexpCompany = regexp.MustCompile(mx.TaxIdentityPatternCompany)
 )
 
 // FoodVouchers carries the data to produce a CFDI's "Complemento de

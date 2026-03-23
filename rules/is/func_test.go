@@ -59,7 +59,7 @@ func TestFuncError(t *testing.T) {
 }
 
 func TestFuncContext(t *testing.T) {
-	fn := func(ctx rules.Context, val any) bool {
+	fn := func(ctx rules.Context, _ any) bool {
 		regime, _ := ctx.Value("regime").(string)
 		return regime == "ES"
 	}

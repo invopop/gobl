@@ -113,7 +113,7 @@ func TestValidateEachValueNotSlice(t *testing.T) {
 	assert.Empty(t, faults)
 }
 
-func TestCollectContextNilPointer(t *testing.T) {
+func TestCollectContextNilPointer(_ *testing.T) {
 	var p *struct{ Name string }
 	rc := &Context{}
 	// Should not panic.
@@ -268,7 +268,7 @@ type embContainer struct {
 	Wrap *embWrapper `json:"wrap"`
 }
 
-func TestCollectContextUnexportedFieldSkipped(t *testing.T) {
+func TestCollectContextUnexportedFieldSkipped(_ *testing.T) {
 	type hasUnexported struct {
 		exported string //nolint:unused
 		Name     string

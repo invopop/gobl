@@ -115,5 +115,3 @@ var identities = []*cbc.Definition{
 		},
 	},
 }
-
-var identityKeys = cbc.DefinitionKeys(identities)

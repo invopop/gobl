@@ -2,15 +2,16 @@ package is
 
 import "github.com/invopop/gobl/rules"
 
-type funcTest struct {
+// FuncTest is a Test that validates a value against a custom boolean function.
+type FuncTest struct {
 	desc string
 	test func(any) bool
 }
 
 // Func creates a validation rule that checks if a value satisfies a custom
 // condition defined by the provided boolean test function.
-func Func(desc string, test func(any) bool) funcTest {
-	return funcTest{
+func Func(desc string, test func(any) bool) FuncTest {
+	return FuncTest{
 		desc: desc,
 		test: test,
 	}
@@ -18,8 +19,8 @@ func Func(desc string, test func(any) bool) funcTest {
 
 // FuncError creates a validation rule that checks if a value satisfies a custom
 // condition defined by the provided test function that returns an error.
-func FuncError(desc string, test func(any) error) funcTest {
-	return funcTest{
+func FuncError(desc string, test func(any) error) FuncTest {
+	return FuncTest{
 		desc: desc,
 		test: func(value any) bool {
 			err := test(value)
@@ -28,11 +29,12 @@ func FuncError(desc string, test func(any) error) funcTest {
 	}
 }
 
-func (t funcTest) Check(value any) bool {
+// Check returns true if the value satisfies the test function.
+func (t FuncTest) Check(value any) bool {
 	return t.test(value)
 }
 
-func (t funcTest) String() string {
+func (t FuncTest) String() string {
 	return t.desc
 }
 
@@ -41,26 +43,27 @@ func (t funcTest) String() string {
 // current value being tested. Use this to implement tests that need to
 // inspect values injected via rules.WithContext options or embedded ContextAdder
 // fields (e.g. tax.Regime).
-func FuncContext(desc string, fn func(ctx rules.Context, val any) bool) funcContextTest {
-	return funcContextTest{desc: desc, fn: fn}
+func FuncContext(desc string, fn func(ctx rules.Context, val any) bool) FuncContextTest {
+	return FuncContextTest{desc: desc, fn: fn}
 }
 
-type funcContextTest struct {
+// FuncContextTest is a Test with access to the validation context.
+type FuncContextTest struct {
 	desc string
 	fn   func(ctx rules.Context, val any) bool
 }
 
 // CheckWithContext implements rules.ContextualTest, giving this test access to
 // the validation context during a rules.Validate call.
-func (t funcContextTest) CheckWithContext(rc *rules.Context, val any) bool {
+func (t FuncContextTest) CheckWithContext(rc *rules.Context, val any) bool {
 	return t.fn(*rc, val)
 }
 
 // Check satisfies the rules.Test interface when no context is available.
-func (t funcContextTest) Check(val any) bool {
+func (t FuncContextTest) Check(val any) bool {
 	return t.fn(rules.Context{}, val)
 }
 
-func (t funcContextTest) String() string {
+func (t FuncContextTest) String() string {
 	return t.desc
 }

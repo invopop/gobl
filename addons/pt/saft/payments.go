@@ -129,4 +129,3 @@ func normalizePayment(pmt *bill.Payment) {
 		pmt.Ext[ExtKeySource] = SourceBillingProduced
 	}
 }
-

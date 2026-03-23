@@ -96,4 +96,3 @@ func normalize(doc any) {
 		normalizePayAdvance(obj)
 	}
 }
-

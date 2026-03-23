@@ -73,4 +73,3 @@ func payAdvanceRules() *rules.Set {
 		),
 	)
 }
-

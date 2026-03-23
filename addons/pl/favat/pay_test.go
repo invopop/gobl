@@ -100,7 +100,6 @@ func TestValidatePay(t *testing.T) {
 	})
 }
 
-
 func TestPaymentMeansMapping(t *testing.T) {
 	ad := tax.AddonForKey(favat.V3)
 

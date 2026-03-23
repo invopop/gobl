@@ -65,4 +65,3 @@ func normalize(doc any) {
 		normalizeTaxCombo(obj)
 	}
 }
-

@@ -59,7 +59,7 @@ func newAddon() *tax.AddonDef {
 			invoiceTags,
 		},
 		Corrections: invoiceCorrectionDefinitions,
-		Normalizer: normalize,
+		Normalizer:  normalize,
 	}
 }
 

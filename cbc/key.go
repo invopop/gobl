@@ -147,7 +147,7 @@ func HasValidKeyIn(keys ...Key) HasKeyRule {
 	return HasKeyRule{elements: keys}
 }
 
-// HasKeyTest defines a test that will check for the presence
+// HasKeyRule defines a test that will check for the presence
 // of keys.
 type HasKeyRule struct {
 	elements []Key

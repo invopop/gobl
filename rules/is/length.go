@@ -5,7 +5,8 @@ import (
 	"unicode/utf8"
 )
 
-type lengthTest struct {
+// LengthTest is a Test that checks the byte or rune length of a value.
+type LengthTest struct {
 	min  int
 	max  int
 	rune bool
@@ -14,10 +15,10 @@ type lengthTest struct {
 // Length returns a validation rule that checks if a value's length is within the specified range.
 // For strings, it counts bytes. If max is 0, there is no upper bound.
 // Empty values are skipped; use Present to enforce presence.
-func Length(min, max int) lengthTest {
-	return lengthTest{
-		min: min,
-		max: max,
+func Length(minLen, maxLen int) LengthTest {
+	return LengthTest{
+		min: minLen,
+		max: maxLen,
 	}
 }
 
@@ -25,15 +26,16 @@ func Length(min, max int) lengthTest {
 // within the specified range. Unlike Length, it correctly handles multi-byte Unicode characters.
 // For non-string types, it behaves identically to Length. If max is 0, there is no upper bound.
 // Empty values are skipped; use Present to enforce presence.
-func RuneLength(min, max int) lengthTest {
-	return lengthTest{
-		min:  min,
-		max:  max,
+func RuneLength(minLen, maxLen int) LengthTest {
+	return LengthTest{
+		min:  minLen,
+		max:  maxLen,
 		rune: true,
 	}
 }
 
-func (t lengthTest) Check(value any) bool {
+// Check returns true if the value's length is within the configured range.
+func (t LengthTest) Check(value any) bool {
 	value, isNil := Indirect(value)
 	if isNil || emptyValue(value) {
 		return true // ignore
@@ -59,10 +61,10 @@ func (t lengthTest) Check(value any) bool {
 		}
 	}
 
-	return !(t.min > 0 && l < t.min || t.max > 0 && l > t.max || t.min == 0 && t.max == 0 && l > 0)
+	return (t.min == 0 || l >= t.min) && (t.max == 0 || l <= t.max) && (t.min != 0 || t.max != 0 || l == 0)
 }
 
-func (t lengthTest) String() string {
+func (t LengthTest) String() string {
 	if t.rune {
 		return fmt.Sprintf("rune length between %d and %d", t.min, t.max)
 	}

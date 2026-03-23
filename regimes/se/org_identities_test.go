@@ -3,7 +3,6 @@ package se_test
 import (
 	"testing"
 
-	_ "github.com/invopop/gobl/regimes/se" // ensure regime loaded
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/se"

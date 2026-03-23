@@ -897,7 +897,7 @@ func TestEachTopLevelSlice(t *testing.T) {
 	})
 }
 
-func TestValidateWithNilPointerField(t *testing.T) {
+func TestValidateWithNilPointerField(_ *testing.T) {
 	// Nil pointer field should be skipped without panic.
 	p := &Person{Name: "Alice", Address: nil}
 	faults := rules.Validate(p)

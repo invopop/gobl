@@ -4,12 +4,11 @@ package ae_test
 import (
 	"testing"
 
-	_ "github.com/invopop/gobl/regimes/ae"
 	"github.com/invopop/gobl/cbc"
+	_ "github.com/invopop/gobl/regimes/ae"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	_ "github.com/invopop/gobl/regimes/ae"
 )
 
 func TestTaxIdentityRules(t *testing.T) {

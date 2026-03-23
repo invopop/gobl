@@ -7,11 +7,13 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
+// StringTest is a Test that validates a string value against a custom function.
 type StringTest struct {
 	desc string
 	test func(string) bool
 }
 
+// StringFunc creates a StringTest with the given description and test function.
 func StringFunc(desc string, test func(string) bool) StringTest {
 	return StringTest{
 		desc: desc,
@@ -19,6 +21,7 @@ func StringFunc(desc string, test func(string) bool) StringTest {
 	}
 }
 
+// Check returns true if the value is a string that satisfies the test function.
 func (t StringTest) Check(value any) bool {
 	isString, str, _, _ := StringOrBytes(value)
 	if !isString {

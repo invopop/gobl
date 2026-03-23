@@ -35,6 +35,6 @@ func init() {
 	)
 }
 
-// Deprecated: do not use. Ensure a rule exists to check for the
+// RequireIdentityCode is deprecated: do not use. Ensure a rule exists to check for the
 // tax Identity Code.
 var RequireIdentityCode = validation.Skip

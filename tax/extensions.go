@@ -408,6 +408,8 @@ func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
 
 // Validate implements the validation.Rule interface. It returns an error when
 // the extensions map does not satisfy the rule.
+//
+//nolint:gocyclo
 func (v ExtensionsRule) Validate(value any) error {
 	em, ok := value.(Extensions)
 	if !ok {

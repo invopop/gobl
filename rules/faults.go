@@ -7,6 +7,8 @@ import (
 )
 
 // Fault represents a single rule assertion failure identified by a code and path.
+//
+//nolint:errname
 type Fault struct {
 	path    string
 	code    Code
@@ -70,6 +72,8 @@ type Faults interface {
 }
 
 // faultList is the concrete slice-based implementation of Faults.
+//
+//nolint:errname
 type faultList []*Fault
 
 // newFaults wraps a slice of faults in the Faults interface, returning nil when empty.

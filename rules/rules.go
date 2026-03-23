@@ -461,6 +461,8 @@ func (s *Set) Validate(obj any) Faults {
 }
 
 // validate is the internal context-aware implementation of Validate.
+//
+//nolint:gocyclo
 func (s *Set) validate(rc *Context, obj any) Faults {
 	rv := reflect.ValueOf(obj)
 	if !rv.IsValid() {

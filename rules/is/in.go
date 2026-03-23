@@ -5,7 +5,8 @@ import (
 	"strings"
 )
 
-type inTest struct {
+// InTest is a Test that checks if a value is one of a set.
+type InTest struct {
 	set []any // normalized by compile
 }
 
@@ -13,18 +14,20 @@ type inTest struct {
 // Named types (e.g. type Code string) are compared against their underlying primitive,
 // so In("A", "B") will match both string("A") and Code("A").
 // Nil values are skipped; use Present to enforce presence.
-func In(set ...any) *inTest {
-	return &inTest{set: set}
+func In(set ...any) *InTest {
+	return &InTest{set: set}
 }
 
-func (t *inTest) Compile(_ any) error {
+// Compile normalizes the set values for comparison.
+func (t *InTest) Compile(_ any) error {
 	for i, v := range t.set {
 		t.set[i] = normalizeValue(v)
 	}
 	return nil
 }
 
-func (t inTest) Check(value any) bool {
+// Check returns true if the value is present in the set.
+func (t InTest) Check(value any) bool {
 	value, isNil := Indirect(value)
 	if isNil {
 		return true // skip nil
@@ -38,7 +41,7 @@ func (t inTest) Check(value any) bool {
 	return false
 }
 
-func (t inTest) String() string {
+func (t InTest) String() string {
 	parts := make([]string, len(t.set))
 	for i, v := range t.set {
 		parts[i] = fmt.Sprintf("%v", v)

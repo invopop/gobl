@@ -15,25 +15,26 @@ const (
 	thresholdLT                     // <
 )
 
-type minMaxTest struct {
+// MinMaxTest is a Test that checks if a value meets a numeric or time threshold.
+type MinMaxTest struct {
 	threshold any
 	op        thresholdOp
 }
 
 // Min returns a validation rule that checks if a value is greater than or equal to threshold.
 // Supports int, uint, float, and time.Time types. Empty values are skipped.
-func Min(threshold any) minMaxTest {
-	return minMaxTest{threshold: threshold, op: thresholdGTE}
+func Min(threshold any) MinMaxTest {
+	return MinMaxTest{threshold: threshold, op: thresholdGTE}
 }
 
 // Max returns a validation rule that checks if a value is less than or equal to threshold.
 // Supports int, uint, float, and time.Time types. Empty values are skipped.
-func Max(threshold any) minMaxTest {
-	return minMaxTest{threshold: threshold, op: thresholdLTE}
+func Max(threshold any) MinMaxTest {
+	return MinMaxTest{threshold: threshold, op: thresholdLTE}
 }
 
 // Exclusive returns a copy of the rule using strict (exclusive) comparison.
-func (t minMaxTest) Exclusive() minMaxTest {
+func (t MinMaxTest) Exclusive() MinMaxTest {
 	switch t.op {
 	case thresholdGTE:
 		t.op = thresholdGT
@@ -43,7 +44,8 @@ func (t minMaxTest) Exclusive() minMaxTest {
 	return t
 }
 
-func (t minMaxTest) Check(value any) bool {
+// Check returns true if the value satisfies the threshold comparison.
+func (t MinMaxTest) Check(value any) bool {
 	value, isNil := Indirect(value)
 	if isNil || emptyValue(value) {
 		return true
@@ -86,7 +88,7 @@ func (t minMaxTest) Check(value any) bool {
 	return false
 }
 
-func (t minMaxTest) String() string {
+func (t MinMaxTest) String() string {
 	switch t.op {
 	case thresholdGT:
 		return fmt.Sprintf("greater than %v", t.threshold)
@@ -99,7 +101,7 @@ func (t minMaxTest) String() string {
 	}
 }
 
-func (t minMaxTest) compareInt(threshold, value int64) bool {
+func (t MinMaxTest) compareInt(threshold, value int64) bool {
 	switch t.op {
 	case thresholdGT:
 		return value > threshold
@@ -112,7 +114,7 @@ func (t minMaxTest) compareInt(threshold, value int64) bool {
 	}
 }
 
-func (t minMaxTest) compareUint(threshold, value uint64) bool {
+func (t MinMaxTest) compareUint(threshold, value uint64) bool {
 	switch t.op {
 	case thresholdGT:
 		return value > threshold
@@ -125,7 +127,7 @@ func (t minMaxTest) compareUint(threshold, value uint64) bool {
 	}
 }
 
-func (t minMaxTest) compareFloat(threshold, value float64) bool {
+func (t MinMaxTest) compareFloat(threshold, value float64) bool {
 	switch t.op {
 	case thresholdGT:
 		return value > threshold
@@ -138,7 +140,7 @@ func (t minMaxTest) compareFloat(threshold, value float64) bool {
 	}
 }
 
-func (t minMaxTest) compareTime(threshold, value time.Time) bool {
+func (t MinMaxTest) compareTime(threshold, value time.Time) bool {
 	switch t.op {
 	case thresholdGT:
 		return value.After(threshold)

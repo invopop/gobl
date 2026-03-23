@@ -108,4 +108,3 @@ func TestValidateTaxCombo(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-

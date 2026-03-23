@@ -335,4 +335,3 @@ func removeLineChargesIncludedTaxes(charges []*LineCharge, tc *tax.Combo, exp ui
 	}
 	return rows
 }
-

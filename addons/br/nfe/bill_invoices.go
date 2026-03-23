@@ -233,10 +233,6 @@ func amountZeroOrPositive(val any) bool {
 	return !amt.IsNegative()
 }
 
-func isNFCe(t *bill.Tax) bool {
-	return t != nil && t.Ext[ExtKeyModel] == ModelNFCe
-}
-
 func isNFe(t *bill.Tax) bool {
 	return t != nil && t.Ext[ExtKeyModel] == ModelNFe
 }

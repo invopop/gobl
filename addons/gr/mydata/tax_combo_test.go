@@ -51,7 +51,6 @@ func TestValidateTaxCombo(t *testing.T) {
 	})
 }
 
-
 func TestNormalizeTaxCombo(t *testing.T) {
 	ad := tax.AddonForKey(mydata.V1)
 

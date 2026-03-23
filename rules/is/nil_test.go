@@ -35,7 +35,7 @@ func TestNil(t *testing.T) {
 	})
 
 	t.Run("fails for non-nil pointer to non-empty value", func(t *testing.T) {
-		s := "hello"
+		s := "hello" //nolint:goconst
 		assert.False(t, is.Nil.Check(&s))
 	})
 

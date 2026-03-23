@@ -46,7 +46,7 @@ func TestContextEach(t *testing.T) {
 		ctx.Set("a", 1)
 		ctx.Set("b", 2)
 		count := 0
-		result := ctx.Each(func(v any) bool {
+		result := ctx.Each(func(_ any) bool {
 			count++
 			return false
 		})
@@ -56,7 +56,7 @@ func TestContextEach(t *testing.T) {
 
 	t.Run("empty context", func(t *testing.T) {
 		var ctx Context
-		result := ctx.Each(func(v any) bool {
+		result := ctx.Each(func(_ any) bool {
 			return true
 		})
 		assert.False(t, result)
