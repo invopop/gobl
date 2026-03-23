@@ -3,8 +3,9 @@ package saft
 import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var taxRateMap = tax.Extensions{
@@ -116,25 +117,43 @@ func prepareTaxComboRate(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(val any) error {
-	c, ok := val.(*tax.Combo)
-	if !ok {
-		return nil
-	}
-	switch c.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(c, validateVATExt(&c.Ext))
-	}
-	return nil
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(is.Func("is VAT", taxComboIsVAT),
+			vatExtRuleDefs("ext")...,
+		),
+	)
 }
 
-func validateVATExt(ext *tax.Extensions) *validation.FieldRules {
-	return validation.Field(ext,
-		tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
-		validation.When(
-			(*ext)[ExtKeyTaxRate] == TaxRateExempt,
-			tax.ExtensionsRequire(ExtKeyExemption),
+// taxComboIsVAT checks if the combo is a VAT category.
+func taxComboIsVAT(val any) bool {
+	c, ok := val.(*tax.Combo)
+	return ok && c != nil && c.Category == tax.CategoryVAT
+}
+
+// vatExtRuleDefs returns rule definitions for VAT extension validation.
+// This is shared between tax_combo.go and payment_line.go.
+func vatExtRuleDefs(fieldName string) []rules.Def {
+	return []rules.Def{
+		rules.Field(fieldName,
+			rules.Assert("01", "region and tax rate are required",
+				tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
+			),
+			rules.Assert("02", "exemption is required when tax rate is exempt",
+				is.Func("exempt requires exemption", vatExtExemptRequiresExemption),
+			),
 		),
-		validation.Skip,
-	)
+	}
+}
+
+// vatExtExemptRequiresExemption checks that when tax rate is exempt, the exemption is present.
+func vatExtExemptRequiresExemption(val any) bool {
+	ext, ok := val.(tax.Extensions)
+	if !ok || ext == nil {
+		return true
+	}
+	if ext[ExtKeyTaxRate] != TaxRateExempt {
+		return true
+	}
+	return tax.ExtensionsRequire(ExtKeyExemption).Check(ext)
 }

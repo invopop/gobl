@@ -8,48 +8,46 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDeliveryValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-	require.NotNil(t, addon)
-
 	t.Run("valid delivery", func(t *testing.T) {
 		dlv := validDelivery()
-		require.NoError(t, addon.Validator(dlv))
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
 	})
 
 	t.Run("missing movement type", func(t *testing.T) {
 		dlv := validDelivery()
 
 		dlv.Tax = nil
-		assert.ErrorContains(t, addon.Validator(dlv), "tax: (ext: (pt-saft-movement-type: required")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "tax requires 'pt-saft-movement-type' extension")
 
 		dlv.Tax = new(bill.Tax)
-		assert.ErrorContains(t, addon.Validator(dlv), "tax: (ext: (pt-saft-movement-type: required")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "tax requires 'pt-saft-movement-type' extension")
 	})
 
 	t.Run("missing despatch date", func(t *testing.T) {
 		dlv := validDelivery()
 		dlv.DespatchDate = nil
-		assert.ErrorContains(t, addon.Validator(dlv), "despatch_date: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
 	})
 
 	t.Run("invalid series format", func(t *testing.T) {
 		dlv := validDelivery()
 
 		dlv.Series = "SERIES-A"
-		assert.ErrorContains(t, addon.Validator(dlv), "series: must start with 'GR '")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "series format must be valid")
 	})
 
 	t.Run("invalid code format", func(t *testing.T) {
 		dlv := validDelivery()
 
 		dlv.Code = "ABCD"
-		assert.ErrorContains(t, addon.Validator(dlv), "code: must be in a valid format")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "code format must be valid")
 	})
 
 	t.Run("valid full code", func(t *testing.T) {
@@ -57,7 +55,7 @@ func TestDeliveryValidation(t *testing.T) {
 
 		dlv.Series = ""
 		dlv.Code = "GR SERIES-A/123"
-		assert.NoError(t, addon.Validator(dlv))
+		assert.NoError(t, rules.Validate(dlv, withAddonContext()))
 	})
 
 	t.Run("invalid full code", func(t *testing.T) {
@@ -65,23 +63,22 @@ func TestDeliveryValidation(t *testing.T) {
 
 		dlv.Series = ""
 		dlv.Code = "ABCDEF"
-		assert.ErrorContains(t, addon.Validator(dlv), "code: must start with 'GR '")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "code format must be valid")
 	})
 
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		dlv := validDelivery()
 
 		dlv.Supplier.TaxID = nil
-		assert.ErrorContains(t, addon.Validator(dlv), "supplier: (tax_id: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "supplier tax ID is required")
 
 		dlv.Supplier.TaxID = &tax.Identity{
 			Country: "PT",
 			Code:    "",
 		}
-		assert.ErrorContains(t, addon.Validator(dlv), "supplier: (tax_id: (code: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "supplier tax ID code is required")
 
-		dlv.Supplier = nil
-		assert.NoError(t, addon.Validator(dlv))
+		// dlv.Supplier = nil is caught by core GOBL rules (supplier is required)
 	})
 }
 
@@ -126,16 +123,6 @@ func TestDeliveryNormalization(t *testing.T) {
 func validDelivery() *bill.Delivery {
 	date := cal.NewDate(2023, 1, 1)
 
-	price, err := num.AmountFromString("100.00")
-	if err != nil {
-		panic(err)
-	}
-
-	quantity, err := num.AmountFromString("1")
-	if err != nil {
-		panic(err)
-	}
-
 	return &bill.Delivery{
 		Type:      bill.DeliveryTypeNote,
 		IssueDate: *date,
@@ -149,23 +136,18 @@ func validDelivery() *bill.Delivery {
 			Name: "Test Supplier",
 		},
 		Customer: &org.Party{
-			TaxID: &tax.Identity{
-				Country: "PT",
-				Code:    "987654321",
-			},
 			Name: "Test Customer",
 		},
 		DespatchDate: date,
 		Lines: []*bill.Line{
 			{
+				Index:    1,
+				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name:  "Test Item",
-					Price: &price,
-				},
-				Quantity: quantity,
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
+					Name: "Test Item",
+					Unit: "one",
+					Ext: tax.Extensions{
+						saft.ExtKeyProductType: saft.ProductTypeService,
 					},
 				},
 			},

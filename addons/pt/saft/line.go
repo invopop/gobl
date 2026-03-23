@@ -9,8 +9,9 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeLine(line *bill.Line) {
@@ -47,46 +48,39 @@ func normalizeLine(line *bill.Line) {
 	}
 }
 
-func validateLine(line *bill.Line) error {
-	if line == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Quantity, num.Positive),
-		validation.Field(&line.Sum, num.ZeroOrPositive),
-		validation.Field(&line.Total, num.ZeroOrPositive),
-		validation.Field(&line.Discounts,
-			validation.Each(
-				validation.By(validateBillLineDiscount),
-				validation.Skip,
+func billLineRules() *rules.Set {
+	return rules.For(new(bill.Line),
+		rules.Field("quantity",
+			rules.Assert("01", "must be greater than 0", num.Positive),
+		),
+		rules.Field("sum",
+			rules.Assert("02", "must be no less than 0", num.ZeroOrPositive),
+		),
+		rules.Field("total",
+			rules.Assert("03", "must be no less than 0", num.ZeroOrPositive),
+		),
+		rules.Field("discounts",
+			rules.Each(
+				rules.Field("amount",
+					rules.Assert("04", "must be no less than 0", num.ZeroOrPositive),
+				),
 			),
 		),
-		validation.Field(&line.Notes,
-			validation.By(validateLineNotes(line)),
-			validation.Skip,
+		rules.Assert("05", "exemption notes invalid",
+			is.FuncError("exemption notes", lineExemptionNotesValid),
 		),
 	)
 }
 
-func validateBillLineDiscount(val any) error {
-	disc, _ := val.(*bill.LineDiscount)
-	if disc == nil {
+// lineExemptionNotesValid validates exemption notes for a line.
+func lineExemptionNotesValid(val any) error {
+	line, ok := val.(*bill.Line)
+	if !ok || line == nil {
 		return nil
 	}
-
-	return validation.ValidateStruct(disc,
-		validation.Field(&disc.Amount, num.ZeroOrPositive),
-	)
+	return validateExemptionNotes(line.Notes, lineTaxExemptionCode(line))
 }
 
-func validateLineNotes(line *bill.Line) validation.RuleFunc {
-	return func(val any) error {
-		notes, _ := val.([]*org.Note) //nolint:errcheck
-		ec := lineTaxExemptionCode(line)
-		return validateExemptionNotes(notes, ec)
-	}
-}
 func validateExemptionNotes(notes []*org.Note, ec cbc.Code) error {
 	count := 0
 	for i, n := range notes {

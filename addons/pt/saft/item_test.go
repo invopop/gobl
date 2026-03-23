@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,6 +20,7 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
+				Name: "Test Item",
 				Unit: "kg",
 				Ext: tax.Extensions{
 					saft.ExtKeyProductType: "P",
@@ -32,14 +34,14 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "missing extensions",
 			item: &org.Item{},
-			err:  "ext: (pt-saft-product-type: required.)",
+			err:  "product type is required",
 		},
 		{
 			name: "empty extensions",
 			item: &org.Item{
 				Ext: tax.Extensions{},
 			},
-			err: "ext: (pt-saft-product-type: required.)",
+			err: "product type is required",
 		},
 		{
 			name: "missing extension",
@@ -48,19 +50,18 @@ func TestItemValidation(t *testing.T) {
 					"random": "12345678",
 				},
 			},
-			err: "ext: (pt-saft-product-type: required.)",
+			err: "product type is required",
 		},
 		{
 			name: "missing unit",
 			item: &org.Item{},
-			err:  "unit: cannot be blank.",
+			err:  "cannot be blank",
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.item)
+			err := rules.Validate(ts.item, withAddonContext())
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
