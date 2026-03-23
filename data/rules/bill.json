@@ -27,7 +27,7 @@
             {
               "id": "GOBL-BILL-INVOICE-03",
               "desc": "invoice issue date is required",
-              "tests": "present"
+              "tests": "not zero"
             }
           ]
         },

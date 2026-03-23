@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+Massive refactor of the validation system with a move to "rules" based checks. The objective was to move away from the opaque validation processes of the nested methods, and instead move to a rules based system whereby each assertion is pre-defined with a code, description, and test. Any assertions that fail during the new validation process will generate an array of faults that include the code, message, and path to the element that failed.
+
+### Added
+
+- `rules`: new package to help define validation rules and execute them on top of any object.
+
 ### Removed
 
 - `mx`/`co`: Tax Identity Zone migration removed.

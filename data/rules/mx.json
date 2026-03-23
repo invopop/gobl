@@ -18,7 +18,7 @@
                     {
                       "id": "GOBL-MX-TAX-IDENTITY-01",
                       "desc": "invalid Mexican RFC tax identity code",
-                      "tests": "valid"
+                      "tests": "valid RFC"
                     }
                   ]
                 }

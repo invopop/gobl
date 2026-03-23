@@ -41,7 +41,7 @@
         {
           "id": "GOBL-CBC-KEY-02",
           "desc": "key must match the required pattern",
-          "tests": "matches ^([a-z]([a-z0-9-]*[a-z0-9])?)(\\+([a-z]([a-z0-9-]*[a-z0-9])?))*$"
+          "tests": "matches ^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$"
         }
       ]
     },
