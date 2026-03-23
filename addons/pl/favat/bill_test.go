@@ -563,7 +563,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding documents are required for credit notes")
+		assert.NoError(t, err)
 	})
 }
 

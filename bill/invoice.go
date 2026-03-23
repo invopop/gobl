@@ -190,6 +190,10 @@ func invoiceNeedsLines(val any) bool {
 // After inverting the invoice is recalculated and any differences will raise
 // an error.
 func (inv *Invoice) Invert() error {
+	if inv.HasTags(tax.TagBypass) {
+		return fmt.Errorf("cannot invert an invoice with tag bypass")
+	}
+
 	payable := inv.Totals.Payable.Invert()
 
 	for _, row := range inv.Lines {
@@ -212,8 +216,8 @@ func (inv *Invoice) Invert() error {
 			row.Amount = row.Amount.Invert()
 		}
 	}
-	inv.Totals = nil
 
+	inv.Totals = nil
 	if err := inv.Calculate(); err != nil {
 		return err
 	}

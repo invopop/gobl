@@ -120,8 +120,12 @@ func billInvoiceRules() *rules.Set {
 
 func billDiscountRules() *rules.Set {
 	return rules.For(new(bill.Discount),
+		// BR-32: taxes are required on document-level discounts
+		rules.Field("taxes",
+			rules.Assert("01", "taxes are required (BR-32)", is.Present),
+		),
 		// BR-33: either reason or allowance type extension required
-		rules.Assert("01", "either a reason or an allowance type extension is required (BR-33)",
+		rules.Assert("02", "either a reason or an allowance type extension is required (BR-33)",
 			is.Func("reason or allowance", billDiscountHasReasonOrAllowance),
 		),
 	)

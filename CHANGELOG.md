@@ -16,8 +16,17 @@ Massive refactor of the validation system with a move to "rules" based checks. T
 
 - `mx`/`co`: Tax Identity Zone migration removed.
 
+### Removed
+
+- `pl-favat-v3`: Preceding no longer required when it is a credit note
+
+### Added
+
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+
 ### Changed
 
+- `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
 
