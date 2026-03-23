@@ -1,7 +1,6 @@
 package org
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -47,10 +46,10 @@ func (i *Inbox) Normalize() {
 	}
 	uuid.Normalize(&i.UUID)
 	code := i.Code.String()
-	if govalidator.IsEmail(code) {
+	if is.EmailFormat.Check(code) {
 		i.Email = code
 		i.Code = ""
-	} else if govalidator.IsURL(code) {
+	} else if is.URL.Check(code) {
 		i.URL = code
 		i.Code = ""
 	}

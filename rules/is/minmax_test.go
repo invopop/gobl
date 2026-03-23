@@ -148,3 +148,87 @@ func TestMinMaxExclusive(t *testing.T) {
 		assert.False(t, is.Max(base).Exclusive().Check(base))
 	})
 }
+
+func TestMinMaxExclusiveUint(t *testing.T) {
+	t.Run("Min exclusive uint passes when strictly greater", func(t *testing.T) {
+		assert.True(t, is.Min(uint(5)).Exclusive().Check(uint(6)))
+	})
+
+	t.Run("Min exclusive uint fails when equal", func(t *testing.T) {
+		assert.False(t, is.Min(uint(5)).Exclusive().Check(uint(5)))
+	})
+
+	t.Run("Min exclusive uint fails when below", func(t *testing.T) {
+		assert.False(t, is.Min(uint(5)).Exclusive().Check(uint(4)))
+	})
+
+	t.Run("Max exclusive uint passes when strictly less", func(t *testing.T) {
+		assert.True(t, is.Max(uint(10)).Exclusive().Check(uint(9)))
+	})
+
+	t.Run("Max exclusive uint fails when equal", func(t *testing.T) {
+		assert.False(t, is.Max(uint(10)).Exclusive().Check(uint(10)))
+	})
+
+	t.Run("Max exclusive uint fails when above", func(t *testing.T) {
+		assert.False(t, is.Max(uint(10)).Exclusive().Check(uint(11)))
+	})
+
+	t.Run("Min uint non-exclusive boundary", func(t *testing.T) {
+		assert.True(t, is.Min(uint(5)).Check(uint(5)))
+	})
+
+	t.Run("Max uint non-exclusive boundary", func(t *testing.T) {
+		assert.True(t, is.Max(uint(10)).Check(uint(10)))
+	})
+}
+
+func TestMinMaxExclusiveFloat(t *testing.T) {
+	t.Run("Min exclusive float passes when strictly greater", func(t *testing.T) {
+		assert.True(t, is.Min(1.5).Exclusive().Check(2.0))
+	})
+
+	t.Run("Min exclusive float fails when equal", func(t *testing.T) {
+		assert.False(t, is.Min(1.5).Exclusive().Check(1.5))
+	})
+
+	t.Run("Min exclusive float fails when below", func(t *testing.T) {
+		assert.False(t, is.Min(1.5).Exclusive().Check(1.0))
+	})
+
+	t.Run("Max exclusive float passes when strictly less", func(t *testing.T) {
+		assert.True(t, is.Max(10.5).Exclusive().Check(10.0))
+	})
+
+	t.Run("Max exclusive float fails when equal", func(t *testing.T) {
+		assert.False(t, is.Max(10.5).Exclusive().Check(10.5))
+	})
+
+	t.Run("Max exclusive float fails when above", func(t *testing.T) {
+		assert.False(t, is.Max(10.5).Exclusive().Check(11.0))
+	})
+}
+
+func TestMinMaxTypeMismatch(t *testing.T) {
+	t.Run("uint threshold with string value", func(t *testing.T) {
+		assert.False(t, is.Min(uint(5)).Check("hello"))
+	})
+
+	t.Run("float threshold with string value", func(t *testing.T) {
+		assert.False(t, is.Min(1.5).Check("hello"))
+	})
+
+	t.Run("int threshold with string value", func(t *testing.T) {
+		assert.False(t, is.Min(5).Check("hello"))
+	})
+
+	t.Run("struct threshold that is not time.Time", func(t *testing.T) {
+		type S struct{ X int }
+		assert.False(t, is.Min(S{X: 1}).Check(S{X: 2}))
+	})
+
+	t.Run("time.Time threshold with non-time value", func(t *testing.T) {
+		base := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+		assert.False(t, is.Min(base).Check("not a time"))
+	})
+}

@@ -1,8 +1,6 @@
 package org
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
@@ -10,7 +8,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of supported note keys based on the
@@ -283,29 +280,6 @@ func NoteFromScenario(sn *tax.ScenarioNote) *Note {
 		Text: sn.Text,
 		Ext:  sn.Ext,
 	}
-}
-
-type validateNotes struct {
-	key cbc.Key
-}
-
-// ValidateNotesHasKey returns a validation rule that check that at least one
-// of the notes has the provided key.
-func ValidateNotesHasKey(key cbc.Key) validation.Rule {
-	return &validateNotes{key: key}
-}
-
-func (v *validateNotes) Validate(value any) error {
-	notes, ok := value.([]*Note)
-	if !ok {
-		return nil
-	}
-	for _, n := range notes {
-		if n.Key.In(v.key) {
-			return nil // match found, this is good
-		}
-	}
-	return fmt.Errorf("with key '%s' missing", v.key.String())
 }
 
 // WithSrc instantiates a new source instance with the provided

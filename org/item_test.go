@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -76,33 +75,6 @@ func TestItemValidation(t *testing.T) {
 			Key:  "invalid_key",
 		}
 		assert.ErrorContains(t, rules.Validate(i), "key must match the required pattern")
-	})
-}
-
-func TestItemPriceRequired(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		var item *org.Item
-		assert.NoError(t, validation.Validate(item, org.ItemPriceRequired()))
-	})
-	t.Run("success", func(t *testing.T) {
-		item := &org.Item{
-			Name:  "test item",
-			Price: num.NewAmount(100, 2),
-		}
-		assert.NoError(t, validation.Validate(item, org.ItemPriceRequired()))
-	})
-	t.Run("missing", func(t *testing.T) {
-		obj := struct {
-			Item *org.Item `json:"item"`
-		}{
-			Item: &org.Item{
-				Name: "test item",
-			},
-		}
-		err := validation.ValidateStruct(&obj,
-			validation.Field(&obj.Item, org.ItemPriceRequired()),
-		)
-		assert.ErrorContains(t, err, "item: (price: cannot be blank.)")
 	})
 }
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/stretchr/testify/assert"
 )
@@ -54,5 +55,33 @@ func TestFuncError(t *testing.T) {
 
 	t.Run("String returns description", func(t *testing.T) {
 		assert.Equal(t, "non-empty string", is.FuncError("non-empty string", validate).String())
+	})
+}
+
+func TestFuncContext(t *testing.T) {
+	fn := func(ctx rules.Context, val any) bool {
+		regime, _ := ctx.Value("regime").(string)
+		return regime == "ES"
+	}
+	fc := is.FuncContext("regime is ES", fn)
+
+	t.Run("String returns description", func(t *testing.T) {
+		assert.Equal(t, "regime is ES", fc.String())
+	})
+
+	t.Run("CheckWithContext passes with matching context", func(t *testing.T) {
+		rc := &rules.Context{}
+		rc.Set("regime", "ES")
+		assert.True(t, fc.CheckWithContext(rc, nil))
+	})
+
+	t.Run("CheckWithContext fails with non-matching context", func(t *testing.T) {
+		rc := &rules.Context{}
+		rc.Set("regime", "PT")
+		assert.False(t, fc.CheckWithContext(rc, nil))
+	})
+
+	t.Run("Check fallback with empty context", func(t *testing.T) {
+		assert.False(t, fc.Check(nil))
 	})
 }

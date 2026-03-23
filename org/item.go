@@ -1,8 +1,6 @@
 package org
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
@@ -12,7 +10,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -86,27 +83,6 @@ func itemRules() *rules.Set {
 			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
 		),
 	)
-}
-
-type itemPriceValidator struct{}
-
-// ItemPriceRequired ensures that the item has a price.
-func ItemPriceRequired() validation.Rule {
-	return &itemPriceValidator{}
-}
-
-// Validate ensures that the item has a price.
-func (v *itemPriceValidator) Validate(value any) error {
-	i, ok := value.(*Item)
-	if i == nil || !ok {
-		return nil
-	}
-	if i.Price == nil {
-		return validation.Errors{
-			"price": errors.New("cannot be blank"),
-		}
-	}
-	return nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.

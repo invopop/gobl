@@ -1,6 +1,7 @@
 package rules_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/rules"
@@ -618,4 +619,320 @@ func TestEmbeddable(t *testing.T) {
 		faults := rules.Validate(c)
 		assert.Nil(t, faults)
 	})
+}
+
+func TestAssertIfPresent(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Field("name",
+			rules.AssertIfPresent("01", "name too short",
+				is.Func("min 3", func(val any) bool {
+					s, ok := val.(string)
+					return ok && len(s) >= 3
+				}),
+			),
+		),
+	)
+
+	t.Run("non-empty value runs assertion and passes", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: "Alice"})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("non-empty value runs assertion and fails", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: "Al"})
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("$.name"))
+	})
+
+	t.Run("empty string skips assertion", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: ""})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("nil pointer skips assertion", func(t *testing.T) {
+		ptrSet := rules.For(new(Person),
+			rules.Field("address",
+				rules.AssertIfPresent("01", "street required",
+					is.Func("has street", func(val any) bool {
+						a, ok := val.(*Address)
+						return ok && a.Street != ""
+					}),
+				),
+			),
+		)
+		faults := ptrSet.Validate(&Person{Address: nil})
+		assert.NoError(t, faults)
+	})
+}
+
+func TestObject(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Object(
+			rules.Assert("01", "name required",
+				is.Expr(`name != ""`),
+			),
+			rules.Assert("02", "age positive",
+				is.Expr(`age > 0`),
+			),
+		),
+	)
+
+	t.Run("both pass", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: "Alice", Age: 30})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("both fail", func(t *testing.T) {
+		faults := set.Validate(&Person{Name: "", Age: 0})
+		require.Error(t, faults)
+		assert.GreaterOrEqual(t, faults.Len(), 2)
+	})
+}
+
+func TestAllSets(t *testing.T) {
+	sets := rules.AllSets()
+	assert.NotEmpty(t, sets)
+	// Should be same as Registry.
+	assert.Equal(t, rules.Registry(), sets)
+}
+
+func TestSetMarshalJSON(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.When(is.Expr(`age > 0`),
+			rules.Assert("01", "name required",
+				is.Expr(`name != ""`),
+			),
+		),
+		rules.Field("name",
+			rules.Assert("02", "name not empty", is.Present),
+		),
+	)
+	data, err := json.Marshal(set)
+	require.NoError(t, err)
+
+	var m map[string]any
+	require.NoError(t, json.Unmarshal(data, &m))
+	assert.Contains(t, m, "id")
+	assert.Contains(t, m, "subsets")
+}
+
+func TestAssertionMarshalJSON(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Assert("01", "name and age valid",
+			is.Expr(`name != ""`),
+			is.Expr(`age > 0`),
+		),
+	)
+	data, err := json.Marshal(set)
+	require.NoError(t, err)
+
+	var m map[string]any
+	require.NoError(t, json.Unmarshal(data, &m))
+	asserts, ok := m["assert"].([]any)
+	require.True(t, ok)
+	require.Len(t, asserts, 1)
+	a := asserts[0].(map[string]any)
+	// Tests should be comma-joined string
+	tests, ok := a["tests"].(string)
+	require.True(t, ok)
+	assert.Contains(t, tests, ", ")
+}
+
+func TestValidateNil(t *testing.T) {
+	faults := rules.Validate(nil)
+	assert.Nil(t, faults)
+}
+
+// testRegime implements ContextAdder for guard testing.
+type testRegime struct {
+	Code string
+}
+
+func (r testRegime) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set("regime", r.Code)
+	}
+}
+
+type docWithRegime struct {
+	Regime testRegime `json:"regime"`
+	Name   string     `json:"name"`
+}
+
+func TestRegisterWithGuard(t *testing.T) {
+	guardTest := is.In("ES", "PT")
+	nameSet := rules.For(new(docWithRegime),
+		rules.Field("name",
+			rules.Assert("01", "name required", is.Present),
+		),
+	)
+
+	rules.RegisterWithGuard("guard-test", rules.GOBL.Add("GUARDTEST"),
+		is.HasContext(guardTest), nameSet)
+
+	t.Run("guard passes - set applied", func(t *testing.T) {
+		doc := &docWithRegime{
+			Regime: testRegime{Code: "ES"},
+			Name:   "",
+		}
+		faults := rules.Validate(doc)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("GOBL-GUARDTEST-DOCWITHREGIME-01"))
+	})
+
+	t.Run("guard fails - set skipped", func(t *testing.T) {
+		doc := &docWithRegime{
+			Regime: testRegime{Code: "FR"},
+			Name:   "",
+		}
+		faults := rules.Validate(doc)
+		// Should not have the guard-test fault (guard doesn't match FR)
+		if faults != nil {
+			assert.False(t, faults.HasCode("GOBL-GUARDTEST-DOCWITHREGIME-01"))
+		}
+	})
+}
+
+func TestAssertIfPresentMarshalJSON(t *testing.T) {
+	// This triggers presentGuard.String() via Set.MarshalJSON.
+	set := rules.For(new(Person),
+		rules.Field("name",
+			rules.AssertIfPresent("01", "name too short",
+				is.Func("min 3", func(val any) bool {
+					s, ok := val.(string)
+					return ok && len(s) >= 3
+				}),
+			),
+		),
+	)
+	data, err := json.Marshal(set)
+	require.NoError(t, err)
+	assert.Contains(t, string(data), "present")
+}
+
+func TestValidateWithContext(t *testing.T) {
+	// Tests the WithContext option path in Validate.
+	guardTest := is.In("DE")
+	nameSet := rules.For(new(Email),
+		rules.Field("addr",
+			rules.Assert("01", "email required", is.Present),
+		),
+	)
+	rules.RegisterWithGuard("ctx-opt-test", rules.GOBL.Add("CTXOPT"),
+		is.HasContext(guardTest), nameSet)
+
+	t.Run("WithContext option injects context", func(t *testing.T) {
+		e := &Email{Addr: ""}
+		faults := rules.Validate(e, func(rc *rules.Context) {
+			rc.Set("country", "DE")
+		})
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("GOBL-CTXOPT-EMAIL-01"))
+	})
+}
+
+func TestEachWithPointerElements(t *testing.T) {
+	type Item struct {
+		Value string `json:"value"`
+	}
+	type Container struct {
+		Items []*Item `json:"items"`
+	}
+
+	set := rules.For(new(Container),
+		rules.Field("items",
+			rules.Each(
+				rules.Field("value",
+					rules.Assert("01", "value required", is.Present),
+				),
+			),
+		),
+	)
+
+	t.Run("pointer elements validated", func(t *testing.T) {
+		c := &Container{Items: []*Item{{Value: "ok"}, {Value: ""}}}
+		faults := set.Validate(c)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("$.items[1].value"))
+	})
+
+	t.Run("all valid", func(t *testing.T) {
+		c := &Container{Items: []*Item{{Value: "a"}, {Value: "b"}}}
+		faults := set.Validate(c)
+		assert.NoError(t, faults)
+	})
+
+	t.Run("nil slice field", func(t *testing.T) {
+		c := &Container{Items: nil}
+		faults := set.Validate(c)
+		assert.NoError(t, faults)
+	})
+}
+
+func TestEachTopLevelSlice(t *testing.T) {
+	// Tests validateEachValue with pointer-to-slice and Each at top-level of When.
+	type Row struct {
+		Name string `json:"name"`
+	}
+	type Table struct {
+		Rows []Row `json:"rows"`
+	}
+	set := rules.For(new(Table),
+		rules.Field("rows",
+			rules.Each(
+				rules.Assert("01", "name required",
+					is.Func("has name", func(val any) bool {
+						r, ok := val.(*Row)
+						return ok && r.Name != ""
+					}),
+				),
+			),
+		),
+	)
+	t.Run("each validates all rows", func(t *testing.T) {
+		tb := &Table{Rows: []Row{{Name: "a"}, {Name: ""}}}
+		faults := set.Validate(tb)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("$.rows[1]"))
+	})
+}
+
+func TestValidateWithNilPointerField(t *testing.T) {
+	// Nil pointer field should be skipped without panic.
+	p := &Person{Name: "Alice", Address: nil}
+	faults := rules.Validate(p)
+	// No rules fire since address is nil and name is set.
+	_ = faults
+}
+
+type noJSONTag struct {
+	Bare string
+}
+
+func TestFieldWithNoJSONTag(t *testing.T) {
+	// Tests the jsonFieldName fallback to field name when no json tag.
+	set := rules.For(new(noJSONTag),
+		rules.Field("Bare",
+			rules.Assert("01", "bare required", is.Present),
+		),
+	)
+	faults := set.Validate(&noJSONTag{Bare: ""})
+	require.Error(t, faults)
+	assert.True(t, faults.HasPath("$.Bare"))
+}
+
+type dashTag struct {
+	Hidden string `json:"-"`
+	Shown  string `json:"shown"`
+}
+
+func TestFieldWithDashJSONTag(t *testing.T) {
+	// Exercises the json:"-" path in jsonFieldName.
+	set := rules.For(new(dashTag),
+		rules.Field("shown",
+			rules.Assert("01", "shown required", is.Present),
+		),
+	)
+	faults := set.Validate(&dashTag{Shown: ""})
+	require.Error(t, faults)
 }

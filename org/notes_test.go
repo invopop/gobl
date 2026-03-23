@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -91,23 +90,6 @@ func TestNoteFromScenario(t *testing.T) {
 	assert.NotPanics(t, func() {
 		org.NoteFromScenario(nil)
 	})
-}
-
-func TestNotesValidationHasKey(t *testing.T) {
-	ns := []*org.Note{
-		{
-			Key:  org.NoteKeyGeneral,
-			Text: "This is a general note test",
-		},
-	}
-	err := validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.NoError(t, err)
-
-	err = validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyLegal))
-	assert.ErrorContains(t, err, "with key 'legal' missin")
-
-	err = validation.Validate(cbc.Key("foo"), org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.Nil(t, err, "should ignore invalid type")
 }
 
 func TestNoteSameAs(t *testing.T) {
