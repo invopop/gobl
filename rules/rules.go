@@ -450,7 +450,7 @@ func Validate(obj any, opts ...WithContext) Faults {
 			faults = append(faults, fs.List()...)
 		}
 	}
-	return newFaults(faults)
+	return newFaults(faults...)
 }
 
 // Validate validates an object against the set's rules. If the set has a test
@@ -461,8 +461,6 @@ func (s *Set) Validate(obj any) Faults {
 }
 
 // validate is the internal context-aware implementation of Validate.
-//
-//nolint:gocyclo
 func (s *Set) validate(rc *Context, obj any) Faults {
 	rv := reflect.ValueOf(obj)
 	if !rv.IsValid() {
@@ -523,88 +521,98 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 		}
 	}
 
-	// Sub-subsets: skip field extraction when the object is nil.
+	// Process subsets and nested fields when the object is not nil.
 	if !isNil {
-		for _, ss := range s.Subsets {
-			if ss.FieldName == "" {
-				if ss.Each {
-					faults = append(faults, validateEachValue(rc, rv, ss)...)
-				} else {
-					if fs := ss.validate(rc, obj); fs != nil {
-						faults = append(faults, fs.List()...)
-					}
-				}
+		faults = append(faults, s.validateSubsets(rc, rv, obj, callObj)...)
+	}
+
+	return newFaults(faults...)
+}
+
+// validateSubsets processes the set's subsets and, for namespace-level sets,
+// iterates exported struct fields to apply type-specific rules to nested values.
+func (s *Set) validateSubsets(rc *Context, rv reflect.Value, obj, callObj any) []*Fault {
+	var faults []*Fault
+
+	for _, ss := range s.Subsets {
+		if ss.FieldName == "" {
+			if ss.Each {
+				faults = append(faults, validateEachValue(rc, rv, ss)...)
 			} else {
-				fv, ok := fieldValueByName(rv, ss.FieldName)
-				if !ok {
-					continue
+				if fs := ss.validate(rc, obj); fs != nil {
+					faults = append(faults, fs.List()...)
 				}
-				if fs := ss.validate(rc, fv.Interface()); fs != nil {
-					faults = append(faults, prependPath(ss.FieldName, fs.List())...)
-				}
+			}
+		} else {
+			fv, ok := fieldValueByName(rv, ss.FieldName)
+			if !ok {
+				continue
+			}
+			if fs := ss.validate(rc, fv.Interface()); fs != nil {
+				faults = append(faults, prependPath(ss.FieldName, fs.List())...)
 			}
 		}
+	}
 
-		// For namespace-level sets that own type-specific rules, iterate all
-		// exported struct fields and apply this set's rules to each nested value.
-		// This keeps field iteration scoped to the namespace so that guard tests
-		// are not re-evaluated against nested objects, and type-specific rules
-		// registered under this namespace (e.g. taxComboRules) are still applied
-		// to nested types discovered during traversal.
-		if s.isNamespace() {
-			hasTypeRules := false
-			for _, ss := range s.Subsets {
-				if ss.objType != nil {
-					hasTypeRules = true
-					break
+	// For namespace-level sets that own type-specific rules, iterate all
+	// exported struct fields and apply this set's rules to each nested value.
+	// This keeps field iteration scoped to the namespace so that guard tests
+	// are not re-evaluated against nested objects, and type-specific rules
+	// registered under this namespace (e.g. taxComboRules) are still applied
+	// to nested types discovered during traversal.
+	if s.isNamespace() {
+		hasTypeRules := false
+		for _, ss := range s.Subsets {
+			if ss.objType != nil {
+				hasTypeRules = true
+				break
+			}
+		}
+		if hasTypeRules {
+			switch rv.Kind() {
+			case reflect.Struct:
+				rt := rv.Type()
+				for i := range rv.NumField() {
+					sf := rt.Field(i)
+					if !sf.IsExported() {
+						continue
+					}
+					fv := rv.Field(i)
+					fs := s.validateNestedFieldValue(rc, fv)
+					if len(fs) == 0 {
+						continue
+					}
+					if sf.Anonymous {
+						faults = append(faults, fs...)
+						continue
+					}
+					name := jsonFieldName(sf)
+					if name != "" {
+						faults = append(faults, prependPath(name, fs)...)
+					}
+				}
+			case reflect.Slice, reflect.Array:
+				for i := range rv.Len() {
+					ev := rv.Index(i)
+					if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
+						faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
+					}
 				}
 			}
-			if hasTypeRules {
-				switch rv.Kind() {
-				case reflect.Struct:
-					rt := rv.Type()
-					for i := range rv.NumField() {
-						sf := rt.Field(i)
-						if !sf.IsExported() {
-							continue
-						}
-						fv := rv.Field(i)
-						fs := s.validateNestedFieldValue(rc, fv)
-						if len(fs) == 0 {
-							continue
-						}
-						if sf.Anonymous {
-							faults = append(faults, fs...)
-							continue
-						}
-						name := jsonFieldName(sf)
-						if name != "" {
-							faults = append(faults, prependPath(name, fs)...)
-						}
-					}
-				case reflect.Slice, reflect.Array:
-					for i := range rv.Len() {
-						ev := rv.Index(i)
-						if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
-							faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
-						}
-					}
-				}
-				// If the root object exposes an embedded payload, validate it at
-				// the same path level. This handles cases like schema.Object where
-				// the payload is a private field accessible only via Embedded().
-				if emb, ok := callObj.(Embeddable); ok {
-					if inner := emb.Embedded(); inner != nil {
-						if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
-							faults = append(faults, fs...)
-						}
+			// If the root object exposes an embedded payload, validate it at
+			// the same path level. This handles cases like schema.Object where
+			// the payload is a private field accessible only via Embedded().
+			if emb, ok := callObj.(Embeddable); ok {
+				if inner := emb.Embedded(); inner != nil {
+					if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
+						faults = append(faults, fs...)
 					}
 				}
 			}
 		}
 	}
 
-	return newFaults(faults)
+	return faults
 }
 
 // validateNestedValue applies this set's type-specific subsets to obj and

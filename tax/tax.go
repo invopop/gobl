@@ -24,14 +24,14 @@ func init() {
 		rules.GOBL.Add("TAX"),
 		addonRules(),
 		addonDefRules(),
-		identityRules(),
 		categoryDefRules(),
+		comboRules(),
 		correctionDefinitionRules(),
+		identityRules(),
 		rateDefRules(),
 		regimeDefRules(),
 		scenarioSetRules(),
 		setRules(),
-		comboRules(),
 	)
 }
 

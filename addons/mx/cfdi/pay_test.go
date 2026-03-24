@@ -57,7 +57,7 @@ func TestValidatePayTerms(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var terms *pay.Terms
 		assert.NotPanics(t, func() {
-			assert.NoError(t, rules.Validate(terms))
+			assert.NoError(t, rules.Validate(terms, tax.AddonContext(cfdi.V4)))
 		})
 	})
 
@@ -65,7 +65,7 @@ func TestValidatePayTerms(t *testing.T) {
 		terms := &pay.Terms{
 			Notes: "test",
 		}
-		err := rules.Validate(terms)
+		err := rules.Validate(terms, tax.AddonContext(cfdi.V4))
 		assert.NoError(t, err)
 	})
 }

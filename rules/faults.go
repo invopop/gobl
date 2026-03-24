@@ -76,8 +76,8 @@ type Faults interface {
 //nolint:errname
 type faultList []*Fault
 
-// newFaults wraps a slice of faults in the Faults interface, returning nil when empty.
-func newFaults(faults []*Fault) Faults {
+// newFaults wraps a set of faults in the Faults interface, returning nil when empty.
+func newFaults(faults ...*Fault) Faults {
 	if len(faults) == 0 {
 		return nil
 	}

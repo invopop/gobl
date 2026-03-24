@@ -2,18 +2,15 @@ package gobl
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"strconv"
-
-	"github.com/invopop/validation"
+	"strings"
 
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
@@ -150,11 +147,8 @@ func validDigest(val any) bool {
 }
 
 // Validate ensures that the envelope contains everything it should to be considered valid GOBL.
-func (e *Envelope) Validate() error {
-	if err := rules.Validate(e); err != nil {
-		return err
-	}
-	return e.ValidateWithContext(context.Background())
+func (e *Envelope) Validate() rules.Faults {
+	return rules.Validate(e)
 }
 
 // Verify checks the envelope's signatures to ensure the headers they contain
@@ -163,19 +157,17 @@ func (e *Envelope) Validate() error {
 // one of them. If no keys are provided, only the contents will be checked.
 func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 	if len(e.Signatures) == 0 {
-		return errors.New("no signatures to verify")
+		return ErrSignature.WithReason("no signatures to verify")
 	}
 
-	ve := make(validation.Errors)
+	var msgs []string
 	for i, s := range e.Signatures {
 		if err := e.verifySignature(s, keys...); err != nil {
-			ve[strconv.Itoa(i)] = err
+			msgs = append(msgs, "sigs["+strconv.Itoa(i)+"]: "+err.Error())
 		}
 	}
-	if len(ve) > 0 {
-		return ErrValidation.WithCause(validation.Errors{
-			"signatures": ve,
-		})
+	if len(msgs) > 0 {
+		return ErrSignature.WithReason("%s", strings.Join(msgs, "; "))
 	}
 
 	return nil
@@ -215,35 +207,6 @@ func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 	return errors.New("no key match found")
 }
 
-// ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
-func (e *Envelope) ValidateWithContext(ctx context.Context) error {
-	if len(e.Signatures) > 0 {
-		ctx = internal.SignedContext(ctx)
-	}
-	err := validation.ValidateStructWithContext(ctx, e,
-		validation.Field(&e.Schema, validation.Required),
-		validation.Field(&e.Head, validation.Required),
-		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures),
-	)
-	if err != nil {
-		return wrapError(err)
-	}
-	return wrapError(e.verifyDigest())
-}
-
-func (e *Envelope) verifyDigest() error {
-	d1 := e.Head.Digest
-	d2, err := e.Digest()
-	if err != nil {
-		return err
-	}
-	if err := d1.Equals(d2); err != nil {
-		return ErrDigest.WithCause(err)
-	}
-	return nil
-}
-
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
@@ -257,7 +220,7 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	}
 	e.Signatures = append(e.Signatures, sig)
 	if err := e.Validate(); err != nil {
-		// invalid envlopes cannot be signed
+		// invalid envelopes cannot be signed
 		e.Signatures = nil
 		return err
 	}

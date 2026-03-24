@@ -298,18 +298,34 @@ func TestInvoiceTax(t *testing.T) {
 		require.ErrorContains(t, err, "prices_include must be VAT")
 	})
 
-	t.Run("missing PricesInclude", func(t *testing.T) {
+	t.Run("missing PricesInclude will be normalized", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.PricesInclude = ""
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("missing Tax", func(t *testing.T) {
+	t.Run("missing prices_include", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax.PricesInclude = ""
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-02")
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-03")
+	})
+
+	t.Run("missing Tax will be normalized", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("missing tax", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax = nil
+		require.ErrorContains(t, rules.Validate(inv), "GOBL-IT-TICKET-V1-BILL-INVOICE-01")
 	})
 
 	t.Run("lottery code length", func(t *testing.T) {

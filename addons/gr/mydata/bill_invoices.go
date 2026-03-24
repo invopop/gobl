@@ -100,11 +100,11 @@ func billInvoiceRules() *rules.Set {
 
 func invoiceRequiresValidCustomer(val any) bool {
 	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
+	if !ok || inv == nil || inv.Tax == nil {
 		return false
 	}
 	typeCats := []string{"1", "2", "5"}
-	it := inv.Tax.Ext[ExtKeyInvoiceType].String()
+	it := inv.Tax.Ext.Get(ExtKeyInvoiceType).String()
 	for _, prefix := range typeCats {
 		if strings.HasPrefix(it, prefix+".") {
 			return true

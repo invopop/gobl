@@ -62,9 +62,6 @@ type AddonDef struct {
 	// Normalizer performs the normalization rules for the add-on.
 	Normalizer func(doc any) `json:"-"`
 
-	// TODO: REMOVE!
-	Validator func(doc any) error `json:"-"`
-
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
