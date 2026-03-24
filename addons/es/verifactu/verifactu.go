@@ -27,7 +27,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V1.String(),
 		rules.GOBL.Add("ES-VERIFACTU-V1"),
-		is.HasContext(tax.AddonIn(V1)),
+		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		taxComboRules(),
 	)

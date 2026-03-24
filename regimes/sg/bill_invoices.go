@@ -11,7 +11,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("supplier",
 				rules.Assert("01", "invoice supplier in Singapore must have a GST tax ID code or a UEN identity",
 					is.Func("has GST tax ID code or UEN identity", hasSupplierTaxIDOrIdentity),

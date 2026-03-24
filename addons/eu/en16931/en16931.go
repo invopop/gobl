@@ -24,7 +24,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V2017.String(),
 		rules.GOBL.Add("EU-EN16931-V2017"),
-		is.HasContext(tax.AddonIn(V2017)),
+		is.InContext(tax.AddonIn(V2017)),
 		billInvoiceRules(),
 		billDiscountRules(),
 		billLineDiscountRules(),

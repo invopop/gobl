@@ -11,7 +11,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(l10n.AR.Tax())),
+			is.InContext(tax.RegimeIn(l10n.AR.Tax())),
 			rules.Field("supplier",
 				rules.Field("tax_id",
 					rules.Assert("01", "invoice supplier tax ID required for Argentine regime", is.Present),

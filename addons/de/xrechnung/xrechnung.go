@@ -30,7 +30,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V3.String(),
 		rules.GOBL.Add("DE-XRECHNUNG-V3"),
-		is.HasContext(tax.AddonIn(V3)),
+		is.InContext(tax.AddonIn(V3)),
 		billInvoiceRules(),
 	)
 }

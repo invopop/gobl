@@ -11,7 +11,7 @@ import (
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				is.Expr(`string(cat) == "VAT"`),
 				rules.Field("ext",

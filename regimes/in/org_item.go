@@ -10,7 +10,7 @@ import (
 func orgItemRules() *rules.Set {
 	return rules.For(new(org.Item),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("identities",
 				rules.Assert("01", "all items must have an HSN identity code",
 					org.IdentitiesTypeIn(IdentityTypeHSN),

@@ -34,7 +34,7 @@ func (t orTest) Check(obj any) bool {
 	return false
 }
 
-// CheckWithContext implements rules.ContextualTest so that Or(HasContext(...), ...)
+// CheckWithContext implements rules.ContextualTest so that Or(InContext(...), ...)
 // correctly threads the context through to each inner test.
 func (t orTest) CheckWithContext(rc *rules.Context, val any) bool {
 	for _, test := range t.tests {

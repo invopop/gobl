@@ -27,7 +27,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V2.String(),
 		rules.GOBL.Add("CO-DIAN-V2"),
-		is.HasContext(tax.AddonIn(V2)),
+		is.InContext(tax.AddonIn(V2)),
 		billInvoiceRules(),
 	)
 }

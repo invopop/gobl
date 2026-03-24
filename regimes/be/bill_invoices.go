@@ -12,7 +12,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(l10n.BE.Tax())),
+			is.InContext(tax.RegimeIn(l10n.BE.Tax())),
 			rules.Field("supplier",
 				rules.When(
 					is.Func("no BCE identity", supplierNoBCEIdentity),

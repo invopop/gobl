@@ -768,7 +768,7 @@ func TestRegisterWithGuard(t *testing.T) {
 	)
 
 	rules.RegisterWithGuard("guard-test", rules.GOBL.Add("GUARDTEST"),
-		is.HasContext(guardTest), nameSet)
+		is.InContext(guardTest), nameSet)
 
 	t.Run("guard passes - set applied", func(t *testing.T) {
 		doc := &docWithRegime{
@@ -819,7 +819,7 @@ func TestValidateWithContext(t *testing.T) {
 		),
 	)
 	rules.RegisterWithGuard("ctx-opt-test", rules.GOBL.Add("CTXOPT"),
-		is.HasContext(guardTest), nameSet)
+		is.InContext(guardTest), nameSet)
 
 	t.Run("WithContext option injects context", func(t *testing.T) {
 		e := &Email{Addr: ""}

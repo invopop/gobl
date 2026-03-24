@@ -10,7 +10,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("supplier",
 				rules.Field("tax_id",
 					rules.Field("code",

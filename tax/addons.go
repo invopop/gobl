@@ -164,7 +164,7 @@ func AllAddonDefs() []*AddonDef {
 
 // RulesContext implements rules.ContextAdder so that any struct embedding
 // Addons automatically injects each addon definition into the validation context.
-// This allows guards like is.HasContext(tax.AddonIn(key)) to work on
+// This allows guards like is.InContext(tax.AddonIn(key)) to work on
 // nested objects without needing access to the root document.
 func (as Addons) RulesContext() rules.WithContext {
 	return func(rc *rules.Context) {
@@ -194,7 +194,7 @@ func HasAddon(key cbc.Key) rules.Test {
 
 // AddonIn returns a Test that checks whether the context contains the given addon key.
 // It is symmetric with RegimeIn and works with addon definitions stored in the
-// validation context via HasContext(AddonIn(key)).
+// validation context via InContext(AddonIn(key)).
 func AddonIn(keys ...cbc.Key) rules.Test {
 	parts := make([]string, len(keys))
 	for i, k := range keys {

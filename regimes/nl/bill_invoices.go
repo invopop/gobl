@@ -12,7 +12,7 @@ import (
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(l10n.NL.Tax())),
+			is.InContext(tax.RegimeIn(l10n.NL.Tax())),
 			rules.Field("supplier",
 				rules.Assert("01", "invoice supplier must have a tax ID code or a KVK/OIN identity",
 					is.Func("has tax ID code or KVK/OIN identity", hasSupplierTaxIDOrIdentity),

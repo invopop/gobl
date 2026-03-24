@@ -32,7 +32,7 @@ var invoiceTags = &tax.TagSet{
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("type",
 				rules.Assert("01", "invoice type is not valid for Portugal", is.In(
 					bill.InvoiceTypeStandard,

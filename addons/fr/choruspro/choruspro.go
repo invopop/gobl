@@ -23,7 +23,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V1.String(),
 		rules.GOBL.Add("FR-CHORUSPRO-V1"),
-		is.HasContext(tax.AddonIn(V1)),
+		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		orgPartyRules(),
 	)

@@ -17,7 +17,7 @@ var (
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				org.IdentitiesTypeIn(IdentityTypeSIREN),
 				rules.Field("code",

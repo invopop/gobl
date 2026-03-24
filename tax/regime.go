@@ -77,7 +77,7 @@ const regimeContextKey rules.ContextKey = "regime"
 
 // RulesContext implements rules.ContextAdder so that any struct embedding
 // Regime automatically injects the regime code into the validation context.
-// This allows guards like is.HasContext(tax.RegimeIn("ES")) to work on
+// This allows guards like is.InContext(tax.RegimeIn("ES")) to work on
 // nested objects without needing access to the root document.
 func (r Regime) RulesContext() rules.WithContext {
 	return func(rc *rules.Context) {

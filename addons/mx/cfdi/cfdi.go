@@ -43,7 +43,7 @@ func init() {
 	rules.RegisterWithGuard(
 		V4.String(),
 		rules.GOBL.Add("MX-CFDI-V4"),
-		is.HasContext(tax.AddonIn(V4)),
+		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		payInstructionsRules(),
 		payAdvanceRules(),

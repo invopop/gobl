@@ -24,7 +24,7 @@ func init() {
 	rules.RegisterWithGuard(
 		Flow2V1.String(),
 		rules.GOBL.Add("FR-CTC-FLOW2-V1"),
-		is.HasContext(tax.AddonIn(Flow2V1)),
+		is.InContext(tax.AddonIn(Flow2V1)),
 		billInvoiceRules(),
 		orgPartyRules(),
 		orgIdentityRules(),

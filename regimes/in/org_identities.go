@@ -44,7 +44,7 @@ func normalizeOrgIdentity(id *org.Identity) {
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				org.IdentityTypeIn(IdentityTypePAN),
 				rules.Field("code",

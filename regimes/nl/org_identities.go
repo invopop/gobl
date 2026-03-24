@@ -48,7 +48,7 @@ var oinPattern = `^0{6}(0[1-9]|10|99)\d{9}0{3}$`
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			is.HasContext(tax.RegimeIn(CountryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.When(
 				org.IdentityTypeIn(IdentityTypeKVK),
 				rules.Field("code",
