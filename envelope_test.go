@@ -224,7 +224,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -233,7 +233,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required",
+			want: "validation: [GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -262,7 +262,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "[GOBL-ENVELOPE-11] envelope digest does not match document contents",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 	}
 
@@ -316,6 +316,22 @@ func TestEnvelopeSign(t *testing.T) {
 		err := env.Sign(testKey)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "validation: header required")
+	})
+
+	t.Run("checks signing state", func(t *testing.T) {
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		env := gobl.NewEnvelope()
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+
+		inv := env.Extract().(*bill.Invoice)
+		inv.Code = "" // blank, so cannot sign
+		require.NoError(t, env.Calculate())
+
+		err = env.Sign(testKey)
+		assert.ErrorContains(t, err, "[GOBL-ENVELOPE-13] envelope doc is not ready to be signed, check code or other key fields")
+
 	})
 }
 func TestEnvelopeCorrect(t *testing.T) {
@@ -468,7 +484,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `[{"path":"$.doc.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
+	assert.JSONEq(t, `{"key":"validation","faults":[{"path":"$.doc.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]}`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

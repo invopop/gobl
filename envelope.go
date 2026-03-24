@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/c14n"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/rules"
@@ -80,7 +79,7 @@ func envelopeRules() *rules.Set {
 		),
 		rules.When(is.Func("has signatures", hasSignatures),
 			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
-				is.Func("ready to sign", isDocumentReadyToSign),
+				isDocumentReadyToSign,
 			),
 		),
 	)
@@ -117,21 +116,20 @@ type documentCanSign interface {
 // isDocumentReadyToSign is used to determine if the embedded document is reporting itself as ready to
 // sign. This is used by the signing rules to ensure that documents have all the
 // necessary information.
-func isDocumentReadyToSign(val any) bool {
-	e, ok := val.(*Envelope)
-	if !ok {
-		return true // ignore
-	}
-	if e.Document == nil {
-		return true // ignore
-	}
-	obj, ok := e.Document.Instance().(documentCanSign)
-	if ok {
-		return obj.CanSign()
-	}
-	// assume all other documents are ready
-	return true
-}
+var isDocumentReadyToSign rules.Test = is.Func(
+	"ready to sign",
+	func(val any) bool {
+		e, ok := val.(*Envelope)
+		if !ok || e == nil || e.Document == nil {
+			return false // cannot sign
+		}
+		obj, ok := e.Document.Instance().(documentCanSign)
+		if ok {
+			return obj.CanSign()
+		}
+		// assume all other documents are ready
+		return true
+	})
 
 func validDigest(val any) bool {
 	e, ok := val.(*Envelope)
@@ -147,8 +145,8 @@ func validDigest(val any) bool {
 }
 
 // Validate ensures that the envelope contains everything it should to be considered valid GOBL.
-func (e *Envelope) Validate() rules.Faults {
-	return rules.Validate(e)
+func (e *Envelope) Validate() error {
+	return wrapError(rules.Validate(e))
 }
 
 // Verify checks the envelope's signatures to ensure the headers they contain
@@ -374,16 +372,4 @@ func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, wrapError(err)
 	}
 	return opts, nil
-}
-
-// GetAddons is a convenience method that will provide a list of addon keys from the
-// embedded document if it implements the addon interface.
-func (e *Envelope) GetAddons() []cbc.Key {
-	if e.Document == nil || e.Document.IsEmpty() {
-		return nil
-	}
-	if a, ok := e.Document.Instance().(interface{ GetAddons() []cbc.Key }); ok {
-		return a.GetAddons()
-	}
-	return nil
 }

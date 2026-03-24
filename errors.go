@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"sort"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
@@ -19,10 +17,6 @@ type Error struct {
 	key   cbc.Key
 	cause error // the underlying error
 }
-
-// FieldErrors is a map of field names to errors, which is provided when it
-// was possible to determine that the error was related to a specific field.
-type FieldErrors map[string]error // nolint:errname
 
 var (
 	// ErrNoDocument is provided when the envelope does not contain a
@@ -87,9 +81,6 @@ func wrapError(err error) error {
 func (e *Error) Error() string {
 	if e.cause != nil {
 		msg := e.cause.Error()
-		if e.Fields() != nil {
-			msg = fmt.Sprintf("(%s).", msg)
-		}
 		return fmt.Sprintf("%s: %s", e.key, msg)
 	}
 	return e.key.String()
@@ -128,23 +119,9 @@ func (e *Error) Faults() rules.Faults {
 	return nil
 }
 
-// Fields returns the errors that are associated with specific fields
-// or nil if there are no field errors available.
-// Deprecated: Use [Fields] instead which provides an array of
-// Fault objects instead of a map.
-func (e *Error) Fields() FieldErrors {
-	if fe, ok := e.cause.(FieldErrors); ok {
-		return fe
-	}
-	return nil
-}
-
 // Message returns a string representation of the underlying error.
 func (e *Error) Message() string {
-	if e.cause == nil {
-		return ""
-	}
-	if e.Fields() != nil {
+	if e.cause == nil || e.Faults() != nil {
 		return ""
 	}
 	return e.cause.Error()
@@ -171,58 +148,13 @@ func (e *Error) Is(target error) bool {
 // valid MarhsalJSON method.
 func (e *Error) MarshalJSON() ([]byte, error) {
 	err := struct {
-		Key     cbc.Key     `json:"key"`
-		Fields  FieldErrors `json:"fields,omitempty"`
-		Message string      `json:"message,omitempty"`
+		Key     cbc.Key      `json:"key"`
+		Faults  rules.Faults `json:"faults,omitempty"`
+		Message string       `json:"message,omitempty"`
 	}{
 		Key:     e.key,
-		Fields:  e.Fields(),
+		Faults:  e.Faults(),
 		Message: e.Message(),
 	}
 	return json.Marshal(err)
-}
-
-// Error returns the error string of FieldErrors. This is based on the
-// implementation of [validation.Errors].
-func (fe FieldErrors) Error() string {
-	if len(fe) == 0 {
-		return ""
-	}
-
-	keys := make([]string, len(fe))
-	i := 0
-	for key := range fe {
-		keys[i] = key
-		i++
-	}
-	sort.Strings(keys)
-
-	var s strings.Builder
-	for i, key := range keys {
-		if i > 0 {
-			s.WriteString("; ")
-		}
-		switch errs := fe[key].(type) {
-		case FieldErrors:
-			_, _ = fmt.Fprintf(&s, "%v: (%v)", key, errs)
-		default:
-			_, _ = fmt.Fprintf(&s, "%v: %v", key, fe[key].Error())
-		}
-	}
-	s.WriteString(".")
-	return s.String()
-}
-
-// MarshalJSON converts the FieldErrors into a valid JSON. Based on the
-// implementation of [validation.Errors].
-func (fe FieldErrors) MarshalJSON() ([]byte, error) {
-	errs := map[string]any{}
-	for key, err := range fe {
-		if ms, ok := err.(json.Marshaler); ok {
-			errs[key] = ms
-		} else {
-			errs[key] = err.Error()
-		}
-	}
-	return json.Marshal(errs)
 }

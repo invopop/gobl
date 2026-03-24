@@ -13,6 +13,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
@@ -282,9 +284,9 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					SeqID:   1,
 					IsFinal: false,
 					Error: &Error{
-						Code:    422,
-						Key:     cbc.Key("validation"),
-						Message: "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required",
+						Code:   422,
+						Key:    cbc.Key("validation"),
+						Faults: rules.Validate(&note.Message{Title: "This is a title"}),
 					},
 				},
 				{

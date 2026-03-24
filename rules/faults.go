@@ -7,6 +7,8 @@ import (
 )
 
 // Fault represents a single rule assertion failure identified by a code and path.
+// Fault is *not* designed to be instantiated directly, and will be created as part
+// of the validation processes from defined rules.
 //
 //nolint:errname
 type Fault struct {
