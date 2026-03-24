@@ -56,7 +56,7 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("lines",
 			rules.Each(
 				rules.Assert("06", "line taxes must include VAT category",
-					is.FuncError("has VAT", lineHasVATCategory),
+					bill.RequireLineTaxCategory(tax.CategoryVAT),
 				),
 			),
 		),
@@ -73,8 +73,4 @@ func billInvoiceRules() *rules.Set {
 			),
 		),
 	)
-}
-
-func lineHasVATCategory(val any) error {
-	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }

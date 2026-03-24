@@ -11,7 +11,6 @@ import (
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // PaymentLine defines the details of a line item in a payment document.
@@ -135,11 +134,7 @@ func (pl *PaymentLine) calculate(rates []*currency.ExchangeRate, cur currency.Co
 			// If the document has a currency, we need to ensure there is an exchange
 			// rate so any taxes can be converted correctly.
 			if er = currency.MatchExchangeRate(rates, dc, cur); er == nil {
-				return validation.Errors{
-					"document": validation.Errors{
-						"currency": fmt.Errorf("missing exchange rate from %s to %s", dc, cur),
-					},
-				}
+				return fmt.Errorf("document: currency: missing exchange rate from %s to %s", dc, cur)
 			}
 		}
 		pl.Document.Calculate(cur, rr)

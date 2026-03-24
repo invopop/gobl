@@ -1,8 +1,9 @@
 package l10n
 
 import (
+	"fmt"
+
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // ISOCountryCode defines an ISO 3166-2 country code.
@@ -30,21 +31,26 @@ func validTaxCountryCodes() []TaxCountryCode {
 	return list
 }
 
-var (
-	isISOCountry = validation.In(validISOCountryCodes()...).Error("must be a valid ISO country code")
-	isTaxCountry = validation.In(validTaxCountryCodes()...).Error("must be a valid tax country code")
-)
-
 // Validate ensures the ISO country code is inside the known and valid
 // list of countries.
 func (c ISOCountryCode) Validate() error {
-	return isISOCountry.Validate(c)
+	for _, v := range validISOCountryCodes() {
+		if c == v {
+			return nil
+		}
+	}
+	return fmt.Errorf("must be a valid ISO country code")
 }
 
 // Validate ensures the tax country code is inside the known and valid
 // list of country codes for taxes.
 func (c TaxCountryCode) Validate() error {
-	return isTaxCountry.Validate(c)
+	for _, v := range validTaxCountryCodes() {
+		if c == v {
+			return nil
+		}
+	}
+	return fmt.Errorf("must be a valid tax country code")
 }
 
 // Empty returns true if the ISO country code is empty.

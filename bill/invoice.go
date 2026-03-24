@@ -3,7 +3,6 @@ package bill
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -15,7 +14,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -252,13 +250,9 @@ func (inv *Invoice) Calculate() error {
 
 	inv.Normalize(tax.ExtractNormalizers(inv))
 
-	for i, tag := range inv.Tags.List {
+	for _, tag := range inv.Tags.List {
 		if !tag.In(inv.supportedTags()...) {
-			return validation.Errors{
-				"$tags": validation.Errors{
-					strconv.Itoa(i): fmt.Errorf("'%s' undefined", tag),
-				},
-			}
+			return fmt.Errorf("$tags: '%s' undefined", tag)
 		}
 	}
 

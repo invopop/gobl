@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
-	"github.com/invopop/validation"
 )
 
 // Stamp defines an official seal of approval from a third party like a governmental agency
@@ -42,7 +41,7 @@ func (s *Stamp) In(ss []*Stamp) bool {
 
 // DetectDuplicateStamps checks if the list of stamps contains duplicate
 // provider keys.
-var DetectDuplicateStamps = validation.By(detectDuplicateStamps)
+var DetectDuplicateStamps = is.FuncError("no duplicate stamps", detectDuplicateStamps)
 
 func detectDuplicateStamps(list any) error {
 	values, ok := list.([]*Stamp)

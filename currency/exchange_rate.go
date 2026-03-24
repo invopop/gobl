@@ -1,12 +1,9 @@
 package currency
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/validation"
 )
 
 // ExchangeRate contains data on the rate to be used when converting amounts from
@@ -45,17 +42,6 @@ type ExchangeRate struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
 
-// Validate ensures the content of the exchange rate looks good.
-func (er *ExchangeRate) Validate() error {
-	return validation.ValidateStruct(er,
-		validation.Field(&er.From, validation.Required),
-		validation.Field(&er.To, validation.Required),
-		validation.Field(&er.At, cal.DateTimeNotZero()),
-		validation.Field(&er.Source),
-		validation.Field(&er.Amount, num.Positive),
-	)
-}
-
 // Convert performs the currency conversion defined by the exchange rate.
 func (er *ExchangeRate) Convert(amount num.Amount) num.Amount {
 	a := amount.Multiply(er.Amount)
@@ -90,36 +76,4 @@ func Convert(rates []*ExchangeRate, from, to Code, amount num.Amount) *num.Amoun
 		return &a
 	}
 	return nil
-}
-
-type exchangeRateValidation struct {
-	rates []*ExchangeRate
-	to    Code
-}
-
-// Validate performs validation on the provided value to see if it
-// is present in the exchange rates.
-func (erv *exchangeRateValidation) Validate(val any) error {
-	cur, ok := val.(Code)
-	if !ok || cur == CodeEmpty {
-		return nil
-	}
-	if cur == erv.to {
-		return nil
-	}
-	for _, r := range erv.rates {
-		if r.From == cur && r.To == erv.to {
-			return nil
-		}
-	}
-	return fmt.Errorf("no exchange rate defined for '%v' to '%v'", cur, erv.to)
-}
-
-// CanConvertInto will check to see if the currency to be validated can
-// be converted using one of the provided exchange rates.
-func CanConvertInto(rates []*ExchangeRate, to Code) validation.Rule {
-	return &exchangeRateValidation{
-		rates: rates,
-		to:    to,
-	}
 }

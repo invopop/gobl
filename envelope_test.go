@@ -493,7 +493,7 @@ func TestEnvelopeVerify(t *testing.T) {
 		assert.NoError(t, err)
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
 	})
 
 	t.Run("changes", func(t *testing.T) {
@@ -504,15 +504,15 @@ func TestEnvelopeVerify(t *testing.T) {
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
 		err = env.Verify()
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
 		err = env.Verify(testKey.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
 
 		rk := dsig.NewES256Key()
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
 	})
 }
 

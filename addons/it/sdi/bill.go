@@ -147,7 +147,7 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("lines",
 			rules.Each(
 				rules.Assert("17", "line must have VAT tax category",
-					is.FuncError("has VAT category", lineHasVATCategory),
+					bill.RequireLineTaxCategory(tax.CategoryVAT),
 				),
 				rules.Field("item",
 					rules.Field("name",
@@ -323,14 +323,6 @@ func invoicePaymentInstructionsPresent(val any) bool {
 		return p.Instructions != nil
 	}
 	return true
-}
-
-func lineHasVATCategory(val any) error {
-	line, ok := val.(*bill.Line)
-	if !ok || line == nil {
-		return nil
-	}
-	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }
 
 func chargeIsFundContribution(val any) bool {

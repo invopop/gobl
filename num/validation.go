@@ -3,7 +3,7 @@ package num
 import (
 	"fmt"
 
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
 // ThresholdRule is a validator for Amounts and Percentages
@@ -11,16 +11,8 @@ type ThresholdRule struct {
 	desc      string
 	threshold Amount
 	operator  int
-	err       validation.Error
+	err       string // format string with %s for threshold
 }
-
-var (
-	// ErrIsZero indicates that the value is zero when it should not be.
-	ErrIsZero = validation.NewError("validation_is_zero", "must not be zero")
-
-	// ErrNotEqual indicates that the value is not equal to the expected amount or percentage.
-	ErrNotEqual = validation.NewError("validation_not_equal", "must be equal to {{.threshold}}")
-)
 
 const (
 	greaterThan = iota
@@ -45,7 +37,7 @@ var (
 		desc:      "not zero",
 		threshold: Amount{0, 0},
 		operator:  notZero,
-		err:       ErrIsZero,
+		err:       "must not be zero",
 	}
 )
 
@@ -66,7 +58,7 @@ func Min(value any) ThresholdRule {
 		desc:      fmt.Sprintf("min %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  greaterEqualThan,
-		err:       validation.ErrMinGreaterEqualThanRequired,
+		err:       "must be no less than %s",
 	}
 }
 
@@ -76,7 +68,7 @@ func Max(value any) ThresholdRule {
 		desc:      fmt.Sprintf("max %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  lessEqualThan,
-		err:       validation.ErrMaxLessEqualThanRequired,
+		err:       "must be no greater than %s",
 	}
 }
 
@@ -86,12 +78,12 @@ func Equals(value any) ThresholdRule {
 		desc:      fmt.Sprintf("equals %s", value),
 		threshold: interfaceToAmount(value),
 		operator:  equals,
-		err:       ErrNotEqual,
+		err:       "must be equal to %s",
 	}
 }
 
 func interfaceToAmount(val interface{}) Amount {
-	val, isNil := validation.Indirect(val)
+	val, isNil := rules.Indirect(val)
 	if isNil {
 		return Amount{}
 	}
@@ -110,10 +102,10 @@ func (r ThresholdRule) Exclusive() ThresholdRule {
 	switch r.operator {
 	case greaterEqualThan:
 		r.operator = greaterThan
-		r.err = validation.ErrMinGreaterThanRequired
+		r.err = "must be greater than %s"
 	case lessEqualThan:
 		r.operator = lessThan
-		r.err = validation.ErrMaxLessThanRequired
+		r.err = "must be less than %s"
 	}
 	return r
 }
@@ -121,14 +113,14 @@ func (r ThresholdRule) Exclusive() ThresholdRule {
 // Validate checks if the provided value confirms with the threshold
 // rule.
 func (r ThresholdRule) Validate(value interface{}) error {
-	value, isNil := validation.Indirect(value)
-	if isNil || validation.IsEmpty(value) {
+	value, isNil := rules.Indirect(value)
+	if isNil || rules.IsEmpty(value) {
 		return nil
 	}
 
 	a := interfaceToAmount(value)
 	if !r.compare(a) {
-		return r.err.SetParams(map[string]any{"threshold": r.threshold.String()})
+		return fmt.Errorf(r.err, r.threshold.String())
 	}
 
 	return nil

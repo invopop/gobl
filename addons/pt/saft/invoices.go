@@ -114,7 +114,7 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("lines",
 			rules.Each(
 				rules.Assert("07", "line taxes must include VAT category",
-					is.FuncError("has VAT", invoiceLineHasVAT),
+					bill.RequireLineTaxCategory(tax.CategoryVAT),
 				),
 			),
 		),
@@ -213,11 +213,6 @@ func invoiceCodeFormatValid(val any) error {
 		return nil
 	}
 	return validateCodeFormat(inv.Series, invoiceDocType(inv)).Validate(inv.Code)
-}
-
-// invoiceLineHasVAT checks that a line has the VAT tax category.
-func invoiceLineHasVAT(val any) error {
-	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }
 
 // invoiceIsReceipt returns true if the invoice is an invoice-receipt.

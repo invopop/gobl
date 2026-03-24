@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Extensions are a key component of GOBL that are used to include additional
@@ -293,10 +293,10 @@ const (
 	extCodeOpExcludeCodes
 )
 
-// ExtensionsRule is a validation rule for extension maps. It implements both
-// validation.Rule (for use with the invopop/validation package) and the
+// ExtensionsRule is a validation rule for extension maps. It implements the
 // rules.Test interface (Check + String), so it can be used in rules.When
-// conditions and rules.Assert tests as well as regular validation.
+// conditions and rules.Assert tests. It also provides a Validate method
+// that returns detailed per-key errors.
 type ExtensionsRule struct {
 	desc   string
 	op     extCodeOp
@@ -406,8 +406,29 @@ func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) ExtensionsRule {
 	}
 }
 
-// Validate implements the validation.Rule interface. It returns an error when
-// the extensions map does not satisfy the rule.
+// extErrors is a map of extension keys to errors used by Validate.
+//
+//nolint:errname
+type extErrors map[string]error
+
+func (ee extErrors) Error() string {
+	keys := make([]string, 0, len(ee))
+	for k := range ee {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	var b strings.Builder
+	for i, k := range keys {
+		if i > 0 {
+			b.WriteString("; ")
+		}
+		fmt.Fprintf(&b, "%s: %s", k, ee[k].Error())
+	}
+	b.WriteString(".")
+	return b.String()
+}
+
+// Validate returns an error when the extensions map does not satisfy the rule.
 //
 //nolint:gocyclo
 func (v ExtensionsRule) Validate(value any) error {
@@ -415,7 +436,7 @@ func (v ExtensionsRule) Validate(value any) error {
 	if !ok {
 		return nil
 	}
-	err := make(validation.Errors)
+	err := make(extErrors)
 
 	switch v.op {
 	case extCodeOpAnd:

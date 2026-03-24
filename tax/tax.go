@@ -4,7 +4,6 @@ package tax
 import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
-	"github.com/invopop/validation"
 )
 
 func init() {
@@ -34,7 +33,3 @@ func init() {
 		setRules(),
 	)
 }
-
-// RequireIdentityCode is deprecated: do not use. Ensure a rule exists to check for the
-// tax Identity Code.
-var RequireIdentityCode = validation.Skip

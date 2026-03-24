@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
-	"github.com/invopop/validation"
 )
 
 // An Error provides a structure to better be able to make error comparisons.
@@ -78,7 +77,7 @@ func wrapError(err error) error {
 		return ErrUnknownSchema
 	}
 	switch err.(type) {
-	case validation.Errors, rules.Faults:
+	case rules.Faults:
 		return ErrValidation.WithCause(err)
 	}
 	return ErrInternal.WithCause(err)
@@ -100,15 +99,11 @@ func (e *Error) Error() string {
 // unless the errors is already of type [*Error], in which case it will
 // be returned as is.
 func (e *Error) WithCause(err error) *Error {
-	ne := e.copy()
-	switch te := err.(type) {
-	case *Error:
+	if te, ok := err.(*Error); ok {
 		return te
-	case validation.Errors:
-		ne.cause = fieldErrorsFromValidation(te)
-	default:
-		ne.cause = err
 	}
+	ne := e.copy()
+	ne.cause = err
 	return ne
 }
 
@@ -208,7 +203,7 @@ func (fe FieldErrors) Error() string {
 			s.WriteString("; ")
 		}
 		switch errs := fe[key].(type) {
-		case FieldErrors, validation.Errors:
+		case FieldErrors:
 			_, _ = fmt.Fprintf(&s, "%v: (%v)", key, errs)
 		default:
 			_, _ = fmt.Fprintf(&s, "%v: %v", key, fe[key].Error())
@@ -230,12 +225,4 @@ func (fe FieldErrors) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(errs)
-}
-
-func fieldErrorsFromValidation(errs validation.Errors) FieldErrors {
-	fe := make(FieldErrors)
-	for key, err := range errs {
-		fe[key] = err
-	}
-	return fe
 }

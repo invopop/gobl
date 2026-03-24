@@ -192,7 +192,7 @@ func TestPaymentCalculate(t *testing.T) {
 		}
 		p.Lines[0].Document.Payable = num.NewAmount(10000, 2)
 		p.Lines[0].Document.Currency = currency.EUR
-		require.ErrorContains(t, p.Calculate(), "lines: (1: (document: (currency: missing exchange rate from EUR to MXN.).).)")
+		require.ErrorContains(t, p.Calculate(), "lines: 1: document: currency: missing exchange rate from EUR to MXN")
 	})
 
 	t.Run("with multiple and different exchange rates", func(t *testing.T) {

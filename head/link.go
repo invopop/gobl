@@ -11,7 +11,6 @@ import (
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Link category keys defined for use inside link categories.
@@ -221,7 +220,7 @@ func AppendLink(list []*Link, l *Link) []*Link {
 
 // DetectDuplicateLinks checks if the list of links contains duplicate
 // category and key pairs.
-var DetectDuplicateLinks = validation.By(detectDuplicateLinks)
+var DetectDuplicateLinks = is.FuncError("no duplicate links", detectDuplicateLinks)
 
 func detectDuplicateLinks(list any) error {
 	values, ok := list.([]*Link)

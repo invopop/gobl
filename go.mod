@@ -15,7 +15,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/imdario/mergo v0.3.16
 	github.com/invopop/jsonschema v0.12.0
-	github.com/invopop/validation v0.7.0
 	github.com/invopop/yaml v0.3.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/magefile/mage v1.15.0
@@ -51,6 +50,5 @@ require (
 
 // replace github.com/invopop/jsonschema => ../jsonschema
 
-// replace github.com/invopop/validation => ../validation
 
 replace github.com/expr-lang/expr => github.com/invopop/expr v0.0.0-20260306122517-c23ccc78012d

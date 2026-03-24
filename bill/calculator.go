@@ -1,7 +1,6 @@
 package bill
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
@@ -11,7 +10,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // billable defines the methods required to be able to perform calculations and
@@ -52,7 +50,7 @@ func calculate(doc billable) error {
 	// Convert empty or invalid currency to the regime's currency
 	if doc.getCurrency() == currency.CodeEmpty || doc.getCurrency().Def() == nil {
 		if r == nil {
-			return validation.Errors{"currency": errors.New("missing")}
+			return fmt.Errorf("currency: missing")
 		}
 		doc.setCurrency(r.Currency)
 	}
@@ -63,7 +61,7 @@ func calculate(doc billable) error {
 		rates := doc.getExchangeRates()
 		if currency.MatchExchangeRate(rates, cur, r.Currency) == nil &&
 			currency.MatchExchangeRate(rates, r.Currency, cur) == nil {
-			return validation.Errors{"currency": fmt.Errorf("no exchange rate defined for '%v' to '%v'", cur, r.Currency)}
+			return fmt.Errorf("currency: no exchange rate defined for '%v' to '%v'", cur, r.Currency)
 		}
 	}
 
@@ -102,7 +100,7 @@ func calculate(doc billable) error {
 
 	// Complements
 	if err := calculateComplements(doc.getComplements()); err != nil {
-		return validation.Errors{"complements": err}
+		return fmt.Errorf("complements: %w", err)
 	}
 
 	// Preceding
@@ -110,7 +108,7 @@ func calculate(doc billable) error {
 
 	// Lines
 	if err := calculateLines(doc.getLines(), cur, doc.getExchangeRates(), rr); err != nil {
-		return validation.Errors{"lines": err}
+		return fmt.Errorf("lines: %w", err)
 	}
 	t.Sum = calculateLineSum(doc.getLines(), cur)
 	t.Total = t.Sum

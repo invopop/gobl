@@ -32,7 +32,7 @@ func billOrderRules() *rules.Set {
 		rules.Field("lines",
 			rules.Each(
 				rules.Assert("06", "line taxes must include VAT category",
-					is.FuncError("has VAT", orderLineHasVAT),
+					bill.RequireLineTaxCategory(tax.CategoryVAT),
 				),
 			),
 		),
@@ -81,10 +81,6 @@ func orderCodeFormatValid(val any) error {
 	}
 	dt := orderDocType(ord)
 	return validateCodeFormat(ord.Series, dt).Validate(ord.Code)
-}
-
-func orderLineHasVAT(val any) error {
-	return bill.RequireLineTaxCategory(tax.CategoryVAT).Validate(val)
 }
 
 func orderDocType(ord *bill.Order) cbc.Code {

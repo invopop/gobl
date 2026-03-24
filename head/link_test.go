@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -193,17 +192,14 @@ func TestDetectDuplicateLink(t *testing.T) {
 		l2 := &head.Link{Key: "test2", URL: "https://example.com/2"}
 		list := []*head.Link{l1, l2}
 
-		err := validation.Validate(list, head.DetectDuplicateLinks)
-		assert.NoError(t, err)
+		assert.True(t, head.DetectDuplicateLinks.Check(list))
 	})
 	t.Run("detect duplicate", func(t *testing.T) {
 		l1 := &head.Link{Key: "test1", URL: "https://example.com"}
 		l2 := &head.Link{Key: "test1", URL: "https://example.com/2"}
 		list := []*head.Link{l1, l2}
 
-		err := validation.Validate(list, head.DetectDuplicateLinks)
-
-		require.ErrorContains(t, err, "duplicate key 'test1'")
+		assert.False(t, head.DetectDuplicateLinks.Check(list))
 	})
 
 	t.Run("detect duplicate in category", func(t *testing.T) {
@@ -211,9 +207,7 @@ func TestDetectDuplicateLink(t *testing.T) {
 		l2 := &head.Link{Category: head.LinkCategoryKeyFormat, Key: "test1", URL: "https://example.com/2"}
 		list := []*head.Link{l1, l2}
 
-		err := validation.Validate(list, head.DetectDuplicateLinks)
-
-		require.ErrorContains(t, err, "duplicate category 'format' and key 'test1'")
+		assert.False(t, head.DetectDuplicateLinks.Check(list))
 	})
 }
 

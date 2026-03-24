@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,10 +41,10 @@ func TestError(t *testing.T) {
 	err = gobl.ErrCalculation.WithCause(err2)
 	assert.Equal(t, "validation: overwrite message", err.Error())
 
-	ve := validation.Errors{
+	fe := gobl.FieldErrors{
 		"field": errors.New("field error"),
 	}
-	err = gobl.ErrValidation.WithCause(ve)
+	err = gobl.ErrValidation.WithCause(fe)
 	assert.Equal(t, "validation: (field: field error.).", err.Error())
 	data, _ = json.Marshal(err)
 	assert.JSONEq(t, `{"key":"validation","fields":{"field":"field error"}}`, string(data))

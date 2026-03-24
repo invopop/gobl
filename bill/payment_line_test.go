@@ -295,7 +295,7 @@ func TestPaymentLineCalculation(t *testing.T) {
 			},
 		}
 		err := pl.calculate(rates, currency.EUR, tax.RoundingRulePrecise)
-		require.ErrorContains(t, err, "document: (currency: missing exchange rate from GBP to EUR.).")
+		require.ErrorContains(t, err, "document: currency: missing exchange rate from GBP to EUR")
 	})
 }
 

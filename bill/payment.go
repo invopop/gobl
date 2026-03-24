@@ -17,7 +17,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of the payment types supported.
@@ -232,9 +231,7 @@ func (pmt *Payment) calculate() error {
 		pmt.Currency = r.Currency
 	}
 	if pmt.Currency == currency.CodeEmpty {
-		return validation.Errors{
-			"currency": fmt.Errorf("required, unable to determine"),
-		}
+		return fmt.Errorf("currency: required, unable to determine")
 	}
 
 	var total *num.Amount
@@ -245,11 +242,7 @@ func (pmt *Payment) calculate() error {
 		l.Index = i + 1
 
 		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
-			return validation.Errors{
-				"lines": validation.Errors{
-					fmt.Sprintf("%d", l.Index): err,
-				},
-			}
+			return fmt.Errorf("lines: %d: %w", l.Index, err)
 		}
 
 		// Add the totals
