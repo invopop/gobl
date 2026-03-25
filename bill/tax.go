@@ -39,6 +39,19 @@ type Tax struct {
 	tags []cbc.Key
 }
 
+// MergeNotes adds a tax note to the tax object, automatically handling nil data,
+// and returning a new updated instance.
+func (t *Tax) MergeNotes(notes ...*tax.Note) *Tax {
+	if len(notes) == 0 {
+		return t
+	}
+	if t == nil {
+		t = new(Tax)
+	}
+	t.Notes = append(t.Notes, notes...)
+	return t
+}
+
 // MergeExtensions makes it easier to add extensions to the tax object
 // by automatically handling nil data, and replying a new updated instance.
 func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {

@@ -121,8 +121,8 @@
             "reverse-charge"
           ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "cat": "VAT",
+            "key": "reverse-charge",
             "text": "Reverse Charge / Inversión del sujeto pasivo."
           }
         },
@@ -131,8 +131,8 @@
             "simplified-scheme"
           ],
           "note": {
-            "key": "legal",
-            "src": "simplified-scheme",
+            "cat": "VAT",
+            "key": "simplified-scheme",
             "text": "Factura expedida por contribuyente en régimen simplificado."
           }
         },
@@ -141,8 +141,8 @@
             "self-billed"
           ],
           "note": {
-            "key": "legal",
-            "src": "self-billed",
+            "cat": "VAT",
+            "key": "self-billed",
             "text": "Facturación por el destinatario."
           }
         },
@@ -151,8 +151,8 @@
             "travel-agency"
           ],
           "note": {
-            "key": "legal",
-            "src": "travel-agency",
+            "cat": "VAT",
+            "key": "travel-agency",
             "text": "Régimen especial de las agencias de viajes."
           }
         },
@@ -161,8 +161,8 @@
             "second-hand-goods"
           ],
           "note": {
-            "key": "legal",
-            "src": "second-hand-goods",
+            "cat": "VAT",
+            "key": "second-hand-goods",
             "text": "Régimen especial de los bienes usados."
           }
         },
@@ -171,8 +171,8 @@
             "art"
           ],
           "note": {
-            "key": "legal",
-            "src": "art",
+            "cat": "VAT",
+            "key": "art",
             "text": "Régimen especial de los objetos de arte."
           }
         },
@@ -181,8 +181,8 @@
             "antiques"
           ],
           "note": {
-            "key": "legal",
-            "src": "antiques",
+            "cat": "VAT",
+            "key": "antiques",
             "text": "Régimen especial de las antigüedades y objetos de colección."
           }
         },
@@ -191,8 +191,8 @@
             "cash-basis"
           ],
           "note": {
-            "key": "legal",
-            "src": "cash-basis",
+            "cat": "VAT",
+            "key": "cash-basis",
             "text": "Régimen especial del criterio de caja."
           }
         }

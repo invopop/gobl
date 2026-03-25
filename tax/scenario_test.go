@@ -59,46 +59,46 @@ func TestScenarioSetSummary(t *testing.T) {
 				Ext: tax.Extensions{
 					"xx-test": "simple",
 				},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Code: "note1",
-					Text: "This is a note1",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      "note1",
+					Text:     "This is a note1",
 				},
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSimplified, tax.TagPartial},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Code: "note1",
-					Text: "This will replace previous note1",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      "note1",
+					Text:     "This will replace previous note1",
 				},
 			},
 			{
 				Types:   []cbc.Key{bill.InvoiceTypeStandard},
 				ExtKey:  "yy-test",
 				ExtCode: "BAR",
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Code: "note2",
-					Text: "This is a note 2",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      "note2",
+					Text:     "This is a note 2",
 				},
 			},
 			{
 				Types:  []cbc.Key{bill.InvoiceTypeStandard},
 				ExtKey: "zz-test",
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Code: "note2",
-					Text: "This is a note 3",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      "note3",
+					Text:     "This is a note 3",
 				},
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeDebitNote},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Code: "note3",
-					Text: "This should not be used",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      "note4",
+					Text:     "This should not be used",
 				},
 			},
 			{

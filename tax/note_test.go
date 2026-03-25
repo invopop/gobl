@@ -64,14 +64,13 @@ func TestNoteValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "cat")
 	})
 
-	t.Run("invalid key for category", func(t *testing.T) {
+	t.Run("free-form key for category", func(t *testing.T) {
 		n := &tax.Note{
 			Category: "VAT",
-			Key:      "not-a-real-key",
+			Key:      "reverse-charge",
 			Text:     "Some reason",
 		}
-		err := n.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "key")
+		assert.NoError(t, n.ValidateWithContext(ctx))
 	})
 }
 

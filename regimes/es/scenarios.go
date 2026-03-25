@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -102,73 +101,73 @@ func invoiceScenarios() *tax.ScenarioSet {
 			// Reverse Charges
 			{
 				Tags: []cbc.Key{tax.TagReverseCharge},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  tax.TagReverseCharge,
-					Text: "Reverse Charge / Inversión del sujeto pasivo.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse Charge / Inversión del sujeto pasivo.",
 				},
 			},
 			// Simplified Scheme (Modules)
 			{
 				Tags: []cbc.Key{TagSimplifiedScheme},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagSimplifiedScheme,
-					Text: "Factura expedida por contribuyente en régimen simplificado.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagSimplifiedScheme,
+					Text:     "Factura expedida por contribuyente en régimen simplificado.",
 				},
 			},
 			// Customer issued invoices
 			{
 				Tags: []cbc.Key{tax.TagSelfBilled},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  tax.TagSelfBilled,
-					Text: "Facturación por el destinatario.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      tax.TagSelfBilled,
+					Text:     "Facturación por el destinatario.",
 				},
 			},
 			// Travel agency
 			{
 				Tags: []cbc.Key{TagTravelAgency},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagTravelAgency,
-					Text: "Régimen especial de las agencias de viajes.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagTravelAgency,
+					Text:     "Régimen especial de las agencias de viajes.",
 				},
 			},
 			// Secondhand stuff
 			{
 				Tags: []cbc.Key{TagSecondHandGoods},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagSecondHandGoods,
-					Text: "Régimen especial de los bienes usados.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagSecondHandGoods,
+					Text:     "Régimen especial de los bienes usados.",
 				},
 			},
 			// Art
 			{
 				Tags: []cbc.Key{TagArt},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagArt,
-					Text: "Régimen especial de los objetos de arte.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagArt,
+					Text:     "Régimen especial de los objetos de arte.",
 				},
 			},
 			// Antiques
 			{
 				Tags: []cbc.Key{TagAntiques},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagAntiques,
-					Text: "Régimen especial de las antigüedades y objetos de colección.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagAntiques,
+					Text:     "Régimen especial de las antigüedades y objetos de colección.",
 				},
 			},
 			// Special Regime of "Cash Criteria"
 			{
 				Tags: []cbc.Key{TagCashBasis},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagCashBasis,
-					Text: "Régimen especial del criterio de caja.",
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagCashBasis,
+					Text:     "Régimen especial del criterio de caja.",
 				},
 			},
 		},

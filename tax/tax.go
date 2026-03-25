@@ -16,5 +16,6 @@ func init() {
 		RegimeDef{},
 		AddonDef{},
 		CatalogueDef{},
+		Note{},
 	)
 }

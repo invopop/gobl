@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "27346c4026fd0b0d77abdff2f58cc3d5e1a5248cd0d91088858ccfe29ddfa582"
+			"val": "a4481abbb67aaa209ab577bc5bb57e619dbff7049d1104cd26f42256816aa5b1"
 		}
 	},
 	"doc": {
@@ -19,7 +19,14 @@
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "AED",
-		"tax": {},
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"text": "Simplified Tax Invoice"
+				}
+			]
+		},
 		"supplier": {
 			"name": "Provide One LLC",
 			"tax_id": {
@@ -92,13 +99,6 @@
 			"tax": "81.00",
 			"total_with_tax": "1701.00",
 			"payable": "1701.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "simplified",
-				"text": "Simplified Tax Invoice"
-			}
-		]
+		}
 	}
 }

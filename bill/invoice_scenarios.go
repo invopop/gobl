@@ -2,7 +2,6 @@ package bill
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -12,10 +11,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Reverse Charges
 		{
 			Tags: []cbc.Key{tax.TagReverseCharge},
-			Note: &tax.ScenarioNote{
-				Key:  org.NoteKeyLegal,
-				Src:  tax.TagReverseCharge,
-				Text: "Reverse charge: Customer to account for VAT to the relevant tax authority.",
+			Note: &tax.Note{
+				Category: tax.CategoryVAT,
+				Key:      tax.KeyReverseCharge,
+				Text:     "Reverse charge: Customer to account for VAT to the relevant tax authority.",
 			},
 		},
 	},
@@ -71,20 +70,7 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 		ss.Merge(a.Scenarios)
 	}
 
-	inv.removePreviousScenarioNotes(ss)
 	return ss.SummaryFor(inv)
-}
-
-func (inv *Invoice) removePreviousScenarioNotes(ss *tax.ScenarioSet) {
-	for _, sn := range ss.Notes() {
-		n := org.NoteFromScenario(sn)
-		for i, n2 := range inv.Notes {
-			if n.SameAs(n2) {
-				// remove from array
-				inv.Notes = append(inv.Notes[:i], inv.Notes[i+1:]...)
-			}
-		}
-	}
 }
 
 func (inv *Invoice) prepareScenarios() error {
@@ -94,17 +80,24 @@ func (inv *Invoice) prepareScenarios() error {
 		return nil
 	}
 
+	normalizers := tax.ExtractNormalizers(inv)
+
 	for _, sn := range ss.Notes {
-		n := org.NoteFromScenario(sn)
-		// make sure we don't already have the same note in the invoice
-		for _, n2 := range inv.Notes {
-			if n.SameAs(n2) {
-				n = nil
-				break
+		// make sure we don't already have the same note
+		found := false
+		if inv.Tax != nil {
+			for _, n := range inv.Tax.Notes {
+				if sn.SameAs(n) {
+					found = true
+					break
+				}
 			}
 		}
-		if n != nil {
-			inv.Notes = append(inv.Notes, n)
+		if !found {
+			// Normalize the note so addons can enrich it (e.g. en16931
+			// adds UNTDID tax category extensions).
+			sn.Normalize(normalizers)
+			inv.Tax = inv.Tax.MergeNotes(sn)
 		}
 	}
 

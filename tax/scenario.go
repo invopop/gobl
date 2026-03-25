@@ -64,7 +64,7 @@ type Scenario struct {
 	/* Outputs */
 
 	// A note to be added to the document if the scenario is applied.
-	Note *ScenarioNote `json:"note,omitempty" jsonschema:"title=Note"`
+	Note *Note `json:"note,omitempty" jsonschema:"title=Note"`
 
 	// Codes is used to define additional codes for regime specific
 	// situations.
@@ -75,26 +75,11 @@ type Scenario struct {
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
-// ScenarioNote represents the structure of the note that needs to be added to the document.
-// This is a copy of the regular org.Note to avoid import cycle issues.
-type ScenarioNote struct {
-	// Key specifying subject of the text
-	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Code used for additional data that may be required to identify the note.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Source of this note, especially useful when auto-generated.
-	Src cbc.Key `json:"src,omitempty" jsonschema:"title=Source"`
-	// The contents of the note
-	Text string `json:"text" jsonschema:"title=Text"`
-	// Extension data
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
-}
-
 // ScenarioSummary is the result after running through a set of
 // scenarios and determining which combinations of Notes, Codes, Meta,
 // and extensions are viable.
 type ScenarioSummary struct {
-	Notes []*ScenarioNote
+	Notes []*Note
 	Codes cbc.CodeMap
 	Ext   Extensions
 }
@@ -141,8 +126,8 @@ func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
 }
 
 // Notes extracts all the possible notes that could be applied to a document.
-func (ss *ScenarioSet) Notes() []*ScenarioNote {
-	notes := make([]*ScenarioNote, 0)
+func (ss *ScenarioSet) Notes() []*Note {
+	notes := make([]*Note, 0)
 	for _, row := range ss.List {
 		if row.Note != nil {
 			notes = append(notes, row.Note)
@@ -155,14 +140,14 @@ func (ss *ScenarioSet) Notes() []*ScenarioNote {
 // supplied document.
 func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	summary := &ScenarioSummary{
-		Notes: make([]*ScenarioNote, 0),
+		Notes: make([]*Note, 0),
 		Codes: make(cbc.CodeMap),
 		Ext:   make(Extensions),
 	}
 	for _, s := range ss.List {
 		if s.match(doc) {
 			if s.Note != nil {
-				summary.addNote(s.Note.withCode(s.ExtCode))
+				summary.addNote(s.Note)
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
@@ -175,9 +160,9 @@ func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	return summary
 }
 
-func (ss *ScenarioSummary) addNote(note *ScenarioNote) {
+func (ss *ScenarioSummary) addNote(note *Note) {
 	for i, n := range ss.Notes {
-		if n.sameAs(note) {
+		if n.SameAs(note) {
 			// replace
 			ss.Notes[i] = note
 			return
@@ -259,16 +244,4 @@ func (s *Scenario) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&s.Ext),
 	)
 	return err
-}
-
-func (n *ScenarioNote) withCode(code cbc.Code) *ScenarioNote {
-	nw := *n // copy
-	nw.Code = code
-	return &nw
-}
-
-func (n *ScenarioNote) sameAs(n2 *ScenarioNote) bool {
-	return n.Key == n2.Key &&
-		n.Code == n2.Code &&
-		n.Src == n2.Src
 }

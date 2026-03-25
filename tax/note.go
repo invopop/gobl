@@ -13,12 +13,22 @@ import (
 type Note struct {
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat,omitempty" jsonschema:"title=Category"`
-	// Key identifies the tax situation this note applies to (e.g. "exempt", "reverse-charge").
+	// Key usually identifies the tax rate key this note applies to (e.g. "exempt",
+	// "reverse-charge"), but may also be used for other identifiers depending on context.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Text contains the exemption reason or explanation.
 	Text string `json:"text" jsonschema:"title=Text"`
 	// Extensions for additional structured data.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+}
+
+// SameAs returns true if the two notes refer to the same tax situation,
+// based on Category and Key.
+func (n *Note) SameAs(n2 *Note) bool {
+	if n == nil || n2 == nil {
+		return false
+	}
+	return n.Category == n2.Category && n.Key == n2.Key
 }
 
 // Normalize cleans up the note's extensions.
@@ -37,9 +47,7 @@ func (n *Note) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&n.Category,
 			rd.InCategories(),
 		),
-		validation.Field(&n.Key,
-			rd.InCategoryKeys(n.Category),
-		),
+		validation.Field(&n.Key),
 		validation.Field(&n.Text, validation.Required),
 		validation.Field(&n.Ext),
 	)

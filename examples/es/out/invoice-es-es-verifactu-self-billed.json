@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9492958527bedc07a4afe9c4ee225b379a51cca3b34c3641eeb7b3be30851a75"
+			"val": "f2e32315ae086dc8bb12ec8e9695544968e632496ff5b9508352ae1c75b351e8"
 		}
 	},
 	"doc": {
@@ -26,7 +26,13 @@
 			"ext": {
 				"es-verifactu-doc-type": "F1",
 				"es-verifactu-issuer-type": "D"
-			}
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"text": "Facturación por el destinatario."
+				}
+			]
 		},
 		"supplier": {
 			"name": "Provide One S.L.",
@@ -147,13 +153,6 @@
 			"tax": "340.20",
 			"total_with_tax": "1970.20",
 			"payable": "1970.20"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "self-billed",
-				"text": "Facturación por el destinatario."
-			}
-		]
+		}
 	}
 }
