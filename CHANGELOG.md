@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `tax`: Update scenarios to use tax.Note instead of ScenarioNote
 - `eu-en16935-v2017`: Exemption reason notes (BT-120).
 - `tax`: Add note to tax.
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.

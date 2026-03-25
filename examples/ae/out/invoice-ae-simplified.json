@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a4481abbb67aaa209ab577bc5bb57e619dbff7049d1104cd26f42256816aa5b1"
+			"val": "90f348a969a5c6b79424269eed4ba766e1d2e3b1088c3546956dd22ef3a7df1b"
 		}
 	},
 	"doc": {
@@ -23,6 +23,7 @@
 			"notes": [
 				{
 					"cat": "VAT",
+					"key": "simplified",
 					"text": "Simplified Tax Invoice"
 				}
 			]

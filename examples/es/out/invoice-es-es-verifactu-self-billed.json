@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f2e32315ae086dc8bb12ec8e9695544968e632496ff5b9508352ae1c75b351e8"
+			"val": "c89585fd042f001a2258cc512c04698d20f2d9e45e1fc61addf211f2f8d9238a"
 		}
 	},
 	"doc": {
@@ -30,6 +30,7 @@
 			"notes": [
 				{
 					"cat": "VAT",
+					"key": "self-billed",
 					"text": "Facturación por el destinatario."
 				}
 			]
