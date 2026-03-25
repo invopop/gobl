@@ -131,9 +131,10 @@ func TestValidateAddresses(t *testing.T) {
 		},
 	}
 
+	br := tax.RegimeContext(br.CountryCode)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := rules.Validate(tt.party)
+			err := rules.Validate(tt.party, br)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -179,6 +180,7 @@ func TestValidatePostCodes(t *testing.T) {
 			err:  "GOBL-BR-ORG-PARTY-03",
 		},
 	}
+	br := tax.RegimeContext(br.CountryCode)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			party := &org.Party{
@@ -189,7 +191,7 @@ func TestValidatePostCodes(t *testing.T) {
 					},
 				},
 			}
-			err := rules.Validate(party)
+			err := rules.Validate(party, br)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

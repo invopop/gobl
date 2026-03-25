@@ -24,21 +24,24 @@ var (
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
 		rules.When(
-			isBrazilianParty,
-			rules.Field("ext",
-				rules.AssertIfPresent("01", fmt.Sprintf("Brazilian party ext must define a valid '%s' code", ExtKeyMunicipality),
-					tax.ExtensionHasValidCode(ExtKeyMunicipality),
+			is.InContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				isBrazilianParty,
+				rules.Field("ext",
+					rules.AssertIfPresent("01", fmt.Sprintf("Brazilian party ext must define a valid '%s' code", ExtKeyMunicipality),
+						tax.ExtensionHasValidCode(ExtKeyMunicipality),
+					),
 				),
-			),
-			rules.Field("addresses",
-				rules.Each(
-					rules.When(
-						is.Expr("string(country) in ['','BR']"),
-						rules.Field("state",
-							rules.AssertIfPresent("02", "Brazilian state must be one of the valid states", cbc.InCodes(validStates...)),
-						),
-						rules.Field("code",
-							rules.AssertIfPresent("03", "Brazilian postal code must match the valid format", is.Matches(validPostCode)),
+				rules.Field("addresses",
+					rules.Each(
+						rules.When(
+							is.Expr("string(country) in ['','BR']"),
+							rules.Field("state",
+								rules.AssertIfPresent("02", "Brazilian state must be one of the valid states", cbc.InCodes(validStates...)),
+							),
+							rules.Field("code",
+								rules.AssertIfPresent("03", "Brazilian postal code must match the valid format", is.Matches(validPostCode)),
+							),
 						),
 					),
 				),

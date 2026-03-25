@@ -11,9 +11,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-2 code for Brazil.
+const CountryCode = "BR"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("br", rules.GOBL.Add("BR"),
+	rules.Register("br", rules.GOBL.Add(CountryCode),
 		orgPartyRules(),
 		taxIdentityRules(),
 	)
@@ -22,7 +25,7 @@ func init() {
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "BR",
+		Country:  CountryCode,
 		Currency: currency.BRL,
 		Name: i18n.String{
 			i18n.EN: "Brazil",
