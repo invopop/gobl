@@ -186,6 +186,46 @@ func TestExemptionNoteValidation(t *testing.T) {
 		assert.False(t, n.Ext.Has(untdid.ExtKeyTaxCategory))
 	})
 
+	t.Run("note normalization derives key from ext", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "E",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key)
+	})
+
+	t.Run("note normalization derives key for reverse charge", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Reverse charge applies",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyReverseCharge, n.Key)
+	})
+
+	t.Run("note normalization does not override existing key", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key, "should not override existing key")
+	})
+
 	t.Run("note normalization adds tax category", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = []*bill.Line{

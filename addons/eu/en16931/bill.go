@@ -60,6 +60,12 @@ func normalizeTaxNote(n *tax.Note) {
 		return
 	}
 
+	// Reverse: if ext is present but no key, derive the key
+	if n.Key.IsEmpty() {
+		n.Key = vatKeyMap.Lookup(n.Ext.Get(untdid.ExtKeyTaxCategory))
+	}
+
+	// Forward: if key is present, ensure the ext is set
 	if code := vatKeyMap.Get(n.Key); !code.IsEmpty() {
 		n.Ext = n.Ext.Merge(tax.Extensions{
 			untdid.ExtKeyTaxCategory: code,
