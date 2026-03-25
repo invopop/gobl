@@ -12,9 +12,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-2 code for Germany.
+const CountryCode = "DE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("de", rules.GOBL.Add("DE"),
+	rules.Register("de", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		orgIdentityRules(),
 		taxIdentityRules(),
@@ -24,7 +27,7 @@ func init() {
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "DE",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

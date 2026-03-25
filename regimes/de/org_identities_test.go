@@ -65,10 +65,11 @@ func TestTaxNumberValidation(t *testing.T) {
 		{name: "wrong NW last length", code: "123/4567/89101", err: "[GOBL-DE-ORG-IDENTITY-01]"},
 	}
 
+	ctx := tax.RegimeContext(de.CountryCode)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Key: de.IdentityKeyTaxNumber, Code: tt.code}
-			err := rules.Validate(id)
+			err := rules.Validate(id, ctx)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

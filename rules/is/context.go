@@ -35,3 +35,12 @@ func (h *inContextTest) Check(val any) bool {
 func (h *inContextTest) String() string {
 	return "context: " + h.test.String()
 }
+
+// ContextKeys implements rules.ContextKeyable by delegating to the inner test.
+// If the inner test does not implement ContextKeyable, nil is returned.
+func (h *inContextTest) ContextKeys() []rules.ContextKey {
+	if ck, ok := h.test.(rules.ContextKeyable); ok {
+		return ck.ContextKeys()
+	}
+	return nil
+}

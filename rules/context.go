@@ -51,6 +51,14 @@ type ContextualTest interface {
 	CheckWithContext(rc *Context, val any) bool
 }
 
+// ContextKeyable is optionally implemented by guard tests that can report
+// which context keys they depend on. This enables the engine to skip
+// guard evaluation entirely when none of the required keys are present
+// in the validation context.
+type ContextKeyable interface {
+	ContextKeys() []ContextKey
+}
+
 // runTest evaluates test t against val. When rc is non-nil and t implements
 // ContextualTest, it delegates to CheckWithContext; otherwise it calls Check.
 func runTest(rc *Context, t Test, val any) bool {
@@ -60,6 +68,19 @@ func runTest(rc *Context, t Test, val any) bool {
 		}
 	}
 	return t.Check(val)
+}
+
+// Keys returns the set of distinct keys present in the context.
+func (c Context) Keys() []ContextKey {
+	seen := make(map[ContextKey]struct{}, len(c.entries))
+	keys := make([]ContextKey, 0, len(c.entries))
+	for _, e := range c.entries {
+		if _, ok := seen[e.key]; !ok {
+			seen[e.key] = struct{}{}
+			keys = append(keys, e.key)
+		}
+	}
+	return keys
 }
 
 // Each iterates over all values in the context, calling fn for each. Returns

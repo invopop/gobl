@@ -197,16 +197,41 @@ func HasAddon(key cbc.Key) rules.Test {
 // validation context via InContext(AddonIn(key)).
 func AddonIn(keys ...cbc.Key) rules.Test {
 	parts := make([]string, len(keys))
+	ctxKeys := make([]rules.ContextKey, len(keys))
 	for i, k := range keys {
 		parts[i] = k.String()
+		ctxKeys[i] = rules.ContextKey(k)
 	}
-	return is.Func("addon in ["+strings.Join(parts, ",")+"]", func(value any) bool {
-		def, ok := value.(*AddonDef)
-		if !ok {
-			return false
-		}
-		return def.Key.In(keys...)
-	})
+	return &addonInTest{
+		desc:    "addon in [" + strings.Join(parts, ",") + "]",
+		keys:    keys,
+		ctxKeys: ctxKeys,
+	}
+}
+
+// addonInTest is a Test returned by AddonIn that also implements
+// rules.ContextKeyable so the engine can index guards by addon key.
+type addonInTest struct {
+	desc    string
+	keys    []cbc.Key
+	ctxKeys []rules.ContextKey
+}
+
+func (t *addonInTest) Check(value any) bool {
+	def, ok := value.(*AddonDef)
+	if !ok {
+		return false
+	}
+	return def.Key.In(t.keys...)
+}
+
+func (t *addonInTest) String() string {
+	return t.desc
+}
+
+// ContextKeys implements rules.ContextKeyable.
+func (t *addonInTest) ContextKeys() []rules.ContextKey {
+	return t.ctxKeys
 }
 
 // AddonContext returns a rules.WithContext option that injects the given addon

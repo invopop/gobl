@@ -16,7 +16,16 @@ import (
 // GOBL for GOBL rules.
 const GOBL Code = "GOBL"
 
-var globalRegistry = make([]*Set, 0)
+var (
+	// coreRegistry holds namespace sets with no guard (always applied).
+	coreRegistry = make([]*Set, 0)
+	// guardedIndex maps context keys to namespace sets whose guards
+	// depend on those keys, enabling O(1) lookup at validation time.
+	guardedIndex = make(map[ContextKey][]*Set)
+	// unkeyedGuarded holds guarded sets whose guards do not implement
+	// ContextKeyable, so they must be evaluated every time.
+	unkeyedGuarded = make([]*Set, 0)
+)
 
 // Code defines a unique code to use for rules.
 type Code string
@@ -44,7 +53,8 @@ type Set struct {
 	// Subsets are additional sets of rules to apply recursively to the struct associated with this set of rules. They will be applied in order, and their assertions will be evaluated after the assertions in this set. Subsets can also have their own Test conditions, which will be evaluated independently.
 	Subsets []*Set `json:"subsets,omitempty"`
 
-	objType reflect.Type
+	objType   reflect.Type
+	typeIndex map[reflect.Type][]*Set // maps objType → subsets targeting that type
 }
 
 // Assertion represents a single validation rule definition.
@@ -77,7 +87,7 @@ type compilableTest interface {
 
 // Registry returns the global registry of rule sets.
 func Registry() []*Set {
-	return globalRegistry
+	return allSets()
 }
 
 // Register is used to register a set of rules for a given namespace.
@@ -95,7 +105,43 @@ func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
 		Subsets: sets,
 	}
 	prependToSets(pkg, sets)
-	globalRegistry = append(globalRegistry, set)
+	buildTypeIndex(set)
+	if guard == nil {
+		coreRegistry = append(coreRegistry, set)
+	} else if ck, ok := guard.(ContextKeyable); ok {
+		if keys := ck.ContextKeys(); len(keys) > 0 {
+			for _, k := range keys {
+				guardedIndex[k] = append(guardedIndex[k], set)
+			}
+		} else {
+			unkeyedGuarded = append(unkeyedGuarded, set)
+		}
+	} else {
+		unkeyedGuarded = append(unkeyedGuarded, set)
+	}
+}
+
+// buildTypeIndex populates the typeIndex map on a namespace set by grouping
+// its direct subsets that have a non-nil objType. This enables O(1) type
+// lookups during nested value validation instead of linear scans.
+func buildTypeIndex(s *Set) {
+	for _, ss := range s.Subsets {
+		if ss.objType == nil {
+			continue
+		}
+		if s.typeIndex == nil {
+			s.typeIndex = make(map[reflect.Type][]*Set)
+		}
+		s.typeIndex[ss.objType] = append(s.typeIndex[ss.objType], ss)
+	}
+}
+
+// subsetsForType returns the subsets that target the given type, or nil if none.
+func (s *Set) subsetsForType(t reflect.Type) []*Set {
+	if s.typeIndex == nil {
+		return nil
+	}
+	return s.typeIndex[t]
 }
 
 // For creates a new set of rules for the provided object (struct or value type).
@@ -426,7 +472,18 @@ func (c Code) Add(code Code) Code {
 
 // AllSets returns all rule sets registered in the global registry.
 func AllSets() []*Set {
-	return globalRegistry
+	return allSets()
+}
+
+// allSets returns the concatenation of all registry partitions.
+func allSets() []*Set {
+	all := make([]*Set, 0, len(coreRegistry)+len(unkeyedGuarded)+len(guardedIndex))
+	all = append(all, coreRegistry...)
+	all = append(all, unkeyedGuarded...)
+	for _, sets := range guardedIndex {
+		all = append(all, sets...)
+	}
+	return all
 }
 
 // Validate uses the global registry of rule sets to validate the provided object.
@@ -445,11 +502,36 @@ func Validate(obj any, opts ...WithContext) Faults {
 	}
 	collectContext(rc, obj)
 	var faults []*Fault
-	for _, ns := range globalRegistry {
+
+	// Always apply core (unguarded) rule sets.
+	for _, ns := range coreRegistry {
 		if fs := ns.validate(rc, obj); fs != nil {
 			faults = append(faults, fs.List()...)
 		}
 	}
+
+	// Apply guarded sets indexed by context key — only iterate sets
+	// whose key is present in the current validation context.
+	seen := make(map[*Set]struct{})
+	for _, key := range rc.Keys() {
+		for _, ns := range guardedIndex[key] {
+			if _, ok := seen[ns]; ok {
+				continue // a set may be indexed under multiple keys
+			}
+			seen[ns] = struct{}{}
+			if fs := ns.validate(rc, obj); fs != nil {
+				faults = append(faults, fs.List()...)
+			}
+		}
+	}
+
+	// Apply guarded sets that could not be indexed by key.
+	for _, ns := range unkeyedGuarded {
+		if fs := ns.validate(rc, obj); fs != nil {
+			faults = append(faults, fs.List()...)
+		}
+	}
+
 	return newFaults(faults...)
 }
 
@@ -560,53 +642,44 @@ func (s *Set) validateSubsets(rc *Context, rv reflect.Value, obj, callObj any) [
 	// are not re-evaluated against nested objects, and type-specific rules
 	// registered under this namespace (e.g. taxComboRules) are still applied
 	// to nested types discovered during traversal.
-	if s.isNamespace() {
-		hasTypeRules := false
-		for _, ss := range s.Subsets {
-			if ss.objType != nil {
-				hasTypeRules = true
-				break
+	if s.isNamespace() && len(s.typeIndex) > 0 {
+		switch rv.Kind() {
+		case reflect.Struct:
+			rt := rv.Type()
+			for i := range rv.NumField() {
+				sf := rt.Field(i)
+				if !sf.IsExported() {
+					continue
+				}
+				fv := rv.Field(i)
+				fs := s.validateNestedFieldValue(rc, fv)
+				if len(fs) == 0 {
+					continue
+				}
+				if sf.Anonymous {
+					faults = append(faults, fs...)
+					continue
+				}
+				name := jsonFieldName(sf)
+				if name != "" {
+					faults = append(faults, prependPath(name, fs)...)
+				}
+			}
+		case reflect.Slice, reflect.Array:
+			for i := range rv.Len() {
+				ev := rv.Index(i)
+				if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
+					faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
+				}
 			}
 		}
-		if hasTypeRules {
-			switch rv.Kind() {
-			case reflect.Struct:
-				rt := rv.Type()
-				for i := range rv.NumField() {
-					sf := rt.Field(i)
-					if !sf.IsExported() {
-						continue
-					}
-					fv := rv.Field(i)
-					fs := s.validateNestedFieldValue(rc, fv)
-					if len(fs) == 0 {
-						continue
-					}
-					if sf.Anonymous {
-						faults = append(faults, fs...)
-						continue
-					}
-					name := jsonFieldName(sf)
-					if name != "" {
-						faults = append(faults, prependPath(name, fs)...)
-					}
-				}
-			case reflect.Slice, reflect.Array:
-				for i := range rv.Len() {
-					ev := rv.Index(i)
-					if fs := s.validateNestedFieldValue(rc, ev); len(fs) > 0 {
-						faults = append(faults, prependPath("["+strconv.Itoa(i)+"]", fs)...)
-					}
-				}
-			}
-			// If the root object exposes an embedded payload, validate it at
-			// the same path level. This handles cases like schema.Object where
-			// the payload is a private field accessible only via Embedded().
-			if emb, ok := callObj.(Embeddable); ok {
-				if inner := emb.Embedded(); inner != nil {
-					if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
-						faults = append(faults, fs...)
-					}
+		// If the root object exposes an embedded payload, validate it at
+		// the same path level. This handles cases like schema.Object where
+		// the payload is a private field accessible only via Embedded().
+		if emb, ok := callObj.(Embeddable); ok {
+			if inner := emb.Embedded(); inner != nil {
+				if fs := s.validateNestedValue(rc, inner); len(fs) > 0 {
+					faults = append(faults, fs...)
 				}
 			}
 		}
@@ -648,11 +721,8 @@ func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 
 	var faults []*Fault
 
-	// Apply matching type-specific subsets from this namespace.
-	for _, ss := range s.Subsets {
-		if ss.objType != objType {
-			continue
-		}
+	// Apply matching type-specific subsets from this namespace using the type index.
+	for _, ss := range s.subsetsForType(objType) {
 		if fs := ss.validate(rc, callObj); fs != nil {
 			faults = append(faults, fs.List()...)
 		}
