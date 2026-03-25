@@ -179,6 +179,22 @@ func TestScenarioSetSummary(t *testing.T) {
 		require.Len(t, keys, 1)
 		assert.Contains(t, keys, cbc.Key("xx-test"))
 	})
+	t.Run("notes extraction", func(t *testing.T) {
+		notes := ss.Notes()
+		require.Len(t, notes, 5)
+		assert.Equal(t, "This is a note1", notes[0].Text)
+	})
+	t.Run("summary with note added", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:  bill.InvoiceTypeStandard,
+			tags: []cbc.Key{tax.TagSimplified},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		require.Len(t, sum.Notes, 1)
+		assert.Equal(t, "This is a note1", sum.Notes[0].Text)
+		assert.Equal(t, tax.CategoryVAT, sum.Notes[0].Category)
+	})
 }
 
 func scenariosInvoiceExample() *bill.Invoice {
