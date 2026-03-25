@@ -119,7 +119,7 @@ func (m *Charge) Normalize(normalizers tax.Normalizers) {
 
 func chargeRules() *rules.Set {
 	return rules.For(new(Charge),
-		rules.When(is.Expr("base != nil"),
+		rules.When(is.Expr("Base != nil"),
 			rules.Field("percent",
 				rules.Assert("01", "percent is required when base is set", is.Present),
 			),

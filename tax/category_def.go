@@ -72,7 +72,7 @@ func categoryDefRules() *rules.Set {
 			rules.Assert("03", "category def title is required", is.Present),
 		),
 		rules.Assert("04", "category def cannot be retained and informative",
-			is.Expr("!retained || !informative"),
+			is.Expr("!Retained || !Informative"),
 		),
 	)
 }

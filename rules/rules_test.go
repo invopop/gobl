@@ -30,7 +30,7 @@ type Email struct {
 func personRules() *rules.Set {
 	return rules.For(new(Person),
 		rules.Assert("01", "person address must have a city",
-			is.Expr(`(address?.city ?? "") != ""`),
+			is.Expr(`(Address?.City ?? "") != ""`),
 		),
 	)
 }
@@ -329,7 +329,7 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		set := rules.For(new(Item),
-			rules.When(is.Expr(`active`),
+			rules.When(is.Expr(`Active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
 						is.Present,
@@ -348,7 +348,7 @@ func TestSetValidate(t *testing.T) {
 			Name   string `json:"name"`
 		}
 		set := rules.For(new(Item),
-			rules.When(is.Expr(`active`),
+			rules.When(is.Expr(`Active`),
 				rules.Field("name",
 					rules.Assert("01", "name required when active",
 						is.Present,
@@ -368,9 +368,9 @@ func TestSetValidate(t *testing.T) {
 		}
 		proto := new(Item)
 		set := rules.For(proto,
-			rules.When(is.Expr(`active`),
+			rules.When(is.Expr(`Active`),
 				rules.Assert("01", "name required when active",
-					is.Expr(`name != ""`),
+					is.Expr(`Name != ""`),
 				),
 			),
 		)
@@ -432,7 +432,7 @@ func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
 	// incorrectly matching field subsets by type rather than by field name.
 	set := rules.For(new(Person),
 		rules.When(
-			is.Expr(`name != ""`),
+			is.Expr(`Name != ""`),
 			rules.Field("address",
 				rules.Assert("01", "city is required",
 					is.Func("city required", func(val any) bool {
@@ -669,10 +669,10 @@ func TestObject(t *testing.T) {
 	set := rules.For(new(Person),
 		rules.Object(
 			rules.Assert("01", "name required",
-				is.Expr(`name != ""`),
+				is.Expr(`Name != ""`),
 			),
 			rules.Assert("02", "age positive",
-				is.Expr(`age > 0`),
+				is.Expr(`Age > 0`),
 			),
 		),
 	)
@@ -698,9 +698,9 @@ func TestAllSets(t *testing.T) {
 
 func TestSetMarshalJSON(t *testing.T) {
 	set := rules.For(new(Person),
-		rules.When(is.Expr(`age > 0`),
+		rules.When(is.Expr(`Age > 0`),
 			rules.Assert("01", "name required",
-				is.Expr(`name != ""`),
+				is.Expr(`Name != ""`),
 			),
 		),
 		rules.Field("name",
@@ -719,8 +719,8 @@ func TestSetMarshalJSON(t *testing.T) {
 func TestAssertionMarshalJSON(t *testing.T) {
 	set := rules.For(new(Person),
 		rules.Assert("01", "name and age valid",
-			is.Expr(`name != ""`),
-			is.Expr(`age > 0`),
+			is.Expr(`Name != ""`),
+			is.Expr(`Age > 0`),
 		),
 	)
 	data, err := json.Marshal(set)

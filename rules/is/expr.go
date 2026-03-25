@@ -45,9 +45,11 @@ func (et *exprTest) Compile(val any) error {
 	// Backslashes in tests must be doubled for embedding inside an expr
 	// double-quoted string literal (expr interprets \\ as a single \).
 	etStr := strings.ReplaceAll(et.test, `\`, `\\`)
+	// Note: we cannot use expr.WithTag("json") here to allow expressions
+	// to reference fields by their JSON tag names; the upstream expr library
+	// does not support this option. Expressions must use Go field names.
 	prog, err := expr.Compile(etStr,
 		expr.AsBool(),
-		expr.WithTag("json"),
 		expr.Env(env),
 	)
 	if err != nil {
@@ -59,7 +61,7 @@ func (et *exprTest) Compile(val any) error {
 
 // buildEnv constructs the expression environment for the given type and value.
 // Struct values are returned directly so that expressions can reference fields
-// by their json tag names. Non-struct types are exposed as a map with a single
+// by their Go field names. Non-struct types are exposed as a map with a single
 // "this" key holding the underlying primitive value, so that assertion
 // expressions can reference the value uniformly regardless of type.
 func (et *exprTest) buildEnv(val any) any {

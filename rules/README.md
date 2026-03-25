@@ -94,7 +94,7 @@ The condition receives the full parent struct. Use `is.Expr(...)`,
 
 ```go
 rules.Object(
-    rules.Assert("10", "cross-field constraint", is.Expr(`field_a != "" || field_b == nil`)),
+    rules.Assert("10", "cross-field constraint", is.Expr(`FieldA != "" || FieldB == nil`)),
 )
 ```
 
@@ -143,7 +143,7 @@ import (
 | `is.Length(min, max)`                                 | `max=0` means no upper bound                                           |
 | `is.RuneLength(min, max)`                             | Unicode-aware                                                          |
 | `is.Min(v)` / `is.Max(v)`                             | int, uint, float, time                                                 |
-| `is.Expr(expr)`                                       | CEL-like expression; fields accessed by JSON name                      |
+| `is.Expr(expr)`                                       | CEL-like expression; fields accessed by Go field name                  |
 | `is.Func(desc, func(any) bool)`                       | Custom boolean function                                                |
 | `is.StringFunc(desc, func(string) bool)`              | Convenience for string-typed fields                                    |
 | `is.FuncError(desc, func(any) error)`                 | Error message is discarded; use `desc`                                 |
@@ -209,7 +209,7 @@ want a named, testable function:
 ```go
 // Simple cross-field check
 rules.Assert("10", "digest must be nil when MIME type is not provided",
-    is.Expr(`mime != "" || digest == nil`),
+    is.Expr(`MIME != "" || Digest == nil`),
 )
 
 // More complex logic

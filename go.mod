@@ -50,5 +50,4 @@ require (
 
 // replace github.com/invopop/jsonschema => ../jsonschema
 
-
-replace github.com/expr-lang/expr => github.com/invopop/expr v0.0.0-20260306122517-c23ccc78012d
+// replace github.com/expr-lang/expr => github.com/invopop/expr v0.0.0-20260306122517-c23ccc78012d

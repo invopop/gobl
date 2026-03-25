@@ -38,7 +38,7 @@ func (ld *LineDiscount) Normalize(normalizers tax.Normalizers) {
 
 func lineDiscountRules() *rules.Set {
 	return rules.For(new(LineDiscount),
-		rules.When(is.Expr("base != nil"),
+		rules.When(is.Expr("Base != nil"),
 			rules.Field("percent",
 				rules.Assert("01", "percent is required when base is set", is.Present),
 			),

@@ -35,7 +35,7 @@ func orgPartyRules() *rules.Set {
 				rules.Field("addresses",
 					rules.Each(
 						rules.When(
-							is.Expr("string(country) in ['','BR']"),
+							is.Expr("string(Country) in ['','BR']"),
 							rules.Field("state",
 								rules.AssertIfPresent("02", "Brazilian state must be one of the valid states", cbc.InCodes(validStates...)),
 							),

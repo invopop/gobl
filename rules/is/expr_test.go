@@ -33,7 +33,7 @@ func TestExpr(t *testing.T) {
 	t.Run("struct-based expr passes", func(t *testing.T) {
 		set := rules.For(new(exprPerson),
 			rules.Assert("01", "name required",
-				is.Expr(`name != ""`),
+				is.Expr(`Name != ""`),
 			),
 		)
 		faults := set.Validate(&exprPerson{Name: "Alice", Age: 30})
@@ -43,7 +43,7 @@ func TestExpr(t *testing.T) {
 	t.Run("struct-based expr fails", func(t *testing.T) {
 		set := rules.For(new(exprPerson),
 			rules.Assert("01", "name required",
-				is.Expr(`name != ""`),
+				is.Expr(`Name != ""`),
 			),
 		)
 		faults := set.Validate(&exprPerson{Name: "", Age: 30})

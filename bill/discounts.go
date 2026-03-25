@@ -135,7 +135,7 @@ func (m *Discount) Normalize(normalizers tax.Normalizers) {
 
 func discountRules() *rules.Set {
 	return rules.For(new(Discount),
-		rules.When(is.Expr("base != nil"),
+		rules.When(is.Expr("Base != nil"),
 			rules.Field("percent",
 				rules.Assert("01", "percent is required when base is set", is.Present),
 			),

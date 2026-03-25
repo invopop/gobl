@@ -46,7 +46,7 @@ func definitionRules() *rules.Set {
 			rules.Assert("01", "name is required", is.Present),
 		),
 		rules.Assert("02", "definition must have either a key or a code, and not both",
-			is.Expr("string(code) != '' || string(key) != ''"),
+			is.Expr("string(Code) != '' || string(Key) != ''"),
 		),
 		rules.Field("pattern",
 			rules.AssertIfPresent("03", "pattern must be a valid regular expression",

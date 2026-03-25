@@ -48,12 +48,12 @@ func (n *Name) Normalize() {
 
 func nameRules() *rules.Set {
 	return rules.For(new(Name),
-		rules.When(is.Expr(`surname == ""`),
+		rules.When(is.Expr(`Surname == ""`),
 			rules.Field("given",
 				rules.Assert("01", "given name is required when surname is absent", is.Present),
 			),
 		),
-		rules.When(is.Expr(`given == ""`),
+		rules.When(is.Expr(`Given == ""`),
 			rules.Field("surname",
 				rules.Assert("02", "surname is required when given name is absent", is.Present),
 			),
