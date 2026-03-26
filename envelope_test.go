@@ -477,14 +477,14 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = rules.Validate(doc)
 	data, err := json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `[{"path":"$.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]`, string(data))
+	assert.Equal(t, `[{"code":"GOBL-NOTE-MESSAGE-01","paths":["$.content"],"message":"message content is required"}]`, string(data))
 
 	env := gobl.NewEnvelope()
 	require.NoError(t, env.Insert(msg))
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.JSONEq(t, `{"key":"validation","faults":[{"path":"$.doc.content","code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]}`, string(data))
+	assert.JSONEq(t, `{"key":"validation","faults":[{"paths":["$.doc.content"],"code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]}`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

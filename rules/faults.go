@@ -6,25 +6,29 @@ import (
 	"strings"
 )
 
-// Fault represents a single rule assertion failure identified by a code and path.
-// Fault is *not* designed to be instantiated directly, and will be created as part
-// of the validation processes from defined rules.
+// Fault represents a single rule assertion failure identified by a code and one or
+// more paths. When multiple paths share the same code and message, they are merged
+// into a single Fault. Fault is *not* designed to be instantiated directly, and
+// will be created as part of the validation processes from defined rules.
 //
 //nolint:errname
 type Fault struct {
-	path    string
+	paths   []string
 	code    Code
 	message string
 }
 
 func newFault(path string, id Code, message string) *Fault {
-	return &Fault{path: path, code: id, message: message}
+	return &Fault{paths: []string{path}, code: id, message: message}
 }
 
-// Path returns the JSON Path (RFC 6901) location where this fault occurred.
-// Returns "$" if the fault is at the root.
-func (f *Fault) Path() string {
-	return publicPath(f.path)
+// Paths returns the JSON Path (RFC 6901) locations where this fault occurred.
+func (f *Fault) Paths() []string {
+	result := make([]string, len(f.paths))
+	for i, p := range f.paths {
+		result[i] = publicPath(p)
+	}
+	return result
 }
 
 // Code returns the assertion code that produced this fault.
@@ -39,20 +43,31 @@ func (f *Fault) Message() string {
 
 // Error implements the error interface.
 func (f *Fault) Error() string {
-	msg := f.message
-	if f.path != "" {
-		msg = "(" + publicPath(f.path) + ") " + msg
+	var pathPart string
+	switch {
+	case len(f.paths) == 1 && f.paths[0] != "":
+		pathPart = "(" + publicPath(f.paths[0]) + ") "
+	case len(f.paths) > 1:
+		parts := make([]string, len(f.paths))
+		for i, p := range f.paths {
+			parts[i] = publicPath(p)
+		}
+		pathPart = "(" + strings.Join(parts, ", ") + ") "
 	}
-	return fmt.Sprintf("[%s] %s", f.code, msg)
+	return fmt.Sprintf("[%s] %s", f.code, pathPart+f.message)
 }
 
-// MarshalJSON encodes the fault as a JSON object with path, code, and message fields.
+// MarshalJSON encodes the fault as a JSON object with paths, code, and message fields.
 func (f *Fault) MarshalJSON() ([]byte, error) {
+	paths := make([]string, len(f.paths))
+	for i, p := range f.paths {
+		paths[i] = publicPath(p)
+	}
 	return json.Marshal(struct {
-		Path    string `json:"path"`
-		Code    Code   `json:"code"`
-		Message string `json:"message"`
-	}{publicPath(f.path), f.code, f.message})
+		Code    Code     `json:"code"`
+		Paths   []string `json:"paths"`
+		Message string   `json:"message"`
+	}{f.code, paths, f.message})
 }
 
 // Faults is the interface for a collection of validation faults.
@@ -79,11 +94,12 @@ type Faults interface {
 type faultList []*Fault
 
 // newFaults wraps a set of faults in the Faults interface, returning nil when empty.
+// Faults with the same code and message are merged, combining their paths.
 func newFaults(faults ...*Fault) Faults {
 	if len(faults) == 0 {
 		return nil
 	}
-	return faultList(faults)
+	return faultList(mergeFaults(faults))
 }
 
 // Error implements the error interface.
@@ -106,8 +122,10 @@ func (fs faultList) MarshalJSON() ([]byte, error) {
 // HasPath reports whether any fault has exactly the given JSON Path.
 func (fs faultList) HasPath(path string) bool {
 	for _, f := range fs {
-		if publicPath(f.path) == path {
-			return true
+		for _, p := range f.paths {
+			if publicPath(p) == path {
+				return true
+			}
 		}
 	}
 	return false
@@ -148,15 +166,44 @@ func (fs faultList) List() []*Fault {
 	return []*Fault(fs)
 }
 
-// prependPath returns a new slice with prefix prepended to each fault's path.
+// mergeFaults combines faults that share the same (code, message) pair,
+// concatenating their paths into a single Fault.
+func mergeFaults(faults []*Fault) []*Fault {
+	type key struct {
+		code    Code
+		message string
+	}
+	seen := make(map[key]int) // index in result
+	result := make([]*Fault, 0, len(faults))
+	for _, f := range faults {
+		k := key{f.code, f.message}
+		if idx, ok := seen[k]; ok {
+			result[idx].paths = append(result[idx].paths, f.paths...)
+		} else {
+			seen[k] = len(result)
+			result = append(result, &Fault{
+				paths:   append([]string(nil), f.paths...),
+				code:    f.code,
+				message: f.message,
+			})
+		}
+	}
+	return result
+}
+
+// prependPath returns a new slice with prefix prepended to each fault's paths.
 func prependPath(prefix string, faults []*Fault) []*Fault {
 	if prefix == "" || len(faults) == 0 {
 		return faults
 	}
 	result := make([]*Fault, len(faults))
 	for i, f := range faults {
+		newPaths := make([]string, len(f.paths))
+		for j, p := range f.paths {
+			newPaths[j] = joinPath(prefix, p)
+		}
 		result[i] = &Fault{
-			path:    joinPath(prefix, f.path),
+			paths:   newPaths,
 			code:    f.code,
 			message: f.message,
 		}

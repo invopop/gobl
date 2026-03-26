@@ -29,11 +29,15 @@ func TestFaultMarshalJSON(t *testing.T) {
 		f := faults.First()
 		data, err := json.Marshal(f)
 		require.NoError(t, err)
-		var m map[string]string
+		var m struct {
+			Paths   []string `json:"paths"`
+			Code    string   `json:"code"`
+			Message string   `json:"message"`
+		}
 		require.NoError(t, json.Unmarshal(data, &m))
-		assert.Equal(t, "$.addr", m["path"])
-		assert.Contains(t, m["code"], "01")
-		assert.Equal(t, "email required", m["message"])
+		assert.Equal(t, []string{"$.addr"}, m.Paths)
+		assert.Contains(t, m.Code, "01")
+		assert.Equal(t, "email required", m.Message)
 	})
 
 	t.Run("root-level fault has $ path", func(t *testing.T) {
@@ -45,9 +49,11 @@ func TestFaultMarshalJSON(t *testing.T) {
 		f := faults.First()
 		data, err := json.Marshal(f)
 		require.NoError(t, err)
-		var m map[string]string
+		var m struct {
+			Paths []string `json:"paths"`
+		}
 		require.NoError(t, json.Unmarshal(data, &m))
-		assert.Equal(t, "$", m["path"])
+		assert.Equal(t, []string{"$"}, m.Paths)
 	})
 }
 
@@ -62,7 +68,11 @@ func TestFaultListMarshalJSON(t *testing.T) {
 	require.Error(t, faults)
 	data, err := json.Marshal(faults)
 	require.NoError(t, err)
-	var arr []map[string]string
+	var arr []struct {
+		Paths   []string `json:"paths"`
+		Code    string   `json:"code"`
+		Message string   `json:"message"`
+	}
 	require.NoError(t, json.Unmarshal(data, &arr))
 	assert.GreaterOrEqual(t, len(arr), 2)
 }

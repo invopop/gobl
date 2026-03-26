@@ -115,7 +115,7 @@ func TestValidate(t *testing.T) {
 		f := faults.First()
 		assert.Equal(t, "expected a valid email address", f.Message())
 		assert.Equal(t, rules.Code("GOBL-TEST-EMAIL-01"), f.Code())
-		assert.Equal(t, "$.addr", f.Path())
+		assert.Equal(t, []string{"$.addr"}, f.Paths())
 	})
 
 	t.Run("recurses into struct fields", func(t *testing.T) {
@@ -272,9 +272,9 @@ func TestMapValidation(t *testing.T) {
 		}
 		faults := rules.Validate(obj)
 		require.NotNil(t, faults)
-		require.GreaterOrEqual(t, faults.Len(), 2)
-		assert.Equal(t, "$.tags.alpha.addr", faults.At(0).Path())
-		assert.Equal(t, "$.tags.beta.addr", faults.At(1).Path())
+		// Faults with same code+message are merged, so both paths appear in one fault
+		assert.True(t, faults.HasPath("$.tags.alpha.addr"))
+		assert.True(t, faults.HasPath("$.tags.beta.addr"))
 	})
 
 	t.Run("nil map is skipped", func(t *testing.T) {

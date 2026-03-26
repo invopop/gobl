@@ -70,17 +70,19 @@ func TestError(t *testing.T) {
 		err := gobl.ErrValidation.WithCause(faults)
 		require.NotNil(t, err.Faults())
 		assert.Equal(t, 1, err.Faults().Len())
-		assert.Equal(t, "$.name", err.Faults().First().Path())
+		assert.Equal(t, []string{"$.name"}, err.Faults().First().Paths())
 
 		data, _ := json.Marshal(err)
 		var out struct {
-			Key    string           `json:"key"`
-			Faults []map[string]any `json:"faults"`
+			Key    string `json:"key"`
+			Faults []struct {
+				Paths []string `json:"paths"`
+			} `json:"faults"`
 		}
 		require.NoError(t, json.Unmarshal(data, &out))
 		assert.Equal(t, "validation", out.Key)
 		assert.Len(t, out.Faults, 1)
-		assert.Equal(t, "$.name", out.Faults[0]["path"])
+		assert.Equal(t, []string{"$.name"}, out.Faults[0].Paths)
 	})
 
 	t.Run("Is checks nested cause chain", func(t *testing.T) {
