@@ -160,7 +160,7 @@ func validateCustomer(value interface{}) error {
 		),
 		validation.Field(&customer.Identities,
 			validation.When(
-				isItalianParty(customer) && !hasTaxIDCode(customer),
+				isItalianParty(customer) && !customer.HasTaxIDCode(),
 				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
 			),
 			validation.Skip,
@@ -285,10 +285,6 @@ func validateItalianTelephone(value any) error {
 			validation.Skip,
 		),
 	)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 func hasFiscalCode(party *org.Party) bool {

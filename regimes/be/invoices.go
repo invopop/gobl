@@ -32,16 +32,12 @@ func validateInvoiceSupplier(value any) error {
 		),
 		validation.Field(&p.Identities,
 			validation.When(
-				!hasTaxIDCode(p),
+				!p.HasTaxIDCode(),
 				org.RequireIdentityType(IdentityTypeBCE),
 			),
 			validation.Skip,
 		),
 	)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 func hasIdentityBCE(party *org.Party) bool {

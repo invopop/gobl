@@ -4,6 +4,7 @@ package luhn
 
 import (
 	"regexp"
+	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 )
@@ -39,4 +40,24 @@ func Check(code cbc.Code) bool {
 	}
 
 	return checksum%10 == 0
+}
+
+// CheckDigit computes the Luhn check digit for the given numeric string.
+// The caller is responsible for ensuring the input contains only ASCII digit
+// characters; no validation is performed on the input.
+func CheckDigit(number string) string {
+	sum := 0
+	pos := 0
+	for i := len(number) - 1; i >= 0; i-- {
+		digit := int(number[i] - '0')
+		if pos%2 == 0 {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
+		sum += digit
+		pos++
+	}
+	return strconv.Itoa((10 - sum%10) % 10)
 }

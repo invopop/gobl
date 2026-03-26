@@ -51,3 +51,29 @@ func TestCheck(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckDigit(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		number string
+		want   string
+	}{
+		{name: "single digit", number: "0", want: "0"},
+		{name: "credit card base", number: "411111111111111", want: "1"},
+		{name: "luhn example", number: "7992739871", want: "3"},
+		{name: "italian VAT", number: "0271580010", want: "4"},
+		{name: "french SIREN", number: "73282932", want: "0"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got := luhn.CheckDigit(tt.number)
+			assert.Equal(t, tt.want, got)
+			// Verify consistency: number + check digit should pass Check.
+			full := cbc.Code(tt.number + got)
+			assert.True(t, luhn.Check(full), "number+check digit should pass Check: %s", full)
+		})
+	}
+}

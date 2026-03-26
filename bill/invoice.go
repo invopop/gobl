@@ -214,15 +214,11 @@ func validateInvoiceCustomer(value any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Name,
 			validation.When(
-				partyHasTaxIDCode(p),
+				p.HasTaxIDCode(),
 				validation.Required,
 			),
 		),
 	)
-}
-
-func partyHasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 // Invert effectively reverses the invoice by inverting the sign of all quantity
