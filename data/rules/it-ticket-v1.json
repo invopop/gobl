@@ -73,7 +73,7 @@
                 {
                   "id": "GOBL-IT-TICKET-V1-BILL-INVOICE-06",
                   "desc": "line taxes must include VAT category",
-                  "tests": "has VAT"
+                  "tests": "line has tax category VAT"
                 }
               ]
             }

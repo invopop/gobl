@@ -445,7 +445,7 @@
       "name": "bill.LineDiscount",
       "subsets": [
         {
-          "guard": "base != nil",
+          "guard": "Base != nil",
           "subsets": [
             {
               "field": "percent",
@@ -466,7 +466,7 @@
       "name": "bill.LineCharge",
       "subsets": [
         {
-          "guard": "base != nil",
+          "guard": "Base != nil",
           "subsets": [
             {
               "field": "percent",
@@ -481,7 +481,7 @@
           ]
         },
         {
-          "guard": "base != nil || percent != nil",
+          "guard": "Base != nil || Percent != nil",
           "subsets": [
             {
               "field": "quantity",
@@ -506,7 +506,7 @@
           ]
         },
         {
-          "guard": "quantity == nil",
+          "guard": "Quantity == nil",
           "subsets": [
             {
               "field": "unit",
@@ -521,7 +521,7 @@
           ]
         },
         {
-          "guard": "quantity != nil",
+          "guard": "Quantity != nil",
           "subsets": [
             {
               "field": "rate",
@@ -542,7 +542,7 @@
       "name": "bill.Discount",
       "subsets": [
         {
-          "guard": "base != nil",
+          "guard": "Base != nil",
           "subsets": [
             {
               "field": "percent",
@@ -563,7 +563,7 @@
       "name": "bill.Charge",
       "subsets": [
         {
-          "guard": "base != nil",
+          "guard": "Base != nil",
           "subsets": [
             {
               "field": "percent",

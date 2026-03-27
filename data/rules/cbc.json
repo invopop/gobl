@@ -52,7 +52,7 @@
         {
           "id": "GOBL-CBC-DEFINITION-02",
           "desc": "definition must have either a key or a code, and not both",
-          "tests": "string(code) != '' || string(key) != ''"
+          "tests": "string(Code) != '' || string(Key) != ''"
         }
       ],
       "subsets": [

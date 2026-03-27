@@ -184,7 +184,7 @@
         {
           "id": "GOBL-BR-NFSE-V1-BILL-LINE-01",
           "desc": "line taxes must include the ISS category",
-          "tests": "has ISS"
+          "tests": "line has tax category ISS"
         }
       ]
     },

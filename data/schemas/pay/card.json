@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/card",
+  "$ref": "#/$defs/Card",
+  "$defs": {
+    "Card": {
+      "properties": {
+        "first6": {
+          "type": "string",
+          "title": "First 6",
+          "description": "First 6 digits of the card's Primary Account Number (PAN)."
+        },
+        "last4": {
+          "type": "string",
+          "title": "Last 4",
+          "description": "Last 4 digits of the card's Primary Account Number (PAN)."
+        },
+        "holder": {
+          "type": "string",
+          "title": "Holder Name",
+          "description": "Name of the person whom the card belongs to."
+        }
+      },
+      "type": "object",
+      "description": "Card contains simplified card holder data as a reference for the customer."
+    }
+  }
+}

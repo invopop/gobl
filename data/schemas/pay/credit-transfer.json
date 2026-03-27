@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/credit-transfer",
+  "$ref": "#/$defs/CreditTransfer",
+  "$defs": {
+    "CreditTransfer": {
+      "properties": {
+        "iban": {
+          "type": "string",
+          "title": "IBAN",
+          "description": "International Bank Account Number"
+        },
+        "bic": {
+          "type": "string",
+          "title": "BIC",
+          "description": "Bank Identifier Code used for international transfers."
+        },
+        "number": {
+          "type": "string",
+          "title": "Number",
+          "description": "Account number, if IBAN not available."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the bank."
+        },
+        "branch": {
+          "$ref": "https://gobl.org/draft-0/org/address",
+          "title": "Branch",
+          "description": "Bank office branch address, not normally required."
+        }
+      },
+      "type": "object",
+      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
+    }
+  }
+}

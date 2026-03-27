@@ -9,7 +9,11 @@ import (
 func init() {
 	schema.Register(schema.GOBL.Add("pay"),
 		Advance{},
+		Card{},
+		CreditTransfer{},
+		DirectDebit{},
 		Instructions{},
+		Online{},
 		Terms{},
 	)
 	rules.Register(

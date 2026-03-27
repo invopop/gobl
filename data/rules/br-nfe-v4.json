@@ -414,17 +414,17 @@
         {
           "id": "GOBL-BR-NFE-V4-BILL-LINE-01",
           "desc": "line taxes must include the ICMS category",
-          "tests": "has ICMS"
+          "tests": "line has tax category ICMS"
         },
         {
           "id": "GOBL-BR-NFE-V4-BILL-LINE-02",
           "desc": "line taxes must include the PIS category",
-          "tests": "has PIS"
+          "tests": "line has tax category PIS"
         },
         {
           "id": "GOBL-BR-NFE-V4-BILL-LINE-03",
           "desc": "line taxes must include the COFINS category",
-          "tests": "has COFINS"
+          "tests": "line has tax category COFINS"
         }
       ]
     },

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/direct-debit",
+  "$ref": "#/$defs/DirectDebit",
+  "$defs": {
+    "DirectDebit": {
+      "properties": {
+        "ref": {
+          "type": "string",
+          "title": "Mandate Reference",
+          "description": "Unique identifier assigned by the payee for referencing the direct debit."
+        },
+        "creditor": {
+          "type": "string",
+          "title": "Creditor ID",
+          "description": "Unique banking reference that identifies the payee or seller assigned by the bank."
+        },
+        "account": {
+          "type": "string",
+          "title": "Account",
+          "description": "Account identifier to be debited by the direct debit."
+        }
+      },
+      "type": "object",
+      "description": "DirectDebit defines the data that will be used to make the direct debit."
+    }
+  }
+}

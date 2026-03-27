@@ -128,12 +128,12 @@
           "description": "If different from the parent document's base currency."
         },
         "card": {
-          "$ref": "#/$defs/Card",
+          "$ref": "https://gobl.org/draft-0/pay/card",
           "title": "Card",
           "description": "Details of the payment that was made via a credit or debit card."
         },
         "credit_transfer": {
-          "$ref": "#/$defs/CreditTransfer",
+          "$ref": "https://gobl.org/draft-0/pay/credit-transfer",
           "title": "Credit Transfer",
           "description": "Details about how the payment was made by credit (bank) transfer."
         },
@@ -154,58 +154,6 @@
         "amount"
       ],
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
-    },
-    "Card": {
-      "properties": {
-        "first6": {
-          "type": "string",
-          "title": "First 6",
-          "description": "First 6 digits of the card's Primary Account Number (PAN)."
-        },
-        "last4": {
-          "type": "string",
-          "title": "Last 4",
-          "description": "Last 4 digits of the card's Primary Account Number (PAN)."
-        },
-        "holder": {
-          "type": "string",
-          "title": "Holder Name",
-          "description": "Name of the person whom the card belongs to."
-        }
-      },
-      "type": "object",
-      "description": "Card contains simplified card holder data as a reference for the customer."
-    },
-    "CreditTransfer": {
-      "properties": {
-        "iban": {
-          "type": "string",
-          "title": "IBAN",
-          "description": "International Bank Account Number"
-        },
-        "bic": {
-          "type": "string",
-          "title": "BIC",
-          "description": "Bank Identifier Code used for international transfers."
-        },
-        "number": {
-          "type": "string",
-          "title": "Number",
-          "description": "Account number, if IBAN not available."
-        },
-        "name": {
-          "type": "string",
-          "title": "Name",
-          "description": "Name of the bank."
-        },
-        "branch": {
-          "$ref": "https://gobl.org/draft-0/org/address",
-          "title": "Branch",
-          "description": "Bank office branch address, not normally required."
-        }
-      },
-      "type": "object",
-      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
     }
   }
 }

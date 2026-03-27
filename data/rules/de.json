@@ -28,15 +28,20 @@
       "name": "org.Identity",
       "subsets": [
         {
-          "guard": "is tax number",
+          "guard": "context: regime in [DE]",
           "subsets": [
             {
-              "field": "code",
-              "assert": [
+              "guard": "is tax number",
+              "subsets": [
                 {
-                  "id": "GOBL-DE-ORG-IDENTITY-01",
-                  "desc": "German tax number code must be in valid format",
-                  "tests": "matches ^(\\d{2}/\\d{3}/\\d{5}|\\d{3}/\\d{3}/\\d{5}|\\d{3}/\\d{4}/\\d{4})$"
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-DE-ORG-IDENTITY-01",
+                      "desc": "German tax number code must be in valid format",
+                      "tests": "matches ^(\\d{2}/\\d{3}/\\d{5}|\\d{3}/\\d{3}/\\d{5}|\\d{3}/\\d{4}/\\d{4})$"
+                    }
+                  ]
                 }
               ]
             }

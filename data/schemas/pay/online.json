@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/online",
+  "$ref": "#/$defs/Online",
+  "$defs": {
+    "Online": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key identifier for this online payment method."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Descriptive label for the online provider."
+        },
+        "url": {
+          "type": "string",
+          "title": "URL",
+          "description": "URL to be used for payment."
+        }
+      },
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "description": "Online provides the details required to make a payment online using a website"
+    }
+  }
+}

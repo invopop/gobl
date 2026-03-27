@@ -390,7 +390,7 @@
                 {
                   "id": "GOBL-IT-SDI-V1-BILL-INVOICE-17",
                   "desc": "line must have VAT tax category",
-                  "tests": "has VAT category"
+                  "tests": "line has tax category VAT"
                 }
               ],
               "subsets": [

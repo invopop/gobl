@@ -319,7 +319,7 @@
       "name": "org.Name",
       "subsets": [
         {
-          "guard": "surname == \"\"",
+          "guard": "Surname == \"\"",
           "subsets": [
             {
               "field": "given",
@@ -334,7 +334,7 @@
           ]
         },
         {
-          "guard": "given == \"\"",
+          "guard": "Given == \"\"",
           "subsets": [
             {
               "field": "surname",

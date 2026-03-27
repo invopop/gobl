@@ -150,7 +150,7 @@
           "guard": "context: regime in [PT]",
           "subsets": [
             {
-              "guard": "string(cat) == \"VAT\"",
+              "guard": "string(Category) == \"VAT\"",
               "subsets": [
                 {
                   "field": "ext",

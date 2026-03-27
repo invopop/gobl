@@ -103,9 +103,21 @@
       "name": "bill.Discount",
       "assert": [
         {
-          "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT-01",
+          "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT-02",
           "desc": "either a reason or an allowance type extension is required (BR-33)",
           "tests": "reason or allowance"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "taxes",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT-01",
+              "desc": "taxes are required (BR-32)",
+              "tests": "present"
+            }
+          ]
         }
       ]
     },

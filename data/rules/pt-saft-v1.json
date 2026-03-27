@@ -63,7 +63,7 @@
                 {
                   "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-07",
                   "desc": "line taxes must include VAT category",
-                  "tests": "has VAT"
+                  "tests": "line has tax category VAT"
                 }
               ]
             }
@@ -351,7 +351,7 @@
                 {
                   "id": "GOBL-PT-SAFT-V1-BILL-ORDER-06",
                   "desc": "line taxes must include VAT category",
-                  "tests": "has VAT"
+                  "tests": "line has tax category VAT"
                 }
               ]
             }
