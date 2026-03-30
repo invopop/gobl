@@ -26,6 +26,8 @@ type ScenarioDocument interface {
 	GetTags() []cbc.Key
 	// GetExtensions an array of extensions that used in the document.
 	GetExtensions() []Extensions
+	// GetCategories returns a list of tax categories used in the document's lines.
+	GetCategories() []cbc.Code
 }
 
 // Scenario is used to describe a tax scenario of a document based on the combination
@@ -48,6 +50,11 @@ type Scenario struct {
 
 	// Array of tags that have been applied to the document.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
+
+	// Categories is an optional list of tax category codes that acts as a filter.
+	// When set, at least one of the specified categories must be present in the
+	// document's line taxes for the scenario to match.
+	Categories []cbc.Code `json:"cat,omitempty" jsonschema:"title=Tax Categories"`
 
 	// Extension key that must be present in the document.
 	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`
@@ -186,6 +193,11 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 			return false
 		}
 	}
+	if len(s.Categories) > 0 {
+		if !s.hasCategories(doc.GetCategories()) {
+			return false
+		}
+	}
 	if s.ExtKey != cbc.KeyEmpty {
 		// For extensions we need to find a complete match
 		// and reject if none found. We intentionally don't try
@@ -216,6 +228,17 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 // hasType returns true if the scenario has the specified document type.
 func (s *Scenario) hasType(docType cbc.Key) bool {
 	return docType.In(s.Types...)
+}
+
+// hasCategories returns true if at least one of the scenario's categories
+// is present in the document's categories.
+func (s *Scenario) hasCategories(docCats []cbc.Code) bool {
+	for _, c := range s.Categories {
+		if c.In(docCats...) {
+			return true
+		}
+	}
+	return false
 }
 
 // hasTags returns true if the the provided document tags is a subset of the

@@ -10,7 +10,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{tax.TagReverseCharge},
+			Tags:       []cbc.Key{tax.TagReverseCharge},
+			Categories: []cbc.Code{tax.CategoryVAT},
 			Note: &tax.Note{
 				Category: tax.CategoryVAT,
 				Key:      tax.KeyReverseCharge,
@@ -29,6 +30,20 @@ func InvoiceScenarios() *tax.ScenarioSet {
 // GetType provides the invoice type as part of the tax.ScenarioDocument interface.
 func (inv *Invoice) GetType() cbc.Key {
 	return inv.Type
+}
+
+// GetCategories returns a list of unique tax category codes used across all
+// invoice lines.
+func (inv *Invoice) GetCategories() []cbc.Code {
+	cats := make([]cbc.Code, 0)
+	for _, line := range inv.Lines {
+		for _, combo := range line.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	return cats
 }
 
 // GetExtensions goes through the invoice and grabs all the extensions that are in

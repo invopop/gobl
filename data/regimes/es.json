@@ -120,6 +120,9 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
             "cat": "VAT",
             "key": "reverse-charge",
@@ -128,7 +131,23 @@
         },
         {
           "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversión del sujeto pasivo."
+          }
+        },
+        {
+          "tags": [
             "simplified-scheme"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
@@ -141,7 +160,6 @@
             "self-billed"
           ],
           "note": {
-            "cat": "VAT",
             "key": "self-billed",
             "text": "Facturación por el destinatario."
           }
@@ -149,6 +167,9 @@
         {
           "tags": [
             "travel-agency"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
@@ -158,7 +179,23 @@
         },
         {
           "tags": [
+            "travel-agency"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "travel-agency",
+            "text": "Régimen especial de las agencias de viajes."
+          }
+        },
+        {
+          "tags": [
             "second-hand-goods"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
@@ -168,7 +205,23 @@
         },
         {
           "tags": [
+            "second-hand-goods"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "second-hand-goods",
+            "text": "Régimen especial de los bienes usados."
+          }
+        },
+        {
+          "tags": [
             "art"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
@@ -178,7 +231,23 @@
         },
         {
           "tags": [
+            "art"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "art",
+            "text": "Régimen especial de los objetos de arte."
+          }
+        },
+        {
+          "tags": [
             "antiques"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
@@ -188,10 +257,39 @@
         },
         {
           "tags": [
+            "antiques"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "antiques",
+            "text": "Régimen especial de las antigüedades y objetos de colección."
+          }
+        },
+        {
+          "tags": [
             "cash-basis"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",
+            "key": "cash-basis",
+            "text": "Régimen especial del criterio de caja."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
             "key": "cash-basis",
             "text": "Régimen especial del criterio de caja."
           }

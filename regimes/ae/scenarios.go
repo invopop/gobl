@@ -12,7 +12,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{tax.TagReverseCharge},
+			Tags:       []cbc.Key{tax.TagReverseCharge},
+			Categories: []cbc.Code{tax.CategoryVAT},
 			Note: &tax.Note{
 				Category: tax.CategoryVAT,
 				Key:      tax.KeyReverseCharge,
@@ -21,7 +22,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// Simplified Tax Invoice
 		{
-			Tags: []cbc.Key{tax.TagSimplified},
+			Tags:       []cbc.Key{tax.TagSimplified},
+			Categories: []cbc.Code{tax.CategoryVAT},
 			Note: &tax.Note{
 				Category: tax.CategoryVAT,
 				Key:      tax.TagSimplified,

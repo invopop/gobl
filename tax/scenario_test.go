@@ -15,9 +15,10 @@ import (
 )
 
 type scenarioTestDocument struct {
-	typ  cbc.Key
-	tags []cbc.Key
-	exts []tax.Extensions
+	typ        cbc.Key
+	tags       []cbc.Key
+	exts       []tax.Extensions
+	categories []cbc.Code
 }
 
 func (d *scenarioTestDocument) GetType() cbc.Key {
@@ -28,6 +29,9 @@ func (d *scenarioTestDocument) GetTags() []cbc.Key {
 }
 func (d *scenarioTestDocument) GetExtensions() []tax.Extensions {
 	return d.exts
+}
+func (d *scenarioTestDocument) GetCategories() []cbc.Code {
+	return d.categories
 }
 
 func TestScenarioSetSummary(t *testing.T) {
@@ -194,6 +198,88 @@ func TestScenarioSetSummary(t *testing.T) {
 		require.Len(t, sum.Notes, 1)
 		assert.Equal(t, "This is a note1", sum.Notes[0].Text)
 		assert.Equal(t, tax.CategoryVAT, sum.Notes[0].Category)
+	})
+}
+
+func TestScenarioSetCategoryFilter(t *testing.T) {
+	ss := &tax.ScenarioSet{
+		Schema: bill.ShortSchemaInvoice,
+		List: []*tax.Scenario{
+			{
+				Tags:       []cbc.Key{tax.TagReverseCharge},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse charge VAT",
+				},
+			},
+			{
+				Tags:       []cbc.Key{tax.TagReverseCharge},
+				Categories: []cbc.Code{"IGIC"},
+				Note: &tax.Note{
+					Category: "IGIC",
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse charge IGIC",
+				},
+			},
+		},
+	}
+
+	t.Run("matches VAT category", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:        bill.InvoiceTypeStandard,
+			tags:       []cbc.Key{tax.TagReverseCharge},
+			categories: []cbc.Code{tax.CategoryVAT},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		require.Len(t, sum.Notes, 1)
+		assert.Equal(t, "Reverse charge VAT", sum.Notes[0].Text)
+	})
+
+	t.Run("matches IGIC category", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:        bill.InvoiceTypeStandard,
+			tags:       []cbc.Key{tax.TagReverseCharge},
+			categories: []cbc.Code{"IGIC"},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		require.Len(t, sum.Notes, 1)
+		assert.Equal(t, "Reverse charge IGIC", sum.Notes[0].Text)
+	})
+
+	t.Run("no match without category", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:  bill.InvoiceTypeStandard,
+			tags: []cbc.Key{tax.TagReverseCharge},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		assert.Empty(t, sum.Notes)
+	})
+
+	t.Run("no match with wrong category", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:        bill.InvoiceTypeStandard,
+			tags:       []cbc.Key{tax.TagReverseCharge},
+			categories: []cbc.Code{"IRPF"},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		assert.Empty(t, sum.Notes)
+	})
+
+	t.Run("both categories present matches both", func(t *testing.T) {
+		doc := &scenarioTestDocument{
+			typ:        bill.InvoiceTypeStandard,
+			tags:       []cbc.Key{tax.TagReverseCharge},
+			categories: []cbc.Code{tax.CategoryVAT, "IGIC"},
+		}
+		sum := ss.SummaryFor(doc)
+		require.NotNil(t, sum)
+		assert.Len(t, sum.Notes, 2)
 	})
 }
 

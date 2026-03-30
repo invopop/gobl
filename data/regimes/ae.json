@@ -27,6 +27,9 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
             "cat": "VAT",
             "key": "reverse-charge",
@@ -36,6 +39,9 @@
         {
           "tags": [
             "simplified"
+          ],
+          "cat": [
+            "VAT"
           ],
           "note": {
             "cat": "VAT",

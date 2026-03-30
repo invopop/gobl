@@ -175,6 +175,14 @@
           "title": "Tags",
           "description": "Array of tags that have been applied to the document."
         },
+        "cat": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/code"
+          },
+          "type": "array",
+          "title": "Tax Categories",
+          "description": "Categories is an optional list of tax category codes that acts as a filter.\nWhen set, at least one of the specified categories must be present in the\ndocument's line taxes for the scenario to match."
+        },
         "ext_key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Extension Key",

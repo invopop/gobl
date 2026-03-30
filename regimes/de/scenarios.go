@@ -12,7 +12,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// ** Special Messages **
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{tax.TagReverseCharge},
+			Tags:       []cbc.Key{tax.TagReverseCharge},
+			Categories: []cbc.Code{tax.CategoryVAT},
 			Note: &tax.Note{
 				Category: tax.CategoryVAT,
 				Key:      tax.KeyReverseCharge,
