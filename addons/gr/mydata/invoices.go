@@ -180,6 +180,10 @@ func validateInvoicePreceding(value any) error {
 
 // requiresValidCustomer returns true if the invoice type requires a customer.
 func requiresValidCustomer(inv *bill.Invoice) bool {
+	if inv.Tax == nil {
+		return false
+	}
+
 	// Invoice type categories that require a valid customer.
 	typeCats := []string{"1", "2", "5"}
 
