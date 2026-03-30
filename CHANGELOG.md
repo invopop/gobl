@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 
 ### Changed
 
