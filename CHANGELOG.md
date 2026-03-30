@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+- `es-tbai-v1`: Customer validation now only required for non-simplified invoices
 
 ### Fixed
 
