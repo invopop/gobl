@@ -1,0 +1,103 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "cfe2c3032439ff3e49c1246cce7c0c84f704e6b2792b8e4d1669c7332ae029c3"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "7c94e8d1-3f52-4a6b-b9e0-1d7f3c8a2e45",
+		"type": "standard",
+		"series": "INV",
+		"code": "2025-002",
+		"issue_date": "2025-03-15",
+		"currency": "JPY",
+		"supplier": {
+			"name": "Sakura Tech Co., Ltd.",
+			"tax_id": {
+				"country": "JP",
+				"code": "9700150098417"
+			},
+			"addresses": [
+				{
+					"street": "Marunouchi 1-9-2",
+					"locality": "Chiyoda-ku",
+					"region": "Tokyo",
+					"code": "100-0005",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "Acme Cloud Inc.",
+			"tax_id": {
+				"country": "US",
+				"code": "123456789"
+			},
+			"addresses": [
+				{
+					"street": "100 Market St",
+					"locality": "San Francisco",
+					"region": "CA",
+					"code": "94105",
+					"country": "US"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "IT consulting services",
+					"price": "300000"
+				},
+				"sum": "300000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "300000"
+			}
+		],
+		"totals": {
+			"sum": "300000",
+			"total": "300000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "300000",
+								"amount": "0"
+							}
+						],
+						"amount": "0"
+					}
+				],
+				"sum": "0"
+			},
+			"tax": "0",
+			"total_with_tax": "300000",
+			"payable": "300000"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse Charge"
+			}
+		]
+	}
+}

@@ -1,0 +1,38 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "7c94e8d1-3f52-4a6b-b9e0-1d7f3c8a2e45"
+currency: "JPY"
+issue_date: "2025-03-15"
+series: "INV"
+code: "2025-002"
+$tags:
+  - reverse-charge
+supplier:
+  tax_id:
+    country: "JP"
+    code: "9700150098417"
+  name: "Sakura Tech Co., Ltd."
+  addresses:
+    - street: "Marunouchi 1-9-2"
+      locality: "Chiyoda-ku"
+      region: "Tokyo"
+      code: "100-0005"
+      country: "JP"
+customer:
+  name: "Acme Cloud Inc."
+  tax_id:
+    country: "US"
+    code: "123456789"
+  addresses:
+    - street: "100 Market St"
+      locality: "San Francisco"
+      region: "CA"
+      code: "94105"
+      country: "US"
+lines:
+  - quantity: 1
+    item:
+      name: "IT consulting services"
+      price: "300000"
+    taxes:
+      - cat: VAT
+        key: reverse-charge

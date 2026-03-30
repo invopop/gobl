@@ -1,0 +1,164 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Japan",
+    "ja": "日本"
+  },
+  "description": {
+    "en": "Japan's tax system is administered by the National Tax Agency (NTA).\nThe Consumption Tax (消費税, Shōhizei) functions as a VAT and applies\nat standard (10%) and reduced (8%) rates since October 2019.\n\nBusinesses are identified by a 13-digit Corporate Number (法人番号,\nHōjin Bangō). The Qualified Invoice System (インボイス制度), effective\nsince October 2023, requires registered businesses to include a\nRegistration Number (T + Corporate Number) on invoices for buyers\nto claim input tax credits.\n\nCredit notes are supported as Qualified Return Invoices (適格返還請求書)\nfor returns, discounts, and rebates."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "National Tax Agency - Consumption Tax"
+      },
+      "url": "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm"
+    }
+  ],
+  "time_zone": "Asia/Tokyo",
+  "country": "JP",
+  "currency": "JPY",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "CT",
+        "ja": "消費税"
+      },
+      "title": {
+        "en": "Consumption Tax",
+        "ja": "消費税"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ja": "標準税率"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless specified otherwise.",
+            "ja": "特に定めがない限り、ほとんどの商品・サービスに適用されます。"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "10%"
+            },
+            {
+              "since": "2014-04-01",
+              "percent": "8%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ja": "軽減税率"
+          },
+          "desc": {
+            "en": "Applies to food and non-alcoholic beverages (excluding dining out) and newspaper subscriptions (2+ per week).",
+            "ja": "飲食料品（外食を除く）および定期購読の新聞（週2回以上発行）に適用されます。"
+          },
+          "values": [
+            {
+              "since": "2019-10-01",
+              "percent": "8%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "National Tax Agency - Consumption Tax",
+            "ja": "国税庁 - 消費税"
+          },
+          "url": "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm"
+        }
+      ]
+    }
+  ]
+}
