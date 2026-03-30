@@ -37,7 +37,24 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				The French tax regime covers the basics.
+				France's tax system is administered by the Direction Générale des Finances
+				Publiques (DGFiP). As an EU member state, France follows the EU VAT Directive
+				with locally adapted rates.
+
+				TVA (Taxe sur la Valeur Ajoutée) applies at standard, intermediate, reduced,
+				and super-reduced rates covering various categories of goods and services.
+
+				Businesses are identified by three closely related numbers: the VAT code
+				(numéro de TVA intracommunautaire), an 11-digit number starting with a
+				2-digit checksum followed by the 9-digit SIREN; the SIREN itself, a 9-digit
+				company identifier from the national register (Répertoire SIRENE); and the
+				SIRET, which extends the SIREN with a 5-digit establishment number to form
+				a 14-digit code.
+
+				France supports both corrective invoices and credit notes for invoice
+				corrections. E-invoicing via the Chorus Pro platform is mandatory for B2G
+				transactions, with B2B e-invoicing being progressively mandated through the
+				CTC (Continuous Transaction Controls) framework.
 			`),
 		},
 		TimeZone: "Europe/Paris",

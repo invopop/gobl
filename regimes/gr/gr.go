@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -34,6 +35,37 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Greece",
 			i18n.EL: "Ελλάδα",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Greece's tax system is administered by the Independent Authority for Public
+				Revenue (IAPR / AADE). As an EU member state, Greece follows the EU VAT
+				Directive with locally adapted rates.
+
+				FPA (Fóros Prostithémenis Axías) applies at standard, reduced, and
+				super-reduced rates. The islands of Leros, Lesbos, Kos, Samos, and Chios
+				benefit from a reduction on all standard rates.
+
+				Businesses are identified by their AFM (Arithmós Forologikoú Mitróou), a
+				9-digit tax identification number. The Greek VAT number uses the format EL
+				followed by the 9-digit AFM.
+
+				Greece uses the myDATA platform for tax reporting, where invoices must be
+				classified with specific invoice type codes, VAT category codes, income
+				classifications, and exemption codes. Payment method codes must also be
+				reported. PEPPOL BIS Billing 3.0 is used for B2G e-invoicing. Credit notes
+				are supported for invoice corrections.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("myDATA API Documentation v1.0.7"),
+				URL:   "https://www.aade.gr/sites/default/files/2023-10/myDATA%20API%20Documentation_v1.0.7_eng.pdf",
+			},
+			{
+				Title: i18n.NewString("Greek PEPPOL BIS Billing 3.0"),
+				URL:   "https://www.gsis.gr/sites/default/files/eInvoice/Instructions%20to%20B2G%20Suppliers%20and%20certified%20PEPPOL%20Providers%20for%20the%20Greek%20PEPPOL%20BIS-EN-%20v1.0.pdf",
+			},
 		},
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
