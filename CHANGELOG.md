@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `bill`: `Date` field on `Tax` to define the tax point date (issue, delivery, paid).
+- `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 
 ### Removed

@@ -6,27 +6,27 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Date keys define when the tax point occurs, i.e. when the tax liability
+// Point keys define when the tax point occurs, i.e. when the tax liability
 // is triggered. These correspond to UNCL 2005 date/time/period function codes
 // used in BT-8 of the EN 16931 standard.
 const (
-	// DateIssue indicates tax is due on the invoice issue date.
+	// PointIssue indicates tax is due on the invoice issue date.
 	// Corresponds to UNCL 2005 code 3.
-	DateIssue cbc.Key = "issue"
+	PointIssue cbc.Key = "issue"
 
-	// DateDelivery indicates tax is due on the delivery date.
+	// PointDelivery indicates tax is due on the delivery date.
 	// Corresponds to UNCL 2005 code 35.
-	DateDelivery cbc.Key = "delivery"
+	PointDelivery cbc.Key = "delivery"
 
-	// DatePaid indicates tax is due when payment is received.
+	// PointPayment indicates tax is due when payment is received.
 	// Corresponds to UNCL 2005 code 432.
-	DatePaid cbc.Key = "paid"
+	PointPayment cbc.Key = "payment"
 )
 
-// DateDefs lists the supported tax date keys and their descriptions.
-var DateDefs = []*cbc.Definition{
+// PointDefs lists the supported tax point keys and their descriptions.
+var PointDefs = []*cbc.Definition{
 	{
-		Key: DateIssue,
+		Key: PointIssue,
 		Name: i18n.String{
 			i18n.EN: "Issue Date",
 		},
@@ -37,7 +37,7 @@ var DateDefs = []*cbc.Definition{
 		},
 	},
 	{
-		Key: DateDelivery,
+		Key: PointDelivery,
 		Name: i18n.String{
 			i18n.EN: "Delivery Date",
 		},
@@ -48,9 +48,9 @@ var DateDefs = []*cbc.Definition{
 		},
 	},
 	{
-		Key: DatePaid,
+		Key: PointPayment,
 		Name: i18n.String{
-			i18n.EN: "Paid Date",
+			i18n.EN: "Payment Date",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`

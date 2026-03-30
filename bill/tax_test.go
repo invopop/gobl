@@ -30,18 +30,18 @@ func TestTaxValidation(t *testing.T) {
 		err := tx.ValidateWithContext(context.Background())
 		assert.ErrorContains(t, err, "rounding: must be a valid value")
 	})
-	t.Run("with date", func(t *testing.T) {
+	t.Run("with tax point", func(t *testing.T) {
 		tx := &bill.Tax{
-			Date: "delivery",
+			Point: "delivery",
 		}
 		assert.NoError(t, tx.ValidateWithContext(context.Background()))
 	})
-	t.Run("with invalid date", func(t *testing.T) {
+	t.Run("with invalid tax point", func(t *testing.T) {
 		tx := &bill.Tax{
-			Date: "invalid",
+			Point: "invalid",
 		}
 		err := tx.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "date: must be a valid value")
+		assert.ErrorContains(t, err, "point: must be a valid value")
 	})
 }
 
@@ -218,9 +218,9 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 				"type": "string",
 				"title": "Rounding"
 			},
-			"date": {
+			"point": {
 				"type": "string",
-				"title": "Date"
+				"title": "Point"
 			}
 		}
 	}`
@@ -236,12 +236,12 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 	assert.Equal(t, "precise", prop.OneOf[0].Const)
 	assert.Equal(t, "currency", prop.OneOf[1].Const)
 
-	prop, ok = schema.Properties.Get("date")
+	prop, ok = schema.Properties.Get("point")
 	require.True(t, ok)
 	assert.Len(t, prop.OneOf, 3)
 	assert.Equal(t, "issue", prop.OneOf[0].Const)
 	assert.Equal(t, "delivery", prop.OneOf[1].Const)
-	assert.Equal(t, "paid", prop.OneOf[2].Const)
+	assert.Equal(t, "payment", prop.OneOf[2].Const)
 }
 
 func TestTaxGetExt(t *testing.T) {
