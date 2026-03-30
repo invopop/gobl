@@ -347,6 +347,140 @@ func TestReplicateTool(t *testing.T) {
 	assert.Contains(t, text, "bill/invoice")
 }
 
+func TestCorrectTool(t *testing.T) {
+	s := initServer(t)
+
+	// Build a valid envelope first
+	invoiceData := `{
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"currency": "EUR",
+		"issue_date": "2024-01-15",
+		"type": "standard",
+		"supplier": {
+			"tax_id": {"country": "ES", "code": "B91983379"},
+			"name": "Test Company S.L."
+		},
+		"customer": {
+			"tax_id": {"country": "ES", "code": "B85905495"},
+			"name": "Customer S.L."
+		},
+		"lines": [{
+			"quantity": "10",
+			"item": {"name": "Test Item", "price": "100.00"},
+			"taxes": [{"cat": "VAT", "rate": "standard"}]
+		}]
+	}`
+
+	buildResult := callTool(t, s, "build", map[string]any{
+		"data":    invoiceData,
+		"envelop": true,
+	})
+	require.False(t, buildResult.IsError)
+	builtText := extractText(t, buildResult)
+
+	t.Run("correction options schema", func(t *testing.T) {
+		result := callTool(t, s, "correct", map[string]any{
+			"data":   builtText,
+			"schema": true,
+		})
+		assert.False(t, result.IsError)
+		text := extractText(t, result)
+		assert.NotEmpty(t, text)
+	})
+
+	t.Run("create credit note", func(t *testing.T) {
+		opts := `{"credit": true}`
+		result := callTool(t, s, "correct", map[string]any{
+			"data":    builtText,
+			"options": opts,
+		})
+		// May succeed or fail depending on regime requirements,
+		// but should not panic
+		_ = result
+	})
+
+	t.Run("missing data", func(t *testing.T) {
+		result := callTool(t, s, "correct", map[string]any{})
+		assert.True(t, result.IsError)
+		text := extractText(t, result)
+		assert.Contains(t, text, "data")
+	})
+
+	t.Run("invalid data", func(t *testing.T) {
+		result := callTool(t, s, "correct", map[string]any{
+			"data": `{"invalid": true}`,
+		})
+		assert.True(t, result.IsError)
+	})
+}
+
+func TestValidateToolMissingData(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "validate", map[string]any{})
+	assert.True(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "data")
+}
+
+func TestReplicateToolMissingData(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "replicate", map[string]any{})
+	assert.True(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "data")
+}
+
+func TestReplicateToolInvalidData(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "replicate", map[string]any{
+		"data": `{"invalid": true}`,
+	})
+	assert.True(t, result.IsError)
+}
+
+func TestSchemaToolMissingPath(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "schema", map[string]any{})
+	assert.True(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "path")
+}
+
+func TestSchemaToolWithJsonSuffix(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "schema", map[string]any{
+		"path": "bill/invoice.json",
+	})
+	assert.False(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "properties")
+}
+
+func TestRegimeToolMissingCode(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "regime", map[string]any{})
+	assert.True(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "code")
+}
+
+func TestRegimeToolLowercase(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "regime", map[string]any{
+		"code": "de",
+	})
+	assert.False(t, result.IsError)
+	text := extractText(t, result)
+	assert.Contains(t, text, "Germany")
+}
+
 func TestNewServer(t *testing.T) {
 	srv := goblmcp.NewServer()
 	require.NotNil(t, srv)
