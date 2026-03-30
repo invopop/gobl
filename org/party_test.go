@@ -137,6 +137,20 @@ func TestPartyValidation(t *testing.T) {
 		assert.NoError(t, party.Validate())
 		assert.Equal(t, "DE", party.GetRegime().String())
 	})
+	t.Run("has tax id code", func(t *testing.T) {
+		var nilParty *org.Party
+		assert.False(t, nilParty.HasTaxIDCode())
+
+		assert.False(t, (&org.Party{Name: "Test"}).HasTaxIDCode())
+
+		assert.False(t, (&org.Party{
+			TaxID: &tax.Identity{Country: "ES"},
+		}).HasTaxIDCode())
+
+		assert.True(t, (&org.Party{
+			TaxID: &tax.Identity{Country: "ES", Code: "B85905495"},
+		}).HasTaxIDCode())
+	})
 	t.Run("with regime and bad code", func(t *testing.T) {
 		party := org.Party{
 			Regime: tax.WithRegime("DE"),

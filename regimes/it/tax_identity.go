@@ -7,9 +7,9 @@ package it
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pkg/luhn"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -49,32 +49,9 @@ func validateTaxCode(value interface{}) error {
 		return errors.New("invalid length")
 	}
 
-	chk := computeLuhnCheckDigit(str[:10])
-	if chk != str[10:] {
+	if luhn.CheckDigit(str[:10]) != str[10:] {
 		return errors.New("invalid check digit")
 	}
 
 	return nil
-}
-
-// TODO: refactor this into a shareable method.
-func computeLuhnCheckDigit(number string) string {
-	sum := 0
-	pos := 0
-
-	for i := len(number) - 1; i >= 0; i-- {
-		digit := int(number[i] - '0')
-
-		if pos%2 == 0 {
-			digit *= 2
-			if digit > 9 {
-				digit -= 9
-			}
-		}
-
-		sum += digit
-		pos++
-	}
-
-	return strconv.FormatInt(int64((10-(sum%10))%10), 10)
 }

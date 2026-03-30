@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `pkg/luhn`: Replaced duplicate `computeLuhnCheckDigit` implementations in the `fr` and `it` regimes with a shared `CheckDigit` function.
+- `org`, `bill`, `regimes`, `addons/it/sdi`: Replaced duplicate `hasTaxIDCode` helpers with a shared `Party.HasTaxIDCode()` method.
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema

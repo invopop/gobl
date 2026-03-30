@@ -37,7 +37,7 @@ func validateInvoiceSupplier(value any) error {
 		),
 		validation.Field(&p.Identities,
 			validation.When(
-				!hasTaxIDCode(p),
+				!p.HasTaxIDCode(),
 				org.RequireIdentityKey(IdentityKeyTaxNumber),
 			),
 			validation.Skip,
@@ -47,10 +47,6 @@ func validateInvoiceSupplier(value any) error {
 
 func isSimplified(inv *bill.Invoice) bool {
 	return inv.HasTags(tax.TagSimplified)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 func hasIdentityTaxNumber(party *org.Party) bool {

@@ -50,6 +50,11 @@ type Party struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// HasTaxIDCode returns true if the party has a tax identity with a non-empty code.
+func (p *Party) HasTaxIDCode() bool {
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
 // Calculate will perform basic normalization of the party's data without
 // using any tax regime or addon.
 func (p *Party) Calculate() error {
