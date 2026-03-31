@@ -16,6 +16,17 @@ import (
 	"github.com/invopop/validation"
 )
 
+var corrections = tax.CorrectionSet{
+	{
+		Schema: bill.ShortSchemaInvoice,
+		Types: []cbc.Key{
+			bill.InvoiceTypeCreditNote,
+			bill.InvoiceTypeDebitNote,
+		},
+		ReasonRequired: true,
+	},
+}
+
 // Series and code patterns
 const (
 	fullCodePattern  = "^[^ ]+ [^/^ ]+/[0-9]+$" // extracted from the SAFT-PT XSD to validate the code when the series is not present (e.g. "FT SERIES-A/123")
