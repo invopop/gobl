@@ -9,6 +9,7 @@ import (
 // Brazilian extension keys required to issue NFS-e documents
 const (
 	ExtKeyCNAE            = "br-nfse-cnae"
+	ExtKeyNBS             = "br-nfse-nbs"
 	ExtKeyFiscalIncentive = "br-nfse-fiscal-incentive"
 	ExtKeyISSLiability    = "br-nfse-iss-liability"
 	ExtKeyService         = "br-nfse-service"
@@ -36,6 +37,43 @@ var extensions = []*cbc.Definition{
 			`),
 		},
 		Pattern: `^\d{2}[\s\.\-\/]?\d{2}[\s\.\-\/]?\d[\s\.\-\/]?\d{2}$`,
+	},
+	{
+		Key: ExtKeyNBS,
+		Name: i18n.String{
+			i18n.EN: "NBS code",
+			i18n.PT: "Código NBS",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The NBS (Nomenclatura Brasileira de Serviços, Intangíveis e outras Operações que
+				produzam Variações no Patrimônio) code for a service. NBS is the Brazilian
+				classification system for services and intangibles, established by Decreto No.
+				7.708/2012 and maintained by the MDIC (Ministério do Desenvolvimento, Indústria,
+				Comércio e Serviços).
+
+				Official list of codes from the MDIC:
+
+				* https://www.gov.br/mdic/pt-br/assuntos/sdic/comercio-e-servicos/nbs-nomenclatura-brasileira-de-servicos
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Decree No. 7.708/2012 - Institution of the NBS and NEBS",
+					i18n.PT: "Decreto Nº 7.708/2012 - Instituição da NBS e NEBS",
+				},
+				URL: "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/decreto/d7708.htm",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "NBS - Brazilian Nomenclature of Services (MDIC)",
+					i18n.PT: "NBS - Nomenclatura Brasileira de Serviços (MDIC)",
+				},
+				URL: "https://www.gov.br/mdic/pt-br/assuntos/sdic/comercio-e-servicos/nbs-nomenclatura-brasileira-de-servicos",
+			},
+		},
+		Pattern: `^\d[\.\s]?\d{4}[\.\s]?\d{2}[\.\s]?\d{2}$`,
 	},
 	{
 		Key: ExtKeyFiscalIncentive,
