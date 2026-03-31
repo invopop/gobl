@@ -36,10 +36,13 @@ var extensionKeys = []*cbc.Definition{
 				Each category corresponds to a field in the FA_VAT XML schema (P_13_*, P_14_*, etc.).
 
 				This extension is used at the **line tax level** (~lines[].taxes[]~) and is automatically
-				normalized by GOBL based on the tax combo ~key~ and ~rate~ fields. The extension is required
-				for all line items.
+				normalized by GOBL based on the tax combo ~key~, ~rate~, and ~country~ fields. The extension
+				is required for all line items.
 
-				Automatic mapping from GOBL tax combos:
+				If the tax combo has a ~country~ set to a value other than ~PL~, the category is
+				automatically set to **8** (outside scope), regardless of the ~key~ and ~rate~ values.
+
+				Automatic mapping from GOBL tax combos (when country is ~PL~ or empty):
 
 				| GOBL Tax Key          | GOBL Rate        | FA_VAT Category | VAT % |
 				| --------------------- | ---------------- | --------------- | ----- |
@@ -52,6 +55,7 @@ var extensionKeys = []*cbc.Definition{
 				| ~exempt~              | -                | 7               | -     |
 				| ~outside-scope~       | -                | 8               | -     |
 				| ~reverse-charge~      | -                | 9               | -     |
+				| *(non-PL country)*    | *(any)*          | 8               | -     |
 
 				Example:
 
