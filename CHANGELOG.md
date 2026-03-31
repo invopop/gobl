@@ -6,14 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
+
 ### Removed
 
 - `pl-favat-v3`: Preceding no longer required when it is a credit note
-
-### Added
-
-- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
-- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 
 ### Changed
 
