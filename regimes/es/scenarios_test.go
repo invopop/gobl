@@ -106,9 +106,9 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	i := testInvoiceStandard(t)
 	i.SetTags(es.TagTravelAgency)
 	require.NoError(t, i.Calculate())
-	assert.Len(t, i.Notes, 1)
-	assert.Equal(t, i.Notes[0].Src, es.TagTravelAgency)
-	assert.Equal(t, i.Notes[0].Text, "Régimen especial de las agencias de viajes.")
+	require.NotNil(t, i.Tax)
+	assert.Len(t, i.Tax.Notes, 1)
+	assert.Equal(t, "Régimen especial de las agencias de viajes.", i.Tax.Notes[0].Text)
 
 	i = testInvoiceSimplified(t)
 	require.NoError(t, i.Calculate())

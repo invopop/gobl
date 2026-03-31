@@ -36,9 +36,12 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "cat": "VAT",
+            "key": "reverse-charge",
             "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
           }
         }

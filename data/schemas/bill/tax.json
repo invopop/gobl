@@ -54,6 +54,14 @@
           "title": "Extensions",
           "description": "Additional extensions that are applied to the invoice as a whole as opposed to specific\nsections."
         },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Notes contains tax-related notes, typically used for exemption reasons\nor other tax-specific explanations associated with particular tax categories."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",

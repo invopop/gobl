@@ -260,20 +260,6 @@ func (n *Note) Validate() error {
 	)
 }
 
-// NoteFromScenario creates a new Note from a ScenarioNote.
-func NoteFromScenario(sn *tax.ScenarioNote) *Note {
-	if sn == nil {
-		return nil
-	}
-	return &Note{
-		Key:  sn.Key,
-		Code: sn.Code,
-		Src:  sn.Src,
-		Text: sn.Text,
-		Ext:  sn.Ext,
-	}
-}
-
 var isValidNoteKey = validation.In(validNoteKeys()...)
 
 func validNoteKeys() []interface{} {
