@@ -135,4 +135,14 @@ func collectContext(rc *Context, obj any) {
 			ca.RulesContext()(rc)
 		}
 	}
+
+	// Claude's fix:
+	// If the object exposes an embedded payload (e.g. schema.Object wrapping
+	// a bill.Invoice), collect context from the inner object so that guards
+	// depending on embedded ContextAdders (like tax.Addons) can match.
+	if emb, ok := obj.(Embeddable); ok {
+		if inner := emb.Embedded(); inner != nil {
+			collectContext(rc, inner)
+		}
+	}
 }

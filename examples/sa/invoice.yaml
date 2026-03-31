@@ -1,0 +1,68 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["sa-zatca-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "SAR"
+issue_time: "12:00:00"
+op_date: "2022-02-01"
+code: "SAMPLE-001"
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "312345678912343"
+  name: "Acme Corp Saudi"
+  identities:
+    - code: "1234567890"
+      ext:
+        sa-zatca-seller-id-scheme: "CRN"
+  addresses:
+    - street: "King Fahd Road"
+      street_extra: "Al Olaya"
+      num: "1234"
+      locality: "Riyadh"
+      region: "Riyadh"
+      code: "12345"
+      country: "SA"
+
+customer:
+  tax_id:
+    country: "SA"
+    code: "399999999900003"
+  name: "Sample Consumer LLC"
+  addresses:
+    - street: "Olaya Street"
+      street_extra: "Al Malaz"
+      num: "5678"
+      locality: "Riyadh"
+      region: "Riyadh"
+      code: "54321"
+      country: "SA"
+
+delivery:
+  date: "2022-02-01"
+  period:
+    start: "2022-02-01"
+    end: "2022-02-28"
+
+payment:
+  instructions:
+    key: "credit-transfer"
+  terms:
+    notes: "Payment due within 30 days"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Financial service"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: zero
