@@ -78,6 +78,15 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Equal(t, "BAR", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
 	})
+	t.Run("with colon in scheme", func(t *testing.T) {
+		id := &org.Inbox{
+			Scheme: "DK:CVR",
+			Code:   "DK12345678",
+		}
+		id.Normalize()
+		assert.Equal(t, "DK:CVR", id.Scheme.String())
+		assert.Equal(t, "DK12345678", id.Code.String())
+	})
 	t.Run("with email in code", func(t *testing.T) {
 		id := &org.Inbox{
 			Code: "dev@invopop.com",
