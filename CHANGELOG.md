@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
 - `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
 - `gr`: Corrected key for the reduced island tax rate
+- `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17
 
