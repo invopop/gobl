@@ -24,9 +24,8 @@ type Tax struct {
 	// the rounding model used.
 	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
-	// Point defines when the tax becomes liable, also known as the
-	// tax point or value date code. It is not a date field,
-	// but rather a code that indicates the relevant date for tax purposes.
+	// Point is a code that identifies the event which triggers the tax liability,
+	// such as invoice issuance, delivery of goods, or receipt of payment.
 	Point cbc.Key `json:"point,omitempty" jsonschema:"title=Point"`
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
