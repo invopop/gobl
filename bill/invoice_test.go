@@ -1079,6 +1079,15 @@ func TestCalculateInverted(t *testing.T) {
 	assert.Equal(t, i.Totals.Due.String(), "-700.00")
 }
 
+func TestInvertWithBypassTag(t *testing.T) {
+	i := &bill.Invoice{}
+	i.SetTags(tax.TagBypass)
+
+	err := i.Invert()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "bypass")
+}
+
 func TestInvoiceForUnknownRegime(t *testing.T) {
 	lines := []*bill.Line{
 		{
@@ -1205,6 +1214,23 @@ func TestValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "lines: (0: (item: (price: cannot be blank.).).)")
+	})
+
+	t.Run("tax point without value date", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Tax.Point = tax.PointDelivery
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("tax point with value date rejected", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		vd := cal.MakeDate(2022, 6, 20)
+		inv.ValueDate = &vd
+		inv.Tax.Point = tax.PointDelivery
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "value_date: value date cannot be set when tax point is set")
 	})
 
 	t.Run("missing lines with charge", func(t *testing.T) {

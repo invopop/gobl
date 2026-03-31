@@ -29,7 +29,8 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSelfBilled)
 		require.NoError(t, i.Calculate())
-		assert.Len(t, i.Notes, 1)
+		require.NotNil(t, i.Tax)
+		assert.Len(t, i.Tax.Notes, 1)
 		assert.Equal(t, i.Tax.Ext[facturae.ExtKeyDocType].String(), "AF")
 	})
 }

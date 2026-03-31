@@ -27,9 +27,12 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "cat": "VAT",
+            "key": "reverse-charge",
             "text": "Reverse Charge"
           }
         },
@@ -37,9 +40,12 @@
           "tags": [
             "simplified"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "simplified",
+            "cat": "VAT",
+            "key": "simplified",
             "text": "Simplified Tax Invoice"
           }
         }

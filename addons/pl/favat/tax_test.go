@@ -88,6 +88,41 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	}
 }
 
+func TestNormalizeTaxComboForeignCountry(t *testing.T) {
+	ad := tax.AddonForKey(favat.V3)
+
+	t.Run("foreign country sets outside scope", func(t *testing.T) {
+		tc := &tax.Combo{
+			Country: "DE",
+			Key:     tax.KeyStandard,
+			Rate:    tax.RateGeneral,
+			Percent: num.NewPercentage(19, 0),
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "8", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
+	})
+
+	t.Run("polish country normalizes normally", func(t *testing.T) {
+		tc := &tax.Combo{
+			Country: "PL",
+			Key:     tax.KeyStandard,
+			Rate:    tax.RateGeneral,
+			Percent: num.NewPercentage(23, 0),
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "1", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
+	})
+
+	t.Run("no country normalizes normally", func(t *testing.T) {
+		tc := &tax.Combo{
+			Key:     tax.KeyExempt,
+			Percent: num.NewPercentage(0, 0),
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "7", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
+	})
+}
+
 func TestValidateTaxCombo(t *testing.T) {
 	ad := tax.AddonForKey(favat.V3)
 

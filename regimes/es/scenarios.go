@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -99,76 +98,142 @@ func invoiceScenarios() *tax.ScenarioSet {
 		Schema: bill.ShortSchemaInvoice,
 		List: []*tax.Scenario{
 			// ** Special Messages **
-			// Reverse Charges
+			// Reverse Charges - VAT
 			{
-				Tags: []cbc.Key{tax.TagReverseCharge},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  tax.TagReverseCharge,
-					Text: "Reverse Charge / Inversión del sujeto pasivo.",
+				Tags:       []cbc.Key{tax.TagReverseCharge},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse Charge / Inversión del sujeto pasivo.",
 				},
 			},
-			// Simplified Scheme (Modules)
+			// Reverse Charges - IGIC
 			{
-				Tags: []cbc.Key{TagSimplifiedScheme},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagSimplifiedScheme,
-					Text: "Factura expedida por contribuyente en régimen simplificado.",
+				Tags:       []cbc.Key{tax.TagReverseCharge},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      tax.KeyReverseCharge,
+					Text:     "Reverse Charge / Inversión del sujeto pasivo.",
+				},
+			},
+			// Simplified Scheme (Modules) - VAT only
+			{
+				Tags:       []cbc.Key{TagSimplifiedScheme},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagSimplifiedScheme,
+					Text:     "Factura expedida por contribuyente en régimen simplificado.",
 				},
 			},
 			// Customer issued invoices
 			{
 				Tags: []cbc.Key{tax.TagSelfBilled},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  tax.TagSelfBilled,
+				Note: &tax.Note{
+					Key:  tax.TagSelfBilled,
 					Text: "Facturación por el destinatario.",
 				},
 			},
-			// Travel agency
+			// Travel agency - VAT
 			{
-				Tags: []cbc.Key{TagTravelAgency},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagTravelAgency,
-					Text: "Régimen especial de las agencias de viajes.",
+				Tags:       []cbc.Key{TagTravelAgency},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagTravelAgency,
+					Text:     "Régimen especial de las agencias de viajes.",
 				},
 			},
-			// Secondhand stuff
+			// Travel agency - IGIC
 			{
-				Tags: []cbc.Key{TagSecondHandGoods},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagSecondHandGoods,
-					Text: "Régimen especial de los bienes usados.",
+				Tags:       []cbc.Key{TagTravelAgency},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      TagTravelAgency,
+					Text:     "Régimen especial de las agencias de viajes.",
 				},
 			},
-			// Art
+			// Second-hand goods - VAT
 			{
-				Tags: []cbc.Key{TagArt},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagArt,
-					Text: "Régimen especial de los objetos de arte.",
+				Tags:       []cbc.Key{TagSecondHandGoods},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagSecondHandGoods,
+					Text:     "Régimen especial de los bienes usados.",
 				},
 			},
-			// Antiques
+			// Second-hand goods - IGIC
 			{
-				Tags: []cbc.Key{TagAntiques},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagAntiques,
-					Text: "Régimen especial de las antigüedades y objetos de colección.",
+				Tags:       []cbc.Key{TagSecondHandGoods},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      TagSecondHandGoods,
+					Text:     "Régimen especial de los bienes usados.",
 				},
 			},
-			// Special Regime of "Cash Criteria"
+			// Art - VAT
 			{
-				Tags: []cbc.Key{TagCashBasis},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  TagCashBasis,
-					Text: "Régimen especial del criterio de caja.",
+				Tags:       []cbc.Key{TagArt},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagArt,
+					Text:     "Régimen especial de los objetos de arte.",
+				},
+			},
+			// Art - IGIC
+			{
+				Tags:       []cbc.Key{TagArt},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      TagArt,
+					Text:     "Régimen especial de los objetos de arte.",
+				},
+			},
+			// Antiques - VAT
+			{
+				Tags:       []cbc.Key{TagAntiques},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagAntiques,
+					Text:     "Régimen especial de las antigüedades y objetos de colección.",
+				},
+			},
+			// Antiques - IGIC
+			{
+				Tags:       []cbc.Key{TagAntiques},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      TagAntiques,
+					Text:     "Régimen especial de las antigüedades y objetos de colección.",
+				},
+			},
+			// Cash basis - VAT
+			{
+				Tags:       []cbc.Key{TagCashBasis},
+				Categories: []cbc.Code{tax.CategoryVAT},
+				Note: &tax.Note{
+					Category: tax.CategoryVAT,
+					Key:      TagCashBasis,
+					Text:     "Régimen especial del criterio de caja.",
+				},
+			},
+			// Cash basis - IGIC
+			{
+				Tags:       []cbc.Key{TagCashBasis},
+				Categories: []cbc.Code{TaxCategoryIGIC},
+				Note: &tax.Note{
+					Category: TaxCategoryIGIC,
+					Key:      TagCashBasis,
+					Text:     "Régimen especial del criterio de caja.",
 				},
 			},
 		},

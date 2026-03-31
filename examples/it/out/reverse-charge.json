@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "13e60d764581b68f07bfcf0bab9a5bb1ba3d8aba0c368d7796e0eeb44469ef6f"
+			"val": "ad295cd4b4062556a927c8c976aa931ddec62d1235ee4455d724ce4548e75872"
 		}
 	},
 	"doc": {
@@ -26,7 +26,14 @@
 			"ext": {
 				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPR12"
-			}
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge",
+					"text": "Reverse Charge / Inversione del soggetto passivo"
+				}
+			]
 		},
 		"supplier": {
 			"name": "MªF. Services",
@@ -125,13 +132,6 @@
 			"tax": "0.00",
 			"total_with_tax": "1800.00",
 			"payable": "1800.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "reverse-charge",
-				"text": "Reverse Charge / Inversione del soggetto passivo"
-			}
-		]
+		}
 	}
 }
