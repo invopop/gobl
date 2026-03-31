@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `org`: New note key `footer` for document footer text.
 - `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
 - `eu-en16935-v2017`: Exemption reason notes (BT-120)
 - `tax`: Add note to tax

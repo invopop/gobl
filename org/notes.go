@@ -70,6 +70,8 @@ const (
 	NoteKeyQuarantine cbc.Key = "quarantine"
 	// Tax declaration
 	NoteKeyTax cbc.Key = "tax"
+	// Footer text for the document
+	NoteKeyFooter cbc.Key = "footer"
 	// Other
 	NoteKeyOther cbc.Key = "other"
 )
@@ -211,6 +213,11 @@ var NoteKeyDefinitions = []cbc.Definition{
 		Key:  NoteKeyTax,
 		Name: i18n.NewString("Tax"),
 		Desc: i18n.NewString("Tax declaration"),
+	},
+	{
+		Key:  NoteKeyFooter,
+		Name: i18n.NewString("Footer"),
+		Desc: i18n.NewString("Footer text for the document"),
 	},
 	{
 		Key:  NoteKeyOther,

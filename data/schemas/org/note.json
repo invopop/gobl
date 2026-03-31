@@ -150,6 +150,11 @@
               "description": "Tax declaration"
             },
             {
+              "const": "footer",
+              "title": "Footer",
+              "description": "Footer text for the document"
+            },
+            {
               "const": "other",
               "title": "Other",
               "description": "Mutually defined"
