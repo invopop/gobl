@@ -28,4 +28,5 @@ import (
 	_ "github.com/invopop/gobl/addons/mx/cfdi"
 	_ "github.com/invopop/gobl/addons/pl/favat"
 	_ "github.com/invopop/gobl/addons/pt/saft"
+	_ "github.com/invopop/gobl/addons/sa/zatca"
 )
