@@ -24,6 +24,10 @@ type Tax struct {
 	// the rounding model used.
 	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
+	// Point is a code that identifies the event which triggers the tax liability,
+	// such as invoice issuance, delivery of goods, or receipt of payment.
+	Point cbc.Key `json:"point,omitempty" jsonschema:"title=Point"`
+
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
@@ -108,6 +112,9 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&t.Rounding,
 			cbc.InKeyDefs(tax.RoundingRules),
 		),
+		validation.Field(&t.Point,
+			cbc.InKeyDefs(tax.PointDefs),
+		),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Notes),
 		validation.Field(&t.Meta),
@@ -139,6 +146,16 @@ func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
 				Const:       r.Key.String(),
 				Title:       r.Name.String(),
 				Description: r.Desc.String(),
+			}
+		}
+	}
+	if p, ok := schema.Properties.Get("point"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.PointDefs))
+		for i, w := range tax.PointDefs {
+			p.OneOf[i] = &jsonschema.Schema{
+				Const:       w.Key.String(),
+				Title:       w.Name.String(),
+				Description: w.Desc.String(),
 			}
 		}
 	}

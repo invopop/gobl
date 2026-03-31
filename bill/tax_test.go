@@ -30,6 +30,19 @@ func TestTaxValidation(t *testing.T) {
 		err := tx.ValidateWithContext(context.Background())
 		assert.ErrorContains(t, err, "rounding: must be a valid value")
 	})
+	t.Run("with tax point", func(t *testing.T) {
+		tx := &bill.Tax{
+			Point: "delivery",
+		}
+		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+	})
+	t.Run("with invalid tax point", func(t *testing.T) {
+		tx := &bill.Tax{
+			Point: "invalid",
+		}
+		err := tx.ValidateWithContext(context.Background())
+		assert.ErrorContains(t, err, "point: must be a valid value")
+	})
 }
 
 func TestTaxNormalize(t *testing.T) {
@@ -231,20 +244,31 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 			"rounding": {
 				"type": "string",
 				"title": "Rounding"
-			}	
+			},
+			"point": {
+				"type": "string",
+				"title": "Point"
+			}
 		}
 	}`
 	schema := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(eg), schema))
 
-	tax := new(bill.Tax)
-	tax.JSONSchemaExtend(schema)
+	tx := new(bill.Tax)
+	tx.JSONSchemaExtend(schema)
 
 	prop, ok := schema.Properties.Get("rounding")
 	require.True(t, ok)
 	assert.Len(t, prop.OneOf, 2)
 	assert.Equal(t, "precise", prop.OneOf[0].Const)
 	assert.Equal(t, "currency", prop.OneOf[1].Const)
+
+	prop, ok = schema.Properties.Get("point")
+	require.True(t, ok)
+	assert.Len(t, prop.OneOf, 3)
+	assert.Equal(t, "issue", prop.OneOf[0].Const)
+	assert.Equal(t, "delivery", prop.OneOf[1].Const)
+	assert.Equal(t, "payment", prop.OneOf[2].Const)
 }
 
 func TestTaxGetExt(t *testing.T) {

@@ -8,19 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `tax`: Update scenarios to use tax.Note instead of ScenarioNote
+- `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
 - `eu-en16935-v2017`: Exemption reason notes (BT-120)
 - `tax`: Add note to tax
-- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts
-
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
+- 
 ### Removed
 
 - `pl-favat-v3`: Preceding no longer required when it is a credit note
-- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
-- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 
 ### Changed
 
+- `tax`: Update scenarios to use tax.Note instead of ScenarioNote
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
