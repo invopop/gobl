@@ -142,7 +142,14 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			cal.DateNotZero(),
 		),
 		validation.Field(&inv.OperationDate),
-		validation.Field(&inv.ValueDate),
+		validation.Field(&inv.ValueDate,
+			// The value date indicates indicates when taxes become liable which is also indicated by the tax point
+			// so if the tax point is set, the value date should not be set to avoid confusion.
+			validation.When(
+				inv.Tax != nil && inv.Tax.Point != cbc.KeyEmpty,
+				validation.Empty.Error("value date cannot be set when tax point is set"),
+			),
+		),
 		validation.Field(&inv.Currency,
 			validation.Required,
 			exRule,

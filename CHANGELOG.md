@@ -6,18 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Removed
-
-- `pl-favat-v3`: Preceding no longer required when it is a credit note
-
 ### Added
 
+- `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
+- `eu-en16935-v2017`: Exemption reason notes (BT-120)
+- `tax`: Add note to tax
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 - `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 - `br-nfse-v1`: NBS extension for service classification codes.
 
+### Removed
+
+- `pl-favat-v3`: Preceding no longer required when it is a credit note
+
 ### Changed
 
+- `tax`: Update scenarios to use tax.Note instead of ScenarioNote
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
@@ -29,6 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
 - `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
 - `gr`: Corrected key for the reduced island tax rate
+- `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17
 

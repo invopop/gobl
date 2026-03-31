@@ -27,8 +27,7 @@
             "reverse-charge"
           ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "key": "reverse-charge",
             "text": "Reverse Charge"
           }
         },
@@ -37,8 +36,7 @@
             "simplified"
           ],
           "note": {
-            "key": "legal",
-            "src": "simplified",
+            "key": "simplified",
             "text": "Simplified Tax Invoice"
           }
         }
