@@ -30,7 +30,7 @@ func (d *scenarioTestDocument) GetTags() []cbc.Key {
 func (d *scenarioTestDocument) GetExtensions() []tax.Extensions {
 	return d.exts
 }
-func (d *scenarioTestDocument) GetCategories() []cbc.Code {
+func (d *scenarioTestDocument) GetTaxCategories() []cbc.Code {
 	return d.categories
 }
 

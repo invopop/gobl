@@ -26,8 +26,9 @@ type ScenarioDocument interface {
 	GetTags() []cbc.Key
 	// GetExtensions an array of extensions that used in the document.
 	GetExtensions() []Extensions
-	// GetCategories returns a list of tax categories used in the document's lines.
-	GetCategories() []cbc.Code
+	// GetTaxCategories returns a list of tax categories used in the document's lines,
+	// charges, and discounts.
+	GetTaxCategories() []cbc.Code
 }
 
 // Scenario is used to describe a tax scenario of a document based on the combination
@@ -194,7 +195,7 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 		}
 	}
 	if len(s.Categories) > 0 {
-		if !s.hasCategories(doc.GetCategories()) {
+		if !s.hasCategories(doc.GetTaxCategories()) {
 			return false
 		}
 	}

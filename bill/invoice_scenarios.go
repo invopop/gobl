@@ -32,12 +32,26 @@ func (inv *Invoice) GetType() cbc.Key {
 	return inv.Type
 }
 
-// GetCategories returns a list of unique tax category codes used across all
-// invoice lines.
-func (inv *Invoice) GetCategories() []cbc.Code {
+// GetTaxCategories returns a list of unique tax category codes used across all
+// invoice lines, charges, and discounts.
+func (inv *Invoice) GetTaxCategories() []cbc.Code {
 	cats := make([]cbc.Code, 0)
 	for _, line := range inv.Lines {
 		for _, combo := range line.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	for _, charge := range inv.Charges {
+		for _, combo := range charge.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	for _, discount := range inv.Discounts {
+		for _, combo := range discount.Taxes {
 			if !combo.Category.In(cats...) {
 				cats = append(cats, combo.Category)
 			}
