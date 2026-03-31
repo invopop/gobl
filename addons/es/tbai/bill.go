@@ -83,7 +83,11 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceCustomer),
+			validation.When(
+				!inv.HasTags(tax.TagSimplified),
+				validation.Required,
+				validation.By(validateInvoiceCustomer),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,

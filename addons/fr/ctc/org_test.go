@@ -476,7 +476,9 @@ func TestSIRENGenerationFromSIRET(t *testing.T) {
 		}
 		assert.NotNil(t, sirenIdentity)
 		assert.Equal(t, "123456789", sirenIdentity.Code.String())
-		// Note: ISO scheme ID 0002 will be set by EN16931 addon
+		// ISO scheme ID must be set here because EN16931 already ran over the
+		// identities slice before FR CTC appends the new SIREN identity.
+		assert.Equal(t, "0002", sirenIdentity.Ext[iso.ExtKeySchemeID].String())
 	})
 
 	t.Run("generated SIREN gets legal scope", func(t *testing.T) {
