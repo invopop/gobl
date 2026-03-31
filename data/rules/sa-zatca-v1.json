@@ -1,0 +1,552 @@
+{
+  "id": "GOBL-SA-ZATCA-V1",
+  "name": "sa-zatca-v1",
+  "guard": "context: addon in [sa-zatca-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-49",
+          "desc": "EDU/HEA tax exemption requires buyer with NAT identity",
+          "tests": "EDU/HEA buyer NAT"
+        },
+        {
+          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-25",
+          "desc": "simplified invoice with EDU/HEA exemption requires buyer name",
+          "tests": "simplified EDU/HEA buyer name"
+        },
+        {
+          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-31",
+          "desc": "simplified invoices only allow third-party, nominal, and summary flags",
+          "tests": "simplified invoice flags"
+        },
+        {
+          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-32",
+          "desc": "self-billing is not allowed for export invoices",
+          "tests": "no self-billing for exports"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "tax",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-05",
+                  "desc": "document type must be a valid ZATCA type (388, 386, 383, 381)",
+                  "tests": "ext 'untdid-document-type' in [388, 386, 383, 381]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "credit or debit note",
+          "subsets": [
+            {
+              "field": "preceding",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-56",
+                  "desc": "credit and debit notes must have a billing reference",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "reason",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-17",
+                          "desc": "credit and debit notes must contain the reason for issuance",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "issue_time",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-15",
+              "desc": "issue time must be present",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-04",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-39",
+                  "desc": "seller VAT registration number is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-39",
+                      "desc": "seller VAT registration number code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-08",
+                  "desc": "seller must have exactly one identity with a valid scheme ID (CRN, MOM, MLS, 700, SAG, OTH) and alphanumeric code",
+                  "tests": "valid seller ID"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-06",
+                  "desc": "supplier address is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "num",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-06",
+                          "desc": "supplier address building number is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-07",
+                          "desc": "supplier address building number must contain 4 digits",
+                          "tests": "matches ^\\d{4}$"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "street_extra",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-08",
+                          "desc": "supplier address must have a district",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "street",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+                          "desc": "supplier address must have a street name",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-65",
+                          "desc": "supplier postal code is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-66",
+                          "desc": "supplier postal code must be 5 digits",
+                          "tests": "matches ^\\d{5}$"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "locality",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-12",
+                          "desc": "supplier address must have a city name",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "country",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-13",
+                          "desc": "supplier address must have a country code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+              "desc": "customer is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-14",
+              "desc": "buyer must have a tax ID or an identity with a valid ZATCA scheme",
+              "tests": "has tax_id or identity"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-09",
+                  "desc": "customer address is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "standard tax invoice",
+          "subsets": [
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "num",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+                              "desc": "customer address must have a building number",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "street",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+                              "desc": "customer address must have a street name",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "locality",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-11",
+                              "desc": "customer address must have a city name",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "country",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-12",
+                              "desc": "customer address must have a country code",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "street_extra",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-08",
+                              "desc": "customer address must have a district",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "buyer country code is SA",
+          "subsets": [
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "street",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+                              "desc": "customer address must have a street name",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "num",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-10",
+                              "desc": "customer address must have a building number",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "code",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-11",
+                              "desc": "customer address must have a postal code",
+                              "tests": "present"
+                            },
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-67",
+                              "desc": "buyer postal code must be 5 digits when country is SA",
+                              "tests": "matches ^\\d{5}$"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "locality",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-12",
+                              "desc": "customer address must have a city name",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "country",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-13",
+                              "desc": "customer address must have a country code",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "street_extra",
+                          "assert": [
+                            {
+                              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-13",
+                              "desc": "customer address must have a district",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "export invoice",
+          "subsets": [
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-46",
+                      "desc": "export invoices must not have buyer VAT registration number",
+                      "tests": "empty"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "delivery",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-16",
+              "desc": "delivery is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "invoice is a tax invoice, or invoice is a simplified tax summary invoice",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-35",
+              "desc": "delivery period end date must be \u003e= supply date",
+              "tests": "supply end date \u003e= supply date"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "delivery",
+              "subsets": [
+                {
+                  "field": "date",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-19",
+                      "desc": "delivery period must have a supply date",
+                      "tests": "present"
+                    }
+                  ]
+                },
+                {
+                  "field": "period",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-13",
+                      "desc": "supply must have a delivery period",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "simplified summary invoice",
+          "subsets": [
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "name",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-71",
+                      "desc": "buyer name is required for simplified summary invoices",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-02",
+              "desc": "invoice currency must be SAR",
+              "tests": "one of [SAR]"
+            }
+          ]
+        },
+        {
+          "guard": "standard tax invoice",
+          "subsets": [
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "name",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-45",
+                      "desc": "buyer name is required for standard tax invoices",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "taxes",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-52",
+                          "desc": "line taxes are required for standard tax invoices",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "total",
+                      "assert": [
+                        {
+                          "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-53",
+                          "desc": "line total is required for standard tax invoices",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

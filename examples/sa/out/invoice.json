@@ -1,0 +1,163 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "SA",
+	"$addons": [
+		"eu-en16931-v2017",
+		"sa-zatca-v1"
+	],
+	"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+	"type": "standard",
+	"code": "SAMPLE-001",
+	"issue_date": "2026-03-31",
+	"issue_time": "12:00:00",
+	"op_date": "2022-02-01",
+	"currency": "SAR",
+	"tax": {
+		"ext": {
+			"untdid-document-type": "388"
+		}
+	},
+	"supplier": {
+		"name": "Acme Corp Saudi",
+		"tax_id": {
+			"country": "SA",
+			"code": "312345678912343"
+		},
+		"identities": [
+			{
+				"code": "1234567890",
+				"ext": {
+					"sa-zatca-seller-id-scheme": "CRN"
+				}
+			}
+		],
+		"addresses": [
+			{
+				"num": "1234",
+				"street": "King Fahd Road",
+				"street_extra": "Al Olaya",
+				"locality": "Riyadh",
+				"region": "Riyadh",
+				"code": "12345",
+				"country": "SA"
+			}
+		]
+	},
+	"customer": {
+		"name": "Sample Consumer LLC",
+		"tax_id": {
+			"country": "SA",
+			"code": "399999999900003"
+		},
+		"addresses": [
+			{
+				"num": "5678",
+				"street": "Olaya Street",
+				"street_extra": "Al Malaz",
+				"locality": "Riyadh",
+				"region": "Riyadh",
+				"code": "54321",
+				"country": "SA"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "20",
+			"item": {
+				"name": "Development services",
+				"price": "90.00",
+				"unit": "h"
+			},
+			"sum": "1800.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"rate": "general",
+					"percent": "15.0%",
+					"ext": {
+						"untdid-tax-category": "S"
+					}
+				}
+			],
+			"total": "1800.00"
+		},
+		{
+			"i": 2,
+			"quantity": "1",
+			"item": {
+				"name": "Financial service",
+				"price": "10.00",
+				"unit": "one"
+			},
+			"sum": "10.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "zero",
+					"percent": "0%",
+					"ext": {
+						"untdid-tax-category": "Z"
+					}
+				}
+			],
+			"total": "10.00"
+		}
+	],
+	"payment": {
+		"terms": {
+			"notes": "Payment due within 30 days"
+		},
+		"instructions": {
+			"key": "credit-transfer",
+			"ext": {
+				"untdid-payment-means": "30"
+			}
+		}
+	},
+	"delivery": {
+		"date": "2022-02-01",
+		"period": {
+			"start": "2022-02-01",
+			"end": "2022-02-28"
+		}
+	},
+	"totals": {
+		"sum": "1810.00",
+		"total": "1810.00",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"key": "standard",
+							"ext": {
+								"untdid-tax-category": "S"
+							},
+							"base": "1800.00",
+							"percent": "15.0%",
+							"amount": "270.00"
+						},
+						{
+							"key": "zero",
+							"ext": {
+								"untdid-tax-category": "Z"
+							},
+							"base": "10.00",
+							"percent": "0%",
+							"amount": "0.00"
+						}
+					],
+					"amount": "270.00"
+				}
+			],
+			"sum": "270.00"
+		},
+		"tax": "270.00",
+		"total_with_tax": "2080.00",
+		"payable": "2080.00"
+	}
+}

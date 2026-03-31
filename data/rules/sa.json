@@ -1,0 +1,58 @@
+{
+  "id": "GOBL-SA",
+  "name": "sa",
+  "subsets": [
+    {
+      "id": "GOBL-SA-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [SA]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-TAX-IDENTITY-01",
+                      "desc": "invalid Saudi tax identity code",
+                      "tests": "matches ^3[0-9]{13}3$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SA-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SA]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-BILL-INVOICE-01",
+                      "desc": "invoice supplier tax ID required for Saudi Arabia regime",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

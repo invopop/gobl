@@ -1,0 +1,155 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "ar": "المملكة العربية السعودية",
+    "en": "Kingdom of Saudi Arabia"
+  },
+  "description": {
+    "en": "Saudi Arabia's tax system is administered by the Zakat, Tax and\nCustoms Authority (ZATCA). VAT was introduced on January 1, 2018,\nat 5% and increased to 15% on July 1, 2020.\n\nBusinesses must register for VAT if annual taxable supplies exceed\nSAR 375,000, with voluntary registration available above SAR 187,500.\nRegistered businesses receive a VAT Identification Number which must\nappear on all tax invoices.\n\nSimplified tax invoices may be used for B2C transactions. Both credit\nnotes and debit notes are supported for invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "ZATCA - VAT Implementing Regulations"
+      },
+      "url": "https://zatca.gov.sa/en/RulesRegulations/VAT/Pages/default.aspx"
+    }
+  ],
+  "time_zone": "Asia/Riyadh",
+  "country": "SA",
+  "currency": "SAR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "VAT"
+      },
+      "title": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ar": "النسبة الأساسية",
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "ar": "تنطبق على معظم السلع والخدمات ما لم ينص على خلاف ذلك.",
+            "en": "Applies to most goods and services unless specified otherwise."
+          },
+          "values": [
+            {
+              "since": "2020-07-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2018-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "ar": "هيئة الزكاة والضريبة والجمارك",
+            "en": "ZATCA - VAT Regulations"
+          },
+          "url": "https://zatca.gov.sa/en/RulesRegulations/VAT/Pages/default.aspx"
+        }
+      ]
+    }
+  ]
+}
