@@ -121,6 +121,55 @@ func TestNormalizeCode(t *testing.T) {
 	}
 }
 
+func TestNormalizeUpperCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "uppercase",
+			code: cbc.Code("FOO"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "lowercase",
+			code: cbc.Code("foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "with colon",
+			code: cbc.Code("DK:CVR"),
+			want: cbc.Code("DK:CVR"),
+		},
+		{
+			name: "lowercase with colon",
+			code: cbc.Code("dk:cvr"),
+			want: cbc.Code("DK:CVR"),
+		},
+		{
+			name: "with spaces",
+			code: cbc.Code(" foo "),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "peppol scheme",
+			code: cbc.Code("0088:1234567891234"),
+			want: cbc.Code("0088:1234567891234"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeUpperCode(tt.code))
+		})
+	}
+}
+
 func TestNormalizeAlphanumericalCode(t *testing.T) {
 	tests := []struct {
 		name string

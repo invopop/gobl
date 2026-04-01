@@ -128,6 +128,13 @@ func invoiceRules() *rules.Set {
 				rules.Assert("06", "invoice supplier name is required", is.Present),
 			),
 		),
+		// The value date indicates when taxes become liable which is also indicated by the tax point
+		// so if the tax point is set, the value date should not be set to avoid confusion.
+		rules.When(is.Func("has tax point", invoiceHasTaxPoint),
+			rules.Field("value_date",
+				rules.Assert("11", "value date cannot be set when tax point is set", is.Empty),
+			),
+		),
 		rules.Field("customer",
 			rules.When(is.Func("has tax ID code", customerHasTaxIDCode),
 				rules.Field("name",
@@ -153,6 +160,19 @@ func invoiceRules() *rules.Set {
 			),
 		),
 	)
+}
+
+func invoiceHasTaxPoint(val any) bool {
+	var inv *Invoice
+	switch v := val.(type) {
+	case *Invoice:
+		inv = v
+	case Invoice:
+		inv = &v
+	default:
+		return false
+	}
+	return inv != nil && inv.Tax != nil && inv.Tax.Point != cbc.KeyEmpty
 }
 
 func customerHasTaxIDCode(val any) bool {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "31f1ced950a8823b713fe0597b00d89ee1632f087d2772f36ed082a1458c2e60"
+			"val": "df752fbc6ec0c1fe7c78654c0defe95f7fc5d7c7a1e050afdbaa9fb187cb63e7"
 		}
 	},
 	"doc": {
@@ -26,7 +26,13 @@
 			"ext": {
 				"es-sii-doc-type": "F1",
 				"es-sii-third-party-issuer": "S"
-			}
+			},
+			"notes": [
+				{
+					"key": "self-billed",
+					"text": "Facturación por el destinatario."
+				}
+			]
 		},
 		"supplier": {
 			"name": "Provide One S.L.",
@@ -143,13 +149,6 @@
 			"tax": "340.20",
 			"total_with_tax": "1970.20",
 			"payable": "1970.20"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "self-billed",
-				"text": "Facturación por el destinatario."
-			}
-		]
+		}
 	}
 }

@@ -116,6 +116,11 @@ func TestOtherInvoiceTypeValidation(t *testing.T) {
 
 	require.NoError(t, inv.Calculate())
 	assert.NoError(t, rules.Validate(inv))
+
+	inv.Tax = nil
+	require.NoError(t, inv.Calculate())
+	err := rules.Validate(inv)
+	assert.ErrorContains(t, err, "tax")
 }
 
 func TestPrecedingValidation(t *testing.T) {

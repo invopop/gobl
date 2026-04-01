@@ -91,10 +91,17 @@ func billInvoiceRules() *rules.Set {
 			),
 		),
 		// Customer
-		// Code 03: customer tax_id required when customer is present
-		rules.Field("customer",
-			rules.Field("tax_id",
-				rules.Assert("03", "customer tax ID is required", is.Present),
+		// Code 03: customer required for non-simplified invoices
+		rules.When(
+			is.Func("non-simplified", func(val any) bool {
+				inv, ok := val.(*bill.Invoice)
+				return ok && inv != nil && !inv.HasTags(tax.TagSimplified)
+			}),
+			rules.Field("customer",
+				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
+				rules.Field("tax_id",
+					rules.Assert("03a", "customer tax ID is required", is.Present),
+				),
 			),
 		),
 		// Preceding

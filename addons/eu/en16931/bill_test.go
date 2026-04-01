@@ -78,6 +78,192 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
+func TestExemptionNoteValidation(t *testing.T) {
+	t.Run("exempt with matching note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("exempt without note or vatex", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "exempt tax categories require either a VATEX code or an exemption note")
+	})
+
+	t.Run("exempt with vatex code no note needed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("nil note in notes slice", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		var nilNote *tax.Note
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				nilNote,
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("nil tax note normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		var n *tax.Note
+		assert.NotPanics(t, func() {
+			ad.Normalizer(n)
+		})
+	})
+
+	t.Run("non-VAT note skips normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: "IGIC",
+			Key:      "exempt",
+			Text:     "Some IGIC exemption",
+		}
+		ad.Normalizer(n)
+		assert.False(t, n.Ext.Has(untdid.ExtKeyTaxCategory))
+	})
+
+	t.Run("note normalization derives key from ext", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "E",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key)
+	})
+
+	t.Run("note normalization derives key for reverse charge", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Reverse charge applies",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyReverseCharge, n.Key)
+	})
+
+	t.Run("note normalization does not override existing key", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key, "should not override existing key")
+	})
+
+	t.Run("note normalization adds tax category", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// After calculation, the tax note should have the UNTDID tax category set
+		require.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "E", inv.Tax.Notes[0].Ext.Get(untdid.ExtKeyTaxCategory).String())
+	})
+
+	t.Run("standard rate does not need note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+}
+
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := &bill.Invoice{

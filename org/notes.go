@@ -268,20 +268,6 @@ func validNoteKeyValues() []any {
 	return ks
 }
 
-// NoteFromScenario creates a new Note from a ScenarioNote.
-func NoteFromScenario(sn *tax.ScenarioNote) *Note {
-	if sn == nil {
-		return nil
-	}
-	return &Note{
-		Key:  sn.Key,
-		Code: sn.Code,
-		Src:  sn.Src,
-		Text: sn.Text,
-		Ext:  sn.Ext,
-	}
-}
-
 // WithSrc instantiates a new source instance with the provided
 // source property set. This is a useful pattern for regional
 // configurations.

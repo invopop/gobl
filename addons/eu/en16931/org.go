@@ -21,7 +21,7 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyPaymentMethod:  "PMD",
 	org.NoteKeyPaymentTerm:    "AAB",
 	org.NoteKeyGeneral:        "AAI", // General information
-	org.NoteKeyLegal:          "ABY",
+	org.NoteKeyLegal:          "ABL", // Government information
 	org.NoteKeyDangerousGoods: "AAC",
 	org.NoteKeyAck:            "AAE",
 	org.NoteKeyRate:           "AAF",
@@ -68,9 +68,7 @@ func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
 	}
-	if n.Key == cbc.KeyEmpty {
-		return
-	}
+
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
 		n.Ext = n.Ext.Merge(tax.Extensions{
 			untdid.ExtKeyTextSubject: code,

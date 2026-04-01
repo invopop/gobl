@@ -501,3 +501,15 @@ func TestInvoiceTotalsValidation(t *testing.T) {
 	// nil totals is now caught by core GOBL rules (invoice totals are required),
 	// so no addon-specific test is needed.
 }
+
+func TestCorrectionDefinitions(t *testing.T) {
+	t.Run("correction definitions exist for credit and debit notes", func(t *testing.T) {
+		addon := tax.AddonForKey(saft.V1)
+		require.NotNil(t, addon.Corrections)
+		def := addon.Corrections.Def(bill.ShortSchemaInvoice)
+		require.NotNil(t, def)
+		assert.True(t, def.HasType(bill.InvoiceTypeCreditNote))
+		assert.True(t, def.HasType(bill.InvoiceTypeDebitNote))
+		assert.True(t, def.ReasonRequired)
+	})
+}
