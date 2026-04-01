@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/note/message",
-  "$ref": "#/$defs/Message",
+  "$ref": "#/$defs/note.Message",
   "$defs": {
-    "Message": {
+    "note.Message": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -38,16 +38,6 @@
           "title": "Example Title"
         }
       ]
-    },
-    "Meta": {
-      "$id": "https://gobl.org/draft-0/cbc/meta",
-      "patternProperties": {
-        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "description": "Meta defines a structure for data about the data being defined."
     }
   }
 }

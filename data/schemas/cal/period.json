@@ -1,16 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cal/period",
-  "$ref": "#/$defs/Period",
+  "$ref": "#/$defs/cal.Period",
   "$defs": {
-    "Date": {
-      "$id": "https://gobl.org/draft-0/cal/date",
-      "type": "string",
-      "format": "date",
-      "title": "Date",
-      "description": "Civil date in simplified ISO format, like 2021-05-26"
-    },
-    "Period": {
+    "cal.Period": {
       "properties": {
         "label": {
           "type": "string",

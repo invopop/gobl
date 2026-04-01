@@ -1,18 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/extensions",
-  "$ref": "#/$defs/Extensions",
+  "$ref": "#/$defs/tax.Extensions",
   "$defs": {
-    "Code": {
-      "$id": "https://gobl.org/draft-0/cbc/code",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
-      "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
-    },
-    "Extensions": {
+    "tax.Extensions": {
       "patternProperties": {
         "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
           "$ref": "https://gobl.org/draft-0/cbc/code"

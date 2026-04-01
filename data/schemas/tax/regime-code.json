@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/regime-code",
-  "$ref": "#/$defs/RegimeCode",
+  "$ref": "#/$defs/tax.RegimeCode",
   "$defs": {
-    "RegimeCode": {
+    "tax.RegimeCode": {
       "oneOf": [
         {
           "const": "AE",

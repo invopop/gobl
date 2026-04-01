@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/email",
-  "$ref": "#/$defs/Email",
+  "$ref": "#/$defs/org.Email",
   "$defs": {
-    "Email": {
+    "org.Email": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -32,16 +32,6 @@
         "addr"
       ],
       "description": "Email describes the electronic mailing details."
-    },
-    "Meta": {
-      "$id": "https://gobl.org/draft-0/cbc/meta",
-      "patternProperties": {
-        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "description": "Meta defines a structure for data about the data being defined."
     }
   }
 }

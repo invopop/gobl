@@ -10,9 +10,8 @@
   {
     "imports": {
       "codemirror": "https://esm.sh/codemirror@6.0.1",
-      "@codemirror/lang-json": "https://esm.sh/@codemirror/lang-json@6",
       "@codemirror/state": "https://esm.sh/@codemirror/state@6",
-      "codemirror-json-schema": "https://esm.sh/@invopop/codemirror-json-schema@0.9"
+      "codemirror-json-schema": "https://esm.sh/@invopop/codemirror-json-schema@0.9.3"
     }
   }
   </script>
@@ -107,7 +106,6 @@
 
   <script type="module">
     import { basicSetup, EditorView } from 'codemirror';
-    import { json } from '@codemirror/lang-json';
     import { EditorState } from '@codemirror/state';
 
     const darkTheme = EditorView.theme({
@@ -174,10 +172,8 @@
 
         activeSchemaURL = url;
         const path = url.slice(SCHEMA_PREFIX.length);
-        const res = await fetch('/v0/schemas/' + path);
-        if (!res.ok) return;
-
-        updateSchema(view, await res.json());
+        const res = await fetch('/v0/schemas/' + path + '?bundle');
+        if (res.ok) updateSchema(view, await res.json());
       } catch (e) {
         console.warn('Schema loading failed:', e);
       }
@@ -188,7 +184,6 @@
         doc: defaultDoc,
         extensions: [
           basicSetup,
-          json(),
           darkTheme,
           EditorView.lineWrapping,
           jsonSchema(),

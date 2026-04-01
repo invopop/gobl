@@ -24,7 +24,7 @@ type Addons struct {
 
 // AddonDef is an interface that defines the methods that a tax add-on must implement.
 type AddonDef struct {
-	// Key that defines how to uniquely idenitfy the add-on.
+	// Key that defines how to uniquely identify the add-on.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	// Requires defines any additional addons that this one depends on to operate

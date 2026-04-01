@@ -1,18 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/inbox",
-  "$ref": "#/$defs/Inbox",
+  "$ref": "#/$defs/org.Inbox",
   "$defs": {
-    "Code": {
-      "$id": "https://gobl.org/draft-0/cbc/code",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
-      "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
-    },
-    "Inbox": {
+    "org.Inbox": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -53,15 +44,6 @@
       },
       "type": "object",
       "description": "Inbox is used to store data about a connection with a service that is responsible for automatically receiving copies of GOBL envelopes or other document formats."
-    },
-    "Key": {
-      "$id": "https://gobl.org/draft-0/cbc/key",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
-      "title": "Key",
-      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
     }
   }
 }

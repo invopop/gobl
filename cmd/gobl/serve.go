@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl/internal/api"
@@ -42,6 +44,13 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 		Handler: api.NewHandler(),
 	}
 
+	addr := srv.Addr
+	if addr == "" {
+		addr = ":80"
+	}
+	fmt.Fprintf(cmd.OutOrStdout(), "GOBL %s\n", gobl.VERSION)
+	fmt.Fprintf(cmd.OutOrStdout(), "Listening on %s\n", addr)
+
 	var startErr error
 	go func() {
 		err := srv.ListenAndServe()
@@ -52,6 +61,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	}()
 
 	<-ctx.Done()
+	fmt.Fprintln(cmd.OutOrStdout(), "Shutting down...")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()

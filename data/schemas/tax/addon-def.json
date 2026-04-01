@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/addon-def",
-  "$ref": "#/$defs/AddonDef",
+  "$ref": "#/$defs/tax.AddonDef",
   "$defs": {
-    "AddonDef": {
+    "tax.AddonDef": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
-          "description": "Key that defines how to uniquely idenitfy the add-on."
+          "description": "Key that defines how to uniquely identify the add-on."
         },
         "requires": {
           "items": {
@@ -46,7 +46,7 @@
         },
         "tags": {
           "items": {
-            "$ref": "#/$defs/TagSet"
+            "$ref": "https://gobl.org/draft-0/tax/tag-set"
           },
           "type": "array",
           "title": "Tags",
@@ -54,7 +54,7 @@
         },
         "scenarios": {
           "items": {
-            "$ref": "#/$defs/ScenarioSet"
+            "$ref": "https://gobl.org/draft-0/tax/scenario-set"
           },
           "type": "array",
           "title": "Scenarios",
@@ -77,7 +77,7 @@
           "description": "Inboxes is a list of keys that are used to identify where copies of\ndocuments can be sent."
         },
         "corrections": {
-          "$ref": "#/$defs/CorrectionSet",
+          "$ref": "https://gobl.org/draft-0/tax/correction-set",
           "title": "Corrections",
           "description": "Corrections is used to provide a map of correction definitions that\nare supported by the add-on."
         }
@@ -91,331 +91,6 @@
         "corrections"
       ],
       "description": "AddonDef is an interface that defines the methods that a tax add-on must implement."
-    },
-    "Code": {
-      "$id": "https://gobl.org/draft-0/cbc/code",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
-      "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
-    },
-    "CodeMap": {
-      "$id": "https://gobl.org/draft-0/cbc/code-map",
-      "patternProperties": {
-        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "$ref": "https://gobl.org/draft-0/cbc/code"
-        }
-      },
-      "type": "object",
-      "description": "CodeMap is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
-    },
-    "CorrectionDefinition": {
-      "properties": {
-        "schema": {
-          "type": "string",
-          "title": "Schema",
-          "description": "Partial or complete schema URL for the document type supported by correction."
-        },
-        "types": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Types",
-          "description": "The types of sub-documents supported by the regime"
-        },
-        "extensions": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Extensions",
-          "description": "Extension keys that can be included"
-        },
-        "reason_required": {
-          "type": "boolean",
-          "title": "Reason Required",
-          "description": "ReasonRequired when true implies that a reason must be provided"
-        },
-        "stamps": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Stamps",
-          "description": "Stamps that must be copied from the preceding document."
-        },
-        "copy_tax": {
-          "type": "boolean",
-          "title": "Copy Tax Totals",
-          "description": "Copy tax from the preceding document to the document ref."
-        }
-      },
-      "type": "object",
-      "required": [
-        "schema"
-      ],
-      "description": "CorrectionDefinition contains details about what can be defined in ."
-    },
-    "CorrectionSet": {
-      "items": {
-        "$ref": "#/$defs/CorrectionDefinition"
-      },
-      "type": "array",
-      "description": "CorrectionSet defines a set of correction definitions for a selection of schemas."
-    },
-    "DateTime": {
-      "$id": "https://gobl.org/draft-0/cal/date-time",
-      "type": "string",
-      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$",
-      "title": "Date Time",
-      "description": "Civil date time in simplified ISO format with no time zone\nnor location information, for example: 2021-05-26T13:45:00"
-    },
-    "Definition": {
-      "$id": "https://gobl.org/draft-0/cbc/definition",
-      "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Key being defined."
-        },
-        "code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Code this definition represents."
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Short name for the key."
-        },
-        "desc": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description",
-          "description": "Description offering more details about when the key should be used."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Meta defines any additional details that may be useful or associated\nwith the key."
-        },
-        "sources": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/source"
-          },
-          "type": "array",
-          "title": "Sources",
-          "description": "Where the information was sourced from and where it can be reviewed for updates in the future."
-        },
-        "values": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/definition"
-          },
-          "type": "array",
-          "title": "Values",
-          "description": "Values defines the possible values associated with the key, which themselves will\neither be keys or codes depending on the context."
-        },
-        "pattern": {
-          "type": "string",
-          "title": "Pattern",
-          "description": "Pattern is used to validate the key value instead of using a fixed value\nfrom the code or key definitions."
-        },
-        "map": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Code Map",
-          "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
-        }
-      },
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "description": "Definition defines properties of a key, code, or other value that has a specific meaning or utility."
-    },
-    "Extensions": {
-      "$id": "https://gobl.org/draft-0/tax/extensions",
-      "patternProperties": {
-        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "$ref": "https://gobl.org/draft-0/cbc/code"
-        }
-      },
-      "type": "object",
-      "description": "Extensions is a map of extension keys to values."
-    },
-    "Key": {
-      "$id": "https://gobl.org/draft-0/cbc/key",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
-      "title": "Key",
-      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
-    },
-    "Meta": {
-      "$id": "https://gobl.org/draft-0/cbc/meta",
-      "patternProperties": {
-        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "description": "Meta defines a structure for data about the data being defined."
-    },
-    "Scenario": {
-      "properties": {
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of the scenario for further information."
-        },
-        "desc": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description",
-          "description": "Description of the scenario for documentation purposes."
-        },
-        "type": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Type",
-          "description": "Type of document, if present."
-        },
-        "tags": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Array of tags that have been applied to the document."
-        },
-        "cat": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/code"
-          },
-          "type": "array",
-          "title": "Tax Categories",
-          "description": "Categories is an optional list of tax category codes that acts as a filter.\nWhen set, at least one of the specified categories must be present in the\ndocument's line taxes for the scenario to match."
-        },
-        "ext_key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Extension Key",
-          "description": "Extension key that must be present in the document."
-        },
-        "ext_code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Extension Code",
-          "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
-        },
-        "note": {
-          "$ref": "https://gobl.org/draft-0/tax/note",
-          "title": "Note",
-          "description": "A note to be added to the document if the scenario is applied."
-        },
-        "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Codes",
-          "description": "Codes is used to define additional codes for regime specific\nsituations."
-        },
-        "ext": {
-          "$ref": "https://gobl.org/draft-0/tax/extensions",
-          "title": "Extensions",
-          "description": "Ext represents a set of tax extensions that should be applied to\nthe document in the appropriate \"tax\" context."
-        }
-      },
-      "type": "object",
-      "description": "Scenario is used to describe a tax scenario of a document based on the combination of document type and tag used."
-    },
-    "ScenarioSet": {
-      "properties": {
-        "schema": {
-          "type": "string",
-          "title": "Schema",
-          "description": "Partial or complete schema URL for the document type"
-        },
-        "list": {
-          "items": {
-            "$ref": "#/$defs/Scenario"
-          },
-          "type": "array",
-          "title": "List",
-          "description": "List of scenarios for the schema"
-        }
-      },
-      "type": "object",
-      "required": [
-        "schema",
-        "list"
-      ],
-      "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
-    },
-    "Source": {
-      "$id": "https://gobl.org/draft-0/cbc/source",
-      "properties": {
-        "title": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Title",
-          "description": "Title stores the name of the source of information."
-        },
-        "url": {
-          "type": "string",
-          "format": "uri",
-          "title": "URL",
-          "description": "URL is the location of the source of information."
-        },
-        "content_type": {
-          "type": "string",
-          "title": "Content Type",
-          "description": "ContentType of the information expected at the URL."
-        },
-        "at": {
-          "$ref": "https://gobl.org/draft-0/cal/date-time",
-          "title": "At",
-          "description": "At is the date and time the information was retrieved."
-        }
-      },
-      "type": "object",
-      "required": [
-        "url"
-      ],
-      "description": "Source is used to identify a specific source of data."
-    },
-    "String": {
-      "$id": "https://gobl.org/draft-0/i18n/string",
-      "patternProperties": {
-        "^[a-z]{2}$": {
-          "type": "string",
-          "title": "Text in given language."
-        }
-      },
-      "type": "object",
-      "title": "Multi-language String",
-      "description": "Map of 2-Letter language codes to their translations."
-    },
-    "TagSet": {
-      "properties": {
-        "schema": {
-          "type": "string",
-          "title": "Schema",
-          "description": "Schema that the tags are associated with."
-        },
-        "list": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/definition"
-          },
-          "type": "array",
-          "title": "List",
-          "description": "List of tags for the schema"
-        }
-      },
-      "type": "object",
-      "required": [
-        "schema",
-        "list"
-      ],
-      "description": "TagSet defines a set of tags and their descriptions that can be used for a specific schema in the context of a Regime or Addon."
     }
   }
 }

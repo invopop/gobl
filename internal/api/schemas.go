@@ -32,6 +32,16 @@ func handleSchema(w http.ResponseWriter, r *http.Request) {
 	}
 	p = path.Join("schemas", p)
 
+	if _, ok := r.URL.Query()["bundle"]; ok {
+		d, err := schema.BundleSchema(p)
+		if err != nil {
+			writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "schema not found"})
+			return
+		}
+		writeRawJSON(w, http.StatusOK, d)
+		return
+	}
+
 	d, err := data.Content.ReadFile(p)
 	if err != nil {
 		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "schema not found"})

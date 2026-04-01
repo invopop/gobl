@@ -14,7 +14,7 @@
         {
           "id": "GOBL-CBC-CODE-02",
           "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_\u0026 or space",
-          "tests": "matches ^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$"
+          "tests": "matches ^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?[A-ZÑa-z0-9]+)*$"
         }
       ]
     },

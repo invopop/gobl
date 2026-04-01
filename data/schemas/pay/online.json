@@ -1,18 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/online",
-  "$ref": "#/$defs/Online",
+  "$ref": "#/$defs/pay.Online",
   "$defs": {
-    "Key": {
-      "$id": "https://gobl.org/draft-0/cbc/key",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
-      "title": "Key",
-      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
-    },
-    "Online": {
+    "pay.Online": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

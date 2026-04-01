@@ -152,6 +152,35 @@ func TestSchemaEndpointNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
+func TestSchemaBundleQueryParam(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	resp, err := http.Get(srv.URL + prefix + "/schemas/bill/invoice?bundle")
+	require.NoError(t, err)
+	defer resp.Body.Close()
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
+
+	var result map[string]any
+	require.NoError(t, json.NewDecoder(resp.Body).Decode(&result))
+
+	// Should still have $id and $ref for the root type
+	assert.Equal(t, "https://gobl.org/draft-0/bill/invoice", result["$id"])
+	assert.Contains(t, result["$ref"], "#/$defs/")
+
+	// $defs should contain the root type plus all dependencies
+	defs, ok := result["$defs"].(map[string]any)
+	require.True(t, ok)
+	assert.Greater(t, len(defs), 10)
+
+	// All $ref values should be internal (#/$defs/...), not external URLs.
+	raw, _ := json.Marshal(result)
+	assert.NotContains(t, string(raw), `"$ref":"https://gobl.org/`)
+	assert.NotContains(t, string(raw), `"$ref": "https://gobl.org/`)
+}
+
 func TestRegimeEndpoint(t *testing.T) {
 	srv := httptest.NewServer(api.NewHandler())
 	defer srv.Close()

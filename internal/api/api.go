@@ -5,6 +5,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/invopop/gobl"
@@ -59,7 +60,7 @@ func NewHandler() http.Handler {
 	// Version / health
 	mux.HandleFunc("GET "+p+"/", withETag(handleVersion))
 
-	return withCORS(withVersion(withTiming(mux)))
+	return withCORS(withVersion(withLogging(withTiming(mux))))
 }
 
 // etag is the ETag value for all static reference-data responses,
@@ -121,6 +122,27 @@ func (tw *timingWriter) WriteHeader(code int) {
 func (tw *timingWriter) Write(b []byte) (int, error) {
 	tw.writeTimingHeader()
 	return tw.ResponseWriter.Write(b)
+}
+
+// withLogging logs each request with method, path, status code, and duration.
+func withLogging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := nowMs()
+		lw := &loggingWriter{ResponseWriter: w, status: http.StatusOK}
+		next.ServeHTTP(lw, r)
+		dur := nowMs() - start
+		log.Printf("%s %s %d %.1fms", r.Method, r.URL.RequestURI(), lw.status, dur)
+	})
+}
+
+type loggingWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (lw *loggingWriter) WriteHeader(code int) {
+	lw.status = code
+	lw.ResponseWriter.WriteHeader(code)
 }
 
 // withCORS wraps a handler with permissive CORS headers.
