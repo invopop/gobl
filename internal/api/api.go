@@ -50,6 +50,9 @@ func NewHandler() http.Handler {
 	// Key generation
 	mux.HandleFunc("POST "+p+"/keygen", handleKeygen)
 
+	// Editor UI
+	mux.HandleFunc("GET /{$}", handleEditor)
+
 	// Favicon
 	mux.HandleFunc("GET /favicon.svg", handleFavicon)
 

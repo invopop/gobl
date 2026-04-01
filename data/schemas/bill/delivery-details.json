@@ -3,6 +3,155 @@
   "$id": "https://gobl.org/draft-0/bill/delivery-details",
   "$ref": "#/$defs/DeliveryDetails",
   "$defs": {
+    "Address": {
+      "$id": "https://gobl.org/draft-0/org/address",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Useful identifier, such as home, work, etc.",
+          "examples": [
+            "Office"
+          ]
+        },
+        "po_box": {
+          "type": "string",
+          "title": "Post Office Box",
+          "description": "Box number or code for the post office box located at the address."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "House or building number in the street."
+        },
+        "floor": {
+          "type": "string",
+          "title": "Floor",
+          "description": "Floor number within the building."
+        },
+        "block": {
+          "type": "string",
+          "title": "Block",
+          "description": "Block number within the building."
+        },
+        "door": {
+          "type": "string",
+          "title": "Door",
+          "description": "Door number within the building."
+        },
+        "street": {
+          "type": "string",
+          "title": "Street",
+          "description": "First line of street."
+        },
+        "street_extra": {
+          "type": "string",
+          "title": "Extended Street",
+          "description": "Additional street address details."
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality",
+          "description": "Name of a village, town, district, or city, typically inside a region."
+        },
+        "region": {
+          "type": "string",
+          "title": "Region",
+          "description": "Name of a city, province, county, or state, inside a country."
+        },
+        "state": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "State",
+          "description": "State or province code for countries that require it."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Post or ZIP code."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
+          "title": "Country",
+          "description": "ISO country code."
+        },
+        "coords": {
+          "$ref": "https://gobl.org/draft-0/org/coordinates",
+          "title": "Coordinates",
+          "description": "When the postal address is not sufficient, coordinates help locate the address more precisely."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional semi-structure details about the address."
+        }
+      },
+      "type": "object",
+      "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address.",
+      "recommended": [
+        "number",
+        "street",
+        "locality",
+        "region",
+        "code",
+        "country"
+      ]
+    },
+    "Amount": {
+      "$id": "https://gobl.org/draft-0/num/amount",
+      "type": "string",
+      "pattern": "^\\-?[0-9]+(\\.[0-9]+)?$",
+      "title": "Amount",
+      "description": "Quantity with optional decimal places that determine accuracy."
+    },
+    "Code": {
+      "$id": "https://gobl.org/draft-0/cbc/code",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
+      "title": "Code",
+      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
+    },
+    "Coordinates": {
+      "$id": "https://gobl.org/draft-0/org/coordinates",
+      "properties": {
+        "lat": {
+          "type": "number",
+          "title": "Latitude",
+          "description": "Decimal latitude coordinate."
+        },
+        "lon": {
+          "type": "number",
+          "title": "Longitude",
+          "description": "Decimal longitude coordinate."
+        },
+        "w3w": {
+          "type": "string",
+          "title": "What 3 Words",
+          "description": "What 3 Words text coordinates."
+        },
+        "geohash": {
+          "type": "string",
+          "title": "Geohash",
+          "description": "Single string coordinate based on geohash standard."
+        }
+      },
+      "type": "object",
+      "description": "Coordinates describes an exact geographical location in the world."
+    },
+    "Date": {
+      "$id": "https://gobl.org/draft-0/cal/date",
+      "type": "string",
+      "format": "date",
+      "title": "Date",
+      "description": "Civil date in simplified ISO format, like 2021-05-26"
+    },
     "DeliveryDetails": {
       "properties": {
         "receiver": {
@@ -36,6 +185,2757 @@
       },
       "type": "object",
       "description": "DeliveryDetails covers the details of the destination for the products described in the invoice body."
+    },
+    "Digest": {
+      "$id": "https://gobl.org/draft-0/dsig/digest",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "title": "Algorithm",
+          "description": "Algorithm stores the algorithm key that was used to generate the value."
+        },
+        "val": {
+          "type": "string",
+          "title": "Value",
+          "description": "Value contains the Hexadecimal representation of the resulting hash\ngenerated by the algorithm."
+        }
+      },
+      "type": "object",
+      "required": [
+        "alg",
+        "val"
+      ],
+      "description": "Digest defines a structure to hold a digest value including the algorithm used to generate it."
+    },
+    "Email": {
+      "$id": "https://gobl.org/draft-0/org/email",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for the email."
+        },
+        "addr": {
+          "type": "string",
+          "title": "Address",
+          "description": "Electronic mailing address."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional fields."
+        }
+      },
+      "type": "object",
+      "required": [
+        "addr"
+      ],
+      "description": "Email describes the electronic mailing details."
+    },
+    "Extensions": {
+      "$id": "https://gobl.org/draft-0/tax/extensions",
+      "patternProperties": {
+        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+          "$ref": "https://gobl.org/draft-0/cbc/code"
+        }
+      },
+      "type": "object",
+      "description": "Extensions is a map of extension keys to values."
+    },
+    "ISOCountryCode": {
+      "$id": "https://gobl.org/draft-0/l10n/iso-country-code",
+      "oneOf": [
+        {
+          "const": "AF",
+          "title": "Afghanistan"
+        },
+        {
+          "const": "AX",
+          "title": "Åland Islands"
+        },
+        {
+          "const": "AL",
+          "title": "Albania"
+        },
+        {
+          "const": "DZ",
+          "title": "Algeria"
+        },
+        {
+          "const": "AS",
+          "title": "American Samoa"
+        },
+        {
+          "const": "AD",
+          "title": "Andorra"
+        },
+        {
+          "const": "AO",
+          "title": "Angola"
+        },
+        {
+          "const": "AI",
+          "title": "Anguilla"
+        },
+        {
+          "const": "AQ",
+          "title": "Antarctica"
+        },
+        {
+          "const": "AG",
+          "title": "Antigua and Barbuda"
+        },
+        {
+          "const": "AR",
+          "title": "Argentina"
+        },
+        {
+          "const": "AM",
+          "title": "Armenia"
+        },
+        {
+          "const": "AW",
+          "title": "Aruba"
+        },
+        {
+          "const": "AU",
+          "title": "Australia"
+        },
+        {
+          "const": "AT",
+          "title": "Austria"
+        },
+        {
+          "const": "AZ",
+          "title": "Azerbaijan"
+        },
+        {
+          "const": "BS",
+          "title": "Bahamas"
+        },
+        {
+          "const": "BH",
+          "title": "Bahrain"
+        },
+        {
+          "const": "BD",
+          "title": "Bangladesh"
+        },
+        {
+          "const": "BB",
+          "title": "Barbados"
+        },
+        {
+          "const": "BY",
+          "title": "Belarus"
+        },
+        {
+          "const": "BE",
+          "title": "Belgium"
+        },
+        {
+          "const": "BZ",
+          "title": "Belize"
+        },
+        {
+          "const": "BJ",
+          "title": "Benin"
+        },
+        {
+          "const": "BM",
+          "title": "Bermuda"
+        },
+        {
+          "const": "BT",
+          "title": "Bhutan"
+        },
+        {
+          "const": "BO",
+          "title": "Bolivia, Plurinational State of"
+        },
+        {
+          "const": "BQ",
+          "title": "Bonaire, Sint Eustatius and Saba"
+        },
+        {
+          "const": "BA",
+          "title": "Bosnia and Herzegovina"
+        },
+        {
+          "const": "BW",
+          "title": "Botswana"
+        },
+        {
+          "const": "BV",
+          "title": "Bouvet Island"
+        },
+        {
+          "const": "BR",
+          "title": "Brazil"
+        },
+        {
+          "const": "IO",
+          "title": "British Indian Ocean Territory"
+        },
+        {
+          "const": "BN",
+          "title": "Brunei Darussalam"
+        },
+        {
+          "const": "BG",
+          "title": "Bulgaria"
+        },
+        {
+          "const": "BF",
+          "title": "Burkina Faso"
+        },
+        {
+          "const": "BI",
+          "title": "Burundi"
+        },
+        {
+          "const": "CV",
+          "title": "Cabo Verde"
+        },
+        {
+          "const": "KH",
+          "title": "Cambodia"
+        },
+        {
+          "const": "CM",
+          "title": "Cameroon"
+        },
+        {
+          "const": "CA",
+          "title": "Canada"
+        },
+        {
+          "const": "KY",
+          "title": "Cayman Islands"
+        },
+        {
+          "const": "CF",
+          "title": "Central African Republic"
+        },
+        {
+          "const": "TD",
+          "title": "Chad"
+        },
+        {
+          "const": "CL",
+          "title": "Chile"
+        },
+        {
+          "const": "CN",
+          "title": "China"
+        },
+        {
+          "const": "CX",
+          "title": "Christmas Island"
+        },
+        {
+          "const": "CC",
+          "title": "Cocos (Keeling) Islands"
+        },
+        {
+          "const": "CO",
+          "title": "Colombia"
+        },
+        {
+          "const": "KM",
+          "title": "Comoros"
+        },
+        {
+          "const": "CG",
+          "title": "Congo"
+        },
+        {
+          "const": "CD",
+          "title": "Congo, Democratic Republic of the"
+        },
+        {
+          "const": "CK",
+          "title": "Cook Islands"
+        },
+        {
+          "const": "CR",
+          "title": "Costa Rica"
+        },
+        {
+          "const": "CI",
+          "title": "Côte d'Ivoire"
+        },
+        {
+          "const": "HR",
+          "title": "Croatia"
+        },
+        {
+          "const": "CU",
+          "title": "Cuba"
+        },
+        {
+          "const": "CW",
+          "title": "Curaçao"
+        },
+        {
+          "const": "CY",
+          "title": "Cyprus"
+        },
+        {
+          "const": "CZ",
+          "title": "Czechia"
+        },
+        {
+          "const": "DK",
+          "title": "Denmark"
+        },
+        {
+          "const": "DJ",
+          "title": "Djibouti"
+        },
+        {
+          "const": "DM",
+          "title": "Dominica"
+        },
+        {
+          "const": "DO",
+          "title": "Dominican Republic"
+        },
+        {
+          "const": "EC",
+          "title": "Ecuador"
+        },
+        {
+          "const": "EG",
+          "title": "Egypt"
+        },
+        {
+          "const": "SV",
+          "title": "El Salvador"
+        },
+        {
+          "const": "GQ",
+          "title": "Equatorial Guinea"
+        },
+        {
+          "const": "ER",
+          "title": "Eritrea"
+        },
+        {
+          "const": "EE",
+          "title": "Estonia"
+        },
+        {
+          "const": "SZ",
+          "title": "Eswatini"
+        },
+        {
+          "const": "ET",
+          "title": "Ethiopia"
+        },
+        {
+          "const": "FK",
+          "title": "Falkland Islands"
+        },
+        {
+          "const": "FO",
+          "title": "Faroe Islands"
+        },
+        {
+          "const": "FJ",
+          "title": "Fiji"
+        },
+        {
+          "const": "FI",
+          "title": "Finland"
+        },
+        {
+          "const": "FR",
+          "title": "France"
+        },
+        {
+          "const": "GF",
+          "title": "French Guiana"
+        },
+        {
+          "const": "PF",
+          "title": "French Polynesia"
+        },
+        {
+          "const": "TF",
+          "title": "French Southern Territories"
+        },
+        {
+          "const": "GA",
+          "title": "Gabon"
+        },
+        {
+          "const": "GM",
+          "title": "Gambia"
+        },
+        {
+          "const": "GE",
+          "title": "Georgia"
+        },
+        {
+          "const": "DE",
+          "title": "Germany"
+        },
+        {
+          "const": "GH",
+          "title": "Ghana"
+        },
+        {
+          "const": "GI",
+          "title": "Gibraltar"
+        },
+        {
+          "const": "GR",
+          "title": "Greece"
+        },
+        {
+          "const": "GL",
+          "title": "Greenland"
+        },
+        {
+          "const": "GD",
+          "title": "Grenada"
+        },
+        {
+          "const": "GP",
+          "title": "Guadeloupe"
+        },
+        {
+          "const": "GU",
+          "title": "Guam"
+        },
+        {
+          "const": "GT",
+          "title": "Guatemala"
+        },
+        {
+          "const": "GG",
+          "title": "Guernsey"
+        },
+        {
+          "const": "GN",
+          "title": "Guinea"
+        },
+        {
+          "const": "GW",
+          "title": "Guinea-Bissau"
+        },
+        {
+          "const": "GY",
+          "title": "Guyana"
+        },
+        {
+          "const": "HT",
+          "title": "Haiti"
+        },
+        {
+          "const": "HM",
+          "title": "Heard Island and McDonald Islands"
+        },
+        {
+          "const": "VA",
+          "title": "Holy See (the)"
+        },
+        {
+          "const": "HN",
+          "title": "Honduras"
+        },
+        {
+          "const": "HK",
+          "title": "Hong Kong"
+        },
+        {
+          "const": "HU",
+          "title": "Hungary"
+        },
+        {
+          "const": "IS",
+          "title": "Iceland"
+        },
+        {
+          "const": "IN",
+          "title": "India"
+        },
+        {
+          "const": "ID",
+          "title": "Indonesia"
+        },
+        {
+          "const": "IR",
+          "title": "Iran, Islamic Republic of"
+        },
+        {
+          "const": "IQ",
+          "title": "Iraq"
+        },
+        {
+          "const": "IE",
+          "title": "Ireland"
+        },
+        {
+          "const": "IM",
+          "title": "Isle of Man"
+        },
+        {
+          "const": "IL",
+          "title": "Israel"
+        },
+        {
+          "const": "IT",
+          "title": "Italy"
+        },
+        {
+          "const": "JM",
+          "title": "Jamaica"
+        },
+        {
+          "const": "JP",
+          "title": "Japan"
+        },
+        {
+          "const": "JE",
+          "title": "Jersey"
+        },
+        {
+          "const": "JO",
+          "title": "Jordan"
+        },
+        {
+          "const": "KZ",
+          "title": "Kazakhstan"
+        },
+        {
+          "const": "KE",
+          "title": "Kenya"
+        },
+        {
+          "const": "KI",
+          "title": "Kiribati"
+        },
+        {
+          "const": "KP",
+          "title": "Korea, Democratic People's Republic of"
+        },
+        {
+          "const": "KR",
+          "title": "Korea, Republic of"
+        },
+        {
+          "const": "KW",
+          "title": "Kuwait"
+        },
+        {
+          "const": "KG",
+          "title": "Kyrgyzstan"
+        },
+        {
+          "const": "LA",
+          "title": "Lao People's Democratic Republic"
+        },
+        {
+          "const": "LV",
+          "title": "Latvia"
+        },
+        {
+          "const": "LB",
+          "title": "Lebanon"
+        },
+        {
+          "const": "LS",
+          "title": "Lesotho"
+        },
+        {
+          "const": "LR",
+          "title": "Liberia"
+        },
+        {
+          "const": "LY",
+          "title": "Libya"
+        },
+        {
+          "const": "LI",
+          "title": "Liechtenstein"
+        },
+        {
+          "const": "LT",
+          "title": "Lithuania"
+        },
+        {
+          "const": "LU",
+          "title": "Luxembourg"
+        },
+        {
+          "const": "MO",
+          "title": "Macao"
+        },
+        {
+          "const": "MK",
+          "title": "North Macedonia"
+        },
+        {
+          "const": "MG",
+          "title": "Madagascar"
+        },
+        {
+          "const": "MW",
+          "title": "Malawi"
+        },
+        {
+          "const": "MY",
+          "title": "Malaysia"
+        },
+        {
+          "const": "MV",
+          "title": "Maldives"
+        },
+        {
+          "const": "ML",
+          "title": "Mali"
+        },
+        {
+          "const": "MT",
+          "title": "Malta"
+        },
+        {
+          "const": "MH",
+          "title": "Marshall Islands"
+        },
+        {
+          "const": "MQ",
+          "title": "Martinique"
+        },
+        {
+          "const": "MR",
+          "title": "Mauritania"
+        },
+        {
+          "const": "MU",
+          "title": "Mauritius"
+        },
+        {
+          "const": "YT",
+          "title": "Mayotte"
+        },
+        {
+          "const": "MX",
+          "title": "Mexico"
+        },
+        {
+          "const": "FM",
+          "title": "Micronesia, Federated States of"
+        },
+        {
+          "const": "MD",
+          "title": "Moldova, Republic of"
+        },
+        {
+          "const": "MC",
+          "title": "Monaco"
+        },
+        {
+          "const": "MN",
+          "title": "Mongolia"
+        },
+        {
+          "const": "ME",
+          "title": "Montenegro"
+        },
+        {
+          "const": "MS",
+          "title": "Montserrat"
+        },
+        {
+          "const": "MA",
+          "title": "Morocco"
+        },
+        {
+          "const": "MZ",
+          "title": "Mozambique"
+        },
+        {
+          "const": "MM",
+          "title": "Myanmar"
+        },
+        {
+          "const": "NA",
+          "title": "Namibia"
+        },
+        {
+          "const": "NR",
+          "title": "Nauru"
+        },
+        {
+          "const": "NP",
+          "title": "Nepal"
+        },
+        {
+          "const": "NL",
+          "title": "Netherlands"
+        },
+        {
+          "const": "NC",
+          "title": "New Caledonia"
+        },
+        {
+          "const": "NZ",
+          "title": "New Zealand"
+        },
+        {
+          "const": "NI",
+          "title": "Nicaragua"
+        },
+        {
+          "const": "NE",
+          "title": "Niger"
+        },
+        {
+          "const": "NG",
+          "title": "Nigeria"
+        },
+        {
+          "const": "NU",
+          "title": "Niue"
+        },
+        {
+          "const": "NF",
+          "title": "Norfolk Island"
+        },
+        {
+          "const": "MP",
+          "title": "Northern Mariana Islands"
+        },
+        {
+          "const": "NO",
+          "title": "Norway"
+        },
+        {
+          "const": "OM",
+          "title": "Oman"
+        },
+        {
+          "const": "PK",
+          "title": "Pakistan"
+        },
+        {
+          "const": "PW",
+          "title": "Palau"
+        },
+        {
+          "const": "PS",
+          "title": "Palestine, State of"
+        },
+        {
+          "const": "PA",
+          "title": "Panama"
+        },
+        {
+          "const": "PG",
+          "title": "Papua New Guinea"
+        },
+        {
+          "const": "PY",
+          "title": "Paraguay"
+        },
+        {
+          "const": "PE",
+          "title": "Peru"
+        },
+        {
+          "const": "PH",
+          "title": "Philippines"
+        },
+        {
+          "const": "PN",
+          "title": "Pitcairn"
+        },
+        {
+          "const": "PL",
+          "title": "Poland"
+        },
+        {
+          "const": "PT",
+          "title": "Portugal"
+        },
+        {
+          "const": "PR",
+          "title": "Puerto Rico"
+        },
+        {
+          "const": "QA",
+          "title": "Qatar"
+        },
+        {
+          "const": "RE",
+          "title": "Réunion"
+        },
+        {
+          "const": "RO",
+          "title": "Romania"
+        },
+        {
+          "const": "RU",
+          "title": "Russian Federation"
+        },
+        {
+          "const": "RW",
+          "title": "Rwanda"
+        },
+        {
+          "const": "BL",
+          "title": "Saint Barthélemy"
+        },
+        {
+          "const": "SH",
+          "title": "Saint Helena, Ascension and Tristan da Cunha"
+        },
+        {
+          "const": "KN",
+          "title": "Saint Kitts and Nevis"
+        },
+        {
+          "const": "LC",
+          "title": "Saint Lucia"
+        },
+        {
+          "const": "MF",
+          "title": "Saint Martin (French part)"
+        },
+        {
+          "const": "PM",
+          "title": "Saint Pierre and Miquelon"
+        },
+        {
+          "const": "VC",
+          "title": "Saint Vincent and the Grenadines"
+        },
+        {
+          "const": "WS",
+          "title": "Samoa"
+        },
+        {
+          "const": "SM",
+          "title": "San Marino"
+        },
+        {
+          "const": "ST",
+          "title": "Sao Tome and Principe"
+        },
+        {
+          "const": "SA",
+          "title": "Saudi Arabia"
+        },
+        {
+          "const": "SN",
+          "title": "Senegal"
+        },
+        {
+          "const": "RS",
+          "title": "Serbia"
+        },
+        {
+          "const": "SC",
+          "title": "Seychelles"
+        },
+        {
+          "const": "SL",
+          "title": "Sierra Leone"
+        },
+        {
+          "const": "SG",
+          "title": "Singapore"
+        },
+        {
+          "const": "SX",
+          "title": "Sint Maarten (Dutch part)"
+        },
+        {
+          "const": "SK",
+          "title": "Slovakia"
+        },
+        {
+          "const": "SI",
+          "title": "Slovenia"
+        },
+        {
+          "const": "SB",
+          "title": "Solomon Islands"
+        },
+        {
+          "const": "SO",
+          "title": "Somalia"
+        },
+        {
+          "const": "ZA",
+          "title": "South Africa"
+        },
+        {
+          "const": "GS",
+          "title": "South Georgia and the South Sandwich Islands"
+        },
+        {
+          "const": "SS",
+          "title": "South Sudan"
+        },
+        {
+          "const": "ES",
+          "title": "Spain"
+        },
+        {
+          "const": "LK",
+          "title": "Sri Lanka"
+        },
+        {
+          "const": "SD",
+          "title": "Sudan"
+        },
+        {
+          "const": "SR",
+          "title": "Suriname"
+        },
+        {
+          "const": "SJ",
+          "title": "Svalbard and Jan Mayen"
+        },
+        {
+          "const": "SE",
+          "title": "Sweden"
+        },
+        {
+          "const": "CH",
+          "title": "Switzerland"
+        },
+        {
+          "const": "SY",
+          "title": "Syrian Arab Republic"
+        },
+        {
+          "const": "TW",
+          "title": "Taiwan (Province of China)"
+        },
+        {
+          "const": "TJ",
+          "title": "Tajikistan"
+        },
+        {
+          "const": "TZ",
+          "title": "Tanzania, the United Republic of"
+        },
+        {
+          "const": "TH",
+          "title": "Thailand"
+        },
+        {
+          "const": "TL",
+          "title": "Timor-Leste"
+        },
+        {
+          "const": "TG",
+          "title": "Togo"
+        },
+        {
+          "const": "TK",
+          "title": "Tokelau"
+        },
+        {
+          "const": "TO",
+          "title": "Tonga"
+        },
+        {
+          "const": "TT",
+          "title": "Trinidad and Tobago"
+        },
+        {
+          "const": "TN",
+          "title": "Tunisia"
+        },
+        {
+          "const": "TR",
+          "title": "Türkiye"
+        },
+        {
+          "const": "TM",
+          "title": "Turkmenistan"
+        },
+        {
+          "const": "TC",
+          "title": "Turks and Caicos Islands"
+        },
+        {
+          "const": "TV",
+          "title": "Tuvalu"
+        },
+        {
+          "const": "UG",
+          "title": "Uganda"
+        },
+        {
+          "const": "UA",
+          "title": "Ukraine"
+        },
+        {
+          "const": "AE",
+          "title": "United Arab Emirates"
+        },
+        {
+          "const": "GB",
+          "title": "United Kingdom"
+        },
+        {
+          "const": "US",
+          "title": "United States of America"
+        },
+        {
+          "const": "UM",
+          "title": "United States Minor Outlying Islands"
+        },
+        {
+          "const": "UY",
+          "title": "Uruguay"
+        },
+        {
+          "const": "UZ",
+          "title": "Uzbekistan"
+        },
+        {
+          "const": "VU",
+          "title": "Vanuatu"
+        },
+        {
+          "const": "VE",
+          "title": "Venezuela, Bolivarian Republic of"
+        },
+        {
+          "const": "VN",
+          "title": "Viet Nam"
+        },
+        {
+          "const": "VG",
+          "title": "Virgin Islands (British)"
+        },
+        {
+          "const": "VI",
+          "title": "Virgin Islands (U.S.)"
+        },
+        {
+          "const": "WF",
+          "title": "Wallis and Futuna"
+        },
+        {
+          "const": "EH",
+          "title": "Western Sahara"
+        },
+        {
+          "const": "YE",
+          "title": "Yemen"
+        },
+        {
+          "const": "ZM",
+          "title": "Zambia"
+        },
+        {
+          "const": "ZW",
+          "title": "Zimbabwe"
+        }
+      ],
+      "type": "string",
+      "title": "ISO Country Code",
+      "description": "Defines an ISO 3166-2 country code"
+    },
+    "Identity": {
+      "$id": "https://gobl.org/draft-0/tax/identity",
+      "properties": {
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "title": "Country Code",
+          "description": "Tax country code for Where the tax identity was issued."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "pattern": "^[A-Z0-9Ñ\\\u0026]+$",
+          "title": "Code",
+          "description": "Normalized code shown on the original identity document."
+        },
+        "scheme": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Scheme",
+          "description": "Scheme is an optional field that may be used to override the tax regime's\ndefault tax scheme. Many electronic formats such as UBL or CII define an\nequivalent field. Examples: `VAT`, `GST`, `ST`, etc."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Type",
+          "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made.\n\nDeprecated: Tax Identities should only be used for VAT or similar codes\nfor companies. Use the identities array for other types of identification."
+        }
+      },
+      "type": "object",
+      "required": [
+        "country"
+      ],
+      "description": "Identity stores the details required to identify an entity for tax purposes in a specific country.",
+      "recommended": [
+        "code"
+      ]
+    },
+    "Image": {
+      "$id": "https://gobl.org/draft-0/org/image",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label to help identify the image."
+        },
+        "url": {
+          "type": "string",
+          "title": "URL",
+          "description": "URL of the image"
+        },
+        "data": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "title": "Data",
+          "description": "As an alternative to the URL and only when the source data is small,\nlike an SVG, the raw data may be provided using Base64 encoding."
+        },
+        "mime": {
+          "type": "string",
+          "title": "MIME",
+          "description": "Format of the image."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Details of what the image represents."
+        },
+        "alt": {
+          "type": "string",
+          "title": "Alt",
+          "description": "Alternative text if the image cannot be shown."
+        },
+        "height": {
+          "type": "integer",
+          "title": "Height",
+          "description": "Height of the image in pixels."
+        },
+        "width": {
+          "type": "integer",
+          "title": "Width",
+          "description": "Width of the image in pixels."
+        },
+        "digest": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest",
+          "description": "Digest can be used to ensure the image contained at the URL\nis the same one as originally intended."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the image."
+        }
+      },
+      "type": "object",
+      "description": "Image describes a logo or photo that represents an entity."
+    },
+    "Inbox": {
+      "$id": "https://gobl.org/draft-0/org/inbox",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label for the inbox."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Type of inbox being defined if required for clarification between multiple\ninboxes."
+        },
+        "scheme": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Scheme",
+          "description": "Scheme ID of the code used to identify the inbox. This is context specific\nand usually an ISO 6523 code or CEF (Connecting Europe Facility) code."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code or ID that identifies the Inbox. Mutually exclusive with URL and Email."
+        },
+        "url": {
+          "type": "string",
+          "title": "URL",
+          "description": "URL of the inbox that includes the protocol, server, and path. May\nbe used instead of the Code to identify the inbox. Mutually exclusive with\nCode and Email."
+        },
+        "email": {
+          "type": "string",
+          "title": "Email",
+          "description": "Email address for the inbox. Mutually exclusive with Code and URL."
+        }
+      },
+      "type": "object",
+      "description": "Inbox is used to store data about a connection with a service that is responsible for automatically receiving copies of GOBL envelopes or other document formats."
+    },
+    "Key": {
+      "$id": "https://gobl.org/draft-0/cbc/key",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+      "title": "Key",
+      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
+    },
+    "Meta": {
+      "$id": "https://gobl.org/draft-0/cbc/meta",
+      "patternProperties": {
+        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "Meta defines a structure for data about the data being defined."
+    },
+    "Name": {
+      "$id": "https://gobl.org/draft-0/org/name",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "What the person would like to be called"
+        },
+        "prefix": {
+          "type": "string",
+          "title": "Prefix",
+          "description": "Additional prefix to add to name, like Mrs. or Mr."
+        },
+        "given": {
+          "type": "string",
+          "title": "Given",
+          "description": "Person's given or first name"
+        },
+        "middle": {
+          "type": "string",
+          "title": "Middle",
+          "description": "Middle names or initials"
+        },
+        "surname": {
+          "type": "string",
+          "title": "Surname",
+          "description": "Second or Family name."
+        },
+        "surname2": {
+          "type": "string",
+          "title": "Second Surname",
+          "description": "Additional second of family name."
+        },
+        "suffix": {
+          "type": "string",
+          "title": "Suffix",
+          "description": "Titles to include after the name."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional useful data."
+        }
+      },
+      "type": "object",
+      "description": "Name represents what a human is called."
+    },
+    "Party": {
+      "$id": "https://gobl.org/draft-0/org/party",
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/tax/regime-code",
+          "title": "Tax Regime",
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label can be used to provide a custom label for the party in a given\ncontext in a single language, for example \"Supplier\", \"Host\", or similar.",
+          "examples": [
+            "Supplier"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Legal name or representation of the organization."
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "Alternate short name."
+        },
+        "tax_id": {
+          "$ref": "https://gobl.org/draft-0/tax/identity",
+          "title": "Tax Identity",
+          "description": "The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Set of codes used to identify the party in other systems."
+        },
+        "people": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/person"
+          },
+          "type": "array",
+          "title": "People",
+          "description": "Details of physical people who represent the party."
+        },
+        "inboxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/inbox"
+          },
+          "type": "array",
+          "title": "Inboxes",
+          "description": "Digital inboxes used for forwarding electronic versions of documents"
+        },
+        "addresses": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/address"
+          },
+          "type": "array",
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
+        },
+        "emails": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/email"
+          },
+          "type": "array",
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses"
+        },
+        "websites": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/website"
+          },
+          "type": "array",
+          "title": "Websites",
+          "description": "Public websites that provide further information about the party."
+        },
+        "telephones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers",
+          "description": "Regular telephone numbers"
+        },
+        "registration": {
+          "$ref": "https://gobl.org/draft-0/org/registration",
+          "title": "Registration",
+          "description": "Additional registration details about the company that may need to be included in a document."
+        },
+        "logos": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/image"
+          },
+          "type": "array",
+          "title": "Logos",
+          "description": "Images that can be used to identify the party visually."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension code map for any additional regime specific codes that may be required."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional semi-structured information that does not fit into the rest of the party."
+        }
+      },
+      "type": "object",
+      "description": "Party represents a person or business entity.",
+      "recommended": [
+        "name",
+        "tax_id"
+      ]
+    },
+    "Period": {
+      "$id": "https://gobl.org/draft-0/cal/period",
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label is a short description of the period."
+        },
+        "start": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Start",
+          "description": "Start indicates when this period starts."
+        },
+        "end": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "End",
+          "description": "End indicates when the period ends, and must be after the start date."
+        }
+      },
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "description": "Period represents two dates with a start and finish."
+    },
+    "Person": {
+      "$id": "https://gobl.org/draft-0/org/person",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label can be used to identify the person in a given context in a single\nlanguage, for example \"Attn\", \"Contact\", \"Responsible\", etc.",
+          "examples": [
+            "Attn"
+          ]
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the role of the person inside the context of the object."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/org/name",
+          "title": "Name",
+          "description": "Complete details on the name of the person."
+        },
+        "role": {
+          "type": "string",
+          "title": "Role",
+          "description": "Role or job title of the responsibilities of the person within an organization."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Set of codes used to identify the person, such as ID numbers, social security,\ndriving licenses, etc. that can be attributed to the individual."
+        },
+        "addresses": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/address"
+          },
+          "type": "array",
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
+        },
+        "emails": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/email"
+          },
+          "type": "array",
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses that belong to the person."
+        },
+        "telephones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers",
+          "description": "Regular phone or mobile numbers"
+        },
+        "avatars": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/image"
+          },
+          "type": "array",
+          "title": "Avatars",
+          "description": "Avatars provider links to images or photos or the person."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Data about the data."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "description": "Person represents a human, and how to contact them electronically."
+    },
+    "RegimeCode": {
+      "$id": "https://gobl.org/draft-0/tax/regime-code",
+      "oneOf": [
+        {
+          "const": "AE",
+          "title": "United Arab Emirates"
+        },
+        {
+          "const": "AR",
+          "title": "Argentina"
+        },
+        {
+          "const": "AT",
+          "title": "Austria"
+        },
+        {
+          "const": "BE",
+          "title": "Belgium"
+        },
+        {
+          "const": "BR",
+          "title": "Brazil"
+        },
+        {
+          "const": "CA",
+          "title": "Canada"
+        },
+        {
+          "const": "CH",
+          "title": "Switzerland"
+        },
+        {
+          "const": "CO",
+          "title": "Colombia"
+        },
+        {
+          "const": "DE",
+          "title": "Germany"
+        },
+        {
+          "const": "DK",
+          "title": "Denmark"
+        },
+        {
+          "const": "EL",
+          "title": "Greece"
+        },
+        {
+          "const": "ES",
+          "title": "Spain"
+        },
+        {
+          "const": "FR",
+          "title": "France"
+        },
+        {
+          "const": "GB",
+          "title": "United Kingdom"
+        },
+        {
+          "const": "IE",
+          "title": "Ireland"
+        },
+        {
+          "const": "IN",
+          "title": "India"
+        },
+        {
+          "const": "IT",
+          "title": "Italy"
+        },
+        {
+          "const": "MX",
+          "title": "Mexico"
+        },
+        {
+          "const": "NL",
+          "title": "The Netherlands"
+        },
+        {
+          "const": "PL",
+          "title": "Poland"
+        },
+        {
+          "const": "PT",
+          "title": "Portugal"
+        },
+        {
+          "const": "SE",
+          "title": "Sweden"
+        },
+        {
+          "const": "SG",
+          "title": "Singapore"
+        },
+        {
+          "const": "US",
+          "title": "United States of America"
+        }
+      ],
+      "type": "string",
+      "title": "Tax Regime Code",
+      "description": "Identifies a GOBL tax regime"
+    },
+    "Registration": {
+      "$id": "https://gobl.org/draft-0/org/registration",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "examples": [
+            "Registration"
+          ]
+        },
+        "capital": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Capital"
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency"
+        },
+        "office": {
+          "type": "string",
+          "title": "Office"
+        },
+        "book": {
+          "type": "string",
+          "title": "Book"
+        },
+        "volume": {
+          "type": "string",
+          "title": "Volume"
+        },
+        "sheet": {
+          "type": "string",
+          "title": "Sheet"
+        },
+        "section": {
+          "type": "string",
+          "title": "Section"
+        },
+        "page": {
+          "type": "string",
+          "title": "Page"
+        },
+        "entry": {
+          "type": "string",
+          "title": "Entry"
+        },
+        "other": {
+          "type": "string",
+          "title": "Other"
+        }
+      },
+      "type": "object",
+      "description": "Registration is used in countries that require additional information to be associated with a company usually related to a specific registration office."
+    },
+    "TaxCountryCode": {
+      "$id": "https://gobl.org/draft-0/l10n/tax-country-code",
+      "oneOf": [
+        {
+          "const": "AF",
+          "title": "Afghanistan"
+        },
+        {
+          "const": "AX",
+          "title": "Åland Islands"
+        },
+        {
+          "const": "AL",
+          "title": "Albania"
+        },
+        {
+          "const": "DZ",
+          "title": "Algeria"
+        },
+        {
+          "const": "AS",
+          "title": "American Samoa"
+        },
+        {
+          "const": "AD",
+          "title": "Andorra"
+        },
+        {
+          "const": "AO",
+          "title": "Angola"
+        },
+        {
+          "const": "AI",
+          "title": "Anguilla"
+        },
+        {
+          "const": "AQ",
+          "title": "Antarctica"
+        },
+        {
+          "const": "AG",
+          "title": "Antigua and Barbuda"
+        },
+        {
+          "const": "AR",
+          "title": "Argentina"
+        },
+        {
+          "const": "AM",
+          "title": "Armenia"
+        },
+        {
+          "const": "AW",
+          "title": "Aruba"
+        },
+        {
+          "const": "AU",
+          "title": "Australia"
+        },
+        {
+          "const": "AT",
+          "title": "Austria"
+        },
+        {
+          "const": "AZ",
+          "title": "Azerbaijan"
+        },
+        {
+          "const": "BS",
+          "title": "Bahamas"
+        },
+        {
+          "const": "BH",
+          "title": "Bahrain"
+        },
+        {
+          "const": "BD",
+          "title": "Bangladesh"
+        },
+        {
+          "const": "BB",
+          "title": "Barbados"
+        },
+        {
+          "const": "BY",
+          "title": "Belarus"
+        },
+        {
+          "const": "BE",
+          "title": "Belgium"
+        },
+        {
+          "const": "BZ",
+          "title": "Belize"
+        },
+        {
+          "const": "BJ",
+          "title": "Benin"
+        },
+        {
+          "const": "BM",
+          "title": "Bermuda"
+        },
+        {
+          "const": "BT",
+          "title": "Bhutan"
+        },
+        {
+          "const": "BO",
+          "title": "Bolivia, Plurinational State of"
+        },
+        {
+          "const": "BQ",
+          "title": "Bonaire, Sint Eustatius and Saba"
+        },
+        {
+          "const": "BA",
+          "title": "Bosnia and Herzegovina"
+        },
+        {
+          "const": "BW",
+          "title": "Botswana"
+        },
+        {
+          "const": "BV",
+          "title": "Bouvet Island"
+        },
+        {
+          "const": "BR",
+          "title": "Brazil"
+        },
+        {
+          "const": "IO",
+          "title": "British Indian Ocean Territory"
+        },
+        {
+          "const": "BN",
+          "title": "Brunei Darussalam"
+        },
+        {
+          "const": "BG",
+          "title": "Bulgaria"
+        },
+        {
+          "const": "BF",
+          "title": "Burkina Faso"
+        },
+        {
+          "const": "BI",
+          "title": "Burundi"
+        },
+        {
+          "const": "CV",
+          "title": "Cabo Verde"
+        },
+        {
+          "const": "KH",
+          "title": "Cambodia"
+        },
+        {
+          "const": "CM",
+          "title": "Cameroon"
+        },
+        {
+          "const": "CA",
+          "title": "Canada"
+        },
+        {
+          "const": "KY",
+          "title": "Cayman Islands"
+        },
+        {
+          "const": "CF",
+          "title": "Central African Republic"
+        },
+        {
+          "const": "TD",
+          "title": "Chad"
+        },
+        {
+          "const": "CL",
+          "title": "Chile"
+        },
+        {
+          "const": "CN",
+          "title": "China"
+        },
+        {
+          "const": "CX",
+          "title": "Christmas Island"
+        },
+        {
+          "const": "CC",
+          "title": "Cocos (Keeling) Islands"
+        },
+        {
+          "const": "CO",
+          "title": "Colombia"
+        },
+        {
+          "const": "KM",
+          "title": "Comoros"
+        },
+        {
+          "const": "CG",
+          "title": "Congo"
+        },
+        {
+          "const": "CD",
+          "title": "Congo, Democratic Republic of the"
+        },
+        {
+          "const": "CK",
+          "title": "Cook Islands"
+        },
+        {
+          "const": "CR",
+          "title": "Costa Rica"
+        },
+        {
+          "const": "CI",
+          "title": "Côte d'Ivoire"
+        },
+        {
+          "const": "HR",
+          "title": "Croatia"
+        },
+        {
+          "const": "CU",
+          "title": "Cuba"
+        },
+        {
+          "const": "CW",
+          "title": "Curaçao"
+        },
+        {
+          "const": "CY",
+          "title": "Cyprus"
+        },
+        {
+          "const": "CZ",
+          "title": "Czechia"
+        },
+        {
+          "const": "DK",
+          "title": "Denmark"
+        },
+        {
+          "const": "DJ",
+          "title": "Djibouti"
+        },
+        {
+          "const": "DM",
+          "title": "Dominica"
+        },
+        {
+          "const": "DO",
+          "title": "Dominican Republic"
+        },
+        {
+          "const": "EC",
+          "title": "Ecuador"
+        },
+        {
+          "const": "EG",
+          "title": "Egypt"
+        },
+        {
+          "const": "SV",
+          "title": "El Salvador"
+        },
+        {
+          "const": "GQ",
+          "title": "Equatorial Guinea"
+        },
+        {
+          "const": "ER",
+          "title": "Eritrea"
+        },
+        {
+          "const": "EE",
+          "title": "Estonia"
+        },
+        {
+          "const": "SZ",
+          "title": "Eswatini"
+        },
+        {
+          "const": "ET",
+          "title": "Ethiopia"
+        },
+        {
+          "const": "FK",
+          "title": "Falkland Islands"
+        },
+        {
+          "const": "FO",
+          "title": "Faroe Islands"
+        },
+        {
+          "const": "FJ",
+          "title": "Fiji"
+        },
+        {
+          "const": "FI",
+          "title": "Finland"
+        },
+        {
+          "const": "FR",
+          "title": "France"
+        },
+        {
+          "const": "GF",
+          "title": "French Guiana"
+        },
+        {
+          "const": "PF",
+          "title": "French Polynesia"
+        },
+        {
+          "const": "TF",
+          "title": "French Southern Territories"
+        },
+        {
+          "const": "GA",
+          "title": "Gabon"
+        },
+        {
+          "const": "GM",
+          "title": "Gambia"
+        },
+        {
+          "const": "GE",
+          "title": "Georgia"
+        },
+        {
+          "const": "DE",
+          "title": "Germany"
+        },
+        {
+          "const": "GH",
+          "title": "Ghana"
+        },
+        {
+          "const": "GI",
+          "title": "Gibraltar"
+        },
+        {
+          "const": "GL",
+          "title": "Greenland"
+        },
+        {
+          "const": "GD",
+          "title": "Grenada"
+        },
+        {
+          "const": "GP",
+          "title": "Guadeloupe"
+        },
+        {
+          "const": "GU",
+          "title": "Guam"
+        },
+        {
+          "const": "GT",
+          "title": "Guatemala"
+        },
+        {
+          "const": "GG",
+          "title": "Guernsey"
+        },
+        {
+          "const": "GN",
+          "title": "Guinea"
+        },
+        {
+          "const": "GW",
+          "title": "Guinea-Bissau"
+        },
+        {
+          "const": "GY",
+          "title": "Guyana"
+        },
+        {
+          "const": "HT",
+          "title": "Haiti"
+        },
+        {
+          "const": "HM",
+          "title": "Heard Island and McDonald Islands"
+        },
+        {
+          "const": "VA",
+          "title": "Holy See (the)"
+        },
+        {
+          "const": "HN",
+          "title": "Honduras"
+        },
+        {
+          "const": "HK",
+          "title": "Hong Kong"
+        },
+        {
+          "const": "HU",
+          "title": "Hungary"
+        },
+        {
+          "const": "IS",
+          "title": "Iceland"
+        },
+        {
+          "const": "IN",
+          "title": "India"
+        },
+        {
+          "const": "ID",
+          "title": "Indonesia"
+        },
+        {
+          "const": "IR",
+          "title": "Iran, Islamic Republic of"
+        },
+        {
+          "const": "IQ",
+          "title": "Iraq"
+        },
+        {
+          "const": "IE",
+          "title": "Ireland"
+        },
+        {
+          "const": "IM",
+          "title": "Isle of Man"
+        },
+        {
+          "const": "IL",
+          "title": "Israel"
+        },
+        {
+          "const": "IT",
+          "title": "Italy"
+        },
+        {
+          "const": "JM",
+          "title": "Jamaica"
+        },
+        {
+          "const": "JP",
+          "title": "Japan"
+        },
+        {
+          "const": "JE",
+          "title": "Jersey"
+        },
+        {
+          "const": "JO",
+          "title": "Jordan"
+        },
+        {
+          "const": "KZ",
+          "title": "Kazakhstan"
+        },
+        {
+          "const": "KE",
+          "title": "Kenya"
+        },
+        {
+          "const": "KI",
+          "title": "Kiribati"
+        },
+        {
+          "const": "KP",
+          "title": "Korea, Democratic People's Republic of"
+        },
+        {
+          "const": "KR",
+          "title": "Korea, Republic of"
+        },
+        {
+          "const": "KW",
+          "title": "Kuwait"
+        },
+        {
+          "const": "KG",
+          "title": "Kyrgyzstan"
+        },
+        {
+          "const": "LA",
+          "title": "Lao People's Democratic Republic"
+        },
+        {
+          "const": "LV",
+          "title": "Latvia"
+        },
+        {
+          "const": "LB",
+          "title": "Lebanon"
+        },
+        {
+          "const": "LS",
+          "title": "Lesotho"
+        },
+        {
+          "const": "LR",
+          "title": "Liberia"
+        },
+        {
+          "const": "LY",
+          "title": "Libya"
+        },
+        {
+          "const": "LI",
+          "title": "Liechtenstein"
+        },
+        {
+          "const": "LT",
+          "title": "Lithuania"
+        },
+        {
+          "const": "LU",
+          "title": "Luxembourg"
+        },
+        {
+          "const": "MO",
+          "title": "Macao"
+        },
+        {
+          "const": "MK",
+          "title": "North Macedonia"
+        },
+        {
+          "const": "MG",
+          "title": "Madagascar"
+        },
+        {
+          "const": "MW",
+          "title": "Malawi"
+        },
+        {
+          "const": "MY",
+          "title": "Malaysia"
+        },
+        {
+          "const": "MV",
+          "title": "Maldives"
+        },
+        {
+          "const": "ML",
+          "title": "Mali"
+        },
+        {
+          "const": "MT",
+          "title": "Malta"
+        },
+        {
+          "const": "MH",
+          "title": "Marshall Islands"
+        },
+        {
+          "const": "MQ",
+          "title": "Martinique"
+        },
+        {
+          "const": "MR",
+          "title": "Mauritania"
+        },
+        {
+          "const": "MU",
+          "title": "Mauritius"
+        },
+        {
+          "const": "YT",
+          "title": "Mayotte"
+        },
+        {
+          "const": "MX",
+          "title": "Mexico"
+        },
+        {
+          "const": "FM",
+          "title": "Micronesia, Federated States of"
+        },
+        {
+          "const": "MD",
+          "title": "Moldova, Republic of"
+        },
+        {
+          "const": "MC",
+          "title": "Monaco"
+        },
+        {
+          "const": "MN",
+          "title": "Mongolia"
+        },
+        {
+          "const": "ME",
+          "title": "Montenegro"
+        },
+        {
+          "const": "MS",
+          "title": "Montserrat"
+        },
+        {
+          "const": "MA",
+          "title": "Morocco"
+        },
+        {
+          "const": "MZ",
+          "title": "Mozambique"
+        },
+        {
+          "const": "MM",
+          "title": "Myanmar"
+        },
+        {
+          "const": "NA",
+          "title": "Namibia"
+        },
+        {
+          "const": "NR",
+          "title": "Nauru"
+        },
+        {
+          "const": "NP",
+          "title": "Nepal"
+        },
+        {
+          "const": "NL",
+          "title": "Netherlands"
+        },
+        {
+          "const": "NC",
+          "title": "New Caledonia"
+        },
+        {
+          "const": "NZ",
+          "title": "New Zealand"
+        },
+        {
+          "const": "NI",
+          "title": "Nicaragua"
+        },
+        {
+          "const": "NE",
+          "title": "Niger"
+        },
+        {
+          "const": "NG",
+          "title": "Nigeria"
+        },
+        {
+          "const": "NU",
+          "title": "Niue"
+        },
+        {
+          "const": "NF",
+          "title": "Norfolk Island"
+        },
+        {
+          "const": "MP",
+          "title": "Northern Mariana Islands"
+        },
+        {
+          "const": "NO",
+          "title": "Norway"
+        },
+        {
+          "const": "OM",
+          "title": "Oman"
+        },
+        {
+          "const": "PK",
+          "title": "Pakistan"
+        },
+        {
+          "const": "PW",
+          "title": "Palau"
+        },
+        {
+          "const": "PS",
+          "title": "Palestine, State of"
+        },
+        {
+          "const": "PA",
+          "title": "Panama"
+        },
+        {
+          "const": "PG",
+          "title": "Papua New Guinea"
+        },
+        {
+          "const": "PY",
+          "title": "Paraguay"
+        },
+        {
+          "const": "PE",
+          "title": "Peru"
+        },
+        {
+          "const": "PH",
+          "title": "Philippines"
+        },
+        {
+          "const": "PN",
+          "title": "Pitcairn"
+        },
+        {
+          "const": "PL",
+          "title": "Poland"
+        },
+        {
+          "const": "PT",
+          "title": "Portugal"
+        },
+        {
+          "const": "PR",
+          "title": "Puerto Rico"
+        },
+        {
+          "const": "QA",
+          "title": "Qatar"
+        },
+        {
+          "const": "RE",
+          "title": "Réunion"
+        },
+        {
+          "const": "RO",
+          "title": "Romania"
+        },
+        {
+          "const": "RU",
+          "title": "Russian Federation"
+        },
+        {
+          "const": "RW",
+          "title": "Rwanda"
+        },
+        {
+          "const": "BL",
+          "title": "Saint Barthélemy"
+        },
+        {
+          "const": "SH",
+          "title": "Saint Helena, Ascension and Tristan da Cunha"
+        },
+        {
+          "const": "KN",
+          "title": "Saint Kitts and Nevis"
+        },
+        {
+          "const": "LC",
+          "title": "Saint Lucia"
+        },
+        {
+          "const": "MF",
+          "title": "Saint Martin (French part)"
+        },
+        {
+          "const": "PM",
+          "title": "Saint Pierre and Miquelon"
+        },
+        {
+          "const": "VC",
+          "title": "Saint Vincent and the Grenadines"
+        },
+        {
+          "const": "WS",
+          "title": "Samoa"
+        },
+        {
+          "const": "SM",
+          "title": "San Marino"
+        },
+        {
+          "const": "ST",
+          "title": "Sao Tome and Principe"
+        },
+        {
+          "const": "SA",
+          "title": "Saudi Arabia"
+        },
+        {
+          "const": "SN",
+          "title": "Senegal"
+        },
+        {
+          "const": "RS",
+          "title": "Serbia"
+        },
+        {
+          "const": "SC",
+          "title": "Seychelles"
+        },
+        {
+          "const": "SL",
+          "title": "Sierra Leone"
+        },
+        {
+          "const": "SG",
+          "title": "Singapore"
+        },
+        {
+          "const": "SX",
+          "title": "Sint Maarten (Dutch part)"
+        },
+        {
+          "const": "SK",
+          "title": "Slovakia"
+        },
+        {
+          "const": "SI",
+          "title": "Slovenia"
+        },
+        {
+          "const": "SB",
+          "title": "Solomon Islands"
+        },
+        {
+          "const": "SO",
+          "title": "Somalia"
+        },
+        {
+          "const": "ZA",
+          "title": "South Africa"
+        },
+        {
+          "const": "GS",
+          "title": "South Georgia and the South Sandwich Islands"
+        },
+        {
+          "const": "SS",
+          "title": "South Sudan"
+        },
+        {
+          "const": "ES",
+          "title": "Spain"
+        },
+        {
+          "const": "LK",
+          "title": "Sri Lanka"
+        },
+        {
+          "const": "SD",
+          "title": "Sudan"
+        },
+        {
+          "const": "SR",
+          "title": "Suriname"
+        },
+        {
+          "const": "SJ",
+          "title": "Svalbard and Jan Mayen"
+        },
+        {
+          "const": "SE",
+          "title": "Sweden"
+        },
+        {
+          "const": "CH",
+          "title": "Switzerland"
+        },
+        {
+          "const": "SY",
+          "title": "Syrian Arab Republic"
+        },
+        {
+          "const": "TW",
+          "title": "Taiwan (Province of China)"
+        },
+        {
+          "const": "TJ",
+          "title": "Tajikistan"
+        },
+        {
+          "const": "TZ",
+          "title": "Tanzania, the United Republic of"
+        },
+        {
+          "const": "TH",
+          "title": "Thailand"
+        },
+        {
+          "const": "TL",
+          "title": "Timor-Leste"
+        },
+        {
+          "const": "TG",
+          "title": "Togo"
+        },
+        {
+          "const": "TK",
+          "title": "Tokelau"
+        },
+        {
+          "const": "TO",
+          "title": "Tonga"
+        },
+        {
+          "const": "TT",
+          "title": "Trinidad and Tobago"
+        },
+        {
+          "const": "TN",
+          "title": "Tunisia"
+        },
+        {
+          "const": "TR",
+          "title": "Türkiye"
+        },
+        {
+          "const": "TM",
+          "title": "Turkmenistan"
+        },
+        {
+          "const": "TC",
+          "title": "Turks and Caicos Islands"
+        },
+        {
+          "const": "TV",
+          "title": "Tuvalu"
+        },
+        {
+          "const": "UG",
+          "title": "Uganda"
+        },
+        {
+          "const": "UA",
+          "title": "Ukraine"
+        },
+        {
+          "const": "AE",
+          "title": "United Arab Emirates"
+        },
+        {
+          "const": "GB",
+          "title": "United Kingdom"
+        },
+        {
+          "const": "US",
+          "title": "United States of America"
+        },
+        {
+          "const": "UM",
+          "title": "United States Minor Outlying Islands"
+        },
+        {
+          "const": "UY",
+          "title": "Uruguay"
+        },
+        {
+          "const": "UZ",
+          "title": "Uzbekistan"
+        },
+        {
+          "const": "VU",
+          "title": "Vanuatu"
+        },
+        {
+          "const": "VE",
+          "title": "Venezuela, Bolivarian Republic of"
+        },
+        {
+          "const": "VN",
+          "title": "Viet Nam"
+        },
+        {
+          "const": "VG",
+          "title": "Virgin Islands (British)"
+        },
+        {
+          "const": "VI",
+          "title": "Virgin Islands (U.S.)"
+        },
+        {
+          "const": "WF",
+          "title": "Wallis and Futuna"
+        },
+        {
+          "const": "EH",
+          "title": "Western Sahara"
+        },
+        {
+          "const": "YE",
+          "title": "Yemen"
+        },
+        {
+          "const": "ZM",
+          "title": "Zambia"
+        },
+        {
+          "const": "ZW",
+          "title": "Zimbabwe"
+        },
+        {
+          "const": "EL",
+          "title": "Greece"
+        },
+        {
+          "const": "XI",
+          "title": "United Kingdom (Northern Ireland)"
+        },
+        {
+          "const": "XU",
+          "title": "United Kingdom (excluding Northern Ireland)"
+        },
+        {
+          "const": "EU",
+          "title": "European Union"
+        }
+      ],
+      "type": "string",
+      "title": "Tax Country Code",
+      "description": "Defines an ISO base country code used for tax purposes"
+    },
+    "Telephone": {
+      "$id": "https://gobl.org/draft-0/org/telephone",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for this number."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "Free-text string that represents the telephone number."
+        }
+      },
+      "type": "object",
+      "required": [
+        "num"
+      ],
+      "description": "Telephone describes what is expected for a telephone number."
+    },
+    "Website": {
+      "$id": "https://gobl.org/draft-0/org/website",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label for the website to show alongside the URL."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title of the website to help distinguish between this and other links."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL for the website."
+        }
+      },
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "description": "Website describes what is expected for a web address."
     }
   }
 }

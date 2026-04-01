@@ -3,6 +3,16 @@
   "$id": "https://gobl.org/draft-0/org/name",
   "$ref": "#/$defs/Name",
   "$defs": {
+    "Meta": {
+      "$id": "https://gobl.org/draft-0/cbc/meta",
+      "patternProperties": {
+        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "Meta defines a structure for data about the data being defined."
+    },
     "Name": {
       "properties": {
         "uuid": {

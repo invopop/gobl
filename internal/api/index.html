@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOBL Editor</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "codemirror": "https://esm.sh/codemirror@6.0.1",
+      "@codemirror/lang-json": "https://esm.sh/@codemirror/lang-json@6",
+      "@codemirror/state": "https://esm.sh/@codemirror/state@6",
+      "codemirror-json-schema": "https://esm.sh/@invopop/codemirror-json-schema@0.9"
+    }
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; background: #1e1e2e; color: #cdd6f4; }
+    body { display: flex; flex-direction: column; }
+
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 16px; background: #181825; border-bottom: 1px solid #313244;
+      flex-shrink: 0;
+    }
+    header svg { width: 28px; height: 28px; fill: #cdd6f4; }
+    header h1 { font-size: 16px; font-weight: 600; }
+    header .spacer { flex: 1; }
+
+    .toolbar-group { display: flex; align-items: center; gap: 8px; }
+
+    label.checkbox { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; user-select: none; }
+    label.checkbox input { accent-color: #89b4fa; }
+
+    button.build {
+      padding: 6px 16px; border: none; border-radius: 6px;
+      background: #89b4fa; color: #1e1e2e; font-weight: 600; font-size: 13px;
+      cursor: pointer; transition: opacity .15s;
+    }
+    button.build:hover { opacity: .85; }
+    button.build:disabled { opacity: .5; cursor: not-allowed; }
+
+    .status {
+      font-size: 12px; padding: 4px 8px; border-radius: 4px;
+      transition: opacity .3s;
+    }
+    .status.success { color: #a6e3a1; }
+    .status.error { color: #f38ba8; }
+
+    #errors {
+      background: #1e1e2e; border-bottom: 1px solid #313244;
+      padding: 8px 16px; font-size: 13px; overflow-y: auto; max-height: 200px;
+      flex-shrink: 0;
+    }
+    #errors summary { cursor: pointer; color: #f38ba8; font-weight: 600; }
+    #errors .fault { padding: 2px 0 2px 16px; font-family: monospace; font-size: 12px; }
+    #errors .fault .path { color: #fab387; }
+    #errors .fault .code { color: #89b4fa; font-weight: 600; }
+    #errors .fault .msg { color: #cdd6f4; }
+
+    main { flex: 1; overflow: hidden; }
+    .cm-editor { height: 100%; }
+    .cm-scroller { overflow: auto; }
+  </style>
+</head>
+<body x-data="editor()">
+  <header>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180.6 218.8">
+      <path d="M172 127.5V32.6c0-1.4-.7-2.8-1.9-3.6s-2.7-.9-4-.3l-38.8 16.8v-27c0-1.4-.7-2.8-1.9-3.6s-2.7-.9-4-.4L82.6 31.3v-27c0-1.4-.7-2.8-1.9-3.6s-2.7-.9-4-.4L11 28.7c-1.6.7-2.6 2.2-2.6 3.9v94.9c0 1.4.7 2.8 1.9 3.6.7.5 1.5.7 2.3.7.6 0 1.1-.1 1.7-.3l38.8-16.8v27c0 1.4.7 2.8 1.9 3.6.7.5 1.5.7 2.3.7.6 0 1.1-.1 1.7-.3l38.8-16.8v27c0 1.4.7 2.8 1.9 3.6.7.5 1.5.7 2.3.7.6 0 1.1-.1 1.7-.3l65.6-28.4c1.7-.7 2.7-2.3 2.7-4"/>
+    </svg>
+    <h1>GOBL Editor</h1>
+    <div class="spacer"></div>
+    <div class="toolbar-group">
+      <label class="checkbox">
+        <input type="checkbox" x-model="envelop" />
+        Envelop
+      </label>
+      <button class="build" @click="build()" :disabled="loading">
+        <span x-text="loading ? 'Building…' : 'Build'"></span>
+      </button>
+      <span class="status" :class="{ success: success, error: !!error }"
+            x-text="success ? 'OK' : ''"></span>
+    </div>
+  </header>
+
+  <div id="errors" x-show="error" x-cloak>
+    <details open>
+      <summary x-text="error?.message || 'Error'"></summary>
+      <template x-if="error?.faults?.length">
+        <div>
+          <template x-for="f in error.faults" :key="f.message + f.paths?.join()">
+            <div class="fault">
+              <span class="code" x-show="f.code" x-text="'[' + f.code + ']'"></span>
+              <span class="path" x-text="f.paths?.join(', ') || ''"></span>
+              <span class="msg" x-text="f.message"></span>
+            </div>
+          </template>
+        </div>
+      </template>
+    </details>
+  </div>
+
+  <main id="editor-container"></main>
+
+  <script type="module">
+    import { basicSetup, EditorView } from 'codemirror';
+    import { json } from '@codemirror/lang-json';
+    import { EditorState } from '@codemirror/state';
+
+    const darkTheme = EditorView.theme({
+      '&': { backgroundColor: '#1e1e2e', color: '#cdd6f4' },
+      '.cm-content': { caretColor: '#f5e0dc' },
+      '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#f5e0dc' },
+      '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': { backgroundColor: '#45475a' },
+      '.cm-panels': { backgroundColor: '#181825', color: '#cdd6f4' },
+      '.cm-panels.cm-panels-top': { borderBottom: '1px solid #313244' },
+      '.cm-panels.cm-panels-bottom': { borderTop: '1px solid #313244' },
+      '.cm-searchMatch': { backgroundColor: '#a6adc844' },
+      '.cm-searchMatch.cm-searchMatch-selected': { backgroundColor: '#585b7044' },
+      '.cm-activeLine': { backgroundColor: '#181825' },
+      '.cm-selectionMatch': { backgroundColor: '#585b7044' },
+      '.cm-matchingBracket': { color: '#a6e3a1', backgroundColor: '#45475a' },
+      '.cm-gutters': { backgroundColor: '#181825', color: '#6c7086', borderRight: '1px solid #313244' },
+      '.cm-activeLineGutter': { backgroundColor: '#1e1e2e' },
+      '.cm-foldPlaceholder': { backgroundColor: '#45475a', color: '#cdd6f4', border: 'none' },
+    }, { dark: true });
+
+    const defaultDoc = JSON.stringify({
+      "$schema": "https://gobl.org/draft-0/bill/invoice",
+      "currency": "USD",
+      "issue_date": new Date().toISOString().slice(0, 10),
+      "supplier": {
+        "name": "Acme Inc.",
+        "tax_id": {
+          "country": "US"
+        }
+      },
+      "customer": {
+        "name": "Sample Customer"
+      },
+      "lines": [
+        {
+          "quantity": "10",
+          "item": {
+            "name": "Development Services",
+            "price": "100.00"
+          },
+          "taxes": [
+            {
+              "cat": "ST",
+              "percent": "8.25%"
+            }
+          ]
+        }
+      ]
+    }, null, 2);
+
+    const { jsonSchema, updateSchema } = await import('codemirror-json-schema');
+
+    const SCHEMA_PREFIX = 'https://gobl.org/draft-0/';
+    let activeSchemaURL = null;
+    let debounceTimer;
+
+    async function loadSchemaFromDoc(view) {
+      try {
+        const text = view.state.doc.toString();
+        const m = text.match(/"\$schema"\s*:\s*"([^"]+)"/);
+        const url = m?.[1];
+        if (!url || url === activeSchemaURL) return;
+        if (!url.startsWith(SCHEMA_PREFIX)) return;
+
+        activeSchemaURL = url;
+        const path = url.slice(SCHEMA_PREFIX.length);
+        const res = await fetch('/v0/schemas/' + path);
+        if (!res.ok) return;
+
+        updateSchema(view, await res.json());
+      } catch (e) {
+        console.warn('Schema loading failed:', e);
+      }
+    }
+
+    const editor = new EditorView({
+      state: EditorState.create({
+        doc: defaultDoc,
+        extensions: [
+          basicSetup,
+          json(),
+          darkTheme,
+          EditorView.lineWrapping,
+          jsonSchema(),
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              clearTimeout(debounceTimer);
+              debounceTimer = setTimeout(() => loadSchemaFromDoc(update.view), 500);
+            }
+          }),
+        ],
+      }),
+      parent: document.getElementById('editor-container'),
+    });
+
+    window._cmEditor = editor;
+    loadSchemaFromDoc(editor);
+  </script>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('editor', () => ({
+        loading: false,
+        envelop: false,
+        error: null,
+        success: false,
+
+        async build() {
+          const editor = window._cmEditor;
+          if (!editor) return;
+
+          this.loading = true;
+          this.error = null;
+          this.success = false;
+
+          try {
+            const content = editor.state.doc.toString();
+            const payload = JSON.parse(content);
+
+            const res = await fetch('/v0/build', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ data: payload, envelop: this.envelop }),
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+              this.error = result;
+              return;
+            }
+
+            const pretty = JSON.stringify(result, null, 2);
+            editor.dispatch({
+              changes: { from: 0, to: editor.state.doc.length, insert: pretty },
+            });
+            this.success = true;
+            setTimeout(() => { this.success = false; }, 3000);
+          } catch (e) {
+            this.error = { message: e.message };
+          } finally {
+            this.loading = false;
+          }
+        },
+      }));
+    });
+  </script>
+</body>
+</html>

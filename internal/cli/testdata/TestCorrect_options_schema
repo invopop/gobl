@@ -1,6 +1,15 @@
 {
     "$comment": "Generated dynamically for es",
     "$defs": {
+        "Code": {
+            "$id": "https://gobl.org/draft-0/cbc/code",
+            "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks.",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
+            "title": "Code",
+            "type": "string"
+        },
         "CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
             "properties": {
@@ -61,6 +70,53 @@
             ],
             "required": [
                 "type"
+            ],
+            "type": "object"
+        },
+        "Date": {
+            "$id": "https://gobl.org/draft-0/cal/date",
+            "description": "Civil date in simplified ISO format, like 2021-05-26",
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+        },
+        "Extensions": {
+            "$id": "https://gobl.org/draft-0/tax/extensions",
+            "description": "Extensions is a map of extension keys to values.",
+            "patternProperties": {
+                "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+                    "$ref": "https://gobl.org/draft-0/cbc/code"
+                }
+            },
+            "type": "object"
+        },
+        "Key": {
+            "$id": "https://gobl.org/draft-0/cbc/key",
+            "description": "Text identifier to be used instead of a code for a more verbose but readable identifier.",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+            "title": "Key",
+            "type": "string"
+        },
+        "Stamp": {
+            "$id": "https://gobl.org/draft-0/head/stamp",
+            "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes.",
+            "properties": {
+                "prv": {
+                    "$ref": "https://gobl.org/draft-0/cbc/key",
+                    "description": "Identity of the agency used to create the stamp usually defined by each region.",
+                    "title": "Provider"
+                },
+                "val": {
+                    "description": "The serialized stamp value generated for or by the external agency",
+                    "title": "Value",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "prv",
+                "val"
             ],
             "type": "object"
         }

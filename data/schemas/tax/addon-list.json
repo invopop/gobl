@@ -91,6 +91,15 @@
       },
       "type": "array",
       "description": "AddonList defines the slice of keys to use for addons."
+    },
+    "Key": {
+      "$id": "https://gobl.org/draft-0/cbc/key",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+      "title": "Key",
+      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
     }
   }
 }

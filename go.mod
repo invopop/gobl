@@ -14,13 +14,12 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/imdario/mergo v0.3.16
-	github.com/invopop/jsonschema v0.12.0
+	github.com/invopop/jsonschema v0.13.1-0.20260331224545-b36d455c19d3
 	github.com/invopop/yaml v0.3.1
 	github.com/magefile/mage v1.15.0
 	github.com/mark3labs/mcp-go v0.46.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/syumai/workers v0.32.0
 	gitlab.com/flimzy/testy v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )

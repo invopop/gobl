@@ -27,6 +27,7 @@ func main() {
 func generate() error {
 	r := new(jsonschema.Reflector)
 	r.AllowAdditionalProperties = true
+	r.BundleLookupRefs = true
 
 	if err := r.AddGoComments("github.com/invopop/gobl", "./"); err != nil {
 		return fmt.Errorf("reading comments: %w", err)

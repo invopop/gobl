@@ -3,6 +3,13 @@
   "$id": "https://gobl.org/draft-0/cal/period",
   "$ref": "#/$defs/Period",
   "$defs": {
+    "Date": {
+      "$id": "https://gobl.org/draft-0/cal/date",
+      "type": "string",
+      "format": "date",
+      "title": "Date",
+      "description": "Civil date in simplified ISO format, like 2021-05-26"
+    },
     "Period": {
       "properties": {
         "label": {

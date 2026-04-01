@@ -3,6 +3,44 @@
   "$id": "https://gobl.org/draft-0/org/note",
   "$ref": "#/$defs/Note",
   "$defs": {
+    "Code": {
+      "$id": "https://gobl.org/draft-0/cbc/code",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-ZÑa-z0-9]+([\\.\\-\\:/,_\\\u0026 ]?[A-ZÑa-z0-9]+)*$",
+      "title": "Code",
+      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
+    },
+    "Extensions": {
+      "$id": "https://gobl.org/draft-0/tax/extensions",
+      "patternProperties": {
+        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+          "$ref": "https://gobl.org/draft-0/cbc/code"
+        }
+      },
+      "type": "object",
+      "description": "Extensions is a map of extension keys to values."
+    },
+    "Key": {
+      "$id": "https://gobl.org/draft-0/cbc/key",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+      "title": "Key",
+      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
+    },
+    "Meta": {
+      "$id": "https://gobl.org/draft-0/cbc/meta",
+      "patternProperties": {
+        "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "Meta defines a structure for data about the data being defined."
+    },
     "Note": {
       "properties": {
         "uuid": {
