@@ -25,10 +25,24 @@ var taxCategories = []*tax.CategoryDef{
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
-					i18n.EN: "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2023)",
-					i18n.DE: "Umsatzsteuer/Güter - und Dienstleistungssteuer (USt/GST) (1976-2023)",
+					i18n.EN: "Federal Ministry of Finance: 100 Years of VAT in Germany",
+					i18n.DE: "Bundesfinanzministerium: 100 Jahre Umsatzsteuer in Deutschland",
 				},
-				URL: "https://www.oecd.org/tax/tax-policy/tax-database/",
+				URL: "https://www.bundesfinanzministerium.de/Monatsberichte/2019/12/Inhalte/Kapitel-3-Analysen/3-4-100-jahre-umsatzsteuer.html",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "German Bundestag Research Service: Role of VAT and its Contribution to Financing Social Security Systems",
+					i18n.DE: "Wissenschaftliche Dienste des Deutschen Bundestages: Rolle der Umsatzsteuer und ihr Beitrag zur Finanzierung der sozialen Sicherungssysteme",
+				},
+				URL: "https://www.bundestag.de/resource/blob/410468/8ceeef0b94cdfa0b39a9925dece2aa75/WD-4-040-10-pdf.pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Federal Statistical Office: Effect of the VAT Reduction",
+					i18n.DE: "Statistisches Bundesamt: Auswirkungen der Mehrwertsteuersenkung",
+				},
+				URL: "https://www.destatis.de/EN/Themes/Society-Environment/Income-Consumption-Living-Conditions/Consumption-Expenditure/consumption-1-VAT.html",
 			},
 		},
 		Retained: false,
@@ -48,7 +62,7 @@ var taxCategories = []*tax.CategoryDef{
 
 				Values: []*tax.RateValueDef{
 					{
-						Since:   cal.NewDate(2022, 1, 1),
+						Since:   cal.NewDate(2021, 1, 1),
 						Percent: num.MakePercentage(19, 2),
 					},
 					{
@@ -56,12 +70,16 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(16, 2),
 					},
 					{
-						Since:   cal.NewDate(2007, 7, 1),
+						Since:   cal.NewDate(2007, 1, 1),
 						Percent: num.MakePercentage(19, 2),
 					},
 					{
-						Since:   cal.NewDate(1993, 1, 1),
+						Since:   cal.NewDate(1998, 4, 1),
 						Percent: num.MakePercentage(16, 2),
+					},
+					{
+						Since:   cal.NewDate(1993, 1, 1),
+						Percent: num.MakePercentage(15, 2),
 					},
 				},
 			},
@@ -78,7 +96,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Since:   cal.NewDate(2022, 1, 1),
+						Since:   cal.NewDate(2021, 1, 1),
 						Percent: num.MakePercentage(7, 2),
 					},
 					{
@@ -86,12 +104,8 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(5, 2),
 					},
 					{
-						Since:   cal.NewDate(2007, 7, 1),
+						Since:   cal.NewDate(1983, 7, 1),
 						Percent: num.MakePercentage(7, 2),
-					},
-					{
-						Since:   cal.NewDate(1993, 1, 1),
-						Percent: num.MakePercentage(5, 2),
 					},
 				},
 			},
