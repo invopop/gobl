@@ -57,6 +57,9 @@ func NewHandler() http.Handler {
 	// Favicon
 	mux.HandleFunc("GET /favicon.svg", handleFavicon)
 
+	// OpenAPI spec
+	mux.HandleFunc("GET "+p+"/openapi.json", handleOpenAPI)
+
 	// Version / health
 	mux.HandleFunc("GET "+p+"/", withETag(handleVersion))
 
