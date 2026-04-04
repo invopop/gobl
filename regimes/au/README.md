@@ -1,6 +1,6 @@
 # Australia (`AU`)
 
-Australia uses a Goods and Services Tax (GST) system administered by the Australian Taxation Office (ATO). GOBL models the Australian regime with a 10% standard GST rate, support for GST-free and input-taxed supplies through the generic GST model, ABN validation, and invoice validation rules for supplier and customer identification.
+Australia uses a Goods and Services Tax (GST) system administered by the Australian Taxation Office (ATO). GOBL models the Australian regime with a 10% standard GST rate, support for GST-free and input-taxed supplies through the generic GST key model, ABN validation, and invoice validation rules for supplier and customer identification.
 
 ## Public Documentation
 
@@ -28,17 +28,16 @@ Validation follows the ABR checksum algorithm:
 
 Australian GST distinguishes between taxable supplies, GST-free supplies, and input-taxed supplies. GOBL keeps Australia on the shared GST model and maps those concepts as follows:
 
-| Australian concept | GOBL key / rate | GST treatment |
+| Australian concept | GOBL key / handling | GST treatment |
 | --- | --- | --- |
 | Taxable supply | `standard` / `general` | 10% GST |
-| GST-free supply | `zero` / `zero` | 0% GST |
+| GST-free supply | `zero` | 0% GST through the shared GST zero key |
 | Input-taxed supply | `exempt` | No GST charged; used as the generic mapping for input-taxed treatment |
 | Outside scope / non-taxable | `outside-scope` | Not part of the GST calculation |
 
 | Rate Name | GOBL Rate Key | Percent | Since |
 | --- | --- | --- | --- |
 | General rate | `standard` / `general` | 10% | 2000-07-01 |
-| GST-free rate | `zero` / `zero` | 0% | 2000-07-01 |
 
 ## Tax Invoices
 

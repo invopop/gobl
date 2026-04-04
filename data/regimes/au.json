@@ -97,21 +97,6 @@
               "percent": "10%"
             }
           ]
-        },
-        {
-          "rate": "zero",
-          "keys": [
-            "zero"
-          ],
-          "name": {
-            "en": "Zero rate"
-          },
-          "values": [
-            {
-              "since": "2000-07-01",
-              "percent": "0%"
-            }
-          ]
         }
       ],
       "sources": [

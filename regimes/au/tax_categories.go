@@ -40,19 +40,6 @@ func taxCategories() []*tax.CategoryDef {
 						},
 					},
 				},
-				{
-					Keys: []cbc.Key{tax.KeyZero},
-					Rate: tax.RateZero,
-					Name: i18n.String{
-						i18n.EN: "Zero rate",
-					},
-					Values: []*tax.RateValueDef{
-						{
-							Since:   cal.NewDate(2000, 7, 1),
-							Percent: num.PercentageZero,
-						},
-					},
-				},
 			},
 		},
 	}
