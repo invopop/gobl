@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/au"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -73,6 +74,12 @@ func validInvoice() *bill.Invoice {
 
 func TestInvoiceValidation(t *testing.T) {
 	t.Parallel()
+
+	t.Run("nil invoice", func(t *testing.T) {
+		t.Parallel()
+		var inv *bill.Invoice
+		require.NoError(t, au.Validate(inv))
+	})
 
 	t.Run("valid invoice under threshold", func(t *testing.T) {
 		t.Parallel()

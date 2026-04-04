@@ -12,6 +12,9 @@ import (
 var customerIdentificationThreshold = num.MakeAmount(100000, 2)
 
 func validateBillInvoice(inv *bill.Invoice) error {
+	if inv == nil {
+		return nil
+	}
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
 			validation.By(validateBillInvoiceSupplier),
