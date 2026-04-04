@@ -13,7 +13,7 @@ supplier:
     code: "51824753556"
   addresses:
     - street: George Street
-      number: "100"
+      num: "100"
       locality: Sydney
       region: NSW
       code: "2000"
@@ -23,7 +23,7 @@ customer:
   name: Example Customer Pty Ltd
   addresses:
     - street: Collins Street
-      number: "200"
+      num: "200"
       locality: Melbourne
       region: VIC
       code: "3000"

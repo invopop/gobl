@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4d8afaf12759b4ca824799073709d20282467f48829766514b9ee94012ef14cc"
+			"val": "9b83035fda7d9f82243097be6bfdfc321d431f25d4d355b2a00700ed5c9b6687"
 		}
 	},
 	"doc": {
@@ -24,6 +24,7 @@
 			},
 			"addresses": [
 				{
+					"num": "100",
 					"street": "George Street",
 					"locality": "Sydney",
 					"region": "NSW",
@@ -36,6 +37,7 @@
 			"name": "Example Customer Pty Ltd",
 			"addresses": [
 				{
+					"num": "200",
 					"street": "Collins Street",
 					"locality": "Melbourne",
 					"region": "VIC",
