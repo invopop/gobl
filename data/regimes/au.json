@@ -4,7 +4,7 @@
     "en": "Australia"
   },
   "description": {
-    "en": "Australia's indirect tax system is administered by the Australian\nTaxation Office (ATO). Goods and Services Tax (GST) applies at a\nstandard rate of 10%, with zero-rated exports and exempt supplies for\nspecific transactions such as certain financial services and residential\nrent.\n\nBusinesses are identified by an Australian Business Number (ABN), an\n11-digit identifier used for GST registration and invoicing. Australian\ntax invoices must show the supplier's details and ABN, and invoices of\nAUD 1,000 or more must also identify the customer. Electronic invoicing\nis aligned with the Peppol PINT A-NZ specification."
+    "en": "Australia's indirect tax system is administered by the Australian\nTaxation Office (ATO). Goods and Services Tax (GST) applies at a\nstandard rate of 10%. Supplies may also be GST-free (for example, many\nexports) or input-taxed (for example, certain financial supplies and\nresidential rent). In GOBL's generic GST model, GST-free supplies map to\nthe zero key and input-taxed supplies map to the exempt key.\n\nBusinesses are identified by an Australian Business Number (ABN), an\n11-digit identifier used for GST registration and invoicing. Australian\ntax invoices must show the supplier's details and ABN, and invoices of\nAUD 1,000 or more, or self-billed invoices, must also identify the\ncustomer. Electronic invoicing is aligned with the Peppol PINT A-NZ\nspecification."
   },
   "sources": [
     {
@@ -40,7 +40,8 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "credit-note"
+        "credit-note",
+        "debit-note"
       ]
     }
   ],

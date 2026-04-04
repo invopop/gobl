@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `au`: Added the Australian GST regime.
+
 ## [v0.309.0] - 2026-04-01
 
 ### Added
