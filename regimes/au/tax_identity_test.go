@@ -29,6 +29,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			tID := &tax.Identity{Country: "AU", Code: tt.code}
 
 			err := au.Validate(tID)
@@ -63,6 +64,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			tID := &tax.Identity{Country: "AU", Code: tt.input}
 
 			au.Normalize(tID)

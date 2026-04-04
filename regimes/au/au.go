@@ -1,3 +1,4 @@
+// Package au provides models for dealing with Australia.
 package au
 
 import (
