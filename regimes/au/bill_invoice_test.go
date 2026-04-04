@@ -81,25 +81,40 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("valid invoice at threshold with customer ABN", func(t *testing.T) {
+	t.Run("valid invoice at threshold with customer name only", func(t *testing.T) {
 		t.Parallel()
 		inv := validInvoice()
 		inv.Lines[0].Item.Price = num.NewAmount(100000, 2)
-		inv.Customer.TaxID = &tax.Identity{
-			Country: l10n.AU.Tax(),
-			Code:    "53004085616",
-		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("invoice at threshold without customer ABN", func(t *testing.T) {
+	t.Run("invoice at threshold without customer", func(t *testing.T) {
 		t.Parallel()
 		inv := validInvoice()
 		inv.Lines[0].Item.Price = num.NewAmount(100000, 2)
+		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "tax_id")
+		assert.ErrorContains(t, err, "customer")
+	})
+
+	t.Run("self billed invoice under threshold with customer name", func(t *testing.T) {
+		t.Parallel()
+		inv := validInvoice()
+		inv.SetTags(tax.TagSelfBilled)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("self billed invoice under threshold without customer", func(t *testing.T) {
+		t.Parallel()
+		inv := validInvoice()
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer")
 	})
 
 	t.Run("nil supplier", func(t *testing.T) {
@@ -126,5 +141,23 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "name")
+	})
+
+	t.Run("supplier tax ID must be australian", func(t *testing.T) {
+		t.Parallel()
+		inv := validInvoice()
+		inv.Supplier.TaxID.Country = "US"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "country")
+	})
+
+	t.Run("supplier tax ID must be valid ABN", func(t *testing.T) {
+		t.Parallel()
+		inv := validInvoice()
+		inv.Supplier.TaxID.Code = "11111111111"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "invalid checksum")
 	})
 }

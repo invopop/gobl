@@ -2,13 +2,14 @@ package au
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-var customerABNThreshold = num.MakeAmount(100000, 2)
+var customerIdentificationThreshold = num.MakeAmount(100000, 2)
 
 func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
@@ -18,7 +19,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				requiresCustomerABN(inv),
+				requiresCustomerIdentification(inv),
 				validation.Required,
 			).Else(
 				validation.Skip,
@@ -42,6 +43,20 @@ func validateBillInvoiceSupplier(value any) error {
 		validation.Field(&party.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			validation.By(validateBillInvoiceSupplierTaxID),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillInvoiceSupplierTaxID(value any) error {
+	tID, ok := value.(*tax.Identity)
+	if !ok || tID == nil {
+		return nil
+	}
+	return validation.ValidateStruct(tID,
+		validation.Field(&tID.Country,
+			validation.In(l10n.AU.Tax()),
 			validation.Skip,
 		),
 	)
@@ -50,21 +65,25 @@ func validateBillInvoiceSupplier(value any) error {
 func validateBillInvoiceCustomer(inv *bill.Invoice) validation.RuleFunc {
 	return func(value any) error {
 		party, ok := value.(*org.Party)
-		if !ok || party == nil || !requiresCustomerABN(inv) {
+		if !ok || party == nil || !requiresCustomerIdentification(inv) {
 			return nil
 		}
 		return validation.ValidateStruct(party,
-			validation.Field(&party.TaxID,
+			validation.Field(&party.Name,
 				validation.Required,
-				tax.RequireIdentityCode,
 				validation.Skip,
 			),
 		)
 	}
 }
 
-func requiresCustomerABN(inv *bill.Invoice) bool {
-	return inv != nil &&
-		inv.Totals != nil &&
-		inv.Totals.TotalWithTax.Compare(customerABNThreshold) >= 0
+func requiresCustomerIdentification(inv *bill.Invoice) bool {
+	if inv == nil {
+		return false
+	}
+	if inv.HasTags(tax.TagSelfBilled) {
+		return true
+	}
+	return inv.Totals != nil &&
+		inv.Totals.TotalWithTax.Compare(customerIdentificationThreshold) >= 0
 }
