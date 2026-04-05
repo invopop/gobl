@@ -8,10 +8,13 @@ import (
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal/cli"
+	goblnet "github.com/invopop/gobl/net"
 )
 
 type verifyOpts struct {
 	publicKeyFile string
+	address       string
+	remote        bool
 }
 
 func verify() *verifyOpts {
@@ -28,6 +31,8 @@ func (v *verifyOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 
 	f.StringVarP(&v.publicKeyFile, "key", "k", pubfileFromPriv(defaultKeyFilename), "Public key file for signature validation")
+	f.StringVarP(&v.address, "address", "a", "", "GOBL Net address (FQDN) for remote key discovery")
+	f.BoolVarP(&v.remote, "remote", "r", false, "Auto-discover keys from the signature's gn header")
 
 	return cmd
 }
@@ -40,6 +45,17 @@ func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	defer input.Close() // nolint:errcheck
+
+	if v.address != "" || v.remote {
+		var addr goblnet.Address
+		if v.address != "" {
+			addr, err = goblnet.ParseAddress(v.address)
+			if err != nil {
+				return err
+			}
+		}
+		return cli.VerifyRemote(ctx, input, goblnet.NewClient(), addr)
+	}
 
 	pbFilename, err := expandHome(v.publicKeyFile)
 	if err != nil {

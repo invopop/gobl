@@ -33,6 +33,16 @@ type PublicKey struct {
 	jwk *jose.JSONWebKey
 }
 
+// NewPublicKey creates a PublicKey from a jose.JSONWebKey.
+// The key must be a valid public key.
+func NewPublicKey(jwk jose.JSONWebKey) (*PublicKey, error) {
+	pk := &PublicKey{jwk: &jwk}
+	if err := pk.Validate(); err != nil {
+		return nil, err
+	}
+	return pk, nil
+}
+
 // NewES256Key provides a new ECDSA 256 bit private key and assigns it
 // an ID.
 func NewES256Key() *PrivateKey {

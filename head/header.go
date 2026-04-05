@@ -1,11 +1,22 @@
 package head
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
+)
+
+var (
+	// ErrSignaturePayload is returned when a signature's payload cannot be parsed.
+	ErrSignaturePayload = errors.New("head: invalid signature payload")
+	// ErrSignatureMismatch is returned when a signature's payload does not match the header.
+	ErrSignatureMismatch = errors.New("head: signature payload mismatch")
+	// ErrSignatureKeyMismatch is returned when no provided key matches the signature.
+	ErrSignatureKeyMismatch = errors.New("head: no key match found")
 )
 
 // Header defines the metadata of the body. The header is used as the payload
@@ -127,9 +138,70 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 	return LinkByCategoryAndKey(h.Links, category, key)
 }
 
+// signingPayload defines the minimal set of fields that are locked
+// by signing. Only the UUID and Digest are immutable after signing;
+// stamps, links, tags, meta, and notes can be added post-signing.
+type signingPayload struct {
+	UUID   uuid.UUID    `json:"uuid"`
+	Digest *dsig.Digest `json:"dig"`
+}
+
+func (h *Header) payload() *signingPayload {
+	return &signingPayload{
+		UUID:   h.UUID,
+		Digest: h.Digest,
+	}
+}
+
+// Sign creates a JWS signature of the header's signing payload (UUID + Digest)
+// using the provided private key.
+func (h *Header) Sign(key *dsig.PrivateKey, opts ...dsig.SignerOption) (*dsig.Signature, error) {
+	return dsig.NewSignature(key, h.payload(), opts...)
+}
+
+// Verify checks that the provided signature was created from this header's
+// signing payload. If public keys are provided, the signature must also be
+// cryptographically valid against at least one of them.
+func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	expected := h.payload()
+	if len(keys) == 0 {
+		p := new(signingPayload)
+		if err := sig.UnsafePayload(p); err != nil {
+			return ErrSignaturePayload
+		}
+		return matchPayload(expected, p)
+	}
+	for _, k := range keys {
+		p := new(signingPayload)
+		if err := sig.VerifyPayload(k, p); err != nil {
+			continue
+		}
+		return matchPayload(expected, p)
+	}
+	return ErrSignatureKeyMismatch
+}
+
+func matchPayload(expected, actual *signingPayload) error {
+	if expected.UUID.String() != actual.UUID.String() {
+		return ErrSignatureMismatch
+	}
+	if expected.Digest == nil || actual.Digest == nil {
+		if expected.Digest != actual.Digest {
+			return ErrSignatureMismatch
+		}
+		return nil
+	}
+	if err := expected.Digest.Equals(actual.Digest); err != nil {
+		return ErrSignatureMismatch
+	}
+	return nil
+}
+
 // Contains compares the provided header to ensure that all the fields
 // and properties are contained within the base header. Only a subset of
 // the most important fields are compared.
+//
+// Deprecated: Use Verify with a signature instead.
 func (h *Header) Contains(h2 *Header) bool {
 	if h.UUID.String() != h2.UUID.String() {
 		return false

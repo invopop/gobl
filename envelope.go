@@ -3,7 +3,6 @@ package gobl
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"strconv"
 	"strings"
 
@@ -181,38 +180,19 @@ func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 }
 
 func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
-	if len(keys) == 0 {
-		// no keys provided, only check the contents
-		h := new(head.Header)
-		if err := sig.UnsafePayload(h); err != nil {
-			return errors.New("invalid signature payload")
-		}
-		if !e.Head.Contains(h) {
-			return errors.New("header mismatch")
-		}
-		return nil
-	}
-	for _, k := range keys {
-		h := new(head.Header)
-		if err := sig.VerifyPayload(k, h); err != nil {
-			continue
-		}
-		if e.Head.Contains(h) {
-			return nil
-		}
-		return errors.New("header mismatch")
-	}
-	return errors.New("no key match found")
+	return e.Head.Verify(sig, keys...)
 }
 
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
-func (e *Envelope) Sign(key *dsig.PrivateKey) error {
+// Optional SignerOption values can be provided to add custom headers to the
+// signature, such as the GOBL Net address via dsig.WithGN().
+func (e *Envelope) Sign(key *dsig.PrivateKey, opts ...dsig.SignerOption) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
 	}
-	sig, err := key.Sign(e.Head)
+	sig, err := e.Head.Sign(key, opts...)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
