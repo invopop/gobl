@@ -88,7 +88,7 @@ func TestParseAddress(t *testing.T) {
 
 func TestAddressJWKSURL(t *testing.T) {
 	a := Address("billing.invopop.com")
-	assert.Equal(t, "https://billing.invopop.com/.well-known/jwks.json", a.JWKSURL())
+	assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/jwks.json", a.JWKSURL())
 }
 
 func TestAddressTopic(t *testing.T) {

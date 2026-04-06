@@ -9,7 +9,7 @@ import (
 
 const (
 	// WellKnownPath is the base path for GOBL Net well-known URLs.
-	WellKnownPath = "/.well-known"
+	WellKnownPath = "/.well-known/gobl"
 	// JWKSPath is the full well-known path for JWKS discovery.
 	JWKSPath = WellKnownPath + "/jwks.json"
 )

@@ -40,7 +40,7 @@ func TestFetchKeySet(t *testing.T) {
 		ks, err := c.FetchKeySet(ctx, Address("billing.invopop.com"))
 		require.NoError(t, err)
 		assert.NotNil(t, ks)
-		assert.Equal(t, "https://billing.invopop.com/.well-known/jwks.json", mock.url)
+		assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/jwks.json", mock.url)
 		assert.Len(t, ks.Keys, 1)
 		assert.Equal(t, key.ID(), ks.Keys[0].KeyID)
 	})
