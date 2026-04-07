@@ -30,15 +30,27 @@
           ]
         },
         {
-          "field": "customer",
+          "guard": "non-simplified",
           "subsets": [
             {
-              "field": "tax_id",
+              "field": "customer",
               "assert": [
                 {
                   "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-03",
-                  "desc": "customer tax ID is required",
+                  "desc": "customer is required for non-simplified invoices",
                   "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-03a",
+                      "desc": "customer tax ID is required",
+                      "tests": "present"
+                    }
+                  ]
                 }
               ]
             }

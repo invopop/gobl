@@ -6,6 +6,13 @@
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE",
       "name": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-08",
+          "desc": "exempt tax categories require either a VATEX code or an exemption note",
+          "tests": "exemption notes"
+        }
+      ],
       "subsets": [
         {
           "field": "tax",
@@ -284,7 +291,7 @@
                 {
                   "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-02",
                   "desc": "VAT category code must be valid",
-                  "tests": "ext 'untdid-tax-category' in [E, AE, K, G, O, S, Z]"
+                  "tests": "ext 'untdid-tax-category' in [O, S, Z, E, AE, K, G]"
                 }
               ]
             }
@@ -345,6 +352,21 @@
                   "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-06",
                   "desc": "VATEX extension is required for exempt tax (BR-E-10)",
                   "tests": "ext require [cef-vatex]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is non-exempt",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-07",
+                  "desc": "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
+                  "tests": "ext exclude [cef-vatex]"
                 }
               ]
             }

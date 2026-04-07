@@ -16,6 +16,7 @@ Massive refactor of the validation system with a move to "rules" based checks. T
 - `bill`: `Tax` now includes specific Note field (`tax.Note`).
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 - `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
+- `pl-favat-v3`: Supplier tax ID and code validation moved from PL regime to addon.
 - `br-nfse-v1`: NBS extension for service classification codes.
 
 ### Removed

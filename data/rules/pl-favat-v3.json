@@ -8,22 +8,22 @@
       "name": "bill.Invoice",
       "assert": [
         {
-          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-11",
+          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-13",
           "desc": "customer requires identity with role '8' and code for JST",
           "tests": "JST identity"
         },
         {
-          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-12",
+          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-14",
           "desc": "customer requires identity with role '10' and code for GroupVAT",
           "tests": "GroupVAT identity"
         },
         {
-          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-13",
+          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-15",
           "desc": "missing exemption note",
           "tests": "exemption note present"
         },
         {
-          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-14",
+          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-16",
           "desc": "too many exemption notes",
           "tests": "single exemption note"
         }
@@ -80,10 +80,32 @@
           ],
           "subsets": [
             {
-              "field": "name",
+              "field": "tax_id",
               "assert": [
                 {
                   "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-05",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-06",
+                      "desc": "supplier tax ID code required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-07",
                   "desc": "supplier name is required",
                   "tests": "present"
                 }
@@ -93,17 +115,17 @@
               "field": "addresses",
               "assert": [
                 {
-                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-06",
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-08",
                   "desc": "supplier addresses are required",
                   "tests": "present"
                 },
                 {
-                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-07",
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-09",
                   "desc": "supplier first address must have a country",
                   "tests": "first address country"
                 },
                 {
-                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-08",
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-10",
                   "desc": "supplier first address must have a street",
                   "tests": "first address street"
                 }
@@ -118,7 +140,7 @@
               "field": "customer",
               "assert": [
                 {
-                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-09",
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-11",
                   "desc": "customer is required",
                   "tests": "present"
                 }
@@ -128,7 +150,7 @@
                   "field": "tax_id",
                   "assert": [
                     {
-                      "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-10",
+                      "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-12",
                       "desc": "customer tax ID is required",
                       "tests": "present"
                     }

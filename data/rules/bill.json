@@ -64,6 +64,21 @@
           ]
         },
         {
+          "guard": "has tax point",
+          "subsets": [
+            {
+              "field": "value_date",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-INVOICE-11",
+                  "desc": "value date cannot be set when tax point is set",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "field": "customer",
           "subsets": [
             {
@@ -661,6 +676,21 @@
                   "id": "GOBL-BILL-TAX-01",
                   "desc": "rounding model is not valid",
                   "tests": "one of [precise, currency]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "point",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-TAX-02",
+                  "desc": "tax point is not valid",
+                  "tests": "one of [issue, delivery, payment]"
                 }
               ]
             }
