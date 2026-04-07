@@ -22,16 +22,14 @@ func writeError(w http.ResponseWriter, err error) {
 	_ = json.NewEncoder(w).Encode(cliErr) //nolint:errcheck
 }
 
-// writeJSON writes a JSON response with the given status code.
-func writeJSON(w http.ResponseWriter, status int, v any) {
+// writeJSON writes a JSON response with 200 OK status.
+func writeJSON(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v) //nolint:errcheck
 }
 
 // writeRawJSON writes pre-encoded JSON bytes as a response.
-func writeRawJSON(w http.ResponseWriter, status int, d []byte) {
+func writeRawJSON(w http.ResponseWriter, d []byte) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
 	_, _ = w.Write(d) //nolint:errcheck
 }

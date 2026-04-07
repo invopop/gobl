@@ -23,5 +23,5 @@ func handleVerify(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, cli.VerifyResponse{OK: true})
+	writeJSON(w, cli.VerifyResponse{OK: true})
 }

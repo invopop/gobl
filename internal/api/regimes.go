@@ -12,10 +12,10 @@ import (
 )
 
 type regimeSummary struct {
-	Country     string    `json:"country"`
+	Country     string      `json:"country"`
 	Name        i18n.String `json:"name"`
 	Description i18n.String `json:"description,omitempty"`
-	Currency    string    `json:"currency"`
+	Currency    string      `json:"currency"`
 }
 
 func handleRegimeList(w http.ResponseWriter, _ *http.Request) {
@@ -29,7 +29,7 @@ func handleRegimeList(w http.ResponseWriter, _ *http.Request) {
 			Currency:    string(r.Currency),
 		}
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"regimes": items})
+	writeJSON(w, map[string]any{"regimes": items})
 }
 
 func handleRegime(w http.ResponseWriter, r *http.Request) {
@@ -45,5 +45,5 @@ func handleRegime(w http.ResponseWriter, r *http.Request) {
 		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "regime not found"})
 		return
 	}
-	writeRawJSON(w, http.StatusOK, d)
+	writeRawJSON(w, d)
 }

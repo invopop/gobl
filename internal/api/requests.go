@@ -31,7 +31,7 @@ type validateRequest struct {
 
 type verifyRequest struct {
 	Data      json.RawMessage `json:"data"`
-	PublicKey *dsig.PublicKey  `json:"publickey,omitempty"`
+	PublicKey *dsig.PublicKey `json:"publickey,omitempty"`
 }
 
 type correctRequest struct {

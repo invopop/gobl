@@ -48,8 +48,8 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	if addr == "" {
 		addr = ":80"
 	}
-	fmt.Fprintf(cmd.OutOrStdout(), "GOBL %s\n", gobl.VERSION)
-	fmt.Fprintf(cmd.OutOrStdout(), "Listening on %s\n", addr)
+	fmt.Fprintf(cmd.OutOrStdout(), "GOBL %s\n", gobl.VERSION) //nolint:errcheck
+	fmt.Fprintf(cmd.OutOrStdout(), "Listening on %s\n", addr) //nolint:errcheck
 
 	var startErr error
 	go func() {
@@ -61,7 +61,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	}()
 
 	<-ctx.Done()
-	fmt.Fprintln(cmd.OutOrStdout(), "Shutting down...")
+	fmt.Fprintln(cmd.OutOrStdout(), "Shutting down...") //nolint:errcheck
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()

@@ -18,7 +18,7 @@ func handleSchemaList(w http.ResponseWriter, _ *http.Request) {
 		items[i] = v.String()
 	}
 	sort.Strings(items)
-	writeJSON(w, http.StatusOK, map[string]any{"schemas": items})
+	writeJSON(w, map[string]any{"schemas": items})
 }
 
 func handleSchema(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,7 @@ func handleSchema(w http.ResponseWriter, r *http.Request) {
 			writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "schema not found"})
 			return
 		}
-		writeRawJSON(w, http.StatusOK, d)
+		writeRawJSON(w, d)
 		return
 	}
 
@@ -47,5 +47,5 @@ func handleSchema(w http.ResponseWriter, r *http.Request) {
 		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "schema not found"})
 		return
 	}
-	writeRawJSON(w, http.StatusOK, d)
+	writeRawJSON(w, d)
 }

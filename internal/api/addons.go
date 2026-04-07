@@ -13,10 +13,10 @@ import (
 )
 
 type addonSummary struct {
-	Key         string    `json:"key"`
+	Key         string      `json:"key"`
 	Name        i18n.String `json:"name"`
 	Description i18n.String `json:"description,omitempty"`
-	Requires    []cbc.Key `json:"requires,omitempty"`
+	Requires    []cbc.Key   `json:"requires,omitempty"`
 }
 
 func handleAddonList(w http.ResponseWriter, _ *http.Request) {
@@ -30,7 +30,7 @@ func handleAddonList(w http.ResponseWriter, _ *http.Request) {
 			Requires:    a.Requires,
 		}
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"addons": items})
+	writeJSON(w, map[string]any{"addons": items})
 }
 
 func handleAddon(w http.ResponseWriter, r *http.Request) {
@@ -50,5 +50,5 @@ func handleAddon(w http.ResponseWriter, r *http.Request) {
 		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "addon not found"})
 		return
 	}
-	writeRawJSON(w, http.StatusOK, d)
+	writeRawJSON(w, d)
 }

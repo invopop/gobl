@@ -7,7 +7,7 @@ import (
 )
 
 func handleVersion(w http.ResponseWriter, _ *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]any{
+	writeJSON(w, map[string]any{
 		"gobl":    "Welcome",
 		"version": gobl.VERSION,
 	})

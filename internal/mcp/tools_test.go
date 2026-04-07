@@ -13,7 +13,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func callTool(t *testing.T, srv interface{ HandleMessage(context.Context, json.RawMessage) mcp.JSONRPCMessage }, name string, args map[string]any) *mcp.CallToolResult {
+func callTool(t *testing.T, srv interface {
+	HandleMessage(context.Context, json.RawMessage) mcp.JSONRPCMessage
+}, name string, args map[string]any) *mcp.CallToolResult {
 	t.Helper()
 
 	params := map[string]any{
@@ -92,31 +94,31 @@ func (s *initedServer) HandleMessage(ctx context.Context, msg json.RawMessage) m
 	return s.srv.HandleMessage(ctx, msg)
 }
 
+const testInvoiceData = `{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"currency": "EUR",
+	"issue_date": "2024-01-15",
+	"type": "standard",
+	"supplier": {
+		"tax_id": {"country": "ES", "code": "B91983379"},
+		"name": "Test Company S.L."
+	},
+	"customer": {
+		"tax_id": {"country": "ES", "code": "B85905495"},
+		"name": "Customer S.L."
+	},
+	"lines": [{
+		"quantity": "10",
+		"item": {"name": "Test Item", "price": "100.00"},
+		"taxes": [{"cat": "VAT", "rate": "standard"}]
+	}]
+}`
+
 func TestBuildTool(t *testing.T) {
 	s := initServer(t)
 
-	invoiceData := `{
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"currency": "EUR",
-		"issue_date": "2024-01-15",
-		"type": "standard",
-		"supplier": {
-			"tax_id": {"country": "ES", "code": "B91983379"},
-			"name": "Test Company S.L."
-		},
-		"customer": {
-			"tax_id": {"country": "ES", "code": "B85905495"},
-			"name": "Customer S.L."
-		},
-		"lines": [{
-			"quantity": "10",
-			"item": {"name": "Test Item", "price": "100.00"},
-			"taxes": [{"cat": "VAT", "rate": "standard"}]
-		}]
-	}`
-
 	result := callTool(t, s, "build", map[string]any{
-		"data": invoiceData,
+		"data": testInvoiceData,
 	})
 
 	assert.False(t, result.IsError, "build should succeed")
@@ -129,25 +131,7 @@ func TestBuildTool(t *testing.T) {
 func TestBuildToolWithEnvelop(t *testing.T) {
 	s := initServer(t)
 
-	invoiceData := `{
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"currency": "EUR",
-		"issue_date": "2024-01-15",
-		"type": "standard",
-		"supplier": {
-			"tax_id": {"country": "ES", "code": "B91983379"},
-			"name": "Test Company S.L."
-		},
-		"customer": {
-			"tax_id": {"country": "ES", "code": "B85905495"},
-			"name": "Customer S.L."
-		},
-		"lines": [{
-			"quantity": "10",
-			"item": {"name": "Test Item", "price": "100.00"},
-			"taxes": [{"cat": "VAT", "rate": "standard"}]
-		}]
-	}`
+	invoiceData := testInvoiceData
 
 	result := callTool(t, s, "build", map[string]any{
 		"data":    invoiceData,
@@ -215,25 +199,7 @@ func TestValidateTool(t *testing.T) {
 	s := initServer(t)
 
 	// First build a valid envelope
-	invoiceData := `{
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"currency": "EUR",
-		"issue_date": "2024-01-15",
-		"type": "standard",
-		"supplier": {
-			"tax_id": {"country": "ES", "code": "B91983379"},
-			"name": "Test Company S.L."
-		},
-		"customer": {
-			"tax_id": {"country": "ES", "code": "B85905495"},
-			"name": "Customer S.L."
-		},
-		"lines": [{
-			"quantity": "10",
-			"item": {"name": "Test Item", "price": "100.00"},
-			"taxes": [{"cat": "VAT", "rate": "standard"}]
-		}]
-	}`
+	invoiceData := testInvoiceData
 
 	// Build first to get calculated document
 	buildResult := callTool(t, s, "build", map[string]any{
@@ -311,25 +277,7 @@ func TestReplicateTool(t *testing.T) {
 	s := initServer(t)
 
 	// Build a valid document first
-	invoiceData := `{
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"currency": "EUR",
-		"issue_date": "2024-01-15",
-		"type": "standard",
-		"supplier": {
-			"tax_id": {"country": "ES", "code": "B91983379"},
-			"name": "Test Company S.L."
-		},
-		"customer": {
-			"tax_id": {"country": "ES", "code": "B85905495"},
-			"name": "Customer S.L."
-		},
-		"lines": [{
-			"quantity": "10",
-			"item": {"name": "Test Item", "price": "100.00"},
-			"taxes": [{"cat": "VAT", "rate": "standard"}]
-		}]
-	}`
+	invoiceData := testInvoiceData
 
 	buildResult := callTool(t, s, "build", map[string]any{
 		"data":    invoiceData,
@@ -351,25 +299,7 @@ func TestCorrectTool(t *testing.T) {
 	s := initServer(t)
 
 	// Build a valid envelope first
-	invoiceData := `{
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"currency": "EUR",
-		"issue_date": "2024-01-15",
-		"type": "standard",
-		"supplier": {
-			"tax_id": {"country": "ES", "code": "B91983379"},
-			"name": "Test Company S.L."
-		},
-		"customer": {
-			"tax_id": {"country": "ES", "code": "B85905495"},
-			"name": "Customer S.L."
-		},
-		"lines": [{
-			"quantity": "10",
-			"item": {"name": "Test Item", "price": "100.00"},
-			"taxes": [{"cat": "VAT", "rate": "standard"}]
-		}]
-	}`
+	invoiceData := testInvoiceData
 
 	buildResult := callTool(t, s, "build", map[string]any{
 		"data":    invoiceData,

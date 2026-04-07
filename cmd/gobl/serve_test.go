@@ -21,7 +21,7 @@ func TestServeVersion(t *testing.T) {
 
 	resp, err := http.Get(srv.URL + prefix + "/")
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, string(gobl.VERSION), resp.Header.Get("GOBL-Version"))
@@ -58,7 +58,7 @@ func TestServeBuild(t *testing.T) {
 	body, _ := json.Marshal(map[string]any{"data": invoice})
 	resp, err := http.Post(srv.URL+prefix+"/build", "application/json", bytes.NewReader(body))
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -74,7 +74,7 @@ func TestServeBuildNoPayload(t *testing.T) {
 	body, _ := json.Marshal(map[string]any{})
 	resp, err := http.Post(srv.URL+prefix+"/build", "application/json", bytes.NewReader(body))
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
@@ -86,7 +86,7 @@ func TestServeVerify(t *testing.T) {
 	body, _ := json.Marshal(map[string]any{"data": json.RawMessage(`{}`)})
 	resp, err := http.Post(srv.URL+prefix+"/verify", "application/json", bytes.NewReader(body))
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
 }
@@ -97,7 +97,7 @@ func TestServeKeygen(t *testing.T) {
 
 	resp, err := http.Post(srv.URL+prefix+"/keygen", "application/json", nil)
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 

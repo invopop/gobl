@@ -23,5 +23,5 @@ func handleValidate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, cli.ValidateResponse{OK: true})
+	writeJSON(w, cli.ValidateResponse{OK: true})
 }

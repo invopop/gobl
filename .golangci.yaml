@@ -21,6 +21,10 @@ linters:
         - -QF1008
   exclusions:
     generated: lax
+    rules:
+      - linters: [revive]
+        text: "var-naming: avoid meaningless package names"
+        path: internal/api/
     paths:
       - third_party$
       - builtin$
