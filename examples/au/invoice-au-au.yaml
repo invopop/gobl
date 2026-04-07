@@ -1,0 +1,41 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: AU
+uuid: 2d301f3b-370a-4e15-a554-a8e05f61e93b
+currency: AUD
+series: "2026"
+code: "AU0001"
+issue_date: "2026-04-03"
+
+supplier:
+  name: Example Supplier Pty Ltd
+  tax_id:
+    country: AU
+    code: "51824753556"
+  addresses:
+    - street: George Street
+      num: "100"
+      locality: Sydney
+      region: NSW
+      code: "2000"
+      country: AU
+
+customer:
+  name: Example Customer Pty Ltd
+  addresses:
+    - street: Collins Street
+      num: "200"
+      locality: Melbourne
+      region: VIC
+      code: "3000"
+      country: AU
+
+lines:
+  - quantity: "1"
+    item:
+      name: Software engineering services
+      price: "900.00"
+      unit: h
+    taxes:
+      - cat: GST
+        rate: general
+        key: standard

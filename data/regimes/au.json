@@ -1,0 +1,112 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Australia"
+  },
+  "description": {
+    "en": "Australia's indirect tax system is administered by the Australian\nTaxation Office (ATO). Goods and Services Tax (GST) applies at a\nstandard rate of 10%. Supplies may also be GST-free (for example, many\nexports) or input-taxed (for example, certain financial supplies and\nresidential rent). In GOBL's generic GST model, GST-free supplies map to\nthe zero key and input-taxed supplies map to the exempt key.\n\nBusinesses are identified by an Australian Business Number (ABN), an\n11-digit identifier used for GST registration and invoicing. Australian\ntax invoices must show the supplier's details and ABN, and invoices of\nAUD 1,000 or more, or self-billed invoices, must also identify the\ncustomer. Electronic invoicing is aligned with the Peppol PINT A-NZ\nspecification."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "ATO - GST"
+      },
+      "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+    },
+    {
+      "title": {
+        "en": "ATO - Tax invoices"
+      },
+      "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices"
+    },
+    {
+      "title": {
+        "en": "Peppol PINT A-NZ BIS"
+      },
+      "url": "https://docs.peppol.eu/poac/aunz/pint-aunz/bis/"
+    },
+    {
+      "title": {
+        "en": "ATO - eInvoicing"
+      },
+      "url": "https://www.ato.gov.au/businesses-and-organisations/invoicing-and-using-accounting-software/einvoicing"
+    }
+  ],
+  "time_zone": "Australia/Sydney",
+  "country": "AU",
+  "currency": "AUD",
+  "tax_scheme": "GST",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate"
+          },
+          "values": [
+            {
+              "since": "2000-07-01",
+              "percent": "10%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "ATO - GST"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+        }
+      ]
+    }
+  ]
+}
