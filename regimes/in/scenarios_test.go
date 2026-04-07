@@ -71,7 +71,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	inv.SetTags(tax.TagSimplified)
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
-	assert.Len(t, inv.Notes, 1)
-	assert.Equal(t, inv.Notes[0].Src, tax.TagSimplified)
-	assert.Equal(t, inv.Notes[0].Text, "Simplified Tax Invoice")
+	require.NotNil(t, inv.Tax)
+	assert.Len(t, inv.Tax.Notes, 1)
+	assert.Equal(t, "Simplified Tax Invoice", inv.Tax.Notes[0].Text)
 }

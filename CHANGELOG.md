@@ -11,6 +11,12 @@ Massive refactor of the validation system with a move to "rules" based checks. T
 ### Added
 
 - `rules`: new package to help define validation rules and execute them on top of any object.
+- `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
+- `eu-en16935-v2017`: Exemption reason notes (BT-120)
+- `bill`: `Tax` now includes specific Note field (`tax.Note`).
+- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
+- `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
+- `br-nfse-v1`: NBS extension for service classification codes.
 
 ### Removed
 
@@ -20,22 +26,27 @@ Massive refactor of the validation system with a move to "rules" based checks. T
 
 - `pl-favat-v3`: Preceding no longer required when it is a credit note
 
-### Added
-
-- `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
-
 ### Changed
 
+- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
 - `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
+- `es-tbai-v1`: Customer validation now only required for non-simplified invoices
 
 ### Fixed
 
 - `tax`: Fixed `Since` date comparison to be inclusive
 - `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
+- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
+- `gr`: Corrected key for the reduced island tax rate
+- `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17
+
+### Added
+
+- `pt-saft-v1`: Added correction definitions
 
 ### Removed
 

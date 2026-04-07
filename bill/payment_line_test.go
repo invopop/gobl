@@ -54,6 +54,33 @@ func TestPaymentLineCalculation(t *testing.T) {
 		assert.Nil(t, pl.Tax)
 		assert.Equal(t, "20.50", pl.Due.String())
 	})
+	t.Run("basic with tax, no payable", func(t *testing.T) {
+		pl := &PaymentLine{
+			Index:       1,
+			Installment: 2,
+			Amount:      num.MakeAmount(2000, 2),
+			Tax: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code: "VAT",
+						Rates: []*tax.RateTotal{
+							{
+								Base:    num.MakeAmount(1653, 2),
+								Percent: num.NewPercentage(21, 2),
+							},
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, pl.calculate(nil, currency.EUR, tax.RoundingRulePrecise))
+		assert.Nil(t, pl.Payable)
+		assert.Nil(t, pl.Advances)
+		assert.Equal(t, "20.00", pl.Amount.String())
+		assert.Equal(t, "16.53", pl.Tax.Categories[0].Rates[0].Base.String(), "should be same as original")
+		assert.Equal(t, "3.47", pl.Tax.Sum.String())
+		assert.Nil(t, pl.Due)
+	})
 	t.Run("basic with payable and taxes", func(t *testing.T) {
 		pl := &PaymentLine{
 			Index:       1,

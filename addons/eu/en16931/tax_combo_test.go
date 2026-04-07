@@ -117,7 +117,30 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 
-	t.Run("exempt reverse charge", func(t *testing.T) {
+	t.Run("exempt with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
+	})
+
+	t.Run("exempt without vatex", func(t *testing.T) {
+		// VATEX extension is now required at the combo level for exempt tax
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension is required for exempt tax")
+	})
+
+	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
@@ -176,6 +199,33 @@ func TestTaxComboValidation(t *testing.T) {
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("zero with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyZero,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension must not be set")
+	})
+
+	t.Run("standard with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(19, 2),
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension must not be set")
 	})
 
 	t.Run("nil", func(t *testing.T) {

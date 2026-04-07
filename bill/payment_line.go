@@ -168,8 +168,10 @@ func (pl *PaymentLine) calculate(rates []*currency.ExchangeRate, cur currency.Co
 		}
 		due = due.Subtract(pl.Amount)
 		pl.Due = &due
+	} else if pl.Tax != nil {
+		// Ensure the taxes are calculated correctly.
+		pl.Tax.Calculate(cur, rr)
 	}
 
 	return nil
-
 }

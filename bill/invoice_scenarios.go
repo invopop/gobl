@@ -2,7 +2,6 @@ package bill
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -11,11 +10,12 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{tax.TagReverseCharge},
-			Note: &tax.ScenarioNote{
-				Key:  org.NoteKeyLegal,
-				Src:  tax.TagReverseCharge,
-				Text: "Reverse charge: Customer to account for VAT to the relevant tax authority.",
+			Tags:       []cbc.Key{tax.TagReverseCharge},
+			Categories: []cbc.Code{tax.CategoryVAT},
+			Note: &tax.Note{
+				Category: tax.CategoryVAT,
+				Key:      tax.KeyReverseCharge,
+				Text:     "Reverse charge: Customer to account for VAT to the relevant tax authority.",
 			},
 		},
 	},
@@ -30,6 +30,34 @@ func InvoiceScenarios() *tax.ScenarioSet {
 // GetType provides the invoice type as part of the tax.ScenarioDocument interface.
 func (inv *Invoice) GetType() cbc.Key {
 	return inv.Type
+}
+
+// GetTaxCategories returns a list of unique tax category codes used across all
+// invoice lines, charges, and discounts.
+func (inv *Invoice) GetTaxCategories() []cbc.Code {
+	cats := make([]cbc.Code, 0)
+	for _, line := range inv.Lines {
+		for _, combo := range line.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	for _, charge := range inv.Charges {
+		for _, combo := range charge.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	for _, discount := range inv.Discounts {
+		for _, combo := range discount.Taxes {
+			if !combo.Category.In(cats...) {
+				cats = append(cats, combo.Category)
+			}
+		}
+	}
+	return cats
 }
 
 // GetExtensions goes through the invoice and grabs all the extensions that are in
@@ -71,20 +99,7 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 		ss.Merge(a.Scenarios)
 	}
 
-	inv.removePreviousScenarioNotes(ss)
 	return ss.SummaryFor(inv)
-}
-
-func (inv *Invoice) removePreviousScenarioNotes(ss *tax.ScenarioSet) {
-	for _, sn := range ss.Notes() {
-		n := org.NoteFromScenario(sn)
-		for i, n2 := range inv.Notes {
-			if n.SameAs(n2) {
-				// remove from array
-				inv.Notes = append(inv.Notes[:i], inv.Notes[i+1:]...)
-			}
-		}
-	}
 }
 
 func (inv *Invoice) prepareScenarios() error {
@@ -94,17 +109,24 @@ func (inv *Invoice) prepareScenarios() error {
 		return nil
 	}
 
+	normalizers := tax.ExtractNormalizers(inv)
+
 	for _, sn := range ss.Notes {
-		n := org.NoteFromScenario(sn)
-		// make sure we don't already have the same note in the invoice
-		for _, n2 := range inv.Notes {
-			if n.SameAs(n2) {
-				n = nil
-				break
+		// make sure we don't already have the same note
+		found := false
+		if inv.Tax != nil {
+			for _, n := range inv.Tax.Notes {
+				if sn.SameAs(n) {
+					found = true
+					break
+				}
 			}
 		}
-		if n != nil {
-			inv.Notes = append(inv.Notes, n)
+		if !found {
+			// Normalize the note so addons can enrich it (e.g. en16931
+			// adds UNTDID tax category extensions).
+			sn.Normalize(normalizers)
+			inv.Tax = inv.Tax.MergeNotes(sn)
 		}
 	}
 

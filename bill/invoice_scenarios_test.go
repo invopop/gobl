@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,8 +33,9 @@ func TestScenarios(t *testing.T) {
 			Code:    "12345678903",
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Len(t, inv.Notes, 1)
-		assert.Equal(t, "Reverse Charge / Inversione del soggetto passivo", inv.Notes[0].Text)
+		require.NotNil(t, inv.Tax)
+		assert.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "Reverse Charge / Inversione del soggetto passivo", inv.Tax.Notes[0].Text)
 	})
 
 	t.Run("scenario for existing note", func(t *testing.T) {
@@ -45,14 +45,19 @@ func TestScenarios(t *testing.T) {
 			Country: "IT",
 			Code:    "12345678903",
 		}
-		inv.Notes = append(inv.Notes, &org.Note{
-			Key:  org.NoteKeyLegal,
-			Src:  tax.TagReverseCharge,
-			Text: "Random to replace",
-		})
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{
+					Category: tax.CategoryVAT,
+					Key:      tax.KeyReverseCharge,
+					Text:     "User provided note",
+				},
+			},
+		}
 		require.NoError(t, inv.Calculate())
-		assert.Len(t, inv.Notes, 1)
-		assert.Equal(t, "Reverse Charge / Inversione del soggetto passivo", inv.Notes[0].Text, "should replace invoices existing note")
+		require.NotNil(t, inv.Tax)
+		assert.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "User provided note", inv.Tax.Notes[0].Text, "should keep user's existing note")
 	})
 
 	t.Run("without tax defined", func(t *testing.T) {

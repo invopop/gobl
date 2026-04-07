@@ -23,6 +23,13 @@ const (
 	TaxCategoryIPSI           cbc.Code = "M" // Ceuta and Melilla
 )
 
+// exemptTaxCategories lists the UNTDID 5305 codes that require either
+// a CEF VATEX code or an exemption reason note.
+var exemptTaxCategories = []cbc.Code{
+	TaxCategoryExempt, TaxCategoryReverseCharge, TaxCategoryIntraCommunity,
+	TaxCategoryExport, TaxCategoryOutsideScope,
+}
+
 // VAT key mapping from GOBL tax keys to UNTDID 5305 codes.
 var vatKeyMap = tax.Extensions{
 	tax.KeyStandard:       TaxCategoryStandard,
@@ -99,6 +106,14 @@ func taxComboRules() *rules.Set {
 				),
 			),
 		),
+		// BR-S-10, BR-Z-10: standard, zero-rated, IGIC, and IPSI shall NOT have a VATEX code
+		rules.When(is.Func("is non-exempt", taxComboIsNonExempt),
+			rules.Field("ext",
+				rules.Assert("07", "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
+					tax.ExtensionsExclude(cef.ExtKeyVATEX),
+				),
+			),
+		),
 	)
 }
 
@@ -125,4 +140,9 @@ func taxComboIsOutsideScope(val any) bool {
 func taxComboIsExempt(val any) bool {
 	tc, ok := val.(*tax.Combo)
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory) == TaxCategoryExempt
+}
+
+func taxComboIsNonExempt(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)
 }

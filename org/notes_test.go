@@ -71,27 +71,6 @@ func TestNotesValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "note key must be a valid value")
 }
 
-func TestNoteFromScenario(t *testing.T) {
-	n := org.NoteFromScenario(&tax.ScenarioNote{
-		Key:  org.NoteKeyGeneral,
-		Code: "note1",
-		Src:  "src1",
-		Text: "This is a note1",
-		Ext: tax.Extensions{
-			"untidid-text-subject": "AAI",
-		},
-	})
-	assert.Equal(t, org.NoteKeyGeneral, n.Key)
-	assert.Equal(t, "note1", n.Code.String())
-	assert.Equal(t, "src1", n.Src.String())
-	assert.Equal(t, "This is a note1", n.Text)
-	assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
-
-	assert.NotPanics(t, func() {
-		org.NoteFromScenario(nil)
-	})
-}
-
 func TestNoteSameAs(t *testing.T) {
 	n := &org.Note{
 		Key:  org.NoteKeyGeneral,

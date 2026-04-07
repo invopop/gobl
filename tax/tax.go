@@ -17,6 +17,7 @@ func init() {
 		RegimeDef{},
 		AddonDef{},
 		CatalogueDef{},
+		Note{},
 	)
 	rules.Register(
 		"tax",
@@ -31,5 +32,6 @@ func init() {
 		regimeDefRules(),
 		scenarioSetRules(),
 		setRules(),
+		noteRules(),
 	)
 }
