@@ -264,6 +264,23 @@ func TestEnvelopeValidate(t *testing.T) {
 			},
 			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
+		{
+			name: "with more complex document and rules",
+			env: func() *gobl.Envelope {
+				data, err := os.ReadFile("./examples/fr/invoice-fr-fr.yaml")
+				require.NoError(t, err)
+				inv := new(bill.Invoice)
+				err = yaml.Unmarshal(data, inv)
+				require.NoError(t, err)
+				inv.Supplier.TaxID.Code = ""
+
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(inv))
+
+				return env
+			},
+			want: "validation: [GOBL-FR-BILL-INVOICE-01] ($.doc.supplier) invoice supplier must have a tax ID code or a SIREN/SIRET identity",
+		},
 	}
 
 	for _, tt := range tests {

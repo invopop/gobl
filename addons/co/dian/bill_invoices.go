@@ -86,16 +86,18 @@ func billInvoiceRules() *rules.Set {
 		),
 		// Customer validation
 		// Code 05: customer tax_id required when not simplified
-		// Code 06: Colombian customer must have at least one address
-		// Code 07: Colombian customer with tax ID code must have municipality ext
-		// Code 08: Colombian customer must have fiscal responsibility ext
-		rules.Field("customer",
-			rules.When(
-				is.Func("not simplified", invoiceNotSimplified),
+		rules.When(
+			is.Func("not simplified", invoiceNotSimplified),
+			rules.Field("customer",
 				rules.Field("tax_id",
 					rules.Assert("05", "customer tax ID is required", is.Present),
 				),
 			),
+		),
+		// Code 06: Colombian customer must have at least one address
+		// Code 07: Colombian customer with tax ID code must have municipality ext
+		// Code 08: Colombian customer must have fiscal responsibility ext
+		rules.Field("customer",
 			rules.When(
 				is.Func("colombian customer", customerIsColombian),
 				rules.Field("addresses",
