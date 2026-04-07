@@ -136,10 +136,15 @@ func collectContext(rc *Context, obj any) {
 		}
 		// Recurse into Embeddable wrappers (e.g. schema.Object) so that
 		// context providers on the inner payload are discovered.
-		// Use fv.Interface() directly because fieldObj may be a double-pointer
-		// (via Addr) which would not match the Embeddable interface.
+		// For value fields, fieldObj is already *T (via Addr above).
+		// For pointer fields, fieldObj is **T, so use fv.Interface()
+		// which gives *T.
 		if !fv.IsZero() {
-			if emb, ok := fv.Interface().(Embeddable); ok {
+			embObj := fieldObj
+			if fv.Kind() == reflect.Ptr {
+				embObj = fv.Interface()
+			}
+			if emb, ok := embObj.(Embeddable); ok {
 				if inner := emb.Embedded(); inner != nil {
 					collectContext(rc, inner)
 				}
