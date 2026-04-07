@@ -2,8 +2,8 @@ $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons: ["sa-zatca-v1"]
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "SAR"
+issue_date: "2022-02-01"
 issue_time: "12:00:00"
-op_date: "2022-02-01"
 code: "SAMPLE-001"
 
 supplier:
@@ -12,9 +12,8 @@ supplier:
     code: "312345678912343"
   name: "Acme Corp Saudi"
   identities:
-    - code: "1234567890"
-      ext:
-        sa-zatca-seller-id-scheme: "CRN"
+    - type: "CRN"
+      code: "1234567890"
   addresses:
     - street: "King Fahd Road"
       street_extra: "Al Olaya"
@@ -25,9 +24,9 @@ supplier:
       country: "SA"
 
 customer:
-  tax_id:
-    country: "SA"
-    code: "399999999900003"
+  identities:
+    - type: "TIN"
+      code: "123456789012345"
   name: "Sample Consumer LLC"
   addresses:
     - street: "Olaya Street"
@@ -65,4 +64,6 @@ lines:
       price: "10.00"
     taxes:
       - cat: VAT
-        rate: zero
+        key: exempt
+        ext:
+          cef-vatex: "VATEX-SA-29"

@@ -84,8 +84,8 @@ func TestInvoiceSupplierValidation(t *testing.T) {
 			Country: "SA",
 			Code:    "",
 		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier must have a valid tax ID code or identity")
 	})
 
 	t.Run("supplier with invalid tax ID format", func(t *testing.T) {
@@ -105,8 +105,8 @@ func TestInvoiceSimplified(t *testing.T) {
 		inv := validInvoice()
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer must have a valid tax ID code or identity")
 	})
 
 	t.Run("simplified with customer", func(t *testing.T) {

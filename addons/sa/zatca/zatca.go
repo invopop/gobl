@@ -4,6 +4,7 @@ package zatca
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -24,6 +25,7 @@ func init() {
 		rules.GOBL.Add("SA-ZATCA-V1"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
+		taxComboRules(),
 	)
 }
 
@@ -58,5 +60,13 @@ func newAddon() *tax.AddonDef {
 		},
 		Extensions: extensions,
 		Scenarios:  scenarios,
+		Normalizer: normalize,
+	}
+}
+
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeInvoice(obj)
 	}
 }

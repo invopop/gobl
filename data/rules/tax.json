@@ -1,10 +1,10 @@
 {
   "id": "GOBL-TAX",
-  "package": "tax",
+  "name": "tax",
   "subsets": [
     {
       "id": "GOBL-TAX-ADDONS",
-      "object": "tax.Addons",
+      "name": "tax.Addons",
       "subsets": [
         {
           "field": "$addons",
@@ -25,7 +25,7 @@
     },
     {
       "id": "GOBL-TAX-ADDONDEF",
-      "object": "tax.AddonDef",
+      "name": "tax.AddonDef",
       "subsets": [
         {
           "field": "key",
@@ -51,7 +51,7 @@
     },
     {
       "id": "GOBL-TAX-CATEGORYDEF",
-      "object": "tax.CategoryDef",
+      "name": "tax.CategoryDef",
       "assert": [
         {
           "id": "GOBL-TAX-CATEGORYDEF-04",
@@ -94,7 +94,7 @@
     },
     {
       "id": "GOBL-TAX-COMBO",
-      "object": "tax.Combo",
+      "name": "tax.Combo",
       "assert": [
         {
           "id": "GOBL-TAX-COMBO-01",
@@ -130,7 +130,7 @@
     },
     {
       "id": "GOBL-TAX-CORRECTIONDEFINITION",
-      "object": "tax.CorrectionDefinition",
+      "name": "tax.CorrectionDefinition",
       "subsets": [
         {
           "field": "schema",
@@ -146,7 +146,7 @@
     },
     {
       "id": "GOBL-TAX-IDENTITY",
-      "object": "tax.Identity",
+      "name": "tax.Identity",
       "subsets": [
         {
           "field": "country",
@@ -172,7 +172,7 @@
     },
     {
       "id": "GOBL-TAX-RATEDEF",
-      "object": "tax.RateDef",
+      "name": "tax.RateDef",
       "subsets": [
         {
           "field": "rate",
@@ -211,7 +211,7 @@
                   "field": "percent",
                   "assert": [
                     {
-                      "id": "GOBL-TAX-RATEDEF-04",
+                      "id": "GOBL-TAX-RATEDEF-01",
                       "desc": "rate value percent is required",
                       "tests": "present"
                     }
@@ -225,7 +225,7 @@
     },
     {
       "id": "GOBL-TAX-REGIMEDEF",
-      "object": "tax.RegimeDef",
+      "name": "tax.RegimeDef",
       "subsets": [
         {
           "field": "country",
@@ -283,7 +283,7 @@
     },
     {
       "id": "GOBL-TAX-SCENARIOSET",
-      "object": "tax.ScenarioSet",
+      "name": "tax.ScenarioSet",
       "subsets": [
         {
           "field": "schema",
@@ -309,7 +309,7 @@
     },
     {
       "id": "GOBL-TAX-SET",
-      "object": "tax.Set",
+      "name": "tax.Set",
       "assert": [
         {
           "id": "GOBL-TAX-SET-01",
@@ -320,7 +320,7 @@
     },
     {
       "id": "GOBL-TAX-NOTE",
-      "object": "tax.Note",
+      "name": "tax.Note",
       "subsets": [
         {
           "field": "text",

@@ -1,19 +1,14 @@
 {
-  "id": "GOBL-CO-DIAN",
-  "package": "co-dian",
+  "id": "GOBL-CO-DIAN-V2",
+  "name": "co-dian-v2",
   "guard": "context: addon in [co-dian-v2]",
   "subsets": [
     {
-      "id": "GOBL-CO-DIAN-BILL-INVOICE",
-      "object": "bill.Invoice",
+      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE",
+      "name": "bill.Invoice",
       "assert": [
         {
-          "id": "GOBL-CO-DIAN-BILL-INVOICE-14",
-          "desc": "invoice must be in COP or provide exchange rate for conversion",
-          "tests": "can convert to [COP]"
-        },
-        {
-          "id": "GOBL-CO-DIAN-BILL-INVOICE-01",
+          "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-01",
           "desc": "invoice type must be one of standard, credit-note, debit-note, or proforma",
           "tests": "invoice type in [standard, credit-note, debit-note, proforma]"
         }
@@ -29,7 +24,7 @@
                   "field": "addresses",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-02",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-02",
                       "desc": "at least one address is required for Colombian suppliers",
                       "tests": "length between 1 and 0"
                     }
@@ -44,7 +39,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-03",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-03",
                       "desc": "extension 'co-dian-municipality' is required",
                       "tests": "ext require [co-dian-municipality]"
                     }
@@ -59,7 +54,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-04",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-04",
                       "desc": "extension 'co-dian-fiscal-responsibility' is required",
                       "tests": "ext require [co-dian-fiscal-responsibility]"
                     }
@@ -79,7 +74,7 @@
                   "field": "tax_id",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-05",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-05",
                       "desc": "customer tax ID is required",
                       "tests": "present"
                     }
@@ -99,7 +94,7 @@
                   "field": "addresses",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-06",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-06",
                       "desc": "at least one address is required for Colombian customers",
                       "tests": "length between 1 and 0"
                     }
@@ -114,7 +109,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-07",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-07",
                       "desc": "extension 'co-dian-municipality' is required",
                       "tests": "ext require [co-dian-municipality]"
                     }
@@ -129,7 +124,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-CO-DIAN-BILL-INVOICE-08",
+                      "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-08",
                       "desc": "extension 'co-dian-fiscal-responsibility' is required",
                       "tests": "ext require [co-dian-fiscal-responsibility]"
                     }
@@ -146,7 +141,7 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-CO-DIAN-BILL-INVOICE-09",
+                  "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-09",
                   "desc": "preceding documents are required for credit and debit notes",
                   "tests": "present"
                 }
@@ -167,7 +162,7 @@
                       "field": "ext",
                       "assert": [
                         {
-                          "id": "GOBL-CO-DIAN-BILL-INVOICE-10",
+                          "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-10",
                           "desc": "extension 'co-dian-credit-code' is required for credit notes",
                           "tests": "ext require [co-dian-credit-code]"
                         }
@@ -177,7 +172,7 @@
                       "field": "reason",
                       "assert": [
                         {
-                          "id": "GOBL-CO-DIAN-BILL-INVOICE-12",
+                          "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-12",
                           "desc": "preceding reason is required",
                           "tests": "present"
                         }
@@ -202,7 +197,7 @@
                       "field": "ext",
                       "assert": [
                         {
-                          "id": "GOBL-CO-DIAN-BILL-INVOICE-11",
+                          "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-11",
                           "desc": "extension 'co-dian-debit-code' is required for debit notes",
                           "tests": "ext require [co-dian-debit-code]"
                         }
@@ -212,7 +207,7 @@
                       "field": "reason",
                       "assert": [
                         {
-                          "id": "GOBL-CO-DIAN-BILL-INVOICE-13",
+                          "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-12",
                           "desc": "preceding reason is required",
                           "tests": "present"
                         }
