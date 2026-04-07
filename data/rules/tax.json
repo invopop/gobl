@@ -317,6 +317,22 @@
           "tests": "no duplicate categories"
         }
       ]
+    },
+    {
+      "id": "GOBL-TAX-NOTE",
+      "name": "tax.Note",
+      "subsets": [
+        {
+          "field": "text",
+          "assert": [
+            {
+              "id": "GOBL-TAX-NOTE-01",
+              "desc": "tax note text is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -25,33 +25,14 @@
       "list": [
         {
           "tags": [
-            "reverse-charge"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "reverse-charge",
-            "text": "Reverse Charge"
-          }
-        },
-        {
-          "tags": [
             "simplified"
           ],
           "note": {
-            "key": "legal",
-            "src": "simplified",
+            "cat": "VAT",
+            "key": "simplified",
             "text": "Simplified Tax Invoice"
           }
         }
-      ]
-    }
-  ],
-  "corrections": [
-    {
-      "schema": "bill/invoice",
-      "types": [
-        "credit-note",
-        "debit-note"
       ]
     }
   ],

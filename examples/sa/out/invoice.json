@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f010372d4a1d5235d542fda6a8fd5ec10c4e92f22346cf48449e311a1da2693f"
+			"val": "57812cc40a9e203fe408ab469ad4f0247508fe7d911a3333f905ac02d6bd6d8c"
 		}
 	},
 	"doc": {
@@ -17,11 +17,11 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-001",
-		"issue_date": "2026-03-31",
+		"issue_date": "2022-02-01",
 		"issue_time": "12:00:00",
-		"op_date": "2022-02-01",
 		"currency": "SAR",
 		"tax": {
+			"rounding": "currency",
 			"ext": {
 				"untdid-document-type": "388"
 			}
@@ -34,10 +34,8 @@
 			},
 			"identities": [
 				{
-					"code": "1234567890",
-					"ext": {
-						"sa-zatca-seller-id-scheme": "CRN"
-					}
+					"type": "CRN",
+					"code": "1234567890"
 				}
 			],
 			"addresses": [
@@ -54,10 +52,12 @@
 		},
 		"customer": {
 			"name": "Sample Consumer LLC",
-			"tax_id": {
-				"country": "SA",
-				"code": "399999999900003"
-			},
+			"identities": [
+				{
+					"type": "TIN",
+					"code": "123456789012345"
+				}
+			],
 			"addresses": [
 				{
 					"num": "5678",
@@ -105,10 +105,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "zero",
-						"percent": "0%",
+						"key": "exempt",
 						"ext": {
-							"untdid-tax-category": "Z"
+							"cef-vatex": "VATEX-SA-29",
+							"untdid-tax-category": "E"
 						}
 					}
 				],
@@ -151,12 +151,12 @@
 								"amount": "270.00"
 							},
 							{
-								"key": "zero",
+								"key": "exempt",
 								"ext": {
-									"untdid-tax-category": "Z"
+									"cef-vatex": "VATEX-SA-29",
+									"untdid-tax-category": "E"
 								},
 								"base": "10.00",
-								"percent": "0%",
 								"amount": "0.00"
 							}
 						],

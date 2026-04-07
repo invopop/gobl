@@ -8,22 +8,40 @@ import (
 
 // ZATCA extension keys
 const (
+	// KSA-2 invoice type code positions (0-indexed).
+	// The code is a 7-character string: TTXNESO
+	//   - TT (0-1): Invoice type (01=Standard, 02=Simplified)
+	//   - X  (2):   Third-party transaction
+	//   - N  (3):   Nominal supply transaction
+	//   - E  (4):   Export invoice
+	//   - S  (5):   Summary invoice
+	//   - O  (6):   Self-billed invoice
+	InvTypeCodeLen   = 7
+	InvTypePosExport = 4
+
 	// ExtKeyInvoiceType identifies the ZATCA invoice subtype code (KSA-2).
-	// This is a 7-character binary code where:
-	//   - Positions 1-2: Invoice type (01 = Standard Tax Invoice, 02 = Simplified Tax Invoice)
-	//   - Position 3: Third-party transaction (0 or 1)
-	//   - Position 4: Nominal supply transaction (0 or 1)
-	//   - Position 5: Export invoice (0 or 1)
-	//   - Position 6: Summary invoice (0 or 1)
-	//   - Position 7: Self-billed invoice (0 or 1)
-	ExtKeyInvoiceType cbc.Key = "sa-zatca-invoice-type"
+	ExtKeyInvoiceTypeTransactions cbc.Key = "sa-zatca-invoice-type"
 
-	// ExtKeySellerIDScheme identifies the ZATCA seller identification scheme (BT-29-1).
-	ExtKeySellerIDScheme cbc.Key = "sa-zatca-seller-id-scheme"
-
-	// ExtKeyBuyerIDScheme identifies the ZATCA buyer identification scheme (BT-46-1).
-	ExtKeyBuyerIDScheme cbc.Key = "sa-zatca-buyer-id-scheme"
+	// SA VATEX exemption reason codes
+	Vatex29         cbc.Code = "VATEX-SA-29"    // Exempt: Financial services (Article 29)
+	Vatex29_7       cbc.Code = "VATEX-SA-29-7"  // Exempt: Life insurance (Article 29.7)
+	Vatex30         cbc.Code = "VATEX-SA-30"    // Exempt: Real estate (Article 30)
+	Vatex32         cbc.Code = "VATEX-SA-32"    // Zero-rated: Export of goods (Article 32)
+	Vatex33         cbc.Code = "VATEX-SA-33"    // Zero-rated: Export of services (Article 33)
+	Vatex34_1       cbc.Code = "VATEX-SA-34-1"  // Zero-rated: Intra-GCC supply (Article 34.1)
+	Vatex34_2       cbc.Code = "VATEX-SA-34-2"  // Zero-rated: Intra-GCC supply (Article 34.2)
+	Vatex34_3       cbc.Code = "VATEX-SA-34-3"  // Zero-rated: Intra-GCC supply (Article 34.3)
+	Vatex34_4       cbc.Code = "VATEX-SA-34-4"  // Zero-rated: Intra-GCC supply (Article 34.4)
+	Vatex34_5       cbc.Code = "VATEX-SA-34-5"  // Zero-rated: Intra-GCC supply (Article 34.5)
+	Vatex35         cbc.Code = "VATEX-SA-35"    // Zero-rated: Qualified medicines and medical equipment (Article 35)
+	Vatex36         cbc.Code = "VATEX-SA-36"    // Zero-rated: Qualified metals (Article 36)
+	VatexEdu        cbc.Code = "VATEX-SA-EDU"   // Zero-rated: Private education
+	VatexHea        cbc.Code = "VATEX-SA-HEA"   // Zero-rated: Private healthcare
+	VatexMltry      cbc.Code = "VATEX-SA-MLTRY" // Zero-rated: Qualified military goods
+	VatexOutOfScope cbc.Code = "VATEX-SA-OOS"   // Out of scope
 )
+
+var vatIDPattern = `^3[0-9]{13}3$`
 
 var allowedDocumentTypes = []cbc.Code{
 	"388", // Tax Invoice
@@ -32,6 +50,7 @@ var allowedDocumentTypes = []cbc.Code{
 	"381", // Credit Note
 }
 
+// InvTypesStandard contains all valid standard tax invoice type codes (KSA-2 starting with 01).
 var InvTypesStandard = []cbc.Code{
 	"0100000", // Standard Tax Invoice
 	"0100001", // Standard Tax Invoice — Self-billed
@@ -59,6 +78,7 @@ var InvTypesStandard = []cbc.Code{
 	"0111110", // Standard Tax Invoice — Third-party, Nominal, Export, Summary
 }
 
+// InvTypesSimplified contains all valid simplified tax invoice type codes (KSA-2 starting with 02).
 var InvTypesSimplified = []cbc.Code{
 	"0200000", // Simplified Tax Invoice
 	"0200010", // Simplified Tax Invoice — Summary
@@ -70,7 +90,7 @@ var InvTypesSimplified = []cbc.Code{
 	"0211010", // Simplified Tax Invoice — Third-party, Nominal, Summary
 }
 
-var InvTypesSummary = []cbc.Code{
+var invTypesSummary = []cbc.Code{
 	"0100010", // Standard Tax Invoice — Summary
 	"0100011", // Standard Tax Invoice — Summary, Self-billed
 	"0100110", // Standard Tax Invoice — Export, Summary
@@ -89,34 +109,9 @@ var InvTypesSummary = []cbc.Code{
 	"0211010", // Simplified Tax Invoice — Third-party, Nominal, Summary
 }
 
-// Valid seller identification scheme IDs (BR-KSA-08)
-var sellerIDSchemes = []cbc.Code{
-	"CRN", // Commercial Registration Number
-	"MOM", // MOMRAH license
-	"MLS", // MHRSD license
-	"700", // 700 Number
-	"SAG", // MISA license
-	"OTH", // Other ID
-}
-
-// Valid buyer identification scheme IDs (BR-KSA-14)
-var buyerIDSchemes = []cbc.Code{
-	"TIN", // Tax Identification Number
-	"CRN", // Commercial Registration Number
-	"MOM", // MOMRAH license
-	"MLS", // MHRSD license
-	"700", // 700 Number
-	"SAG", // MISA license
-	"NAT", // National ID
-	"GCC", // GCC ID
-	"IQA", // Iqama Number
-	"PAS", // Passport ID
-	"OTH", // Other ID
-}
-
 var extensions = []*cbc.Definition{
 	{
-		Key: ExtKeyInvoiceType,
+		Key: ExtKeyInvoiceTypeTransactions,
 		Name: i18n.String{
 			i18n.EN: "ZATCA Invoice Type",
 			i18n.AR: "نوع الفاتورة",
@@ -354,157 +349,6 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Simplified Tax Invoice — Third-party, Nominal, Summary",
 					i18n.AR: "فاتورة ضريبية مبسطة — طرف ثالث، اسمية، ملخص",
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeySellerIDScheme,
-		Name: i18n.String{
-			i18n.EN: "ZATCA Seller Identification Scheme",
-			i18n.AR: "نظام تعريف البائع",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Scheme ID for the seller's additional identification (BT-29-1).
-				One of: CRN (Commercial Registration), MOM (MOMRAH license),
-				MLS (MHRSD license), 700 (700 Number), SAG (MISA license),
-				OTH (Other ID).
-			`),
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: "CRN",
-				Name: i18n.String{
-					i18n.EN: "Commercial Registration Number",
-					i18n.AR: "رقم السجل التجاري",
-				},
-			},
-			{
-				Code: "MOM",
-				Name: i18n.String{
-					i18n.EN: "MOMRAH License",
-					i18n.AR: "ترخيص وزارة الشؤون البلدية",
-				},
-			},
-			{
-				Code: "MLS",
-				Name: i18n.String{
-					i18n.EN: "MHRSD License",
-					i18n.AR: "ترخيص وزارة الموارد البشرية",
-				},
-			},
-			{
-				Code: "700",
-				Name: i18n.String{
-					i18n.EN: "700 Number",
-					i18n.AR: "رقم 700",
-				},
-			},
-			{
-				Code: "SAG",
-				Name: i18n.String{
-					i18n.EN: "MISA License",
-					i18n.AR: "ترخيص وزارة الاستثمار",
-				},
-			},
-			{
-				Code: "OTH",
-				Name: i18n.String{
-					i18n.EN: "Other ID",
-					i18n.AR: "معرف آخر",
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyBuyerIDScheme,
-		Name: i18n.String{
-			i18n.EN: "ZATCA Buyer Identification Scheme",
-			i18n.AR: "نظام تعريف المشتري",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Scheme ID for the buyer's additional identification (BT-46-1).
-				One of: TIN, CRN, MOM, MLS, 700, SAG, NAT, GCC, IQA, PAS, OTH.
-			`),
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: "TIN",
-				Name: i18n.String{
-					i18n.EN: "Tax Identification Number",
-					i18n.AR: "الرقم الضريبي",
-				},
-			},
-			{
-				Code: "CRN",
-				Name: i18n.String{
-					i18n.EN: "Commercial Registration Number",
-					i18n.AR: "رقم السجل التجاري",
-				},
-			},
-			{
-				Code: "MOM",
-				Name: i18n.String{
-					i18n.EN: "MOMRAH License",
-					i18n.AR: "ترخيص وزارة الشؤون البلدية",
-				},
-			},
-			{
-				Code: "MLS",
-				Name: i18n.String{
-					i18n.EN: "MHRSD License",
-					i18n.AR: "ترخيص وزارة الموارد البشرية",
-				},
-			},
-			{
-				Code: "700",
-				Name: i18n.String{
-					i18n.EN: "700 Number",
-					i18n.AR: "رقم 700",
-				},
-			},
-			{
-				Code: "SAG",
-				Name: i18n.String{
-					i18n.EN: "MISA License",
-					i18n.AR: "ترخيص وزارة الاستثمار",
-				},
-			},
-			{
-				Code: "NAT",
-				Name: i18n.String{
-					i18n.EN: "National ID",
-					i18n.AR: "الهوية الوطنية",
-				},
-			},
-			{
-				Code: "GCC",
-				Name: i18n.String{
-					i18n.EN: "GCC ID",
-					i18n.AR: "هوية مجلس التعاون",
-				},
-			},
-			{
-				Code: "IQA",
-				Name: i18n.String{
-					i18n.EN: "Iqama Number",
-					i18n.AR: "رقم الإقامة",
-				},
-			},
-			{
-				Code: "PAS",
-				Name: i18n.String{
-					i18n.EN: "Passport ID",
-					i18n.AR: "رقم جواز السفر",
-				},
-			},
-			{
-				Code: "OTH",
-				Name: i18n.String{
-					i18n.EN: "Other ID",
-					i18n.AR: "معرف آخر",
 				},
 			},
 		},

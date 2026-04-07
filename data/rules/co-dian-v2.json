@@ -65,10 +65,10 @@
           ]
         },
         {
-          "field": "customer",
+          "guard": "not simplified",
           "subsets": [
             {
-              "guard": "not simplified",
+              "field": "customer",
               "subsets": [
                 {
                   "field": "tax_id",
@@ -81,7 +81,12 @@
                   ]
                 }
               ]
-            },
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
             {
               "guard": "colombian customer",
               "subsets": [

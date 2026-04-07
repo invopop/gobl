@@ -86,6 +86,10 @@
           {
             "const": "pt-saft-v1",
             "title": "Portugal SAF-T"
+          },
+          {
+            "const": "sa-zatca-v1",
+            "title": "Saudi Arabia ZATCA"
           }
         ]
       },
