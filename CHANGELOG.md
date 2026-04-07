@@ -6,41 +6,58 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-Massive refactor of the validation system with a move to "rules" based checks. The objective was to move away from the opaque validation processes of the nested methods, and instead move to a rules based system whereby each assertion is pre-defined with a code, description, and test. Any assertions that fail during the new validation process will generate an array of faults that include the code, message, and path to the element that failed.
-
 ### Added
 
 - `rules`: new package to help define validation rules and execute them on top of any object.
+- `cmd/gobl`: MCP server support via `gobl mcp` CLI command using stdio transport.
+- `internal/api`: New framework-free HTTP API package replacing the previous Echo-based serve handler, with versioned route prefix (e.g. `/v0/build`).
+- `internal/api`: Built-in web editor UI served at the root path.
+- `internal/api`: OpenAPI spec served at `/v0/openapi.json`.
+- `internal/api`: MCP over Streamable HTTP endpoint at `/v0/mcp`.
+- `internal/api`: New endpoints for regime, addon, and schema lookups (`GET /v0/regimes`, `/v0/addons`, `/v0/schemas`).
+- `internal/api`: ETag-based caching for static reference data, CORS, and request timing middleware.
+- `schema`: `BundleSchema` function to produce self-contained JSON Schema documents with all transitive dependencies inlined.
+
+### Removed
+
+- `cmd/gobl`: Removed Echo framework dependency from the serve command.
+
+### Changed
+
+- `cmd/gobl`: `serve` command now uses the new `internal/api` handler instead of inline Echo routes.
+- `tax`: `Extensions.Values()` now returns codes in deterministic sorted order.
+- `schema`: JSON Schema files updated to use bundled format with inlined `$defs`.
+
+## [v0.309.0] - 2026-04-01
+
+### Added
+
 - `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
 - `eu-en16935-v2017`: Exemption reason notes (BT-120)
 - `bill`: `Tax` now includes specific Note field (`tax.Note`).
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 - `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 - `br-nfse-v1`: NBS extension for service classification codes.
-- MCP server support via CLI.
 
 ### Removed
 
 - `mx`/`co`: Tax Identity Zone migration removed.
-
-### Removed
-
-- `pl-favat-v3`: Preceding no longer required when it is a credit note
+- `pl-favat-v3`: Preceding no longer required when it is a credit note.
 
 ### Changed
 
-- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`
+- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`.
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
-- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
-- `es-tbai-v1`: Customer validation now only required for non-simplified invoices
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema.
+- `es-tbai-v1`: Customer validation now only required for non-simplified invoices.
 
 ### Fixed
 
-- `tax`: Fixed `Since` date comparison to be inclusive
-- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
-- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
-- `gr`: Corrected key for the reduced island tax rate
+- `tax`: Fixed `Since` date comparison to be inclusive.
+- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`.
+- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`.
+- `gr`: Corrected key for the reduced island tax rate.
 - `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17

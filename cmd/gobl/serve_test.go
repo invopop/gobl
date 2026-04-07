@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -9,11 +10,35 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/internal/api"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 const prefix = "/v0"
+
+func TestServeRunE(t *testing.T) {
+	t.Parallel()
+
+	// Create a context that we cancel immediately to stop the server.
+	ctx, cancel := context.WithCancel(context.Background())
+
+	cmd := &cobra.Command{}
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	cmd.SetContext(ctx)
+
+	s := serve()
+	s.httpPort = 0 // let OS pick a free port
+
+	// Cancel the context in the background so the server shuts down.
+	cancel()
+
+	err := s.runE(cmd, nil)
+	assert.NoError(t, err)
+	assert.Contains(t, buf.String(), "GOBL")
+	assert.Contains(t, buf.String(), "Shutting down...")
+}
 
 func TestServeVersion(t *testing.T) {
 	srv := httptest.NewServer(api.NewHandler())
