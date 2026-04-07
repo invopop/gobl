@@ -124,6 +124,13 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer")
 	})
 
+	t.Run("regime validator with nil supplier party", func(t *testing.T) {
+		t.Parallel()
+		inv := validInvoice()
+		inv.Supplier = nil
+		require.NoError(t, au.Validate(inv))
+	})
+
 	t.Run("nil supplier", func(t *testing.T) {
 		t.Parallel()
 		inv := validInvoice()

@@ -53,10 +53,7 @@ func validateBillInvoiceSupplier(value any) error {
 }
 
 func validateBillInvoiceSupplierTaxID(value any) error {
-	tID, ok := value.(*tax.Identity)
-	if !ok || tID == nil {
-		return nil
-	}
+	tID := value.(*tax.Identity)
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Country,
 			validation.In(l10n.AU.Tax()),
@@ -81,9 +78,6 @@ func validateBillInvoiceCustomer(inv *bill.Invoice) validation.RuleFunc {
 }
 
 func requiresCustomerIdentification(inv *bill.Invoice) bool {
-	if inv == nil {
-		return false
-	}
 	if inv.HasTags(tax.TagSelfBilled) {
 		return true
 	}
