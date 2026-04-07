@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1b507759e64ef4b5db41cad09d2c2136d96a08820844f83e250eb02470ce2ed9"
+			"val": "414ec7ddd1f304e0c796d1f93be0c330e4a0502ab8cd88235a92a7c07d93b61c"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "FAC",
-		"code": "2024-001",
+		"code": "2024-00001",
 		"issue_date": "2024-06-13",
 		"currency": "EUR",
 		"tax": {

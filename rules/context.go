@@ -134,5 +134,15 @@ func collectContext(rc *Context, obj any) {
 		if ca, ok := fieldObj.(ContextAdder); ok {
 			ca.RulesContext()(rc)
 		}
+		// If the field wraps an embedded payload (e.g. schema.Object),
+		// collect context from the inner value as well. Use fv.Interface()
+		// directly since fieldObj may be double-pointer for pointer fields.
+		if fv.Kind() != reflect.Ptr || !fv.IsNil() {
+			if emb, ok := fv.Interface().(Embeddable); ok {
+				if inner := emb.Embedded(); inner != nil {
+					collectContext(rc, inner)
+				}
+			}
+		}
 	}
 }
