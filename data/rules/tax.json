@@ -211,7 +211,7 @@
                   "field": "percent",
                   "assert": [
                     {
-                      "id": "GOBL-TAX-RATEDEF-01",
+                      "id": "GOBL-TAX-RATEDEF-04",
                       "desc": "rate value percent is required",
                       "tests": "present"
                     }
@@ -315,6 +315,22 @@
           "id": "GOBL-TAX-SET-01",
           "desc": "all tax categories in a set must be unique",
           "tests": "no duplicate categories"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-NOTE",
+      "name": "tax.Note",
+      "subsets": [
+        {
+          "field": "text",
+          "assert": [
+            {
+              "id": "GOBL-TAX-NOTE-01",
+              "desc": "tax note text is required",
+              "tests": "present"
+            }
+          ]
         }
       ]
     }

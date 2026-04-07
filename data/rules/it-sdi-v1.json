@@ -67,85 +67,6 @@
                   "desc": "supplier addresses are required",
                   "tests": "present"
                 }
-              ],
-              "subsets": [
-                {
-                  "each": true,
-                  "assert": [
-                    {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-30",
-                      "desc": "address either street or post office box must be set",
-                      "tests": "street or postbox"
-                    }
-                  ],
-                  "subsets": [
-                    {
-                      "field": "street",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-31",
-                          "desc": "address street must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "po_box",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-32",
-                          "desc": "address post office box must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "country",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-33",
-                          "desc": "address country is required",
-                          "tests": "present"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "locality",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-34",
-                          "desc": "address locality is required",
-                          "tests": "present"
-                        },
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-35",
-                          "desc": "address locality must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "guard": "Italian address",
-                      "subsets": [
-                        {
-                          "field": "code",
-                          "assert": [
-                            {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-36",
-                              "desc": "Italian address code is required",
-                              "tests": "present"
-                            },
-                            {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-37",
-                              "desc": "Italian address code must be 5 digits",
-                              "tests": "matches ^\\d{5}$"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
               ]
             },
             {
@@ -252,85 +173,6 @@
                   "id": "GOBL-IT-SDI-V1-BILL-INVOICE-12",
                   "desc": "customer addresses are required",
                   "tests": "present"
-                }
-              ],
-              "subsets": [
-                {
-                  "each": true,
-                  "assert": [
-                    {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-30",
-                      "desc": "address either street or post office box must be set",
-                      "tests": "street or postbox"
-                    }
-                  ],
-                  "subsets": [
-                    {
-                      "field": "street",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-31",
-                          "desc": "address street must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "po_box",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-32",
-                          "desc": "address post office box must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "country",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-33",
-                          "desc": "address country is required",
-                          "tests": "present"
-                        }
-                      ]
-                    },
-                    {
-                      "field": "locality",
-                      "assert": [
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-34",
-                          "desc": "address locality is required",
-                          "tests": "present"
-                        },
-                        {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-35",
-                          "desc": "address locality must use Latin-1 characters",
-                          "tests": "latin1"
-                        }
-                      ]
-                    },
-                    {
-                      "guard": "Italian address",
-                      "subsets": [
-                        {
-                          "field": "code",
-                          "assert": [
-                            {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-36",
-                              "desc": "Italian address code is required",
-                              "tests": "present"
-                            },
-                            {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-37",
-                              "desc": "Italian address code must be 5 digits",
-                              "tests": "matches ^\\d{5}$"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
                 }
               ]
             }
@@ -499,6 +341,84 @@
                   "id": "GOBL-IT-SDI-V1-BILL-CHARGE-03",
                   "desc": "fund contribution charge must have VAT tax category",
                   "tests": "all of [VAT]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-IT-SDI-V1-ORG-ADDRESS",
+      "name": "org.Address",
+      "assert": [
+        {
+          "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-01",
+          "desc": "address either street or post office box must be set",
+          "tests": "street or postbox"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "street",
+          "assert": [
+            {
+              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-02",
+              "desc": "address street must use Latin-1 characters",
+              "tests": "latin1"
+            }
+          ]
+        },
+        {
+          "field": "po_box",
+          "assert": [
+            {
+              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-03",
+              "desc": "address post office box must use Latin-1 characters",
+              "tests": "latin1"
+            }
+          ]
+        },
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-04",
+              "desc": "address country is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "locality",
+          "assert": [
+            {
+              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-05",
+              "desc": "address locality is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-06",
+              "desc": "address locality must use Latin-1 characters",
+              "tests": "latin1"
+            }
+          ]
+        },
+        {
+          "guard": "Italian address",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-07",
+                  "desc": "Italian address code is required",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-08",
+                  "desc": "Italian address code must be 5 digits",
+                  "tests": "matches ^\\d{5}$"
                 }
               ]
             }

@@ -386,6 +386,27 @@
       ]
     },
     {
+      "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL",
+      "name": "tax.RateTotal",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-01",
+              "desc": "region and tax rate are required",
+              "tests": "ext require [pt-region, pt-saft-tax-rate]"
+            },
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-02",
+              "desc": "exemption is required when tax rate is exempt",
+              "tests": "exempt requires exemption"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-PT-SAFT-V1-ORG-ITEM",
       "name": "org.Item",
       "subsets": [
@@ -556,28 +577,6 @@
                           "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-05",
                           "desc": "only one rate allowed per line",
                           "tests": "length between 0 and 1"
-                        }
-                      ],
-                      "subsets": [
-                        {
-                          "each": true,
-                          "subsets": [
-                            {
-                              "field": "ext",
-                              "assert": [
-                                {
-                                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-01",
-                                  "desc": "region and tax rate are required",
-                                  "tests": "ext require [pt-region, pt-saft-tax-rate]"
-                                },
-                                {
-                                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-02",
-                                  "desc": "exemption is required when tax rate is exempt",
-                                  "tests": "exempt requires exemption"
-                                }
-                              ]
-                            }
-                          ]
                         }
                       ]
                     }
