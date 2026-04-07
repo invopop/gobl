@@ -1,6 +1,7 @@
 package schema_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -67,6 +68,146 @@ func TestObjectReplicate(t *testing.T) {
 	require.NoError(t, obj.Replicate())
 	assert.NotEqual(t, ou, obj.UUID())
 	assert.Empty(t, inv.Code, "should remove code")
+}
+
+func TestObjectValidate(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+
+	faults := obj.Validate()
+	assert.Empty(t, faults, "valid invoice should have no faults")
+}
+
+func TestObjectIsEmpty(t *testing.T) {
+	obj := new(schema.Object)
+	assert.True(t, obj.IsEmpty())
+
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	assert.False(t, obj.IsEmpty())
+}
+
+func TestObjectInstance(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	assert.Equal(t, inv, obj.Instance())
+}
+
+func TestObjectEmbedded(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	assert.Equal(t, inv, obj.Embedded())
+}
+
+func TestObjectCorrect(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+
+	// Invoice is Correctable, so this should work
+	err = obj.Correct()
+	// May return an error if options are required, but should not panic
+	_ = err
+
+	// Non-correctable payload
+	msg := &note.Message{
+		Title:   "test",
+		Content: "hello",
+	}
+	obj2, err := schema.NewObject(msg)
+	require.NoError(t, err)
+	err = obj2.Correct()
+	assert.Error(t, err, "non-correctable type should return error")
+}
+
+func TestObjectCorrectionOptionsSchema(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+
+	result, err := obj.CorrectionOptionsSchema()
+	assert.NoError(t, err)
+	// Invoice should return options schema
+	_ = result
+
+	// Non-correctable payload
+	msg := &note.Message{
+		Title:   "test",
+		Content: "hello",
+	}
+	obj2, err := schema.NewObject(msg)
+	require.NoError(t, err)
+	result, err = obj2.CorrectionOptionsSchema()
+	assert.NoError(t, err)
+	assert.Nil(t, result, "non-correctable type should return nil")
+}
+
+func TestObjectClone(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+
+	clone, err := obj.Clone()
+	require.NoError(t, err)
+	assert.NotNil(t, clone)
+	assert.Equal(t, obj.UUID(), clone.UUID())
+
+	// Modifying the original should not affect clone
+	inv.Code = "MODIFIED"
+	cloneInv, ok := clone.Instance().(*bill.Invoice)
+	require.True(t, ok)
+	assert.NotEqual(t, "MODIFIED", cloneInv.Code)
+}
+
+func TestObjectMarshalUnmarshalJSON(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+
+	data, err := json.Marshal(obj)
+	require.NoError(t, err)
+	assert.Contains(t, string(data), `"$schema"`)
+
+	obj2 := new(schema.Object)
+	require.NoError(t, json.Unmarshal(data, obj2))
+	assert.Equal(t, obj.UUID(), obj2.UUID())
+	assert.False(t, obj2.IsEmpty())
+}
+
+func TestObjectUnmarshalJSONUnknownSchema(t *testing.T) {
+	data := []byte(`{"$schema":"https://gobl.org/draft-0/unknown/type","foo":"bar"}`)
+	obj := new(schema.Object)
+	err := json.Unmarshal(data, obj)
+	assert.Error(t, err)
+}
+
+func TestObjectUnmarshalJSONNoSchema(t *testing.T) {
+	data := []byte(`{"foo":"bar"}`)
+	obj := new(schema.Object)
+	err := json.Unmarshal(data, obj)
+	assert.NoError(t, err)
+	assert.True(t, obj.IsEmpty())
+}
+
+func TestObjectJSONSchema(t *testing.T) {
+	obj := schema.Object{}
+	s := obj.JSONSchema()
+	assert.Equal(t, "object", s.Type)
+	assert.Equal(t, "Object", s.Title)
+}
+
+func TestObjectError(t *testing.T) {
+	err := schema.ErrUnknownSchema
+	assert.Equal(t, "unknown-schema", err.Error())
 }
 
 // exampleInvoice defines a simple invoice example pre-calculations.

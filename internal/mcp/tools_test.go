@@ -439,6 +439,60 @@ func TestNewServer(t *testing.T) {
 	assert.Contains(t, string(respJSON), string(gobl.VERSION))
 }
 
+func TestRegimeListTool(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "regime_list", map[string]any{})
+	assert.False(t, result.IsError, "regime_list should succeed")
+	text := extractText(t, result)
+	assert.Contains(t, text, "regimes")
+	assert.Contains(t, text, "ES")
+}
+
+func TestAddonTool(t *testing.T) {
+	s := initServer(t)
+
+	t.Run("success", func(t *testing.T) {
+		result := callTool(t, s, "addon", map[string]any{
+			"key": "es-verifactu-v1",
+		})
+		assert.False(t, result.IsError)
+		text := extractText(t, result)
+		assert.Contains(t, text, "verifactu")
+	})
+
+	t.Run("with json suffix", func(t *testing.T) {
+		result := callTool(t, s, "addon", map[string]any{
+			"key": "es-verifactu-v1.json",
+		})
+		assert.False(t, result.IsError)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		result := callTool(t, s, "addon", map[string]any{
+			"key": "nonexistent-addon",
+		})
+		assert.True(t, result.IsError)
+	})
+
+	t.Run("missing key", func(t *testing.T) {
+		result := callTool(t, s, "addon", map[string]any{})
+		assert.True(t, result.IsError)
+		text := extractText(t, result)
+		assert.Contains(t, text, "key")
+	})
+}
+
+func TestAddonListTool(t *testing.T) {
+	s := initServer(t)
+
+	result := callTool(t, s, "addon_list", map[string]any{})
+	assert.False(t, result.IsError, "addon_list should succeed")
+	text := extractText(t, result)
+	assert.Contains(t, text, "addons")
+	assert.Contains(t, text, "es-verifactu-v1")
+}
+
 func extractText(t *testing.T, result *mcp.CallToolResult) string {
 	t.Helper()
 	require.NotEmpty(t, result.Content)
