@@ -19,7 +19,7 @@ func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
 		V3.String(),
-		rules.GOBL.Add("ES-FACTURAE-v3"),
+		rules.GOBL.Add("ES-FACTURAE-V3"),
 		is.InContext(tax.AddonIn(V3)),
 		billInvoiceRules(),
 	)

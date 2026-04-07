@@ -69,7 +69,7 @@ func rateDefRules() *rules.Set {
 			),
 			rules.Each(
 				rules.Field("percent",
-					rules.Assert("01", "rate value percent is required", is.Present),
+					rules.Assert("04", "rate value percent is required", is.Present),
 				),
 			),
 		),

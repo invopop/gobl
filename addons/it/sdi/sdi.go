@@ -3,6 +3,8 @@
 package sdi
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -29,6 +31,7 @@ func init() {
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billChargeRules(),
+		orgAddressRules(),
 		taxComboRules(),
 		payInstructionsRules(),
 		payAdvanceRules(),
@@ -64,4 +67,19 @@ func normalize(doc any) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
+}
+
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
+
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
+	}
+	return nil
 }

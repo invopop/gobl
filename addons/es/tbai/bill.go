@@ -100,7 +100,7 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("customer",
 				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
 				rules.Field("tax_id",
-					rules.Assert("03a", "customer tax ID is required", is.Present),
+					rules.Assert("08", "customer tax ID is required", is.Present),
 				),
 			),
 		),

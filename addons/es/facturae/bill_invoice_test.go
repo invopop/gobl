@@ -42,7 +42,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
+		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
 	})
 
 }
@@ -53,7 +53,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 
 	require.NoError(t, inv.Calculate())
 	err := rules.Validate(inv)
-	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-04] ($.preceding) preceding document reference is required for credit-note, corrective, debit-note invoices")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-04] ($.preceding) preceding document reference is required for credit-note, corrective, debit-note invoices")
 
 	inv.Preceding = []*org.DocumentRef{
 		{
@@ -62,7 +62,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-v3-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-v3-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-V3-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
 
 	inv.Preceding[0].Ext = tax.Extensions{
 		facturae.ExtKeyCorrection: "01",

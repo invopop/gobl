@@ -692,8 +692,12 @@ func TestObject(t *testing.T) {
 func TestAllSets(t *testing.T) {
 	sets := rules.AllSets()
 	assert.NotEmpty(t, sets)
-	// Should be same as Registry.
-	assert.Equal(t, rules.Registry(), sets)
+	// Should contain the same sets as Registry (order may vary due to map iteration).
+	reg := rules.Registry()
+	assert.Equal(t, len(reg), len(sets))
+	for _, s := range reg {
+		assert.Contains(t, sets, s)
+	}
 }
 
 func TestSetMarshalJSON(t *testing.T) {
