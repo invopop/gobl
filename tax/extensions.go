@@ -259,6 +259,9 @@ func (em Extensions) Values() []cbc.Code {
 	for _, v := range em {
 		values = append(values, v)
 	}
+	sort.Slice(values, func(i, j int) bool {
+		return values[i] < values[j]
+	})
 	return values
 }
 

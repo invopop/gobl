@@ -291,7 +291,7 @@
                 {
                   "id": "GOBL-EU-EN16931-V2017-TAX-COMBO-02",
                   "desc": "VAT category code must be valid",
-                  "tests": "ext 'untdid-tax-category' in [S, Z, E, AE, K, G, O]"
+                  "tests": "ext 'untdid-tax-category' in [AE, E, G, K, O, S, Z]"
                 }
               ]
             }
