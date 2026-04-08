@@ -121,7 +121,7 @@ func Test_build(t *testing.T) {
 					"foo": "missing.yaml",
 				},
 			},
-			err: `code=422, message=open missing.yaml: no such file or directory`,
+			err: `internal: open missing.yaml: no such file or directory`,
 		},
 		{
 			name: "valid file",
@@ -136,7 +136,7 @@ func Test_build(t *testing.T) {
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
 			opts: &buildOpts{},
-			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			err:  "input: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",
@@ -182,7 +182,7 @@ func Test_build(t *testing.T) {
 				},
 			}`),
 			opts: &buildOpts{},
-			err:  "code=422, message=no-document",
+			err:  "no-document",
 		},
 		{
 			name: "invalid doc",
@@ -198,7 +198,7 @@ func Test_build(t *testing.T) {
 				doc: "foo bar baz"
 			}`),
 			opts: &buildOpts{},
-			err:  "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err:  "input: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",
@@ -214,7 +214,7 @@ func Test_build(t *testing.T) {
 				doc: {}
 			}`),
 			opts: &buildOpts{},
-			err:  "code=422, message=no-document",
+			err:  "no-document",
 		},
 		{
 			name: "input file",

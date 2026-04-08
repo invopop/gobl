@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -32,11 +32,8 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 		},
 		want: []*BulkResponse{
 			{
-				SeqID: 1,
-				Error: &Error{
-					Code:    422,
-					Message: "invalid character 'h' in literal true (expecting 'r')",
-				},
+				SeqID:   1,
+				Error:   gobl.ErrInput.WithReason("invalid character 'h' in literal true (expecting 'r')"),
 				IsFinal: true,
 			},
 		},
@@ -149,11 +146,8 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					IsFinal: false,
 				},
 				{
-					SeqID: 2,
-					Error: &Error{
-						Code:    422,
-						Message: "invalid character 'o' in literal null (expecting 'u')",
-					},
+					SeqID:   2,
+					Error:   gobl.ErrInput.WithReason("invalid character 'o' in literal null (expecting 'u')"),
 					IsFinal: true,
 				},
 			},
@@ -177,10 +171,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    422,
-						Message: "json: cannot unmarshal string into Go value of type cli.VerifyRequest",
-					},
+					Error:   gobl.ErrInternal.WithReason("json: cannot unmarshal string into Go value of type cli.VerifyRequest"),
 				},
 				{
 					SeqID:   2,
@@ -210,10 +201,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    400,
-						Message: `error converting YAML to JSON: yaml: invalid leading UTF-8 octet`,
-					},
+					Error:   gobl.ErrInput.WithReason("error converting YAML to JSON: yaml: invalid leading UTF-8 octet"),
 				},
 				{
 					SeqID:   2,
@@ -283,11 +271,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:   422,
-						Key:    cbc.Key("validation"),
-						Faults: rules.Validate(&note.Message{Title: "This is a title"}),
-					},
+					Error:   gobl.ErrValidation.WithCause(rules.Validate(&note.Message{Title: "This is a title"})),
 				},
 				{
 					SeqID:   2,
@@ -351,10 +335,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: &Error{
-						Code:    400,
-						Message: `unrecognized doc type: "chicken"`,
-					},
+					Error: gobl.ErrInput.WithReason("unrecognized doc type: %q", "chicken"),
 				},
 				{
 					SeqID:   2,
@@ -382,10 +363,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: &Error{
-						Code:    422,
-						Message: "invalid payload: illegal base64 data at input byte 4",
-					},
+					Error: gobl.ErrInternal.WithReason("invalid payload: illegal base64 data at input byte 4"),
 				},
 				{
 					SeqID:   2,
@@ -412,10 +390,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    422,
-						Message: `invalid payload: json: cannot unmarshal string into Go value of type cli.BuildRequest`,
-					},
+					Error:   gobl.ErrInternal.WithReason("invalid payload: json: cannot unmarshal string into Go value of type cli.BuildRequest"),
 				},
 				{
 					SeqID:   2,
@@ -445,10 +420,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    400,
-						Message: "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}",
-					},
+					Error:   gobl.ErrInput.WithReason("yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}"),
 				},
 				{
 					SeqID:   2,
@@ -578,12 +550,9 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			},
 			want: []*BulkResponse{
 				{
-					ReqID: "asdf",
-					SeqID: 1,
-					Error: &Error{
-						Code:    400,
-						Message: "unrecognized action: 'frobnicate'",
-					},
+					ReqID:   "asdf",
+					SeqID:   1,
+					Error:   gobl.ErrInput.WithReason("unrecognized action: 'frobnicate'"),
 					IsFinal: false,
 				},
 				{

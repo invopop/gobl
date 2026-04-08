@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
@@ -28,7 +27,7 @@ type CorrectOptions struct {
 func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	res, err := correct(ctx, opts)
 	if err != nil {
-		return nil, wrapError(http.StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 	return res, nil
 }

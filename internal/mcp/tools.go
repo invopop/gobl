@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/i18n"
@@ -343,11 +344,11 @@ func toolResultFromJSON(v any) (*mcp.CallToolResult, error) {
 	return mcp.NewToolResultText(string(d)), nil
 }
 
-// toolResultFromError converts a CLI error into an MCP tool error result,
+// toolResultFromError converts a GOBL error into an MCP tool error result,
 // preserving structured fault information.
 func toolResultFromError(err error) *mcp.CallToolResult {
-	if cliErr, ok := err.(*cli.Error); ok {
-		d, marshalErr := json.MarshalIndent(cliErr, "", "\t")
+	if ge, ok := err.(*gobl.Error); ok {
+		d, marshalErr := json.MarshalIndent(ge, "", "\t")
 		if marshalErr == nil {
 			return mcp.NewToolResultError(string(d))
 		}

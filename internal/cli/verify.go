@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"io"
-	"net/http"
 
 	jsonyaml "github.com/invopop/yaml"
 
@@ -17,23 +16,23 @@ import (
 func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 	body, err := io.ReadAll(iotools.CancelableReader(ctx, in))
 	if err != nil {
-		return wrapError(StatusBadRequest, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	env := new(gobl.Envelope)
 	if err := jsonyaml.Unmarshal(body, env); err != nil {
-		return wrapError(StatusBadRequest, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	if err := env.Validate(); err != nil {
-		return wrapError(StatusUnprocessableEntity, err)
+		return gobl.ErrValidation.WithCause(err)
 	}
 	if key == nil {
-		return wrapErrorf(StatusBadRequest, "public key required")
+		return gobl.ErrInput.WithReason("public key required")
 	}
 	if !env.Signed() {
-		return wrapErrorf(http.StatusUnprocessableEntity, "envelope is not signed")
+		return gobl.ErrSignature.WithReason("envelope is not signed")
 	}
 	if err := env.Signatures[0].VerifyPayload(key, env); err != nil {
-		return wrapError(http.StatusUnprocessableEntity, err)
+		return gobl.ErrSignature.WithCause(err)
 	}
 	return nil
 }

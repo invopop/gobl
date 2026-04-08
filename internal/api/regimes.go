@@ -5,9 +5,9 @@ import (
 	"path"
 	"strings"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal/cli"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -35,14 +35,14 @@ func handleRegimeList(w http.ResponseWriter, _ *http.Request) {
 func handleRegime(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
 	if code == "" {
-		writeError(w, &cli.Error{Code: http.StatusBadRequest, Message: "missing regime code"})
+		writeError(w, gobl.ErrInput.WithReason("missing regime code"))
 		return
 	}
 
 	p := path.Join("regimes", strings.ToLower(code)+".json")
 	d, err := data.Content.ReadFile(p)
 	if err != nil {
-		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "regime not found"})
+		writeError(w, gobl.ErrNotFound.WithReason("regime not found"))
 		return
 	}
 	writeRawJSON(w, d)

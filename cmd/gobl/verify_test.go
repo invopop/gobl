@@ -26,7 +26,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			in:  strings.NewReader("this isn't JSON"),
-			err: "code=400, message=error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err: "input: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 		{
 			name: "read error",
@@ -34,7 +34,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			in:  testy.ErrorReader(`{"foo":`, errors.New("read error")),
-			err: "code=400, message=read error",
+			err: "input: read error",
 		},
 		{
 			name: "empty envelope",
@@ -42,7 +42,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			in:  strings.NewReader(`{}`),
-			err: "code=422, message=[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
+			err: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "read from file",
@@ -50,7 +50,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			args: []string{"testdata/invalid.json"},
-			err:  "code=400, message=error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err:  "input: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 		{
 			name: "file missing",
@@ -64,7 +64,7 @@ func Test_verify(t *testing.T) {
 			},
 			args: []string{"-"},
 			in:   strings.NewReader("not really valid"),
-			err:  "code=400, message=error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err:  "input: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 	}
 
