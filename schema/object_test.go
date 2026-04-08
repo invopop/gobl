@@ -99,7 +99,7 @@ func TestObjectValidate(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, obj.Calculate())
 		faults = obj.Validate()
-		assert.ErrorContains(t, faults, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is require")
+		assert.ErrorContains(t, faults, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required")
 	})
 
 	t.Run("with embedded object, invalid guard condition", func(t *testing.T) {
@@ -111,6 +111,13 @@ func TestObjectValidate(t *testing.T) {
 		require.NoError(t, obj.Calculate())
 		faults := obj.Validate()
 		assert.ErrorContains(t, faults, "[GOBL-FR-BILL-INVOICE-01] ($.supplier) invoice supplier must have a tax ID code or a SIREN/SIRET identity")
+	})
+
+	t.Run("with nil", func(t *testing.T) {
+		obj := new(schema.Object)
+		assert.NotPanics(t, func() {
+			obj.Validate()
+		})
 	})
 }
 
