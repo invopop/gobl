@@ -78,6 +78,40 @@ func TestObjectValidate(t *testing.T) {
 
 	faults := obj.Validate()
 	assert.Empty(t, faults, "valid invoice should have no faults")
+
+	t.Run("with embedded object, complete", func(t *testing.T) {
+		msg := &note.Message{
+			Title:   "test",
+			Content: "hello",
+		}
+		obj, err := schema.NewObject(msg)
+		require.NoError(t, err)
+		require.NoError(t, obj.Calculate())
+		faults = obj.Validate()
+		assert.Empty(t, faults, "valid embedded object should have no faults")
+	})
+
+	t.Run("with embedded object, missing content", func(t *testing.T) {
+		msg := &note.Message{
+			Title: "test",
+		}
+		obj, err := schema.NewObject(msg)
+		require.NoError(t, err)
+		require.NoError(t, obj.Calculate())
+		faults = obj.Validate()
+		assert.ErrorContains(t, faults, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is require")
+	})
+
+	t.Run("with embedded object, invalid guard condition", func(t *testing.T) {
+		inv := exampleInvoice()
+		inv.Supplier.TaxID.Country = "FR"
+		inv.Supplier.TaxID.Code = "" // invalid
+		obj, err := schema.NewObject(inv)
+		require.NoError(t, err)
+		require.NoError(t, obj.Calculate())
+		faults := obj.Validate()
+		assert.ErrorContains(t, faults, "[GOBL-FR-BILL-INVOICE-01] ($.supplier) invoice supplier must have a tax ID code or a SIREN/SIRET identity")
+	})
 }
 
 func TestObjectIsEmpty(t *testing.T) {
