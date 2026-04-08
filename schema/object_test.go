@@ -116,7 +116,7 @@ func TestObjectValidate(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		obj := new(schema.Object)
 		assert.NotPanics(t, func() {
-			obj.Validate()
+			assert.NoError(t, obj.Validate())
 		})
 	})
 }
