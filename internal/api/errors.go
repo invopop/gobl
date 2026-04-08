@@ -4,22 +4,34 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 )
 
-// writeError writes a JSON error response. If the error is a *cli.Error,
-// its Code is used as the HTTP status; otherwise 500 is used.
+// httpStatusForKey maps domain error keys to HTTP status codes.
+func httpStatusForKey(key cbc.Key) int {
+	switch key {
+	case gobl.ErrInput.Key():
+		return http.StatusBadRequest // 400
+	case gobl.ErrNotFound.Key():
+		return http.StatusNotFound // 404
+	case gobl.ErrInternal.Key():
+		return http.StatusInternalServerError // 500
+	default:
+		return http.StatusUnprocessableEntity // 422 for all domain errors
+	}
+}
+
+// writeError writes a JSON error response. The HTTP status is derived
+// from the error's Key using httpStatusForKey.
 func writeError(w http.ResponseWriter, err error) {
-	cliErr, ok := err.(*cli.Error)
+	ge, ok := err.(*gobl.Error)
 	if !ok {
-		cliErr = &cli.Error{
-			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
-		}
+		ge = gobl.ErrInternal.WithCause(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(cliErr.Code)
-	_ = json.NewEncoder(w).Encode(cliErr) //nolint:errcheck
+	w.WriteHeader(httpStatusForKey(ge.Key()))
+	_ = json.NewEncoder(w).Encode(ge) //nolint:errcheck
 }
 
 // writeJSON writes a JSON response with 200 OK status.

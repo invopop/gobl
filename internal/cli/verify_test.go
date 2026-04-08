@@ -50,7 +50,7 @@ func TestVerify(t *testing.T) {
 	tests.Add("missing key", func(t *testing.T) interface{} {
 		return tt{
 			in:  testFileReader(t, "testdata/success.json"),
-			err: "code=400, message=public key required",
+			err: "input: public key required",
 		}
 	})
 	tests.Add("wrong public key", func(t *testing.T) interface{} {
@@ -62,14 +62,14 @@ func TestVerify(t *testing.T) {
 		return tt{
 			in:  testFileReader(t, "testdata/success.json"),
 			key: wrongKey,
-			err: "code=422, message=key mismatch",
+			err: "signature: key mismatch",
 		}
 	})
 	tests.Add("draft", func(t *testing.T) interface{} {
 		return tt{
 			in:  testFileReader(t, "testdata/draft.json"),
 			key: publicKey,
-			err: "code=422, message=envelope is not signed",
+			err: "signature: envelope is not signed",
 		}
 	})
 

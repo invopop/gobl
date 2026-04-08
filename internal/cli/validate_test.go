@@ -39,7 +39,7 @@ func TestValidate(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
-		err: `code=400, message=unknown-schema`,
+		err: `input: unknown-schema`,
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
@@ -59,7 +59,7 @@ func TestValidate(t *testing.T) {
 	tests.Add("without totals", func(t *testing.T) interface{} {
 		return tt{
 			in:  testFileReader(t, "testdata/nototals.json"),
-			err: "code=422, message=[GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+			err: "validation: [GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		}
 	})
 

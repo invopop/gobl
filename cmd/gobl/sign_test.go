@@ -121,7 +121,7 @@ func Test_sign(t *testing.T) {
 				},
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: `code=422, message=open missing.yaml: no such file or directory`,
+			err: `internal: open missing.yaml: no such file or directory`,
 		},
 		{
 			name: "valid file",
@@ -139,7 +139,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			err: "input: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",
@@ -165,7 +165,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=422, message=no-document",
+			err: "no-document",
 		},
 		{
 			name: "invalid doc",
@@ -183,7 +183,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err: "input: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",
@@ -201,7 +201,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=422, message=no-document",
+			err: "no-document",
 		},
 		{
 			name: "input file",

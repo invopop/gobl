@@ -5,10 +5,10 @@ import (
 	"path"
 	"strings"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal/cli"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -36,7 +36,7 @@ func handleAddonList(w http.ResponseWriter, _ *http.Request) {
 func handleAddon(w http.ResponseWriter, r *http.Request) {
 	key := r.PathValue("key")
 	if key == "" {
-		writeError(w, &cli.Error{Code: http.StatusBadRequest, Message: "missing addon key"})
+		writeError(w, gobl.ErrInput.WithReason("missing addon key"))
 		return
 	}
 
@@ -47,7 +47,7 @@ func handleAddon(w http.ResponseWriter, r *http.Request) {
 
 	d, err := data.Content.ReadFile(p)
 	if err != nil {
-		writeError(w, &cli.Error{Code: http.StatusNotFound, Message: "addon not found"})
+		writeError(w, gobl.ErrNotFound.WithReason("addon not found"))
 		return
 	}
 	writeRawJSON(w, d)

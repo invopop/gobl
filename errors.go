@@ -34,10 +34,6 @@ var (
 	// or marshal an object, usually into JSON.
 	ErrMarshal = NewError("marshal")
 
-	// ErrUnmarshal is used when that has been a problem attempting to read the
-	// source data.
-	ErrUnmarshal = NewError("unmarshal")
-
 	// ErrSignature identifies an issue related to signatures.
 	ErrSignature = NewError("signature")
 
@@ -50,6 +46,12 @@ var (
 	// ErrUnknownSchema is provided when we attempt to determine the schema for an object
 	// or from an ID and cannot find a match.
 	ErrUnknownSchema = NewError("unknown-schema")
+
+	// ErrInput is used when the input data is malformed or missing required fields.
+	ErrInput = NewError("input")
+
+	// ErrNotFound is used when a requested resource cannot be found.
+	ErrNotFound = NewError("not-found")
 )
 
 // NewError provides a new error with a code that is meant to provide
