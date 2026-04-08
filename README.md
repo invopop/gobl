@@ -5,7 +5,7 @@
 
 Go Business Language. Core library, schemas, and CLI.
 
-Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021-2025 [Invopop S.L.](https://invopop.com).
+Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021-2026 [Invopop S.L.](https://invopop.com).
 
 [![Lint](https://github.com/invopop/gobl/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/lint.yaml)
 [![Test Go](https://github.com/invopop/gobl/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/test.yaml)
@@ -233,6 +233,56 @@ gobl sign -i --key ./examples/key.jwk ./examples/es/invoice-es-es.env.yaml
 ```
 
 It is only possible to sign non-draft envelopes, so the CLI will automatically remove this flag during the signing process. This implies that the document must be completely valid before signing.
+
+### Validate
+
+Validate checks a GOBL document for errors without modifying it:
+
+```sh
+# Validate an existing envelope
+gobl validate ./examples/es/invoice-es-es.env.yaml
+```
+
+### Verify
+
+Verify checks the digital signature and digest of a signed GOBL envelope:
+
+```sh
+# Verify a signed envelope using a specific public key
+gobl verify --key ./examples/id_es256.pub.jwk ./examples/es/invoice-es-es.env.yaml
+```
+
+### Replicate
+
+Replicate creates a copy of a document with a new UUID and issue date, useful for generating a new document based on an existing one:
+
+```sh
+# Create a replica of an invoice
+gobl replicate ./examples/es/invoice-es-es.env.yaml
+```
+
+### Serve
+
+Launch the GOBL HTTP API server, which exposes endpoints for building, validating, correcting, and signing documents, as well as reference data for regimes, addons, and schemas:
+
+```sh
+# Start the server on the default port (80)
+gobl serve
+
+# Start the server on a custom port
+gobl serve -p 8080
+```
+
+The server includes a built-in web editor UI at the root path, an OpenAPI spec at `/v0/openapi.json`, and an MCP endpoint at `/v0/mcp`.
+
+### MCP
+
+Launch a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server over stdio, allowing AI tools and editors to interact with GOBL:
+
+```sh
+# Start the MCP server
+gobl mcp
+```
 
 ## Development
 

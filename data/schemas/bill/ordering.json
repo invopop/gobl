@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/ordering",
-  "$ref": "#/$defs/Ordering",
+  "$ref": "#/$defs/bill.Ordering",
   "$defs": {
-    "Ordering": {
+    "bill.Ordering": {
       "properties": {
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

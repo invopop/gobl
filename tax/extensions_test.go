@@ -356,7 +356,15 @@ func TestExtensionsValues(t *testing.T) {
 			"key1": "value1",
 			"key2": "value2",
 		}
-		assert.ElementsMatch(t, []cbc.Code{"value1", "value2"}, em.Values())
+		assert.Equal(t, []cbc.Code{"value1", "value2"}, em.Values())
+	})
+	t.Run("sorted output", func(t *testing.T) {
+		em := tax.Extensions{
+			"a": "cherry",
+			"b": "apple",
+			"c": "banana",
+		}
+		assert.Equal(t, []cbc.Code{"apple", "banana", "cherry"}, em.Values())
 	})
 }
 

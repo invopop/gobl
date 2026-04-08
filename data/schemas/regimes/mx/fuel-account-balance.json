@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/regimes/mx/fuel-account-balance",
-  "$ref": "#/$defs/FuelAccountBalance",
+  "$ref": "#/$defs/cfdi.FuelAccountBalance",
   "$defs": {
-    "FuelAccountBalance": {
+    "cfdi.FuelAccountBalance": {
       "properties": {
         "account_number": {
           "type": "string",
@@ -24,7 +24,7 @@
         },
         "lines": {
           "items": {
-            "$ref": "#/$defs/FuelAccountLine"
+            "$ref": "#/$defs/cfdi.FuelAccountLine"
           },
           "type": "array",
           "title": "Lines",
@@ -40,7 +40,7 @@
       ],
       "description": "FuelAccountBalance carries the data to produce a CFDI's \"Complemento de Estado de Cuenta de Combustibles para Monederos Electrónicos\" (version 1.2 revision B) providing detailed information about fuel purchases made with electronic wallets."
     },
-    "FuelAccountItem": {
+    "cfdi.FuelAccountItem": {
       "properties": {
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -71,7 +71,7 @@
       ],
       "description": "FuelAccountItem provides the details of a fuel purchase."
     },
-    "FuelAccountLine": {
+    "cfdi.FuelAccountLine": {
       "properties": {
         "i": {
           "type": "integer",
@@ -105,7 +105,7 @@
           "description": "Amount of fuel units purchased (maps to `Cantidad`)"
         },
         "item": {
-          "$ref": "#/$defs/FuelAccountItem",
+          "$ref": "#/$defs/cfdi.FuelAccountItem",
           "title": "Item",
           "description": "Details of the fuel purchased."
         },
@@ -122,7 +122,7 @@
         },
         "taxes": {
           "items": {
-            "$ref": "#/$defs/FuelAccountTax"
+            "$ref": "#/$defs/cfdi.FuelAccountTax"
           },
           "type": "array",
           "title": "Taxes",
@@ -144,7 +144,7 @@
       ],
       "description": "FuelAccountLine represents a single fuel purchase made with an e-wallet issued by the invoice's supplier."
     },
-    "FuelAccountTax": {
+    "cfdi.FuelAccountTax": {
       "properties": {
         "cat": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

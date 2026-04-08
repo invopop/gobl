@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/card",
-  "$ref": "#/$defs/Card",
+  "$ref": "#/$defs/pay.Card",
   "$defs": {
-    "Card": {
+    "pay.Card": {
       "properties": {
         "first6": {
           "type": "string",

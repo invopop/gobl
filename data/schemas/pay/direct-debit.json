@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/direct-debit",
-  "$ref": "#/$defs/DirectDebit",
+  "$ref": "#/$defs/pay.DirectDebit",
   "$defs": {
-    "DirectDebit": {
+    "pay.DirectDebit": {
       "properties": {
         "ref": {
           "type": "string",

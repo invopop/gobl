@@ -1,0 +1,600 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GOBL API",
+    "description": "Go Business Language — build, validate, sign, and query tax-aware business documents.",
+    "version": "v0",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "contact": {
+      "name": "Invopop",
+      "url": "https://gobl.org"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://gobl.dev/v0",
+      "description": "Production"
+    },
+    {
+      "url": "/v0",
+      "description": "Local"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getVersion",
+        "summary": "Version and health check",
+        "tags": ["Meta"],
+        "responses": {
+          "200": {
+            "description": "Service info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gobl": { "type": "string", "example": "Welcome" },
+                    "version": { "type": "string", "example": "v0.400.0" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/build": {
+      "post": {
+        "operationId": "build",
+        "summary": "Build a GOBL document",
+        "description": "Parses, calculates, and validates a GOBL document. Optionally wraps the result in an envelope.",
+        "tags": ["Documents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BuildRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Built document or envelope",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "operationId": "validate",
+        "summary": "Validate a GOBL document",
+        "description": "Validates a document without modifying it.",
+        "tags": ["Documents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ValidateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation passed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OkResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/correct": {
+      "post": {
+        "operationId": "correct",
+        "summary": "Create a corrective document",
+        "description": "Generates a credit note, debit note, or other correction from an existing document. When the `schema` flag is set, returns the available correction options instead.",
+        "tags": ["Documents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CorrectRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Corrected document, or correction options schema when `schema` is true",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/replicate": {
+      "post": {
+        "operationId": "replicate",
+        "summary": "Replicate a document",
+        "description": "Creates a copy of a document with a fresh UUID and no signatures.",
+        "tags": ["Documents"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReplicateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replicated document or envelope",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/sign": {
+      "post": {
+        "operationId": "sign",
+        "summary": "Sign a GOBL document",
+        "description": "Builds the document, wraps it in an envelope, and signs it with the provided private key.",
+        "tags": ["Signing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SignRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed envelope",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "operationId": "verify",
+        "summary": "Verify a signed envelope",
+        "description": "Checks the signature(s) on a GOBL envelope using the provided public key.",
+        "tags": ["Signing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VerifyRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification passed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OkResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/keygen": {
+      "post": {
+        "operationId": "keygen",
+        "summary": "Generate a signing key pair",
+        "description": "Creates a new ES256 (ECDSA P-256) key pair for signing and verification.",
+        "tags": ["Signing"],
+        "responses": {
+          "200": {
+            "description": "Generated key pair",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KeygenResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schemas": {
+      "get": {
+        "operationId": "listSchemas",
+        "summary": "List available JSON schemas",
+        "tags": ["Reference"],
+        "responses": {
+          "200": {
+            "description": "List of schema IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "schemas": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "example": ["https://gobl.org/draft-0/bill/invoice", "https://gobl.org/draft-0/org/party"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schemas/{path}": {
+      "get": {
+        "operationId": "getSchema",
+        "summary": "Get a JSON schema",
+        "description": "Returns the JSON Schema for a GOBL type. Use the `bundle` query parameter to get a self-contained schema with all dependencies inlined.",
+        "tags": ["Reference"],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "bill/invoice"
+          },
+          {
+            "name": "bundle",
+            "in": "query",
+            "required": false,
+            "description": "When present, returns a self-contained schema with all transitive `$ref` dependencies resolved into `$defs`.",
+            "schema": { "type": "boolean" },
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON Schema document",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/regimes": {
+      "get": {
+        "operationId": "listRegimes",
+        "summary": "List tax regimes",
+        "tags": ["Reference"],
+        "responses": {
+          "200": {
+            "description": "List of regime summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regimes": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/RegimeSummary" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/regimes/{code}": {
+      "get": {
+        "operationId": "getRegime",
+        "summary": "Get a tax regime definition",
+        "tags": ["Reference"],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "ES"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full regime definition",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/addons": {
+      "get": {
+        "operationId": "listAddons",
+        "summary": "List format addons",
+        "tags": ["Reference"],
+        "responses": {
+          "200": {
+            "description": "List of addon summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "addons": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AddonSummary" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addons/{key}": {
+      "get": {
+        "operationId": "getAddon",
+        "summary": "Get an addon definition",
+        "tags": ["Reference"],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "es-verifactu-v1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full addon definition",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BuildRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "GOBL document to build."
+          },
+          "template": {
+            "description": "Optional template to merge with the data before building."
+          },
+          "type": {
+            "type": "string",
+            "description": "Document type hint (e.g. `bill/invoice`)."
+          },
+          "envelop": {
+            "type": "boolean",
+            "description": "Wrap the result in an envelope.",
+            "default": false
+          }
+        }
+      },
+      "ValidateRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "GOBL document or envelope to validate."
+          }
+        }
+      },
+      "CorrectRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "Original document to correct."
+          },
+          "options": {
+            "description": "Correction options (method, reason, stamps, etc.)."
+          },
+          "schema": {
+            "type": "boolean",
+            "description": "When true, returns the available correction options schema instead of correcting.",
+            "default": false
+          }
+        }
+      },
+      "ReplicateRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "Document or envelope to replicate."
+          }
+        }
+      },
+      "SignRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "GOBL document to sign."
+          },
+          "template": {
+            "description": "Optional template to merge with the data before signing."
+          },
+          "privatekey": {
+            "$ref": "#/components/schemas/JWK",
+            "description": "ES256 private key in JWK format."
+          },
+          "type": {
+            "type": "string",
+            "description": "Document type hint."
+          },
+          "envelop": {
+            "type": "boolean",
+            "description": "Wrap in envelope (always true for signing).",
+            "default": true
+          }
+        }
+      },
+      "VerifyRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "description": "Signed GOBL envelope to verify."
+          },
+          "publickey": {
+            "$ref": "#/components/schemas/JWK",
+            "description": "ES256 public key in JWK format."
+          }
+        }
+      },
+      "KeygenResponse": {
+        "type": "object",
+        "properties": {
+          "private": {
+            "$ref": "#/components/schemas/JWK",
+            "description": "ES256 private key."
+          },
+          "public": {
+            "$ref": "#/components/schemas/JWK",
+            "description": "Corresponding public key."
+          }
+        }
+      },
+      "JWK": {
+        "type": "object",
+        "description": "JSON Web Key (RFC 7517) — ES256 / P-256.",
+        "properties": {
+          "kty": { "type": "string", "example": "EC" },
+          "crv": { "type": "string", "example": "P-256" },
+          "alg": { "type": "string", "example": "ES256" },
+          "use": { "type": "string", "example": "sig" },
+          "kid": { "type": "string", "format": "uuid" },
+          "x": { "type": "string", "description": "Base64url-encoded X coordinate." },
+          "y": { "type": "string", "description": "Base64url-encoded Y coordinate." },
+          "d": { "type": "string", "description": "Base64url-encoded private exponent (private keys only)." }
+        }
+      },
+      "OkResponse": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean", "example": true }
+        }
+      },
+      "RegimeSummary": {
+        "type": "object",
+        "properties": {
+          "country": { "type": "string", "example": "ES" },
+          "name": { "$ref": "#/components/schemas/I18nString" },
+          "description": { "$ref": "#/components/schemas/I18nString" },
+          "currency": { "type": "string", "example": "EUR" }
+        }
+      },
+      "AddonSummary": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string", "example": "es-verifactu-v1" },
+          "name": { "$ref": "#/components/schemas/I18nString" },
+          "description": { "$ref": "#/components/schemas/I18nString" },
+          "requires": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "I18nString": {
+        "type": "object",
+        "description": "Localized string keyed by language code.",
+        "additionalProperties": { "type": "string" },
+        "example": { "en": "English text", "es": "Texto en español" }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "description": "HTTP status code.", "example": 422 },
+          "key": { "type": "string", "description": "Machine-readable error key." },
+          "message": { "type": "string", "description": "Human-readable message." },
+          "faults": {
+            "type": "array",
+            "description": "Validation faults.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "properties": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Property paths that failed."
+                },
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Error response",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "Documents", "description": "Build, validate, correct, and replicate GOBL documents." },
+    { "name": "Signing", "description": "Sign and verify GOBL envelopes." },
+    { "name": "Reference", "description": "JSON schemas, tax regimes, and format addons." },
+    { "name": "Meta", "description": "Service metadata." }
+  ]
+}
