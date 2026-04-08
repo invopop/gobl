@@ -35,6 +35,13 @@ func TestDateJSONParsing(t *testing.T) {
 		assert.Equal(t, d.Month, time.May)
 		assert.Equal(t, d.Day, 26)
 	})
+
+	t.Run("empty date", func(t *testing.T) {
+		d := cal.Date{}
+		err := json.Unmarshal([]byte(`""`), &d)
+		assert.NoError(t, err)
+		assert.True(t, d.IsZero())
+	})
 }
 
 func TestDateValidation(t *testing.T) {
