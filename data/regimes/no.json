@@ -1,0 +1,167 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Norway",
+    "nb": "Norge"
+  },
+  "description": {
+    "en": "Norway's tax system is administered by the Norwegian Tax Administration\n(Skatteetaten). While not an EU member state, Norway follows similar VAT\nrules through the EEA Agreement.\n\nVAT (Merverdiavgift, MVA) applies at a standard rate and two reduced rates.\nThe standard rate covers most goods and services, one reduced rate applies\nto foodstuffs and water supply, and another reduced rate covers passenger\ntransport, accommodation, broadcasting, and cultural events. Certain\nsupplies are zero-rated (e.g. exports, newspapers) or exempt (e.g.\nhealthcare, education, financial services).\n\nBusinesses are identified by their organization number\n(Organisasjonsnummer), a 9-digit number. The Norwegian VAT number uses the\nformat NO followed by the 9-digit organization number and the suffix MVA.\nE-invoicing via the PEPPOL network is mandatory for all B2G transactions."
+  },
+  "time_zone": "Europe/Oslo",
+  "country": "NO",
+  "currency": "NOK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "ORG",
+      "name": {
+        "en": "Organization Number",
+        "nb": "Organisasjonsnummer"
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "nb": "MVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "nb": "Merverdiavgift"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "nb": "Alminnelig sats"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (Food, Water Supply)",
+            "nb": "Redusert sats (mat, vannforsyning)"
+          },
+          "values": [
+            {
+              "since": "2005-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-Reduced Rate (Transport, Accommodation)",
+            "nb": "Lav sats (transport, overnatting)"
+          },
+          "values": [
+            {
+              "since": "2018-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate",
+            "nb": "Nullsats"
+          },
+          "values": [
+            {
+              "since": "1970-01-01",
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Skatteetaten - VAT rates"
+          },
+          "url": "https://www.skatteetaten.no/en/rates/value-added-tax/"
+        }
+      ]
+    }
+  ]
+}
