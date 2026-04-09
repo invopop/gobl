@@ -228,7 +228,9 @@ func TestObjectUnmarshalJSONUnknownSchema(t *testing.T) {
 	data := []byte(`{"$schema":"https://gobl.org/draft-0/unknown/type","foo":"bar"}`)
 	obj := new(schema.Object)
 	err := json.Unmarshal(data, obj)
-	assert.Error(t, err)
+	assert.NoError(t, err, "unknown schema should passthrough without error")
+	assert.False(t, obj.IsEmpty())
+	assert.False(t, obj.HasPayload())
 }
 
 func TestObjectUnmarshalJSONNoSchema(t *testing.T) {
@@ -251,6 +253,67 @@ func TestObjectError(t *testing.T) {
 	assert.Equal(t, "unknown-schema", err.Error())
 }
 
+func TestObjectPassthrough(t *testing.T) {
+	raw := []byte(`{"$schema":"https://example.com/unknown-type","foo":"bar","num":42}`)
+
+	t.Run("unmarshal", func(t *testing.T) {
+		obj := new(schema.Object)
+		err := obj.UnmarshalJSON(raw)
+		require.NoError(t, err)
+		assert.Equal(t, schema.ID("https://example.com/unknown-type"), obj.Schema)
+		assert.Nil(t, obj.Instance())
+		assert.False(t, obj.HasPayload())
+		assert.False(t, obj.IsEmpty())
+	})
+
+	t.Run("round-trip", func(t *testing.T) {
+		obj := new(schema.Object)
+		require.NoError(t, obj.UnmarshalJSON(raw))
+		out, err := obj.MarshalJSON()
+		require.NoError(t, err)
+		assert.JSONEq(t, string(raw), string(out))
+	})
+
+	t.Run("calculate", func(t *testing.T) {
+		obj := new(schema.Object)
+		require.NoError(t, obj.UnmarshalJSON(raw))
+		assert.NoError(t, obj.Calculate())
+	})
+
+	t.Run("clone", func(t *testing.T) {
+		obj := new(schema.Object)
+		require.NoError(t, obj.UnmarshalJSON(raw))
+		clone, err := obj.Clone()
+		require.NoError(t, err)
+		assert.Equal(t, obj.Schema, clone.Schema)
+		assert.False(t, clone.HasPayload())
+		out, err := clone.MarshalJSON()
+		require.NoError(t, err)
+		assert.JSONEq(t, string(raw), string(out))
+	})
+
+	t.Run("validate", func(t *testing.T) {
+		obj := new(schema.Object)
+		require.NoError(t, obj.UnmarshalJSON(raw))
+		faults := obj.Validate()
+		assert.Empty(t, faults)
+	})
+}
+
+func TestObjectHasPayload(t *testing.T) {
+	t.Run("registered schema", func(t *testing.T) {
+		inv := exampleInvoice()
+		obj, err := schema.NewObject(inv)
+		require.NoError(t, err)
+		assert.True(t, obj.HasPayload())
+	})
+
+	t.Run("empty object", func(t *testing.T) {
+		obj := new(schema.Object)
+		assert.False(t, obj.HasPayload())
+		assert.True(t, obj.IsEmpty())
+	})
+}
 // exampleInvoice defines a simple invoice example pre-calculations.
 func exampleInvoice() *bill.Invoice {
 	return &bill.Invoice{

@@ -27,9 +27,14 @@ const (
 // Object helps handle json objects that must contain a schema to correctly identify
 // the contents and ensuring that a `$schema` property is added automatically when
 // marshalling back into JSON.
+//
+// When the $schema is not registered in the global registry, the Object stores
+// the raw JSON for round-trip passthrough. In this case Instance() returns nil
+// and HasPayload() returns false.
 type Object struct {
 	Schema  ID `json:"$schema"`
 	payload any
+	raw     json.RawMessage // stores full JSON when schema is unregistered
 }
 
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
@@ -78,9 +83,16 @@ func (d *Object) Validate() rules.Faults {
 	return rules.Validate(d.Instance())
 }
 
-// IsEmpty returns true if no payload has been set yet.
+// IsEmpty returns true if no payload or raw JSON has been set yet.
 func (d *Object) IsEmpty() bool {
-	return d.payload == nil
+	return d.payload == nil && d.raw == nil
+}
+
+// HasPayload returns true when the Object contains a resolved Go instance
+// (i.e., the schema was registered). Returns false for passthrough objects
+// that only hold raw JSON.
+func (d *Object) HasPayload() bool {
+	return d.payload != nil
 }
 
 // Instance returns a prepared version of the document's content.
@@ -195,10 +207,13 @@ func (d *Object) UnmarshalJSON(data []byte) error {
 		return nil // return silently
 	}
 
-	// Map the schema to an instance of the payload, or fail if we don't know what it is
+	// Map the schema to an instance of the payload. If the schema is not
+	// registered, store the raw JSON for passthrough.
 	d.payload = d.Schema.Interface()
 	if d.payload == nil {
-		return ErrUnknownSchema
+		d.raw = make(json.RawMessage, len(data))
+		copy(d.raw, data)
+		return nil
 	}
 	if err := json.Unmarshal(data, d.payload); err != nil {
 		return err
@@ -209,6 +224,10 @@ func (d *Object) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON satisfies the json.Marshaler interface.
 func (d *Object) MarshalJSON() ([]byte, error) {
+	if d.raw != nil {
+		return d.raw, nil
+	}
+
 	data, err := json.Marshal(d.payload)
 	if err != nil {
 		return nil, err
