@@ -53,6 +53,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
+			validation.Each(validation.By(validateNoteKeyOrCode)),
 			validation.By(validateExemptionNote(inv)),
 			validation.Skip,
 		),
@@ -150,6 +151,17 @@ func validateBillInvoicePreceding(value any) error {
 		validation.Field(&obj.IssueDate, validation.Required),
 		validation.Field(&obj.Code, validation.Required),
 	)
+}
+
+func validateNoteKeyOrCode(value any) error {
+	n, ok := value.(*org.Note)
+	if !ok || n == nil {
+		return nil
+	}
+	if n.Key == "" && n.Code == "" {
+		return fmt.Errorf("key or code must be set")
+	}
+	return nil
 }
 
 func isExemptionNote(n *org.Note) bool {
