@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/status",
+  "$ref": "#/$defs/Status",
+  "$defs": {
+    "Status": {
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/tax/regime-code",
+          "title": "Tax Regime",
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
+        },
+        "$addons": {
+          "$ref": "https://gobl.org/draft-0/tax/addon-list",
+          "title": "Addons",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Type",
+          "description": "Type of status being reported (e.g. \"system\" for internal events)."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "IssueDate is the date when the status event occurred."
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier",
+          "description": "Supplier is the entity that is reporting the event."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext provides additional structured data specific to the regime or addon."
+        },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/object"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Complements contain regime/addon specific payload data."
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Notes for additional details about the event."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains unstructured data useful for internal tools."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "issue_date",
+        "supplier"
+      ],
+      "description": "Status represents a system or business event that needs to be recorded for compliance purposes."
+    }
+  }
+}
