@@ -41,6 +41,11 @@ func init() {
 		paymentLineRules(),
 		taxRules(),
 		totalsRules(),
+		statusRules(),
+		statusLineRules(),
+		reasonRules(),
+		actionRules(),
+		conditionRules(),
 	)
 }
 
