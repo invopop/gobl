@@ -272,10 +272,12 @@ func TestEnvelopeValidate(t *testing.T) {
 				doc := new(schema.Object)
 				require.NoError(t, doc.UnmarshalJSON(raw))
 				env.Document = doc
-				env.Head.Digest = dsig.NewSHA256Digest([]byte("fake"))
+				dig, err := env.Digest()
+				require.NoError(t, err)
+				env.Head.Digest = dig
 				return env
 			},
-			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema",
+			want: "validation: [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema",
 		},
 		{
 			name: "with more complex document and rules",
