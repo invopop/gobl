@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 )
 
 const (
@@ -611,6 +612,73 @@ func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
 	}
 	tax.Normalize(normalizers, sl.Doc)
 	normalizers.Each(sl)
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Status) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if its, ok := props.Get("type"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(StatusTypes))
+		for i, kd := range StatusTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"$regime",
+			"series",
+			"lines",
+		},
+	}
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (StatusLine) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if its, ok := props.Get("key"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(StatusEvents))
+		for i, kd := range StatusEvents {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Reason) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if its, ok := props.Get("key"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(ReasonKeys))
+		for i, kd := range ReasonKeys {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Action) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if its, ok := props.Get("key"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(ActionKeys))
+		for i, kd := range ActionKeys {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
 }
 
 func statusRules() *rules.Set {

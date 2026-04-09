@@ -1,6 +1,7 @@
 package bill_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
@@ -9,7 +10,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -588,4 +591,102 @@ func TestStatusDefinitions(t *testing.T) {
 		_, hasError := mapped[bill.StatusEventError]
 		assert.False(t, hasError)
 	})
+}
+
+func TestStatusJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$regime": {
+				"$ref": "https://gobl.org/draft-0/tax/regime-code",
+				"title": "Tax Regime"
+			},
+			"type": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Type"
+			},
+			"series": {
+				"$ref": "https://gobl.org/draft-0/cbc/code",
+				"title": "Series"
+			},
+			"lines": {
+				"type": "array",
+				"title": "Lines"
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	st := bill.Status{}
+	st.JSONSchemaExtend(js)
+
+	t.Run("types", func(t *testing.T) {
+		prop, ok := js.Properties.Get("type")
+		require.True(t, ok)
+		require.Len(t, prop.OneOf, len(bill.StatusTypes))
+		assert.Equal(t, bill.StatusTypes[0].Key.String(), prop.OneOf[0].Const)
+		assert.Equal(t, bill.StatusTypes[0].Name.String(), prop.OneOf[0].Title)
+		assert.Equal(t, bill.StatusTypes[0].Desc.String(), prop.OneOf[0].Description)
+	})
+
+	t.Run("recommended", func(t *testing.T) {
+		assert.Len(t, js.Extras[schema.Recommended], 3)
+	})
+}
+
+func schemaWithKeyProp(t *testing.T) *jsonschema.Schema {
+	t.Helper()
+	eg := `{
+		"properties": {
+			"key": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Key"
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+	return js
+}
+
+func TestStatusLineJSONSchemaExtend(t *testing.T) {
+	js := schemaWithKeyProp(t)
+
+	sl := bill.StatusLine{}
+	sl.JSONSchemaExtend(js)
+
+	prop, ok := js.Properties.Get("key")
+	require.True(t, ok)
+	require.Len(t, prop.OneOf, len(bill.StatusEvents))
+	assert.Equal(t, bill.StatusEvents[0].Key.String(), prop.OneOf[0].Const)
+	assert.Equal(t, bill.StatusEvents[0].Name.String(), prop.OneOf[0].Title)
+	assert.Equal(t, bill.StatusEvents[0].Desc.String(), prop.OneOf[0].Description)
+}
+
+func TestReasonJSONSchemaExtend(t *testing.T) {
+	js := schemaWithKeyProp(t)
+
+	r := bill.Reason{}
+	r.JSONSchemaExtend(js)
+
+	prop, ok := js.Properties.Get("key")
+	require.True(t, ok)
+	require.Len(t, prop.OneOf, len(bill.ReasonKeys))
+	assert.Equal(t, bill.ReasonKeys[0].Key.String(), prop.OneOf[0].Const)
+	assert.Equal(t, bill.ReasonKeys[0].Name.String(), prop.OneOf[0].Title)
+	assert.Equal(t, bill.ReasonKeys[0].Desc.String(), prop.OneOf[0].Description)
+}
+
+func TestActionJSONSchemaExtend(t *testing.T) {
+	js := schemaWithKeyProp(t)
+
+	a := bill.Action{}
+	a.JSONSchemaExtend(js)
+
+	prop, ok := js.Properties.Get("key")
+	require.True(t, ok)
+	require.Len(t, prop.OneOf, len(bill.ActionKeys))
+	assert.Equal(t, bill.ActionKeys[0].Key.String(), prop.OneOf[0].Const)
+	assert.Equal(t, bill.ActionKeys[0].Name.String(), prop.OneOf[0].Title)
+	assert.Equal(t, bill.ActionKeys[0].Desc.String(), prop.OneOf[0].Description)
 }

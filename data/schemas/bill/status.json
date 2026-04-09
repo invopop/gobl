@@ -7,6 +7,43 @@
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "none",
+              "title": "No action required",
+              "description": "No action required."
+            },
+            {
+              "const": "provide",
+              "title": "Provide information",
+              "description": "Missing information requested without re-issuing invoice."
+            },
+            {
+              "const": "reissue",
+              "title": "Issue new invoice",
+              "description": "Request to re-issue a corrected invoice."
+            },
+            {
+              "const": "credit-full",
+              "title": "Credit fully",
+              "description": "Request to fully cancel the referenced invoice with a credit note."
+            },
+            {
+              "const": "credit-partial",
+              "title": "Credit partially",
+              "description": "Request to issue partial credit note for corrections only."
+            },
+            {
+              "const": "credit-amount",
+              "title": "Credit the amount",
+              "description": "Request to repay the amount paid on the invoice."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Requested action is not defined by code."
+            }
+          ],
           "title": "Key",
           "description": "Key helps determine what to do next."
         },
@@ -53,6 +90,78 @@
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "none",
+              "title": "No Issue",
+              "description": "Receiver of the documents sends the message just to update the status and there are no problems with document processing."
+            },
+            {
+              "const": "references",
+              "title": "References Incorrect",
+              "description": "Received document did not contain references as required by the receiver for correctly routing the document for approval or processing."
+            },
+            {
+              "const": "legal",
+              "title": "Legal information incorrect",
+              "description": "Information in the received document is not according to legal requirements."
+            },
+            {
+              "const": "unknown-receiver",
+              "title": "Receiver unknown",
+              "description": "The party to which the document is addressed is not known."
+            },
+            {
+              "const": "quality",
+              "title": "Item quality issue",
+              "description": "Unacceptable or incorrect quality."
+            },
+            {
+              "const": "delivery",
+              "title": "Delivery issues",
+              "description": "Delivery proposed or provided is not acceptable."
+            },
+            {
+              "const": "prices",
+              "title": "Prices incorrect",
+              "description": "Prices not according to previous expectation."
+            },
+            {
+              "const": "quantity",
+              "title": "Quantity incorrect",
+              "description": "Quantity not according to previous expectation."
+            },
+            {
+              "const": "items",
+              "title": "Items incorrect",
+              "description": "Items not according to previous expectation."
+            },
+            {
+              "const": "payment-terms",
+              "title": "Payment terms incorrect",
+              "description": "Payment terms not according to previous expectation."
+            },
+            {
+              "const": "not-recognized",
+              "title": "Not recognized",
+              "description": "Commercial transaction not recognized."
+            },
+            {
+              "const": "finance-terms",
+              "title": "Finance incorrect",
+              "description": "Finance terms not according to previous expectation."
+            },
+            {
+              "const": "partial",
+              "title": "Partially paid",
+              "description": "Payment is partially but not fully paid."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Reason for status is not defined by code."
+            }
+          ],
           "title": "Key",
           "description": "Key helps identify the reason."
         },
@@ -96,6 +205,23 @@
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "response",
+              "title": "Response",
+              "description": "A response to a document that has been submitted, often used in a two way communication between a customer and supplier."
+            },
+            {
+              "const": "update",
+              "title": "Update",
+              "description": "Issued by the supplier (or issuer) that may be shared with the customer, but more likely with a fifth-corner, like a government agency."
+            },
+            {
+              "const": "system",
+              "title": "System",
+              "description": "A system event that is not directly related to a specific document, but needs to be recorded for compliance purposes."
+            }
+          ],
           "title": "Type",
           "description": "Type of status being reported (e.g. \"system\" for internal events)."
         },
@@ -186,7 +312,12 @@
         "code",
         "supplier"
       ],
-      "description": "Status represents a system or business event that needs to be recorded for compliance purposes."
+      "description": "Status represents a system or business event that needs to be recorded for compliance purposes.",
+      "recommended": [
+        "$regime",
+        "series",
+        "lines"
+      ]
     },
     "bill.StatusLine": {
       "properties": {
@@ -197,6 +328,48 @@
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "issued",
+              "title": "Issued",
+              "description": "Document has been submitted pending review by the recipient."
+            },
+            {
+              "const": "acknowledged",
+              "title": "Acknowledged",
+              "description": "Received a readable invoice message that can be understood and submitted for processing by the Buyer."
+            },
+            {
+              "const": "processing",
+              "title": "In Process",
+              "description": "Indicates that the referenced message or transaction is being processed."
+            },
+            {
+              "const": "querying",
+              "title": "Under Query",
+              "description": "Buyer will not proceed to accept the Invoice without receiving additional information from the Seller."
+            },
+            {
+              "const": "rejected",
+              "title": "Rejected",
+              "description": "Buyer will not process the referenced Invoice any further. Buyer is rejecting this invoice but not necessarily the commercial transaction. Although it can be used also for rejection for commercial reasons (invoice not corresponding to delivery)."
+            },
+            {
+              "const": "accepted",
+              "title": "Accepted / Approved",
+              "description": "Buyer has given a final approval of the invoice and the next step is payment."
+            },
+            {
+              "const": "paid",
+              "title": "Paid",
+              "description": "Buyer has initiated payment, or the supplier has acknowledged receipt of payment."
+            },
+            {
+              "const": "error",
+              "title": "Error",
+              "description": "There is a technical issue with the document that has caused it to be rejected."
+            }
+          ],
           "title": "Key",
           "description": "Status Key indicates the situation of the document"
         },
