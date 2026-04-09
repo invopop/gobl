@@ -314,6 +314,7 @@ func TestObjectHasPayload(t *testing.T) {
 		assert.True(t, obj.IsEmpty())
 	})
 }
+
 // exampleInvoice defines a simple invoice example pre-calculations.
 func exampleInvoice() *bill.Invoice {
 	return &bill.Invoice{
