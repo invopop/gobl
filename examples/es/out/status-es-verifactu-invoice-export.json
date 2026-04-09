@@ -1,0 +1,53 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "6c62fee3f35fd17e920621b096e9ddf01dc0ebd313c58b333d0cc93a3fd33eca"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "a1b2c3d4-1005-4beb-90bd-f8f280d852a0",
+		"type": "system",
+		"issue_date": "2024-12-04",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			}
+		},
+		"ext": {
+			"es-verifactu-event-type": "08"
+		},
+		"complements": [
+			{
+				"$schema": "https://gobl.org/draft-0/addons/es/verifactu/invoice-export",
+				"start": "2024-11-01T00:00:00+01:00",
+				"end": "2024-11-30T23:59:59+01:00",
+				"first": {
+					"issuer_tax_code": "B98602642",
+					"code": "SAMPLE-001",
+					"issue_date": "2024-11-01",
+					"fingerprint": "AAAA000000000000000000000000000000000000000000000000000000000001"
+				},
+				"last": {
+					"issuer_tax_code": "B98602642",
+					"code": "SAMPLE-050",
+					"issue_date": "2024-11-30",
+					"fingerprint": "BBBB000000000000000000000000000000000000000000000000000000000050"
+				},
+				"registration_count": 45,
+				"tax_total": "9450.00",
+				"amount_total": "54450.00",
+				"cancellation_count": 5,
+				"discarded": "N"
+			}
+		]
+	}
+}

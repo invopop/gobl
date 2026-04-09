@@ -16,6 +16,7 @@ const (
 	ExtKeyIdentityType      cbc.Key = "es-verifactu-identity-type"
 	ExtKeySimplifiedArt7273 cbc.Key = "es-verifactu-simplified-art7273"
 	ExtKeyIssuerType        cbc.Key = "es-verifactu-issuer-type"
+	ExtKeyEventType         cbc.Key = "es-verifactu-event-type"
 )
 
 // Identity Type Codes - limited subset assigned to identities.
@@ -176,7 +177,7 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				Correction type code used to identify the type of correction being
 				made. Values map to L3 list.
-				
+
 				Code is determined automatically according to the invoice type:
 
 				| Invoice Type		| Code |
@@ -540,7 +541,7 @@ var extensions = []*cbc.Definition{
 
 				The regular Party Tax Identity is preferred over using a specific identity type
 				code, and will be mapped automatically as follows:
-				
+
 				- Spanish Tax IDs will be mapped to the ~NIF~ field.
 				- EU Tax IDs will be mapped to the ~IDOtro~ field with code ~02~.
 				- Non-EU Tax IDs will be mapped to the ~IDOtro~ field with code ~04~.
@@ -548,7 +549,7 @@ var extensions = []*cbc.Definition{
 				VERI*FACTU will perform validation on both Spanish and EU Tax IDs, so it is important
 				to provide the correct details.
 
-				The following identity ~key~ values will be mapped automatically to an extension by the 
+				The following identity ~key~ values will be mapped automatically to an extension by the
 				addon for the following keys:
 
 				| Identity Key | Extension Code |
@@ -709,6 +710,98 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Issued by Customer",
 					i18n.ES: "Emitida por Destinatario",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyEventType,
+		Name: i18n.String{
+			i18n.EN: "Event Type Code",
+			i18n.ES: "Código de Tipo de Evento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to identify the type of event being recorded in a RegistroEvento.
+				Maps to the ~TipoEvento~ field, with values from the L2E list.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "System startup",
+					i18n.ES: "Inicio del funcionamiento del SIF como NO VERI*FACTU",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "System shutdown",
+					i18n.ES: "Fin del funcionamiento del SIF como NO VERI*FACTU",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Invoice anomaly detection launch",
+					i18n.ES: "Lanzamiento detección anomalías en registros de facturación",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Invoice anomaly detected",
+					i18n.ES: "Detección anomalías en registros de facturación",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Event anomaly detection launch",
+					i18n.ES: "Lanzamiento detección anomalías en registros de evento",
+				},
+			},
+			{
+				Code: "06",
+				Name: i18n.String{
+					i18n.EN: "Event anomaly detected",
+					i18n.ES: "Detección anomalías en registros de evento",
+				},
+			},
+			{
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "Backup restoration",
+					i18n.ES: "Restauración de copia de seguridad",
+				},
+			},
+			{
+				Code: "08",
+				Name: i18n.String{
+					i18n.EN: "Invoice records export",
+					i18n.ES: "Exportación registros de facturación en periodo",
+				},
+			},
+			{
+				Code: "09",
+				Name: i18n.String{
+					i18n.EN: "Event records export",
+					i18n.ES: "Exportación registros de evento en periodo",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Event summary",
+					i18n.ES: "Registro resumen de eventos",
+				},
+			},
+			{
+				Code: "90",
+				Name: i18n.String{
+					i18n.EN: "Other events",
+					i18n.ES: "Otros eventos",
 				},
 			},
 		},

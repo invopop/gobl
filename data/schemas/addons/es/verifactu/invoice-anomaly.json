@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/invoice-anomaly",
+  "$ref": "#/$defs/InvoiceAnomaly",
+  "$defs": {
+    "AnomalousInvoice": {
+      "properties": {
+        "issuer_tax_code": {
+          "type": "string",
+          "title": "Issuer Tax Code",
+          "description": "Tax identification number of the invoice issuer."
+        },
+        "code": {
+          "type": "string",
+          "title": "Invoice Number",
+          "description": "Full invoice code including series."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "Date of issuance."
+        }
+      },
+      "type": "object",
+      "required": [
+        "issuer_tax_code",
+        "code",
+        "issue_date"
+      ],
+      "description": "AnomalousInvoice identifies a specific invoice that triggered an anomaly."
+    },
+    "InvoiceAnomaly": {
+      "properties": {
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Anomaly Type",
+          "description": "Anomaly type code from L1E list."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Free-text description of the anomaly (max 100 chars)."
+        },
+        "invoice": {
+          "$ref": "#/$defs/AnomalousInvoice",
+          "title": "Anomalous Invoice",
+          "description": "Details of the anomalous invoice, if applicable."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "InvoiceAnomaly describes a detected anomaly in invoice records."
+    }
+  }
+}

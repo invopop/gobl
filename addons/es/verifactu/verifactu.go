@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -23,13 +24,31 @@ const (
 )
 
 func init() {
+	schema.Register(schema.GOBL.Add("addons/es/verifactu"),
+		InvoiceAnomalyLaunch{},
+		InvoiceAnomaly{},
+		EventAnomalyLaunch{},
+		EventAnomaly{},
+		InvoiceExport{},
+		EventExport{},
+		EventSummary{},
+	)
+
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
 		V1.String(),
 		rules.GOBL.Add("ES-VERIFACTU-V1"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
+		billStatusRules(),
 		taxComboRules(),
+		invoiceAnomalyLaunchRules(),
+		invoiceAnomalyRules(),
+		eventAnomalyLaunchRules(),
+		eventAnomalyRules(),
+		invoiceExportRules(),
+		eventExportRules(),
+		eventSummaryRules(),
 	)
 }
 

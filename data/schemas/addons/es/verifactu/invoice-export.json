@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/invoice-export",
+  "$ref": "#/$defs/InvoiceExport",
+  "$defs": {
+    "InvoiceExport": {
+      "properties": {
+        "start": {
+          "type": "string",
+          "title": "Period Start",
+          "description": "Start of the export period in ISO 8601 datetime format."
+        },
+        "end": {
+          "type": "string",
+          "title": "Period End",
+          "description": "End of the export period in ISO 8601 datetime format."
+        },
+        "first": {
+          "$ref": "#/$defs/InvoiceRecord",
+          "title": "First Invoice",
+          "description": "First invoice record in the exported period."
+        },
+        "last": {
+          "$ref": "#/$defs/InvoiceRecord",
+          "title": "Last Invoice",
+          "description": "Last invoice record in the exported period."
+        },
+        "registration_count": {
+          "type": "integer",
+          "title": "Registration Count",
+          "description": "Number of registration records exported."
+        },
+        "tax_total": {
+          "type": "string",
+          "title": "Tax Total",
+          "description": "Sum of taxes in the period (Decimal 12,2)."
+        },
+        "amount_total": {
+          "type": "string",
+          "title": "Amount Total",
+          "description": "Sum of total amounts in the period (Decimal 12,2)."
+        },
+        "cancellation_count": {
+          "type": "integer",
+          "title": "Cancellation Count",
+          "description": "Number of cancellation records exported."
+        },
+        "discarded": {
+          "type": "string",
+          "title": "Records Discarded",
+          "description": "Whether any records were discarded (\"S\" or \"N\")."
+        }
+      },
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "first",
+        "last",
+        "registration_count",
+        "tax_total",
+        "amount_total",
+        "cancellation_count",
+        "discarded"
+      ],
+      "description": "InvoiceExport contains summary data for an export of invoice records over a period."
+    },
+    "InvoiceRecord": {
+      "properties": {
+        "issuer_tax_code": {
+          "type": "string",
+          "title": "Issuer Tax Code",
+          "description": "Tax identification number of the invoice issuer."
+        },
+        "code": {
+          "type": "string",
+          "title": "Invoice Number",
+          "description": "Full invoice code including series."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "Date of issuance."
+        },
+        "fingerprint": {
+          "type": "string",
+          "title": "Fingerprint",
+          "description": "SHA-256 fingerprint (64 hex characters)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "issuer_tax_code",
+        "code",
+        "issue_date",
+        "fingerprint"
+      ],
+      "description": "InvoiceRecord identifies a specific invoice in an export or summary."
+    }
+  }
+}

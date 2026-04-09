@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/event-anomaly",
+  "$ref": "#/$defs/EventAnomaly",
+  "$defs": {
+    "AnomalousEvent": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Event Type",
+          "description": "Event type code from L2E list."
+        },
+        "timestamp": {
+          "type": "string",
+          "title": "Timestamp",
+          "description": "Timestamp in ISO 8601 format."
+        },
+        "fingerprint": {
+          "type": "string",
+          "title": "Fingerprint",
+          "description": "SHA-256 fingerprint (64 hex characters)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "timestamp",
+        "fingerprint"
+      ],
+      "description": "AnomalousEvent identifies a specific event that triggered an anomaly."
+    },
+    "EventAnomaly": {
+      "properties": {
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Anomaly Type",
+          "description": "Anomaly type code from L1E list."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Free-text description of the anomaly (max 100 chars)."
+        },
+        "event": {
+          "$ref": "#/$defs/AnomalousEvent",
+          "title": "Anomalous Event",
+          "description": "Details of the anomalous event, if applicable."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "EventAnomaly describes a detected anomaly in event records."
+    }
+  }
+}

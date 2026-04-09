@@ -1,0 +1,41 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "dc71d837a31b8b897d62e0fbabbf893f0e96e5e62e58d8810115be6deaac4eba"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "a1b2c3d4-1002-4beb-90bd-f8f280d852a0",
+		"type": "system",
+		"issue_date": "2024-12-04",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			}
+		},
+		"ext": {
+			"es-verifactu-event-type": "04"
+		},
+		"complements": [
+			{
+				"$schema": "https://gobl.org/draft-0/addons/es/verifactu/invoice-anomaly",
+				"type": "01",
+				"description": "Fingerprint mismatch in invoice record",
+				"invoice": {
+					"issuer_tax_code": "B98602642",
+					"code": "SAMPLE-004",
+					"issue_date": "2024-12-04"
+				}
+			}
+		]
+	}
+}

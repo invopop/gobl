@@ -1,0 +1,30 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+$addons: ["es-verifactu-v1"]
+uuid: "a1b2c3d4-1006-4beb-90bd-f8f280d852a0"
+
+type: "system"
+issue_date: "2024-12-04"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+
+ext:
+  es-verifactu-event-type: "09"
+
+complements:
+  - $schema: "https://gobl.org/draft-0/addons/es/verifactu/event-export"
+    start: "2024-11-01T00:00:00+01:00"
+    end: "2024-11-30T23:59:59+01:00"
+    first:
+      type: "01"
+      timestamp: "2024-11-01T08:00:00+01:00"
+      fingerprint: "CCCC000000000000000000000000000000000000000000000000000000000001"
+    last:
+      type: "10"
+      timestamp: "2024-11-30T20:00:00+01:00"
+      fingerprint: "DDDD000000000000000000000000000000000000000000000000000000000030"
+    count: 30
+    discarded: "N"

@@ -500,6 +500,95 @@
           }
         }
       ]
+    },
+    {
+      "key": "es-verifactu-event-type",
+      "name": {
+        "en": "Event Type Code",
+        "es": "Código de Tipo de Evento"
+      },
+      "desc": {
+        "en": "Code used to identify the type of event being recorded in a\nRegistroEvento. Maps to the `TipoEvento` field, with values\nfrom the L2E list."
+      },
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "System startup",
+            "es": "Inicio del funcionamiento del SIF como NO VERI*FACTU"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "System shutdown",
+            "es": "Fin del funcionamiento del SIF como NO VERI*FACTU"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Invoice anomaly detection launch",
+            "es": "Lanzamiento detección anomalías en registros de facturación"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Invoice anomaly detected",
+            "es": "Detección anomalías en registros de facturación"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Event anomaly detection launch",
+            "es": "Lanzamiento detección anomalías en registros de evento"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Event anomaly detected",
+            "es": "Detección anomalías en registros de evento"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Backup restoration",
+            "es": "Restauración de copia de seguridad"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Invoice records export",
+            "es": "Exportación registros de facturación en periodo"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "Event records export",
+            "es": "Exportación registros de evento en periodo"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Event summary",
+            "es": "Registro resumen de eventos"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "Other events",
+            "es": "Otros eventos"
+          }
+        }
+      ]
     }
   ],
   "tags": [

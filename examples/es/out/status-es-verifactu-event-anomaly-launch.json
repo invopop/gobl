@@ -1,0 +1,41 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c825e861d115e3842e72f333645b9a231d5b2c43ed10b3998a5b17aae4bea5cf"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "a1b2c3d4-1003-4beb-90bd-f8f280d852a0",
+		"type": "system",
+		"issue_date": "2024-12-04",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			}
+		},
+		"ext": {
+			"es-verifactu-event-type": "05"
+		},
+		"complements": [
+			{
+				"$schema": "https://gobl.org/draft-0/addons/es/verifactu/event-anomaly-launch",
+				"fingerprint_check": true,
+				"fingerprint_count": 50,
+				"signature_check": false,
+				"chain_check": true,
+				"chain_count": 50,
+				"date_check": true,
+				"date_count": 50
+			}
+		]
+	}
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/event-export",
+  "$ref": "#/$defs/EventExport",
+  "$defs": {
+    "EventExport": {
+      "properties": {
+        "start": {
+          "type": "string",
+          "title": "Period Start",
+          "description": "Start of the export period in ISO 8601 datetime format."
+        },
+        "end": {
+          "type": "string",
+          "title": "Period End",
+          "description": "End of the export period in ISO 8601 datetime format."
+        },
+        "first": {
+          "$ref": "#/$defs/EventRecord",
+          "title": "First Event",
+          "description": "First event record in the exported period."
+        },
+        "last": {
+          "$ref": "#/$defs/EventRecord",
+          "title": "Last Event",
+          "description": "Last event record in the exported period."
+        },
+        "count": {
+          "type": "integer",
+          "title": "Event Count",
+          "description": "Number of event records exported."
+        },
+        "discarded": {
+          "type": "string",
+          "title": "Records Discarded",
+          "description": "Whether any records were discarded (\"S\" or \"N\")."
+        }
+      },
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "first",
+        "last",
+        "count",
+        "discarded"
+      ],
+      "description": "EventExport contains summary data for an export of event records over a period."
+    },
+    "EventRecord": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Event Type",
+          "description": "Event type code from L2E list."
+        },
+        "timestamp": {
+          "type": "string",
+          "title": "Timestamp",
+          "description": "Timestamp in ISO 8601 format."
+        },
+        "fingerprint": {
+          "type": "string",
+          "title": "Fingerprint",
+          "description": "SHA-256 fingerprint (64 hex characters)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "timestamp",
+        "fingerprint"
+      ],
+      "description": "EventRecord identifies a specific event in an export or summary."
+    }
+  }
+}

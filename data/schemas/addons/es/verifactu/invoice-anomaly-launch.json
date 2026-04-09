@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/invoice-anomaly-launch",
+  "$ref": "#/$defs/InvoiceAnomalyLaunch",
+  "$defs": {
+    "InvoiceAnomalyLaunch": {
+      "properties": {
+        "fingerprint_check": {
+          "type": "boolean",
+          "title": "Fingerprint Integrity Check",
+          "description": "Whether a fingerprint integrity check was performed"
+        },
+        "fingerprint_count": {
+          "type": "integer",
+          "title": "Fingerprint Records Analyzed",
+          "description": "Number of fingerprint records analyzed (required when check is true)."
+        },
+        "signature_check": {
+          "type": "boolean",
+          "title": "Signature Integrity Check",
+          "description": "Whether a signature integrity check was performed"
+        },
+        "signature_count": {
+          "type": "integer",
+          "title": "Signature Records Analyzed",
+          "description": "Number of signature records analyzed (required when check is true)."
+        },
+        "chain_check": {
+          "type": "boolean",
+          "title": "Chain Traceability Check",
+          "description": "Whether a chain traceability check was performed"
+        },
+        "chain_count": {
+          "type": "integer",
+          "title": "Chain Records Analyzed",
+          "description": "Number of chain records analyzed (required when check is true)."
+        },
+        "date_check": {
+          "type": "boolean",
+          "title": "Date Traceability Check",
+          "description": "Whether a date traceability check was performed"
+        },
+        "date_count": {
+          "type": "integer",
+          "title": "Date Records Analyzed",
+          "description": "Number of date records analyzed (required when check is true)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "fingerprint_check",
+        "signature_check",
+        "chain_check",
+        "date_check"
+      ],
+      "description": "InvoiceAnomalyLaunch contains the results of launching an anomaly detection process on invoice records."
+    }
+  }
+}

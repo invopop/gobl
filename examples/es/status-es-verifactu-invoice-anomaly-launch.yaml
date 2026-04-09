@@ -1,0 +1,25 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+$addons: ["es-verifactu-v1"]
+uuid: "a1b2c3d4-1001-4beb-90bd-f8f280d852a0"
+
+type: "system"
+issue_date: "2024-12-04"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+
+ext:
+  es-verifactu-event-type: "03"
+
+complements:
+  - $schema: "https://gobl.org/draft-0/addons/es/verifactu/invoice-anomaly-launch"
+    fingerprint_check: true
+    fingerprint_count: 150
+    signature_check: true
+    signature_count: 150
+    chain_check: true
+    chain_count: 150
+    date_check: false

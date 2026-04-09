@@ -263,6 +263,56 @@
       ]
     },
     {
+      "id": "GOBL-ES-VERIFACTU-V1-BILL-STATUS",
+      "name": "bill.Status",
+      "subsets": [
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-BILL-STATUS-01",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-BILL-STATUS-02",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-V1-BILL-STATUS-03",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-BILL-STATUS-04",
+              "desc": "event type extension is required",
+              "tests": "ext require [es-verifactu-event-type]"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO",
       "name": "tax.Combo",
       "subsets": [
@@ -306,6 +356,405 @@
                       "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO-04",
                       "desc": "extension 'es-verifactu-op-class' is required for taxed operations",
                       "tests": "ext require [es-verifactu-op-class]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALYLAUNCH",
+      "name": "verifactu.InvoiceAnomalyLaunch",
+      "subsets": [
+        {
+          "guard": "fingerprint checked",
+          "subsets": [
+            {
+              "field": "fingerprint_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALYLAUNCH-01",
+                  "desc": "fingerprint count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "signature checked",
+          "subsets": [
+            {
+              "field": "signature_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALYLAUNCH-02",
+                  "desc": "signature count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "chain checked",
+          "subsets": [
+            {
+              "field": "chain_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALYLAUNCH-03",
+                  "desc": "chain count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "date checked",
+          "subsets": [
+            {
+              "field": "date_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALYLAUNCH-04",
+                  "desc": "date count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALY",
+      "name": "verifactu.InvoiceAnomaly",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALY-01",
+              "desc": "anomaly type is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "description",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALY-02",
+                  "desc": "description must be 100 characters or less",
+                  "tests": "length between 0 and 100"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "invoice",
+          "subsets": [
+            {
+              "field": "issuer_tax_code",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALY-03",
+                  "desc": "issuer tax code is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-INVOICEANOMALY-04",
+                  "desc": "invoice code is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALYLAUNCH",
+      "name": "verifactu.EventAnomalyLaunch",
+      "subsets": [
+        {
+          "guard": "fingerprint checked",
+          "subsets": [
+            {
+              "field": "fingerprint_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALYLAUNCH-01",
+                  "desc": "fingerprint count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "signature checked",
+          "subsets": [
+            {
+              "field": "signature_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALYLAUNCH-02",
+                  "desc": "signature count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "chain checked",
+          "subsets": [
+            {
+              "field": "chain_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALYLAUNCH-03",
+                  "desc": "chain count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "date checked",
+          "subsets": [
+            {
+              "field": "date_count",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALYLAUNCH-04",
+                  "desc": "date count is required when check is enabled",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY",
+      "name": "verifactu.EventAnomaly",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY-01",
+              "desc": "anomaly type is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "description",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY-02",
+                  "desc": "description must be 100 characters or less",
+                  "tests": "length between 0 and 100"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "event",
+          "subsets": [
+            {
+              "field": "type",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY-03",
+                  "desc": "event type is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "timestamp",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY-04",
+                  "desc": "timestamp is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "fingerprint",
+              "assert": [
+                {
+                  "id": "GOBL-ES-VERIFACTU-V1-EVENTANOMALY-05",
+                  "desc": "fingerprint is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT",
+      "name": "verifactu.InvoiceExport",
+      "subsets": [
+        {
+          "field": "start",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT-01",
+              "desc": "period start is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "end",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT-02",
+              "desc": "period end is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "first",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT-03",
+              "desc": "first invoice record is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "last",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT-04",
+              "desc": "last invoice record is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "discarded",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-INVOICEEXPORT-05",
+              "desc": "discarded flag is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT",
+      "name": "verifactu.EventExport",
+      "subsets": [
+        {
+          "field": "start",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT-01",
+              "desc": "period start is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "end",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT-02",
+              "desc": "period end is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "first",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT-03",
+              "desc": "first event record is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "last",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT-04",
+              "desc": "last event record is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "discarded",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTEXPORT-05",
+              "desc": "discarded flag is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-VERIFACTU-V1-EVENTSUMMARY",
+      "name": "verifactu.EventSummary",
+      "subsets": [
+        {
+          "field": "events",
+          "assert": [
+            {
+              "id": "GOBL-ES-VERIFACTU-V1-EVENTSUMMARY-01",
+              "desc": "event type counts are required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "type",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-V1-EVENTSUMMARY-02",
+                      "desc": "event type is required",
+                      "tests": "present"
                     }
                   ]
                 }

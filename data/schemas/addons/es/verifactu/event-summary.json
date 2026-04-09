@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/es/verifactu/event-summary",
+  "$ref": "#/$defs/EventSummary",
+  "$defs": {
+    "EventSummary": {
+      "properties": {
+        "events": {
+          "items": {
+            "$ref": "#/$defs/EventTypeCount"
+          },
+          "type": "array",
+          "title": "Event Type Counts",
+          "description": "Counts per event type."
+        },
+        "first_invoice": {
+          "$ref": "#/$defs/InvoiceRecord",
+          "title": "First Invoice",
+          "description": "First invoice record in the period."
+        },
+        "last_invoice": {
+          "$ref": "#/$defs/InvoiceRecord",
+          "title": "Last Invoice",
+          "description": "Last invoice record in the period."
+        },
+        "registration_count": {
+          "type": "integer",
+          "title": "Registration Count",
+          "description": "Number of registration records in the period."
+        },
+        "tax_total": {
+          "type": "string",
+          "title": "Tax Total",
+          "description": "Sum of taxes in the period (Decimal 12,2)."
+        },
+        "amount_total": {
+          "type": "string",
+          "title": "Amount Total",
+          "description": "Sum of total amounts in the period (Decimal 12,2)."
+        },
+        "cancellation_count": {
+          "type": "integer",
+          "title": "Cancellation Count",
+          "description": "Number of cancellation records in the period."
+        }
+      },
+      "type": "object",
+      "required": [
+        "events",
+        "registration_count",
+        "tax_total",
+        "amount_total",
+        "cancellation_count"
+      ],
+      "description": "EventSummary provides a summary of events and invoices over a period."
+    },
+    "EventTypeCount": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Event Type",
+          "description": "Event type code from L2E list."
+        },
+        "count": {
+          "type": "integer",
+          "title": "Count",
+          "description": "Number of occurrences."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "count"
+      ],
+      "description": "EventTypeCount pairs an event type code with its occurrence count."
+    },
+    "InvoiceRecord": {
+      "properties": {
+        "issuer_tax_code": {
+          "type": "string",
+          "title": "Issuer Tax Code",
+          "description": "Tax identification number of the invoice issuer."
+        },
+        "code": {
+          "type": "string",
+          "title": "Invoice Number",
+          "description": "Full invoice code including series."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "Date of issuance."
+        },
+        "fingerprint": {
+          "type": "string",
+          "title": "Fingerprint",
+          "description": "SHA-256 fingerprint (64 hex characters)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "issuer_tax_code",
+        "code",
+        "issue_date",
+        "fingerprint"
+      ],
+      "description": "InvoiceRecord identifies a specific invoice in an export or summary."
+    }
+  }
+}
