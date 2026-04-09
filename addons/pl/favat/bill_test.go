@@ -719,6 +719,31 @@ func TestInvoiceWithNotes(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("note with only code is valid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Notes = []*org.Note{
+			{
+				Code: "ABC",
+				Text: "Note with code only",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("note without key or code is invalid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Notes = []*org.Note{
+			{
+				Text: "Note without key or code",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "note key or code must be set")
+	})
+
 	t.Run("invoice with legal note but different src", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Notes = []*org.Note{

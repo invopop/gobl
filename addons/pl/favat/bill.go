@@ -101,6 +101,14 @@ func billInvoiceRules() *rules.Set {
 		rules.Assert("14", "too many exemption notes",
 			is.Func("single exemption note", invoiceSingleExemptionNote),
 		),
+		// Notes validation
+		rules.Field("notes",
+			rules.Each(
+				rules.Assert("15", "note key or code must be set",
+					is.Func("note has key or code", noteHasKeyOrCode),
+				),
+			),
+		),
 	)
 }
 
@@ -157,6 +165,14 @@ func hasIdentityWithRole(identities []*org.Identity, roleCode cbc.Code) bool {
 		}
 	}
 	return false
+}
+
+func noteHasKeyOrCode(val any) bool {
+	n, ok := val.(*org.Note)
+	if !ok || n == nil {
+		return true
+	}
+	return n.Key != "" || n.Code != ""
 }
 
 func invoiceExemptionNotePresent(val any) bool {
