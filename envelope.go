@@ -68,10 +68,8 @@ func envelopeRules() *rules.Set {
 		),
 		rules.Field("doc",
 			rules.Assert("03", "envelope doc is required", is.Present),
-			rules.When(is.Present,
-				rules.Assert("04", "envelope doc must have a known schema",
-					is.Func("doc has payload", docHasPayload),
-				),
+			rules.AssertIfPresent("04", "envelope doc must have a known schema",
+				is.Func("doc has payload", docHasPayload),
 			),
 		),
 		rules.Assert("11", "envelope digest does not match document contents",
@@ -92,10 +90,7 @@ func envelopeRules() *rules.Set {
 
 func docHasPayload(val any) bool {
 	obj, ok := val.(*schema.Object)
-	if !ok || obj == nil {
-		return false
-	}
-	return obj.HasPayload()
+	return ok && obj.HasPayload()
 }
 
 func notSigned(val any) bool {
