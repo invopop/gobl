@@ -15,12 +15,6 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const (
-	// UNTDID4343Key is the key used to identify the UNTDID 4343 code
-	// associated with a status event.
-	UNTDID4343Key cbc.Key = "untdid4343"
-)
-
 // Status type representing the context in which the status was generated.
 const (
 	StatusTypeResponse cbc.Key = "response"
@@ -120,9 +114,6 @@ var StatusEvents = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: "Received a readable invoice message that can be understood and submitted for processing by the Buyer.",
 		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "AB",
-		},
 	},
 	{
 		Key: StatusEventProcessing,
@@ -131,9 +122,6 @@ var StatusEvents = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: "Indicates that the referenced message or transaction is being processed.",
-		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "IP",
 		},
 	},
 	{
@@ -144,9 +132,6 @@ var StatusEvents = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: "Buyer will not proceed to accept the Invoice without receiving additional information from the Seller.",
 		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "UQ",
-		},
 	},
 	{
 		Key: StatusEventRejected,
@@ -155,9 +140,6 @@ var StatusEvents = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: "Buyer will not process the referenced Invoice any further. Buyer is rejecting this invoice but not necessarily the commercial transaction. Although it can be used also for rejection for commercial reasons (invoice not corresponding to delivery).",
-		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "RE",
 		},
 	},
 	{
@@ -168,9 +150,6 @@ var StatusEvents = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: "Buyer has given a final approval of the invoice and the next step is payment.",
 		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "AP",
-		},
 	},
 	{
 		Key: StatusEventPaid,
@@ -179,9 +158,6 @@ var StatusEvents = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: "Buyer has initiated payment, or the supplier has acknowledged receipt of payment.",
-		},
-		Map: cbc.CodeMap{
-			UNTDID4343Key: "PD",
 		},
 	},
 	{

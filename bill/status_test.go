@@ -570,27 +570,6 @@ func TestStatusDefinitions(t *testing.T) {
 	t.Run("action keys count", func(t *testing.T) {
 		assert.Len(t, bill.ActionKeys, 7)
 	})
-
-	t.Run("UNTDID4343 map entries", func(t *testing.T) {
-		// Verify the mapped events have the correct UNTDID codes
-		mapped := make(map[cbc.Key]cbc.Code)
-		for _, ev := range bill.StatusEvents {
-			if code, ok := ev.Map[bill.UNTDID4343Key]; ok {
-				mapped[ev.Key] = code
-			}
-		}
-		assert.Equal(t, cbc.Code("AB"), mapped[bill.StatusEventAcknowledged])
-		assert.Equal(t, cbc.Code("IP"), mapped[bill.StatusEventProcessing])
-		assert.Equal(t, cbc.Code("UQ"), mapped[bill.StatusEventQuerying])
-		assert.Equal(t, cbc.Code("RE"), mapped[bill.StatusEventRejected])
-		assert.Equal(t, cbc.Code("AP"), mapped[bill.StatusEventAccepted])
-		assert.Equal(t, cbc.Code("PD"), mapped[bill.StatusEventPaid])
-		// issued and error have no UNTDID code
-		_, hasIssued := mapped[bill.StatusEventIssued]
-		assert.False(t, hasIssued)
-		_, hasError := mapped[bill.StatusEventError]
-		assert.False(t, hasError)
-	})
 }
 
 func TestStatusJSONSchemaExtend(t *testing.T) {
