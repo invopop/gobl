@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/internal/editor"
 	goblmcp "github.com/invopop/gobl/internal/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -52,7 +53,8 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("POST "+p+"/keygen", handleKeygen)
 
 	// Editor UI
-	mux.HandleFunc("GET /{$}", handleEditor)
+	editor.RegisterAssets(mux)
+	mux.HandleFunc("GET /{$}", withETag(editor.Handler()))
 
 	// Favicon
 	mux.HandleFunc("GET /favicon.svg", handleFavicon)
