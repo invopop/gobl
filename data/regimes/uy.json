@@ -1,0 +1,156 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Uruguay",
+    "es": "Uruguay"
+  },
+  "description": {
+    "en": "Uruguay's tax system is administered by the DGI (Dirección General\nImpositiva). The primary indirect tax is the IVA (Impuesto al Valor\nAgregado), which applies at a standard rate and a reduced rate known\nas the \"tasa mínima\".\n\nTaxpayers are identified by their RUT (Registro Único Tributario),\na 12-digit number that includes a check digit calculated using a\nmodulo 11 algorithm. The RUT serves as both the general taxpayer\nidentification and the IVA registration number.\n\nExports are zero-rated. Certain goods and services are exempt from\nIVA, including some financial services and agricultural products.\n\nElectronic invoicing (Comprobantes Fiscales Electrónicos, CFE) is\nmandatory for all IVA taxpayers, administered through the DGI.\nBoth credit notes and debit notes are supported for invoice\ncorrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "DGI - RUT numbering"
+      },
+      "url": "https://www.gub.uy/direccion-general-impositiva/comunicacion/noticias/nueva-numeracion-del-rut"
+    },
+    {
+      "title": {
+        "en": "OECD - Tax Identification Numbers: Uruguay"
+      },
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/uruguay-tin.pdf"
+    },
+    {
+      "title": {
+        "en": "python-stdnum RUT validation"
+      },
+      "url": "https://arthurdejong.org/python-stdnum/doc/1.20/stdnum.uy.rut"
+    }
+  ],
+  "time_zone": "America/Montevideo",
+  "country": "UY",
+  "currency": "UYU",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tasa Básica"
+          },
+          "desc": {
+            "en": "Applies to the majority of goods and services.",
+            "es": "Se aplica a la mayoría de bienes y servicios."
+          },
+          "values": [
+            {
+              "since": "2007-07-01",
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Tasa Mínima"
+          },
+          "desc": {
+            "en": "Applies to basic necessities including food, medicine, hotel services, passenger transport, and health services.",
+            "es": "Se aplica a artículos de primera necesidad como alimentos, medicamentos, servicios de hotelería, transporte de pasajeros y servicios de salud."
+          },
+          "values": [
+            {
+              "since": "2007-07-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "IVA - Título 10, Texto Ordenado 2023 (Art. 18: rates)",
+            "es": "IVA - Título 10, Texto Ordenado 2023 (Art. 18: tasas)"
+          },
+          "url": "https://www.impo.com.uy/bases/todgi-2023/10-2024/10"
+        }
+      ]
+    }
+  ]
+}

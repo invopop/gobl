@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `uy`: New tax regime for Uruguay with IVA (22% standard, 10% reduced) and RUT validation.
+
 ## [v0.401.0] - 2026-04-17
 
 ### Changed
