@@ -5,7 +5,6 @@
 #  * `GITHUB_TOKEN` - A GitHub token with access to the repository.
 #  * `AWS_ACCESS_KEY_ID` - An AWS access key with write access to the CDN bucket.
 #  * `AWS_SECRET_ACCESS_KEY` - The secret for the AWS access key
-#  * `NPM_TOKEN` - An NPM token with access to the package.
 #
 
 name: Release
@@ -48,9 +47,7 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v5
               with:
-                  # Use fixed go version to avoid issues with lib/wasm location
-                  go-version: "1.24"
-                  # go-version-file: "go.mod"
+                  go-version-file: "go.mod"
 
             # Ensure we have a wasm_exec.js for the current version of Go
             - name: Copy Go WASM Exec
@@ -71,44 +68,7 @@ jobs:
                   # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
                   # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
 
-            # Following actions are to release a new version of gobl-worker to NPM
-            # using the new wasm version in the CDN.
-
-            - name: Install Node.js
-              uses: actions/setup-node@v4
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              with:
-                  node-version: 22.x
-                  registry-url: 'https://registry.npmjs.org'
-
-            # The npm shipped with recent Node 22.x tool-cache images has a
-            # broken dependency tree (missing `promise-retry`), which breaks
-            # `npm install -g npm@latest`. Use corepack to install a working
-            # npm 11.x instead — this is the npm maintainers' recommended
-            # approach.
-            - name: Activate npm via corepack
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              run: |
-                  corepack enable
-                  corepack prepare npm@latest --activate
-                  npm --version
-
-            - name: Run npm ci
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              working-directory: ./wasm/worker
-              run: npm ci
-
-            - name: Update gobl-worker version
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              working-directory: ./wasm/worker
-              run: npm version --no-git-tag-version ${{ steps.bump.outputs.new_tag }}
-
-            - name: Build gobl-worker
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              working-directory: ./wasm/worker
-              run: npm run build
-
-            - name: Publish gobl-worker to NPM registry
-              if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              working-directory: ./wasm/worker
-              run: npm publish
+            # The gobl-worker NPM package is published by the Publish NPM
+            # workflow (publish-npm.yaml), which runs on successful
+            # completion of this workflow and can be re-run manually to
+            # retry a failed publish independently of the release.

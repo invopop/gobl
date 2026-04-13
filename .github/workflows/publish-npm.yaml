@@ -1,0 +1,84 @@
+#
+# Publish the gobl-worker package to NPM. Runs automatically after a
+# successful Release, and can be re-run manually to retry a failed
+# publish without re-running the full release.
+#
+# Authentication is via NPM Trusted Publisher (OIDC) — no secret
+# needed. `id-token: write` is required so that the runner can exchange
+# its GitHub OIDC token for a short-lived npm publish token.
+#
+
+name: Publish NPM
+
+on:
+    workflow_run:
+        workflows: ["Release"]
+        types: [completed]
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    publish:
+        name: Publish gobl-worker
+        # Run on successful upstream Release, or whenever triggered manually.
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  # Pin to the commit the upstream Release ran against so
+                  # we publish the same version. Falls back to the manually
+                  # selected ref for workflow_dispatch.
+                  ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+            - name: Read current version
+              run: |
+                  grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: "go.mod"
+
+            # wasm_exec.js is gitignored and must be copied from the active
+            # Go install before the npm build bundles it into the package.
+            - name: Copy Go WASM Exec
+              run: cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" ./wasm/worker/src
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+                  registry-url: 'https://registry.npmjs.org'
+
+            # The npm shipped with recent Node 22.x tool-cache images has a
+            # broken dependency tree (missing `promise-retry`), which breaks
+            # `npm install -g npm@latest`. Use corepack to install a working
+            # npm 11.x instead — this is the npm maintainers' recommended
+            # approach.
+            - name: Activate npm via corepack
+              run: |
+                  corepack enable
+                  corepack prepare npm@latest --activate
+                  npm --version
+
+            - name: Run npm ci
+              working-directory: ./wasm/worker
+              run: npm ci
+
+            - name: Update gobl-worker version
+              working-directory: ./wasm/worker
+              run: npm version --no-git-tag-version ${{ env.GOBL_VERSION }}
+
+            - name: Build gobl-worker
+              working-directory: ./wasm/worker
+              run: npm run build
+
+            - name: Publish gobl-worker to NPM registry
+              working-directory: ./wasm/worker
+              run: npm publish
