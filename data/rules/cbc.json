@@ -1,0 +1,103 @@
+{
+  "id": "GOBL-CBC",
+  "name": "cbc",
+  "subsets": [
+    {
+      "id": "GOBL-CBC-CODE",
+      "name": "cbc.Code",
+      "assert": [
+        {
+          "id": "GOBL-CBC-CODE-01",
+          "desc": "codes must be no longer than 64 characters",
+          "tests": "length between 0 and 64"
+        },
+        {
+          "id": "GOBL-CBC-CODE-02",
+          "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_\u0026 or space",
+          "tests": "matches ^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?[A-ZÑa-z0-9]+)*$"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-CODEMAP",
+      "name": "cbc.CodeMap",
+      "assert": [
+        {
+          "id": "GOBL-CBC-CODEMAP-01",
+          "desc": "all code map keys must be valid",
+          "tests": "valid keys"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-KEY",
+      "name": "cbc.Key",
+      "assert": [
+        {
+          "id": "GOBL-CBC-KEY-01",
+          "desc": "key must be between 1 and 64 characters long",
+          "tests": "length between 1 and 64"
+        },
+        {
+          "id": "GOBL-CBC-KEY-02",
+          "desc": "key must match the required pattern",
+          "tests": "matches ^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-DEFINITION",
+      "name": "cbc.Definition",
+      "assert": [
+        {
+          "id": "GOBL-CBC-DEFINITION-02",
+          "desc": "definition must have either a key or a code, and not both",
+          "tests": "string(Code) != '' || string(Key) != ''"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-CBC-DEFINITION-01",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "pattern",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-CBC-DEFINITION-03",
+                  "desc": "pattern must be a valid regular expression",
+                  "tests": "is a regexp"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-SOURCE",
+      "name": "cbc.Source",
+      "subsets": [
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-CBC-SOURCE-01",
+              "desc": "url is required and must be a URL",
+              "tests": "present, url"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

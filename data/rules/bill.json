@@ -1,0 +1,706 @@
+{
+  "id": "GOBL-BILL",
+  "name": "bill",
+  "subsets": [
+    {
+      "id": "GOBL-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-BILL-INVOICE-01",
+              "desc": "invoice type is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-INVOICE-02",
+              "desc": "invoice type is not valid",
+              "tests": "one of [standard, proforma, corrective, credit-note, debit-note, other]"
+            }
+          ]
+        },
+        {
+          "field": "issue_date",
+          "assert": [
+            {
+              "id": "GOBL-BILL-INVOICE-03",
+              "desc": "invoice issue date is required",
+              "tests": "not zero"
+            }
+          ]
+        },
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-BILL-INVOICE-04",
+              "desc": "invoice currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BILL-INVOICE-05",
+              "desc": "invoice supplier is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-INVOICE-06",
+                  "desc": "invoice supplier name is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "has tax point",
+          "subsets": [
+            {
+              "field": "value_date",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-INVOICE-11",
+                  "desc": "value date cannot be set when tax point is set",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "guard": "has tax ID code",
+              "subsets": [
+                {
+                  "field": "name",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-INVOICE-07",
+                      "desc": "invoice customer name required when tax ID is set",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "item",
+                  "subsets": [
+                    {
+                      "field": "price",
+                      "assert": [
+                        {
+                          "id": "GOBL-BILL-INVOICE-08",
+                          "desc": "invoice line item price is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "totals",
+          "assert": [
+            {
+              "id": "GOBL-BILL-INVOICE-09",
+              "desc": "invoice totals are required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "no discounts or charges",
+          "subsets": [
+            {
+              "field": "lines",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-INVOICE-10",
+                  "desc": "invoice lines are required without discounts or charges",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-DELIVERY",
+      "name": "bill.Delivery",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-BILL-DELIVERY-01",
+              "desc": "type is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-DELIVERY-02",
+              "desc": "type is not valid",
+              "tests": "one of [advice, note, waybill, receipt]"
+            }
+          ]
+        },
+        {
+          "field": "issue_date",
+          "assert": [
+            {
+              "id": "GOBL-BILL-DELIVERY-03",
+              "desc": "issue date is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BILL-DELIVERY-04",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-BILL-DELIVERY-05",
+              "desc": "lines are required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-ORDER",
+      "name": "bill.Order",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ORDER-01",
+              "desc": "type is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-ORDER-02",
+              "desc": "type is not valid",
+              "tests": "one of [purchase, sale, quote]"
+            }
+          ]
+        },
+        {
+          "field": "issue_date",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ORDER-03",
+              "desc": "issue date is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ORDER-04",
+              "desc": "currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ORDER-05",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ORDER-06",
+              "desc": "lines are required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-PAYMENT",
+      "name": "bill.Payment",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-01",
+              "desc": "payment type is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-PAYMENT-02",
+              "desc": "payment type is not valid",
+              "tests": "one of [request, advice, receipt]"
+            }
+          ]
+        },
+        {
+          "field": "method",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-03",
+              "desc": "payment method is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "issue_date",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-04",
+              "desc": "payment issue date is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-05",
+              "desc": "payment currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-06",
+              "desc": "payment supplier is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENT-07",
+              "desc": "payment lines are required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-LINE",
+      "name": "bill.Line",
+      "subsets": [
+        {
+          "field": "i",
+          "assert": [
+            {
+              "id": "GOBL-BILL-LINE-01",
+              "desc": "index is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "quantity",
+          "assert": [
+            {
+              "id": "GOBL-BILL-LINE-02",
+              "desc": "quantity is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "item",
+          "assert": [
+            {
+              "id": "GOBL-BILL-LINE-03",
+              "desc": "item is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "item has price",
+          "subsets": [
+            {
+              "field": "sum",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINE-04",
+                  "desc": "sum is required when item has a price",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "total",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINE-05",
+                  "desc": "total is required when item has a price",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-SUBLINE",
+      "name": "bill.SubLine",
+      "subsets": [
+        {
+          "field": "i",
+          "assert": [
+            {
+              "id": "GOBL-BILL-SUBLINE-01",
+              "desc": "index is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "quantity",
+          "assert": [
+            {
+              "id": "GOBL-BILL-SUBLINE-02",
+              "desc": "quantity is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "item",
+          "assert": [
+            {
+              "id": "GOBL-BILL-SUBLINE-03",
+              "desc": "item is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "item has price",
+          "subsets": [
+            {
+              "field": "sum",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-SUBLINE-04",
+                  "desc": "sum is required when item has a price",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "total",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-SUBLINE-05",
+                  "desc": "total is required when item has a price",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-LINEDISCOUNT",
+      "name": "bill.LineDiscount",
+      "subsets": [
+        {
+          "guard": "Base != nil",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINEDISCOUNT-01",
+                  "desc": "percent is required when base is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-LINECHARGE",
+      "name": "bill.LineCharge",
+      "subsets": [
+        {
+          "guard": "Base != nil",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-01",
+                  "desc": "percent is required when base is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Base != nil || Percent != nil",
+          "subsets": [
+            {
+              "field": "quantity",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-02",
+                  "desc": "quantity must be blank with base or percent",
+                  "tests": "empty"
+                }
+              ]
+            },
+            {
+              "field": "rate",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-03",
+                  "desc": "rate must be blank with base or percent",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Quantity == nil",
+          "subsets": [
+            {
+              "field": "unit",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-04",
+                  "desc": "unit must be blank without quantity",
+                  "tests": "empty"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Quantity != nil",
+          "subsets": [
+            {
+              "field": "rate",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-LINECHARGE-05",
+                  "desc": "rate is required when quantity is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-DISCOUNT",
+      "name": "bill.Discount",
+      "subsets": [
+        {
+          "guard": "Base != nil",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-DISCOUNT-01",
+                  "desc": "percent is required when base is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-CHARGE",
+      "name": "bill.Charge",
+      "subsets": [
+        {
+          "guard": "Base != nil",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-CHARGE-01",
+                  "desc": "percent is required when base is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-PAYMENTLINE",
+      "name": "bill.PaymentLine",
+      "assert": [
+        {
+          "id": "GOBL-BILL-PAYMENTLINE-11",
+          "desc": "advances must not exceed payable",
+          "tests": "advances within payable"
+        },
+        {
+          "id": "GOBL-BILL-PAYMENTLINE-12",
+          "desc": "amount must not exceed payable less advances",
+          "tests": "amount within limit"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "installment",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENTLINE-01",
+              "desc": "installment must be between 1 and 999",
+              "tests": "at least 1, at most 999"
+            }
+          ]
+        },
+        {
+          "field": "payable",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENTLINE-02",
+              "desc": "payable must be positive",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "advances",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENTLINE-03",
+              "desc": "advances must be zero or positive",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "amount",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENTLINE-04",
+              "desc": "amount must be positive",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "due",
+          "assert": [
+            {
+              "id": "GOBL-BILL-PAYMENTLINE-05",
+              "desc": "due must be zero or positive",
+              "tests": "min 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-TAX",
+      "name": "bill.Tax",
+      "subsets": [
+        {
+          "field": "rounding",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-TAX-01",
+                  "desc": "rounding model is not valid",
+                  "tests": "one of [precise, currency]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "point",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-BILL-TAX-02",
+                  "desc": "tax point is not valid",
+                  "tests": "one of [issue, delivery, payment]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-TOTALS",
+      "name": "bill.Totals"
+    }
+  ]
+}

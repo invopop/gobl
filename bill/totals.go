@@ -1,11 +1,9 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Totals contains the summaries of all calculations for the invoice.
@@ -38,22 +36,8 @@ type Totals struct {
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
-// ValidateWithContext checks the totals calculated for the invoice.
-func (t *Totals) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, t,
-		validation.Field(&t.Sum),
-		validation.Field(&t.Discount),
-		validation.Field(&t.Charge),
-		validation.Field(&t.TaxIncluded),
-		validation.Field(&t.Total),
-		validation.Field(&t.Taxes),
-		validation.Field(&t.Tax),
-		validation.Field(&t.TotalWithTax),
-		validation.Field(&t.Rounding),
-		validation.Field(&t.Payable),
-		validation.Field(&t.Advances),
-		validation.Field(&t.Due),
-	)
+func totalsRules() *rules.Set {
+	return rules.For(new(Totals))
 }
 
 // Reset sets all the totals to the provided zero amount with the correct

@@ -1,10 +1,13 @@
 package mydata
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -54,36 +57,30 @@ func normalizePayAdvance(a *pay.Advance) {
 	}
 }
 
-func validatePayInstructions(value any) error {
-	i, ok := value.(*pay.Instructions)
-	if !ok || i == nil {
-		return nil
-	}
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Key,
-			validation.Required,
-			validation.Skip,
+func payInstructionsRules() *rules.Set {
+	return rules.For(new(pay.Instructions),
+		rules.Field("key",
+			rules.Assert("01", "payment instructions key is required", is.Present),
 		),
-		validation.Field(&i.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+		rules.Field("ext",
+			rules.Assert("02",
+				fmt.Sprintf("payment instructions require '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayAdvance(value any) error {
-	a, ok := value.(*pay.Advance)
-	if !ok || a == nil {
-		return nil
-	}
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Key,
-			validation.Required,
-			validation.Skip,
+func payAdvanceRules() *rules.Set {
+	return rules.For(new(pay.Advance),
+		rules.Field("key",
+			rules.Assert("01", "payment advance key is required", is.Present),
 		),
-		validation.Field(&a.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+		rules.Field("ext",
+			rules.Assert("02",
+				fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }

@@ -8,17 +8,26 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-2 code for Germany.
+const CountryCode = "DE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("de", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		orgIdentityRules(),
+		taxIdentityRules(),
+	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "DE",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -57,23 +66,9 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateTaxNumber(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

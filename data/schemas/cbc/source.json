@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cbc/source",
-  "$ref": "#/$defs/Source",
+  "$ref": "#/$defs/cbc.Source",
   "$defs": {
-    "Source": {
+    "cbc.Source": {
       "properties": {
         "title": {
           "$ref": "https://gobl.org/draft-0/i18n/string",

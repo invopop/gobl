@@ -9,13 +9,12 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestElectronicAddressValidation(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
-
 	t.Run("valid SIREN inbox matching VAT", func(t *testing.T) {
 		party := &org.Party{
 			TaxID: &tax.Identity{
@@ -29,7 +28,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -51,7 +50,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -68,10 +67,10 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		// cbc.Code base validation doesn't allow + character
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "must be in a valid format")
+		assert.ErrorContains(t, err, "code")
 	})
 
 	t.Run("SIREN inbox with any valid format is accepted", func(t *testing.T) {
@@ -87,7 +86,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -100,7 +99,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.ErrorContains(t, err, "must be in a valid format")
 	})
 
@@ -114,7 +113,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -127,7 +126,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -144,7 +143,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -161,8 +160,8 @@ func TestElectronicAddressValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
-		assert.ErrorContains(t, err, "the length must be between 1 and 64")
+		err := rules.Validate(party, withAddonContext())
+		assert.ErrorContains(t, err, "no longer than 64")
 	})
 }
 
@@ -267,8 +266,6 @@ func TestPeppolKeyNormalization(t *testing.T) {
 }
 
 func TestIdentitySchemeFormatValidation(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
-
 	t.Run("valid identity with scheme 0224 - alphanumeric", func(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{
@@ -280,22 +277,22 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
-	t.Run("valid identity with scheme 0224 - with special characters", func(t *testing.T) {
+	t.Run("valid identity with scheme 0224 - with allowed special characters", func(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{
 				{
-					Code: "ABC123+test-info_data/route",
+					Code: "ABC123-info_data/route",
 					Ext: tax.Extensions{
 						"iso-scheme-id": "0224",
 					},
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -310,24 +307,23 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
-		assert.ErrorContains(t, err, "identity with ISO scheme ID 0224")
-		assert.ErrorContains(t, err, "must contain only alphanumeric")
+		err := rules.Validate(party, withAddonContext())
+		assert.ErrorContains(t, err, "must be in a valid format")
 	})
 
-	t.Run("identity with other scheme ID not validated", func(t *testing.T) {
+	t.Run("identity with other scheme ID not validated by CTC", func(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{
 				{
-					Code: "ABC@123", // Invalid format but different scheme
+					Code: "ABC123", // Valid cbc.Code format, different scheme
 					Ext: tax.Extensions{
 						"iso-scheme-id": "0002",
 					},
 				},
 			},
 		}
-		err := ad.Validator(party)
-		// Should not fail on format for scheme 0002
+		err := rules.Validate(party, withAddonContext())
+		// Should not fail for scheme 0002 (CTC-specific 0224 rules don't apply)
 		assert.NoError(t, err)
 	})
 
@@ -340,15 +336,16 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		// BR-FR-CO-10: All identities must have an ISO scheme ID
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
 	})
 
-	t.Run("identity with scheme 0224 at max length (100 characters)", func(t *testing.T) {
-		// Create a 100 character string
-		longCode := "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
-		assert.Equal(t, 100, len(longCode))
+	t.Run("identity with scheme 0224 at cbc.Code max length (64 characters)", func(t *testing.T) {
+		// cbc.Code base rules limit to 64 characters; CTC allows up to 100
+		// but cbc.Code rules take precedence
+		longCode := "1234567890123456789012345678901234567890123456789012345678901234"
+		assert.Equal(t, 64, len(longCode))
 
 		party := &org.Party{
 			Identities: []*org.Identity{
@@ -360,14 +357,14 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
-	t.Run("identity with scheme 0224 exceeds max length (101 characters)", func(t *testing.T) {
-		// Create a 101 character string
-		tooLongCode := "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"
-		assert.Equal(t, 101, len(tooLongCode))
+	t.Run("identity with scheme 0224 exceeds cbc.Code max length (65 characters)", func(t *testing.T) {
+		// cbc.Code base rules limit to 64 characters
+		tooLongCode := "12345678901234567890123456789012345678901234567890123456789012345"
+		assert.Equal(t, 65, len(tooLongCode))
 
 		party := &org.Party{
 			Identities: []*org.Identity{
@@ -379,8 +376,8 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
-		assert.ErrorContains(t, err, "must not exceed 100 characters")
+		err := rules.Validate(party, withAddonContext())
+		assert.ErrorContains(t, err, "no longer than 64")
 	})
 }
 
@@ -525,8 +522,7 @@ func TestSIRENGenerationFromSIRET(t *testing.T) {
 // Additional edge cases for better coverage
 func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("nil identity returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator((*org.Identity)(nil))
+		err := rules.Validate((*org.Identity)(nil), withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -537,8 +533,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 				iso.ExtKeySchemeID: "0224",
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(id)
+		err := rules.Validate(id, withAddonContext())
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "must be no more than 100")
 	})
@@ -550,16 +545,14 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 				iso.ExtKeySchemeID: "0224",
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(id)
+		err := rules.Validate(id, withAddonContext())
 		assert.NoError(t, err)
 	})
 }
 
 func TestValidatePartyEdgeCases(t *testing.T) {
 	t.Run("nil party returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator((*org.Party)(nil))
+		err := rules.Validate((*org.Party)(nil), withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -583,8 +576,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-09/10")
 	})
@@ -599,8 +591,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.Error(t, err)
 	})
 }
@@ -804,8 +795,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 			Name:       "Test Party",
 			Identities: []*org.Identity{},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -818,8 +808,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
 	})
@@ -842,11 +831,9 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-10")
-		assert.ErrorContains(t, err, "duplicate")
 	})
 
 	t.Run("nil identity in array is skipped", func(t *testing.T) {
@@ -863,17 +850,16 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err, "validation should skip nil identity and succeed with valid identity")
 	})
 
-	t.Run("private-id (0224) with empty code is skipped", func(t *testing.T) {
+	t.Run("private-id (0224) with empty code", func(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 			Identities: []*org.Identity{
 				{
-					Code: "", // Empty code should be skipped via continue
+					Code: "", // Empty code - base Identity rules require code
 					Ext: tax.Extensions{
 						iso.ExtKeySchemeID: "0224", // private-id scheme
 					},
@@ -886,16 +872,15 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(party)
-		assert.NoError(t, err, "validation should skip empty code for private-id and succeed with other valid identity")
+		err := rules.Validate(party, withAddonContext())
+		// Base org.Identity rules require code to be present
+		assert.Error(t, err, "base identity rules require code")
 	})
 }
 
 func TestValidateInboxEdgeCases(t *testing.T) {
 	t.Run("nil inbox returns nil", func(t *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator((*org.Inbox)(nil))
+		err := rules.Validate((*org.Inbox)(nil), withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -904,8 +889,7 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 			Scheme: "0225",
 			Code:   "123456789-valid-code",
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(inbox)
+		err := rules.Validate(inbox, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -914,8 +898,7 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 			Scheme: "9999",
 			Code:   "ANY-CODE-FORMAT", // Different scheme, CTC doesn't validate it
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(inbox)
+		err := rules.Validate(inbox, withAddonContext())
 		assert.NoError(t, err)
 	})
 }

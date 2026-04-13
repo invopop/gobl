@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"io"
-	"net/http"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/schema"
@@ -16,22 +15,22 @@ func Validate(ctx context.Context, r io.Reader) error {
 	}
 	obj, err := parseGOBLData(ctx, opts)
 	if err != nil {
-		return wrapError(StatusUnprocessableEntity, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
 		if err := env.Validate(); err != nil {
-			return wrapError(http.StatusUnprocessableEntity, err)
+			return gobl.ErrValidation.WithCause(err)
 		}
 		return nil
 	}
 
 	if doc, ok := obj.(*schema.Object); ok {
 		if err := doc.Validate(); err != nil {
-			return wrapError(http.StatusUnprocessableEntity, err)
+			return gobl.ErrValidation.WithCause(err)
 		}
 		return nil
 	}
 
-	return wrapErrorf(http.StatusUnprocessableEntity, "invalid document type")
+	return gobl.ErrInput.WithReason("invalid document type")
 }

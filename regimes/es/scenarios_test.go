@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -103,14 +104,14 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 }
 
 func TestInvoiceDocumentScenarios(t *testing.T) {
-	i := testInvoiceStandard(t)
-	i.SetTags(es.TagTravelAgency)
-	require.NoError(t, i.Calculate())
-	require.NotNil(t, i.Tax)
-	assert.Len(t, i.Tax.Notes, 1)
-	assert.Equal(t, "Régimen especial de las agencias de viajes.", i.Tax.Notes[0].Text)
+	inv := testInvoiceStandard(t)
+	inv.SetTags(es.TagTravelAgency)
+	require.NoError(t, inv.Calculate())
+	require.NotNil(t, inv.Tax)
+	assert.Len(t, inv.Tax.Notes, 1)
+	assert.Equal(t, "Régimen especial de las agencias de viajes.", inv.Tax.Notes[0].Text)
 
-	i = testInvoiceSimplified(t)
-	require.NoError(t, i.Calculate())
-	require.NoError(t, i.Validate())
+	inv = testInvoiceSimplified(t)
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, rules.Validate(inv))
 }

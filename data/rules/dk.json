@@ -1,0 +1,79 @@
+{
+  "id": "GOBL-DK",
+  "name": "dk",
+  "subsets": [
+    {
+      "id": "GOBL-DK-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [DK]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-DK-BILL-INVOICE-01",
+                  "desc": "invoice DK supplier must have either tax ID code or identity with 'CVR' type",
+                  "tests": "has tax ID code or identity with 'CVR' type"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DK-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "is CVR",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-ORG-IDENTITY-01",
+                      "desc": "invalid Danish CVR identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DK-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [DK]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-TAX-IDENTITY-01",
+                      "desc": "invalid Danish VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

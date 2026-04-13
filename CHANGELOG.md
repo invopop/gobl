@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.400.0-rc1] - 2026-04-13
+
+Major GOBL release: migrating from the old validation methods to the new "rules" package. This is a very significant change and solves one of the most frequently requested features in GOBL, the ability to know what validations and checks will be performed on the data before they are applied. Now every validation is assigned a specific unique reference code that allows them to be easily identified. The rules package is designed to be useable in any project, not just GOBL, so we're hoping to see in broader use through all the systems that depend on GOBL as an alternative to other validation packages.
+
+In addition, the "serve" CLI command has been improved to offer a self-hosted version of the GOBL Builder and API that includes support to use as an MCP (model context protocol) server.
+
+### Added
+
+- `rules`: new package to help define validation rules and execute them on top of any object.
+- `cmd/gobl`: MCP server support via `gobl mcp` CLI command using stdio transport.
+- `internal/api`: New framework-free HTTP API package replacing the previous Echo-based serve handler, with versioned route prefix (e.g. `/v0/build`).
+- `internal/api`: Built-in web editor UI served at the root path.
+- `internal/api`: OpenAPI spec served at `/v0/openapi.json`.
+- `internal/api`: MCP over Streamable HTTP endpoint at `/v0/mcp`.
+- `internal/api`: New endpoints for regime, addon, and schema lookups (`GET /v0/regimes`, `/v0/addons`, `/v0/schemas`).
+- `internal/api`: ETag-based caching for static reference data, CORS, and request timing middleware.
+- `schema`: `BundleSchema` function to produce self-contained JSON Schema documents with all transitive dependencies inlined.
+
+### Removed
+
+- `mx`/`co`: Tax Identity Zone migration removed.
+- `cmd/gobl`: Removed Echo framework dependency from the serve command.
+- `cli`: No longer provides HTTP error codes, only keys are used now.
+
+### Changed
+
+- `cmd/gobl`: `serve` command now uses the new `internal/api` handler instead of inline Echo routes.
+- `tax`: `Extensions.Values()` now returns codes in deterministic sorted order.
+- `schema`: JSON Schemas updated to include package names in models, i.e. `bill.Invoice` vs `Invoice`.
+
 ## [v0.309.0] - 2026-04-01
 
 ### Added
@@ -19,22 +49,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `pl-favat-v3`: Preceding no longer required when it is a credit note
+- `pl-favat-v3`: Preceding no longer required when it is a credit note.
 
 ### Changed
 
-- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`
+- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`.
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
-- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
-- `es-tbai-v1`: Customer validation now only required for non-simplified invoices
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema.
+- `es-tbai-v1`: Customer validation now only required for non-simplified invoices.
 
 ### Fixed
 
-- `tax`: Fixed `Since` date comparison to be inclusive
-- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
-- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
-- `gr`: Corrected key for the reduced island tax rate
+- `tax`: Fixed `Since` date comparison to be inclusive.
+- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`.
+- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`.
+- `gr`: Corrected key for the reduced island tax rate.
 - `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17
@@ -62,7 +92,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
 - `bill`: Invoice and Order now normalize Attachments fields
-
 
 ## [v0.307.0] - 2026-01-27
 

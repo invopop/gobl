@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
 )
 
 // DeliveryDetails covers the details of the destination for the products described
@@ -21,15 +20,4 @@ type DeliveryDetails struct {
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Additional custom data.
 	Meta *cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
-// Validate the delivery details
-func (d *DeliveryDetails) Validate() error {
-	return validation.ValidateStruct(d,
-		validation.Field(&d.Receiver),
-		validation.Field(&d.Identities),
-		validation.Field(&d.Date),
-		validation.Field(&d.Period),
-		validation.Field(&d.Meta),
-	)
 }

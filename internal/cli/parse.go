@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"sort"
@@ -34,10 +33,10 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	var intermediate map[string]interface{}
 	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, in))
 	if err := dec.Decode(&intermediate); err != nil {
-		return wrapError(StatusBadRequest, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	if err := mergo.Merge(dest, intermediate, mergo.WithOverride); err != nil {
-		return wrapError(StatusUnprocessableEntity, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	return nil
 }
@@ -61,7 +60,7 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 	}
 
 	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInput.WithCause(err)
 	}
 
 	if opts.DocType != "" {
@@ -75,24 +74,24 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		}
 		schema := FindType(opts.DocType)
 		if schema == "" {
-			return nil, wrapError(StatusBadRequest, fmt.Errorf("unrecognized doc type: %q", opts.DocType))
+			return nil, gobl.ErrInput.WithReason("unrecognized doc type: %q", opts.DocType)
 		}
 		if err := mergo.Merge(&intermediate, schemaDataFunc(schema)); err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInput.WithCause(err)
 		}
 	}
 
 	// Encode intermediate to JSON for usage with `gobl.Parse`.
 	intermediateJSON, err := json.Marshal(intermediate)
 	if err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInput.WithCause(err)
 	}
 
 	// Parse the JSON encoded intermediate, so we can figure out if the incoming data
 	// is already an envelope.
 	obj, err := gobl.Parse(intermediateJSON)
 	if err != nil {
-		return nil, wrapError(StatusBadRequest, err)
+		return nil, gobl.ErrInput.WithCause(err)
 	}
 
 	// If the incoming data was parsed as an envelope, we can simply return
@@ -109,7 +108,7 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		var err error
 		doc, err = schema.NewObject(obj)
 		if err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInput.WithCause(err)
 		}
 	}
 
@@ -150,10 +149,10 @@ func parseSets(opts *ParseOptions) (map[string]interface{}, error) {
 		v := opts.SetYAML[k]
 		var parsed interface{}
 		if err := yaml.Unmarshal([]byte(v), &parsed); err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInput.WithCause(err)
 		}
 		if err := setValue(&values, k, parsed); err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInput.WithCause(err)
 		}
 	}
 

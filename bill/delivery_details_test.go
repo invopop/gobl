@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,6 +16,6 @@ func TestDeliveryDetailsValidation(t *testing.T) {
 			Date: cal.NewDate(2020, 1, 1),
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }

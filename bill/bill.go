@@ -2,6 +2,7 @@
 package bill
 
 import (
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -22,6 +23,23 @@ func init() {
 		DeliveryDetails{},
 		Tax{},
 		Totals{},
+	)
+	rules.Register(
+		"bill",
+		rules.GOBL.Add("BILL"),
+		invoiceRules(),
+		deliveryRules(),
+		orderRules(),
+		paymentRules(),
+		lineRules(),
+		subLineRules(),
+		lineDiscountRules(),
+		lineChargeRules(),
+		discountRules(),
+		chargeRules(),
+		paymentLineRules(),
+		taxRules(),
+		totalsRules(),
 	)
 }
 

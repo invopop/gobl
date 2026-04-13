@@ -1,16 +1,16 @@
 package bill
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // PaymentLine defines the details of a line item in a payment document.
@@ -59,40 +59,70 @@ type PaymentLine struct {
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
-// ValidateWithContext ensures that the fields contained in the PaymentLine look correct.
-func (pl *PaymentLine) ValidateWithContext(ctx context.Context) error {
-	mx := num.MakeAmount(0, pl.Amount.Exp())
-	if pl.Payable != nil {
-		mx = mx.Add(*pl.Payable)
-		if pl.Advances != nil {
-			mx = mx.Sub(*pl.Advances)
-		}
-	}
-	return tax.ValidateStructWithContext(ctx, pl,
-		validation.Field(&pl.Document),
-		validation.Field(&pl.Installment, validation.Min(1), validation.Max(999)),
-		validation.Field(&pl.Payable,
-			num.Positive,
-		),
-		validation.Field(&pl.Advances,
-			num.ZeroOrPositive,
-			validation.When(
-				pl.Payable != nil,
-				num.Max(pl.Payable),
+func paymentLineRules() *rules.Set {
+	return rules.For(new(PaymentLine),
+		rules.Field("installment",
+			rules.Assert("01", "installment must be between 1 and 999",
+				is.Min(1), is.Max(999),
 			),
 		),
-		validation.Field(&pl.Amount,
-			num.Positive,
-			validation.When(
-				mx.Value() > 0,
-				num.Max(mx),
+		rules.Field("payable",
+			rules.Assert("02", "payable must be positive",
+				num.Positive,
 			),
 		),
-		validation.Field(&pl.Due,
-			num.ZeroOrPositive,
+		rules.Field("advances",
+			rules.Assert("03", "advances must be zero or positive",
+				num.ZeroOrPositive,
+			),
 		),
-		validation.Field(&pl.Notes),
+		rules.Field("amount",
+			rules.Assert("04", "amount must be positive",
+				num.Positive,
+			),
+		),
+		rules.Field("due",
+			rules.Assert("05", "due must be zero or positive",
+				num.ZeroOrPositive,
+			),
+		),
+		rules.Assert("11", "advances must not exceed payable",
+			is.Func("advances within payable", paymentLineAdvancesWithinPayable),
+		),
+		rules.Assert("12", "amount must not exceed payable less advances",
+			is.Func("amount within limit", paymentLineAmountWithinLimit),
+		),
 	)
+}
+
+func paymentLineAdvancesWithinPayable(val any) bool {
+	pl, ok := val.(*PaymentLine)
+	if !ok {
+		return false
+	}
+	if pl.Payable == nil || pl.Advances == nil {
+		// nothing to compare, assume okay
+		return true
+	}
+	return pl.Advances.Compare(*pl.Payable) <= 0
+}
+
+func paymentLineAmountWithinLimit(val any) bool {
+	pl, ok := val.(*PaymentLine)
+	if !ok {
+		return false
+	}
+	if pl == nil || pl.Payable == nil {
+		return true
+	}
+	mx := *pl.Payable
+	if pl.Advances != nil {
+		mx = mx.Subtract(*pl.Advances)
+	}
+	if !mx.IsPositive() {
+		return true
+	}
+	return pl.Amount.Compare(mx) <= 0
 }
 
 func (pl *PaymentLine) calculate(rates []*currency.ExchangeRate, cur currency.Code, rr cbc.Key) error {
@@ -104,11 +134,7 @@ func (pl *PaymentLine) calculate(rates []*currency.ExchangeRate, cur currency.Co
 			// If the document has a currency, we need to ensure there is an exchange
 			// rate so any taxes can be converted correctly.
 			if er = currency.MatchExchangeRate(rates, dc, cur); er == nil {
-				return validation.Errors{
-					"document": validation.Errors{
-						"currency": fmt.Errorf("missing exchange rate from %s to %s", dc, cur),
-					},
-				}
+				return fmt.Errorf("document: currency: missing exchange rate from %s to %s", dc, cur)
 			}
 		}
 		pl.Document.Calculate(cur, rr)

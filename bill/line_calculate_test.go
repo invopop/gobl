@@ -24,7 +24,7 @@ func TestLineCalculate(t *testing.T) {
 			},
 		}
 		err := calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
-		assert.ErrorContains(t, err, "0: (item: no exchange rate found from 'MXN' to 'EUR'.).")
+		assert.ErrorContains(t, err, "0: item: no exchange rate found from 'MXN' to 'EUR'")
 	})
 	t.Run("missing item", func(t *testing.T) {
 		line := &Line{}
@@ -91,7 +91,7 @@ func TestLineCalculate(t *testing.T) {
 			},
 		}
 		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
-		require.ErrorContains(t, err, "substituted: (0: no exchange rate found from 'MXN' to 'EUR'.)")
+		require.ErrorContains(t, err, "substituted: 0: no exchange rate found from 'MXN' to 'EUR'")
 	})
 	t.Run("sublines: basic", func(t *testing.T) {
 		line := &Line{
@@ -263,7 +263,7 @@ func TestLineCalculate(t *testing.T) {
 			},
 		}
 		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
-		require.ErrorContains(t, err, "breakdown: (0: no exchange rate found from 'MXN' to 'EUR'.).")
+		require.ErrorContains(t, err, "breakdown: 0: no exchange rate found from 'MXN' to 'EUR'")
 	})
 
 	t.Run("lines with round-then-sum", func(t *testing.T) {

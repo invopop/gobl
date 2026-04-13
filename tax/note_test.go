@@ -1,24 +1,22 @@
 package tax_test
 
 import (
-	"context"
 	"testing"
 
 	_ "github.com/invopop/gobl"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNoteValidation(t *testing.T) {
-	ctx := tax.RegimeDefFor("DE").WithContext(context.Background())
-
 	t.Run("valid note", func(t *testing.T) {
 		n := &tax.Note{
 			Category: "VAT",
 			Key:      "exempt",
 			Text:     "Exempt under Article 132",
 		}
-		assert.NoError(t, n.ValidateWithContext(ctx))
+		assert.NoError(t, rules.Validate(n))
 	})
 
 	t.Run("with extensions", func(t *testing.T) {
@@ -30,14 +28,14 @@ func TestNoteValidation(t *testing.T) {
 				"untdid-tax-category": "AE",
 			},
 		}
-		assert.NoError(t, n.ValidateWithContext(ctx))
+		assert.NoError(t, rules.Validate(n))
 	})
 
 	t.Run("text only", func(t *testing.T) {
 		n := &tax.Note{
 			Text: "Some exemption reason",
 		}
-		assert.NoError(t, n.ValidateWithContext(ctx))
+		assert.NoError(t, rules.Validate(n))
 	})
 
 	t.Run("missing text", func(t *testing.T) {
@@ -45,23 +43,16 @@ func TestNoteValidation(t *testing.T) {
 			Category: "VAT",
 			Key:      "exempt",
 		}
-		err := n.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "text: cannot be blank")
+		err := rules.Validate(n)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "text")
 	})
 
 	t.Run("empty note", func(t *testing.T) {
 		n := &tax.Note{}
-		err := n.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "text: cannot be blank")
-	})
-
-	t.Run("invalid category", func(t *testing.T) {
-		n := &tax.Note{
-			Category: "INVALID",
-			Text:     "Some reason",
-		}
-		err := n.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "cat")
+		err := rules.Validate(n)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "text")
 	})
 
 	t.Run("free-form key for category", func(t *testing.T) {
@@ -70,7 +61,7 @@ func TestNoteValidation(t *testing.T) {
 			Key:      "reverse-charge",
 			Text:     "Some reason",
 		}
-		assert.NoError(t, n.ValidateWithContext(ctx))
+		assert.NoError(t, rules.Validate(n))
 	})
 }
 

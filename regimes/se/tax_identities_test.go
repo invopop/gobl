@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/se"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +35,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 }
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -46,27 +47,27 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "too short",
 			code: "20210054890",
-			err:  "invalid length",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too long",
 			code: "2021005489001",
-			err:  "invalid length",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid check digit",
 			code: "202100548900",
-			err:  "invalid check digit, expected 01",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid checksum",
 			code: "202100548801",
-			err:  "invalid identification number checksum",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "contains non-numeric characters",
 			code: "202100548A01",
-			err:  "invalid characters, expected numeric",
+			err:  "IDENTITY-01",
 		},
 	}
 
@@ -74,7 +75,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "SE", Code: tt.code}
 
-			err := se.Validate(tID)
+			err := rules.Validate(tID)
 
 			if tt.err == "" {
 				assert.NoError(t, err)

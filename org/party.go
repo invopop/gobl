@@ -1,15 +1,11 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-
-	"github.com/invopop/validation"
 )
 
 // Party represents a person or business entity.
@@ -87,40 +83,6 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, p.Emails)
 
 	normalizers.Each(p)
-}
-
-// Validate is used to check the party's data meets minimum expectations.
-func (p *Party) Validate() error {
-	return p.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext is used to check the party's data meets minimum expectations.
-func (p *Party) ValidateWithContext(ctx context.Context) error {
-	ctx = p.validationContext(ctx)
-	return tax.ValidateStructWithContext(ctx, p,
-		validation.Field(&p.Regime),
-		validation.Field(&p.Name),
-		validation.Field(&p.TaxID),
-		validation.Field(&p.Identities),
-		validation.Field(&p.People),
-		validation.Field(&p.Inboxes),
-		validation.Field(&p.Addresses),
-		validation.Field(&p.Emails),
-		validation.Field(&p.Websites),
-		validation.Field(&p.Telephones),
-		validation.Field(&p.Registration),
-		validation.Field(&p.Logos),
-		validation.Field(&p.Ext),
-		validation.Field(&p.Meta),
-	)
-}
-
-// validationContext returns a context with the regime's validation rules.
-func (p *Party) validationContext(ctx context.Context) context.Context {
-	if r := p.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	return ctx
 }
 
 // JSONSchemaExtend adds extra details to the schema.

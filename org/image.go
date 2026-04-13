@@ -1,14 +1,11 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // Image describes a logo or photo that represents an entity. Most
@@ -40,19 +37,22 @@ type Image struct {
 	Meta *cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate ensures the details on the image look okay.
-func (i *Image) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the details on the image look okay inside the provided context.
-func (i *Image) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.UUID),
-		validation.Field(&i.URL, is.URL),
-		validation.Field(&i.Height, validation.Min(64), validation.Max(2048)),
-		validation.Field(&i.Width, validation.Min(64), validation.Max(2048)),
-		validation.Field(&i.Digest),
-		validation.Field(&i.Meta),
+func imageRules() *rules.Set {
+	return rules.For(new(Image),
+		rules.Field("url",
+			rules.AssertIfPresent("01", "image URL must be valid", is.URL),
+		),
+		rules.Field("height",
+			rules.Assert("02", "image height must be between 64 and 2048 pixels",
+				is.Min(int32(64)),
+				is.Max(int32(2048)),
+			),
+		),
+		rules.Field("width",
+			rules.Assert("03", "image width must be between 64 and 2048 pixels",
+				is.Min(int32(64)),
+				is.Max(int32(2048)),
+			),
+		),
 	)
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestTelephoneNormalizeAndValidate(t *testing.T) {
 		}
 		tel.Normalize()
 		assert.Equal(t, "+123 456 7890", tel.Number)
-		assert.NoError(t, tel.Validate())
+		assert.NoError(t, rules.Validate(tel))
 	})
 
 	t.Run("empty number", func(t *testing.T) {
@@ -29,7 +30,7 @@ func TestTelephoneNormalizeAndValidate(t *testing.T) {
 		}
 		tel.Normalize()
 		assert.Equal(t, "", tel.Number)
-		assert.ErrorContains(t, tel.Validate(), "num: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(tel), "telephone number is required")
 	})
 
 	t.Run("allow complex numbers", func(t *testing.T) {
@@ -38,6 +39,6 @@ func TestTelephoneNormalizeAndValidate(t *testing.T) {
 		}
 		tel.Normalize()
 		assert.Equal(t, "+1 (123) 456-7890 ext. 123", tel.Number)
-		assert.NoError(t, tel.Validate())
+		assert.NoError(t, rules.Validate(tel))
 	})
 }

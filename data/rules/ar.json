@@ -1,0 +1,58 @@
+{
+  "id": "GOBL-AR",
+  "name": "ar",
+  "subsets": [
+    {
+      "id": "GOBL-AR-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [AR]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-BILL-INVOICE-01",
+                      "desc": "invoice supplier tax ID required for Argentine regime",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-AR-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [AR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-TAX-IDENTITY-01",
+                      "desc": "invalid Argentine tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

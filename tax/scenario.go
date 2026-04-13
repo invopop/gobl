@@ -1,11 +1,10 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // ScenarioSet is a collection of tax scenarios for a given schema that can be used to
@@ -100,6 +99,17 @@ func NewScenarioSet(schema string) *ScenarioSet {
 	}
 }
 
+func scenarioSetRules() *rules.Set {
+	return rules.For(new(ScenarioSet),
+		rules.Field("schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+		rules.Field("list",
+			rules.Assert("02", "at least one scenario is required", is.Present),
+		),
+	)
+}
+
 // Merge appends the scenarios from the other set to the current set.
 func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 	for _, os := range other {
@@ -108,15 +118,6 @@ func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 		}
 		ss.List = append(ss.List, os.List...)
 	}
-}
-
-// ValidateWithContext checks the scenario set for errors.
-func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, ss,
-		validation.Field(&ss.Schema, validation.Required),
-		validation.Field(&ss.List, validation.Required),
-	)
-	return err
 }
 
 // ExtensionKeys extracts all the possible extension keys that could be applied to a
@@ -254,18 +255,4 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 		return true
 	}
 	return false
-}
-
-// ValidateWithContext checks the scenario for errors, using the regime in the context
-// to validate the list of tags.
-func (s *Scenario) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, s,
-		validation.Field(&s.Types),
-		validation.Field(&s.Tags), // consider validating tags in context
-		validation.Field(&s.Name),
-		validation.Field(&s.Note),
-		validation.Field(&s.Codes),
-		validation.Field(&s.Ext),
-	)
-	return err
 }

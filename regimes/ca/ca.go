@@ -50,7 +50,6 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone:   "America/Toronto", // Toronto
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
@@ -63,15 +62,6 @@ func New() *tax.RegimeDef {
 		},
 		Categories: taxCategories,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

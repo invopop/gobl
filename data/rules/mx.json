@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-MX",
+  "name": "mx",
+  "subsets": [
+    {
+      "id": "GOBL-MX-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [MX]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-TAX-IDENTITY-01",
+                      "desc": "invalid Mexican RFC tax identity code",
+                      "tests": "valid RFC"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

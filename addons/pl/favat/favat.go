@@ -6,6 +6,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -23,6 +25,14 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddonV3())
+	rules.RegisterWithGuard(
+		V3.String(),
+		rules.GOBL.Add("PL-FAVAT-V3"),
+		is.InContext(tax.AddonIn(V3)),
+		billInvoiceRules(),
+		taxComboRules(),
+		payAdvanceRules(),
+	)
 }
 
 func newAddonV3() *tax.AddonDef {
@@ -37,7 +47,6 @@ func newAddonV3() *tax.AddonDef {
 		Extensions:  extensionKeys,
 		Scenarios:   scenarios,
 		Normalizer:  normalize,
-		Validator:   validate,
 		Corrections: corrections,
 	}
 }
@@ -53,18 +62,6 @@ func normalize(doc any) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	}
-	return nil
 }
 
 var corrections = tax.CorrectionSet{

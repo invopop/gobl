@@ -1,13 +1,10 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // PaymentDetails contains details as to how the invoice should be paid.
@@ -34,16 +31,6 @@ func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(p)
 }
 
-// ValidateWithContext checks to make sure the payment data looks good
-func (p *PaymentDetails) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, p,
-		validation.Field(&p.Payee),
-		validation.Field(&p.Terms),
-		validation.Field(&p.Advances),
-		validation.Field(&p.Instructions),
-	)
-}
-
 // ResetAdvances clears the advances list.
 func (p *PaymentDetails) ResetAdvances() {
 	if p == nil {
@@ -54,6 +41,9 @@ func (p *PaymentDetails) ResetAdvances() {
 
 func (p *PaymentDetails) calculateAdvances(zero num.Amount, payable num.Amount) {
 	for _, a := range p.Advances {
+		if a == nil {
+			continue
+		}
 		a.CalculateFrom(payable)
 		// Payments must always have currency precision
 		a.Amount = a.Amount.Rescale(zero.Exp())
@@ -67,6 +57,9 @@ func (p *PaymentDetails) totalAdvance(zero num.Amount) *num.Amount {
 	// Payments always maintain currency precision
 	sum := zero
 	for _, a := range p.Advances {
+		if a == nil {
+			continue
+		}
 		sum = sum.Add(a.Amount)
 	}
 	return &sum

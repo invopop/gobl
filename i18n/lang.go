@@ -2,7 +2,6 @@ package i18n
 
 import (
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // To simplify language management GoBL does not support full localization
@@ -21,20 +20,12 @@ type LangDef struct {
 	Name string `json:"name" jsonschema:"title=Name"`
 }
 
-var isLang = validation.In(validLang()...)
-
-func validLang() []interface{} {
-	list := make([]interface{}, len(LangDefinitions))
+func validLangValues() []any {
+	list := make([]any, len(LangDefinitions))
 	for i, d := range LangDefinitions {
 		list[i] = string(d.Code)
 	}
 	return list
-}
-
-// Validate ensures the language code is valid according
-// to the ISO 639-1 two-letter list.
-func (l Lang) Validate() error {
-	return validation.Validate(string(l), isLang)
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

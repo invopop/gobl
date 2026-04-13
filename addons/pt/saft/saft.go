@@ -8,6 +8,8 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,6 +20,21 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("PT-SAFT-V1"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		billPaymentRules(),
+		billDeliveryRules(),
+		billOrderRules(),
+		taxComboRules(),
+		rateTotalRules(),
+		orgItemRules(),
+		orgNoteRules(),
+		billLineRules(),
+		billPaymentLineRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -52,7 +69,7 @@ func newAddon() *tax.AddonDef {
 				ContentType: "application/pdf",
 			},
 			{
-				Title:       i18n.NewString("Comunicação dos elementos dos documentos de faturação à AT, por webservice"),
+				Title:       i18n.NewString("Comunicação dos elementos dos documentos de faturação à AT, por webservice"),
 				URL:         "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf",
 				ContentType: "application/pdf",
 			},
@@ -60,7 +77,6 @@ func newAddon() *tax.AddonDef {
 		Extensions:  extensions,
 		Normalizer:  normalize,
 		Scenarios:   scenarios,
-		Validator:   validate,
 		Corrections: corrections,
 	}
 }
@@ -86,28 +102,4 @@ func normalize(doc any) {
 	case *bill.Line:
 		normalizeLine(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *bill.Payment:
-		return validatePayment(obj)
-	case *bill.Delivery:
-		return validateDelivery(obj)
-	case *bill.Order:
-		return validateOrder(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *org.Item:
-		return validateItem(obj)
-	case *org.Note:
-		return validateNote(obj)
-	case *bill.Line:
-		return validateLine(obj)
-	case *bill.PaymentLine:
-		return validatePaymentLine(obj)
-	}
-	return nil
 }

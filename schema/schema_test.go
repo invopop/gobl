@@ -3,6 +3,7 @@ package schema_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,10 +21,12 @@ func TestID(t *testing.T) {
 	assert.EqualValues(t, base+"/test/bar#new", id)
 
 	id = schema.ID("bad-url")
-	err := id.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "valid URL")
+	err := rules.Validate(id)
+	assert.ErrorContains(t, err, "[GOBL-SCHEMA-ID-01] schema ID must be a valid URL")
 
+	id = schema.ID("")
+	err = rules.Validate(id)
+	assert.NoError(t, err, "no error expected for empty schema ID")
 }
 
 func TestExtract(t *testing.T) {
@@ -51,4 +54,16 @@ func TestInsert(t *testing.T) {
 	data, err = schema.Insert(id, data)
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"$schema\":\"https://gobl.org/draft-0/test/bar\",\"random\":\"message\"}", string(data))
+}
+
+func TestIDInterface(t *testing.T) {
+	// Known schema should return a non-nil instance
+	id := schema.GOBL.Add("bill/invoice")
+	obj := id.Interface()
+	assert.NotNil(t, obj, "known schema ID should return an instance")
+
+	// Unknown schema should return nil
+	id = schema.ID("https://gobl.org/draft-0/unknown/type")
+	obj = id.Interface()
+	assert.Nil(t, obj, "unknown schema ID should return nil")
 }

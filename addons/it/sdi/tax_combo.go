@@ -1,12 +1,15 @@
 package sdi
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -79,30 +82,45 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(val any) error {
-	c, ok := val.(*tax.Combo)
-	if !ok {
-		return nil
-	}
-	switch c.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				validation.When(
-					c.Percent == nil,
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		// VAT: exempt extension required when no percent
+		rules.When(is.Func("VAT without percent", taxComboIsVATWithoutPercent),
+			rules.Field("ext",
+				rules.Assert("01",
+					fmt.Sprintf("VAT tax combo without percent requires '%s' extension", ExtKeyExempt),
 					tax.ExtensionsRequire(ExtKeyExempt),
 				),
-				validation.Skip,
 			),
-		)
-	// ensure retained taxes have the required extension
-	case it.TaxCategoryIRPEF, it.TaxCategoryIRES, it.TaxCategoryINPS, it.TaxCategoryENPAM, it.TaxCategoryENASARCO, it.TaxCategoryCP:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				tax.ExtensionsRequire(ExtKeyRetained),
-				validation.Skip,
+		),
+		// Retained taxes require the retained extension
+		rules.When(is.Func("is retained tax", taxComboIsRetained),
+			rules.Field("ext",
+				rules.Assert("02",
+					fmt.Sprintf("retained tax combo requires '%s' extension", ExtKeyRetained),
+					tax.ExtensionsRequire(ExtKeyRetained),
+				),
 			),
-		)
+		),
+	)
+}
+
+func taxComboIsVATWithoutPercent(val any) bool {
+	c, ok := val.(*tax.Combo)
+	if !ok || c == nil {
+		return false
 	}
-	return nil
+	return c.Category == tax.CategoryVAT && c.Percent == nil
+}
+
+func taxComboIsRetained(val any) bool {
+	c, ok := val.(*tax.Combo)
+	if !ok || c == nil {
+		return false
+	}
+	switch c.Category {
+	case it.TaxCategoryIRPEF, it.TaxCategoryIRES, it.TaxCategoryINPS, it.TaxCategoryENPAM, it.TaxCategoryENASARCO, it.TaxCategoryCP:
+		return true
+	}
+	return false
 }

@@ -5,6 +5,8 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -24,6 +26,13 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("ES-TBAI-V1"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		taxComboRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -33,14 +42,12 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
-		Validator:   validate,
 		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
 
 func normalize(doc any) {
-	// nothing to normalize yet
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
@@ -49,12 +56,4 @@ func normalize(doc any) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }

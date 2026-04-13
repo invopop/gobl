@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-DSIG",
+  "name": "dsig",
+  "subsets": [
+    {
+      "id": "GOBL-DSIG-DIGEST",
+      "name": "dsig.Digest",
+      "subsets": [
+        {
+          "field": "alg",
+          "assert": [
+            {
+              "id": "GOBL-DSIG-DIGEST-01",
+              "desc": "algorithm is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "val",
+          "assert": [
+            {
+              "id": "GOBL-DSIG-DIGEST-02",
+              "desc": "value is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

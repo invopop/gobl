@@ -1,0 +1,338 @@
+{
+  "id": "GOBL-TAX",
+  "name": "tax",
+  "subsets": [
+    {
+      "id": "GOBL-TAX-ADDONS",
+      "name": "tax.Addons",
+      "subsets": [
+        {
+          "field": "$addons",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-TAX-ADDONS-01",
+                  "desc": "add-on must be registered",
+                  "tests": "add-on must be registered"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-ADDONDEF",
+      "name": "tax.AddonDef",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-TAX-ADDONDEF-01",
+              "desc": "addon must have a key",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-ADDONDEF-02",
+              "desc": "addon must have a name",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-CATEGORYDEF",
+      "name": "tax.CategoryDef",
+      "assert": [
+        {
+          "id": "GOBL-TAX-CATEGORYDEF-04",
+          "desc": "category def cannot be retained and informative",
+          "tests": "!Retained || !Informative"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-01",
+              "desc": "category def code is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-02",
+              "desc": "category def name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CATEGORYDEF-03",
+              "desc": "category def title is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-COMBO",
+      "name": "tax.Combo",
+      "assert": [
+        {
+          "id": "GOBL-TAX-COMBO-01",
+          "desc": "tax category not valid for regime",
+          "tests": "category in regime"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-02",
+          "desc": "tax combo key not valid for category in regime",
+          "tests": "key in category"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-03",
+          "desc": "tax combo rate not valid for key in regime",
+          "tests": "rate in key"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-04",
+          "desc": "tax combo percent required or invalid for key in regime",
+          "tests": "percent valid for key"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-05",
+          "desc": "tax combo surcharge requires percent in regime",
+          "tests": "surcharge requires percent"
+        },
+        {
+          "id": "GOBL-TAX-COMBO-06",
+          "desc": "tax combo extension key not defined in regime",
+          "tests": "extension keys defined"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-CORRECTIONDEFINITION",
+      "name": "tax.CorrectionDefinition",
+      "subsets": [
+        {
+          "field": "schema",
+          "assert": [
+            {
+              "id": "GOBL-TAX-CORRECTIONDEFINITION-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-TAX-IDENTITY-01",
+              "desc": "tax id country code is always required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-TAX-IDENTITY-02",
+              "desc": "tax id code must have a valid format",
+              "tests": "matches ^[A-Z0-9Ñ\\\u0026]+$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-RATEDEF",
+      "name": "tax.RateDef",
+      "subsets": [
+        {
+          "field": "rate",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-01",
+              "desc": "rate is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-02",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "values",
+          "assert": [
+            {
+              "id": "GOBL-TAX-RATEDEF-03",
+              "desc": "rate values must be in descending chronological order",
+              "tests": "date order"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "percent",
+                  "assert": [
+                    {
+                      "id": "GOBL-TAX-RATEDEF-04",
+                      "desc": "rate value percent is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-REGIMEDEF",
+      "name": "tax.RegimeDef",
+      "subsets": [
+        {
+          "field": "country",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-01",
+              "desc": "country code is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-02",
+              "desc": "name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "time_zone",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-03",
+              "desc": "time zone is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-TAX-REGIMEDEF-04",
+                  "desc": "time zone must be valid",
+                  "tests": "valid time zone"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "categories",
+          "assert": [
+            {
+              "id": "GOBL-TAX-REGIMEDEF-05",
+              "desc": "at least one category is required",
+              "tests": "length between 1 and 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-SCENARIOSET",
+      "name": "tax.ScenarioSet",
+      "subsets": [
+        {
+          "field": "schema",
+          "assert": [
+            {
+              "id": "GOBL-TAX-SCENARIOSET-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "list",
+          "assert": [
+            {
+              "id": "GOBL-TAX-SCENARIOSET-02",
+              "desc": "at least one scenario is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-SET",
+      "name": "tax.Set",
+      "assert": [
+        {
+          "id": "GOBL-TAX-SET-01",
+          "desc": "all tax categories in a set must be unique",
+          "tests": "no duplicate categories"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-TAX-NOTE",
+      "name": "tax.Note",
+      "subsets": [
+        {
+          "field": "text",
+          "assert": [
+            {
+              "id": "GOBL-TAX-NOTE-01",
+              "desc": "tax note text is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

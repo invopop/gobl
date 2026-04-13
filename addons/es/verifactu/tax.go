@@ -1,10 +1,13 @@
 package verifactu
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -64,30 +67,35 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-		return nil
-	}
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			// Regime is always required for VAT and IGIC
-			tax.ExtensionsRequire(ExtKeyRegime),
-			validation.When(
-				tc.Percent != nil, // Taxed
-				tax.ExtensionsRequire(ExtKeyOpClass),
-				validation.Required,
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			// Guard: only apply to VAT/IGIC combos that have been processed by verifactu
+			// normalization (which always sets ExtKeyRegime via SetIfEmpty).
+			is.Func("verifactu vat/igic", taxComboForVATorIGIC),
+			rules.Field("ext",
+				rules.Assert("01", fmt.Sprintf("extension '%s' is required", ExtKeyRegime),
+					tax.ExtensionsRequire(ExtKeyRegime),
+				),
+				rules.When(
+					tax.ExtensionsHasCodes(ExtKeyRegime, "01"),
+					rules.Assert("02", fmt.Sprintf("exempt codes E2 and E3 not allowed with '%s' 01", ExtKeyRegime),
+						tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
+					),
+				),
+				rules.Assert("03", fmt.Sprintf("cannot use both '%s' and '%s' at the same time", ExtKeyOpClass, ExtKeyExempt),
+					tax.ExtensionsAllowOneOf(ExtKeyOpClass, ExtKeyExempt),
+				),
 			),
-			validation.When(
-				// Cannot use both exempt and operation class at same time.
-				tc.Ext.Has(ExtKeyOpClass),
-				tax.ExtensionsExclude(ExtKeyExempt),
+			rules.When(
+				is.Func("has percent", taxComboHasPercent),
+				rules.Field("ext",
+					rules.Assert("04", fmt.Sprintf("extension '%s' is required for taxed operations", ExtKeyOpClass),
+						tax.ExtensionsRequire(ExtKeyOpClass),
+					),
+				),
 			),
 			// https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf (Page 10, section 15.5)
-			validation.When(
-				tc.Ext.Get(ExtKeyRegime).In("01"),
-				tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
-			),
-			validation.Skip,
 		),
 	)
 }
@@ -116,4 +124,14 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	if tc.Key.IsEmpty() {
 		tc.Key = tax.KeyStandard // "S1" fallback
 	}
+}
+
+func taxComboForVATorIGIC(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC)
+}
+
+func taxComboHasPercent(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Percent != nil
 }

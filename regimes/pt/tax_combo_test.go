@@ -5,7 +5,9 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,6 +22,7 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "valid combo",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
 				Ext: tax.Extensions{
 					pt.ExtKeyRegion: "PT-AC",
 				},
@@ -33,38 +36,43 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "missing extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "empty extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
 				Ext:      tax.Extensions{},
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "missing extension",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
 				Ext: tax.Extensions{
 					"random": "12345678",
 				},
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "other category",
 			tc: &tax.Combo{
 				Category: tax.CategoryGST,
+				Percent:  num.NewPercentage(210, 3),
 			},
+			err: "[GOBL-TAX-COMBO-01]", // general combo error
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := pt.Validate(tt.tc)
+			err := rules.Validate(tt.tc, tax.RegimeContext(l10n.PT.Tax()))
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

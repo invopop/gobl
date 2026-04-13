@@ -1,0 +1,464 @@
+{
+  "id": "GOBL-BR-NFE-V4",
+  "name": "br-nfe-v4",
+  "guard": "context: addon in [br-nfe-v4]",
+  "subsets": [
+    {
+      "id": "GOBL-BR-NFE-V4-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-30",
+          "desc": "a note with key 'reason' is required to describe the nature of the operation (natOp)",
+          "tests": "has reason note"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-01",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-02",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "subsets": [
+                {
+                  "each": true,
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-03",
+                      "desc": "supplier address must not be empty",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "street",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-04",
+                          "desc": "supplier address requires a street",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "num",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-05",
+                          "desc": "supplier address requires a number",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "locality",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-06",
+                          "desc": "supplier address requires a locality",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "state",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-07",
+                          "desc": "supplier address requires a state",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-08",
+                          "desc": "supplier address requires a postal code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "has addresses",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-09",
+                      "desc": "supplier requires 'br-ibge-municipality' extension when addresses are present",
+                      "tests": "ext require [br-ibge-municipality]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-10",
+                  "desc": "supplier name is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-11",
+                  "desc": "supplier must have at least one address",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice is NFe",
+          "subsets": [
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-12",
+                  "desc": "customer is required for NF-e invoices",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-13",
+                      "desc": "customer must have at least one address for NF-e invoices",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-14",
+                  "desc": "customer tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-15",
+                      "desc": "customer tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "subsets": [
+                {
+                  "each": true,
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-16",
+                      "desc": "customer address must not be empty",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "street",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-17",
+                          "desc": "customer address requires a street",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "num",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-18",
+                          "desc": "customer address requires a number",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "locality",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-19",
+                          "desc": "customer address requires a locality",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "state",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-20",
+                          "desc": "customer address requires a state",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-21",
+                          "desc": "customer address requires a postal code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "has addresses",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-22",
+                      "desc": "customer requires 'br-ibge-municipality' extension when addresses are present",
+                      "tests": "ext require [br-ibge-municipality]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "series",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFE-V4-BILL-INVOICE-23",
+              "desc": "series is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BR-NFE-V4-BILL-INVOICE-24",
+              "desc": "series format is invalid; must be 0 or 1-999",
+              "tests": "matches ^(?:0|[1-9]{1}[0-9]{0,2})$"
+            }
+          ]
+        },
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFE-V4-BILL-INVOICE-25",
+              "desc": "tax is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-26",
+                  "desc": "tax requires 'br-nfe-model' and 'br-nfe-presence' extensions",
+                  "tests": "ext require [br-nfe-model, br-nfe-presence]"
+                }
+              ],
+              "subsets": [
+                {
+                  "guard": "NFe model",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-27",
+                      "desc": "NF-e invoices do not support '4' for 'br-nfe-presence'",
+                      "tests": "ext 'br-nfe-presence' not in [4]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "NFCe model",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-28",
+                      "desc": "NFC-e invoices require in-person or delivery for 'br-nfe-presence'",
+                      "tests": "ext 'br-nfe-presence' in [1, 4]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "notes",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "guard": "reason note",
+                  "subsets": [
+                    {
+                      "field": "text",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-V4-BILL-INVOICE-29",
+                          "desc": "reason note text must be between 1 and 60 characters",
+                          "tests": "length between 1 and 60"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice not paid",
+          "subsets": [
+            {
+              "field": "payment",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-31",
+                  "desc": "payment is required when invoice is unpaid",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "instructions",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-V4-BILL-INVOICE-32",
+                      "desc": "payment instructions are required when invoice is unpaid",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "totals",
+          "subsets": [
+            {
+              "field": "due",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-V4-BILL-INVOICE-33",
+                  "desc": "due amount must not be negative",
+                  "tests": "zero or positive"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFE-V4-BILL-LINE",
+      "name": "bill.Line",
+      "assert": [
+        {
+          "id": "GOBL-BR-NFE-V4-BILL-LINE-01",
+          "desc": "line taxes must include the ICMS category",
+          "tests": "line has tax category ICMS"
+        },
+        {
+          "id": "GOBL-BR-NFE-V4-BILL-LINE-02",
+          "desc": "line taxes must include the PIS category",
+          "tests": "line has tax category PIS"
+        },
+        {
+          "id": "GOBL-BR-NFE-V4-BILL-LINE-03",
+          "desc": "line taxes must include the COFINS category",
+          "tests": "line has tax category COFINS"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFE-V4-PAY-INSTRUCTIONS",
+      "name": "pay.Instructions",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFE-V4-PAY-INSTRUCTIONS-01",
+              "desc": "payment instructions require 'br-nfe-payment-means' extension",
+              "tests": "ext require [br-nfe-payment-means]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFE-V4-PAY-ADVANCE",
+      "name": "pay.Advance",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFE-V4-PAY-ADVANCE-01",
+              "desc": "payment advance requires 'br-nfe-payment-means' extension",
+              "tests": "ext require [br-nfe-payment-means]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

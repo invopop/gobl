@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,7 +57,7 @@ func TestAddressValidation(t *testing.T) {
 			Code:     "HG12 2AB",
 			Country:  "GB",
 		}
-		assert.NoError(t, a.Validate())
+		assert.NoError(t, rules.Validate(a))
 	})
 
 	t.Run("invalid UUID", func(t *testing.T) {
@@ -70,7 +71,7 @@ func TestAddressValidation(t *testing.T) {
 			Country:  "GB",
 		}
 		a.UUID = "invalid"
-		assert.ErrorContains(t, a.Validate(), "uuid: invalid UUID length: 7")
+		assert.ErrorContains(t, rules.Validate(a), "GOBL-UUID-UUID-01")
 	})
 }
 

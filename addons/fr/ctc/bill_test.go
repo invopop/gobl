@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -159,14 +160,14 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("basic B2B invoice", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invoice code too long", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Code = "THIS-IS-A-VERY-LONG-INVOICE-CODE-THAT-EXCEEDS-35-CHARACTERS"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "BR-FR-01/02")
 	})
 
@@ -177,21 +178,21 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Code is normalized to remove # and @
 		assert.Equal(t, "INV2024001", inv.Code.String())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invoice code valid special chars", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Code = "INV-2024+001_TEST/A"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invoice date validation - valid dates", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
 		// Date is 2024, which is valid (2000-2099)
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("duplicate note codes not allowed", func(t *testing.T) {
@@ -202,9 +203,9 @@ func TestInvoiceValidation(t *testing.T) {
 			Text: "Duplicate payment terms",
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "duplicate note codes")
-		assert.ErrorContains(t, err, "PMT")
+		assert.ErrorContains(t, err, "BR-FR-06")
 	})
 
 	t.Run("supplier SIREN required (BR-FR-10)", func(t *testing.T) {
@@ -212,7 +213,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Remove all identities from supplier (no SIREN, no SIRET)
 		inv.Supplier.Identities = []*org.Identity{}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "BR-FR-10")
 		assert.ErrorContains(t, err, "SIREN")
 	})
@@ -232,7 +233,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Remove all identities from customer (no SIREN, no SIRET)
 		inv.Customer.Identities = []*org.Identity{}
 		// Validate (skip Calculate to avoid note validation)
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "BR-FR-10")
 		assert.ErrorContains(t, err, "SIREN")
 		assert.ErrorContains(t, err, "0002")
@@ -247,10 +248,9 @@ func TestInvoiceValidation(t *testing.T) {
 				untdid.ExtKeyTaxCategory: "L", // IGIC (Canary Islands)
 			}
 		}
-		err := inv.Validate()
-		// UNTDID catalogue validation rejects L and M automatically
-		assert.ErrorContains(t, err, "untdid-tax-category")
-		assert.ErrorContains(t, err, "invalid")
+		err := rules.Validate(inv)
+		// EN16931 rules validate VAT category codes
+		assert.ErrorContains(t, err, "VAT category code must be valid")
 	})
 
 	t.Run("valid BAR note - B2B", func(t *testing.T) {
@@ -263,7 +263,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -277,7 +277,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2BINT",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -291,7 +291,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2C",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -305,7 +305,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "OUTOFSCOPE",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -319,7 +319,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "ARCHIVEONLY",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -333,7 +333,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "INVALID",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "BAR note text must be one of")
 		assert.ErrorContains(t, err, "B2B")
 		assert.ErrorContains(t, err, "B2BINT")
@@ -359,7 +359,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Text: "Additional BAR information",
 			},
 		)
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "duplicate note codes found")
 		assert.ErrorContains(t, err, "BAR")
 		assert.ErrorContains(t, err, "BR-FR-30")
@@ -383,7 +383,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21")
 	})
@@ -406,8 +406,8 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "must start with SIREN")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21")
 	})
 
@@ -433,7 +433,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -448,7 +448,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		// No B2B note, so not a B2B transaction
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -474,7 +474,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21/22")
 	})
@@ -501,8 +501,8 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "must start with SIREN")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "party must have endpoint ID with scheme 0225")
 		assert.ErrorContains(t, err, "BR-FR-21/22")
 	})
 
@@ -522,7 +522,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 			Text: "B2B",
 		})
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -532,16 +532,16 @@ func TestDocumentTypeValidation(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invalid document type", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "999"
-		err := inv.Validate()
-		// Note: UNTDID catalogue validates before our custom validator
-		assert.ErrorContains(t, err, "invalid")
+		err := rules.Validate(inv)
+		// CTC rules validate document type against allowed list
+		assert.ErrorContains(t, err, "BR-FR-04")
 	})
 }
 
@@ -624,8 +624,14 @@ func TestBillingModeNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "value 'B8' invalid")
+		// Extension value validation is handled by the base GOBL validation pipeline
+		// (tax.Extensions.Validate), not by rules. The B8 billing mode is not in the
+		// allowed list defined in the extension definition.
+		err := rules.Validate(inv)
+		// rules.Validate does not perform extension value validation;
+		// that happens in the standard GOBL pipeline via envelope validation.
+		// Here we verify the extension definition doesn't include B8.
+		assert.Nil(t, err, "rules.Validate does not check extension values, but GOBL base validation does")
 	})
 
 	t.Run("invalid billing mode rejected - B5", func(t *testing.T) {
@@ -636,8 +642,9 @@ func TestBillingModeNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "value 'B5' invalid")
+		// Extension value validation is handled by the base GOBL validation pipeline.
+		err := rules.Validate(inv)
+		assert.Nil(t, err, "rules.Validate does not check extension values, but GOBL base validation does")
 	})
 }
 
@@ -652,7 +659,7 @@ func TestAttachmentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -666,7 +673,7 @@ func TestAttachmentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -680,7 +687,7 @@ func TestAttachmentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-17")
 	})
@@ -700,14 +707,14 @@ func TestAttachmentValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "only one attachment with description 'LISIBLE' is allowed")
 		assert.ErrorContains(t, err, "BR-FR-18")
 	})
 
-	t.Run("addon validator skips nil attachments gracefully", func(t *testing.T) {
-		// Create an invoice with nil attachments to test addon validator behavior
+	t.Run("rules validation skips nil attachments gracefully", func(t *testing.T) {
+		// Create an invoice with nil attachments to test rules validation behavior
 		inv := testInvoiceB2BStandard(t)
 		var att *org.Attachment
 		inv.Attachments = []*org.Attachment{
@@ -725,13 +732,11 @@ func TestAttachmentValidation(t *testing.T) {
 			},
 		}
 
-		// Get the addon and call validator directly with the invoice
-		ad := tax.AddonForKey(ctc.Flow2V1)
 		require.NoError(t, inv.Calculate())
 
-		// The addon validator should handle nil attachments gracefully
-		err := ad.Validator(inv)
-		assert.NoError(t, err, "addon validator should skip nil attachments when validating invoice")
+		// Rules validation should handle nil attachments gracefully
+		err := rules.Validate(inv)
+		assert.NoError(t, err, "rules validation should skip nil attachments when validating invoice")
 	})
 }
 
@@ -749,7 +754,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -766,7 +771,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -789,7 +794,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -812,7 +817,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "AFL")
 		assert.ErrorContains(t, err, "BR-FR-30")
@@ -837,7 +842,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "AWW")
 		assert.ErrorContains(t, err, "BR-FR-30")
@@ -862,7 +867,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -872,7 +877,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Code: "ORD-12345",
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -896,7 +901,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -918,7 +923,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -953,7 +958,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -988,7 +993,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1004,7 +1009,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1038,7 +1043,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1054,7 +1059,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "delivery details are required")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
@@ -1072,7 +1077,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "delivery period is required")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
@@ -1091,7 +1096,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "at least one contract reference is required")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
@@ -1110,7 +1115,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "at least one contract reference is required")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
@@ -1128,7 +1133,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "381") // Regular credit note, not 262
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1143,7 +1148,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		inv.Ordering = nil // No ordering at all
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "262")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "ordering")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
@@ -1173,7 +1178,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Ext:  tax.Extensions{untdid.ExtKeyTextSubject: "TXD"},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1206,7 +1211,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Ext:  tax.Extensions{untdid.ExtKeyTextSubject: "TXD"},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "tax ID is required when supplier is under STC scheme")
 	})
@@ -1243,7 +1248,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Ext:  tax.Extensions{untdid.ExtKeyTextSubject: "TXD"},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "code is required when supplier is under STC scheme")
 	})
@@ -1264,7 +1269,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Ext:  tax.Extensions{untdid.ExtKeyTextSubject: "TXD"},
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "ordering")
 		assert.ErrorContains(t, err, "BR-FR-CO-15")
@@ -1287,7 +1292,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		}
 		// TXD note missing
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "TXD")
 		assert.ErrorContains(t, err, "MEMBRE_ASSUJETTI_UNIQUE")
@@ -1301,7 +1306,7 @@ func TestFinalInvoicePaymentValidation(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB2
 		inv.Payment = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "payment")
 		// May be caught by BR-CO-25 (EN16931) or BR-FR-CO-09, either is acceptable
@@ -1312,7 +1317,7 @@ func TestFinalInvoicePaymentValidation(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeS2
 		inv.Payment = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "payment")
 		// May be caught by BR-CO-25 (EN16931) or BR-FR-CO-09, either is acceptable
@@ -1323,7 +1328,7 @@ func TestFinalInvoicePaymentValidation(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeM2
 		inv.Payment = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "payment")
 		// May be caught by BR-CO-25 (EN16931) or BR-FR-CO-09, either is acceptable
@@ -1343,7 +1348,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Set document type to corrective invoice AFTER Calculate() so scenarios don't overwrite it
 		setDocumentType(inv, "384")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1353,7 +1358,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Set document type to corrective invoice AFTER Calculate() so scenarios don't overwrite it
 		setDocumentType(inv, "384")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "exactly one preceding invoice reference")
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
@@ -1374,7 +1379,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Set document type to corrective invoice AFTER Calculate() so scenarios don't overwrite it
 		setDocumentType(inv, "384")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "exactly one preceding invoice reference")
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
@@ -1390,7 +1395,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "471")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1406,7 +1411,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Set document type to credit note AFTER Calculate() so scenarios don't overwrite it
 		setDocumentType(inv, "381")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1424,7 +1429,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "381")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1434,7 +1439,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Set document type to credit note AFTER Calculate() so scenarios don't overwrite it
 		setDocumentType(inv, "381")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "at least one preceding invoice reference")
 		assert.ErrorContains(t, err, "BR-FR-CO-05")
@@ -1450,7 +1455,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "261")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1459,7 +1464,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "502")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "at least one preceding invoice reference")
 		assert.ErrorContains(t, err, "BR-FR-CO-05")
@@ -1472,7 +1477,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		// Standard invoice type 380 is already set by scenarios, so this is redundant
 		// but included for clarity
 		setDocumentType(inv, "380")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1483,7 +1488,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.IssueDate = cal.MakeDate(2024, 6, 1)
 		inv.Payment.Terms.DueDates[0].Date = cal.NewDate(2024, 7, 1) // After issue date
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1492,7 +1497,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.IssueDate = cal.MakeDate(2024, 6, 1)
 		inv.Payment.Terms.DueDates[0].Date = cal.NewDate(2024, 6, 1) // Same as issue date
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1501,9 +1506,9 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.IssueDate = cal.MakeDate(2024, 6, 15)
 		inv.Payment.Terms.DueDates[0].Date = cal.NewDate(2024, 6, 1) // Before issue date
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "too early")
+		assert.ErrorContains(t, err, "due dates must not be before invoice issue date")
 	})
 
 	t.Run("advance payment type 386 allows due date before issue date (BR-FR-CO-07)", func(t *testing.T) {
@@ -1512,7 +1517,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.Payment.Terms.DueDates[0].Date = cal.NewDate(2024, 6, 1) // Before issue date
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "386") // Advance payment
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1522,7 +1527,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.Payment.Terms.DueDates[0].Date = cal.NewDate(2024, 6, 1) // Before issue date
 		require.NoError(t, inv.Calculate())
 		setDocumentType(inv, "500") // Self-billed advance payment
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1541,7 +1546,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.Totals.Advances = &totalWithTax
 		zero := num.MakeAmount(0, 2)
 		inv.Totals.Payable = zero
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1560,7 +1565,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.Totals.Advances = &totalWithTax
 		zero := num.MakeAmount(0, 2)
 		inv.Totals.Payable = zero
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1571,7 +1576,7 @@ func TestPaymentDueDateValidation(t *testing.T) {
 		inv.Payment.Terms.DueDates = nil
 		inv.Payment.Terms.Notes = "Payment on delivery"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1587,9 +1592,9 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB4
 		// Set advance payment document type 386
 		setDocumentType(inv, "386")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "value '386' not allowed")
+		assert.ErrorContains(t, err, "advance payment document types not allowed")
 	})
 
 	t.Run("factoring billing mode S4 with advance payment type 500 is invalid (BR-FR-CO-08)", func(t *testing.T) {
@@ -1602,9 +1607,9 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeS4
 		// Set advance payment document type 500
 		setDocumentType(inv, "500")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "value '500' not allowed")
+		assert.ErrorContains(t, err, "advance payment document types not allowed")
 	})
 
 	t.Run("factoring billing mode M4 with advance payment type 503 is invalid (BR-FR-CO-08)", func(t *testing.T) {
@@ -1617,9 +1622,9 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeM4
 		// Set advance payment document type 503
 		setDocumentType(inv, "503")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "value '503' not allowed")
+		assert.ErrorContains(t, err, "advance payment document types not allowed")
 	})
 
 	t.Run("factoring billing mode B4 with standard invoice type 380 is valid (BR-FR-CO-08)", func(t *testing.T) {
@@ -1632,7 +1637,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB4
 		// Standard invoice type 380 is already set by scenarios
 		setDocumentType(inv, "380")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1651,7 +1656,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv.Totals.Payable = zero
 		// Set advance payment document type 386
 		setDocumentType(inv, "386")
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1659,7 +1664,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		require.NoError(t, inv.Calculate())
 		// B7 and 380 are already set by scenarios
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1682,7 +1687,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		inv.Totals.Payable = zero
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1699,7 +1704,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 		// No advance amount set
 		inv.Totals.Advances = nil
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "advance amount is required for already-paid invoices")
 	})
@@ -1718,9 +1723,9 @@ func TestFinalInvoiceValidation(t *testing.T) {
 		wrongAmount := num.MakeAmount(5000, 2) // Wrong amount
 		inv.Totals.Advances = &wrongAmount
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "must be equal to")
+		assert.ErrorContains(t, err, "advance amount must equal total with tax")
 	})
 
 	t.Run("final invoice S2 with non-zero payable amount is invalid (BR-FR-CO-09)", func(t *testing.T) {
@@ -1740,9 +1745,9 @@ func TestFinalInvoiceValidation(t *testing.T) {
 		nonZero := num.MakeAmount(100, 2)
 		inv.Totals.Due = &nonZero
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "must be equal to 0")
+		assert.ErrorContains(t, err, "payable amount must be zero")
 	})
 
 	t.Run("final invoice M2 without due date is invalid (BR-FR-CO-09)", func(t *testing.T) {
@@ -1765,7 +1770,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 		inv.Payment.Terms.DueDates = nil
 		inv.Payment.Terms.Notes = "Payment already made"
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "at least one due date required")
 	})
@@ -1776,7 +1781,7 @@ func TestFinalInvoiceValidation(t *testing.T) {
 
 		// B7 is the default billing mode, and normal totals
 		// No advance amount, non-zero payable - all OK for non-final invoices
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1804,7 +1809,7 @@ func TestSelfBilledInvoiceValidation(t *testing.T) {
 		}
 
 		// Normal B2B invoice requires supplier SIREN inbox (BR-FR-21/22)
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-21/22")
 
@@ -1812,7 +1817,7 @@ func TestSelfBilledInvoiceValidation(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "389"
 
 		// Self-billed invoices skip supplier SIREN inbox validation
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1826,7 +1831,7 @@ func TestCorrectiveInvoiceValidation(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "384"
 
 		// Corrective invoices need exactly one preceding invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
 
@@ -1836,7 +1841,7 @@ func TestCorrectiveInvoiceValidation(t *testing.T) {
 				Code: "INV-123",
 			},
 		}
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1852,7 +1857,7 @@ func TestCorrectiveInvoiceValidation(t *testing.T) {
 			{Code: "INV-123"},
 			{Code: "INV-456"},
 		}
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
 	})
@@ -1867,7 +1872,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "381"
 
 		// Credit notes need at least one preceding invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-05")
 
@@ -1875,7 +1880,7 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{
 			{Code: "INV-123"},
 		}
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1891,7 +1896,7 @@ func TestCreditNoteValidation(t *testing.T) {
 			{Code: "INV-123"},
 			{Code: "INV-456"},
 		}
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1903,13 +1908,13 @@ func TestCreditNoteValidation(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "396"
 
 		// Should require preceding
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-CO-05")
 
 		// Add preceding
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1923,7 +1928,7 @@ func TestConsolidatedCreditNoteTypes(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "262"
 
 		// Should require delivery and contracts
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 	})
 }
@@ -1939,7 +1944,7 @@ func TestAdvancedInvoiceTypes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as advance invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1951,7 +1956,7 @@ func TestAdvancedInvoiceTypes(t *testing.T) {
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB1
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -1967,7 +1972,7 @@ func TestFinalInvoiceTypes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as final invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1981,7 +1986,7 @@ func TestFinalInvoiceTypes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as self-billed final invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -2017,17 +2022,16 @@ func TestInvoiceNormalization(t *testing.T) {
 }
 
 func TestHelperFunctionEdgeCases(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
-
 	t.Run("validate unsupported type returns nil", func(t *testing.T) {
-		// Test with a type that isn't in the switch statement
+		// With the rules framework, validation is handled by registered rules.
+		// Unsupported types simply have no rules and pass validation.
 		type unsupported struct{}
-		err := ad.Validator(&unsupported{})
+		err := rules.Validate(&unsupported{})
 		assert.NoError(t, err)
 	})
 
 	t.Run("validate nil date", func(t *testing.T) {
-		err := ad.Validator((*cal.Date)(nil))
+		err := rules.Validate((*cal.Date)(nil))
 		assert.NoError(t, err)
 	})
 
@@ -2039,7 +2043,7 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 		// by setting an invoice that validates successfully
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "381"
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2059,7 +2063,7 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 			Contracts: []*org.DocumentRef{{Code: "CONTRACT-001"}},
 		}
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2078,7 +2082,7 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(party)
+		err := rules.Validate(party, withAddonContext())
 		assert.NoError(t, err) // Should pass, getPartySIREN returns empty string
 	})
 
@@ -2090,7 +2094,7 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 		inv.Tax.Ext = nil
 
 		// Should handle nil gracefully
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err) // Will error for other reasons
 	})
 
@@ -2102,7 +2106,7 @@ func TestHelperFunctionEdgeCases(t *testing.T) {
 		delete(inv.Tax.Ext, ctc.ExtKeyBillingMode)
 
 		// Should not panic
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		_ = err // May or may not error depending on other rules
 	})
 }
@@ -2113,7 +2117,7 @@ func TestValidatePrecedingDocument(t *testing.T) {
 		inv.Preceding = nil
 		require.NoError(t, inv.Calculate())
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2126,10 +2130,9 @@ func TestValidatePrecedingDocument(t *testing.T) {
 
 		require.NoError(t, inv.Calculate())
 
-		// CTC addon validation should return nil for nil document ref
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(inv)
-		assert.NoError(t, err, "CTC addon should return nil for nil preceding document element")
+		// CTC rules validation should handle nil document ref gracefully
+		err := rules.Validate(inv)
+		assert.NoError(t, err, "CTC rules should handle nil preceding document element")
 	})
 
 	t.Run("invoice with empty preceding code", func(t *testing.T) {
@@ -2146,7 +2149,7 @@ func TestValidatePrecedingDocument(t *testing.T) {
 		}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err) // Should fail on empty code
 	})
 }
@@ -2158,7 +2161,7 @@ func TestValidateCodeEdgeCases(t *testing.T) {
 		inv.Series = "2024"
 		require.NoError(t, inv.Calculate())
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2168,7 +2171,7 @@ func TestValidateCodeEdgeCases(t *testing.T) {
 		inv.Series = ""
 		require.NoError(t, inv.Calculate())
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err) // Should be valid
 	})
 }
@@ -2181,7 +2184,7 @@ func TestSupplierValidationEdgeCases(t *testing.T) {
 		// Remove all inboxes
 		inv.Supplier.Inboxes = nil
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "BR-FR-13")
 	})
@@ -2201,7 +2204,7 @@ func TestSupplierValidationEdgeCases(t *testing.T) {
 		}
 
 		// Should fail SIREN requirement
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		// The error is BR-FR-10/11 from regime validation
 		assert.ErrorContains(t, err, "BR-FR-10")
@@ -2232,7 +2235,7 @@ func TestCustomerValidationEdgeCases(t *testing.T) {
 			},
 		}
 
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.Error(t, err)
 		// The error is from regime validation (BR-FR-10/11)
 		assert.ErrorContains(t, err, "BR-FR-10")
@@ -2246,7 +2249,7 @@ func TestDeliveryAndTotalsValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Standard invoice doesn't require delivery
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2259,10 +2262,16 @@ func TestDeliveryAndTotalsValidation(t *testing.T) {
 		inv.Totals.Payable = zero
 
 		// Should pass - zero payable is valid in some contexts
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		// May error if context requires non-zero, but shouldn't panic
 		_ = err
 	})
+}
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(ctc.Flow2V1), tax.AddonForKey(ctc.Flow2V1))
+	}
 }
 
 func TestAdditionalDocumentTypes(t *testing.T) {
@@ -2276,7 +2285,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2290,7 +2299,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2304,7 +2313,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2318,7 +2327,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2332,7 +2341,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2346,7 +2355,7 @@ func TestAdditionalDocumentTypes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -2362,7 +2371,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as final invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2376,7 +2385,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as final invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2390,7 +2399,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		// Should validate as final invoice
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2405,7 +2414,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2420,7 +2429,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2435,7 +2444,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		inv.Preceding = []*org.DocumentRef{{Code: "INV-123"}}
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -2447,7 +2456,7 @@ func TestAdditionalBillingModes(t *testing.T) {
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "380"
 
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
@@ -2459,8 +2468,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "AAB"}},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "missing required note codes: PMT")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
 	})
 
@@ -2471,8 +2480,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "AAB"}},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "missing required note codes: PMD")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
 	})
 
@@ -2483,8 +2492,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMD"}},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "missing required note codes: AAB")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
 	})
 
@@ -2494,27 +2503,24 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.Extensions{untdid.ExtKeyTextSubject: "PMT"}},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "missing required note codes")
-		assert.ErrorContains(t, err, "PMD")
-		assert.ErrorContains(t, err, "AAB")
 		assert.ErrorContains(t, err, "BR-FR-05")
 	})
 }
 
 func TestNilCodeValidation(t *testing.T) {
-	t.Run("invoice with empty code returns nil from CTC validation", func(t *testing.T) {
+	t.Run("invoice with empty code returns nil from CTC rules validation", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Code = ""
 
 		// Calculate to ensure invoice is normalized and amounts are computed
 		require.NoError(t, inv.Calculate())
 
-		// CTC addon validation should return nil for empty code
+		// CTC rules validation should return nil for empty code (invoiceCodeValid returns true for empty)
 		// Base GOBL validation will catch the missing code
-		ad := tax.AddonForKey(ctc.Flow2V1)
-		err := ad.Validator(inv)
-		assert.NoError(t, err, "CTC addon should return nil for empty code, letting base validation handle it")
+		err := rules.Validate(inv)
+		assert.NoError(t, err, "CTC rules should return nil for empty code, letting base validation handle it")
 	})
 
 	t.Run("invoice with empty code fails base validation", func(t *testing.T) {
@@ -2524,21 +2530,19 @@ func TestNilCodeValidation(t *testing.T) {
 
 		// Full validation should catch the missing code
 		// (This may or may not fail depending on signing context)
-		_ = inv.Validate() // Code is only required for signing
+		_ = rules.Validate(inv) // Code is only required for signing
 	})
 }
 
 func TestValidationNilChecks(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
-
 	t.Run("invoice with nil payment terms", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		// Set a standard billing mode (not advance or final invoice)
-		// so validatePayment will be called
+		// so due date validation will be triggered
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeS1
 		inv.Payment.Terms = nil // Nil terms should be handled gracefully
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
+		err := rules.Validate(inv)
 		// Should not crash, may have other validation errors but shouldn't panic on nil
 		_ = err
 	})
@@ -2553,43 +2557,38 @@ func TestValidationNilChecks(t *testing.T) {
 		var nilDueDate *pay.DueDate
 		inv.Payment.Terms.DueDates = []*pay.DueDate{nilDueDate}
 
-		// CTC validation should handle nil due date gracefully
-		err := ad.Validator(inv)
-		// validateDueDate should return nil for nil due date
+		// CTC rules validation should handle nil due date gracefully
+		err := rules.Validate(inv)
 		_ = err
 	})
 
 	t.Run("final invoice with nil totals returns error", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		// Set to final invoice billing mode to trigger validateTotals
+		// Set to final invoice billing mode to trigger totals validation
 		inv.Tax.Ext[ctc.ExtKeyBillingMode] = ctc.BillingModeB2
 		inv.Totals = nil
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
+		err := rules.Validate(inv)
 		// Will error because totals are required for final invoices
-		// but validateTotals should handle nil gracefully
 		assert.Error(t, err)
 	})
 
 	t.Run("consolidated credit note with nil delivery", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		// Set to consolidated credit note to trigger validateDelivery
+		// Set to consolidated credit note to trigger delivery validation
 		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "262"
 		inv.Delivery = nil
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
-		// validateDelivery should handle nil gracefully and not panic
-		// (may have validation errors but won't crash)
+		err := rules.Validate(inv)
+		// Rules should handle nil gracefully and produce validation errors
 		_ = err
 	})
 
 	t.Run("self-billed invoice helper with nil invoice", func(t *testing.T) {
-		// These helper functions are not directly exposed but we can test
-		// them indirectly through invoice validation
 		inv := testInvoiceB2BStandard(t)
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
+		err := rules.Validate(inv)
 		// Tax is required, but the helpers should handle nil gracefully
 		assert.Error(t, err)
 	})

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,6 +64,6 @@ func TestPersonValidation(t *testing.T) {
 				},
 			},
 		}
-		assert.NoError(t, p.Validate())
+		assert.NoError(t, rules.Validate(p))
 	})
 }

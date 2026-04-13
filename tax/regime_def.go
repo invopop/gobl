@@ -1,9 +1,7 @@
 package tax
 
 import (
-	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -11,13 +9,8 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/num"
-	"github.com/invopop/validation"
-)
-
-const (
-	// KeyRegime is used in the context to store the tax regime during validation.
-	keyRegime contextKey = "regime"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // RegimeDef defines the holding structure for the definitions of taxes inside a country
@@ -96,23 +89,9 @@ type RegimeDef struct {
 	// List of tax categories.
 	Categories []*CategoryDef `json:"categories" jsonschema:"title=Categories"`
 
-	// Validator is a method to use to validate a document in a given region.
-	Validator Validator `json:"-"`
-
 	// Normalizer is used to perform regime specific normalizations on data,
 	// that might need to take place such as with tax codes and removing white-space.
 	Normalizer Normalizer `json:"-"`
-}
-
-// WithContext adds this regime to the given context, alongside
-// its validator and tags in the contexts.
-func (r *RegimeDef) WithContext(ctx context.Context) context.Context {
-	if r == nil {
-		return ctx
-	}
-	ctx = context.WithValue(ctx, keyRegime, r)
-	ctx = ContextWithValidator(ctx, r.Validator)
-	return ctx
 }
 
 // Normalizers returns the normalizers for this regime, if any,
@@ -122,15 +101,6 @@ func (r *RegimeDef) Normalizers() Normalizers {
 		return nil
 	}
 	return Normalizers{r.Normalizer}
-}
-
-// RegimeDefFromContext returns the regime from the given context, or nil.
-func RegimeDefFromContext(ctx context.Context) *RegimeDef {
-	r, ok := ctx.Value(keyRegime).(*RegimeDef)
-	if !ok {
-		return nil
-	}
-	return r
 }
 
 // Code provides a unique code for this tax regime based on the country.
@@ -163,18 +133,6 @@ func (r *RegimeDef) GetRoundingRule() cbc.Key {
 	return RoundingRulePrecise
 }
 
-// ValidateObject performs validation on the provided object in the context
-// of the regime.
-func (r *RegimeDef) ValidateObject(value interface{}) error {
-	if r == nil {
-		return nil
-	}
-	if r.Validator != nil {
-		return r.Validator(value)
-	}
-	return nil
-}
-
 // NormalizeObject performs any regime specific normalizations on the provided
 // object.
 func (r *RegimeDef) NormalizeObject(obj interface{}) {
@@ -202,40 +160,29 @@ func (r *RegimeDef) ScenarioSet(schema string) *ScenarioSet {
 	return nil
 }
 
-// Validate enures the region definition is valid, including all
-// subsequent categories.
-func (r *RegimeDef) Validate() error {
-	return r.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext enures the region definition is valid, including all
-// subsequent categories, and passes through the context.
-func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
-	ctx = r.WithContext(ctx)
-	err := validation.ValidateStructWithContext(ctx, r,
-		validation.Field(&r.Country, validation.Required),
-		validation.Field(&r.AltCountryCodes),
-		validation.Field(&r.Name, validation.Required),
-		validation.Field(&r.Description),
-		validation.Field(&r.TimeZone, validation.Required, validation.By(validateTimeZone)),
-		validation.Field(&r.Country),
-		validation.Field(&r.Zone),
-		validation.Field(&r.Currency),
-		validation.Field(&r.TaxScheme),
-		validation.Field(&r.Tags),
-		validation.Field(&r.Identities),
-		validation.Field(&r.Extensions),
-		validation.Field(&r.PaymentMeansKeys),
-		validation.Field(&r.InboxKeys),
-		validation.Field(&r.Scenarios),
-		validation.Field(&r.Corrections),
-		validation.Field(&r.Sources),
-		validation.Field(&r.Categories, validation.Required),
+func regimeDefRules() *rules.Set {
+	return rules.For(new(RegimeDef),
+		rules.Field("country",
+			rules.Assert("01", "country code is required", is.Present),
+		),
+		rules.Field("name",
+			rules.Assert("02", "name is required", is.Present),
+		),
+		rules.Field("time_zone",
+			rules.Assert("03", "time zone is required", is.Present),
+			rules.AssertIfPresent("04", "time zone must be valid",
+				is.FuncError("valid time zone", validateTimeZone),
+			),
+		),
+		rules.Field("categories",
+			rules.Assert("05", "at least one category is required",
+				is.Length(1, 0),
+			),
+		),
 	)
-	return err
 }
 
-func validateTimeZone(value interface{}) error {
+func validateTimeZone(value any) error {
 	s, ok := value.(string)
 	if !ok {
 		return errors.New("invalid time zone")
@@ -254,113 +201,6 @@ func (r *RegimeDef) TimeLocation() *time.Location {
 		return time.UTC
 	}
 	return loc
-}
-
-type inCategoryRule struct {
-	cat   cbc.Code
-	key   cbc.Key
-	rates []cbc.Key
-}
-
-func (r *inCategoryRule) Validate(value any) error {
-	rate, ok := value.(cbc.Key)
-	if !ok || rate == cbc.KeyEmpty {
-		return nil
-	}
-	for _, k := range r.rates {
-		if rate.Has(k) {
-			return nil
-		}
-	}
-	return fmt.Errorf("'%s' not defined in '%s' category for key '%s'", rate, r.cat, r.key)
-}
-
-// InCategoryRates is used to provide a validation rule that will
-// ensure a rate is represented inside a category and has a key.
-func (r *RegimeDef) InCategoryRates(cat cbc.Code, key cbc.Key) validation.Rule {
-	if r == nil {
-		return validation.Empty.Error("must be blank when regime is undefined")
-	}
-	cd := r.CategoryDef(cat)
-	if cd == nil {
-		return validation.Empty.Error(fmt.Sprintf("must be blank for undefined category '%s'", cat.String()))
-	}
-
-	rates := make([]cbc.Key, 0)
-	for _, rd := range cd.Rates {
-		if rd.HasKey(key) {
-			rates = append(rates, rd.Rate)
-		}
-	}
-	if len(rates) == 0 {
-		if key == cbc.KeyEmpty {
-			return validation.Empty.Error(fmt.Sprintf("must be blank for category '%s' with no key", cat))
-		}
-		return validation.Empty.Error(fmt.Sprintf("must be blank for category '%s' and key '%s'", cat, key))
-	}
-	return &inCategoryRule{cat: cat, key: key, rates: rates}
-}
-
-// InCategoryKeys returns a validation rule to ensure the key is inside the
-// list of known keys for the category.
-func (r *RegimeDef) InCategoryKeys(cat cbc.Code) validation.Rule {
-	cd := r.CategoryDef(cat)
-	if cd == nil {
-		return validation.Empty.Error("must be blank when category is undefined")
-	}
-
-	keys := make([]cbc.Key, len(cd.Keys))
-	for i, k := range cd.Keys {
-		keys[i] = k.Key
-	}
-
-	return validation.In(keys...)
-}
-
-// RequiresPercent returns a validation rule that will ensure the percent
-// is either nil or a valid percent for the given category and key.
-func (r *RegimeDef) RequiresPercent(cat cbc.Code, key cbc.Key) validation.Rule {
-	return validation.By(func(value any) error {
-		p, ok := value.(*num.Percentage)
-		if !ok {
-			return nil
-		}
-
-		cd := r.CategoryDef(cat)
-		if cd == nil {
-			return nil // nothing to lookup
-		}
-		if key == cbc.KeyEmpty && p == nil {
-			return validation.ErrRequired
-		}
-		kd := cd.KeyDef(key)
-		if kd == nil {
-			return nil // no key definition, no percent required
-		}
-		if kd.NoPercent {
-			if p != nil {
-				return fmt.Errorf("must be nil for '%s' in '%s'", key.String(), cat.String())
-			}
-		} else {
-			if p == nil {
-				return fmt.Errorf("required for '%s' in '%s'", key.String(), cat.String())
-			}
-		}
-		return nil
-	})
-}
-
-// InCategories returns a validation rule to ensure the category code
-// is inside the list of known codes.
-func (r *RegimeDef) InCategories() validation.Rule {
-	if r == nil {
-		return validation.Skip
-	}
-	cats := make([]cbc.Code, len(r.Categories))
-	for i, c := range r.Categories {
-		cats[i] = c.Code
-	}
-	return validation.In(cats...)
 }
 
 // CategoryDef provides the requested category definition by its code.

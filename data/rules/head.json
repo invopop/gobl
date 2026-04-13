@@ -1,0 +1,136 @@
+{
+  "id": "GOBL-HEAD",
+  "name": "head",
+  "subsets": [
+    {
+      "id": "GOBL-HEAD-HEADER",
+      "name": "head.Header",
+      "subsets": [
+        {
+          "field": "uuid",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-HEADER-01",
+              "desc": "header must contain a UUID v1 or v7 with timestamp",
+              "tests": "present, has timestamp"
+            }
+          ]
+        },
+        {
+          "field": "dig",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-HEADER-02",
+              "desc": "header must have a digest",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "stamps",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-HEADER-03",
+              "desc": "duplicate stamp providers are not allowed",
+              "tests": "no duplicate stamps"
+            }
+          ]
+        },
+        {
+          "field": "links",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-HEADER-04",
+              "desc": "duplicate link keys are not allowed",
+              "tests": "no duplicate links"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-HEAD-STAMP",
+      "name": "head.Stamp",
+      "subsets": [
+        {
+          "field": "prv",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-STAMP-01",
+              "desc": "stamp provider is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "val",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-STAMP-02",
+              "desc": "stamp value is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-HEAD-LINK",
+      "name": "head.Link",
+      "assert": [
+        {
+          "id": "GOBL-HEAD-LINK-06",
+          "desc": "link digest must be nil when MIME type is not provided",
+          "tests": "no digest without MIME"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-LINK-01",
+              "desc": "link key is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "category",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-LINK-02",
+              "desc": "link category is not valid",
+              "tests": "valid or empty"
+            }
+          ]
+        },
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-LINK-03",
+              "desc": "link URL is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-HEAD-LINK-04",
+              "desc": "link URL must be a valid URL",
+              "tests": "url"
+            }
+          ]
+        },
+        {
+          "field": "mime",
+          "assert": [
+            {
+              "id": "GOBL-HEAD-LINK-05",
+              "desc": "link MIME type is not valid",
+              "tests": "valid or empty MIME"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

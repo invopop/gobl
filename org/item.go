@@ -1,18 +1,15 @@
 package org
 
 import (
-	"context"
-	"errors"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-
-	"github.com/invopop/validation"
 )
 
 const (
@@ -62,11 +59,6 @@ type Item struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate checks that the Item looks okay.
-func (i *Item) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
 // Normalize performs any required normalizations on the Item.
 func (i *Item) Normalize(normalizers tax.Normalizers) {
 	if i == nil {
@@ -82,47 +74,15 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(i)
 }
 
-// ValidateWithContext checks that the Item looks okay inside the provided context.
-func (i *Item) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.UUID),
-		validation.Field(&i.Ref),
-		validation.Field(&i.Key),
-		validation.Field(&i.Name, validation.Required),
-		validation.Field(&i.Description),
-		validation.Field(&i.Images),
-		validation.Field(&i.Identities),
-		validation.Field(&i.Currency),
-		validation.Field(&i.Price,
-			num.ZeroOrPositive,
+func itemRules() *rules.Set {
+	return rules.For(new(Item),
+		rules.Field("name",
+			rules.Assert("01", "item name is required", is.Present),
 		),
-		validation.Field(&i.AltPrices),
-		validation.Field(&i.Unit),
-		validation.Field(&i.Origin),
-		validation.Field(&i.Ext),
-		validation.Field(&i.Meta),
+		rules.Field("price",
+			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
+		),
 	)
-}
-
-type itemPriceValidator struct{}
-
-// ItemPriceRequired ensures that the item has a price.
-func ItemPriceRequired() validation.Rule {
-	return &itemPriceValidator{}
-}
-
-// Validate ensures that the item has a price.
-func (v *itemPriceValidator) Validate(value any) error {
-	i, ok := value.(*Item)
-	if i == nil || !ok {
-		return nil
-	}
-	if i.Price == nil {
-		return validation.Errors{
-			"price": errors.New("cannot be blank"),
-		}
-	}
-	return nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.

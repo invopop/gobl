@@ -1,21 +1,20 @@
 package bill
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Delivery document types.
@@ -173,95 +172,28 @@ type Tracking struct {
 	Website *org.Website `json:"website,omitempty" jsonschema:"title=Website"`
 }
 
-// Validate the delivery document
-func (dlv *Delivery) Validate() error {
-	return dlv.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the delivery is ready to be signed
+// or not.
+func (dlv *Delivery) CanSign() bool {
+	return !dlv.Code.IsEmpty()
 }
 
-// ValidateWithContext ensures that the fields contained in the Delivery look correct.
-func (dlv *Delivery) ValidateWithContext(ctx context.Context) error {
-	ctx = dlv.validationContext(ctx)
-	r := dlv.RegimeDef()
-	return tax.ValidateStructWithContext(ctx, dlv,
-		validation.Field(&dlv.Regime),
-		validation.Field(&dlv.Addons),
-		validation.Field(&dlv.Tags),
-		validation.Field(&dlv.UUID),
-		validation.Field(&dlv.Type,
-			validation.Required,
-			isValidDeliveryType,
+func deliveryRules() *rules.Set {
+	return rules.For(new(Delivery),
+		rules.Field("type",
+			rules.Assert("01", "type is required", is.Present),
+			rules.Assert("02", "type is not valid", isValidDeliveryType),
 		),
-		validation.Field(&dlv.Series),
-		validation.Field(&dlv.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign delivery"),
-			),
+		rules.Field("issue_date",
+			rules.Assert("03", "issue date is required", is.Present),
 		),
-		validation.Field(&dlv.IssueDate,
-			validation.Required,
-			cal.DateNotZero(),
+		rules.Field("supplier",
+			rules.Assert("04", "supplier is required", is.Present),
 		),
-		validation.Field(&dlv.ValueDate),
-		validation.Field(&dlv.Currency,
-			currency.CanConvertInto(dlv.ExchangeRates, r.GetCurrency()),
-		),
-		validation.Field(&dlv.ExchangeRates,
-			validation.Each(validation.NotNil),
-		),
-
-		validation.Field(&dlv.Ordering),
-		validation.Field(&dlv.Preceding,
-			validation.Each(validation.NotNil),
-		),
-
-		validation.Field(&dlv.Tracking),
-		validation.Field(&dlv.DespatchDate),
-		validation.Field(&dlv.ReceiveDate),
-
-		validation.Field(&dlv.Tax),
-
-		validation.Field(&dlv.Supplier, validation.Required),
-		validation.Field(&dlv.Customer),
-		validation.Field(&dlv.Despatcher),
-		validation.Field(&dlv.Receiver),
-		validation.Field(&dlv.Courier),
-
-		validation.Field(&dlv.Lines,
-			validation.Required,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Discounts,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Charges,
-			validation.Each(validation.NotNil),
-		),
-
-		validation.Field(&dlv.Totals),
-		validation.Field(&dlv.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Meta),
-		validation.Field(&dlv.Attachments,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Assert("05", "lines are required", is.Present),
 		),
 	)
-}
-
-// validationContext builds a context with all the validators that the delivery might
-// need for execution.
-func (dlv *Delivery) validationContext(ctx context.Context) context.Context {
-	if r := dlv.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	for _, a := range dlv.AddonDefs() {
-		ctx = a.WithContext(ctx)
-	}
-	return ctx
 }
 
 // Calculate performs all the normalizations and calculations required for the delivery

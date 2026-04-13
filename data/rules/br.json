@@ -1,0 +1,108 @@
+{
+  "id": "GOBL-BR",
+  "name": "br",
+  "subsets": [
+    {
+      "id": "GOBL-BR-ORG-PARTY",
+      "name": "org.Party",
+      "subsets": [
+        {
+          "guard": "context: regime in [BR]",
+          "subsets": [
+            {
+              "guard": "is Brazilian party",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-ORG-PARTY-01",
+                          "desc": "Brazilian party ext must define a valid 'br-ibge-municipality' code",
+                          "tests": "ext 'br-ibge-municipality' matches pattern '^\\d{7}$'"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "addresses",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "guard": "string(Country) in ['','BR']",
+                          "subsets": [
+                            {
+                              "field": "state",
+                              "subsets": [
+                                {
+                                  "guard": "present",
+                                  "assert": [
+                                    {
+                                      "id": "GOBL-BR-ORG-PARTY-02",
+                                      "desc": "Brazilian state must be one of the valid states",
+                                      "tests": "code in [AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO]"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "field": "code",
+                              "subsets": [
+                                {
+                                  "guard": "present",
+                                  "assert": [
+                                    {
+                                      "id": "GOBL-BR-ORG-PARTY-03",
+                                      "desc": "Brazilian postal code must match the valid format",
+                                      "tests": "matches ^\\d{5}-?\\d{3}$"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [BR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-TAX-IDENTITY-01",
+                      "desc": "invalid Brazilian tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

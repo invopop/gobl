@@ -1,11 +1,11 @@
 package tax_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -33,8 +33,8 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	ts.Addons = tax.WithAddons("mx-cfdi-v4", "invalid-addon")
 
-	err := ts.Addons.Validate()
-	assert.ErrorContains(t, err, "1: addon 'invalid-addon' not registered")
+	err := rules.Validate(ts)
+	assert.ErrorContains(t, err, "[GOBL-TAX-ADDONS-01] ($.$addons[1]) add-on must be registered")
 
 	t.Run("test addon normalization", func(t *testing.T) {
 		ts.Addons.List = tax.AddonList{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
@@ -52,31 +52,13 @@ func TestAddonForKey(t *testing.T) {
 	t.Run("found", func(t *testing.T) {
 		a := tax.AddonForKey("mx-cfdi-v4")
 		require.NotNil(t, a)
-		assert.NoError(t, a.Validate())
+		assert.NoError(t, rules.Validate(a))
 	})
 }
 
 func TestAllAddonDefs(t *testing.T) {
 	as := tax.AllAddonDefs()
 	assert.NotEmpty(t, as)
-}
-
-func TestAddonWithContext(t *testing.T) {
-	t.Run("with validator", func(t *testing.T) {
-		ad := tax.AddonForKey("mx-cfdi-v4")
-		ctx := ad.WithContext(context.Background())
-
-		vs := tax.Validators(ctx)
-		assert.Len(t, vs, 1)
-		// no reliable way to check the function is actually the same :-(
-	})
-	t.Run("without validator", func(t *testing.T) {
-		ad := new(tax.AddonDef)
-		ctx := ad.WithContext(context.Background())
-		vs := tax.Validators(ctx)
-		assert.Empty(t, vs)
-	})
-
 }
 
 func TestAddonsJSONSchemaEmbed(t *testing.T) {

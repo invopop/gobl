@@ -15,7 +15,6 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, l10n.IE, regime.Country.Code())
 	assert.Equal(t, "Ireland", regime.Name.String())
 	assert.NotNil(t, regime.Categories)
-	assert.NotNil(t, regime.Validator)
 	assert.NotNil(t, regime.Normalizer)
 	assert.Len(t, regime.Categories, 1)
 	assert.Equal(t, "VAT", regime.Categories[0].Code.String())

@@ -1,0 +1,77 @@
+{
+  "id": "GOBL-ES",
+  "name": "es",
+  "subsets": [
+    {
+      "id": "GOBL-ES-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [ES]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-ES-BILL-INVOICE-01",
+                  "desc": "invoice supplier in Spain is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-BILL-INVOICE-02",
+                      "desc": "invoice supplier tax ID in Spain is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-BILL-INVOICE-03",
+                          "desc": "invoice supplier tax ID code in Spain is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ES-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [ES]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-TAX-IDENTITY-01",
+                      "desc": "invalid Spanish VAT identity code format or checksum",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

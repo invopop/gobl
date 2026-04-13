@@ -35,6 +35,7 @@ func (o *rootOpts) cmd() *cobra.Command {
 	cmd.AddCommand(replicate(o).cmd())
 	cmd.AddCommand(versionCmd())
 	cmd.AddCommand(serve().cmd())
+	cmd.AddCommand(mcpServe().cmd())
 	cmd.AddCommand(keygen(o).cmd())
 	return cmd
 }

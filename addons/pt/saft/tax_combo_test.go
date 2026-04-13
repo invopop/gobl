@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -248,7 +249,6 @@ func TestTaxComboNormalize(t *testing.T) {
 }
 
 func TestTaxComboValidate(t *testing.T) {
-	ad := tax.AddonForKey(saft.V1)
 	t.Run("valid", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -258,7 +258,7 @@ func TestTaxComboValidate(t *testing.T) {
 				saft.ExtKeyTaxRate: "NOR",
 			},
 		}
-		err := ad.Validator(combo)
+		err := rules.Validate(combo, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -269,8 +269,8 @@ func TestTaxComboValidate(t *testing.T) {
 				pt.ExtKeyRegion: "PT",
 			},
 		}
-		err := ad.Validator(combo)
-		assert.ErrorContains(t, err, "ext: (pt-saft-tax-rate: required.)")
+		err := rules.Validate(combo, withAddonContext())
+		assert.ErrorContains(t, err, "region and tax rate are required")
 	})
 
 	t.Run("missing rate foreign", func(t *testing.T) {
@@ -281,8 +281,8 @@ func TestTaxComboValidate(t *testing.T) {
 				pt.ExtKeyRegion: "PT",
 			},
 		}
-		err := ad.Validator(combo)
-		assert.ErrorContains(t, err, "ext: (pt-saft-tax-rate: required.)")
+		err := rules.Validate(combo, withAddonContext())
+		assert.ErrorContains(t, err, "region and tax rate are required")
 	})
 
 	t.Run("valid exempt", func(t *testing.T) {
@@ -294,7 +294,7 @@ func TestTaxComboValidate(t *testing.T) {
 				saft.ExtKeyExemption: "M01",
 			},
 		}
-		err := ad.Validator(combo)
+		err := rules.Validate(combo, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -306,15 +306,15 @@ func TestTaxComboValidate(t *testing.T) {
 				saft.ExtKeyTaxRate: "ISE",
 			},
 		}
-		err := ad.Validator(combo)
-		assert.ErrorContains(t, err, "ext: (pt-saft-exemption: required.)")
+		err := rules.Validate(combo, withAddonContext())
+		assert.ErrorContains(t, err, "exemption is required when tax rate is exempt")
 	})
 
 	t.Run("other category", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryGST,
 		}
-		err := ad.Validator(combo)
+		err := rules.Validate(combo, withAddonContext())
 		assert.NoError(t, err)
 	})
 

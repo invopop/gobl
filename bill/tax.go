@@ -1,13 +1,12 @@
 package bill
 
 import (
-	"context"
 	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Tax defines a summary of the taxes which may be applied to an invoice.
@@ -105,19 +104,18 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(t)
 }
 
-// ValidateWithContext ensures the tax details look valid.
-func (t *Tax) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, t,
-		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Rounding,
-			cbc.InKeyDefs(tax.RoundingRules),
+func taxRules() *rules.Set {
+	return rules.For(new(Tax),
+		rules.Field("rounding",
+			rules.AssertIfPresent("01", "rounding model is not valid",
+				cbc.InKeyDefs(tax.RoundingRules),
+			),
 		),
-		validation.Field(&t.Point,
-			cbc.InKeyDefs(tax.PointDefs),
+		rules.Field("point",
+			rules.AssertIfPresent("02", "tax point is not valid",
+				cbc.InKeyDefs(tax.PointDefs),
+			),
 		),
-		validation.Field(&t.Ext),
-		validation.Field(&t.Notes),
-		validation.Field(&t.Meta),
 	)
 }
 

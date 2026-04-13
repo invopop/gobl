@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"io"
 	"os"
 	"strings"
@@ -14,7 +13,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
@@ -32,11 +32,8 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 		},
 		want: []*BulkResponse{
 			{
-				SeqID: 1,
-				Error: &Error{
-					Code:    422,
-					Message: "invalid character 'h' in literal true (expecting 'r')",
-				},
+				SeqID:   1,
+				Error:   gobl.ErrInput.WithReason("invalid character 'h' in literal true (expecting 'r')"),
 				IsFinal: true,
 			},
 		},
@@ -149,11 +146,8 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					IsFinal: false,
 				},
 				{
-					SeqID: 2,
-					Error: &Error{
-						Code:    422,
-						Message: "invalid character 'o' in literal null (expecting 'u')",
-					},
+					SeqID:   2,
+					Error:   gobl.ErrInput.WithReason("invalid character 'o' in literal null (expecting 'u')"),
 					IsFinal: true,
 				},
 			},
@@ -177,10 +171,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    422,
-						Message: "json: cannot unmarshal string into Go value of type cli.VerifyRequest",
-					},
+					Error:   gobl.ErrInternal.WithReason("json: cannot unmarshal string into Go value of type cli.VerifyRequest"),
 				},
 				{
 					SeqID:   2,
@@ -210,10 +201,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    400,
-						Message: `error converting YAML to JSON: yaml: invalid leading UTF-8 octet`,
-					},
+					Error:   gobl.ErrInput.WithReason("error converting YAML to JSON: yaml: invalid leading UTF-8 octet"),
 				},
 				{
 					SeqID:   2,
@@ -283,13 +271,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code: 422,
-						Key:  cbc.Key("validation"),
-						Fields: gobl.FieldErrors{
-							"content": errors.New("cannot be blank"),
-						},
-					},
+					Error:   gobl.ErrValidation.WithCause(rules.Validate(&note.Message{Title: "This is a title"})),
 				},
 				{
 					SeqID:   2,
@@ -353,10 +335,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: &Error{
-						Code:    400,
-						Message: `unrecognized doc type: "chicken"`,
-					},
+					Error: gobl.ErrInput.WithReason("unrecognized doc type: %q", "chicken"),
 				},
 				{
 					SeqID:   2,
@@ -384,10 +363,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: &Error{
-						Code:    422,
-						Message: "invalid payload: illegal base64 data at input byte 4",
-					},
+					Error: gobl.ErrInternal.WithReason("invalid payload: illegal base64 data at input byte 4"),
 				},
 				{
 					SeqID:   2,
@@ -414,10 +390,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    422,
-						Message: `invalid payload: json: cannot unmarshal string into Go value of type cli.BuildRequest`,
-					},
+					Error:   gobl.ErrInternal.WithReason("invalid payload: json: cannot unmarshal string into Go value of type cli.BuildRequest"),
 				},
 				{
 					SeqID:   2,
@@ -447,10 +420,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error: &Error{
-						Code:    400,
-						Message: "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}",
-					},
+					Error:   gobl.ErrInput.WithReason("yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}"),
 				},
 				{
 					SeqID:   2,
@@ -580,12 +550,9 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 			},
 			want: []*BulkResponse{
 				{
-					ReqID: "asdf",
-					SeqID: 1,
-					Error: &Error{
-						Code:    400,
-						Message: "unrecognized action: 'frobnicate'",
-					},
+					ReqID:   "asdf",
+					SeqID:   1,
+					Error:   gobl.ErrInput.WithReason("unrecognized action: 'frobnicate'"),
 					IsFinal: false,
 				},
 				{
@@ -648,7 +615,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 				// Following raw message is copied and pasted! (sorry!)
 				Payload: json.RawMessage(`{
 					"list": [
-						"https://gobl.org/draft-0/bill/charge", "https://gobl.org/draft-0/bill/correction-options", "https://gobl.org/draft-0/bill/delivery", "https://gobl.org/draft-0/bill/delivery-details", "https://gobl.org/draft-0/bill/discount", "https://gobl.org/draft-0/bill/invoice", "https://gobl.org/draft-0/bill/line", "https://gobl.org/draft-0/bill/order", "https://gobl.org/draft-0/bill/ordering", "https://gobl.org/draft-0/bill/payment", "https://gobl.org/draft-0/bill/payment-details", "https://gobl.org/draft-0/bill/tax", "https://gobl.org/draft-0/bill/totals", "https://gobl.org/draft-0/cal/date", "https://gobl.org/draft-0/cal/date-time", "https://gobl.org/draft-0/cal/period", "https://gobl.org/draft-0/cal/time", "https://gobl.org/draft-0/cbc/code", "https://gobl.org/draft-0/cbc/code-map", "https://gobl.org/draft-0/cbc/definition", "https://gobl.org/draft-0/cbc/key", "https://gobl.org/draft-0/cbc/meta", "https://gobl.org/draft-0/cbc/source", "https://gobl.org/draft-0/currency/amount", "https://gobl.org/draft-0/currency/code", "https://gobl.org/draft-0/currency/exchange-rate", "https://gobl.org/draft-0/dsig/digest", "https://gobl.org/draft-0/dsig/signature", "https://gobl.org/draft-0/envelope", "https://gobl.org/draft-0/head/header", "https://gobl.org/draft-0/head/link", "https://gobl.org/draft-0/head/stamp", "https://gobl.org/draft-0/i18n/string", "https://gobl.org/draft-0/l10n/code", "https://gobl.org/draft-0/l10n/iso-country-code", "https://gobl.org/draft-0/l10n/tax-country-code", "https://gobl.org/draft-0/note/message", "https://gobl.org/draft-0/num/amount", "https://gobl.org/draft-0/num/percentage", "https://gobl.org/draft-0/org/address", "https://gobl.org/draft-0/org/attachment", "https://gobl.org/draft-0/org/coordinates", "https://gobl.org/draft-0/org/document-ref", "https://gobl.org/draft-0/org/email", "https://gobl.org/draft-0/org/identity", "https://gobl.org/draft-0/org/image", "https://gobl.org/draft-0/org/inbox", "https://gobl.org/draft-0/org/item", "https://gobl.org/draft-0/org/name", "https://gobl.org/draft-0/org/note", "https://gobl.org/draft-0/org/party", "https://gobl.org/draft-0/org/person", "https://gobl.org/draft-0/org/registration", "https://gobl.org/draft-0/org/telephone", "https://gobl.org/draft-0/org/unit", "https://gobl.org/draft-0/org/website", "https://gobl.org/draft-0/pay/advance", "https://gobl.org/draft-0/pay/instructions", "https://gobl.org/draft-0/pay/terms", "https://gobl.org/draft-0/regimes/mx/food-vouchers", "https://gobl.org/draft-0/regimes/mx/fuel-account-balance", "https://gobl.org/draft-0/schema/object", "https://gobl.org/draft-0/tax/addon-def", "https://gobl.org/draft-0/tax/addon-list", "https://gobl.org/draft-0/tax/catalogue-def", "https://gobl.org/draft-0/tax/extensions", "https://gobl.org/draft-0/tax/identity", "https://gobl.org/draft-0/tax/note", "https://gobl.org/draft-0/tax/regime-code", "https://gobl.org/draft-0/tax/regime-def", "https://gobl.org/draft-0/tax/set", "https://gobl.org/draft-0/tax/total"
+						"https://gobl.org/draft-0/bill/charge", "https://gobl.org/draft-0/bill/correction-options", "https://gobl.org/draft-0/bill/delivery", "https://gobl.org/draft-0/bill/delivery-details", "https://gobl.org/draft-0/bill/discount", "https://gobl.org/draft-0/bill/invoice", "https://gobl.org/draft-0/bill/line", "https://gobl.org/draft-0/bill/order", "https://gobl.org/draft-0/bill/ordering", "https://gobl.org/draft-0/bill/payment", "https://gobl.org/draft-0/bill/payment-details", "https://gobl.org/draft-0/bill/tax", "https://gobl.org/draft-0/bill/totals", "https://gobl.org/draft-0/cal/date", "https://gobl.org/draft-0/cal/date-time", "https://gobl.org/draft-0/cal/period", "https://gobl.org/draft-0/cal/time", "https://gobl.org/draft-0/cbc/code", "https://gobl.org/draft-0/cbc/code-map", "https://gobl.org/draft-0/cbc/definition", "https://gobl.org/draft-0/cbc/key", "https://gobl.org/draft-0/cbc/meta", "https://gobl.org/draft-0/cbc/source", "https://gobl.org/draft-0/currency/amount", "https://gobl.org/draft-0/currency/code", "https://gobl.org/draft-0/currency/exchange-rate", "https://gobl.org/draft-0/dsig/digest", "https://gobl.org/draft-0/dsig/signature", "https://gobl.org/draft-0/envelope", "https://gobl.org/draft-0/head/header", "https://gobl.org/draft-0/head/link", "https://gobl.org/draft-0/head/stamp", "https://gobl.org/draft-0/i18n/string", "https://gobl.org/draft-0/l10n/code", "https://gobl.org/draft-0/l10n/iso-country-code", "https://gobl.org/draft-0/l10n/tax-country-code", "https://gobl.org/draft-0/note/message", "https://gobl.org/draft-0/num/amount", "https://gobl.org/draft-0/num/percentage", "https://gobl.org/draft-0/org/address", "https://gobl.org/draft-0/org/attachment", "https://gobl.org/draft-0/org/coordinates", "https://gobl.org/draft-0/org/document-ref", "https://gobl.org/draft-0/org/email", "https://gobl.org/draft-0/org/identity", "https://gobl.org/draft-0/org/image", "https://gobl.org/draft-0/org/inbox", "https://gobl.org/draft-0/org/item", "https://gobl.org/draft-0/org/name", "https://gobl.org/draft-0/org/note", "https://gobl.org/draft-0/org/party", "https://gobl.org/draft-0/org/person", "https://gobl.org/draft-0/org/registration", "https://gobl.org/draft-0/org/telephone", "https://gobl.org/draft-0/org/unit", "https://gobl.org/draft-0/org/website", "https://gobl.org/draft-0/pay/advance", "https://gobl.org/draft-0/pay/card", "https://gobl.org/draft-0/pay/credit-transfer", "https://gobl.org/draft-0/pay/direct-debit", "https://gobl.org/draft-0/pay/instructions", "https://gobl.org/draft-0/pay/online", "https://gobl.org/draft-0/pay/terms", "https://gobl.org/draft-0/regimes/mx/food-vouchers", "https://gobl.org/draft-0/regimes/mx/fuel-account-balance", "https://gobl.org/draft-0/schema/object", "https://gobl.org/draft-0/tax/addon-def", "https://gobl.org/draft-0/tax/addon-list", "https://gobl.org/draft-0/tax/catalogue-def", "https://gobl.org/draft-0/tax/correction-definition", "https://gobl.org/draft-0/tax/correction-set", "https://gobl.org/draft-0/tax/extensions", "https://gobl.org/draft-0/tax/identity", "https://gobl.org/draft-0/tax/note", "https://gobl.org/draft-0/tax/regime-code", "https://gobl.org/draft-0/tax/regime-def", "https://gobl.org/draft-0/tax/scenario", "https://gobl.org/draft-0/tax/scenario-set", "https://gobl.org/draft-0/tax/set", "https://gobl.org/draft-0/tax/tag-set", "https://gobl.org/draft-0/tax/total"
 					]
 				}`),
 				IsFinal: false,
@@ -668,9 +635,9 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					Payload: json.RawMessage(`{
 						"$schema": "https://json-schema.org/draft/2020-12/schema",
 						"$id": "https://gobl.org/draft-0/head/stamp",
-						"$ref": "#/$defs/Stamp",
+						"$ref": "#/$defs/head.Stamp",
 						"$defs": {
-						  "Stamp": {
+						  "head.Stamp": {
 							"properties": {
 							  "prv": {
 								"$ref": "https://gobl.org/draft-0/cbc/key",

@@ -1,0 +1,69 @@
+{
+  "id": "GOBL",
+  "name": "gobl",
+  "subsets": [
+    {
+      "id": "GOBL-ENVELOPE",
+      "name": "gobl.Envelope",
+      "assert": [
+        {
+          "id": "GOBL-ENVELOPE-11",
+          "desc": "envelope digest does not match document contents",
+          "tests": "valid digest"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "$schema",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-01",
+              "desc": "envelope schema is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "head",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-02",
+              "desc": "envelope header is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "doc",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-03",
+              "desc": "envelope doc is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "guard": "not signed",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-12",
+              "desc": "envelope header cannot have stamps when not signed",
+              "tests": "no stamps"
+            }
+          ]
+        },
+        {
+          "guard": "has signatures",
+          "assert": [
+            {
+              "id": "GOBL-ENVELOPE-13",
+              "desc": "envelope doc is not ready to be signed, check code or other key fields",
+              "tests": "ready to sign"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

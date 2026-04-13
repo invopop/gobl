@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/l10n/iso-country-code",
-  "$ref": "#/$defs/ISOCountryCode",
+  "$ref": "#/$defs/l10n.ISOCountryCode",
   "$defs": {
-    "ISOCountryCode": {
+    "l10n.ISOCountryCode": {
       "oneOf": [
         {
           "const": "AF",

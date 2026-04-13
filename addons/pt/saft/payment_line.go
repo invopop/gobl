@@ -5,106 +5,57 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-func validatePaymentLine(pl *bill.PaymentLine) error {
-	if pl == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(pl,
-		validation.Field(&pl.Document,
-			validation.By(validatePaymentLineDocument),
-			validation.Required,
-			validation.Skip,
+func billPaymentLineRules() *rules.Set {
+	return rules.For(new(bill.PaymentLine),
+		rules.Field("document",
+			rules.Assert("01", "cannot be blank", is.Present),
+			rules.Field("issue_date",
+				rules.Assert("02", "cannot be blank", is.Present),
+			),
 		),
-		validation.Field(&pl.Tax,
-			validation.By(validatePaymentLineTax),
-			validation.Required,
-			validation.Skip,
+		rules.Field("tax",
+			rules.Assert("03", "cannot be blank", is.Present),
+			rules.Assert("04", "missing category VAT",
+				is.FuncError("has VAT category", paymentLineTaxHasVAT),
+			),
+			rules.Field("categories",
+				rules.Each(
+					rules.Field("rates",
+						rules.Assert("05", "only one rate allowed per line", is.Length(0, 1)),
+					),
+				),
+			),
 		),
-		validation.Field(&pl.Notes,
-			validation.By(validatePaymentLineNotes(pl)),
-			validation.Skip,
-		),
-	)
-}
-
-func validatePaymentLineDocument(val any) error {
-	ld, _ := val.(*org.DocumentRef)
-	if ld == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(ld,
-		validation.Field(&ld.IssueDate,
-			validation.Required,
-			validation.Skip,
+		rules.Assert("06", "exemption notes invalid",
+			is.FuncError("exemption notes", paymentLineExemptionNotesValid),
 		),
 	)
 }
 
-func validatePaymentLineTax(val any) error {
-	lt, _ := val.(*tax.Total)
-	if lt == nil {
+// paymentLineTaxHasVAT checks that the payment line's tax total has a VAT category.
+func paymentLineTaxHasVAT(val any) error {
+	lt, ok := val.(*tax.Total)
+	if !ok || lt == nil {
 		return nil
 	}
-
-	c := lt.Category(tax.CategoryVAT)
-	if c == nil {
+	if lt.Category(tax.CategoryVAT) == nil {
 		return errors.New("missing category VAT")
 	}
-
-	return validation.ValidateStruct(lt,
-		validation.Field(&lt.Categories,
-			validation.Each(
-				validation.By(validateLineTaxCategory),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
+	return nil
 }
 
-func validateLineTaxCategory(val any) error {
-	tc, _ := val.(*tax.CategoryTotal)
-	if tc == nil {
+// paymentLineExemptionNotesValid validates exemption notes for a payment line.
+func paymentLineExemptionNotesValid(val any) error {
+	pl, ok := val.(*bill.PaymentLine)
+	if !ok || pl == nil {
 		return nil
 	}
-
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Rates,
-			// According to point 4.4.4.14.6. of Portaria nª 302/2016,
-			// multiple tax rates (even for the same document) must be
-			// reported broken down in different payment lines.
-			validation.Length(0, 1).Error("only one rate allowed per line"),
-			validation.Each(
-				validation.By(validateLineTaxRate),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateLineTaxRate(val any) error {
-	r, _ := val.(*tax.RateTotal)
-	if r == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(r, validateVATExt(&r.Ext))
-}
-
-func validatePaymentLineNotes(pl *bill.PaymentLine) validation.RuleFunc {
-	return func(val any) error {
-		notes, _ := val.([]*org.Note) //nolint:errcheck
-		ec := paymentLineTaxExemptionCode(pl)
-		return validateExemptionNotes(notes, ec)
-	}
+	return validateExemptionNotes(pl.Notes, paymentLineTaxExemptionCode(pl))
 }
 
 func paymentLineTaxExemptionCode(pl *bill.PaymentLine) cbc.Code {

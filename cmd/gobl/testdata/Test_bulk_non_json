@@ -1,7 +1,7 @@
 {
 	"seq_id": 1,
 	"error": {
-		"code": 422,
+		"key": "input",
 		"message": "invalid character 'o' in literal null (expecting 'u')"
 	},
 	"is_final": true

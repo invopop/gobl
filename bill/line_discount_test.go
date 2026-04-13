@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -30,11 +31,11 @@ func TestLineDiscountValidation(t *testing.T) {
 		Code:   "BAR",
 		Amount: num.MakeAmount(100, 2),
 	}
-	err := l.Validate()
+	err := rules.Validate(l)
 	assert.NoError(t, err)
 
 	l.Amount = num.MakeAmount(0, 2)
-	err = l.Validate()
+	err = rules.Validate(l)
 	assert.NoError(t, err)
 }
 

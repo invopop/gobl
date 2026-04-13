@@ -4,7 +4,8 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Definition defines properties of a key, code, or other value that has a specific meaning or
@@ -39,28 +40,20 @@ type Definition struct {
 	Map CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
 }
 
-// Validate ensures the definition looks correct.
-func (d *Definition) Validate() error {
-	err := validation.ValidateStruct(d,
-		validation.Field(&d.Key,
-			validation.When(
-				d.Code == "",
-				validation.Required.Error("or code are required"),
+func definitionRules() *rules.Set {
+	return rules.For(new(Definition),
+		rules.Field("name",
+			rules.Assert("01", "name is required", is.Present),
+		),
+		rules.Assert("02", "definition must have either a key or a code, and not both",
+			is.Expr("string(Code) != '' || string(Key) != ''"),
+		),
+		rules.Field("pattern",
+			rules.AssertIfPresent("03", "pattern must be a valid regular expression",
+				is.FuncError("is a regexp", validRegexpPattern),
 			),
 		),
-		validation.Field(&d.Code,
-			validation.When(
-				d.Key != "",
-				validation.Empty.Error("must be empty when key is set"),
-			),
-		),
-		validation.Field(&d.Name, validation.Required),
-		validation.Field(&d.Desc),
-		validation.Field(&d.Sources),
-		validation.Field(&d.Values),
-		validation.Field(&d.Pattern, validation.By(validRegexpPattern)),
 	)
-	return err
 }
 
 // HasCode loops through values and determines if there
@@ -141,22 +134,22 @@ func GetCodeDefinition(code Code, list []*Definition) *Definition {
 
 // InKeyDefs prepares a validation to provide a rule that will determine
 // if the keys are in the provided set.
-func InKeyDefs(list []*Definition) validation.Rule {
+func InKeyDefs(list []*Definition) rules.Test {
 	defs := make([]interface{}, len(list))
 	for i, item := range list {
 		defs[i] = item.Key
 	}
-	return validation.In(defs...)
+	return is.In(defs...)
 }
 
 // InCodeDefs prepares a validation to provide a rule that will determine
 // if the codes are in the provided set.
-func InCodeDefs(list []*Definition) validation.Rule {
+func InCodeDefs(list []*Definition) rules.Test {
 	defs := make([]interface{}, len(list))
 	for i, item := range list {
 		defs[i] = item.Code
 	}
-	return validation.In(defs...)
+	return is.In(defs...)
 }
 
 func validRegexpPattern(value any) error {

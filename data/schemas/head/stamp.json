@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/head/stamp",
-  "$ref": "#/$defs/Stamp",
+  "$ref": "#/$defs/head.Stamp",
   "$defs": {
-    "Stamp": {
+    "head.Stamp": {
       "properties": {
         "prv": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

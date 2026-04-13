@@ -8,20 +8,9 @@ import (
 
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
-
-func TestEmailValidation(t *testing.T) {
-	valid := org.Email{
-		Address: "foobar@invopop.example.com",
-	}
-	assert.NoError(t, valid.Validate())
-
-	invalid := org.Email{
-		Address: "foobar",
-	}
-	assert.EqualError(t, invalid.Validate(), "addr: must be a valid email address.")
-}
 
 func TestPartyNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
@@ -118,7 +107,7 @@ func TestPartyAddressNill(t *testing.T) {
 		Addresses: []*org.Address{nil},
 	}
 	party.Normalize(nil)
-	assert.NoError(t, party.Validate())
+	assert.NoError(t, rules.Validate(&party))
 }
 
 func TestPartyValidation(t *testing.T) {
@@ -134,7 +123,7 @@ func TestPartyValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, party.Calculate())
-		assert.NoError(t, party.Validate())
+		assert.NoError(t, rules.Validate(&party))
 		assert.Equal(t, "DE", party.GetRegime().String())
 	})
 	t.Run("with regime and bad code", func(t *testing.T) {
@@ -149,7 +138,7 @@ func TestPartyValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, party.Calculate())
-		err := party.Validate()
-		assert.ErrorContains(t, err, "identities: (0: (code: must be in a valid format.).).")
+		err := rules.Validate(&party)
+		assert.ErrorContains(t, err, "German tax number code must be in valid format")
 	})
 }

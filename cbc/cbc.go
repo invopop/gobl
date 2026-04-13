@@ -3,7 +3,10 @@
 // Name is take from the similar namespace used in UBL.
 package cbc
 
-import "github.com/invopop/gobl/schema"
+import (
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+)
 
 func init() {
 	schema.Register(schema.GOBL.Add("cbc"),
@@ -13,5 +16,14 @@ func init() {
 		Key(""),
 		Meta{},
 		Source{},
+	)
+	rules.Register(
+		"cbc",
+		rules.GOBL.Add("CBC"),
+		codeRules(),
+		codeMapRules(),
+		keyRules(),
+		definitionRules(),
+		sourceRules(),
 	)
 }

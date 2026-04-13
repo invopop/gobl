@@ -1,9 +1,12 @@
 package nfse
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -11,14 +14,22 @@ const (
 	ISSLiabilityDefault = "1" // Liable
 )
 
-func validateTaxCombo(tc *tax.Combo) error {
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			validation.When(tc.Category == br.TaxCategoryISS,
-				tax.ExtensionsRequire(ExtKeyISSLiability),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			is.Func("ISS category", taxComboIsISS),
+			rules.Field("ext",
+				rules.Assert("01", fmt.Sprintf("ISS tax combo requires '%s' extension", ExtKeyISSLiability),
+					tax.ExtensionsRequire(ExtKeyISSLiability),
+				),
 			),
 		),
 	)
+}
+
+func taxComboIsISS(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == br.TaxCategoryISS
 }
 
 func normalizeTaxCombo(tc *tax.Combo) {

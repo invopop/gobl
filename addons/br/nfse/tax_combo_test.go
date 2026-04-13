@@ -6,13 +6,12 @@ import (
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTaxComboValidation(t *testing.T) {
-	addon := tax.AddonForKey(nfse.V1)
-
 	tests := []struct {
 		name string
 		tc   *tax.Combo
@@ -38,12 +37,12 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: br.TaxCategoryISS,
 			},
-			err: "br-nfse-iss-liability: required",
+			err: "ISS tax combo requires 'br-nfse-iss-liability' extension",
 		},
 	}
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.tc)
+			err := rules.Validate(ts.tc, withAddonContext())
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -102,5 +101,4 @@ func TestTaxComboNormalization(t *testing.T) {
 			}
 		})
 	}
-
 }

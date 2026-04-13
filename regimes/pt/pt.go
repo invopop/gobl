@@ -6,13 +6,23 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("pt", rules.GOBL.Add("PT"),
+		billInvoiceRules(),
+		taxComboRules(),
+		taxIdentityRules(),
+	)
 }
+
+// CountryCode is the tax country code for Portugal.
+const CountryCode l10n.TaxCountryCode = "PT"
 
 // Custom keys used typically in meta information
 const (
@@ -35,7 +45,7 @@ const (
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "PT",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -65,7 +75,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Tags: []*tax.TagSet{
 			invoiceTags,
@@ -81,19 +90,6 @@ func New() *tax.RegimeDef {
 		},
 		Categories: taxCategories,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

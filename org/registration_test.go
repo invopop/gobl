@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,14 +52,12 @@ func TestRegistrationValidate_ValidData(t *testing.T) {
 	}
 	r.Normalize()
 
-	err := r.Validate()
-	assert.NoError(t, err)
+	assert.NoError(t, rules.Validate(r))
 }
 
 func TestRegistrationValidate_InvalidCurrency(t *testing.T) {
 	r := &org.Registration{
 		Currency: currency.Code("ZZZ"),
 	}
-	err := r.Validate()
-	assert.Error(t, err)
+	assert.Error(t, rules.Validate(r))
 }

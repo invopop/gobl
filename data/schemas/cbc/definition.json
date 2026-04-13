@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cbc/definition",
-  "$ref": "#/$defs/Definition",
+  "$ref": "#/$defs/cbc.Definition",
   "$defs": {
-    "Definition": {
+    "cbc.Definition": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

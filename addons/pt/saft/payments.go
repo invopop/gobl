@@ -1,12 +1,14 @@
 package saft
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Add-on custom tags
@@ -14,38 +16,94 @@ const (
 	TagVATCash cbc.Key = "vat-cash"
 )
 
-func validatePayment(pmt *bill.Payment) error {
-	dt := paymentDocType(pmt)
-
-	return validation.ValidateStruct(pmt,
-		validation.Field(&pmt.Series,
-			validateSeriesFormat(dt),
-			validation.Skip,
+func billPaymentRules() *rules.Set {
+	return rules.For(new(bill.Payment),
+		rules.Assert("01", "series format must be valid",
+			is.FuncError("series format", paymentSeriesFormatValid),
 		),
-		validation.Field(&pmt.Code,
-			validateCodeFormat(pmt.Series, dt),
-			validation.Skip,
+		rules.Assert("02", "code format must be valid",
+			is.FuncError("code format", paymentCodeFormatValid),
 		),
-		validation.Field(&pmt.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentType),
-			tax.ExtensionsRequire(ExtKeySource),
-			validation.When(
-				pmt.Ext[ExtKeySource] != SourceBillingProduced,
-				tax.ExtensionsRequire(ExtKeySourceRef),
+		rules.Field("ext",
+			rules.Assert("03",
+				fmt.Sprintf("'%s' extension is required", ExtKeyPaymentType),
+				tax.ExtensionsRequire(ExtKeyPaymentType),
 			),
-			validation.By(validateSourceRef(dt)),
-			validation.Skip,
+			rules.Assert("04",
+				fmt.Sprintf("'%s' extension is required", ExtKeySource),
+				tax.ExtensionsRequire(ExtKeySource),
+			),
 		),
-		validation.Field(&pmt.Supplier,
-			validation.By(validateSupplier),
-			validation.Skip,
+		rules.When(is.Func("source not produced", paymentSourceNotProduced),
+			rules.Field("ext",
+				rules.Assert("05",
+					fmt.Sprintf("'%s' extension is required when source is not produced", ExtKeySourceRef),
+					tax.ExtensionsRequire(ExtKeySourceRef),
+				),
+			),
 		),
-		validation.Field(&pmt.Customer,
-			validation.By(validateCustomer),
-			validation.Skip,
+		rules.Assert("06", "source ref format is invalid",
+			is.FuncError("source ref format", paymentSourceRefValid),
 		),
-		validation.Field(&pmt.Total, num.ZeroOrPositive),
+		rules.Field("supplier",
+			rules.Field("tax_id",
+				rules.Assert("07", "supplier tax ID is required", is.Present),
+				rules.Field("code",
+					rules.Assert("08", "supplier tax ID code is required", is.Present),
+				),
+			),
+		),
+		rules.Assert("09", "customer name is required when customer has tax ID code",
+			is.Func("customer name present", paymentCustomerNamePresent),
+		),
+		rules.Field("total",
+			rules.Assert("10", "must be no less than 0", num.ZeroOrPositive),
+		),
 	)
+}
+
+func paymentSeriesFormatValid(val any) error {
+	pmt, ok := val.(*bill.Payment)
+	if !ok || pmt == nil {
+		return nil
+	}
+	return validateSeriesFormat(paymentDocType(pmt)).Validate(pmt.Series)
+}
+
+func paymentCodeFormatValid(val any) error {
+	pmt, ok := val.(*bill.Payment)
+	if !ok || pmt == nil {
+		return nil
+	}
+	dt := paymentDocType(pmt)
+	return validateCodeFormat(pmt.Series, dt).Validate(pmt.Code)
+}
+
+func paymentSourceNotProduced(val any) bool {
+	pmt, ok := val.(*bill.Payment)
+	if !ok || pmt == nil {
+		return false
+	}
+	return pmt.Ext != nil && pmt.Ext[ExtKeySource] != "" && pmt.Ext[ExtKeySource] != SourceBillingProduced
+}
+
+func paymentSourceRefValid(val any) error {
+	pmt, ok := val.(*bill.Payment)
+	if !ok || pmt == nil {
+		return nil
+	}
+	return validateSourceRef(paymentDocType(pmt), pmt.Ext)
+}
+
+func paymentCustomerNamePresent(val any) bool {
+	pmt, ok := val.(*bill.Payment)
+	if !ok || pmt == nil || pmt.Customer == nil {
+		return true
+	}
+	if pmt.Customer.TaxID == nil || pmt.Customer.TaxID.Code == cbc.CodeEmpty {
+		return true
+	}
+	return pmt.Customer.Name != ""
 }
 
 func paymentDocType(pmt *bill.Payment) cbc.Code {
@@ -53,34 +111,6 @@ func paymentDocType(pmt *bill.Payment) cbc.Code {
 		return cbc.CodeEmpty
 	}
 	return pmt.Ext[ExtKeyPaymentType]
-}
-
-func validateSupplier(val any) error {
-	sup, _ := val.(*org.Party)
-	if sup == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(sup,
-		validation.Field(&sup.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-	)
-}
-
-func validateCustomer(val any) error {
-	cus, _ := val.(*org.Party)
-	if cus == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(cus,
-		validation.Field(&cus.Name,
-			validation.When(cus.TaxID != nil && cus.TaxID.Code != cbc.CodeEmpty, validation.Required),
-		),
-	)
 }
 
 func normalizePayment(pmt *bill.Payment) {

@@ -25,8 +25,17 @@ func main() {
 }
 
 func generate() error {
-	r := new(jsonschema.Reflector)
-	r.AllowAdditionalProperties = true
+	r := &jsonschema.Reflector{
+		Namer: func(t reflect.Type) string {
+			if t.Name() == "" {
+				return ""
+			}
+			parts := strings.Split(t.PkgPath(), "/")
+			pkg := parts[len(parts)-1]
+			return pkg + "." + t.Name() // e.g. "bill.Invoice"
+		},
+		AllowAdditionalProperties: true,
+	}
 
 	if err := r.AddGoComments("github.com/invopop/gobl", "./"); err != nil {
 		return fmt.Errorf("reading comments: %w", err)

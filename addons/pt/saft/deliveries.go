@@ -1,35 +1,67 @@
 package saft
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-// validateDelivery ensures that the delivery has the required movement type extension.
-func validateDelivery(dlv *bill.Delivery) error {
-	dt := movementDocType(dlv)
-
-	return validation.ValidateStruct(dlv,
-		validation.Field(&dlv.Supplier,
-			validation.By(validateSupplier),
-			validation.Skip,
+func billDeliveryRules() *rules.Set {
+	return rules.For(new(bill.Delivery),
+		rules.Assert("01",
+			fmt.Sprintf("tax requires '%s' extension", ExtKeyMovementType),
+			is.Func("has movement type", deliveryHasMovementType),
 		),
-		validation.Field(&dlv.Series,
-			validateSeriesFormat(dt),
-			validation.Skip,
+		rules.Assert("02", "series format must be valid",
+			is.FuncError("series format", deliverySeriesFormatValid),
 		),
-		validation.Field(&dlv.Code,
-			validateCodeFormat(dlv.Series, dt),
-			validation.Skip,
+		rules.Assert("03", "code format must be valid",
+			is.FuncError("code format", deliveryCodeFormatValid),
 		),
-		validation.Field(&dlv.Tax,
-			validation.By(validateDeliveryTax),
-			validation.Skip,
+		rules.Field("supplier",
+			rules.Field("tax_id",
+				rules.Assert("04", "supplier tax ID is required", is.Present),
+				rules.Field("code",
+					rules.Assert("05", "supplier tax ID code is required", is.Present),
+				),
+			),
 		),
-		validation.Field(&dlv.DespatchDate, validation.Required),
+		rules.Field("despatch_date",
+			rules.Assert("06", "cannot be blank", is.Present),
+		),
 	)
+}
+
+func deliveryHasMovementType(val any) bool {
+	dlv, ok := val.(*bill.Delivery)
+	if !ok || dlv == nil {
+		return true
+	}
+	if dlv.Tax == nil || dlv.Tax.Ext == nil {
+		return false
+	}
+	return tax.ExtensionsRequire(ExtKeyMovementType).Check(dlv.Tax.Ext)
+}
+
+func deliverySeriesFormatValid(val any) error {
+	dlv, ok := val.(*bill.Delivery)
+	if !ok || dlv == nil {
+		return nil
+	}
+	return validateSeriesFormat(movementDocType(dlv)).Validate(dlv.Series)
+}
+
+func deliveryCodeFormatValid(val any) error {
+	dlv, ok := val.(*bill.Delivery)
+	if !ok || dlv == nil {
+		return nil
+	}
+	dt := movementDocType(dlv)
+	return validateCodeFormat(dlv.Series, dt).Validate(dlv.Code)
 }
 
 func movementDocType(dlv *bill.Delivery) cbc.Code {
@@ -37,23 +69,6 @@ func movementDocType(dlv *bill.Delivery) cbc.Code {
 		return cbc.CodeEmpty
 	}
 	return dlv.Tax.Ext[ExtKeyMovementType]
-}
-
-func validateDeliveryTax(val any) error {
-	t, _ := val.(*bill.Tax)
-	if t == nil {
-		// If no tax is given, init a blank one so that we can return meaningful
-		// validation errors. The blank tax object is not assigned to the invoice
-		// and so the original document doesn't actually change.
-		t = new(bill.Tax)
-	}
-
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Ext,
-			tax.ExtensionsRequire(ExtKeyMovementType),
-			validation.Skip,
-		),
-	)
 }
 
 func normalizeDelivery(dlv *bill.Delivery) {

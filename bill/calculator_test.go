@@ -64,7 +64,7 @@ func TestCalculate(t *testing.T) {
 				Price:    num.NewAmount(942, 2),
 			},
 		})
-		require.ErrorContains(t, inv.Calculate(), "lines: (0: (item: no exchange rate found from 'USD' to 'EUR'.).)")
+		require.ErrorContains(t, inv.Calculate(), "lines: 0: item: no exchange rate found from 'USD' to 'EUR'")
 	})
 	t.Run("with preceding docs and taxes", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)

@@ -5,11 +5,12 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/ar"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTaxIdentityValidation(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -42,60 +43,60 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{
 			name: "too short",
 			code: "2017254359",
-			err:  "must have 11 digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too long",
 			code: "201725435978",
-			err:  "must have 11 digits",
+			err:  "IDENTITY-01",
 		},
 
 		// Invalid - non-numeric
 		{
 			name: "contains letters",
 			code: "2017254A597",
-			err:  "must contain only digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "contains special characters",
 			code: "20172543A97",
-			err:  "must contain only digits",
+			err:  "IDENTITY-01",
 		},
 
 		// Invalid - wrong check digit
 		{
 			name: "wrong check digit",
 			code: "20172543598",
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "wrong check digit - company",
 			code: "30500010911", // Changed last digit
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 
 		// Invalid - another wrong check digit test
 		{
 			name: "wrong check digit - female",
 			code: "27123456781", // Wrong check digit
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 
 		// Invalid - invalid prefix
 		{
 			name: "invalid prefix - 10",
 			code: "10123456789",
-			err:  "invalid prefix",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid prefix - 40",
 			code: "40123456789",
-			err:  "invalid prefix",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid prefix - 99",
 			code: "99123456789",
-			err:  "invalid prefix",
+			err:  "IDENTITY-01",
 		},
 
 		// Valid - special check digit cases
@@ -112,7 +113,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "AR", Code: tt.code}
-			err := ar.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -168,13 +169,13 @@ func TestTaxIdentityNormalization(t *testing.T) {
 
 func TestEmptyTaxIdentity(t *testing.T) {
 	tID := &tax.Identity{Country: "AR"}
-	err := ar.Validate(tID)
+	err := rules.Validate(tID)
 	assert.NoError(t, err)
 }
 
 func TestTaxIdentityWithEmptyCode(t *testing.T) {
 	// Test explicitly empty code string
 	tID := &tax.Identity{Country: "AR", Code: ""}
-	err := ar.Validate(tID)
+	err := rules.Validate(tID)
 	assert.NoError(t, err)
 }

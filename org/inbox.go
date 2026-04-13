@@ -1,14 +1,10 @@
 package org
 
 import (
-	"context"
-
-	"github.com/asaskevich/govalidator"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 const (
@@ -50,10 +46,10 @@ func (i *Inbox) Normalize() {
 	}
 	uuid.Normalize(&i.UUID)
 	code := i.Code.String()
-	if govalidator.IsEmail(code) {
+	if is.EmailFormat.Check(code) {
 		i.Email = code
 		i.Code = ""
-	} else if govalidator.IsURL(code) {
+	} else if is.URL.Check(code) {
 		i.URL = code
 		i.Code = ""
 	}
@@ -74,36 +70,31 @@ func (i *Inbox) Normalize() {
 	}
 }
 
-// Validate ensures the inbox's fields look good.
-func (i *Inbox) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the inbox's fields look good inside the provided context.
-func (i *Inbox) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.UUID),
-		validation.Field(&i.Key),
-		validation.Field(&i.Scheme),
-		validation.Field(&i.Code,
-			validation.When(
-				i.URL == "" && i.Email == "",
-				validation.Required.Error("cannot be blank without url or email"),
-			),
+func inboxRules() *rules.Set {
+	return rules.For(new(Inbox),
+		rules.Assert("01", "inbox requires a code, url, or email",
+			is.Func("one of code, url, email required", func(val any) bool {
+				i, ok := val.(*Inbox)
+				return ok && i != nil && (i.Code != "" || i.URL != "" || i.Email != "")
+			}),
 		),
-		validation.Field(&i.URL,
-			is.URL,
-			validation.When(
-				i.Code != "" || i.Email != "",
-				validation.Empty.Error("must be blank with code or email"),
-			),
+		rules.Assert("02", "inbox url must be blank when code or email is provided",
+			is.Func("url exclusive", func(val any) bool {
+				i, ok := val.(*Inbox)
+				return ok && i != nil && (i.URL == "" || (i.Code == "" && i.Email == ""))
+			}),
 		),
-		validation.Field(&i.Email,
-			is.EmailFormat,
-			validation.When(
-				i.Code != "" || i.URL != "",
-				validation.Empty.Error("must be blank with code or url"),
-			),
+		rules.Assert("03", "inbox email must be blank when code or url is provided",
+			is.Func("email exclusive", func(val any) bool {
+				i, ok := val.(*Inbox)
+				return ok && i != nil && (i.Email == "" || (i.Code == "" && i.URL == ""))
+			}),
+		),
+		rules.Field("url",
+			rules.AssertIfPresent("04", "inbox url must be valid", is.URL),
+		),
+		rules.Field("email",
+			rules.AssertIfPresent("05", "inbox email must be valid", is.EmailFormat),
 		),
 	)
 }

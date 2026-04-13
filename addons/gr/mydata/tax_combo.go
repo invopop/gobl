@@ -1,11 +1,14 @@
 package mydata
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/gr"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var taxComboRateMapVAT = tax.Extensions{
@@ -98,29 +101,50 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if tc == nil {
-		return nil
-	}
-	switch tc.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(tc,
-			validation.Field(&tc.Ext,
-				tax.ExtensionsRequire(ExtKeyVATRate),
-				validation.When(
-					tc.Percent == nil,
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(is.Func("category is VAT", taxComboIsVAT),
+			rules.Field("ext",
+				rules.Assert("01",
+					fmt.Sprintf("VAT combo requires '%s' extension", ExtKeyVATRate),
+					tax.ExtensionsRequire(ExtKeyVATRate),
+				),
+			),
+		),
+		rules.When(is.Func("VAT with no percent", taxComboVATNoPercent),
+			rules.Field("ext",
+				rules.Assert("02",
+					fmt.Sprintf("exempt VAT combo requires '%s' extension", ExtKeyExemption),
 					tax.ExtensionsRequire(ExtKeyExemption),
 				),
-				validation.When(
-					// MyDATA uses income category and type for accounting purposes
-					// and for them to be grouped with taxes. We ensure they're present
-					// here so that the
-					tc.Ext.Has(ExtKeyIncomeCat) || tc.Ext.Has(ExtKeyIncomeType),
+			),
+		),
+		rules.When(is.Func("VAT with income ext", taxComboVATHasIncomeExt),
+			rules.Field("ext",
+				rules.Assert("03",
+					fmt.Sprintf("income extensions '%s' and '%s' must both be present",
+						ExtKeyIncomeCat, ExtKeyIncomeType),
 					tax.ExtensionsRequire(ExtKeyIncomeCat, ExtKeyIncomeType),
 				),
-				validation.Skip,
 			),
-		)
+		),
+	)
+}
+
+func taxComboIsVAT(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == tax.CategoryVAT
+}
+
+func taxComboVATNoPercent(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil && tc.Category == tax.CategoryVAT && tc.Percent == nil
+}
+
+func taxComboVATHasIncomeExt(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	if !ok || tc == nil || tc.Category != tax.CategoryVAT {
+		return false
 	}
-	return nil
+	return tc.Ext.Has(ExtKeyIncomeCat) || tc.Ext.Has(ExtKeyIncomeType)
 }

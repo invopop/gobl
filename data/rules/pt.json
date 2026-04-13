@@ -1,0 +1,198 @@
+{
+  "id": "GOBL-PT",
+  "name": "pt",
+  "subsets": [
+    {
+      "id": "GOBL-PT-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [PT]",
+          "assert": [
+            {
+              "id": "GOBL-PT-BILL-INVOICE-11",
+              "desc": "value date must not be after issue date",
+              "tests": "value date not after issue date"
+            },
+            {
+              "id": "GOBL-PT-BILL-INVOICE-12",
+              "desc": "operation date must not be after issue date",
+              "tests": "operation date not after issue date"
+            },
+            {
+              "id": "GOBL-PT-BILL-INVOICE-13",
+              "desc": "preceding document issue dates must not be after invoice issue date",
+              "tests": "preceding dates not after issue date"
+            },
+            {
+              "id": "GOBL-PT-BILL-INVOICE-14",
+              "desc": "advance payment dates must not be after invoice issue date",
+              "tests": "advance dates not after issue date"
+            },
+            {
+              "id": "GOBL-PT-BILL-INVOICE-15",
+              "desc": "payment due dates must not be before invoice issue date",
+              "tests": "due dates not before issue date"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "type",
+              "assert": [
+                {
+                  "id": "GOBL-PT-BILL-INVOICE-01",
+                  "desc": "invoice type is not valid for Portugal",
+                  "tests": "one of [standard, credit-note, debit-note, proforma, other]"
+                }
+              ]
+            },
+            {
+              "guard": "invoice type in [credit-note, debit-note]",
+              "subsets": [
+                {
+                  "field": "preceding",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-BILL-INVOICE-02",
+                      "desc": "preceding is required for credit and debit notes",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-BILL-INVOICE-03",
+                      "desc": "supplier tax ID is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-PT-BILL-INVOICE-04",
+                          "desc": "supplier tax ID code is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "quantity",
+                      "assert": [
+                        {
+                          "id": "GOBL-PT-BILL-INVOICE-05",
+                          "desc": "line quantity must be zero or positive",
+                          "tests": "min 0"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "item",
+                      "subsets": [
+                        {
+                          "field": "price",
+                          "assert": [
+                            {
+                              "id": "GOBL-PT-BILL-INVOICE-06",
+                              "desc": "item price must be zero or positive",
+                              "tests": "min 0"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "totals",
+              "subsets": [
+                {
+                  "field": "due",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-BILL-INVOICE-07",
+                      "desc": "due amount must be zero or positive",
+                      "tests": "min 0"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-TAX-COMBO",
+      "name": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "context: regime in [PT]",
+          "subsets": [
+            {
+              "guard": "string(Category) == \"VAT\"",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-TAX-COMBO-01",
+                      "desc": "pt-region extension is required for VAT",
+                      "tests": "ext require [pt-region]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [PT]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-TAX-IDENTITY-01",
+                      "desc": "invalid Portuguese NIF tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

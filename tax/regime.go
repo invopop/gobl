@@ -1,7 +1,11 @@
 package tax
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -60,6 +64,53 @@ func (rc RegimeCode) Code() l10n.Code {
 // String provides the string representation of the regime code.
 func (rc RegimeCode) String() string {
 	return string(rc)
+}
+
+// regimeGetter is an interface for types that expose a GetRegime method,
+// including types that embed tax.Regime.
+type regimeGetter interface {
+	GetRegime() l10n.TaxCountryCode
+}
+
+// regimeContextKey is the key used to store a Regime in the validation context.
+const regimeContextKey rules.ContextKey = "regime"
+
+// RulesContext implements rules.ContextAdder so that any struct embedding
+// Regime automatically injects the regime code into the validation context.
+// This allows guards like is.InContext(tax.RegimeIn("ES")) to work on
+// nested objects without needing access to the root document.
+func (r Regime) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(regimeContextKey, r)
+	}
+}
+
+// RegimeContext returns a rules.WithContext option that injects the given
+// regime code(s) into the validation context. Useful for testing rules against
+// specific regimes without a fully calculated document.
+func RegimeContext(codes ...l10n.TaxCountryCode) rules.WithContext {
+	return func(rc *rules.Context) {
+		for _, code := range codes {
+			rc.Set(regimeContextKey, Regime{Country: RegimeCode(code)})
+		}
+	}
+}
+
+// RegimeIn checks if the regime's country code is in the provided list of codes.
+func RegimeIn(codes ...l10n.TaxCountryCode) rules.Test {
+	str := make([]string, len(codes))
+	for i, c := range codes {
+		str[i] = c.String()
+	}
+	return is.Func("regime in ["+strings.Join(str, ",")+"]",
+		func(value any) bool {
+			rg, ok := value.(regimeGetter)
+			if !ok {
+				return false
+			}
+			return rg.GetRegime().In(codes...)
+		},
+	)
 }
 
 // JSONSchema provides a representation of the type for usage in Schema.

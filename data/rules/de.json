@@ -1,0 +1,79 @@
+{
+  "id": "GOBL-DE",
+  "name": "de",
+  "subsets": [
+    {
+      "id": "GOBL-DE-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [DE]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-DE-BILL-INVOICE-01",
+                  "desc": "invoice DE supplier must have either tax ID code or identity with 'de-tax-number' key",
+                  "tests": "has tax ID code or identity with 'de-tax-number' key"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DE-ORG-IDENTITY",
+      "name": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [DE]",
+          "subsets": [
+            {
+              "guard": "is tax number",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-DE-ORG-IDENTITY-01",
+                      "desc": "German tax number code must be in valid format",
+                      "tests": "matches ^(\\d{2}/\\d{3}/\\d{5}|\\d{3}/\\d{3}/\\d{5}|\\d{3}/\\d{4}/\\d{4})$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DE-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [DE]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-DE-TAX-IDENTITY-01",
+                      "desc": "invalid German VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

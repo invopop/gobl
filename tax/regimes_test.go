@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ import (
 func TestAllRegimes(t *testing.T) {
 	for _, r := range tax.AllRegimeDefs() {
 		t.Run(r.Name.String(), func(t *testing.T) {
-			assert.NoError(t, r.Validate())
+			assert.NoError(t, rules.Validate(r))
 		})
 	}
 }

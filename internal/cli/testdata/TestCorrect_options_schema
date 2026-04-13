@@ -1,7 +1,7 @@
 {
     "$comment": "Generated dynamically for es",
     "$defs": {
-        "CorrectionOptions": {
+        "bill.CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
             "properties": {
                 "copy_tax": {
@@ -66,6 +66,6 @@
         }
     },
     "$id": "https://gobl.org/draft-0/bill/correction-options?tax_regime=es",
-    "$ref": "#/$defs/CorrectionOptions",
+    "$ref": "#/$defs/bill.CorrectionOptions",
     "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

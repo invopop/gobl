@@ -4,8 +4,9 @@ import (
 	"slices"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // List of units typically used for services. Used to infer a default product type.
@@ -31,16 +32,15 @@ var serviceUnits = []org.Unit{
 	org.UnitOne,
 }
 
-func validateItem(item *org.Item) error {
-	if item == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Unit, validation.Required),
-		validation.Field(&item.Ext,
-			tax.ExtensionsRequire(ExtKeyProductType),
-			validation.Skip,
+func orgItemRules() *rules.Set {
+	return rules.For(new(org.Item),
+		rules.Field("unit",
+			rules.Assert("01", "cannot be blank", is.Present),
+		),
+		rules.Field("ext",
+			rules.Assert("02", "product type is required",
+				tax.ExtensionsRequire(ExtKeyProductType),
+			),
 		),
 	)
 }

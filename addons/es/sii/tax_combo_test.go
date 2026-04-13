@@ -195,6 +195,8 @@ func TestNormalizeTaxCombo(t *testing.T) {
 }
 
 func TestValidateTaxCombo(t *testing.T) {
+	ruleSet := taxComboRules()
+
 	t.Run("valid", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -204,7 +206,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyRegime: "01",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -213,7 +215,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: tax.CategoryGST,
 			Rate:     tax.RateGeneral,
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -226,7 +228,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -238,7 +240,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
 	})
 
@@ -250,7 +252,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E3",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "E3")
 	})
@@ -263,7 +265,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -275,7 +277,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "E2")
 	})
@@ -289,7 +291,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyProduct: "goods",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), string(ExtKeyRegime))
 	})
@@ -304,9 +306,9 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), ExtKeyExempt)
+		assert.Contains(t, err.Error(), string(ExtKeyExempt))
 	})
 
 	t.Run("allows only one of outside scope or exempt", func(t *testing.T) {
@@ -318,9 +320,9 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt:       "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), ExtKeyExempt)
+		assert.Contains(t, err.Error(), string(ExtKeyExempt))
 	})
 
 	t.Run("valid not subject when percent is nil", func(t *testing.T) {
@@ -331,7 +333,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyOutsideScope: "location",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -345,7 +347,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyOutsideScope: "location",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -358,7 +360,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyRegime: "01",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -370,7 +372,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 }

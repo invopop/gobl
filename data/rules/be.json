@@ -1,0 +1,90 @@
+{
+  "id": "GOBL-BE",
+  "name": "be",
+  "subsets": [
+    {
+      "id": "GOBL-BE-TAX-IDENTITY",
+      "name": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [BE]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-BE-TAX-IDENTITY-01",
+                      "desc": "invalid Belgian VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BE-BILL-INVOICE",
+      "name": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [BE]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "guard": "no BCE identity",
+                  "subsets": [
+                    {
+                      "field": "tax_id",
+                      "assert": [
+                        {
+                          "id": "GOBL-BE-BILL-INVOICE-01",
+                          "desc": "supplier tax ID required for Belgian regime",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "field": "code",
+                          "assert": [
+                            {
+                              "id": "GOBL-BE-BILL-INVOICE-02",
+                              "desc": "supplier tax ID code required for Belgian regime",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "no tax ID code",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-BE-BILL-INVOICE-03",
+                          "desc": "supplier identities must include BCE type",
+                          "tests": "has BCE type"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

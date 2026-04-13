@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +20,7 @@ func TestInvoice(t *testing.T) {
 		assert.Equal(t, "FT", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
 		assert.Equal(t, "NOR", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
 
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("prepaid", func(t *testing.T) {
@@ -35,7 +36,7 @@ func TestInvoice(t *testing.T) {
 		inv.Series = "FR SERIES-A"
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "FR", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("reduced", func(t *testing.T) {
@@ -43,7 +44,7 @@ func TestInvoice(t *testing.T) {
 		inv.Lines[0].Taxes[0].Rate = tax.RateReduced
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "RED", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("intermediate", func(t *testing.T) {
@@ -51,7 +52,7 @@ func TestInvoice(t *testing.T) {
 		inv.Lines[0].Taxes[0].Rate = tax.RateIntermediate
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "INT", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("exempt with addon added later", func(t *testing.T) {

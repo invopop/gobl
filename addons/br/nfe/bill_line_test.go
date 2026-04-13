@@ -5,7 +5,10 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,6 +22,14 @@ func TestLineValidation(t *testing.T) {
 		{
 			name: "valid line with all required taxes",
 			line: &bill.Line{
+				Index:    1,
+				Quantity: num.MakeAmount(1, 0),
+				Sum:      num.NewAmount(100, 2),
+				Total:    num.NewAmount(100, 2),
+				Item: &org.Item{
+					Name:  "Test",
+					Price: num.NewAmount(100, 2),
+				},
 				Taxes: tax.Set{
 					{
 						Category: br.TaxCategoryICMS,
@@ -39,14 +50,14 @@ func TestLineValidation(t *testing.T) {
 		{
 			name: "missing taxes",
 			line: &bill.Line{},
-			err:  "taxes: missing category ICMS.",
+			err:  "line taxes must include the ICMS category",
 		},
 		{
 			name: "empty taxes",
 			line: &bill.Line{
 				Taxes: tax.Set{},
 			},
-			err: "taxes: missing category ICMS.",
+			err: "line taxes must include the ICMS category",
 		},
 		{
 			name: "missing ICMS tax",
@@ -60,7 +71,7 @@ func TestLineValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "taxes: missing category ICMS.",
+			err: "line taxes must include the ICMS category",
 		},
 		{
 			name: "missing PIS tax",
@@ -74,7 +85,7 @@ func TestLineValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "taxes: missing category PIS.",
+			err: "line taxes must include the PIS category",
 		},
 		{
 			name: "missing COFINS tax",
@@ -88,14 +99,13 @@ func TestLineValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "taxes: missing category COFINS.",
+			err: "line taxes must include the COFINS category",
 		},
 	}
 
-	addon := tax.AddonForKey(nfe.V4)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.line)
+			err := rules.Validate(ts.line, withAddonContext())
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -104,5 +114,11 @@ func TestLineValidation(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(nfe.V4), tax.AddonForKey(nfe.V4))
 	}
 }

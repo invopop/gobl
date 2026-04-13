@@ -1,15 +1,15 @@
 package tax_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestSetValidation(t *testing.T) {
 	var tests = []struct {
 		desc string
 		set  tax.Set
-		err  interface{}
+		err  string
 	}{
 		{
 			desc: "simple success",
@@ -28,12 +28,10 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
-			err: nil,
 		},
 		{
 			desc: "empty success",
 			set:  tax.Set{},
-			err:  nil,
 		},
 		{
 			desc: "complex success",
@@ -61,7 +59,6 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
-			err: nil,
 		},
 		{
 			desc: "other country no percent",
@@ -71,7 +68,7 @@ func TestSetValidation(t *testing.T) {
 					Country:  "NL",
 				},
 			},
-			err: "0: (percent: cannot be blank.).",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "exempt rate with percent",
@@ -82,7 +79,7 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(5, 3),
 				},
 			},
-			err: "0: (percent: must be nil for 'exempt' in 'VAT'.)",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "duplicate",
@@ -98,7 +95,7 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
-			err: "duplicated",
+			err: "TAX-SET-01",
 		},
 		{
 			desc: "VAT missing percentage",
@@ -107,7 +104,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 				},
 			},
-			err: "0: (percent: cannot be blank.)",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "VAT missing percentage with key",
@@ -117,7 +114,7 @@ func TestSetValidation(t *testing.T) {
 					Key:      "standard",
 				},
 			},
-			err: "0: (percent: required for 'standard' in 'VAT'.).",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "IRPF missing percentage",
@@ -126,7 +123,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "IRPF",
 				},
 			},
-			err: "0: (percent: cannot be blank.)",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "missing percentage with exempt rate",
@@ -136,7 +133,6 @@ func TestSetValidation(t *testing.T) {
 					Key:      tax.KeyExempt,
 				},
 			},
-			err: nil, // this is okay
 		},
 		{
 			desc: "undefined category code",
@@ -146,10 +142,10 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
-			err: "cat: must be a valid value",
+			err: "TAX-COMBO-01",
 		},
 		{
-			desc: "undefined category rate",
+			desc: "undefined category key",
 			set: tax.Set{
 				{
 					Category: "VAT",
@@ -157,7 +153,7 @@ func TestSetValidation(t *testing.T) {
 					Key:      cbc.Key("invalid-tag"),
 				},
 			},
-			err: "0: (key: must be a valid value.).",
+			err: "TAX-COMBO-02",
 		},
 		{
 			desc: "rate with extension",
@@ -169,7 +165,6 @@ func TestSetValidation(t *testing.T) {
 					Rate:     tax.RateGeneral.With("eqs"),
 				},
 			},
-			err: nil,
 		},
 		{
 			desc: "missing percent with surcharge",
@@ -179,7 +174,7 @@ func TestSetValidation(t *testing.T) {
 					Surcharge: num.NewPercentage(5, 3),
 				},
 			},
-			err: "surcharge: required with percent.",
+			err: "TAX-COMBO-05",
 		},
 		{
 			desc: "exempt key with reason",
@@ -192,7 +187,6 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: nil,
 		},
 		{
 			desc: "exempt, no key, with extension",
@@ -206,7 +200,7 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "0: (percent: cannot be blank.).",
+			err: "TAX-COMBO-04",
 		},
 		{
 			desc: "exempt rate with invalid reason",
@@ -219,7 +213,7 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "0: (ext: (foo: undefined.).)",
+			err: "TAX-COMBO-06",
 		},
 		{
 			desc: "category extension",
@@ -232,22 +226,18 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: nil,
 		},
 	}
-	ctx := context.Background()
-	ctx = es.New().WithContext(ctx)
+	esCtx := tax.RegimeContext(l10n.ES.Tax())
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Helper()
-			err := test.set.ValidateWithContext(ctx)
-			if test.err == nil {
+			err := rules.Validate(test.set, esCtx)
+			if test.err == "" {
 				assert.NoError(t, err)
-			} else if e, ok := test.err.(error); ok {
-				assert.ErrorIs(t, err, e)
-			} else if s, ok := test.err.(string); ok {
+			} else {
 				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), s)
+					assert.Contains(t, err.Error(), test.err)
 				}
 			}
 		})
@@ -391,22 +381,22 @@ func TestSetHasCategory(t *testing.T) {
 		},
 	}
 	t.Run("has VAT", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasCategory("VAT"))
+		err := tax.SetHasCategory("VAT").Validate(s)
 		assert.NoError(t, err)
 	})
 	t.Run("has multiple", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasCategory(tax.CategoryVAT, es.TaxCategoryIRPF))
+		err := tax.SetHasCategory(tax.CategoryVAT, es.TaxCategoryIRPF).Validate(s)
 		assert.NoError(t, err)
 	})
 	t.Run("missing category", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasCategory("FOO"))
+		err := tax.SetHasCategory("FOO").Validate(s)
 		assert.Error(t, err)
 		assert.Equal(t, "missing category FOO", err.Error())
 	})
 	t.Run("with different type", func(t *testing.T) {
 		var s2 string
 		assert.NotPanics(t, func() {
-			err := validation.Validate(s2, tax.SetHasCategory("FOO"))
+			err := tax.SetHasCategory("FOO").Validate(s2)
 			assert.NoError(t, err)
 		})
 	})
@@ -424,27 +414,27 @@ func TestSetHasOneOf(t *testing.T) {
 		},
 	}
 	t.Run("has VAT", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasOneOf("VAT"))
+		err := tax.SetHasOneOf("VAT").Validate(s)
 		assert.NoError(t, err)
 	})
 	t.Run("has multiple", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIRPF))
+		err := tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIRPF).Validate(s)
 		assert.NoError(t, err)
 	})
 	t.Run("missing category", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasOneOf("FOO"))
+		err := tax.SetHasOneOf("FOO").Validate(s)
 		assert.Error(t, err)
 		assert.Equal(t, "missing category in FOO", err.Error())
 	})
 	t.Run("missing category", func(t *testing.T) {
-		err := validation.Validate(s, tax.SetHasOneOf("FOO", "BAR"))
+		err := tax.SetHasOneOf("FOO", "BAR").Validate(s)
 		assert.Error(t, err)
 		assert.Equal(t, "missing category in FOO, BAR", err.Error())
 	})
 	t.Run("with different type", func(t *testing.T) {
 		var s2 string
 		assert.NotPanics(t, func() {
-			err := validation.Validate(s2, tax.SetHasCategory("FOO"))
+			err := tax.SetHasCategory("FOO").Validate(s2)
 			assert.NoError(t, err)
 		})
 	})

@@ -1,13 +1,14 @@
 package cbc
 
 import (
-	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -21,7 +22,7 @@ const (
 // Codes are standardized so that when validated they must contain between
 // 1 and 64 inclusive english alphabet letters or numbers with optional
 // periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
-// colons (`:`), commas (`,`), or spaces (` `) to separate blocks.
+// colons (`:`), commas (`,`), ampersand (`&`), or spaces (` `) to separate blocks.
 // Each block must only be separated by a single symbol.
 //
 // The objective is to have a code that is easy to read and understand, while
@@ -34,16 +35,17 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodeSeparators           = `\.\-\:/,_ `
-	CodePattern              = `^[A-Za-z0-9]+([` + CodeSeparators + `]?[A-Za-z0-9]+)*$`
+	CodeSeparators           = `.\-:/,_& ` // only escape dash for JS compatibility
+	CodeDigits               = `A-ZÑa-z0-9`
+	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 64
 )
 
 var (
-	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9` + CodeSeparators + `]+`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^` + CodeDigits + `]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^` + CodeDigits + CodeSeparators + `]+`)
 	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
 	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
@@ -87,12 +89,20 @@ func NormalizeNumericalCode(c Code) Code {
 	return Code(code)
 }
 
+func codeRules() *rules.Set {
+	return rules.For(Code(""),
+		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
+			is.Length(0, int(CodeMaxLength)),
+		),
+		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
+			is.Matches(CodePattern),
+		),
+	)
+}
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
-	return validation.Validate(string(c),
-		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(CodePatternRegexp),
-	)
+	return rules.Validate(c)
 }
 
 // IsEmpty returns true if no code is specified.
@@ -160,19 +170,38 @@ func (Code) JSONSchema() *jsonschema.Schema {
 	}
 }
 
-// Validate ensures the code maps data looks correct.
-func (cs CodeMap) Validate() error {
-	err := make(validation.Errors)
-	// values are already tested
-	for k := range cs {
-		if e := k.Validate(); e != nil {
-			err[k.String()] = e
+// InCodes provides a rules test that checks if a code's value is one of the provided codes.
+func InCodes(codes ...Code) rules.Test {
+	return is.Func("code in ["+strings.Join(CodeStrings(codes), ", ")+"]",
+		func(value any) bool {
+			c, ok := value.(Code)
+			if !ok {
+				return false
+			}
+			return c.In(codes...)
+		},
+	)
+}
+
+func codeMapRules() *rules.Set {
+	return rules.For(CodeMap{},
+		rules.Assert("01", "all code map keys must be valid",
+			is.Func("valid keys", codeMapKeysValid),
+		),
+	)
+}
+
+func codeMapKeysValid(v any) bool {
+	m, ok := v.(CodeMap)
+	if !ok {
+		return true
+	}
+	for k := range m {
+		if rules.Validate(k) != nil {
+			return false
 		}
 	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
+	return true
 }
 
 // Has returns true if the code map has values for all the provided keys.
@@ -205,32 +234,31 @@ func (cs CodeMap) Equals(other CodeMap) bool {
 
 // CodeMapHas returns a validation rule that ensures the code set contains
 // the provided keys.
-func CodeMapHas(keys ...Key) validation.Rule {
-	return validateCodeMap{keys: keys}
+func CodeMapHas(keys ...Key) rules.Test {
+	return codeMapTest{keys: keys}
 }
 
-type validateCodeMap struct {
+type codeMapTest struct {
 	keys []Key
 }
 
-func (v validateCodeMap) Validate(value interface{}) error {
+// String returns a string representation of the rule.
+func (r codeMapTest) String() string {
+	return fmt.Sprintf("have keys [%s]", strings.Join(KeyStrings(r.keys), ", "))
+}
+
+// Check returns true if the code map has all the required keys.
+func (r codeMapTest) Check(value any) bool {
 	cs, ok := value.(CodeMap)
 	if !ok {
-		return nil
+		return false
 	}
-	var err validation.Errors
-	for _, k := range v.keys {
+	for _, k := range r.keys {
 		if _, ok := cs[k]; !ok {
-			if err == nil {
-				err = make(validation.Errors)
-			}
-			err[k.String()] = errors.New("required")
+			return false
 		}
 	}
-	if len(err) > 0 {
-		return err
-	}
-	return nil
+	return true
 }
 
 // JSONSchemaExtend ensures the pattern property is set correctly.

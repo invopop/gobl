@@ -5,13 +5,14 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("co", rules.GOBL.Add("CO"), taxIdentityRules())
 }
 
 // New provides the tax region definition
@@ -58,7 +59,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "America/Bogota",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
@@ -78,16 +78,5 @@ func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
-	case *org.Party:
-		normalizeParty(obj)
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
 }

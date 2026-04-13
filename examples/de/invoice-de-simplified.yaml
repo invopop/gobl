@@ -10,6 +10,9 @@ tax:
 supplier:
   tax_id:
     country: "DE"
+  identities:
+    - key: "de-tax-number"
+      code: "92/345/67894"
   name: "Provide One GmbH"
   emails:
     - addr: "billing@example.com"

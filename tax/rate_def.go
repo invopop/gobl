@@ -1,14 +1,14 @@
 package tax
 
 import (
-	"context"
 	"errors"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // RateDef defines a single rate inside a category
@@ -55,25 +55,24 @@ type RateValueDef struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// ValidateWithContext checks that our tax definition is valid. This is only really
-// meant to be used when testing new regional tax definitions.
-func (r *RateDef) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, r,
-		validation.Field(&r.Rate, validation.Required),
-		validation.Field(&r.Keys),
-		validation.Field(&r.Name, validation.Required),
-		validation.Field(&r.Values,
-			validation.By(checkRateValuesOrder),
+func rateDefRules() *rules.Set {
+	return rules.For(new(RateDef),
+		rules.Field("rate",
+			rules.Assert("01", "rate is required", is.Present),
 		),
-		validation.Field(&r.Meta),
-	)
-	return err
-}
-
-// Validate ensures the tax rate contains all the required fields.
-func (rv *RateValueDef) Validate() error {
-	return validation.ValidateStruct(rv,
-		validation.Field(&rv.Percent, validation.Required),
+		rules.Field("name",
+			rules.Assert("02", "name is required", is.Present),
+		),
+		rules.Field("values",
+			rules.Assert("03", "rate values must be in descending chronological order",
+				is.FuncError("date order", checkRateValuesOrder),
+			),
+			rules.Each(
+				rules.Field("percent",
+					rules.Assert("04", "rate value percent is required", is.Present),
+				),
+			),
+		),
 	)
 }
 
@@ -109,7 +108,7 @@ func (r *RateDef) Value(date cal.Date, ext Extensions) *RateValueDef {
 	return nil
 }
 
-func checkRateValuesOrder(list interface{}) error {
+func checkRateValuesOrder(list any) error {
 	values, ok := list.([]*RateValueDef)
 	if !ok {
 		return errors.New("must be a tax rate value array")

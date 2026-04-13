@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/pl/favat"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -133,7 +134,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Percent: num.NewPercentage(23, 0),
 		}
 		ad.Normalizer(tc)
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -143,7 +144,13 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:    tax.RateGeneral,
 			Percent: num.NewPercentage(23, 0),
 		}
-		err := ad.Validator(tc)
-		assert.ErrorContains(t, err, "ext: (pl-favat-tax-category: required.)")
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "tax combo requires 'pl-favat-tax-category' extension")
 	})
+}
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(favat.V3), tax.AddonForKey(favat.V3))
+	}
 }

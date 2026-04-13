@@ -1,14 +1,15 @@
 package tax
 
 import (
-	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // AddonList defines the slice of keys to use for addons.
@@ -23,7 +24,7 @@ type Addons struct {
 
 // AddonDef is an interface that defines the methods that a tax add-on must implement.
 type AddonDef struct {
-	// Key that defines how to uniquely idenitfy the add-on.
+	// Key that defines how to uniquely identify the add-on.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	// Requires defines any additional addons that this one depends on to operate
@@ -61,9 +62,6 @@ type AddonDef struct {
 	// Normalizer performs the normalization rules for the add-on.
 	Normalizer func(doc any) `json:"-"`
 
-	// Validator performs the validation rules for the add-on.
-	Validator func(doc any) error `json:"-"`
-
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
@@ -80,7 +78,7 @@ func (as *Addons) SetAddons(addons ...cbc.Key) {
 }
 
 // GetAddons provides the list of addon keys in use.
-func (as *Addons) GetAddons() []cbc.Key {
+func (as Addons) GetAddons() []cbc.Key {
 	return as.List
 }
 
@@ -109,10 +107,14 @@ func (as *Addons) normalizeAddons() {
 	as.List = list
 }
 
-// Validate ensures that the list of addons is valid. This struct is designed to be
-// embedded, so we don't perform a regular validation on the struct itself.
-func (as Addons) Validate() error {
-	return validation.Validate(as.List, validation.Each(AddonRegistered))
+func addonRules() *rules.Set {
+	return rules.For(new(Addons),
+		rules.Field("$addons",
+			rules.Each(
+				rules.Assert("01", "add-on must be registered", addonRegistered),
+			),
+		),
+	)
 }
 
 type addonCollection struct {
@@ -160,44 +162,106 @@ func AllAddonDefs() []*AddonDef {
 	return all
 }
 
-// WithContext adds this addon to the given context, alongside
-// its validator.
-func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
-	if ad == nil {
-		return ctx
+// RulesContext implements rules.ContextAdder so that any struct embedding
+// Addons automatically injects each addon definition into the validation context.
+// This allows guards like is.InContext(tax.AddonIn(key)) to work on
+// nested objects without needing access to the root document.
+func (as Addons) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		for _, key := range as.List {
+			if def := AddonForKey(key); def != nil {
+				rc.Set(rules.ContextKey(key), def)
+			}
+		}
 	}
-	ctx = ContextWithValidator(ctx, ad.Validator)
-	return ctx
 }
 
-type addonValidation struct{}
+type implementsAddon interface {
+	GetAddons() []cbc.Key
+}
 
-// AddonRegistered will check that an add-on with the key to be validated
-// has been registered.
-var AddonRegistered = addonValidation{}
+// HasAddon provides a test to check that an object provided to the test responds to the
+// GetAddons method and that the addon key provided is supported.
+func HasAddon(key cbc.Key) rules.Test {
+	return is.Func(fmt.Sprintf("has addon %v", key), func(value any) bool {
+		obj, ok := value.(implementsAddon)
+		if !ok {
+			return false // do not continue
+		}
+		return key.In(obj.GetAddons()...)
+	})
+}
 
-func (addonValidation) Validate(value interface{}) error {
-	key, ok := value.(cbc.Key)
+// AddonIn returns a Test that checks whether the context contains the given addon key.
+// It is symmetric with RegimeIn and works with addon definitions stored in the
+// validation context via InContext(AddonIn(key)).
+func AddonIn(keys ...cbc.Key) rules.Test {
+	parts := make([]string, len(keys))
+	ctxKeys := make([]rules.ContextKey, len(keys))
+	for i, k := range keys {
+		parts[i] = k.String()
+		ctxKeys[i] = rules.ContextKey(k)
+	}
+	return &addonInTest{
+		desc:    "addon in [" + strings.Join(parts, ",") + "]",
+		keys:    keys,
+		ctxKeys: ctxKeys,
+	}
+}
+
+// addonInTest is a Test returned by AddonIn that also implements
+// rules.ContextKeyable so the engine can index guards by addon key.
+type addonInTest struct {
+	desc    string
+	keys    []cbc.Key
+	ctxKeys []rules.ContextKey
+}
+
+func (t *addonInTest) Check(value any) bool {
+	def, ok := value.(*AddonDef)
 	if !ok {
-		return nil
+		return false
 	}
-	if AddonForKey(key) == nil {
-		return fmt.Errorf("addon '%v' not registered", key.String())
-	}
-	return nil
+	return def.Key.In(t.keys...)
 }
 
-// Validate checks that the add-on has been defined correctly.
-func (ad *AddonDef) Validate() error {
-	return validation.ValidateStruct(ad,
-		validation.Field(&ad.Key, validation.Required, AddonRegistered),
-		validation.Field(&ad.Name, validation.Required),
-		validation.Field(&ad.Extensions),
-		validation.Field(&ad.Identities),
-		validation.Field(&ad.Inboxes),
-		validation.Field(&ad.Tags),
-		validation.Field(&ad.Scenarios),
-		validation.Field(&ad.Corrections),
+func (t *addonInTest) String() string {
+	return t.desc
+}
+
+// ContextKeys implements rules.ContextKeyable.
+func (t *addonInTest) ContextKeys() []rules.ContextKey {
+	return t.ctxKeys
+}
+
+// AddonContext returns a rules.WithContext option that injects the given addon
+// key(s) into the validation context. Useful for testing rules against specific
+// addons without a fully calculated document.
+func AddonContext(keys ...cbc.Key) rules.WithContext {
+	return func(rc *rules.Context) {
+		for _, key := range keys {
+			if def := AddonForKey(key); def != nil {
+				rc.Set(rules.ContextKey(key), def)
+			}
+		}
+	}
+}
+
+// addonRegistered will check that an add-on with the key to be validated
+// has been registered.
+var addonRegistered = is.Func("add-on must be registered", func(value any) bool {
+	key, _ := value.(cbc.Key)
+	return AddonForKey(key) != nil
+})
+
+func addonDefRules() *rules.Set {
+	return rules.For(new(AddonDef),
+		rules.Field("key",
+			rules.Assert("01", "addon must have a key", is.Present),
+		),
+		rules.Field("name",
+			rules.Assert("02", "addon must have a name", is.Present),
+		),
 	)
 }
 

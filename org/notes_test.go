@@ -6,9 +6,9 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -58,34 +58,17 @@ func TestNotesValidation(t *testing.T) {
 	n := new(org.Note)
 	n.Text = "This is a general note test"
 
-	err := n.Validate()
+	err := rules.Validate(n)
 	assert.NoError(t, err) // empty key ok
 
 	n.Key = org.NoteKeyGeneral
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.NoError(t, err)
 
 	n.Key = cbc.Key("fooo")
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "key: must be a valid value")
-}
-
-func TestNotesValidationHasKey(t *testing.T) {
-	ns := []*org.Note{
-		{
-			Key:  org.NoteKeyGeneral,
-			Text: "This is a general note test",
-		},
-	}
-	err := validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.NoError(t, err)
-
-	err = validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyLegal))
-	assert.ErrorContains(t, err, "with key 'legal' missin")
-
-	err = validation.Validate(cbc.Key("foo"), org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.Nil(t, err, "should ignore invalid type")
+	assert.Contains(t, err.Error(), "note key must be a valid value")
 }
 
 func TestNoteSameAs(t *testing.T) {
