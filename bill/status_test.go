@@ -554,6 +554,59 @@ func TestStatusLineNormalize(t *testing.T) {
 	})
 }
 
+func TestReasonNormalize(t *testing.T) {
+	t.Run("nil reason", func(t *testing.T) {
+		var r *bill.Reason
+		assert.NotPanics(t, func() {
+			r.Normalize(nil)
+		})
+	})
+
+	t.Run("normalizes conditions", func(t *testing.T) {
+		r := &bill.Reason{
+			Key: bill.ReasonKeyReferences,
+			Conditions: []*bill.Condition{
+				{Code: "ERR-001"},
+			},
+		}
+		assert.NotPanics(t, func() {
+			r.Normalize(nil)
+		})
+		assert.Equal(t, cbc.Code("ERR-001"), r.Conditions[0].Code)
+	})
+}
+
+func TestActionNormalize(t *testing.T) {
+	t.Run("nil action", func(t *testing.T) {
+		var a *bill.Action
+		assert.NotPanics(t, func() {
+			a.Normalize(nil)
+		})
+	})
+
+	t.Run("non-nil action", func(t *testing.T) {
+		a := &bill.Action{Key: bill.ActionKeyReissue}
+		assert.NotPanics(t, func() {
+			a.Normalize(nil)
+		})
+	})
+}
+
+func TestConditionNormalize(t *testing.T) {
+	t.Run("nil condition", func(t *testing.T) {
+		var c *bill.Condition
+		assert.NotPanics(t, func() {
+			c.Normalize(nil)
+		})
+	})
+
+	t.Run("normalizes code", func(t *testing.T) {
+		c := &bill.Condition{Code: "  ERR--001  "}
+		c.Normalize(nil)
+		assert.Equal(t, cbc.Code("ERR-001"), c.Code)
+	})
+}
+
 func TestStatusDefinitions(t *testing.T) {
 	t.Run("status types count", func(t *testing.T) {
 		assert.Len(t, bill.StatusTypes, 3)

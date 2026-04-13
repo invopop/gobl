@@ -485,6 +485,9 @@ type Reason struct {
 	// Condition provides additional details with codes about what has gone
 	// wrong with the incoming document.
 	Conditions []*Condition `json:"conditions,omitempty" jsonschema:"title=Conditions"`
+
+	// Extensions for local or format focussed data
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // Action provides a suggestion about what to do next with the document.
@@ -495,6 +498,9 @@ type Action struct {
 	// Description includes human readable details about what steps should be
 	// take next.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+
+	// Extensions for local or format focussed data
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // Condition provides a more formal structure for describing with a specific
@@ -528,6 +534,7 @@ func (st *Status) Calculate() error {
 func (st *Status) Normalize(normalizers tax.Normalizers) {
 	st.Series = cbc.NormalizeCode(st.Series)
 	st.Code = cbc.NormalizeCode(st.Code)
+	st.Ext = tax.CleanExtensions(st.Ext)
 
 	tax.Normalize(normalizers, st.Supplier)
 	tax.Normalize(normalizers, st.Customer)
@@ -586,8 +593,39 @@ func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
 	if sl == nil {
 		return
 	}
+	sl.Ext = tax.CleanExtensions(sl.Ext)
 	tax.Normalize(normalizers, sl.Doc)
+	tax.Normalize(normalizers, sl.Reasons)
+	tax.Normalize(normalizers, sl.Actions)
 	normalizers.Each(sl)
+}
+
+// Normalize normalizes the reason's sub-objects.
+func (r *Reason) Normalize(normalizers tax.Normalizers) {
+	if r == nil {
+		return
+	}
+	r.Ext = tax.CleanExtensions(r.Ext)
+	tax.Normalize(normalizers, r.Conditions)
+	normalizers.Each(r)
+}
+
+// Normalize runs any registered normalizers on the action.
+func (a *Action) Normalize(normalizers tax.Normalizers) {
+	if a == nil {
+		return
+	}
+	a.Ext = tax.CleanExtensions(a.Ext)
+	normalizers.Each(a)
+}
+
+// Normalize normalizes the condition's code and runs any registered normalizers.
+func (c *Condition) Normalize(normalizers tax.Normalizers) {
+	if c == nil {
+		return
+	}
+	c.Code = cbc.NormalizeCode(c.Code)
+	normalizers.Each(c)
 }
 
 // JSONSchemaExtend extends the schema with additional property details
