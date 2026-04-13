@@ -54,7 +54,11 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 22.x
-                  registry-url: 'https://registry.npmjs.org'
+                  # Intentionally no `registry-url`: setup-node would
+                  # otherwise write a `.npmrc` with an `_authToken` entry
+                  # that forces npm to use token auth and blocks the OIDC
+                  # trusted-publisher exchange. npm defaults to
+                  # registry.npmjs.org, which is what we want.
 
             # The npm shipped with recent Node 22.x tool-cache images has a
             # broken dependency tree (missing `promise-retry`), which breaks
