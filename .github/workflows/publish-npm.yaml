@@ -72,6 +72,21 @@ jobs:
               working-directory: ./wasm/worker
               run: npm run build
 
+            # npm 11 refuses to publish a prerelease (e.g. v1.2.3-rc1) to
+            # the default `latest` dist-tag. Derive the tag from the
+            # version: a prerelease like `-rc1` / `-beta.2` maps to `rc` /
+            # `beta`; a plain version maps to `latest`.
+            - name: Determine npm dist-tag
+              id: npm-tag
+              run: |
+                  if [[ "$GOBL_VERSION" =~ -([a-z]+) ]]; then
+                      tag="${BASH_REMATCH[1]}"
+                  else
+                      tag="latest"
+                  fi
+                  echo "Using npm dist-tag: $tag"
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
             # OIDC trusted publishing requires npm ≥ 11.5.1, but Node 22's
             # tool-cache ships npm 10.9.7 with a corrupted dependency tree
             # that prevents `npm install -g npm@latest`, and corepack
@@ -81,4 +96,4 @@ jobs:
             # touching the global install.
             - name: Publish gobl-worker to NPM registry
               working-directory: ./wasm/worker
-              run: npx -y npm@11 publish
+              run: npx -y npm@11 publish --tag ${{ steps.npm-tag.outputs.tag }}
