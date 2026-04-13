@@ -81,9 +81,17 @@ jobs:
                   node-version: 22.x
                   registry-url: 'https://registry.npmjs.org'
 
-            # Ensure npm 11.5.1 or later is installed
-            - name: Update npm
-              run: npm install -g npm@latest
+            # The npm shipped with recent Node 22.x tool-cache images has a
+            # broken dependency tree (missing `promise-retry`), which breaks
+            # `npm install -g npm@latest`. Use corepack to install a working
+            # npm 11.x instead — this is the npm maintainers' recommended
+            # approach.
+            - name: Activate npm via corepack
+              if: ${{ steps.bump.new_tag == steps.bump.tag }}
+              run: |
+                  corepack enable
+                  corepack prepare npm@latest --activate
+                  npm --version
 
             - name: Run npm ci
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
