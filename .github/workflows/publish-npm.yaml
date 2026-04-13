@@ -62,13 +62,17 @@ jobs:
 
             # The npm shipped with recent Node 22.x tool-cache images has a
             # broken dependency tree (missing `promise-retry`), which breaks
-            # `npm install -g npm@latest`. Use corepack to install a working
-            # npm 11.x instead — this is the npm maintainers' recommended
-            # approach.
+            # `npm install -g npm@latest`. Use corepack to install npm via
+            # its package name — the npm maintainers' recommended approach.
+            #
+            # Pin to npm@11: OIDC trusted publishing requires npm ≥ 11.5.1,
+            # and corepack's `npm@latest` resolves via its bundled known-
+            # good list (currently 10.9.7), not the npm registry's latest
+            # tag, so `@latest` is not good enough here.
             - name: Activate npm via corepack
               run: |
                   corepack enable
-                  corepack prepare npm@latest --activate
+                  corepack prepare npm@11 --activate
                   npm --version
 
             - name: Run npm ci
