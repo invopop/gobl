@@ -60,21 +60,6 @@ jobs:
                   # trusted-publisher exchange. npm defaults to
                   # registry.npmjs.org, which is what we want.
 
-            # The npm shipped with recent Node 22.x tool-cache images has a
-            # broken dependency tree (missing `promise-retry`), which breaks
-            # `npm install -g npm@latest`. Use corepack to install npm via
-            # its package name — the npm maintainers' recommended approach.
-            #
-            # Pin to npm@11: OIDC trusted publishing requires npm ≥ 11.5.1,
-            # and corepack's `npm@latest` resolves via its bundled known-
-            # good list (currently 10.9.7), not the npm registry's latest
-            # tag, so `@latest` is not good enough here.
-            - name: Activate npm via corepack
-              run: |
-                  corepack enable
-                  corepack prepare npm@11 --activate
-                  npm --version
-
             - name: Run npm ci
               working-directory: ./wasm/worker
               run: npm ci
@@ -87,6 +72,13 @@ jobs:
               working-directory: ./wasm/worker
               run: npm run build
 
+            # OIDC trusted publishing requires npm ≥ 11.5.1, but Node 22's
+            # tool-cache ships npm 10.9.7 with a corrupted dependency tree
+            # that prevents `npm install -g npm@latest`, and corepack
+            # explicitly refuses to shim `npm` so its `prepare --activate`
+            # is a no-op for this binary. `npx` sidesteps both: it fetches
+            # npm 11 on demand and executes it from npx's cache without
+            # touching the global install.
             - name: Publish gobl-worker to NPM registry
               working-directory: ./wasm/worker
-              run: npm publish
+              run: npx -y npm@11 publish
