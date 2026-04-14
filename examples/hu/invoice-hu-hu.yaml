@@ -1,0 +1,48 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: HU
+uuid: a1b2c3d4-5678-9abc-def0-1234567890ab
+currency: HUF
+series: "2026"
+code: "001"
+issue_date: "2026-04-14"
+
+supplier:
+  name: "Példa Szolgáltató Kft."
+  tax_id:
+    country: HU
+    code: "13895459"
+  addresses:
+    - street: "Andrássy út"
+      num: "60"
+      locality: "Budapest"
+      code: "1062"
+      country: HU
+
+customer:
+  name: "Vevő Kereskedelmi Zrt."
+  tax_id:
+    country: HU
+    code: "10773381"
+  addresses:
+    - street: "Könyves Kálmán körút"
+      num: "36"
+      locality: "Budapest"
+      code: "1097"
+      country: HU
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Szoftverfejlesztési szolgáltatás"
+      price: "25000.00"
+      unit: h
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "5"
+    item:
+      name: "Szakkönyvek"
+      price: "4500.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced

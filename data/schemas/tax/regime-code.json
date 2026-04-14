@@ -62,6 +62,10 @@
           "title": "United Kingdom"
         },
         {
+          "const": "HU",
+          "title": "Hungary"
+        },
+        {
           "const": "IE",
           "title": "Ireland"
         },

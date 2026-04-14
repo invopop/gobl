@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `hu`: Added the Hungarian ÁFA (VAT) regime with 27% standard, 18% reduced, and 5% super-reduced rates, and adószám validation with modulo-10 checksum.
+
 ## [v0.400.0] - 2026-14-15
 
 Final release of the rules based changes.
