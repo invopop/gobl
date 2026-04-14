@@ -1,11 +1,11 @@
 {
   "id": "GOBL-ES-TBAI-V1",
-  "name": "es-tbai-v1",
+  "package": "es-tbai-v1",
   "guard": "context: addon in [es-tbai-v1]",
   "subsets": [
     {
       "id": "GOBL-ES-TBAI-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "tax",
@@ -115,7 +115,7 @@
     },
     {
       "id": "GOBL-ES-TBAI-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "exempt vat/igic",

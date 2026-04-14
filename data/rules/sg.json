@@ -1,10 +1,10 @@
 {
   "id": "GOBL-SG",
-  "name": "sg",
+  "package": "sg",
   "subsets": [
     {
       "id": "GOBL-SG-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [SG]",
@@ -25,7 +25,7 @@
     },
     {
       "id": "GOBL-SG-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "context: regime in [SG]",
@@ -51,7 +51,7 @@
     },
     {
       "id": "GOBL-SG-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [SG]",

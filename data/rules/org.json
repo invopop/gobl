@@ -1,10 +1,10 @@
 {
   "id": "GOBL-ORG",
-  "name": "org",
+  "package": "org",
   "subsets": [
     {
       "id": "GOBL-ORG-ATTACHMENT",
-      "name": "org.Attachment",
+      "object": "org.Attachment",
       "subsets": [
         {
           "field": "url",
@@ -35,7 +35,7 @@
     },
     {
       "id": "GOBL-ORG-COORDINATES",
-      "name": "org.Coordinates",
+      "object": "org.Coordinates",
       "subsets": [
         {
           "field": "lat",
@@ -86,7 +86,7 @@
     },
     {
       "id": "GOBL-ORG-DOCUMENTREF",
-      "name": "org.DocumentRef",
+      "object": "org.DocumentRef",
       "subsets": [
         {
           "field": "code",
@@ -132,7 +132,7 @@
     },
     {
       "id": "GOBL-ORG-EMAIL",
-      "name": "org.Email",
+      "object": "org.Email",
       "subsets": [
         {
           "field": "addr",
@@ -153,7 +153,7 @@
     },
     {
       "id": "GOBL-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "assert": [
         {
           "id": "GOBL-ORG-IDENTITY-03",
@@ -191,7 +191,7 @@
     },
     {
       "id": "GOBL-ORG-IMAGE",
-      "name": "org.Image",
+      "object": "org.Image",
       "subsets": [
         {
           "field": "url",
@@ -232,7 +232,7 @@
     },
     {
       "id": "GOBL-ORG-INBOX",
-      "name": "org.Inbox",
+      "object": "org.Inbox",
       "assert": [
         {
           "id": "GOBL-ORG-INBOX-01",
@@ -285,7 +285,7 @@
     },
     {
       "id": "GOBL-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "field": "name",
@@ -316,7 +316,7 @@
     },
     {
       "id": "GOBL-ORG-NAME",
-      "name": "org.Name",
+      "object": "org.Name",
       "subsets": [
         {
           "guard": "Surname == \"\"",
@@ -352,7 +352,7 @@
     },
     {
       "id": "GOBL-ORG-NOTE",
-      "name": "org.Note",
+      "object": "org.Note",
       "subsets": [
         {
           "field": "text",
@@ -383,7 +383,7 @@
     },
     {
       "id": "GOBL-ORG-PERSON",
-      "name": "org.Person",
+      "object": "org.Person",
       "subsets": [
         {
           "field": "name",
@@ -399,7 +399,7 @@
     },
     {
       "id": "GOBL-ORG-REGISTRATION",
-      "name": "org.Registration",
+      "object": "org.Registration",
       "subsets": [
         {
           "field": "currency",
@@ -420,7 +420,7 @@
     },
     {
       "id": "GOBL-ORG-TELEPHONE",
-      "name": "org.Telephone",
+      "object": "org.Telephone",
       "subsets": [
         {
           "field": "num",
@@ -436,7 +436,7 @@
     },
     {
       "id": "GOBL-ORG-UNIT",
-      "name": "org.Unit",
+      "object": "org.Unit",
       "assert": [
         {
           "id": "GOBL-ORG-UNIT-01",
@@ -447,7 +447,7 @@
     },
     {
       "id": "GOBL-ORG-WEBSITE",
-      "name": "org.Website",
+      "object": "org.Website",
       "subsets": [
         {
           "field": "url",

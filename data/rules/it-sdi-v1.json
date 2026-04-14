@@ -1,11 +1,11 @@
 {
   "id": "GOBL-IT-SDI-V1",
-  "name": "it-sdi-v1",
+  "package": "it-sdi-v1",
   "guard": "context: addon in [it-sdi-v1]",
   "subsets": [
     {
       "id": "GOBL-IT-SDI-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-IT-SDI-V1-BILL-INVOICE-13",
@@ -309,7 +309,7 @@
     },
     {
       "id": "GOBL-IT-SDI-V1-BILL-CHARGE",
-      "name": "bill.Charge",
+      "object": "bill.Charge",
       "subsets": [
         {
           "guard": "is fund contribution",
@@ -350,7 +350,7 @@
     },
     {
       "id": "GOBL-IT-SDI-V1-ORG-ADDRESS",
-      "name": "org.Address",
+      "object": "org.Address",
       "assert": [
         {
           "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-01",
@@ -428,7 +428,7 @@
     },
     {
       "id": "GOBL-IT-SDI-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "VAT without percent",
@@ -464,7 +464,7 @@
     },
     {
       "id": "GOBL-IT-SDI-V1-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "ext",
@@ -480,7 +480,7 @@
     },
     {
       "id": "GOBL-IT-SDI-V1-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "ext",

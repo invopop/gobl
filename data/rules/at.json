@@ -1,10 +1,10 @@
 {
   "id": "GOBL-AT",
-  "name": "at",
+  "package": "at",
   "subsets": [
     {
       "id": "GOBL-AT-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [AT]",

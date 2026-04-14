@@ -1,10 +1,10 @@
 {
   "id": "GOBL-IN",
-  "name": "in",
+  "package": "in",
   "subsets": [
     {
       "id": "GOBL-IN-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "context: regime in [IN]",
@@ -45,7 +45,7 @@
     },
     {
       "id": "GOBL-IN-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "guard": "context: regime in [IN]",
@@ -66,7 +66,7 @@
     },
     {
       "id": "GOBL-IN-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [IN]",

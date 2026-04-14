@@ -1,11 +1,11 @@
 {
   "id": "GOBL-GR-MYDATA-V1",
-  "name": "gr-mydata-v1",
+  "package": "gr-mydata-v1",
   "guard": "context: addon in [gr-mydata-v1]",
   "subsets": [
     {
       "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "series",
@@ -234,7 +234,7 @@
     },
     {
       "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE",
-      "name": "bill.Charge",
+      "object": "bill.Charge",
       "subsets": [
         {
           "field": "ext",
@@ -295,7 +295,7 @@
     },
     {
       "id": "GOBL-GR-MYDATA-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "category is VAT",
@@ -346,7 +346,7 @@
     },
     {
       "id": "GOBL-GR-MYDATA-V1-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "key",
@@ -372,7 +372,7 @@
     },
     {
       "id": "GOBL-GR-MYDATA-V1-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "key",

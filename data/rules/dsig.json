@@ -1,10 +1,10 @@
 {
   "id": "GOBL-DSIG",
-  "name": "dsig",
+  "package": "dsig",
   "subsets": [
     {
       "id": "GOBL-DSIG-DIGEST",
-      "name": "dsig.Digest",
+      "object": "dsig.Digest",
       "subsets": [
         {
           "field": "alg",

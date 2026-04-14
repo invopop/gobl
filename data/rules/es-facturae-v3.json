@@ -1,11 +1,11 @@
 {
   "id": "GOBL-ES-FACTURAE-V3",
-  "name": "es-facturae-v3",
+  "package": "es-facturae-v3",
   "guard": "context: addon in [es-facturae-v3]",
   "subsets": [
     {
       "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "customer",

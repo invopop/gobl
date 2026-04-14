@@ -1,10 +1,10 @@
 {
   "id": "GOBL-PL",
-  "name": "pl",
+  "package": "pl",
   "subsets": [
     {
       "id": "GOBL-PL-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [PL]",
@@ -35,7 +35,7 @@
     },
     {
       "id": "GOBL-PL-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [PL]",

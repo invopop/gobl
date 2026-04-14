@@ -1,10 +1,10 @@
 {
   "id": "GOBL-UUID",
-  "name": "uuid",
+  "package": "uuid",
   "subsets": [
     {
       "id": "GOBL-UUID-UUID",
-      "name": "uuid.UUID",
+      "object": "uuid.UUID",
       "subsets": [
         {
           "guard": "present",

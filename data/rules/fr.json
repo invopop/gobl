@@ -1,10 +1,10 @@
 {
   "id": "GOBL-FR",
-  "name": "fr",
+  "package": "fr",
   "subsets": [
     {
       "id": "GOBL-FR-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [FR]",
@@ -25,7 +25,7 @@
     },
     {
       "id": "GOBL-FR-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "context: regime in [FR]",
@@ -66,7 +66,7 @@
     },
     {
       "id": "GOBL-FR-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [FR]",
