@@ -1,10 +1,10 @@
 {
   "id": "GOBL-IE",
-  "name": "ie",
+  "package": "ie",
   "subsets": [
     {
       "id": "GOBL-IE-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [IE]",

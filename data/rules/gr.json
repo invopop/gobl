@@ -1,10 +1,10 @@
 {
   "id": "GOBL-GR",
-  "name": "gr",
+  "package": "gr",
   "subsets": [
     {
       "id": "GOBL-GR-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [EL]",

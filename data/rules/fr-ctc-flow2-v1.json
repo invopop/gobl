@@ -1,11 +1,11 @@
 {
   "id": "GOBL-FR-CTC-FLOW2-V1",
-  "name": "fr-ctc-flow2-v1",
+  "package": "fr-ctc-flow2-v1",
   "guard": "context: addon in [fr-ctc-flow2-v1]",
   "subsets": [
     {
       "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-01",
@@ -473,7 +473,7 @@
     },
     {
       "id": "GOBL-FR-CTC-FLOW2-V1-ORG-PARTY",
-      "name": "org.Party",
+      "object": "org.Party",
       "subsets": [
         {
           "field": "identities",
@@ -509,7 +509,7 @@
     },
     {
       "id": "GOBL-FR-CTC-FLOW2-V1-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "scheme 0224",
@@ -535,7 +535,7 @@
     },
     {
       "id": "GOBL-FR-CTC-FLOW2-V1-ORG-INBOX",
-      "name": "org.Inbox",
+      "object": "org.Inbox",
       "subsets": [
         {
           "guard": "scheme 0225",
@@ -561,7 +561,7 @@
     },
     {
       "id": "GOBL-FR-CTC-FLOW2-V1-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "field": "meta",

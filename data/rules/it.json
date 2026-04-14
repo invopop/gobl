@@ -1,10 +1,10 @@
 {
   "id": "GOBL-IT",
-  "name": "it",
+  "package": "it",
   "subsets": [
     {
       "id": "GOBL-IT-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [IT]",
@@ -30,7 +30,7 @@
     },
     {
       "id": "GOBL-IT-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "context: regime in [IT]",

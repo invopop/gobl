@@ -1,10 +1,10 @@
 {
   "id": "GOBL-BR",
-  "name": "br",
+  "package": "br",
   "subsets": [
     {
       "id": "GOBL-BR-ORG-PARTY",
-      "name": "org.Party",
+      "object": "org.Party",
       "subsets": [
         {
           "guard": "context: regime in [BR]",
@@ -80,7 +80,7 @@
     },
     {
       "id": "GOBL-BR-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [BR]",

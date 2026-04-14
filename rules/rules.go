@@ -40,8 +40,10 @@ type Def func(s *Set)
 type Set struct {
 	// ID is the namespace for this set of rules, typically a package-level code like "GOBL" or "GOBL-ORG".
 	ID Code `json:"id,omitempty"`
-	// Name is the name of the struct type this set of rules applies to. It is used for informational purposes and is not required to be unique.
-	Name string `json:"name,omitempty"`
+	// Package is the short package name used by Register to identify the rule set for generation purposes. It is only set by Register and RegisterWithGuard.
+	Package string `json:"package,omitempty"`
+	// Object is the fully-qualified Go type name (e.g. "bill.Invoice") that this set of rules applies to. It is set by For and is used for informational purposes.
+	Object string `json:"object,omitempty"`
 	// FieldName is the JSON tag name of the field this subset is scoped to. When non-empty, Validate extracts this field from the parent object and delegates to it.
 	FieldName string `json:"field,omitempty"`
 	// Each when true causes Validate to iterate over the slice elements of the field named by FieldName.
@@ -91,20 +93,21 @@ func Registry() []*Set {
 }
 
 // Register is used to register a set of rules for a given namespace.
-func Register(name string, pkg Code, sets ...*Set) {
-	RegisterWithGuard(name, pkg, nil, sets...)
+func Register(pkg string, code Code, sets ...*Set) {
+	RegisterWithGuard(pkg, code, nil, sets...)
 }
 
 // RegisterWithGuard is used to register a set of rules for a given namespace
 // with an optional guard condition that determines when the rules should be applied.
-func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
+func RegisterWithGuard(pkg string, code Code, guard Test, sets ...*Set) {
+	sets = cloneSets(sets)
 	set := &Set{
-		ID:      pkg,
-		Name:    name,
+		ID:      code,
+		Package: pkg,
 		Guard:   guard,
 		Subsets: sets,
 	}
-	prependToSets(pkg, sets)
+	prependToSets(code, sets)
 	buildTypeIndex(set)
 	if guard == nil {
 		coreRegistry = append(coreRegistry, set)
@@ -119,6 +122,26 @@ func RegisterWithGuard(name string, pkg Code, guard Test, sets ...*Set) {
 	} else {
 		unkeyedGuarded = append(unkeyedGuarded, set)
 	}
+}
+
+// NewSet creates a standalone namespace set from the given type-bound subsets.
+// It prepends the namespace code to all assertion and set IDs and builds
+// the type index for efficient lookup during validation.
+//
+// Unlike Register, the returned set is NOT added to the global registry.
+// Use Set.Validate to validate objects against it directly.
+//
+// The input sets are cloned internally, so the same output of For can safely
+// be passed to multiple NewSet or Register calls.
+func NewSet(ns Code, sets ...*Set) *Set {
+	sets = cloneSets(sets)
+	set := &Set{
+		ID:      ns,
+		Subsets: sets,
+	}
+	prependToSets(ns, sets)
+	buildTypeIndex(set)
+	return set
 }
 
 // buildTypeIndex populates the typeIndex map on a namespace set by grouping
@@ -174,13 +197,13 @@ func For(obj any, defs ...Def) *Set {
 	normPkg := func(p string) string { return strings.TrimSuffix(p, "_test") }
 	samePackage := callerPkg != "" && normPkg(callerPkg) == normPkg(t.PkgPath())
 	setID := typeSetID(t, samePackage)
-	name := t.Name()
+	objName := t.Name()
 	if pkg := pkgShortName(t); pkg != "" {
-		name = pkg + "." + name
+		objName = pkg + "." + objName
 	}
 	s := &Set{
 		ID:      setID,
-		Name:    name,
+		Object:  objName,
 		objType: t,
 	}
 	for _, def := range defs {
@@ -445,6 +468,33 @@ func pkgShortName(t reflect.Type) string {
 	return strings.TrimSuffix(name, "_test")
 }
 
+// cloneSets returns a deep-enough copy of each set so that prependToSets can
+// safely mutate IDs without affecting the originals. Only the fields modified
+// by prepending (Set.ID, Assertion.ID) and the slices that hold them are
+// copied; shared references like Guard, Tests, and objType are retained.
+func cloneSets(sets []*Set) []*Set {
+	out := make([]*Set, len(sets))
+	for i, s := range sets {
+		out[i] = cloneSet(s)
+	}
+	return out
+}
+
+func cloneSet(s *Set) *Set {
+	c := *s
+	if len(s.Assert) > 0 {
+		c.Assert = make([]*Assertion, len(s.Assert))
+		for i, a := range s.Assert {
+			ac := *a
+			c.Assert[i] = &ac
+		}
+	}
+	if len(s.Subsets) > 0 {
+		c.Subsets = cloneSets(s.Subsets)
+	}
+	return &c
+}
+
 func prependToSets(code Code, sets []*Set) {
 	for _, s := range sets {
 		if s.ID != "" {
@@ -538,8 +588,17 @@ func Validate(obj any, opts ...WithContext) Faults {
 // Validate validates an object against the set's rules. If the set has a test
 // condition (from When), it is evaluated first and the set is skipped when false.
 // Returns nil when no faults are found.
-func (s *Set) Validate(obj any) Faults {
-	return s.validate(nil, obj)
+//
+// Optional WithContext values inject additional context into the validation
+// session. Context is also collected automatically from the root object's
+// exported fields that implement ContextAdder (e.g. tax.Regime, tax.Addons).
+func (s *Set) Validate(obj any, opts ...WithContext) Faults {
+	rc := &Context{}
+	for _, opt := range opts {
+		opt(rc)
+	}
+	collectContext(rc, obj)
+	return s.validate(rc, obj)
 }
 
 // validate is the internal context-aware implementation of Validate.
@@ -847,7 +906,8 @@ func jsonFieldName(f reflect.StructField) string {
 func (s Set) MarshalJSON() ([]byte, error) {
 	type alias struct {
 		ID        Code         `json:"id,omitempty"`
-		Name      string       `json:"name,omitempty"`
+		Package   string       `json:"package,omitempty"`
+		Object    string       `json:"object,omitempty"`
 		FieldName string       `json:"field,omitempty"`
 		Each      bool         `json:"each,omitempty"`
 		Guard     string       `json:"guard,omitempty"`
@@ -856,7 +916,8 @@ func (s Set) MarshalJSON() ([]byte, error) {
 	}
 	a := alias{
 		ID:        s.ID,
-		Name:      s.Name,
+		Package:   s.Package,
+		Object:    s.Object,
 		FieldName: s.FieldName,
 		Each:      s.Each,
 		Assert:    s.Assert,

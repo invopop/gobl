@@ -1,11 +1,11 @@
 {
   "id": "GOBL-MX-CFDI-V4",
-  "name": "mx-cfdi-v4",
+  "package": "mx-cfdi-v4",
   "guard": "context: addon in [mx-cfdi-v4]",
   "subsets": [
     {
       "id": "GOBL-MX-CFDI-V4-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "tax",
@@ -374,7 +374,7 @@
     },
     {
       "id": "GOBL-MX-CFDI-V4-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "ext",
@@ -390,7 +390,7 @@
     },
     {
       "id": "GOBL-MX-CFDI-V4-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "ext",
@@ -406,7 +406,7 @@
     },
     {
       "id": "GOBL-MX-CFDI-V4-PAY-TERMS",
-      "name": "pay.Terms",
+      "object": "pay.Terms",
       "subsets": [
         {
           "field": "notes",
@@ -422,7 +422,7 @@
     },
     {
       "id": "GOBL-MX-CFDI-V4-FOODVOUCHERS",
-      "name": "cfdi.FoodVouchers",
+      "object": "cfdi.FoodVouchers",
       "subsets": [
         {
           "field": "employer_registration",
@@ -582,7 +582,7 @@
     },
     {
       "id": "GOBL-MX-CFDI-V4-FUELACCOUNTBALANCE",
-      "name": "cfdi.FuelAccountBalance",
+      "object": "cfdi.FuelAccountBalance",
       "subsets": [
         {
           "field": "account_number",

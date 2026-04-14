@@ -1,11 +1,11 @@
 {
   "id": "GOBL-AR-ARCA-V4",
-  "name": "ar-arca-v4",
+  "package": "ar-arca-v4",
   "guard": "context: addon in [ar-arca-v4]",
   "subsets": [
     {
       "id": "GOBL-AR-ARCA-V4-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-AR-ARCA-V4-BILL-INVOICE-05",
@@ -268,7 +268,7 @@
     },
     {
       "id": "GOBL-AR-ARCA-V4-BILL-CHARGE",
-      "name": "bill.Charge",
+      "object": "bill.Charge",
       "subsets": [
         {
           "guard": "key is tax",
@@ -319,7 +319,7 @@
     },
     {
       "id": "GOBL-AR-ARCA-V4-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "category is VAT",

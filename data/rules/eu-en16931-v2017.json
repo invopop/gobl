@@ -1,11 +1,11 @@
 {
   "id": "GOBL-EU-EN16931-V2017",
-  "name": "eu-en16931-v2017",
+  "package": "eu-en16931-v2017",
   "guard": "context: addon in [eu-en16931-v2017]",
   "subsets": [
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-BILL-INVOICE-08",
@@ -107,7 +107,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT",
-      "name": "bill.Discount",
+      "object": "bill.Discount",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-BILL-DISCOUNT-02",
@@ -130,7 +130,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-LINEDISCOUNT",
-      "name": "bill.LineDiscount",
+      "object": "bill.LineDiscount",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-BILL-LINEDISCOUNT-01",
@@ -141,7 +141,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-CHARGE",
-      "name": "bill.Charge",
+      "object": "bill.Charge",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-BILL-CHARGE-01",
@@ -152,7 +152,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-BILL-LINECHARGE",
-      "name": "bill.LineCharge",
+      "object": "bill.LineCharge",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-BILL-LINECHARGE-01",
@@ -163,7 +163,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "ext",
@@ -179,7 +179,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-PAY-TERMS",
-      "name": "pay.Terms",
+      "object": "pay.Terms",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-PAY-TERMS-01",
@@ -190,7 +190,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "field": "unit",
@@ -206,7 +206,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-ORG-ATTACHMENT",
-      "name": "org.Attachment",
+      "object": "org.Attachment",
       "subsets": [
         {
           "field": "code",
@@ -222,7 +222,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-ORG-PARTY",
-      "name": "org.Party",
+      "object": "org.Party",
       "subsets": [
         {
           "field": "inboxes",
@@ -238,7 +238,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-ORG-INBOX",
-      "name": "org.Inbox",
+      "object": "org.Inbox",
       "assert": [
         {
           "id": "GOBL-EU-EN16931-V2017-ORG-INBOX-01",
@@ -254,7 +254,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-ORG-ADDRESS",
-      "name": "org.Address",
+      "object": "org.Address",
       "subsets": [
         {
           "field": "country",
@@ -270,7 +270,7 @@
     },
     {
       "id": "GOBL-EU-EN16931-V2017-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "field": "ext",

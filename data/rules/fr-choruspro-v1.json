@@ -1,11 +1,11 @@
 {
   "id": "GOBL-FR-CHORUSPRO-V1",
-  "name": "fr-choruspro-v1",
+  "package": "fr-choruspro-v1",
   "guard": "context: addon in [fr-choruspro-v1]",
   "subsets": [
     {
       "id": "GOBL-FR-CHORUSPRO-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "customer",
@@ -78,7 +78,7 @@
     },
     {
       "id": "GOBL-FR-CHORUSPRO-V1-ORG-PARTY",
-      "name": "org.Party",
+      "object": "org.Party",
       "subsets": [
         {
           "field": "ext",

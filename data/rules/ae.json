@@ -1,10 +1,10 @@
 {
   "id": "GOBL-AE",
-  "name": "ae",
+  "package": "ae",
   "subsets": [
     {
       "id": "GOBL-AE-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [AE]",
