@@ -5,8 +5,9 @@ context("Inputs", () => {
 
   describe("Valid Input", () => {
     beforeEach(() => {
-      cy.get("#input-file").clear().paste(`{
-        "doc": { 
+      cy.get("#input-file").clear();
+      cy.get("#input-file").paste(`{
+        "doc": {
             "$schema": "https://gobl.org/draft-0/note/message",
             "title": "Test Message",
             "content": "test content"
@@ -24,8 +25,9 @@ context("Inputs", () => {
 
   describe("Invalid Input", () => {
     beforeEach(() => {
-      cy.get("#input-file").clear().paste(`{
-        "doczzz": { 
+      cy.get("#input-file").clear();
+      cy.get("#input-file").paste(`{
+        "doczzz": {
             "$schema": "https://gobl.org/draft-0/note/message",
             "title": "Test Message",
             "content": "test content"

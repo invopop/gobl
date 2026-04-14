@@ -14,7 +14,7 @@
     "dev": "browser-sync start . -s --port 8080 --files '*.html, *.css, *.js'",
     "test": "./node_modules/.bin/cypress open",
     "ci": "npm run check-formatting && npm start & node_modules/.bin/wait-on http://127.0.0.1:8080 && cypress run",
-    "check-formatting": "node_modules/.bin/markdownlint *.md && node_modules/.bin/eslint *.js cypress/**/*.js --no-error-on-unmatched-pattern",
+    "check-formatting": "node_modules/.bin/markdownlint *.md && node_modules/.bin/eslint *.js cypress/**/*.js --no-error-on-unmatched-pattern --no-warn-ignored",
     "process-ids-on-8080": "lsof -t -i:8080"
   },
   "keywords": [],
@@ -28,7 +28,7 @@
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-cypress": "^4.1.0",
     "eslint-plugin-prettier": "^5.2.3",
-    "markdownlint-cli": "^0.46.0",
+    "markdownlint-cli": "^0.48.0",
     "prettier": "^3.5.2"
   },
   "dependencies": {
