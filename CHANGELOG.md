@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.400.0-rc2] - 2026-04-14
+
 ### Added
 
 - `rules`: `NewSet` function for standalone use of rule sets with namespaced error codes, without requiring global registration.
