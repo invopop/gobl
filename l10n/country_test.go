@@ -28,6 +28,10 @@ func TestISOCountryCodeValidation(t *testing.T) {
 	c = l10n.ISOCountryCode("XI") // Northern Ireland
 	err = c.Validate()
 	assert.ErrorContains(t, err, "must be a valid ISO country code")
+
+	c = l10n.ISOCountryCode("")
+	err = c.Validate()
+	assert.NoError(t, err)
 }
 
 func TestTaxCountryCodeValidation(t *testing.T) {
@@ -42,6 +46,10 @@ func TestTaxCountryCodeValidation(t *testing.T) {
 	assert.ErrorContains(t, err, "must be a valid tax country code")
 
 	c = l10n.TaxCountryCode("XI") // Northern Ireland
+	err = c.Validate()
+	assert.NoError(t, err)
+
+	c = l10n.TaxCountryCode("")
 	err = c.Validate()
 	assert.NoError(t, err)
 }
