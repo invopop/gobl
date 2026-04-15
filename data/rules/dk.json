@@ -1,10 +1,10 @@
 {
   "id": "GOBL-DK",
-  "name": "dk",
+  "package": "dk",
   "subsets": [
     {
       "id": "GOBL-DK-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [DK]",
@@ -25,7 +25,7 @@
     },
     {
       "id": "GOBL-DK-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "is CVR",
@@ -51,7 +51,7 @@
     },
     {
       "id": "GOBL-DK-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [DK]",

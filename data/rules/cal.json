@@ -1,10 +1,10 @@
 {
   "id": "GOBL-CAL",
-  "name": "cal",
+  "package": "cal",
   "subsets": [
     {
       "id": "GOBL-CAL-DATE",
-      "name": "cal.Date",
+      "object": "cal.Date",
       "assert": [
         {
           "id": "GOBL-CAL-DATE-01",
@@ -15,7 +15,7 @@
     },
     {
       "id": "GOBL-CAL-DATETIME",
-      "name": "cal.DateTime",
+      "object": "cal.DateTime",
       "assert": [
         {
           "id": "GOBL-CAL-DATETIME-01",
@@ -26,7 +26,7 @@
     },
     {
       "id": "GOBL-CAL-PERIOD",
-      "name": "cal.Period",
+      "object": "cal.Period",
       "assert": [
         {
           "id": "GOBL-CAL-PERIOD-10",

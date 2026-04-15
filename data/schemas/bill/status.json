@@ -51,6 +51,11 @@
           "type": "string",
           "title": "Description",
           "description": "Description includes human readable details about what steps should be\ntake next."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for local or format focussed data"
         }
       },
       "type": "object",
@@ -177,6 +182,11 @@
           "type": "array",
           "title": "Conditions",
           "description": "Condition provides additional details with codes about what has gone\nwrong with the incoming document."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for local or format focussed data"
         }
       },
       "type": "object",

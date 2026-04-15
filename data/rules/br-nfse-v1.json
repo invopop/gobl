@@ -1,11 +1,11 @@
 {
   "id": "GOBL-BR-NFSE-V1",
-  "name": "br-nfse-v1",
+  "package": "br-nfse-v1",
   "guard": "context: addon in [br-nfse-v1]",
   "subsets": [
     {
       "id": "GOBL-BR-NFSE-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "series",
@@ -179,7 +179,7 @@
     },
     {
       "id": "GOBL-BR-NFSE-V1-BILL-LINE",
-      "name": "bill.Line",
+      "object": "bill.Line",
       "assert": [
         {
           "id": "GOBL-BR-NFSE-V1-BILL-LINE-01",
@@ -190,7 +190,7 @@
     },
     {
       "id": "GOBL-BR-NFSE-V1-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "field": "ext",
@@ -211,7 +211,7 @@
     },
     {
       "id": "GOBL-BR-NFSE-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "ISS category",

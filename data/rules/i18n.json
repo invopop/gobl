@@ -1,10 +1,10 @@
 {
   "id": "GOBL-I18N",
-  "name": "i18n",
+  "package": "i18n",
   "subsets": [
     {
       "id": "GOBL-I18N-LANG",
-      "name": "i18n.Lang",
+      "object": "i18n.Lang",
       "assert": [
         {
           "id": "GOBL-I18N-LANG-01",

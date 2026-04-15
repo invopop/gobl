@@ -1,10 +1,10 @@
 {
   "id": "GOBL-TAX",
-  "name": "tax",
+  "package": "tax",
   "subsets": [
     {
       "id": "GOBL-TAX-ADDONS",
-      "name": "tax.Addons",
+      "object": "tax.Addons",
       "subsets": [
         {
           "field": "$addons",
@@ -25,7 +25,7 @@
     },
     {
       "id": "GOBL-TAX-ADDONDEF",
-      "name": "tax.AddonDef",
+      "object": "tax.AddonDef",
       "subsets": [
         {
           "field": "key",
@@ -51,7 +51,7 @@
     },
     {
       "id": "GOBL-TAX-CATEGORYDEF",
-      "name": "tax.CategoryDef",
+      "object": "tax.CategoryDef",
       "assert": [
         {
           "id": "GOBL-TAX-CATEGORYDEF-04",
@@ -94,7 +94,7 @@
     },
     {
       "id": "GOBL-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "assert": [
         {
           "id": "GOBL-TAX-COMBO-01",
@@ -130,7 +130,7 @@
     },
     {
       "id": "GOBL-TAX-CORRECTIONDEFINITION",
-      "name": "tax.CorrectionDefinition",
+      "object": "tax.CorrectionDefinition",
       "subsets": [
         {
           "field": "schema",
@@ -146,7 +146,7 @@
     },
     {
       "id": "GOBL-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "field": "country",
@@ -172,7 +172,7 @@
     },
     {
       "id": "GOBL-TAX-RATEDEF",
-      "name": "tax.RateDef",
+      "object": "tax.RateDef",
       "subsets": [
         {
           "field": "rate",
@@ -225,7 +225,7 @@
     },
     {
       "id": "GOBL-TAX-REGIMEDEF",
-      "name": "tax.RegimeDef",
+      "object": "tax.RegimeDef",
       "subsets": [
         {
           "field": "country",
@@ -283,7 +283,7 @@
     },
     {
       "id": "GOBL-TAX-SCENARIOSET",
-      "name": "tax.ScenarioSet",
+      "object": "tax.ScenarioSet",
       "subsets": [
         {
           "field": "schema",
@@ -309,7 +309,7 @@
     },
     {
       "id": "GOBL-TAX-SET",
-      "name": "tax.Set",
+      "object": "tax.Set",
       "assert": [
         {
           "id": "GOBL-TAX-SET-01",
@@ -320,7 +320,7 @@
     },
     {
       "id": "GOBL-TAX-NOTE",
-      "name": "tax.Note",
+      "object": "tax.Note",
       "subsets": [
         {
           "field": "text",

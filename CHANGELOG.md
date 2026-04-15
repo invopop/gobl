@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.400.0] - 2026-14-15
+
+Final release of the rules based changes.
+
+## [v0.400.0-rc2] - 2026-04-14
+
+### Added
+
+- `rules`: `NewSet` function for standalone use of rule sets with namespaced error codes, without requiring global registration.
+- `rules`: `Set.Validate` now accepts optional `WithContext` values for context-aware guards.
+
+### Changed
+
+- `rules`: `Set.Name` field replaced with `Set.Package` (set by `Register`) and `Set.Object` (set by `For`).
+- `rules`: `Register` and `RegisterWithGuard` first parameter renamed from `name` to `pkg` for clarity.
+- `rules`: Input sets are now cloned internally by `Register`, `RegisterWithGuard`, and `NewSet`, so the same `For` output can be safely reused.
+
+## [v0.400.0-rc1] - 2026-04-13
+
+Major GOBL release: migrating from the old validation methods to the new "rules" package. This is a very significant change and solves one of the most frequently requested features in GOBL, the ability to know what validations and checks will be performed on the data before they are applied. Now every validation is assigned a specific unique reference code that allows them to be easily identified. The rules package is designed to be useable in any project, not just GOBL, so we're hoping to see in broader use through all the systems that depend on GOBL as an alternative to other validation packages.
+
+In addition, the "serve" CLI command has been improved to offer a self-hosted version of the GOBL Builder and API that includes support to use as an MCP (model context protocol) server.
+
 ### Added
 
 - `rules`: new package to help define validation rules and execute them on top of any object.
@@ -20,13 +43,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
+- `mx`/`co`: Tax Identity Zone migration removed.
 - `cmd/gobl`: Removed Echo framework dependency from the serve command.
+- `cli`: No longer provides HTTP error codes, only keys are used now.
 
 ### Changed
 
 - `cmd/gobl`: `serve` command now uses the new `internal/api` handler instead of inline Echo routes.
 - `tax`: `Extensions.Values()` now returns codes in deterministic sorted order.
-- `schema`: JSON Schema files updated to use bundled format with inlined `$defs`.
+- `schema`: JSON Schemas updated to include package names in models, i.e. `bill.Invoice` vs `Invoice`.
 
 ## [v0.309.0] - 2026-04-01
 
@@ -41,7 +66,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `mx`/`co`: Tax Identity Zone migration removed.
 - `pl-favat-v3`: Preceding no longer required when it is a credit note.
 
 ### Changed

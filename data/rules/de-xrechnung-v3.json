@@ -1,11 +1,11 @@
 {
   "id": "GOBL-DE-XRECHNUNG-V3",
-  "name": "de-xrechnung-v3",
+  "package": "de-xrechnung-v3",
   "guard": "context: addon in [de-xrechnung-v3]",
   "subsets": [
     {
       "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "tax",

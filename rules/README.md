@@ -41,7 +41,7 @@ rules.Assert("01", "description", test1, test2, ...)
 
 All tests must pass. The first failure short-circuits the assertion and emits a
 fault with the given description. Assertion codes are prefixed automatically
-during `Register` to form globally unique codes like `GOBL-ORG-EMAIL-01`.
+by `Register` or `NewSet` to form globally unique codes like `GOBL-ORG-EMAIL-01`.
 
 Use `AssertIfPresent` when the assertion should be skipped for nil or empty values:
 
@@ -117,8 +117,49 @@ func init() {
 }
 ```
 
-Rules registered here are automatically applied by `rules.Validate(obj)` to
-any matching object type anywhere in the object graph.
+The first argument is the package name (used for generation), and the second is
+the namespace code prepended to all assertion IDs. Rules registered here are
+automatically applied by `rules.Validate(obj)` to any matching object type
+anywhere in the object graph.
+
+### `NewSet` — standalone namespace sets
+
+When using rule sets outside the GOBL global registry (e.g. in a separate
+application for validating request bodies), use `NewSet` to create a namespace
+set that can be validated directly:
+
+```go
+const MyApp rules.Code = "MYAPP"
+
+personSet := rules.For(new(Person),
+    rules.Assert("01", "name required", is.Present),
+)
+emailSet := rules.For(new(Email),
+    rules.Field("addr",
+        rules.Assert("01", "email required", is.Present),
+    ),
+)
+
+validator := rules.NewSet(MyApp, personSet, emailSet)
+faults := validator.Validate(person)
+// Codes: MYAPP-PERSON-01, MYAPP-EMAIL-01
+```
+
+Unlike `Register`, the returned set is NOT added to the global registry and
+will not be applied by `rules.Validate(obj)`. Like `Register`, the namespace
+code is prepended to all assertion and set IDs during construction.
+
+Input sets are cloned internally, so the same output of `For` can safely be
+reused across multiple `NewSet` or `Register` calls.
+
+`Set.Validate` also accepts optional `WithContext` values to inject context
+for context-aware guards:
+
+```go
+faults := validator.Validate(obj, func(rc *rules.Context) {
+    rc.Set("country", "ES")
+})
+```
 
 ## Available tests
 
@@ -250,9 +291,9 @@ context (e.g. "is signed?") must be derived from the object's own state.
 
 ### Nested struct fields
 
-Define rules for each type independently and register them all. `rules.Validate`
-recurses into every exported field automatically — no wiring is needed between
-parent and child.
+Define rules for each type independently and register them all (or group them
+with `NewSet`). Both `rules.Validate` and `Set.Validate` recurse into every
+exported field automatically — no wiring is needed between parent and child.
 
 When you need to add constraints on a nested type from the **parent's
 perspective** (e.g. regime-specific rules that don't belong on the child type),
@@ -303,11 +344,13 @@ rules.Assert("02", "code must not exceed 10 characters",
 
 ## Testing
 
-Call `rules.Validate(obj)` and assert on the returned `rules.Faults` value:
+Call `rules.Validate(obj)` (global registry) or `set.Validate(obj)` (standalone)
+and assert on the returned `rules.Faults` value:
 
 ```go
 import "github.com/invopop/gobl/rules"
 
+// Global registry validation:
 err := rules.Validate(obj)
 assert.NoError(t, err)
 
@@ -316,6 +359,11 @@ require.NotNil(t, faults)
 assert.True(t, faults.HasPath("field"))
 assert.True(t, faults.HasCode("GOBL-PKG-STRUCT-01"))
 assert.Equal(t, "assertion description", faults.First().Message())
+
+// Standalone set validation:
+faults = mySet.Validate(obj)
+require.NotNil(t, faults)
+assert.True(t, faults.HasCode("MYAPP-STRUCT-01"))
 ```
 
 `rules.Faults` implements `error`. A nil return means no faults. The full error
@@ -328,14 +376,15 @@ string format is:
 ## Assertion code conventions
 
 Codes within a set are short local identifiers (e.g. `"01"`, `"02"`). They are
-prefixed during `Register` to form globally unique codes. Follow this convention:
+prefixed by `Register` or `NewSet` to form globally unique codes. Follow this
+convention:
 
 - `01`–`09`: field-level assertions, in the order fields appear in the struct
 - `10`–`19`: object-level (cross-field) assertions
 - `20`+: reserved for `When` conditional subsets if needed
 
 The fully-qualified code is constructed as:
-`{REGISTER_PREFIX}-{PKG}-{STRUCT}-{LOCAL_CODE}`
+`{NAMESPACE}-{STRUCT}-{LOCAL_CODE}`
 
 For example, a `"03"` assertion on `head.Header` registered under `GOBL-HEAD`
 becomes `GOBL-HEAD-HEADER-03`.

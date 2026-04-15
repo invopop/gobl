@@ -1,11 +1,11 @@
 {
   "id": "GOBL-ES-SII-V1",
-  "name": "es-sii-v1",
+  "package": "es-sii-v1",
   "guard": "context: addon in [es-sii-v1]",
   "subsets": [
     {
       "id": "GOBL-ES-SII-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "invoice type in [corrective]",
@@ -222,7 +222,7 @@
     },
     {
       "id": "GOBL-ES-SII-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "sii vat/igic",

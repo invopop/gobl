@@ -1,11 +1,11 @@
 {
   "id": "GOBL-CO-DIAN-V2",
-  "name": "co-dian-v2",
+  "package": "co-dian-v2",
   "guard": "context: addon in [co-dian-v2]",
   "subsets": [
     {
       "id": "GOBL-CO-DIAN-V2-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-CO-DIAN-V2-BILL-INVOICE-01",

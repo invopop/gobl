@@ -1,10 +1,10 @@
 {
   "id": "GOBL-PAY",
-  "name": "pay",
+  "package": "pay",
   "subsets": [
     {
       "id": "GOBL-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "description",
@@ -35,7 +35,7 @@
     },
     {
       "id": "GOBL-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "key",
@@ -63,7 +63,7 @@
     },
     {
       "id": "GOBL-PAY-ONLINE",
-      "name": "pay.Online",
+      "object": "pay.Online",
       "subsets": [
         {
           "field": "url",
@@ -79,7 +79,7 @@
     },
     {
       "id": "GOBL-PAY-TERMS",
-      "name": "pay.Terms",
+      "object": "pay.Terms",
       "subsets": [
         {
           "field": "key",
@@ -100,7 +100,7 @@
     },
     {
       "id": "GOBL-PAY-DUEDATE",
-      "name": "pay.DueDate",
+      "object": "pay.DueDate",
       "subsets": [
         {
           "field": "date",

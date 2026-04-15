@@ -1,10 +1,10 @@
 {
   "id": "GOBL-AR",
-  "name": "ar",
+  "package": "ar",
   "subsets": [
     {
       "id": "GOBL-AR-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [AR]",
@@ -30,7 +30,7 @@
     },
     {
       "id": "GOBL-AR-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [AR]",

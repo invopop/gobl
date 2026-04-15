@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/rules"
@@ -29,7 +28,7 @@ func generate() error {
 		if err := enc.Encode(s); err != nil {
 			return err
 		}
-		n := strings.ToLower(string(s.Name))
+		n := s.Package
 		f := filepath.Join("data", "rules", n+".json")
 		if err := os.WriteFile(f, buf.Bytes(), 0644); err != nil {
 			return err

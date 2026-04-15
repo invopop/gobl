@@ -1,10 +1,10 @@
 {
   "id": "GOBL-HEAD",
-  "name": "head",
+  "package": "head",
   "subsets": [
     {
       "id": "GOBL-HEAD-HEADER",
-      "name": "head.Header",
+      "object": "head.Header",
       "subsets": [
         {
           "field": "uuid",
@@ -50,7 +50,7 @@
     },
     {
       "id": "GOBL-HEAD-STAMP",
-      "name": "head.Stamp",
+      "object": "head.Stamp",
       "subsets": [
         {
           "field": "prv",
@@ -76,7 +76,7 @@
     },
     {
       "id": "GOBL-HEAD-LINK",
-      "name": "head.Link",
+      "object": "head.Link",
       "assert": [
         {
           "id": "GOBL-HEAD-LINK-06",

@@ -1,10 +1,10 @@
 {
   "id": "GOBL-CBC",
-  "name": "cbc",
+  "package": "cbc",
   "subsets": [
     {
       "id": "GOBL-CBC-CODE",
-      "name": "cbc.Code",
+      "object": "cbc.Code",
       "assert": [
         {
           "id": "GOBL-CBC-CODE-01",
@@ -20,7 +20,7 @@
     },
     {
       "id": "GOBL-CBC-CODEMAP",
-      "name": "cbc.CodeMap",
+      "object": "cbc.CodeMap",
       "assert": [
         {
           "id": "GOBL-CBC-CODEMAP-01",
@@ -31,7 +31,7 @@
     },
     {
       "id": "GOBL-CBC-KEY",
-      "name": "cbc.Key",
+      "object": "cbc.Key",
       "assert": [
         {
           "id": "GOBL-CBC-KEY-01",
@@ -47,7 +47,7 @@
     },
     {
       "id": "GOBL-CBC-DEFINITION",
-      "name": "cbc.Definition",
+      "object": "cbc.Definition",
       "assert": [
         {
           "id": "GOBL-CBC-DEFINITION-02",
@@ -85,7 +85,7 @@
     },
     {
       "id": "GOBL-CBC-SOURCE",
-      "name": "cbc.Source",
+      "object": "cbc.Source",
       "subsets": [
         {
           "field": "url",

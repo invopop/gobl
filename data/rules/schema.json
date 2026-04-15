@@ -1,10 +1,10 @@
 {
   "id": "GOBL-SCHEMA",
-  "name": "schema",
+  "package": "schema",
   "subsets": [
     {
       "id": "GOBL-SCHEMA-ID",
-      "name": "schema.ID",
+      "object": "schema.ID",
       "subsets": [
         {
           "guard": "present",
@@ -20,7 +20,7 @@
     },
     {
       "id": "GOBL-SCHEMA-OBJECT",
-      "name": "schema.Object",
+      "object": "schema.Object",
       "subsets": [
         {
           "field": "$schema",

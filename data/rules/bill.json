@@ -1,10 +1,10 @@
 {
   "id": "GOBL-BILL",
-  "name": "bill",
+  "package": "bill",
   "subsets": [
     {
       "id": "GOBL-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "type",
@@ -152,7 +152,7 @@
     },
     {
       "id": "GOBL-BILL-DELIVERY",
-      "name": "bill.Delivery",
+      "object": "bill.Delivery",
       "subsets": [
         {
           "field": "type",
@@ -203,7 +203,7 @@
     },
     {
       "id": "GOBL-BILL-ORDER",
-      "name": "bill.Order",
+      "object": "bill.Order",
       "subsets": [
         {
           "field": "type",
@@ -264,7 +264,7 @@
     },
     {
       "id": "GOBL-BILL-PAYMENT",
-      "name": "bill.Payment",
+      "object": "bill.Payment",
       "subsets": [
         {
           "field": "type",
@@ -335,7 +335,7 @@
     },
     {
       "id": "GOBL-BILL-LINE",
-      "name": "bill.Line",
+      "object": "bill.Line",
       "subsets": [
         {
           "field": "i",
@@ -396,7 +396,7 @@
     },
     {
       "id": "GOBL-BILL-SUBLINE",
-      "name": "bill.SubLine",
+      "object": "bill.SubLine",
       "subsets": [
         {
           "field": "i",
@@ -457,7 +457,7 @@
     },
     {
       "id": "GOBL-BILL-LINEDISCOUNT",
-      "name": "bill.LineDiscount",
+      "object": "bill.LineDiscount",
       "subsets": [
         {
           "guard": "Base != nil",
@@ -478,7 +478,7 @@
     },
     {
       "id": "GOBL-BILL-LINECHARGE",
-      "name": "bill.LineCharge",
+      "object": "bill.LineCharge",
       "subsets": [
         {
           "guard": "Base != nil",
@@ -554,7 +554,7 @@
     },
     {
       "id": "GOBL-BILL-DISCOUNT",
-      "name": "bill.Discount",
+      "object": "bill.Discount",
       "subsets": [
         {
           "guard": "Base != nil",
@@ -575,7 +575,7 @@
     },
     {
       "id": "GOBL-BILL-CHARGE",
-      "name": "bill.Charge",
+      "object": "bill.Charge",
       "subsets": [
         {
           "guard": "Base != nil",
@@ -596,7 +596,7 @@
     },
     {
       "id": "GOBL-BILL-PAYMENTLINE",
-      "name": "bill.PaymentLine",
+      "object": "bill.PaymentLine",
       "assert": [
         {
           "id": "GOBL-BILL-PAYMENTLINE-11",
@@ -664,7 +664,7 @@
     },
     {
       "id": "GOBL-BILL-TAX",
-      "name": "bill.Tax",
+      "object": "bill.Tax",
       "subsets": [
         {
           "field": "rounding",
@@ -700,11 +700,11 @@
     },
     {
       "id": "GOBL-BILL-TOTALS",
-      "name": "bill.Totals"
+      "object": "bill.Totals"
     },
     {
       "id": "GOBL-BILL-STATUS",
-      "name": "bill.Status",
+      "object": "bill.Status",
       "subsets": [
         {
           "field": "type",
@@ -755,7 +755,7 @@
     },
     {
       "id": "GOBL-BILL-STATUSLINE",
-      "name": "bill.StatusLine",
+      "object": "bill.StatusLine",
       "subsets": [
         {
           "field": "key",
@@ -776,7 +776,7 @@
     },
     {
       "id": "GOBL-BILL-REASON",
-      "name": "bill.Reason",
+      "object": "bill.Reason",
       "subsets": [
         {
           "field": "key",
@@ -797,7 +797,7 @@
     },
     {
       "id": "GOBL-BILL-ACTION",
-      "name": "bill.Action",
+      "object": "bill.Action",
       "subsets": [
         {
           "field": "key",
@@ -818,7 +818,7 @@
     },
     {
       "id": "GOBL-BILL-CONDITION",
-      "name": "bill.Condition",
+      "object": "bill.Condition",
       "subsets": [
         {
           "field": "code",

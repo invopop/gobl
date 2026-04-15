@@ -1,10 +1,10 @@
 {
   "id": "GOBL-CURRENCY",
-  "name": "currency",
+  "package": "currency",
   "subsets": [
     {
       "id": "GOBL-CURRENCY-AMOUNT",
-      "name": "currency.Amount",
+      "object": "currency.Amount",
       "subsets": [
         {
           "field": "currency",
@@ -20,7 +20,7 @@
     },
     {
       "id": "GOBL-CURRENCY-EXCHANGERATE",
-      "name": "currency.ExchangeRate",
+      "object": "currency.ExchangeRate",
       "subsets": [
         {
           "field": "from",

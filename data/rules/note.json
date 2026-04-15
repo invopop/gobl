@@ -1,10 +1,10 @@
 {
   "id": "GOBL-NOTE",
-  "name": "note",
+  "package": "note",
   "subsets": [
     {
       "id": "GOBL-NOTE-MESSAGE",
-      "name": "note.Message",
+      "object": "note.Message",
       "subsets": [
         {
           "field": "content",

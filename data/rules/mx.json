@@ -1,10 +1,10 @@
 {
   "id": "GOBL-MX",
-  "name": "mx",
+  "package": "mx",
   "subsets": [
     {
       "id": "GOBL-MX-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [MX]",
