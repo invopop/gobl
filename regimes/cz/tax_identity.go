@@ -1,0 +1,110 @@
+package cz
+
+import (
+	"errors"
+	"regexp"
+	"strconv"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+)
+
+// Reference: https://arthurdejong.org/python-stdnum/doc/1.17/stdnum.cz.dic
+
+var taxCodeRegexps = []*regexp.Regexp{
+	regexp.MustCompile(`^\d{8,10}$`),
+}
+
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn(CountryCode),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Czech DIČ code",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
+	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
+}
+
+func validateTaxCode(value any) error {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return nil
+	}
+	val := code.String()
+
+	match := false
+	for _, re := range taxCodeRegexps {
+		if re.MatchString(val) {
+			match = true
+			break
+		}
+	}
+	if !match {
+		return errors.New("invalid format")
+	}
+
+	switch len(val) {
+	case 8:
+		return validateLegalEntityCode(val)
+	case 9:
+		// 9-digit codes include special IDs (starting with 6) and
+		// older individual birth number formats; no checksum required.
+		return nil
+	case 10:
+		return validateIndividualCode(val)
+	}
+
+	return nil
+}
+
+// validateLegalEntityCode validates an 8-digit legal entity DIČ using
+// modulo-11 checksum with weights [8,7,6,5,4,3,2].
+func validateLegalEntityCode(val string) error {
+	weights := []int{8, 7, 6, 5, 4, 3, 2}
+	total := 0
+
+	for i := range 7 {
+		total += int(val[i]-'0') * weights[i]
+	}
+
+	expected := 11 - (total % 11)
+	if expected == 10 {
+		expected = 0
+	} else if expected == 11 {
+		expected = 1
+	}
+
+	checkDigit := int(val[7] - '0')
+	if checkDigit != expected {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
+}
+
+// validateIndividualCode validates a 10-digit individual DIČ (derived from
+// Rodné číslo). Must be divisible by 11.
+func validateIndividualCode(val string) error {
+	n, err := strconv.ParseUint(val, 10, 64)
+	if err != nil {
+		return errors.New("invalid format")
+	}
+
+	if n%11 != 0 {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
+}

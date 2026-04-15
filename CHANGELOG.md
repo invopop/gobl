@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `cz`: Added the Czech Republic DPH (VAT) regime with 21% standard, 12% reduced (2024 consolidation), and historical rates back to 2004. DIČ validation with three format types and IČO business registration identity.
+
 ## [v0.400.0] - 2026-14-15
 
 Final release of the rules based changes.
