@@ -6,19 +6,25 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-1 alpha-2 code for Finland.
+const CountryCode = "FI"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("fi", rules.GOBL.Add(CountryCode),
+		taxIdentityRules(),
+	)
 }
 
 // New instantiates a new Finland regime
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   l10n.FI.Tax(),
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -71,18 +77,8 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Helsinki",
 		Categories: taxCategories,
 		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
-		Validator:  Validate,
 		Normalizer: Normalize,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will perform any regime specific normalization.

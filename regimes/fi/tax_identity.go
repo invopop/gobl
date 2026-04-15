@@ -1,43 +1,43 @@
 package fi
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var taxCodeRegexps = []*regexp.Regexp{
 	regexp.MustCompile(`^\d{8}$`),
 }
 
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn(CountryCode),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Finnish Y-tunnus tax identity code",
+					is.Func("valid", validateTaxCode),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value any) error {
+func validateTaxCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
+	if !ok {
+		return false
 	}
 	val := code.String()
 
-	match := false
 	for _, re := range taxCodeRegexps {
 		if re.MatchString(val) {
-			match = true
-			break
+			return validateTaxCodeChecksum(val)
 		}
 	}
-	if !match {
-		return errors.New("invalid format")
-	}
-
-	return validateTaxCodeChecksum(val)
+	return false
 }
 
 // Finland's Y-tunnus (Business ID) check digit validation.
@@ -49,7 +49,7 @@ func validateTaxCode(value any) error {
 // ASCII digits. This is guaranteed by the regex validation in validateTaxCode.
 //
 // Reference: https://www.vero.fi/globalassets/tietoa-verohallinnosta/ohjelmistokehittajille/yritys--ja-yhteisötunnuksen-ja-henkilötunnuksen-tarkistusmerkin-tarkistuslaskenta.pdf
-func validateTaxCodeChecksum(val string) error {
+func validateTaxCodeChecksum(val string) bool {
 	weights := []int{7, 9, 10, 5, 8, 4, 2, 1}
 	sum := 0
 
@@ -57,9 +57,5 @@ func validateTaxCodeChecksum(val string) error {
 		sum += int(val[i]-'0') * weights[i]
 	}
 
-	if sum%11 != 0 {
-		return errors.New("checksum mismatch")
-	}
-
-	return nil
+	return sum%11 == 0
 }
