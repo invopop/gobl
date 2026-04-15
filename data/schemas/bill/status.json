@@ -235,15 +235,10 @@
           "title": "Type",
           "description": "Type of status being reported (e.g. \"system\" for internal events)."
         },
-        "issue_date": {
-          "$ref": "https://gobl.org/draft-0/cal/date",
-          "title": "Issue Date",
-          "description": "IssueDate is the date when the status event occurred."
-        },
-        "issue_time": {
-          "$ref": "https://gobl.org/draft-0/cal/time",
-          "title": "Issue Time",
-          "description": "IssueTime is the time when the status event occurred."
+        "issue_at": {
+          "$ref": "https://gobl.org/draft-0/cal/timestamp",
+          "title": "Issue At",
+          "description": "IssueAt is the date and time when the status event occurred in UTC."
         },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -293,14 +288,6 @@
           "title": "Lines",
           "description": "Lines contain the main payload of the message used to describe individual\ndocuments which have a status. A message may not have any lines.\n(Optional)."
         },
-        "complements": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/schema/object"
-          },
-          "type": "array",
-          "title": "Complements",
-          "description": "Complements contain regime/addon specific payload data."
-        },
         "notes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/note"
@@ -318,7 +305,7 @@
       "type": "object",
       "required": [
         "type",
-        "issue_date",
+        "issue_at",
         "code",
         "supplier"
       ],
@@ -338,7 +325,7 @@
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
+          "anyOf": [
             {
               "const": "issued",
               "title": "Issued",
@@ -378,6 +365,10 @@
               "const": "error",
               "title": "Error",
               "description": "There is a technical issue with the document that has caused it to be rejected."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Other"
             }
           ],
           "title": "Key",
@@ -418,6 +409,14 @@
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
           "description": "Extensions for local or format focussed data"
+        },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/object"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Complements contain regime/addon specific payload data."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

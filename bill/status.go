@@ -369,7 +369,6 @@ var ActionKeys = []*cbc.Definition{
 }
 
 var isValidStatusType = cbc.InKeyDefs(StatusTypes)
-var isValidStatusEvent = cbc.InKeyDefs(StatusEvents)
 var isValidReasonKey = cbc.InKeyDefs(ReasonKeys)
 var isValidActionKey = cbc.InKeyDefs(ActionKeys)
 
@@ -384,11 +383,8 @@ type Status struct {
 	// Type of status being reported (e.g. "system" for internal events).
 	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 
-	// IssueDate is the date when the status event occurred.
-	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
-
-	// IssueTime is the time when the status event occurred.
-	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time"`
+	// IssueAt is the date and time when the status event occurred in UTC.
+	IssueAt cal.Timestamp `json:"issue_at,omitzero" jsonschema:"title=Issue At"`
 
 	// Series is an optional code to group related status events together.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
@@ -428,9 +424,6 @@ type Status struct {
 	// (Optional).
 	Lines []*StatusLine `json:"lines,omitempty" jsonschema:"title=Lines"`
 
-	// Complements contain regime/addon specific payload data.
-	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
-
 	// Notes for additional details about the event.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
@@ -468,6 +461,9 @@ type StatusLine struct {
 
 	// Extensions for local or format focussed data
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+
+	// Complements contain regime/addon specific payload data.
+	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
 
 	// Additional data specific for the source system.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -518,6 +514,12 @@ type Condition struct {
 	Message string `json:"message,omitempty" jsonschema:"title=Message"`
 }
 
+// CanSign returns a boolean indicating whether the status is ready to be signed
+// or not.
+func (st *Status) CanSign() bool {
+	return st != nil && !st.Code.IsEmpty() && !st.IssueAt.IsZero()
+}
+
 // Calculate performs all the normalizations and calculations required for
 // the status document.
 func (st *Status) Calculate() error {
@@ -559,17 +561,10 @@ func (st *Status) normalizers() tax.Normalizers {
 }
 
 func (st *Status) calculate() error {
-	r := st.RegimeDef()
-
-	// Set the issue date and time
-	tz := r.TimeLocation()
-	if st.IssueTime != nil && st.IssueTime.IsZero() {
-		tn := cal.ThisSecondIn(tz)
-		hn := tn.Time()
-		st.IssueDate = tn.Date()
-		st.IssueTime = &hn
-	} else if st.IssueDate.IsZero() {
-		st.IssueDate = cal.TodayIn(tz)
+	// Auto-fill the issue timestamp when not provided. Status timestamps
+	// are always stored in UTC, independent of the regime's time zone.
+	if st.IssueAt.IsZero() {
+		st.IssueAt = cal.TimestampNow()
 	}
 
 	// Index lines
@@ -578,11 +573,10 @@ func (st *Status) calculate() error {
 			continue
 		}
 		l.Index = i + 1
-	}
-
-	// Complements
-	if err := calculateComplements(st.Complements); err != nil {
-		return fmt.Errorf("complements: %w", err)
+		// Complements
+		if err := calculateComplements(l.Complements); err != nil {
+			return fmt.Errorf("complements: %w", err)
+		}
 	}
 
 	return nil
@@ -654,14 +648,18 @@ func (Status) JSONSchemaExtend(js *jsonschema.Schema) {
 func (StatusLine) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	if its, ok := props.Get("key"); ok {
-		its.OneOf = make([]*jsonschema.Schema, len(StatusEvents))
+		its.AnyOf = make([]*jsonschema.Schema, len(StatusEvents))
 		for i, kd := range StatusEvents {
-			its.OneOf[i] = &jsonschema.Schema{
+			its.AnyOf[i] = &jsonschema.Schema{
 				Const:       kd.Key.String(),
 				Title:       kd.Name.String(),
 				Description: kd.Desc.String(),
 			}
 		}
+		its.AnyOf = append(its.AnyOf, &jsonschema.Schema{
+			Title:   "Other",
+			Pattern: cbc.KeyPattern,
+		})
 	}
 }
 
@@ -701,14 +699,11 @@ func statusRules() *rules.Set {
 			rules.Assert("01", "status type is required", is.Present),
 			rules.Assert("02", "status type is not valid", isValidStatusType),
 		),
-		rules.Field("issue_date",
-			rules.Assert("03", "status issue date is required", cal.DateNotZero()),
-		),
-		rules.Field("code",
-			rules.Assert("04", "status code is required", is.Present),
-		),
 		rules.Field("supplier",
-			rules.Assert("05", "status supplier is required", is.Present),
+			rules.Assert("03", "status supplier is required", is.Present),
+		),
+		rules.Field("lines",
+			rules.Assert("04", "status must have at least one line", is.Present),
 		),
 	)
 }
@@ -717,7 +712,6 @@ func statusLineRules() *rules.Set {
 	return rules.For(new(StatusLine),
 		rules.Field("key",
 			rules.Assert("01", "status line key is required", is.Present),
-			rules.Assert("02", "status line key is not valid", isValidStatusEvent),
 		),
 	)
 }

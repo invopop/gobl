@@ -107,7 +107,7 @@ type Invoice struct {
 // CanSign returns a boolean indicating whether the invoice is ready to be signed
 // or not.
 func (inv *Invoice) CanSign() bool {
-	return !inv.Code.IsEmpty()
+	return inv != nil && !inv.Code.IsEmpty()
 }
 
 func invoiceRules() *rules.Set {

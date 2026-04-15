@@ -3,6 +3,7 @@ package bill_test
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
@@ -20,16 +21,19 @@ import (
 func testStatusMinimal(t *testing.T) *bill.Status {
 	t.Helper()
 	return &bill.Status{
-		Type:      bill.StatusTypeResponse,
-		IssueDate: cal.MakeDate(2025, 3, 15),
-		Series:    "S-1",
-		Code:      "001",
+		Type:    bill.StatusTypeResponse,
+		IssueAt: cal.TimestampOf(time.Date(2025, 3, 15, 10, 0, 0, 0, time.UTC)),
+		Series:  "S-1",
+		Code:    "001",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: "ES",
 				Code:    "B-98602642",
 			},
+		},
+		Lines: []*bill.StatusLine{
+			{Key: bill.StatusEventAccepted},
 		},
 	}
 }
@@ -145,36 +149,23 @@ func TestStatusCalculate(t *testing.T) {
 		})
 	})
 
-	t.Run("without issue date", func(t *testing.T) {
+	t.Run("without issue at", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		st.IssueDate = cal.Date{}
+		st.IssueAt = cal.Timestamp{}
 		require.NoError(t, st.Calculate())
-		tn := cal.TodayIn(st.RegimeDef().TimeLocation())
-		assert.Equal(t, tn, st.IssueDate)
-		assert.Nil(t, st.IssueTime)
+		assert.False(t, st.IssueAt.IsZero(), "issue_at should be auto-filled")
+		// Auto-filled values are always UTC and close to now.
+		z, _ := st.IssueAt.Zone()
+		assert.Equal(t, "UTC", z)
+		assert.WithinDuration(t, time.Now(), st.IssueAt.Time, time.Minute)
 	})
 
-	t.Run("with empty issue time", func(t *testing.T) {
+	t.Run("with preset issue at", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		st.IssueDate = cal.Date{}
-		st.IssueTime = new(cal.Time)
+		preset := cal.TimestampOf(time.Date(2025, 3, 15, 10, 30, 0, 0, time.UTC))
+		st.IssueAt = preset
 		require.NoError(t, st.Calculate())
-		tn := cal.ThisSecondIn(st.RegimeDef().TimeLocation())
-		assert.Equal(t, tn.Date().String(), st.IssueDate.String())
-		assert.Equal(t, tn.Time().Hour, st.IssueTime.Hour)
-		assert.Equal(t, tn.Time().Minute, st.IssueTime.Minute)
-		assert.Equal(t, tn.Time().Second, st.IssueTime.Second)
-	})
-
-	t.Run("with preset issue time", func(t *testing.T) {
-		st := testStatusMinimal(t)
-		it := cal.MakeTime(10, 30, 0)
-		st.IssueTime = &it
-		require.NoError(t, st.Calculate())
-		// Date and time should remain as-is
-		assert.Equal(t, "2025-03-15", st.IssueDate.String())
-		assert.Equal(t, 10, st.IssueTime.Hour)
-		assert.Equal(t, 30, st.IssueTime.Minute)
+		assert.Equal(t, preset, st.IssueAt)
 	})
 
 	t.Run("line indexing", func(t *testing.T) {
@@ -222,7 +213,8 @@ func TestStatusCalculate(t *testing.T) {
 		st := testStatusFull(t)
 		st.Lines = append(st.Lines, nil)
 		st.Notes = append(st.Notes, nil)
-		st.Complements = append(st.Complements, nil)
+		// Complements live on lines; nil entries there should also be tolerated.
+		st.Lines[0].Complements = append(st.Lines[0].Complements, nil)
 		require.NoError(t, st.Calculate())
 	})
 
@@ -236,6 +228,33 @@ func TestStatusCalculate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Addons.SetAddons(tbai.V1)
 		require.NoError(t, st.Calculate())
+	})
+}
+
+func TestStatusCanSign(t *testing.T) {
+	t.Run("can sign with code", func(t *testing.T) {
+		st := testStatusMinimal(t)
+		require.NoError(t, st.Calculate())
+		assert.True(t, st.CanSign())
+	})
+
+	t.Run("cannot sign without code", func(t *testing.T) {
+		st := testStatusMinimal(t)
+		st.Code = ""
+		require.NoError(t, st.Calculate())
+		assert.False(t, st.CanSign())
+	})
+
+	t.Run("cannot sign with zero issue date", func(t *testing.T) {
+		st := testStatusMinimal(t)
+		require.NoError(t, st.Calculate())
+		st.IssueAt = cal.Timestamp{}
+		assert.False(t, st.CanSign())
+	})
+
+	t.Run("cannot sign with nil status", func(t *testing.T) {
+		var st *bill.Status
+		assert.False(t, st.CanSign())
 	})
 }
 
@@ -268,21 +287,12 @@ func TestStatusValidate(t *testing.T) {
 		assert.ErrorContains(t, err, "status type is not valid")
 	})
 
-	t.Run("missing issue date", func(t *testing.T) {
+	t.Run("issue at auto-filled", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		st.IssueDate = cal.MakeDate(2025, 3, 15)
+		st.IssueAt = cal.Timestamp{}
 		require.NoError(t, st.Calculate())
-		st.IssueDate = cal.Date{}
-		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "status issue date is required")
-	})
-
-	t.Run("missing code", func(t *testing.T) {
-		st := testStatusMinimal(t)
-		require.NoError(t, st.Calculate())
-		st.Code = ""
-		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "status code is required")
+		require.NoError(t, rules.Validate(st))
+		assert.False(t, st.IssueAt.IsZero())
 	})
 
 	t.Run("missing supplier", func(t *testing.T) {
@@ -323,14 +333,15 @@ func TestStatusLineValidate(t *testing.T) {
 		assert.ErrorContains(t, err, "status line key is required")
 	})
 
-	t.Run("invalid key", func(t *testing.T) {
+	t.Run("custom key allowed", func(t *testing.T) {
+		// Status line keys are open-ended: the schema permits "Other"
+		// values matching the cbc.Key pattern, so custom keys validate.
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
-			{Key: "invalid-event"},
+			{Key: "custom-event"},
 		}
 		require.NoError(t, st.Calculate())
-		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "status line key is not valid")
+		require.NoError(t, rules.Validate(st))
 	})
 
 	t.Run("all event keys valid", func(t *testing.T) {
@@ -689,10 +700,13 @@ func TestStatusLineJSONSchemaExtend(t *testing.T) {
 
 	prop, ok := js.Properties.Get("key")
 	require.True(t, ok)
-	require.Len(t, prop.OneOf, len(bill.StatusEvents))
-	assert.Equal(t, bill.StatusEvents[0].Key.String(), prop.OneOf[0].Const)
-	assert.Equal(t, bill.StatusEvents[0].Name.String(), prop.OneOf[0].Title)
-	assert.Equal(t, bill.StatusEvents[0].Desc.String(), prop.OneOf[0].Description)
+	// Status line keys allow an open-ended "Other" fallback entry in
+	// addition to the defined events, so AnyOf has one extra element.
+	require.Len(t, prop.AnyOf, len(bill.StatusEvents)+1)
+	assert.Equal(t, bill.StatusEvents[0].Key.String(), prop.AnyOf[0].Const)
+	assert.Equal(t, bill.StatusEvents[0].Name.String(), prop.AnyOf[0].Title)
+	assert.Equal(t, bill.StatusEvents[0].Desc.String(), prop.AnyOf[0].Description)
+	assert.Equal(t, "Other", prop.AnyOf[len(bill.StatusEvents)].Title)
 }
 
 func TestReasonJSONSchemaExtend(t *testing.T) {

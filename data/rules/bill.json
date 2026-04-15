@@ -722,31 +722,21 @@
           ]
         },
         {
-          "field": "issue_date",
+          "field": "supplier",
           "assert": [
             {
               "id": "GOBL-BILL-STATUS-03",
-              "desc": "status issue date is required",
-              "tests": "not zero"
-            }
-          ]
-        },
-        {
-          "field": "code",
-          "assert": [
-            {
-              "id": "GOBL-BILL-STATUS-04",
-              "desc": "status code is required",
+              "desc": "status supplier is required",
               "tests": "present"
             }
           ]
         },
         {
-          "field": "supplier",
+          "field": "lines",
           "assert": [
             {
-              "id": "GOBL-BILL-STATUS-05",
-              "desc": "status supplier is required",
+              "id": "GOBL-BILL-STATUS-04",
+              "desc": "status must have at least one line",
               "tests": "present"
             }
           ]
@@ -764,11 +754,6 @@
               "id": "GOBL-BILL-STATUSLINE-01",
               "desc": "status line key is required",
               "tests": "present"
-            },
-            {
-              "id": "GOBL-BILL-STATUSLINE-02",
-              "desc": "status line key is not valid",
-              "tests": "one of [issued, acknowledged, processing, querying, rejected, accepted, paid, error]"
             }
           ]
         }

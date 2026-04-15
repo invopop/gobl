@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: Status model added for dealing with special billing events.
+- `cal`: `Timestamp` model for dealing with precise times, useful in status.
+
 ## [v0.400.0] - 2026-14-15
 
 Final release of the rules based changes.
