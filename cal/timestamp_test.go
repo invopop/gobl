@@ -211,8 +211,8 @@ func TestTimestampInModel(t *testing.T) {
 	// Mirrors lib/at: zero timestamp marshals as null; a pointer field with
 	// omitempty is omitted entirely when nil.
 	type model struct {
-		At     cal.Timestamp  `json:"at"`
-		AtPtr  *cal.Timestamp `json:"at_ptr,omitempty"`
+		At    cal.Timestamp  `json:"at"`
+		AtPtr *cal.Timestamp `json:"at_ptr,omitempty"`
 	}
 
 	data, err := json.Marshal(&model{})
