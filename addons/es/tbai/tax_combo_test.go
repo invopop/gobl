@@ -179,3 +179,48 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, tax.KeyStandard, tc.Key)
 	})
 }
+
+func TestValidateTaxCombo(t *testing.T) {
+	ruleSet := taxComboRules()
+
+	t.Run("exempt with valid reason", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.Extensions{
+				ExtKeyExempt: "E1",
+			},
+		}
+		err := ruleSet.Validate(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("exempt without reason", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		err := ruleSet.Validate(tc)
+		assert.ErrorContains(t, err, string(ExtKeyExempt))
+	})
+
+	t.Run("standard without exempt ext is valid", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(210, 3),
+		}
+		err := ruleSet.Validate(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("not in category", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryGST,
+			Key:      tax.KeyExempt,
+		}
+		err := ruleSet.Validate(tc)
+		assert.NoError(t, err)
+	})
+}

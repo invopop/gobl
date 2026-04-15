@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ff1fcfb2dcaa6153102097cd17fdbbcbfe49d2d6b2e0b8c6c094ad2d76537ee3"
+			"val": "3fd86af014779d93755efa5ee64e5dd44658e2986745a0ab86da489a353a2644"
 		}
 	},
 	"doc": {
@@ -25,6 +25,12 @@
 			"tax_id": {
 				"country": "DE"
 			},
+			"identities": [
+				{
+					"key": "de-tax-number",
+					"code": "92/345/67894"
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",

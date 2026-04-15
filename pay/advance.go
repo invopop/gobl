@@ -1,17 +1,17 @@
 package pay
 
 import (
-	"context"
 	"encoding/json"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Advance represents a single payment that has been made already, such
@@ -48,6 +48,17 @@ type Advance struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+func advanceRules() *rules.Set {
+	return rules.For(new(Advance),
+		rules.Field("description",
+			rules.Assert("01", "description is required", is.Present),
+		),
+		rules.Field("key",
+			rules.AssertIfPresent("02", "key must be valid", HasValidMeansKey),
+		),
+	)
+}
+
 // Normalize will try to normalize the advance's data.
 func (a *Advance) Normalize() {
 	if a == nil {
@@ -59,32 +70,10 @@ func (a *Advance) Normalize() {
 	a.Ext = tax.CleanExtensions(a.Ext)
 }
 
-// Validate checks the advance looks okay
-func (a *Advance) Validate() error {
-	return a.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks the advance looks okay inside the context.
-func (a *Advance) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, a,
-		validation.Field(&a.Date),
-		validation.Field(&a.Key, HasValidMeansKey),
-		validation.Field(&a.Ref),
-		validation.Field(&a.Description, validation.Required),
-		validation.Field(&a.Percent),
-		validation.Field(&a.Amount),
-		validation.Field(&a.Currency),
-		validation.Field(&a.Card),
-		validation.Field(&a.CreditTransfer),
-		validation.Field(&a.Ext),
-		validation.Field(&a.Meta),
-	)
-}
-
 // CalculateFrom will update the amount using the rate of the provided
 // total, if defined.
 func (a *Advance) CalculateFrom(payable num.Amount) {
-	if a.Percent != nil {
+	if a != nil && a.Percent != nil {
 		a.Amount = a.Percent.Of(payable)
 	}
 }

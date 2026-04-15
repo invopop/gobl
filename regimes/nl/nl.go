@@ -6,19 +6,28 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("nl", rules.GOBL.Add("NL"),
+		billInvoiceRules(),
+		orgIdentityRules(),
+		taxIdentityRules(),
+	)
 }
+
+// CountryCode is the tax country code for the Netherlands.
+const CountryCode l10n.TaxCountryCode = "NL"
 
 // New provides the Dutch region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "NL",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -47,7 +56,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Amsterdam",
 		Identities: identityDefinitions,
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -63,19 +71,6 @@ func New() *tax.RegimeDef {
 		Categories: taxCategories,
 	}
 
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateIdentity(obj)
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }
 
 // Normalize performs region specific calculations on the document.

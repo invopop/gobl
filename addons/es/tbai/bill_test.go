@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -98,29 +99,61 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("missing customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer is required for non-simplified invoices")
 	})
 
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer tax ID is required")
+	})
+
+	t.Run("simplified invoice without customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("simplified invoice with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("simplified invoice with customer tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -128,13 +161,13 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Series = ""
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("without notes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
-		assertValidationError(t, inv, "notes: with key 'general' missing")
+		assertValidationError(t, inv, "with key 'general' missing")
 	})
 
 	t.Run("correction", func(t *testing.T) {
@@ -145,7 +178,7 @@ func TestInvoiceValidation(t *testing.T) {
 			bill.WithExtension(tbai.ExtKeyCorrection, "R4"),
 		))
 		assert.Len(t, inv.Preceding, 1)
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -180,7 +213,7 @@ func TestBillLineNormalization(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.ErrorContains(t, err, expected)
 }
 

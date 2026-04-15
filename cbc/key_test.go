@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,7 +30,7 @@ func TestKey(t *testing.T) {
 	}
 	for _, check := range checks {
 		t.Run(check.key.String(), func(t *testing.T) {
-			err := check.key.Validate()
+			err := rules.Validate(check.key)
 			if check.err {
 				assert.Error(t, err)
 			} else {
@@ -108,15 +108,18 @@ func TestAppendUniqueKeys(t *testing.T) {
 }
 
 func TestHasValidKeyIn(t *testing.T) {
-	k := cbc.Key("standard")
-	err := validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs"))
+	rule := cbc.HasValidKeyIn("pro", "reduced+eqs", "standard")
+
+	k := cbc.Key("fooo")
+	err := rule.Validate(k)
 	assert.ErrorContains(t, err, "must be or start with a valid ke")
 
-	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	k = cbc.Key("standard")
+	err = rule.Validate(k)
 	assert.NoError(t, err)
 
 	k = cbc.KeyEmpty
-	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	err = rule.Validate(k)
 	assert.NoError(t, err)
 }
 

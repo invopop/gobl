@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -133,30 +132,26 @@ func TestTagSetMerge(t *testing.T) {
 
 func TestTagSetValidation(t *testing.T) {
 	list := []cbc.Key{"tag1", "tag2"}
+	r := tax.TagsIn(list...)
 
 	t.Run("valid tag", func(t *testing.T) {
-		err := validation.Validate([]cbc.Key{"tag1"}, tax.TagsIn(list...))
-		assert.NoError(t, err)
+		assert.True(t, r.Check([]cbc.Key{"tag1"}))
 	})
 	t.Run("invalid tag", func(t *testing.T) {
-		err := validation.Validate([]cbc.Key{"tag3"}, tax.TagsIn(list...))
-		assert.ErrorContains(t, err, "0: 'tag3' undefined")
+		assert.False(t, r.Check([]cbc.Key{"tag3"}))
 	})
 	t.Run("invalid tag 2", func(t *testing.T) {
-		err := validation.Validate([]cbc.Key{"tag1", "tag3"}, tax.TagsIn(list...))
-		assert.ErrorContains(t, err, "1: 'tag3' undefined")
+		assert.False(t, r.Check([]cbc.Key{"tag1", "tag3"}))
 	})
 
 	t.Run("with tags", func(t *testing.T) {
 		set := tax.WithTags("tag1")
-		err := validation.Validate(set, tax.TagsIn(list...))
-		assert.NoError(t, err)
+		assert.True(t, r.Check(set))
 	})
 
 	t.Run("with something else", func(t *testing.T) {
 		codes := []cbc.Code{"FOO"}
-		err := validation.Validate(codes, tax.TagsIn(list...))
-		assert.NoError(t, err)
+		assert.True(t, r.Check(codes))
 	})
 }
 
@@ -201,7 +196,7 @@ func TestTagsJSONSchemaEmbedWithDefs(t *testing.T) {
 
 	prop, ok := js.Properties.Get("$tags")
 	require.True(t, ok)
-	assert.Equal(t, 7, len(prop.Items.AnyOf), "should have 6 tags plus 1 catch-all")
+	assert.Equal(t, 9, len(prop.Items.AnyOf), "should have 6 tags plus 1 catch-all")
 	assert.Equal(t, "simplified", prop.Items.AnyOf[0].Const)
-	assert.Equal(t, "Any", prop.Items.AnyOf[6].Title)
+	assert.Equal(t, "Any", prop.Items.AnyOf[8].Title)
 }

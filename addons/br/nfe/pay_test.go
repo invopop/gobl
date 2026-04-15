@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -120,8 +121,6 @@ func TestNormalizePayAdvance(t *testing.T) {
 }
 
 func TestValidatePayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(nfe.V4)
-
 	t.Run("with payment means", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
@@ -129,7 +128,7 @@ func TestValidatePayInstructions(t *testing.T) {
 				nfe.ExtKeyPaymentMeans: "01",
 			},
 		}
-		err := ad.Validator(instr)
+		err := rules.Validate(instr, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -137,28 +136,27 @@ func TestValidatePayInstructions(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
 		}
-		err := ad.Validator(instr)
-		assert.ErrorContains(t, err, "br-nfe-payment-means: required")
+		err := rules.Validate(instr, withAddonContext())
+		assert.ErrorContains(t, err, "payment instructions require 'br-nfe-payment-means' extension")
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var instr *pay.Instructions
-		err := ad.Validator(instr)
+		err := rules.Validate(instr, withAddonContext())
 		assert.NoError(t, err)
 	})
 }
 
 func TestValidatePayAdvance(t *testing.T) {
-	ad := tax.AddonForKey(nfe.V4)
-
 	t.Run("with payment means", func(t *testing.T) {
 		adv := &pay.Advance{
-			Key: pay.MeansKeyCard,
+			Key:         pay.MeansKeyCard,
+			Description: "Card payment",
 			Ext: tax.Extensions{
 				nfe.ExtKeyPaymentMeans: "03",
 			},
 		}
-		err := ad.Validator(adv)
+		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -166,13 +164,13 @@ func TestValidatePayAdvance(t *testing.T) {
 		adv := &pay.Advance{
 			Key: pay.MeansKeyCard,
 		}
-		err := ad.Validator(adv)
-		assert.ErrorContains(t, err, "br-nfe-payment-means: required")
+		err := rules.Validate(adv, withAddonContext())
+		assert.ErrorContains(t, err, "payment advance requires 'br-nfe-payment-means' extension")
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var adv *pay.Advance
-		err := ad.Validator(adv)
+		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)
 	})
 }

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/head/link",
-  "$ref": "#/$defs/Link",
+  "$ref": "#/$defs/head.Link",
   "$defs": {
-    "Link": {
+    "head.Link": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -74,6 +74,7 @@
         },
         "mime": {
           "type": "string",
+          "format": "mime",
           "title": "MIME Type",
           "description": "Expected MIME type of the link's content when the content is a file. Can only\nbe one of the allowed types defined by EN 16931-1:2017 plus XML itself."
         },

@@ -103,6 +103,30 @@ var defaultInvoiceTags = &tax.TagSet{
 				`),
 			},
 		},
+		{
+			Key: tax.TagPrepayment,
+			Name: i18n.String{
+				i18n.EN: "Prepayment",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					An invoice to pay amounts for goods and services in
+					advance; these amounts will be subtracted from the final
+					invoice.
+				`),
+			},
+		},
+		{
+			Key: tax.TagFactoring,
+			Name: i18n.String{
+				i18n.EN: "Factoring",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Invoice assigned to a third party for collection.
+				`),
+			},
+		},
 	},
 }
 

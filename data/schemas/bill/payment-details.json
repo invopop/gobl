@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/payment-details",
-  "$ref": "#/$defs/PaymentDetails",
+  "$ref": "#/$defs/bill.PaymentDetails",
   "$defs": {
-    "PaymentDetails": {
+    "bill.PaymentDetails": {
       "properties": {
         "payee": {
           "$ref": "https://gobl.org/draft-0/org/party",

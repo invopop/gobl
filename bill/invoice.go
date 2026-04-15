@@ -1,20 +1,19 @@
 package bill
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -105,124 +104,101 @@ type Invoice struct {
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
-// Validate checks to ensure the invoice is valid and contains all the information we need.
-func (inv *Invoice) Validate() error {
-	return inv.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the invoice is ready to be signed
+// or not.
+func (inv *Invoice) CanSign() bool {
+	return !inv.Code.IsEmpty()
 }
 
-// ValidateWithContext checks to ensure the invoice is valid and contains all the
-// information we need.
-func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
-	ctx = inv.validationContext(ctx)
-
-	var exRule validation.Rule
-	exRule = validation.Skip
-	if r := inv.RegimeDef(); r != nil {
-		// regime specific additions for validation
-		exRule = currency.CanConvertInto(inv.ExchangeRates, r.Currency)
-	}
-
-	return tax.ValidateStructWithContext(ctx, inv,
-		validation.Field(&inv.Regime),
-		validation.Field(&inv.Addons),
-		validation.Field(&inv.Tags.List, tax.TagsIn(inv.supportedTags()...)),
-		validation.Field(&inv.UUID),
-		validation.Field(&inv.Type,
-			validation.Required,
-			isValidInvoiceType,
+func invoiceRules() *rules.Set {
+	return rules.For(new(Invoice),
+		rules.Field("type",
+			rules.Assert("01", "invoice type is required", is.Present),
+			rules.Assert("02", "invoice type is not valid", isValidInvoiceType),
 		),
-		validation.Field(&inv.Series),
-		validation.Field(&inv.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign invoice"),
+		rules.Field("issue_date",
+			rules.Assert("03", "invoice issue date is required", cal.DateNotZero()),
+		),
+		rules.Field("currency",
+			rules.Assert("04", "invoice currency is required", is.Present),
+		),
+		rules.Field("supplier",
+			rules.Assert("05", "invoice supplier is required", is.Present),
+			rules.Field("name",
+				rules.Assert("06", "invoice supplier name is required", is.Present),
 			),
 		),
-		validation.Field(&inv.IssueDate,
-			cal.DateNotZero(),
-		),
-		validation.Field(&inv.OperationDate),
-		validation.Field(&inv.ValueDate),
-		validation.Field(&inv.Currency,
-			validation.Required,
-			exRule,
-		),
-		validation.Field(&inv.ExchangeRates,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&inv.Preceding,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&inv.Tax),
-		validation.Field(&inv.Supplier,
-			validation.Required,
-			validation.By(validateInvoiceSupplier),
-		),
-		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceCustomer),
-		),
-		validation.Field(&inv.Lines,
-			validation.Each(
-				validation.NotNil,
-				validation.By(lineItemHasPrice),
-			),
-			validation.When(
-				len(inv.Discounts) == 0 && len(inv.Charges) == 0,
-				validation.Required.Error("cannot be empty without discounts or charges"),
+		// The value date indicates when taxes become liable which is also indicated by the tax point
+		// so if the tax point is set, the value date should not be set to avoid confusion.
+		rules.When(is.Func("has tax point", invoiceHasTaxPoint),
+			rules.Field("value_date",
+				rules.Assert("11", "value date cannot be set when tax point is set", is.Empty),
 			),
 		),
-		validation.Field(&inv.Discounts,
-			validation.Each(validation.NotNil),
+		rules.Field("customer",
+			rules.When(is.Func("has tax ID code", customerHasTaxIDCode),
+				rules.Field("name",
+					rules.Assert("07", "invoice customer name required when tax ID is set", is.Present),
+				),
+			),
 		),
-		validation.Field(&inv.Charges,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Each(
+				rules.Field("item",
+					rules.Field("price",
+						rules.Assert("08", "invoice line item price is required", is.Present),
+					),
+				),
+			),
 		),
-		validation.Field(&inv.Ordering),
-		validation.Field(&inv.Payment),
-		validation.Field(&inv.Delivery),
-		validation.Field(&inv.Totals,
-			validation.Required,
+		rules.Field("totals",
+			rules.Assert("09", "invoice totals are required", is.Present),
 		),
-		validation.Field(&inv.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&inv.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&inv.Meta),
-		validation.Field(&inv.Attachments,
-			validation.Each(validation.NotNil),
-		),
-	)
-}
-
-func validateInvoiceSupplier(value any) error {
-	p, ok := value.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Name, validation.Required),
-	)
-}
-
-func validateInvoiceCustomer(value any) error {
-	p, ok := value.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Name,
-			validation.When(
-				partyHasTaxIDCode(p),
-				validation.Required,
+		rules.When(is.Func("no discounts or charges", invoiceNeedsLines),
+			rules.Field("lines",
+				rules.Assert("10", "invoice lines are required without discounts or charges", is.Present),
 			),
 		),
 	)
 }
 
-func partyHasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+func invoiceHasTaxPoint(val any) bool {
+	var inv *Invoice
+	switch v := val.(type) {
+	case *Invoice:
+		inv = v
+	case Invoice:
+		inv = &v
+	default:
+		return false
+	}
+	return inv != nil && inv.Tax != nil && inv.Tax.Point != cbc.KeyEmpty
+}
+
+func customerHasTaxIDCode(val any) bool {
+	var p *org.Party
+	switch v := val.(type) {
+	case *org.Party:
+		p = v
+	case org.Party:
+		p = &v
+	default:
+		return false
+	}
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
+func invoiceNeedsLines(val any) bool {
+	var inv *Invoice
+	switch v := val.(type) {
+	case *Invoice:
+		inv = v
+	case Invoice:
+		inv = &v
+	default:
+		return false
+	}
+	return inv != nil && len(inv.Discounts) == 0 && len(inv.Charges) == 0
 }
 
 // Invert effectively reverses the invoice by inverting the sign of all quantity
@@ -232,6 +208,10 @@ func partyHasTaxIDCode(party *org.Party) bool {
 // After inverting the invoice is recalculated and any differences will raise
 // an error.
 func (inv *Invoice) Invert() error {
+	if inv.HasTags(tax.TagBypass) {
+		return fmt.Errorf("cannot invert an invoice with tag bypass")
+	}
+
 	payable := inv.Totals.Payable.Invert()
 
 	for _, row := range inv.Lines {
@@ -254,8 +234,8 @@ func (inv *Invoice) Invert() error {
 			row.Amount = row.Amount.Invert()
 		}
 	}
-	inv.Totals = nil
 
+	inv.Totals = nil
 	if err := inv.Calculate(); err != nil {
 		return err
 	}
@@ -289,6 +269,12 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	inv.Normalize(tax.ExtractNormalizers(inv))
+
+	for _, tag := range inv.Tags.List {
+		if !tag.In(inv.supportedTags()...) {
+			return fmt.Errorf("$tags: '%s' undefined", tag)
+		}
+	}
 
 	if err := calculate(inv); err != nil {
 		return err
@@ -336,18 +322,6 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaInvoice))
 	}
 	return ts.Keys()
-}
-
-// validationContext builds a context with all the validators that the invoice might
-// need for execution.
-func (inv *Invoice) validationContext(ctx context.Context) context.Context {
-	if r := inv.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	for _, a := range inv.AddonDefs() {
-		ctx = a.WithContext(ctx)
-	}
-	return ctx
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include

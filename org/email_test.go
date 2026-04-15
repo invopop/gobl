@@ -1,10 +1,10 @@
 package org_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,37 +26,33 @@ func TestEmailNormalize_NilReceiver(t *testing.T) {
 	})
 }
 
-func TestEmailValidate(t *testing.T) {
+func TestEmailRules(t *testing.T) {
 	t.Run("valid email after normalize", func(t *testing.T) {
 		e := &org.Email{
 			Address: "  jane.doe@example.com  ",
 		}
 		e.Normalize()
-		assert.NoError(t, e.Validate())
-	})
-
-	t.Run("valid email with context", func(t *testing.T) {
-		e := &org.Email{
-			Address: "john.doe@example.com",
-		}
-		assert.NoError(t, e.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(e))
 	})
 
 	t.Run("empty address is invalid", func(t *testing.T) {
 		e := &org.Email{}
-		assert.Error(t, e.Validate())
+		faults := rules.Validate(e)
+		assert.Error(t, faults)
+		assert.Contains(t, faults.Error(), "email address is required")
+		assert.True(t, faults.HasCode("GOBL-ORG-EMAIL-01"))
 	})
 
 	t.Run("invalid format is rejected", func(t *testing.T) {
 		e := &org.Email{Address: "not-an-email"}
-		assert.Error(t, e.Validate())
+		assert.Error(t, rules.Validate(e))
 	})
 
 	t.Run("accepts uppercase", func(t *testing.T) {
 		e := &org.Email{
 			Address: "John.Doe+tag@Example.COM",
 		}
-		assert.NoError(t, e.Validate())
+		assert.NoError(t, rules.Validate(e))
 	})
 
 	t.Run("invalid with whitespace after normalize", func(t *testing.T) {
@@ -64,14 +60,14 @@ func TestEmailValidate(t *testing.T) {
 			Address: "   ",
 		}
 		e.Normalize()
-		assert.Error(t, e.Validate())
+		assert.Error(t, rules.Validate(e))
 	})
 
 	t.Run("invalid missing @", func(t *testing.T) {
 		e := &org.Email{
 			Address: "johndoe.example.com",
 		}
-		assert.Error(t, e.Validate())
+		assert.Error(t, rules.Validate(e))
 	})
 
 }

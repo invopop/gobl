@@ -3,10 +3,11 @@
 package nfe
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,6 +18,15 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V4.String(),
+		rules.GOBL.Add("BR-NFE-V4"),
+		is.InContext(tax.AddonIn(V4)),
+		billInvoiceRules(),
+		billLineRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -25,26 +35,11 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Brazil NF-e 4.00",
 		},
-		Validator:  validate,
 		Normalizer: normalize,
 		Extensions: extensions,
 		Scenarios:  scenarios,
 		Identities: identities,
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *bill.Line:
-		return validateLine(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	}
-	return nil
 }
 
 func normalize(doc any) {

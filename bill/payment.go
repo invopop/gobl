@@ -1,23 +1,22 @@
 package bill
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of the payment types supported.
@@ -137,75 +136,34 @@ type Payment struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate runs the validation rules for the payment without the context.
-func (pmt *Payment) Validate() error {
-	return pmt.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the payment is ready to be signed
+// or not.
+func (pmt *Payment) CanSign() bool {
+	return !pmt.Code.IsEmpty()
 }
 
-// ValidateWithContext ensures that the fields contained in the Payment look correct.
-func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
-	ctx = pmt.validationContext(ctx)
-	r := pmt.RegimeDef()
-	return tax.ValidateStructWithContext(ctx, pmt,
-		validation.Field(&pmt.Regime),
-		validation.Field(&pmt.Addons),
-		validation.Field(&pmt.UUID),
-		validation.Field(&pmt.Type,
-			validation.Required,
-			isValidPaymentType,
+func paymentRules() *rules.Set {
+	return rules.For(new(Payment),
+		rules.Field("type",
+			rules.Assert("01", "payment type is required", is.Present),
+			rules.Assert("02", "payment type is not valid", isValidPaymentType),
 		),
-		validation.Field(&pmt.Method, validation.Required),
-		validation.Field(&pmt.Series),
-		validation.Field(&pmt.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign payment"),
-			),
+		rules.Field("method",
+			rules.Assert("03", "payment method is required", is.Present),
 		),
-		validation.Field(&pmt.IssueDate,
-			validation.Required,
-			cal.DateNotZero(),
+		rules.Field("issue_date",
+			rules.Assert("04", "payment issue date is required", is.Present),
 		),
-		validation.Field(&pmt.Currency,
-			validation.Required,
-			currency.CanConvertInto(pmt.ExchangeRates, r.GetCurrency()),
+		rules.Field("currency",
+			rules.Assert("05", "payment currency is required", is.Present),
 		),
-		validation.Field(&pmt.ExchangeRates,
-			validation.Each(validation.NotNil),
+		rules.Field("supplier",
+			rules.Assert("06", "payment supplier is required", is.Present),
 		),
-		validation.Field(&pmt.Ext),
-		validation.Field(&pmt.Preceding,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Assert("07", "payment lines are required", is.Present),
 		),
-		validation.Field(&pmt.Supplier, validation.Required),
-		validation.Field(&pmt.Customer),
-		validation.Field(&pmt.Payee),
-		validation.Field(&pmt.Lines,
-			validation.Required,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&pmt.Ordering),
-		validation.Field(&pmt.Total), // Totals may be zero or negative
-		validation.Field(&pmt.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&pmt.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&pmt.Meta),
 	)
-}
-
-// validationContext builds a context with all the validators that the payment might
-// need for execution.
-func (pmt *Payment) validationContext(ctx context.Context) context.Context {
-	if r := pmt.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	for _, a := range pmt.AddonDefs() {
-		ctx = a.WithContext(ctx)
-	}
-	return ctx
 }
 
 // Calculate performs all the normalizations and calculations required for the invoice
@@ -273,9 +231,7 @@ func (pmt *Payment) calculate() error {
 		pmt.Currency = r.Currency
 	}
 	if pmt.Currency == currency.CodeEmpty {
-		return validation.Errors{
-			"currency": fmt.Errorf("required, unable to determine"),
-		}
+		return fmt.Errorf("currency: required, unable to determine")
 	}
 
 	var total *num.Amount
@@ -286,11 +242,7 @@ func (pmt *Payment) calculate() error {
 		l.Index = i + 1
 
 		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
-			return validation.Errors{
-				"lines": validation.Errors{
-					fmt.Sprintf("%d", l.Index): err,
-				},
-			}
+			return fmt.Errorf("lines: %d: %w", l.Index, err)
 		}
 
 		// Add the totals

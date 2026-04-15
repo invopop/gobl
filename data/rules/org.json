@@ -1,0 +1,465 @@
+{
+  "id": "GOBL-ORG",
+  "package": "org",
+  "subsets": [
+    {
+      "id": "GOBL-ORG-ATTACHMENT",
+      "object": "org.Attachment",
+      "subsets": [
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTACHMENT-01",
+              "desc": "attachment URL must be valid",
+              "tests": "present, url"
+            }
+          ]
+        },
+        {
+          "field": "mime",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ATTACHMENT-02",
+                  "desc": "attachment MIME type must be of an expected types defined in EN16931-1:2017",
+                  "tests": "one of [application/pdf, image/jpeg, image/png, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.oasis.opendocument.spreadsheet]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-COORDINATES",
+      "object": "org.Coordinates",
+      "subsets": [
+        {
+          "field": "lat",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-COORDINATES-01",
+                  "desc": "coordinate lattude must be between -90.0 and 90.0",
+                  "tests": "at least -90, at most 90"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lon",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-COORDINATES-02",
+                  "desc": "coordinate longitude must be between -180.0 and 180.0",
+                  "tests": "at least -180, at most 180"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "w3w",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-COORDINATES-03",
+                  "desc": "what3words coordinate must be valid",
+                  "tests": "matches ^/*(?:(?:\\p{L}\\p{M}*)+[.｡。･・︒។։။۔።।](?:\\p{L}\\p{M}*)+[.｡。･・︒។։။۔።।](?:\\p{L}\\p{M}*)+|(?:\\p{L}\\p{M}*)+([  ](?:\\p{L}\\p{M}*)+){1,3}[.｡。･・︒។։။۔።।](?:\\p{L}\\p{M}*)+([  ](?:\\p{L}\\p{M}*)+){1,3}[.｡。･・︒។։။۔።।](?:\\p{L}\\p{M}*)+([  ](?:\\p{L}\\p{M}*)+){1,3})$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-DOCUMENTREF",
+      "object": "org.DocumentRef",
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-ORG-DOCUMENTREF-01",
+              "desc": "document reference code is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "issue_date",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-DOCUMENTREF-02",
+                  "desc": "document reference issue date must not be zero",
+                  "tests": "not zero"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "url",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-DOCUMENTREF-03",
+                  "desc": "document reference URL must be valid",
+                  "tests": "url"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-EMAIL",
+      "object": "org.Email",
+      "subsets": [
+        {
+          "field": "addr",
+          "assert": [
+            {
+              "id": "GOBL-ORG-EMAIL-01",
+              "desc": "email address is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-ORG-EMAIL-02",
+              "desc": "email address must be valid",
+              "tests": "email-format"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-IDENTITY",
+      "object": "org.Identity",
+      "assert": [
+        {
+          "id": "GOBL-ORG-IDENTITY-03",
+          "desc": "identity must have either a key or type defined, but not both",
+          "tests": "key and type must not be used together"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-ORG-IDENTITY-01",
+              "desc": "identity code must be provided",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "scope",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-IDENTITY-02",
+                  "desc": "identity scope when provided must be either 'tax' or 'legal'",
+                  "tests": "one of [tax, legal]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-IMAGE",
+      "object": "org.Image",
+      "subsets": [
+        {
+          "field": "url",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-IMAGE-01",
+                  "desc": "image URL must be valid",
+                  "tests": "url"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "height",
+          "assert": [
+            {
+              "id": "GOBL-ORG-IMAGE-02",
+              "desc": "image height must be between 64 and 2048 pixels",
+              "tests": "at least 64, at most 2048"
+            }
+          ]
+        },
+        {
+          "field": "width",
+          "assert": [
+            {
+              "id": "GOBL-ORG-IMAGE-03",
+              "desc": "image width must be between 64 and 2048 pixels",
+              "tests": "at least 64, at most 2048"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-INBOX",
+      "object": "org.Inbox",
+      "assert": [
+        {
+          "id": "GOBL-ORG-INBOX-01",
+          "desc": "inbox requires a code, url, or email",
+          "tests": "one of code, url, email required"
+        },
+        {
+          "id": "GOBL-ORG-INBOX-02",
+          "desc": "inbox url must be blank when code or email is provided",
+          "tests": "url exclusive"
+        },
+        {
+          "id": "GOBL-ORG-INBOX-03",
+          "desc": "inbox email must be blank when code or url is provided",
+          "tests": "email exclusive"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "url",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-INBOX-04",
+                  "desc": "inbox url must be valid",
+                  "tests": "url"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "email",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-INBOX-05",
+                  "desc": "inbox email must be valid",
+                  "tests": "email-format"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-ITEM",
+      "object": "org.Item",
+      "subsets": [
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ITEM-01",
+              "desc": "item name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "price",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-02",
+                  "desc": "item price must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-NAME",
+      "object": "org.Name",
+      "subsets": [
+        {
+          "guard": "Surname == \"\"",
+          "subsets": [
+            {
+              "field": "given",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-NAME-01",
+                  "desc": "given name is required when surname is absent",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "Given == \"\"",
+          "subsets": [
+            {
+              "field": "surname",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-NAME-02",
+                  "desc": "surname is required when given name is absent",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-NOTE",
+      "object": "org.Note",
+      "subsets": [
+        {
+          "field": "text",
+          "assert": [
+            {
+              "id": "GOBL-ORG-NOTE-01",
+              "desc": "note text is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "key",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-NOTE-02",
+                  "desc": "note key must be a valid value",
+                  "tests": "one of [goods, payment, payment-method, payment-term, legal, dangerous-goods, ack, rate, reason, dispute, customer, glossary, customs, general, handling, packaging, loading, price, priority, regulatory, safety, ship-line, supplier, transport, delivery, quarantine, tax, other]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-PERSON",
+      "object": "org.Person",
+      "subsets": [
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PERSON-01",
+              "desc": "person name is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-REGISTRATION",
+      "object": "org.Registration",
+      "subsets": [
+        {
+          "field": "currency",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-REGISTRATION-01",
+                  "desc": "registration currency must be a valid ISO 4217 code",
+                  "tests": "is valid currency"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-TELEPHONE",
+      "object": "org.Telephone",
+      "subsets": [
+        {
+          "field": "num",
+          "assert": [
+            {
+              "id": "GOBL-ORG-TELEPHONE-01",
+              "desc": "telephone number is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-UNIT",
+      "object": "org.Unit",
+      "assert": [
+        {
+          "id": "GOBL-ORG-UNIT-01",
+          "desc": "unit must be a valid value or UN/ECE code",
+          "tests": "matches ^[A-Z0-9]{2,3}$, or one of [mg, g, kg, t, mm, cm, dm, m, km, in, ft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, l, w, kw, kwh, rate, mon, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, bunch, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-WEBSITE",
+      "object": "org.Website",
+      "subsets": [
+        {
+          "field": "url",
+          "assert": [
+            {
+              "id": "GOBL-ORG-WEBSITE-01",
+              "desc": "website URL is required and must be valid",
+              "tests": "present, url"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

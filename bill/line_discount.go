@@ -3,9 +3,10 @@ package bill
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // LineDiscount represents an amount deducted from the line, and will be
@@ -35,20 +36,13 @@ func (ld *LineDiscount) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(ld)
 }
 
-// Validate checks the line discount's fields.
-func (ld *LineDiscount) Validate() error {
-	return validation.ValidateStruct(ld,
-		validation.Field(&ld.Key),
-		validation.Field(&ld.Code),
-		validation.Field(&ld.Base),
-		validation.Field(&ld.Percent,
-			validation.When(
-				ld.Base != nil,
-				validation.Required,
+func lineDiscountRules() *rules.Set {
+	return rules.For(new(LineDiscount),
+		rules.When(is.Expr("Base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", is.Present),
 			),
 		),
-		validation.Field(&ld.Amount),
-		validation.Field(&ld.Ext),
 	)
 }
 

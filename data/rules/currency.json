@@ -1,0 +1,73 @@
+{
+  "id": "GOBL-CURRENCY",
+  "package": "currency",
+  "subsets": [
+    {
+      "id": "GOBL-CURRENCY-AMOUNT",
+      "object": "currency.Amount",
+      "subsets": [
+        {
+          "field": "currency",
+          "assert": [
+            {
+              "id": "GOBL-CURRENCY-AMOUNT-01",
+              "desc": "currency is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CURRENCY-EXCHANGERATE",
+      "object": "currency.ExchangeRate",
+      "subsets": [
+        {
+          "field": "from",
+          "assert": [
+            {
+              "id": "GOBL-CURRENCY-EXCHANGERATE-01",
+              "desc": "from currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "to",
+          "assert": [
+            {
+              "id": "GOBL-CURRENCY-EXCHANGERATE-02",
+              "desc": "to currency is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "at",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-CURRENCY-EXCHANGERATE-03",
+                  "desc": "date/time must not be zero",
+                  "tests": "not zero"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "amount",
+          "assert": [
+            {
+              "id": "GOBL-CURRENCY-EXCHANGERATE-04",
+              "desc": "amount must be positive",
+              "tests": "min 0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

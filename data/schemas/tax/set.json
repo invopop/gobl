@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/set",
-  "$ref": "#/$defs/Set",
+  "$ref": "#/$defs/tax.Set",
   "$defs": {
-    "Combo": {
+    "tax.Combo": {
       "anyOf": [
         {
           "if": {
@@ -128,9 +128,9 @@
       ],
       "description": "Combo represents the tax combination of a category code and rate key."
     },
-    "Set": {
+    "tax.Set": {
       "items": {
-        "$ref": "#/$defs/Combo"
+        "$ref": "#/$defs/tax.Combo"
       },
       "type": "array",
       "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."

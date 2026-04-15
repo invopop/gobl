@@ -1,0 +1,329 @@
+{
+  "id": "GOBL-DE-XRECHNUNG-V3",
+  "package": "de-xrechnung-v3",
+  "guard": "context: addon in [de-xrechnung-v3]",
+  "subsets": [
+    {
+      "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "tax",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-01",
+                  "desc": "tax ext must have a valid UNTDID document type code (BR-DE-17)",
+                  "tests": "ext 'untdid-tax-category' in [326, 380, 384, 389, 381, 875, 876, 877]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [corrective, credit-note]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-02",
+                  "desc": "preceding documents are required for corrective and credit note invoices (BR-DE-26)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-03",
+              "desc": "supplier is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-09",
+              "desc": "either party.telephones or party.people[0].telephones is required (BR-DE-6)",
+              "tests": "has telephones"
+            },
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-10",
+              "desc": "either party.emails or party.people[0].emails is required (BR-DE-7)",
+              "tests": "has emails"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "people",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-04",
+                  "desc": "supplier people is required (BR-DE-5)",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-05",
+                  "desc": "supplier addresses is required (BR-DE-2)",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-06",
+                  "desc": "supplier first address must have a locality (BR-DE-3)",
+                  "tests": "has locality"
+                },
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-07",
+                  "desc": "supplier first address must have a postal code (BR-DE-4)",
+                  "tests": "has code"
+                }
+              ]
+            },
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-08",
+                  "desc": "supplier inboxes are required (PEPPOL-EN16931-R020)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "assert": [
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-11",
+              "desc": "customer is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-12",
+                  "desc": "customer addresses are required (BR-DE-8)",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-13",
+                  "desc": "customer first address must have a locality (BR-DE-9)",
+                  "tests": "has locality"
+                },
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-14",
+                  "desc": "customer first address must have a postal code (BR-DE-10)",
+                  "tests": "has code"
+                }
+              ]
+            },
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-15",
+                  "desc": "customer inboxes are required (PEPPOL-EN16931-R010)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "payment",
+          "assert": [
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-16",
+              "desc": "payment is required (BR-DE-1)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "instructions",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-17",
+                  "desc": "payment instructions are required (BR-DE-1)",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "guard": "has credit-transfer key",
+                  "subsets": [
+                    {
+                      "field": "credit_transfer",
+                      "assert": [
+                        {
+                          "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-18",
+                          "desc": "credit transfer is required for credit-transfer payments (BR-DE-23)",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "guard": "no IBAN",
+                              "subsets": [
+                                {
+                                  "field": "number",
+                                  "assert": [
+                                    {
+                                      "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-19",
+                                      "desc": "account number is required when IBAN is not provided (BR-DE-19)",
+                                      "tests": "present"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "has card key",
+                  "subsets": [
+                    {
+                      "field": "card",
+                      "assert": [
+                        {
+                          "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-20",
+                          "desc": "card details are required for card payments (BR-DE-24)",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "has direct-debit key",
+                  "subsets": [
+                    {
+                      "field": "direct_debit",
+                      "assert": [
+                        {
+                          "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-21",
+                          "desc": "direct debit details are required for direct-debit payments (BR-DE-25)",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "field": "ref",
+                          "assert": [
+                            {
+                              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-22",
+                              "desc": "direct debit mandate reference is required (BR-DE-29)",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "creditor",
+                          "assert": [
+                            {
+                              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-23",
+                              "desc": "direct debit creditor identifier is required (BR-DE-30)",
+                              "tests": "present"
+                            }
+                          ]
+                        },
+                        {
+                          "field": "account",
+                          "assert": [
+                            {
+                              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-24",
+                              "desc": "direct debit account is required (BR-DE-31)",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "delivery",
+          "subsets": [
+            {
+              "field": "receiver",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-25",
+                  "desc": "delivery receiver is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-26",
+                      "desc": "delivery receiver addresses are required",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-27",
+                      "desc": "delivery receiver first address must have a locality (BR-DE-11)",
+                      "tests": "has locality"
+                    },
+                    {
+                      "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-28",
+                      "desc": "delivery receiver first address must have a postal code (BR-DE-12)",
+                      "tests": "has code"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "ordering",
+          "assert": [
+            {
+              "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-29",
+              "desc": "ordering is required (BR-DE-15)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-DE-XRECHNUNG-V3-BILL-INVOICE-30",
+                  "desc": "ordering code is required (BR-DE-15)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

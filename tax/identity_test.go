@@ -6,8 +6,8 @@ import (
 	_ "github.com/invopop/gobl" // load all mods
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +16,7 @@ func TestTaxIdentity(t *testing.T) {
 		Country: "ES",
 		Code:    "X3157928M",
 	}
-	err := tID.Validate()
+	err := rules.Validate(tID)
 	assert.NoError(t, err)
 	assert.Equal(t, tID.String(), "ESX3157928M")
 
@@ -26,9 +26,9 @@ func TestTaxIdentity(t *testing.T) {
 		Country: "ES",
 		Code:    "X3157928MMM",
 	}
-	err = tID.Validate()
+	err = rules.Validate(tID)
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "code: invalid")
+		assert.Contains(t, err.Error(), "[GOBL-ES-TAX-IDENTITY-01]")
 	}
 
 	tID = &tax.Identity{
@@ -43,20 +43,12 @@ func TestTaxIdentity(t *testing.T) {
 		tID.Normalize()
 	})
 
-	t.Run("mexican case with custom validation", func(t *testing.T) {
+	t.Run("mexican case with strange characters", func(t *testing.T) {
 		tID := &tax.Identity{
 			Country: "MX",
-			Code:    "K&A010301I16",
+			Code:    "K&Ñ010301I16",
 		}
-		assert.NoError(t, tID.Validate())
-	})
-
-	t.Run("invalid non-exception case", func(t *testing.T) {
-		tID := &tax.Identity{
-			Country: "ZW", // update when ZW regime is added
-			Code:    "AB&DE",
-		}
-		assert.ErrorContains(t, tID.Validate(), "code: must be in a valid format")
+		assert.NoError(t, rules.Validate(tID))
 	})
 
 	t.Run("with scheme", func(t *testing.T) {
@@ -65,7 +57,7 @@ func TestTaxIdentity(t *testing.T) {
 			Code:    "X3157928M",
 			Scheme:  tax.CategoryVAT,
 		}
-		assert.NoError(t, tID.Validate())
+		assert.NoError(t, rules.Validate(tID))
 	})
 	t.Run("with invalid scheme", func(t *testing.T) {
 		tID := &tax.Identity{
@@ -73,7 +65,7 @@ func TestTaxIdentity(t *testing.T) {
 			Code:    "X3157928M",
 			Scheme:  "Fo--o",
 		}
-		assert.ErrorContains(t, tID.Validate(), "scheme: must be in a valid format.")
+		assert.ErrorContains(t, rules.Validate(tID), "GOBL-CBC-CODE-02")
 	})
 
 	t.Run("in EU", func(t *testing.T) {
@@ -95,7 +87,7 @@ func TestParseIdentity(t *testing.T) {
 	assert.Equal(t, tID.String(), "ESX3157928M")
 
 	_, err = tax.ParseIdentity("ESX3157928MMM")
-	assert.ErrorContains(t, err, "code: invalid")
+	assert.ErrorContains(t, err, "GOBL-ES-TAX-IDENTITY-01")
 
 	_, err = tax.ParseIdentity("E")
 	assert.ErrorContains(t, err, "invalid tax identity code")
@@ -132,14 +124,6 @@ func TestIdentityGetScheme(t *testing.T) {
 		assert.Equal(t, cbc.CodeEmpty, tID.GetScheme())
 	})
 
-}
-
-func TestValidationRules(t *testing.T) {
-	tID := &tax.Identity{
-		Country: "ES",
-	}
-	err := validation.Validate(tID, tax.RequireIdentityCode)
-	assert.ErrorContains(t, err, "code: cannot be blank")
 }
 
 func TestNormalizeIdentity(t *testing.T) {

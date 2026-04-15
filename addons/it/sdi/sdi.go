@@ -3,11 +3,15 @@
 package sdi
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -21,6 +25,17 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V1.String(),
+		rules.GOBL.Add("IT-SDI-V1"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		billChargeRules(),
+		orgAddressRules(),
+		taxComboRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -36,7 +51,6 @@ func newAddon() *tax.AddonDef {
 		Inboxes:    inboxes,
 		Normalizer: normalize,
 		Scenarios:  scenarios,
-		Validator:  validate,
 	}
 }
 
@@ -55,18 +69,17 @@ func normalize(doc any) {
 	}
 }
 
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
+
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
 	}
 	return nil
 }

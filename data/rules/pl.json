@@ -1,0 +1,63 @@
+{
+  "id": "GOBL-PL",
+  "package": "pl",
+  "subsets": [
+    {
+      "id": "GOBL-PL-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [PL]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-PL-BILL-INVOICE-01",
+                          "desc": "supplier tax ID code required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PL-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [PL]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-TAX-IDENTITY-01",
+                      "desc": "invalid Polish VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

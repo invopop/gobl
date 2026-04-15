@@ -212,6 +212,8 @@ func TestNormalizeTaxCombo(t *testing.T) {
 }
 
 func TestValidateTaxCombo(t *testing.T) {
+	ruleSet := taxComboRules()
+
 	t.Run("valid", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -221,7 +223,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyRegime:  "01",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -230,7 +232,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: tax.CategoryGST,
 			Rate:     tax.RateGeneral,
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -243,7 +245,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E1",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -255,7 +257,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
 	})
 
@@ -267,9 +269,8 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E3",
 			},
 		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "E3")
+		err := ruleSet.Validate(tc)
+		assert.ErrorContains(t, err, "E3")
 	})
 
 	t.Run("allows E2 exemption code with non-01 regime", func(t *testing.T) {
@@ -280,7 +281,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
+		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
 	})
 
@@ -292,8 +293,7 @@ func TestValidateTaxCombo(t *testing.T) {
 				ExtKeyExempt: "E2",
 			},
 		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "E2")
+		err := ruleSet.Validate(tc)
+		assert.ErrorContains(t, err, "E2")
 	})
 }

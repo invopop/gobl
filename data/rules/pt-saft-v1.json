@@ -1,0 +1,592 @@
+{
+  "id": "GOBL-PT-SAFT-V1",
+  "package": "pt-saft-v1",
+  "guard": "context: addon in [pt-saft-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-01",
+          "desc": "either 'pt-saft-work-type' or 'pt-saft-invoice-type' must be set",
+          "tests": "has doc type"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-02",
+          "desc": "either 'pt-saft-work-type' or 'pt-saft-invoice-type' must be set, but not both",
+          "tests": "not both doc types"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-03",
+          "desc": "invoice work type is not valid",
+          "tests": "valid invoice work type"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-04",
+          "desc": "series format must be valid",
+          "tests": "series format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-05",
+          "desc": "code format must be valid",
+          "tests": "code format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-12",
+          "desc": "tax requires 'pt-saft-source' extension",
+          "tests": "tax has source"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-14",
+          "desc": "source ref format is invalid",
+          "tests": "source ref format"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "value_date",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-06",
+              "desc": "cannot be blank",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-07",
+                  "desc": "line taxes must include VAT category",
+                  "tests": "line has tax category VAT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "payment",
+          "subsets": [
+            {
+              "field": "advances",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "date",
+                      "assert": [
+                        {
+                          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-08",
+                          "desc": "cannot be blank",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "totals",
+          "subsets": [
+            {
+              "field": "payable",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-09",
+                  "desc": "must be no less than 0",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is invoice-receipt",
+          "subsets": [
+            {
+              "field": "totals",
+              "subsets": [
+                {
+                  "field": "due",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-10",
+                      "desc": "must be equal to 0",
+                      "tests": "equals 0"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "preceding",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-11",
+              "desc": "the length must be no more than 1",
+              "tests": "length between 0 and 1"
+            }
+          ]
+        },
+        {
+          "guard": "source not produced",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-13",
+              "desc": "tax requires 'pt-saft-source-ref' extension when source is not produced",
+              "tests": "tax has source ref"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT",
+      "object": "bill.Payment",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-01",
+          "desc": "series format must be valid",
+          "tests": "series format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-02",
+          "desc": "code format must be valid",
+          "tests": "code format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-06",
+          "desc": "source ref format is invalid",
+          "tests": "source ref format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-09",
+          "desc": "customer name is required when customer has tax ID code",
+          "tests": "customer name present"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-03",
+              "desc": "'pt-saft-payment-type' extension is required",
+              "tests": "ext require [pt-saft-payment-type]"
+            },
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-04",
+              "desc": "'pt-saft-source' extension is required",
+              "tests": "ext require [pt-saft-source]"
+            }
+          ]
+        },
+        {
+          "guard": "source not produced",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-05",
+                  "desc": "'pt-saft-source-ref' extension is required when source is not produced",
+                  "tests": "ext require [pt-saft-source-ref]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-07",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-08",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "total",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-10",
+              "desc": "must be no less than 0",
+              "tests": "min 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY",
+      "object": "bill.Delivery",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-01",
+          "desc": "tax requires 'pt-saft-movement-type' extension",
+          "tests": "has movement type"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-02",
+          "desc": "series format must be valid",
+          "tests": "series format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-03",
+          "desc": "code format must be valid",
+          "tests": "code format"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-04",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-05",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "despatch_date",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-06",
+              "desc": "cannot be blank",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-ORDER",
+      "object": "bill.Order",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-01",
+          "desc": "tax requires 'pt-saft-work-type' extension",
+          "tests": "has work type"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-02",
+          "desc": "work type must not be an invoice work type",
+          "tests": "order work type valid"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-03",
+          "desc": "series format must be valid",
+          "tests": "series format"
+        },
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-04",
+          "desc": "code format must be valid",
+          "tests": "code format"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "value_date",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-ORDER-05",
+              "desc": "cannot be blank",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-ORDER-06",
+                  "desc": "line taxes must include VAT category",
+                  "tests": "line has tax category VAT"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "is VAT",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-TAX-COMBO-01",
+                  "desc": "region and tax rate are required",
+                  "tests": "ext require [pt-region, pt-saft-tax-rate]"
+                },
+                {
+                  "id": "GOBL-PT-SAFT-V1-TAX-COMBO-02",
+                  "desc": "exemption is required when tax rate is exempt",
+                  "tests": "exempt requires exemption"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL",
+      "object": "tax.RateTotal",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-01",
+              "desc": "region and tax rate are required",
+              "tests": "ext require [pt-region, pt-saft-tax-rate]"
+            },
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-02",
+              "desc": "exemption is required when tax rate is exempt",
+              "tests": "exempt requires exemption"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-ORG-ITEM",
+      "object": "org.Item",
+      "subsets": [
+        {
+          "field": "unit",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-ORG-ITEM-01",
+              "desc": "cannot be blank",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-ORG-ITEM-02",
+              "desc": "product type is required",
+              "tests": "ext require [pt-saft-product-type]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-ORG-NOTE",
+      "object": "org.Note",
+      "subsets": [
+        {
+          "guard": "legal exemption note",
+          "subsets": [
+            {
+              "field": "text",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-ORG-NOTE-01",
+                  "desc": "the length must be between 6 and 60",
+                  "tests": "length between 6 and 60"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-LINE",
+      "object": "bill.Line",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-LINE-05",
+          "desc": "exemption notes invalid",
+          "tests": "exemption notes"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "quantity",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-LINE-01",
+              "desc": "must be greater than 0",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "sum",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-LINE-02",
+              "desc": "must be no less than 0",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "total",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-LINE-03",
+              "desc": "must be no less than 0",
+              "tests": "min 0"
+            }
+          ]
+        },
+        {
+          "field": "discounts",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "amount",
+                  "assert": [
+                    {
+                      "id": "GOBL-PT-SAFT-V1-BILL-LINE-04",
+                      "desc": "must be no less than 0",
+                      "tests": "min 0"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE",
+      "object": "bill.PaymentLine",
+      "assert": [
+        {
+          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-06",
+          "desc": "exemption notes invalid",
+          "tests": "exemption notes"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "document",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-01",
+              "desc": "cannot be blank",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "issue_date",
+              "assert": [
+                {
+                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-02",
+                  "desc": "cannot be blank",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-03",
+              "desc": "cannot be blank",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-04",
+              "desc": "missing category VAT",
+              "tests": "has VAT category"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "categories",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "rates",
+                      "assert": [
+                        {
+                          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-05",
+                          "desc": "only one rate allowed per line",
+                          "tests": "length between 0 and 1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

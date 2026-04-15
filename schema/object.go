@@ -1,14 +1,14 @@
 package schema
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Error is used to define schema errors
@@ -58,9 +58,24 @@ type Identifiable interface {
 }
 
 // NewObject instantiates an Object wrapper around the provided payload.
-func NewObject(payload interface{}) (*Object, error) {
+func NewObject(payload any) (*Object, error) {
 	d := new(Object)
 	return d, d.insert(payload)
+}
+
+func objectRules() *rules.Set {
+	return rules.For(new(Object),
+		rules.Field("$schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+	)
+}
+
+// Validate will check the document payload for any rule violations
+// and return them as a list of faults. This will only check the
+// payload of the object, which would not otherwise be verified.
+func (d *Object) Validate() rules.Faults {
+	return rules.Validate(d.Instance())
 }
 
 // IsEmpty returns true if no payload has been set yet.
@@ -69,7 +84,13 @@ func (d *Object) IsEmpty() bool {
 }
 
 // Instance returns a prepared version of the document's content.
-func (d *Object) Instance() interface{} {
+func (d *Object) Instance() any {
+	return d.payload
+}
+
+// Embedded returns the document payload so that the rules traversal can validate
+// it at the same JSON level as the Object wrapper, maintaining correct paths.
+func (d *Object) Embedded() any {
 	return d.payload
 }
 
@@ -88,26 +109,6 @@ func (d *Object) Calculate() error {
 		return nil
 	}
 	return pl.Calculate()
-}
-
-// Validate checks to ensure the document has everything it needs
-// and will pass on the validation call to the payload.
-func (d *Object) Validate() error {
-	return d.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks to ensure the document has everything it needs
-// and will pass on the validation call to the payload.
-func (d *Object) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, d,
-		validation.Field(&d.Schema, validation.Required),
-	)
-	if err != nil {
-		return err
-	}
-	// return any errors from the payload as if they were for the document
-	// itself.
-	return validation.ValidateWithContext(ctx, d.payload)
 }
 
 // Correct will attempt to run the correction method on the document
@@ -151,7 +152,7 @@ func (d *Object) Replicate() error {
 
 // Insert places the provided object inside the document and looks up the schema
 // information to ensure it is known.
-func (d *Object) insert(payload interface{}) error {
+func (d *Object) insert(payload any) error {
 	d.Schema = Lookup(payload)
 	if d.Schema == UnknownID {
 		return ErrUnknownSchema

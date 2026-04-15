@@ -1,10 +1,10 @@
 package org_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,15 +51,12 @@ func TestWebsiteValidate(t *testing.T) {
 			// Ensure Normalize helps when there is surrounding whitespace.
 			w.Normalize()
 
-			err1 := w.Validate()
-			err2 := w.ValidateWithContext(context.Background())
-
-			assert.Equal(t, err1 == nil, err2 == nil, "Validate and ValidateWithContext mismatch: err1=%v err2=%v", err1, err2)
+			err := rules.Validate(w)
 
 			if tc.ok {
-				assert.NoError(t, err1)
+				assert.NoError(t, err)
 			} else {
-				assert.Error(t, err1)
+				assert.Error(t, err)
 			}
 		})
 	}

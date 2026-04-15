@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cal/date",
-  "$ref": "#/$defs/Date",
+  "$ref": "#/$defs/cal.Date",
   "$defs": {
-    "Date": {
+    "cal.Date": {
       "type": "string",
       "format": "date",
       "title": "Date",

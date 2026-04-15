@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -12,60 +13,57 @@ import (
 func TestInvalidFoodVouchers(t *testing.T) {
 	fvc := &cfdi.FoodVouchers{}
 
-	err := fvc.Validate()
+	err := rules.Validate(fvc, withAddonContext())
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "account_number: cannot be blank")
-	assert.Contains(t, err.Error(), "lines: cannot be blank")
+	assert.ErrorContains(t, err, "account number is required")
+	assert.ErrorContains(t, err, "lines are required")
 
 	fvc.EmployerRegistration = "123456789012345678901"
 	fvc.AccountNumber = "012345678901234567891"
 
-	err = fvc.Validate()
+	err = rules.Validate(fvc, withAddonContext())
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "employer_registration: the length must be no more than 20")
-	assert.Contains(t, err.Error(), "account_number: the length must be no more than 20")
+	assert.ErrorContains(t, err, "employer registration must be no more than 20 characters")
+	assert.ErrorContains(t, err, "account number must be no more than 20 characters")
 }
 
 func TestInvalidFoodVouchersLine(t *testing.T) {
 	fvc := &cfdi.FoodVouchers{Lines: []*cfdi.FoodVouchersLine{{}}}
 
-	err := fvc.Validate()
+	err := rules.Validate(fvc, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "e_wallet_id: cannot be blank")
-	assert.Contains(t, err.Error(), "issue_date_time: required")
-	assert.Contains(t, err.Error(), "employee: cannot be blank")
+	assert.Contains(t, err.Error(), "line e-wallet ID is required")
+	assert.Contains(t, err.Error(), "line issue date and time is required")
+	assert.Contains(t, err.Error(), "line employee is required")
 
 	fvc.Lines[0].EWalletID = "123456789012345678901"
 
-	err = fvc.Validate()
+	err = rules.Validate(fvc, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "e_wallet_id: the length must be no more than 20")
+	assert.Contains(t, err.Error(), "line e-wallet ID must be no more than 20 characters")
 }
 
 func TestInvalidFoodVouchersEmployee(t *testing.T) {
 	fvc := &cfdi.FoodVouchers{Lines: []*cfdi.FoodVouchersLine{{Employee: &cfdi.FoodVouchersEmployee{}}}}
 
-	err := fvc.Validate()
+	err := rules.Validate(fvc, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "tax_code: cannot be blank")
-	assert.Contains(t, err.Error(), "curp: cannot be blank")
-	assert.Contains(t, err.Error(), "name: cannot be blank")
+	assert.Contains(t, err.Error(), "employee tax code (RFC) is required")
+	assert.Contains(t, err.Error(), "employee CURP is required")
+	assert.Contains(t, err.Error(), "employee name is required")
 
 	fvc.Lines[0].Employee.TaxCode = "INVALID1"
 	fvc.Lines[0].Employee.CURP = "INVALID2"
 	fvc.Lines[0].Employee.SocialSecurity = "INVALID3"
 
-	err = fvc.Validate()
+	err = rules.Validate(fvc, withAddonContext())
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "tax_code: invalid tax identity code")
-	assert.Contains(t, err.Error(), "curp: must be in a valid format")
-	assert.Contains(t, err.Error(), "social_security: must be in a valid format")
+	assert.ErrorContains(t, err, "employee tax code (RFC) must be valid")
+	assert.ErrorContains(t, err, "employee CURP format must be valid")
+	assert.ErrorContains(t, err, "employee social security number format is invalid")
 }
 
 func TestCalculateFoodVouchers(t *testing.T) {

@@ -19,7 +19,7 @@ type BuildOptions struct {
 func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
@@ -29,11 +29,11 @@ func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 		env.Signatures = nil
 
 		if err := env.Calculate(); err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInternal.WithCause(err)
 		}
 
 		if err := env.Validate(); err != nil {
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			return nil, gobl.ErrInternal.WithCause(err)
 		}
 
 		return env, nil
@@ -43,13 +43,13 @@ func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 		if c, ok := doc.Instance().(schema.Calculable); ok {
 			if err := c.Calculate(); err != nil {
 				err = gobl.ErrCalculation.WithCause(err)
-				return nil, wrapError(StatusUnprocessableEntity, err)
+				return nil, gobl.ErrInternal.WithCause(err)
 			}
 		}
 
 		if err := doc.Validate(); err != nil {
-			err = gobl.ErrValidation.WithCause(err)
-			return nil, wrapError(StatusUnprocessableEntity, err)
+			err := gobl.ErrValidation.WithCause(err)
+			return nil, gobl.ErrInternal.WithCause(err)
 		}
 
 		return doc, nil

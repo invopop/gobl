@@ -2,38 +2,24 @@
 package ae
 
 import (
-	"errors"
-	"regexp"
-
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var (
 	// TRN in UAE is a 15-digit number
-	trnRegex = regexp.MustCompile(`^\d{15}$`)
+	trnPattern = `^\d{15}$`
 )
 
-// validateTaxIdentity checks to ensure the UAE TRN format is correct.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTRNCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("AE"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid UAE tax identity code",
+					is.Matches(trnPattern),
+				),
+			),
+		),
 	)
-}
-
-// validateTRNCode checks that the TRN is a valid 15-digit format.
-func validateTRNCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
-	}
-	val := code.String()
-
-	// Check if TRN matches the 15-digit pattern
-	if !trnRegex.MatchString(val) {
-		return errors.New("must be a 15-digit number")
-	}
-
-	return nil
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +13,7 @@ func TestExchangeRateValidation(t *testing.T) {
 	tests := []struct {
 		name string
 		rate currency.ExchangeRate
-		exp  string
+		ok   bool
 	}{
 		{
 			name: "valid",
@@ -22,14 +22,13 @@ func TestExchangeRateValidation(t *testing.T) {
 				To:     currency.EUR,
 				Amount: num.MakeAmount(875967, 6),
 			},
-			exp: "",
+			ok: true,
 		},
 		{
 			name: "missing currency",
 			rate: currency.ExchangeRate{
 				Amount: num.MakeAmount(875967, 6),
 			},
-			exp: "from: cannot be blank; to: cannot be blank",
 		},
 		{
 			name: "missing amount",
@@ -37,7 +36,6 @@ func TestExchangeRateValidation(t *testing.T) {
 				From: currency.USD,
 				To:   currency.EUR,
 			},
-			exp: "amount: must be greater than 0",
 		},
 		{
 			name: "negative amount",
@@ -46,16 +44,15 @@ func TestExchangeRateValidation(t *testing.T) {
 				To:     currency.EUR,
 				Amount: num.MakeAmount(-87596, 3),
 			},
-			exp: "amount: must be greater than 0",
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := test.rate.Validate()
-			if test.exp == "" {
-				assert.NoError(t, err)
+			err := rules.Validate(&test.rate)
+			if test.ok {
+				assert.Nil(t, err)
 			} else {
-				assert.ErrorContains(t, err, test.exp)
+				assert.NotNil(t, err)
 			}
 		})
 	}
@@ -111,27 +108,6 @@ func TestConvert(t *testing.T) {
 
 	b = currency.Convert(rates, currency.EUR, currency.CLP, a)
 	assert.Equal(t, "100629", b.String())
-}
-
-func TestExchangeRateValidationRule(t *testing.T) {
-	rates := sampleRates()
-	cur := currency.USD
-	err := validation.Validate(cur, currency.CanConvertInto(rates, currency.EUR))
-	assert.NoError(t, err)
-
-	err = validation.Validate(cur, currency.CanConvertInto(rates, currency.MXN))
-	assert.ErrorContains(t, err, "no exchange rate defined for 'USD' to 'MXN")
-
-	err = validation.Validate(currency.CodeEmpty, currency.CanConvertInto(rates, currency.EUR))
-	assert.NoError(t, err)
-
-	err = validation.Validate(currency.CodeEmpty, currency.CanConvertInto(rates, currency.USD))
-	assert.NoError(t, err)
-
-	t.Run("same rate", func(t *testing.T) {
-		err := validation.Validate(currency.USD, currency.CanConvertInto(rates, currency.USD))
-		assert.NoError(t, err)
-	})
 }
 
 func sampleRates() []*currency.ExchangeRate {

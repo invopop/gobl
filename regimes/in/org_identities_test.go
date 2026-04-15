@@ -6,6 +6,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/in"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -57,57 +59,59 @@ func TestOrgIdentityValidate(t *testing.T) {
 			name: "PAN too short",
 			typ:  in.IdentityTypePAN,
 			code: "ABC1234F",
-			err:  "code: must be in a valid format.",
+			err:  "[GOBL-IN-ORG-IDENTITY-01] ($.code) identity code must be a valid PAN format",
 		},
 		{
 			name: "PAN contains spaces",
 			typ:  in.IdentityTypePAN,
 			code: "ABCDE 1234F",
-			err:  "code: must be in a valid format.",
+			err:  "[GOBL-IN-ORG-IDENTITY-01]",
 		},
 		{
 			name: "PAN extra characters",
 			typ:  in.IdentityTypePAN,
 			code: "ABCDE1234F12",
-			err:  "code: must be in a valid format.",
+			err:  "[GOBL-IN-ORG-IDENTITY-01]",
 		},
 		{
 			name: "HSN too short",
 			typ:  in.IdentityTypeHSN,
 			code: "123",
-			err:  "code: must be a 4, 6, or 8 digit number",
+			err:  "[GOBL-IN-ORG-IDENTITY-02] ($.code) identity code must be a valid HSN format",
 		},
 		{
 			name: "HSN mid",
 			typ:  in.IdentityTypeHSN,
 			code: "12345",
-			err:  "code: must be a 4, 6, or 8 digit number",
+			err:  "[GOBL-IN-ORG-IDENTITY-02]",
 		},
 		{
 			name: "HSN mid 2",
 			typ:  in.IdentityTypeHSN,
 			code: "1234567",
-			err:  "code: must be a 4, 6, or 8 digit number",
+			err:  "[GOBL-IN-ORG-IDENTITY-02]",
 		},
 		{
 			name: "HSN long",
 			typ:  in.IdentityTypeHSN,
 			code: "123456789",
-			err:  "code: must be a 4, 6, or 8 digit number",
+			err:  "[GOBL-IN-ORG-IDENTITY-02]",
 		},
 		{
 			name: "HSN contains letters",
 			typ:  in.IdentityTypeHSN,
 			code: "1234A6",
-			err:  "code: must be a 4, 6, or 8 digit number",
+			err:  "[GOBL-IN-ORG-IDENTITY-02]",
 		},
 	}
 
+	opts := []rules.WithContext{
+		tax.RegimeContext(in.CountryCode),
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Type: tt.typ, Code: tt.code}
-			err := in.Validate(id)
-
+			err := rules.Validate(id, opts...)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

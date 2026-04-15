@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/schema"
@@ -19,7 +18,7 @@ type ReplicateOptions struct {
 func Replicate(ctx context.Context, opts *ReplicateOptions) (interface{}, error) {
 	res, err := replicate(ctx, opts)
 	if err != nil {
-		return nil, wrapError(http.StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 	return res, nil
 }

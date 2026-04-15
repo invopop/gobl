@@ -1,0 +1,52 @@
+{
+  "id": "GOBL-GB",
+  "package": "gb",
+  "subsets": [
+    {
+      "id": "GOBL-GB-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [GB]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-01",
+                      "desc": "invalid UK VAT identity format",
+                      "tests": "matches ^(\\d{9}|\\d{12}|GD\\d{3}|HA\\d{3})$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-02",
+                      "desc": "all-zero UK VAT identity codes are not allowed",
+                      "tests": "not-zeros"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GB-TAX-IDENTITY-03",
+                      "desc": "UK VAT identity checksum mismatch",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

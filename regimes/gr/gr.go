@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("gr", rules.GOBL.Add("GR"), taxIdentityRules())
 }
 
 // Official IAPR codes to include in stamps.
@@ -71,19 +73,9 @@ func New() *tax.RegimeDef {
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
 		Corrections:            corrections,
-		Validator:              Validate,
 		Normalizer:             Normalize,
 		Categories:             taxCategories,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

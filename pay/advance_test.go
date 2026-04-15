@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
@@ -65,13 +66,13 @@ func TestAdvanceValidate(t *testing.T) {
 			Description: "Test advance",
 			Percent:     num.NewPercentage(100, 2),
 		}
-		assert.NoError(t, a.Validate())
+		assert.NoError(t, rules.Validate(a))
 	})
 	t.Run("invalid", func(t *testing.T) {
 		a := &pay.Advance{
 			Amount: num.MakeAmount(100, 2),
 		}
-		assert.ErrorContains(t, a.Validate(), "description: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(a), "description is required")
 	})
 	t.Run("valid means key", func(t *testing.T) {
 		a := &pay.Advance{
@@ -79,7 +80,7 @@ func TestAdvanceValidate(t *testing.T) {
 			Percent:     num.NewPercentage(100, 2),
 			Key:         pay.MeansKeyCard,
 		}
-		assert.NoError(t, a.Validate())
+		assert.NoError(t, rules.Validate(a))
 	})
 	t.Run("invalid means key", func(t *testing.T) {
 		a := &pay.Advance{
@@ -87,7 +88,7 @@ func TestAdvanceValidate(t *testing.T) {
 			Percent:     num.NewPercentage(100, 2),
 			Key:         "invalid",
 		}
-		assert.ErrorContains(t, a.Validate(), "key: must be or start with a valid key.")
+		assert.ErrorContains(t, rules.Validate(a), "key must be valid")
 	})
 }
 

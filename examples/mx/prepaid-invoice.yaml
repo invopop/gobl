@@ -23,7 +23,8 @@ customer:
   tax_id:
     country: "MX"
     code: "URE180429TM6"
-    zone: "86991"
+  addresses:
+    - code: "86991"
 lines:
   - quantity: "1"
     item:

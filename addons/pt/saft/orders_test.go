@@ -9,50 +9,49 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestOrderValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
 	t.Run("valid order", func(t *testing.T) {
 		ord := validOrder()
-		require.NoError(t, addon.Validator(ord))
+		require.NoError(t, rules.Validate(ord, withAddonContext()))
 	})
 
 	t.Run("missing work type", func(t *testing.T) {
 		ord := validOrder()
 
 		ord.Tax = nil
-		assert.ErrorContains(t, addon.Validator(ord), "tax: (ext: (pt-saft-work-type: required")
+		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "tax requires 'pt-saft-work-type' extension")
 
 		ord.Tax = new(bill.Tax)
-		assert.ErrorContains(t, addon.Validator(ord), "tax: (ext: (pt-saft-work-type: required")
+		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "tax requires 'pt-saft-work-type' extension")
 	})
 
 	t.Run("invalid work type", func(t *testing.T) {
 		ord := validOrder()
 
 		ord.Tax.Ext = tax.Extensions{
-			saft.ExtKeyWorkType: saft.WorkTypeProforma, // Proforma is not valid in orders, only in invoices
+			saft.ExtKeyWorkType: saft.WorkTypeProforma,
 		}
 
-		assert.ErrorContains(t, addon.Validator(ord), "value 'PF' invalid")
+		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "work type must not be an invoice work type")
 	})
 
 	t.Run("missing VAT category in lines", func(t *testing.T) {
 		ord := validOrder()
 
 		ord.Lines[0].Taxes = nil
-		assert.ErrorContains(t, addon.Validator(ord), "lines: (0: (taxes: missing category VAT")
+		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "line taxes must include VAT category")
 	})
 
 	t.Run("missing value date", func(t *testing.T) {
 		ord := validOrder()
 		ord.ValueDate = nil
-		assert.ErrorContains(t, addon.Validator(ord), "value_date: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "cannot be blank")
 	})
 }
 
@@ -161,17 +160,32 @@ func validOrder() *bill.Order {
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		ValueDate: cal.NewDate(2022, 12, 31),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.NewAmount(100, 0),
+		Lines:     validOrderLines(),
+	}
+}
+
+func validOrderLines() []*bill.Line {
+	return []*bill.Line{
+		{
+			Index:    1,
+			Quantity: num.MakeAmount(1, 0),
+			Sum:      num.NewAmount(100, 0),
+			Total:    num.NewAmount(100, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(100, 0),
+				Unit:  "one",
+				Ext: tax.Extensions{
+					saft.ExtKeyProductType: saft.ProductTypeService,
 				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Key:      "standard",
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(230, 3),
+					Ext: tax.Extensions{
+						"pt-region":        "PT",
+						saft.ExtKeyTaxRate: saft.TaxRateNormal,
 					},
 				},
 			},

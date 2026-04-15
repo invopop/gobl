@@ -11,9 +11,17 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
+
+func init() {
+	rules.Register(
+		"uuid",
+		rules.GOBL.Add("UUID"),
+		uuidRules(),
+	)
+}
 
 // UUID defines a string wrapper for dealing with UUIDs using the google uuid
 // package for parsing and specific method support. This implementation has
@@ -186,7 +194,7 @@ func (u UUID) String() string {
 
 // Validate checks to ensure the value is a UUID
 func (u UUID) Validate() error {
-	return validation.Validate(string(u), Valid)
+	return Valid.Validate(u)
 }
 
 // Base64 returns a compact URL-safe Base64 string of the UUID as opposed to the

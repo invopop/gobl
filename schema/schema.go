@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 const (
@@ -38,7 +38,12 @@ func init() {
 	Register(GOBL.Add("schema"),
 		Object{},
 	)
-
+	rules.Register(
+		"schema",
+		rules.GOBL.Add("SCHEMA"),
+		idRules(),
+		objectRules(),
+	)
 }
 
 // ID contains the official schema URL.
@@ -46,6 +51,12 @@ type ID string
 
 type document struct {
 	Schema ID `json:"$schema,omitempty"`
+}
+
+func idRules() *rules.Set {
+	return rules.For(ID(""),
+		rules.AssertIfPresent("01", "schema ID must be a valid URL", is.URL),
+	)
 }
 
 // Extract attempts to Unmarshal the provided JSON document in order to extract
@@ -74,11 +85,6 @@ func Insert(id ID, data []byte) ([]byte, error) {
 	data = append(sdata, data...)
 
 	return data, nil
-}
-
-// Validate ensures the schema ID looks good.
-func (id ID) Validate() error {
-	return validation.Validate(string(id), is.URL)
 }
 
 // Anchor either adds or replaces the anchor part of the schema URI.

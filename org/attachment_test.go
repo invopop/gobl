@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,14 +57,14 @@ func TestAttachmentValidation(t *testing.T) {
 			Name: "test.txt",
 			URL:  "https://example.com/test.txt",
 		}
-		err := a.Validate()
+		err := rules.Validate(a)
 		assert.NoError(t, err)
 	})
 	t.Run("minimum fields", func(t *testing.T) {
 		a := &org.Attachment{
 			URL: "https://example.com/test.txt",
 		}
-		err := a.Validate()
+		err := rules.Validate(a)
 		assert.NoError(t, err)
 	})
 	t.Run("missing URL", func(t *testing.T) {
@@ -72,7 +73,7 @@ func TestAttachmentValidation(t *testing.T) {
 			Code: "ABC",
 			Name: "test.txt",
 		}
-		err := a.Validate()
-		assert.ErrorContains(t, err, "url: cannot be blank")
+		err := rules.Validate(a)
+		assert.ErrorContains(t, err, "[GOBL-ORG-ATTACHMENT-01] ($.url) attachment URL must be valid")
 	})
 }

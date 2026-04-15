@@ -2,17 +2,16 @@ package gobl
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"strconv"
-
-	"github.com/invopop/validation"
+	"strings"
 
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -51,7 +50,7 @@ func NewEnvelope() *Envelope {
 // Envelop is a convenience method that will build a new envelope and insert
 // the contents document provided in a single swoop. The resulting envelope
 // will still need to be signed afterwards.
-func Envelop(doc interface{}) (*Envelope, error) {
+func Envelop(doc any) (*Envelope, error) {
 	e := NewEnvelope()
 	if err := e.Insert(doc); err != nil {
 		return nil, err
@@ -59,9 +58,95 @@ func Envelop(doc interface{}) (*Envelope, error) {
 	return e, nil
 }
 
-// Validate ensures that the envelope contains everything it should to be considered valid GoBL.
+func envelopeRules() *rules.Set {
+	return rules.For(new(Envelope),
+		rules.Field("$schema",
+			rules.Assert("01", "envelope schema is required", is.Present),
+		),
+		rules.Field("head",
+			rules.Assert("02", "envelope header is required", is.Present),
+		),
+		rules.Field("doc",
+			rules.Assert("03", "envelope doc is required", is.Present),
+		),
+		rules.Assert("11", "envelope digest does not match document contents",
+			is.Func("valid digest", validDigest),
+		),
+		rules.When(is.Func("not signed", notSigned),
+			rules.Assert("12", "envelope header cannot have stamps when not signed",
+				is.Func("no stamps", hasNoStamps),
+			),
+		),
+		rules.When(is.Func("has signatures", hasSignatures),
+			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
+				isDocumentReadyToSign,
+			),
+		),
+	)
+}
+
+func notSigned(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) == 0
+}
+
+func hasSignatures(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) > 0
+}
+
+func hasNoStamps(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return true
+	}
+	return e.Head == nil || len(e.Head.Stamps) == 0
+}
+
+type documentCanSign interface {
+	CanSign() bool
+}
+
+// isDocumentReadyToSign is used to determine if the embedded document is reporting itself as ready to
+// sign. This is used by the signing rules to ensure that documents have all the
+// necessary information.
+var isDocumentReadyToSign rules.Test = is.Func(
+	"ready to sign",
+	func(val any) bool {
+		e, ok := val.(*Envelope)
+		if !ok || e == nil || e.Document == nil {
+			return false // cannot sign
+		}
+		obj, ok := e.Document.Instance().(documentCanSign)
+		if ok {
+			return obj.CanSign()
+		}
+		// assume all other documents are ready
+		return true
+	})
+
+func validDigest(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok || e.Head == nil {
+		return false
+	}
+	d1 := e.Head.Digest
+	d2, err := e.Digest()
+	if err != nil {
+		return false
+	}
+	return d1.Equals(d2) == nil
+}
+
+// Validate ensures that the envelope contains everything it should to be considered valid GOBL.
 func (e *Envelope) Validate() error {
-	return e.ValidateWithContext(context.Background())
+	return wrapError(rules.Validate(e))
 }
 
 // Verify checks the envelope's signatures to ensure the headers they contain
@@ -70,19 +155,17 @@ func (e *Envelope) Validate() error {
 // one of them. If no keys are provided, only the contents will be checked.
 func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 	if len(e.Signatures) == 0 {
-		return errors.New("no signatures to verify")
+		return ErrSignature.WithReason("no signatures to verify")
 	}
 
-	ve := make(validation.Errors)
+	var msgs []string
 	for i, s := range e.Signatures {
 		if err := e.verifySignature(s, keys...); err != nil {
-			ve[strconv.Itoa(i)] = err
+			msgs = append(msgs, "sigs["+strconv.Itoa(i)+"]: "+err.Error())
 		}
 	}
-	if len(ve) > 0 {
-		return ErrValidation.WithCause(validation.Errors{
-			"signatures": ve,
-		})
+	if len(msgs) > 0 {
+		return ErrSignature.WithReason("%s", strings.Join(msgs, "; "))
 	}
 
 	return nil
@@ -122,35 +205,6 @@ func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 	return errors.New("no key match found")
 }
 
-// ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
-func (e *Envelope) ValidateWithContext(ctx context.Context) error {
-	if len(e.Signatures) > 0 {
-		ctx = internal.SignedContext(ctx)
-	}
-	err := validation.ValidateStructWithContext(ctx, e,
-		validation.Field(&e.Schema, validation.Required),
-		validation.Field(&e.Head, validation.Required),
-		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures),
-	)
-	if err != nil {
-		return wrapError(err)
-	}
-	return wrapError(e.verifyDigest())
-}
-
-func (e *Envelope) verifyDigest() error {
-	d1 := e.Head.Digest
-	d2, err := e.Digest()
-	if err != nil {
-		return err
-	}
-	if err := d1.Equals(d2); err != nil {
-		return ErrDigest.WithCause(err)
-	}
-	return nil
-}
-
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
@@ -164,7 +218,7 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	}
 	e.Signatures = append(e.Signatures, sig)
 	if err := e.Validate(); err != nil {
-		// invalid envlopes cannot be signed
+		// invalid envelopes cannot be signed
 		e.Signatures = nil
 		return err
 	}

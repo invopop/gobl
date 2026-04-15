@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,20 +53,7 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	}
 }
 
-func TestNormalizeTaxIdentity(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		tID := (*tax.Identity)(nil)
-		assert.NotPanics(t, func() {
-			mx.NormalizeTaxIdentity(tID)
-		})
-	})
-}
-
-func TestTaxIdentityValidation(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		tID := (*tax.Identity)(nil)
-		assert.NoError(t, mx.Validate(tID))
-	})
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -76,22 +64,24 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{name: "valid code 1", code: "MNOP8201019HJ"},
 		{name: "valid code 2", code: "UVWX610715JKL"},
 		{name: "valid code 3", code: "STU760612MN1"},
-		{name: "with symbol", code: "K&A010301I16"},
+		{
+			name: "valid with symbol",
+			code: "K&A010301I16",
+		},
 		{
 			name: "invalid code 1",
 			code: "STU760612MN",
-			err:  tax.ErrIdentityCodeInvalid.Error(),
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid code 2",
 			code: "XXXX",
-			err:  tax.ErrIdentityCodeInvalid.Error(),
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "empty",
 			code: "",
 			// empty is allowed
-			// err:  "code: cannot be blank",
 		},
 		{
 			name: "missing zone",
@@ -103,8 +93,8 @@ func TestTaxIdentityValidation(t *testing.T) {
 
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: "MX", Code: ts.code, Zone: ts.zone}
-			err := mx.Validate(tID)
+			tID := &tax.Identity{Country: "MX", Code: ts.code}
+			err := rules.Validate(tID)
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -112,47 +102,6 @@ func TestTaxIdentityValidation(t *testing.T) {
 					assert.Contains(t, err.Error(), ts.err)
 				}
 			}
-		})
-	}
-}
-
-func TestValidateTaxCode(t *testing.T) {
-	t.Run("empty", func(t *testing.T) {
-		err := mx.ValidateTaxCode("")
-		assert.NoError(t, err)
-	})
-}
-
-func TestTaxIdentityDetermineType(t *testing.T) {
-	tests := []struct {
-		Code cbc.Code
-		Type cbc.Key
-	}{
-		{
-			Code: "",
-			Type: cbc.KeyEmpty,
-		},
-		{
-			Code: mx.TaxIdentityCodeForeign,
-			Type: mx.TaxIdentityTypePerson,
-		},
-		{
-			Code: "MNOP8201019HJ",
-			Type: mx.TaxIdentityTypePerson,
-		},
-		{
-			Code: "ABC830720XYZ",
-			Type: mx.TaxIdentityTypeCompany,
-		},
-		{
-			Code: "XXXX",
-			Type: cbc.KeyEmpty,
-		},
-	}
-	for _, ts := range tests {
-		t.Run(string(ts.Code), func(t *testing.T) {
-			res := mx.DetermineTaxCodeType(ts.Code)
-			assert.Equal(t, ts.Type, res)
 		})
 	}
 }

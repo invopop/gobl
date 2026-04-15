@@ -3,8 +3,9 @@ package favat
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -45,14 +46,10 @@ func normalizePayAdvance(adv *pay.Advance) {
 	}
 }
 
-func validatePayAdvance(adv *pay.Advance) error {
-	if adv == nil {
-		return nil
-	}
-	return validation.ValidateStruct(adv,
-		validation.Field(&adv.Date,
-			validation.Required,
-			validation.Skip,
+func payAdvanceRules() *rules.Set {
+	return rules.For(new(pay.Advance),
+		rules.Field("date",
+			rules.Assert("01", "advance payment date is required", is.Present),
 		),
 	)
 }

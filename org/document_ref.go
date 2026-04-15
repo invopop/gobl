@@ -1,18 +1,16 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // DocumentRef is used to describe an existing document or a specific part of it's contents.
@@ -88,30 +86,18 @@ func (dr *DocumentRef) Calculate(cur currency.Code, rr cbc.Key) {
 	dr.Tax.Round(cur.Def().Zero())
 }
 
-// Validate ensures the Document looks correct.
-func (dr *DocumentRef) Validate() error {
-	return dr.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the Document looks correct within the provided context.
-func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, dr,
-		validation.Field(&dr.UUID),
-		validation.Field(&dr.Schema),
-		validation.Field(&dr.Type),
-		validation.Field(&dr.IssueDate, cal.DateNotZero()),
-		validation.Field(&dr.Series),
-		validation.Field(&dr.Code,
-			validation.Match(cbc.CodePatternRegexp),
-			validation.Required,
+func documentRefRules() *rules.Set {
+	return rules.For(new(DocumentRef),
+		rules.Field("code",
+			rules.Assert("01", "document reference code is required", is.Present),
 		),
-		validation.Field(&dr.Currency),
-		validation.Field(&dr.URL, is.URL),
-		validation.Field(&dr.Stamps),
-		validation.Field(&dr.Period),
-		validation.Field(&dr.Tax),
-		validation.Field(&dr.Payable),
-		validation.Field(&dr.Ext),
-		validation.Field(&dr.Meta),
+		rules.Field("issue_date",
+			rules.AssertIfPresent("02", "document reference issue date must not be zero",
+				cal.DateNotZero(),
+			),
+		),
+		rules.Field("url",
+			rules.AssertIfPresent("03", "document reference URL must be valid", is.URL),
+		),
 	)
 }

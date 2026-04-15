@@ -5,11 +5,12 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTaxIdentityValidation(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -23,49 +24,49 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{
 			name: "non-numeric",
 			code: "A2345678901234",
-			err:  "must contain only digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "non-numeric verification digit",
 			code: "123456789012AB",
-			err:  "must contain only digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "first verification digit wrong",
 			code: "05104582000160",
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "second verification digit wrong",
 			code: "05104582000171",
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid CPF wrong checksum",
 			code: "11144477730",
-			err:  "verification digit mismatch",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid CPF too short",
 			code: "1114447773",
-			err:  "must have 11 (CPF) or 14 (CNPJ) digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid CPF too long",
 			code: "111444777356",
-			err:  "must have 11 (CPF) or 14 (CNPJ) digits",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "invalid CPF non-numeric",
 			code: "11A44477735",
-			err:  "must contain only digits",
+			err:  "IDENTITY-01",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "BR", Code: tt.code}
-			err := br.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

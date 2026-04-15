@@ -3,22 +3,21 @@ package pt
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-func validateTaxCombo(tc *tax.Combo) error {
-	if tc == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			validation.When(
-				tc.Category == tax.CategoryVAT,
-				tax.ExtensionsRequire(ExtKeyRegion),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			is.InContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				is.Expr(`string(Category) == "VAT"`),
+				rules.Field("ext",
+					rules.Assert("01", "pt-region extension is required for VAT", tax.ExtensionsRequire(ExtKeyRegion)),
+				),
 			),
-			validation.Skip,
 		),
 	)
 }

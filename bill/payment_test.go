@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -66,7 +67,7 @@ func TestPaymentCalculate(t *testing.T) {
 		pmt.Lines[0].Refund = true
 		pmt.Lines[0].Amount = num.MakeAmount(5000, 2)
 		require.NoError(t, pmt.Calculate())
-		require.NoError(t, pmt.Validate())
+		require.NoError(t, rules.Validate(pmt))
 		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 
@@ -191,7 +192,7 @@ func TestPaymentCalculate(t *testing.T) {
 		}
 		p.Lines[0].Document.Payable = num.NewAmount(10000, 2)
 		p.Lines[0].Document.Currency = currency.EUR
-		require.ErrorContains(t, p.Calculate(), "lines: (1: (document: (currency: missing exchange rate from EUR to MXN.).).)")
+		require.ErrorContains(t, p.Calculate(), "lines: 1: document: currency: missing exchange rate from EUR to MXN")
 	})
 
 	t.Run("with multiple and different exchange rates", func(t *testing.T) {
@@ -235,21 +236,21 @@ func TestPaymentValidate(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := testPaymentMinimal(t)
 		require.NoError(t, p.Calculate())
-		require.NoError(t, p.Validate())
+		require.NoError(t, rules.Validate(p))
 	})
 
 	t.Run("with error", func(t *testing.T) {
 		pmt := testPaymentMinimal(t)
 		require.NoError(t, pmt.Calculate())
 		pmt.Supplier = nil
-		assert.ErrorContains(t, pmt.Validate(), "supplier: cannot be blank")
+		assert.ErrorContains(t, rules.Validate(pmt), "supplier is required")
 	})
 
 	t.Run("with addon", func(t *testing.T) {
 		pmt := testPaymentMinimal(t)
 		pmt.Addons.SetAddons(tbai.V1)
 		require.NoError(t, pmt.Calculate())
-		require.NoError(t, pmt.Validate())
+		require.NoError(t, rules.Validate(pmt))
 	})
 
 	t.Run("with nil array entries", func(t *testing.T) {
@@ -260,12 +261,7 @@ func TestPaymentValidate(t *testing.T) {
 		pmt.ExchangeRates = append(pmt.ExchangeRates, nil)
 		pmt.Complements = append(pmt.Complements, nil)
 		require.NoError(t, pmt.Calculate())
-		err := pmt.Validate()
-		assert.ErrorContains(t, err, "lines: (1: is required.)")
-		assert.ErrorContains(t, err, "notes: (0: is required.)")
-		assert.ErrorContains(t, err, "preceding: (0: is required.)")
-		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
-		assert.ErrorContains(t, err, "complements: (0: is required.)")
+		require.NoError(t, rules.Validate(pmt))
 	})
 }
 

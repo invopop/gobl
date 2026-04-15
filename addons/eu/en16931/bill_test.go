@@ -12,18 +12,18 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestInvoiceValidation(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("missing tax", func(t *testing.T) {
@@ -31,50 +31,236 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeOther
 		require.NoError(t, inv.Calculate())
 		inv.Tax = nil // not sure why this would happen...
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "tax: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "tax details are required")
 	})
 	t.Run("missing tax document type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeOther
 		inv.Tax = &bill.Tax{PricesInclude: "VAT"}
 		require.NoError(t, inv.Calculate())
-		err := ad.Validator(inv)
-		assert.ErrorContains(t, err, "tax: (ext: (untdid-document-type: required.).)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "document type extension is required")
 	})
 	t.Run("supplier and customer with addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("supplier with no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "addresses: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "addresses are required")
 	})
 	t.Run("customer with no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "addresses: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "addresses are required")
 	})
 	t.Run("nil customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 	t.Run("credit note", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
+	})
+}
+
+func TestExemptionNoteValidation(t *testing.T) {
+	t.Run("exempt with matching note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("exempt without note or vatex", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "exempt tax categories require either a VATEX code or an exemption note")
+	})
+
+	t.Run("exempt with vatex code no note needed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("nil note in notes slice", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							"cef-vatex": "VATEX-EU-132",
+						},
+					},
+				},
+			},
+		}
+		var nilNote *tax.Note
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				nilNote,
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("nil tax note normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		var n *tax.Note
+		assert.NotPanics(t, func() {
+			ad.Normalizer(n)
+		})
+	})
+
+	t.Run("non-VAT note skips normalization", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: "IGIC",
+			Key:      "exempt",
+			Text:     "Some IGIC exemption",
+		}
+		ad.Normalizer(n)
+		assert.False(t, n.Ext.Has(untdid.ExtKeyTaxCategory))
+	})
+
+	t.Run("note normalization derives key from ext", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "E",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key)
+	})
+
+	t.Run("note normalization derives key for reverse charge", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Text:     "Reverse charge applies",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyReverseCharge, n.Key)
+	})
+
+	t.Run("note normalization does not override existing key", func(t *testing.T) {
+		ad := tax.AddonForKey(en16931.V2017)
+		n := &tax.Note{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Text:     "Exempt under Article 132",
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: "AE",
+			},
+		}
+		ad.Normalizer(n)
+		assert.Equal(t, tax.KeyExempt, n.Key, "should not override existing key")
+	})
+
+	t.Run("note normalization adds tax category", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Exempt item", Price: num.NewAmount(100, 2)},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+					},
+				},
+			},
+		}
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{Category: tax.CategoryVAT, Key: "exempt", Text: "Exempt under Article 132"},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// After calculation, the tax note should have the UNTDID tax category set
+		require.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "E", inv.Tax.Notes[0].Ext.Get(untdid.ExtKeyTaxCategory).String())
+	})
+
+	t.Run("standard rate does not need note", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -248,13 +434,21 @@ func TestNormalizeBillCharge(t *testing.T) {
 }
 
 func TestValidateBillDiscount(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with reason", func(t *testing.T) {
 		l := &bill.Discount{
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+					Ext: tax.Extensions{
+						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+					},
+				},
+			},
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -264,16 +458,34 @@ func TestValidateBillDiscount(t *testing.T) {
 				untdid.ExtKeyAllowance: "67",
 			},
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+					Ext: tax.Extensions{
+						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+					},
+				},
+			},
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
 	t.Run("without reason or extension", func(t *testing.T) {
 		l := &bill.Discount{
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+					Ext: tax.Extensions{
+						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+					},
+				},
+			},
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or an allowance type extension is required")
 	})
 
@@ -284,20 +496,37 @@ func TestValidateBillDiscount(t *testing.T) {
 				untdid.ExtKeyAllowance: "67",
 			},
 			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+					Ext: tax.Extensions{
+						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
+					},
+				},
+			},
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
+	})
+
+	t.Run("without taxes (BR-32)", func(t *testing.T) {
+		l := &bill.Discount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "taxes are required (BR-32)")
 	})
 }
 
 func TestValidateBillCharge(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with reason", func(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -308,7 +537,7 @@ func TestValidateBillCharge(t *testing.T) {
 			},
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -316,7 +545,7 @@ func TestValidateBillCharge(t *testing.T) {
 		l := &bill.Charge{
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
 	})
 
@@ -328,149 +557,118 @@ func TestValidateBillCharge(t *testing.T) {
 			},
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 }
 
-func TestValidateBillLine(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
+func TestValidateBillLineDiscount(t *testing.T) {
 	t.Run("Discount with reason", func(t *testing.T) {
-		l := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Reason: "Product sample",
-					Amount: num.MakeAmount(100, 2),
-				},
-			},
+		d := &bill.LineDiscount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
 	t.Run("Discount with extension", func(t *testing.T) {
-		l := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Ext: tax.Extensions{
-						untdid.ExtKeyAllowance: "67",
-					},
-					Amount: num.MakeAmount(100, 2),
-				},
+		d := &bill.LineDiscount{
+			Ext: tax.Extensions{
+				untdid.ExtKeyAllowance: "67",
 			},
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
 	t.Run("Discount without reason or extension", func(t *testing.T) {
-		l := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Amount: num.MakeAmount(100, 2),
-				},
-			},
+		d := &bill.LineDiscount{
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or an allowance type extension is required")
 	})
 
 	t.Run("Discount with reason and extension", func(t *testing.T) {
-		l := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Reason: "Product sample",
-					Ext: tax.Extensions{
-						untdid.ExtKeyAllowance: "67",
-					},
-					Amount: num.MakeAmount(100, 2),
-				},
+		d := &bill.LineDiscount{
+			Reason: "Product sample",
+			Ext: tax.Extensions{
+				untdid.ExtKeyAllowance: "67",
 			},
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
+	t.Run("nil discount", func(t *testing.T) {
+		var d *bill.LineDiscount
+		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+}
+
+func TestValidateBillLineCharge(t *testing.T) {
 	t.Run("Charge with reason", func(t *testing.T) {
-		l := &bill.Line{
-			Charges: []*bill.LineCharge{
-				{
-					Reason: "Product sample",
-					Amount: num.MakeAmount(100, 2),
-				},
-			},
+		c := &bill.LineCharge{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
 	t.Run("Charge with extension", func(t *testing.T) {
-		l := &bill.Line{
-			Charges: []*bill.LineCharge{
-				{
-					Ext: tax.Extensions{
-						untdid.ExtKeyCharge: "AAE",
-					},
-					Amount: num.MakeAmount(100, 2),
-				},
+		c := &bill.LineCharge{
+			Ext: tax.Extensions{
+				untdid.ExtKeyCharge: "AAE",
 			},
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
 	t.Run("Charge without reason or extension", func(t *testing.T) {
-		l := &bill.Line{
-			Charges: []*bill.LineCharge{
-				{
-					Amount: num.MakeAmount(100, 2),
-				},
-			},
+		c := &bill.LineCharge{
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
 	})
 
 	t.Run("Charge with reason and extension", func(t *testing.T) {
-		l := &bill.Line{
-			Charges: []*bill.LineCharge{
-				{
-					Reason: "Product sample",
-					Ext: tax.Extensions{
-						untdid.ExtKeyCharge: "AAE",
-					},
-					Amount: num.MakeAmount(100, 2),
-				},
+		c := &bill.LineCharge{
+			Reason: "Product sample",
+			Ext: tax.Extensions{
+				untdid.ExtKeyCharge: "AAE",
 			},
+			Amount: num.MakeAmount(100, 2),
 		}
-		err := ad.Validator(l)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
-	t.Run("Line with nil charge and discount", func(t *testing.T) {
-		l := &bill.Line{
-			Discounts: []*bill.LineDiscount{nil},
-			Charges:   []*bill.LineCharge{nil},
-		}
-		err := ad.Validator(l)
+	t.Run("nil charge", func(t *testing.T) {
+		var c *bill.LineCharge
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 }
 
 func TestValidateBillPayment(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with terms", func(t *testing.T) {
-		p := &bill.PaymentDetails{
-			Terms: &pay.Terms{
-				DueDates: []*pay.DueDate{
-					{
-						Date:   cal.NewDate(2025, time.January, 1),
-						Amount: num.MakeAmount(1000, 2),
-					},
+		p := &pay.Terms{
+			DueDates: []*pay.DueDate{
+				{
+					Date:   cal.NewDate(2025, time.January, 1),
+					Amount: num.MakeAmount(1000, 2),
 				},
 			},
 		}
-		err := ad.Validator(p)
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -479,7 +677,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment.Terms = nil
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
@@ -488,7 +686,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment = nil
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "payment details are required when amount is due")
 	})
 
@@ -505,7 +703,7 @@ func TestValidateBillPayment(t *testing.T) {
 
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -514,7 +712,7 @@ func TestValidateBillPayment(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{} // payment details exist but no terms
 		err := inv.Calculate()
 		require.NoError(t, err)
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
@@ -532,7 +730,7 @@ func TestValidateBillPayment(t *testing.T) {
 		require.NoError(t, err)
 		// Remove payment details after calculation
 		inv.Payment = nil
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err) // Should pass because no amount is due
 	})
 

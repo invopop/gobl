@@ -1,13 +1,10 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Ordering provides additional information about the ordering process including references
@@ -65,28 +62,4 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, o.Seller)
 	tax.Normalize(normalizers, o.Issuer)
 	normalizers.Each(o)
-}
-
-// Validate the ordering details.
-func (o *Ordering) Validate() error {
-	return o.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext the ordering details with context.
-func (o *Ordering) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, o,
-		validation.Field(&o.Code),
-		validation.Field(&o.Identities),
-		validation.Field(&o.Cost),
-		validation.Field(&o.Projects),
-		validation.Field(&o.Contracts),
-		validation.Field(&o.Purchases),
-		validation.Field(&o.Sales),
-		validation.Field(&o.Receiving),
-		validation.Field(&o.Despatch),
-		validation.Field(&o.Tender),
-		validation.Field(&o.Buyer),
-		validation.Field(&o.Seller),
-		validation.Field(&o.Issuer),
-	)
 }

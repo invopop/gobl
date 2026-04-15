@@ -54,7 +54,7 @@ func Test_parseSets(t *testing.T) {
 					"foo": "[bar",
 				},
 			},
-			err: `code=422, message=yaml: line 1: did not find expected ',' or ']'`,
+			err: `input: yaml: line 1: did not find expected ',' or ']'`,
 		},
 		{
 			name: "valid yaml",
@@ -107,7 +107,7 @@ func Test_parseSets(t *testing.T) {
 					".": "foo",
 				},
 			},
-			err: "code=422, message=src and dst must be of same type",
+			err: "input: src and dst must be of same type",
 		},
 		{
 			name: "explicit string",
@@ -234,7 +234,7 @@ func TestBuild(t *testing.T) {
 			}`),
 			},
 		},
-		err: `code=400, message=unknown-schema`,
+		err: `input: unknown-schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{

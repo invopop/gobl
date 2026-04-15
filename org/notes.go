@@ -1,14 +1,13 @@
 package org
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of supported note keys based on the
@@ -248,36 +247,21 @@ func (n *Note) Normalize() {
 	n.Ext = tax.CleanExtensions(n.Ext)
 }
 
-// Validate checks that the note looks okay.
-func (n *Note) Validate() error {
-	return validation.ValidateStruct(n,
-		validation.Field(&n.Key, isValidNoteKey),
-		validation.Field(&n.Code),
-		validation.Field(&n.Text, validation.Required),
-		validation.Field(&n.Src),
-		validation.Field(&n.Meta),
-		validation.Field(&n.Ext),
+func noteRules() *rules.Set {
+	return rules.For(new(Note),
+		rules.Field("text",
+			rules.Assert("01", "note text is required", is.Present),
+		),
+		rules.Field("key",
+			rules.AssertIfPresent("02", "note key must be a valid value",
+				is.In(validNoteKeyValues()...),
+			),
+		),
 	)
 }
 
-// NoteFromScenario creates a new Note from a ScenarioNote.
-func NoteFromScenario(sn *tax.ScenarioNote) *Note {
-	if sn == nil {
-		return nil
-	}
-	return &Note{
-		Key:  sn.Key,
-		Code: sn.Code,
-		Src:  sn.Src,
-		Text: sn.Text,
-		Ext:  sn.Ext,
-	}
-}
-
-var isValidNoteKey = validation.In(validNoteKeys()...)
-
-func validNoteKeys() []interface{} {
-	ks := make([]interface{}, len(NoteKeyDefinitions))
+func validNoteKeyValues() []any {
+	ks := make([]any, len(NoteKeyDefinitions))
 	for i, v := range NoteKeyDefinitions {
 		ks[i] = v.Key
 	}
@@ -321,29 +305,6 @@ func (n *Note) Equals(n2 *Note) bool {
 		n.Src == n2.Src &&
 		n.Text == n2.Text &&
 		n.Meta.Equals(n2.Meta)
-}
-
-type validateNotes struct {
-	key cbc.Key
-}
-
-// ValidateNotesHasKey returns a validation rule that check that at least one
-// of the notes has the provided key.
-func ValidateNotesHasKey(key cbc.Key) validation.Rule {
-	return &validateNotes{key: key}
-}
-
-func (v *validateNotes) Validate(value any) error {
-	notes, ok := value.([]*Note)
-	if !ok {
-		return nil
-	}
-	for _, n := range notes {
-		if n.Key.In(v.key) {
-			return nil // match found, this is good
-		}
-	}
-	return fmt.Errorf("with key '%s' missing", v.key.String())
 }
 
 // JSONSchemaExtend adds the list of definitions for the notes.

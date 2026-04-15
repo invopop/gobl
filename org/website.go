@@ -1,13 +1,10 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // Website describes what is expected for a web address.
@@ -32,14 +29,10 @@ func (w *Website) Normalize() {
 	w.URL = cbc.NormalizeString(w.URL)
 }
 
-// Validate checks the website objects URL to ensure it looks correct.
-func (w *Website) Validate() error {
-	return w.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks the website objects URL to ensure it looks correct inside the provided context.
-func (w *Website) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, w,
-		validation.Field(&w.URL, validation.Required, is.URL),
+func websiteRules() *rules.Set {
+	return rules.For(new(Website),
+		rules.Field("url",
+			rules.Assert("01", "website URL is required and must be valid", is.Present, is.URL),
+		),
 	)
 }

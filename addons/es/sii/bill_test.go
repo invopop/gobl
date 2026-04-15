@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -182,21 +183,21 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "F1")
 	})
 	t.Run("standard invoice without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, inv.Validate(), "customer: cannot be blank.")
+		require.ErrorContains(t, rules.Validate(inv), "customer is required")
 	})
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
-		err := inv.Validate()
-		require.ErrorContains(t, err, "es-sii-doc-type: required")
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "extension 'es-sii-doc-type' is required")
 	})
 
 	t.Run("note too long", func(t *testing.T) {
@@ -208,8 +209,8 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "text: the length must be no more than 500")
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "general note text must be 500 characters or less")
 	})
 
 	t.Run("note with wrong key", func(t *testing.T) {
@@ -221,7 +222,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {
@@ -229,7 +230,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "F2")
 	})
 
@@ -239,7 +240,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(sii.ExtKeyDocType, "F3")))
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		// Should always set the doc type to R5, even if trying to override as the simplified
 		// tag has priority.
 		assert.Equal(t, "R5", inv.Tax.Ext[sii.ExtKeyDocType].String())
@@ -249,23 +250,21 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
-		assertValidationError(t, inv, "preceding: cannot be blank")
+		assertValidationError(t, inv, "preceding documents are required for corrective invoices")
 	})
 	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note needs no preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("corrective invoice preceding requires issue date and tax", func(t *testing.T) {
@@ -276,7 +275,10 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "123",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "preceding issue date is required")
+		require.ErrorContains(t, err, "preceding invoice tax data is required")
 	})
 
 	t.Run("corrective invoice with preceding", func(t *testing.T) {
@@ -309,7 +311,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Log(string(data))
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "R1")
 		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
@@ -319,7 +321,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags("replacement")
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("replacement with preceding", func(t *testing.T) {
@@ -333,7 +335,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
@@ -344,7 +346,10 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "123",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.ErrorContains(t, err, "preceding issue date is required")
+		require.ErrorContains(t, err, "preceding invoice tax data is required")
 	})
 
 	t.Run("customer nil", func(t *testing.T) {
@@ -352,21 +357,20 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		ad := tax.AddonForKey(sii.V1)
-		assert.NoError(t, ad.Validator(inv))
+		assert.NoError(t, rules.Validate(inv))
 	})
 	t.Run("customer with missing ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "customer: must have a tax_id, or an identity with ext 'es-sii-identity-type'")
+		assert.ErrorContains(t, rules.Validate(inv), "must have a tax_id, or an identity with ext 'es-sii-identity-type'")
 	})
 	t.Run("customer with missing Tax ID code", func(t *testing.T) {
 		// SII has no way to handle just a country without an actual code.
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "customer: (tax_id: (code: cannot be blank.).)")
+		assert.ErrorContains(t, rules.Validate(inv), "customer tax ID must have a code")
 	})
 	t.Run("customer with identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -378,7 +382,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lines with same regime", func(t *testing.T) {
@@ -387,7 +391,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
 		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lines with different regimes", func(t *testing.T) {
@@ -396,8 +400,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
 		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "02"}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "es-sii-regime")
-		assert.ErrorContains(t, inv.Validate(), "must be the same in all tax combos")
+		assert.ErrorContains(t, rules.Validate(inv), "es-sii-regime")
+		assert.ErrorContains(t, rules.Validate(inv), "must be the same in all tax combos")
 	})
 
 	t.Run("lines with product in all tax combos", func(t *testing.T) {
@@ -406,7 +410,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
 		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lines with product in some but not all tax combos", func(t *testing.T) {
@@ -415,8 +419,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
 		inv.Lines[1].Taxes[0].Ext = tax.Extensions{}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "es-sii-product")
-		assert.ErrorContains(t, inv.Validate(), "must be present in all tax combos or none")
+		assert.ErrorContains(t, rules.Validate(inv), "es-sii-product")
+		assert.ErrorContains(t, rules.Validate(inv), "must be present in all tax combos or none")
 	})
 
 	t.Run("lines with non-VAT/IGIC taxes are ignored", func(t *testing.T) {
@@ -433,7 +437,7 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		})
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("invoice with no lines", func(t *testing.T) {
@@ -445,14 +449,14 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.ErrorContains(t, err, expected)
 }
 

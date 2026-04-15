@@ -4,9 +4,12 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
+
+var regexpUNECEUnit = regexp.MustCompile(UnitPatternUNECE)
 
 // Unit represents either a unit key defined by GOBL *or* a two to three letter code
 // defined by the UN/ECE.
@@ -18,8 +21,6 @@ const (
 	// UnitUNECEMutuallyDefined is the UN/ECE code for mutually defined units.
 	UnitUNECEMutuallyDefined cbc.Code = `ZZ`
 )
-
-var regexpUNECEUnit = regexp.MustCompile(UnitPatternUNECE)
 
 // Set of common units based on UN/ECE recommendation 20 and 21 extensions. Some local formats
 // may define additional non-standard codes which may be added.
@@ -211,22 +212,28 @@ var UnitDefinitions = []DefUnit{
 	{UnitUnit, "Unit", "A type of package composed of a single item or object, not otherwise specified as a unit of transport equipment.", "XUN"},
 }
 
-var isValidUnit = validation.In(validUnits()...)
+func unitRules() *rules.Set {
+	return rules.For(Unit(""),
+		rules.Assert("01", "unit must be a valid value or UN/ECE code",
+			is.Or(
+				is.MatchesRegexp(regexpUNECEUnit),
+				is.In(validUnitValues()...),
+			),
+		),
+	)
+}
 
-func validUnits() []interface{} {
-	list := make([]interface{}, len(UnitDefinitions))
+func validUnitValues() []any {
+	list := make([]any, len(UnitDefinitions))
 	for i, d := range UnitDefinitions {
-		list[i] = string(d.Unit)
+		list[i] = d.Unit
 	}
 	return list
 }
 
-// Validate ensures the unit looks correct
+// Validate ensures the unit looks correct.
 func (u Unit) Validate() error {
-	if regexpUNECEUnit.MatchString(string(u)) {
-		return nil
-	}
-	return validation.Validate(string(u), isValidUnit.Error("must be a valid value or UN/ECE code"))
+	return rules.Validate(u)
 }
 
 // UNECE provides the unit's UN/ECE equivalent value.

@@ -19,6 +19,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -165,7 +166,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Signatures = nil
 		err = e.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "stamps: must be blank.")
+		assert.Contains(t, err.Error(), "envelope header cannot have stamps when not signed")
 		err = e.Calculate()
 		assert.NoError(t, err)
 		assert.Len(t, e.Head.Stamps, 1)
@@ -223,7 +224,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "validation: ($schema: cannot be blank; doc: cannot be blank; head: cannot be blank.).",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
@@ -232,7 +233,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "validation: (doc: (content: cannot be blank.).).",
+			want: "validation: [GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
@@ -261,7 +262,24 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "digest: mismatch",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+		},
+		{
+			name: "with more complex document and rules",
+			env: func() *gobl.Envelope {
+				data, err := os.ReadFile("./examples/fr/invoice-fr-fr.yaml")
+				require.NoError(t, err)
+				inv := new(bill.Invoice)
+				err = yaml.Unmarshal(data, inv)
+				require.NoError(t, err)
+				inv.Supplier.TaxID.Code = ""
+
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(inv))
+
+				return env
+			},
+			want: "validation: [GOBL-FR-BILL-INVOICE-01] ($.doc.supplier) invoice supplier must have a tax ID code or a SIREN/SIRET identity",
 		},
 	}
 
@@ -289,7 +307,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.ErrorContains(t, err, "validation: (doc: (content: cannot be blank.).).")
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
@@ -315,6 +333,22 @@ func TestEnvelopeSign(t *testing.T) {
 		err := env.Sign(testKey)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "validation: header required")
+	})
+
+	t.Run("checks signing state", func(t *testing.T) {
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		env := gobl.NewEnvelope()
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+
+		inv := env.Extract().(*bill.Invoice)
+		inv.Code = "" // blank, so cannot sign
+		require.NoError(t, env.Calculate())
+
+		err = env.Sign(testKey)
+		assert.ErrorContains(t, err, "[GOBL-ENVELOPE-13] envelope doc is not ready to be signed, check code or other key fields")
+
 	})
 }
 func TestEnvelopeCorrect(t *testing.T) {
@@ -432,10 +466,8 @@ func TestDocumentValidation(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "content: cannot be blank")
-	}
+	err = rules.Validate(doc.Instance())
+	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required")
 
 	doc = new(schema.Object)
 	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
@@ -449,10 +481,8 @@ func TestDocumentValidation(t *testing.T) {
 	assert.NoError(t, doc.Validate())
 	inv.IssueDate = cal.Date{}
 	err = doc.Validate()
-	if assert.Error(t, err) {
-		// Double check to make sure validation working
-		assert.Contains(t, err.Error(), "issue_date: required")
-	}
+	// Double check to make sure validation working
+	assert.ErrorContains(t, err, "[GOBL-BILL-INVOICE-03] ($.issue_date) invoice issue date is required")
 }
 
 func TestDocumentValidationOutput(t *testing.T) {
@@ -461,17 +491,17 @@ func TestDocumentValidationOutput(t *testing.T) {
 	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
-	err = doc.Validate()
+	err = rules.Validate(doc)
 	data, err := json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"content":"cannot be blank"}`, string(data))
+	assert.Equal(t, `[{"code":"GOBL-NOTE-MESSAGE-01","paths":["$.content"],"message":"message content is required"}]`, string(data))
 
 	env := gobl.NewEnvelope()
 	require.NoError(t, env.Insert(msg))
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"key":"validation","fields":{"doc":{"content":"cannot be blank"}}}`, string(data))
+	assert.JSONEq(t, `{"key":"validation","faults":[{"paths":["$.doc.content"],"code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]}`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {
@@ -496,7 +526,7 @@ func TestEnvelopeVerify(t *testing.T) {
 		assert.NoError(t, err)
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
 	})
 
 	t.Run("changes", func(t *testing.T) {
@@ -507,15 +537,15 @@ func TestEnvelopeVerify(t *testing.T) {
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
 		err = env.Verify()
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
 		err = env.Verify(testKey.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
 
 		rk := dsig.NewES256Key()
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
 	})
 }
 

@@ -1,10 +1,12 @@
 package nfe
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Addon-specific Payment Means Keys
@@ -52,26 +54,22 @@ func normalizePayAdvance(adv *pay.Advance) {
 	}
 }
 
-func validatePayInstructions(i *pay.Instructions) error {
-	if i == nil {
-		return nil
-	}
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+func payInstructionsRules() *rules.Set {
+	return rules.For(new(pay.Instructions),
+		rules.Field("ext",
+			rules.Assert("01", fmt.Sprintf("payment instructions require '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayAdvance(a *pay.Advance) error {
-	if a == nil {
-		return nil
-	}
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+func payAdvanceRules() *rules.Set {
+	return rules.For(new(pay.Advance),
+		rules.Field("ext",
+			rules.Assert("01", fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }

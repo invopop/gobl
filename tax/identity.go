@@ -9,10 +9,10 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
-
-	"github.com/invopop/validation"
 )
 
 // Identity stores the details required to identify an entity for tax
@@ -40,18 +40,12 @@ type Identity struct {
 	// Deprecated: Tax Identities should only be used for VAT or similar codes
 	// for companies. Use the identities array for other types of identification.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
-
-	// Zone identifies a sub-locality within a country.
-	//
-	// Deprecated: Removed 2024-03-14 in favour of using tax tags
-	// and extensions with local data when required. Maintained here to support
-	// data migration.
-	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 }
 
 var (
 	// IdentityCodePattern is the regular expression pattern used to validate tax identity codes.
-	IdentityCodePattern = `^[A-Z0-9]+$`
+	// Includes special exception letters used in some regions such as MX.
+	IdentityCodePattern = `^[A-Z0-9Ñ\&]+$`
 
 	// IdentityCodePatternRegexp is the regular expression used to validate tax identity codes.
 	IdentityCodePatternRegexp = regexp.MustCompile(IdentityCodePattern)
@@ -60,21 +54,8 @@ var (
 	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
 
 	// IdentityCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
-	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
-
-	// IdentityCodeValidationIgnore is a list of countries that should not have their tax identity
-	// codes validated due to local rules.
-	IdentityCodeValidationIgnore = []l10n.TaxCountryCode{"MX"}
+	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9Ñ\&]+`)
 )
-
-// RequireIdentityCode is an additional check to use alongside
-// regular validation that will ensure the tax ID has a code
-// value set.
-var RequireIdentityCode = validateTaxID{requireCode: true}
-
-type validateTaxID struct {
-	requireCode bool
-}
 
 // ParseIdentity will attempt to parse a tax identity from a string making
 // the assumption that the first two characters are the country code and
@@ -89,7 +70,7 @@ func ParseIdentity(tin string) (*Identity, error) {
 		Code:    cbc.Code(tin[2:]),
 	}
 	id.Normalize()
-	if err := id.Validate(); err != nil {
+	if err := rules.Validate(id); err != nil {
 		return nil, err
 	}
 	return id, nil
@@ -139,30 +120,15 @@ func (id *Identity) Normalize() {
 	}
 }
 
-// Validate checks to ensure the tax ID contains all the required
-// fields and performs any regime specific validation based on the ID's
-// country and zone properties.
-func (id *Identity) Validate() error {
-	err := validation.ValidateStruct(id,
-		validation.Field(&id.Country, validation.Required),
-		validation.Field(&id.Code,
-			validation.Skip.When(
-				id.Country.In(IdentityCodeValidationIgnore...),
-			),
-			validation.Match(IdentityCodePatternRegexp),
+func identityRules() *rules.Set {
+	return rules.For(new(Identity),
+		rules.Field("country",
+			rules.Assert("01", "tax id country code is always required", is.Present),
 		),
-		validation.Field(&id.Scheme),
-		validation.Field(&id.Zone, validation.Empty),
-		validation.Field(&id.Type),
+		rules.Field("code",
+			rules.Assert("02", "tax id code must have a valid format", is.Matches(IdentityCodePattern)),
+		),
 	)
-	if err != nil {
-		return err
-	}
-	r := regimes.For(id.Country.Code())
-	if r != nil {
-		return r.ValidateObject(id)
-	}
-	return nil
 }
 
 // InEU checks if the tax identity is from a country that is part of the EU on
@@ -171,21 +137,24 @@ func (id *Identity) InEU(date cal.Date) bool {
 	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
 }
 
-func (v validateTaxID) Validate(value any) error {
-	id, ok := value.(*Identity)
-	if id == nil || !ok {
-		return nil
+// IdentityIn provides a rules test that checks if a tax identity's country code is one of the provided codes.
+func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
+	var str string
+	for i, c := range codes {
+		if i > 0 {
+			str += ", "
+		}
+		str += string(c)
 	}
-	rules := []*validation.FieldRules{}
-	if v.requireCode {
-		rules = append(rules,
-			validation.Field(&id.Code,
-				validation.Required,
-				validation.Skip,
-			),
-		)
-	}
-	return validation.ValidateStruct(id, rules...)
+	return is.Func("code in ["+str+"]",
+		func(value any) bool {
+			id, ok := value.(*Identity)
+			if !ok {
+				return false
+			}
+			return id.Country.In(codes...)
+		},
+	)
 }
 
 // JSONSchemaExtend adds extra details to the schema.

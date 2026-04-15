@@ -1,0 +1,38 @@
+{
+  "id": "GOBL-SCHEMA",
+  "package": "schema",
+  "subsets": [
+    {
+      "id": "GOBL-SCHEMA-ID",
+      "object": "schema.ID",
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-SCHEMA-ID-01",
+              "desc": "schema ID must be a valid URL",
+              "tests": "url"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SCHEMA-OBJECT",
+      "object": "schema.Object",
+      "subsets": [
+        {
+          "field": "$schema",
+          "assert": [
+            {
+              "id": "GOBL-SCHEMA-OBJECT-01",
+              "desc": "schema is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

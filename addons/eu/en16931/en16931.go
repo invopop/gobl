@@ -9,6 +9,8 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,6 +21,24 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		V2017.String(),
+		rules.GOBL.Add("EU-EN16931-V2017"),
+		is.InContext(tax.AddonIn(V2017)),
+		billInvoiceRules(),
+		billDiscountRules(),
+		billLineDiscountRules(),
+		billChargeRules(),
+		billLineChargeRules(),
+		payInstructionsRules(),
+		payTermsRules(),
+		orgItemRules(),
+		orgAttachmentRules(),
+		orgPartyRules(),
+		orgInboxRules(),
+		orgAddressRules(),
+		taxComboRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -57,11 +77,23 @@ func newAddon() *tax.AddonDef {
 
 				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
 				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
+
+				## Exemption Notes
+
+				Exempt tax categories (E, AE, K, G, O) require either a CEF VATEX code
+				(` + "`cef-vatex`" + `) on the tax combo, or an exemption note in ` + "`tax.notes`" + `.
+
+				Exemption notes use the ` + "`tax.Note`" + ` struct with ` + "`cat`" + `, ` + "`key`" + `, and ` + "`text`" + ` fields.
+				During normalization, the note's ` + "`key`" + ` is mapped to the corresponding
+				` + "`untdid-tax-category`" + ` extension (e.g. ` + "`exempt`" + ` → ` + "`E`" + `,
+				` + "`reverse-charge`" + ` → ` + "`AE`" + `).
+
+				Each exempt tax category without a VATEX code must have at least one
+				exemption note covering it.
 			`),
 		},
 		Scenarios:  scenarios,
 		Normalizer: normalize,
-		Validator:  validate,
 	}
 }
 
@@ -81,6 +113,8 @@ func normalize(doc any) {
 		normalizeBillCharge(obj)
 	case *bill.LineCharge:
 		normalizeBillLineCharge(obj)
+	case *tax.Note:
+		normalizeTaxNote(obj)
 	case *org.Note:
 		normalizeOrgNote(obj)
 	case *org.Item:
@@ -90,34 +124,4 @@ func normalize(doc any) {
 	case *org.Inbox:
 		normalizeOrgInbox(obj)
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Line:
-		return validateBillLine(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Discount:
-		return validateBillDiscount(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	case *org.Item:
-		return validateOrgItem(obj)
-	case *org.Attachment:
-		return validateOrgAttachment(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	case *org.Inbox:
-		return validateOrgInbox(obj)
-	case *org.Address:
-		return validateOrgAddress(obj)
-	}
-	return nil
 }

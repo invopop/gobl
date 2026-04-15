@@ -181,7 +181,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 		schema, ok := out.(*jsonschema.Schema)
 		require.True(t, ok)
 
-		cos := schema.Definitions["CorrectionOptions"]
+		cos := schema.Definitions["bill.CorrectionOptions"]
 		assert.Equal(t, 7, cos.Properties.Len())
 
 		pm, ok := cos.Properties.Get("ext")
@@ -216,7 +216,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 		schema, ok := out.(*jsonschema.Schema)
 		require.True(t, ok)
 
-		cos := schema.Definitions["CorrectionOptions"]
+		cos := schema.Definitions["bill.CorrectionOptions"]
 		assert.Equal(t, []string{"series", "ext", "copy_tax"}, cos.Extras["recommended"])
 	})
 }

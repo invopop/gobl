@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -40,92 +40,66 @@ func TestDateTimeJSONParsing(t *testing.T) {
 func TestDateTimeValidation(t *testing.T) {
 	t.Run("basics", func(t *testing.T) {
 		d := cal.MakeDateTime(2021, time.May, 26, 15, 59, 30)
-		err := validation.Validate(d)
-		assert.NoError(t, err)
+		assert.NoError(t, rules.Validate(d))
 
 		d = cal.MakeDateTime(2021, 0, 1, 15, 59, 30)
-		err = d.Validate()
-		assert.Error(t, err)
-		err = validation.Validate(d)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid date time")
+		assert.Error(t, rules.Validate(d))
 
 		d = cal.MakeDateTime(2021, 1, 0, 15, 59, 30)
-		err = validation.Validate(d)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid date time")
+		assert.Error(t, rules.Validate(d))
 
 		// Pointer
 		dp := cal.NewDateTime(2021, 1, 0, 15, 59, 30)
-		assert.Error(t, dp.Validate())
-		assert.Error(t, validation.Validate(dp))
+		assert.Error(t, rules.Validate(dp))
 
 		dp = nil
-		assert.NoError(t, validation.Validate(dp))
+		assert.NoError(t, rules.Validate(dp))
 	})
 
 	t.Run("date time not zero", func(t *testing.T) {
 		d := cal.MakeDateTime(2021, time.May, 26, 10, 10, 10)
-		err := validation.Validate(d, cal.DateTimeNotZero())
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeNotZero().Check(d))
 
 		d = cal.DateTime{}
-		err = validation.Validate(d, cal.DateTimeNotZero())
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "required")
+		assert.False(t, cal.DateTimeNotZero().Check(d))
 
 		dp := new(cal.DateTime)
-		err = validation.Validate(dp, cal.DateTimeNotZero())
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "required")
+		assert.False(t, cal.DateTimeNotZero().Check(dp))
 
 		dp = nil
-		err = validation.Validate(dp, cal.DateTimeNotZero())
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeNotZero().Check(dp))
 	})
 
 	t.Run("date time after", func(t *testing.T) {
 		d := cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
+
 		d2 := cal.MakeDateTime(2023, time.March, 24, 10, 10, 9)
-		err := validation.Validate(d, cal.DateTimeAfter(d2))
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeAfter(d2).Check(d))
 
 		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 9)
-		err = validation.Validate(d, cal.DateTimeAfter(d2))
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeAfter(d2).Check(d))
 
 		d2 = cal.MakeDateTime(2023, time.March, 26, 10, 10, 10)
-		err = validation.Validate(d, cal.DateTimeAfter(d2))
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "too early")
+		assert.False(t, cal.DateTimeAfter(d2).Check(d))
 
 		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 11)
-		err = validation.Validate(d, cal.DateTimeAfter(d2))
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "too early")
+		assert.False(t, cal.DateTimeAfter(d2).Check(d))
 	})
 
 	t.Run("date time before", func(t *testing.T) {
 		d := cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
 
 		d2 := cal.MakeDateTime(2023, time.March, 26, 10, 10, 10)
-		err := validation.Validate(d, cal.DateTimeBefore(d2))
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeBefore(d2).Check(d))
 
-		assert.NoError(t, err)
 		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 11)
-		err = validation.Validate(d, cal.DateTimeBefore(d2))
-		assert.NoError(t, err)
+		assert.True(t, cal.DateTimeBefore(d2).Check(d))
 
 		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
-		err = validation.Validate(d, cal.DateTimeBefore(d2))
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "too late")
+		assert.False(t, cal.DateTimeBefore(d2).Check(d))
 
 		d2 = cal.MakeDateTime(2023, time.March, 24, 10, 10, 10)
-		err = validation.Validate(d, cal.DateTimeBefore(d2))
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "too late")
+		assert.False(t, cal.DateTimeBefore(d2).Check(d))
 	})
 }
 

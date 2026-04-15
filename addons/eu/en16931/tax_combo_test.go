@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -110,18 +111,43 @@ func TestTaxComboValidation(t *testing.T) {
 			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 
-	t.Run("exempt reverse charge", func(t *testing.T) {
+	t.Run("exempt with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
+	})
+
+	t.Run("exempt without vatex", func(t *testing.T) {
+		// VATEX extension is now required at the combo level for exempt tax
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension is required for exempt tax")
+	})
+
+	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "AE", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -132,7 +158,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyIntraCommunity,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "K", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -143,7 +170,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyExport,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -153,7 +181,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Key:      tax.KeyOutsideScope,
 		}
 		ad.Normalizer(c)
-		assert.NoError(t, ad.Validator(c))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
 		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
@@ -167,14 +196,41 @@ func TestTaxComboValidation(t *testing.T) {
 			},
 		}
 		ad.Normalizer(c)
-		err := ad.Validator(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 
+	t.Run("zero with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyZero,
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension must not be set")
+	})
+
+	t.Run("standard with vatex code", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(19, 2),
+			Ext: tax.Extensions{
+				"cef-vatex": "VATEX-EU-132",
+			},
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX extension must not be set")
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
-		err := ad.Validator(tc)
+		err := rules.Validate(tc, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -185,8 +241,7 @@ func TestTaxComboValidation(t *testing.T) {
 		}
 		ad.Normalizer(c)
 		c.Ext = nil // override
-		err := ad.Validator(c)
-		assert.ErrorContains(t, err, "ext: (untdid-tax-category: required.)")
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "tax category extension is required")
 	})
-
 }

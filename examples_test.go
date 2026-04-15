@@ -28,6 +28,7 @@ var skipExamplePaths = []string{
 	"wasm/",
 	".claude/",
 	".git/",
+	"internal/",
 }
 
 var updateExamples = flag.Bool("update", false, "Update the examples in the repository")
