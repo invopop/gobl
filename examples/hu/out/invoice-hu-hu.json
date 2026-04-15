@@ -1,0 +1,121 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ebf9b1609590a2fb2a0a227e00758a1a20c010e96ecf8d8b8ff812e1df66ec79"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "HU",
+		"uuid": "a1b2c3d4-5678-9abc-def0-1234567890ab",
+		"type": "standard",
+		"series": "2026",
+		"code": "001",
+		"issue_date": "2026-04-14",
+		"currency": "HUF",
+		"supplier": {
+			"name": "Példa Szolgáltató Kft.",
+			"tax_id": {
+				"country": "HU",
+				"code": "13895459"
+			},
+			"addresses": [
+				{
+					"num": "60",
+					"street": "Andrássy út",
+					"locality": "Budapest",
+					"code": "1062",
+					"country": "HU"
+				}
+			]
+		},
+		"customer": {
+			"name": "Vevő Kereskedelmi Zrt.",
+			"tax_id": {
+				"country": "HU",
+				"code": "10773381"
+			},
+			"addresses": [
+				{
+					"num": "36",
+					"street": "Könyves Kálmán körút",
+					"locality": "Budapest",
+					"code": "1097",
+					"country": "HU"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Szoftverfejlesztési szolgáltatás",
+					"price": "25000.00",
+					"unit": "h"
+				},
+				"sum": "250000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "27.0%"
+					}
+				],
+				"total": "250000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Szakkönyvek",
+					"price": "4500.00"
+				},
+				"sum": "22500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "super-reduced",
+						"percent": "5.0%"
+					}
+				],
+				"total": "22500.00"
+			}
+		],
+		"totals": {
+			"sum": "272500",
+			"total": "272500",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "250000",
+								"percent": "27.0%",
+								"amount": "67500"
+							},
+							{
+								"key": "standard",
+								"base": "22500",
+								"percent": "5.0%",
+								"amount": "1125"
+							}
+						],
+						"amount": "68625"
+					}
+				],
+				"sum": "68625"
+			},
+			"tax": "68625",
+			"total_with_tax": "341125",
+			"payable": "341125"
+		}
+	}
+}

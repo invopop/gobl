@@ -1,0 +1,181 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Hungary",
+    "hu": "Magyarország"
+  },
+  "description": {
+    "en": "Hungary's tax system is administered by the National Tax and Customs\nAdministration (Nemzeti Adó- és Vámhivatal, NAV). As an EU member state,\nHungary follows the EU VAT Directive.\n\nVAT (ÁFA — Általános forgalmi adó) applies at a standard rate of 27%\n(the highest in the EU), an intermediate reduced rate of 18%, and a lower\nreduced rate of 5%. Certain supplies are zero-rated (exports, intra-community)\nor exempt (healthcare, education, financial services).\n\nBusinesses are identified by their adószám (tax number), an 11-digit\nidentifier in the format TTTTTTTT-V-RR, where the first 8 digits include\na modulo-10 check digit, the 9th digit indicates VAT status, and the\nlast 2 digits identify the regional tax office. The EU VAT number uses\nthe HU prefix followed by the 8-digit base number.\n\nHungary operates a mandatory real-time invoice reporting (RTIR) system\nthrough NAV Online Számla, requiring all invoices to be reported\nelectronically since April 2021."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "NAV - Nemzeti Adó- és Vámhivatal"
+      },
+      "url": "https://nav.gov.hu"
+    },
+    {
+      "title": {
+        "en": "NAV Online Számla - Technical Documentation"
+      },
+      "url": "https://github.com/nav-gov-hu/Online-Invoice"
+    },
+    {
+      "title": {
+        "en": "OECD - Hungary Tax Identification Number"
+      },
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/hungary-tin.pdf"
+    }
+  ],
+  "time_zone": "Europe/Budapest",
+  "country": "HU",
+  "currency": "HUF",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "hu": "ÁFA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "hu": "Általános forgalmi adó"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "hu": "Általános kulcs"
+          },
+          "values": [
+            {
+              "since": "2012-01-01",
+              "percent": "27.0%"
+            },
+            {
+              "since": "2009-07-01",
+              "percent": "25.0%"
+            },
+            {
+              "since": "2006-01-01",
+              "percent": "20.0%"
+            },
+            {
+              "since": "2004-05-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "hu": "Kedvezményes kulcs"
+          },
+          "values": [
+            {
+              "since": "2009-07-01",
+              "percent": "18.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super Reduced Rate",
+            "hu": "Kedvezményes alsó kulcs"
+          },
+          "values": [
+            {
+              "since": "2004-05-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "NAV - ÁFA rates and tax-exempt activities"
+          },
+          "url": "https://nav.gov.hu/ugyfeliranytu/adokulcsok_jarulekmertekek/afakulcs_adomen"
+        },
+        {
+          "title": {
+            "en": "Act CXXVII of 2007 on Value Added Tax"
+          },
+          "url": "https://njt.hu/jogszabaly/2007-127-00-00"
+        }
+      ]
+    }
+  ]
+}
