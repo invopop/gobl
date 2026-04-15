@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.400.0] - 2026-14-15
+
+Final release of the rules based changes.
+
 ## [v0.400.0-rc2] - 2026-04-14
 
 ### Added
