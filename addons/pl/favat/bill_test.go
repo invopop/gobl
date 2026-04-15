@@ -587,12 +587,38 @@ func TestSimplifiedInvoiceCustomerValidation(t *testing.T) {
 }
 
 func TestCustomerTaxIDValidation(t *testing.T) {
-	t.Run("customer without tax ID", func(t *testing.T) {
+	t.Run("customer without tax ID is valid", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer tax ID is required")
+		assert.NoError(t, err)
+	})
+
+	t.Run("Polish customer with tax ID code is valid", func(t *testing.T) {
+		inv := standardInvoice()
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Polish customer with empty tax ID code is invalid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Customer.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer Polish tax ID code is required")
+	})
+
+	t.Run("non-Polish customer with empty tax ID code is valid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "DE",
+			Code:    "",
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 
