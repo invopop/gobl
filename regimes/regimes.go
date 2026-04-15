@@ -13,6 +13,7 @@ import (
 	_ "github.com/invopop/gobl/regimes/ca"
 	_ "github.com/invopop/gobl/regimes/ch"
 	_ "github.com/invopop/gobl/regimes/co"
+	_ "github.com/invopop/gobl/regimes/cz"
 	_ "github.com/invopop/gobl/regimes/de"
 	_ "github.com/invopop/gobl/regimes/dk"
 	_ "github.com/invopop/gobl/regimes/es"
