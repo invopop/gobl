@@ -247,7 +247,7 @@ func (Object) JSONSchema() *jsonschema.Schema {
 		Type:  "object",
 		Title: "Object",
 		Description: here.Doc(`
-			Data object whose type is determined from the <code>$schema</code> property.
+			Data object whose type is determined from the ~$schema~ property.
 		`),
 	}
 }

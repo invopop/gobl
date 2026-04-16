@@ -235,10 +235,15 @@
           "title": "Type",
           "description": "Type of status being reported (e.g. \"system\" for internal events)."
         },
-        "issue_at": {
-          "$ref": "https://gobl.org/draft-0/cal/timestamp",
-          "title": "Issue At",
-          "description": "IssueAt is the date and time when the status event occurred in UTC."
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "IssueDate is the date when the status is to be considered effective."
+        },
+        "issue_time": {
+          "$ref": "https://gobl.org/draft-0/cal/time",
+          "title": "Issue Time",
+          "description": "IssueTime is used when extra precision is required to determine when exactly\nthe status was issued."
         },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -305,7 +310,7 @@
       "type": "object",
       "required": [
         "type",
-        "issue_at",
+        "issue_date",
         "code",
         "supplier"
       ],
