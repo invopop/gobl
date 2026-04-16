@@ -1,0 +1,86 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "770d9077541d3800493b2a3f06a04959f40b3bec5d6a76bd620a8e978fe6af71"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$regime": "ES",
+		"uuid": "0194c26e-d5b2-7a33-9c10-f1e2d3c4b5a6",
+		"type": "update",
+		"issue_date": "2025-04-12",
+		"series": "SU",
+		"code": "0001",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"index": 1,
+				"key": "accepted",
+				"doc": {
+					"issue_date": "2025-04-01",
+					"series": "SAMPLE",
+					"code": "001"
+				},
+				"description": "Invoice approved for payment",
+				"reasons": [
+					{
+						"key": "none"
+					}
+				]
+			},
+			{
+				"index": 2,
+				"key": "paid",
+				"doc": {
+					"issue_date": "2025-04-05",
+					"series": "SAMPLE",
+					"code": "002"
+				},
+				"description": "Payment initiated via bank transfer",
+				"reasons": [
+					{
+						"key": "none"
+					}
+				]
+			}
+		],
+		"notes": [
+			{
+				"key": "general",
+				"text": "Batch payment processing for April invoices"
+			}
+		]
+	}
+}

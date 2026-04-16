@@ -26,7 +26,7 @@
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
           "title": "Period",
-          "description": "Period of time that the invoice document refers to often used in addition to the details\nprovided in the individual line items."
+          "description": "Period of time that the document refers to often used in addition to the details\nprovided in the individual line items."
         },
         "buyer": {
           "$ref": "https://gobl.org/draft-0/org/party",
@@ -41,7 +41,7 @@
         "issuer": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Issuer",
-          "description": "Issuer represents a third party responsible for issuing the invoice, but is not\nresponsible for tax. Some tax regimes and formats require this field."
+          "description": "Issuer represents a third party responsible for issuing the document, but is not\nresponsible for tax. Some tax regimes and formats require this field."
         },
         "projects": {
           "items": {
@@ -49,7 +49,7 @@
           },
           "type": "array",
           "title": "Projects",
-          "description": "Projects this invoice refers to."
+          "description": "Projects this document refers to."
         },
         "contracts": {
           "items": {
@@ -97,7 +97,7 @@
           },
           "type": "array",
           "title": "Tender Advice",
-          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
+          "description": "Tender advice, the identification of the call for tender or lot the document relates to."
         }
       },
       "type": "object",

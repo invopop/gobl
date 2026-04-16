@@ -17,17 +17,17 @@ type Ordering struct {
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Buyer accounting reference cost code associated with the document.
 	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost,example=1287:65464"`
-	// Period of time that the invoice document refers to often used in addition to the details
+	// Period of time that the document refers to often used in addition to the details
 	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Party who is responsible for issuing payment, if not the same as the customer.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
 	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
-	// Issuer represents a third party responsible for issuing the invoice, but is not
+	// Issuer represents a third party responsible for issuing the document, but is not
 	// responsible for tax. Some tax regimes and formats require this field.
 	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
-	// Projects this invoice refers to.
+	// Projects this document refers to.
 	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`
 	// The identification of contracts.
 	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts"`
@@ -39,7 +39,7 @@ type Ordering struct {
 	Receiving []*org.DocumentRef `json:"receiving,omitempty" jsonschema:"title=Receiving Advice"`
 	// Despatch advice.
 	Despatch []*org.DocumentRef `json:"despatch,omitempty" jsonschema:"title=Despatch Advice"`
-	// Tender advice, the identification of the call for tender or lot the invoice relates to.
+	// Tender advice, the identification of the call for tender or lot the document relates to.
 	Tender []*org.DocumentRef `json:"tender,omitempty" jsonschema:"title=Tender Advice"`
 }
 

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `schema`: `Object` model will now handle anonymous or undefined schemas and simply pass through the data. This is useful for complementary schema implementations that are very domain specific and cannot easily be included inside GOBL.
+
+### Added
+
+- `bill`: Status model added for dealing with special billing events.
+- `cal`: `Timestamp` model for dealing with precise times.
+
 ## [v0.400.0] - 2026-14-15
 
 Final release of the rules based changes.

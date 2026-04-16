@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cal/timestamp",
+  "$ref": "#/$defs/cal.Timestamp",
+  "$defs": {
+    "cal.Timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
+      "format": "date-time",
+      "title": "Timestamp",
+      "description": "RFC3339 timestamp in UTC with a Z suffix and optional sub-second\nprecision, for example: 2021-05-26T13:45:00.000Z"
+    }
+  }
+}
