@@ -196,6 +196,59 @@ func TestTimestampValidation(t *testing.T) {
 	})
 }
 
+func TestTimestampTestString(t *testing.T) {
+	assert.Equal(t, "not zero", cal.TimestampNotZero().String())
+
+	base := cal.TimestampOf(time.Date(2025, time.March, 15, 10, 0, 0, 0, time.UTC))
+	assert.Equal(t, "after 2025-03-15T10:00:00.000Z", cal.TimestampAfter(base).String())
+	assert.Equal(t, "before 2025-03-15T10:00:00.000Z", cal.TimestampBefore(base).String())
+}
+
+func TestTimestampUnmarshalJSONEdgeCases(t *testing.T) {
+	t.Run("invalid json type", func(t *testing.T) {
+		var ts cal.Timestamp
+		err := json.Unmarshal([]byte(`123`), &ts)
+		assert.Error(t, err)
+	})
+	t.Run("json object", func(t *testing.T) {
+		var ts cal.Timestamp
+		err := json.Unmarshal([]byte(`{"foo":"bar"}`), &ts)
+		assert.Error(t, err)
+	})
+}
+
+func TestTimestampValidatePointer(t *testing.T) {
+	t.Run("non-nil pointer not zero", func(t *testing.T) {
+		ts := cal.TimestampNow()
+		assert.True(t, cal.TimestampNotZero().Check(&ts))
+	})
+	t.Run("non-nil pointer zero", func(t *testing.T) {
+		ts := cal.Timestamp{}
+		assert.False(t, cal.TimestampNotZero().Check(&ts))
+	})
+	t.Run("non-nil pointer after", func(t *testing.T) {
+		base := cal.TimestampOf(time.Date(2025, time.March, 15, 10, 0, 0, 0, time.UTC))
+		later := cal.TimestampOf(time.Date(2025, time.March, 15, 11, 0, 0, 0, time.UTC))
+		assert.True(t, cal.TimestampAfter(base).Check(&later))
+	})
+	t.Run("non-nil pointer before", func(t *testing.T) {
+		base := cal.TimestampOf(time.Date(2025, time.March, 15, 10, 0, 0, 0, time.UTC))
+		earlier := cal.TimestampOf(time.Date(2025, time.March, 15, 9, 0, 0, 0, time.UTC))
+		assert.True(t, cal.TimestampBefore(base).Check(&earlier))
+	})
+	t.Run("non-timestamp type", func(t *testing.T) {
+		assert.True(t, cal.TimestampNotZero().Check("not a timestamp"))
+	})
+}
+
+func TestTimestampFormatValidPointer(t *testing.T) {
+	ts := cal.TimestampNow()
+	assert.NoError(t, rules.Validate(&ts))
+
+	zero := cal.Timestamp{}
+	assert.NoError(t, rules.Validate(&zero))
+}
+
 func TestTimestampJSONSchema(t *testing.T) {
 	schema := cal.Timestamp{}.JSONSchema()
 	out, err := json.Marshal(schema)
