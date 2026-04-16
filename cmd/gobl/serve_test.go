@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/api"
+	"github.com/invopop/gobl/pkg/api"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

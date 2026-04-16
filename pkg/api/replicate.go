@@ -13,11 +13,11 @@ import (
 func handleReplicate(w http.ResponseWriter, r *http.Request) {
 	req := new(replicateRequest)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-		writeError(w, gobl.ErrInput.WithCause(fmt.Errorf("invalid JSON: %w", err)))
+		WriteError(w, gobl.ErrInput.WithCause(fmt.Errorf("invalid JSON: %w", err)))
 		return
 	}
 	if len(req.Data) == 0 {
-		writeError(w, gobl.ErrInput.WithReason("no payload"))
+		WriteError(w, gobl.ErrInput.WithReason("no payload"))
 		return
 	}
 
@@ -29,8 +29,8 @@ func handleReplicate(w http.ResponseWriter, r *http.Request) {
 
 	result, err := ops.Replicate(r.Context(), opts)
 	if err != nil {
-		writeError(w, err)
+		WriteError(w, err)
 		return
 	}
-	writeJSON(w, result)
+	WriteJSON(w, result)
 }

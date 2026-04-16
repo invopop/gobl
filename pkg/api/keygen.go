@@ -9,7 +9,7 @@ import (
 
 func handleKeygen(w http.ResponseWriter, _ *http.Request) {
 	key := dsig.NewES256Key()
-	writeJSON(w, ops.KeygenResponse{
+	WriteJSON(w, ops.KeygenResponse{
 		Private: key,
 		Public:  key.Public(),
 	})

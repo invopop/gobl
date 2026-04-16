@@ -22,9 +22,10 @@ func httpStatusForKey(key cbc.Key) int {
 	}
 }
 
-// writeError writes a JSON error response. The HTTP status is derived
-// from the error's Key using httpStatusForKey.
-func writeError(w http.ResponseWriter, err error) {
+// WriteError writes a JSON error response. The HTTP status is derived
+// from the error's Key using httpStatusForKey. Useful for custom route
+// handlers that need to produce consistent error responses.
+func WriteError(w http.ResponseWriter, err error) {
 	ge, ok := err.(*gobl.Error)
 	if !ok {
 		ge = gobl.ErrInternal.WithCause(err)
@@ -34,14 +35,14 @@ func writeError(w http.ResponseWriter, err error) {
 	_ = json.NewEncoder(w).Encode(ge) //nolint:errcheck
 }
 
-// writeJSON writes a JSON response with 200 OK status.
-func writeJSON(w http.ResponseWriter, v any) {
+// WriteJSON writes a JSON response with 200 OK status.
+func WriteJSON(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(v) //nolint:errcheck
 }
 
-// writeRawJSON writes pre-encoded JSON bytes as a response.
-func writeRawJSON(w http.ResponseWriter, d []byte) {
+// WriteRawJSON writes pre-encoded JSON bytes as a response.
+func WriteRawJSON(w http.ResponseWriter, d []byte) {
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(d) //nolint:errcheck
 }

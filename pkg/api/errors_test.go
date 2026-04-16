@@ -33,7 +33,7 @@ func TestHttpStatusForKey(t *testing.T) {
 
 func TestWriteErrorWithGoblError(t *testing.T) {
 	w := httptest.NewRecorder()
-	writeError(w, gobl.ErrInput.WithReason("bad input"))
+	WriteError(w, gobl.ErrInput.WithReason("bad input"))
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Contains(t, w.Body.String(), `"key":"input"`)
 	assert.Contains(t, w.Body.String(), `"message":"bad input"`)
@@ -41,7 +41,7 @@ func TestWriteErrorWithGoblError(t *testing.T) {
 
 func TestWriteErrorWithPlainError(t *testing.T) {
 	w := httptest.NewRecorder()
-	writeError(w, errors.New("something broke"))
+	WriteError(w, errors.New("something broke"))
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Contains(t, w.Body.String(), `"key":"internal"`)
 	assert.Contains(t, w.Body.String(), `"message":"something broke"`)

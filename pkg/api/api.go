@@ -1,6 +1,10 @@
 // Package api provides a framework-free HTTP handler for the GOBL API.
 // It wraps the internal/ops functions and exposes them as standard
 // net/http endpoints, suitable for use in any HTTP server.
+//
+// Use [NewHandler] to build an [http.Handler] with all GOBL API routes.
+// Options allow enabling the MCP endpoint, the built-in favicon, or
+// registering custom routes on the underlying ServeMux.
 package api
 
 import (
@@ -9,20 +13,58 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/editor"
 	goblmcp "github.com/invopop/gobl/internal/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-// versionPrefix is the major-version path prefix derived from gobl.VERSION,
+// VersionPrefix is the major-version path prefix derived from gobl.VERSION,
 // e.g. "v0" for "v0.400.0-rc1".
-var versionPrefix = "v" + fmt.Sprintf("%d", gobl.VERSION.Semver().Major())
+var VersionPrefix = "v" + fmt.Sprintf("%d", gobl.VERSION.Semver().Major())
 
-// NewHandler builds and returns an http.Handler with all GOBL API routes
+type config struct {
+	withMCP     bool
+	withFavicon bool
+	extraRoutes func(mux *http.ServeMux, prefix string)
+}
+
+// Option configures the handler returned by [NewHandler].
+type Option func(*config)
+
+// WithMCP enables the MCP (Model Context Protocol) endpoint at
+// /<version>/mcp.
+func WithMCP() Option {
+	return func(c *config) { c.withMCP = true }
+}
+
+// WithFavicon enables the built-in /favicon.svg handler.
+func WithFavicon() Option {
+	return func(c *config) { c.withFavicon = true }
+}
+
+// WithRoutes allows the caller to register additional routes on the
+// handler's ServeMux. The prefix argument is the version path prefix
+// (e.g. "/v0") so callers can mount routes alongside the API.
+func WithRoutes(fn func(mux *http.ServeMux, prefix string)) Option {
+	return func(c *config) { c.extraRoutes = fn }
+}
+
+// NewHandler builds and returns an [http.Handler] with GOBL API routes
 // registered under the major-version prefix (e.g. /v0/build).
-// The handler includes CORS and version-header middleware.
-func NewHandler() http.Handler {
-	p := "/" + versionPrefix
+//
+// By default the handler includes document operations (build, validate,
+// correct, replicate, sign, verify), reference data (schemas, regimes,
+// addons), key generation, the OpenAPI spec, and a version/health endpoint.
+// CORS, version-header, timing, and logging middleware are always applied.
+//
+// Use [WithMCP], [WithFavicon], and [WithRoutes] to enable additional
+// functionality.
+func NewHandler(opts ...Option) http.Handler {
+	var cfg config
+	for _, o := range opts {
+		o(&cfg)
+	}
+
+	p := "/" + VersionPrefix
 
 	mux := http.NewServeMux()
 
@@ -35,35 +77,40 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("POST "+p+"/verify", handleVerify)
 
 	// Reference data (static per version — ETag for caching)
-	mux.HandleFunc("GET "+p+"/schemas", withETag(handleSchemaList))
-	mux.HandleFunc("GET "+p+"/schemas/{path...}", withETag(handleSchema))
-	mux.HandleFunc("GET "+p+"/regimes", withETag(handleRegimeList))
-	mux.HandleFunc("GET "+p+"/regimes/{code}", withETag(handleRegime))
-	mux.HandleFunc("GET "+p+"/addons", withETag(handleAddonList))
-	mux.HandleFunc("GET "+p+"/addons/{key...}", withETag(handleAddon))
+	mux.HandleFunc("GET "+p+"/schemas", WithETag(handleSchemaList))
+	mux.HandleFunc("GET "+p+"/schemas/{path...}", WithETag(handleSchema))
+	mux.HandleFunc("GET "+p+"/regimes", WithETag(handleRegimeList))
+	mux.HandleFunc("GET "+p+"/regimes/{code}", WithETag(handleRegime))
+	mux.HandleFunc("GET "+p+"/addons", WithETag(handleAddonList))
+	mux.HandleFunc("GET "+p+"/addons/{key...}", WithETag(handleAddon))
 
 	// MCP (Streamable HTTP — stateless)
-	mcpSrv := goblmcp.NewServer()
-	mcpHTTP := server.NewStreamableHTTPServer(mcpSrv, server.WithStateLess(true))
-	mux.Handle("POST "+p+"/mcp", mcpHTTP)
-	mux.Handle("GET "+p+"/mcp", mcpHTTP)
-	mux.Handle("DELETE "+p+"/mcp", mcpHTTP)
+	if cfg.withMCP {
+		mcpSrv := goblmcp.NewServer()
+		mcpHTTP := server.NewStreamableHTTPServer(mcpSrv, server.WithStateLess(true))
+		mux.Handle("POST "+p+"/mcp", mcpHTTP)
+		mux.Handle("GET "+p+"/mcp", mcpHTTP)
+		mux.Handle("DELETE "+p+"/mcp", mcpHTTP)
+	}
 
 	// Key generation
 	mux.HandleFunc("POST "+p+"/keygen", handleKeygen)
 
-	// Editor UI
-	editor.RegisterAssets(mux)
-	mux.HandleFunc("GET /{$}", withETag(editor.Handler()))
-
 	// Favicon
-	mux.HandleFunc("GET /favicon.svg", handleFavicon)
+	if cfg.withFavicon {
+		mux.HandleFunc("GET /favicon.svg", handleFavicon)
+	}
+
+	// Custom routes
+	if cfg.extraRoutes != nil {
+		cfg.extraRoutes(mux, p)
+	}
 
 	// OpenAPI spec
 	mux.HandleFunc("GET "+p+"/openapi.json", handleOpenAPI)
 
 	// Version / health
-	mux.HandleFunc("GET "+p+"/", withETag(handleVersion))
+	mux.HandleFunc("GET "+p+"/", WithETag(handleVersion))
 
 	return withCORS(withVersion(withLogging(withTiming(mux))))
 }
@@ -72,10 +119,10 @@ func NewHandler() http.Handler {
 // quoted per RFC 7232.
 var etag = `"` + string(gobl.VERSION) + `"`
 
-// withETag wraps a handler func to set an ETag header based on the GOBL
+// WithETag wraps a handler func to set an ETag header based on the GOBL
 // version and return 304 Not Modified when the client already has the
 // current version cached.
-func withETag(h http.HandlerFunc) http.HandlerFunc {
+func WithETag(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("ETag", etag)
 		w.Header().Set("Cache-Control", "public, max-age=86400")

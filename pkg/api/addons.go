@@ -30,13 +30,13 @@ func handleAddonList(w http.ResponseWriter, _ *http.Request) {
 			Requires:    a.Requires,
 		}
 	}
-	writeJSON(w, map[string]any{"addons": items})
+	WriteJSON(w, map[string]any{"addons": items})
 }
 
 func handleAddon(w http.ResponseWriter, r *http.Request) {
 	key := r.PathValue("key")
 	if key == "" {
-		writeError(w, gobl.ErrInput.WithReason("missing addon key"))
+		WriteError(w, gobl.ErrInput.WithReason("missing addon key"))
 		return
 	}
 
@@ -47,8 +47,8 @@ func handleAddon(w http.ResponseWriter, r *http.Request) {
 
 	d, err := data.Content.ReadFile(p)
 	if err != nil {
-		writeError(w, gobl.ErrNotFound.WithReason("addon not found"))
+		WriteError(w, gobl.ErrNotFound.WithReason("addon not found"))
 		return
 	}
-	writeRawJSON(w, d)
+	WriteRawJSON(w, d)
 }

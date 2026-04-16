@@ -10,7 +10,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal/api"
+	"github.com/invopop/gobl/pkg/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -591,31 +591,8 @@ func TestKeygenEndpoint(t *testing.T) {
 	assert.NotEmpty(t, result["public"])
 }
 
-func TestEditorEndpoint(t *testing.T) {
-	srv := httptest.NewServer(api.NewHandler())
-	defer srv.Close()
-
-	t.Run("success", func(t *testing.T) {
-		resp, err := http.Get(srv.URL + "/")
-		require.NoError(t, err)
-		defer resp.Body.Close() //nolint:errcheck
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-		assert.Contains(t, resp.Header.Get("Content-Type"), "text/html")
-	})
-
-	t.Run("not modified", func(t *testing.T) {
-		etag := `"` + string(gobl.VERSION) + `"`
-		req, _ := http.NewRequest(http.MethodGet, srv.URL+"/", nil)
-		req.Header.Set("If-None-Match", etag)
-		resp, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
-		defer resp.Body.Close() //nolint:errcheck
-		assert.Equal(t, http.StatusNotModified, resp.StatusCode)
-	})
-}
-
 func TestFaviconEndpoint(t *testing.T) {
-	srv := httptest.NewServer(api.NewHandler())
+	srv := httptest.NewServer(api.NewHandler(api.WithFavicon()))
 	defer srv.Close()
 
 	resp, err := http.Get(srv.URL + "/favicon.svg")
