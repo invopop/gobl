@@ -543,3 +543,25 @@ func TestBRKSA49_25_EDUHEAExemption(t *testing.T) {
 			"customer name must be present (BR-KSA-25)")
 	})
 }
+
+// ============================================================================
+// Defensive nil guards coverage
+// ============================================================================
+
+func TestNilGuards(t *testing.T) {
+	t.Run("standard invoice with nil customer fails", func(t *testing.T) {
+		inv := validStandardInvoice()
+		require.NoError(t, inv.Calculate())
+		inv.Customer = nil
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer must be present")
+	})
+
+	t.Run("standard invoice with nil tax after calculate", func(t *testing.T) {
+		inv := validStandardInvoice()
+		require.NoError(t, inv.Calculate())
+		inv.Tax = nil
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "tax must be present")
+	})
+}

@@ -26,7 +26,6 @@ func init() {
 		billInvoiceRules(),
 		orgAddressRules(),
 		taxComboRules(),
-		calPeriodRules(),
 		billDiscountRules(),
 	)
 }
