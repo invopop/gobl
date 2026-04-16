@@ -1,5 +1,4 @@
-// Package iotools helps with reading documents.
-package iotools
+package ops
 
 import (
 	"context"
@@ -11,9 +10,9 @@ type cancelReader struct {
 	r   io.Reader
 }
 
-// CancelableReader wraps r such that when ctx is cancelled, Read will return
+// cancelableReader wraps r such that when ctx is cancelled, Read will return
 // an error immediately.
-func CancelableReader(ctx context.Context, r io.Reader) io.Reader {
+func cancelableReader(ctx context.Context, r io.Reader) io.Reader {
 	return &cancelReader{
 		ctx: ctx,
 		r:   r,

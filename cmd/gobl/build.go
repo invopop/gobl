@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/spf13/cobra"
 )
 
@@ -74,8 +74,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	buildOpts := &cli.BuildOptions{
-		ParseOptions: &cli.ParseOptions{
+	buildOpts := &ops.BuildOptions{
+		ParseOptions: &ops.ParseOptions{
 			Template:  template,
 			Input:     input,
 			SetFile:   b.setFiles,
@@ -86,7 +86,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		},
 	}
 
-	res, err := cli.Build(ctx, buildOpts)
+	res, err := ops.Build(ctx, buildOpts)
 	if err != nil {
 		return err
 	}

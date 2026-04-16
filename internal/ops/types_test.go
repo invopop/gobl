@@ -1,4 +1,4 @@
-package cli
+package ops
 
 import (
 	"reflect"
@@ -29,7 +29,7 @@ func TestFindType(t *testing.T) {
 		}
 	})
 	t.Run("exact type match with package", func(t *testing.T) {
-		got := findType(r, "cli.Invoice")
+		got := findType(r, "ops.Invoice")
 		if got != idInvoice {
 			t.Errorf("Unexpected result: %v", got)
 		}

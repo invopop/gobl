@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func handleBuild(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +21,8 @@ func handleBuild(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := &cli.BuildOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.BuildOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input:   bytes.NewReader(req.Data),
 			DocType: req.DocType,
 			Envelop: req.Envelop,
@@ -32,7 +32,7 @@ func handleBuild(w http.ResponseWriter, r *http.Request) {
 		opts.Template = bytes.NewReader(req.Template)
 	}
 
-	result, err := cli.Build(r.Context(), opts)
+	result, err := ops.Build(r.Context(), opts)
 	if err != nil {
 		writeError(w, err)
 		return

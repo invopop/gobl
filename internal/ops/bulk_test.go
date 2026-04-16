@@ -1,4 +1,4 @@
-package cli
+package ops
 
 import (
 	"bytes"
@@ -171,7 +171,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   gobl.ErrInternal.WithReason("json: cannot unmarshal string into Go value of type cli.VerifyRequest"),
+					Error:   gobl.ErrInternal.WithReason("json: cannot unmarshal string into Go value of type ops.VerifyRequest"),
 				},
 				{
 					SeqID:   2,
@@ -390,7 +390,7 @@ func TestBulk(t *testing.T) { //nolint:gocyclo
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   gobl.ErrInternal.WithReason("invalid payload: json: cannot unmarshal string into Go value of type cli.BuildRequest"),
+					Error:   gobl.ErrInternal.WithReason("invalid payload: json: cannot unmarshal string into Go value of type ops.BuildRequest"),
 				},
 				{
 					SeqID:   2,

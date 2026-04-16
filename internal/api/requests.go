@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 )
 
-// Request types for the HTTP API. These mirror the cli.* request types but
+// Request types for the HTTP API. These mirror the ops.* request types but
 // use json.RawMessage instead of []byte so that JSON payloads are accepted
 // as-is rather than requiring base64 encoding.
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func handleCorrect(w http.ResponseWriter, r *http.Request) {
@@ -21,15 +21,15 @@ func handleCorrect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := &cli.CorrectOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.CorrectOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: bytes.NewReader(req.Data),
 		},
 		OptionsSchema: req.Schema,
 		Data:          req.Options,
 	}
 
-	result, err := cli.Correct(r.Context(), opts)
+	result, err := ops.Correct(r.Context(), opts)
 	if err != nil {
 		writeError(w, err)
 		return

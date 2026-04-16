@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func handleSign(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +21,8 @@ func handleSign(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := &cli.SignOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.SignOptions{
+		ParseOptions: &ops.ParseOptions{
 			DocType: req.DocType,
 			Input:   bytes.NewReader(req.Data),
 			Envelop: req.Envelop,
@@ -33,7 +33,7 @@ func handleSign(w http.ResponseWriter, r *http.Request) {
 		opts.Template = bytes.NewReader(req.Template)
 	}
 
-	result, err := cli.Sign(r.Context(), opts)
+	result, err := ops.Sign(r.Context(), opts)
 	if err != nil {
 		writeError(w, err)
 		return

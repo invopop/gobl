@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func handleVerify(w http.ResponseWriter, r *http.Request) {
@@ -21,9 +21,9 @@ func handleVerify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := cli.Verify(r.Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
+	if err := ops.Verify(r.Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
 		writeError(w, err)
 		return
 	}
-	writeJSON(w, cli.VerifyResponse{OK: true})
+	writeJSON(w, ops.VerifyResponse{OK: true})
 }

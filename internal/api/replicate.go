@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func handleReplicate(w http.ResponseWriter, r *http.Request) {
@@ -21,13 +21,13 @@ func handleReplicate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := &cli.ReplicateOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.ReplicateOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: bytes.NewReader(req.Data),
 		},
 	}
 
-	result, err := cli.Replicate(r.Context(), opts)
+	result, err := ops.Replicate(r.Context(), opts)
 	if err != nil {
 		writeError(w, err)
 		return

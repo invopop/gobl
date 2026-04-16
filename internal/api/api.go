@@ -1,5 +1,5 @@
 // Package api provides a framework-free HTTP handler for the GOBL API.
-// It wraps the internal/cli functions and exposes them as standard
+// It wraps the internal/ops functions and exposes them as standard
 // net/http endpoints, suitable for use in any HTTP server.
 package api
 

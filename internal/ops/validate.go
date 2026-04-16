@@ -1,4 +1,4 @@
-package cli
+package ops
 
 import (
 	"context"

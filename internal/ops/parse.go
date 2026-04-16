@@ -1,4 +1,4 @@
-package cli
+package ops
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 
 	"github.com/imdario/mergo"
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/iotools"
 	"github.com/invopop/gobl/schema"
 	"gopkg.in/yaml.v3"
 )
@@ -31,7 +30,7 @@ type ParseOptions struct {
 // decodeInto unmarshals in as YAML, then merges it into dest.
 func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader) error {
 	var intermediate map[string]interface{}
-	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, in))
+	dec := yaml.NewDecoder(cancelableReader(ctx, in))
 	if err := dec.Decode(&intermediate); err != nil {
 		return gobl.ErrInput.WithCause(err)
 	}
