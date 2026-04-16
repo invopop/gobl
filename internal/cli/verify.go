@@ -43,17 +43,17 @@ func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 func VerifyRemote(ctx context.Context, in io.Reader, client *goblnet.Client, addr goblnet.Address) error {
 	body, err := io.ReadAll(iotools.CancelableReader(ctx, in))
 	if err != nil {
-		return wrapError(StatusBadRequest, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	env := new(gobl.Envelope)
 	if err := jsonyaml.Unmarshal(body, env); err != nil {
-		return wrapError(StatusBadRequest, err)
+		return gobl.ErrInput.WithCause(err)
 	}
 	if err := env.Validate(); err != nil {
-		return wrapError(StatusUnprocessableEntity, err)
+		return gobl.ErrValidation.WithCause(err)
 	}
 	if err := client.VerifyEnvelope(ctx, env, addr); err != nil {
-		return wrapError(http.StatusUnprocessableEntity, err)
+		return gobl.ErrValidation.WithCause(err)
 	}
 	return nil
 }
