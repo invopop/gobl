@@ -9,10 +9,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Saudi VAT Identification Number is a 15-digit number starting and ending with 3.
-const (
-	vatIDPattern = `^3[0-9]{13}3$`
-)
+// vatIDRegexp matches a Saudi VAT Identification Number: 15 digits starting and ending with 3.
+var vatIDRegexp = regexp.MustCompile(`^3[0-9]{13}3$`)
 
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID.Code == "" {
@@ -37,6 +35,5 @@ func vatIDValid(val any) bool {
 	if !ok || code.IsEmpty() {
 		return true
 	}
-	match, _ := regexp.MatchString(vatIDPattern, code.String())
-	return match
+	return vatIDRegexp.MatchString(code.String())
 }
