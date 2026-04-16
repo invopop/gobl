@@ -2,7 +2,6 @@ package sa
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -15,37 +14,32 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(l10n.SA.Tax())),
 			rules.Field("supplier",
-				rules.Assert("01", "supplier must have a valid tax ID code or identity",
-					is.Func("has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-08)", hasSupplierTaxIDOrIdentity),
-				),
-			),
-
-			rules.Field("customer",
-				rules.Assert("03", "customer must have a valid tax ID code or identity",
-					is.Func("hast tax id code or TIN/CRN/Mom/MLS/700/SAG/National/Gcc/Iqa/Passport/OTH (BR-KSA-14)", hasCustomerTaxIDOrIdentity),
+				rules.Assert("01", "supplier must have a valid tax ID code. An additional identity is optional but must be at most 1",
+					is.Func("has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-39), (BR-KSA-08)", hasValidTaxIDAndIdentities),
 				),
 			),
 		),
 	)
 }
 
-func hasSupplierTaxIDOrIdentity(value any) bool {
+func hasValidTaxIDAndIdentities(value any) bool {
 	party, _ := value.(*org.Party)
-	return hasTaxIDCode(party) || partyHasIdentities(party, supplierValidIdentities)
-}
-
-func hasCustomerTaxIDOrIdentity(value any) bool {
-	party, _ := value.(*org.Party)
-	return hasTaxIDCode(party) || partyHasIdentities(party, customerValidIdentities)
+	if party == nil {
+		return false
+	}
+	return hasTaxIDCode(party) && hasAtMostOneIdentity(party)
 }
 
 func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+	return party.TaxID != nil && party.TaxID.Code != ""
 }
 
-func partyHasIdentities(party *org.Party, identitites []cbc.Code) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
+func hasAtMostOneIdentity(party *org.Party) bool {
+	if len(party.Identities) == 0 {
+		return true
 	}
-	return org.IdentitiesTypeIn(identitites...).Check(party.Identities)
+	if len(party.Identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(party.Identities) {
+		return true
+	}
+	return false
 }

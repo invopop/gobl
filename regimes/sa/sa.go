@@ -12,44 +12,6 @@ import (
 
 const countryCode = "SA"
 
-// Identification keys used for additional codes not covered by the standard fields
-const (
-	IdentityTypeTIN      cbc.Code = "TIN" // Tax Identification Number
-	IdentityTypeCRN      cbc.Code = "CRN" // Commercial Registration Number
-	IdentityTypeMom      cbc.Code = "MOM" // Ministry of Municipal, Rural Affairs and Housing Number
-	IdentityTypeMLS      cbc.Code = "MLS" // Ministry of Human Resources and Social Development Number
-	IdentityType700      cbc.Code = "700" // 700 Number
-	IdentityTypeSAG      cbc.Code = "SAG" // Saudi Arabian General Authority Number
-	IdentityTypeNational cbc.Code = "NAT" // National ID
-	IdentityTypeGcc      cbc.Code = "GCC" // GCC ID
-	IdentityTypeIqa      cbc.Code = "IQA" // Iqama Number (Resident ID)
-	IdentityTypePassport cbc.Code = "PAS" // Passport Number
-	IdentityTypeOTH      cbc.Code = "OTH" // Other ID
-)
-
-var supplierValidIdentities = []cbc.Code{
-	IdentityTypeCRN,
-	IdentityTypeMom,
-	IdentityTypeMLS,
-	IdentityType700,
-	IdentityTypeSAG,
-	IdentityTypeOTH,
-}
-
-var customerValidIdentities = []cbc.Code{
-	IdentityTypeTIN,
-	IdentityTypeCRN,
-	IdentityTypeMom,
-	IdentityTypeMLS,
-	IdentityType700,
-	IdentityTypeSAG,
-	IdentityTypeNational,
-	IdentityTypeGcc,
-	IdentityTypeIqa,
-	IdentityTypePassport,
-	IdentityTypeOTH,
-}
-
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sa", rules.GOBL.Add(countryCode),
@@ -90,10 +52,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://zatca.gov.sa/en/RulesRegulations/VAT/Pages/default.aspx",
 			},
 		},
-		TimeZone: "Asia/Riyadh",
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
+		TimeZone:   "Asia/Riyadh",
 		Normalizer: Normalize,
 		Categories: taxCategories(),
 	}

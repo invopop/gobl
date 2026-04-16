@@ -4,6 +4,8 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -35,4 +37,12 @@ func normalizeInvoice(inv *bill.Invoice) {
 			vat.Percent = &num.PercentageZero
 		}
 	}
+}
+
+func billDiscountRules() *rules.Set {
+	return rules.For(new(bill.Discount),
+		rules.Field("taxes",
+			rules.Assert("01", "taxes are required (BR-32)", is.Present),
+		),
+	)
 }
