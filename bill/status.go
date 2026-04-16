@@ -424,9 +424,8 @@ type Status struct {
 	Recipient *org.Party `json:"recipient,omitempty" jsonschema:"title=Recipient"`
 
 	// Lines contain the main payload of the message used to describe individual
-	// documents which have a status. A message may not have any lines.
-	// (Optional).
-	Lines []*StatusLine `json:"lines,omitempty" jsonschema:"title=Lines"`
+	// documents which have a status.
+	Lines []*StatusLine `json:"lines" jsonschema:"title=Lines"`
 
 	// Notes for additional details about the event.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`

@@ -299,6 +299,14 @@ func TestStatusValidate(t *testing.T) {
 		assert.ErrorContains(t, err, "status supplier is required")
 	})
 
+	t.Run("missing lines", func(t *testing.T) {
+		st := testStatusMinimal(t)
+		st.Lines = nil
+		require.NoError(t, st.Calculate())
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "status must have at least one line")
+	})
+
 	t.Run("all status types valid", func(t *testing.T) {
 		for _, st := range []cbc.Key{bill.StatusTypeResponse, bill.StatusTypeUpdate, bill.StatusTypeSystem} {
 			s := testStatusMinimal(t)
