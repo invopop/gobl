@@ -123,8 +123,6 @@ func taxComboHasValidVATEX(val any) bool {
 		en16931.TaxCategoryOutsideScope:
 		allowed, ok := vatexValidCodes[category]
 		return ok && vatex.In(allowed...)
-	case cbc.CodeEmpty:
-		return true
 	default:
 		return false
 	}
