@@ -4,14 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "57812cc40a9e203fe408ab469ad4f0247508fe7d911a3333f905ac02d6bd6d8c"
+			"val": "fa17013627ee707457f8d90fa86180ca30ac8f214c317132fc98990077bbcde0"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "SA",
 		"$addons": [
-			"eu-en16931-v2017",
 			"sa-zatca-v1"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
@@ -23,6 +22,7 @@
 		"tax": {
 			"rounding": "currency",
 			"ext": {
+				"sa-zatca-invoice-type": "0100000",
 				"untdid-document-type": "388"
 			}
 		},
@@ -92,27 +92,6 @@
 					}
 				],
 				"total": "1800.00"
-			},
-			{
-				"i": 2,
-				"quantity": "1",
-				"item": {
-					"name": "Financial service",
-					"price": "10.00",
-					"unit": "one"
-				},
-				"sum": "10.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "exempt",
-						"ext": {
-							"cef-vatex": "VATEX-SA-29",
-							"untdid-tax-category": "E"
-						}
-					}
-				],
-				"total": "10.00"
 			}
 		],
 		"payment": {
@@ -120,10 +99,7 @@
 				"notes": "Payment due within 30 days"
 			},
 			"instructions": {
-				"key": "credit-transfer",
-				"ext": {
-					"untdid-payment-means": "30"
-				}
+				"key": "credit-transfer"
 			}
 		},
 		"delivery": {
@@ -134,8 +110,8 @@
 			}
 		},
 		"totals": {
-			"sum": "1810.00",
-			"total": "1810.00",
+			"sum": "1800.00",
+			"total": "1800.00",
 			"taxes": {
 				"categories": [
 					{
@@ -149,15 +125,6 @@
 								"base": "1800.00",
 								"percent": "15.0%",
 								"amount": "270.00"
-							},
-							{
-								"key": "exempt",
-								"ext": {
-									"cef-vatex": "VATEX-SA-29",
-									"untdid-tax-category": "E"
-								},
-								"base": "10.00",
-								"amount": "0.00"
 							}
 						],
 						"amount": "270.00"
@@ -166,8 +133,8 @@
 				"sum": "270.00"
 			},
 			"tax": "270.00",
-			"total_with_tax": "2080.00",
-			"payable": "2080.00"
+			"total_with_tax": "2070.00",
+			"payable": "2070.00"
 		}
 	}
 }

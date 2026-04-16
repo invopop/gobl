@@ -31,15 +31,6 @@ func TestCustomerTaxIDOrIdentity(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("customer without VAT and without identity is invalid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		inv.Customer.Identities = nil
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer must have a valid tax ID code or identity")
-	})
-
 	t.Run("customer without VAT and with empty identity code is invalid", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Customer.TaxID = nil

@@ -19,23 +19,6 @@
   "country": "SA",
   "currency": "SAR",
   "tax_scheme": "VAT",
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "simplified"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "simplified",
-            "text": "Simplified Tax Invoice"
-          }
-        }
-      ]
-    }
-  ],
   "categories": [
     {
       "code": "VAT",

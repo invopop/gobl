@@ -1,11 +1,15 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons: ["sa-zatca-v1"]
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
-currency: "SAR"
 issue_date: "2022-02-01"
 issue_time: "12:00:00"
 code: "SAMPLE-001"
+regime: "SA"
 
+tax:
+  ext:
+    sa-zatca-invoice-type: "0100000"
+    untdid-document-type: "388"
 supplier:
   tax_id:
     country: "SA"
@@ -58,12 +62,3 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
-  - quantity: 1
-    item:
-      name: "Financial service"
-      price: "10.00"
-    taxes:
-      - cat: VAT
-        key: exempt
-        ext:
-          cef-vatex: "VATEX-SA-29"

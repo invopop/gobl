@@ -14,18 +14,8 @@
               "assert": [
                 {
                   "id": "GOBL-SA-BILL-INVOICE-01",
-                  "desc": "supplier must have a valid tax ID code or identity",
-                  "tests": "has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-08)"
-                }
-              ]
-            },
-            {
-              "field": "customer",
-              "assert": [
-                {
-                  "id": "GOBL-SA-BILL-INVOICE-03",
-                  "desc": "customer must have a valid tax ID code or identity",
-                  "tests": "hast tax id code or TIN/CRN/Mom/MLS/700/SAG/National/Gcc/Iqa/Passport/OTH (BR-KSA-14)"
+                  "desc": "supplier must have a valid tax ID code. An additional identity is optional but must be at most 1",
+                  "tests": "has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-39), (BR-KSA-08)"
                 }
               ]
             }
@@ -83,16 +73,11 @@
           "subsets": [
             {
               "field": "code",
-              "subsets": [
+              "assert": [
                 {
-                  "guard": "present",
-                  "assert": [
-                    {
-                      "id": "GOBL-SA-TAX-IDENTITY-01",
-                      "desc": "invalid Saudi tax identity code",
-                      "tests": "valid Saudi VAT number"
-                    }
-                  ]
+                  "id": "GOBL-SA-TAX-IDENTITY-01",
+                  "desc": "VAT number must be 15 digits starting/ending with 3 (BR-KSA-40)",
+                  "tests": "when present, VAT id must be valid"
                 }
               ]
             }

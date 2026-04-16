@@ -1,81 +1,131 @@
 package zatca
 
 import (
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/catalogues/cef"
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// SA VATEX exemption reason codes (subset of CEF VATEX list, per ZATCA spec).
+const (
+	VatexFinancialServices        cbc.Code = "VATEX-SA-29"
+	VatexLifeInsurance            cbc.Code = "VATEX-SA-29-7"
+	VatexRealEstate               cbc.Code = "VATEX-SA-30"
+	VatexExportGoods              cbc.Code = "VATEX-SA-32"
+	VatexExportServices           cbc.Code = "VATEX-SA-33"
+	VatexIntlTransportGoods       cbc.Code = "VATEX-SA-34-1"
+	VatexIntlTransportPassengers  cbc.Code = "VATEX-SA-34-2"
+	VatexIntlTransportRelated     cbc.Code = "VATEX-SA-34-3"
+	VatexQualifyingTransportMeans cbc.Code = "VATEX-SA-34-4"
+	VatexTransportRelated         cbc.Code = "VATEX-SA-34-5"
+	VatexMedicines                cbc.Code = "VATEX-SA-35"
+	VatexQualifyingMetals         cbc.Code = "VATEX-SA-36"
+	VatexPrivateEducation         cbc.Code = "VATEX-SA-EDU"
+	VatexPrivateHealthcare        cbc.Code = "VATEX-SA-HEA"
+	VatexMilitaryGoods            cbc.Code = "VATEX-SA-MLTRY"
+	VatexOutOfScope               cbc.Code = "VATEX-SA-OOS"
+)
+
+var vatexValidCodes = map[cbc.Code][]cbc.Code{
+	en16931.TaxCategoryExempt: {
+		VatexFinancialServices,
+		VatexLifeInsurance,
+		VatexRealEstate,
+	},
+	en16931.TaxCategoryStandard: {},
+	en16931.TaxCategoryZero: {
+		VatexExportGoods,
+		VatexExportServices,
+		VatexIntlTransportGoods,
+		VatexIntlTransportPassengers,
+		VatexIntlTransportRelated,
+		VatexQualifyingTransportMeans,
+		VatexTransportRelated,
+		VatexMedicines,
+		VatexQualifyingMetals,
+		VatexPrivateEducation,
+		VatexPrivateHealthcare,
+		VatexMilitaryGoods,
+	},
+	en16931.TaxCategoryOutsideScope: {
+		VatexOutOfScope,
+	},
+}
+
+var vatKeyMap = tax.Extensions{
+	tax.KeyStandard:     en16931.TaxCategoryStandard,
+	tax.KeyZero:         en16931.TaxCategoryZero,
+	tax.KeyExempt:       en16931.TaxCategoryExempt,
+	tax.KeyOutsideScope: en16931.TaxCategoryOutsideScope,
+}
+
+func normalizeTaxCombo(tc *tax.Combo) {
+	if tc == nil || tc.Category != tax.CategoryVAT {
+		return
+	}
+	if tc.Key.IsEmpty() {
+		k := vatKeyMap.Lookup(tc.Ext.Get(untdid.ExtKeyTaxCategory))
+		if k.IsEmpty() {
+			k = tax.KeyStandard
+		}
+		tc.Key = k
+	}
+	if cat := vatKeyMap.Get(tc.Key); cat != "" {
+		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, cat)
+	}
+}
+
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
-		rules.When(
-			is.Func("is zero, exempt, or outside scope", taxComboRequiresVATEX),
-			rules.Field("ext",
-				rules.Assert("01", "exempt, zero-rated, or outside-scope tax must have a valid SA VATEX code (BR-KSA-CL-04)",
-					is.Func("valid SA VATEX code", taxComboHasValidVATEX),
+
+		rules.Field("ext",
+			rules.Assert("01", "VATEX exemption code must be present and valid for Z/E/O categories, and must not be set for Standard (BR-KSA-CL-04)",
+				is.Func("valid SA VATEX code", taxComboHasValidVATEX),
+			),
+		),
+
+		// Extensions
+		rules.Field("ext",
+			rules.Assert("02", "VAT category code must contain one of the values (S, Z, E, O) (BR-KSA-18)",
+				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory,
+					en16931.TaxCategoryStandard,
+					en16931.TaxCategoryZero,
+					en16931.TaxCategoryExempt,
+					en16931.TaxCategoryOutsideScope,
 				),
 			),
 		),
 
-		rules.When(
-			is.Func("is standard rate", taxComboIsStandard),
-			rules.Field("ext",
-				rules.Assert("02", "standard rate tax must not have a VATEX code (BR-KSA-CL-04)",
-					tax.ExtensionsExclude(cef.ExtKeyVATEX),
-				),
-			),
+		// Category
+		rules.Field("cat",
+			rules.Assert("04", "tax schema id must be 'VAT' (BR-KSA-54)", is.In(tax.CategoryVAT)),
 		),
 	)
 }
 
-// taxComboIsStandard returns true when the tax combo key is standard rate.
-func taxComboIsStandard(val any) bool {
-	tc, ok := val.(*tax.Combo)
-	if !ok || tc == nil {
-		return false
-	}
-	return tc.Key == tax.KeyStandard
-}
-
-// taxComboRequiresVATEX returns true when the tax combo key is zero,
-// exempt, or outside-scope and therefore requires a SA VATEX code.
-func taxComboRequiresVATEX(val any) bool {
-	tc, ok := val.(*tax.Combo)
-	if !ok || tc == nil {
-		return false
-	}
-	return tc.Key.In(tax.KeyZero, tax.KeyExempt, tax.KeyOutsideScope)
-}
-
-// taxComboHasValidVATEX checks that the VATEX code in the extensions
-// is one of the valid SA codes for the combo's tax key.
 func taxComboHasValidVATEX(val any) bool {
 	ext, ok := val.(tax.Extensions)
 	if !ok {
 		return false
 	}
-	code := ext.Get(cef.ExtKeyVATEX)
-	if code == cbc.CodeEmpty {
+	category := ext.Get(untdid.ExtKeyTaxCategory)
+	vatex := ext.Get(cef.ExtKeyVATEX)
+
+	switch category {
+	case en16931.TaxCategoryStandard:
+		return vatex == cbc.CodeEmpty
+	case en16931.TaxCategoryExempt,
+		en16931.TaxCategoryZero,
+		en16931.TaxCategoryOutsideScope:
+		allowed, ok := vatexValidCodes[category]
+		return ok && vatex.In(allowed...)
+	case cbc.CodeEmpty:
+		return true
+	default:
 		return false
 	}
-	return code.In(
-		Vatex29,
-		Vatex29_7,
-		Vatex30,
-		Vatex32,
-		Vatex33,
-		Vatex34_1,
-		Vatex34_2,
-		Vatex34_3,
-		Vatex34_4,
-		Vatex34_5,
-		Vatex35,
-		Vatex36,
-		VatexEdu,
-		VatexHea,
-		VatexMltry,
-		VatexOutOfScope,
-	)
 }

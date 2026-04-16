@@ -14,10 +14,6 @@ const (
 	vatIDPattern = `^3[0-9]{13}3$`
 )
 
-var (
-	vatIDRegex = regexp.MustCompile(vatIDPattern)
-)
-
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID.Code == "" {
 		return
@@ -29,18 +25,18 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(countryCode),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "invalid Saudi tax identity code",
-					is.Func("valid Saudi VAT number", validateTaxCode),
-				),
+				rules.Assert("01", "VAT number must be 15 digits starting/ending with 3 (BR-KSA-40)",
+					is.Func("when present, VAT id must be valid", vatIDValid)),
 			),
 		),
 	)
 }
 
-func validateTaxCode(value any) bool {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return false
+func vatIDValid(val any) bool {
+	code, ok := val.(cbc.Code)
+	if !ok || code.IsEmpty() {
+		return true
 	}
-	return vatIDRegex.MatchString(code.String())
+	match, _ := regexp.MatchString(vatIDPattern, code.String())
+	return match
 }
