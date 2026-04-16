@@ -644,3 +644,90 @@ func TestValidateEndpointInvalidJSON(t *testing.T) {
 	defer resp.Body.Close() //nolint:errcheck
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
+
+func TestValidateEndpointValidationError(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	// Send a document missing required fields so validation fails.
+	invalid := json.RawMessage(`{"$schema":"https://gobl.org/draft-0/bill/invoice","currency":"EUR"}`)
+	resp := postJSON(t, srv.URL+prefix+"/validate", map[string]any{"data": invalid})
+	defer resp.Body.Close() //nolint:errcheck
+	assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+}
+
+func TestWithMCPOption(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler(api.WithMCP()))
+	defer srv.Close()
+
+	// MCP endpoint should respond (not 404).
+	resp, err := http.Post(srv.URL+prefix+"/mcp", "application/json", nil)
+	require.NoError(t, err)
+	defer resp.Body.Close() //nolint:errcheck
+	assert.NotEqual(t, http.StatusNotFound, resp.StatusCode)
+}
+
+func TestWithRoutesOption(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler(
+		api.WithRoutes(func(mux *http.ServeMux, _ string) {
+			mux.HandleFunc("GET /custom", func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte("custom"))
+			})
+		}),
+	))
+	defer srv.Close()
+
+	resp, err := http.Get(srv.URL + "/custom")
+	require.NoError(t, err)
+	defer resp.Body.Close() //nolint:errcheck
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	body, _ := io.ReadAll(resp.Body)
+	assert.Equal(t, "custom", string(body))
+}
+
+func TestSignEndpointError(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	// Send invalid document data that will fail signing.
+	resp := postJSON(t, srv.URL+prefix+"/sign", map[string]any{
+		"data": json.RawMessage(`{"$schema":"https://gobl.org/draft-0/bill/invoice"}`),
+	})
+	defer resp.Body.Close() //nolint:errcheck
+	assert.NotEqual(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestReplicateEndpointError(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	// Send minimal invalid data that will fail replication.
+	resp := postJSON(t, srv.URL+prefix+"/replicate", map[string]any{
+		"data": json.RawMessage(`{"bad":"data"}`),
+	})
+	defer resp.Body.Close() //nolint:errcheck
+	assert.NotEqual(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestCorrectEndpointError(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	// Send data that will fail correction.
+	resp := postJSON(t, srv.URL+prefix+"/correct", map[string]any{
+		"data": json.RawMessage(`{"bad":"data"}`),
+	})
+	defer resp.Body.Close() //nolint:errcheck
+	assert.NotEqual(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestSchemaBundleEndpointNotFound(t *testing.T) {
+	srv := httptest.NewServer(api.NewHandler())
+	defer srv.Close()
+
+	resp, err := http.Get(srv.URL + prefix + "/schemas/nonexistent?bundle")
+	require.NoError(t, err)
+	defer resp.Body.Close() //nolint:errcheck
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}

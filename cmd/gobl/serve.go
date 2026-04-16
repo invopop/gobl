@@ -40,7 +40,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	defer cancel()
 
 	srv := &http.Server{
-		Addr:    ":" + strconv.Itoa(s.httpPort),
+		Addr: ":" + strconv.Itoa(s.httpPort),
 		Handler: api.NewHandler(
 			api.WithMCP(),
 			api.WithFavicon(),
