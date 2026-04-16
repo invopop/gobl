@@ -31,6 +31,23 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 
 ### Added
 
+- `net`: new package for GOBL Net remote verification using FQDN-based addresses (e.g., `billing.invopop.com`).
+- `net`: `Address` type with deterministic JWKS URL derivation and topic generation from reversed FQDN.
+- `net`: `KeySet` struct extending standard JWKS with optional digest and signatures, allowing a trusted authority to endorse a set of public keys.
+- `net`: `Client` with `FetchKeySet`, `VerifyEnvelope`, and `VerifyKeySet` for full chain verification (pinned authority keys + 1-hop remote lookup).
+- `net`: `Authorities` global and `RegisterAuthority` for pinned trust anchors.
+- `dsig`: `WithGN` signer option and `GN()` reader for the `gn` (GOBL Net) JWS header.
+- `dsig`: `NewPublicKey` constructor from `jose.JSONWebKey`.
+- `head`: `Sign` and `Verify` methods on `Header`, signing only the immutable payload (UUID + Digest).
+- `cmd/gobl`: `verify` command now supports `--address` / `--remote` flags for remote key discovery.
+
+### Changed
+
+- `head`: Signing payload reduced to UUID + Digest only; stamps, links, tags, meta, and notes are no longer locked by signing.
+- `head`: `Contains` method deprecated in favour of `Verify`.
+- `envelope`: `Sign` now accepts variadic `dsig.SignerOption` and delegates to `Header.Sign`.
+- `envelope`: `verifySignature` delegates to `Header.Verify`.
+
 - `rules`: new package to help define validation rules and execute them on top of any object.
 - `cmd/gobl`: MCP server support via `gobl mcp` CLI command using stdio transport.
 - `internal/api`: New framework-free HTTP API package replacing the previous Echo-based serve handler, with versioned route prefix (e.g. `/v0/build`).
