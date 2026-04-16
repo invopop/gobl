@@ -55,3 +55,15 @@ func TestInsert(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"$schema\":\"https://gobl.org/draft-0/test/bar\",\"random\":\"message\"}", string(data))
 }
+
+func TestIDInterface(t *testing.T) {
+	// Known schema should return a non-nil instance
+	id := schema.GOBL.Add("bill/invoice")
+	obj := id.Interface()
+	assert.NotNil(t, obj, "known schema ID should return an instance")
+
+	// Unknown schema should return nil
+	id = schema.ID("https://gobl.org/draft-0/unknown/type")
+	obj = id.Interface()
+	assert.Nil(t, obj, "unknown schema ID should return nil")
+}

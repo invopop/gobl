@@ -1,11 +1,11 @@
 {
   "id": "GOBL-IT-TICKET-V1",
-  "name": "it-ticket-v1",
+  "package": "it-ticket-v1",
   "guard": "context: addon in [it-ticket-v1]",
   "subsets": [
     {
       "id": "GOBL-IT-TICKET-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "field": "tax",
@@ -108,7 +108,7 @@
     },
     {
       "id": "GOBL-IT-TICKET-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "VAT without percent",

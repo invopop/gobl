@@ -113,7 +113,7 @@ func (d *Date) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	// Zero dates are not great, put pass validation.
-	if s == "0000-00-00" {
+	if s == "0000-00-00" || s == "" {
 		*d = Date{}
 		return nil
 	}

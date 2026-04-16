@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/l10n/tax-country-code",
-  "$ref": "#/$defs/TaxCountryCode",
+  "$ref": "#/$defs/l10n.TaxCountryCode",
   "$defs": {
-    "TaxCountryCode": {
+    "l10n.TaxCountryCode": {
       "oneOf": [
         {
           "const": "AF",

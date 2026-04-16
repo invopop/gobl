@@ -1,10 +1,10 @@
 {
   "id": "GOBL-CO",
-  "name": "co",
+  "package": "co",
   "subsets": [
     {
       "id": "GOBL-CO-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [CO]",

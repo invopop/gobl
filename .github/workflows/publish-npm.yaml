@@ -1,0 +1,99 @@
+#
+# Publish the gobl-worker package to NPM. Runs automatically after a
+# successful Release, and can be re-run manually to retry a failed
+# publish without re-running the full release.
+#
+# Authentication is via NPM Trusted Publisher (OIDC) — no secret
+# needed. `id-token: write` is required so that the runner can exchange
+# its GitHub OIDC token for a short-lived npm publish token.
+#
+
+name: Publish NPM
+
+on:
+    workflow_run:
+        workflows: ["Release"]
+        types: [completed]
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    publish:
+        name: Publish gobl-worker
+        # Run on successful upstream Release, or whenever triggered manually.
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  # Pin to the commit the upstream Release ran against so
+                  # we publish the same version. Falls back to the manually
+                  # selected ref for workflow_dispatch.
+                  ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+            - name: Read current version
+              run: |
+                  grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: "go.mod"
+
+            # wasm_exec.js is gitignored and must be copied from the active
+            # Go install before the npm build bundles it into the package.
+            - name: Copy Go WASM Exec
+              run: cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" ./wasm/worker/src
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+                  # Intentionally no `registry-url`: setup-node would
+                  # otherwise write a `.npmrc` with an `_authToken` entry
+                  # that forces npm to use token auth and blocks the OIDC
+                  # trusted-publisher exchange. npm defaults to
+                  # registry.npmjs.org, which is what we want.
+
+            - name: Run npm ci
+              working-directory: ./wasm/worker
+              run: npm ci
+
+            - name: Update gobl-worker version
+              working-directory: ./wasm/worker
+              run: npm version --no-git-tag-version ${{ env.GOBL_VERSION }}
+
+            - name: Build gobl-worker
+              working-directory: ./wasm/worker
+              run: npm run build
+
+            # npm 11 refuses to publish a prerelease (e.g. v1.2.3-rc1) to
+            # the default `latest` dist-tag. Derive the tag from the
+            # version: a prerelease like `-rc1` / `-beta.2` maps to `rc` /
+            # `beta`; a plain version maps to `latest`.
+            - name: Determine npm dist-tag
+              id: npm-tag
+              run: |
+                  if [[ "$GOBL_VERSION" =~ -([a-z]+) ]]; then
+                      tag="${BASH_REMATCH[1]}"
+                  else
+                      tag="latest"
+                  fi
+                  echo "Using npm dist-tag: $tag"
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+            # OIDC trusted publishing requires npm ≥ 11.5.1, but Node 22's
+            # tool-cache ships npm 10.9.7 with a corrupted dependency tree
+            # that prevents `npm install -g npm@latest`, and corepack
+            # explicitly refuses to shim `npm` so its `prepare --activate`
+            # is a no-op for this binary. `npx` sidesteps both: it fetches
+            # npm 11 on demand and executes it from npx's cache without
+            # touching the global install.
+            - name: Publish gobl-worker to NPM registry
+              working-directory: ./wasm/worker
+              run: npx -y npm@11 publish --tag ${{ steps.npm-tag.outputs.tag }}

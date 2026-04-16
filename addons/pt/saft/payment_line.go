@@ -27,9 +27,6 @@ func billPaymentLineRules() *rules.Set {
 				rules.Each(
 					rules.Field("rates",
 						rules.Assert("05", "only one rate allowed per line", is.Length(0, 1)),
-						rules.Each(
-							vatExtRuleDefs("ext")...,
-						),
 					),
 				),
 			),

@@ -1,10 +1,10 @@
 {
   "id": "GOBL",
-  "name": "gobl",
+  "package": "gobl",
   "subsets": [
     {
       "id": "GOBL-ENVELOPE",
-      "name": "gobl.Envelope",
+      "object": "gobl.Envelope",
       "assert": [
         {
           "id": "GOBL-ENVELOPE-11",

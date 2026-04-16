@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/instructions",
-  "$ref": "#/$defs/Instructions",
+  "$ref": "#/$defs/pay.Instructions",
   "$defs": {
-    "Instructions": {
+    "pay.Instructions": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

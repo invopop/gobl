@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/dsig/signature",
-  "$ref": "#/$defs/Signature",
+  "$ref": "#/$defs/dsig.Signature",
   "$defs": {
-    "Signature": {
+    "dsig.Signature": {
       "type": "string",
       "title": "Signature",
       "description": "JSON Web Signature in compact form."

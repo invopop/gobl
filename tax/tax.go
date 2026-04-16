@@ -8,16 +8,21 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("tax"),
-		Identity{},
-		Set{},
-		Extensions{},
-		Total{},
-		RegimeCode(""),
-		AddonList{},
-		RegimeDef{},
 		AddonDef{},
+		AddonList{},
 		CatalogueDef{},
+		CorrectionDefinition{},
+		CorrectionSet{},
+		Extensions{},
+		Identity{},
 		Note{},
+		RegimeCode(""),
+		RegimeDef{},
+		Set{},
+		Scenario{},
+		ScenarioSet{},
+		TagSet{},
+		Total{},
 	)
 	rules.Register(
 		"tax",

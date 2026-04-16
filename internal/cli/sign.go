@@ -22,7 +22,7 @@ func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 
 	env, ok := obj.(*gobl.Envelope)
@@ -31,12 +31,12 @@ func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 	}
 
 	if err := env.Calculate(); err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 
 	// Sign envelope headers. Validation is done transparently in `Sign`.
 	if err := env.Sign(opts.PrivateKey); err != nil {
-		return nil, wrapError(StatusUnprocessableEntity, err)
+		return nil, gobl.ErrInternal.WithCause(err)
 	}
 
 	return env, nil

@@ -56,9 +56,9 @@ func init() {
 }
 
 func TestFor(t *testing.T) {
-	t.Run("name includes go package name", func(t *testing.T) {
+	t.Run("object includes go package name", func(t *testing.T) {
 		set := emailRules()
-		assert.Equal(t, "rules.Email", set.Name)
+		assert.Equal(t, "rules.Email", set.Object)
 	})
 
 	t.Run("id omits package when For is called from the same package", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestFor(t *testing.T) {
 		var found *rules.Set
 		for _, ns := range rules.Registry() {
 			for _, sub := range ns.Subsets {
-				if sub.Name == "rules.Email" {
+				if sub.Object == "rules.Email" {
 					found = sub
 					break
 				}
@@ -692,8 +692,12 @@ func TestObject(t *testing.T) {
 func TestAllSets(t *testing.T) {
 	sets := rules.AllSets()
 	assert.NotEmpty(t, sets)
-	// Should be same as Registry.
-	assert.Equal(t, rules.Registry(), sets)
+	// Should contain the same sets as Registry (order may vary due to map iteration).
+	reg := rules.Registry()
+	assert.Equal(t, len(reg), len(sets))
+	for _, s := range reg {
+		assert.Contains(t, sets, s)
+	}
 }
 
 func TestSetMarshalJSON(t *testing.T) {
@@ -935,4 +939,96 @@ func TestFieldWithDashJSONTag(t *testing.T) {
 	)
 	faults := set.Validate(&dashTag{Shown: ""})
 	require.Error(t, faults)
+}
+
+func TestNewSet(t *testing.T) {
+	t.Run("codes are namespaced", func(t *testing.T) {
+		// Use top-level helper so runtime.Caller(1) in For detects the
+		// correct package and omits the package prefix from the set ID.
+		set := rules.NewSet("MYAPP", emailRules())
+		faults := set.Validate(&Email{Addr: ""})
+		require.Error(t, faults)
+		assert.Equal(t, rules.Code("MYAPP-EMAIL-01"), faults.First().Code())
+		assert.True(t, faults.HasPath("$.addr"))
+	})
+
+	t.Run("multi-type validation", func(t *testing.T) {
+		set := rules.NewSet("NS", personRules(), emailRules())
+
+		// Validates Person with nested Email via type index traversal.
+		p := &Person{
+			Name:    "Alice",
+			Address: new(Address),
+			Emails: []Email{
+				{Addr: "ok@example.com"},
+				{Addr: ""},
+			},
+		}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("NS-PERSON-01"))
+		assert.True(t, faults.HasCode("NS-EMAIL-01"))
+		assert.True(t, faults.HasPath("$.emails[1].addr"))
+	})
+
+	t.Run("does not pollute global registry", func(t *testing.T) {
+		before := len(rules.AllSets())
+		rules.NewSet("STANDALONE", emailRules())
+		after := len(rules.AllSets())
+		assert.Equal(t, before, after)
+	})
+
+	t.Run("passes when valid", func(t *testing.T) {
+		set := rules.NewSet("OK", emailRules())
+		faults := set.Validate(&Email{Addr: "test@example.com"})
+		assert.NoError(t, faults)
+	})
+
+	t.Run("same For output reused across multiple NewSet calls", func(t *testing.T) {
+		shared := emailRules()
+		a := rules.NewSet("AAA", shared)
+		b := rules.NewSet("BBB", shared)
+
+		fa := a.Validate(&Email{Addr: ""})
+		fb := b.Validate(&Email{Addr: ""})
+		require.Error(t, fa)
+		require.Error(t, fb)
+		assert.Equal(t, rules.Code("AAA-EMAIL-01"), fa.First().Code())
+		assert.Equal(t, rules.Code("BBB-EMAIL-01"), fb.First().Code())
+		// Original set is untouched.
+		assert.Equal(t, rules.Code("EMAIL"), shared.ID)
+	})
+}
+
+func docWithRegimeRules() *rules.Set {
+	return rules.For(new(docWithRegime),
+		rules.When(is.InContext(is.In("ES")),
+			rules.Field("name",
+				rules.Assert("01", "name required", is.Present),
+			),
+		),
+	)
+}
+
+func TestNewSetValidateWithContext(t *testing.T) {
+	set := rules.NewSet("CTX", docWithRegimeRules())
+
+	t.Run("context-aware guard fires with matching context", func(t *testing.T) {
+		doc := &docWithRegime{
+			Regime: testRegime{Code: "ES"},
+			Name:   "",
+		}
+		faults := set.Validate(doc)
+		require.Error(t, faults)
+		assert.True(t, faults.HasCode("CTX-DOCWITHREGIME-01"))
+	})
+
+	t.Run("context-aware guard skips with non-matching context", func(t *testing.T) {
+		doc := &docWithRegime{
+			Regime: testRegime{Code: "FR"},
+			Name:   "",
+		}
+		faults := set.Validate(doc)
+		assert.NoError(t, faults)
+	})
 }

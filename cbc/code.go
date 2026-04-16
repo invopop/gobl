@@ -35,7 +35,7 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodeSeparators           = `\.\-\:/,_\& `
+	CodeSeparators           = `.\-:/,_& ` // only escape dash for JS compatibility
 	CodeDigits               = `A-ZÑa-z0-9`
 	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)

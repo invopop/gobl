@@ -1,10 +1,10 @@
 {
   "id": "GOBL-PT",
-  "name": "pt",
+  "package": "pt",
   "subsets": [
     {
       "id": "GOBL-PT-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [PT]",
@@ -144,7 +144,7 @@
     },
     {
       "id": "GOBL-PT-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "context: regime in [PT]",
@@ -170,7 +170,7 @@
     },
     {
       "id": "GOBL-PT-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [PT]",

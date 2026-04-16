@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cbc/meta",
-  "$ref": "#/$defs/Meta",
+  "$ref": "#/$defs/cbc.Meta",
   "$defs": {
-    "Meta": {
+    "cbc.Meta": {
       "patternProperties": {
         "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
           "type": "string"

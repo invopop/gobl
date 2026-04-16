@@ -1,0 +1,71 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://gobl.org/draft-0/bill/correction-options?tax_regime=es",
+	"$ref": "#/$defs/bill.CorrectionOptions",
+	"$defs": {
+		"bill.CorrectionOptions": {
+			"properties": {
+				"type": {
+					"$ref": "https://gobl.org/draft-0/cbc/key",
+					"oneOf": [
+						{
+							"const": "credit-note",
+							"title": "Credit Note",
+							"description": "Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."
+						},
+						{
+							"const": "corrective",
+							"title": "Corrective",
+							"description": "Corrected invoice that completely *replaces* the preceding document."
+						},
+						{
+							"const": "debit-note",
+							"title": "Debit Note",
+							"description": "An additional set of charges to be added to the preceding document."
+						}
+					],
+					"title": "Type",
+					"description": "The type of corrective invoice to produce.",
+					"default": "credit-note"
+				},
+				"issue_date": {
+					"$ref": "https://gobl.org/draft-0/cal/date",
+					"title": "Issue Date",
+					"description": "When the new corrective invoice's issue date should be set to."
+				},
+				"series": {
+					"$ref": "https://gobl.org/draft-0/cbc/code",
+					"title": "Series",
+					"description": "Series to assign to the new corrective invoice."
+				},
+				"stamps": {
+					"items": {
+						"$ref": "https://gobl.org/draft-0/head/stamp"
+					},
+					"type": "array",
+					"title": "Stamps",
+					"description": "Stamps of the previous document to include in the preceding data."
+				},
+				"reason": {
+					"type": "string",
+					"title": "Reason",
+					"description": "Human readable reason for the corrective operation."
+				},
+				"copy_tax": {
+					"type": "boolean",
+					"title": "Copy Tax Totals",
+					"description": "CopyTax when true will copy the tax totals from the previous document to the\npreceding document data."
+				}
+			},
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
+			"recommended": [
+				"series"
+			]
+		}
+	},
+	"$comment": "Generated dynamically for es"
+}

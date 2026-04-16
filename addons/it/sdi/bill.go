@@ -1,7 +1,6 @@
 package sdi
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
@@ -60,9 +59,6 @@ func billInvoiceRules() *rules.Set {
 			),
 			rules.Field("addresses",
 				rules.Assert("04", "supplier addresses are required", is.Present),
-				rules.Each(
-					billAddressAssertions()...,
-				),
 			),
 			rules.Field("ext",
 				rules.Assert("05",
@@ -108,9 +104,6 @@ func billInvoiceRules() *rules.Set {
 			),
 			rules.Field("addresses",
 				rules.Assert("12", "customer addresses are required", is.Present),
-				rules.Each(
-					billAddressAssertions()...,
-				),
 			),
 		),
 		// Customer name required when tax_id code is present or people is nil
@@ -182,39 +175,6 @@ func billInvoiceRules() *rules.Set {
 			is.Func("payment instructions check", invoicePaymentInstructionsPresent),
 		),
 	)
-}
-
-func billAddressAssertions() []rules.Def {
-	return []rules.Def{
-		rules.Assert("30", "address either street or post office box must be set",
-			is.Func("street or postbox", addressHasStreetOrPostBox),
-		),
-		rules.Field("street",
-			rules.Assert("31", "address street must use Latin-1 characters",
-				is.FuncError("latin1", validateLatin1String),
-			),
-		),
-		rules.Field("po_box",
-			rules.Assert("32", "address post office box must use Latin-1 characters",
-				is.FuncError("latin1", validateLatin1String),
-			),
-		),
-		rules.Field("country",
-			rules.Assert("33", "address country is required", is.Present),
-		),
-		rules.Field("locality",
-			rules.Assert("34", "address locality is required", is.Present),
-			rules.Assert("35", "address locality must use Latin-1 characters",
-				is.FuncError("latin1", validateLatin1String),
-			),
-		),
-		rules.When(is.Func("Italian address", addressIsItalian),
-			rules.Field("code",
-				rules.Assert("36", "Italian address code is required", is.Present),
-				rules.Assert("37", "Italian address code must be 5 digits", is.Matches(`^\d{5}$`)),
-			),
-		),
-	}
 }
 
 func billChargeRules() *rules.Set {
@@ -333,22 +293,6 @@ func chargeIsFundContribution(val any) bool {
 	return c.Key.Has(KeyFundContribution)
 }
 
-func addressIsItalian(val any) bool {
-	a, ok := val.(*org.Address)
-	if !ok || a == nil {
-		return false
-	}
-	return a.Country.In("IT")
-}
-
-func addressHasStreetOrPostBox(val any) bool {
-	a, ok := val.(*org.Address)
-	if !ok || a == nil {
-		return true
-	}
-	return a.Street != "" || a.PostOfficeBox != ""
-}
-
 func hasTaxIDCode(party *org.Party) bool {
 	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
@@ -366,19 +310,4 @@ func isItalianParty(party *org.Party) bool {
 		return false
 	}
 	return party.TaxID.Country.In("IT")
-}
-
-// validateLatin1String ensures that the item name only contains characters
-// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateLatin1String(val any) error {
-	name, _ := val.(string)
-
-	for _, r := range name {
-		// Check if the character is outside Latin and Latin-1 range
-		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
-		if r > 255 {
-			return errors.New("contains characters outside of Latin and Latin-1 range")
-		}
-	}
-	return nil
 }

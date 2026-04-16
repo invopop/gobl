@@ -163,7 +163,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	js.ID = jsonschema.ID(id)
 	js.Comments = fmt.Sprintf("Generated dynamically for %s", code)
 
-	cos := js.Definitions["CorrectionOptions"]
+	cos := js.Definitions["bill.CorrectionOptions"]
 
 	// Always recommend the series
 	recommended := []string{"series"}

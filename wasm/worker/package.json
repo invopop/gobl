@@ -5,7 +5,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/invopop/gobl.git"
+    "url": "git+https://github.com/invopop/gobl.git"
   },
   "homepage": "https://gobl.org",
   "author": {
@@ -18,9 +18,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/gobl-worker.js",
-      "require": "./dist/gobl-worker.umd.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/gobl-worker.umd.cjs"
     }
   },
   "scripts": {

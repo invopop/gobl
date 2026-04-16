@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/i18n/string",
-  "$ref": "#/$defs/String",
+  "$ref": "#/$defs/i18n.String",
   "$defs": {
-    "String": {
+    "i18n.String": {
       "patternProperties": {
         "^[a-z]{2}$": {
           "type": "string",

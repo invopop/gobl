@@ -75,7 +75,7 @@ func objectRules() *rules.Set {
 // and return them as a list of faults. This will only check the
 // payload of the object, which would not otherwise be verified.
 func (d *Object) Validate() rules.Faults {
-	return rules.Validate(d)
+	return rules.Validate(d.Instance())
 }
 
 // IsEmpty returns true if no payload has been set yet.
@@ -84,7 +84,7 @@ func (d *Object) IsEmpty() bool {
 }
 
 // Instance returns a prepared version of the document's content.
-func (d *Object) Instance() interface{} {
+func (d *Object) Instance() any {
 	return d.payload
 }
 

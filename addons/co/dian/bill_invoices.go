@@ -156,7 +156,7 @@ func billInvoiceRules() *rules.Set {
 						),
 					),
 					rules.Field("reason",
-						rules.Assert("12", "preceding reason is required", is.Present),
+						rules.Assert("13", "preceding reason is required", is.Present),
 					),
 				),
 			),

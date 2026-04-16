@@ -18,7 +18,7 @@ worker.onmessage = (event) => {
   delete inFlight[event.data.req_id];
   if (!waiting) {
     console.log(
-      "got a response for an unregistered request: " + event.data.req_id
+      "got a response for an unregistered request: " + event.data.req_id,
     );
     return true;
   }

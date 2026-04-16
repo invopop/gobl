@@ -29,6 +29,7 @@ func init() {
 		billDeliveryRules(),
 		billOrderRules(),
 		taxComboRules(),
+		rateTotalRules(),
 		orgItemRules(),
 		orgNoteRules(),
 		billLineRules(),

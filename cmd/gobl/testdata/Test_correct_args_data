@@ -1,0 +1,11 @@
+(*main.correctOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  options: (bool) false,
+  data: (string) (len=17) "{\"type\":\"credit\"}",
+  credit: (bool) false,
+  debit: (bool) false
+})

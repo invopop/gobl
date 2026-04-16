@@ -21,23 +21,26 @@ builds:
       - "wasm"
 archives:
   - id: cli
-    builds:
+    ids:
       - gobl.cli
-    format: tar.gz
+    formats:
+      - tar.gz
     name_template: "gobl.{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     wrap_in_directory: true
   - id: wasm
-    builds:
+    ids:
       - gobl.wasm
-    format: binary
+    formats:
+      - binary
     name_template: "gobl.{{ .Version }}"
     files:
       - none*
     wrap_in_directory: false
   - id: wasm-gz
-    builds:
+    ids:
       - gobl.wasm
-    format: gz
+    formats:
+      - gz
     name_template: "gobl.{{ .Version }}.wasm"
     files:
       - none*
@@ -66,7 +69,7 @@ checksum:
   name_template: "checksums.txt"
 
 snapshot:
-  name_template: "{{ .Tag }}"
+  version_template: "{{ .Tag }}"
 
 changelog:
   sort: asc

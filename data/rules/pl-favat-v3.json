@@ -1,11 +1,11 @@
 {
   "id": "GOBL-PL-FAVAT-V3",
-  "name": "pl-favat-v3",
+  "package": "pl-favat-v3",
   "guard": "context: addon in [pl-favat-v3]",
   "subsets": [
     {
       "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-11",
@@ -142,7 +142,7 @@
     },
     {
       "id": "GOBL-PL-FAVAT-V3-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "field": "ext",
@@ -158,7 +158,7 @@
     },
     {
       "id": "GOBL-PL-FAVAT-V3-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "date",

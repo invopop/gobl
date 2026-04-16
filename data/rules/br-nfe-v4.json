@@ -1,11 +1,11 @@
 {
   "id": "GOBL-BR-NFE-V4",
-  "name": "br-nfe-v4",
+  "package": "br-nfe-v4",
   "guard": "context: addon in [br-nfe-v4]",
   "subsets": [
     {
       "id": "GOBL-BR-NFE-V4-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-BR-NFE-V4-BILL-INVOICE-30",
@@ -409,7 +409,7 @@
     },
     {
       "id": "GOBL-BR-NFE-V4-BILL-LINE",
-      "name": "bill.Line",
+      "object": "bill.Line",
       "assert": [
         {
           "id": "GOBL-BR-NFE-V4-BILL-LINE-01",
@@ -430,7 +430,7 @@
     },
     {
       "id": "GOBL-BR-NFE-V4-PAY-INSTRUCTIONS",
-      "name": "pay.Instructions",
+      "object": "pay.Instructions",
       "subsets": [
         {
           "field": "ext",
@@ -446,7 +446,7 @@
     },
     {
       "id": "GOBL-BR-NFE-V4-PAY-ADVANCE",
-      "name": "pay.Advance",
+      "object": "pay.Advance",
       "subsets": [
         {
           "field": "ext",

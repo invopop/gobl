@@ -91,7 +91,7 @@ func Test_validate(t *testing.T) {
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			err:  "input: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "no document",
@@ -107,7 +107,7 @@ func Test_validate(t *testing.T) {
 					}
 				},
 			}`),
-			err: "code=422, message=[GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
+			err: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "invalid doc",
@@ -122,7 +122,7 @@ func Test_validate(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err: "input: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",
@@ -137,7 +137,7 @@ func Test_validate(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "code=422, message=[GOBL-SCHEMA-OBJECT-01] ($.doc.$schema) schema is required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+			err: "validation: [GOBL-SCHEMA-OBJECT-01] ($.doc.$schema) schema is required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 		{
 			name: "input file",
@@ -146,7 +146,7 @@ func Test_validate(t *testing.T) {
 		{
 			name: "without totals",
 			args: []string{"testdata/nototals.json"},
-			err:  "code=422, message=[GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+			err:  "validation: [GOBL-BILL-INVOICE-09] ($.doc.totals) invoice totals are required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 		{
 			name:   "output file",

@@ -1,11 +1,11 @@
 {
   "id": "GOBL-ES-VERIFACTU-V1",
-  "name": "es-verifactu-v1",
+  "package": "es-verifactu-v1",
   "guard": "context: addon in [es-verifactu-v1]",
   "subsets": [
     {
       "id": "GOBL-ES-VERIFACTU-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "invoice type in [corrective]",
@@ -264,7 +264,7 @@
     },
     {
       "id": "GOBL-ES-VERIFACTU-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "verifactu vat/igic",

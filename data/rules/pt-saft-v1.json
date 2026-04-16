@@ -1,11 +1,11 @@
 {
   "id": "GOBL-PT-SAFT-V1",
-  "name": "pt-saft-v1",
+  "package": "pt-saft-v1",
   "guard": "context: addon in [pt-saft-v1]",
   "subsets": [
     {
       "id": "GOBL-PT-SAFT-V1-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-01",
@@ -153,7 +153,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT",
-      "name": "bill.Payment",
+      "object": "bill.Payment",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-01",
@@ -248,7 +248,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY",
-      "name": "bill.Delivery",
+      "object": "bill.Delivery",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-01",
@@ -308,7 +308,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-BILL-ORDER",
-      "name": "bill.Order",
+      "object": "bill.Order",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-ORDER-01",
@@ -361,7 +361,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-TAX-COMBO",
-      "name": "tax.Combo",
+      "object": "tax.Combo",
       "subsets": [
         {
           "guard": "is VAT",
@@ -386,8 +386,29 @@
       ]
     },
     {
+      "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL",
+      "object": "tax.RateTotal",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-01",
+              "desc": "region and tax rate are required",
+              "tests": "ext require [pt-region, pt-saft-tax-rate]"
+            },
+            {
+              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-02",
+              "desc": "exemption is required when tax rate is exempt",
+              "tests": "exempt requires exemption"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-PT-SAFT-V1-ORG-ITEM",
-      "name": "org.Item",
+      "object": "org.Item",
       "subsets": [
         {
           "field": "unit",
@@ -413,7 +434,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-ORG-NOTE",
-      "name": "org.Note",
+      "object": "org.Note",
       "subsets": [
         {
           "guard": "legal exemption note",
@@ -434,7 +455,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-BILL-LINE",
-      "name": "bill.Line",
+      "object": "bill.Line",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-LINE-05",
@@ -497,7 +518,7 @@
     },
     {
       "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE",
-      "name": "bill.PaymentLine",
+      "object": "bill.PaymentLine",
       "assert": [
         {
           "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-06",
@@ -556,28 +577,6 @@
                           "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-05",
                           "desc": "only one rate allowed per line",
                           "tests": "length between 0 and 1"
-                        }
-                      ],
-                      "subsets": [
-                        {
-                          "each": true,
-                          "subsets": [
-                            {
-                              "field": "ext",
-                              "assert": [
-                                {
-                                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-01",
-                                  "desc": "region and tax rate are required",
-                                  "tests": "ext require [pt-region, pt-saft-tax-rate]"
-                                },
-                                {
-                                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-02",
-                                  "desc": "exemption is required when tax rate is exempt",
-                                  "tests": "exempt requires exemption"
-                                }
-                              ]
-                            }
-                          ]
                         }
                       ]
                     }

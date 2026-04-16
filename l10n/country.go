@@ -2,6 +2,7 @@ package l10n
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/invopop/jsonschema"
 )
@@ -34,10 +35,11 @@ func validTaxCountryCodes() []TaxCountryCode {
 // Validate ensures the ISO country code is inside the known and valid
 // list of countries.
 func (c ISOCountryCode) Validate() error {
-	for _, v := range validISOCountryCodes() {
-		if c == v {
-			return nil
-		}
+	if c.Empty() {
+		return nil
+	}
+	if slices.Contains(validISOCountryCodes(), c) {
+		return nil
 	}
 	return fmt.Errorf("must be a valid ISO country code")
 }
@@ -45,10 +47,11 @@ func (c ISOCountryCode) Validate() error {
 // Validate ensures the tax country code is inside the known and valid
 // list of country codes for taxes.
 func (c TaxCountryCode) Validate() error {
-	for _, v := range validTaxCountryCodes() {
-		if c == v {
-			return nil
-		}
+	if c.Empty() {
+		return nil
+	}
+	if slices.Contains(validTaxCountryCodes(), c) {
+		return nil
 	}
 	return fmt.Errorf("must be a valid tax country code")
 }
