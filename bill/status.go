@@ -383,8 +383,12 @@ type Status struct {
 	// Type of status being reported (e.g. "system" for internal events).
 	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 
-	// IssueAt is the date and time when the status event occurred in UTC.
-	IssueAt cal.Timestamp `json:"issue_at,omitzero" jsonschema:"title=Issue At"`
+	// IssueDate is the date when the status is to be considered effective.
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+
+	// IssueTime is used when extra precision is required to determine when exactly
+	// the status was issued.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time"`
 
 	// Series is an optional code to group related status events together.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
@@ -517,7 +521,7 @@ type Condition struct {
 // CanSign returns a boolean indicating whether the status is ready to be signed
 // or not.
 func (st *Status) CanSign() bool {
-	return st != nil && !st.Code.IsEmpty() && !st.IssueAt.IsZero()
+	return st != nil && !st.Code.IsEmpty() && !st.IssueDate.IsZero()
 }
 
 // Calculate performs all the normalizations and calculations required for
@@ -561,10 +565,9 @@ func (st *Status) normalizers() tax.Normalizers {
 }
 
 func (st *Status) calculate() error {
-	// Auto-fill the issue timestamp when not provided. Status timestamps
-	// are always stored in UTC, independent of the regime's time zone.
-	if st.IssueAt.IsZero() {
-		st.IssueAt = cal.TimestampNow()
+	// Autofill the issue date when not provided. The issue time is optional.
+	if st.IssueDate.IsZero() {
+		st.IssueDate = cal.Today()
 	}
 
 	// Index lines

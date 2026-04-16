@@ -3,7 +3,6 @@ package bill_test
 import (
 	"encoding/json"
 	"testing"
-	"time"
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
@@ -21,10 +20,10 @@ import (
 func testStatusMinimal(t *testing.T) *bill.Status {
 	t.Helper()
 	return &bill.Status{
-		Type:    bill.StatusTypeResponse,
-		IssueAt: cal.TimestampOf(time.Date(2025, 3, 15, 10, 0, 0, 0, time.UTC)),
-		Series:  "S-1",
-		Code:    "001",
+		Type:      bill.StatusTypeResponse,
+		IssueDate: cal.MakeDate(2025, 3, 15),
+		Series:    "S-1",
+		Code:      "001",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
@@ -149,23 +148,20 @@ func TestStatusCalculate(t *testing.T) {
 		})
 	})
 
-	t.Run("without issue at", func(t *testing.T) {
+	t.Run("without issue date", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		st.IssueAt = cal.Timestamp{}
+		st.IssueDate = cal.Date{}
 		require.NoError(t, st.Calculate())
-		assert.False(t, st.IssueAt.IsZero(), "issue_at should be auto-filled")
-		// Auto-filled values are always UTC and close to now.
-		z, _ := st.IssueAt.Zone()
-		assert.Equal(t, "UTC", z)
-		assert.WithinDuration(t, time.Now(), st.IssueAt.Time, time.Minute)
+		assert.False(t, st.IssueDate.IsZero(), "issue_date should be auto-filled")
+		assert.Equal(t, cal.Today(), st.IssueDate)
 	})
 
-	t.Run("with preset issue at", func(t *testing.T) {
+	t.Run("with preset issue date", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		preset := cal.TimestampOf(time.Date(2025, 3, 15, 10, 30, 0, 0, time.UTC))
-		st.IssueAt = preset
+		preset := cal.MakeDate(2025, 3, 15)
+		st.IssueDate = preset
 		require.NoError(t, st.Calculate())
-		assert.Equal(t, preset, st.IssueAt)
+		assert.Equal(t, preset, st.IssueDate)
 	})
 
 	t.Run("line indexing", func(t *testing.T) {
@@ -248,7 +244,7 @@ func TestStatusCanSign(t *testing.T) {
 	t.Run("cannot sign with zero issue date", func(t *testing.T) {
 		st := testStatusMinimal(t)
 		require.NoError(t, st.Calculate())
-		st.IssueAt = cal.Timestamp{}
+		st.IssueDate = cal.Date{}
 		assert.False(t, st.CanSign())
 	})
 
@@ -287,12 +283,12 @@ func TestStatusValidate(t *testing.T) {
 		assert.ErrorContains(t, err, "status type is not valid")
 	})
 
-	t.Run("issue at auto-filled", func(t *testing.T) {
+	t.Run("issue date auto-filled", func(t *testing.T) {
 		st := testStatusMinimal(t)
-		st.IssueAt = cal.Timestamp{}
+		st.IssueDate = cal.Date{}
 		require.NoError(t, st.Calculate())
 		require.NoError(t, rules.Validate(st))
-		assert.False(t, st.IssueAt.IsZero())
+		assert.False(t, st.IssueDate.IsZero())
 	})
 
 	t.Run("missing supplier", func(t *testing.T) {
