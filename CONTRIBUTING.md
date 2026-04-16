@@ -35,10 +35,13 @@ Regimes and addons self-register via `init()` functions:
 - **Addons** call `tax.RegisterAddonDef(newAddon())` in their `init()`.
 - Aggregation is via blank imports in [`regimes/regimes.go`](regimes/regimes.go) and [`addons/addons.go`](addons/addons.go).
 
-### Normalizer / Validator Dispatch
+### Normalization and Validation
 
-Both regimes and addons use a `switch obj := doc.(type)` pattern to dispatch normalization and validation to the
-appropriate handler based on the document type. See the `Normalize` and `Validate` functions in any existing regime for an example.
+Normalization uses a `switch obj := doc.(type)` pattern to dispatch to type-specific handlers.
+See the `Normalize` function in any existing regime for an example.
+
+Validation uses the `rules` package. Regimes define rule sets with `rules.Register(...)` in
+their `init()` function. See existing regime rule definitions for examples.
 
 ### Scenarios
 
@@ -158,24 +161,24 @@ URLs as you go (you'll need them later).
 Create a new directory under `regimes/` named with the 2-letter country code. The best way to learn how a regime is
 structured is to read an existing one. Use a recent and/or similar regime to build upon.
 
-A minimal regime needs four files:
+A minimal regime needs three files:
 
 - `<cc>.go`: declares the regime and defines its metadata.
 - `tax_categories.go`: declares tax categories with rates and, optionally, historical values.
 - `tax_identity.go`: implements tax ID normalization, validation, classification, etc.
-- `invoices.go`: implements invoice-level validation (e.g. supplier must have a tax ID).
 
 Depending on the requirements you may also need:
 
+- `bill_invoices.go`: implements invoice-level validation rules when the regime requires it (e.g. supplier must have a tax ID). Not all regimes need this.
+- `org_identities.go`: for non-tax identifiers that can appear on invoices as alternatives to the tax ID.
 - `scenarios.go`: most regimes only need the shared baseline scenarios (`bill.InvoiceScenarios()`). Add a country-specific file when the regime requires its own mappings.
 - `corrections.go`: only needed when the country's regulation explicitly constrains which correction types are valid. Omitting the `Corrections` field entirely means any correction type is accepted.
-- `identities.go`: for non-tax identifiers that can appear on invoices as alternatives to the tax ID.
 
 After you've implemented the regime:
 
 - Include test files for any regime-specific logic. Purely declarative files don't need any: they are covered by GOBL core tests.
 - Add a blank import in [`regimes/regimes.go`](regimes/regimes.go) to register the new regime.
-- Add at least one GOBL example document in `examples/<cc>/` and run `go test ./... -update` to regenerate the output files.
+- Add at least one GOBL example document in `examples/<cc>/` and run `go test --update ./...` to regenerate the output files.
 - Run `mage check` to lint, regenerate schemas, run tests, and verify a clean git state.
 
 ## Adding a new addon
