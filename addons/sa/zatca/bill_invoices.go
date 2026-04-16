@@ -180,6 +180,9 @@ func getInvTypeCode(val any) string {
 	if !ok || inv == nil {
 		return ""
 	}
+	if inv.Tax == nil {
+		return ""
+	}
 	code := inv.Tax.GetExt(ExtKeyInvoiceTypeTransactions).String()
 	if len(code) != InvTypeCodeLen {
 		return ""

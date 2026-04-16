@@ -29,7 +29,7 @@ var (
 	tinRegexp   = regexp.MustCompile(`^\d{15}$`)
 	otherRegexp = regexp.MustCompile(`^\d{10}$`)
 
-	// CustomerValidIdentities groups customer accepted identites by ZATCA
+	// CustomerValidIdentities groups customer accepted identities by ZATCA
 	CustomerValidIdentities = []cbc.Code{
 		IdentityTypeTIN,
 		IdentityTypeCRN,

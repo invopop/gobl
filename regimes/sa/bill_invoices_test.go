@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/sa"
-	_ "github.com/invopop/gobl/regimes/sa"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -148,7 +147,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier must have a valid tax ID code")
+		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
 	})
 
 	t.Run("supplier with two identities fails", func(t *testing.T) {
@@ -159,7 +158,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier must have a valid tax ID code")
+		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
 	})
 
 	t.Run("supplier with NAT identity type fails (not in supplier list)", func(t *testing.T) {
@@ -169,7 +168,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier must have a valid tax ID code")
+		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
 	})
 
 	t.Run("supplier with TIN identity type fails (not in supplier list)", func(t *testing.T) {
@@ -179,6 +178,6 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier must have a valid tax ID code")
+		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
 	})
 }

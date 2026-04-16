@@ -14,32 +14,25 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(l10n.SA.Tax())),
 			rules.Field("supplier",
-				rules.Assert("01", "supplier must have a valid tax ID code. An additional identity is optional but must be at most 1",
-					is.Func("has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-39), (BR-KSA-08)", hasValidTaxIDAndIdentities),
+				rules.Assert("01", "supplier must have a valid tax ID code (BR-KSA-39)",
+					is.Func("valid VAT code", hasTaxIDCode),
+				),
+				rules.Field("identities",
+					rules.Assert("02", "supplier can have 0 or 1 identities (BR-KSA-08)",
+						is.Func("identity must be one of: CRN/MOM/MLS/700/SAG/OTH", hasAtMostOneIdentity),
+					),
 				),
 			),
 		),
 	)
 }
 
-func hasValidTaxIDAndIdentities(value any) bool {
+func hasTaxIDCode(value any) bool {
 	party, _ := value.(*org.Party)
-	if party == nil {
-		return false
-	}
-	return hasTaxIDCode(party) && hasAtMostOneIdentity(party)
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
-func hasTaxIDCode(party *org.Party) bool {
-	return party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasAtMostOneIdentity(party *org.Party) bool {
-	if len(party.Identities) == 0 {
-		return true
-	}
-	if len(party.Identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(party.Identities) {
-		return true
-	}
-	return false
+func hasAtMostOneIdentity(value any) bool {
+	identities, _ := value.([]*org.Identity)
+	return len(identities) == 0 || (len(identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(identities))
 }

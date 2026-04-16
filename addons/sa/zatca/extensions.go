@@ -80,11 +80,13 @@ var invTypesSummary = []cbc.Code{
 	"0211010",
 }
 
+// Every code in invTypeSummary already exists in InvTypeStandard
+//
+//	or InvTypesSimplified
 var validTransactionTypes = func() []cbc.Code {
-	codes := make([]cbc.Code, 0, len(InvTypesStandard)+len(InvTypesSimplified)+len(invTypesSummary))
+	codes := make([]cbc.Code, 0, len(InvTypesStandard)+len(InvTypesSimplified))
 	codes = append(codes, InvTypesStandard...)
 	codes = append(codes, InvTypesSimplified...)
-	codes = append(codes, invTypesSummary...)
 	return codes
 }()
 
