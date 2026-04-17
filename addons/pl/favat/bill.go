@@ -75,8 +75,14 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("09", "customer is required", is.Present),
 			),
 		),
-		rules.Assert("10", "customer Polish tax ID code is required",
-			is.Func("Polish customer tax ID code", invoiceCustomerPLTaxIDCodePresent),
+		rules.Field("customer",
+			rules.Field("tax_id",
+				rules.When(tax.IdentityIn(l10n.PL.Tax()),
+					rules.Field("code",
+						rules.Assert("10", "customer Polish tax ID code is required", is.Present),
+					),
+				),
+			),
 		),
 		// Customer JST identity check (invoice-level, needs both customer.ext and customer.identities)
 		rules.Assert("11",
@@ -120,19 +126,6 @@ func invoiceNotSimplified(val any) bool {
 		return false
 	}
 	return !inv.HasTags(tax.TagSimplified)
-}
-
-// invoiceCustomerPLTaxIDCodePresent returns false when the customer has a
-// Polish tax ID but no code — the NIP is mandatory for Polish entities.
-func invoiceCustomerPLTaxIDCodePresent(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Customer == nil || inv.Customer.TaxID == nil {
-		return true
-	}
-	if inv.Customer.TaxID.Country == l10n.PL.Tax() {
-		return len(inv.Customer.TaxID.Code) > 0
-	}
-	return true
 }
 
 func invoiceCustomerJSTIdentityValid(val any) bool {

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
+
 ## [v0.400.0] - 2026-14-15
 
 Final release of the rules based changes.
