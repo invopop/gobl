@@ -291,7 +291,7 @@
           },
           "type": "array",
           "title": "Lines",
-          "description": "Lines contain the main payload of the message used to describe individual\ndocuments which have a status. A message may not have any lines.\n(Optional)."
+          "description": "Lines contain the main payload of the message used to describe individual\ndocuments which have a status."
         },
         "notes": {
           "items": {
@@ -312,7 +312,8 @@
         "type",
         "issue_date",
         "code",
-        "supplier"
+        "supplier",
+        "lines"
       ],
       "description": "Status represents a system or business event that needs to be recorded for compliance purposes.",
       "recommended": [

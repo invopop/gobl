@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 type verifyOpts struct {
@@ -56,5 +56,5 @@ func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return cli.Verify(ctx, input, key)
+	return ops.Verify(ctx, input, key)
 }

@@ -10,11 +10,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
 - `schema`: `Object` model will now handle anonymous or undefined schemas and simply pass through the data. This is useful for complementary schema implementations that are very domain specific and cannot easily be included inside GOBL.
+- `pkg/api`: HTTP API handler promoted from `internal/api` to a public package so external projects can embed and compose it. `NewHandler` now accepts functional options (`WithMCP`, `WithFavicon`, `WithRoutes`) and exports helpers (`WithETag`, `WriteJSON`, `WriteError`, `WriteRawJSON`, `VersionPrefix`) for custom route handlers.
+- `internal/ops`: Renamed from `internal/cli` to better reflect its role as the operational layer shared by the API, CLI, MCP server, and WASM. `internal/iotools` merged in as an unexported helper.
 
 ### Added
 
 - `bill`: Status model added for dealing with special billing events.
 - `cal`: `Timestamp` model for dealing with precise times.
+- `.github/workflows/release.yaml`: `repository_dispatch` step notifying [gobl.dev](https://github.com/invopop/gobl.dev) when a new GOBL version is tagged.
+
+### Removed
+
+- `internal/api`: Built-in web editor UI and its assets; the editor now lives in the [gobl.dev](https://github.com/invopop/gobl.dev) repository, which consumes `pkg/api` directly.
+- `fly.toml`, `.github/workflows/deploy-api.yaml`: API deployment is now handled by the gobl.dev repository. The `Dockerfile` is retained for general-purpose GOBL CLI container builds.
 
 ## [v0.400.0] - 2026-14-15
 

@@ -24,7 +24,7 @@ linters:
     rules:
       - linters: [revive]
         text: "var-naming: avoid meaningless package names"
-        path: internal/api/
+        path: pkg/api/
     paths:
       - third_party$
       - builtin$
