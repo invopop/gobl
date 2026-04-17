@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.401.0] - 2026-04-17
+
 ### Changed
 
 - `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
@@ -24,7 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `internal/api`: Built-in web editor UI and its assets; the editor now lives in the [gobl.dev](https://github.com/invopop/gobl.dev) repository, which consumes `pkg/api` directly.
 - `fly.toml`, `.github/workflows/deploy-api.yaml`: API deployment is now handled by the gobl.dev repository. The `Dockerfile` is retained for general-purpose GOBL CLI container builds.
 
-## [v0.400.0] - 2026-14-15
+## [v0.400.0] - 2026-04-15
 
 Final release of the rules based changes.
 
