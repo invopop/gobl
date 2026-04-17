@@ -8,8 +8,7 @@ import (
 type Version string
 
 // VERSION is the current version of the GOBL library
-// 2026-04-15
-const VERSION Version = "v0.400.1"
+const VERSION Version = "v0.401.0"
 
 // Semver parses and returns semver
 func (v Version) Semver() *semver.Version {

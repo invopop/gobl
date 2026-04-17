@@ -68,14 +68,6 @@ jobs:
                   # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
                   # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
 
-            - name: Notify gobl.dev of new release
-              uses: peter-evans/repository-dispatch@v3
-              with:
-                  token: ${{ secrets.GOBL_DEV_DISPATCH_TOKEN }}
-                  repository: invopop/gobl.dev
-                  event-type: gobl-release
-                  client-payload: '{"version": "${{ env.GOBL_VERSION }}"}'
-
             # The gobl-worker NPM package is published by the Publish NPM
             # workflow (publish-npm.yaml), which runs on successful
             # completion of this workflow and can be re-run manually to
