@@ -150,6 +150,21 @@
               ]
             }
           ]
+        },
+        {
+          "field": "notes",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-15",
+                  "desc": "note key or code must be set",
+                  "tests": "note has key or code"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

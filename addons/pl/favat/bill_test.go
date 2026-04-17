@@ -744,6 +744,14 @@ func TestInvoiceWithNotes(t *testing.T) {
 		assert.ErrorContains(t, err, "note key or code must be set")
 	})
 
+	t.Run("nil note element is invalid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Notes = []*org.Note{nil}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "note key or code must be set")
+	})
+
 	t.Run("invoice with legal note but different src", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Notes = []*org.Note{

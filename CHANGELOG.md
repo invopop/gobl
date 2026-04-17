@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `pl-favat-v3`: Require key or code in notes. 
 - `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
 - `schema`: `Object` model will now handle anonymous or undefined schemas and simply pass through the data. This is useful for complementary schema implementations that are very domain specific and cannot easily be included inside GOBL.
 - `pkg/api`: HTTP API handler promoted from `internal/api` to a public package so external projects can embed and compose it. `NewHandler` now accepts functional options (`WithMCP`, `WithFavicon`, `WithRoutes`) and exports helpers (`WithETag`, `WriteJSON`, `WriteError`, `WriteRawJSON`, `VersionPrefix`) for custom route handlers.

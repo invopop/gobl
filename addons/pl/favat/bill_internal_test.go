@@ -7,5 +7,5 @@ import (
 )
 
 func TestNoteHasKeyOrCodeGuard(t *testing.T) {
-	assert.True(t, noteHasKeyOrCode("not a note"))
+	assert.False(t, noteHasKeyOrCode("not a note"))
 }

@@ -32,6 +32,9 @@ func normalizeInvoice(inv *bill.Invoice) {
 }
 
 func isExemptionNote(n *org.Note) bool {
+	if n == nil {
+		return false
+	}
 	return n.Key == org.NoteKeyLegal && n.Src == ExtKeyExemption
 }
 
@@ -170,7 +173,7 @@ func hasIdentityWithRole(identities []*org.Identity, roleCode cbc.Code) bool {
 func noteHasKeyOrCode(val any) bool {
 	n, ok := val.(*org.Note)
 	if !ok || n == nil {
-		return true
+		return false
 	}
 	return n.Key != "" || n.Code != ""
 }
