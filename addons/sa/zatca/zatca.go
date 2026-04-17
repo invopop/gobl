@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -27,6 +28,7 @@ func init() {
 		orgAddressRules(),
 		taxComboRules(),
 		billDiscountRules(),
+		payInstructionsRules(),
 	)
 }
 
@@ -68,5 +70,7 @@ func normalize(doc any) {
 		normalizeInvoice(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
+	case *pay.Instructions:
+		normalizePayInstructions(obj)
 	}
 }

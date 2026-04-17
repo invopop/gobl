@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f87ac1f204c5598afb51b127b81408a33194f0cc6fec92104d6bd368eaa9e838"
+			"val": "b502e155a39ca9788194c1a9945c183582dae5e3e47c2b95572f82e4f2cd52af"
 		}
 	},
 	"doc": {
@@ -87,7 +87,10 @@
 				"notes": "Payment due within 30 days"
 			},
 			"instructions": {
-				"key": "credit-transfer"
+				"key": "credit-transfer",
+				"ext": {
+					"untdid-payment-means": "30"
+				}
 			}
 		},
 		"delivery": {
