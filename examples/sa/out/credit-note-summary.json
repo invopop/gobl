@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0e7cead253f762ead1835c04535c60a7c03de6a5b76ffd70bb29c324576e3fb2"
+			"val": "6d5e59cd3b97f4a163af8a8f9a27cd07165dfcd4dbe4848d6a001050e6c2e825"
 		}
 	},
 	"doc": {
@@ -218,7 +218,10 @@
 						"bic": "RJHISARIXXX",
 						"name": "Sample Consumer LLC — Refund Account"
 					}
-				]
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
 			}
 		},
 		"delivery": {
