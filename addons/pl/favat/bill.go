@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -72,8 +73,14 @@ func billInvoiceRules() *rules.Set {
 		rules.When(is.Func("not simplified", invoiceNotSimplified),
 			rules.Field("customer",
 				rules.Assert("09", "customer is required", is.Present),
-				rules.Field("tax_id",
-					rules.Assert("10", "customer tax ID is required", is.Present),
+			),
+		),
+		rules.Field("customer",
+			rules.Field("tax_id",
+				rules.When(tax.IdentityIn(l10n.PL.Tax()),
+					rules.Field("code",
+						rules.Assert("10", "customer Polish tax ID code is required", is.Present),
+					),
 				),
 			),
 		),

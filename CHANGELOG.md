@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
 - `schema`: `Object` model will now handle anonymous or undefined schemas and simply pass through the data. This is useful for complementary schema implementations that are very domain specific and cannot easily be included inside GOBL.
 
 ### Added

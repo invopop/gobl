@@ -122,15 +122,28 @@
                   "desc": "customer is required",
                   "tests": "present"
                 }
-              ],
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "tax_id",
               "subsets": [
                 {
-                  "field": "tax_id",
-                  "assert": [
+                  "guard": "code in [PL]",
+                  "subsets": [
                     {
-                      "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-10",
-                      "desc": "customer tax ID is required",
-                      "tests": "present"
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-PL-FAVAT-V3-BILL-INVOICE-10",
+                          "desc": "customer Polish tax ID code is required",
+                          "tests": "present"
+                        }
+                      ]
                     }
                   ]
                 }
