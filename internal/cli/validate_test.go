@@ -39,7 +39,7 @@ func TestValidate(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
-		err: `input: unknown-schema`,
+		err: `validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema`,
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{

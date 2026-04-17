@@ -1,0 +1,41 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+uuid: "0194c26e-e6c3-7b44-ad20-a2b3c4d5e6f7"
+type: "system"
+series: "SS"
+code: "0001"
+issue_date: "2025-04-15"
+issue_time: "09:15:00"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+lines:
+  - key: "error"
+    doc:
+      series: "SAMPLE"
+      code: "003"
+      issue_date: "2025-04-14"
+    description: "Document failed schema validation during submission"
+    reasons:
+      - key: "legal"
+        description: "Tax identification number format is invalid"
+        conditions:
+          - code: "ERR-VAL-010"
+            paths:
+              - "supplier.tax_id.code"
+            message: "Tax ID does not match expected format for country ES"
+    actions:
+      - key: "reissue"
+        description: "Correct the supplier tax ID and resubmit"

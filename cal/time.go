@@ -44,6 +44,13 @@ func TimeNowIn(loc *time.Location) Time {
 	return Time{ct}
 }
 
+// IsZero returns true if the time is the zero value (00:00:00).
+// This is used by the `omitzero` JSON tag to determine if the
+// time should be omitted from JSON output.
+func (t Time) IsZero() bool {
+	return t.Time.IsZero()
+}
+
 // UnmarshalJSON is used to parse a time from json and ensures that
 // we can handle invalid data reasonably.
 func (t *Time) UnmarshalJSON(data []byte) error {

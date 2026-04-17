@@ -265,6 +265,21 @@ func TestEnvelopeValidate(t *testing.T) {
 			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents",
 		},
 		{
+			name: "passthrough doc",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				raw := []byte(`{"$schema":"https://example.com/unknown","foo":"bar"}`)
+				doc := new(schema.Object)
+				require.NoError(t, doc.UnmarshalJSON(raw))
+				env.Document = doc
+				dig, err := env.Digest()
+				require.NoError(t, err)
+				env.Head.Digest = dig
+				return env
+			},
+			want: "validation: [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema",
+		},
+		{
 			name: "with more complex document and rules",
 			env: func() *gobl.Envelope {
 				data, err := os.ReadFile("./examples/fr/invoice-fr-fr.yaml")

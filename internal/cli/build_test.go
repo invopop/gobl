@@ -234,7 +234,7 @@ func TestBuild(t *testing.T) {
 			}`),
 			},
 		},
-		err: `input: unknown-schema`,
+		err: `validation: [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{

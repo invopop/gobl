@@ -103,6 +103,47 @@ func TestTimeParsing(t *testing.T) {
 	})
 }
 
+func TestTimeIsZero(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		var tm cal.Time
+		assert.True(t, tm.IsZero())
+	})
+	t.Run("midnight", func(t *testing.T) {
+		tm := cal.MakeTime(0, 0, 0)
+		assert.True(t, tm.IsZero())
+	})
+	t.Run("non-zero", func(t *testing.T) {
+		tm := cal.MakeTime(12, 30, 0)
+		assert.False(t, tm.IsZero())
+	})
+	t.Run("only seconds", func(t *testing.T) {
+		tm := cal.MakeTime(0, 0, 1)
+		assert.False(t, tm.IsZero())
+	})
+}
+
+func TestTimeOmitZero(t *testing.T) {
+	type testStruct struct {
+		Name string   `json:"name"`
+		Time cal.Time `json:"time,omitzero"`
+	}
+	t.Run("omits zero time", func(t *testing.T) {
+		s := testStruct{Name: "test"}
+		data, err := json.Marshal(s)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"name":"test"}`, string(data))
+	})
+	t.Run("includes non-zero time", func(t *testing.T) {
+		s := testStruct{
+			Name: "test",
+			Time: cal.MakeTime(14, 30, 0),
+		}
+		data, err := json.Marshal(s)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"name":"test","time":"14:30:00"}`, string(data))
+	})
+}
+
 func TestTimeJSONSChema(t *testing.T) {
 	// Check the schema for the time type.
 	schema := cal.Time{}.JSONSchema()
