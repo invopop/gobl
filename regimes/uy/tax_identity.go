@@ -4,8 +4,9 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // RUT (Registro Único Tributario) is a 12-digit tax identification number
@@ -48,18 +49,27 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 }
 
-// validateTaxIdentity checks to ensure the RUT code looks okay.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("UY"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Uruguay RUT identity code",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
-		return nil
+		return false
 	}
+	return validateTaxCode(code) == nil
+}
+
+func validateTaxCode(code cbc.Code) error {
 	val := code.String()
 
 	// RUT must be exactly 12 digits

@@ -19,12 +19,6 @@
         "en": "OECD - Tax Identification Numbers: Uruguay"
       },
       "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/uruguay-tin.pdf"
-    },
-    {
-      "title": {
-        "en": "python-stdnum RUT validation"
-      },
-      "url": "https://arthurdejong.org/python-stdnum/doc/1.20/stdnum.uy.rut"
     }
   ],
   "time_zone": "America/Montevideo",

@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("uy", rules.GOBL.Add("UY"), taxIdentityRules())
 }
 
 // New provides the tax region definition for Uruguay.
@@ -54,13 +56,8 @@ func New() *tax.RegimeDef {
 				Title: i18n.NewString("OECD - Tax Identification Numbers: Uruguay"),
 				URL:   "https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/uruguay-tin.pdf",
 			},
-			{
-				Title: i18n.NewString("python-stdnum RUT validation"),
-				URL:   "https://arthurdejong.org/python-stdnum/doc/1.20/stdnum.uy.rut",
-			},
 		},
 		TimeZone:   "America/Montevideo",
-		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
@@ -73,15 +70,6 @@ func New() *tax.RegimeDef {
 		},
 		Categories: taxCategories,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.

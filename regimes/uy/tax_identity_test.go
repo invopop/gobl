@@ -5,11 +5,12 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/uy"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -28,66 +29,34 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid 10", code: "217055850011"},
 		{name: "valid 11", code: "220018800014"},
 
-		// Empty and nil codes should pass (not required)
+		// Empty code passes (not required by the rule set).
 		{name: "empty code", code: ""},
 
 		// Invalid - wrong length
-		{
-			name: "too short",
-			code: "21100342001",
-			err:  "must have 12 digits",
-		},
-		{
-			name: "too long",
-			code: "2142184200106",
-			err:  "must have 12 digits",
-		},
+		{name: "too short", code: "21100342001", err: "IDENTITY-01"},
+		{name: "too long", code: "2142184200106", err: "IDENTITY-01"},
 
 		// Invalid - non-numeric characters
-		{
-			name: "contains letters",
-			code: "FF1599340019",
-			err:  "must contain only digits",
-		},
+		{name: "contains letters", code: "FF1599340019", err: "IDENTITY-01"},
 
 		// Invalid - registration type out of range
-		{
-			name: "prefix 00",
-			code: "001599340019",
-			err:  "invalid registration type",
-		},
-		{
-			name: "prefix too high",
-			code: "991599340011",
-			err:  "invalid registration type",
-		},
+		{name: "prefix 00", code: "001599340019", err: "IDENTITY-01"},
+		{name: "prefix too high", code: "991599340011", err: "IDENTITY-01"},
 
 		// Invalid - sequence number all zeros
-		{
-			name: "zero sequence number",
-			code: "210000000019",
-			err:  "invalid sequence number",
-		},
+		{name: "zero sequence number", code: "210000000019", err: "IDENTITY-01"},
 
 		// Invalid - fixed field not 001
-		{
-			name: "invalid fixed field",
-			code: "211599345519",
-			err:  "invalid fixed field",
-		},
+		{name: "invalid fixed field", code: "211599345519", err: "IDENTITY-01"},
 
 		// Invalid - wrong check digit
-		{
-			name: "checksum mismatch",
-			code: "211599340010",
-			err:  "checksum mismatch",
-		},
+		{name: "checksum mismatch", code: "211599340010", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "UY", Code: tt.code}
-			err := uy.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
