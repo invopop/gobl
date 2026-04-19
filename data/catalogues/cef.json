@@ -367,6 +367,102 @@
           "name": {
             "en": "France domestic Credit Notes without VAT, due to supplier forfeit of VAT for discount"
           }
+        },
+        {
+          "code": "VATEX-SA-29",
+          "name": {
+            "en": "Financial services mentioned in Article 29 of the VAT Regulations"
+          }
+        },
+        {
+          "code": "VATEX-SA-29-7",
+          "name": {
+            "en": "Life insurance services mentioned in Article 29 of the VAT Regulations"
+          }
+        },
+        {
+          "code": "VATEX-SA-30",
+          "name": {
+            "en": "Real estate transactions mentioned in Article 30 of the VAT Regulations"
+          }
+        },
+        {
+          "code": "VATEX-SA-32",
+          "name": {
+            "en": "Export of goods"
+          }
+        },
+        {
+          "code": "VATEX-SA-33",
+          "name": {
+            "en": "Export of services"
+          }
+        },
+        {
+          "code": "VATEX-SA-34-1",
+          "name": {
+            "en": "The international transport of goods"
+          }
+        },
+        {
+          "code": "VATEX-SA-34-2",
+          "name": {
+            "en": "International transport of passengers"
+          }
+        },
+        {
+          "code": "VATEX-SA-34-3",
+          "name": {
+            "en": "Services directly connected and incidental to a supply of international passenger transport"
+          }
+        },
+        {
+          "code": "VATEX-SA-34-4",
+          "name": {
+            "en": "Supply of a qualifying means of transport"
+          }
+        },
+        {
+          "code": "VATEX-SA-34-5",
+          "name": {
+            "en": "Any services relating to goods or passenger transportation, as defined in Article 25 of the VAT Regulations"
+          }
+        },
+        {
+          "code": "VATEX-SA-35",
+          "name": {
+            "en": "Medicines and medical equipment"
+          }
+        },
+        {
+          "code": "VATEX-SA-36",
+          "name": {
+            "en": "Qualifying metals"
+          }
+        },
+        {
+          "code": "VATEX-SA-EDU",
+          "name": {
+            "en": "Private education to citizen"
+          }
+        },
+        {
+          "code": "VATEX-SA-HEA",
+          "name": {
+            "en": "Private healthcare to citizen"
+          }
+        },
+        {
+          "code": "VATEX-SA-MLTRY",
+          "name": {
+            "en": "Supply of qualified military goods"
+          }
+        },
+        {
+          "code": "VATEX-SA-OOS",
+          "name": {
+            "en": "Reason is free text, to be provided by the taxpayer on a case-by-case basis"
+          }
         }
       ]
     }

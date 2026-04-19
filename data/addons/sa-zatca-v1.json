@@ -1,0 +1,274 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "sa-zatca-v1",
+  "name": {
+    "ar": "هيئة الزكاة والضريبة والجمارك",
+    "en": "Saudi Arabia ZATCA"
+  },
+  "description": {
+    "en": "Support for the Saudi Arabia ZATCA (Zakat, Tax and Customs Authority) e-invoicing\nrequirements based on UBL 2.1 with EN 16931 as an intermediate layer and KSA-specific\nextensions (BR-KSA-* rules).\n\nZATCA e-invoicing covers both standard tax invoices (B2B/B2G) sent for clearance\nand simplified tax invoices (B2C) sent for reporting through the FATOORA platform.\n\nThis addon extends EN 16931 with Saudi-specific fields and validations including\ninvoice type transactions, address requirements, and supply date handling."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "ZATCA E-Invoicing Developer Portal"
+      },
+      "url": "https://zatca.gov.sa/en/E-Invoicing/SystemsDevelopers/Pages/E-Invoice-specifications.aspx"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "sa-zatca-invoice-type",
+      "name": {
+        "ar": "نوع الفاتورة",
+        "en": "ZATCA Invoice Type"
+      },
+      "desc": {
+        "en": "Code used to describe the ZATCA invoice subtype and transaction flags (KSA-2).\nThe code is a 7-character string where positions 1-2 indicate the main type\n(01 = Standard Tax Invoice, 02 = Simplified Tax Invoice) and positions 3-7\nare binary flags for third-party, nominal, export, summary, and self-billed\ntransactions respectively."
+      },
+      "values": [
+        {
+          "code": "0100000",
+          "name": {
+            "ar": "فاتورة ضريبية",
+            "en": "Standard Tax Invoice"
+          }
+        },
+        {
+          "code": "0100001",
+          "name": {
+            "ar": "فاتورة ضريبية — ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Self-billed"
+          }
+        },
+        {
+          "code": "0100010",
+          "name": {
+            "ar": "فاتورة ضريبية — ملخص",
+            "en": "Standard Tax Invoice — Summary"
+          }
+        },
+        {
+          "code": "0100011",
+          "name": {
+            "ar": "فاتورة ضريبية — ملخص، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Summary, Self-billed"
+          }
+        },
+        {
+          "code": "0100100",
+          "name": {
+            "ar": "فاتورة ضريبية — تصدير",
+            "en": "Standard Tax Invoice — Export"
+          }
+        },
+        {
+          "code": "0100110",
+          "name": {
+            "ar": "فاتورة ضريبية — تصدير، ملخص",
+            "en": "Standard Tax Invoice — Export, Summary"
+          }
+        },
+        {
+          "code": "0101000",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية",
+            "en": "Standard Tax Invoice — Nominal"
+          }
+        },
+        {
+          "code": "0101001",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Nominal, Self-billed"
+          }
+        },
+        {
+          "code": "0101010",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية، ملخص",
+            "en": "Standard Tax Invoice — Nominal, Summary"
+          }
+        },
+        {
+          "code": "0101011",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية، ملخص، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Nominal, Summary, Self-billed"
+          }
+        },
+        {
+          "code": "0101100",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية، تصدير",
+            "en": "Standard Tax Invoice — Nominal, Export"
+          }
+        },
+        {
+          "code": "0101110",
+          "name": {
+            "ar": "فاتورة ضريبية — اسمية، تصدير، ملخص",
+            "en": "Standard Tax Invoice — Nominal, Export, Summary"
+          }
+        },
+        {
+          "code": "0110000",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث",
+            "en": "Standard Tax Invoice — Third-party"
+          }
+        },
+        {
+          "code": "0110001",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Third-party, Self-billed"
+          }
+        },
+        {
+          "code": "0110010",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، ملخص",
+            "en": "Standard Tax Invoice — Third-party, Summary"
+          }
+        },
+        {
+          "code": "0110011",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، ملخص، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Third-party, Summary, Self-billed"
+          }
+        },
+        {
+          "code": "0110100",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، تصدير",
+            "en": "Standard Tax Invoice — Third-party, Export"
+          }
+        },
+        {
+          "code": "0110110",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، تصدير، ملخص",
+            "en": "Standard Tax Invoice — Third-party, Export, Summary"
+          }
+        },
+        {
+          "code": "0111000",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية",
+            "en": "Standard Tax Invoice — Third-party, Nominal"
+          }
+        },
+        {
+          "code": "0111001",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Third-party, Nominal, Self-billed"
+          }
+        },
+        {
+          "code": "0111010",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية، ملخص",
+            "en": "Standard Tax Invoice — Third-party, Nominal, Summary"
+          }
+        },
+        {
+          "code": "0111011",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية، ملخص، ذاتية الإصدار",
+            "en": "Standard Tax Invoice — Third-party, Nominal, Summary, Self-billed"
+          }
+        },
+        {
+          "code": "0111100",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية، تصدير",
+            "en": "Standard Tax Invoice — Third-party, Nominal, Export"
+          }
+        },
+        {
+          "code": "0111110",
+          "name": {
+            "ar": "فاتورة ضريبية — طرف ثالث، اسمية، تصدير، ملخص",
+            "en": "Standard Tax Invoice — Third-party, Nominal, Export, Summary"
+          }
+        },
+        {
+          "code": "0200000",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة",
+            "en": "Simplified Tax Invoice"
+          }
+        },
+        {
+          "code": "0200010",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — ملخص",
+            "en": "Simplified Tax Invoice — Summary"
+          }
+        },
+        {
+          "code": "0201000",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — اسمية",
+            "en": "Simplified Tax Invoice — Nominal"
+          }
+        },
+        {
+          "code": "0201010",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — اسمية، ملخص",
+            "en": "Simplified Tax Invoice — Nominal, Summary"
+          }
+        },
+        {
+          "code": "0210000",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — طرف ثالث",
+            "en": "Simplified Tax Invoice — Third-party"
+          }
+        },
+        {
+          "code": "0210010",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — طرف ثالث، ملخص",
+            "en": "Simplified Tax Invoice — Third-party, Summary"
+          }
+        },
+        {
+          "code": "0211000",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — طرف ثالث، اسمية",
+            "en": "Simplified Tax Invoice — Third-party, Nominal"
+          }
+        },
+        {
+          "code": "0211010",
+          "name": {
+            "ar": "فاتورة ضريبية مبسطة — طرف ثالث، اسمية، ملخص",
+            "en": "Simplified Tax Invoice — Third-party, Nominal, Summary"
+          }
+        }
+      ],
+      "pattern": "^0[12][01]{5}$"
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "388"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}
