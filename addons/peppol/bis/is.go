@@ -18,9 +18,6 @@ var validISInvoiceDocumentTypes = []cbc.Code{"380", "381"}
 
 var isAccountRe = regexp.MustCompile(`^\d{12}$`)
 
-// isEINDAGIDateRe matches the YYYY-MM-DD format required by IS-R-008.
-var isEINDAGIDateRe = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)
-
 func billInvoiceRulesIS() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.IS),
@@ -55,16 +52,7 @@ func billInvoiceRulesIS() *rules.Set {
 					),
 				),
 			),
-			// IS-R-008/R-009/R-010: EINDAGI note handling.
-			rules.Assert("IS-R-008", "Icelandic EINDAGI note must be in YYYY-MM-DD format (IS-R-008)",
-				is.Func("is eindagi format", isEINDAGIFormat),
-			),
-			rules.Assert("IS-R-009", "Icelandic invoice with EINDAGI must have a due date (IS-R-009)",
-				is.Func("is eindagi due", isEINDAGIDuePresent),
-			),
-			rules.Assert("IS-R-010", "Icelandic EINDAGI date must be on or after due date (IS-R-010)",
-				is.Func("is eindagi order", isEINDAGIAfterDue),
-			),
+			// IS-R-008/R-009/R-010 (EINDAGI) deferred to gobl.ubl — see deferred.go.
 		),
 	)
 }
@@ -132,66 +120,6 @@ func firstAddressStreetAndCode(val any) bool {
 		return true
 	}
 	return a.Street != "" && a.Code != ""
-}
-
-func isEINDAGIFormat(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	for _, n := range inv.Notes {
-		if n == nil {
-			continue
-		}
-		if n.Src == "EINDAGI" {
-			if !isEINDAGIDateRe.MatchString(n.Text) {
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func isEINDAGIDuePresent(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	hasEINDAGI := false
-	for _, n := range inv.Notes {
-		if n != nil && n.Src == "EINDAGI" {
-			hasEINDAGI = true
-			break
-		}
-	}
-	if !hasEINDAGI {
-		return true
-	}
-	return inv.Payment != nil && inv.Payment.Terms != nil && len(inv.Payment.Terms.DueDates) > 0
-}
-
-func isEINDAGIAfterDue(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Payment == nil || inv.Payment.Terms == nil || len(inv.Payment.Terms.DueDates) == 0 {
-		return true
-	}
-	firstDue := inv.Payment.Terms.DueDates[0]
-	if firstDue == nil || firstDue.Date == nil {
-		return true
-	}
-	for _, n := range inv.Notes {
-		if n == nil || n.Src != "EINDAGI" {
-			continue
-		}
-		if !isEINDAGIDateRe.MatchString(n.Text) {
-			continue
-		}
-		// Compare by string comparison since both are YYYY-MM-DD.
-		if n.Text < firstDue.Date.String() {
-			return false
-		}
-	}
-	return true
 }
 
 func isPaymentCode9Account(val any) bool {

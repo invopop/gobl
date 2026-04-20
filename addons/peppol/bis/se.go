@@ -21,10 +21,7 @@ func billInvoiceRulesSE() *rules.Set {
 			rules.Assert("SE-R-006", "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
 				is.Func("se vat rate", seVATRateAllowed),
 			),
-			// SE-R-005: supplier tax registration requires F-skatt note.
-			rules.Assert("SE-R-005", "Swedish supplier with tax registration must include 'Godkänd för F-skatt' note (SE-R-005)",
-				is.Func("se f-skatt note", seFSkattNotePresent),
-			),
+			// SE-R-005 (F-skatt boilerplate text) deferred to gobl.ubl — see deferred.go.
 		),
 	)
 }
@@ -97,75 +94,6 @@ func seVATRateAllowed(val any) bool {
 			if !allowed {
 				return false
 			}
-		}
-	}
-	return true
-}
-
-func seFSkattNotePresent(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Supplier == nil {
-		return true
-	}
-	// Rule only applies when the supplier has a tax registration.
-	if !partyHasTaxRegistration(inv.Supplier) {
-		return true
-	}
-	for _, n := range inv.Notes {
-		if n == nil {
-			continue
-		}
-		// Match case-insensitive on the Swedish text.
-		txt := n.Text
-		if containsFold(txt, "Godkänd för F-skatt") {
-			return true
-		}
-	}
-	return false
-}
-
-func partyHasTaxRegistration(p *org.Party) bool {
-	if p == nil {
-		return false
-	}
-	if p.TaxID != nil && p.TaxID.Code != "" {
-		return true
-	}
-	return false
-}
-
-func containsFold(s, substr string) bool {
-	// Simple case-insensitive substring — avoids pulling strings package import
-	// into a hot path.
-	return indexFold(s, substr) >= 0
-}
-
-func indexFold(s, substr string) int {
-	if len(substr) == 0 {
-		return 0
-	}
-	for i := 0; i+len(substr) <= len(s); i++ {
-		if equalFold(s[i:i+len(substr)], substr) {
-			return i
-		}
-	}
-	return -1
-}
-
-func equalFold(a, b string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := 0; i < len(a); i++ {
-		ca, cb := a[i], b[i]
-		if ca >= 'A' && ca <= 'Z' {
-			ca += 32
-		}
-		if cb >= 'A' && cb <= 'Z' {
-			cb += 32
-		}
-		if ca != cb {
-			return false
 		}
 	}
 	return true

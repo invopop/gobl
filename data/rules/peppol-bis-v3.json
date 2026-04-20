@@ -271,19 +271,9 @@
               "tests": "has buyer reference"
             },
             {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-022",
-              "desc": "attachment filenames must be unique case-insensitive (DE-R-022)",
-              "tests": "unique attachments"
-            },
-            {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-026",
               "desc": "corrective invoices should reference a preceding invoice (DE-R-026)",
               "tests": "preceding present for corrections"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-018",
-              "desc": "early payment discount note must follow the Skonto format (DE-R-018)",
-              "tests": "skonto format"
             },
             {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-014",
@@ -482,41 +472,6 @@
           "guard": "supplier country GR",
           "assert": [
             {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-1",
-              "desc": "Greek invoice ID must have 6 segments (GR-R-001-1)",
-              "tests": "gr id segments"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-2",
-              "desc": "Greek invoice ID segment 1 must be the supplier TIN (GR-R-001-2)",
-              "tests": "gr id tin"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-3",
-              "desc": "Greek invoice ID segment 2 must match issue date YYYYMMDD (GR-R-001-3)",
-              "tests": "gr id date"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-4",
-              "desc": "Greek invoice ID segment 3 must be a positive integer (GR-R-001-4)",
-              "tests": "gr id seq"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-5",
-              "desc": "Greek invoice ID segment 4 must be a valid Greek document type (GR-R-001-5)",
-              "tests": "gr id type"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-6",
-              "desc": "Greek invoice ID segment 5 must not be empty (GR-R-001-6)",
-              "tests": "gr id seg5"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-7",
-              "desc": "Greek invoice ID segment 6 must not be empty (GR-R-001-7)",
-              "tests": "gr id seg6"
-            },
-            {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-004-1",
               "desc": "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
               "tests": "gr mark count"
@@ -606,23 +561,6 @@
       "subsets": [
         {
           "guard": "supplier country IS",
-          "assert": [
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-008",
-              "desc": "Icelandic EINDAGI note must be in YYYY-MM-DD format (IS-R-008)",
-              "tests": "is eindagi format"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-009",
-              "desc": "Icelandic invoice with EINDAGI must have a due date (IS-R-009)",
-              "tests": "is eindagi due"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-010",
-              "desc": "Icelandic EINDAGI date must be on or after due date (IS-R-010)",
-              "tests": "is eindagi order"
-            }
-          ],
           "subsets": [
             {
               "field": "tax",
@@ -915,11 +853,6 @@
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-006",
               "desc": "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
               "tests": "se vat rate"
-            },
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-005",
-              "desc": "Swedish supplier with tax registration must include 'Godkänd för F-skatt' note (SE-R-005)",
-              "tests": "se f-skatt note"
             }
           ]
         }

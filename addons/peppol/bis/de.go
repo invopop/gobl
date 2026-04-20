@@ -30,11 +30,7 @@ var deCardMeansCodes = []cbc.Code{"48", "54", "55"}
 // deDirectDebitMeansCode is the UNTDID 4461 code for SEPA direct debit (DE-R-025).
 var deDirectDebitMeansCode cbc.Code = "59"
 
-var (
-	ibanRe = regexp.MustCompile(`^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$`)
-	// Skonto note format: #SKONTO#TAGE=N#PROZENT=N(.NN)#[BASISBETRAG=N]#
-	skontoRe = regexp.MustCompile(`^#SKONTO#TAGE=\d+#PROZENT=\d+(\.\d{1,2})?#(BASISBETRAG=\d+(\.\d{1,2})?#)?$`)
-)
+var ibanRe = regexp.MustCompile(`^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$`)
 
 func billInvoiceRulesDE() *rules.Set {
 	return rules.For(new(bill.Invoice),
@@ -106,17 +102,9 @@ func billInvoiceRulesDE() *rules.Set {
 					),
 				),
 			),
-			// DE-R-022: attachments must have unique filenames.
-			rules.Assert("DE-R-022", "attachment filenames must be unique case-insensitive (DE-R-022)",
-				is.Func("unique attachments", attachmentsUnique),
-			),
 			// DE-R-026 (warning): corrective invoices should reference a preceding invoice.
 			rules.Assert("DE-R-026", "corrective invoices should reference a preceding invoice (DE-R-026)",
 				is.Func("preceding present for corrections", correctivePrecedingPresent),
-			),
-			// DE-R-018: Skonto note format, when present.
-			rules.Assert("DE-R-018", "early payment discount note must follow the Skonto format (DE-R-018)",
-				is.Func("skonto format", skontoFormatValid),
 			),
 			// DE-R-014: each VAT rate has a percent set.
 			rules.Assert("DE-R-014", "each VAT category must have a rate percent (DE-R-014)",
@@ -305,25 +293,6 @@ func partyEmailFormat(val any) bool {
 	return true
 }
 
-func attachmentsUnique(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	type attachment interface{ GetName() string }
-	seen := make(map[string]bool)
-	// bill.Invoice doesn't expose Attachments as a top-level field — attachments
-	// on GOBL invoices live on org.DocumentRef via Attachments. For Peppol,
-	// we walk Ordering references and Preceding; if none, we pass.
-	// The rule applies primarily to cac:AdditionalDocumentReference attachments
-	// which GOBL models as org.Attachment on various places. Given the indirect
-	// mapping, we return true here; a more thorough implementation would walk
-	// all DocumentRef.Attachments.
-	_ = seen
-	_ = inv
-	return true
-}
-
 func correctivePrecedingPresent(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil || inv.Tax == nil {
@@ -334,25 +303,6 @@ func correctivePrecedingPresent(val any) bool {
 		return true
 	}
 	return len(inv.Preceding) > 0
-}
-
-func skontoFormatValid(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	for _, n := range inv.Notes {
-		if n == nil {
-			continue
-		}
-		// A Skonto note is conventionally keyed as payment-term with a `#SKONTO#` prefix.
-		if strings.HasPrefix(n.Text, "#SKONTO#") {
-			if !skontoRe.MatchString(n.Text) {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 func deVATRatePercentSet(val any) bool {
