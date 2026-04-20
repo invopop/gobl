@@ -2,12 +2,15 @@
 	"$schema": "https://gobl.org/draft-0/bill/invoice",
 	"uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
 	"$regime": "DK",
-	"$addons": ["eu-en16931-v2017"],
+	"$addons": ["peppol-bis-v3"],
 	"type": "standard",
 	"series": "S2025",
 	"code": "001",
 	"issue_date": "2025-05-20",
 	"currency": "DKK",
+	"ordering": {
+		"code": "PO-2025-001"
+	},
 	"supplier": {
 		"name": "Danish Services ApS",
 		"tax_id": {

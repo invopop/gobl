@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `addons/peppol/bis`: New `peppol-bis-v3` addon enforcing the [Peppol BIS Billing 3.0](https://docs.peppol.eu/poacc/billing/3.0/) rule set on top of EN 16931. Covers the 55 base rules (`PEPPOL-COMMON-R040..R053`, `PEPPOL-EN16931-*`) plus 99 national CIUS rules for Denmark, Germany, Greece, Iceland, Italy, the Netherlands, Norway and Sweden. Namespaced under `addons/peppol/<profile>/` so a future `addons/peppol/pint/` addon (Peppol International) can sit alongside.
+- `addons/peppol/bis`: `IdentityKeyGreekMARK` identity key (`gr-mark`) for the Mydata Auto-Registration Key issued by the Greek IAPR to each invoice.
+- `examples/de/invoice-peppol.yaml`, `examples/dk/invoice-peppol.json`: Example GOBL invoices exercising the new `peppol-bis-v3` addon for German and Danish suppliers.
+
 ## [v0.401.0] - 2026-04-17
 
 ### Changed

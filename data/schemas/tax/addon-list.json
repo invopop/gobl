@@ -80,6 +80,10 @@
             "title": "Mexican SAT CFDI v4.X"
           },
           {
+            "const": "peppol-bis-v3",
+            "title": "Peppol BIS Billing 3.0"
+          },
+          {
             "const": "pl-favat-v3",
             "title": "Polish KSeF FA_VAT FA(3)"
           },

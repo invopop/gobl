@@ -1,0 +1,27 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "peppol-bis-v3",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "Peppol BIS Billing 3.0"
+  },
+  "description": {
+    "en": "Enforces the Peppol BIS Billing 3.0 rule set on top of the EN 16931 base.\n\nCovers the 55 base Peppol rules (PEPPOL-COMMON-Rxxx and PEPPOL-EN16931-*) as\nwell as the national CIUS rule sets for Denmark, Germany, Greece, Iceland,\nItaly, the Netherlands, Norway and Sweden. National rules are applied\nautomatically based on the supplier's country.\n\nThis addon does not define the Peppol ProfileID or CustomizationID — those\nare emitted by the converter (`gobl.ubl`) based on the Context\nselected at serialization time.\n\nFor the authoritative rule list, see:\nhttps://docs.peppol.eu/poacc/billing/3.0/rules/ubl-peppol/"
+  },
+  "extensions": null,
+  "scenarios": null,
+  "identities": [
+    {
+      "key": "gr-mark",
+      "name": {
+        "en": "Greek MARK Number"
+      },
+      "desc": {
+        "en": "Mydata Auto-Registration Key assigned by the Greek Independent Authority for Public Revenue (IAPR) to each registered invoice."
+      }
+    }
+  ],
+  "corrections": null
+}

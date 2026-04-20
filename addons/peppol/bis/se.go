@@ -1,0 +1,283 @@
+package bis
+
+import (
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+)
+
+// seAllowedVATPercents lists the Swedish VAT rates allowed by SE-R-006.
+var seAllowedVATPercents = []string{"6", "12", "25", "6.0", "12.0", "25.0", "6.00", "12.00", "25.00"}
+
+func billInvoiceRulesSE() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.When(supplierCountryIs(l10n.SE),
+			// SE-R-006: VAT rate must be 6, 12, or 25%.
+			rules.Assert("SE-R-006", "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
+				is.Func("se vat rate", seVATRateAllowed),
+			),
+			// SE-R-005: supplier tax registration requires F-skatt note.
+			rules.Assert("SE-R-005", "Swedish supplier with tax registration must include 'Godkänd för F-skatt' note (SE-R-005)",
+				is.Func("se f-skatt note", seFSkattNotePresent),
+			),
+		),
+	)
+}
+
+func orgPartyRulesSE() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.When(supplierCountryIs(l10n.SE),
+			rules.Field("supplier",
+				// SE-R-001/R-002: VAT length + trailing digits.
+				rules.Assert("SE-R-001", "Swedish VAT must be 14 characters (SE-R-001)",
+					is.Func("se vat length", swedishVATLength),
+				),
+				rules.Assert("SE-R-002", "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
+					is.Func("se vat trailing digits", swedishVATTrailingDigits),
+				),
+				// SE-R-003/R-004: SE org number format.
+				rules.Assert("SE-R-003", "Swedish organization number must be numeric (SE-R-003)",
+					is.Func("se org numeric", swedishOrgNumeric),
+				),
+				rules.Assert("SE-R-004", "Swedish organization number must be 10 characters (SE-R-004)",
+					is.Func("se org length", swedishOrgLength),
+				),
+				// SE-R-013: SE org Luhn checksum.
+				rules.Assert("SE-R-013", "Swedish organization number last digit must be a valid Luhn checksum (SE-R-013)",
+					is.Func("se org luhn", swedishOrgLuhn),
+				),
+			),
+		),
+	)
+}
+
+func payInstructionsRulesSE() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.When(supplierCountryIs(l10n.SE),
+			rules.Field("payment",
+				rules.Field("instructions",
+					// SE-R-012 (warning): domestic credit transfer should use code 30.
+					rules.Assert("SE-R-012", "Swedish domestic credit transfer should use payment means code 30 (SE-R-012)",
+						is.Func("se cc 30", seCreditTransferCode30),
+					),
+				),
+			),
+		),
+	)
+}
+
+// --- helpers ---
+
+func seVATRateAllowed(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Totals == nil || inv.Totals.Taxes == nil {
+		return true
+	}
+	for _, cat := range inv.Totals.Taxes.Categories {
+		if cat == nil {
+			continue
+		}
+		for _, rt := range cat.Rates {
+			if rt == nil || rt.Percent == nil {
+				continue
+			}
+			p := rt.Percent.String()
+			allowed := false
+			for _, a := range seAllowedVATPercents {
+				if p == a || p == a+"%" {
+					allowed = true
+					break
+				}
+			}
+			if !allowed {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func seFSkattNotePresent(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Supplier == nil {
+		return true
+	}
+	// Rule only applies when the supplier has a tax registration.
+	if !partyHasTaxRegistration(inv.Supplier) {
+		return true
+	}
+	for _, n := range inv.Notes {
+		if n == nil {
+			continue
+		}
+		// Match case-insensitive on the Swedish text.
+		txt := n.Text
+		if containsFold(txt, "Godkänd för F-skatt") {
+			return true
+		}
+	}
+	return false
+}
+
+func partyHasTaxRegistration(p *org.Party) bool {
+	if p == nil {
+		return false
+	}
+	if p.TaxID != nil && p.TaxID.Code != "" {
+		return true
+	}
+	return false
+}
+
+func containsFold(s, substr string) bool {
+	// Simple case-insensitive substring — avoids pulling strings package import
+	// into a hot path.
+	return indexFold(s, substr) >= 0
+}
+
+func indexFold(s, substr string) int {
+	if len(substr) == 0 {
+		return 0
+	}
+	for i := 0; i+len(substr) <= len(s); i++ {
+		if equalFold(s[i:i+len(substr)], substr) {
+			return i
+		}
+	}
+	return -1
+}
+
+func equalFold(a, b string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		ca, cb := a[i], b[i]
+		if ca >= 'A' && ca <= 'Z' {
+			ca += 32
+		}
+		if cb >= 'A' && cb <= 'Z' {
+			cb += 32
+		}
+		if ca != cb {
+			return false
+		}
+	}
+	return true
+}
+
+func swedishVATLength(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil || p.TaxID == nil {
+		return true
+	}
+	if p.TaxID.Country.Code() != l10n.SE {
+		return true
+	}
+	code := p.TaxID.Code.String()
+	// GOBL typically stores the bare numeric; the 14-character full form includes SE prefix + "01".
+	// Accept either the bare 10-digit number or the full 14-char version.
+	if code == "" {
+		return true
+	}
+	if len(code) == 10 || len(code) == 14 {
+		return true
+	}
+	return false
+}
+
+func swedishVATTrailingDigits(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil || p.TaxID == nil {
+		return true
+	}
+	if p.TaxID.Country.Code() != l10n.SE {
+		return true
+	}
+	code := p.TaxID.Code.String()
+	// For the 14-char form, trailing 12 must be digits.
+	if len(code) == 14 {
+		return onlyDigits(code[2:])
+	}
+	// For bare 10-digit form, all must be digits (implies trailing digits are fine).
+	if len(code) == 10 {
+		return onlyDigits(code)
+	}
+	return true
+}
+
+func swedishOrgNumeric(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true
+	}
+	for _, id := range p.Identities {
+		if id == nil {
+			continue
+		}
+		// Heuristic: SE org number is a legal-scope identity on a Swedish party.
+		if id.Scope != "legal" {
+			continue
+		}
+		if !onlyDigits(id.Code.String()) {
+			return false
+		}
+	}
+	return true
+}
+
+func swedishOrgLength(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true
+	}
+	for _, id := range p.Identities {
+		if id == nil || id.Scope != "legal" {
+			continue
+		}
+		if len(id.Code.String()) != 10 {
+			return false
+		}
+	}
+	return true
+}
+
+func swedishOrgLuhn(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true
+	}
+	for _, id := range p.Identities {
+		if id == nil || id.Scope != "legal" {
+			continue
+		}
+		code := id.Code.String()
+		if !onlyDigits(code) || len(code) != 10 {
+			continue // handled by SE-R-003/R-004
+		}
+		if !luhnValid(code) {
+			return false
+		}
+	}
+	return true
+}
+
+func seCreditTransferCode30(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return true
+	}
+	if len(instr.CreditTransfer) == 0 {
+		return true
+	}
+	code := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
+	if code == "" {
+		return true
+	}
+	return code == cbc.Code("30")
+}
