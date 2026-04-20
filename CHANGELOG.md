@@ -104,6 +104,9 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 - `gr`: Corrected key for the reduced island tax rate.
 - `bill`: Payment Line tax always calculated.
 
+### Added
+- `cl`: Added the Chilean regime
+
 ## [v0.308.0] - 2026-02-17
 
 ### Added
