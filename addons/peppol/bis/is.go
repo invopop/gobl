@@ -50,7 +50,12 @@ func billInvoiceRulesIS() *rules.Set {
 					),
 				),
 			),
-			// IS-R-008/R-009/R-010 (EINDAGI) deferred to gobl.ubl — see deferred.go.
+			// IS-R-008/R-009/R-010 (EINDAGI date note: format, BT-9 presence,
+			// date-order check) are not enforced here. GOBL already models the
+			// due date structurally via bill.Payment.Terms.DueDates; gobl.ubl
+			// should emit the EINDAGI cac:AdditionalDocumentReference from
+			// that field, which makes the three schematron checks structurally
+			// impossible to violate.
 		),
 	)
 }

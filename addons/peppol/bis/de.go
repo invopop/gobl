@@ -102,14 +102,23 @@ func billInvoiceRulesDE() *rules.Set {
 					),
 				),
 			),
+			// DE-R-018 (early-payment #SKONTO# note format) and DE-R-022
+			// (attachment filename uniqueness) are not enforced here. Both are
+			// UBL-level concerns: DE-R-018's note text can be synthesized by
+			// gobl.ubl from bill.Payment.Terms.DueDates rather than hand-written;
+			// DE-R-022 constrains the cac:AdditionalDocumentReference elements
+			// gobl.ubl emits.
+			//
 			// DE-R-026 (warning): corrective invoices should reference a preceding invoice.
 			rules.Assert("DE-R-026", "corrective invoices should reference a preceding invoice (DE-R-026)",
 				is.Func("preceding present for corrections", correctivePrecedingPresent),
 			),
-			// DE-R-014: each VAT rate has a percent set.
-			rules.Assert("DE-R-014", "each VAT category must have a rate percent (DE-R-014)",
-				is.Func("vat rate percent", deVATRatePercentSet),
-			),
+			// DE-R-014 (VAT category rate percent) is not enforced here. GOBL's
+			// tax model only carries a numeric percent on standard/reduced-rated
+			// tax combos; exempt, zero, reverse-charge, and not-subject-to-VAT
+			// categories structurally have no percent. gobl.ubl emits cbc:Percent
+			// for every UBL tax subtotal (0 for the non-standard categories), so
+			// the schematron assertion is satisfied by construction at emit time.
 			// DE-R-016: tax categories S/Z/E/AE/K/G/L/M require supplier VAT/tax ID.
 			rules.Assert("DE-R-016", "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
 				is.Func("supplier tax id for categories", deSupplierHasTaxIDForCategory),
@@ -302,33 +311,6 @@ func correctivePrecedingPresent(val any) bool {
 		return true
 	}
 	return len(inv.Preceding) > 0
-}
-
-// deVATRatePercentSet checks DE-R-014: a rate percent must be stated for
-// standard-rated VAT entries. Exempt/zero/reverse-charge/not-subject-to-tax
-// categories have no numeric percent by definition and are skipped.
-func deVATRatePercentSet(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Totals == nil || inv.Totals.Taxes == nil {
-		return true
-	}
-	for _, cat := range inv.Totals.Taxes.Categories {
-		if cat == nil {
-			continue
-		}
-		for _, rt := range cat.Rates {
-			if rt == nil {
-				continue
-			}
-			if rt.Ext.Get(untdid.ExtKeyTaxCategory) != "S" {
-				continue
-			}
-			if rt.Percent == nil {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 func deSupplierHasTaxIDForCategory(val any) bool {

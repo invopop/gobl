@@ -21,9 +21,11 @@ func billInvoiceRulesGR() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.GR),
 			// GR-R-001-1: Greek invoice ID must produce 6 underscore-delimited
-			// segments when Series and Code are joined with "_". Sub-rules
-			// GR-R-001-2..-7 (TIN/date/sequence/type matching) are deferred to
-			// gobl.ubl — see deferred.go.
+			// segments when Series and Code are joined with "_". The segment
+			// contents (GR-R-001-2..-7: supplier TIN, YYYYMMDD, sequence, doc
+			// type, free-form) are not checked here — gobl.ubl should build the
+			// Peppol-visible ID from the structured Supplier.TaxID + IssueDate
+			// + sequence fields rather than parsing them back out.
 			rules.Assert("GR-R-001-1", "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
 				is.Func("gr id segments", grIDSixSegments),
 			),

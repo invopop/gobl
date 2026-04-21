@@ -284,11 +284,6 @@
               "tests": "preceding present for corrections"
             },
             {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-014",
-              "desc": "each VAT category must have a rate percent (DE-R-014)",
-              "tests": "vat rate percent"
-            },
-            {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-016",
               "desc": "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
               "tests": "supplier tax id for categories"

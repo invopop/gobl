@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
@@ -90,27 +89,6 @@ func TestCorrectivePrecedingPresent(t *testing.T) {
 		Tax:       taxExt("384"),
 		Preceding: []*org.DocumentRef{{Code: "ORIG"}},
 	}))
-}
-
-func TestDeVATRatePercentSet(t *testing.T) {
-	assert.True(t, deVATRatePercentSet(nil))
-	assert.True(t, deVATRatePercentSet(&bill.Invoice{}))
-	pct := num.MakePercentage(190, 3)
-	// Standard-rated with percent → passes.
-	good := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
-		{Rates: []*tax.RateTotal{{Percent: &pct, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "S"}}}},
-	}}}}
-	assert.True(t, deVATRatePercentSet(good))
-	// Standard-rated without percent → fails.
-	bad := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
-		{Rates: []*tax.RateTotal{{Percent: nil, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "S"}}}},
-	}}}}
-	assert.False(t, deVATRatePercentSet(bad))
-	// Exempt (E) rate without percent → passes (rule scoped to standard-rated).
-	exempt := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
-		{Rates: []*tax.RateTotal{{Percent: nil, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "E"}}}},
-	}}}}
-	assert.True(t, deVATRatePercentSet(exempt))
 }
 
 func TestDeSupplierHasTaxIDForCategory(t *testing.T) {

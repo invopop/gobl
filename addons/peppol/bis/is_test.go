@@ -51,8 +51,8 @@ func TestFirstAddressStreetAndCode(t *testing.T) {
 }
 
 func TestValidISAccount(t *testing.T) {
-	assert.True(t, validISAccount("123456789012"))      // 12-digit domestic
-	assert.True(t, validISAccount("IS140159260076545510730339")) // IS IBAN
+	assert.True(t, validISAccount("123456789012"))                     // 12-digit domestic
+	assert.True(t, validISAccount("IS140159260076545510730339"))       // IS IBAN
 	assert.True(t, validISAccount("IS14 0159 2600 7654 5510 7303 39")) // IBAN with spaces
 	assert.False(t, validISAccount(""))
 	assert.False(t, validISAccount("12345"))

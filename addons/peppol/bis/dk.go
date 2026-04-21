@@ -58,10 +58,11 @@ func orgPartyRulesDK() *rules.Set {
 	)
 }
 
-// orgItemRulesDK is currently a no-op. DK-R-003 (UNSPSC version) is deferred
-// to gobl.ubl — see deferred.go — because GOBL has no structured field for
-// classification-scheme versions, and validating against free-text Description
-// was the only in-GOBL option and was fragile.
+// orgItemRulesDK is intentionally a no-op. DK-R-003 requires UNSPSC
+// classifications to use version 19.05.01 or 26.08.01, but GOBL has no
+// structured slot for a classification-scheme version; gobl.ubl owns
+// cac:CommodityClassification/@listVersionID and enforces the allowed set
+// there.
 func orgItemRulesDK() *rules.Set {
 	return rules.For(new(bill.Invoice))
 }
