@@ -10,7 +10,7 @@ import (
 )
 
 // Set represents a collection of rules grouped by a namespace
-// an associated with a specific struct.
+// and associated with a specific struct.
 type Set struct {
 	// ID is the namespace for this set of rules, typically a package-level code like "GOBL" or "GOBL-ORG".
 	ID Code `json:"id,omitempty"`

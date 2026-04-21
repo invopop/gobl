@@ -54,9 +54,9 @@ func TestValidate(t *testing.T) {
 	})
 
 	t.Run("nil pointer field is skipped", func(t *testing.T) {
-		p := &Person{Name: "Carol", Address: &Address{City: "Anytown"}}
+		p := &Person{Name: "Carol", Address: &Address{City: "Anytown"}, SecondAddress: nil}
 		faults := rules.Validate(p)
-		assert.Nil(t, faults)
+		assert.NoError(t, faults)
 	})
 }
 
@@ -65,12 +65,13 @@ func TestValidateNil(t *testing.T) {
 	assert.Nil(t, faults)
 }
 
-func TestValidateWithNilPointerField(_ *testing.T) {
+func TestValidateWithNilPointerField(t *testing.T) {
 	// Nil pointer field should be skipped without panic.
 	p := &Person{Name: "Alice", Address: nil}
-	faults := rules.Validate(p)
 	// No rules fire since address is nil and name is set.
-	_ = faults
+	assert.NotPanics(t, func() {
+		rules.Validate(p)
+	})
 }
 
 func TestMapValidation(t *testing.T) {
