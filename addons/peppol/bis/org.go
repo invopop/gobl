@@ -1,7 +1,7 @@
 package bis
 
 import (
-	"fmt"
+	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -85,47 +85,47 @@ func checkSchemeFormat(scheme cbc.Code, code cbc.Code) error {
 	switch scheme {
 	case schemeGLN:
 		if !validGLN(code.String()) {
-			return fmt.Errorf("GLN must be 13 digits with valid Mod 10 checksum (PEPPOL-COMMON-R040)")
+			return errors.New("invalid GLN: must be 13 digits with valid Mod 10 checksum (PEPPOL-COMMON-R040)")
 		}
 	case schemeNOOrg:
 		if !validNorwegianOrg(code.String()) {
-			return fmt.Errorf("Norwegian organization number must be 9 digits with valid Mod 11 checksum (PEPPOL-COMMON-R041)")
+			return errors.New("invalid Norwegian organization number: must be 9 digits with valid Mod 11 checksum (PEPPOL-COMMON-R041)")
 		}
 	case schemeDKCVR:
 		if !validDanishCVR(code.String()) {
-			return fmt.Errorf("Danish CVR must be 8 digits with valid Mod 11 checksum (PEPPOL-COMMON-R042)")
+			return errors.New("invalid Danish CVR: must be 8 digits with valid Mod 11 checksum (PEPPOL-COMMON-R042)")
 		}
 	case schemeBEEnt:
 		if !validBelgianEnterprise(code.String()) {
-			return fmt.Errorf("Belgian enterprise number must be 10 digits with valid Mod 97 checksum (PEPPOL-COMMON-R043)")
+			return errors.New("invalid Belgian enterprise number: must be 10 digits with valid Mod 97 checksum (PEPPOL-COMMON-R043)")
 		}
 	case schemeITIPA:
 		if !validITIPA(code.String()) {
-			return fmt.Errorf("Italian IPA code must be 6 alphanumeric characters (PEPPOL-COMMON-R044)")
+			return errors.New("invalid Italian IPA code: must be 6 alphanumeric characters (PEPPOL-COMMON-R044)")
 		}
 	case schemeITCF:
 		if !validITCodiceFiscale(code.String()) {
-			return fmt.Errorf("Italian Codice Fiscale must be 11 digits or 16 alphanumerics (PEPPOL-COMMON-R045/R046)")
+			return errors.New("invalid Italian Codice Fiscale: must be 11 digits or 16 alphanumerics (PEPPOL-COMMON-R045/R046)")
 		}
 	case schemeITPIva:
 		if !validITPartitaIVA(code.String()) {
-			return fmt.Errorf("Italian Partita IVA must be 11 digits (PEPPOL-COMMON-R047)")
+			return errors.New("invalid Italian Partita IVA: must be 11 digits (PEPPOL-COMMON-R047)")
 		}
 	case schemeSEOrg:
 		if !validSwedishOrg(code.String()) {
-			return fmt.Errorf("Swedish organization number must be 10 digits with valid Luhn checksum (PEPPOL-COMMON-R049)")
+			return errors.New("invalid Swedish organization number: must be 10 digits with valid Luhn checksum (PEPPOL-COMMON-R049)")
 		}
 	case schemeAUABN:
 		if !validAustralianABN(code.String()) {
-			return fmt.Errorf("Australian ABN must be 11 digits with valid weighted checksum (PEPPOL-COMMON-R050)")
+			return errors.New("invalid Australian ABN: must be 11 digits with valid weighted checksum (PEPPOL-COMMON-R050)")
 		}
 	case schemeDKPNum:
 		if !validDanishPNumber(code.String()) {
-			return fmt.Errorf("Danish P-number must be 10 digits (PEPPOL-COMMON-R052)")
+			return errors.New("invalid Danish P-number: must be 10 digits (PEPPOL-COMMON-R052)")
 		}
 	case schemeDKSENum:
 		if !validDanishSENumber(code.String()) {
-			return fmt.Errorf("Danish SE-number must be 8 digits (PEPPOL-COMMON-R053)")
+			return errors.New("invalid Danish SE-number: must be 8 digits (PEPPOL-COMMON-R053)")
 		}
 	}
 	return nil

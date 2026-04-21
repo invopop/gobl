@@ -156,10 +156,9 @@ func payInstructionsRulesDE() *rules.Set {
 // --- helpers ---
 
 func deInvoiceDocumentTypeValid(val any) bool {
-	ext, ok := val.(map[cbc.Key]cbc.Code)
-	// bill.Tax.Ext is tax.Extensions which is map[cbc.Key]cbc.Code; use type-assertion carefully.
-	_ = ext
-	// The rule argument will be a tax.Extensions value. We handle it via interface:
+	// bill.Tax.Ext is tax.Extensions; check via the Get-accessor interface
+	// rather than asserting on the concrete map type so callers can pass
+	// either form.
 	type getter interface {
 		Get(cbc.Key) cbc.Code
 	}

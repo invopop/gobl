@@ -149,7 +149,7 @@ func swedishOrgNumeric(val any) bool {
 			continue
 		}
 		// Heuristic: SE org number is a legal-scope identity on a Swedish party.
-		if id.Scope != "legal" {
+		if id.Scope != org.IdentityScopeLegal {
 			continue
 		}
 		if !onlyDigits(id.Code.String()) {
@@ -165,7 +165,7 @@ func swedishOrgLength(val any) bool {
 		return true
 	}
 	for _, id := range p.Identities {
-		if id == nil || id.Scope != "legal" {
+		if id == nil || id.Scope != org.IdentityScopeLegal {
 			continue
 		}
 		if len(id.Code.String()) != 10 {
@@ -181,7 +181,7 @@ func swedishOrgLuhn(val any) bool {
 		return true
 	}
 	for _, id := range p.Identities {
-		if id == nil || id.Scope != "legal" {
+		if id == nil || id.Scope != org.IdentityScopeLegal {
 			continue
 		}
 		code := id.Code.String()

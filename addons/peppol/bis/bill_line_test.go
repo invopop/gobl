@@ -9,8 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func d(year int, month time.Month, day int) cal.Date {
-	return cal.MakeDate(year, month, day)
+// d builds a test date in the fixed test year 2026.
+func d(month time.Month, day int) cal.Date {
+	return cal.MakeDate(2026, month, day)
 }
 
 func TestLineStartsWithinInvoice(t *testing.T) {
@@ -27,21 +28,21 @@ func TestLineStartsWithinInvoice(t *testing.T) {
 	})
 	t.Run("line start before invoice start fails", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(2026, 4, 10)}},
-			Lines:    []*bill.Line{{Period: &cal.Period{Start: d(2026, 4, 1)}}},
+			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(4, 10)}},
+			Lines:    []*bill.Line{{Period: &cal.Period{Start: d(4, 1)}}},
 		}
 		assert.False(t, lineStartsWithinInvoice(inv))
 	})
 	t.Run("line start equal/after invoice start passes", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(2026, 4, 10)}},
-			Lines:    []*bill.Line{{Period: &cal.Period{Start: d(2026, 4, 15)}}},
+			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(4, 10)}},
+			Lines:    []*bill.Line{{Period: &cal.Period{Start: d(4, 15)}}},
 		}
 		assert.True(t, lineStartsWithinInvoice(inv))
 	})
 	t.Run("nil line and zero line period skipped", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(2026, 4, 10)}},
+			Ordering: &bill.Ordering{Period: &cal.Period{Start: d(4, 10)}},
 			Lines:    []*bill.Line{nil, {Period: nil}, {Period: &cal.Period{}}},
 		}
 		assert.True(t, lineStartsWithinInvoice(inv))
@@ -62,15 +63,15 @@ func TestLineEndsWithinInvoice(t *testing.T) {
 	})
 	t.Run("line end after invoice end fails", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Ordering: &bill.Ordering{Period: &cal.Period{End: d(2026, 4, 30)}},
-			Lines:    []*bill.Line{{Period: &cal.Period{End: d(2026, 5, 5)}}},
+			Ordering: &bill.Ordering{Period: &cal.Period{End: d(4, 30)}},
+			Lines:    []*bill.Line{{Period: &cal.Period{End: d(5, 5)}}},
 		}
 		assert.False(t, lineEndsWithinInvoice(inv))
 	})
 	t.Run("line end on/before invoice end passes", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Ordering: &bill.Ordering{Period: &cal.Period{End: d(2026, 4, 30)}},
-			Lines:    []*bill.Line{{Period: &cal.Period{End: d(2026, 4, 25)}}},
+			Ordering: &bill.Ordering{Period: &cal.Period{End: d(4, 30)}},
+			Lines:    []*bill.Line{{Period: &cal.Period{End: d(4, 25)}}},
 		}
 		assert.True(t, lineEndsWithinInvoice(inv))
 	})

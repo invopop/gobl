@@ -103,7 +103,7 @@ func partyHasLegalIdentity(val any) bool {
 		return true
 	}
 	for _, id := range p.Identities {
-		if id != nil && id.Scope == "legal" {
+		if id != nil && id.Scope == org.IdentityScopeLegal {
 			return true
 		}
 	}

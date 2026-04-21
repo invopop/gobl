@@ -135,7 +135,7 @@ func nlPartyLegalScheme(val any) bool {
 		return true
 	}
 	for _, id := range p.Identities {
-		if id == nil || id.Scope != "legal" {
+		if id == nil || id.Scope != org.IdentityScopeLegal {
 			continue
 		}
 		scheme := id.Ext.Get(iso.ExtKeySchemeID)
