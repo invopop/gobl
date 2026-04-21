@@ -1,6 +1,8 @@
 package bis
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
@@ -31,8 +33,10 @@ func taxComboRules() *rules.Set {
 	)
 }
 
-// vatexCategoryCoherent returns true when the combo's VATEX code (if any)
-// is paired with the matching UNTDID 5305 tax category.
+// vatexCategoryCoherent returns true when the combo's VATEX code (if any) is
+// paired with the matching UNTDID 5305 tax category. For known VATEX codes
+// the mapping is explicit; for any other `VATEX-EU-*` code we fail closed
+// and require category `E` (the exemption default under the CEF codelist).
 func vatexCategoryCoherent(val any) bool {
 	combo, ok := val.(*tax.Combo)
 	if !ok || combo == nil {
@@ -42,10 +46,14 @@ func vatexCategoryCoherent(val any) bool {
 	if vatex == "" {
 		return true
 	}
-	required, ok := vatexCategoryMap[vatex]
-	if !ok {
-		return true
-	}
 	current := combo.Ext.Get(untdid.ExtKeyTaxCategory)
-	return current == required
+	if required, ok := vatexCategoryMap[vatex]; ok {
+		return current == required
+	}
+	// Unknown VATEX-EU-* codes default to category E so we fail closed on new
+	// or mistyped codes instead of silently accepting any pairing.
+	if strings.HasPrefix(vatex.String(), "VATEX-EU-") {
+		return current == "E"
+	}
+	return true
 }

@@ -304,6 +304,9 @@ func correctivePrecedingPresent(val any) bool {
 	return len(inv.Preceding) > 0
 }
 
+// deVATRatePercentSet checks DE-R-014: a rate percent must be stated for
+// standard-rated VAT entries. Exempt/zero/reverse-charge/not-subject-to-tax
+// categories have no numeric percent by definition and are skipped.
 func deVATRatePercentSet(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil || inv.Totals == nil || inv.Totals.Taxes == nil {
@@ -315,6 +318,9 @@ func deVATRatePercentSet(val any) bool {
 		}
 		for _, rt := range cat.Rates {
 			if rt == nil {
+				continue
+			}
+			if rt.Ext.Get(untdid.ExtKeyTaxCategory) != "S" {
 				continue
 			}
 			if rt.Percent == nil {
@@ -352,11 +358,17 @@ func deSupplierHasTaxIDForCategory(val any) bool {
 	if inv.Supplier == nil {
 		return false
 	}
+	// DE-R-016 requires a VAT identifier (TaxID) or tax registration identifier
+	// (legal-scope identity). Any other identity (DUNS, GLN, custom) does not
+	// satisfy the rule.
 	if inv.Supplier.TaxID != nil && inv.Supplier.TaxID.Code != "" {
 		return true
 	}
 	for _, id := range inv.Supplier.Identities {
-		if id != nil && id.Code != "" {
+		if id == nil {
+			continue
+		}
+		if id.Scope == org.IdentityScopeLegal && id.Code != "" {
 			return true
 		}
 	}

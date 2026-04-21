@@ -84,16 +84,36 @@
       ]
     },
     {
-      "id": "GOBL-PEPPOL-BIS-V3-ORG-PARTY",
-      "object": "org.Party",
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
       "subsets": [
         {
-          "field": "inboxes",
-          "assert": [
+          "field": "supplier",
+          "subsets": [
             {
-              "id": "GOBL-PEPPOL-BIS-V3-ORG-PARTY-R010-R020",
-              "desc": "party electronic address (inbox) is required (PEPPOL-EN16931-R010/R020)",
-              "tests": "present"
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R020",
+                  "desc": "seller electronic address is required (PEPPOL-EN16931-R020)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R010",
+                  "desc": "buyer electronic address is required (PEPPOL-EN16931-R010)",
+                  "tests": "present"
+                }
+              ]
             }
           ]
         }
@@ -239,19 +259,7 @@
     },
     {
       "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
-      "object": "bill.Invoice",
-      "subsets": [
-        {
-          "guard": "supplier country DK",
-          "assert": [
-            {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-003",
-              "desc": "Danish item UNSPSC classifications must use version 19.05.01 or 26.08.01 (DK-R-003)",
-              "tests": "dk unspsc"
-            }
-          ]
-        }
-      ]
+      "object": "bill.Invoice"
     },
     {
       "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",

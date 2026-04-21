@@ -44,10 +44,19 @@ func TestPartyHasLegalIdentity(t *testing.T) {
 func TestFirstAddressStreetAndCode(t *testing.T) {
 	assert.True(t, firstAddressStreetAndCode(nil))
 	assert.True(t, firstAddressStreetAndCode([]*org.Address{}))
-	assert.True(t, firstAddressStreetAndCode([]*org.Address{nil}))
+	assert.False(t, firstAddressStreetAndCode([]*org.Address{nil}))
 	assert.False(t, firstAddressStreetAndCode([]*org.Address{{Street: "X"}}))
 	assert.False(t, firstAddressStreetAndCode([]*org.Address{{Code: "1"}}))
 	assert.True(t, firstAddressStreetAndCode([]*org.Address{{Street: "X", Code: "1"}}))
+}
+
+func TestValidISAccount(t *testing.T) {
+	assert.True(t, validISAccount("123456789012"))      // 12-digit domestic
+	assert.True(t, validISAccount("IS140159260076545510730339")) // IS IBAN
+	assert.True(t, validISAccount("IS14 0159 2600 7654 5510 7303 39")) // IBAN with spaces
+	assert.False(t, validISAccount(""))
+	assert.False(t, validISAccount("12345"))
+	assert.False(t, validISAccount("DE89370400440532013000")) // non-IS IBAN
 }
 
 func TestISPaymentCodes(t *testing.T) {
@@ -58,6 +67,10 @@ func TestISPaymentCodes(t *testing.T) {
 	assert.True(t, isPaymentCode9Account(&pay.Instructions{
 		Ext:            payExt("9"),
 		CreditTransfer: []*pay.CreditTransfer{{Number: "123456789012"}},
+	}))
+	assert.True(t, isPaymentCode9Account(&pay.Instructions{
+		Ext:            payExt("9"),
+		CreditTransfer: []*pay.CreditTransfer{{IBAN: "IS140159260076545510730339"}},
 	}))
 	assert.False(t, isPaymentCode9Account(&pay.Instructions{
 		Ext:            payExt("9"),

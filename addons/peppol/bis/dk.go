@@ -16,10 +16,6 @@ import (
 // for Danish suppliers under DK-R-005.
 var allowedDKPaymentMeans = []cbc.Code{"1", "10", "31", "42", "48", "49", "50", "58", "59", "93", "97"}
 
-// unspscAllowedDKVersions captures the UNSPSC classification versions accepted
-// by DK-R-003.
-var unspscAllowedDKVersions = []string{"19.05.01", "26.08.01"}
-
 func billInvoiceRulesDK() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.DK),
@@ -62,15 +58,12 @@ func orgPartyRulesDK() *rules.Set {
 	)
 }
 
+// orgItemRulesDK is currently a no-op. DK-R-003 (UNSPSC version) is deferred
+// to gobl.ubl — see deferred.go — because GOBL has no structured field for
+// classification-scheme versions, and validating against free-text Description
+// was the only in-GOBL option and was fragile.
 func orgItemRulesDK() *rules.Set {
-	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.DK),
-			// DK-R-003: UNSPSC classifications must be from v19.05.01 or v26.08.01.
-			rules.Assert("DK-R-003", "Danish item UNSPSC classifications must use version 19.05.01 or 26.08.01 (DK-R-003)",
-				is.Func("dk unspsc", dkItemClassificationsValid),
-			),
-		),
-	)
+	return rules.For(new(bill.Invoice))
 }
 
 func payInstructionsRulesDK() *rules.Set {
@@ -143,39 +136,6 @@ func customerIsDK(val any) bool {
 	return partyCountry(p) == l10n.DK
 }
 
-func dkItemClassificationsValid(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	for _, line := range inv.Lines {
-		if line == nil || line.Item == nil {
-			continue
-		}
-		for _, id := range line.Item.Identities {
-			if id == nil {
-				continue
-			}
-			// Only UNSPSC classifications use "UNSPSC" scheme; we accept either
-			// the identity.Description carrying the version, or skip if absent.
-			// DK-R-003 matches when classification has a UNSPSC version.
-			if id.Description != "" {
-				matched := false
-				for _, v := range unspscAllowedDKVersions {
-					if id.Description == v {
-						matched = true
-						break
-					}
-				}
-				if !matched {
-					return false
-				}
-			}
-		}
-	}
-	return true
-}
-
 func dkPaymentMeansAllowed(val any) bool {
 	instr, ok := val.(*pay.Instructions)
 	if !ok || instr == nil {
@@ -201,7 +161,9 @@ func dkCreditTransferComplete(val any) bool {
 		return false
 	}
 	for _, ct := range instr.CreditTransfer {
-		if ct == nil || ct.Number == "" {
+		// GOBL's canonical SEPA field is IBAN; Number is the non-IBAN fallback.
+		// Either satisfies DK-R-006's "bank account" requirement.
+		if ct == nil || (ct.IBAN == "" && ct.Number == "") {
 			return false
 		}
 	}

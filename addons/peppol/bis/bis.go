@@ -71,13 +71,24 @@ func invoiceSupplierCountry(val any) l10n.Code {
 	return partyCountry(inv.Supplier)
 }
 
-// partyCountry returns the party's country, checking TaxID first then first address.
+// partyCountry returns the party's country, checking TaxID first then first
+// address. Used for country guards that target the supplier's tax jurisdiction.
 func partyCountry(p *org.Party) l10n.Code {
 	if p == nil {
 		return ""
 	}
 	if p.TaxID != nil && !p.TaxID.Country.Empty() {
 		return p.TaxID.Country.Code()
+	}
+	return partyAddressCountry(p)
+}
+
+// partyAddressCountry returns the party's first-address country, ignoring the
+// TaxID. Use this for rules whose schematron targets cac:PostalAddress/cac:Country
+// (e.g. PEPPOL-EN16931-R002's DK exception).
+func partyAddressCountry(p *org.Party) l10n.Code {
+	if p == nil {
+		return ""
 	}
 	if len(p.Addresses) > 0 && p.Addresses[0] != nil {
 		return p.Addresses[0].Country.Code()

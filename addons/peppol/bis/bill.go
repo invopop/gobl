@@ -52,8 +52,8 @@ func billInvoiceRules() *rules.Set {
 }
 
 // notesCardinalityValid returns true when the invoice has ≤1 note, OR when
-// both supplier and customer are Danish (which allows multiple notes per
-// PEPPOL-EN16931-R002).
+// both supplier and customer postal addresses are in DK (schematron targets
+// cac:PostalAddress/cbc:Country/cbc:IdentificationCode, not the tax country).
 func notesCardinalityValid(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil {
@@ -62,8 +62,8 @@ func notesCardinalityValid(val any) bool {
 	if len(inv.Notes) <= 1 {
 		return true
 	}
-	// Multiple notes permitted only when both parties are Danish.
-	return partyCountry(inv.Supplier) == l10n.DK && partyCountry(inv.Customer) == l10n.DK
+	return partyAddressCountry(inv.Supplier) == l10n.DK &&
+		partyAddressCountry(inv.Customer) == l10n.DK
 }
 
 // hasBuyerReferenceOrPO returns true when the invoice carries either an

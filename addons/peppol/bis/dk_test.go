@@ -56,34 +56,6 @@ func TestCustomerIsDK(t *testing.T) {
 	assert.True(t, customerIsDK(&org.Party{TaxID: &tax.Identity{Country: "DK"}}))
 }
 
-func TestDKItemClassificationsValid(t *testing.T) {
-	assert.True(t, dkItemClassificationsValid(nil))
-	// Item without classification description passes.
-	inv := &bill.Invoice{
-		Lines: []*bill.Line{
-			{Item: &org.Item{Identities: []*org.Identity{{Code: "ABC"}}}},
-		},
-	}
-	assert.True(t, dkItemClassificationsValid(inv))
-	// Allowed UNSPSC version.
-	inv2 := &bill.Invoice{
-		Lines: []*bill.Line{
-			{Item: &org.Item{Identities: []*org.Identity{{Code: "X", Description: "19.05.01"}}}},
-		},
-	}
-	assert.True(t, dkItemClassificationsValid(inv2))
-	// Disallowed version.
-	inv3 := &bill.Invoice{
-		Lines: []*bill.Line{
-			{Item: &org.Item{Identities: []*org.Identity{{Code: "X", Description: "1.0"}}}},
-		},
-	}
-	assert.False(t, dkItemClassificationsValid(inv3))
-	// Nil line / item / identity skipped.
-	inv4 := &bill.Invoice{Lines: []*bill.Line{nil, {Item: nil}, {Item: &org.Item{Identities: []*org.Identity{nil}}}}}
-	assert.True(t, dkItemClassificationsValid(inv4))
-}
-
 func TestDKPaymentMeansAllowed(t *testing.T) {
 	assert.True(t, dkPaymentMeansAllowed(nil))
 	assert.True(t, dkPaymentMeansAllowed(&pay.Instructions{}))

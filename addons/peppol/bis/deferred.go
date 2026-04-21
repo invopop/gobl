@@ -11,6 +11,13 @@ package bis
 //
 // Deferred rules:
 //
+//   - DK-R-003 (UNSPSC version must be 19.05.01 or 26.08.01)
+//     GOBL has no structured slot for a classification-scheme version; the
+//     only option at the GOBL layer was pattern-matching on free-text
+//     Identity.Description, which has no convention. gobl.ubl owns
+//     cac:CommodityClassification/@listVersionID and can enforce the allowed
+//     set when emitting DK invoices.
+//
 //   - DE-R-022 (attachment filenames must be unique, case-insensitive)
 //     GOBL has no single attachment list analogous to
 //     cac:AdditionalDocumentReference. Uniqueness is a property of the UBL

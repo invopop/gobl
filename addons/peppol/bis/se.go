@@ -5,14 +5,21 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 )
 
-// seAllowedVATPercents lists the Swedish VAT rates allowed by SE-R-006.
-var seAllowedVATPercents = []string{"6", "12", "25", "6.0", "12.0", "25.0", "6.00", "12.00", "25.00"}
+// seAllowedVATPercents lists the Swedish VAT rates allowed by SE-R-006. Compared
+// numerically to the invoice percent so callers can store any equivalent
+// representation (25%, 25.0%, 0.25, etc.) without tripping the rule.
+var seAllowedVATPercents = []num.Percentage{
+	num.MakePercentage(6, 2),
+	num.MakePercentage(12, 2),
+	num.MakePercentage(25, 2),
+}
 
 func billInvoiceRulesSE() *rules.Set {
 	return rules.For(new(bill.Invoice),
@@ -83,10 +90,9 @@ func seVATRateAllowed(val any) bool {
 			if rt == nil || rt.Percent == nil {
 				continue
 			}
-			p := rt.Percent.String()
 			allowed := false
 			for _, a := range seAllowedVATPercents {
-				if p == a || p == a+"%" {
+				if rt.Percent.Equals(a) {
 					allowed = true
 					break
 				}

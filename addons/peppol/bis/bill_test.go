@@ -24,6 +24,12 @@ func partyInCountry(c l10n.Code) *org.Party {
 	return &org.Party{TaxID: &tax.Identity{Country: l10n.TaxCountryCode(c)}}
 }
 
+// partyAtAddress returns a party whose first-address country is set (used by
+// rules whose schematron targets cac:PostalAddress/cbc:Country, e.g. R002).
+func partyAtAddress(c l10n.Code) *org.Party {
+	return &org.Party{Addresses: []*org.Address{{Country: l10n.ISOCountryCode(c)}}}
+}
+
 func TestNotesCardinalityValid(t *testing.T) {
 	t.Run("nil/wrong type passes", func(t *testing.T) {
 		assert.True(t, notesCardinalityValid(nil))
@@ -36,18 +42,27 @@ func TestNotesCardinalityValid(t *testing.T) {
 	t.Run("multiple notes fails for non-DK pair", func(t *testing.T) {
 		inv := &bill.Invoice{
 			Notes:    []*org.Note{{Text: "a"}, {Text: "b"}},
-			Supplier: partyInCountry(l10n.SE),
-			Customer: partyInCountry(l10n.SE),
+			Supplier: partyAtAddress(l10n.SE),
+			Customer: partyAtAddress(l10n.SE),
 		}
 		assert.False(t, notesCardinalityValid(inv))
 	})
-	t.Run("multiple notes pass when both DK", func(t *testing.T) {
+	t.Run("multiple notes pass when both postal addresses are DK", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Notes:    []*org.Note{{Text: "a"}, {Text: "b"}},
+			Supplier: partyAtAddress(l10n.DK),
+			Customer: partyAtAddress(l10n.DK),
+		}
+		assert.True(t, notesCardinalityValid(inv))
+	})
+	t.Run("DK TaxID country alone does not grant the exception", func(t *testing.T) {
+		// Schematron targets postal-address country, not tax-id country.
 		inv := &bill.Invoice{
 			Notes:    []*org.Note{{Text: "a"}, {Text: "b"}},
 			Supplier: partyInCountry(l10n.DK),
 			Customer: partyInCountry(l10n.DK),
 		}
-		assert.True(t, notesCardinalityValid(inv))
+		assert.False(t, notesCardinalityValid(inv))
 	})
 }
 

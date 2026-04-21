@@ -96,14 +96,21 @@ func TestDeVATRatePercentSet(t *testing.T) {
 	assert.True(t, deVATRatePercentSet(nil))
 	assert.True(t, deVATRatePercentSet(&bill.Invoice{}))
 	pct := num.MakePercentage(190, 3)
+	// Standard-rated with percent → passes.
 	good := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
-		{Rates: []*tax.RateTotal{{Percent: &pct}}},
+		{Rates: []*tax.RateTotal{{Percent: &pct, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "S"}}}},
 	}}}}
 	assert.True(t, deVATRatePercentSet(good))
+	// Standard-rated without percent → fails.
 	bad := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
-		{Rates: []*tax.RateTotal{{Percent: nil}}},
+		{Rates: []*tax.RateTotal{{Percent: nil, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "S"}}}},
 	}}}}
 	assert.False(t, deVATRatePercentSet(bad))
+	// Exempt (E) rate without percent → passes (rule scoped to standard-rated).
+	exempt := &bill.Invoice{Totals: &bill.Totals{Taxes: &tax.Total{Categories: []*tax.CategoryTotal{
+		{Rates: []*tax.RateTotal{{Percent: nil, Ext: tax.Extensions{untdid.ExtKeyTaxCategory: "E"}}}},
+	}}}}
+	assert.True(t, deVATRatePercentSet(exempt))
 }
 
 func TestDeSupplierHasTaxIDForCategory(t *testing.T) {
@@ -120,10 +127,17 @@ func TestDeSupplierHasTaxIDForCategory(t *testing.T) {
 	}))
 	// No supplier -> fails.
 	assert.False(t, deSupplierHasTaxIDForCategory(&bill.Invoice{Totals: tot}))
-	// Supplier with identity (non-empty code) -> passes.
+	// Supplier with legal-scope identity (tax registration) -> passes.
 	assert.True(t, deSupplierHasTaxIDForCategory(&bill.Invoice{
+		Totals: tot,
+		Supplier: &org.Party{Identities: []*org.Identity{{
+			Scope: org.IdentityScopeLegal, Code: "HRB-1234",
+		}}},
+	}))
+	// Non-legal identity (e.g. DUNS, GLN) -> fails.
+	assert.False(t, deSupplierHasTaxIDForCategory(&bill.Invoice{
 		Totals:   tot,
-		Supplier: &org.Party{Identities: []*org.Identity{{Code: "X"}}},
+		Supplier: &org.Party{Identities: []*org.Identity{{Code: "123456789"}}},
 	}))
 }
 

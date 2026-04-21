@@ -4,6 +4,7 @@ import (
 	"errors"
 	"regexp"
 
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -28,12 +29,23 @@ const (
 )
 
 func orgPartyRules() *rules.Set {
-	return rules.For(new(org.Party),
-		// PEPPOL-EN16931-R010/R020: buyer and seller MUST have an electronic
-		// address. Applied to any org.Party — suppliers and customers alike.
-		rules.Field("inboxes",
-			rules.Assert("R010-R020", "party electronic address (inbox) is required (PEPPOL-EN16931-R010/R020)",
-				is.Present,
+	// PEPPOL-EN16931-R010/R020: buyer and seller MUST have an electronic
+	// address. Scoped explicitly to the invoice's supplier and customer so
+	// other parties (Ordering.Buyer/Seller/Issuer, Delivery.Receiver, etc.)
+	// are not forced to carry an inbox.
+	return rules.For(new(bill.Invoice),
+		rules.Field("supplier",
+			rules.Field("inboxes",
+				rules.Assert("R020", "seller electronic address is required (PEPPOL-EN16931-R020)",
+					is.Present,
+				),
+			),
+		),
+		rules.Field("customer",
+			rules.Field("inboxes",
+				rules.Assert("R010", "buyer electronic address is required (PEPPOL-EN16931-R010)",
+					is.Present,
+				),
 			),
 		),
 	)

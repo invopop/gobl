@@ -1,7 +1,7 @@
 package bis
 
 import (
-	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
@@ -15,8 +15,6 @@ import (
 
 // validISInvoiceDocumentTypes is the IS-R-001 recommended UNTDID 1001 subset.
 var validISInvoiceDocumentTypes = []cbc.Code{"380", "381"}
-
-var isAccountRe = regexp.MustCompile(`^\d{12}$`)
 
 func billInvoiceRulesIS() *rules.Set {
 	return rules.For(new(bill.Invoice),
@@ -113,13 +111,46 @@ func partyHasLegalIdentity(val any) bool {
 func firstAddressStreetAndCode(val any) bool {
 	addrs, ok := val.([]*org.Address)
 	if !ok || len(addrs) == 0 {
-		return true
+		return true // presence is enforced elsewhere
 	}
 	a := addrs[0]
 	if a == nil {
-		return true
+		return false
 	}
 	return a.Street != "" && a.Code != ""
+}
+
+// validISAccount accepts either a 12-digit Icelandic domestic account or an
+// IS-prefix IBAN (IS + 24 alphanumeric chars, 26 total).
+func validISAccount(s string) bool {
+	if s == "" {
+		return false
+	}
+	if len(s) == 12 && onlyDigits(s) {
+		return true
+	}
+	upper := strings.ToUpper(strings.ReplaceAll(s, " ", ""))
+	if len(upper) == 26 && strings.HasPrefix(upper, "IS") {
+		return true
+	}
+	return false
+}
+
+// paymentCreditTransferHasValidAccount returns true when every credit transfer
+// entry carries a valid account (IBAN preferred, Number as fallback).
+func paymentCreditTransferHasValidAccount(instr *pay.Instructions) bool {
+	if len(instr.CreditTransfer) == 0 {
+		return false
+	}
+	for _, ct := range instr.CreditTransfer {
+		if ct == nil {
+			return false
+		}
+		if !validISAccount(ct.IBAN) && !validISAccount(ct.Number) {
+			return false
+		}
+	}
+	return true
 }
 
 func isPaymentCode9Account(val any) bool {
@@ -131,15 +162,7 @@ func isPaymentCode9Account(val any) bool {
 	if code != "9" {
 		return true
 	}
-	if len(instr.CreditTransfer) == 0 {
-		return false
-	}
-	for _, ct := range instr.CreditTransfer {
-		if ct == nil || !isAccountRe.MatchString(ct.Number) {
-			return false
-		}
-	}
-	return true
+	return paymentCreditTransferHasValidAccount(instr)
 }
 
 func isPaymentCode42Account(val any) bool {
@@ -151,13 +174,5 @@ func isPaymentCode42Account(val any) bool {
 	if code != "42" {
 		return true
 	}
-	if len(instr.CreditTransfer) == 0 {
-		return false
-	}
-	for _, ct := range instr.CreditTransfer {
-		if ct == nil || !isAccountRe.MatchString(ct.Number) {
-			return false
-		}
-	}
-	return true
+	return paymentCreditTransferHasValidAccount(instr)
 }
