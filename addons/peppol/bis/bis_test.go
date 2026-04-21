@@ -51,10 +51,12 @@ func TestFSkattNormalizer(t *testing.T) {
 	require.NotNil(t, def)
 	require.NotNil(t, def.Normalizer)
 
-	t.Run("fills code when key set without one", func(t *testing.T) {
+	t.Run("fills code, scope and type when key set bare", func(t *testing.T) {
 		id := &org.Identity{Key: bis.IdentityKeyFSkatt}
 		def.Normalizer(id)
 		assert.Equal(t, cbc.Code(bis.FSkattText), id.Code)
+		assert.Equal(t, org.IdentityScopeTax, id.Scope)
+		assert.Equal(t, bis.FSkattTaxSchemeID, id.Type)
 	})
 
 	t.Run("leaves existing code untouched", func(t *testing.T) {
@@ -63,10 +65,22 @@ func TestFSkattNormalizer(t *testing.T) {
 		assert.Equal(t, cbc.Code("custom"), id.Code)
 	})
 
+	t.Run("leaves existing scope and type untouched", func(t *testing.T) {
+		id := &org.Identity{
+			Key:   bis.IdentityKeyFSkatt,
+			Scope: "other",
+			Type:  "CUSTOM",
+		}
+		def.Normalizer(id)
+		assert.Equal(t, cbc.Key("other"), id.Scope)
+		assert.Equal(t, cbc.Code("CUSTOM"), id.Type)
+	})
+
 	t.Run("ignores other identities", func(t *testing.T) {
 		id := &org.Identity{Key: bis.IdentityKeyGreekMARK, Code: "12345"}
 		def.Normalizer(id)
 		assert.Equal(t, cbc.Code("12345"), id.Code)
+		assert.Equal(t, cbc.Key(""), id.Scope)
 	})
 }
 

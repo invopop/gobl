@@ -14,15 +14,19 @@ const (
 	// IdentityKeyFSkatt marks a Swedish supplier as approved for F-tax (F-skatt).
 	// In UBL it surfaces as a non-VAT cac:PartyTaxScheme entry whose cbc:CompanyID
 	// carries the literal text "Godkänd för F-skatt", as required by Peppol rule
-	// SE-R-005. The addon's normalizer fills the boilerplate code when the key
-	// is set without one. Lives here (not in regimes/se) because the assertion
-	// is a Peppol-specific UBL artifact, not a general property of the SE regime.
+	// SE-R-005. Lives here (not in regimes/se) because the assertion is a
+	// Peppol-specific UBL artifact, not a general property of the SE regime.
 	IdentityKeyFSkatt cbc.Key = "se-f-skatt"
 )
 
 // FSkattText is the literal Swedish boilerplate required by Peppol SE-R-005
 // in the cac:PartyTaxScheme/cbc:CompanyID field.
 const FSkattText = "Godkänd för F-skatt"
+
+// FSkattTaxSchemeID is the non-VAT cac:TaxScheme/cbc:ID emitted alongside the
+// F-skatt boilerplate. The schematron's only constraint is that the scheme
+// be non-VAT (case-insensitive).
+const FSkattTaxSchemeID cbc.Code = "TAX"
 
 // identities lists the party identity types recognised by the Peppol addon.
 var identities = []*cbc.Definition{
@@ -55,13 +59,25 @@ var identities = []*cbc.Definition{
 	},
 }
 
-// normalizeIdentity fills addon-specific identity defaults — currently just
-// the F-skatt boilerplate code when the key is set without one.
+// normalizeIdentity fills addon-specific identity defaults.
+//
+// For IdentityKeyFSkatt we populate Scope=tax, a non-VAT Type, and the
+// Swedish boilerplate Code. These three fields together drive gobl.ubl's
+// tax-scope identity path to emit the second cac:PartyTaxScheme block that
+// Peppol SE-R-005 requires, without any converter-side changes.
 func normalizeIdentity(id *org.Identity) {
 	if id == nil {
 		return
 	}
-	if id.Key == IdentityKeyFSkatt && id.Code == "" {
-		id.Code = FSkattText
+	if id.Key == IdentityKeyFSkatt {
+		if id.Scope == "" {
+			id.Scope = org.IdentityScopeTax
+		}
+		if id.Type == "" {
+			id.Type = FSkattTaxSchemeID
+		}
+		if id.Code == "" {
+			id.Code = FSkattText
+		}
 	}
 }

@@ -28,11 +28,12 @@ func billInvoiceRulesSE() *rules.Set {
 			rules.Assert("SE-R-006", "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
 				is.Func("se vat rate", seVATRateAllowed),
 			),
-			// SE-R-005 (F-skatt boilerplate text in cac:PartyTaxScheme/cbc:CompanyID)
+			// SE-R-005 (F-skatt boilerplate in cac:PartyTaxScheme/cbc:CompanyID)
 			// is not enforced here. The structured marker is IdentityKeyFSkatt
-			// (see identities.go); when set on a Swedish supplier, gobl.ubl emits
-			// the second non-VAT cac:PartyTaxScheme block with the "Godkänd för
-			// F-skatt" boilerplate the schematron looks for.
+			// (see identities.go); the addon normalizer populates Scope=tax,
+			// a non-VAT Type, and the boilerplate Code on that identity, which
+			// drives gobl.ubl's existing tax-scope identity → cac:PartyTaxScheme
+			// path to emit the block the schematron looks for.
 		),
 	)
 }
