@@ -211,7 +211,7 @@ func partyHasContactName(val any) bool {
 	}
 	// Person.Name is a *org.Name struct — check name presence.
 	first := p.People[0]
-	return first != nil && first.Name.Given != ""
+	return first != nil && first.Name != nil && first.Name.Given != ""
 }
 
 func partyHasContactTelephone(val any) bool {
