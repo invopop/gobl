@@ -102,12 +102,15 @@ func billInvoiceRulesDE() *rules.Set {
 					),
 				),
 			),
-			// DE-R-018 (early-payment #SKONTO# note format) and DE-R-022
-			// (attachment filename uniqueness) are not enforced here. Both are
-			// UBL-level concerns: DE-R-018's note text can be synthesized by
-			// gobl.ubl from bill.Payment.Terms.DueDates rather than hand-written;
-			// DE-R-022 constrains the cac:AdditionalDocumentReference elements
-			// gobl.ubl emits.
+			// DE-R-018 (early-payment #SKONTO# note format) is not enforced here.
+			// The note is written by the caller into the payment-terms text
+			// (gobl.ubl does not synthesize it from bill.Payment.Terms.DueDates);
+			// if the caller includes a #SKONTO#-prefixed line, they must format
+			// it correctly themselves or the Peppol access point will reject.
+			//
+			// DE-R-022 (attachment filename uniqueness) is a UBL-level concern
+			// governing the cac:AdditionalDocumentReference elements gobl.ubl
+			// emits.
 			//
 			// DE-R-026 (warning): corrective invoices should reference a preceding invoice.
 			rules.Assert("DE-R-026", "corrective invoices should reference a preceding invoice (DE-R-026)",
