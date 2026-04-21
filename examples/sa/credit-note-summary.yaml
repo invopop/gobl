@@ -34,7 +34,7 @@ supplier:
     country: "SA"
     code: "312345678912343"
   identities:
-    - type: "CRN"
+    - type: "SAG"
       code: "1010101010"
   people:
     - name:

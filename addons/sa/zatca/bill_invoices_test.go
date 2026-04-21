@@ -83,6 +83,9 @@ func validSupplier() *org.Party {
 			Country: "SA",
 			Code:    "300000000000003",
 		},
+		Identities: []*org.Identity{
+			{Type: sa.IdentityTypeCRN, Code: "1234567890"},
+		},
 		Addresses: []*org.Address{validAddress()},
 	}
 }

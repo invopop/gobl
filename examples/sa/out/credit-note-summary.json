@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d5e59cd3b97f4a163af8a8f9a27cd07165dfcd4dbe4848d6a001050e6c2e825"
+			"val": "be56d66e4632335803ef21fb29f4dc5f982956acb1e00529b8971c5293fea277"
 		}
 	},
 	"doc": {
@@ -47,7 +47,7 @@
 			},
 			"identities": [
 				{
-					"type": "CRN",
+					"type": "SAG",
 					"code": "1010101010"
 				}
 			],

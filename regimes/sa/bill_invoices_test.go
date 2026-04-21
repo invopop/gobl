@@ -24,6 +24,9 @@ func validInvoice() *bill.Invoice {
 				Country: "SA",
 				Code:    "300000000000003",
 			},
+			Identities: []*org.Identity{
+				{Type: sa.IdentityTypeCRN, Code: "1234567890"},
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -52,7 +55,8 @@ func validInvoice() *bill.Invoice {
 	}
 }
 
-// --- Rule 01 (BR-KSA-39, BR-KSA-08): supplier must have valid tax ID and at most 1 valid identity ---
+// --- Rule 01 (BR-KSA-39): supplier must have valid tax ID ---
+// --- Rule 02 (BR-KSA-08): supplier must have exactly 1 valid identity ---
 
 func TestSupplierTaxIDRequired(t *testing.T) {
 	t.Run("valid invoice passes", func(t *testing.T) {
@@ -79,11 +83,12 @@ func TestSupplierTaxIDRequired(t *testing.T) {
 }
 
 func TestSupplierIdentities(t *testing.T) {
-	t.Run("supplier with no identities and valid tax ID passes", func(t *testing.T) {
+	t.Run("supplier with no identities fails", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.Identities = nil
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier must have a valid identity")
 	})
 
 	t.Run("supplier with one valid CRN identity passes", func(t *testing.T) {
@@ -147,7 +152,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
+		assert.ErrorContains(t, err, "supplier must have a valid identity")
 	})
 
 	t.Run("supplier with two identities fails", func(t *testing.T) {
@@ -158,7 +163,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
+		assert.ErrorContains(t, err, "supplier must have a valid identity")
 	})
 
 	t.Run("supplier with NAT identity type fails (not in supplier list)", func(t *testing.T) {
@@ -168,7 +173,7 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
+		assert.ErrorContains(t, err, "supplier must have a valid identity")
 	})
 
 	t.Run("supplier with TIN identity type fails (not in supplier list)", func(t *testing.T) {
@@ -178,6 +183,6 @@ func TestSupplierIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier can have 0 or 1 identities")
+		assert.ErrorContains(t, err, "supplier must have a valid identity")
 	})
 }

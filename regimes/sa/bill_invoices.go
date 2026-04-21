@@ -18,8 +18,8 @@ func billInvoiceRules() *rules.Set {
 					is.Func("valid VAT code", hasTaxIDCode),
 				),
 				rules.Field("identities",
-					rules.Assert("02", "supplier can have 0 or 1 identities (BR-KSA-08)",
-						is.Func("identity must be one of: CRN/MOM/MLS/700/SAG/OTH", hasAtMostOneIdentity),
+					rules.Assert("02", "supplier must have a valid identity (BR-KSA-08)",
+						is.Func("identity must be one of: CRN/MOM/MLS/700/SAG/OTH", hasOneIdentity),
 					),
 				),
 			),
@@ -32,7 +32,7 @@ func hasTaxIDCode(value any) bool {
 	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
-func hasAtMostOneIdentity(value any) bool {
+func hasOneIdentity(value any) bool {
 	identities, _ := value.([]*org.Identity)
-	return len(identities) == 0 || (len(identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(identities))
+	return len(identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(identities)
 }
