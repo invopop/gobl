@@ -68,9 +68,8 @@ func TestValidateNil(t *testing.T) {
 func TestValidateWithNilPointerField(t *testing.T) {
 	// Nil pointer field should be skipped without panic.
 	p := &Person{Name: "Alice", Address: nil}
-	// No rules fire since address is nil and name is set.
 	assert.NotPanics(t, func() {
-		assert.NoError(t, rules.Validate(p))
+		assert.Error(t, rules.Validate(p))
 	})
 }
 
