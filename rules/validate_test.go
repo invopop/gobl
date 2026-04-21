@@ -70,7 +70,7 @@ func TestValidateWithNilPointerField(t *testing.T) {
 	p := &Person{Name: "Alice", Address: nil}
 	// No rules fire since address is nil and name is set.
 	assert.NotPanics(t, func() {
-		rules.Validate(p)
+		assert.NoError(t, rules.Validate(p))
 	})
 }
 
