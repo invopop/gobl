@@ -3,6 +3,7 @@ package bis
 import (
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
@@ -19,8 +20,13 @@ var (
 func billInvoiceRulesGR() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.GR),
-			// GR-R-001 (invoice ID segmentation) deferred to gobl.ubl — see deferred.go.
-			//
+			// GR-R-001-1: Greek invoice ID must produce 6 underscore-delimited
+			// segments when Series and Code are joined with "_". Sub-rules
+			// GR-R-001-2..-7 (TIN/date/sequence/type matching) are deferred to
+			// gobl.ubl — see deferred.go.
+			rules.Assert("GR-R-001-1", "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
+				is.Func("gr id segments", grIDSixSegments),
+			),
 			// GR-R-004: exactly one MARK identity with positive integer code.
 			rules.Assert("GR-R-004-1", "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
 				is.Func("gr mark count", grMARKExactlyOne),
@@ -34,6 +40,34 @@ func billInvoiceRulesGR() *rules.Set {
 			),
 		),
 	)
+}
+
+// grFullInvoiceID joins Series and Code with an underscore so the count check
+// works whether the caller stores all six segments in Code or splits them
+// across Series + Code.
+func grFullInvoiceID(inv *bill.Invoice) string {
+	if inv == nil {
+		return ""
+	}
+	if inv.Series == "" {
+		return inv.Code.String()
+	}
+	return inv.Series.String() + "_" + inv.Code.String()
+}
+
+// grIDSixSegments enforces GR-R-001-1: the joined identifier must split into
+// exactly 6 non-empty-or-empty segments on `_`. We deliberately do not check
+// the contents of each segment here — that is gobl.ubl's job at UBL emit.
+func grIDSixSegments(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return true
+	}
+	id := grFullInvoiceID(inv)
+	if id == "" {
+		return true
+	}
+	return len(strings.Split(id, "_")) == 6
 }
 
 func orgPartyRulesGR() *rules.Set {

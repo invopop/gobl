@@ -472,6 +472,11 @@
           "guard": "supplier country GR",
           "assert": [
             {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-1",
+              "desc": "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
+              "tests": "gr id segments"
+            },
+            {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-004-1",
               "desc": "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
               "tests": "gr mark count"

@@ -29,20 +29,14 @@ package bis
 //     source, the format, presence, and comparison rules become
 //     structurally impossible to violate.
 //
-//   - SE-R-005 (supplier with tax registration must include the "Godkänd för
-//     F-skatt" boilerplate)
-//     The structured marker for this is IdentityKeyFSkatt (see
-//     identities.go in this package). When set on the supplier, the addon
-//     normalizer fills the boilerplate code, and gobl.ubl should emit the
-//     second cac:PartyTaxScheme block (cbc:CompanyID = "Godkänd för
-//     F-skatt", any non-VAT TaxScheme ID) that the schematron looks for.
-//
-//   - GR-R-001-1 through GR-R-001-7 (Greek invoice ID must be a 6-segment
-//     underscore-delimited string containing the supplier TIN, YYYYMMDD,
-//     sequence, document type, and two further segments)
-//     The supplier TIN, issue date, and sequence are already on the GOBL
-//     document as structured fields. Asking callers to additionally encode
-//     them into `Code` as an underscore-delimited string is duplicative.
+//   - GR-R-001-2 through GR-R-001-7 (Greek invoice ID segment contents:
+//     supplier TIN, YYYYMMDD, sequence, document type, and two further
+//     segments)
+//     The 6-segment shape (GR-R-001-1) IS enforced here: we join Series +
+//     "_" + Code and assert that the split yields six tokens. The contents
+//     of each segment are not checked, because the supplier TIN, issue date,
+//     and sequence are already on the GOBL document as structured fields and
+//     asking callers to additionally encode them into `Code` is duplicative.
 //     gobl.ubl should build the Peppol-visible ID from those fields at
 //     serialization time; GR-specific callers then only need to supply the
 //     last two segments (likely via a future GR-specific field or pair of
