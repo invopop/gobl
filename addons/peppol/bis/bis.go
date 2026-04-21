@@ -112,5 +112,14 @@ func newAddon() *tax.AddonDef {
 			`),
 		},
 		Identities: identities,
+		Normalizer: normalize,
+	}
+}
+
+// normalize dispatches addon-specific normalization to the right handler.
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *org.Identity:
+		normalizeIdentity(obj)
 	}
 }

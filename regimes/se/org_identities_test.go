@@ -107,23 +107,3 @@ func TestOrgIdentityValidate(t *testing.T) {
 		})
 	}
 }
-
-func TestFSkattIdentity(t *testing.T) {
-	t.Run("normalizer fills boilerplate when key is set", func(t *testing.T) {
-		id := &org.Identity{Key: se.IdentityKeyFSkatt}
-		se.Normalize(id)
-		assert.Equal(t, cbc.Code(se.FSkattText), id.Code)
-	})
-
-	t.Run("normalizer leaves existing code untouched", func(t *testing.T) {
-		id := &org.Identity{Key: se.IdentityKeyFSkatt, Code: "custom"}
-		se.Normalize(id)
-		assert.Equal(t, cbc.Code("custom"), id.Code)
-	})
-
-	t.Run("does not affect other identities", func(t *testing.T) {
-		id := &org.Identity{Type: se.IdentityTypeOrgNr, Code: "5560360793"}
-		se.Normalize(id)
-		assert.Equal(t, cbc.Code("5560360793"), id.Code)
-	})
-}

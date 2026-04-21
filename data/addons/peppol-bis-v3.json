@@ -21,6 +21,17 @@
       "desc": {
         "en": "Mydata Auto-Registration Key assigned by the Greek Independent Authority for Public Revenue (IAPR) to each registered invoice."
       }
+    },
+    {
+      "key": "se-f-skatt",
+      "name": {
+        "en": "F-Tax Approval",
+        "se": "Godkänd för F-skatt"
+      },
+      "desc": {
+        "en": "Swedish F-tax (F-skatt) approval. Setting this identity on a supplier asserts that the business handles its own tax payments. Required for Peppol BIS Billing 3.0 (SE-R-005); rendered as a non-VAT party tax scheme entry with the boilerplate text \"Godkänd för F-skatt\".",
+        "se": "Svenskt godkännande för F-skatt. När denna identitet anges på en leverantör betyder det att verksamheten hanterar sina egna skattebetalningar. Krävs för Peppol BIS Billing 3.0 (SE-R-005)."
+      }
     }
   ],
   "corrections": null

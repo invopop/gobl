@@ -31,11 +31,11 @@ package bis
 //
 //   - SE-R-005 (supplier with tax registration must include the "Godkänd för
 //     F-skatt" boilerplate)
-//     The structured marker for this is the SE-regime identity key
-//     se.IdentityKeyFSkatt (see regimes/se/org_identities.go). When present
-//     on the supplier, gobl.ubl should emit the second cac:PartyTaxScheme
-//     block (cbc:CompanyID = "Godkänd för F-skatt", any non-VAT TaxScheme
-//     ID) that the schematron looks for.
+//     The structured marker for this is IdentityKeyFSkatt (see
+//     identities.go in this package). When set on the supplier, the addon
+//     normalizer fills the boilerplate code, and gobl.ubl should emit the
+//     second cac:PartyTaxScheme block (cbc:CompanyID = "Godkänd för
+//     F-skatt", any non-VAT TaxScheme ID) that the schematron looks for.
 //
 //   - GR-R-001-1 through GR-R-001-7 (Greek invoice ID must be a 6-segment
 //     underscore-delimited string containing the supplier TIN, YYYYMMDD,

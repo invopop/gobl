@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/peppol/bis"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -33,14 +34,40 @@ func TestAddonKeyConstant(t *testing.T) {
 func TestIdentities(t *testing.T) {
 	def := tax.AddonForKey(bis.V3)
 	require.NotNil(t, def)
-	var found bool
+	keys := map[cbc.Key]bool{}
 	for _, id := range def.Identities {
-		if id != nil && id.Key == bis.IdentityKeyGreekMARK {
-			found = true
-			break
+		if id != nil {
+			keys[id.Key] = true
 		}
 	}
-	assert.True(t, found, "Greek MARK identity definition should be registered")
+	assert.True(t, keys[bis.IdentityKeyGreekMARK], "Greek MARK identity definition should be registered")
+	assert.True(t, keys[bis.IdentityKeyFSkatt], "F-skatt identity definition should be registered")
+}
+
+// TestFSkattNormalizer verifies that attaching the F-skatt key to a supplier
+// auto-fills the boilerplate code via the addon's normalizer.
+func TestFSkattNormalizer(t *testing.T) {
+	def := tax.AddonForKey(bis.V3)
+	require.NotNil(t, def)
+	require.NotNil(t, def.Normalizer)
+
+	t.Run("fills code when key set without one", func(t *testing.T) {
+		id := &org.Identity{Key: bis.IdentityKeyFSkatt}
+		def.Normalizer(id)
+		assert.Equal(t, cbc.Code(bis.FSkattText), id.Code)
+	})
+
+	t.Run("leaves existing code untouched", func(t *testing.T) {
+		id := &org.Identity{Key: bis.IdentityKeyFSkatt, Code: "custom"}
+		def.Normalizer(id)
+		assert.Equal(t, cbc.Code("custom"), id.Code)
+	})
+
+	t.Run("ignores other identities", func(t *testing.T) {
+		id := &org.Identity{Key: bis.IdentityKeyGreekMARK, Code: "12345"}
+		def.Normalizer(id)
+		assert.Equal(t, cbc.Code("12345"), id.Code)
+	})
 }
 
 // TestEmptyInvoiceNoPanic verifies that running Peppol validation against an
