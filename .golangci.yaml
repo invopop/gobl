@@ -29,6 +29,7 @@ linters:
       - third_party$
       - builtin$
       - examples$
+      - node_modules
 formatters:
   enable:
     - gofmt

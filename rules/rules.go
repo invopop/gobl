@@ -373,13 +373,26 @@ func compileEachSubset(t reflect.Type, ss *Set) {
 }
 
 // fieldTypeByName returns the reflect.Type for the field with the given JSON
-// tag name in struct type t. Returns nil if not found.
+// tag name in struct type t. Anonymous (embedded) struct fields are searched
+// recursively so that promoted fields are resolved. Returns nil if not found.
 func fieldTypeByName(t reflect.Type, name string) reflect.Type {
 	if t.Kind() != reflect.Struct {
 		return nil
 	}
 	for i := range t.NumField() {
 		f := t.Field(i)
+		if f.Anonymous {
+			et := f.Type
+			if et.Kind() == reflect.Ptr {
+				et = et.Elem()
+			}
+			if et.Kind() == reflect.Struct {
+				if inner := fieldTypeByName(et, name); inner != nil {
+					return inner
+				}
+			}
+			continue
+		}
 		if jsonFieldName(f) == name {
 			return f.Type
 		}
@@ -388,14 +401,31 @@ func fieldTypeByName(t reflect.Type, name string) reflect.Type {
 }
 
 // fieldValueByName returns the reflect.Value for the field with the given JSON
-// tag name in struct value rv. Returns (zero, false) if not found.
+// tag name in struct value rv. Anonymous (embedded) struct fields are searched
+// recursively. Returns (zero, false) if not found.
 func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
 	if rv.Kind() != reflect.Struct {
 		return reflect.Value{}, false
 	}
 	rt := rv.Type()
 	for i := range rt.NumField() {
-		if jsonFieldName(rt.Field(i)) == name {
+		f := rt.Field(i)
+		if f.Anonymous {
+			fv := rv.Field(i)
+			if fv.Kind() == reflect.Ptr {
+				if fv.IsNil() {
+					continue
+				}
+				fv = fv.Elem()
+			}
+			if fv.Kind() == reflect.Struct {
+				if inner, ok := fieldValueByName(fv, name); ok {
+					return inner, true
+				}
+			}
+			continue
+		}
+		if jsonFieldName(f) == name {
 			return rv.Field(i), true
 		}
 	}

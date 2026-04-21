@@ -467,6 +467,67 @@ func TestFieldRulesDoNotBleedToSameType(t *testing.T) {
 	})
 }
 
+func TestFieldNested(t *testing.T) {
+	set := rules.For(new(Person),
+		rules.Field("address",
+			rules.Field("city",
+				rules.Assert("01", "city is required", is.Present),
+			),
+			rules.Field("street",
+				rules.Assert("02", "street is required", is.Present),
+			),
+		),
+	)
+
+	t.Run("reports fault at nested field path", func(t *testing.T) {
+		p := &Person{Address: &Address{Street: "1 Main", City: ""}}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("$.address.city"))
+	})
+
+	t.Run("passes when nested fields are set", func(t *testing.T) {
+		p := &Person{Address: &Address{Street: "1 Main", City: "London"}}
+		assert.NoError(t, set.Validate(p))
+	})
+
+	t.Run("skips nested field subset when parent pointer is nil", func(t *testing.T) {
+		p := &Person{Address: nil}
+		assert.NoError(t, set.Validate(p))
+	})
+
+	t.Run("sibling nested fields are independent", func(t *testing.T) {
+		p := &Person{Address: &Address{Street: "1 Main", City: ""}}
+		faults := set.Validate(p)
+		require.Error(t, faults)
+		assert.True(t, faults.HasPath("$.address.city"))
+		assert.False(t, faults.HasPath("$.address.street"))
+	})
+}
+
+func TestEmbeddedStruct(t *testing.T) {
+	type Individual struct {
+		Person
+		Testing bool `json:"testing"`
+	}
+	set := rules.For(new(Individual),
+		rules.Field("address",
+			rules.Field("city",
+				rules.Assert("01", "city is required", is.Present),
+			),
+		),
+		rules.Field("testing",
+			rules.Assert("02", "testing must be true", is.In(true)),
+		),
+	)
+	t.Run("embedded struct fields are validated", func(t *testing.T) {
+		i := new(Individual)
+		i.Address = &Address{Street: "1 Main", City: "Foo"}
+		i.Testing = true
+		assert.NoError(t, set.Validate(i))
+	})
+}
+
 func TestEach(t *testing.T) {
 	t.Run("validates each element and reports indexed paths", func(t *testing.T) {
 		set := rules.For(new(Person),
