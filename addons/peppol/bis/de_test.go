@@ -11,13 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDEInvoiceDocumentTypeValid(t *testing.T) {
-	assert.True(t, deInvoiceDocumentTypeValid(nil))
-	assert.True(t, deInvoiceDocumentTypeValid(tax.Extensions{}))
-	assert.True(t, deInvoiceDocumentTypeValid(tax.Extensions{untdid.ExtKeyDocumentType: "380"}))
-	assert.False(t, deInvoiceDocumentTypeValid(tax.Extensions{untdid.ExtKeyDocumentType: "999"}))
-}
-
 func TestPartyHasContactGroup(t *testing.T) {
 	assert.True(t, partyHasContactGroup(nil))
 	assert.False(t, partyHasContactGroup(&org.Party{}))
@@ -57,40 +50,6 @@ func TestPartyContactHelpers(t *testing.T) {
 	assert.True(t, partyHasContactEmail(&org.Party{People: []*org.Person{{Emails: []*org.Email{{Address: "a@b"}}}}}))
 }
 
-func TestPartyTelephoneMinLength(t *testing.T) {
-	assert.True(t, partyTelephoneMinLength(nil))
-	// Three digits passes.
-	assert.True(t, partyTelephoneMinLength(&org.Party{Telephones: []*org.Telephone{{Number: "123"}}}))
-	// Two digits fails.
-	assert.False(t, partyTelephoneMinLength(&org.Party{Telephones: []*org.Telephone{{Number: "+1"}}}))
-	// Looks at people fallback.
-	assert.True(t, partyTelephoneMinLength(&org.Party{People: []*org.Person{{Telephones: []*org.Telephone{{Number: "+49 123 4567"}}}}}))
-	// Nil entry skipped.
-	assert.True(t, partyTelephoneMinLength(&org.Party{Telephones: []*org.Telephone{nil, {Number: "12345"}}}))
-}
-
-func TestPartyEmailFormat(t *testing.T) {
-	assert.True(t, partyEmailFormat(nil))
-	assert.True(t, partyEmailFormat(&org.Party{Emails: []*org.Email{{Address: "a@b"}}}))
-	assert.False(t, partyEmailFormat(&org.Party{Emails: []*org.Email{{Address: "no-at-sign"}}}))
-	assert.False(t, partyEmailFormat(&org.Party{Emails: []*org.Email{{Address: "a@b@c"}}}))
-	assert.False(t, partyEmailFormat(&org.Party{Emails: []*org.Email{{Address: "@b"}}}))
-	assert.False(t, partyEmailFormat(&org.Party{Emails: []*org.Email{{Address: "a@"}}}))
-	// Nil entry skipped.
-	assert.True(t, partyEmailFormat(&org.Party{Emails: []*org.Email{nil}}))
-}
-
-func TestCorrectivePrecedingPresent(t *testing.T) {
-	assert.True(t, correctivePrecedingPresent(nil))
-	assert.True(t, correctivePrecedingPresent(&bill.Invoice{}))
-	assert.True(t, correctivePrecedingPresent(&bill.Invoice{Tax: taxExt("380")}))
-	assert.False(t, correctivePrecedingPresent(&bill.Invoice{Tax: taxExt("384")}))
-	assert.True(t, correctivePrecedingPresent(&bill.Invoice{
-		Tax:       taxExt("384"),
-		Preceding: []*org.DocumentRef{{Code: "ORIG"}},
-	}))
-}
-
 func TestDeSupplierHasTaxIDForCategory(t *testing.T) {
 	assert.True(t, deSupplierHasTaxIDForCategory(nil))
 	// No qualifying categories — passes regardless of supplier.
@@ -117,6 +76,37 @@ func TestDeSupplierHasTaxIDForCategory(t *testing.T) {
 		Totals:   tot,
 		Supplier: &org.Party{Identities: []*org.Identity{{Code: "123456789"}}},
 	}))
+}
+
+func TestSkontoFormatValid(t *testing.T) {
+	assert.True(t, skontoFormatValid(nil))
+	assert.True(t, skontoFormatValid(&bill.Invoice{}))
+	assert.True(t, skontoFormatValid(&bill.Invoice{Payment: &bill.PaymentDetails{}}))
+	// Intro paragraph + well-formed Skonto line passes.
+	good := &bill.Invoice{Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+		Notes: "Payment within 30 days net.\n#SKONTO#TAGE=14#PROZENT=3.00#",
+	}}}
+	assert.True(t, skontoFormatValid(good))
+	// Malformed Skonto line fails.
+	bad := &bill.Invoice{Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+		Notes: "#SKONTO#TAGE=14#PROZENT#",
+	}}}
+	assert.False(t, skontoFormatValid(bad))
+	// BASISBETRAG variant passes.
+	withBasis := &bill.Invoice{Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+		Notes: "#SKONTO#TAGE=7#PROZENT=5.00#BASISBETRAG=1000.00#",
+	}}}
+	assert.True(t, skontoFormatValid(withBasis))
+	// Per-due-date notes are also checked.
+	duePerDate := &bill.Invoice{Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+		DueDates: []*pay.DueDate{{Notes: "#SKONTO#oops"}},
+	}}}
+	assert.False(t, skontoFormatValid(duePerDate))
+	// Non-# lines pass regardless.
+	plain := &bill.Invoice{Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+		Notes: "Anything goes here.\nNo Skonto.",
+	}}}
+	assert.True(t, skontoFormatValid(plain))
 }
 
 func TestDePaymentExclusivity(t *testing.T) {
@@ -162,39 +152,5 @@ func TestDePaymentExclusivity(t *testing.T) {
 	assert.False(t, deDirectDebitFieldsComplete(&pay.Instructions{DirectDebit: &pay.DirectDebit{}}))
 	assert.True(t, deDirectDebitFieldsComplete(&pay.Instructions{
 		DirectDebit: &pay.DirectDebit{Creditor: "C", Account: "A"},
-	}))
-}
-
-func TestDeSEPAIBANValid(t *testing.T) {
-	assert.True(t, deSEPAIBANValid(nil))
-	assert.True(t, deSEPAIBANValid(&pay.Instructions{Ext: payExt("30")}))
-	// Code 58 with valid IBAN passes.
-	assert.True(t, deSEPAIBANValid(&pay.Instructions{
-		Ext:            payExt("58"),
-		CreditTransfer: []*pay.CreditTransfer{{IBAN: "DE89370400440532013000"}},
-	}))
-	// Code 58 with junk fails.
-	assert.False(t, deSEPAIBANValid(&pay.Instructions{
-		Ext:            payExt("58"),
-		CreditTransfer: []*pay.CreditTransfer{{IBAN: "not-an-iban!"}},
-	}))
-	// Empty account passes (handled elsewhere).
-	assert.True(t, deSEPAIBANValid(&pay.Instructions{
-		Ext:            payExt("58"),
-		CreditTransfer: []*pay.CreditTransfer{{}},
-	}))
-}
-
-func TestDeSEPADebitIBANValid(t *testing.T) {
-	assert.True(t, deSEPADebitIBANValid(nil))
-	assert.True(t, deSEPADebitIBANValid(&pay.Instructions{Ext: payExt("30")}))
-	assert.True(t, deSEPADebitIBANValid(&pay.Instructions{Ext: payExt("59")}))
-	assert.True(t, deSEPADebitIBANValid(&pay.Instructions{
-		Ext:         payExt("59"),
-		DirectDebit: &pay.DirectDebit{Account: "DE89370400440532013000"},
-	}))
-	assert.False(t, deSEPADebitIBANValid(&pay.Instructions{
-		Ext:         payExt("59"),
-		DirectDebit: &pay.DirectDebit{Account: "junk!"},
 	}))
 }

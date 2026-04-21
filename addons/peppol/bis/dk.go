@@ -44,16 +44,6 @@ func orgPartyRulesDK() *rules.Set {
 					),
 				),
 			),
-			// DK-R-017 (warning-level): Danish customer should also have CVR.
-			// We implement as fatal here; can be relaxed to warning later.
-			rules.Field("customer",
-				rules.When(
-					is.Func("customer is DK", customerIsDK),
-					rules.Assert("DK-R-017", "Danish customer should provide a CVR identity with scheme 0184 (DK-R-017)",
-						is.Func("dk customer cvr", partyHasCVRIdentity),
-					),
-				),
-			),
 		),
 	)
 }

@@ -2,12 +2,9 @@ package bis
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/catalogues/untdid"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 )
@@ -49,10 +46,8 @@ func orgPartyRulesSE() *rules.Set {
 				rules.Assert("SE-R-002", "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
 					is.Func("se vat trailing digits", swedishVATTrailingDigits),
 				),
-				// SE-R-003/R-004: SE org number format.
-				rules.Assert("SE-R-003", "Swedish organization number must be numeric (SE-R-003)",
-					is.Func("se org numeric", swedishOrgNumeric),
-				),
+				// SE-R-004 (fatal): SE org number length. SE-R-003 (numeric) is
+				// warning-level and intentionally not enforced here.
 				rules.Assert("SE-R-004", "Swedish organization number must be 10 characters (SE-R-004)",
 					is.Func("se org length", swedishOrgLength),
 				),
@@ -65,19 +60,11 @@ func orgPartyRulesSE() *rules.Set {
 	)
 }
 
+// payInstructionsRulesSE currently has no fatal-level rules. SE-R-012 (prefer
+// code 30 for domestic credit transfers) and SE-R-007..R-011 (Plusgiro /
+// Bankgiro format) are all warning-level and intentionally not enforced.
 func payInstructionsRulesSE() *rules.Set {
-	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.SE),
-			rules.Field("payment",
-				rules.Field("instructions",
-					// SE-R-012 (warning): domestic credit transfer should use code 30.
-					rules.Assert("SE-R-012", "Swedish domestic credit transfer should use payment means code 30 (SE-R-012)",
-						is.Func("se cc 30", seCreditTransferCode30),
-					),
-				),
-			),
-		),
-	)
+	return rules.For(new(bill.Invoice))
 }
 
 // --- helpers ---
@@ -150,26 +137,6 @@ func swedishVATTrailingDigits(val any) bool {
 	return true
 }
 
-func swedishOrgNumeric(val any) bool {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return true
-	}
-	for _, id := range p.Identities {
-		if id == nil {
-			continue
-		}
-		// Heuristic: SE org number is a legal-scope identity on a Swedish party.
-		if id.Scope != org.IdentityScopeLegal {
-			continue
-		}
-		if !onlyDigits(id.Code.String()) {
-			return false
-		}
-	}
-	return true
-}
-
 func swedishOrgLength(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil {
@@ -204,19 +171,4 @@ func swedishOrgLuhn(val any) bool {
 		}
 	}
 	return true
-}
-
-func seCreditTransferCode30(val any) bool {
-	instr, ok := val.(*pay.Instructions)
-	if !ok || instr == nil {
-		return true
-	}
-	if len(instr.CreditTransfer) == 0 {
-		return true
-	}
-	code := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
-	if code == "" {
-		return true
-	}
-	return code == cbc.Code("30")
 }

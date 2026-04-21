@@ -4,11 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -72,13 +70,6 @@ func TestSwedishVATTrailingDigits(t *testing.T) {
 }
 
 func TestSwedishOrgChecks(t *testing.T) {
-	// Numeric
-	assert.True(t, swedishOrgNumeric(nil))
-	assert.True(t, swedishOrgNumeric(&org.Party{}))
-	assert.True(t, swedishOrgNumeric(&org.Party{Identities: []*org.Identity{{Scope: "tax", Code: "ABC"}}}))
-	assert.False(t, swedishOrgNumeric(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "ABC"}}}))
-	assert.True(t, swedishOrgNumeric(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
-
 	// Length
 	assert.True(t, swedishOrgLength(nil))
 	assert.True(t, swedishOrgLength(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
@@ -93,24 +84,4 @@ func TestSwedishOrgChecks(t *testing.T) {
 	assert.False(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360794"}}}))
 	// Nil identity / wrong scope skipped.
 	assert.True(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{nil, {Scope: "tax", Code: "X"}}}))
-}
-
-func TestSeCreditTransferCode30(t *testing.T) {
-	assert.True(t, seCreditTransferCode30(nil))
-	// No transfers — passes.
-	assert.True(t, seCreditTransferCode30(&pay.Instructions{}))
-	// Transfer with code 30 — passes.
-	assert.True(t, seCreditTransferCode30(&pay.Instructions{
-		Ext:            payExt(cbc.Code("30")),
-		CreditTransfer: []*pay.CreditTransfer{{}},
-	}))
-	// Transfer with empty ext — passes.
-	assert.True(t, seCreditTransferCode30(&pay.Instructions{
-		CreditTransfer: []*pay.CreditTransfer{{}},
-	}))
-	// Transfer with non-30 code — fails.
-	assert.False(t, seCreditTransferCode30(&pay.Instructions{
-		Ext:            payExt(cbc.Code("58")),
-		CreditTransfer: []*pay.CreditTransfer{{}},
-	}))
 }

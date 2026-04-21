@@ -1,6 +1,7 @@
 package bis
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/invopop/gobl/bill"
@@ -13,20 +14,19 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// validISInvoiceDocumentTypes is the IS-R-001 recommended UNTDID 1001 subset.
-var validISInvoiceDocumentTypes = []cbc.Code{"380", "381"}
+// NoteSrcEINDAGI marks an org.Note as the Icelandic EINDAGI ("due date")
+// supporting document description. gobl.ubl emits notes with this source as
+// a cac:AdditionalDocumentReference with cbc:DocumentDescription="EINDAGI";
+// IS-R-008/R-009/R-010 validate the hand-authored YYYY-MM-DD value the
+// caller writes into Note.Text.
+const NoteSrcEINDAGI cbc.Key = "eindagi"
+
+// isEINDAGIDateRe matches the YYYY-MM-DD format required by IS-R-008.
+var isEINDAGIDateRe = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)
 
 func billInvoiceRulesIS() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.IS),
-			// IS-R-001 (warning): invoice type should be 380 or 381.
-			rules.Field("tax",
-				rules.Field("ext",
-					rules.AssertIfPresent("IS-R-001", "Icelandic invoice document type should be 380 or 381 (IS-R-001)",
-						is.Func("is doc type", isDocumentTypeValid),
-					),
-				),
-			),
 			// IS-R-002: Icelandic supplier must have legal identity.
 			rules.Field("supplier",
 				rules.Assert("IS-R-002", "Icelandic supplier must have a legal identity (IS-R-002)",
@@ -50,11 +50,20 @@ func billInvoiceRulesIS() *rules.Set {
 					),
 				),
 			),
-			// IS-R-008/R-009/R-010 (EINDAGI date note) are not enforced here.
-			// The note is written by the caller (gobl.ubl does not synthesize
-			// it from bill.Payment.Terms.DueDates); callers who include an
-			// EINDAGI AdditionalDocumentReference must match the YYYY-MM-DD
-			// format and align the date with BT-9 themselves.
+			// IS-R-008/R-009/R-010: EINDAGI is an org.Note with Src="eindagi"
+			// (see NoteSrcEINDAGI). When the caller includes one, its Text
+			// must be a YYYY-MM-DD date, Payment.Terms.DueDates must carry at
+			// least one date, and the EINDAGI date must be on or after the
+			// first due date.
+			rules.Assert("IS-R-008", "EINDAGI note text must use YYYY-MM-DD format (IS-R-008)",
+				is.Func("is eindagi format", isEINDAGIFormatValid),
+			),
+			rules.Assert("IS-R-009", "invoice with EINDAGI note must include a payment due date (IS-R-009)",
+				is.Func("is eindagi due-date present", isEINDAGIDueDatePresent),
+			),
+			rules.Assert("IS-R-010", "EINDAGI date must be on or after the first due date (IS-R-010)",
+				is.Func("is eindagi after due", isEINDAGIAfterFirstDue),
+			),
 		),
 	)
 }
@@ -82,21 +91,6 @@ func valAsParty(v any) *org.Party {
 		return nil
 	}
 	return p
-}
-
-func isDocumentTypeValid(val any) bool {
-	type getter interface {
-		Get(cbc.Key) cbc.Code
-	}
-	g, ok := val.(getter)
-	if !ok {
-		return true
-	}
-	code := g.Get(untdid.ExtKeyDocumentType)
-	if code == "" {
-		return true
-	}
-	return code.In(validISInvoiceDocumentTypes...)
 }
 
 func partyHasLegalIdentity(val any) bool {
@@ -179,4 +173,91 @@ func isPaymentCode42Account(val any) bool {
 		return true
 	}
 	return paymentCreditTransferHasValidAccount(instr)
+}
+
+// eindagiNotes returns all notes on the invoice marked as EINDAGI.
+func eindagiNotes(inv *bill.Invoice) []*org.Note {
+	if inv == nil {
+		return nil
+	}
+	var out []*org.Note
+	for _, n := range inv.Notes {
+		if n != nil && n.Src == NoteSrcEINDAGI {
+			out = append(out, n)
+		}
+	}
+	return out
+}
+
+// isEINDAGIFormatValid checks IS-R-008: any EINDAGI note must carry a
+// YYYY-MM-DD date in its Text field.
+func isEINDAGIFormatValid(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return true
+	}
+	for _, n := range eindagiNotes(inv) {
+		if !isEINDAGIDateRe.MatchString(strings.TrimSpace(n.Text)) {
+			return false
+		}
+	}
+	return true
+}
+
+// isEINDAGIDueDatePresent checks IS-R-009: an EINDAGI note requires at
+// least one Payment.Terms.DueDates entry with a Date set (BT-9).
+func isEINDAGIDueDatePresent(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return true
+	}
+	if len(eindagiNotes(inv)) == 0 {
+		return true
+	}
+	if inv.Payment == nil || inv.Payment.Terms == nil {
+		return false
+	}
+	for _, d := range inv.Payment.Terms.DueDates {
+		if d != nil && d.Date != nil {
+			return true
+		}
+	}
+	return false
+}
+
+// isEINDAGIAfterFirstDue checks IS-R-010: the EINDAGI date must be on or
+// after the first Payment.Terms.DueDates date. YYYY-MM-DD strings compare
+// correctly lexicographically.
+func isEINDAGIAfterFirstDue(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return true
+	}
+	notes := eindagiNotes(inv)
+	if len(notes) == 0 {
+		return true
+	}
+	if inv.Payment == nil || inv.Payment.Terms == nil || len(inv.Payment.Terms.DueDates) == 0 {
+		return true // IS-R-009 already catches the missing-due-date case
+	}
+	var firstDue string
+	for _, d := range inv.Payment.Terms.DueDates {
+		if d != nil && d.Date != nil {
+			firstDue = d.Date.String()
+			break
+		}
+	}
+	if firstDue == "" {
+		return true
+	}
+	for _, n := range notes {
+		text := strings.TrimSpace(n.Text)
+		if !isEINDAGIDateRe.MatchString(text) {
+			continue // IS-R-008 catches format errors
+		}
+		if text < firstDue {
+			return false
+		}
+	}
+	return true
 }

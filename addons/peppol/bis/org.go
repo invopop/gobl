@@ -12,20 +12,16 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// ISO 6523 ICD scheme identifiers we know how to validate. Each maps to a
-// checksum/format check below.
+// ISO 6523 ICD scheme identifiers we know how to validate. Only fatal-level
+// PEPPOL-COMMON rules are covered here; warning-level identifier checks
+// (IT IPA/CF/PartitaIVA, DK P/SE) are not implemented as a general policy.
 const (
-	schemeGLN     cbc.Code = "0088" // GLN — PEPPOL-COMMON-R040
-	schemeNOOrg   cbc.Code = "0192" // Norwegian organization number — PEPPOL-COMMON-R041
-	schemeDKCVR   cbc.Code = "0184" // Danish CVR — PEPPOL-COMMON-R042
-	schemeBEEnt   cbc.Code = "0208" // Belgian enterprise — PEPPOL-COMMON-R043
-	schemeITIPA   cbc.Code = "0201" // Italian IPA — PEPPOL-COMMON-R044
-	schemeITCF    cbc.Code = "9907" // Italian Codice Fiscale — PEPPOL-COMMON-R045/R046
-	schemeITPIva  cbc.Code = "9906" // Italian Partita IVA — PEPPOL-COMMON-R047
-	schemeSEOrg   cbc.Code = "0007" // Swedish organization number — PEPPOL-COMMON-R049
-	schemeAUABN   cbc.Code = "0151" // Australian Business Number — PEPPOL-COMMON-R050
-	schemeDKPNum  cbc.Code = "0200" // Danish P-number — PEPPOL-COMMON-R052
-	schemeDKSENum cbc.Code = "0198" // Danish SE-number (ERSTORG) — PEPPOL-COMMON-R053
+	schemeGLN   cbc.Code = "0088" // GLN — PEPPOL-COMMON-R040
+	schemeNOOrg cbc.Code = "0192" // Norwegian organization number — PEPPOL-COMMON-R041
+	schemeDKCVR cbc.Code = "0184" // Danish CVR — PEPPOL-COMMON-R042
+	schemeBEEnt cbc.Code = "0208" // Belgian enterprise — PEPPOL-COMMON-R043
+	schemeSEOrg cbc.Code = "0007" // Swedish organization number — PEPPOL-COMMON-R049
+	schemeAUABN cbc.Code = "0151" // Australian Business Number — PEPPOL-COMMON-R050
 )
 
 func orgPartyRules() *rules.Set {
@@ -111,18 +107,6 @@ func checkSchemeFormat(scheme cbc.Code, code cbc.Code) error {
 		if !validBelgianEnterprise(code.String()) {
 			return errors.New("invalid Belgian enterprise number: must be 10 digits with valid Mod 97 checksum (PEPPOL-COMMON-R043)")
 		}
-	case schemeITIPA:
-		if !validITIPA(code.String()) {
-			return errors.New("invalid Italian IPA code: must be 6 alphanumeric characters (PEPPOL-COMMON-R044)")
-		}
-	case schemeITCF:
-		if !validITCodiceFiscale(code.String()) {
-			return errors.New("invalid Italian Codice Fiscale: must be 11 digits or 16 alphanumerics (PEPPOL-COMMON-R045/R046)")
-		}
-	case schemeITPIva:
-		if !validITPartitaIVA(code.String()) {
-			return errors.New("invalid Italian Partita IVA: must be 11 digits (PEPPOL-COMMON-R047)")
-		}
 	case schemeSEOrg:
 		if !validSwedishOrg(code.String()) {
 			return errors.New("invalid Swedish organization number: must be 10 digits with valid Luhn checksum (PEPPOL-COMMON-R049)")
@@ -130,14 +114,6 @@ func checkSchemeFormat(scheme cbc.Code, code cbc.Code) error {
 	case schemeAUABN:
 		if !validAustralianABN(code.String()) {
 			return errors.New("invalid Australian ABN: must be 11 digits with valid weighted checksum (PEPPOL-COMMON-R050)")
-		}
-	case schemeDKPNum:
-		if !validDanishPNumber(code.String()) {
-			return errors.New("invalid Danish P-number: must be 10 digits (PEPPOL-COMMON-R052)")
-		}
-	case schemeDKSENum:
-		if !validDanishSENumber(code.String()) {
-			return errors.New("invalid Danish SE-number: must be 8 digits (PEPPOL-COMMON-R053)")
 		}
 	}
 	return nil
@@ -216,28 +192,6 @@ func validBelgianEnterprise(code string) bool {
 	return check == expected
 }
 
-// validITIPA — Italian IPA: 6 alphanumeric characters.
-var itIPARe = regexp.MustCompile(`^[A-Z0-9]{6}$`)
-
-func validITIPA(code string) bool {
-	return itIPARe.MatchString(code)
-}
-
-// validITCodiceFiscale — 11 digits (legal entities) or 16 alphanumerics (people).
-var itCFPersonRe = regexp.MustCompile(`^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$`)
-
-func validITCodiceFiscale(code string) bool {
-	if len(code) == 11 && onlyDigits(code) {
-		return true
-	}
-	return len(code) == 16 && itCFPersonRe.MatchString(code)
-}
-
-// validITPartitaIVA — 11 digits.
-func validITPartitaIVA(code string) bool {
-	return len(code) == 11 && onlyDigits(code)
-}
-
 // validSwedishOrg — 10 digits, last digit is Luhn checksum.
 func validSwedishOrg(code string) bool {
 	if len(code) != 10 || !onlyDigits(code) {
@@ -281,14 +235,4 @@ func validAustralianABN(code string) bool {
 		sum += digits[i] * w
 	}
 	return sum%89 == 0
-}
-
-// validDanishPNumber — 10 digits.
-func validDanishPNumber(code string) bool {
-	return len(code) == 10 && onlyDigits(code)
-}
-
-// validDanishSENumber — 8 digits.
-func validDanishSENumber(code string) bool {
-	return len(code) == 8 && onlyDigits(code)
 }

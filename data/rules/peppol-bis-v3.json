@@ -201,21 +201,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "field": "customer",
-              "subsets": [
-                {
-                  "guard": "customer is DK",
-                  "assert": [
-                    {
-                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-017",
-                      "desc": "Danish customer should provide a CVR identity with scheme 0184 (DK-R-017)",
-                      "tests": "dk customer cvr"
-                    }
-                  ]
-                }
-              ]
             }
           ]
         }
@@ -279,9 +264,9 @@
               "tests": "has buyer reference"
             },
             {
-              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-026",
-              "desc": "corrective invoices should reference a preceding invoice (DE-R-026)",
-              "tests": "preceding present for corrections"
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-018",
+              "desc": "early-payment discount note must follow the #SKONTO# format (DE-R-018)",
+              "tests": "skonto format"
             },
             {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-016",
@@ -290,21 +275,6 @@
             }
           ],
           "subsets": [
-            {
-              "field": "tax",
-              "subsets": [
-                {
-                  "field": "ext",
-                  "assert": [
-                    {
-                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-017",
-                      "desc": "German invoice document type must be one of 326, 380, 384, 389, 381, 875, 876, 877 (DE-R-017)",
-                      "tests": "de doc type"
-                    }
-                  ]
-                }
-              ]
-            },
             {
               "field": "supplier",
               "assert": [
@@ -327,16 +297,6 @@
                   "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-007",
                   "desc": "supplier contact email is required (DE-R-007)",
                   "tests": "has contact email"
-                },
-                {
-                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-027",
-                  "desc": "supplier telephone must have at least 3 digits (DE-R-027)",
-                  "tests": "telephone min length"
-                },
-                {
-                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-028",
-                  "desc": "supplier email must be a valid email format (DE-R-028)",
-                  "tests": "valid email"
                 }
               ],
               "subsets": [
@@ -448,16 +408,6 @@
                       "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-030-031",
                       "desc": "direct debit requires creditor and account (DE-R-030, DE-R-031)",
                       "tests": "de direct debit fields"
-                    },
-                    {
-                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-019",
-                      "desc": "SEPA credit transfer account should be a valid IBAN (DE-R-019)",
-                      "tests": "de sepa iban"
-                    },
-                    {
-                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-020",
-                      "desc": "SEPA direct debit account should be a valid IBAN (DE-R-020)",
-                      "tests": "de sepa debit iban"
                     }
                   ]
                 }
@@ -569,27 +519,24 @@
       "subsets": [
         {
           "guard": "supplier country IS",
-          "subsets": [
+          "assert": [
             {
-              "field": "tax",
-              "subsets": [
-                {
-                  "field": "ext",
-                  "subsets": [
-                    {
-                      "guard": "present",
-                      "assert": [
-                        {
-                          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-001",
-                          "desc": "Icelandic invoice document type should be 380 or 381 (IS-R-001)",
-                          "tests": "is doc type"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-008",
+              "desc": "EINDAGI note text must use YYYY-MM-DD format (IS-R-008)",
+              "tests": "is eindagi format"
             },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-009",
+              "desc": "invoice with EINDAGI note must include a payment due date (IS-R-009)",
+              "tests": "is eindagi due-date present"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-010",
+              "desc": "EINDAGI date must be on or after the first due date (IS-R-010)",
+              "tests": "is eindagi after due"
+            }
+          ],
+          "subsets": [
             {
               "field": "supplier",
               "assert": [
@@ -887,11 +834,6 @@
                   "tests": "se vat trailing digits"
                 },
                 {
-                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-003",
-                  "desc": "Swedish organization number must be numeric (SE-R-003)",
-                  "tests": "se org numeric"
-                },
-                {
                   "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-004",
                   "desc": "Swedish organization number must be 10 characters (SE-R-004)",
                   "tests": "se org length"
@@ -909,29 +851,7 @@
     },
     {
       "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
-      "object": "bill.Invoice",
-      "subsets": [
-        {
-          "guard": "supplier country SE",
-          "subsets": [
-            {
-              "field": "payment",
-              "subsets": [
-                {
-                  "field": "instructions",
-                  "assert": [
-                    {
-                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-012",
-                      "desc": "Swedish domestic credit transfer should use payment means code 30 (SE-R-012)",
-                      "tests": "se cc 30"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      "object": "bill.Invoice"
     }
   ]
 }

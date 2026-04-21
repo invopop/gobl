@@ -14,12 +14,6 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// validDEInvoiceDocumentTypes is the UNTDID 1001 subset allowed on German
-// Peppol invoices (DE-R-017, copied from de/xrechnung).
-var validDEInvoiceDocumentTypes = []cbc.Code{
-	"326", "380", "384", "389", "381", "875", "876", "877",
-}
-
 // deCreditTransferMeansCodes are the UNTDID 4461 codes that imply credit
 // transfer for DE-R-023.
 var deCreditTransferMeansCodes = []cbc.Code{"30", "58"}
@@ -30,19 +24,14 @@ var deCardMeansCodes = []cbc.Code{"48", "54", "55"}
 // deDirectDebitMeansCode is the UNTDID 4461 code for SEPA direct debit (DE-R-025).
 var deDirectDebitMeansCode cbc.Code = "59"
 
-var ibanRe = regexp.MustCompile(`^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$`)
+// skontoRe matches the DE-R-018 early-payment discount line format:
+//
+//	#SKONTO#TAGE=N#PROZENT=N(.NN)#[BASISBETRAG=-N(.NN)#]
+var skontoRe = regexp.MustCompile(`^#SKONTO#TAGE=\d+#PROZENT=\d+(\.\d{1,2})?#(BASISBETRAG=-?\d+(\.\d{1,2})?#)?$`)
 
 func billInvoiceRulesDE() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.DE),
-			// DE-R-017 (warning): invoice type code restricted.
-			rules.Field("tax",
-				rules.Field("ext",
-					rules.Assert("DE-R-017", "German invoice document type must be one of 326, 380, 384, 389, 381, 875, 876, 877 (DE-R-017)",
-						is.Func("de doc type", deInvoiceDocumentTypeValid),
-					),
-				),
-			),
 			// DE-R-001: payment instructions required.
 			rules.Assert("DE-R-001", "payment instructions are required (DE-R-001)",
 				is.Func("has payment instructions", hasPaymentInstructions),
@@ -73,12 +62,6 @@ func billInvoiceRulesDE() *rules.Set {
 				rules.Assert("DE-R-007", "supplier contact email is required (DE-R-007)",
 					is.Func("has contact email", partyHasContactEmail),
 				),
-				rules.Assert("DE-R-027", "supplier telephone must have at least 3 digits (DE-R-027)",
-					is.Func("telephone min length", partyTelephoneMinLength),
-				),
-				rules.Assert("DE-R-028", "supplier email must be a valid email format (DE-R-028)",
-					is.Func("valid email", partyEmailFormat),
-				),
 			),
 			rules.Field("customer",
 				rules.Field("addresses",
@@ -102,26 +85,20 @@ func billInvoiceRulesDE() *rules.Set {
 					),
 				),
 			),
-			// DE-R-018 (early-payment #SKONTO# note format) is not enforced here.
-			// The note is written by the caller into the payment-terms text
-			// (gobl.ubl does not synthesize it from bill.Payment.Terms.DueDates);
-			// if the caller includes a #SKONTO#-prefixed line, they must format
-			// it correctly themselves or the Peppol access point will reject.
-			//
-			// DE-R-022 (attachment filename uniqueness) is a UBL-level concern
-			// governing the cac:AdditionalDocumentReference elements gobl.ubl
-			// emits.
-			//
-			// DE-R-026 (warning): corrective invoices should reference a preceding invoice.
-			rules.Assert("DE-R-026", "corrective invoices should reference a preceding invoice (DE-R-026)",
-				is.Func("preceding present for corrections", correctivePrecedingPresent),
+			// DE-R-018: any #SKONTO# line the caller writes into the payment
+			// terms text must match the fixed format. gobl.ubl does not
+			// synthesize these — they're hand-authored — so we catch format
+			// slips at the GOBL layer before they reach a Peppol access point.
+			rules.Assert("DE-R-018", "early-payment discount note must follow the #SKONTO# format (DE-R-018)",
+				is.Func("skonto format", skontoFormatValid),
 			),
-			// DE-R-014 (VAT category rate percent) is not enforced here. GOBL's
-			// tax model only carries a numeric percent on standard/reduced-rated
-			// tax combos; exempt, zero, reverse-charge, and not-subject-to-VAT
-			// categories structurally have no percent. gobl.ubl emits cbc:Percent
-			// for every UBL tax subtotal (0 for the non-standard categories), so
-			// the schematron assertion is satisfied by construction at emit time.
+			// DE-R-014 (VAT category rate percent, fatal) and DE-R-022
+			// (attachment filename uniqueness, fatal) are UBL-level concerns
+			// owned by gobl.ubl: percent is emitted for every tax subtotal
+			// (0 for non-standard categories), and attachment filenames live
+			// inside the cac:AdditionalDocumentReference elements the
+			// converter produces.
+			//
 			// DE-R-016: tax categories S/Z/E/AE/K/G/L/M require supplier VAT/tax ID.
 			rules.Assert("DE-R-016", "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
 				is.Func("supplier tax id for categories", deSupplierHasTaxIDForCategory),
@@ -151,14 +128,6 @@ func payInstructionsRulesDE() *rules.Set {
 					rules.Assert("DE-R-030-031", "direct debit requires creditor and account (DE-R-030, DE-R-031)",
 						is.Func("de direct debit fields", deDirectDebitFieldsComplete),
 					),
-					// DE-R-019 (warn): SEPA credit transfer (code 58) should use IBAN.
-					rules.Assert("DE-R-019", "SEPA credit transfer account should be a valid IBAN (DE-R-019)",
-						is.Func("de sepa iban", deSEPAIBANValid),
-					),
-					// DE-R-020 (warn): SEPA direct debit (code 59) should use IBAN.
-					rules.Assert("DE-R-020", "SEPA direct debit account should be a valid IBAN (DE-R-020)",
-						is.Func("de sepa debit iban", deSEPADebitIBANValid),
-					),
 				),
 			),
 		),
@@ -166,24 +135,6 @@ func payInstructionsRulesDE() *rules.Set {
 }
 
 // --- helpers ---
-
-func deInvoiceDocumentTypeValid(val any) bool {
-	// bill.Tax.Ext is tax.Extensions; check via the Get-accessor interface
-	// rather than asserting on the concrete map type so callers can pass
-	// either form.
-	type getter interface {
-		Get(cbc.Key) cbc.Code
-	}
-	g, ok := val.(getter)
-	if !ok {
-		return true
-	}
-	code := g.Get(untdid.ExtKeyDocumentType)
-	if code == "" {
-		return true
-	}
-	return code.In(validDEInvoiceDocumentTypes...)
-}
 
 func partyHasContactGroup(val any) bool {
 	p, ok := val.(*org.Party)
@@ -251,69 +202,6 @@ func partyHasContactEmail(val any) bool {
 		return true
 	}
 	return false
-}
-
-func partyTelephoneMinLength(val any) bool {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return true
-	}
-	phones := p.Telephones
-	if len(phones) == 0 && len(p.People) > 0 && p.People[0] != nil {
-		phones = p.People[0].Telephones
-	}
-	for _, t := range phones {
-		if t == nil {
-			continue
-		}
-		digits := 0
-		for _, c := range t.Number {
-			if c >= '0' && c <= '9' {
-				digits++
-			}
-		}
-		if digits < 3 {
-			return false
-		}
-	}
-	return true
-}
-
-func partyEmailFormat(val any) bool {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return true
-	}
-	emails := p.Emails
-	if len(emails) == 0 && len(p.People) > 0 && p.People[0] != nil {
-		emails = p.People[0].Emails
-	}
-	for _, e := range emails {
-		if e == nil {
-			continue
-		}
-		addr := e.Address
-		if strings.Count(addr, "@") != 1 {
-			return false
-		}
-		idx := strings.Index(addr, "@")
-		if idx <= 0 || idx >= len(addr)-1 {
-			return false
-		}
-	}
-	return true
-}
-
-func correctivePrecedingPresent(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Tax == nil {
-		return true
-	}
-	code := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	if code != "384" { // only corrective invoices
-		return true
-	}
-	return len(inv.Preceding) > 0
 }
 
 func deSupplierHasTaxIDForCategory(val any) bool {
@@ -413,42 +301,44 @@ func deDirectDebitFieldsComplete(val any) bool {
 	return instr.DirectDebit.Creditor != "" && instr.DirectDebit.Account != ""
 }
 
-func deSEPAIBANValid(val any) bool {
-	instr, ok := val.(*pay.Instructions)
-	if !ok || instr == nil {
+// skontoFormatValid enforces DE-R-018: each `#`-prefixed line in the payment
+// terms text must match the fixed Skonto format. The text is sourced from
+// pay.Terms.Notes (single due-date case) and any pay.DueDate.Notes (multiple
+// due-date case) — both feed cac:PaymentTerms/cbc:Note in the UBL output.
+func skontoFormatValid(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Payment == nil || inv.Payment.Terms == nil {
 		return true
 	}
-	code := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
-	if code != "58" {
-		return true
+	if !skontoLinesValid(inv.Payment.Terms.Notes) {
+		return false
 	}
-	for _, ct := range instr.CreditTransfer {
-		if ct == nil {
+	for _, d := range inv.Payment.Terms.DueDates {
+		if d == nil {
 			continue
 		}
-		acc := ct.IBAN
-		if acc == "" {
-			acc = ct.Number
-		}
-		if acc != "" && !ibanRe.MatchString(strings.ReplaceAll(strings.ToUpper(acc), " ", "")) {
+		if !skontoLinesValid(d.Notes) {
 			return false
 		}
 	}
 	return true
 }
 
-func deSEPADebitIBANValid(val any) bool {
-	instr, ok := val.(*pay.Instructions)
-	if !ok || instr == nil {
+// skontoLinesValid returns true when every `#`-prefixed line in s matches the
+// Skonto regex. Lines not starting with `#` are ignored so callers can keep
+// an intro paragraph (e.g. "Payment within 30 days net.") before the block.
+func skontoLinesValid(s string) bool {
+	if s == "" {
 		return true
 	}
-	code := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
-	if code != "59" || instr.DirectDebit == nil {
-		return true
+	for _, line := range strings.Split(s, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" || trimmed[0] != '#' {
+			continue
+		}
+		if !skontoRe.MatchString(trimmed) {
+			return false
+		}
 	}
-	acc := instr.DirectDebit.Account
-	if acc == "" {
-		return true
-	}
-	return ibanRe.MatchString(strings.ReplaceAll(strings.ToUpper(acc), " ", ""))
+	return true
 }

@@ -72,48 +72,6 @@ func TestValidBelgianEnterprise(t *testing.T) {
 	}
 }
 
-func TestValidITIPA(t *testing.T) {
-	cases := map[string]bool{
-		"ABC123":  true,
-		"XYZ987":  true,
-		"123456":  true,
-		"abc123":  false, // lowercase not allowed
-		"ABC12":   false, // too short
-		"ABC1234": false, // too long
-		"ABC-12":  false, // hyphen
-	}
-	for code, want := range cases {
-		assert.Equal(t, want, validITIPA(code), code)
-	}
-}
-
-func TestValidITCodiceFiscale(t *testing.T) {
-	cases := map[string]bool{
-		"12345678901":       true,  // legal entity (11 digits)
-		"RSSMRA80A01H501U":  true,  // person (16 alphanumerics, structured)
-		"1234567890":        false, // 10 digits
-		"123456789012":      false, // 12 digits
-		"RSSMRA80A01H501":   false, // 15 chars
-		"RSSMRA80A01H501UU": false, // 17 chars
-	}
-	for code, want := range cases {
-		assert.Equal(t, want, validITCodiceFiscale(code), code)
-	}
-}
-
-func TestValidITPartitaIVA(t *testing.T) {
-	cases := map[string]bool{
-		"12345678901":  true,
-		"00000000000":  true,
-		"1234567890":   false,
-		"123456789012": false,
-		"abcdefghijk":  false,
-	}
-	for code, want := range cases {
-		assert.Equal(t, want, validITPartitaIVA(code), code)
-	}
-}
-
 func TestValidSwedishOrg(t *testing.T) {
 	cases := map[string]bool{
 		"5560360793":  true,  // Volvo AB
@@ -150,20 +108,6 @@ func TestValidAustralianABN(t *testing.T) {
 	}
 }
 
-func TestValidDanishPNumber(t *testing.T) {
-	assert.True(t, validDanishPNumber("1234567890"))
-	assert.False(t, validDanishPNumber("123456789"))   // 9 digits
-	assert.False(t, validDanishPNumber("12345678901")) // 11 digits
-	assert.False(t, validDanishPNumber("12345abcde"))
-}
-
-func TestValidDanishSENumber(t *testing.T) {
-	assert.True(t, validDanishSENumber("12345678"))
-	assert.False(t, validDanishSENumber("1234567"))   // 7 digits
-	assert.False(t, validDanishSENumber("123456789")) // 9 digits
-	assert.False(t, validDanishSENumber("1234abcd"))
-}
-
 func TestOnlyDigits(t *testing.T) {
 	assert.True(t, onlyDigits("12345"))
 	assert.False(t, onlyDigits("12345A"))
@@ -183,19 +127,13 @@ func TestCheckSchemeFormat(t *testing.T) {
 		{schemeNOOrg, "990983666", true},
 		{schemeDKCVR, "13585628", true},
 		{schemeBEEnt, "0403170701", true},
-		{schemeITIPA, "ABC123", true},
-		{schemeITCF, "12345678901", true},
-		{schemeITPIva, "12345678901", true},
 		{schemeSEOrg, "5560360793", true},
 		{schemeAUABN, "51824753556", true},
-		{schemeDKPNum, "1234567890", true},
-		{schemeDKSENum, "12345678", true},
 		// known schemes — invalid codes (must error)
 		{schemeGLN, "5790000000006", false},
 		{schemeNOOrg, "912345679", false},
 		{schemeDKCVR, "13585629", false},
 		{schemeBEEnt, "0403170702", false},
-		{schemeITIPA, "abc", false},
 		// unknown scheme — always passes
 		{cbc.Code("9999"), "anything", true},
 		// empty code — passes

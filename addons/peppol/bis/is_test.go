@@ -2,8 +2,10 @@ package bis
 
 import (
 	"testing"
+	"time"
 
-	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
@@ -15,14 +17,6 @@ func TestValAsParty(t *testing.T) {
 	assert.Nil(t, valAsParty("string"))
 	p := &org.Party{}
 	assert.Equal(t, p, valAsParty(p))
-}
-
-func TestISDocumentTypeValid(t *testing.T) {
-	assert.True(t, isDocumentTypeValid(nil))
-	assert.True(t, isDocumentTypeValid(tax.Extensions{}))
-	assert.True(t, isDocumentTypeValid(tax.Extensions{untdid.ExtKeyDocumentType: "380"}))
-	assert.True(t, isDocumentTypeValid(tax.Extensions{untdid.ExtKeyDocumentType: "381"}))
-	assert.False(t, isDocumentTypeValid(tax.Extensions{untdid.ExtKeyDocumentType: "326"}))
 }
 
 func TestPartyHasLegalIdentity(t *testing.T) {
@@ -57,6 +51,67 @@ func TestValidISAccount(t *testing.T) {
 	assert.False(t, validISAccount(""))
 	assert.False(t, validISAccount("12345"))
 	assert.False(t, validISAccount("DE89370400440532013000")) // non-IS IBAN
+}
+
+func TestEINDAGIRules(t *testing.T) {
+	eindagi := func(text string) *org.Note { return &org.Note{Src: NoteSrcEINDAGI, Text: text} }
+	d := func(year int, month time.Month, day int) *cal.Date { return cal.NewDate(year, month, day) }
+
+	t.Run("format: valid and invalid", func(t *testing.T) {
+		assert.True(t, isEINDAGIFormatValid(nil))
+		assert.True(t, isEINDAGIFormatValid(&bill.Invoice{}))
+		assert.True(t, isEINDAGIFormatValid(&bill.Invoice{Notes: []*org.Note{eindagi("2026-06-30")}}))
+		assert.False(t, isEINDAGIFormatValid(&bill.Invoice{Notes: []*org.Note{eindagi("30/06/2026")}}))
+		// Other notes are ignored.
+		assert.True(t, isEINDAGIFormatValid(&bill.Invoice{Notes: []*org.Note{{Src: "other", Text: "junk"}}}))
+	})
+
+	t.Run("due-date presence", func(t *testing.T) {
+		// No EINDAGI — passes regardless.
+		assert.True(t, isEINDAGIDueDatePresent(&bill.Invoice{}))
+		// EINDAGI without due date — fails.
+		assert.False(t, isEINDAGIDueDatePresent(&bill.Invoice{
+			Notes: []*org.Note{eindagi("2026-06-30")},
+		}))
+		// EINDAGI with due date — passes.
+		assert.True(t, isEINDAGIDueDatePresent(&bill.Invoice{
+			Notes: []*org.Note{eindagi("2026-06-30")},
+			Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{{Date: d(2026, time.June, 30)}},
+			}},
+		}))
+	})
+
+	t.Run("EINDAGI date ≥ first due date", func(t *testing.T) {
+		// EINDAGI after due date — passes.
+		assert.True(t, isEINDAGIAfterFirstDue(&bill.Invoice{
+			Notes: []*org.Note{eindagi("2026-07-15")},
+			Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{{Date: d(2026, time.June, 30)}},
+			}},
+		}))
+		// EINDAGI before due date — fails.
+		assert.False(t, isEINDAGIAfterFirstDue(&bill.Invoice{
+			Notes: []*org.Note{eindagi("2026-06-01")},
+			Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{{Date: d(2026, time.June, 30)}},
+			}},
+		}))
+		// Equal dates — passes.
+		assert.True(t, isEINDAGIAfterFirstDue(&bill.Invoice{
+			Notes: []*org.Note{eindagi("2026-06-30")},
+			Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{{Date: d(2026, time.June, 30)}},
+			}},
+		}))
+		// Malformed EINDAGI ignored (format check covers it).
+		assert.True(t, isEINDAGIAfterFirstDue(&bill.Invoice{
+			Notes: []*org.Note{eindagi("bogus")},
+			Payment: &bill.PaymentDetails{Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{{Date: d(2026, time.June, 30)}},
+			}},
+		}))
+	})
 }
 
 func TestISPaymentCodes(t *testing.T) {
