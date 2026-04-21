@@ -4,14 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "78405effccdcc2a4f907bc59501dd0a023ba81ade4fe155169f0609c173012c2"
+			"val": "4a28bbd8a77fdb5764c50e562b7a41fe6844ddadf186b36e363a31dc5891e944"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "DK",
 		"$addons": [
-			"eu-en16931-v2017"
+			"eu-en16931-v2017",
+			"peppol-bis-v3"
 		],
 		"uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
 		"type": "standard",
@@ -149,6 +150,9 @@
 				"total": "5000.00"
 			}
 		],
+		"ordering": {
+			"code": "PO-2025-001"
+		},
 		"payment": {
 			"terms": {
 				"due_dates": [

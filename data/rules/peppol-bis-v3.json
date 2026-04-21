@@ -1,0 +1,857 @@
+{
+  "id": "GOBL-PEPPOL-BIS-V3",
+  "package": "peppol-bis-v3",
+  "guard": "context: addon in [peppol-bis-v3]",
+  "subsets": [
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R003",
+          "desc": "buyer reference or purchase order reference is required (PEPPOL-EN16931-R003)",
+          "tests": "buyer reference"
+        },
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-P0100",
+          "desc": "invoice type code must be one of 380, 383, 386, 389, 751 (PEPPOL-EN16931-P0100)",
+          "tests": "invoice type code"
+        },
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-P0101",
+          "desc": "credit note type code must be one of 381, 396, 261 (PEPPOL-EN16931-P0101)",
+          "tests": "credit note type code"
+        },
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-P0112",
+          "desc": "invoice type 326 or 384 only allowed when both buyer and seller are Italian (PEPPOL-EN16931-P0112)",
+          "tests": "partial/corrective IT-only"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "notes",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R002",
+              "desc": "at most one note allowed unless both buyer and seller are Danish (PEPPOL-EN16931-R002)",
+              "tests": "notes cardinality"
+            }
+          ]
+        },
+        {
+          "field": "ordering",
+          "subsets": [
+            {
+              "field": "projects",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R080",
+                  "desc": "only one project reference allowed (PEPPOL-EN16931-R080)",
+                  "tests": "length between 0 and 1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R110",
+          "desc": "line period start must be within invoice period (PEPPOL-EN16931-R110)",
+          "tests": "line period start"
+        },
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R111",
+          "desc": "line period end must be within invoice period (PEPPOL-EN16931-R111)",
+          "tests": "line period end"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-PAY-INSTRUCTIONS",
+      "object": "pay.Instructions",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-PAY-INSTRUCTIONS-R061",
+          "desc": "mandate reference is required for direct debit payments (PEPPOL-EN16931-R061)",
+          "tests": "direct debit mandate"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R020",
+                  "desc": "seller electronic address is required (PEPPOL-EN16931-R020)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-R010",
+                  "desc": "buyer electronic address is required (PEPPOL-EN16931-R010)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-ORG-IDENTITY",
+      "object": "org.Identity",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-ORG-IDENTITY-COMMON",
+          "desc": "identifier format invalid",
+          "tests": "identity format"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-ORG-INBOX",
+      "object": "org.Inbox",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-ORG-INBOX-COMMON",
+          "desc": "inbox code format invalid",
+          "tests": "inbox format"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-TAX-COMBO",
+      "object": "tax.Combo",
+      "assert": [
+        {
+          "id": "GOBL-PEPPOL-BIS-V3-TAX-COMBO-P0104-P0111",
+          "desc": "tax category must match VATEX code (PEPPOL-EN16931-P0104..P0111)",
+          "tests": "vatex-category coherence"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country DK",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-016",
+              "desc": "Danish credit note cannot have a negative total (DK-R-016)",
+              "tests": "dk credit note total"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country DK",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-002",
+                  "desc": "Danish supplier must provide a CVR identity with scheme 0184 (DK-R-002, DK-R-014)",
+                  "tests": "dk supplier cvr"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "identities",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "assert": [
+                        {
+                          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-013",
+                          "desc": "Danish supplier identities must specify an ISO 6523 scheme ID (DK-R-013)",
+                          "tests": "identity has scheme"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country DK",
+          "subsets": [
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "instructions",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-005",
+                      "desc": "Danish payment means code must be in the allowed DK subset (DK-R-005)",
+                      "tests": "dk payment means"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-006",
+                      "desc": "Danish payment means 31 or 42 requires bank account and registration (DK-R-006)",
+                      "tests": "dk 31/42"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DK-R-007",
+                      "desc": "Danish payment means 49 requires mandate reference and account (DK-R-007)",
+                      "tests": "dk 49"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice"
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country DE",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-001",
+              "desc": "payment instructions are required (DE-R-001)",
+              "tests": "has payment instructions"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-015",
+              "desc": "buyer reference is required (DE-R-015)",
+              "tests": "has buyer reference"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-018",
+              "desc": "early-payment discount note must follow the #SKONTO# format (DE-R-018)",
+              "tests": "skonto format"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-016",
+              "desc": "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
+              "tests": "supplier tax id for categories"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-002",
+                  "desc": "German supplier must provide a contact (DE-R-002)",
+                  "tests": "has seller contact group"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-005",
+                  "desc": "supplier contact name is required (DE-R-005)",
+                  "tests": "has contact name"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-006",
+                  "desc": "supplier contact telephone is required (DE-R-006)",
+                  "tests": "has contact telephone"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-007",
+                  "desc": "supplier contact email is required (DE-R-007)",
+                  "tests": "has contact email"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-003",
+                      "desc": "supplier first address must have a city (DE-R-003)",
+                      "tests": "has locality"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-004",
+                      "desc": "supplier first address must have a postal code (DE-R-004)",
+                      "tests": "has code"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-008",
+                      "desc": "customer first address must have a city (DE-R-008)",
+                      "tests": "has locality"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-009",
+                      "desc": "customer first address must have a postal code (DE-R-009)",
+                      "tests": "has code"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "delivery",
+              "subsets": [
+                {
+                  "field": "receiver",
+                  "subsets": [
+                    {
+                      "field": "addresses",
+                      "subsets": [
+                        {
+                          "guard": "present",
+                          "assert": [
+                            {
+                              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-010",
+                              "desc": "delivery address must have a city (DE-R-010)",
+                              "tests": "has locality"
+                            }
+                          ]
+                        },
+                        {
+                          "guard": "present",
+                          "assert": [
+                            {
+                              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-011",
+                              "desc": "delivery address must have a postal code (DE-R-011)",
+                              "tests": "has code"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country DE",
+          "subsets": [
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "instructions",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-023",
+                      "desc": "credit transfer code requires credit transfer details and excludes card/direct debit (DE-R-023)",
+                      "tests": "de credit transfer exclusive"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-024",
+                      "desc": "card code requires card details and excludes credit transfer/direct debit (DE-R-024)",
+                      "tests": "de card exclusive"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-025",
+                      "desc": "direct debit code requires direct debit details and excludes credit transfer/card (DE-R-025)",
+                      "tests": "de direct debit exclusive"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-R-030-031",
+                      "desc": "direct debit requires creditor and account (DE-R-030, DE-R-031)",
+                      "tests": "de direct debit fields"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country GR",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-001-1",
+              "desc": "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
+              "tests": "gr id segments"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-004-1",
+              "desc": "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
+              "tests": "gr mark count"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-004-2",
+              "desc": "Greek invoice MARK must be a positive integer (GR-R-004-2)",
+              "tests": "gr mark positive"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-008-2",
+              "desc": "at most one Greek invoice URL attachment allowed (GR-R-008-2)",
+              "tests": "gr url count"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country GR",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-003",
+                  "desc": "Greek supplier VAT must start with EL and be a valid TIN (GR-R-003)",
+                  "tests": "gr vat format"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-009",
+                  "desc": "Greek supplier inbox must use scheme 9933 with TIN as code (GR-R-009)",
+                  "tests": "gr supplier inbox"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "name",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-002",
+                      "desc": "Greek supplier name is required (GR-R-002)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-006",
+                  "desc": "Greek customer must have a VAT identifier when customer is Greek (GR-R-006)",
+                  "tests": "gr customer vat"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-010",
+                  "desc": "Greek customer inbox must use scheme 9933 with TIN as code when customer is Greek (GR-R-010)",
+                  "tests": "gr customer inbox"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "name",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-GR-R-005",
+                      "desc": "Greek customer name is required (GR-R-005)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country IS",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-008",
+              "desc": "EINDAGI note text must use YYYY-MM-DD format (IS-R-008)",
+              "tests": "is eindagi format"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-009",
+              "desc": "invoice with EINDAGI note must include a payment due date (IS-R-009)",
+              "tests": "is eindagi due-date present"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-010",
+              "desc": "EINDAGI date must be on or after the first due date (IS-R-010)",
+              "tests": "is eindagi after due"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-002",
+                  "desc": "Icelandic supplier must have a legal identity (IS-R-002)",
+                  "tests": "is supplier legal"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-003",
+                      "desc": "Icelandic supplier address must have street and postcode (IS-R-003)",
+                      "tests": "is address complete"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "guard": "customer is IS",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-004",
+                      "desc": "Icelandic customer must have a legal identity (IS-R-004)",
+                      "tests": "is customer legal"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "addresses",
+                      "assert": [
+                        {
+                          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-005",
+                          "desc": "Icelandic customer address must have street and postcode (IS-R-005)",
+                          "tests": "is customer address complete"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country IS",
+          "subsets": [
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "instructions",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-006",
+                      "desc": "Icelandic payment means 9 requires 12-digit account (IS-R-006)",
+                      "tests": "is 9"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IS-R-007",
+                      "desc": "Icelandic payment means 42 requires 12-digit account (IS-R-007)",
+                      "tests": "is 42"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country IT",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IT-R-001",
+                  "desc": "Italian tax registration identifier length must be 11-16 (IT-R-001)",
+                  "tests": "it tax id length"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IT-R-002",
+                      "desc": "Italian supplier address line 1 is required (IT-R-002)",
+                      "tests": "it street"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IT-R-003",
+                      "desc": "Italian supplier city is required (IT-R-003)",
+                      "tests": "it locality"
+                    },
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-IT-R-004",
+                      "desc": "Italian supplier post code is required (IT-R-004)",
+                      "tests": "it code"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country NL",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-001",
+              "desc": "Dutch credit note must reference a preceding invoice (NL-R-001)",
+              "tests": "nl credit note preceding"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-007",
+              "desc": "Dutch supplier must provide payment instructions (NL-R-007)",
+              "tests": "has payment instructions"
+            },
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-009",
+              "desc": "Dutch invoice with line order references must have an ordering code (NL-R-009)",
+              "tests": "nl order ref requires ordering code"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country NL",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-003",
+                  "desc": "Dutch supplier legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-003)",
+                  "tests": "nl supplier legal scheme"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-002",
+                      "desc": "Dutch supplier address must have street, city and postcode (NL-R-002)",
+                      "tests": "nl supplier addr"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-005",
+                  "desc": "Dutch customer legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-005)",
+                  "tests": "nl customer legal scheme"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-004",
+                          "desc": "Dutch customer address must have street, city and postcode (NL-R-004)",
+                          "tests": "nl customer addr"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country NL",
+          "subsets": [
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "instructions",
+                  "assert": [
+                    {
+                      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NL-R-008",
+                      "desc": "Dutch payment means code must be in the allowed subset (NL-R-008)",
+                      "tests": "nl payment means"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country NO",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-NO-R-001",
+                  "desc": "Norwegian VAT must be NO+9 digits+MVA (NO-R-001)",
+                  "tests": "no vat format"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country SE",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-006",
+              "desc": "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
+              "tests": "se vat rate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "supplier country SE",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-001",
+                  "desc": "Swedish VAT must be 14 characters (SE-R-001)",
+                  "tests": "se vat length"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-002",
+                  "desc": "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
+                  "tests": "se vat trailing digits"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-004",
+                  "desc": "Swedish organization number must be 10 characters (SE-R-004)",
+                  "tests": "se org length"
+                },
+                {
+                  "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-SE-R-013",
+                  "desc": "Swedish organization number last digit must be a valid Luhn checksum (SE-R-013)",
+                  "tests": "se org luhn"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE",
+      "object": "bill.Invoice"
+    }
+  ]
+}

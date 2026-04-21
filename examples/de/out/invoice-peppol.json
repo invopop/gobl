@@ -1,0 +1,179 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "aa1c9342fd2ee1d5e5d2d6dca202c1265ec6e064fbed793557c222d9a75264f3"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DE",
+		"$addons": [
+			"eu-en16931-v2017",
+			"peppol-bis-v3"
+		],
+		"uuid": "0195a1c4-0000-7000-bf99-a0d3ef83be4f",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2026-04-20",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Provide One GmbH",
+			"tax_id": {
+				"country": "DE",
+				"code": "111111125"
+			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					},
+					"emails": [
+						{
+							"addr": "billing@example.com"
+						}
+					],
+					"telephones": [
+						{
+							"num": "+49100200300"
+						}
+					]
+				}
+			],
+			"inboxes": [
+				{
+					"scheme": "0204",
+					"code": "991-01234512345-43"
+				}
+			],
+			"addresses": [
+				{
+					"num": "16",
+					"street": "Dietmar-Hopp-Allee",
+					"locality": "Walldorf",
+					"code": "69190",
+					"country": "DE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "+49100200300"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer GmbH",
+			"tax_id": {
+				"country": "DE",
+				"code": "282741168"
+			},
+			"inboxes": [
+				{
+					"scheme": "0204",
+					"code": "04011000-12345-98"
+				}
+			],
+			"addresses": [
+				{
+					"num": "25",
+					"street": "Werner-Heisenberg-Allee",
+					"locality": "München",
+					"code": "80939",
+					"country": "DE"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"ordering": {
+			"code": "BUYER-REF-2026-001"
+		},
+		"payment": {
+			"terms": {
+				"notes": "Please pay within 30 days"
+			},
+			"instructions": {
+				"key": "credit-transfer+sepa",
+				"credit_transfer": [
+					{
+						"iban": "DE89370400440532013000",
+						"name": "Random Bank Co."
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "58"
+				}
+			}
+		},
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "1620.00",
+								"percent": "19%",
+								"amount": "307.80"
+							}
+						],
+						"amount": "307.80"
+					}
+				],
+				"sum": "307.80"
+			},
+			"tax": "307.80",
+			"total_with_tax": "1927.80",
+			"payable": "1927.80"
+		}
+	}
+}

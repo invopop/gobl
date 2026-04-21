@@ -1,0 +1,38 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "peppol-bis-v3",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "Peppol BIS Billing 3.0"
+  },
+  "description": {
+    "en": "Enforces the Peppol BIS Billing 3.0 rule set on top of the EN 16931 base.\n\nCovers the 55 base Peppol rules (PEPPOL-COMMON-Rxxx and PEPPOL-EN16931-*) as\nwell as the national CIUS rule sets for Denmark, Germany, Greece, Iceland,\nItaly, the Netherlands, Norway and Sweden. National rules are applied\nautomatically based on the supplier's country.\n\nThis addon does not define the Peppol ProfileID or CustomizationID — those\nare emitted by the converter (`gobl.ubl`) based on the Context\nselected at serialization time.\n\nFor the authoritative rule list, see:\nhttps://docs.peppol.eu/poacc/billing/3.0/rules/ubl-peppol/"
+  },
+  "extensions": null,
+  "scenarios": null,
+  "identities": [
+    {
+      "key": "gr-mark",
+      "name": {
+        "en": "Greek MARK Number"
+      },
+      "desc": {
+        "en": "Mydata Auto-Registration Key assigned by the Greek Independent Authority for Public Revenue (IAPR) to each registered invoice."
+      }
+    },
+    {
+      "key": "se-f-skatt",
+      "name": {
+        "en": "F-Tax Approval",
+        "se": "Godkänd för F-skatt"
+      },
+      "desc": {
+        "en": "Swedish F-tax (F-skatt) approval. Setting this identity on a supplier asserts that the business handles its own tax payments. Required for Peppol BIS Billing 3.0 (SE-R-005); rendered as a non-VAT party tax scheme entry with the boilerplate text \"Godkänd för F-skatt\".",
+        "se": "Svenskt godkännande för F-skatt. När denna identitet anges på en leverantör betyder det att verksamheten hanterar sina egna skattebetalningar. Krävs för Peppol BIS Billing 3.0 (SE-R-005)."
+      }
+    }
+  ],
+  "corrections": null
+}
