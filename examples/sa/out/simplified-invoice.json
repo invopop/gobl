@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b502e155a39ca9788194c1a9945c183582dae5e3e47c2b95572f82e4f2cd52af"
+			"val": "72931b967e1409a22eda2ad8c09af9809652d037312d61ff8f06a3f6f1b0a64a"
 		}
 	},
 	"doc": {
@@ -32,6 +32,12 @@
 				"country": "SA",
 				"code": "312345678912343"
 			},
+			"identities": [
+				{
+					"type": "MLS",
+					"code": "1234567890"
+				}
+			],
 			"addresses": [
 				{
 					"num": "1234",
