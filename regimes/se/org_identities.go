@@ -20,7 +20,17 @@ const (
 	IdentityTypePersonNr cbc.Code = "PN" // Unofficial
 	// IdentityTypeCoordinationNr defines the key for the Swedish Coordination Number (Samordningsnummer).
 	IdentityTypeCoordinationNr cbc.Code = "CN" // Unofficial
+
+	// IdentityKeyFSkatt marks a Swedish supplier as approved for F-tax (F-skatt).
+	// In UBL, this maps to a non-VAT cac:PartyTaxScheme entry whose cbc:CompanyID
+	// carries the boilerplate text "Godkänd för F-skatt", as required by Peppol
+	// rule SE-R-005.
+	IdentityKeyFSkatt cbc.Key = "se-f-skatt"
 )
+
+// FSkattText is the literal Swedish boilerplate required by Peppol SE-R-005
+// in the cac:PartyTaxScheme/cbc:CompanyID field.
+const FSkattText = "Godkänd för F-skatt"
 
 var (
 	// ValidOrgIdentityTypes defines the keys for the Swedish organization identities.
@@ -65,6 +75,23 @@ var identityTypeDefinitions = []*cbc.Definition{
 			i18n.SE: "Svenskt samordningsnummer.",
 		},
 	},
+	{
+		Key: IdentityKeyFSkatt,
+		Name: i18n.String{
+			i18n.EN: "F-Tax Approval",
+			i18n.SE: "Godkänd för F-skatt",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Swedish F-tax (F-skatt) approval. Setting this identity on a " +
+				"supplier asserts that the business handles its own tax payments. " +
+				"Required for Peppol BIS Billing 3.0 (SE-R-005); rendered as a " +
+				"non-VAT party tax scheme entry with the boilerplate text " +
+				"\"Godkänd för F-skatt\".",
+			i18n.SE: "Svenskt godkännande för F-skatt. När denna identitet anges " +
+				"på en leverantör betyder det att verksamheten hanterar sina egna " +
+				"skattebetalningar. Krävs för Peppol BIS Billing 3.0 (SE-R-005).",
+		},
+	},
 }
 
 // normalizeOrgIdentity performs normalization specific to Swedish identity codes.
@@ -75,6 +102,11 @@ var identityTypeDefinitions = []*cbc.Definition{
 // If too many or too few numbers are present, it does nothing.
 func normalizeOrgIdentity(id *org.Identity) {
 	if id == nil {
+		return
+	}
+	// Key-based identities (e.g. F-skatt) carry a fixed boilerplate code.
+	if id.Key == IdentityKeyFSkatt && id.Code == "" {
+		id.Code = FSkattText
 		return
 	}
 	switch id.Type {

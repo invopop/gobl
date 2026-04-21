@@ -30,11 +30,12 @@ package bis
 //     structurally impossible to violate.
 //
 //   - SE-R-005 (supplier with tax registration must include the "Godkänd för
-//     F-skatt" note)
-//     This is a free-text legal boilerplate. Rather than scanning note
-//     bodies, gobl.ubl should synthesize the Swedish text automatically
-//     when the supplier carries a tax registration, optionally gated by a
-//     structured marker (e.g. a Swedish-specific tag) added later.
+//     F-skatt" boilerplate)
+//     The structured marker for this is the SE-regime identity key
+//     se.IdentityKeyFSkatt (see regimes/se/org_identities.go). When present
+//     on the supplier, gobl.ubl should emit the second cac:PartyTaxScheme
+//     block (cbc:CompanyID = "Godkänd för F-skatt", any non-VAT TaxScheme
+//     ID) that the schematron looks for.
 //
 //   - GR-R-001-1 through GR-R-001-7 (Greek invoice ID must be a 6-segment
 //     underscore-delimited string containing the supplier TIN, YYYYMMDD,
