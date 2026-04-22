@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -17,6 +18,7 @@ import (
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("42", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Invoice code validation (BR-FR-01/02) - cross-field: series + code
 		rules.Assert("01", "must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
 			is.Func("valid invoice code", invoiceCodeValid),

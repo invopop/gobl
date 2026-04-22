@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -120,6 +121,25 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Lines[0].Taxes = nil
 		assert.ErrorContains(t, rules.Validate(inv), "line taxes must include VAT category")
+	})
+
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := calculatedInvoice(t)
+		inv.Currency = "USD"
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-PT-SAFT-V1-BILL-INVOICE-15] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := calculatedInvoice(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6),
+			},
+		}
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing source billing", func(t *testing.T) {

@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -1427,6 +1428,31 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 			},
 		})
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
+	})
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-ARS currency without exchange rates", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-AR-ARCA-V4-BILL-INVOICE-24] invoice must be in ARS or provide exchange rate for conversion")
+	})
+
+	t.Run("non-ARS currency with exchange rates", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "ARS",
+				Amount: num.MakeAmount(1050, 0),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -47,6 +48,7 @@ func normalizeInvoiceParty(p *org.Party) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("14", "invoice must be in COP or provide exchange rate for conversion", currency.CanConvertTo(currency.COP)),
 		// Code 01: invoice type restriction
 		rules.Assert("01", "invoice type must be one of standard, credit-note, debit-note, or proforma",
 			bill.InvoiceTypeIn(

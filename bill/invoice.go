@@ -339,6 +339,16 @@ func (inv *Invoice) RemoveIncludedTaxes() error {
 
 /** Calculation Interface Methods **/
 
+// GetCurrency provides the documents current currency code.
+func (inv *Invoice) GetCurrency() currency.Code {
+	return inv.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (inv *Invoice) GetExchangeRates() []*currency.ExchangeRate {
+	return inv.ExchangeRates
+}
+
 func (inv *Invoice) getIssueDate() cal.Date {
 	return inv.IssueDate
 }
@@ -356,12 +366,6 @@ func (inv *Invoice) getPreceding() []*org.DocumentRef {
 }
 func (inv *Invoice) getCustomer() *org.Party {
 	return inv.Customer
-}
-func (inv *Invoice) getCurrency() currency.Code {
-	return inv.Currency
-}
-func (inv *Invoice) getExchangeRates() []*currency.ExchangeRate {
-	return inv.ExchangeRates
 }
 func (inv *Invoice) getLines() []*Line {
 	return inv.Lines

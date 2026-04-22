@@ -272,6 +272,16 @@ func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
 
 /** Calculation Interface Methods **/
 
+// GetCurrency provides the documents current currency code.
+func (ord *Order) GetCurrency() currency.Code {
+	return ord.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
+	return ord.ExchangeRates
+}
+
 func (ord *Order) getIssueDate() cal.Date {
 	return ord.IssueDate
 }
@@ -289,12 +299,6 @@ func (ord *Order) getPreceding() []*org.DocumentRef {
 }
 func (ord *Order) getCustomer() *org.Party {
 	return ord.Customer
-}
-func (ord *Order) getCurrency() currency.Code {
-	return ord.Currency
-}
-func (ord *Order) getExchangeRates() []*currency.ExchangeRate {
-	return ord.ExchangeRates
 }
 func (ord *Order) getLines() []*Line {
 	return ord.Lines

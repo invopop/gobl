@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
@@ -19,6 +20,7 @@ const (
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("34", "invoice must be in BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
 		// Supplier validation
 		rules.Field("supplier",
 			rules.Field("tax_id",

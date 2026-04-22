@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `bill`: removed default calculation check for currency, this is now enforced by addons.
+
+### Added
+
+- `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
+
 ### Fixed
 
 - `rules`: Anonymous embedded struct fields are now also checked from the parent.

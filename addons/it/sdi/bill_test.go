@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -109,6 +110,29 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Tax.Ext = nil
 		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "tax requires 'it-sdi-document-type' and 'it-sdi-format' extensions")
+	})
+
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-IT-SDI-V1-BILL-INVOICE-22] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 
