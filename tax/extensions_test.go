@@ -639,30 +639,6 @@ func TestExtensionsSetOneOf(t *testing.T) {
 	})
 }
 
-func TestExtensionsClone(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		var em tax.Extensions
-		assert.Nil(t, em.Clone())
-	})
-
-	t.Run("creates independent copy", func(t *testing.T) {
-		em := tax.Extensions{"a": "1", "b": "2"}
-		clone := em.Clone()
-		assert.Equal(t, em, clone)
-
-		// Mutating the clone must not affect the original.
-		clone["a"] = "changed"
-		assert.Equal(t, cbc.Code("1"), em["a"])
-	})
-
-	t.Run("empty map", func(t *testing.T) {
-		em := make(tax.Extensions)
-		clone := em.Clone()
-		assert.NotNil(t, clone)
-		assert.Empty(t, clone)
-	})
-}
-
 func TestExtensionsDelete(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		var em tax.Extensions

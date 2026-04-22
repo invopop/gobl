@@ -128,13 +128,13 @@ func TestCorrectionNormalizeMerge(t *testing.T) {
 
 	cd1 := &tax.CorrectionDefinition{
 		Schema: bill.ShortSchemaInvoice,
-		Normalize: func(doc any) {
+		Normalize: func(_ any) {
 			calls = append(calls, "first")
 		},
 	}
 	cd2 := &tax.CorrectionDefinition{
 		Schema: bill.ShortSchemaInvoice,
-		Normalize: func(doc any) {
+		Normalize: func(_ any) {
 			calls = append(calls, "second")
 		},
 	}

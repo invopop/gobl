@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `ar-arca-v4`: Correction flow now uses `CorrectionNormalizer` to properly route doc-type to the invoice and copy original extensions to preceding.
+- `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalizer`.
+- `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalizer`.
 - `bill`: Clone correction option extensions before passing to preceding to prevent shared map mutation.
 - `rules`: Anonymous embedded struct fields are now also checked from the parent.
 

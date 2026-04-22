@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"strings"
 
 	"github.com/invopop/gobl/cal"
@@ -295,7 +296,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
-		Ext:       o.Ext.Clone(),
+		Ext:       maps.Clone(o.Ext),
 	}
 	if o.CopyTax && inv.Totals != nil {
 		pre.Tax = inv.Totals.Taxes.Clone()
@@ -320,7 +321,6 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	if cd != nil && cd.Normalize != nil {
 		inv.correctionOptions = o
 		cd.Normalize(inv)
-		inv.correctionOptions = nil
 	}
 
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {

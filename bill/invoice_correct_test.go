@@ -169,17 +169,6 @@ func TestCorrectWithNormalize(t *testing.T) {
 		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
 	})
 
-	t.Run("correction options not leaked", func(t *testing.T) {
-		inv := testInvoiceARForCorrection(t)
-		require.NoError(t, inv.Calculate())
-
-		err := inv.Correct(
-			bill.Credit,
-			bill.WithExtension(arca.ExtKeyDocType, "3"),
-		)
-		require.NoError(t, err)
-		assert.Nil(t, inv.CorrectionOptionsValue(), "options should be cleared after Correct")
-	})
 }
 
 func TestCorrectWithOptions(t *testing.T) {

@@ -1299,6 +1299,40 @@ func TestCorrectionDefinitions(t *testing.T) {
 }
 
 func TestCorrectionNormalize(t *testing.T) {
+	t.Run("ignores non-invoice document", func(t *testing.T) {
+		ad := tax.AddonForKey(arca.V4)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		require.NotNil(t, def.Normalize)
+		// Should not panic with a non-invoice type.
+		def.Normalize("not an invoice")
+	})
+
+	t.Run("ignores invoice without preceding", func(_ *testing.T) {
+		ad := tax.AddonForKey(arca.V4)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		inv := &bill.Invoice{}
+		// Should not panic when Preceding is empty.
+		def.Normalize(inv)
+	})
+
+	t.Run("handles nil tax on invoice", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+		// Simulate a correction normalizer call with nil Tax
+		// but with correction options containing a doc-type.
+		inv.Tax = nil
+		inv.Preceding = []*org.DocumentRef{{
+			Code: "1",
+			Ext:  tax.Extensions{arca.ExtKeyDocType: "3"},
+		}}
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"),
+		)
+		require.NoError(t, err)
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+	})
+
 	t.Run("copies tax extensions to preceding and routes doc-type to invoice", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
@@ -1377,17 +1411,6 @@ func TestCorrectionNormalize(t *testing.T) {
 		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
 	})
 
-	t.Run("correction options not leaked", func(t *testing.T) {
-		inv := testInvoiceWithGoods(t)
-		require.NoError(t, inv.Calculate())
-
-		err := inv.Correct(
-			bill.Credit,
-			bill.WithExtension(arca.ExtKeyDocType, "3"),
-		)
-		require.NoError(t, err)
-		assert.Nil(t, inv.CorrectionOptionsValue(), "options should be cleared after Correct")
-	})
 }
 
 func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {

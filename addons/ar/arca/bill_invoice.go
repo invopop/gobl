@@ -3,6 +3,7 @@ package arca
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"regexp"
 	"strconv"
 
@@ -63,9 +64,10 @@ func normalizeInvoiceCorrection(doc any) {
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
 
 	// Copy the invoice's original tax extensions to preceding so that
-	// the original doc-type, concept, etc. are preserved.
+	// the original doc-type, concept, etc. are preserved. Clone to
+	// ensure preceding gets an independent map.
 	if inv.Tax != nil && len(inv.Tax.Ext) > 0 {
-		ref.Ext = inv.Tax.Ext.Merge(ref.Ext)
+		ref.Ext = maps.Clone(inv.Tax.Ext).Merge(ref.Ext)
 	}
 
 	// Route doc-type from correction options to the invoice.
