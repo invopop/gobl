@@ -1288,15 +1288,105 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 }
 
 func TestCorrectionDefinitions(t *testing.T) {
-	t.Run("correction definitions exist for credit and debit notes", func(t *testing.T) {
+	t.Run("correction definitions", func(t *testing.T) {
 		ad := tax.AddonForKey(arca.V4)
 		require.NotNil(t, ad.Corrections)
-		// Check that invoice correction definition exists
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, def)
-		assert.True(t, def.HasType(bill.InvoiceTypeCreditNote))
-		assert.True(t, def.HasType(bill.InvoiceTypeDebitNote))
 		assert.True(t, def.HasExtension(arca.ExtKeyDocType))
+		assert.NotNil(t, def.Normalize)
+	})
+}
+
+func TestCorrectionNormalize(t *testing.T) {
+	t.Run("copies tax extensions to preceding and routes doc-type to invoice", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyConcept])
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"), // Credit Note A
+		)
+		require.NoError(t, err)
+
+		// Original extensions copied to preceding
+		pre := inv.Preceding[0]
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+
+		// Invoice doc type updated via correction normalizer
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+	})
+
+	t.Run("credit note B", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// Clear pre-set doc type so normalizer derives it from customer VAT status
+		delete(inv.Tax.Ext, arca.ExtKeyDocType)
+		inv.Customer.TaxID = nil
+		inv.Customer.Ext = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "12345678",
+				Ext: tax.Extensions{
+					arca.ExtKeyIdentityType: "96", // DNI
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("6"), inv.Tax.Ext[arca.ExtKeyDocType]) // Invoice B
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "8"), // Credit Note B
+		)
+		require.NoError(t, err)
+
+		assert.Equal(t, cbc.Code("8"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("6"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyConcept])
+	})
+
+	t.Run("without doc-type extension copies originals to preceding", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+
+		// Correct without providing a doc-type extension
+		err := inv.Correct(bill.Credit)
+		require.NoError(t, err)
+
+		// Original extensions still copied to preceding
+		pre := inv.Preceding[0]
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+	})
+
+	t.Run("debit note A", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+
+		err := inv.Correct(
+			bill.Debit,
+			bill.WithExtension(arca.ExtKeyDocType, "2"), // Debit Note A
+		)
+		require.NoError(t, err)
+
+		assert.Equal(t, bill.InvoiceTypeDebitNote, inv.Type)
+		assert.Equal(t, cbc.Code("2"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
+	})
+
+	t.Run("correction options not leaked", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"),
+		)
+		require.NoError(t, err)
+		assert.Nil(t, inv.CorrectionOptionsValue(), "options should be cleared after Correct")
 	})
 }
 

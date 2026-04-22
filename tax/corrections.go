@@ -8,6 +8,14 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
+// CorrectionNormalizer is a callback invoked during the Correct() process
+// to allow addons and regimes to perform custom normalization. The document
+// is passed as `any` to avoid circular imports; implementations should
+// type-assert to the concrete type (e.g., *bill.Invoice).
+// When called, the document's Preceding field is already set and the
+// correction options are available via the document's accessor method.
+type CorrectionNormalizer func(doc any)
+
 // CorrectionSet defines a set of correction definitions for
 // a selection of schemas.
 type CorrectionSet []*CorrectionDefinition
@@ -26,6 +34,10 @@ type CorrectionDefinition struct {
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Copy tax from the preceding document to the document ref.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
+	// Normalize is an optional callback invoked during Correct() to allow
+	// addon/regime-specific logic to route extensions between the document
+	// and the preceding reference.
+	Normalize CorrectionNormalizer `json:"-"`
 }
 
 func correctionDefinitionRules() *rules.Set {
@@ -65,6 +77,20 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	if other.CopyTax {
 		cd.CopyTax = other.CopyTax
 	}
+	// Chain normalizers so both run in sequence.
+	var norm CorrectionNormalizer
+	switch {
+	case cd.Normalize != nil && other.Normalize != nil:
+		first, second := cd.Normalize, other.Normalize
+		norm = func(doc any) {
+			first(doc)
+			second(doc)
+		}
+	case other.Normalize != nil:
+		norm = other.Normalize
+	default:
+		norm = cd.Normalize
+	}
 	cd = &CorrectionDefinition{
 		Schema:         cd.Schema,
 		Types:          append(cd.Types, other.Types...),
@@ -72,6 +98,7 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         append(cd.Stamps, other.Stamps...),
 		CopyTax:        cd.CopyTax,
+		Normalize:      norm,
 	}
 	return cd
 }

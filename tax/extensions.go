@@ -151,6 +151,18 @@ func (em Extensions) SetIfEmpty(key cbc.Key, code cbc.Code) Extensions {
 	return em
 }
 
+// Clone creates a shallow copy of the extensions map.
+func (em Extensions) Clone() Extensions {
+	if em == nil {
+		return nil
+	}
+	nem := make(Extensions, len(em))
+	for k, v := range em {
+		nem[k] = v
+	}
+	return nem
+}
+
 // Delete safely removes the key from the extensions map. Returns the
 // extension for chaining.
 func (em Extensions) Delete(k cbc.Key) Extensions {

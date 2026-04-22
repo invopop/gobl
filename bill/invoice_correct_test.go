@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/addons/es/tbai"
@@ -144,6 +145,41 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, dian.StampCUDE)
 	// assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
+}
+
+func TestCorrectWithNormalize(t *testing.T) {
+	t.Run("copies tax extensions to preceding", func(t *testing.T) {
+		inv := testInvoiceARForCorrection(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyConcept])
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"), // Credit Note A
+		)
+		require.NoError(t, err)
+
+		// Original extensions copied to preceding
+		pre := inv.Preceding[0]
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+
+		// Invoice doc type set via correction normalizer
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+	})
+
+	t.Run("correction options not leaked", func(t *testing.T) {
+		inv := testInvoiceARForCorrection(t)
+		require.NoError(t, inv.Calculate())
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"),
+		)
+		require.NoError(t, err)
+		assert.Nil(t, inv.CorrectionOptionsValue(), "options should be cleared after Correct")
+	})
 }
 
 func TestCorrectWithOptions(t *testing.T) {
@@ -424,4 +460,43 @@ func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 		},
 	}
 	return i
+}
+
+func testInvoiceARForCorrection(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Regime:    tax.WithRegime("AR"),
+		Addons:    tax.WithAddons(arca.V4),
+		Series:    "1",
+		Code:      "123",
+		IssueDate: cal.MakeDate(2024, 1, 15),
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "20345678904",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "30500010912",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(10000, 2),
+					Key:   org.ItemKeyGoods,
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+			},
+		},
+	}
 }

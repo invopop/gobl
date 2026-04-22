@@ -13,10 +13,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `tax`: Added `CorrectionNormalizer` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
+- `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 
 ### Fixed
 
+- `ar-arca-v4`: Correction flow now uses `CorrectionNormalizer` to properly route doc-type to the invoice and copy original extensions to preceding.
+- `bill`: Clone correction option extensions before passing to preceding to prevent shared map mutation.
 - `rules`: Anonymous embedded struct fields are now also checked from the parent.
 
 ## [v0.401.0] - 2026-04-17

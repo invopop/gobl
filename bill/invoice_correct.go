@@ -283,7 +283,11 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return errors.New("cannot correct an invoice without a code")
 	}
 
-	// Copy and prepare the basic fields
+	cd := inv.correctionDef()
+
+	// Copy and prepare the basic fields. Clone the extensions so that
+	// correction normalizers can modify preceding.Ext without affecting
+	// the original options.
 	pre := &org.DocumentRef{
 		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
@@ -291,11 +295,15 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
-		Ext:       o.Ext,
+		Ext:       o.Ext.Clone(),
 	}
 	if o.CopyTax && inv.Totals != nil {
 		pre.Tax = inv.Totals.Taxes.Clone()
 	}
+
+	// Set preceding before resetting fields so the normalizer can access it.
+	inv.Preceding = []*org.DocumentRef{pre}
+
 	inv.UUID = ""
 	inv.Type = o.Type
 	if o.Series != "" {
@@ -308,13 +316,16 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
-	cd := inv.correctionDef()
+	// Let the correction normalizer handle extension routing if defined.
+	if cd != nil && cd.Normalize != nil {
+		inv.correctionOptions = o
+		cd.Normalize(inv)
+		inv.correctionOptions = nil
+	}
+
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err
 	}
-
-	// Replace all previous preceding data
-	inv.Preceding = []*org.DocumentRef{pre}
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
