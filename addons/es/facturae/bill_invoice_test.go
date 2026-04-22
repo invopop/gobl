@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -45,6 +46,30 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
 	})
 
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("ES")
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-07] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("ES")
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6), // 0.875967
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
 }
 
 func TestInvoicePrecedingValidation(t *testing.T) {

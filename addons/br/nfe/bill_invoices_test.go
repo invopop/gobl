@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -425,6 +426,31 @@ func TestCustomerValidation(t *testing.T) {
 		inv.Customer.Addresses[0].Code = ""
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer address requires a postal code")
+	})
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-BRL currency without exchange rates", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-BR-NFE-V4-BILL-INVOICE-34] invoice must be in BRL or provide exchange rate for conversion")
+	})
+
+	t.Run("non-BRL currency with exchange rates", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "BRL",
+				Amount: num.MakeAmount(500, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 

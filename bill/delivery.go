@@ -287,6 +287,16 @@ func (dlv *Delivery) ConvertInto(cur currency.Code) (*Delivery, error) {
 
 /** Calculation Interface Methods **/
 
+// GetCurrency provides the documents current currency code.
+func (dlv *Delivery) GetCurrency() currency.Code {
+	return dlv.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (dlv *Delivery) GetExchangeRates() []*currency.ExchangeRate {
+	return dlv.ExchangeRates
+}
+
 func (dlv *Delivery) getIssueDate() cal.Date {
 	return dlv.IssueDate
 }
@@ -304,12 +314,6 @@ func (dlv *Delivery) getPreceding() []*org.DocumentRef {
 }
 func (dlv *Delivery) getCustomer() *org.Party {
 	return dlv.Customer
-}
-func (dlv *Delivery) getCurrency() currency.Code {
-	return dlv.Currency
-}
-func (dlv *Delivery) getExchangeRates() []*currency.ExchangeRate {
-	return dlv.ExchangeRates
 }
 func (dlv *Delivery) getLines() []*Line {
 	return dlv.Lines

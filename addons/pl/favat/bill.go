@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -37,6 +38,7 @@ func isExemptionNote(n *org.Note) bool {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("15", "invoice must be in PLN or provide exchange rate for conversion", currency.CanConvertTo(currency.PLN)),
 		rules.Field("type",
 			rules.Assert("01", "invoice type must be standard or credit-note",
 				is.In(bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote),

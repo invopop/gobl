@@ -171,6 +171,31 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-COP currency without exchange rates", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-CO-DIAN-V2-BILL-INVOICE-14] invoice must be in COP or provide exchange rate for conversion")
+	})
+
+	t.Run("non-COP currency with exchange rates", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "COP",
+				Amount: num.MakeAmount(4100, 0),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+}
+
 func TestFiscalResponsibilityExtensionValidation(t *testing.T) {
 	// Colombian parties
 	inv := baseInvoice()

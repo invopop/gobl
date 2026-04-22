@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -113,6 +114,31 @@ func TestInvoiceValidation(t *testing.T) {
 		json, err := json.MarshalIndent(inv, "", "  ")
 		require.NoError(t, err)
 		t.Log(string(json))
+	})
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-IT-TICKET-V1-BILL-INVOICE-08] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 

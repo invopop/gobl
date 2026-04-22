@@ -8,6 +8,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -199,6 +200,7 @@ func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("24", "invoice must be in ARS or provide exchange rate for conversion", currency.CanConvertTo(currency.ARS)),
 		rules.Field("series",
 			rules.Assert("01", "series is required", is.Present),
 			rules.Assert("02", "series must be a valid number between 1 and 99998",

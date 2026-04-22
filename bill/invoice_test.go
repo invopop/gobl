@@ -131,7 +131,9 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 	inv := baseInvoice(t, lines...)
 	inv.Currency = currency.USD
 
-	assert.ErrorContains(t, inv.Calculate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
+	// Calculate no longer enforces the regime's currency; that is now handled
+	// by addon-level rules via currency.CanConvertTo.
+	assert.NoError(t, inv.Calculate())
 
 	inv.ExchangeRates = []*currency.ExchangeRate{
 		{

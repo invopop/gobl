@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -153,6 +154,31 @@ func TestValidInvoice(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.ErrorContains(t, rules.Validate(inv), "extensions must all be present or all absent")
+	})
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-MXN currency without exchange rates", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-MX-CFDI-V4-BILL-INVOICE-27] invoice must be in MXN or provide exchange rate for conversion")
+	})
+
+	t.Run("non-MXN currency with exchange rates", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "MXN",
+				Amount: num.MakeAmount(1800, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 

@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/rules"
@@ -24,6 +25,7 @@ var (
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("17", "invoice must be in BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
 		rules.Field("series",
 			rules.Assert("01", "series is required", is.Present),
 		),

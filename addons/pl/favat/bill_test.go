@@ -137,6 +137,31 @@ func TestBasicStandardInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-PLN currency without exchange rates", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-V3-BILL-INVOICE-15] invoice must be in PLN or provide exchange rate for conversion")
+	})
+
+	t.Run("non-PLN currency with exchange rates", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "PLN",
+				Amount: num.MakeAmount(400, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+}
+
 func TestExemptStandardInvoiceValidation(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
