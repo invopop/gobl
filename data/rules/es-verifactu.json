@@ -124,7 +124,7 @@
                 },
                 {
                   "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-07",
-                  "desc": "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
+                  "desc": "must have a tax_id or an identity with ext 'es-verifactu-identity-type'",
                   "tests": "has tax_id or identity"
                 }
               ],

@@ -337,7 +337,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "($.customer) must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'")
+		assert.ErrorContains(t, rules.Validate(inv), "($.customer) must have a tax_id or an identity with ext 'es-verifactu-identity-type'")
 	})
 	t.Run("customer with missing Tax ID code", func(t *testing.T) {
 		// VERI*FACTU has no way to handle just a country without an actual code.

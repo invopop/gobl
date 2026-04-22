@@ -169,7 +169,7 @@ func billInvoiceRules() *rules.Set {
 			is.Func("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
 				rules.Assert("06", "customer is required", is.Present),
-				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
+				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-identity-type'",
 					is.Func("has tax_id or identity", customerHasTaxIDOrIdentity),
 				),
 				rules.Field("tax_id",
