@@ -38,7 +38,10 @@ func billInvoiceRulesIS() *rules.Set {
 				),
 			),
 			rules.Field("customer",
-				rules.When(is.Func("customer is IS", func(val any) bool { return partyCountry(valAsParty(val)) == l10n.IS }),
+				rules.When(is.Func("customer is IS", func(val any) bool {
+					p, _ := val.(*org.Party)
+					return partyCountry(p) == l10n.IS
+				}),
 					rules.Assert("IS-03", "Icelandic customer must have a legal identity (IS-R-004)",
 						is.Func("is customer legal", partyHasLegalIdentity),
 					),
@@ -80,14 +83,6 @@ func payInstructionsRulesIS() *rules.Set {
 			),
 		),
 	)
-}
-
-func valAsParty(v any) *org.Party {
-	p, ok := v.(*org.Party)
-	if !ok {
-		return nil
-	}
-	return p
 }
 
 func partyHasLegalIdentity(val any) bool {

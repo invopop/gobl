@@ -10,16 +10,16 @@ import (
 )
 
 func TestNorwegianVATFormat(t *testing.T) {
-	assert.True(t, norwegianVATFormat(nil))
-	assert.True(t, norwegianVATFormat(&org.Party{}))
+	assert.True(t, noVATFormat(nil))
+	assert.True(t, noVATFormat(&org.Party{}))
 	// Non-NO tax id passes.
-	assert.True(t, norwegianVATFormat(&org.Party{TaxID: &tax.Identity{Country: "DE"}}))
+	assert.True(t, noVATFormat(&org.Party{TaxID: &tax.Identity{Country: "DE"}}))
 	// Empty code passes.
-	assert.True(t, norwegianVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax()}}))
+	assert.True(t, noVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax()}}))
 	// Bare 9 digits passes.
-	assert.True(t, norwegianVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "990983666"}}))
+	assert.True(t, noVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "990983666"}}))
 	// Full NOxxxMVA form passes.
-	assert.True(t, norwegianVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "NO990983666MVA"}}))
+	assert.True(t, noVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "NO990983666MVA"}}))
 	// Non-conforming code fails.
-	assert.False(t, norwegianVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "ABC"}}))
+	assert.False(t, noVATFormat(&org.Party{TaxID: &tax.Identity{Country: l10n.NO.Tax(), Code: "ABC"}}))
 }

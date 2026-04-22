@@ -251,7 +251,7 @@
       "object": "bill.Invoice",
       "subsets": [
         {
-          "guard": "supplier country DE",
+          "guard": "both parties country DE",
           "assert": [
             {
               "id": "GOBL-PEPPOL-BIS-V3-BILL-INVOICE-DE-01",

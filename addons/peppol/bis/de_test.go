@@ -20,16 +20,16 @@ func TestPartyHasContactGroup(t *testing.T) {
 }
 
 func TestFirstAddressHelpers(t *testing.T) {
-	assert.True(t, firstAddressHasLocalityPE(nil))
-	assert.True(t, firstAddressHasLocalityPE([]*org.Address{}))
-	assert.False(t, firstAddressHasLocalityPE([]*org.Address{nil}))
-	assert.False(t, firstAddressHasLocalityPE([]*org.Address{{}}))
-	assert.True(t, firstAddressHasLocalityPE([]*org.Address{{Locality: "Berlin"}}))
+	assert.True(t, firstAddressHasLocality(nil))
+	assert.True(t, firstAddressHasLocality([]*org.Address{}))
+	assert.False(t, firstAddressHasLocality([]*org.Address{nil}))
+	assert.False(t, firstAddressHasLocality([]*org.Address{{}}))
+	assert.True(t, firstAddressHasLocality([]*org.Address{{Locality: "Berlin"}}))
 
-	assert.True(t, firstAddressHasCodePE([]*org.Address{}))
-	assert.False(t, firstAddressHasCodePE([]*org.Address{nil}))
-	assert.False(t, firstAddressHasCodePE([]*org.Address{{}}))
-	assert.True(t, firstAddressHasCodePE([]*org.Address{{Code: "10115"}}))
+	assert.True(t, firstAddressHasCode([]*org.Address{}))
+	assert.False(t, firstAddressHasCode([]*org.Address{nil}))
+	assert.False(t, firstAddressHasCode([]*org.Address{{}}))
+	assert.True(t, firstAddressHasCode([]*org.Address{{Code: "10115"}}))
 }
 
 func TestPartyContactHelpers(t *testing.T) {

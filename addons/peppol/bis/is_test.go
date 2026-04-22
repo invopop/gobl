@@ -12,13 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValAsParty(t *testing.T) {
-	assert.Nil(t, valAsParty(nil))
-	assert.Nil(t, valAsParty("string"))
-	p := &org.Party{}
-	assert.Equal(t, p, valAsParty(p))
-}
-
 func TestPartyHasLegalIdentity(t *testing.T) {
 	assert.True(t, partyHasLegalIdentity(nil))
 	assert.False(t, partyHasLegalIdentity(&org.Party{}))

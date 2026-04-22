@@ -31,7 +31,7 @@ var skontoRe = regexp.MustCompile(`^#SKONTO#TAGE=\d+#PROZENT=\d+(\.\d{1,2})?#(BA
 
 func billInvoiceRulesDE() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.DE),
+		rules.When(bothCountriesAre(l10n.DE),
 			rules.Assert("DE-01", "payment instructions are required (DE-R-001)",
 				is.Func("has payment instructions", hasPaymentInstructions),
 			),
@@ -44,10 +44,10 @@ func billInvoiceRulesDE() *rules.Set {
 				),
 				rules.Field("addresses",
 					rules.Assert("DE-04", "supplier first address must have a city (DE-R-003)",
-						is.Func("has locality", firstAddressHasLocalityPE),
+						is.Func("has locality", firstAddressHasLocality),
 					),
 					rules.Assert("DE-05", "supplier first address must have a postal code (DE-R-004)",
-						is.Func("has code", firstAddressHasCodePE),
+						is.Func("has code", firstAddressHasCode),
 					),
 				),
 				rules.Assert("DE-06", "supplier contact name is required (DE-R-005)",
@@ -63,10 +63,10 @@ func billInvoiceRulesDE() *rules.Set {
 			rules.Field("customer",
 				rules.Field("addresses",
 					rules.Assert("DE-09", "customer first address must have a city (DE-R-008)",
-						is.Func("has locality", firstAddressHasLocalityPE),
+						is.Func("has locality", firstAddressHasLocality),
 					),
 					rules.Assert("DE-10", "customer first address must have a postal code (DE-R-009)",
-						is.Func("has code", firstAddressHasCodePE),
+						is.Func("has code", firstAddressHasCode),
 					),
 				),
 			),
@@ -74,10 +74,10 @@ func billInvoiceRulesDE() *rules.Set {
 				rules.Field("receiver",
 					rules.Field("addresses",
 						rules.AssertIfPresent("DE-11", "delivery address must have a city (DE-R-010)",
-							is.Func("has locality", firstAddressHasLocalityPE),
+							is.Func("has locality", firstAddressHasLocality),
 						),
 						rules.AssertIfPresent("DE-12", "delivery address must have a postal code (DE-R-011)",
-							is.Func("has code", firstAddressHasCodePE),
+							is.Func("has code", firstAddressHasCode),
 						),
 					),
 				),
@@ -138,7 +138,7 @@ func partyHasContactGroup(val any) bool {
 	return false
 }
 
-func firstAddressHasLocalityPE(val any) bool {
+func firstAddressHasLocality(val any) bool {
 	addrs, ok := val.([]*org.Address)
 	if !ok || len(addrs) == 0 {
 		return true // presence enforced elsewhere
@@ -146,7 +146,7 @@ func firstAddressHasLocalityPE(val any) bool {
 	return addrs[0] != nil && addrs[0].Locality != ""
 }
 
-func firstAddressHasCodePE(val any) bool {
+func firstAddressHasCode(val any) bool {
 	addrs, ok := val.([]*org.Address)
 	if !ok || len(addrs) == 0 {
 		return true

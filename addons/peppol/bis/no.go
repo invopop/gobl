@@ -20,14 +20,14 @@ func orgPartyRulesNO() *rules.Set {
 		rules.When(supplierCountryIs(l10n.NO),
 			rules.Field("supplier",
 				rules.Assert("NO-01", "Norwegian VAT must be NO+9 digits+MVA (NO-R-001)",
-					is.Func("no vat format", norwegianVATFormat),
+					is.Func("no vat format", noVATFormat),
 				),
 			),
 		),
 	)
 }
 
-func norwegianVATFormat(val any) bool {
+func noVATFormat(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil || p.TaxID == nil {
 		return true

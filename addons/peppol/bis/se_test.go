@@ -38,50 +38,50 @@ func TestSEVATRateAllowed(t *testing.T) {
 }
 
 func TestSwedishVATLength(t *testing.T) {
-	assert.True(t, swedishVATLength(nil))
-	assert.True(t, swedishVATLength(&org.Party{}))
+	assert.True(t, seVATLength(nil))
+	assert.True(t, seVATLength(&org.Party{}))
 	// Non-SE — passes.
-	assert.True(t, swedishVATLength(&org.Party{TaxID: &tax.Identity{Country: "DE", Code: "X"}}))
+	assert.True(t, seVATLength(&org.Party{TaxID: &tax.Identity{Country: "DE", Code: "X"}}))
 	// SE empty — passes.
-	assert.True(t, swedishVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax()}}))
+	assert.True(t, seVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax()}}))
 	// SE bare 10 — passes.
-	assert.True(t, swedishVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "5560360793"}}))
+	assert.True(t, seVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "5560360793"}}))
 	// SE full 14 — passes.
-	assert.True(t, swedishVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE556036079301"}}))
+	assert.True(t, seVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE556036079301"}}))
 	// SE with weird length — fails.
-	assert.False(t, swedishVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "12345"}}))
+	assert.False(t, seVATLength(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "12345"}}))
 }
 
 func TestSwedishVATTrailingDigits(t *testing.T) {
-	assert.True(t, swedishVATTrailingDigits(nil))
-	assert.True(t, swedishVATTrailingDigits(&org.Party{}))
+	assert.True(t, seVATTrailingDigits(nil))
+	assert.True(t, seVATTrailingDigits(&org.Party{}))
 	// Non-SE passes.
-	assert.True(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: "DE"}}))
+	assert.True(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: "DE"}}))
 	// 14-char with digits passes.
-	assert.True(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE556036079301"}}))
+	assert.True(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE556036079301"}}))
 	// 14-char with letters in trailing — fails.
-	assert.False(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE5560360793AB"}}))
+	assert.False(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "SE5560360793AB"}}))
 	// 10-digit numeric — passes.
-	assert.True(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "5560360793"}}))
+	assert.True(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "5560360793"}}))
 	// 10-char with letters — fails.
-	assert.False(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "ABCDEFGHIJ"}}))
+	assert.False(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "ABCDEFGHIJ"}}))
 	// Other length — passes (handled elsewhere).
-	assert.True(t, swedishVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "12345"}}))
+	assert.True(t, seVATTrailingDigits(&org.Party{TaxID: &tax.Identity{Country: l10n.SE.Tax(), Code: "12345"}}))
 }
 
 func TestSwedishOrgChecks(t *testing.T) {
 	// Length
-	assert.True(t, swedishOrgLength(nil))
-	assert.True(t, swedishOrgLength(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
-	assert.False(t, swedishOrgLength(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "12345"}}}))
+	assert.True(t, seOrgLength(nil))
+	assert.True(t, seOrgLength(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
+	assert.False(t, seOrgLength(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "12345"}}}))
 
 	// Luhn
-	assert.True(t, swedishOrgLuhn(nil))
-	assert.True(t, swedishOrgLuhn(&org.Party{}))
+	assert.True(t, seOrgLuhn(nil))
+	assert.True(t, seOrgLuhn(&org.Party{}))
 	// Wrong length skipped (handled by R-004).
-	assert.True(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "12345"}}}))
-	assert.True(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
-	assert.False(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360794"}}}))
+	assert.True(t, seOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "12345"}}}))
+	assert.True(t, seOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360793"}}}))
+	assert.False(t, seOrgLuhn(&org.Party{Identities: []*org.Identity{{Scope: "legal", Code: "5560360794"}}}))
 	// Nil identity / wrong scope skipped.
-	assert.True(t, swedishOrgLuhn(&org.Party{Identities: []*org.Identity{nil, {Scope: "tax", Code: "X"}}}))
+	assert.True(t, seOrgLuhn(&org.Party{Identities: []*org.Identity{nil, {Scope: "tax", Code: "X"}}}))
 }

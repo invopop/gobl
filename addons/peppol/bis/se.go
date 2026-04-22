@@ -39,18 +39,18 @@ func orgPartyRulesSE() *rules.Set {
 		rules.When(supplierCountryIs(l10n.SE),
 			rules.Field("supplier",
 				rules.Assert("SE-02", "Swedish VAT must be 14 characters (SE-R-001)",
-					is.Func("se vat length", swedishVATLength),
+					is.Func("se vat length", seVATLength),
 				),
 				rules.Assert("SE-03", "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
-					is.Func("se vat trailing digits", swedishVATTrailingDigits),
+					is.Func("se vat trailing digits", seVATTrailingDigits),
 				),
 				// SE-R-003 (numeric org number) is warning-level and intentionally
 				// not enforced here.
 				rules.Assert("SE-04", "Swedish organization number must be 10 characters (SE-R-004)",
-					is.Func("se org length", swedishOrgLength),
+					is.Func("se org length", seOrgLength),
 				),
 				rules.Assert("SE-05", "Swedish organization number last digit must be a valid Luhn checksum (SE-R-013)",
-					is.Func("se org luhn", swedishOrgLuhn),
+					is.Func("se org luhn", seOrgLuhn),
 				),
 			),
 		),
@@ -94,7 +94,7 @@ func seVATRateAllowed(val any) bool {
 	return true
 }
 
-func swedishVATLength(val any) bool {
+func seVATLength(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil || p.TaxID == nil {
 		return true
@@ -114,7 +114,7 @@ func swedishVATLength(val any) bool {
 	return false
 }
 
-func swedishVATTrailingDigits(val any) bool {
+func seVATTrailingDigits(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil || p.TaxID == nil {
 		return true
@@ -134,7 +134,7 @@ func swedishVATTrailingDigits(val any) bool {
 	return true
 }
 
-func swedishOrgLength(val any) bool {
+func seOrgLength(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil {
 		return true
@@ -150,7 +150,7 @@ func swedishOrgLength(val any) bool {
 	return true
 }
 
-func swedishOrgLuhn(val any) bool {
+func seOrgLuhn(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil {
 		return true

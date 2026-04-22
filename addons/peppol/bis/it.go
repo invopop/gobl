@@ -13,17 +13,17 @@ func orgPartyRulesIT() *rules.Set {
 		rules.When(supplierCountryIs(l10n.IT),
 			rules.Field("supplier",
 				rules.Assert("IT-01", "Italian tax registration identifier length must be 11-16 (IT-R-001)",
-					is.Func("it tax id length", italianTaxIDLength),
+					is.Func("it tax id length", itTaxIDLength),
 				),
 				rules.Field("addresses",
 					rules.Assert("IT-02", "Italian supplier address line 1 is required (IT-R-002)",
 						is.Func("it street", firstAddressHasStreet),
 					),
 					rules.Assert("IT-03", "Italian supplier city is required (IT-R-003)",
-						is.Func("it locality", firstAddressHasLocalityPE),
+						is.Func("it locality", firstAddressHasLocality),
 					),
 					rules.Assert("IT-04", "Italian supplier post code is required (IT-R-004)",
-						is.Func("it code", firstAddressHasCodePE),
+						is.Func("it code", firstAddressHasCode),
 					),
 				),
 			),
@@ -31,7 +31,7 @@ func orgPartyRulesIT() *rules.Set {
 	)
 }
 
-func italianTaxIDLength(val any) bool {
+func itTaxIDLength(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil || p.TaxID == nil {
 		return true

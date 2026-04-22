@@ -9,13 +9,13 @@ import (
 )
 
 func TestItalianTaxIDLength(t *testing.T) {
-	assert.True(t, italianTaxIDLength(nil))
-	assert.True(t, italianTaxIDLength(&org.Party{}))
-	assert.True(t, italianTaxIDLength(&org.Party{TaxID: &tax.Identity{}}))
-	assert.True(t, italianTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "12345678901"}}))        // 11
-	assert.True(t, italianTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "1234567890123456"}}))   // 16
-	assert.False(t, italianTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "1234567890"}}))        // 10
-	assert.False(t, italianTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "12345678901234567"}})) // 17
+	assert.True(t, itTaxIDLength(nil))
+	assert.True(t, itTaxIDLength(&org.Party{}))
+	assert.True(t, itTaxIDLength(&org.Party{TaxID: &tax.Identity{}}))
+	assert.True(t, itTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "12345678901"}}))        // 11
+	assert.True(t, itTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "1234567890123456"}}))   // 16
+	assert.False(t, itTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "1234567890"}}))        // 10
+	assert.False(t, itTaxIDLength(&org.Party{TaxID: &tax.Identity{Code: "12345678901234567"}})) // 17
 }
 
 func TestFirstAddressHasStreet(t *testing.T) {
