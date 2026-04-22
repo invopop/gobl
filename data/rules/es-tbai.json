@@ -1,17 +1,24 @@
 {
-  "id": "GOBL-ES-TBAI-V1",
-  "package": "es-tbai-v1",
+  "id": "GOBL-ES-TBAI",
+  "package": "es-tbai",
   "guard": "context: addon in [es-tbai-v1]",
   "subsets": [
     {
-      "id": "GOBL-ES-TBAI-V1-BILL-INVOICE",
+      "id": "GOBL-ES-TBAI-BILL-INVOICE",
       "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-ES-TBAI-BILL-INVOICE-09",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        }
+      ],
       "subsets": [
         {
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-01",
+              "id": "GOBL-ES-TBAI-BILL-INVOICE-01",
               "desc": "tax is required",
               "tests": "present"
             }
@@ -21,7 +28,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-02",
+                  "id": "GOBL-ES-TBAI-BILL-INVOICE-02",
                   "desc": "extension 'es-tbai-region' is required",
                   "tests": "ext require [es-tbai-region]"
                 }
@@ -36,7 +43,7 @@
               "field": "customer",
               "assert": [
                 {
-                  "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-03",
+                  "id": "GOBL-ES-TBAI-BILL-INVOICE-03",
                   "desc": "customer is required for non-simplified invoices",
                   "tests": "present"
                 }
@@ -46,7 +53,7 @@
                   "field": "tax_id",
                   "assert": [
                     {
-                      "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-08",
+                      "id": "GOBL-ES-TBAI-BILL-INVOICE-08",
                       "desc": "customer tax ID is required",
                       "tests": "present"
                     }
@@ -63,7 +70,7 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-04",
+                  "id": "GOBL-ES-TBAI-BILL-INVOICE-04",
                   "desc": "preceding documents are required for credit-note, corrective, debit-note invoices",
                   "tests": "present"
                 }
@@ -81,7 +88,7 @@
                   "field": "issue_date",
                   "assert": [
                     {
-                      "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-05",
+                      "id": "GOBL-ES-TBAI-BILL-INVOICE-05",
                       "desc": "preceding issue date is required",
                       "tests": "present"
                     }
@@ -91,7 +98,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-06",
+                      "id": "GOBL-ES-TBAI-BILL-INVOICE-06",
                       "desc": "preceding ext 'es-tbai-correction' is required",
                       "tests": "ext require [es-tbai-correction]"
                     }
@@ -105,7 +112,7 @@
           "field": "notes",
           "assert": [
             {
-              "id": "GOBL-ES-TBAI-V1-BILL-INVOICE-07",
+              "id": "GOBL-ES-TBAI-BILL-INVOICE-07",
               "desc": "with key 'general' missing",
               "tests": "has general note"
             }
@@ -114,7 +121,7 @@
       ]
     },
     {
-      "id": "GOBL-ES-TBAI-V1-TAX-COMBO",
+      "id": "GOBL-ES-TBAI-TAX-COMBO",
       "object": "tax.Combo",
       "subsets": [
         {
@@ -124,7 +131,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-ES-TBAI-V1-TAX-COMBO-01",
+                  "id": "GOBL-ES-TBAI-TAX-COMBO-01",
                   "desc": "extension 'es-tbai-exemption' is required for exempt tax combos",
                   "tests": "ext require [es-tbai-exemption]"
                 }

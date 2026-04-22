@@ -1,14 +1,19 @@
 {
-  "id": "GOBL-FR-CTC-FLOW2-V1",
-  "package": "fr-ctc-flow2-v1",
+  "id": "GOBL-FR-CTC-FLOW2",
+  "package": "fr-ctc-flow2",
   "guard": "context: addon in [fr-ctc-flow2-v1]",
   "subsets": [
     {
-      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE",
+      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE",
       "object": "bill.Invoice",
       "assert": [
         {
-          "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-01",
+          "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-42",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        },
+        {
+          "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-01",
           "desc": "must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
           "tests": "valid invoice code"
         }
@@ -21,7 +26,7 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-02",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-02",
                   "desc": "preceding code must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
                   "tests": "valid preceding code"
                 }
@@ -36,12 +41,12 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-03",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-03",
                   "desc": "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
                   "tests": "present"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-04",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-04",
                   "desc": "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
                   "tests": "length between 1 and 1"
                 }
@@ -56,7 +61,7 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-05",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-05",
                   "desc": "credit notes must have at least one preceding invoice reference (BR-FR-CO-05)",
                   "tests": "present"
                 }
@@ -68,7 +73,7 @@
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-06",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-06",
               "desc": "tax is required",
               "tests": "present"
             }
@@ -78,12 +83,12 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-07",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-07",
                   "desc": "UNTDID document type must be valid (BR-FR-04)",
                   "tests": "ext 'untdid-document-type' in [380, 389, 393, 501, 386, 500, 384, 471, 472, 473, 261, 262, 381, 396, 502, 503]"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-08",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-08",
                   "desc": "billing mode extension is required",
                   "tests": "ext require [fr-ctc-billing-mode]"
                 }
@@ -101,7 +106,7 @@
                   "field": "ext",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-09",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-09",
                       "desc": "advance payment document types not allowed for factoring billing modes (BR-FR-CO-08)",
                       "tests": "ext 'untdid-document-type' not in [386, 500, 503]"
                     }
@@ -118,7 +123,7 @@
               "field": "inboxes",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-10",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-10",
                   "desc": "seller electronic address required for French B2B invoices (BR-FR-13)",
                   "tests": "present"
                 }
@@ -128,7 +133,7 @@
               "field": "identities",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-11",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-11",
                   "desc": "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
                   "tests": "has SIREN"
                 }
@@ -143,7 +148,7 @@
               "field": "supplier",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-12",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-12",
                   "desc": "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
                   "tests": "has SIREN inbox"
                 }
@@ -158,7 +163,7 @@
               "field": "inboxes",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-13",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-13",
                   "desc": "buyer electronic address required for French B2B invoices (BR-FR-13)",
                   "tests": "present"
                 }
@@ -176,7 +181,7 @@
                   "field": "identities",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-14",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-14",
                       "desc": "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
                       "tests": "has SIREN"
                     }
@@ -193,7 +198,7 @@
               "field": "customer",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-15",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-15",
                   "desc": "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
                   "tests": "has SIREN inbox"
                 }
@@ -208,12 +213,12 @@
               "field": "identities",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-16",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-16",
                   "desc": "only one ordering identity with UNTDID reference 'AFL' is allowed (BR-FR-30)",
                   "tests": "no dup AFL"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-17",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-17",
                   "desc": "only one ordering identity with UNTDID reference 'AWW' is allowed (BR-FR-30)",
                   "tests": "no dup AWW"
                 }
@@ -228,7 +233,7 @@
               "field": "ordering",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-18",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-18",
                   "desc": "ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)",
                   "tests": "present"
                 }
@@ -238,7 +243,7 @@
                   "field": "seller",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-19",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-19",
                       "desc": "seller is required when supplier is under STC scheme (BR-FR-CO-15)",
                       "tests": "present"
                     }
@@ -248,7 +253,7 @@
                       "field": "tax_id",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-20",
+                          "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-20",
                           "desc": "tax ID is required when supplier is under STC scheme (BR-FR-CO-15)",
                           "tests": "present"
                         }
@@ -258,7 +263,7 @@
                           "field": "code",
                           "assert": [
                             {
-                              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-21",
+                              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-21",
                               "desc": "code is required when supplier is under STC scheme (BR-FR-CO-15)",
                               "tests": "present"
                             }
@@ -274,7 +279,7 @@
               "field": "notes",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-22",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-22",
                   "desc": "for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-CO-14)",
                   "tests": "has TXD note"
                 }
@@ -289,7 +294,7 @@
               "field": "ordering",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-23",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-23",
                   "desc": "ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)",
                   "tests": "present"
                 }
@@ -299,12 +304,12 @@
                   "field": "contracts",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-24",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-24",
                       "desc": "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "present"
                     },
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-25",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-25",
                       "desc": "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "length between 1 and 0"
                     }
@@ -316,7 +321,7 @@
               "field": "delivery",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-26",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-26",
                   "desc": "delivery details are required for consolidated credit notes (BR-FR-CO-03)",
                   "tests": "present"
                 }
@@ -326,7 +331,7 @@
                   "field": "period",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-27",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-27",
                       "desc": "delivery period is required for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "present"
                     }
@@ -340,7 +345,7 @@
           "guard": "not advance or final",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-28",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-28",
               "desc": "due dates must not be before invoice issue date (BR-FR-CO-07)",
               "tests": "due dates valid"
             }
@@ -353,7 +358,7 @@
               "field": "payment",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-29",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-29",
                   "desc": "payment details are required for final invoices (BR-FR-CO-09)",
                   "tests": "present"
                 }
@@ -363,7 +368,7 @@
                   "field": "terms",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-30",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-30",
                       "desc": "payment terms required for final invoices (BR-FR-CO-09)",
                       "tests": "present"
                     }
@@ -373,7 +378,7 @@
                       "field": "due_dates",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-31",
+                          "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-31",
                           "desc": "at least one due date required for final invoices (BR-FR-CO-09)",
                           "tests": "present"
                         }
@@ -387,12 +392,12 @@
               "field": "totals",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-33",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-33",
                   "desc": "advance amount must equal total with tax for final invoices (BR-FR-CO-09)",
                   "tests": "advances match"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-34",
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-34",
                   "desc": "payable amount must be zero for final invoices (BR-FR-CO-09)",
                   "tests": "payable zero"
                 }
@@ -402,7 +407,7 @@
                   "field": "advance",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-32",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-32",
                       "desc": "advance amount is required for already-paid invoices (BR-FR-CO-09)",
                       "tests": "present"
                     }
@@ -416,22 +421,22 @@
           "field": "notes",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-35",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-35",
               "desc": "notes are required for French CTC invoices (BR-FR-05)",
               "tests": "present"
             },
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-36",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-36",
               "desc": "missing required note codes (BR-FR-05)",
               "tests": "has required notes"
             },
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-37",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-37",
               "desc": "duplicate note codes found (BR-FR-06/BR-FR-30)",
               "tests": "no duplicate notes"
             },
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-38",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-38",
               "desc": "BAR note text must be one of: B2B, B2BINT, B2C, OUTOFSCOPE, ARCHIVEONLY",
               "tests": "valid BAR text"
             }
@@ -441,7 +446,7 @@
           "field": "attachments",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-41",
+              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-41",
               "desc": "only one attachment with description 'LISIBLE' is allowed per invoice (BR-FR-18)",
               "tests": "unique LISIBLE"
             }
@@ -454,12 +459,12 @@
                   "field": "description",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-39",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-39",
                       "desc": "must be one of the allowed attachment descriptions (BR-FR-17)",
                       "tests": "present"
                     },
                     {
-                      "id": "GOBL-FR-CTC-FLOW2-V1-BILL-INVOICE-40",
+                      "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-40",
                       "desc": "must be one of the allowed attachment descriptions (BR-FR-17)",
                       "tests": "one of [RIB, LISIBLE, FEUILLE_DE_STYLE, PJA, BON_LIVRAISON, BON_COMMANDE, DOCUMENT_ANNEXE, BORDEREAU_SUIVI, BORDEREAU_SUIVI_VALIDATION, ETAT_ACOMPTE, FACTURE_PAIEMENT_DIRECT, RECAPITULATIF_COTRAITANCE]"
                     }
@@ -472,19 +477,19 @@
       ]
     },
     {
-      "id": "GOBL-FR-CTC-FLOW2-V1-ORG-PARTY",
+      "id": "GOBL-FR-CTC-FLOW2-ORG-PARTY",
       "object": "org.Party",
       "subsets": [
         {
           "field": "identities",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-ORG-PARTY-01",
+              "id": "GOBL-FR-CTC-FLOW2-ORG-PARTY-01",
               "desc": "SIRET and SIREN must be coherent (BR-FR-09/10)",
               "tests": "SIRET/SIREN coherent"
             },
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-ORG-PARTY-02",
+              "id": "GOBL-FR-CTC-FLOW2-ORG-PARTY-02",
               "desc": "identity scheme format invalid (BR-FR-CO-10)",
               "tests": "valid scheme format"
             }
@@ -497,7 +502,7 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-ORG-PARTY-03",
+                  "id": "GOBL-FR-CTC-FLOW2-ORG-PARTY-03",
                   "desc": "inbox code format invalid",
                   "tests": "valid inbox"
                 }
@@ -508,7 +513,7 @@
       ]
     },
     {
-      "id": "GOBL-FR-CTC-FLOW2-V1-ORG-IDENTITY",
+      "id": "GOBL-FR-CTC-FLOW2-ORG-IDENTITY",
       "object": "org.Identity",
       "subsets": [
         {
@@ -518,12 +523,12 @@
               "field": "code",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-ORG-IDENTITY-01",
+                  "id": "GOBL-FR-CTC-FLOW2-ORG-IDENTITY-01",
                   "desc": "must be no more than 100 characters long",
                   "tests": "length between 0 and 100"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-ORG-IDENTITY-02",
+                  "id": "GOBL-FR-CTC-FLOW2-ORG-IDENTITY-02",
                   "desc": "must be in a valid format",
                   "tests": "matches ^[A-Za-z0-9\\-\\+_/]+$"
                 }
@@ -534,7 +539,7 @@
       ]
     },
     {
-      "id": "GOBL-FR-CTC-FLOW2-V1-ORG-INBOX",
+      "id": "GOBL-FR-CTC-FLOW2-ORG-INBOX",
       "object": "org.Inbox",
       "subsets": [
         {
@@ -544,12 +549,12 @@
               "field": "code",
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-ORG-INBOX-01",
+                  "id": "GOBL-FR-CTC-FLOW2-ORG-INBOX-01",
                   "desc": "the length must be between 0 and 125",
                   "tests": "length between 0 and 125"
                 },
                 {
-                  "id": "GOBL-FR-CTC-FLOW2-V1-ORG-INBOX-02",
+                  "id": "GOBL-FR-CTC-FLOW2-ORG-INBOX-02",
                   "desc": "must be in a valid format",
                   "tests": "matches ^[A-Za-z0-9\\-\\+_/]+$"
                 }
@@ -560,14 +565,14 @@
       ]
     },
     {
-      "id": "GOBL-FR-CTC-FLOW2-V1-ORG-ITEM",
+      "id": "GOBL-FR-CTC-FLOW2-ORG-ITEM",
       "object": "org.Item",
       "subsets": [
         {
           "field": "meta",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-V1-ORG-ITEM-01",
+              "id": "GOBL-FR-CTC-FLOW2-ORG-ITEM-01",
               "desc": "meta values cannot be blank (BR-FR-28)",
               "tests": "no blank meta"
             }

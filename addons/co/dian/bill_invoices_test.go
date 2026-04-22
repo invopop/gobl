@@ -177,7 +177,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-CO-DIAN-V2-BILL-INVOICE-14] invoice must be in COP or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-CO-DIAN-BILL-INVOICE-14] invoice must be in COP or provide exchange rate for conversion")
 	})
 
 	t.Run("non-COP currency with exchange rates", func(t *testing.T) {

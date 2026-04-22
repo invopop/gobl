@@ -16,8 +16,13 @@ import (
 )
 
 const (
+	// Key identifies the SDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "it-sdi"
+
 	// V1 for SDI's FatturaPA verions 1.x
-	V1 cbc.Key = "it-sdi-v1"
+	V1 cbc.Key = Key + "-v1"
 
 	// KeyFundContribution is the key for the Fund Contribution charge
 	KeyFundContribution cbc.Key = "fund-contribution"
@@ -26,8 +31,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("IT-SDI-V1"),
+		Key.String(),
+		rules.GOBL.Add("IT-SDI"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billChargeRules(),

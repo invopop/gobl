@@ -1,44 +1,49 @@
 {
-  "id": "GOBL-PT-SAFT-V1",
-  "package": "pt-saft-v1",
+  "id": "GOBL-PT-SAFT",
+  "package": "pt-saft",
   "guard": "context: addon in [pt-saft-v1]",
   "subsets": [
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-INVOICE",
+      "id": "GOBL-PT-SAFT-BILL-INVOICE",
       "object": "bill.Invoice",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-01",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-15",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        },
+        {
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-01",
           "desc": "either 'pt-saft-work-type' or 'pt-saft-invoice-type' must be set",
           "tests": "has doc type"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-02",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-02",
           "desc": "either 'pt-saft-work-type' or 'pt-saft-invoice-type' must be set, but not both",
           "tests": "not both doc types"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-03",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-03",
           "desc": "invoice work type is not valid",
           "tests": "valid invoice work type"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-04",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-04",
           "desc": "series format must be valid",
           "tests": "series format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-05",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-05",
           "desc": "code format must be valid",
           "tests": "code format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-12",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-12",
           "desc": "tax requires 'pt-saft-source' extension",
           "tests": "tax has source"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-14",
+          "id": "GOBL-PT-SAFT-BILL-INVOICE-14",
           "desc": "source ref format is invalid",
           "tests": "source ref format"
         }
@@ -48,7 +53,7 @@
           "field": "value_date",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-06",
+              "id": "GOBL-PT-SAFT-BILL-INVOICE-06",
               "desc": "cannot be blank",
               "tests": "present"
             }
@@ -61,7 +66,7 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-07",
+                  "id": "GOBL-PT-SAFT-BILL-INVOICE-07",
                   "desc": "line taxes must include VAT category",
                   "tests": "line has tax category VAT"
                 }
@@ -82,7 +87,7 @@
                       "field": "date",
                       "assert": [
                         {
-                          "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-08",
+                          "id": "GOBL-PT-SAFT-BILL-INVOICE-08",
                           "desc": "cannot be blank",
                           "tests": "present"
                         }
@@ -101,7 +106,7 @@
               "field": "payable",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-09",
+                  "id": "GOBL-PT-SAFT-BILL-INVOICE-09",
                   "desc": "must be no less than 0",
                   "tests": "min 0"
                 }
@@ -119,7 +124,7 @@
                   "field": "due",
                   "assert": [
                     {
-                      "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-10",
+                      "id": "GOBL-PT-SAFT-BILL-INVOICE-10",
                       "desc": "must be equal to 0",
                       "tests": "equals 0"
                     }
@@ -133,7 +138,7 @@
           "field": "preceding",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-11",
+              "id": "GOBL-PT-SAFT-BILL-INVOICE-11",
               "desc": "the length must be no more than 1",
               "tests": "length between 0 and 1"
             }
@@ -143,7 +148,7 @@
           "guard": "source not produced",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-INVOICE-13",
+              "id": "GOBL-PT-SAFT-BILL-INVOICE-13",
               "desc": "tax requires 'pt-saft-source-ref' extension when source is not produced",
               "tests": "tax has source ref"
             }
@@ -152,26 +157,26 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT",
+      "id": "GOBL-PT-SAFT-BILL-PAYMENT",
       "object": "bill.Payment",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-01",
+          "id": "GOBL-PT-SAFT-BILL-PAYMENT-01",
           "desc": "series format must be valid",
           "tests": "series format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-02",
+          "id": "GOBL-PT-SAFT-BILL-PAYMENT-02",
           "desc": "code format must be valid",
           "tests": "code format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-06",
+          "id": "GOBL-PT-SAFT-BILL-PAYMENT-06",
           "desc": "source ref format is invalid",
           "tests": "source ref format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-09",
+          "id": "GOBL-PT-SAFT-BILL-PAYMENT-09",
           "desc": "customer name is required when customer has tax ID code",
           "tests": "customer name present"
         }
@@ -181,12 +186,12 @@
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-03",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENT-03",
               "desc": "'pt-saft-payment-type' extension is required",
               "tests": "ext require [pt-saft-payment-type]"
             },
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-04",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENT-04",
               "desc": "'pt-saft-source' extension is required",
               "tests": "ext require [pt-saft-source]"
             }
@@ -199,7 +204,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-05",
+                  "id": "GOBL-PT-SAFT-BILL-PAYMENT-05",
                   "desc": "'pt-saft-source-ref' extension is required when source is not produced",
                   "tests": "ext require [pt-saft-source-ref]"
                 }
@@ -214,7 +219,7 @@
               "field": "tax_id",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-07",
+                  "id": "GOBL-PT-SAFT-BILL-PAYMENT-07",
                   "desc": "supplier tax ID is required",
                   "tests": "present"
                 }
@@ -224,7 +229,7 @@
                   "field": "code",
                   "assert": [
                     {
-                      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-08",
+                      "id": "GOBL-PT-SAFT-BILL-PAYMENT-08",
                       "desc": "supplier tax ID code is required",
                       "tests": "present"
                     }
@@ -238,7 +243,7 @@
           "field": "total",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENT-10",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENT-10",
               "desc": "must be no less than 0",
               "tests": "min 0"
             }
@@ -247,21 +252,21 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY",
+      "id": "GOBL-PT-SAFT-BILL-DELIVERY",
       "object": "bill.Delivery",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-01",
+          "id": "GOBL-PT-SAFT-BILL-DELIVERY-01",
           "desc": "tax requires 'pt-saft-movement-type' extension",
           "tests": "has movement type"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-02",
+          "id": "GOBL-PT-SAFT-BILL-DELIVERY-02",
           "desc": "series format must be valid",
           "tests": "series format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-03",
+          "id": "GOBL-PT-SAFT-BILL-DELIVERY-03",
           "desc": "code format must be valid",
           "tests": "code format"
         }
@@ -274,7 +279,7 @@
               "field": "tax_id",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-04",
+                  "id": "GOBL-PT-SAFT-BILL-DELIVERY-04",
                   "desc": "supplier tax ID is required",
                   "tests": "present"
                 }
@@ -284,7 +289,7 @@
                   "field": "code",
                   "assert": [
                     {
-                      "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-05",
+                      "id": "GOBL-PT-SAFT-BILL-DELIVERY-05",
                       "desc": "supplier tax ID code is required",
                       "tests": "present"
                     }
@@ -298,7 +303,7 @@
           "field": "despatch_date",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-DELIVERY-06",
+              "id": "GOBL-PT-SAFT-BILL-DELIVERY-06",
               "desc": "cannot be blank",
               "tests": "present"
             }
@@ -307,26 +312,26 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-ORDER",
+      "id": "GOBL-PT-SAFT-BILL-ORDER",
       "object": "bill.Order",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-01",
+          "id": "GOBL-PT-SAFT-BILL-ORDER-01",
           "desc": "tax requires 'pt-saft-work-type' extension",
           "tests": "has work type"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-02",
+          "id": "GOBL-PT-SAFT-BILL-ORDER-02",
           "desc": "work type must not be an invoice work type",
           "tests": "order work type valid"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-03",
+          "id": "GOBL-PT-SAFT-BILL-ORDER-03",
           "desc": "series format must be valid",
           "tests": "series format"
         },
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-ORDER-04",
+          "id": "GOBL-PT-SAFT-BILL-ORDER-04",
           "desc": "code format must be valid",
           "tests": "code format"
         }
@@ -336,7 +341,7 @@
           "field": "value_date",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-ORDER-05",
+              "id": "GOBL-PT-SAFT-BILL-ORDER-05",
               "desc": "cannot be blank",
               "tests": "present"
             }
@@ -349,7 +354,7 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-ORDER-06",
+                  "id": "GOBL-PT-SAFT-BILL-ORDER-06",
                   "desc": "line taxes must include VAT category",
                   "tests": "line has tax category VAT"
                 }
@@ -360,7 +365,7 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-TAX-COMBO",
+      "id": "GOBL-PT-SAFT-TAX-COMBO",
       "object": "tax.Combo",
       "subsets": [
         {
@@ -370,12 +375,12 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-TAX-COMBO-01",
+                  "id": "GOBL-PT-SAFT-TAX-COMBO-01",
                   "desc": "region and tax rate are required",
                   "tests": "ext require [pt-region, pt-saft-tax-rate]"
                 },
                 {
-                  "id": "GOBL-PT-SAFT-V1-TAX-COMBO-02",
+                  "id": "GOBL-PT-SAFT-TAX-COMBO-02",
                   "desc": "exemption is required when tax rate is exempt",
                   "tests": "exempt requires exemption"
                 }
@@ -386,19 +391,19 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL",
+      "id": "GOBL-PT-SAFT-TAX-RATETOTAL",
       "object": "tax.RateTotal",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-01",
+              "id": "GOBL-PT-SAFT-TAX-RATETOTAL-01",
               "desc": "region and tax rate are required",
               "tests": "ext require [pt-region, pt-saft-tax-rate]"
             },
             {
-              "id": "GOBL-PT-SAFT-V1-TAX-RATETOTAL-02",
+              "id": "GOBL-PT-SAFT-TAX-RATETOTAL-02",
               "desc": "exemption is required when tax rate is exempt",
               "tests": "exempt requires exemption"
             }
@@ -407,14 +412,14 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-ORG-ITEM",
+      "id": "GOBL-PT-SAFT-ORG-ITEM",
       "object": "org.Item",
       "subsets": [
         {
           "field": "unit",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-ORG-ITEM-01",
+              "id": "GOBL-PT-SAFT-ORG-ITEM-01",
               "desc": "cannot be blank",
               "tests": "present"
             }
@@ -424,7 +429,7 @@
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-ORG-ITEM-02",
+              "id": "GOBL-PT-SAFT-ORG-ITEM-02",
               "desc": "product type is required",
               "tests": "ext require [pt-saft-product-type]"
             }
@@ -433,7 +438,7 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-ORG-NOTE",
+      "id": "GOBL-PT-SAFT-ORG-NOTE",
       "object": "org.Note",
       "subsets": [
         {
@@ -443,7 +448,7 @@
               "field": "text",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-ORG-NOTE-01",
+                  "id": "GOBL-PT-SAFT-ORG-NOTE-01",
                   "desc": "the length must be between 6 and 60",
                   "tests": "length between 6 and 60"
                 }
@@ -454,11 +459,11 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-LINE",
+      "id": "GOBL-PT-SAFT-BILL-LINE",
       "object": "bill.Line",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-LINE-05",
+          "id": "GOBL-PT-SAFT-BILL-LINE-05",
           "desc": "exemption notes invalid",
           "tests": "exemption notes"
         }
@@ -468,7 +473,7 @@
           "field": "quantity",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-LINE-01",
+              "id": "GOBL-PT-SAFT-BILL-LINE-01",
               "desc": "must be greater than 0",
               "tests": "min 0"
             }
@@ -478,7 +483,7 @@
           "field": "sum",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-LINE-02",
+              "id": "GOBL-PT-SAFT-BILL-LINE-02",
               "desc": "must be no less than 0",
               "tests": "min 0"
             }
@@ -488,7 +493,7 @@
           "field": "total",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-LINE-03",
+              "id": "GOBL-PT-SAFT-BILL-LINE-03",
               "desc": "must be no less than 0",
               "tests": "min 0"
             }
@@ -504,7 +509,7 @@
                   "field": "amount",
                   "assert": [
                     {
-                      "id": "GOBL-PT-SAFT-V1-BILL-LINE-04",
+                      "id": "GOBL-PT-SAFT-BILL-LINE-04",
                       "desc": "must be no less than 0",
                       "tests": "min 0"
                     }
@@ -517,11 +522,11 @@
       ]
     },
     {
-      "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE",
+      "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE",
       "object": "bill.PaymentLine",
       "assert": [
         {
-          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-06",
+          "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-06",
           "desc": "exemption notes invalid",
           "tests": "exemption notes"
         }
@@ -531,7 +536,7 @@
           "field": "document",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-01",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-01",
               "desc": "cannot be blank",
               "tests": "present"
             }
@@ -541,7 +546,7 @@
               "field": "issue_date",
               "assert": [
                 {
-                  "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-02",
+                  "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-02",
                   "desc": "cannot be blank",
                   "tests": "present"
                 }
@@ -553,12 +558,12 @@
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-03",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-03",
               "desc": "cannot be blank",
               "tests": "present"
             },
             {
-              "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-04",
+              "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-04",
               "desc": "missing category VAT",
               "tests": "has VAT category"
             }
@@ -574,7 +579,7 @@
                       "field": "rates",
                       "assert": [
                         {
-                          "id": "GOBL-PT-SAFT-V1-BILL-PAYMENTLINE-05",
+                          "id": "GOBL-PT-SAFT-BILL-PAYMENTLINE-05",
                           "desc": "only one rate allowed per line",
                           "tests": "length between 0 and 1"
                         }

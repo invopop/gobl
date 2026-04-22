@@ -1,24 +1,29 @@
 {
-  "id": "GOBL-IT-SDI-V1",
-  "package": "it-sdi-v1",
+  "id": "GOBL-IT-SDI",
+  "package": "it-sdi",
   "guard": "context: addon in [it-sdi-v1]",
   "subsets": [
     {
-      "id": "GOBL-IT-SDI-V1-BILL-INVOICE",
+      "id": "GOBL-IT-SDI-BILL-INVOICE",
       "object": "bill.Invoice",
       "assert": [
         {
-          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-13",
+          "id": "GOBL-IT-SDI-BILL-INVOICE-22",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        },
+        {
+          "id": "GOBL-IT-SDI-BILL-INVOICE-13",
           "desc": "customer name is required",
           "tests": "customer name check"
         },
         {
-          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-14",
+          "id": "GOBL-IT-SDI-BILL-INVOICE-14",
           "desc": "customer people are required when name is empty",
           "tests": "customer people check"
         },
         {
-          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-21",
+          "id": "GOBL-IT-SDI-BILL-INVOICE-21",
           "desc": "payment instructions are required when terms with due dates are present",
           "tests": "payment instructions check"
         }
@@ -28,7 +33,7 @@
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-01",
+              "id": "GOBL-IT-SDI-BILL-INVOICE-01",
               "desc": "tax is required",
               "tests": "present"
             }
@@ -38,7 +43,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-02",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-02",
                   "desc": "tax requires 'it-sdi-document-type' and 'it-sdi-format' extensions",
                   "tests": "ext require [it-sdi-format, it-sdi-document-type]"
                 }
@@ -53,7 +58,7 @@
               "field": "name",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-03",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-03",
                   "desc": "supplier name must use Latin-1 characters",
                   "tests": "latin1"
                 }
@@ -63,7 +68,7 @@
               "field": "addresses",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-04",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-04",
                   "desc": "supplier addresses are required",
                   "tests": "present"
                 }
@@ -73,7 +78,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-05",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-05",
                   "desc": "supplier requires 'it-sdi-fiscal-regime' extension",
                   "tests": "ext require [it-sdi-fiscal-regime]"
                 }
@@ -86,7 +91,7 @@
                   "field": "entry",
                   "assert": [
                     {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-06",
+                      "id": "GOBL-IT-SDI-BILL-INVOICE-06",
                       "desc": "supplier registration entry is required when registration is present",
                       "tests": "present"
                     }
@@ -96,7 +101,7 @@
                   "field": "office",
                   "assert": [
                     {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-07",
+                      "id": "GOBL-IT-SDI-BILL-INVOICE-07",
                       "desc": "supplier registration office is required when registration is present",
                       "tests": "present"
                     }
@@ -122,7 +127,7 @@
                           "field": "num",
                           "assert": [
                             {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-08",
+                              "id": "GOBL-IT-SDI-BILL-INVOICE-08",
                               "desc": "Italian telephone number length must be between 5 and 12",
                               "tests": "length between 5 and 12"
                             }
@@ -140,7 +145,7 @@
           "field": "customer",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-09",
+              "id": "GOBL-IT-SDI-BILL-INVOICE-09",
               "desc": "customer is required",
               "tests": "present"
             }
@@ -150,7 +155,7 @@
               "field": "name",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-10",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-10",
                   "desc": "customer name must use Latin-1 characters",
                   "tests": "latin1"
                 }
@@ -160,7 +165,7 @@
               "field": "tax_id",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-11",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-11",
                   "desc": "customer tax ID is required",
                   "tests": "present"
                 }
@@ -170,7 +175,7 @@
               "field": "addresses",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-12",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-12",
                   "desc": "customer addresses are required",
                   "tests": "present"
                 }
@@ -191,7 +196,7 @@
                       "field": "code",
                       "assert": [
                         {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-15",
+                          "id": "GOBL-IT-SDI-BILL-INVOICE-15",
                           "desc": "customer tax ID code is required for Italian parties without fiscal code",
                           "tests": "present"
                         }
@@ -213,7 +218,7 @@
                   "field": "identities",
                   "assert": [
                     {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-16",
+                      "id": "GOBL-IT-SDI-BILL-INVOICE-16",
                       "desc": "customer requires identity with key 'it-fiscal-code'",
                       "tests": "has fiscal code"
                     }
@@ -230,7 +235,7 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-INVOICE-17",
+                  "id": "GOBL-IT-SDI-BILL-INVOICE-17",
                   "desc": "line must have VAT tax category",
                   "tests": "line has tax category VAT"
                 }
@@ -243,7 +248,7 @@
                       "field": "name",
                       "assert": [
                         {
-                          "id": "GOBL-IT-SDI-V1-BILL-INVOICE-18",
+                          "id": "GOBL-IT-SDI-BILL-INVOICE-18",
                           "desc": "item name must use Latin-1 characters",
                           "tests": "latin1"
                         }
@@ -271,7 +276,7 @@
                           "field": "issue_date",
                           "assert": [
                             {
-                              "id": "GOBL-IT-SDI-V1-BILL-INVOICE-19",
+                              "id": "GOBL-IT-SDI-BILL-INVOICE-19",
                               "desc": "despatch issue date is required",
                               "tests": "present"
                             }
@@ -295,7 +300,7 @@
                   "field": "despatch",
                   "assert": [
                     {
-                      "id": "GOBL-IT-SDI-V1-BILL-INVOICE-20",
+                      "id": "GOBL-IT-SDI-BILL-INVOICE-20",
                       "desc": "despatch can only be set when invoice has deferred tag",
                       "tests": "empty"
                     }
@@ -308,7 +313,7 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-V1-BILL-CHARGE",
+      "id": "GOBL-IT-SDI-BILL-CHARGE",
       "object": "bill.Charge",
       "subsets": [
         {
@@ -318,7 +323,7 @@
               "field": "percent",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-CHARGE-01",
+                  "id": "GOBL-IT-SDI-BILL-CHARGE-01",
                   "desc": "fund contribution charge requires a percentage",
                   "tests": "present"
                 }
@@ -328,7 +333,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-CHARGE-02",
+                  "id": "GOBL-IT-SDI-BILL-CHARGE-02",
                   "desc": "fund contribution charge requires 'it-sdi-fund-type' extension",
                   "tests": "ext require [it-sdi-fund-type]"
                 }
@@ -338,7 +343,7 @@
               "field": "taxes",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-BILL-CHARGE-03",
+                  "id": "GOBL-IT-SDI-BILL-CHARGE-03",
                   "desc": "fund contribution charge must have VAT tax category",
                   "tests": "all of [VAT]"
                 }
@@ -349,11 +354,11 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-V1-ORG-ADDRESS",
+      "id": "GOBL-IT-SDI-ORG-ADDRESS",
       "object": "org.Address",
       "assert": [
         {
-          "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-01",
+          "id": "GOBL-IT-SDI-ORG-ADDRESS-01",
           "desc": "address either street or post office box must be set",
           "tests": "street or postbox"
         }
@@ -363,7 +368,7 @@
           "field": "street",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-02",
+              "id": "GOBL-IT-SDI-ORG-ADDRESS-02",
               "desc": "address street must use Latin-1 characters",
               "tests": "latin1"
             }
@@ -373,7 +378,7 @@
           "field": "po_box",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-03",
+              "id": "GOBL-IT-SDI-ORG-ADDRESS-03",
               "desc": "address post office box must use Latin-1 characters",
               "tests": "latin1"
             }
@@ -383,7 +388,7 @@
           "field": "country",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-04",
+              "id": "GOBL-IT-SDI-ORG-ADDRESS-04",
               "desc": "address country is required",
               "tests": "present"
             }
@@ -393,12 +398,12 @@
           "field": "locality",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-05",
+              "id": "GOBL-IT-SDI-ORG-ADDRESS-05",
               "desc": "address locality is required",
               "tests": "present"
             },
             {
-              "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-06",
+              "id": "GOBL-IT-SDI-ORG-ADDRESS-06",
               "desc": "address locality must use Latin-1 characters",
               "tests": "latin1"
             }
@@ -411,12 +416,12 @@
               "field": "code",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-07",
+                  "id": "GOBL-IT-SDI-ORG-ADDRESS-07",
                   "desc": "Italian address code is required",
                   "tests": "present"
                 },
                 {
-                  "id": "GOBL-IT-SDI-V1-ORG-ADDRESS-08",
+                  "id": "GOBL-IT-SDI-ORG-ADDRESS-08",
                   "desc": "Italian address code must be 5 digits",
                   "tests": "matches ^\\d{5}$"
                 }
@@ -427,7 +432,7 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-V1-TAX-COMBO",
+      "id": "GOBL-IT-SDI-TAX-COMBO",
       "object": "tax.Combo",
       "subsets": [
         {
@@ -437,7 +442,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-TAX-COMBO-01",
+                  "id": "GOBL-IT-SDI-TAX-COMBO-01",
                   "desc": "VAT tax combo without percent requires 'it-sdi-exempt' extension",
                   "tests": "ext require [it-sdi-exempt]"
                 }
@@ -452,7 +457,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-IT-SDI-V1-TAX-COMBO-02",
+                  "id": "GOBL-IT-SDI-TAX-COMBO-02",
                   "desc": "retained tax combo requires 'it-sdi-retained' extension",
                   "tests": "ext require [it-sdi-retained]"
                 }
@@ -463,14 +468,14 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-V1-PAY-INSTRUCTIONS",
+      "id": "GOBL-IT-SDI-PAY-INSTRUCTIONS",
       "object": "pay.Instructions",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-PAY-INSTRUCTIONS-01",
+              "id": "GOBL-IT-SDI-PAY-INSTRUCTIONS-01",
               "desc": "payment instructions require 'it-sdi-payment-means' extension",
               "tests": "ext require [it-sdi-payment-means]"
             }
@@ -479,14 +484,14 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-V1-PAY-ADVANCE",
+      "id": "GOBL-IT-SDI-PAY-ADVANCE",
       "object": "pay.Advance",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-V1-PAY-ADVANCE-01",
+              "id": "GOBL-IT-SDI-PAY-ADVANCE-01",
               "desc": "payment advance requires 'it-sdi-payment-means' extension",
               "tests": "ext require [it-sdi-payment-means]"
             }
