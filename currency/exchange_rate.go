@@ -61,8 +61,11 @@ type exchangeableObject interface {
 
 // CanConvertTo provides a special rule test that can be used to ensure that the object
 // being tested has enough details to be able to convert from its base currency into
-// at least one of the provided codes.
+// at least one of the provided codes. Panics if called with no target currencies.
 func CanConvertTo(to ...Code) rules.Test {
+	if len(to) == 0 {
+		panic("currency.CanConvertTo requires at least one target currency")
+	}
 	codes := make([]string, len(to))
 	for i, c := range to {
 		codes[i] = c.String()
@@ -84,8 +87,9 @@ func CanConvertTo(to ...Code) rules.Test {
 
 // MatchExchangeRate will attempt to find the matching exchange rate that
 // will convert from one currency into another. Will return nil if no
-// match is found or the currencies are the same. When using exchange rates
-// any multiple potential target currencies, the first will be provided.
+// match is found or the "from" currency is itself one of the target
+// currencies. When multiple target currencies are provided, the first
+// rate in rates whose destination matches any of them is returned.
 func MatchExchangeRate(rates []*ExchangeRate, from Code, to ...Code) *ExchangeRate {
 	if from.In(to...) {
 		return nil

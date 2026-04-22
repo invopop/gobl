@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `bill`: removed default calculation check for currency, this is now enforced by addons.
+- `bill`: removed the default exchange-rate / regime-currency conversion check; addons now enforce currency convertibility where required.
 
 ### Added
 
