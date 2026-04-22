@@ -143,6 +143,31 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "field": "identities",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "guard": "has non-VAT identity type",
+                          "subsets": [
+                            {
+                              "field": "country",
+                              "assert": [
+                                {
+                                  "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-17",
+                                  "desc": "country is required when 'es-verifactu-identity-type' is not NIF-VAT (02)",
+                                  "tests": "present"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }

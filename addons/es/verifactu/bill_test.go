@@ -351,8 +351,36 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.TaxID = nil
 		inv.Customer.Identities = []*org.Identity{
 			{
+				Key:     org.IdentityKeyPassport,
+				Country: "GB",
+				Code:    "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+	t.Run("customer with identity missing country", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
 				Key:  org.IdentityKeyPassport,
 				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)")
+	})
+	t.Run("customer with NIF-VAT identity without country is valid", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "B12345678",
+				Ext: tax.Extensions{
+					verifactu.ExtKeyIdentityType: "02",
+				},
 			},
 		}
 		require.NoError(t, inv.Calculate())
