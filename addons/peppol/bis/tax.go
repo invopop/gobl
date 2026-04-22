@@ -27,7 +27,7 @@ var vatexCategoryMap = map[cbc.Code]cbc.Code{
 
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
-		rules.Assert("P0104-P0111", "tax category must match VATEX code (PEPPOL-EN16931-P0104..P0111)",
+		rules.Assert("01", "tax category must match VATEX code (PEPPOL-EN16931-P0104..P0111)",
 			is.Func("vatex-category coherence", vatexCategoryCoherent),
 		),
 	)

@@ -32,43 +32,40 @@ var skontoRe = regexp.MustCompile(`^#SKONTO#TAGE=\d+#PROZENT=\d+(\.\d{1,2})?#(BA
 func billInvoiceRulesDE() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.DE),
-			// DE-R-001: payment instructions required.
-			rules.Assert("DE-R-001", "payment instructions are required (DE-R-001)",
+			rules.Assert("DE-01", "payment instructions are required (DE-R-001)",
 				is.Func("has payment instructions", hasPaymentInstructions),
 			),
-			// DE-R-015: buyer reference (Ordering.Code) required.
-			rules.Assert("DE-R-015", "buyer reference is required (DE-R-015)",
+			rules.Assert("DE-02", "buyer reference is required (DE-R-015)",
 				is.Func("has buyer reference", hasOrderingCode),
 			),
-			// DE-R-002..R011 — supplier, customer, and delivery address constraints.
 			rules.Field("supplier",
-				rules.Assert("DE-R-002", "German supplier must provide a contact (DE-R-002)",
+				rules.Assert("DE-03", "German supplier must provide a contact (DE-R-002)",
 					is.Func("has seller contact group", partyHasContactGroup),
 				),
 				rules.Field("addresses",
-					rules.Assert("DE-R-003", "supplier first address must have a city (DE-R-003)",
+					rules.Assert("DE-04", "supplier first address must have a city (DE-R-003)",
 						is.Func("has locality", firstAddressHasLocalityPE),
 					),
-					rules.Assert("DE-R-004", "supplier first address must have a postal code (DE-R-004)",
+					rules.Assert("DE-05", "supplier first address must have a postal code (DE-R-004)",
 						is.Func("has code", firstAddressHasCodePE),
 					),
 				),
-				rules.Assert("DE-R-005", "supplier contact name is required (DE-R-005)",
+				rules.Assert("DE-06", "supplier contact name is required (DE-R-005)",
 					is.Func("has contact name", partyHasContactName),
 				),
-				rules.Assert("DE-R-006", "supplier contact telephone is required (DE-R-006)",
+				rules.Assert("DE-07", "supplier contact telephone is required (DE-R-006)",
 					is.Func("has contact telephone", partyHasContactTelephone),
 				),
-				rules.Assert("DE-R-007", "supplier contact email is required (DE-R-007)",
+				rules.Assert("DE-08", "supplier contact email is required (DE-R-007)",
 					is.Func("has contact email", partyHasContactEmail),
 				),
 			),
 			rules.Field("customer",
 				rules.Field("addresses",
-					rules.Assert("DE-R-008", "customer first address must have a city (DE-R-008)",
+					rules.Assert("DE-09", "customer first address must have a city (DE-R-008)",
 						is.Func("has locality", firstAddressHasLocalityPE),
 					),
-					rules.Assert("DE-R-009", "customer first address must have a postal code (DE-R-009)",
+					rules.Assert("DE-10", "customer first address must have a postal code (DE-R-009)",
 						is.Func("has code", firstAddressHasCodePE),
 					),
 				),
@@ -76,10 +73,10 @@ func billInvoiceRulesDE() *rules.Set {
 			rules.Field("delivery",
 				rules.Field("receiver",
 					rules.Field("addresses",
-						rules.AssertIfPresent("DE-R-010", "delivery address must have a city (DE-R-010)",
+						rules.AssertIfPresent("DE-11", "delivery address must have a city (DE-R-010)",
 							is.Func("has locality", firstAddressHasLocalityPE),
 						),
-						rules.AssertIfPresent("DE-R-011", "delivery address must have a postal code (DE-R-011)",
+						rules.AssertIfPresent("DE-12", "delivery address must have a postal code (DE-R-011)",
 							is.Func("has code", firstAddressHasCodePE),
 						),
 					),
@@ -89,7 +86,7 @@ func billInvoiceRulesDE() *rules.Set {
 			// terms text must match the fixed format. gobl.ubl does not
 			// synthesize these — they're hand-authored — so we catch format
 			// slips at the GOBL layer before they reach a Peppol access point.
-			rules.Assert("DE-R-018", "early-payment discount note must follow the #SKONTO# format (DE-R-018)",
+			rules.Assert("DE-13", "early-payment discount note must follow the #SKONTO# format (DE-R-018)",
 				is.Func("skonto format", skontoFormatValid),
 			),
 			// DE-R-014 (VAT category rate percent, fatal) and DE-R-022
@@ -98,9 +95,7 @@ func billInvoiceRulesDE() *rules.Set {
 			// (0 for non-standard categories), and attachment filenames live
 			// inside the cac:AdditionalDocumentReference elements the
 			// converter produces.
-			//
-			// DE-R-016: tax categories S/Z/E/AE/K/G/L/M require supplier VAT/tax ID.
-			rules.Assert("DE-R-016", "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
+			rules.Assert("DE-14", "supplier must have a VAT or tax registration identifier for these tax categories (DE-R-016)",
 				is.Func("supplier tax id for categories", deSupplierHasTaxIDForCategory),
 			),
 		),
@@ -112,20 +107,16 @@ func payInstructionsRulesDE() *rules.Set {
 		rules.When(supplierCountryIs(l10n.DE),
 			rules.Field("payment",
 				rules.Field("instructions",
-					// DE-R-023: credit transfer codes require CreditTransfer; exclude card/debit.
-					rules.Assert("DE-R-023", "credit transfer code requires credit transfer details and excludes card/direct debit (DE-R-023)",
+					rules.Assert("DE-15", "credit transfer code requires credit transfer details and excludes card/direct debit (DE-R-023)",
 						is.Func("de credit transfer exclusive", deCreditTransferExclusive),
 					),
-					// DE-R-024: card codes require Card; exclude credit transfer/direct debit.
-					rules.Assert("DE-R-024", "card code requires card details and excludes credit transfer/direct debit (DE-R-024)",
+					rules.Assert("DE-16", "card code requires card details and excludes credit transfer/direct debit (DE-R-024)",
 						is.Func("de card exclusive", deCardExclusive),
 					),
-					// DE-R-025: direct debit code 59 requires DirectDebit; exclude credit transfer/card.
-					rules.Assert("DE-R-025", "direct debit code requires direct debit details and excludes credit transfer/card (DE-R-025)",
+					rules.Assert("DE-17", "direct debit code requires direct debit details and excludes credit transfer/card (DE-R-025)",
 						is.Func("de direct debit exclusive", deDirectDebitExclusive),
 					),
-					// DE-R-030/R031: direct debit requires creditor + debited account.
-					rules.Assert("DE-R-030-031", "direct debit requires creditor and account (DE-R-030, DE-R-031)",
+					rules.Assert("DE-18", "direct debit requires creditor and account (DE-R-030, DE-R-031)",
 						is.Func("de direct debit fields", deDirectDebitFieldsComplete),
 					),
 				),

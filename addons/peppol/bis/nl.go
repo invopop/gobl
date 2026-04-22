@@ -12,55 +12,58 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// nlAllowedSchemes are the ISO 6523 scheme IDs accepted for Dutch legal entities
-// (NL-R-003, NL-R-005): KVK ("0106") and OIN ("0190").
+// nlAllowedSchemes are the ISO 6523 scheme IDs accepted for Dutch legal
+// entities (NL-R-003, NL-R-005): KVK ("0106") and OIN ("0190").
 var nlAllowedSchemes = []cbc.Code{"0106", "0190"}
 
-// nlAllowedPaymentMeans are the UNTDID 4461 codes permitted for Dutch suppliers
-// by NL-R-008.
+// nlAllowedPaymentMeans are the UNTDID 4461 codes permitted for Dutch
+// suppliers by NL-R-008.
 var nlAllowedPaymentMeans = []cbc.Code{"30", "48", "49", "57", "58", "59"}
 
 func billInvoiceRulesNL() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.NL),
-			// NL-R-001: credit notes must reference preceding invoice.
-			rules.Assert("NL-R-001", "Dutch credit note must reference a preceding invoice (NL-R-001)",
+		// NL-R-001 applies only when both parties are Dutch.
+		rules.When(bothCountriesAre(l10n.NL),
+			rules.Assert("NL-01", "Dutch credit note must reference a preceding invoice (NL-R-001)",
 				is.Func("nl credit note preceding", nlCreditNoteHasPreceding),
 			),
-			// NL-R-007: payment instructions required.
-			rules.Assert("NL-R-007", "Dutch supplier must provide payment instructions (NL-R-007)",
+		),
+		// NL-R-007 / NL-R-009: supplier-scoped.
+		rules.When(supplierCountryIs(l10n.NL),
+			rules.Assert("NL-02", "Dutch supplier must provide payment instructions (NL-R-007)",
 				is.Func("has payment instructions", hasPaymentInstructions),
 			),
-			// NL-R-009: if line Order reference used, invoice Ordering.Code must be set.
-			rules.Assert("NL-R-009", "Dutch invoice with line order references must have an ordering code (NL-R-009)",
+			rules.Assert("NL-03", "Dutch invoice with line order references must have an ordering code (NL-R-009)",
 				is.Func("nl order ref requires ordering code", nlLineOrderRefRequiresOrderingCode),
 			),
 		),
 	)
 }
 
+// orgPartyRulesNL covers the party-shape checks NL-R-002..R-005. The
+// schematron for all four requires both supplier and customer to be Dutch;
+// the field-scoped assertions enforce the supplier / customer shape from
+// there.
 func orgPartyRulesNL() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.NL),
-			// NL-R-002/R-003: supplier address completeness + legal entity scheme.
+		rules.When(bothCountriesAre(l10n.NL),
 			rules.Field("supplier",
 				rules.Field("addresses",
-					rules.Assert("NL-R-002", "Dutch supplier address must have street, city and postcode (NL-R-002)",
+					rules.Assert("NL-04", "Dutch supplier address must have street, city and postcode (NL-R-002)",
 						is.Func("nl supplier addr", firstAddressStreetLocalityCode),
 					),
 				),
-				rules.Assert("NL-R-003", "Dutch supplier legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-003)",
+				rules.Assert("NL-05", "Dutch supplier legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-003)",
 					is.Func("nl supplier legal scheme", nlPartyLegalScheme),
 				),
 			),
-			// NL-R-004/R-005: customer address completeness + legal entity scheme.
 			rules.Field("customer",
 				rules.Field("addresses",
-					rules.AssertIfPresent("NL-R-004", "Dutch customer address must have street, city and postcode (NL-R-004)",
+					rules.AssertIfPresent("NL-06", "Dutch customer address must have street, city and postcode (NL-R-004)",
 						is.Func("nl customer addr", firstAddressStreetLocalityCode),
 					),
 				),
-				rules.Assert("NL-R-005", "Dutch customer legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-005)",
+				rules.Assert("NL-07", "Dutch customer legal entity must use scheme 0106 (KVK) or 0190 (OIN) (NL-R-005)",
 					is.Func("nl customer legal scheme", nlPartyLegalScheme),
 				),
 			),
@@ -68,13 +71,13 @@ func orgPartyRulesNL() *rules.Set {
 	)
 }
 
+// payInstructionsRulesNL carries NL-R-008 (customer-scoped per schematron).
 func payInstructionsRulesNL() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		rules.When(supplierCountryIs(l10n.NL),
+		rules.When(customerCountryIs(l10n.NL),
 			rules.Field("payment",
 				rules.Field("instructions",
-					// NL-R-008: restrict payment means codes.
-					rules.Assert("NL-R-008", "Dutch payment means code must be in the allowed subset (NL-R-008)",
+					rules.Assert("NL-08", "Dutch payment means code must be in the allowed subset (NL-R-008)",
 						is.Func("nl payment means", nlPaymentMeansAllowed),
 					),
 				),
@@ -130,7 +133,6 @@ func nlPartyLegalScheme(val any) bool {
 	if !ok || p == nil {
 		return true
 	}
-	// Only applies to Dutch parties; for non-NL parties the rule is irrelevant.
 	if partyCountry(p) != l10n.NL {
 		return true
 	}

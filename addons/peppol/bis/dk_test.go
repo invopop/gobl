@@ -50,12 +50,6 @@ func TestIdentityHasSchemeID(t *testing.T) {
 	assert.True(t, identityHasSchemeID(&org.Identity{Ext: tax.Extensions{iso.ExtKeySchemeID: "0184"}}))
 }
 
-func TestCustomerIsDK(t *testing.T) {
-	assert.False(t, customerIsDK(nil))
-	assert.False(t, customerIsDK(&org.Party{TaxID: &tax.Identity{Country: "FR"}}))
-	assert.True(t, customerIsDK(&org.Party{TaxID: &tax.Identity{Country: "DK"}}))
-}
-
 func TestDKPaymentMeansAllowed(t *testing.T) {
 	assert.True(t, dkPaymentMeansAllowed(nil))
 	assert.True(t, dkPaymentMeansAllowed(&pay.Instructions{}))

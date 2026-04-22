@@ -20,24 +20,21 @@ var (
 func billInvoiceRulesGR() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.GR),
-			// GR-R-001-1: Greek invoice ID must produce 6 underscore-delimited
-			// segments when Series and Code are joined with "_". The segment
-			// contents (GR-R-001-2..-7: supplier TIN, YYYYMMDD, sequence, doc
-			// type, free-form) are not checked here — gobl.ubl should build the
+			// GR-R-001-1 enforces the 6-segment shape. The segment contents
+			// (GR-R-001-2..-7: supplier TIN, YYYYMMDD, sequence, doc type,
+			// free-form) are not checked here — gobl.ubl should build the
 			// Peppol-visible ID from the structured Supplier.TaxID + IssueDate
 			// + sequence fields rather than parsing them back out.
-			rules.Assert("GR-R-001-1", "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
+			rules.Assert("GR-01", "Greek invoice ID must have 6 underscore-delimited segments when joining series and code (GR-R-001-1)",
 				is.Func("gr id segments", grIDSixSegments),
 			),
-			// GR-R-004: exactly one MARK identity with positive integer code.
-			rules.Assert("GR-R-004-1", "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
+			rules.Assert("GR-02", "Greek invoice must have exactly one MARK identity (GR-R-004-1)",
 				is.Func("gr mark count", grMARKExactlyOne),
 			),
-			rules.Assert("GR-R-004-2", "Greek invoice MARK must be a positive integer (GR-R-004-2)",
+			rules.Assert("GR-03", "Greek invoice MARK must be a positive integer (GR-R-004-2)",
 				is.Func("gr mark positive", grMARKPositive),
 			),
-			// GR-R-008-2: at most one invoice URL attachment.
-			rules.Assert("GR-R-008-2", "at most one Greek invoice URL attachment allowed (GR-R-008-2)",
+			rules.Assert("GR-04", "at most one Greek invoice URL attachment allowed (GR-R-008-2)",
 				is.Func("gr url count", grInvoiceURLCardinality),
 			),
 		),
@@ -76,29 +73,24 @@ func orgPartyRulesGR() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.GR),
 			rules.Field("supplier",
-				// GR-R-002: supplier name required.
 				rules.Field("name",
-					rules.Assert("GR-R-002", "Greek supplier name is required (GR-R-002)", is.Present),
+					rules.Assert("GR-05", "Greek supplier name is required (GR-R-002)", is.Present),
 				),
-				// GR-R-003: supplier VAT starts with EL and valid TIN.
-				rules.Assert("GR-R-003", "Greek supplier VAT must start with EL and be a valid TIN (GR-R-003)",
+				rules.Assert("GR-06", "Greek supplier VAT must start with EL and be a valid TIN (GR-R-003)",
 					is.Func("gr vat format", grSupplierVATValid),
 				),
-				// GR-R-009: supplier inbox scheme 9933 with TIN as code.
-				rules.Assert("GR-R-009", "Greek supplier inbox must use scheme 9933 with TIN as code (GR-R-009)",
+				rules.Assert("GR-07", "Greek supplier inbox must use scheme 9933 with TIN as code (GR-R-009)",
 					is.Func("gr supplier inbox", grSupplierInboxValid),
 				),
 			),
 			rules.Field("customer",
-				// GR-R-005: customer name required.
 				rules.Field("name",
-					rules.Assert("GR-R-005", "Greek customer name is required (GR-R-005)", is.Present),
+					rules.Assert("GR-08", "Greek customer name is required (GR-R-005)", is.Present),
 				),
-				// GR-R-006/R-010: Greek customer must have VAT and correct inbox.
-				rules.Assert("GR-R-006", "Greek customer must have a VAT identifier when customer is Greek (GR-R-006)",
+				rules.Assert("GR-09", "Greek customer must have a VAT identifier when customer is Greek (GR-R-006)",
 					is.Func("gr customer vat", grCustomerVATWhenGreek),
 				),
-				rules.Assert("GR-R-010", "Greek customer inbox must use scheme 9933 with TIN as code when customer is Greek (GR-R-010)",
+				rules.Assert("GR-10", "Greek customer inbox must use scheme 9933 with TIN as code when customer is Greek (GR-R-010)",
 					is.Func("gr customer inbox", grCustomerInboxWhenGreek),
 				),
 			),

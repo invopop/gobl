@@ -8,11 +8,10 @@ import (
 
 func billLineRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		// PEPPOL-EN16931-R110/R111: line periods must sit inside the invoice period.
-		rules.Assert("R110", "line period start must be within invoice period (PEPPOL-EN16931-R110)",
+		rules.Assert("07", "line period start must be within invoice period (PEPPOL-EN16931-R110)",
 			is.Func("line period start", lineStartsWithinInvoice),
 		),
-		rules.Assert("R111", "line period end must be within invoice period (PEPPOL-EN16931-R111)",
+		rules.Assert("08", "line period end must be within invoice period (PEPPOL-EN16931-R111)",
 			is.Func("line period end", lineEndsWithinInvoice),
 		),
 	)

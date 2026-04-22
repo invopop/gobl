@@ -32,14 +32,14 @@ func orgPartyRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.Field("supplier",
 			rules.Field("inboxes",
-				rules.Assert("R020", "seller electronic address is required (PEPPOL-EN16931-R020)",
+				rules.Assert("09", "seller electronic address is required (PEPPOL-EN16931-R020)",
 					is.Present,
 				),
 			),
 		),
 		rules.Field("customer",
 			rules.Field("inboxes",
-				rules.Assert("R010", "buyer electronic address is required (PEPPOL-EN16931-R010)",
+				rules.Assert("10", "buyer electronic address is required (PEPPOL-EN16931-R010)",
 					is.Present,
 				),
 			),
@@ -49,7 +49,7 @@ func orgPartyRules() *rules.Set {
 
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
-		rules.Assert("COMMON", "identifier format invalid",
+		rules.Assert("01", "identifier format invalid",
 			is.FuncError("identity format", identityFormatValid),
 		),
 	)
@@ -57,7 +57,7 @@ func orgIdentityRules() *rules.Set {
 
 func orgInboxRules() *rules.Set {
 	return rules.For(new(org.Inbox),
-		rules.Assert("COMMON", "inbox code format invalid",
+		rules.Assert("01", "inbox code format invalid",
 			is.FuncError("inbox format", inboxFormatValid),
 		),
 	)

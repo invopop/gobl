@@ -19,8 +19,7 @@ func orgPartyRulesNO() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.NO),
 			rules.Field("supplier",
-				// NO-R-001: Norwegian VAT format.
-				rules.Assert("NO-R-001", "Norwegian VAT must be NO+9 digits+MVA (NO-R-001)",
+				rules.Assert("NO-01", "Norwegian VAT must be NO+9 digits+MVA (NO-R-001)",
 					is.Func("no vat format", norwegianVATFormat),
 				),
 			),

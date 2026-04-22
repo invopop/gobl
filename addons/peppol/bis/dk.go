@@ -19,8 +19,7 @@ var allowedDKPaymentMeans = []cbc.Code{"1", "10", "31", "42", "48", "49", "50", 
 func billInvoiceRulesDK() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.DK),
-			// DK-R-016: credit notes must have a non-negative payable amount.
-			rules.Assert("DK-R-016", "Danish credit note cannot have a negative total (DK-R-016)",
+			rules.Assert("DK-01", "Danish credit note cannot have a negative total (DK-R-016)",
 				is.Func("dk credit note total", dkCreditNoteNonNegative),
 			),
 		),
@@ -30,15 +29,13 @@ func billInvoiceRulesDK() *rules.Set {
 func orgPartyRulesDK() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.DK),
-			// DK-R-002 / DK-R-014: Danish supplier must provide CVR (scheme 0184) as legal entity.
 			rules.Field("supplier",
-				rules.Assert("DK-R-002", "Danish supplier must provide a CVR identity with scheme 0184 (DK-R-002, DK-R-014)",
+				rules.Assert("DK-02", "Danish supplier must provide a CVR identity with scheme 0184 (DK-R-002, DK-R-014)",
 					is.Func("dk supplier cvr", partyHasCVRIdentity),
 				),
-				// DK-R-013: every supplier identity must carry a scheme ID.
 				rules.Field("identities",
 					rules.Each(
-						rules.Assert("DK-R-013", "Danish supplier identities must specify an ISO 6523 scheme ID (DK-R-013)",
+						rules.Assert("DK-03", "Danish supplier identities must specify an ISO 6523 scheme ID (DK-R-013)",
 							is.Func("identity has scheme", identityHasSchemeID),
 						),
 					),
@@ -62,16 +59,13 @@ func payInstructionsRulesDK() *rules.Set {
 		rules.When(supplierCountryIs(l10n.DK),
 			rules.Field("payment",
 				rules.Field("instructions",
-					// DK-R-005: restrict allowed UNTDID payment means codes.
-					rules.Assert("DK-R-005", "Danish payment means code must be in the allowed DK subset (DK-R-005)",
+					rules.Assert("DK-04", "Danish payment means code must be in the allowed DK subset (DK-R-005)",
 						is.Func("dk payment means", dkPaymentMeansAllowed),
 					),
-					// DK-R-006: payment means 31/42 require CreditTransfer account details.
-					rules.Assert("DK-R-006", "Danish payment means 31 or 42 requires bank account and registration (DK-R-006)",
+					rules.Assert("DK-05", "Danish payment means 31 or 42 requires bank account and registration (DK-R-006)",
 						is.Func("dk 31/42", dkCreditTransferComplete),
 					),
-					// DK-R-007: payment means 49 requires direct debit mandate and account.
-					rules.Assert("DK-R-007", "Danish payment means 49 requires mandate reference and account (DK-R-007)",
+					rules.Assert("DK-06", "Danish payment means 49 requires mandate reference and account (DK-R-007)",
 						is.Func("dk 49", dkDirectDebit49Complete),
 					),
 				),
@@ -117,14 +111,6 @@ func identityHasSchemeID(val any) bool {
 		return true
 	}
 	return id.Ext.Get(iso.ExtKeySchemeID) != ""
-}
-
-func customerIsDK(val any) bool {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return false
-	}
-	return partyCountry(p) == l10n.DK
 }
 
 func dkPaymentMeansAllowed(val any) bool {

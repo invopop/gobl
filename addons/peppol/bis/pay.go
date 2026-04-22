@@ -13,8 +13,7 @@ var directDebitMeansCodes = []string{"49", "59"}
 
 func payInstructionsRules() *rules.Set {
 	return rules.For(new(pay.Instructions),
-		// PEPPOL-EN16931-R061: mandate reference required for direct debit.
-		rules.Assert("R061", "mandate reference is required for direct debit payments (PEPPOL-EN16931-R061)",
+		rules.Assert("01", "mandate reference is required for direct debit payments (PEPPOL-EN16931-R061)",
 			is.Func("direct debit mandate", directDebitMandatePresent),
 		),
 	)

@@ -52,12 +52,39 @@ func init() {
 	)
 }
 
-// supplierCountryIs returns a Test that passes when the given invoice's
-// supplier country matches the provided code. Used as an inner guard in
-// country-specific rule sets so they only fire for the relevant suppliers.
+// supplierCountryIs returns a Test that passes when the invoice's supplier
+// country matches the provided code. Use for rules whose schematron targets
+// only the AccountingSupplierParty country (e.g. "For German suppliers…").
 func supplierCountryIs(country l10n.Code) rules.Test {
 	return is.Func("supplier country "+country.String(), func(val any) bool {
 		return invoiceSupplierCountry(val) == country
+	})
+}
+
+// customerCountryIs returns a Test that passes when the invoice's customer
+// country matches the provided code. Use for rules that target only the
+// AccountingCustomerParty country.
+func customerCountryIs(country l10n.Code) rules.Test {
+	return is.Func("customer country "+country.String(), func(val any) bool {
+		inv, ok := val.(*bill.Invoice)
+		if !ok || inv == nil {
+			return false
+		}
+		return partyCountry(inv.Customer) == country
+	})
+}
+
+// bothCountriesAre returns a Test that passes when both supplier and customer
+// resolve to the given country. Most Peppol national CIUS rules scope on
+// intra-country B2B, so this is the default guard.
+func bothCountriesAre(country l10n.Code) rules.Test {
+	return is.Func("both parties country "+country.String(), func(val any) bool {
+		inv, ok := val.(*bill.Invoice)
+		if !ok || inv == nil {
+			return false
+		}
+		return partyCountry(inv.Supplier) == country &&
+			partyCountry(inv.Customer) == country
 	})
 }
 

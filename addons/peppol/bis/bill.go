@@ -19,33 +19,28 @@ var validCreditNoteUNTDIDCodes = []cbc.Code{"381", "396", "261"}
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
-		// PEPPOL-EN16931-R002: at most one note unless both parties are DK.
 		rules.Field("notes",
-			rules.Assert("R002", "at most one note allowed unless both buyer and seller are Danish (PEPPOL-EN16931-R002)",
+			rules.Assert("01", "at most one note allowed unless both buyer and seller are Danish (PEPPOL-EN16931-R002)",
 				is.Func("notes cardinality", notesCardinalityValid),
 			),
 		),
-		// PEPPOL-EN16931-R003: buyer reference or purchase order reference required.
-		rules.Assert("R003", "buyer reference or purchase order reference is required (PEPPOL-EN16931-R003)",
+		rules.Assert("02", "buyer reference or purchase order reference is required (PEPPOL-EN16931-R003)",
 			is.Func("buyer reference", hasBuyerReferenceOrPO),
 		),
-		// PEPPOL-EN16931-R080: at most one project reference.
 		rules.Field("ordering",
 			rules.Field("projects",
-				rules.Assert("R080", "only one project reference allowed (PEPPOL-EN16931-R080)",
+				rules.Assert("03", "only one project reference allowed (PEPPOL-EN16931-R080)",
 					is.Length(0, 1),
 				),
 			),
 		),
-		// PEPPOL-EN16931-P0100/P0101: restrict UNTDID document type codes per invoice type.
-		rules.Assert("P0100", "invoice type code must be one of 380, 383, 386, 389, 751 (PEPPOL-EN16931-P0100)",
+		rules.Assert("04", "invoice type code must be one of 380, 383, 386, 389, 751 (PEPPOL-EN16931-P0100)",
 			is.Func("invoice type code", invoiceTypeCodeValid),
 		),
-		rules.Assert("P0101", "credit note type code must be one of 381, 396, 261 (PEPPOL-EN16931-P0101)",
+		rules.Assert("05", "credit note type code must be one of 381, 396, 261 (PEPPOL-EN16931-P0101)",
 			is.Func("credit note type code", creditNoteTypeCodeValid),
 		),
-		// PEPPOL-EN16931-P0112: 326 and 384 only when both parties are IT.
-		rules.Assert("P0112", "invoice type 326 or 384 only allowed when both buyer and seller are Italian (PEPPOL-EN16931-P0112)",
+		rules.Assert("06", "invoice type 326 or 384 only allowed when both buyer and seller are Italian (PEPPOL-EN16931-P0112)",
 			is.Func("partial/corrective IT-only", partialCorrectiveITOnly),
 		),
 	)

@@ -21,8 +21,7 @@ var seAllowedVATPercents = []num.Percentage{
 func billInvoiceRulesSE() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.SE),
-			// SE-R-006: VAT rate must be 6, 12, or 25%.
-			rules.Assert("SE-R-006", "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
+			rules.Assert("SE-01", "Swedish VAT rate must be 6, 12 or 25 (SE-R-006)",
 				is.Func("se vat rate", seVATRateAllowed),
 			),
 			// SE-R-005 (F-skatt boilerplate in cac:PartyTaxScheme/cbc:CompanyID)
@@ -39,20 +38,18 @@ func orgPartyRulesSE() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.When(supplierCountryIs(l10n.SE),
 			rules.Field("supplier",
-				// SE-R-001/R-002: VAT length + trailing digits.
-				rules.Assert("SE-R-001", "Swedish VAT must be 14 characters (SE-R-001)",
+				rules.Assert("SE-02", "Swedish VAT must be 14 characters (SE-R-001)",
 					is.Func("se vat length", swedishVATLength),
 				),
-				rules.Assert("SE-R-002", "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
+				rules.Assert("SE-03", "Swedish VAT trailing 12 characters must be numeric (SE-R-002)",
 					is.Func("se vat trailing digits", swedishVATTrailingDigits),
 				),
-				// SE-R-004 (fatal): SE org number length. SE-R-003 (numeric) is
-				// warning-level and intentionally not enforced here.
-				rules.Assert("SE-R-004", "Swedish organization number must be 10 characters (SE-R-004)",
+				// SE-R-003 (numeric org number) is warning-level and intentionally
+				// not enforced here.
+				rules.Assert("SE-04", "Swedish organization number must be 10 characters (SE-R-004)",
 					is.Func("se org length", swedishOrgLength),
 				),
-				// SE-R-013: SE org Luhn checksum.
-				rules.Assert("SE-R-013", "Swedish organization number last digit must be a valid Luhn checksum (SE-R-013)",
+				rules.Assert("SE-05", "Swedish organization number last digit must be a valid Luhn checksum (SE-R-013)",
 					is.Func("se org luhn", swedishOrgLuhn),
 				),
 			),
