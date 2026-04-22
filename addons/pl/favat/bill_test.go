@@ -244,6 +244,22 @@ func TestSupplierValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-BILL-INVOICE-16]")
+	})
+
+	t.Run("missing supplier tax ID code", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Supplier.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-BILL-INVOICE-17]")
+	})
+
 	t.Run("missing supplier name", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Supplier.Name = ""
