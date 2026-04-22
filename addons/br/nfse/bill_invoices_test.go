@@ -110,7 +110,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 			Currency: "USD",
 		}
 		err := rules.Validate(inv, withAddonContext())
-		assert.ErrorContains(t, err, "[GOBL-BR-NFSE-V1-BILL-INVOICE-17] invoice must be in BRL or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-BR-NFSE-BILL-INVOICE-17] invoice must be in BRL or provide exchange rate for conversion")
 	})
 
 	t.Run("non-BRL currency with exchange rates", func(t *testing.T) {

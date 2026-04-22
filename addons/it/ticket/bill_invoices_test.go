@@ -123,7 +123,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-IT-TICKET-V1-BILL-INVOICE-08] invoice must be in EUR or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-IT-TICKET-BILL-INVOICE-08] invoice must be in EUR or provide exchange rate for conversion")
 	})
 
 	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
@@ -336,8 +336,8 @@ func TestInvoiceTax(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Tax.PricesInclude = ""
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-02")
-		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-03")
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-BILL-INVOICE-02")
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-BILL-INVOICE-03")
 	})
 
 	t.Run("missing Tax will be normalized", func(t *testing.T) {
@@ -351,7 +351,7 @@ func TestInvoiceTax(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax = nil
-		require.ErrorContains(t, rules.Validate(inv), "GOBL-IT-TICKET-V1-BILL-INVOICE-01")
+		require.ErrorContains(t, rules.Validate(inv), "GOBL-IT-TICKET-BILL-INVOICE-01")
 	})
 
 	t.Run("lottery code length", func(t *testing.T) {

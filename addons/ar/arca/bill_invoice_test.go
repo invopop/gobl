@@ -1437,7 +1437,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-AR-ARCA-V4-BILL-INVOICE-24] invoice must be in ARS or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-AR-ARCA-BILL-INVOICE-24] invoice must be in ARS or provide exchange rate for conversion")
 	})
 
 	t.Run("non-ARS currency with exchange rates", func(t *testing.T) {

@@ -322,8 +322,8 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-02] ($.preceding[0].issue_date) issue date is required")
-		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-03] ($.preceding[0].tax) preceding invoice tax data is required")
+		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-BILL-INVOICE-02] ($.preceding[0].issue_date) issue date is required")
+		require.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-BILL-INVOICE-03] ($.preceding[0].tax) preceding invoice tax data is required")
 	})
 
 	t.Run("customer nil", func(t *testing.T) {
@@ -337,14 +337,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "($.customer) must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'")
+		assert.ErrorContains(t, rules.Validate(inv), "($.customer) must have a tax_id or an identity with ext 'es-verifactu-identity-type'")
 	})
 	t.Run("customer with missing Tax ID code", func(t *testing.T) {
 		// VERI*FACTU has no way to handle just a country without an actual code.
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-08] ($.customer.tax_id.code) tax ID must have a code")
+		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-ES-VERIFACTU-BILL-INVOICE-08] ($.customer.tax_id.code) tax ID must have a code")
 	})
 	t.Run("customer with identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -485,7 +485,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-V1-BILL-INVOICE-16] invoice must be in EUR or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-ES-VERIFACTU-BILL-INVOICE-16] invoice must be in EUR or provide exchange rate for conversion")
 	})
 
 	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {

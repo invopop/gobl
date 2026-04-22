@@ -30,23 +30,47 @@ func TestTimeNew(t *testing.T) {
 }
 
 func TestTimeNow(t *testing.T) {
-	t.Run("valid time", func(t *testing.T) {
+	t.Run("matches current UTC wall clock", func(t *testing.T) {
+		before := time.Now().UTC()
 		tm := cal.TimeNow()
-		assert.NotZero(t, tm.Hour)
-		assert.NotZero(t, tm.Minute)
-		assert.NotZero(t, tm.Second)
+		after := time.Now().UTC()
+		assertTimeWithin(t, tm, before, after)
 	})
 }
 
 func TestTimeNowIn(t *testing.T) {
-	t.Run("valid time", func(t *testing.T) {
+	t.Run("matches current wall clock in location", func(t *testing.T) {
 		loc, err := time.LoadLocation("America/New_York")
 		require.NoError(t, err)
+		before := time.Now().In(loc)
 		tm := cal.TimeNowIn(loc)
-		assert.NotZero(t, tm.Hour)
-		assert.NotZero(t, tm.Minute)
-		assert.NotZero(t, tm.Second)
+		after := time.Now().In(loc)
+		assertTimeWithin(t, tm, before, after)
 	})
+}
+
+// assertTimeWithin checks that tm is a valid time-of-day falling between the
+// wall-clock samples taken immediately before and after the call, tolerating
+// a midnight rollover.
+func assertTimeWithin(t *testing.T, tm cal.Time, before, after time.Time) {
+	t.Helper()
+	assert.GreaterOrEqual(t, tm.Hour, 0)
+	assert.Less(t, tm.Hour, 24)
+	assert.GreaterOrEqual(t, tm.Minute, 0)
+	assert.Less(t, tm.Minute, 60)
+	assert.GreaterOrEqual(t, tm.Second, 0)
+	assert.Less(t, tm.Second, 60)
+	assert.Zero(t, tm.Nanosecond, "nanoseconds should be stripped")
+
+	secOfDay := func(h, m, s int) int { return h*3600 + m*60 + s }
+	got := secOfDay(tm.Hour, tm.Minute, tm.Second)
+	lo := secOfDay(before.Hour(), before.Minute(), before.Second())
+	hi := secOfDay(after.Hour(), after.Minute(), after.Second())
+	if hi < lo {
+		assert.True(t, got >= lo || got <= hi, "time %v outside window %v..%v across midnight", tm, before, after)
+	} else {
+		assert.True(t, got >= lo && got <= hi, "time %v outside window %v..%v", tm, before, after)
+	}
 }
 
 func TestTimeString(t *testing.T) {

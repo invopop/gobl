@@ -1,11 +1,18 @@
 {
-  "id": "GOBL-ES-FACTURAE-V3",
-  "package": "es-facturae-v3",
+  "id": "GOBL-ES-FACTURAE",
+  "package": "es-facturae",
   "guard": "context: addon in [es-facturae-v3]",
   "subsets": [
     {
-      "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE",
+      "id": "GOBL-ES-FACTURAE-BILL-INVOICE",
       "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-ES-FACTURAE-BILL-INVOICE-07",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        }
+      ],
       "subsets": [
         {
           "field": "customer",
@@ -20,7 +27,7 @@
                       "field": "code",
                       "assert": [
                         {
-                          "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-01",
+                          "id": "GOBL-ES-FACTURAE-BILL-INVOICE-01",
                           "desc": "customer tax ID code is required for Spanish customers",
                           "tests": "present"
                         }
@@ -36,7 +43,7 @@
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-02",
+              "id": "GOBL-ES-FACTURAE-BILL-INVOICE-02",
               "desc": "tax object is required with ext document type and invoice classes",
               "tests": "present"
             }
@@ -46,7 +53,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-03",
+                  "id": "GOBL-ES-FACTURAE-BILL-INVOICE-03",
                   "desc": "tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions",
                   "tests": "ext require [es-facturae-doc-type, es-facturae-invoice-class]"
                 }
@@ -61,7 +68,7 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-04",
+                  "id": "GOBL-ES-FACTURAE-BILL-INVOICE-04",
                   "desc": "preceding document reference is required for credit-note, corrective, debit-note invoices",
                   "tests": "present"
                 }
@@ -74,7 +81,7 @@
                       "field": "issue_date",
                       "assert": [
                         {
-                          "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-05",
+                          "id": "GOBL-ES-FACTURAE-BILL-INVOICE-05",
                           "desc": "preceding document issue date is required",
                           "tests": "present"
                         }
@@ -84,7 +91,7 @@
                       "field": "ext",
                       "assert": [
                         {
-                          "id": "GOBL-ES-FACTURAE-V3-BILL-INVOICE-06",
+                          "id": "GOBL-ES-FACTURAE-BILL-INVOICE-06",
                           "desc": "preceding document ext require 'es-facturae-correction' extension",
                           "tests": "ext require [es-facturae-correction]"
                         }

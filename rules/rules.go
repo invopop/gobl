@@ -61,12 +61,22 @@ func Registry() []*Set {
 }
 
 // Register is used to register a set of rules for a given namespace.
+//
+// For addon rules, pkg and code should identify the addon *family* rather
+// than a specific version (e.g. "ar-arca" and "AR-ARCA", not "ar-arca-v4"
+// and "AR-ARCA-V4"). The addon version is expressed through the guard.
+// Assertion IDs are a public contract that customers pin for error handling,
+// so they must be stable across versions of an addon family: when introducing
+// a new version, preserved rules must keep their existing numeric IDs. An ID
+// may be retired, but it must never be reassigned to a semantically different
+// rule.
 func Register(pkg string, code Code, sets ...*Set) {
 	RegisterWithGuard(pkg, code, nil, sets...)
 }
 
 // RegisterWithGuard is used to register a set of rules for a given namespace
 // with an optional guard condition that determines when the rules should be applied.
+// See [Register] for guidance on choosing pkg and code for addon families.
 func RegisterWithGuard(pkg string, code Code, guard Test, sets ...*Set) {
 	sets = cloneSets(sets)
 	set := &Set{

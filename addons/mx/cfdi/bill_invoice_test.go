@@ -163,7 +163,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-MX-CFDI-V4-BILL-INVOICE-27] invoice must be in MXN or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-MX-CFDI-BILL-INVOICE-27] invoice must be in MXN or provide exchange rate for conversion")
 	})
 
 	t.Run("non-MXN currency with exchange rates", func(t *testing.T) {

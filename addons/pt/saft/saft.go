@@ -14,15 +14,20 @@ import (
 )
 
 const (
+	// Key identifies the SAF-T (PT) addon family. Individual versions append
+	// a suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "pt-saft"
+
 	// V1 for SAF-T (PT) versions 1.x
-	V1 cbc.Key = "pt-saft-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("PT-SAFT-V1"),
+		Key.String(),
+		rules.GOBL.Add("PT-SAFT"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billPaymentRules(),

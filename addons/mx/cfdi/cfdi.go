@@ -17,7 +17,13 @@ import (
 
 // Key to identify the CFDI addon.
 const (
-	V4 cbc.Key = "mx-cfdi-v4"
+	// Key identifies the CFDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "mx-cfdi"
+
+	// V4 for CFDI version 4
+	V4 cbc.Key = Key + "-v4"
 )
 
 // Official CFDI codes to include in stamps.
@@ -41,8 +47,8 @@ func init() {
 	)
 
 	rules.RegisterWithGuard(
-		V4.String(),
-		rules.GOBL.Add("MX-CFDI-V4"),
+		Key.String(),
+		rules.GOBL.Add("MX-CFDI"),
 		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		payInstructionsRules(),

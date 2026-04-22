@@ -12,8 +12,13 @@ import (
 )
 
 const (
+	// Key identifies the Verifactu addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "es-verifactu"
+
 	// V1 for Verifactu versions 1.x
-	V1 cbc.Key = "es-verifactu-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -25,8 +30,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("ES-VERIFACTU-V1"),
+		Key.String(),
+		rules.GOBL.Add("ES-VERIFACTU"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		taxComboRules(),

@@ -1,17 +1,24 @@
 {
-  "id": "GOBL-GR-MYDATA-V1",
-  "package": "gr-mydata-v1",
+  "id": "GOBL-GR-MYDATA",
+  "package": "gr-mydata",
   "guard": "context: addon in [gr-mydata-v1]",
   "subsets": [
     {
-      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE",
+      "id": "GOBL-GR-MYDATA-BILL-INVOICE",
       "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-GR-MYDATA-BILL-INVOICE-19",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        }
+      ],
       "subsets": [
         {
           "field": "series",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-01",
+              "id": "GOBL-GR-MYDATA-BILL-INVOICE-01",
               "desc": "series is required",
               "tests": "present"
             }
@@ -21,7 +28,7 @@
           "field": "tax",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-02",
+              "id": "GOBL-GR-MYDATA-BILL-INVOICE-02",
               "desc": "tax is required",
               "tests": "present"
             }
@@ -31,7 +38,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-03",
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-03",
                   "desc": "tax requires 'gr-mydata-invoice-type' extension",
                   "tests": "ext require [gr-mydata-invoice-type]"
                 }
@@ -46,7 +53,7 @@
               "field": "tax_id",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-04",
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-04",
                   "desc": "supplier tax ID is required",
                   "tests": "present"
                 }
@@ -56,7 +63,7 @@
                   "field": "code",
                   "assert": [
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-18",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-18",
                       "desc": "supplier tax ID code is required",
                       "tests": "present"
                     }
@@ -73,7 +80,7 @@
               "field": "customer",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-05",
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-05",
                   "desc": "customer is required",
                   "tests": "present"
                 }
@@ -83,7 +90,7 @@
                   "field": "tax_id",
                   "assert": [
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-06",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-06",
                       "desc": "customer tax ID is required",
                       "tests": "present"
                     }
@@ -93,7 +100,7 @@
                   "field": "addresses",
                   "assert": [
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-07",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-07",
                       "desc": "customer addresses are required",
                       "tests": "present"
                     }
@@ -106,7 +113,7 @@
                           "field": "locality",
                           "assert": [
                             {
-                              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-08",
+                              "id": "GOBL-GR-MYDATA-BILL-INVOICE-08",
                               "desc": "customer address locality is required",
                               "tests": "present"
                             }
@@ -116,7 +123,7 @@
                           "field": "code",
                           "assert": [
                             {
-                              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-09",
+                              "id": "GOBL-GR-MYDATA-BILL-INVOICE-09",
                               "desc": "customer address code is required",
                               "tests": "present"
                             }
@@ -140,12 +147,12 @@
                   "field": "total",
                   "assert": [
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-10",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-10",
                       "desc": "line total must be positive",
                       "tests": "min 0"
                     },
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-11",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-11",
                       "desc": "line total must not be zero",
                       "tests": "not zero"
                     }
@@ -158,7 +165,7 @@
                       "field": "ext",
                       "assert": [
                         {
-                          "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-12",
+                          "id": "GOBL-GR-MYDATA-BILL-INVOICE-12",
                           "desc": "item income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present",
                           "tests": "income ext pair"
                         }
@@ -174,7 +181,7 @@
           "field": "discounts",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-13",
+              "id": "GOBL-GR-MYDATA-BILL-INVOICE-13",
               "desc": "discounts are not supported by mydata",
               "tests": "empty"
             }
@@ -184,12 +191,12 @@
           "field": "payment",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-14",
+              "id": "GOBL-GR-MYDATA-BILL-INVOICE-14",
               "desc": "payment is required",
               "tests": "present"
             },
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-15",
+              "id": "GOBL-GR-MYDATA-BILL-INVOICE-15",
               "desc": "payment instructions are required when no advances",
               "tests": "has instructions or advances"
             }
@@ -202,7 +209,7 @@
               "field": "preceding",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-16",
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-16",
                   "desc": "preceding documents are required for credit notes",
                   "tests": "present"
                 }
@@ -220,7 +227,7 @@
                   "field": "stamps",
                   "assert": [
                     {
-                      "id": "GOBL-GR-MYDATA-V1-BILL-INVOICE-17",
+                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-17",
                       "desc": "preceding document requires 'iapr-mark' stamp",
                       "tests": "stamps have iapr-mark"
                     }
@@ -233,14 +240,14 @@
       ]
     },
     {
-      "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE",
+      "id": "GOBL-GR-MYDATA-BILL-CHARGE",
       "object": "bill.Charge",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE-01",
+              "id": "GOBL-GR-MYDATA-BILL-CHARGE-01",
               "desc": "only one of fee, other-tax, or stamp-duty allowed",
               "tests": "ext allow one of [gr-mydata-fee, gr-mydata-other-tax, gr-mydata-stamp-duty]"
             }
@@ -253,7 +260,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE-02",
+                  "id": "GOBL-GR-MYDATA-BILL-CHARGE-02",
                   "desc": "charge with fee tax type requires 'gr-mydata-fee' extension",
                   "tests": "ext require [gr-mydata-fee]"
                 }
@@ -268,7 +275,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE-03",
+                  "id": "GOBL-GR-MYDATA-BILL-CHARGE-03",
                   "desc": "charge with other-tax type requires 'gr-mydata-other-tax' extension",
                   "tests": "ext require [gr-mydata-other-tax]"
                 }
@@ -283,7 +290,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-BILL-CHARGE-04",
+                  "id": "GOBL-GR-MYDATA-BILL-CHARGE-04",
                   "desc": "charge with stamp-duty type requires 'gr-mydata-stamp-duty' extension",
                   "tests": "ext require [gr-mydata-stamp-duty]"
                 }
@@ -294,7 +301,7 @@
       ]
     },
     {
-      "id": "GOBL-GR-MYDATA-V1-TAX-COMBO",
+      "id": "GOBL-GR-MYDATA-TAX-COMBO",
       "object": "tax.Combo",
       "subsets": [
         {
@@ -304,7 +311,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-TAX-COMBO-01",
+                  "id": "GOBL-GR-MYDATA-TAX-COMBO-01",
                   "desc": "VAT combo requires 'gr-mydata-vat-rate' extension",
                   "tests": "ext require [gr-mydata-vat-rate]"
                 }
@@ -319,7 +326,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-TAX-COMBO-02",
+                  "id": "GOBL-GR-MYDATA-TAX-COMBO-02",
                   "desc": "exempt VAT combo requires 'gr-mydata-exemption' extension",
                   "tests": "ext require [gr-mydata-exemption]"
                 }
@@ -334,7 +341,7 @@
               "field": "ext",
               "assert": [
                 {
-                  "id": "GOBL-GR-MYDATA-V1-TAX-COMBO-03",
+                  "id": "GOBL-GR-MYDATA-TAX-COMBO-03",
                   "desc": "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present",
                   "tests": "ext require [gr-mydata-income-cat, gr-mydata-income-type]"
                 }
@@ -345,14 +352,14 @@
       ]
     },
     {
-      "id": "GOBL-GR-MYDATA-V1-PAY-INSTRUCTIONS",
+      "id": "GOBL-GR-MYDATA-PAY-INSTRUCTIONS",
       "object": "pay.Instructions",
       "subsets": [
         {
           "field": "key",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-PAY-INSTRUCTIONS-01",
+              "id": "GOBL-GR-MYDATA-PAY-INSTRUCTIONS-01",
               "desc": "payment instructions key is required",
               "tests": "present"
             }
@@ -362,7 +369,7 @@
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-PAY-INSTRUCTIONS-02",
+              "id": "GOBL-GR-MYDATA-PAY-INSTRUCTIONS-02",
               "desc": "payment instructions require 'gr-mydata-payment-means' extension",
               "tests": "ext require [gr-mydata-payment-means]"
             }
@@ -371,14 +378,14 @@
       ]
     },
     {
-      "id": "GOBL-GR-MYDATA-V1-PAY-ADVANCE",
+      "id": "GOBL-GR-MYDATA-PAY-ADVANCE",
       "object": "pay.Advance",
       "subsets": [
         {
           "field": "key",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-PAY-ADVANCE-01",
+              "id": "GOBL-GR-MYDATA-PAY-ADVANCE-01",
               "desc": "payment advance key is required",
               "tests": "present"
             }
@@ -388,7 +395,7 @@
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-V1-PAY-ADVANCE-02",
+              "id": "GOBL-GR-MYDATA-PAY-ADVANCE-02",
               "desc": "payment advance requires 'gr-mydata-payment-means' extension",
               "tests": "ext require [gr-mydata-payment-means]"
             }
