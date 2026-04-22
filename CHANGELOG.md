@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `rules`: Anonymous embedded struct fields are now also checked from the parent.
+
 ## [v0.401.0] - 2026-04-17
 
 ### Changed
