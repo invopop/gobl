@@ -187,14 +187,14 @@ func invoiceIsNFe(val any) bool {
 
 // taxExtIsNFe checks if the tax extensions indicate NF-e model.
 func taxExtIsNFe(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext[ExtKeyModel] == ModelNFe
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyModel) == ModelNFe
 }
 
 // taxExtIsNFCe checks if the tax extensions indicate NFC-e model.
 func taxExtIsNFCe(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext[ExtKeyModel] == ModelNFCe
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyModel) == ModelNFCe
 }
 
 // isReasonNote checks if a note has the reason key.
@@ -236,5 +236,5 @@ func amountZeroOrPositive(val any) bool {
 }
 
 func isNFe(t *bill.Tax) bool {
-	return t != nil && t.Ext[ExtKeyModel] == ModelNFe
+	return t != nil && t.Ext.Get(ExtKeyModel) == ModelNFe
 }

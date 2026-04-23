@@ -88,7 +88,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	// Go in two parts as the payment errors are independent
 	inv.Payment.Instructions.Key = "debit-transfer"
-	inv.Payment.Instructions.Ext = nil
+	inv.Payment.Instructions.Ext = tax.Extensions{}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "payment instructions require 'gr-mydata-payment-means' extension")
@@ -133,9 +133,9 @@ func TestOtherInvoiceTypeValidation(t *testing.T) {
 	inv := validInvoice()
 	inv.Type = bill.InvoiceTypeOther
 	inv.Tax = &bill.Tax{
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			mydata.ExtKeyInvoiceType: "8.2",
-		},
+		}),
 	}
 	inv.Customer.TaxID = nil
 	inv.Customer.Addresses = nil
@@ -183,28 +183,28 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 
 	t.Run("income cat, no type", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.Extensions{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
 			mydata.ExtKeyIncomeCat: "category1_1",
-		}
+		})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present")
 	})
 
 	t.Run("income type, no cat", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.Extensions{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
 			mydata.ExtKeyIncomeType: "E3_106",
-		}
+		})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present")
 	})
 
 	t.Run("income cat with type", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.Extensions{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
 			mydata.ExtKeyIncomeType: "E3_106",
 			mydata.ExtKeyIncomeCat:  "category1_1",
-		}
+		})
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})

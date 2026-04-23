@@ -16,8 +16,8 @@ import (
 
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := sdi.PaymentMeansExtensions()
-	assert.NotEmpty(t, m)
-	assert.Len(t, m, 24)
+	assert.False(t, m.IsZero())
+	assert.Equal(t, 24, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("MP01"))
 }
 
@@ -26,30 +26,26 @@ func TestPayInstructionsNormalize(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: "online",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"random": "",
-			},
+			}),
 		},
 		Advances: []*pay.Advance{
 			{
 				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "",
-				},
+				}),
 			},
 		},
 	}
-	_, ok := inv.Payment.Instructions.Ext["random"]
-	assert.True(t, ok)
-	_, ok = inv.Payment.Advances[0].Ext["random"]
-	assert.True(t, ok)
+	assert.True(t, inv.Payment.Instructions.Ext.Has("random"))
+	assert.True(t, inv.Payment.Advances[0].Ext.Has("random"))
 	assert.NoError(t, inv.Calculate())
-	_, ok = inv.Payment.Instructions.Ext["random"]
-	assert.False(t, ok)
-	_, ok = inv.Payment.Advances[0].Ext["random"]
-	assert.False(t, ok)
+	assert.False(t, inv.Payment.Instructions.Ext.Has("random"))
+	assert.False(t, inv.Payment.Advances[0].Ext.Has("random"))
 }
 
 func TestPayInstructionsValidation(t *testing.T) {

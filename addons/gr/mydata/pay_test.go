@@ -14,8 +14,8 @@ import (
 
 func TestPaymentMeans(t *testing.T) {
 	m := mydata.PaymentMeansExtensions()
-	assert.NotEmpty(t, m)
-	assert.Len(t, m, 7)
+	assert.False(t, m.IsZero())
+	assert.Equal(t, 7, m.Len())
 }
 
 func TestPayInstructions(t *testing.T) {
@@ -25,7 +25,7 @@ func TestPayInstructions(t *testing.T) {
 			Key: pay.MeansKeyCash,
 		}
 		ad.Normalizer(i)
-		assert.NotEmpty(t, i.Ext)
+		assert.False(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.NoError(t, err)
 	})
@@ -35,7 +35,7 @@ func TestPayInstructions(t *testing.T) {
 			Key: cbc.Key("foo"),
 		}
 		ad.Normalizer(i)
-		assert.Empty(t, i.Ext)
+		assert.True(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.ErrorContains(t, err, "payment instructions require 'gr-mydata-payment-means' extension")
 	})
@@ -55,7 +55,7 @@ func TestPayAdvance(t *testing.T) {
 			Description: "Cash advance",
 		}
 		ad.Normalizer(i)
-		assert.NotEmpty(t, i.Ext)
+		assert.False(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.NoError(t, err)
 	})
@@ -66,7 +66,7 @@ func TestPayAdvance(t *testing.T) {
 			Description: "Bad advance",
 		}
 		ad.Normalizer(i)
-		assert.Empty(t, i.Ext)
+		assert.True(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.ErrorContains(t, err, "payment advance requires 'gr-mydata-payment-means' extension")
 	})

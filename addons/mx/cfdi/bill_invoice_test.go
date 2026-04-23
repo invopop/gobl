@@ -35,16 +35,16 @@ func validInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		IssueTime: cal.NewTime(12, 34, 10),
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				cfdi.ExtKeyIssuePlace: "21000",
-			},
+			}),
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"mx-cfdi-post-code":     "21000",
 				cfdi.ExtKeyFiscalRegime: "601",
-			},
+			}),
 			TaxID: &tax.Identity{
 				Country: "MX",
 				Code:    "AAA010101AAA",
@@ -52,11 +52,11 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"mx-cfdi-post-code":     "65000",
 				cfdi.ExtKeyFiscalRegime: "608",
 				cfdi.ExtKeyUse:          "G01",
-			},
+			}),
 			TaxID: &tax.Identity{
 				Country: "MX",
 				Code:    "ZZZ010101ZZZ",
@@ -69,9 +69,9 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.NewAmount(10000, 2),
 					Unit:  org.UnitPackage,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						cfdi.ExtKeyProdServ: "01010101",
-					},
+					}),
 				},
 				Taxes: tax.Set{
 					{
@@ -88,11 +88,11 @@ func validInvoiceGlobal() *bill.Invoice {
 	inv := validInvoice()
 	inv.Tags = tax.WithTags(cfdi.TagGlobal)
 	inv.Lines[0].Item.Ref = "TEST1234"
-	inv.Tax.Ext = inv.Tax.Ext.Merge(tax.Extensions{
+	inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 		cfdi.ExtKeyGlobalPeriod: "04",
 		cfdi.ExtKeyGlobalMonth:  "01",
 		cfdi.ExtKeyGlobalYear:   "2025",
-	})
+	}))
 	inv.Payment = &bill.PaymentDetails{
 		Advances: []*pay.Advance{
 			{
@@ -114,9 +114,9 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global period", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				cfdi.ExtKeyGlobalPeriod: "04",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -125,9 +125,9 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global month", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				cfdi.ExtKeyGlobalMonth: "02",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -136,9 +136,9 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global year", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				cfdi.ExtKeyGlobalYear: "2025",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -147,10 +147,10 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global period and month", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				cfdi.ExtKeyGlobalPeriod: "04",
 				cfdi.ExtKeyGlobalMonth:  "02",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
 		require.ErrorContains(t, rules.Validate(inv), "extensions must all be present or all absent")
@@ -189,12 +189,12 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
 	})
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Addons = tax.WithAddons(cfdi.V4)
-		delete(inv.Supplier.Ext, "mx-cfdi-post-code")
+		inv.Supplier.Ext = inv.Supplier.Ext.Delete("mx-cfdi-post-code")
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{
 				Locality: "Mexico",
@@ -204,7 +204,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
 	})
 	t.Run("with global tag, invalid", func(t *testing.T) {
 		inv := validInvoice()
@@ -241,11 +241,11 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Tags = tax.WithTags(cfdi.TagGlobal)
 		inv.Lines[0].Item.Ref = "TEST1234"
-		inv.Tax.Ext = inv.Tax.Ext.Merge(tax.Extensions{
+		inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			cfdi.ExtKeyGlobalPeriod: "04",
 			cfdi.ExtKeyGlobalMonth:  "01",
 			cfdi.ExtKeyGlobalYear:   "2025",
-		})
+		}))
 		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
@@ -258,7 +258,7 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.Nil(t, inv.Customer)
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, cbc.Code("04"), inv.Tax.Ext[cfdi.ExtKeyGlobalPeriod])
+		assert.Equal(t, cbc.Code("04"), inv.Tax.Ext.Get(cfdi.ExtKeyGlobalPeriod))
 	})
 
 }
@@ -276,7 +276,7 @@ func TestCustomerValidation(t *testing.T) {
 
 func TestCustomerAddressCodeValidation(t *testing.T) {
 	inv := validInvoice()
-	delete(inv.Customer.Ext, "mx-cfdi-post-code")
+	inv.Customer.Ext = inv.Customer.Ext.Delete("mx-cfdi-post-code")
 	assertValidationError(t, inv, "Mexican customer must have at least one address")
 
 	inv.Customer.Addresses = []*org.Address{{}}
@@ -360,10 +360,10 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Customer.Ext = tax.Extensions{
+	inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
 		cfdi.ExtKeyFiscalRegime: "601",
 		"mx-cfdi-post-code":     "21000",
-	}
+	})
 	assertValidationError(t, inv, "Mexican customer requires 'mx-cfdi-fiscal-regime' and 'mx-cfdi-use' extensions")
 }
 
@@ -429,9 +429,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cfdi.ExtKeyProdServ: "12345678",
-				},
+				}),
 			},
 		},
 		{
@@ -439,9 +439,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(0, 2),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cfdi.ExtKeyProdServ: "12345678",
-				},
+				}),
 			},
 			err: "item price must be greater than 0",
 		},
@@ -450,9 +450,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(-5000, 2),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cfdi.ExtKeyProdServ: "12345678",
-				},
+				}),
 			},
 			// negative price now normalized to quantity
 			err: "quantity must be greater than 0",
@@ -461,9 +461,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			name: "nil price",
 			item: &org.Item{
 				Name: "Test purchase",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cfdi.ExtKeyProdServ: "12345678",
-				},
+				}),
 			},
 			err: "item price is required",
 		},
@@ -480,7 +480,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext:   tax.Extensions{},
+				Ext:   tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
@@ -489,9 +489,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
@@ -500,9 +500,9 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cfdi.ExtKeyProdServ: "AbC2",
-				},
+				}),
 			},
 			err: "product/service code must have 8 digits",
 		},

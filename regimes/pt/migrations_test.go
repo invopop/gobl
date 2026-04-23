@@ -21,18 +21,18 @@ func TestTaxRateMigration(t *testing.T) {
 
 	t0 := inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.KeyExempt, t0.Key)
-	assert.Equal(t, cbc.Code("M01"), t0.Ext[saft.ExtKeyExemption])
+	assert.Equal(t, cbc.Code("M01"), t0.Ext.Get(saft.ExtKeyExemption))
 
 	// Valid new rate
 	inv = validInvoice()
 	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt"
-	inv.Lines[0].Taxes[0].Ext = tax.Extensions{saft.ExtKeyExemption: "M02"}
+	inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{saft.ExtKeyExemption: "M02"})
 
 	err = inv.Calculate()
 	require.NoError(t, err)
 
 	t0 = inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.KeyExempt, t0.Key)
-	assert.Equal(t, cbc.Code("M02"), t0.Ext[saft.ExtKeyExemption])
+	assert.Equal(t, cbc.Code("M02"), t0.Ext.Get(saft.ExtKeyExemption))
 }

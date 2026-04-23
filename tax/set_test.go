@@ -182,9 +182,9 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						tbai.ExtKeyExempt: "E1",
-					},
+					}),
 				},
 			},
 		},
@@ -195,9 +195,9 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					// The correct key would be set
 					// here automatically in normalization.
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						tbai.ExtKeyExempt: "E1",
-					},
+					}),
 				},
 			},
 			err: "TAX-COMBO-04",
@@ -208,9 +208,9 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"foo": "E1",
-					},
+					}),
 				},
 			},
 			err: "TAX-COMBO-06",
@@ -221,9 +221,9 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						tbai.ExtKeyProduct: "services",
-					},
+					}),
 				},
 			},
 		},

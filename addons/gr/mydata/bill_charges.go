@@ -17,9 +17,9 @@ func normalizeBillCharge(c *bill.Charge) {
 	// Try to map the tax type from the key
 	switch c.Key {
 	case bill.ChargeKeyStampDuty:
-		c.Ext.Set(ExtKeyTaxType, TaxTypeStampDuty)
+		c.Ext = c.Ext.Set(ExtKeyTaxType, TaxTypeStampDuty)
 	case bill.ChargeKeyTax:
-		c.Ext.Set(ExtKeyTaxType, TaxTypeOtherTax)
+		c.Ext = c.Ext.Set(ExtKeyTaxType, TaxTypeOtherTax)
 	}
 	if c.Ext.Has(ExtKeyTaxType) {
 		return
@@ -28,11 +28,11 @@ func normalizeBillCharge(c *bill.Charge) {
 	// Try to map the tax type from the other extensions
 	switch {
 	case c.Ext.Has(ExtKeyFee):
-		c.Ext.Set(ExtKeyTaxType, TaxTypeFee)
+		c.Ext = c.Ext.Set(ExtKeyTaxType, TaxTypeFee)
 	case c.Ext.Has(ExtKeyOtherTax):
-		c.Ext.Set(ExtKeyTaxType, TaxTypeOtherTax)
+		c.Ext = c.Ext.Set(ExtKeyTaxType, TaxTypeOtherTax)
 	case c.Ext.Has(ExtKeyStampDuty):
-		c.Ext.Set(ExtKeyTaxType, TaxTypeStampDuty)
+		c.Ext = c.Ext.Set(ExtKeyTaxType, TaxTypeStampDuty)
 	}
 }
 

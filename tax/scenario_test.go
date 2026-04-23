@@ -40,9 +40,9 @@ func TestScenarioSetSummary(t *testing.T) {
 		List: []*tax.Scenario{
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"xx-test": "normal",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -53,16 +53,16 @@ func TestScenarioSetSummary(t *testing.T) {
 					}
 					return inv.Totals.Paid()
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"xx-test": "paid",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSimplified},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"xx-test": "simple",
-				},
+				}),
 				Note: &tax.Note{
 					Category: tax.CategoryVAT,
 					Key:      "note1",
@@ -119,7 +119,7 @@ func TestScenarioSetSummary(t *testing.T) {
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
-		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext.Get("xx-test").String())
 	})
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := scenariosInvoiceExample()
@@ -134,7 +134,7 @@ func TestScenarioSetSummary(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		sum := ss.SummaryFor(inv)
 		require.NotNil(t, sum)
-		assert.Equal(t, "paid", sum.Ext["xx-test"].String())
+		assert.Equal(t, "paid", sum.Ext.Get("xx-test").String())
 	})
 	t.Run("simplified invoice", func(t *testing.T) {
 		doc := &scenarioTestDocument{
@@ -143,7 +143,7 @@ func TestScenarioSetSummary(t *testing.T) {
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
-		assert.Equal(t, "simple", sum.Ext["xx-test"].String())
+		assert.Equal(t, "simple", sum.Ext.Get("xx-test").String())
 	})
 	t.Run("simplified partial invoice", func(t *testing.T) {
 		doc := &scenarioTestDocument{
@@ -152,30 +152,30 @@ func TestScenarioSetSummary(t *testing.T) {
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
-		assert.Equal(t, "simple", sum.Ext["xx-test"].String())
+		assert.Equal(t, "simple", sum.Ext.Get("xx-test").String())
 		assert.Equal(t, "This will replace previous note1", sum.Notes[0].Text)
 	})
 	t.Run("invoice with extensions", func(t *testing.T) {
 		doc := &scenarioTestDocument{
 			typ:  bill.InvoiceTypeStandard,
-			exts: []tax.Extensions{{"yy-test": "BAR"}},
+			exts: []tax.Extensions{tax.ExtensionsOf(tax.ExtMap{"yy-test": "BAR"})},
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
-		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext.Get("xx-test").String())
 		assert.Equal(t, "This is a note 2", sum.Notes[0].Text)
 	})
 	t.Run("invoice with extensions and no value", func(t *testing.T) {
 		doc := &scenarioTestDocument{
 			typ: bill.InvoiceTypeStandard,
 			exts: []tax.Extensions{
-				{"yy-test": "BAR"},
-				{"zz-test": "FOO"},
+				tax.ExtensionsOf(tax.ExtMap{"yy-test": "BAR"}),
+				tax.ExtensionsOf(tax.ExtMap{"zz-test": "FOO"}),
 			},
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
-		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext.Get("xx-test").String())
 		assert.Equal(t, "This is a note 3", sum.Notes[1].Text)
 	})
 	t.Run("extension keys", func(t *testing.T) {

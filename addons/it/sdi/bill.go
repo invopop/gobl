@@ -21,11 +21,9 @@ func normalizeSupplier(party *org.Party) {
 	if party == nil {
 		return
 	}
-	if party.Ext == nil || party.Ext[ExtKeyFiscalRegime] == "" {
-		if party.Ext == nil {
-			party.Ext = make(tax.Extensions)
-		}
-		party.Ext[ExtKeyFiscalRegime] = "RF01" // Ordinary regime is default
+	if party.Ext.Get(ExtKeyFiscalRegime) == "" {
+		// Ordinary regime is default
+		party.Ext = party.Ext.Set(ExtKeyFiscalRegime, "RF01")
 	}
 
 	// Normalize Italian supplier telephone numbers by stripping '+39' prefix

@@ -18,9 +18,9 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "1", // National Taxes
-			},
+			}),
 		}
 		err := rules.Validate(charge, withAddonContext())
 		require.NoError(t, err)
@@ -40,9 +40,9 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"other-ext": "value",
-			},
+			}),
 		}
 		err := rules.Validate(charge, withAddonContext())
 		assert.ErrorContains(t, err, "tax charge requires 'ar-arca-tax-type' extension")
@@ -51,9 +51,9 @@ func TestChargeValidation(t *testing.T) {
 	t.Run("tax type present but missing percent", func(t *testing.T) {
 		charge := &bill.Charge{
 			Key: bill.ChargeKeyTax,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "1",
-			},
+			}),
 			// No percent
 		}
 		err := rules.Validate(charge, withAddonContext())
@@ -74,9 +74,9 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "99", // TaxTypeOther
-			},
+			}),
 			// No reason
 		}
 		err := rules.Validate(charge, withAddonContext())
@@ -88,9 +88,9 @@ func TestChargeValidation(t *testing.T) {
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
 			Reason:  "Custom tax description",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "99", // TaxTypeOther
-			},
+			}),
 		}
 		err := rules.Validate(charge, withAddonContext())
 		require.NoError(t, err)
@@ -100,9 +100,9 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "1", // TaxTypeNationalTaxes
-			},
+			}),
 			// No reason provided
 		}
 		err := rules.Validate(charge, withAddonContext())
@@ -123,7 +123,7 @@ func TestChargeIntegration(t *testing.T) {
 		require.NoError(t, rules.Validate(inv))
 
 		require.Len(t, inv.Charges, 1)
-		assert.Equal(t, "5", inv.Charges[0].Ext[arca.ExtKeyTaxType].String())
+		assert.Equal(t, "5", inv.Charges[0].Ext.Get(arca.ExtKeyTaxType).String())
 	})
 
 	t.Run("invoice with tax charge missing ext fails", func(t *testing.T) {
@@ -170,9 +170,9 @@ func testInvoiceWithCharge(t *testing.T) *bill.Invoice {
 		{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(3, 2), // 3%
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyTaxType: "5", // Gross Income Tax
-			},
+			}),
 		},
 	}
 	return inv

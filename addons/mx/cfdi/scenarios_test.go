@@ -17,7 +17,7 @@ func TestInvoiceScenarios(t *testing.T) {
 	t.Run("regular", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "PPD", inv.Tax.Ext[cfdi.ExtKeyPaymentMethod].String())
+		assert.Equal(t, "PPD", inv.Tax.Ext.Get(cfdi.ExtKeyPaymentMethod).String())
 		assert.NoError(t, rules.Validate(inv))
 	})
 	t.Run("prepaid", func(t *testing.T) {
@@ -35,6 +35,6 @@ func TestInvoiceScenarios(t *testing.T) {
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Logf("DOC: %s", string(data))
 		assert.NoError(t, rules.Validate(inv))
-		assert.Equal(t, "PUE", inv.Tax.Ext[cfdi.ExtKeyPaymentMethod].String())
+		assert.Equal(t, "PUE", inv.Tax.Ext.Get(cfdi.ExtKeyPaymentMethod).String())
 	})
 }

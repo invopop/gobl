@@ -32,8 +32,8 @@ func TestMigratePartyIdentities(t *testing.T) {
 	addon.Normalizer(customer)
 
 	assert.Len(t, customer.Identities, 1)
-	assert.Len(t, customer.Ext, 2)
-	assert.Equal(t, "608", customer.Ext[cfdi.ExtKeyFiscalRegime].String())
-	assert.Equal(t, "G01", customer.Ext[cfdi.ExtKeyUse].String())
+	assert.Equal(t, 2, customer.Ext.Len())
+	assert.Equal(t, "608", customer.Ext.Get(cfdi.ExtKeyFiscalRegime).String())
+	assert.Equal(t, "G01", customer.Ext.Get(cfdi.ExtKeyUse).String())
 	assert.Equal(t, "12345678", customer.Identities[0].Code.String())
 }

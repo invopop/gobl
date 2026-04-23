@@ -44,7 +44,7 @@ func orderHasWorkType(val any) bool {
 	if !ok || ord == nil {
 		return true
 	}
-	if ord.Tax == nil || ord.Tax.Ext == nil {
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
 		return false
 	}
 	return tax.ExtensionsRequire(ExtKeyWorkType).Check(ord.Tax.Ext)
@@ -55,10 +55,11 @@ func orderWorkTypeValid(val any) error {
 	if !ok || ord == nil {
 		return nil
 	}
-	if ord.Tax == nil || ord.Tax.Ext == nil {
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
 		return nil
 	}
-	if wt, ok := ord.Tax.Ext[ExtKeyWorkType]; ok {
+	if ord.Tax.Ext.Has(ExtKeyWorkType) {
+		wt := ord.Tax.Ext.Get(ExtKeyWorkType)
 		if slices.Contains(invoiceWorkTypes, wt) {
 			return fmt.Errorf("value '%s' invalid", wt)
 		}
@@ -84,10 +85,10 @@ func orderCodeFormatValid(val any) error {
 }
 
 func orderDocType(ord *bill.Order) cbc.Code {
-	if ord.Tax == nil || ord.Tax.Ext == nil {
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
 		return cbc.CodeEmpty
 	}
-	return ord.Tax.Ext[ExtKeyWorkType]
+	return ord.Tax.Ext.Get(ExtKeyWorkType)
 }
 
 func normalizeOrder(ord *bill.Order) {
@@ -104,17 +105,17 @@ func normalizeOrderTax(ord *bill.Order) {
 		ord.Tax = new(bill.Tax)
 	}
 
-	if ord.Tax.Ext == nil {
-		ord.Tax.Ext = make(tax.Extensions)
+	if ord.Tax.Ext.IsZero() {
+		ord.Tax.Ext = tax.MakeExtensions()
 	}
 
 	if !ord.Tax.Ext.Has(ExtKeyWorkType) {
 		// Map order types to work types
 		switch ord.Type {
 		case bill.OrderTypePurchase:
-			ord.Tax.Ext[ExtKeyWorkType] = WorkTypePurchaseOrder
+			ord.Tax.Ext = ord.Tax.Ext.Set(ExtKeyWorkType, WorkTypePurchaseOrder)
 		case bill.OrderTypeQuote:
-			ord.Tax.Ext[ExtKeyWorkType] = WorkTypeBudgets
+			ord.Tax.Ext = ord.Tax.Ext.Set(ExtKeyWorkType, WorkTypeBudgets)
 		}
 	}
 }

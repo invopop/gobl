@@ -145,9 +145,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Private Invoice",
 				i18n.IT: "Fattura Privata",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyFormat: "FPR12",
-			},
+			}),
 		},
 		{
 			Tags: []cbc.Key{tax.TagB2G},
@@ -155,9 +155,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Government Invoice",
 				i18n.IT: "Fattura Pubblica",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyFormat: "FPA12",
-			},
+			}),
 		},
 		// **** TIPO DOCUMENTO ****
 		{
@@ -167,9 +167,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Regular Invoice",
 				i18n.IT: "Fattura",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD01",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -178,9 +178,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Advance or down payment on invoice",
 				i18n.IT: "Acconto / anticipo su fattura",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD02",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -188,9 +188,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Credit Note",
 				i18n.IT: "Nota di credito",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD04",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
@@ -198,9 +198,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Debit Note",
 				i18n.IT: "Nota di debito",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD05",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -209,9 +209,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Freelancer invoice with retained taxes",
 				i18n.IT: "Parcella",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD06",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -220,9 +220,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Advance or down payment on freelance invoice",
 				i18n.IT: "Acconto / anticipo su parcella",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD03",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -231,9 +231,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Invoice",
 				i18n.IT: "Fattura Semplificata",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD07",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -242,9 +242,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Credit Note",
 				i18n.IT: "Nota di credito semplificata",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD08",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
@@ -253,9 +253,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Debit Note",
 				i18n.IT: "Nota di debito semplificata",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD09",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -264,9 +264,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for self consumption or for free transfer without recourse",
 				i18n.IT: "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD27", // order is important
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -275,9 +275,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Reverse charge",
 				i18n.IT: "Integrazione fattura reverse charge interno",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD16",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -286,9 +286,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Import",
 				i18n.IT: "Integrazione/autofattura per acquisto servizi da estero",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD17",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -297,9 +297,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed EU Goods Import",
 				i18n.IT: "Integrazione per acquisto beni intracomunitari",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD18",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -308,9 +308,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Goods Import",
 				i18n.IT: "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD19",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -319,9 +319,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Regularization",
 				i18n.IT: "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD20",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -330,9 +330,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed invoice when ceiling exceeded",
 				i18n.IT: "Autofattura per splafonamento",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD21",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -341,9 +341,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse",
 				i18n.IT: "Estrazione beni da Deposito IVA",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD22",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -352,9 +352,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse with VAT payment",
 				i18n.IT: "Estrazione beni da Deposito IVA con versamento IVA",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD23",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -363,9 +363,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
 				i18n.IT: "Fattura differita - art.21 c.4 lett. a",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD24",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -374,9 +374,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
 				i18n.IT: "Fattura differita - art.21 c.4 terzo periodo lett. b",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD25",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -385,9 +385,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
 				i18n.IT: "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD26",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -396,9 +396,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Purchases from San Marino with VAT (paper invoice)",
 				i18n.IT: "Acquisti da San Marino con IVA (fattura cartacea)",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocumentType: "TD28",
-			},
+			}),
 		},
 	},
 }

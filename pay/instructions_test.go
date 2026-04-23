@@ -16,12 +16,12 @@ func TestInstructionsNormalize(t *testing.T) {
 		Key:    "online",
 		Ref:    " fooo ",
 		Detail: " Some random payment\t",
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			"random": "",
-		},
+		}),
 	}
 	i.Normalize()
-	assert.Empty(t, i.Ext)
+	assert.True(t, i.Ext.IsZero())
 	assert.Equal(t, "fooo", i.Ref.String())
 	assert.Equal(t, "Some random payment", i.Detail)
 

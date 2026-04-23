@@ -116,7 +116,7 @@ func invoiceRequiresValidCustomer(val any) bool {
 }
 
 func itemIncomeExtPairValid(val any) bool {
-	ext, ok := val.(tax.Extensions)
+	ext, ok := tax.ExtensionsFromValue(val)
 	if !ok {
 		return true
 	}
