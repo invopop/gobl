@@ -13,7 +13,6 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("pl", rules.GOBL.Add("PL"),
-		billInvoiceRules(),
 		taxIdentityRules(),
 	)
 }
