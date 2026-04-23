@@ -165,6 +165,7 @@ func billInvoiceRules() *rules.Set {
 		// Code 06: customer required
 		// Code 07: customer must have tax_id or identity
 		// Code 08: customer tax_id must have code
+		// Code 17: identity country required when identity type is not NIF-VAT
 		rules.When(
 			is.Func("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
@@ -175,6 +176,16 @@ func billInvoiceRules() *rules.Set {
 				rules.Field("tax_id",
 					rules.Field("code",
 						rules.Assert("08", "tax ID must have a code", is.Present),
+					),
+				),
+				rules.Field("identities",
+					rules.Each(
+						rules.When(
+							is.Func("has non-VAT identity type", identityHasNonVATType),
+							rules.Field("country",
+								rules.Assert("17", "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)", is.Present),
+							),
+						),
 					),
 				),
 			),
@@ -273,6 +284,11 @@ func customerHasTaxIDOrIdentity(val any) bool {
 		return true // nil customer handled by Required check
 	}
 	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
+}
+
+func identityHasNonVATType(val any) bool {
+	id, ok := val.(*org.Identity)
+	return ok && id != nil && id.Ext.Has(ExtKeyIdentityType) && !id.Ext.Get(ExtKeyIdentityType).In(ExtCodeIdentityTypeVAT)
 }
 
 func isGeneralNote(val any) bool {

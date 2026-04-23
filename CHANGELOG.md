@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
+- `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
 
 ### Fixed
 
