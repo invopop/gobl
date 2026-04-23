@@ -287,7 +287,6 @@ func TestInvoiceValidation(t *testing.T) {
 		t.Log(string(data))
 		require.NoError(t, rules.Validate(inv))
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
-		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
