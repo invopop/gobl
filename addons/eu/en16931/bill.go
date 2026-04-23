@@ -10,7 +10,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var discountKeyMap = tax.Extensions{
+var discountKeyMap = map[cbc.Key]cbc.Code{
 	bill.DiscountKeyEarlyCompletion:  "41",
 	bill.DiscountKeyMilitary:         "62",
 	bill.DiscountKeyWorkAccident:     "63",
@@ -29,7 +29,7 @@ var discountKeyMap = tax.Extensions{
 
 // The following map is useful to get started, but for most users it will make
 // sense to use the UNTDID codes directly in the extensions.
-var chargeKeyMap = tax.Extensions{
+var chargeKeyMap = map[cbc.Key]cbc.Code{
 	bill.ChargeKeyStampDuty: "ST",
 	bill.ChargeKeyOutlay:    "AAE",
 	bill.ChargeKeyTax:       "TX",
@@ -65,41 +65,41 @@ func normalizeTaxNote(n *tax.Note) {
 
 	// Forward: if key is present, ensure the ext is set
 	if code := vatKeyMap.Get(n.Key); !code.IsEmpty() {
-		n.Ext = n.Ext.Merge(tax.Extensions{
+		n.Ext = n.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyTaxCategory: code,
-		})
+		}))
 	}
 }
 
 func normalizeBillDiscount(m *bill.Discount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.Extensions{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyAllowance: val,
-		})
+		}))
 	}
 }
 
 func normalizeBillLineDiscount(m *bill.LineDiscount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.Extensions{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyAllowance: val,
-		})
+		}))
 	}
 }
 
 func normalizeBillCharge(m *bill.Charge) {
 	if val, ok := chargeKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.Extensions{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyCharge: val,
-		})
+		}))
 	}
 }
 
 func normalizeBillLineCharge(m *bill.LineCharge) {
 	if val, ok := chargeKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.Extensions{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyCharge: val,
-		})
+		}))
 	}
 }
 

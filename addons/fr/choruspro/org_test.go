@@ -44,9 +44,9 @@ func TestNormalizeParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		addon.Normalizer(party)
@@ -90,7 +90,7 @@ func TestNormalizeParty(t *testing.T) {
 		}
 
 		addon.Normalizer(party)
-		assert.Nil(t, party.Ext)
+		assert.True(t, party.Ext.IsZero())
 	})
 
 	t.Run("Normalizes EU company", func(t *testing.T) {
@@ -157,9 +157,9 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -174,9 +174,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "FR",
 				Code:    "12345678901234",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -192,9 +192,9 @@ func TestValidateParty(t *testing.T) {
 					Code: "123456789",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -214,9 +214,9 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -230,9 +230,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "DE",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "2",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -252,9 +252,9 @@ func TestValidateParty(t *testing.T) {
 					Code: "123456789",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "2",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -268,9 +268,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "2",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -284,9 +284,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "3",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -300,9 +300,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "DE",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "3",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -316,9 +316,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "1",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -332,9 +332,9 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "4",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())
@@ -373,9 +373,9 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyScheme: "2",
-			},
+			}),
 		}
 
 		err := rules.Validate(party, withAddonContext())

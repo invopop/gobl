@@ -17,15 +17,15 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeySelfBilling: "1",
-		})
+		}))
 	}
 
 	if inv.HasTags(tax.TagReverseCharge) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyReverseCharge: "1",
-		})
+		}))
 	}
 
 	// Even if we know that the invoice is exempt (has tag tax.KeyExempt), we cannot autogenerate values

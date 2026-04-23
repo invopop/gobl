@@ -70,9 +70,9 @@ func normalizeOrgNote(n *org.Note) {
 	}
 
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
-		n.Ext = n.Ext.Merge(tax.Extensions{
+		n.Ext = n.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			untdid.ExtKeyTextSubject: code,
-		})
+		}))
 	}
 }
 
@@ -93,9 +93,9 @@ func normalizeOrgIdentity(i *org.Identity) {
 	// Check for key-based identity mapping first
 	if i.Key != cbc.KeyEmpty {
 		if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
-			i.Ext = i.Ext.Merge(tax.Extensions{
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: scheme,
-			})
+			}))
 			return
 		}
 	}
@@ -103,9 +103,9 @@ func normalizeOrgIdentity(i *org.Identity) {
 	// Check for type-based identity mapping (used by some regimes like France)
 	if i.Type != cbc.CodeEmpty {
 		if scheme, ok := orgIdentityTypeSchemeMap[i.Type]; ok {
-			i.Ext = i.Ext.Merge(tax.Extensions{
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: scheme,
-			})
+			}))
 		}
 	}
 }

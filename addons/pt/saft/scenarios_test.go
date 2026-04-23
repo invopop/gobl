@@ -17,8 +17,8 @@ func TestInvoice(t *testing.T) {
 	t.Run("regular", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "FT", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
-		assert.Equal(t, "NOR", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "FT", inv.Tax.Ext.Get(saft.ExtKeyInvoiceType).String())
+		assert.Equal(t, "NOR", inv.Lines[0].Taxes[0].Ext.Get(saft.ExtKeyTaxRate).String())
 
 		assert.NoError(t, rules.Validate(inv))
 	})
@@ -35,7 +35,7 @@ func TestInvoice(t *testing.T) {
 		}
 		inv.Series = "FR SERIES-A"
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "FR", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
+		assert.Equal(t, "FR", inv.Tax.Ext.Get(saft.ExtKeyInvoiceType).String())
 		assert.NoError(t, rules.Validate(inv))
 	})
 
@@ -43,7 +43,7 @@ func TestInvoice(t *testing.T) {
 		inv := validInvoice()
 		inv.Lines[0].Taxes[0].Rate = tax.RateReduced
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "RED", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "RED", inv.Lines[0].Taxes[0].Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.NoError(t, rules.Validate(inv))
 	})
 
@@ -51,7 +51,7 @@ func TestInvoice(t *testing.T) {
 		inv := validInvoice()
 		inv.Lines[0].Taxes[0].Rate = tax.RateIntermediate
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "INT", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "INT", inv.Lines[0].Taxes[0].Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.NoError(t, rules.Validate(inv))
 	})
 
@@ -67,16 +67,16 @@ func TestInvoice(t *testing.T) {
 
 		require.NoError(t, inv.Calculate())
 
-		assert.Empty(t, tc.Ext[saft.ExtKeyTaxRate].String())
+		assert.Empty(t, tc.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "exempt", tc.Key.String())
-		assert.Equal(t, "M40", tc.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "M40", tc.Ext.Get(saft.ExtKeyExemption).String())
 
 		// Add the addon and re-calculate
 		inv.Addons = tax.WithAddons(saft.V1)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "ISE", tc.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "ISE", tc.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "reverse-charge", tc.Key.String())
-		assert.Equal(t, "M40", tc.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "M40", tc.Ext.Get(saft.ExtKeyExemption).String())
 	})
 
 	t.Run("exempt", func(t *testing.T) {
@@ -85,20 +85,20 @@ func TestInvoice(t *testing.T) {
 		tc.Key = tax.KeyExempt
 		tc.Rate = ""
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "ISE", tc.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M07", tc.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", tc.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M07", tc.Ext.Get(saft.ExtKeyExemption).String())
 
 		// Allow override as this is "exempt"
-		tc.Ext[saft.ExtKeyExemption] = "M04"
+		tc.Ext = tc.Ext.Set(saft.ExtKeyExemption, "M04")
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "export", tc.Key.String())
-		assert.Equal(t, "M04", tc.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "M04", tc.Ext.Get(saft.ExtKeyExemption).String())
 
 		// Do not allow override from "export" back to "exempt", but
 		// force the code back to default "M05"
-		tc.Ext[saft.ExtKeyExemption] = "M01"
+		tc.Ext = tc.Ext.Set(saft.ExtKeyExemption, "M01")
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "export", tc.Key.String())
-		assert.Equal(t, "M05", tc.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "M05", tc.Ext.Get(saft.ExtKeyExemption).String())
 	})
 }

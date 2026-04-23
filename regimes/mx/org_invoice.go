@@ -23,22 +23,22 @@ func normalizeInvoice(inv *bill.Invoice) {
 
 // 2024-04-26: copy suppliers post code to invoice, if not alread set.
 func migrateSupplierExtPostCodeToInvoice(inv *bill.Invoice) {
-	ext := make(tax.Extensions)
-	if inv.Tax != nil && inv.Tax.Ext != nil {
+	ext := tax.MakeExtensions()
+	if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
 		ext = inv.Tax.Ext
 	}
 	if ext.Has(extKeyIssuePlace) || inv.Supplier == nil {
 		return
 	}
 	if inv.Supplier.Ext.Has(extKeyPostCode) {
-		ext[extKeyIssuePlace] = inv.Supplier.Ext[extKeyPostCode]
+		ext = ext.Set(extKeyIssuePlace, inv.Supplier.Ext.Get(extKeyPostCode))
 	} else if len(inv.Supplier.Addresses) > 0 {
 		addr := inv.Supplier.Addresses[0]
 		if addr.Code != "" {
-			ext[extKeyIssuePlace] = addr.Code
+			ext = ext.Set(extKeyIssuePlace, addr.Code)
 		}
 	}
-	if len(ext) > 0 {
+	if ext.Len() > 0 {
 		if inv.Tax == nil {
 			inv.Tax = new(bill.Tax)
 		}
@@ -52,7 +52,7 @@ func migrateCustomerExtPostCodeToAddress(inv *bill.Invoice) {
 		if len(inv.Customer.Addresses) == 0 {
 			inv.Customer.Addresses = []*org.Address{{}}
 		}
-		inv.Customer.Addresses[0].Code = inv.Customer.Ext[extKeyPostCode]
+		inv.Customer.Addresses[0].Code = inv.Customer.Ext.Get(extKeyPostCode)
 	}
 }
 
@@ -62,5 +62,5 @@ func deleteExtPostCode(p *org.Party) {
 		return
 	}
 
-	delete(p.Ext, extKeyPostCode)
+	p.Ext = p.Ext.Delete(extKeyPostCode)
 }

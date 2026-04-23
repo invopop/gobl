@@ -24,7 +24,7 @@ type Terms struct {
 	// Description of the conditions for payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Extensions to the terms for local codes.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // TermKeyDef holds a definition of a single payment term key
@@ -143,7 +143,7 @@ func (t *Terms) Normalize() {
 	}
 
 	t.Notes = cbc.NormalizeString(t.Notes)
-	t.Ext = tax.CleanExtensions(t.Ext)
+	t.Ext = t.Ext.Clean()
 }
 
 // UNTDID4279 returns the UNTDID 4279 code associated with the terms key.

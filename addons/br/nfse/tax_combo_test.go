@@ -21,9 +21,9 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "valid ISS tax combo",
 			tc: &tax.Combo{
 				Category: br.TaxCategoryISS,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyISSLiability: "1",
-				},
+				}),
 			},
 		},
 		{
@@ -77,9 +77,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "does not override ISS liability",
 			tc: &tax.Combo{
 				Category: br.TaxCategoryISS,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyISSLiability: "2",
-				},
+				}),
 			},
 			out: "2",
 		},
@@ -97,7 +97,7 @@ func TestTaxComboNormalization(t *testing.T) {
 				assert.Nil(t, ts.tc)
 			} else {
 				assert.NotNil(t, ts.tc)
-				assert.Equal(t, ts.out, ts.tc.Ext[nfse.ExtKeyISSLiability])
+				assert.Equal(t, ts.out, ts.tc.Ext.Get(nfse.ExtKeyISSLiability))
 			}
 		})
 	}

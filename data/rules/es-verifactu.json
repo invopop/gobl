@@ -158,7 +158,7 @@
                               "assert": [
                                 {
                                   "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-17",
-                                  "desc": "country is required when 'es-verifactu-identity-type' is not NIF-VAT (02)",
+                                  "desc": "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)",
                                   "tests": "present"
                                 }
                               ]

@@ -24,37 +24,37 @@ func TestNormalizeCharge(t *testing.T) {
 	t.Run("with fee extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyFee: "13",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeFee, c.Ext[mydata.ExtKeyTaxType].String())
-		assert.Equal(t, "13", c.Ext[mydata.ExtKeyFee].String())
+		assert.Equal(t, mydata.TaxTypeFee, c.Ext.Get(mydata.ExtKeyTaxType).String())
+		assert.Equal(t, "13", c.Ext.Get(mydata.ExtKeyFee).String())
 	})
 
 	t.Run("with other tax extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyOtherTax: "8",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext[mydata.ExtKeyTaxType].String())
-		assert.Equal(t, "8", c.Ext[mydata.ExtKeyOtherTax].String())
+		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
+		assert.Equal(t, "8", c.Ext.Get(mydata.ExtKeyOtherTax).String())
 	})
 
 	t.Run("with stamp duty extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyStampDuty: "1",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext[mydata.ExtKeyTaxType].String())
-		assert.Equal(t, "1", c.Ext[mydata.ExtKeyStampDuty].String())
+		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
+		assert.Equal(t, "1", c.Ext.Get(mydata.ExtKeyStampDuty).String())
 	})
 
 	t.Run("without any tax extension", func(t *testing.T) {
@@ -63,57 +63,57 @@ func TestNormalizeCharge(t *testing.T) {
 			Reason: "Some charge",
 		}
 		ad.Normalizer(c)
-		assert.Nil(t, c.Ext)
+		assert.True(t, c.Ext.IsZero())
 	})
 
 	t.Run("with type extension set", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeOtherTax,
 				mydata.ExtKeyFee:     "13",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext[mydata.ExtKeyTaxType].String())
+		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
 	})
 
 	t.Run("with stamp duty charge key and existing extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyStampDuty,
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyFee: "13",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext[mydata.ExtKeyTaxType].String())
-		assert.Equal(t, "13", c.Ext[mydata.ExtKeyFee].String())
+		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
+		assert.Equal(t, "13", c.Ext.Get(mydata.ExtKeyFee).String())
 	})
 
 	t.Run("with tax charge key and existing extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyTax,
 			Amount: num.MakeAmount(500, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyOtherTax: "8",
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext[mydata.ExtKeyTaxType].String())
-		assert.Equal(t, "8", c.Ext[mydata.ExtKeyOtherTax].String())
+		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
+		assert.Equal(t, "8", c.Ext.Get(mydata.ExtKeyOtherTax).String())
 	})
 
 	t.Run("charge key overrides existing tax type", func(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyStampDuty,
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
-			},
+			}),
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext[mydata.ExtKeyTaxType].String())
+		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
 	})
 }
 
@@ -127,10 +127,10 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid fee", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: "2",
 				mydata.ExtKeyFee:     "13",
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
@@ -139,10 +139,10 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid other tax", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType:  "3",
 				mydata.ExtKeyOtherTax: "8",
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
@@ -151,10 +151,10 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid stamp duty", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType:   "4",
 				mydata.ExtKeyStampDuty: "1",
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		assert.NoError(t, err)
@@ -163,9 +163,9 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing fee extension for fee type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
@@ -175,9 +175,9 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing other tax extension for other tax type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeOtherTax,
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
@@ -187,9 +187,9 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing stamp duty extension for stamp duty type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeStampDuty,
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)
@@ -199,11 +199,11 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("multiple specific extensions", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1500, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				mydata.ExtKeyTaxType:  mydata.TaxTypeFee,
 				mydata.ExtKeyFee:      "13",
 				mydata.ExtKeyOtherTax: "8",
-			},
+			}),
 		}
 		err := rules.Validate(c, withAddonContext())
 		require.Error(t, err)

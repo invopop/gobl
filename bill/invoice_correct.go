@@ -35,7 +35,7 @@ type CorrectionOptions struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Extensions for region specific requirements that may be added in the preceding
 	// or at the document level, according to the local rules.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// CopyTax when true will copy the tax totals from the previous document to the
 	// preceding document data.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
@@ -95,10 +95,7 @@ func WithReason(reason string) schema.Option {
 func WithExtension(key cbc.Key, code cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		if opts.Ext == nil {
-			opts.Ext = make(tax.Extensions)
-		}
-		opts.Ext[key] = code
+		opts.Ext = opts.Ext.Set(key, code)
 	}
 }
 

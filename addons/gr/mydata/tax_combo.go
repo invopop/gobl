@@ -11,7 +11,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxComboRateMapVAT = tax.Extensions{
+var taxComboRateMapVAT = map[cbc.Key]cbc.Code{
 	tax.RateGeneral:                             "1",
 	tax.RateReduced:                             "2",
 	tax.RateSuperReduced:                        "3",

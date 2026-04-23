@@ -31,23 +31,23 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Ext: tax.Extensions{cfdi.ExtKeyProdServ: ts.Code}}
+		item := &org.Item{Ext: tax.ExtensionsOf(tax.ExtMap{cfdi.ExtKeyProdServ: ts.Code})}
 		addon.Normalizer(item)
-		assert.Equal(t, ts.Expected, item.Ext[cfdi.ExtKeyProdServ])
+		assert.Equal(t, ts.Expected, item.Ext.Get(cfdi.ExtKeyProdServ))
 	}
 
 	// In context of invoice
 	inv := validInvoice()
-	inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ] = "010101"
+	inv.Lines[0].Item.Ext = inv.Lines[0].Item.Ext.Set(cfdi.ExtKeyProdServ, "010101")
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, cbc.Code("01010100"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, cbc.Code("01010100"), inv.Lines[0].Item.Ext.Get(cfdi.ExtKeyProdServ))
 }
 
 func TestItemIdentityMigration(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Lines[0].Item.Ext = nil
+	inv.Lines[0].Item.Ext = tax.Extensions{}
 	inv.Lines[0].Item.Identities = []*org.Identity{
 		{
 			Key:  cfdi.ExtKeyProdServ,
@@ -61,6 +61,6 @@ func TestItemIdentityMigration(t *testing.T) {
 
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext.Get(cfdi.ExtKeyProdServ))
 	assert.Equal(t, "1234", inv.Lines[0].Item.Identities[0].Code.String())
 }

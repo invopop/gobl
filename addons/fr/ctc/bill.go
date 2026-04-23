@@ -124,7 +124,7 @@ func isB2BTransaction(inv *bill.Invoice) bool {
 	}
 
 	for _, note := range inv.Notes {
-		if note != nil && note.Ext != nil {
+		if note != nil && !note.Ext.IsZero() {
 			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" && note.Text == "B2B" {
 				// Check if note text indicates B2B transaction (B2B or B2BINT)
 				return true
@@ -137,7 +137,7 @@ func isB2BTransaction(inv *bill.Invoice) bool {
 
 // isSelfBilledInvoice checks if the invoice is self-billed based on document type
 func isSelfBilledInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 
@@ -151,7 +151,7 @@ func isSelfBilledInvoice(inv *bill.Invoice) bool {
 
 // isCorrectiveInvoice checks if the invoice is corrective based on document type
 func isCorrectiveInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 
@@ -169,7 +169,7 @@ func isPartyIdentitySTC(party *org.Party) bool {
 	}
 
 	for _, id := range party.Identities {
-		if id != nil && id.Ext != nil {
+		if id != nil && !id.Ext.IsZero() {
 			if code := id.Ext.Get(iso.ExtKeySchemeID); code == "0231" {
 				return true
 			}
@@ -179,7 +179,7 @@ func isPartyIdentitySTC(party *org.Party) bool {
 }
 
 func isCreditNote(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
@@ -187,7 +187,7 @@ func isCreditNote(inv *bill.Invoice) bool {
 }
 
 func isConsolidatedCreditNote(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
@@ -195,7 +195,7 @@ func isConsolidatedCreditNote(inv *bill.Invoice) bool {
 }
 
 func isAdvancedInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 
@@ -205,7 +205,7 @@ func isAdvancedInvoice(inv *bill.Invoice) bool {
 
 // isFinalInvoice checks if the invoice is a final invoice based on billing mode (B2, S2, M2)
 func isFinalInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 
@@ -225,7 +225,7 @@ func getPartySIREN(party *org.Party) string {
 
 	// SIREN identity - check by type or ISO scheme ID 0002
 	for _, id := range party.Identities {
-		if id != nil && (id.Type == fr.IdentityTypeSIREN || (id.Ext != nil && id.Ext[iso.ExtKeySchemeID] == identitySchemeIDSIREN)) {
+		if id != nil && (id.Type == fr.IdentityTypeSIREN || (!id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDSIREN)) {
 			return string(id.Code)
 		}
 	}
