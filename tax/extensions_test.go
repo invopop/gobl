@@ -864,11 +864,22 @@ func TestExtensionsRuleTestInterface(t *testing.T) {
 	assert.True(t, rule.Check("not an extensions"))
 }
 
-func TestExtensionsJSONSchemaAlias(t *testing.T) {
-	// The alias is what drives the schema generator to treat Extensions as
-	// a flat map[cbc.Key]cbc.Code.
+func TestExtensionsJSONSchemaExtendShape(t *testing.T) {
+	// JSONSchemaExtend is responsible for converting the struct reflection
+	// (empty properties / additionalProperties: false) into a
+	// patternProperties schema that mirrors the old map-based shape.
+	s := &jsonschema.Schema{
+		Type:                 "object",
+		Properties:           jsonschema.NewProperties(),
+		AdditionalProperties: jsonschema.FalseSchema,
+	}
 	var em tax.Extensions
-	alias := em.JSONSchemaAlias()
-	_, ok := alias.(map[cbc.Key]cbc.Code)
-	assert.True(t, ok, "JSONSchemaAlias must return map[cbc.Key]cbc.Code")
+	em.JSONSchemaExtend(s)
+	assert.Nil(t, s.Properties, "Properties should be cleared")
+	assert.Nil(t, s.AdditionalProperties, "AdditionalProperties should be cleared")
+	require.Len(t, s.PatternProperties, 1)
+	pp, ok := s.PatternProperties[cbc.KeyPattern]
+	require.True(t, ok, "PatternProperties must be keyed by cbc.KeyPattern")
+	assert.Equal(t, "https://gobl.org/draft-0/cbc/code", pp.Ref,
+		"pattern value must reference cbc.Code via schema.Lookup")
 }

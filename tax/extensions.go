@@ -14,6 +14,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 )
 
@@ -662,20 +663,16 @@ func extCodeList(codes []cbc.Code) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// JSONSchemaAlias tells the JSON schema generator to treat Extensions as a
-// map[cbc.Key]cbc.Code. Combined with JSONSchemaExtend below, this
-// reproduces the same schema shape as when Extensions was a plain map type.
-func (Extensions) JSONSchemaAlias() any {
-	return map[cbc.Key]cbc.Code{}
-}
-
-// JSONSchemaExtend provides extra details about the extension map which are
-// not automatically determined. In this case we add validation for the map's
-// keys.
-func (Extensions) JSONSchemaExtend(schema *jsonschema.Schema) {
-	prop := schema.AdditionalProperties
-	schema.AdditionalProperties = nil
-	schema.PatternProperties = map[string]*jsonschema.Schema{
-		cbc.KeyPattern: prop,
+// JSONSchemaExtend replaces the struct-reflection artefacts (empty
+// `properties`, `additionalProperties: false`) with a pattern-properties
+// schema that reproduces the shape Extensions had as a map type:
+// keys must match the cbc.Key pattern, and values are references to the
+// cbc.Code schema. The ref target is resolved via `schema.Lookup` so we
+// don't hardcode the URL.
+func (Extensions) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Properties = nil
+	s.AdditionalProperties = nil
+	s.PatternProperties = map[string]*jsonschema.Schema{
+		cbc.KeyPattern: {Ref: schema.Lookup(cbc.Code("")).String()},
 	}
 }
