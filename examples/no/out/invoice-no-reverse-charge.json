@@ -1,0 +1,100 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f4026fd9356d19338676750abc22703466e83fe565369cb303faa37508fe69dd"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "5cfb9d78-7afa-4ded-b2df-a0a402f074c2",
+		"type": "standard",
+		"series": "2025",
+		"code": "0003",
+		"issue_date": "2025-06-20",
+		"currency": "NOK",
+		"supplier": {
+			"name": "Eksempel AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			},
+			"addresses": [
+				{
+					"street": "Eksempelveien 1",
+					"locality": "Oslo",
+					"code": "0150",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Foreign Customer Ltd",
+			"tax_id": {
+				"country": "GB",
+				"code": "000472631"
+			},
+			"addresses": [
+				{
+					"street": "123 Main St",
+					"locality": "London",
+					"country": "GB"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Konsulenttjenester",
+					"price": "2000.00"
+				},
+				"sum": "10000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "10000.00"
+			}
+		],
+		"totals": {
+			"sum": "10000.00",
+			"total": "10000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "10000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "10000.00",
+			"payable": "10000.00"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
+			}
+		]
+	}
+}

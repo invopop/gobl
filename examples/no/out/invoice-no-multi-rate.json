@@ -1,0 +1,142 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c8e62e8385dcc752dd76836a8b93fb03e713737541c886cf1e1b946bcbfa420a"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NO",
+		"uuid": "b5d2e3f4-6a7b-8c9d-0e1f-2a3b4c5d6e7f",
+		"type": "standard",
+		"series": "2025",
+		"code": "0005",
+		"issue_date": "2025-06-28",
+		"currency": "NOK",
+		"supplier": {
+			"name": "Reisebyrå AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "923456783"
+			},
+			"addresses": [
+				{
+					"street": "Eksempelveien 1",
+					"locality": "Oslo",
+					"code": "0150",
+					"country": "NO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Mottaker AS",
+			"tax_id": {
+				"country": "NO",
+				"code": "987654325"
+			},
+			"addresses": [
+				{
+					"street": "Kundeveien 42",
+					"locality": "Bergen",
+					"code": "5003",
+					"country": "NO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Konsulenttjenester",
+					"price": "1500.00"
+				},
+				"sum": "15000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "15000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "20",
+				"item": {
+					"name": "Fersk laks",
+					"price": "250.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "15.0%"
+					}
+				],
+				"total": "5000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "4",
+				"item": {
+					"name": "Hotellovernatting",
+					"price": "1200.00"
+				},
+				"sum": "4800.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "super-reduced",
+						"percent": "12.0%"
+					}
+				],
+				"total": "4800.00"
+			}
+		],
+		"totals": {
+			"sum": "24800.00",
+			"total": "24800.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "15000.00",
+								"percent": "25.0%",
+								"amount": "3750.00"
+							},
+							{
+								"key": "standard",
+								"base": "5000.00",
+								"percent": "15.0%",
+								"amount": "750.00"
+							},
+							{
+								"key": "standard",
+								"base": "4800.00",
+								"percent": "12.0%",
+								"amount": "576.00"
+							}
+						],
+						"amount": "5076.00"
+					}
+				],
+				"sum": "5076.00"
+			},
+			"tax": "5076.00",
+			"total_with_tax": "29876.00",
+			"payable": "29876.00"
+		}
+	}
+}
