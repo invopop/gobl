@@ -11,6 +11,11 @@
           "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-16",
           "desc": "invoice must be in EUR or provide exchange rate for conversion",
           "tests": "can convert to [EUR]"
+        },
+        {
+          "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-20",
+          "desc": "invoice series and code combined must be 60 characters or less",
+          "tests": "series and code fit"
         }
       ],
       "subsets": [
@@ -47,6 +52,16 @@
                           "tests": "present"
                         }
                       ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-21",
+                          "desc": "preceding series and code combined must be 60 characters or less",
+                          "tests": "series and code fit"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -73,6 +88,71 @@
                               "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-03",
                               "desc": "preceding invoice tax data is required for corrective invoices",
                               "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "name",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-18",
+                      "desc": "supplier name must be 120 characters or less",
+                      "tests": "length between 0 and 120"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "name",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-19",
+                      "desc": "customer name must be 120 characters or less",
+                      "tests": "length between 0 and 120"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "tax_id",
+              "subsets": [
+                {
+                  "guard": "non-ES tax ID",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "subsets": [
+                        {
+                          "guard": "present",
+                          "assert": [
+                            {
+                              "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-22",
+                              "desc": "non-Spanish customer tax ID code must be 18 characters or less",
+                              "tests": "length between 0 and 18"
                             }
                           ]
                         }
@@ -158,7 +238,7 @@
                               "assert": [
                                 {
                                   "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-17",
-                                  "desc": "country is required when 'es-verifactu-identity-type' is not NIF-VAT (02)",
+                                  "desc": "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)",
                                   "tests": "present"
                                 }
                               ]
@@ -285,6 +365,26 @@
                       "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-15",
                       "desc": "must include at least one of VAT, IGIC, or IPSI",
                       "tests": "one of [VAT, IGIC, IPSI]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "totals",
+          "subsets": [
+            {
+              "field": "taxes",
+              "subsets": [
+                {
+                  "field": "categories",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-VERIFACTU-BILL-INVOICE-23",
+                      "desc": "non-retained tax rates cannot exceed 12",
+                      "tests": "non-retained rate count within limit"
                     }
                   ]
                 }
