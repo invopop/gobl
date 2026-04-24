@@ -1,6 +1,6 @@
-// Package ctc handles the extensions and validation rules for the French
+// Package flow2 handles the extensions and validation rules for the French
 // CTC (Cycle de Traitement de la Commande) Flow 2 B2B e-invoicing requirements.
-package ctc
+package flow2
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
@@ -15,22 +15,22 @@ import (
 )
 
 const (
-	// Flow2Key identifies the French CTC Flow 2 addon family. Individual
+	// Key identifies the French CTC Flow 2 addon family. Individual
 	// versions append a suffix; the family key is used as the fault-code
 	// namespace so that rules that carry across versions keep stable codes.
 	// Flow 1 is a separate rule family, not a prior version of Flow 2.
-	Flow2Key cbc.Key = "fr-ctc-flow2"
+	Key cbc.Key = "fr-ctc-flow2"
 
-	// Flow2V1 is the key for the French CTC addon
-	Flow2V1 cbc.Key = Flow2Key + "-v1"
+	// V1 is the key for the French CTC Flow 2 addon
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		Flow2Key.String(),
+		Key.String(),
 		rules.GOBL.Add("FR-CTC-FLOW2"),
-		is.InContext(tax.AddonIn(Flow2V1)),
+		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		orgPartyRules(),
 		orgIdentityRules(),
@@ -41,7 +41,7 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key: Flow2V1,
+		Key: V1,
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 2",
 			i18n.FR: "France CTC Flux 2",

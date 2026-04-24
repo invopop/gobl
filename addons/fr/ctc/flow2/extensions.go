@@ -1,4 +1,4 @@
-package ctc
+package flow2
 
 import (
 	"github.com/invopop/gobl/cbc"

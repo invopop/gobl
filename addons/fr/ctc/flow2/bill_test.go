@@ -1,9 +1,9 @@
-package ctc_test
+package flow2_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/fr/ctc"
+	ctc "github.com/invopop/gobl/addons/fr/ctc/flow2"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/iso"
@@ -24,7 +24,7 @@ func testInvoiceB2BStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
 		Regime:   tax.WithRegime("FR"),
-		Addons:   tax.WithAddons(ctc.Flow2V1),
+		Addons:   tax.WithAddons(ctc.V1),
 		Code:     "FAC-2024-001",
 		Currency: "EUR",
 		Type:     bill.InvoiceTypeStandard,
@@ -2016,7 +2016,7 @@ func TestFinalInvoiceTypes(t *testing.T) {
 }
 
 func TestInvoiceNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
+	ad := tax.AddonForKey(ctc.V1)
 
 	t.Run("normalizes invoice with existing tax", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
@@ -2294,7 +2294,7 @@ func TestDeliveryAndTotalsValidation(t *testing.T) {
 
 func withAddonContext() rules.WithContext {
 	return func(rc *rules.Context) {
-		rc.Set(rules.ContextKey(ctc.Flow2V1), tax.AddonForKey(ctc.Flow2V1))
+		rc.Set(rules.ContextKey(ctc.V1), tax.AddonForKey(ctc.V1))
 	}
 }
 

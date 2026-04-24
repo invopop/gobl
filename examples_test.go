@@ -27,6 +27,7 @@ var skipExamplePaths = []string{
 	".golangci.yaml",
 	"wasm/",
 	".claude/",
+	"cdar_mapping.yaml",
 	".git/",
 	"internal/",
 	"pkg/",
