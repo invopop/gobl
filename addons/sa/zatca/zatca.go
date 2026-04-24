@@ -3,10 +3,10 @@
 package zatca
 
 import (
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -28,7 +28,6 @@ func init() {
 		orgAddressRules(),
 		taxComboRules(),
 		billDiscountRules(),
-		payInstructionsRules(),
 	)
 }
 
@@ -38,6 +37,9 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Saudi Arabia ZATCA",
 			i18n.AR: "هيئة الزكاة والضريبة والجمارك",
+		},
+		Requires: []cbc.Key{
+			en16931.V2017,
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
@@ -70,7 +72,5 @@ func normalize(doc any) {
 		normalizeInvoice(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
 	}
 }

@@ -4,13 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a8cfe56ca6eb7f4ce41006c8f0699add60f042847b4176521396bac8594fe626"
+			"val": "73f885721be519736af65951c84c019ebc7ad74fde7808b56aeea9dd91302e62"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "SA",
 		"$addons": [
+			"eu-en16931-v2017",
 			"sa-zatca-v1"
 		],
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120003",
@@ -282,11 +283,17 @@
 		"notes": [
 			{
 				"key": "general",
-				"text": "Monthly summary credit note covering January 2024 adjustments."
+				"text": "Monthly summary credit note covering January 2024 adjustments.",
+				"ext": {
+					"untdid-text-subject": "AAI"
+				}
 			},
 			{
 				"key": "reason",
-				"text": "Customer returned 5 hours of consultancy and the office equipment delivered on 28 Jan."
+				"text": "Customer returned 5 hours of consultancy and the office equipment delivered on 28 Jan.",
+				"ext": {
+					"untdid-text-subject": "ACD"
+				}
 			}
 		]
 	}

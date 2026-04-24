@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8c53d04b2aed6457312a401a08660c65fb1ef73d8b92b8778810f32cf6a7a679"
+			"val": "95e8d6ab6749a448fe0c78375ed1276677a9fc3d519e10900762236557279f30"
 		}
 	},
 	"doc": {
@@ -14,24 +14,28 @@
 			"eu-en16931-v2017",
 			"sa-zatca-v1"
 		],
-		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
-		"type": "standard",
-		"code": "SAMPLE-001",
-		"issue_date": "2022-02-01",
-		"issue_time": "12:00:00",
-		"currency": "USD",
-		"exchange_rates": [
+		"uuid": "a1b2c3d4-2222-4aaa-bbbb-000000000002",
+		"type": "debit-note",
+		"series": "DN",
+		"code": "DN-001",
+		"issue_date": "2022-03-01",
+		"issue_time": "10:00:00",
+		"currency": "SAR",
+		"preceding": [
 			{
-				"from": "USD",
-				"to": "SAR",
-				"amount": "3.75"
+				"issue_date": "2022-02-01",
+				"code": "SAMPLE-001",
+				"reason": "Price adjustment for development services",
+				"ext": {
+					"untdid-document-type": "388"
+				}
 			}
 		],
 		"tax": {
 			"rounding": "currency",
 			"ext": {
 				"sa-zatca-invoice-type": "0100000",
-				"untdid-document-type": "388"
+				"untdid-document-type": "383"
 			}
 		},
 		"supplier": {
@@ -81,13 +85,13 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "5",
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
 					"unit": "h"
 				},
-				"sum": "1800.00",
+				"sum": "450.00",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -99,7 +103,7 @@
 						}
 					}
 				],
-				"total": "1800.00"
+				"total": "450.00"
 			}
 		],
 		"payment": {
@@ -114,15 +118,15 @@
 			}
 		},
 		"delivery": {
-			"date": "2022-02-01",
+			"date": "2022-03-01",
 			"period": {
 				"start": "2022-02-01",
 				"end": "2022-02-28"
 			}
 		},
 		"totals": {
-			"sum": "1800.00",
-			"total": "1800.00",
+			"sum": "450.00",
+			"total": "450.00",
 			"taxes": {
 				"categories": [
 					{
@@ -133,19 +137,19 @@
 								"ext": {
 									"untdid-tax-category": "S"
 								},
-								"base": "1800.00",
+								"base": "450.00",
 								"percent": "15.0%",
-								"amount": "270.00"
+								"amount": "67.50"
 							}
 						],
-						"amount": "270.00"
+						"amount": "67.50"
 					}
 				],
-				"sum": "270.00"
+				"sum": "67.50"
 			},
-			"tax": "270.00",
-			"total_with_tax": "2070.00",
-			"payable": "2070.00"
+			"tax": "67.50",
+			"total_with_tax": "517.50",
+			"payable": "517.50"
 		}
 	}
 }
