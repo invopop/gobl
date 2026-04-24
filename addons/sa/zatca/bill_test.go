@@ -3,8 +3,11 @@ package zatca_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/addons/sa/zatca"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/catalogues/cef"
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -81,6 +84,211 @@ func TestNormalizeInvoice(t *testing.T) {
 		assert.NotPanics(t, func() {
 			ad.Normalizer(inv)
 		})
+	})
+}
+
+func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
+	ad := tax.AddonForKey(zatca.V1)
+
+	t.Run("exempt line gets tax note", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Exempt item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-29",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryExempt,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Tax.Notes, 1)
+		n := inv.Tax.Notes[0]
+		assert.Equal(t, tax.CategoryVAT, n.Category)
+		assert.Equal(t, tax.KeyExempt, n.Key)
+		assert.Equal(t, "Financial services mentioned in Article 29 of the VAT Regulations", n.Text)
+		assert.Equal(t, en16931.TaxCategoryExempt, n.Ext.Get(untdid.ExtKeyTaxCategory))
+	})
+
+	t.Run("zero-rated line gets tax note", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Export item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyZero,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-32",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryZero,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Tax.Notes, 1)
+		n := inv.Tax.Notes[0]
+		assert.Equal(t, tax.CategoryVAT, n.Category)
+		assert.Equal(t, tax.KeyZero, n.Key)
+		assert.Equal(t, "Export of goods", n.Text)
+		assert.Equal(t, en16931.TaxCategoryZero, n.Ext.Get(untdid.ExtKeyTaxCategory))
+	})
+
+	t.Run("outside-scope line gets tax note", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "OOS item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyOutsideScope,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-OOS",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryOutsideScope,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Tax.Notes, 1)
+		n := inv.Tax.Notes[0]
+		assert.Equal(t, tax.CategoryVAT, n.Category)
+		assert.Equal(t, tax.KeyOutsideScope, n.Key)
+		assert.Equal(t, "Reason is free text, to be provided by the taxpayer on case to case basis", n.Text)
+		assert.Equal(t, en16931.TaxCategoryOutsideScope, n.Ext.Get(untdid.ExtKeyTaxCategory))
+	})
+
+	t.Run("standard VAT line does not add note", func(t *testing.T) {
+		inv := validStandardInvoice()
+		ad.Normalizer(inv)
+		assert.Empty(t, inv.Tax.Notes)
+	})
+
+	t.Run("existing note for same category not duplicated", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{
+				{
+					Category: tax.CategoryVAT,
+					Key:      tax.KeyExempt,
+					Text:     "Existing exemption note",
+					Ext:      tax.Extensions{untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt},
+				},
+			},
+		}
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Exempt item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-29",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryExempt,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		assert.Len(t, inv.Tax.Notes, 1)
+		assert.Equal(t, "Existing exemption note", inv.Tax.Notes[0].Text)
+	})
+
+	t.Run("unknown VATEX code does not add note", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Unknown item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-XX-99",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryExempt,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		assert.Empty(t, inv.Tax.Notes)
+	})
+
+	t.Run("multiple lines with different categories get separate notes", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Exempt item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-29",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryExempt,
+						},
+					},
+				},
+			},
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Export item",
+					Price: num.NewAmount(200, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyZero,
+						Ext: tax.Extensions{
+							cef.ExtKeyVATEX:            "VATEX-SA-32",
+							untdid.ExtKeyTaxCategory:   en16931.TaxCategoryZero,
+						},
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Tax.Notes, 2)
+		assert.Equal(t, en16931.TaxCategoryExempt, inv.Tax.Notes[0].Ext.Get(untdid.ExtKeyTaxCategory))
+		assert.Equal(t, en16931.TaxCategoryZero, inv.Tax.Notes[1].Ext.Get(untdid.ExtKeyTaxCategory))
 	})
 }
 

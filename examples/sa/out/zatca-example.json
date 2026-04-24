@@ -1,0 +1,151 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "84bd2dd1a7238fb7f6cd002173a2424d28eb138fd08111abc6f8db80b42f2245"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"$addons": [
+			"sa-zatca-v1"
+		],
+		"uuid": "8d487816-70b8-4ade-a618-9d620b73814a",
+		"type": "standard",
+		"code": "SME00023",
+		"issue_date": "2022-09-07",
+		"issue_time": "12:21:28",
+		"currency": "SAR",
+		"tax": {
+			"rounding": "currency",
+			"ext": {
+				"sa-zatca-invoice-type": "0100000",
+				"untdid-document-type": "388"
+			}
+		},
+		"supplier": {
+			"name": "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD",
+			"tax_id": {
+				"country": "SA",
+				"code": "399999999900003"
+			},
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "1010010000"
+				}
+			],
+			"addresses": [
+				{
+					"num": "2322",
+					"street": "الامير سلطان | Prince Sultan",
+					"street_extra": "المربع | Al-Murabba",
+					"locality": "الرياض | Riyadh",
+					"code": "23333",
+					"country": "SA"
+				}
+			]
+		},
+		"customer": {
+			"name": "شركة نماذج فاتورة المحدودة | Fatoora Samples LTD",
+			"tax_id": {
+				"country": "SA",
+				"code": "399999999800003"
+			},
+			"addresses": [
+				{
+					"num": "1111",
+					"street": "صلاح الدين | Salah Al-Din",
+					"street_extra": "المروج | Al-Murooj",
+					"locality": "الرياض | Riyadh",
+					"code": "12222",
+					"country": "SA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "قلم رصاص",
+					"price": "2.00",
+					"unit": "PCE"
+				},
+				"sum": "4.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "4.00"
+			}
+		],
+		"discounts": [
+			{
+				"i": 1,
+				"reason": "discount",
+				"amount": "0.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				]
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "cash",
+				"ext": {
+					"untdid-payment-means": "10"
+				}
+			}
+		},
+		"delivery": {
+			"date": "2022-09-07"
+		},
+		"totals": {
+			"sum": "4.00",
+			"discount": "0.00",
+			"total": "4.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "4.00",
+								"percent": "15.0%",
+								"amount": "0.60"
+							}
+						],
+						"amount": "0.60"
+					}
+				],
+				"sum": "0.60"
+			},
+			"tax": "0.60",
+			"total_with_tax": "4.60",
+			"payable": "4.60"
+		}
+	}
+}
