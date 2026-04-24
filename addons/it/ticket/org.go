@@ -9,11 +9,11 @@ func normalizeOrgItem(item *org.Item) {
 	if item == nil {
 		return
 	}
-	if item.Ext == nil {
-		item.Ext = make(tax.Extensions)
+	if item.Ext.IsZero() {
+		item.Ext = tax.MakeExtensions()
 	}
 	if !item.Ext.Has(ExtKeyProduct) {
 		// Assume all items are services by default.
-		item.Ext[ExtKeyProduct] = "services"
+		item.Ext = item.Ext.Set(ExtKeyProduct, "services")
 	}
 }

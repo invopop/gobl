@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -34,8 +35,8 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	if tx == nil {
 		tx = &bill.Tax{}
 	}
-	if tx.Ext == nil {
-		tx.Ext = make(tax.Extensions)
+	if tx.Ext.IsZero() {
+		tx.Ext = tax.MakeExtensions()
 	}
 	if tx.Ext.Has(ExtKeyRegion) {
 		return
@@ -48,15 +49,15 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	// to use them to set the region code automatically.
 	switch strings.ToLower(addr.Region) {
 	case "alava", "álava", "araba", "vi":
-		tx.Ext[ExtKeyRegion] = "VI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "VI")
 	case "bizkaia", "vizcaya", "bi":
-		tx.Ext[ExtKeyRegion] = "BI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "BI")
 	case "gipuzkoa", "guipuzcoa", "guipúzcoa", "ss":
-		tx.Ext[ExtKeyRegion] = "SS"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "SS")
 	default:
 		return
 	}
-	if len(tx.Ext) > 0 {
+	if tx.Ext.Len() > 0 {
 		inv.Tax = tx
 	}
 }
@@ -79,6 +80,7 @@ func normalizeBillLine(line *bill.Line) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("09", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Tax
 		// Code 01: tax required
 		// Code 02: region required in tax ext

@@ -96,22 +96,22 @@ func TestIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Type: cbc.Code("FOO"),
 			Code: "BAR",
-			Ext:  tax.Extensions{},
+			Ext:  tax.ExtensionsOf(tax.ExtMap{}),
 		}
 		id.Normalize()
 		assert.Equal(t, "FOO", id.Type.String())
-		assert.Nil(t, id.Ext)
+		assert.True(t, id.Ext.IsZero())
 	})
 	t.Run("with extension", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "0004",
-			},
+			}),
 		}
 		id.Normalize()
 		assert.Equal(t, "BAR", id.Code.String())
-		assert.Equal(t, "0004", id.Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0004", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 }
 
@@ -119,9 +119,9 @@ func TestIdentityRules(t *testing.T) {
 	t.Run("with basics", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "0004",
-			},
+			}),
 		}
 		assert.NoError(t, rules.Validate(id))
 	})
@@ -287,18 +287,18 @@ func TestIdentityForExtKey(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		idents := []*org.Identity{
 			{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cbc.Key("foo"): "bar",
-				},
+				}),
 			},
 			{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cbc.Key("baz"): "qux",
-				},
+				}),
 			},
 		}
 		id := org.IdentityForExtKey(idents, "baz")
-		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
 	t.Run("nil extensions", func(t *testing.T) {
@@ -308,13 +308,13 @@ func TestIdentityForExtKey(t *testing.T) {
 			},
 			{
 				Code: "5678",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cbc.Key("baz"): "qux",
-				},
+				}),
 			},
 		}
 		id := org.IdentityForExtKey(idents, "baz")
-		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
 }

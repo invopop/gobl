@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -40,11 +41,35 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing ext key doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
+		inv.Tax.Ext = inv.Tax.Ext.Delete(facturae.ExtKeyDocType)
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
+		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
 	})
 
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("ES")
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-07] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("ES")
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6), // 0.875967
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
 }
 
 func TestInvoicePrecedingValidation(t *testing.T) {
@@ -53,7 +78,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 
 	require.NoError(t, inv.Calculate())
 	err := rules.Validate(inv)
-	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-04] ($.preceding) preceding document reference is required for credit-note, corrective, debit-note invoices")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-04] ($.preceding) preceding document reference is required for credit-note, corrective, debit-note invoices")
 
 	inv.Preceding = []*org.DocumentRef{
 		{
@@ -62,11 +87,11 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)
-	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-V3-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-V3-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
+	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
 
-	inv.Preceding[0].Ext = tax.Extensions{
+	inv.Preceding[0].Ext = tax.ExtensionsOf(tax.ExtMap{
 		facturae.ExtKeyCorrection: "01",
-	}
+	})
 	inv.Preceding[0].IssueDate = cal.NewDate(2022, 6, 13)
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)

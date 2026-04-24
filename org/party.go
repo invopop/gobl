@@ -41,7 +41,7 @@ type Party struct {
 	// Images that can be used to identify the party visually.
 	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -68,7 +68,7 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 	p.Name = cbc.NormalizeString(p.Name)
 	p.Alias = cbc.NormalizeString(p.Alias)
 
-	p.Ext = tax.CleanExtensions(p.Ext)
+	p.Ext = p.Ext.Clean()
 
 	if p.TaxID != nil {
 		// tax ids are noramlized only by their own tax regime, if any

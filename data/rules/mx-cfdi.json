@@ -1,0 +1,850 @@
+{
+  "id": "GOBL-MX-CFDI",
+  "package": "mx-cfdi",
+  "guard": "context: addon in [mx-cfdi-v4]",
+  "subsets": [
+    {
+      "id": "GOBL-MX-CFDI-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-MX-CFDI-BILL-INVOICE-27",
+          "desc": "invoice must be in MXN or provide exchange rate for conversion",
+          "tests": "can convert to [MXN]"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "tax",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-BILL-INVOICE-01",
+                  "desc": "tax requires 'mx-cfdi-doc-type', 'mx-cfdi-issue-place', and 'mx-cfdi-payment-method' extensions",
+                  "tests": "ext require [mx-cfdi-doc-type, mx-cfdi-issue-place, mx-cfdi-payment-method]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "has global tag",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-02",
+                      "desc": "global invoices require 'mx-cfdi-global-period', 'mx-cfdi-global-month', and 'mx-cfdi-global-year' extensions",
+                      "tests": "ext require [mx-cfdi-global-period, mx-cfdi-global-month, mx-cfdi-global-year]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-BILL-INVOICE-03",
+                  "desc": "cannot be set with global tag",
+                  "tests": "empty"
+                }
+              ]
+            },
+            {
+              "field": "payment",
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-BILL-INVOICE-04",
+                  "desc": "payment is required for global invoices",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "advances",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-05",
+                      "desc": "advances must be set with global tag",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "item",
+                      "subsets": [
+                        {
+                          "field": "ref",
+                          "assert": [
+                            {
+                              "id": "GOBL-MX-CFDI-BILL-INVOICE-06",
+                              "desc": "must be set with global tag",
+                              "tests": "present"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "no global tag",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-07",
+                      "desc": "'mx-cfdi-global-period', 'mx-cfdi-global-month', and 'mx-cfdi-global-year' extensions must all be present or all absent",
+                      "tests": "ext require all or none of [mx-cfdi-global-period, mx-cfdi-global-month, mx-cfdi-global-year]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-08",
+                      "desc": "customer tax ID is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-BILL-INVOICE-09",
+                          "desc": "customer tax ID code is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "customer is Mexican",
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-BILL-INVOICE-10",
+                          "desc": "Mexican customer requires 'mx-cfdi-fiscal-regime' and 'mx-cfdi-use' extensions",
+                          "tests": "ext require [mx-cfdi-fiscal-regime, mx-cfdi-use]"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "addresses",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-BILL-INVOICE-11",
+                          "desc": "Mexican customer must have at least one address",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "code",
+                              "assert": [
+                                {
+                                  "id": "GOBL-MX-CFDI-BILL-INVOICE-12",
+                                  "desc": "customer address postal code is required",
+                                  "tests": "present"
+                                },
+                                {
+                                  "id": "GOBL-MX-CFDI-BILL-INVOICE-13",
+                                  "desc": "customer address postal code format is invalid",
+                                  "tests": "matches ^[0-9]{5}$"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "item",
+                      "subsets": [
+                        {
+                          "field": "ext",
+                          "assert": [
+                            {
+                              "id": "GOBL-MX-CFDI-BILL-INVOICE-14",
+                              "desc": "item requires 'mx-cfdi-prod-serv' extension",
+                              "tests": "ext require [mx-cfdi-prod-serv]"
+                            },
+                            {
+                              "id": "GOBL-MX-CFDI-BILL-INVOICE-15",
+                              "desc": "product/service code must have 8 digits",
+                              "tests": "valid prod-serv"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "has preceding",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-16",
+                      "desc": "tax requires 'mx-cfdi-rel-type' extension when preceding documents are present",
+                      "tests": "ext require [mx-cfdi-rel-type]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "preceding",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "stamps",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-17",
+                      "desc": "preceding row is missing 'sat-uuid' stamp",
+                      "tests": "stamps have sat-uuid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-BILL-INVOICE-18",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-19",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-BILL-INVOICE-20",
+                  "desc": "supplier requires 'mx-cfdi-fiscal-regime' extension",
+                  "tests": "ext require [mx-cfdi-fiscal-regime]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "quantity",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-21",
+                      "desc": "line quantity must be greater than 0",
+                      "tests": "min 0"
+                    }
+                  ]
+                },
+                {
+                  "field": "item",
+                  "subsets": [
+                    {
+                      "field": "price",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-BILL-INVOICE-22",
+                          "desc": "line item price is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-MX-CFDI-BILL-INVOICE-23",
+                          "desc": "line item price must be greater than 0",
+                          "tests": "min 0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "total",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-BILL-INVOICE-24",
+                      "desc": "line total must not be negative",
+                      "tests": "min 0"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "discounts",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-BILL-INVOICE-25",
+              "desc": "document level discounts are not supported, use line discounts instead",
+              "tests": "empty"
+            }
+          ]
+        },
+        {
+          "field": "charges",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-BILL-INVOICE-26",
+              "desc": "document level charges are not supported",
+              "tests": "empty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MX-CFDI-PAY-INSTRUCTIONS",
+      "object": "pay.Instructions",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-PAY-INSTRUCTIONS-01",
+              "desc": "payment instructions require 'mx-cfdi-payment-means' extension",
+              "tests": "ext require [mx-cfdi-payment-means]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MX-CFDI-PAY-ADVANCE",
+      "object": "pay.Advance",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-PAY-ADVANCE-01",
+              "desc": "payment advance requires 'mx-cfdi-payment-means' extension",
+              "tests": "ext require [mx-cfdi-payment-means]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MX-CFDI-PAY-TERMS",
+      "object": "pay.Terms",
+      "subsets": [
+        {
+          "field": "notes",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-PAY-TERMS-01",
+              "desc": "notes length must be no more than 1000",
+              "tests": "length between 0 and 1000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MX-CFDI-FOODVOUCHERS",
+      "object": "cfdi.FoodVouchers",
+      "subsets": [
+        {
+          "field": "employer_registration",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FOODVOUCHERS-01",
+              "desc": "employer registration must be no more than 20 characters",
+              "tests": "length between 0 and 20"
+            }
+          ]
+        },
+        {
+          "field": "account_number",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FOODVOUCHERS-02",
+              "desc": "account number is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-MX-CFDI-FOODVOUCHERS-03",
+              "desc": "account number must be no more than 20 characters",
+              "tests": "length between 0 and 20"
+            }
+          ]
+        },
+        {
+          "field": "total",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FOODVOUCHERS-04",
+              "desc": "total is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FOODVOUCHERS-05",
+              "desc": "lines are required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "e_wallet_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FOODVOUCHERS-06",
+                      "desc": "line e-wallet ID is required",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-MX-CFDI-FOODVOUCHERS-07",
+                      "desc": "line e-wallet ID must be no more than 20 characters",
+                      "tests": "length between 0 and 20"
+                    }
+                  ]
+                },
+                {
+                  "field": "issue_date_time",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FOODVOUCHERS-08",
+                      "desc": "line issue date and time is required",
+                      "tests": "not zero"
+                    }
+                  ]
+                },
+                {
+                  "field": "employee",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FOODVOUCHERS-09",
+                      "desc": "line employee is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "tax_code",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-10",
+                          "desc": "employee tax code (RFC) is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-11",
+                          "desc": "employee tax code (RFC) must be valid",
+                          "tests": "valid RFC"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "curp",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-12",
+                          "desc": "employee CURP is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-13",
+                          "desc": "employee CURP format must be valid",
+                          "tests": "matches ^[A-Z][A,E,I,O,U,X][A-Z]{2}[0-9]{2}[0-1][0-9][0-3][0-9][M,H][A-Z]{2}[B,C,D,F,G,H,J,K,L,M,N,Ñ,P,Q,R,S,T,V,W,X,Y,Z]{3}[0-9,A-Z][0-9]$"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "name",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-14",
+                          "desc": "employee name is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-15",
+                          "desc": "employee name must be no more than 100 characters",
+                          "tests": "length between 0 and 100"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "social_security",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FOODVOUCHERS-16",
+                          "desc": "employee social security number format is invalid",
+                          "tests": "matches ^[0-9]{11}$"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "amount",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FOODVOUCHERS-17",
+                      "desc": "line amount is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE",
+      "object": "cfdi.FuelAccountBalance",
+      "subsets": [
+        {
+          "field": "account_number",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-01",
+              "desc": "account number is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-02",
+              "desc": "account number must be between 1 and 50 characters",
+              "tests": "length between 1 and 50"
+            }
+          ]
+        },
+        {
+          "field": "subtotal",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-03",
+              "desc": "subtotal is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "total",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-04",
+              "desc": "total is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-05",
+              "desc": "lines are required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-20",
+                  "desc": "line total must be quantity x unit_price",
+                  "tests": "valid line total"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "e_wallet_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-06",
+                      "desc": "line e-wallet ID is required",
+                      "tests": "present"
+                    }
+                  ]
+                },
+                {
+                  "field": "purchase_date_time",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-07",
+                      "desc": "line purchase date and time is required",
+                      "tests": "not zero"
+                    }
+                  ]
+                },
+                {
+                  "field": "vendor_tax_code",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-08",
+                      "desc": "line vendor tax code is required",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-09",
+                      "desc": "line vendor tax identity code is invalid",
+                      "tests": "valid RFC"
+                    }
+                  ]
+                },
+                {
+                  "field": "service_station_code",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-10",
+                      "desc": "line service station code is required",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-11",
+                      "desc": "line service station code must be between 1 and 20 characters",
+                      "tests": "length between 1 and 20"
+                    }
+                  ]
+                },
+                {
+                  "field": "quantity",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-12",
+                      "desc": "line quantity must be greater than 0",
+                      "tests": "min 0"
+                    }
+                  ]
+                },
+                {
+                  "field": "item",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-13",
+                      "desc": "line item is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "type",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-14",
+                          "desc": "line item type is required",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "name",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-15",
+                          "desc": "line item name is required",
+                          "tests": "present"
+                        },
+                        {
+                          "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-16",
+                          "desc": "line item name must be between 1 and 300 characters",
+                          "tests": "length between 1 and 300"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "price",
+                      "assert": [
+                        {
+                          "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-17",
+                          "desc": "line item price must be greater than 0",
+                          "tests": "min 0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "purchase_code",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-18",
+                      "desc": "line purchase code is required",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-19",
+                      "desc": "line purchase code must be between 1 and 50 characters",
+                      "tests": "length between 1 and 50"
+                    }
+                  ]
+                },
+                {
+                  "field": "taxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-21",
+                      "desc": "line taxes are required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "cat",
+                          "assert": [
+                            {
+                              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-22",
+                              "desc": "line tax category is required",
+                              "tests": "present"
+                            },
+                            {
+                              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-23",
+                              "desc": "line tax category must be a valid value",
+                              "tests": "one of [VAT, IEPS]"
+                            }
+                          ]
+                        },
+                        {
+                          "guard": "no percent",
+                          "subsets": [
+                            {
+                              "field": "rate",
+                              "assert": [
+                                {
+                                  "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-24",
+                                  "desc": "line tax rate is required when percent is not set",
+                                  "tests": "present"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "field": "rate",
+                          "subsets": [
+                            {
+                              "guard": "present",
+                              "assert": [
+                                {
+                                  "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-25",
+                                  "desc": "line tax rate must be greater than 0",
+                                  "tests": "min 0"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "field": "amount",
+                          "assert": [
+                            {
+                              "id": "GOBL-MX-CFDI-FUELACCOUNTBALANCE-26",
+                              "desc": "line tax amount must be greater than 0",
+                              "tests": "min 0"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

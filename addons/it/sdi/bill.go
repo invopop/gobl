@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/rules"
@@ -20,11 +21,9 @@ func normalizeSupplier(party *org.Party) {
 	if party == nil {
 		return
 	}
-	if party.Ext == nil || party.Ext[ExtKeyFiscalRegime] == "" {
-		if party.Ext == nil {
-			party.Ext = make(tax.Extensions)
-		}
-		party.Ext[ExtKeyFiscalRegime] = "RF01" // Ordinary regime is default
+	if party.Ext.Get(ExtKeyFiscalRegime) == "" {
+		// Ordinary regime is default
+		party.Ext = party.Ext.Set(ExtKeyFiscalRegime, "RF01")
 	}
 
 	// Normalize Italian supplier telephone numbers by stripping '+39' prefix
@@ -39,6 +38,7 @@ func normalizeSupplier(party *org.Party) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("22", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		rules.Field("tax",
 			rules.Assert("01", "tax is required", is.Present),
 			rules.Field("ext",

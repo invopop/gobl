@@ -71,14 +71,14 @@ func TestRateDefValue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rv := rate.Value(tt.date, nil)
+			rv := rate.Value(tt.date, tax.Extensions{})
 			require.NotNil(t, rv)
 			assert.Equal(t, tt.percent, rv.Percent.String())
 		})
 	}
 
 	t.Run("before any rate returns nil", func(t *testing.T) {
-		rv := rate.Value(cal.MakeDate(1992, 12, 31), nil)
+		rv := rate.Value(cal.MakeDate(1992, 12, 31), tax.Extensions{})
 		assert.Nil(t, rv)
 	})
 
@@ -88,7 +88,7 @@ func TestRateDefValue(t *testing.T) {
 				{Percent: num.MakePercentage(10, 2)},
 			},
 		}
-		rv := r.Value(cal.MakeDate(1900, 1, 1), nil)
+		rv := r.Value(cal.MakeDate(1900, 1, 1), tax.Extensions{})
 		require.NotNil(t, rv)
 		assert.Equal(t, "10%", rv.Percent.String())
 	})

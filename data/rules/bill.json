@@ -701,6 +701,121 @@
     {
       "id": "GOBL-BILL-TOTALS",
       "object": "bill.Totals"
+    },
+    {
+      "id": "GOBL-BILL-STATUS",
+      "object": "bill.Status",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-BILL-STATUS-01",
+              "desc": "status type is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-STATUS-02",
+              "desc": "status type is not valid",
+              "tests": "one of [response, update, system]"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BILL-STATUS-03",
+              "desc": "status supplier is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "assert": [
+            {
+              "id": "GOBL-BILL-STATUS-04",
+              "desc": "status must have at least one line",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-STATUSLINE",
+      "object": "bill.StatusLine",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-BILL-STATUSLINE-01",
+              "desc": "status line key is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-REASON",
+      "object": "bill.Reason",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-BILL-REASON-01",
+              "desc": "reason key is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-REASON-02",
+              "desc": "reason key is not valid",
+              "tests": "one of [none, references, legal, unknown-receiver, quality, delivery, prices, quantity, items, payment-terms, not-recognized, finance-terms, partial, other]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-ACTION",
+      "object": "bill.Action",
+      "subsets": [
+        {
+          "field": "key",
+          "assert": [
+            {
+              "id": "GOBL-BILL-ACTION-01",
+              "desc": "action key is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-ACTION-02",
+              "desc": "action key is not valid",
+              "tests": "one of [none, provide, reissue, credit-full, credit-partial, credit-amount, other]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BILL-CONDITION",
+      "object": "bill.Condition",
+      "subsets": [
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-BILL-CONDITION-01",
+              "desc": "condition code is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

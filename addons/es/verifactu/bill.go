@@ -3,6 +3,7 @@ package verifactu
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -23,18 +24,18 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 func normalizeBillInvoice(inv *bill.Invoice) {
 	// Try to move any preceding choices to the document level
 	for _, row := range inv.Preceding {
-		if row == nil || len(row.Ext) == 0 {
+		if row == nil || row.Ext.Len() == 0 {
 			continue
 		}
 		found := false
 		if row.Ext.Has(ExtKeyDocType) {
 			if inv.Tax == nil || !found {
-				inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-					ExtKeyDocType: row.Ext[ExtKeyDocType],
-				})
+				inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+					ExtKeyDocType: row.Ext.Get(ExtKeyDocType),
+				}))
 				found = true // only assign first one
 			}
-			delete(row.Ext, ExtKeyDocType)
+			row.Ext = row.Ext.Delete(ExtKeyDocType)
 		}
 	}
 
@@ -42,13 +43,13 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 	// Verifactu implying that scenarios cannot be used.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "I",
-		})
+		}))
 	case bill.InvoiceTypeCorrective:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "S",
-		})
+		}))
 	}
 
 	// Set default correction type, unless already provided.
@@ -58,20 +59,20 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 		// This is non-deterministic. May be overwritten by user *or*
 		// scenarios.
 		if !inv.Tax.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
-			inv.Tax.Ext[ExtKeyDocType] = "R1"
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, "R1")
 		}
 	}
 
 	// Normalize the third party details
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeCustomer,
-		})
+		}))
 	}
 	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeThirdParty,
-		})
+		}))
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
@@ -102,14 +103,15 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		code = ExtCodeIdentityTypeOther
 	}
 	if !code.IsEmpty() {
-		id.Ext = id.Ext.Merge(tax.Extensions{
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIdentityType: code,
-		})
+		}))
 	}
 }
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("16", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Preceding documents
 		// Code 01: preceding required when corrective
 		rules.When(
@@ -163,16 +165,27 @@ func billInvoiceRules() *rules.Set {
 		// Code 06: customer required
 		// Code 07: customer must have tax_id or identity
 		// Code 08: customer tax_id must have code
+		// Code 17: identity country required when identity type is not NIF-VAT
 		rules.When(
 			is.Func("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
 				rules.Assert("06", "customer is required", is.Present),
-				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-v1-identity-type'",
+				rules.Assert("07", "must have a tax_id or an identity with ext 'es-verifactu-identity-type'",
 					is.Func("has tax_id or identity", customerHasTaxIDOrIdentity),
 				),
 				rules.Field("tax_id",
 					rules.Field("code",
 						rules.Assert("08", "tax ID must have a code", is.Present),
+					),
+				),
+				rules.Field("identities",
+					rules.Each(
+						rules.When(
+							is.Func("has non-VAT identity type", identityHasNonVATType),
+							rules.Field("country",
+								rules.Assert("17", "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)", is.Present),
+							),
+						),
 					),
 				),
 			),
@@ -271,6 +284,11 @@ func customerHasTaxIDOrIdentity(val any) bool {
 		return true // nil customer handled by Required check
 	}
 	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
+}
+
+func identityHasNonVATType(val any) bool {
+	id, ok := val.(*org.Identity)
+	return ok && id != nil && id.Ext.Has(ExtKeyIdentityType) && !id.Ext.Get(ExtKeyIdentityType).In(ExtCodeIdentityTypeVAT)
 }
 
 func isGeneralNote(val any) bool {

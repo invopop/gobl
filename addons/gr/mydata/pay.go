@@ -18,10 +18,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by myDATA.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansMap
+	return tax.ExtensionsOf(paymentMeansMap)
 }
 
-var paymentMeansMap = tax.Extensions{
+var paymentMeansMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyCreditTransfer:                       "1",
 	pay.MeansKeyCreditTransfer.With(MeansKeyForeign): "2",
 	pay.MeansKeyCash:                                 "3",
@@ -37,10 +37,10 @@ func normalizePayInstructions(i *pay.Instructions) {
 	}
 	extVal := paymentMeansMap[i.Key]
 	if extVal != "" {
-		if i.Ext == nil {
-			i.Ext = make(tax.Extensions)
+		if i.Ext.IsZero() {
+			i.Ext = tax.MakeExtensions()
 		}
-		i.Ext[ExtKeyPaymentMeans] = extVal
+		i.Ext = i.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 
@@ -50,10 +50,10 @@ func normalizePayAdvance(a *pay.Advance) {
 	}
 	extVal := paymentMeansMap[a.Key]
 	if extVal != "" {
-		if a.Ext == nil {
-			a.Ext = make(tax.Extensions)
+		if a.Ext.IsZero() {
+			a.Ext = tax.MakeExtensions()
 		}
-		a.Ext[ExtKeyPaymentMeans] = extVal
+		a.Ext = a.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 

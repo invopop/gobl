@@ -14,7 +14,7 @@ const (
 	MeansKeyDebit cbc.Key = "debit"
 )
 
-var paymentMeansKeyMap = tax.Extensions{
+var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyCash:   "01", // Dinheiro
 	pay.MeansKeyCheque: "02", // Cheque
 	pay.MeansKeyCard:   "03", // Cartão de Crédito
@@ -33,9 +33,9 @@ func normalizePayInstructions(instr *pay.Instructions) {
 		return
 	}
 	if code := paymentMeansKeyMap[instr.Key]; code != "" {
-		instr.Ext = instr.Ext.Merge(tax.Extensions{
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 
@@ -48,9 +48,9 @@ func normalizePayAdvance(adv *pay.Advance) {
 		return
 	}
 	if code := paymentMeansKeyMap[adv.Key]; code != "" {
-		adv.Ext = adv.Ext.Merge(tax.Extensions{
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 

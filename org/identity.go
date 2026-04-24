@@ -67,7 +67,7 @@ type Identity struct {
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Ext provides a way to add additional information to the identity.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Normalize will try to clean the identity's data.
@@ -80,7 +80,7 @@ func (i *Identity) Normalize() {
 	i.Type = cbc.NormalizeCode(i.Type)
 	i.Code = cbc.NormalizeCode(i.Code)
 	i.Description = cbc.NormalizeString(i.Description)
-	i.Ext = tax.CleanExtensions(i.Ext)
+	i.Ext = i.Ext.Clean()
 }
 
 func identityRules() *rules.Set {

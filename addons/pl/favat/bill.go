@@ -5,6 +5,8 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -15,15 +17,15 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeySelfBilling: "1",
-		})
+		}))
 	}
 
 	if inv.HasTags(tax.TagReverseCharge) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyReverseCharge: "1",
-		})
+		}))
 	}
 
 	// Even if we know that the invoice is exempt (has tag tax.KeyExempt), we cannot autogenerate values
@@ -36,6 +38,7 @@ func isExemptionNote(n *org.Note) bool {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("15", "invoice must be in PLN or provide exchange rate for conversion", currency.CanConvertTo(currency.PLN)),
 		rules.Field("type",
 			rules.Assert("01", "invoice type must be standard or credit-note",
 				is.In(bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote),
@@ -55,6 +58,14 @@ func billInvoiceRules() *rules.Set {
 		// Supplier validation
 		rules.Field("supplier",
 			rules.Assert("04", "supplier is required", is.Present),
+			rules.Field("tax_id",
+				rules.Assert("16", "supplier tax ID is required", is.Present),
+				rules.Field("code",
+					rules.Assert("17", "supplier tax ID code required",
+						is.Present,
+					),
+				),
+			),
 			rules.Field("name",
 				rules.Assert("05", "supplier name is required", is.Present),
 			),
@@ -72,8 +83,14 @@ func billInvoiceRules() *rules.Set {
 		rules.When(is.Func("not simplified", invoiceNotSimplified),
 			rules.Field("customer",
 				rules.Assert("09", "customer is required", is.Present),
-				rules.Field("tax_id",
-					rules.Assert("10", "customer tax ID is required", is.Present),
+			),
+		),
+		rules.Field("customer",
+			rules.Field("tax_id",
+				rules.When(tax.IdentityIn(l10n.PL.Tax()),
+					rules.Field("code",
+						rules.Assert("10", "customer Polish tax ID code is required", is.Present),
+					),
 				),
 			),
 		),

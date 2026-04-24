@@ -99,7 +99,7 @@ type Charge struct {
 	// List of taxes to apply to the charge
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Extension codes that apply to the charge
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -112,7 +112,7 @@ func (m *Charge) Normalize(normalizers tax.Normalizers) {
 	}
 	m.Code = cbc.NormalizeCode(m.Code)
 	m.Taxes = tax.CleanSet(m.Taxes)
-	m.Ext = tax.CleanExtensions(m.Ext)
+	m.Ext = m.Ext.Clean()
 	tax.Normalize(normalizers, m.Taxes)
 	normalizers.Each(m)
 }

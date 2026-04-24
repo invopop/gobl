@@ -37,7 +37,7 @@ func TestOrgNoteNormalize(t *testing.T) {
 		assert.NotPanics(t, func() {
 			ad.Normalizer(n)
 		})
-		assert.Equal(t, "AAI", n.Ext[untdid.ExtKeyTextSubject].String())
+		assert.Equal(t, "AAI", n.Ext.Get(untdid.ExtKeyTextSubject).String())
 	})
 }
 
@@ -93,9 +93,9 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Key:  "gln",
 			Code: "1234567890123",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "9999",
-			},
+			}),
 		}
 		ad.Normalizer(id)
 		assert.Equal(t, "gln", id.Key.String())
@@ -116,9 +116,9 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Type: "SIREN",
 			Code: "1234567890123",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "9999",
-			},
+			}),
 		}
 		ad.Normalizer(id)
 		assert.Equal(t, "SIREN", id.Type.String())

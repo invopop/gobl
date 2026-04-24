@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/rules"
@@ -24,6 +25,7 @@ var (
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("17", "invoice must be in BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
 		rules.Field("series",
 			rules.Assert("01", "series is required", is.Present),
 		),
@@ -87,9 +89,9 @@ func normalizeSupplier(sup *org.Party) {
 	}
 
 	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
-		if sup.Ext == nil {
-			sup.Ext = make(tax.Extensions)
+		if sup.Ext.IsZero() {
+			sup.Ext = tax.MakeExtensions()
 		}
-		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+		sup.Ext = sup.Ext.Set(ExtKeyFiscalIncentive, FiscalIncentiveDefault)
 	}
 }

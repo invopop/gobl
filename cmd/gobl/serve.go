@@ -11,7 +11,7 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 
-	"github.com/invopop/gobl/internal/api"
+	"github.com/invopop/gobl/pkg/api"
 )
 
 const defaultHTTPPort = 80
@@ -40,8 +40,11 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	defer cancel()
 
 	srv := &http.Server{
-		Addr:    ":" + strconv.Itoa(s.httpPort),
-		Handler: api.NewHandler(),
+		Addr: ":" + strconv.Itoa(s.httpPort),
+		Handler: api.NewHandler(
+			api.WithMCP(),
+			api.WithFavicon(),
+		),
 	}
 
 	addr := srv.Addr

@@ -2,6 +2,7 @@ package choruspro
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -17,8 +18,8 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = &bill.Tax{}
 	}
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = make(tax.Extensions)
+	if inv.Tax.Ext.IsZero() {
+		inv.Tax.Ext = tax.MakeExtensions()
 	}
 
 	// Set default framework type if not specified. This breaks away from the
@@ -26,9 +27,9 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// complexity of trying to apply scenarios.
 	if !inv.Tax.Ext.Has(ExtKeyFramework) {
 		inv.Tax.Ext = inv.Tax.Ext.Merge(
-			tax.Extensions{
+			tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyFramework: ExtFrameworkCodeSupplier,
-			},
+			}),
 		)
 	}
 
@@ -44,6 +45,7 @@ func normalizeBillLine(line *bill.Line) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("07", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Customer validation (only when customer exists)
 		rules.Field("customer",
 			rules.Field("ext",

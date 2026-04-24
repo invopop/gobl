@@ -12,8 +12,13 @@ import (
 )
 
 const (
+	// Key identifies the DIAN addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "co-dian"
+
 	// V2 for DIAN UBL 2.1 in Colombia
-	V2 cbc.Key = "co-dian-v2"
+	V2 cbc.Key = Key + "-v2"
 )
 
 // DIAN official codes to include in stamps.
@@ -25,8 +30,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V2.String(),
-		rules.GOBL.Add("CO-DIAN-V2"),
+		Key.String(),
+		rules.GOBL.Add("CO-DIAN"),
 		is.InContext(tax.AddonIn(V2)),
 		billInvoiceRules(),
 	)

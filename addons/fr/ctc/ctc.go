@@ -15,15 +15,21 @@ import (
 )
 
 const (
+	// Flow2Key identifies the French CTC Flow 2 addon family. Individual
+	// versions append a suffix; the family key is used as the fault-code
+	// namespace so that rules that carry across versions keep stable codes.
+	// Flow 1 is a separate rule family, not a prior version of Flow 2.
+	Flow2Key cbc.Key = "fr-ctc-flow2"
+
 	// Flow2V1 is the key for the French CTC addon
-	Flow2V1 cbc.Key = "fr-ctc-flow2-v1"
+	Flow2V1 cbc.Key = Flow2Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		Flow2V1.String(),
-		rules.GOBL.Add("FR-CTC-FLOW2-V1"),
+		Flow2Key.String(),
+		rules.GOBL.Add("FR-CTC-FLOW2"),
 		is.InContext(tax.AddonIn(Flow2V1)),
 		billInvoiceRules(),
 		orgPartyRules(),

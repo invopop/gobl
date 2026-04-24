@@ -16,16 +16,16 @@ func TestOrderingNormalize(t *testing.T) {
 		Projects: []*org.DocumentRef{
 			{
 				Code: " Bar ",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"missing": "",
-				},
+				}),
 			},
 		},
 	}
 	o.Normalize(nil)
 	assert.Equal(t, "Foo", o.Code.String())
 	assert.Equal(t, "Bar", o.Projects[0].Code.String())
-	assert.Empty(t, o.Projects[0].Ext)
+	assert.True(t, o.Projects[0].Ext.IsZero())
 }
 
 func TestOrderingValidate(t *testing.T) {

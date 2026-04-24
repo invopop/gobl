@@ -34,9 +34,9 @@ func TestOrderValidation(t *testing.T) {
 	t.Run("invalid work type", func(t *testing.T) {
 		ord := validOrder()
 
-		ord.Tax.Ext = tax.Extensions{
+		ord.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{
 			saft.ExtKeyWorkType: saft.WorkTypeProforma,
-		}
+		})
 
 		assert.ErrorContains(t, rules.Validate(ord, withAddonContext()), "work type must not be an invoice work type")
 	})
@@ -72,7 +72,7 @@ func TestOrderNormalization(t *testing.T) {
 		addon.Normalizer(ord)
 		require.NotNil(t, ord.Tax)
 		require.NotNil(t, ord.Tax.Ext)
-		assert.Equal(t, saft.WorkTypePurchaseOrder, ord.Tax.Ext[saft.ExtKeyWorkType])
+		assert.Equal(t, saft.WorkTypePurchaseOrder, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
 	})
 
 	t.Run("quote order type", func(t *testing.T) {
@@ -82,20 +82,20 @@ func TestOrderNormalization(t *testing.T) {
 		addon.Normalizer(ord)
 		require.NotNil(t, ord.Tax)
 		require.NotNil(t, ord.Tax.Ext)
-		assert.Equal(t, saft.WorkTypeBudgets, ord.Tax.Ext[saft.ExtKeyWorkType])
+		assert.Equal(t, saft.WorkTypeBudgets, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
 	})
 
 	t.Run("respect existing value", func(t *testing.T) {
 		ord := &bill.Order{
 			Type: bill.OrderTypePurchase,
 			Tax: &bill.Tax{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyWorkType: saft.WorkTypeOther,
-				},
+				}),
 			},
 		}
 		addon.Normalizer(ord)
-		assert.Equal(t, saft.WorkTypeOther, ord.Tax.Ext[saft.ExtKeyWorkType])
+		assert.Equal(t, saft.WorkTypeOther, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
 	})
 
 	t.Run("sets default value date from issue date", func(t *testing.T) {
@@ -141,9 +141,9 @@ func validOrder() *bill.Order {
 		Addons: tax.WithAddons(saft.V1),
 		Type:   bill.OrderTypePurchase,
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyWorkType: saft.WorkTypePurchaseOrder,
-			},
+			}),
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -175,18 +175,18 @@ func validOrderLines() []*bill.Line {
 				Name:  "Test Item",
 				Price: num.NewAmount(100, 0),
 				Unit:  "one",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyProductType: saft.ProductTypeService,
-				},
+				}),
 			},
 			Taxes: tax.Set{
 				{
 					Category: "VAT",
 					Percent:  num.NewPercentage(230, 3),
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"pt-region":        "PT",
 						saft.ExtKeyTaxRate: saft.TaxRateNormal,
-					},
+					}),
 				},
 			},
 		},

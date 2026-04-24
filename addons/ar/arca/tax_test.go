@@ -27,7 +27,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyZero,
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "3", tc.Ext[arca.ExtKeyVATRate].String())
+		assert.Equal(t, "3", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
 	t.Run("reduced rate sets VAT rate 4", func(t *testing.T) {
@@ -36,7 +36,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateReduced,
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "4", tc.Ext[arca.ExtKeyVATRate].String())
+		assert.Equal(t, "4", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
 	t.Run("general rate sets VAT rate 5", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "5", tc.Ext[arca.ExtKeyVATRate].String())
+		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
 	t.Run("increased rate sets VAT rate 6", func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     ar.RateIncreased,
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "6", tc.Ext[arca.ExtKeyVATRate].String())
+		assert.Equal(t, "6", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
 	t.Run("other rate does not set VAT rate", func(t *testing.T) {
@@ -63,20 +63,20 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateSpecial,
 		}
 		ad.Normalizer(tc)
-		assert.Empty(t, tc.Ext[arca.ExtKeyVATRate])
+		assert.Empty(t, tc.Ext.Get(arca.ExtKeyVATRate))
 	})
 
 	t.Run("existing extensions are preserved", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"custom-key": "custom-value",
-			},
+			}),
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "5", tc.Ext[arca.ExtKeyVATRate].String())
-		assert.Equal(t, "custom-value", tc.Ext["custom-key"].String())
+		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
+		assert.Equal(t, "custom-value", tc.Ext.Get("custom-key").String())
 	})
 }
 
@@ -84,9 +84,9 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("valid VAT combo with rate extension", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				arca.ExtKeyVATRate: "5",
-			},
+			}),
 		}
 		err := rules.Validate(tc, withAddonContext())
 		assert.NoError(t, err)

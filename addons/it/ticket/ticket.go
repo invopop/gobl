@@ -14,8 +14,13 @@ import (
 
 // Key to identify the AdE ticket addon
 const (
+	// Key identifies the AdE ticket addon family. Individual versions append
+	// a suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "it-ticket"
+
 	// V1 for AdE format
-	V1 cbc.Key = "it-ticket-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -31,8 +36,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("IT-TICKET-V1"),
+		Key.String(),
+		rules.GOBL.Add("IT-TICKET"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		taxComboRules(),

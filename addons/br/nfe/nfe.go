@@ -12,15 +12,20 @@ import (
 )
 
 const (
+	// Key identifies the NF-e addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "br-nfe"
+
 	// V4 is the key for the NF-e 4.00 layout
-	V4 cbc.Key = "br-nfe-v4"
+	V4 cbc.Key = Key + "-v4"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V4.String(),
-		rules.GOBL.Add("BR-NFE-V4"),
+		Key.String(),
+		rules.GOBL.Add("BR-NFE"),
 		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		billLineRules(),

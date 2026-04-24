@@ -38,9 +38,9 @@ func TestElectronicAddressValidation(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIREN,
 					Code: "123456789",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002", // ISO scheme ID required by BR-FR-CO-10
-					},
+					}),
 				},
 			},
 			Inboxes: []*org.Inbox{
@@ -271,9 +271,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ABC123XYZ",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"iso-scheme-id": "0224",
-					},
+					}),
 				},
 			},
 		}
@@ -286,9 +286,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ABC123-info_data/route",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"iso-scheme-id": "0224",
-					},
+					}),
 				},
 			},
 		}
@@ -301,9 +301,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ABC123@invalid",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"iso-scheme-id": "0224",
-					},
+					}),
 				},
 			},
 		}
@@ -316,9 +316,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ABC123", // Valid cbc.Code format, different scheme
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"iso-scheme-id": "0002",
-					},
+					}),
 				},
 			},
 		}
@@ -351,9 +351,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: cbc.Code(longCode),
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0224",
-					},
+					}),
 				},
 			},
 		}
@@ -370,9 +370,9 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: cbc.Code(tooLongCode),
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0224",
-					},
+					}),
 				},
 			},
 		}
@@ -395,7 +395,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that ISO scheme ID was set
-		assert.Equal(t, "0224", party.Identities[0].Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0224", party.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
 	})
 
 	t.Run("private-id key sets ISO scheme ID 0224 with existing extensions", func(t *testing.T) {
@@ -404,16 +404,16 @@ func TestPrivateIDNormalization(t *testing.T) {
 				{
 					Key:  cbc.Key("private-id"),
 					Code: "ABC123XYZ",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						"other-key": "other-value",
-					},
+					}),
 				},
 			},
 		}
 		ad.Normalizer(party)
 		// Check that ISO scheme ID was set and other extensions preserved
-		assert.Equal(t, "0224", party.Identities[0].Ext[iso.ExtKeySchemeID].String())
-		assert.Equal(t, "other-value", party.Identities[0].Ext["other-key"].String())
+		assert.Equal(t, "0224", party.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
+		assert.Equal(t, "other-value", party.Identities[0].Ext.Get("other-key").String())
 	})
 
 	t.Run("identity without private-id key not modified", func(t *testing.T) {
@@ -427,7 +427,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that no ISO scheme ID was set
-		assert.Nil(t, party.Identities[0].Ext)
+		assert.True(t, party.Identities[0].Ext.IsZero())
 	})
 
 	t.Run("existing ISO scheme ID not overwritten", func(t *testing.T) {
@@ -436,15 +436,15 @@ func TestPrivateIDNormalization(t *testing.T) {
 				{
 					Key:  cbc.Key("private-id"),
 					Code: "ABC123XYZ",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "9999", // Pre-existing value
-					},
+					}),
 				},
 			},
 		}
 		ad.Normalizer(party)
 		// Check that ISO scheme ID was overwritten to 0224
-		assert.Equal(t, "0224", party.Identities[0].Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0224", party.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
 	})
 }
 
@@ -475,7 +475,7 @@ func TestSIRENGenerationFromSIRET(t *testing.T) {
 		assert.Equal(t, "123456789", sirenIdentity.Code.String())
 		// ISO scheme ID must be set here because EN16931 already ran over the
 		// identities slice before FR CTC appends the new SIREN identity.
-		assert.Equal(t, "0002", sirenIdentity.Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0002", sirenIdentity.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 
 	t.Run("generated SIREN gets legal scope", func(t *testing.T) {
@@ -529,9 +529,9 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("identity with ISO scheme 0224 and code over 100 chars", func(t *testing.T) {
 		id := &org.Identity{
 			Code: cbc.Code(strings.Repeat("A", 101)),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "0224",
-			},
+			}),
 		}
 		err := rules.Validate(id, withAddonContext())
 		assert.Error(t, err)
@@ -541,9 +541,9 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("identity with ISO scheme 0224 and valid code", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "VALID-CODE_123",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				iso.ExtKeySchemeID: "0224",
-			},
+			}),
 		}
 		err := rules.Validate(id, withAddonContext())
 		assert.NoError(t, err)
@@ -563,16 +563,16 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIRET,
 					Code: "12345678901234",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0009",
-					},
+					}),
 				},
 				{
 					Type: fr.IdentityTypeSIREN,
 					Code: "999999999",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 				},
 			},
 		}
@@ -658,9 +658,9 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIRET,
 					Code: "12345678901234",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0009",
-					},
+					}),
 				},
 			},
 		}
@@ -689,16 +689,16 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIRET,
 					Code: "12345678901234",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0009",
-					},
+					}),
 				},
 				{
 					Type: fr.IdentityTypeSIREN,
 					Code: "123456789",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 					Scope: org.IdentityScopeLegal,
 				},
 			},
@@ -819,15 +819,15 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "123",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 				},
 				{
 					Code: "456",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 				},
 			},
 		}
@@ -844,9 +844,9 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 				nilID, // Nil identity should be skipped via continue
 				{
 					Code: "123",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 				},
 			},
 		}
@@ -860,15 +860,15 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "", // Empty code - base Identity rules require code
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0224", // private-id scheme
-					},
+					}),
 				},
 				{
 					Code: "valid-id",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						iso.ExtKeySchemeID: "0002",
-					},
+					}),
 				},
 			},
 		}

@@ -131,7 +131,9 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 	inv := baseInvoice(t, lines...)
 	inv.Currency = currency.USD
 
-	assert.ErrorContains(t, inv.Calculate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
+	// Calculate no longer enforces the regime's currency; that is now handled
+	// by addon-level rules via currency.CanConvertTo.
+	assert.NoError(t, inv.Calculate())
 
 	inv.ExchangeRates = []*currency.ExchangeRate{
 		{
@@ -1093,6 +1095,99 @@ func TestInvertWithBypassTag(t *testing.T) {
 	assert.Contains(t, err.Error(), "bypass")
 }
 
+func TestInvertWithTopLevelChargesAndDiscounts(t *testing.T) {
+	// Exercises the top-level Charges and Discounts inversion paths
+	// in Invoice.Invert which the other tests don't cover.
+	inv := baseInvoiceWithLines(t)
+	inv.Discounts = []*bill.Discount{
+		{
+			Reason: "Top-level discount",
+			Amount: num.MakeAmount(10000, 2),
+		},
+	}
+	inv.Charges = []*bill.Charge{
+		{
+			Reason: "Top-level charge",
+			Amount: num.MakeAmount(5000, 2),
+		},
+	}
+
+	require.NoError(t, inv.Calculate())
+	sumBefore := inv.Totals.Sum.String()
+	require.NoError(t, inv.Invert())
+
+	assert.Equal(t, "-"+sumBefore, inv.Totals.Sum.String(),
+		"totals sum should be inverted")
+	assert.Equal(t, "-100.00", inv.Discounts[0].Amount.String())
+	assert.Equal(t, "-50.00", inv.Charges[0].Amount.String())
+}
+
+func TestInvoiceEmpty(t *testing.T) {
+	t.Run("clears lines, charges, discounts, totals", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Discounts = []*bill.Discount{
+			{Reason: "Test Discount", Amount: num.MakeAmount(1000, 2)},
+		}
+		inv.Charges = []*bill.Charge{
+			{Reason: "Test Charge", Amount: num.MakeAmount(500, 2)},
+		}
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{Description: "Advance", Amount: num.MakeAmount(250, 2)},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals)
+
+		inv.Empty()
+
+		assert.Empty(t, inv.Lines)
+		assert.NotNil(t, inv.Lines, "should be empty slice, not nil")
+		assert.Empty(t, inv.Charges)
+		assert.Empty(t, inv.Discounts)
+		assert.Nil(t, inv.Totals)
+		assert.Empty(t, inv.Payment.Advances)
+	})
+
+	t.Run("safe with nil payment", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Payment = nil
+		assert.NotPanics(t, func() {
+			inv.Empty()
+		})
+		assert.Empty(t, inv.Lines)
+	})
+}
+
+func TestInvoiceUnmarshalJSON(t *testing.T) {
+	t.Run("type mismatch returns error", func(t *testing.T) {
+		// Malformed outer JSON fails in encoding/json before reaching the
+		// method, but a well-formed object with a mistyped field propagates
+		// through UnmarshalJSON's inner alias unmarshal.
+		inv := new(bill.Invoice)
+		err := json.Unmarshal([]byte(`{"code": 42}`), inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot unmarshal number")
+	})
+
+	t.Run("populates regime from supplier", func(t *testing.T) {
+		// The migration path in UnmarshalJSON sets the regime from the
+		// supplier's tax identity when the raw JSON omits it.
+		raw := `{
+			"type": "standard",
+			"code": "ABC",
+			"issue_date": "2025-01-01",
+			"supplier": {
+				"name": "Supplier",
+				"tax_id": {"country": "ES", "code": "B98602642"}
+			}
+		}`
+		inv := new(bill.Invoice)
+		require.NoError(t, json.Unmarshal([]byte(raw), inv))
+		assert.Equal(t, "ES", inv.Regime.Country.String())
+	})
+}
+
 func TestInvoiceForUnknownRegime(t *testing.T) {
 	lines := []*bill.Line{
 		{
@@ -1119,6 +1214,27 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 	inv.Currency = currency.USD
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, rules.Validate(inv))
+}
+
+func TestInvoiceCanSign(t *testing.T) {
+	t.Run("can sign with code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Code = "123TEST"
+		require.NoError(t, inv.Calculate())
+		assert.True(t, inv.CanSign())
+	})
+
+	t.Run("cannot sign without code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.False(t, inv.CanSign())
+	})
+
+	t.Run("cannot sign with nil invoice", func(t *testing.T) {
+		var inv *bill.Invoice
+		assert.False(t, inv.CanSign())
+	})
 }
 
 func TestNormalization(t *testing.T) {

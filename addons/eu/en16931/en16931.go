@@ -15,15 +15,20 @@ import (
 )
 
 const (
+	// Key identifies the EN16931 addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "eu-en16931"
+
 	// V2017 is the key for the EN16931-1:2017 specification.
-	V2017 cbc.Key = "eu-en16931-v2017"
+	V2017 cbc.Key = Key + "-v2017"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V2017.String(),
-		rules.GOBL.Add("EU-EN16931-V2017"),
+		Key.String(),
+		rules.GOBL.Add("EU-EN16931"),
 		is.InContext(tax.AddonIn(V2017)),
 		billInvoiceRules(),
 		billDiscountRules(),

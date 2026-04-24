@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -23,6 +24,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("07", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		rules.Field("customer",
 			rules.Field("tax_id",
 				rules.When(

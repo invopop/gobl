@@ -30,23 +30,47 @@ func TestTimeNew(t *testing.T) {
 }
 
 func TestTimeNow(t *testing.T) {
-	t.Run("valid time", func(t *testing.T) {
+	t.Run("matches current UTC wall clock", func(t *testing.T) {
+		before := time.Now().UTC()
 		tm := cal.TimeNow()
-		assert.NotZero(t, tm.Hour)
-		assert.NotZero(t, tm.Minute)
-		assert.NotZero(t, tm.Second)
+		after := time.Now().UTC()
+		assertTimeWithin(t, tm, before, after)
 	})
 }
 
 func TestTimeNowIn(t *testing.T) {
-	t.Run("valid time", func(t *testing.T) {
+	t.Run("matches current wall clock in location", func(t *testing.T) {
 		loc, err := time.LoadLocation("America/New_York")
 		require.NoError(t, err)
+		before := time.Now().In(loc)
 		tm := cal.TimeNowIn(loc)
-		assert.NotZero(t, tm.Hour)
-		assert.NotZero(t, tm.Minute)
-		assert.NotZero(t, tm.Second)
+		after := time.Now().In(loc)
+		assertTimeWithin(t, tm, before, after)
 	})
+}
+
+// assertTimeWithin checks that tm is a valid time-of-day falling between the
+// wall-clock samples taken immediately before and after the call, tolerating
+// a midnight rollover.
+func assertTimeWithin(t *testing.T, tm cal.Time, before, after time.Time) {
+	t.Helper()
+	assert.GreaterOrEqual(t, tm.Hour, 0)
+	assert.Less(t, tm.Hour, 24)
+	assert.GreaterOrEqual(t, tm.Minute, 0)
+	assert.Less(t, tm.Minute, 60)
+	assert.GreaterOrEqual(t, tm.Second, 0)
+	assert.Less(t, tm.Second, 60)
+	assert.Zero(t, tm.Nanosecond, "nanoseconds should be stripped")
+
+	secOfDay := func(h, m, s int) int { return h*3600 + m*60 + s }
+	got := secOfDay(tm.Hour, tm.Minute, tm.Second)
+	lo := secOfDay(before.Hour(), before.Minute(), before.Second())
+	hi := secOfDay(after.Hour(), after.Minute(), after.Second())
+	if hi < lo {
+		assert.True(t, got >= lo || got <= hi, "time %v outside window %v..%v across midnight", tm, before, after)
+	} else {
+		assert.True(t, got >= lo && got <= hi, "time %v outside window %v..%v", tm, before, after)
+	}
 }
 
 func TestTimeString(t *testing.T) {
@@ -100,6 +124,47 @@ func TestTimeParsing(t *testing.T) {
 		var tm cal.Time
 		err := tm.UnmarshalJSON([]byte(`"12:34:56`))
 		require.ErrorContains(t, err, "unexpected end of JSON input")
+	})
+}
+
+func TestTimeIsZero(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		var tm cal.Time
+		assert.True(t, tm.IsZero())
+	})
+	t.Run("midnight", func(t *testing.T) {
+		tm := cal.MakeTime(0, 0, 0)
+		assert.True(t, tm.IsZero())
+	})
+	t.Run("non-zero", func(t *testing.T) {
+		tm := cal.MakeTime(12, 30, 0)
+		assert.False(t, tm.IsZero())
+	})
+	t.Run("only seconds", func(t *testing.T) {
+		tm := cal.MakeTime(0, 0, 1)
+		assert.False(t, tm.IsZero())
+	})
+}
+
+func TestTimeOmitZero(t *testing.T) {
+	type testStruct struct {
+		Name string   `json:"name"`
+		Time cal.Time `json:"time,omitzero"`
+	}
+	t.Run("omits zero time", func(t *testing.T) {
+		s := testStruct{Name: "test"}
+		data, err := json.Marshal(s)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"name":"test"}`, string(data))
+	})
+	t.Run("includes non-zero time", func(t *testing.T) {
+		s := testStruct{
+			Name: "test",
+			Time: cal.MakeTime(14, 30, 0),
+		}
+		data, err := json.Marshal(s)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"name":"test","time":"14:30:00"}`, string(data))
 	})
 }
 

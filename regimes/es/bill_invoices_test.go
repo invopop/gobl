@@ -23,4 +23,5 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "[GOBL-ES-BILL-INVOICE-02]")
 	})
+
 }

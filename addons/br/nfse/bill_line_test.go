@@ -23,9 +23,9 @@ func TestLineValidation(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: br.TaxCategoryISS,
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							nfse.ExtKeyISSLiability: "1",
-						},
+						}),
 					},
 				},
 			},

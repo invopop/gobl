@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 type signOpts struct {
@@ -82,8 +82,8 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	signOpts := &cli.SignOptions{
-		ParseOptions: &cli.ParseOptions{
+	signOpts := &ops.SignOptions{
+		ParseOptions: &ops.ParseOptions{
 			Template:  template,
 			Input:     input,
 			SetFile:   opts.setFiles,
@@ -94,7 +94,7 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 		PrivateKey: key,
 	}
 
-	env, err := cli.Sign(ctx, signOpts)
+	env, err := ops.Sign(ctx, signOpts)
 	if err != nil {
 		return err
 	}

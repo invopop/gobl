@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+uuid: "0194c26e-c4a1-7e89-b720-a1b2c3d4e5f6"
+type: "response"
+series: "SR"
+code: "0001"
+issue_date: "2025-04-10"
+issue_time: "14:30:00"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - key: "rejected"
+    doc:
+      series: "SAMPLE"
+      code: "001"
+      issue_date: "2025-04-01"
+    description: "Invoice rejected due to incorrect PO reference"
+    reasons:
+      - key: "references"
+        description: "Missing purchase order number"
+        conditions:
+          - code: "ERR-REF-001"
+            paths:
+              - "$.ordering.code"
+            message: "Purchase order reference is required"
+    actions:
+      - key: "reissue"
+        description: "Please reissue the invoice with the correct PO reference"

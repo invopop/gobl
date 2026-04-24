@@ -1,0 +1,216 @@
+{
+  "id": "GOBL-PL-FAVAT",
+  "package": "pl-favat",
+  "guard": "context: addon in [pl-favat-v3]",
+  "subsets": [
+    {
+      "id": "GOBL-PL-FAVAT-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-PL-FAVAT-BILL-INVOICE-15",
+          "desc": "invoice must be in PLN or provide exchange rate for conversion",
+          "tests": "can convert to [PLN]"
+        },
+        {
+          "id": "GOBL-PL-FAVAT-BILL-INVOICE-11",
+          "desc": "customer requires identity with role '8' and code for JST",
+          "tests": "JST identity"
+        },
+        {
+          "id": "GOBL-PL-FAVAT-BILL-INVOICE-12",
+          "desc": "customer requires identity with role '10' and code for GroupVAT",
+          "tests": "GroupVAT identity"
+        },
+        {
+          "id": "GOBL-PL-FAVAT-BILL-INVOICE-13",
+          "desc": "missing exemption note",
+          "tests": "exemption note present"
+        },
+        {
+          "id": "GOBL-PL-FAVAT-BILL-INVOICE-14",
+          "desc": "too many exemption notes",
+          "tests": "single exemption note"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-PL-FAVAT-BILL-INVOICE-01",
+              "desc": "invoice type must be standard or credit-note",
+              "tests": "one of [standard, credit-note]"
+            }
+          ]
+        },
+        {
+          "field": "preceding",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "issue_date",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-FAVAT-BILL-INVOICE-02",
+                      "desc": "preceding issue date is required",
+                      "tests": "present"
+                    }
+                  ]
+                },
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-FAVAT-BILL-INVOICE-03",
+                      "desc": "preceding code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-PL-FAVAT-BILL-INVOICE-04",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-16",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-FAVAT-BILL-INVOICE-17",
+                      "desc": "supplier tax ID code required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-05",
+                  "desc": "supplier name is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-06",
+                  "desc": "supplier addresses are required",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-07",
+                  "desc": "supplier first address must have a country",
+                  "tests": "first address country"
+                },
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-08",
+                  "desc": "supplier first address must have a street",
+                  "tests": "first address street"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "not simplified",
+          "subsets": [
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-09",
+                  "desc": "customer is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "subsets": [
+                {
+                  "guard": "code in [PL]",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-PL-FAVAT-BILL-INVOICE-10",
+                          "desc": "customer Polish tax ID code is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PL-FAVAT-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PL-FAVAT-TAX-COMBO-01",
+              "desc": "tax combo requires 'pl-favat-tax-category' extension",
+              "tests": "ext require [pl-favat-tax-category]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PL-FAVAT-PAY-ADVANCE",
+      "object": "pay.Advance",
+      "subsets": [
+        {
+          "field": "date",
+          "assert": [
+            {
+              "id": "GOBL-PL-FAVAT-PAY-ADVANCE-01",
+              "desc": "advance payment date is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

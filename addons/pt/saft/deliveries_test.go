@@ -93,7 +93,7 @@ func TestDeliveryNormalization(t *testing.T) {
 		addon.Normalizer(dlv)
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
-		assert.Equal(t, saft.MovementTypeDeliveryNote, dlv.Tax.Ext[saft.ExtKeyMovementType])
+		assert.Equal(t, saft.MovementTypeDeliveryNote, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 
 	t.Run("waybill type", func(t *testing.T) {
@@ -103,20 +103,20 @@ func TestDeliveryNormalization(t *testing.T) {
 		addon.Normalizer(dlv)
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
-		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext[saft.ExtKeyMovementType])
+		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 
 	t.Run("respect existing value", func(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeNote,
 			Tax: &bill.Tax{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyMovementType: saft.MovementTypeFixedAssets,
-				},
+				}),
 			},
 		}
 		addon.Normalizer(dlv)
-		assert.Equal(t, saft.MovementTypeFixedAssets, dlv.Tax.Ext[saft.ExtKeyMovementType])
+		assert.Equal(t, saft.MovementTypeFixedAssets, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 }
 
@@ -146,16 +146,16 @@ func validDelivery() *bill.Delivery {
 				Item: &org.Item{
 					Name: "Test Item",
 					Unit: "one",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						saft.ExtKeyProductType: saft.ProductTypeService,
-					},
+					}),
 				},
 			},
 		},
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyMovementType: saft.MovementTypeDeliveryNote,
-			},
+			}),
 		},
 		Totals: &bill.Totals{},
 	}

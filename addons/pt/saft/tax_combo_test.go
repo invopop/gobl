@@ -22,7 +22,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 	})
 
 	t.Run("standard with exempt reason", func(t *testing.T) {
@@ -30,13 +30,13 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 			Rate:     tax.RateGeneral,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M01",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Empty(t, combo.Ext[saft.ExtKeyExemption])
+		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Empty(t, combo.Ext.Get(saft.ExtKeyExemption))
 	})
 
 	t.Run("reverse-charge", func(t *testing.T) {
@@ -45,8 +45,8 @@ func TestTaxComboNormalize(t *testing.T) {
 			Key:      tax.KeyReverseCharge,
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M40", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M40", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
 
 	t.Run("outside-scope", func(t *testing.T) {
@@ -55,8 +55,8 @@ func TestTaxComboNormalize(t *testing.T) {
 			Key:      tax.KeyOutsideScope,
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M99", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M99", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
 	t.Run("intra-community", func(t *testing.T) {
 		combo := &tax.Combo{
@@ -64,8 +64,8 @@ func TestTaxComboNormalize(t *testing.T) {
 			Key:      tax.KeyIntraCommunity,
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M16", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M16", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
 
 	t.Run("unsupported", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Rate:     tax.RateSuperReduced,
 		}
 		ad.Normalizer(combo)
-		assert.Empty(t, combo.Ext)
+		assert.True(t, combo.Ext.IsZero())
 	})
 
 	t.Run("nil", func(t *testing.T) {
@@ -89,19 +89,19 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 		}
 		ad.Normalizer(combo)
-		assert.Empty(t, combo.Ext)
+		assert.True(t, combo.Ext.IsZero())
 	})
 
 	t.Run("no rate, no override ext", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(21, 3),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyTaxRate: "NOR",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 	})
 
 	t.Run("foreign rate", func(t *testing.T) {
@@ -109,128 +109,128 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Country:  l10n.EL.Tax(),
 			Percent:  num.NewPercentage(24, 3),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyTaxRate: "NOR",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "OUT", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "OUT", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.False(t, combo.Ext.Has(saft.ExtKeyExemption))
 	})
 
 	t.Run("reverse map exemption M30", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M30",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M30", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M30", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyReverseCharge, combo.Key)
 	})
 
 	t.Run("reverse map exemption M05", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M05",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M05", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M05", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyExport, combo.Key)
 	})
 
 	t.Run("reverse map exemption M16", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M16",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M16", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M16", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyIntraCommunity, combo.Key)
 	})
 
 	t.Run("reverse map exemption M99", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M99",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M99", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M99", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("reverse map exemption M01", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M01",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M01", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M01", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyExempt, combo.Key)
 	})
 
 	t.Run("reverse map exemption M44", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M44",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M44", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M44", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("reverse map exemption M45", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M45",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M45", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M45", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("reverse map exemption M46", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyExemption: "M46",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M46", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
+		assert.Equal(t, "M46", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
 	})
 
 	t.Run("rate missing but extension present", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyTaxRate: "INT",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "INT", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "INT", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, tax.RateIntermediate, combo.Rate)
 	})
 
@@ -238,12 +238,12 @@ func TestTaxComboNormalize(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				saft.ExtKeyTaxRate: "INT",
-			},
+			}),
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, tax.RateGeneral, combo.Rate)
 	})
 }
@@ -253,10 +253,10 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(230, 3),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "NOR",
-			},
+			}),
 		}
 		err := rules.Validate(combo, withAddonContext())
 		assert.NoError(t, err)
@@ -265,9 +265,9 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("missing rate", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				pt.ExtKeyRegion: "PT",
-			},
+			}),
 		}
 		err := rules.Validate(combo, withAddonContext())
 		assert.ErrorContains(t, err, "region and tax rate are required")
@@ -277,9 +277,9 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Country:  l10n.EL.Tax(),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				pt.ExtKeyRegion: "PT",
-			},
+			}),
 		}
 		err := rules.Validate(combo, withAddonContext())
 		assert.ErrorContains(t, err, "region and tax rate are required")
@@ -288,11 +288,11 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("valid exempt", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				pt.ExtKeyRegion:      "PT",
 				saft.ExtKeyTaxRate:   "ISE",
 				saft.ExtKeyExemption: "M01",
-			},
+			}),
 		}
 		err := rules.Validate(combo, withAddonContext())
 		assert.NoError(t, err)
@@ -301,10 +301,10 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("missing exempt", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "ISE",
-			},
+			}),
 		}
 		err := rules.Validate(combo, withAddonContext())
 		assert.ErrorContains(t, err, "exemption is required when tax rate is exempt")

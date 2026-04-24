@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -25,18 +26,18 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 func normalizeInvoice(inv *bill.Invoice) {
 	// Try to move any preceding choices to the document level
 	for _, row := range inv.Preceding {
-		if row == nil || len(row.Ext) == 0 {
+		if row == nil || row.Ext.Len() == 0 {
 			continue
 		}
 		found := false
 		if row.Ext.Has(ExtKeyDocType) {
 			if inv.Tax == nil || !found {
-				inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-					ExtKeyDocType: row.Ext[ExtKeyDocType],
-				})
+				inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+					ExtKeyDocType: row.Ext.Get(ExtKeyDocType),
+				}))
 				found = true // only assign first one
 			}
-			delete(row.Ext, ExtKeyDocType)
+			row.Ext = row.Ext.Delete(ExtKeyDocType)
 		}
 	}
 
@@ -44,13 +45,13 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// SII implying that scenarios cannot be used.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "I",
-		})
+		}))
 	case bill.InvoiceTypeCorrective:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "S",
-		})
+		}))
 	}
 
 	// Set default correction type, unless already provided.
@@ -60,20 +61,20 @@ func normalizeInvoice(inv *bill.Invoice) {
 		// This is non-deterministic. May be overwritten by user *or*
 		// scenarios.
 		if !inv.Tax.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
-			inv.Tax.Ext[ExtKeyDocType] = "R1"
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, "R1")
 		}
 	}
 
 	// Normalize the third party details
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyThirdPartyIssuer: "S",
-		})
+		}))
 	}
 	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyThirdPartyIssuer: "S",
-		})
+		}))
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
@@ -104,9 +105,9 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		code = ExtCodeIdentityTypeOther
 	}
 	if !code.IsEmpty() {
-		id.Ext = id.Ext.Merge(tax.Extensions{
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIdentityType: code,
-		})
+		}))
 	}
 }
 
@@ -128,6 +129,7 @@ func normalizeBillLine(line *bill.Line) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("15", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Preceding documents
 		// Code 01: preceding required when corrective
 		rules.When(

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,6 +25,25 @@ func TestCode(t *testing.T) {
 	err := c.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "currency code FOOO not defined")
+}
+
+func TestCodeIn(t *testing.T) {
+	c := currency.USD
+	assert.True(t, c.In(currency.USD, currency.EUR))
+	assert.False(t, c.In(currency.EUR, currency.GBP))
+}
+
+func TestCodeRules(t *testing.T) {
+	r := currency.IsCodeDefined
+	assert.True(t, r.Check(currency.USD))
+	assert.False(t, r.Check("FOO"))
+
+	t.Run("rules registry check", func(t *testing.T) {
+		x := currency.USD
+		assert.NoError(t, rules.Validate(x))
+		x = "FOO"
+		assert.ErrorContains(t, rules.Validate(x), "[GOBL-CURRENCY-CODE-01] currency code must be defined in GOBL")
+	})
 }
 
 func TestCodeJSONSchema(t *testing.T) {

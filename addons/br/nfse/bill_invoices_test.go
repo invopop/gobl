@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -100,6 +101,35 @@ func TestInvoicesValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-BRL currency without exchange rates", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Series:   "SAMPLE",
+			Currency: "USD",
+		}
+		err := rules.Validate(inv, withAddonContext())
+		assert.ErrorContains(t, err, "[GOBL-BR-NFSE-BILL-INVOICE-17] invoice must be in BRL or provide exchange rate for conversion")
+	})
+
+	t.Run("non-BRL currency with exchange rates", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Series:   "SAMPLE",
+			Currency: "USD",
+			ExchangeRates: []*currency.ExchangeRate{
+				{
+					From:   "USD",
+					To:     "BRL",
+					Amount: num.MakeAmount(500, 2),
+				},
+			},
+		}
+		err := rules.Validate(inv, withAddonContext())
+		if err != nil {
+			assert.NotContains(t, err.Error(), "invoice must be in BRL or provide exchange rate for conversion")
+		}
+	})
 }
 
 func TestSuppliersValidation(t *testing.T) {
@@ -199,11 +229,11 @@ func TestSuppliersValidation(t *testing.T) {
 			assert.Contains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
 		}
 
-		sup.Ext = tax.Extensions{
+		sup.Ext = tax.ExtensionsOf(tax.ExtMap{
 			nfse.ExtKeySimples:         "1",
 			"br-ibge-municipality":     "12345678",
 			nfse.ExtKeyFiscalIncentive: "2",
-		}
+		})
 		err = rules.Validate(inv, withAddonContext())
 		if assert.Error(t, err) {
 			assert.NotContains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
@@ -231,9 +261,9 @@ func TestSuppliersNormalization(t *testing.T) {
 		{
 			name: "does not override fiscal incentive",
 			supplier: &org.Party{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyFiscalIncentive: "1",
-				},
+				}),
 			},
 			out: "1",
 		},
@@ -245,7 +275,7 @@ func TestSuppliersNormalization(t *testing.T) {
 			if ts.supplier == nil {
 				assert.Nil(t, inv.Supplier)
 			} else {
-				assert.Equal(t, ts.out, inv.Supplier.Ext[nfse.ExtKeyFiscalIncentive])
+				assert.Equal(t, ts.out, inv.Supplier.Ext.Get(nfse.ExtKeyFiscalIncentive))
 			}
 		})
 	}

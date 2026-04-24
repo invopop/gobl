@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -28,14 +29,14 @@ func TestInvoicesValidation(t *testing.T) {
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "tax requires 'br-nfe-model' and 'br-nfe-presence' extensions")
 
-		inv.Tax.Ext = tax.Extensions{
+		inv.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{
 			nfe.ExtKeyModel:    nfe.ModelNFe,
 			nfe.ExtKeyPresence: nfe.PresenceDelivery,
-		}
+		})
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "NF-e invoices do not support '4' for 'br-nfe-presence'")
 
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceInPerson
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -88,9 +89,9 @@ func TestInvoicesValidation(t *testing.T) {
 
 		inv.Payment.Instructions = &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "01",
-			},
+			}),
 		}
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
@@ -114,12 +115,12 @@ func TestInvoicesValidation(t *testing.T) {
 
 	t.Run("validates NFe presence when model is NFe", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Tax.Ext[nfe.ExtKeyModel] = nfe.ModelNFe
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceDelivery
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFe)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceDelivery)
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "NF-e invoices do not support '4' for 'br-nfe-presence'")
 
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceInPerson
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -128,12 +129,12 @@ func TestInvoicesValidation(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Customer = nil // For NFCe, customer is optional
 
-		inv.Tax.Ext[nfe.ExtKeyModel] = nfe.ModelNFCe
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceNotApplicable
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFCe)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceNotApplicable)
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "NFC-e invoices require in-person or delivery for 'br-nfe-presence'")
 
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceInPerson
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -196,7 +197,7 @@ func TestSupplierValidation(t *testing.T) {
 	t.Run("validates supplier addresses required", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Supplier.Addresses = nil
-		inv.Supplier.Ext = nil // remove ext to avoid municipality check on nil addresses
+		inv.Supplier.Ext = tax.Extensions{} // remove ext to avoid municipality check on nil addresses
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier must have at least one address")
 
@@ -205,9 +206,9 @@ func TestSupplierValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "supplier must have at least one address")
 
 		inv.Supplier.Addresses = []*org.Address{nil}
-		inv.Supplier.Ext = tax.Extensions{
+		inv.Supplier.Ext = tax.ExtensionsOf(tax.ExtMap{
 			"br-ibge-municipality": "3304557",
-		}
+		})
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier address must not be empty")
 
@@ -243,13 +244,13 @@ func TestSupplierValidation(t *testing.T) {
 
 	t.Run("validates supplier municipality extension when addresses exist", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Supplier.Ext = nil
+		inv.Supplier.Ext = tax.Extensions{}
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "requires 'br-ibge-municipality' extension when addresses are present")
 
-		inv.Supplier.Ext = tax.Extensions{
+		inv.Supplier.Ext = tax.ExtensionsOf(tax.ExtMap{
 			"br-ibge-municipality": "3304557",
-		}
+		})
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -293,7 +294,7 @@ func TestSupplierValidation(t *testing.T) {
 func TestCustomerValidation(t *testing.T) {
 	t.Run("validates customer required for NFe", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Tax.Ext[nfe.ExtKeyModel] = nfe.ModelNFe
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFe)
 		inv.Customer = nil
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer is required for NF-e")
@@ -313,9 +314,9 @@ func TestCustomerValidation(t *testing.T) {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"br-ibge-municipality": "3550308",
-			},
+			}),
 		}
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
@@ -323,9 +324,9 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("validates customer addresses required for NFe", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Tax.Ext[nfe.ExtKeyModel] = nfe.ModelNFe
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFe)
 		inv.Customer.Addresses = nil
-		inv.Customer.Ext = nil // avoid municipality check
+		inv.Customer.Ext = tax.Extensions{} // avoid municipality check
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer must have at least one address for NF-e")
 
@@ -334,9 +335,9 @@ func TestCustomerValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer must have at least one address for NF-e")
 
 		inv.Customer.Addresses = []*org.Address{nil}
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
 			"br-ibge-municipality": "3550308",
-		}
+		})
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer address must not be empty")
 
@@ -355,8 +356,8 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("customer not required for NFCe", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Tax.Ext[nfe.ExtKeyModel] = nfe.ModelNFCe
-		inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceInPerson
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFCe)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
 		inv.Customer = nil
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
@@ -381,13 +382,13 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("validates customer municipality when addresses exist", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
-		inv.Customer.Ext = nil
+		inv.Customer.Ext = tax.Extensions{}
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "requires 'br-ibge-municipality' extension when addresses are present")
 
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
 			"br-ibge-municipality": "3550308",
-		}
+		})
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -428,6 +429,31 @@ func TestCustomerValidation(t *testing.T) {
 	})
 }
 
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-BRL currency without exchange rates", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-BR-NFE-BILL-INVOICE-34] invoice must be in BRL or provide exchange rate for conversion")
+	})
+
+	t.Run("non-BRL currency with exchange rates", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "BRL",
+				Amount: num.MakeAmount(500, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+}
+
 // validInvoice creates a raw invoice suitable for scenario tests that call Calculate() themselves.
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
@@ -455,9 +481,9 @@ func validInvoice() *bill.Invoice {
 					Code:     "01310100",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"br-ibge-municipality": "3304557",
-			},
+			}),
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -474,15 +500,15 @@ func validInvoice() *bill.Invoice {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"br-ibge-municipality": "3550308",
-			},
+			}),
 		},
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyModel:    nfe.ModelNFe,
 				nfe.ExtKeyPresence: nfe.PresenceInPerson,
-			},
+			}),
 		},
 		Notes: []*org.Note{
 			{
@@ -550,9 +576,9 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 					Code:     "01310100",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"br-ibge-municipality": "3304557",
-			},
+			}),
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -569,9 +595,9 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"br-ibge-municipality": "3550308",
-			},
+			}),
 		},
 		Notes: []*org.Note{
 			{
@@ -610,7 +636,7 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 	}
 	require.NoError(t, inv.Calculate())
 	// Presence is not set by scenarios, set it manually after Calculate
-	inv.Tax.Ext[nfe.ExtKeyPresence] = nfe.PresenceInPerson
+	inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
 	require.NoError(t, rules.Validate(inv))
 	return inv
 }

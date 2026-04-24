@@ -1,0 +1,153 @@
+{
+  "id": "GOBL-IT-TICKET",
+  "package": "it-ticket",
+  "guard": "context: addon in [it-ticket-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-IT-TICKET-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-IT-TICKET-BILL-INVOICE-08",
+          "desc": "invoice must be in EUR or provide exchange rate for conversion",
+          "tests": "can convert to [EUR]"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-IT-TICKET-BILL-INVOICE-01",
+              "desc": "tax is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "prices_include",
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-BILL-INVOICE-02",
+                  "desc": "prices_include is required",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-IT-TICKET-BILL-INVOICE-03",
+                  "desc": "prices_include must be VAT",
+                  "tests": "one of [VAT]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-BILL-INVOICE-04",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [corrective]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-BILL-INVOICE-05",
+                  "desc": "preceding documents are required for corrective invoices",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-BILL-INVOICE-06",
+                  "desc": "line taxes must include VAT category",
+                  "tests": "line has tax category VAT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [corrective]",
+          "subsets": [
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-IT-TICKET-BILL-INVOICE-07",
+                          "desc": "corrective invoice lines require 'it-ticket-line-ref' extension",
+                          "tests": "ext require [it-ticket-line-ref]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-IT-TICKET-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "VAT without percent",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-TAX-COMBO-01",
+                  "desc": "exempt VAT combo requires 'it-ticket-exempt' extension",
+                  "tests": "ext require [it-ticket-exempt]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "is VAT",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-IT-TICKET-TAX-COMBO-02",
+                  "desc": "must be a valid value",
+                  "tests": "valid percentage"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

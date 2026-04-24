@@ -137,7 +137,7 @@ func Test_validate(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "validation: [GOBL-SCHEMA-OBJECT-01] ($.doc.$schema) schema is required; [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+			err: "validation: [GOBL-SCHEMA-OBJECT-01] ($.doc.$schema) schema is required; [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema",
 		},
 		{
 			name: "input file",

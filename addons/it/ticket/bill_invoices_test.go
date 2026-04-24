@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -27,9 +28,9 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ticket.ExtKeyLottery: "12345678",
-			},
+			}),
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -69,9 +70,9 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							ticket.ExtKeyExempt: "N4",
-						},
+						}),
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -95,12 +96,12 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("test correction", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Lines[0].Ext = tax.Extensions{
+		inv.Lines[0].Ext = tax.ExtensionsOf(tax.ExtMap{
 			ticket.ExtKeyLine: "1234567890",
-		}
-		inv.Lines[1].Ext = tax.Extensions{
+		})
+		inv.Lines[1].Ext = tax.ExtensionsOf(tax.ExtMap{
 			ticket.ExtKeyLine: "1234567890",
-		}
+		})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithStamps([]*head.Stamp{
 			{
@@ -113,6 +114,31 @@ func TestInvoiceValidation(t *testing.T) {
 		json, err := json.MarshalIndent(inv, "", "  ")
 		require.NoError(t, err)
 		t.Log(string(json))
+	})
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-IT-TICKET-BILL-INVOICE-08] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 
@@ -214,9 +240,9 @@ func TestInvoiceLineTaxes(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							ticket.ExtKeyExempt: row.Code,
-						},
+						}),
 					},
 				},
 			})
@@ -310,8 +336,8 @@ func TestInvoiceTax(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Tax.PricesInclude = ""
 		err := rules.Validate(inv)
-		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-02")
-		require.ErrorContains(t, err, "GOBL-IT-TICKET-V1-BILL-INVOICE-03")
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-BILL-INVOICE-02")
+		require.ErrorContains(t, err, "GOBL-IT-TICKET-BILL-INVOICE-03")
 	})
 
 	t.Run("missing Tax will be normalized", func(t *testing.T) {
@@ -325,12 +351,12 @@ func TestInvoiceTax(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax = nil
-		require.ErrorContains(t, rules.Validate(inv), "GOBL-IT-TICKET-V1-BILL-INVOICE-01")
+		require.ErrorContains(t, rules.Validate(inv), "GOBL-IT-TICKET-BILL-INVOICE-01")
 	})
 
 	t.Run("lottery code length", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567"
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "1234567")
 		// Pattern validation is handled by core extension validation during Calculate,
 		// not by addon rules.
 		err := inv.Calculate()
@@ -339,16 +365,16 @@ func TestInvoiceTax(t *testing.T) {
 
 	t.Run("lottery code empty", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = ""
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "")
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lottery code uppercase", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567a"
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "1234567a")
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "1234567A", string(inv.Tax.Ext[ticket.ExtKeyLottery]))
+		assert.Equal(t, "1234567A", string(inv.Tax.Ext.Get(ticket.ExtKeyLottery)))
 	})
 
 }

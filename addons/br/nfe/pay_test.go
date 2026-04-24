@@ -23,9 +23,9 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("with match", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "15", // must be overridden
-			},
+			}),
 		}
 		ad.Normalizer(instr)
 		assert.Equal(t, "01", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
@@ -42,9 +42,9 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("with other key and extension", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyOther,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "13", // must be kept
-			},
+			}),
 		}
 		ad.Normalizer(instr)
 		assert.Equal(t, "13", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
@@ -61,9 +61,9 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("preserves existing extensions", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCard,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"other-extension": "value",
-			},
+			}),
 		}
 		ad.Normalizer(instr)
 		assert.Equal(t, "03", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
@@ -84,9 +84,9 @@ func TestNormalizePayAdvance(t *testing.T) {
 	t.Run("with match", func(t *testing.T) {
 		adv := &pay.Advance{
 			Key: pay.MeansKeyCard,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "14", // must be overridden
-			},
+			}),
 		}
 		ad.Normalizer(adv)
 		assert.Equal(t, "03", adv.Ext.Get(nfe.ExtKeyPaymentMeans).String())
@@ -103,9 +103,9 @@ func TestNormalizePayAdvance(t *testing.T) {
 	t.Run("with other key and extension", func(t *testing.T) {
 		adv := &pay.Advance{
 			Key: pay.MeansKeyOther,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "13", // must be kept
-			},
+			}),
 		}
 		ad.Normalizer(adv)
 		assert.Equal(t, "13", adv.Ext.Get(nfe.ExtKeyPaymentMeans).String())
@@ -124,9 +124,9 @@ func TestValidatePayInstructions(t *testing.T) {
 	t.Run("with payment means", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "01",
-			},
+			}),
 		}
 		err := rules.Validate(instr, withAddonContext())
 		assert.NoError(t, err)
@@ -152,9 +152,9 @@ func TestValidatePayAdvance(t *testing.T) {
 		adv := &pay.Advance{
 			Key:         pay.MeansKeyCard,
 			Description: "Card payment",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				nfe.ExtKeyPaymentMeans: "03",
-			},
+			}),
 		}
 		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)

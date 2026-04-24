@@ -20,13 +20,13 @@ func TestAdvanceNormalize(t *testing.T) {
 		Identify:    uuid.Identify{UUID: uuid.Zero},
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			"random": "",
-		},
+		}),
 	}
 	a.Normalize()
 	assert.Empty(t, a.UUID)
-	assert.Empty(t, a.Ext)
+	assert.True(t, a.Ext.IsZero())
 
 	a = nil
 	assert.NotPanics(t, func() {

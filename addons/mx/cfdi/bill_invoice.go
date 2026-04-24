@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -37,6 +38,7 @@ func normalizeInvoiceIssueDateAndTime(inv *bill.Invoice) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("27", "invoice must be in MXN or provide exchange rate for conversion", currency.CanConvertTo(currency.MXN)),
 		// Tax extensions
 		rules.Field("tax",
 			rules.Field("ext",
@@ -224,13 +226,12 @@ func partyIsMexican(val any) bool {
 // itemExtProdServValid checks that the ProdServ extension code has 8 digits.
 // Skips when the extension is not present (handled by a separate assertion).
 func itemExtProdServValid(val any) bool {
-	ext, ok := val.(tax.Extensions)
+	ext, ok := tax.ExtensionsFromValue(val)
 	if !ok {
 		return true
 	}
-	v, has := ext[ExtKeyProdServ]
-	if !has {
+	if !ext.Has(ExtKeyProdServ) {
 		return true // not present, other rule handles this
 	}
-	return itemExtensionValidCodeRegexp.MatchString(string(v))
+	return itemExtensionValidCodeRegexp.MatchString(string(ext.Get(ExtKeyProdServ)))
 }

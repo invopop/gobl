@@ -19,34 +19,34 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeCreditNote,
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyDocType: "FC", // default
-				},
+				}),
 			},
 			{
 				Tags: []cbc.Key{
 					tax.TagSimplified,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyDocType: "FA",
-				},
+				}),
 			},
 			{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyDocType: "AF",
-				},
+				}),
 			},
 			// ** Invoice Class **
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "OO", // Original Invoice
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
@@ -54,36 +54,36 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeCreditNote,
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "OR", // Corrective
-				},
+				}),
 			},
 			{
 				Tags: []cbc.Key{es.TagSummary},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "OC", // Summary
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{es.TagCopy},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "CO", // Copy of the original
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
 				Tags:  []cbc.Key{es.TagCopy},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "CR", // Copy of the corrective
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{es.TagCopy, es.TagSummary},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					ExtKeyInvoiceClass: "CC", // Copy of the summary
-				},
+				}),
 			},
 		},
 	},

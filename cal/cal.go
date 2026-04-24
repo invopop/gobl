@@ -12,6 +12,7 @@ func init() {
 		DateTime{},
 		Period{},
 		Time{},
+		Timestamp{},
 	)
 	rules.Register(
 		"cal",
@@ -19,5 +20,6 @@ func init() {
 		dateRules(),
 		dateTimeRules(),
 		periodRules(),
+		timestampRules(),
 	)
 }

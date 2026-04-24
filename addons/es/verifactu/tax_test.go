@@ -101,9 +101,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyOpClass: "N1",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
@@ -136,9 +136,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "03",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "03", tc.Ext.Get(ExtKeyRegime).String())
@@ -147,9 +147,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with exempt code set", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E6",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E6", tc.Ext.Get(ExtKeyExempt).String())
@@ -160,10 +160,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with export code set", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E2",
 				ExtKeyRegime: "02",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
@@ -173,10 +173,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with reverse-charge", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyOpClass: "S2",
 				ExtKeyRegime:  "01",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
@@ -186,10 +186,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with outside-scope", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyOpClass: "N1",
 				ExtKeyRegime:  "01",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyOpClass).String())
@@ -199,10 +199,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with intra-community", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E5",
 				ExtKeyRegime: "01",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
@@ -218,10 +218,10 @@ func TestValidateTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyOpClass: "S1",
 				ExtKeyRegime:  "01",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
@@ -240,10 +240,10 @@ func TestValidateTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "01",
 				ExtKeyExempt: "E1",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
@@ -252,10 +252,10 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("excludes E2 exemption code with regime 01", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "01",
 				ExtKeyExempt: "E2",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")
@@ -264,10 +264,10 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("excludes E3 exemption code with regime 01", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "01",
 				ExtKeyExempt: "E3",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E3")
@@ -276,10 +276,10 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("allows E2 exemption code with non-01 regime", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "02",
 				ExtKeyExempt: "E2",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)
@@ -288,10 +288,10 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("excludes E2 exemption code with regime 01 and IGIC category", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: es.TaxCategoryIGIC,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyRegime: "01",
 				ExtKeyExempt: "E2",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.ErrorContains(t, err, "E2")

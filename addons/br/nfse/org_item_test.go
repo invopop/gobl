@@ -20,21 +20,21 @@ func TestItemValidation(t *testing.T) {
 			name: "valid item",
 			item: &org.Item{
 				Name: "Test Service",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyService: "12345678",
-				},
+				}),
 			},
 		},
 		{
 			name: "valid item with all IBS/CBS extensions",
 			item: &org.Item{
 				Name: "Test Service",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyOperation: "030101",
 					nfse.ExtKeyTaxStatus: "000",
 					nfse.ExtKeyTaxClass:  "000001",
-				},
+				}),
 			},
 		},
 		{
@@ -52,7 +52,7 @@ func TestItemValidation(t *testing.T) {
 			name: "empty extensions",
 			item: &org.Item{
 				Name: "Test",
-				Ext:  tax.Extensions{},
+				Ext:  tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			err: "item requires 'br-nfse-service' extension",
 		},
@@ -60,9 +60,9 @@ func TestItemValidation(t *testing.T) {
 			name: "missing extension",
 			item: &org.Item{
 				Name: "Test",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			err: "item requires 'br-nfse-service' extension",
 		},
@@ -70,10 +70,10 @@ func TestItemValidation(t *testing.T) {
 			name: "only operation extension",
 			item: &org.Item{
 				Name: "Test",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyOperation: "030101",
-				},
+				}),
 			},
 			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
@@ -81,10 +81,10 @@ func TestItemValidation(t *testing.T) {
 			name: "only tax status extension",
 			item: &org.Item{
 				Name: "Test",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyTaxStatus: "000",
-				},
+				}),
 			},
 			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
@@ -92,10 +92,10 @@ func TestItemValidation(t *testing.T) {
 			name: "only tax class extension",
 			item: &org.Item{
 				Name: "Test",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					nfse.ExtKeyService:  "12345678",
 					nfse.ExtKeyTaxClass: "000001",
-				},
+				}),
 			},
 			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
