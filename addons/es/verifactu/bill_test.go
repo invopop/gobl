@@ -553,10 +553,10 @@ func TestInvoiceValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Percent:  num.NewPercentage(int64(10+i), 2),
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							verifactu.ExtKeyOpClass: "S1",
 							verifactu.ExtKeyRegime:  r,
-						},
+						}),
 					},
 				},
 			})
