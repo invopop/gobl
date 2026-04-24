@@ -10,9 +10,6 @@ tax:
   ext:
     sa-zatca-invoice-type: "0200000"
     untdid-document-type: "388"
-  notes: 
-    - category: "cef-vatex"
-    
 
 supplier:
   tax_id:
@@ -55,4 +52,6 @@ lines:
 
 payment:
   instructions:
-    key: "cash"
+    key: "credit-transfer"
+  terms:
+    notes: "Payment due within 30 days"

@@ -1,0 +1,75 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["sa-zatca-v1"]
+uuid: "a1b2c3d4-1111-4aaa-bbbb-000000000001"
+type: "credit-note"
+issue_date: "2022-03-01"
+issue_time: "10:00:00"
+series: "CN"
+code: "CN-001"
+regime: "SA"
+
+tax:
+  ext:
+    sa-zatca-invoice-type: "0100000"
+    untdid-document-type: "381"
+
+preceding:
+  - series: ""
+    code: "SAMPLE-001"
+    issue_date: "2022-02-01"
+    reason: "Return of development services"
+    ext:
+      untdid-document-type: "388"
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "312345678912343"
+  name: "Acme Corp Saudi"
+  identities:
+    - type: "CRN"
+      code: "1234567890"
+  addresses:
+    - street: "King Fahd Road"
+      street_extra: "Al Olaya"
+      num: "1234"
+      locality: "Riyadh"
+      region: "Riyadh"
+      code: "12345"
+      country: "SA"
+
+customer:
+  identities:
+    - type: "TIN"
+      code: "123456789012345"
+  name: "Sample Consumer LLC"
+  addresses:
+    - street: "Olaya Street"
+      street_extra: "Al Malaz"
+      num: "5678"
+      locality: "Riyadh"
+      region: "Riyadh"
+      code: "54321"
+      country: "SA"
+
+delivery:
+  date: "2022-03-01"
+  period:
+    start: "2022-02-01"
+    end: "2022-02-28"
+
+payment:
+  instructions:
+    key: "credit-transfer"
+  terms:
+    notes: "Refund within 14 days"
+
+lines:
+  - quantity: 5
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard

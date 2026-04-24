@@ -4,27 +4,38 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "84bd2dd1a7238fb7f6cd002173a2424d28eb138fd08111abc6f8db80b42f2245"
+			"val": "c0ee79e2f30891b7d68c3c14810a6d83b634582fee7961c72bce28db3c01c71c"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "SA",
 		"$addons": [
+			"eu-en16931-v2017",
 			"sa-zatca-v1"
 		],
 		"uuid": "8d487816-70b8-4ade-a618-9d620b73814a",
 		"type": "standard",
-		"code": "SME00023",
+		"code": "123456",
 		"issue_date": "2022-09-07",
 		"issue_time": "12:21:28",
 		"currency": "SAR",
 		"tax": {
 			"rounding": "currency",
 			"ext": {
-				"sa-zatca-invoice-type": "0100000",
+				"sa-zatca-invoice-type": "0200000",
 				"untdid-document-type": "388"
-			}
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "zero",
+					"text": "Medicines and medical equipment",
+					"ext": {
+						"untdid-tax-category": "Z"
+					}
+				}
+			]
 		},
 		"supplier": {
 			"name": "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD",
@@ -49,33 +60,38 @@
 				}
 			]
 		},
-		"customer": {
-			"name": "شركة نماذج فاتورة المحدودة | Fatoora Samples LTD",
-			"tax_id": {
-				"country": "SA",
-				"code": "399999999800003"
-			},
-			"addresses": [
-				{
-					"num": "1111",
-					"street": "صلاح الدين | Salah Al-Din",
-					"street_extra": "المروج | Al-Murooj",
-					"locality": "الرياض | Riyadh",
-					"code": "12222",
-					"country": "SA"
-				}
-			]
-		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "2",
+				"quantity": "1",
 				"item": {
-					"name": "قلم رصاص",
-					"price": "2.00",
+					"name": "Medicine | الدواء",
+					"price": "50.00",
 					"unit": "PCE"
 				},
-				"sum": "4.00",
+				"sum": "50.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"cef-vatex": "VATEX-SA-35",
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "50.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Shampoo | شامبو",
+					"price": "21.74",
+					"unit": "PCE"
+				},
+				"sum": "21.74",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -87,65 +103,56 @@
 						}
 					}
 				],
-				"total": "4.00"
-			}
-		],
-		"discounts": [
-			{
-				"i": 1,
-				"reason": "discount",
-				"amount": "0.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "standard",
-						"rate": "general",
-						"percent": "15.0%",
-						"ext": {
-							"untdid-tax-category": "S"
-						}
-					}
-				]
+				"total": "21.74"
 			}
 		],
 		"payment": {
+			"terms": {
+				"notes": "Payment due within 30 days"
+			},
 			"instructions": {
-				"key": "cash",
+				"key": "credit-transfer",
 				"ext": {
-					"untdid-payment-means": "10"
+					"untdid-payment-means": "30"
 				}
 			}
 		},
-		"delivery": {
-			"date": "2022-09-07"
-		},
 		"totals": {
-			"sum": "4.00",
-			"discount": "0.00",
-			"total": "4.00",
+			"sum": "71.74",
+			"total": "71.74",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
+								"key": "zero",
+								"ext": {
+									"cef-vatex": "VATEX-SA-35",
+									"untdid-tax-category": "Z"
+								},
+								"base": "50.00",
+								"percent": "0%",
+								"amount": "0.00"
+							},
+							{
 								"key": "standard",
 								"ext": {
 									"untdid-tax-category": "S"
 								},
-								"base": "4.00",
+								"base": "21.74",
 								"percent": "15.0%",
-								"amount": "0.60"
+								"amount": "3.26"
 							}
 						],
-						"amount": "0.60"
+						"amount": "3.26"
 					}
 				],
-				"sum": "0.60"
+				"sum": "3.26"
 			},
-			"tax": "0.60",
-			"total_with_tax": "4.60",
-			"payable": "4.60"
+			"tax": "3.26",
+			"total_with_tax": "75.00",
+			"payable": "75.00"
 		}
 	}
 }
