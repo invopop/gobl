@@ -397,7 +397,7 @@ type Status struct {
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 
 	// Ext provides additional structured data specific to the regime or addon.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Ordering provides links to related documents and details that may have occurred
 	// before this status was created.
@@ -463,7 +463,7 @@ type StatusLine struct {
 	Actions []*Action `json:"actions,omitempty" jsonschema:"title=Actions"`
 
 	// Extensions for local or format focussed data
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Complements contain regime/addon specific payload data.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
@@ -486,7 +486,7 @@ type Reason struct {
 	Conditions []*Condition `json:"conditions,omitempty" jsonschema:"title=Conditions"`
 
 	// Extensions for local or format focussed data
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Action provides a suggestion about what to do next with the document.
@@ -499,7 +499,7 @@ type Action struct {
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
 	// Extensions for local or format focussed data
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Condition provides a more formal structure for describing with a specific
@@ -539,7 +539,7 @@ func (st *Status) Calculate() error {
 func (st *Status) Normalize(normalizers tax.Normalizers) {
 	st.Series = cbc.NormalizeCode(st.Series)
 	st.Code = cbc.NormalizeCode(st.Code)
-	st.Ext = tax.CleanExtensions(st.Ext)
+	st.Ext = st.Ext.Clean()
 
 	tax.Normalize(normalizers, st.Supplier)
 	tax.Normalize(normalizers, st.Customer)
@@ -589,7 +589,7 @@ func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
 	if sl == nil {
 		return
 	}
-	sl.Ext = tax.CleanExtensions(sl.Ext)
+	sl.Ext = sl.Ext.Clean()
 	tax.Normalize(normalizers, sl.Doc)
 	tax.Normalize(normalizers, sl.Reasons)
 	tax.Normalize(normalizers, sl.Actions)
@@ -601,7 +601,7 @@ func (r *Reason) Normalize(normalizers tax.Normalizers) {
 	if r == nil {
 		return
 	}
-	r.Ext = tax.CleanExtensions(r.Ext)
+	r.Ext = r.Ext.Clean()
 	tax.Normalize(normalizers, r.Conditions)
 	normalizers.Each(r)
 }
@@ -611,7 +611,7 @@ func (a *Action) Normalize(normalizers tax.Normalizers) {
 	if a == nil {
 		return
 	}
-	a.Ext = tax.CleanExtensions(a.Ext)
+	a.Ext = a.Ext.Clean()
 	normalizers.Each(a)
 }
 

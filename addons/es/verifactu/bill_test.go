@@ -42,7 +42,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		// Should not have extension as Spanish NIFs are already handled
-		assert.Empty(t, inv.Customer.Identities[0].Ext)
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
 	})
 
 	t.Run("customer without identities", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(verifactu.ExtKeyIdentityType))
 	})
 
 	t.Run("foreign identity normalization", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext.Get(verifactu.ExtKeyIdentityType))
 	})
 
 	t.Run("resident identity normalization", func(t *testing.T) {
@@ -85,7 +85,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext.Get(verifactu.ExtKeyIdentityType))
 	})
 
 	t.Run("other identity normalization", func(t *testing.T) {
@@ -97,7 +97,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(verifactu.ExtKeyIdentityType))
 	})
 
 	t.Run("unknown identity key not normalized", func(t *testing.T) {
@@ -109,7 +109,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Empty(t, inv.Customer.Identities[0].Ext)
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
 	})
 
 	t.Run("multiple identities only normalizes first", func(t *testing.T) {
@@ -125,15 +125,15 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
-		assert.Empty(t, inv.Customer.Identities[1].Ext)
+		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(verifactu.ExtKeyIdentityType))
+		assert.True(t, inv.Customer.Identities[1].Ext.IsZero())
 	})
 
 	t.Run("self-billed", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSelfBilled)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIssuerTypeCustomer, inv.Tax.Ext[verifactu.ExtKeyIssuerType])
+		assert.Equal(t, verifactu.ExtCodeIssuerTypeCustomer, inv.Tax.Ext.Get(verifactu.ExtKeyIssuerType))
 	})
 
 	t.Run("with issuer", func(t *testing.T) {
@@ -148,7 +148,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, verifactu.ExtCodeIssuerTypeThirdParty, inv.Tax.Ext[verifactu.ExtKeyIssuerType])
+		assert.Equal(t, verifactu.ExtCodeIssuerTypeThirdParty, inv.Tax.Ext.Get(verifactu.ExtKeyIssuerType))
 	})
 }
 
@@ -157,7 +157,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F1")
+		assert.Equal(t, inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F1")
 	})
 	t.Run("standard invoice without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -167,7 +167,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		inv.Tax.Ext = nil
+		inv.Tax.Ext = tax.Extensions{}
 		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "doc type is required")
 	})
@@ -201,7 +201,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
+		assert.Equal(t, inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F2")
 	})
 
 	t.Run("simplified substitution without customer", func(t *testing.T) {
@@ -210,13 +210,13 @@ func TestInvoiceValidation(t *testing.T) {
 		// Simplified invoice without customer details stays F2
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "F2", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
+		assert.Equal(t, "F2", inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
 
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax()))
 		require.NoError(t, rules.Validate(inv))
 		// Should get R5 for simplified corrective
-		assert.Equal(t, "R5", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
-		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
+		assert.Equal(t, "R5", inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+		assert.Equal(t, "S", inv.Tax.Ext.Get(verifactu.ExtKeyCorrectionType).String())
 	})
 
 	t.Run("corrective invoice requires preceding", func(t *testing.T) {
@@ -262,9 +262,9 @@ func TestInvoiceValidation(t *testing.T) {
 				Series:    "ABC",
 				Code:      "122",
 				IssueDate: &d,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					verifactu.ExtKeyDocType: "R1",
-				},
+				}),
 				Tax: &tax.Total{
 					Categories: []*tax.CategoryTotal{
 						{
@@ -284,8 +284,8 @@ func TestInvoiceValidation(t *testing.T) {
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Log(string(data))
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
-		assert.Empty(t, inv.Preceding[0].Ext)
+		assert.Equal(t, inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R1")
+		assert.True(t, inv.Preceding[0].Ext.IsZero())
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
@@ -372,9 +372,9 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "B12345678",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					verifactu.ExtKeyIdentityType: "02",
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -387,7 +387,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
+		assert.Equal(t, inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F2")
 	})
 	t.Run("simplified substitution with customer without tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -418,7 +418,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
+		assert.Equal(t, inv.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R5")
 	})
 	t.Run("simplified invoice F2 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)

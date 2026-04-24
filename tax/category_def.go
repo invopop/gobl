@@ -53,7 +53,7 @@ type CategoryDef struct {
 
 	// Extension key-value pairs that will be copied to the tax combo if this
 	// category is used.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.

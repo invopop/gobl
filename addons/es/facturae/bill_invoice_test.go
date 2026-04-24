@@ -41,7 +41,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing ext key doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
+		inv.Tax.Ext = inv.Tax.Ext.Delete(facturae.ExtKeyDocType)
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-03] ($.tax.ext) tax ext require 'es-facturae-doc-type' and 'es-facturae-invoice-class' extensions")
 	})
@@ -89,9 +89,9 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
 
-	inv.Preceding[0].Ext = tax.Extensions{
+	inv.Preceding[0].Ext = tax.ExtensionsOf(tax.ExtMap{
 		facturae.ExtKeyCorrection: "01",
-	}
+	})
 	inv.Preceding[0].IssueDate = cal.NewDate(2022, 6, 13)
 	require.NoError(t, inv.Calculate())
 	err = rules.Validate(inv)

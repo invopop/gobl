@@ -32,9 +32,9 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "This is a general note test",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"untidid-text-subject": "AAI",
-			},
+			}),
 		}
 		n.Normalize()
 		assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
@@ -44,13 +44,13 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Code: " FOO ",
 			Text: "This is a general note test",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"missing": "",
-			},
+			}),
 		}
 		n.Normalize()
 		assert.Equal(t, "FOO", n.Code.String())
-		assert.Empty(t, n.Ext)
+		assert.True(t, n.Ext.IsZero())
 	})
 }
 

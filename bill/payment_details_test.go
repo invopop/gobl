@@ -43,13 +43,13 @@ func TestPaymentDetailsNormalize(t *testing.T) {
 		Instructions: &pay.Instructions{
 			Key:    "online",
 			Detail: "Some random payment",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"random": "",
-			},
+			}),
 		},
 	}
 	p.Normalize(nil)
-	assert.Empty(t, p.Instructions.Ext)
+	assert.True(t, p.Instructions.Ext.IsZero())
 	assert.NotPanics(t, func() {
 		p.Normalize(nil)
 	})

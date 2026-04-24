@@ -64,12 +64,12 @@ func TestTermsNormalize(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		pt := &pay.Terms{
 			Key: pay.TermKeyUndefined,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"random": "",
-			},
+			}),
 		}
 		pt.Normalize()
-		assert.Empty(t, pt.Ext)
+		assert.True(t, pt.Ext.IsZero())
 		assert.Equal(t, "undefined", pt.Key.String())
 	})
 	t.Run("nil", func(t *testing.T) {

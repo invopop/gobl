@@ -102,7 +102,7 @@ type Payment struct {
 	// Exchange rates to be used when converting the payment's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 	// Extensions for additional codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Key information regarding previous versions of this document.
 	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`

@@ -1,8 +1,12 @@
 package tax
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"iter"
+	"maps"
 	"regexp"
 	"sort"
 	"strings"
@@ -10,6 +14,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 )
 
@@ -22,21 +27,60 @@ import (
 // Naming of extension keys is important and should be kept short and descriptive.
 // There are three key components to an extension key separated by dashes:
 //
-// - An ISO country code e.g. `mx`, `es`, `gb`, etc.
-// - Short abreviation of the platform or format the extension will be used with,
-//   e.g. `cfdi` for Mexico's CFDI defined by the SAT, `facturae` for Spain's
-//   FacturaE format, `sdi` for the Italian SDI (document interchange system), etc.
-//   This is important, as it helps avoid potential conflicts in the future with
-//   new or alternative formats that may appear.
-// - A short descriptive name of the extension, e.g. `exception`, `fiscal-regime`,
-//   `vat-cat`, `incoming-typ`, etc. The aim should be to avoid using obvious names
-//   like `code` or `key` in the name, as these are already implied through usage.
+//   - An ISO country code e.g. `mx`, `es`, `gb`, etc.
+//   - Short abreviation of the platform or format the extension will be used with,
+//     e.g. `cfdi` for Mexico's CFDI defined by the SAT, `facturae` for Spain's
+//     FacturaE format, `sdi` for the Italian SDI (document interchange system), etc.
+//     This is important, as it helps avoid potential conflicts in the future with
+//     new or alternative formats that may appear.
+//   - A short descriptive name of the extension, e.g. `exception`, `fiscal-regime`,
+//     `vat-cat`, `incoming-typ`, etc. The aim should be to avoid using obvious names
+//     like `code` or `key` in the name, as these are already implied through usage.
 //
 // Please look at the regimes package and other country specific implementations for
 // examples of how to define and use extensions.
+//
+// Extensions is immutable: every mutation method (Set, Delete, Merge, etc.)
+// returns a new Extensions instance with its own underlying map. Chaining is
+// supported for ergonomic construction:
+//
+//	ext := tax.MakeExtensions().
+//	    Set("es-sii-doc-type", "F1").
+//	    Set("untdid-document-type", "380")
+//
+// Extensions wraps a map of extension keys to values. The internal map is
+// unexported so that all access goes through the type's methods, which
+// guarantee copy-on-write semantics and deterministic (alphabetical) JSON
+// output.
+type Extensions struct {
+	m ExtMap
+}
 
-// Extensions is a map of extension keys to values.
-type Extensions map[cbc.Key]cbc.Code
+// ExtMap is a short alias for the bare map type used to construct
+// Extensions. It lets callers write
+//
+//	tax.ExtensionsOf(tax.ExtMap{
+//	    "key1": "code1",
+//	    "key2": "code2",
+//	})
+//
+// instead of spelling out `map[cbc.Key]cbc.Code` at every site.
+type ExtMap = map[cbc.Key]cbc.Code
+
+// MakeExtensions returns an empty Extensions ready to be populated via chained
+// Set calls.
+func MakeExtensions() Extensions {
+	return Extensions{}
+}
+
+// ExtensionsOf builds a new Extensions from the provided map. The map is
+// copied so later mutations of the source do not affect the Extensions.
+func ExtensionsOf(m ExtMap) Extensions {
+	if len(m) == 0 {
+		return Extensions{}
+	}
+	return Extensions{m: maps.Clone(m)}
+}
 
 type extensionCollection struct {
 	list map[cbc.Key]*cbc.Definition
@@ -68,110 +112,92 @@ func ExtensionForKey(key cbc.Key) *cbc.Definition {
 	return extensionDefs.list[key]
 }
 
-// Validate ensures the extension map data looks correct and that all keys
-// have been registered globally.
-/*
-func (em Extensions) Validate() error {
-	err := make(validation.Errors)
-	// Validate key format
-	for k := range em {
-		if e := k.Validate(); e != nil {
-			err[k.String()] = e
-		}
-	}
-	if len(err) > 0 {
-		return err
-	}
-	// Validate keys are defined and correct
-	for k, ev := range em {
-		ks := k.String()
-		kd := ExtensionForKey(k)
-		if kd == nil {
-			err[ks] = errors.New("undefined")
-			continue
-		}
-		if len(kd.Values) > 0 && !kd.HasCode(ev) {
-			err[ks] = fmt.Errorf("value '%s' invalid", ev)
-		}
-		if kd.Pattern != "" {
-			re, rerr := regexp.Compile(kd.Pattern)
-			if rerr != nil {
-				err[ks] = rerr
-				continue
-			}
-			if !re.MatchString(string(ev)) {
-				err[ks] = errors.New("does not match pattern")
-			}
-		}
-	}
-	if len(err) > 0 {
-		return err
-	}
-	return nil
+// IsZero returns true when the Extensions has no entries. Used by
+// encoding/json with the "omitzero" tag so that empty extension maps are
+// omitted from JSON output.
+func (e Extensions) IsZero() bool {
+	return len(e.m) == 0
 }
-*/
 
-// Set will update the extension map with the provided key and value, and
-// return the updated map. If the map is nil, it will be created. If the
-// provided code is empty, the key will be removed from the map.
-func (em Extensions) Set(key cbc.Key, code cbc.Code) Extensions {
-	if em == nil {
-		em = make(Extensions)
+// Len returns the number of entries in the Extensions.
+func (e Extensions) Len() int {
+	return len(e.m)
+}
+
+// Clone returns an independent copy of the Extensions. Mutations to the
+// returned value will not affect the receiver. A zero Extensions clones to
+// another zero Extensions (no allocation).
+func (e Extensions) Clone() Extensions {
+	if len(e.m) == 0 {
+		return Extensions{}
 	}
+	return Extensions{m: maps.Clone(e.m)}
+}
+
+// clone returns a new underlying map with the provided extra capacity
+// pre-allocated. Always returns a non-nil map.
+func (e Extensions) clone(extra int) ExtMap {
+	nm := make(ExtMap, len(e.m)+extra)
+	for k, v := range e.m {
+		nm[k] = v
+	}
+	return nm
+}
+
+// Set returns a new Extensions with the provided key set to the given code.
+// If the code is empty, the key is removed from the returned Extensions.
+func (e Extensions) Set(key cbc.Key, code cbc.Code) Extensions {
 	if code == cbc.CodeEmpty {
-		delete(em, key)
-		return em
+		return e.Delete(key)
 	}
-	em[key] = code
-	return em
+	nm := e.clone(1)
+	nm[key] = code
+	return Extensions{m: nm}
 }
 
-// SetOneOf sets the value to the first code provided, unless it is already
-// set as one of the other codes in the list, and return the updated map.
-// If the map is nil, it will be created.
-func (em Extensions) SetOneOf(key cbc.Key, code cbc.Code, codes ...cbc.Code) Extensions {
-	if em == nil {
-		em = make(Extensions)
+// SetOneOf returns a new Extensions where the given key is set to the first
+// code unless the current value for that key is already one of the additional
+// codes provided.
+func (e Extensions) SetOneOf(key cbc.Key, code cbc.Code, codes ...cbc.Code) Extensions {
+	if cur, ok := e.m[key]; ok && cur.In(codes...) {
+		return e
 	}
-	cur, ok := em[key]
-	if !ok || !cur.In(codes...) {
-		em[key] = code
-	}
-	return em
+	nm := e.clone(1)
+	nm[key] = code
+	return Extensions{m: nm}
 }
 
-// SetIfEmpty sets the value for the key only if it is not already set.
-func (em Extensions) SetIfEmpty(key cbc.Key, code cbc.Code) Extensions {
-	if em == nil {
-		em = make(Extensions)
+// SetIfEmpty returns a new Extensions where the given key is set to the
+// provided code only if the key was not already present.
+func (e Extensions) SetIfEmpty(key cbc.Key, code cbc.Code) Extensions {
+	if _, ok := e.m[key]; ok {
+		return e
 	}
-	if _, ok := em[key]; !ok {
-		em[key] = code
-	}
-	return em
+	nm := e.clone(1)
+	nm[key] = code
+	return Extensions{m: nm}
 }
 
-// Delete safely removes the key from the extensions map. Returns the
-// extension for chaining.
-func (em Extensions) Delete(k cbc.Key) Extensions {
-	if em == nil {
-		return nil
+// Delete returns a new Extensions without the provided key. If the key is not
+// present, the returned Extensions has the same content as the receiver.
+func (e Extensions) Delete(key cbc.Key) Extensions {
+	if _, ok := e.m[key]; !ok {
+		return e
 	}
-	delete(em, k)
-	return em
+	nm := e.clone(0)
+	delete(nm, key)
+	return Extensions{m: nm}
 }
 
-// Get returns the value for the provided key or an empty string if not found
-// or the extensions map is nil. If the key is composed of sub-keys and
-// no precise match is found, the key will be split until one of the sub
-// components is found.
-func (em Extensions) Get(k cbc.Key) cbc.Code {
-	if len(em) == 0 {
+// Get returns the value for the provided key or an empty code if not found.
+// If the key is composed of sub-keys and no exact match is found, the key
+// is progressively shortened until a match is found or the key is empty.
+func (e Extensions) Get(k cbc.Key) cbc.Code {
+	if len(e.m) == 0 {
 		return ""
 	}
-	// while k is not empty, pop the last key and check if it exists
 	for k != cbc.KeyEmpty {
-		if v, ok := em[k]; ok {
+		if v, ok := e.m[k]; ok {
 			return v
 		}
 		k = k.Pop()
@@ -179,36 +205,38 @@ func (em Extensions) Get(k cbc.Key) cbc.Code {
 	return ""
 }
 
-// Has returns true if the code map has values for all the provided keys.
-func (em Extensions) Has(keys ...cbc.Key) bool {
+// Has returns true if the Extensions contains entries for all the provided
+// keys.
+func (e Extensions) Has(keys ...cbc.Key) bool {
 	for _, k := range keys {
-		if _, ok := em[k]; !ok {
+		if _, ok := e.m[k]; !ok {
 			return false
 		}
 	}
 	return true
 }
 
-// Equals returns true if the extension map has the same keys and values as the provided
-// map.
-func (em Extensions) Equals(other Extensions) bool {
-	if len(em) != len(other) {
+// Equals returns true if the other Extensions has exactly the same keys and
+// values as this one.
+func (e Extensions) Equals(other Extensions) bool {
+	if len(e.m) != len(other.m) {
 		return false
 	}
-	if len(em) == 0 {
-		return true // empty extensions are equal!
+	if len(e.m) == 0 {
+		return true
 	}
-	return em.Contains(other)
+	return e.Contains(other)
 }
 
-// Contains returns true if the extension map contains the same keys and values as the provided
-// map, but may have additional keys.
-func (em Extensions) Contains(other Extensions) bool {
-	if len(em) == 0 {
+// Contains returns true if this Extensions contains all the key/value pairs
+// of the other Extensions. It may contain additional keys that are not in
+// the other. Always returns false if the receiver is empty.
+func (e Extensions) Contains(other Extensions) bool {
+	if len(e.m) == 0 {
 		return false
 	}
-	for k, v := range other {
-		v2, ok := em[k]
+	for k, v := range other.m {
+		v2, ok := e.m[k]
 		if !ok {
 			return false
 		}
@@ -219,29 +247,25 @@ func (em Extensions) Contains(other Extensions) bool {
 	return true
 }
 
-// Merge will merge the provided extensions map with the current one generating
-// a new map. Duplicate keys will be overwritten by the other map's values.
-func (em Extensions) Merge(other Extensions) Extensions {
-	if em == nil {
-		return other
+// Merge returns a new Extensions combining the entries of the receiver with
+// those of the other Extensions. Keys in both maps take the value from
+// other.
+func (e Extensions) Merge(other Extensions) Extensions {
+	if len(e.m) == 0 && len(other.m) == 0 {
+		return Extensions{}
 	}
-	if other == nil {
-		return em
+	nm := e.clone(len(other.m))
+	for k, v := range other.m {
+		nm[k] = v
 	}
-	nem := make(Extensions)
-	for k, v := range em {
-		nem[k] = v
-	}
-	for k, v := range other {
-		nem[k] = v
-	}
-	return nem
+	return Extensions{m: nm}
 }
 
-// Lookup returns the key for the provided value or an empty
-// key if not found. This is useful for reverse lookups.
-func (em Extensions) Lookup(val cbc.Code) cbc.Key {
-	for k, v := range em {
+// Lookup returns the first key whose value matches the provided code, or an
+// empty key if no match is found. Note: if multiple keys share the value,
+// the returned key is not deterministic (depends on map iteration order).
+func (e Extensions) Lookup(val cbc.Code) cbc.Key {
+	for k, v := range e.m {
 		if v == val {
 			return k
 		}
@@ -249,14 +273,13 @@ func (em Extensions) Lookup(val cbc.Code) cbc.Key {
 	return cbc.KeyEmpty
 }
 
-// Values provides an array of all the accepted codes for the extensions
-// defined.
-func (em Extensions) Values() []cbc.Code {
-	if len(em) == 0 {
+// Values returns all the values of the Extensions sorted alphabetically.
+func (e Extensions) Values() []cbc.Code {
+	if len(e.m) == 0 {
 		return nil
 	}
-	values := make([]cbc.Code, 0, len(em))
-	for _, v := range em {
+	values := make([]cbc.Code, 0, len(e.m))
+	for _, v := range e.m {
 		values = append(values, v)
 	}
 	sort.Slice(values, func(i, j int) bool {
@@ -265,23 +288,99 @@ func (em Extensions) Values() []cbc.Code {
 	return values
 }
 
-// CleanExtensions will try to clean the extension map removing empty values
-// and will potentially return a nil if there only keys with no values.
-func CleanExtensions(em Extensions) Extensions {
-	if em == nil {
+// Keys returns all the keys of the Extensions sorted alphabetically.
+func (e Extensions) Keys() []cbc.Key {
+	if len(e.m) == 0 {
 		return nil
 	}
-	nem := make(Extensions)
-	for k, v := range em {
-		if v == "" {
+	keys := make([]cbc.Key, 0, len(e.m))
+	for k := range e.m {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i] < keys[j]
+	})
+	return keys
+}
+
+// All returns an iterator over the Extensions entries in alphabetical order
+// of the keys. Intended for use with Go 1.23+ range-over-func:
+//
+//	for k, v := range ext.All() {
+//	    // ...
+//	}
+func (e Extensions) All() iter.Seq2[cbc.Key, cbc.Code] {
+	return func(yield func(cbc.Key, cbc.Code) bool) {
+		for _, k := range e.Keys() {
+			if !yield(k, e.m[k]) {
+				return
+			}
+		}
+	}
+}
+
+// Clean returns a new Extensions with empty-code entries removed. If the
+// result has no entries, a zero Extensions is returned.
+func (e Extensions) Clean() Extensions {
+	if len(e.m) == 0 {
+		return Extensions{}
+	}
+	nm := make(map[cbc.Key]cbc.Code, len(e.m))
+	for k, v := range e.m {
+		if v == cbc.CodeEmpty {
 			continue
 		}
-		nem[k] = v
+		nm[k] = v
 	}
-	if len(nem) == 0 {
+	if len(nm) == 0 {
+		return Extensions{}
+	}
+	return Extensions{m: nm}
+}
+
+// MarshalJSON emits the Extensions as a JSON object with keys sorted
+// alphabetically for deterministic output. An empty Extensions marshals to
+// "null".
+func (e Extensions) MarshalJSON() ([]byte, error) {
+	if len(e.m) == 0 {
+		return []byte("null"), nil
+	}
+	keys := e.Keys()
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for i, k := range keys {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		kb, err := json.Marshal(k)
+		if err != nil {
+			return nil, err
+		}
+		buf.Write(kb)
+		buf.WriteByte(':')
+		vb, err := json.Marshal(e.m[k])
+		if err != nil {
+			return nil, err
+		}
+		buf.Write(vb)
+	}
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
+// UnmarshalJSON reads a JSON object into the Extensions. A JSON null is
+// treated as an empty Extensions.
+func (e *Extensions) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
+		e.m = nil
 		return nil
 	}
-	return nem
+	var m map[cbc.Key]cbc.Code
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+	e.m = m
+	return nil
 }
 
 type extCodeOp int
@@ -332,16 +431,39 @@ func ExtensionHasValidCode(key cbc.Key) rules.Test {
 	return is.Func(
 		desc,
 		func(value any) bool {
-			em, ok := value.(Extensions)
+			em, ok := ExtensionsFromValue(value)
 			if !ok {
 				return false // only valid for extensions
 			}
-			ev, ok := em[key]
+			ev, ok := em.m[key]
 			if !ok {
 				return true // if the key is not present, we don't want to fail validation here
 			}
 			return check.Check(ev)
 		})
+}
+
+// ExtensionsFromValue extracts an Extensions from an any, accepting either
+// an Extensions value or a *Extensions pointer (which the rules framework
+// produces when validating struct-typed fields). It is intended for use
+// inside custom validation-guard functions such as those passed to is.Func:
+//
+//	func myGuard(val any) bool {
+//	    ext, ok := tax.ExtensionsFromValue(val)
+//	    return ok && ext.Has("some-key")
+//	}
+func ExtensionsFromValue(value any) (Extensions, bool) {
+	switch e := value.(type) {
+	case Extensions:
+		return e, true
+	case *Extensions:
+		if e == nil {
+			return Extensions{}, true
+		}
+		return *e, true
+	default:
+		return Extensions{}, false
+	}
 }
 
 // ExtensionsRequire returns a validation rule that ensures that all of
@@ -435,7 +557,7 @@ func (ee extErrors) Error() string {
 //
 //nolint:gocyclo
 func (v ExtensionsRule) Validate(value any) error {
-	em, ok := value.(Extensions)
+	em, ok := ExtensionsFromValue(value)
 	if !ok {
 		return nil
 	}
@@ -444,26 +566,26 @@ func (v ExtensionsRule) Validate(value any) error {
 	switch v.op {
 	case extCodeOpAnd:
 		for _, k := range v.keys {
-			if _, ok := em[k]; !ok {
+			if _, ok := em.m[k]; !ok {
 				err[k.String()] = errors.New("required")
 			}
 		}
 	case extCodeOpNot:
 		for _, k := range v.keys {
-			if _, ok := em[k]; ok {
+			if _, ok := em.m[k]; ok {
 				err[k.String()] = errors.New("must be blank")
 			}
 		}
 	case extCodeOpXNOr:
 		present := 0
 		for _, k := range v.keys {
-			if _, ok := em[k]; ok {
+			if _, ok := em.m[k]; ok {
 				present++
 			}
 		}
 		if present > 0 && present != len(v.keys) {
 			for _, k := range v.keys {
-				if _, ok := em[k]; !ok {
+				if _, ok := em.m[k]; !ok {
 					err[k.String()] = errors.New("required")
 				}
 			}
@@ -471,10 +593,10 @@ func (v ExtensionsRule) Validate(value any) error {
 	case extCodeOpOneOf:
 		present := false
 		for _, k := range v.keys {
-			if _, ok := em[k]; ok {
+			if _, ok := em.m[k]; ok {
 				if present {
 					for _, k := range v.keys {
-						if _, ok := em[k]; ok {
+						if _, ok := em.m[k]; ok {
 							err[k.String()] = errors.New("only one allowed")
 						}
 					}
@@ -484,7 +606,7 @@ func (v ExtensionsRule) Validate(value any) error {
 			}
 		}
 	case extCodeOpHasCodes:
-		if ev, ok := em[v.key]; ok {
+		if ev, ok := em.m[v.key]; ok {
 			match := false
 			for _, val := range v.values {
 				if ev == val {
@@ -497,7 +619,7 @@ func (v ExtensionsRule) Validate(value any) error {
 			}
 		}
 	case extCodeOpExcludeCodes:
-		if ev, ok := em[v.key]; ok {
+		if ev, ok := em.m[v.key]; ok {
 			for _, val := range v.values {
 				if ev == val {
 					err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
@@ -541,13 +663,16 @@ func extCodeList(codes []cbc.Code) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// JSONSchemaExtend provides extra details about the extension map which are
-// not automatically determined. In this case we add validation for the map's
-// keys.
-func (Extensions) JSONSchemaExtend(schema *jsonschema.Schema) {
-	prop := schema.AdditionalProperties
-	schema.AdditionalProperties = nil
-	schema.PatternProperties = map[string]*jsonschema.Schema{
-		cbc.KeyPattern: prop,
+// JSONSchemaExtend replaces the struct-reflection artefacts (empty
+// `properties`, `additionalProperties: false`) with a pattern-properties
+// schema that reproduces the shape Extensions had as a map type:
+// keys must match the cbc.Key pattern, and values are references to the
+// cbc.Code schema. The ref target is resolved via `schema.Lookup` so we
+// don't hardcode the URL.
+func (Extensions) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Properties = nil
+	s.AdditionalProperties = nil
+	s.PatternProperties = map[string]*jsonschema.Schema{
+		cbc.KeyPattern: {Ref: schema.Lookup(cbc.Code("")).String()},
 	}
 }

@@ -11,11 +11,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `addons/pl/favat`: Moved supplier tax ID code requirement from the PL regime to the pl-favat addon.
 - `bill`: removed the default exchange-rate / regime-currency conversion check; addons now enforce currency convertibility where required.
 - `addons`: **breaking**: rule fault codes no longer include the addon version segment. `GOBL-AR-ARCA-V4-BILL-INVOICE-24` is now `GOBL-AR-ARCA-BILL-INVOICE-24`. Generated rule files in `data/rules/` are likewise unversioned (`ar-arca.json`, not `ar-arca-v4.json`). Each addon package now exposes a `Key` constant for the unversioned family; version constants such as `V4` are derived from it. Assertion IDs are now guaranteed stable across versions of an addon family — preserved rules keep their numeric IDs on version bumps, and an ID must never be reassigned to a different rule. Consumers pinning fault-code strings should drop the version segment.
+- `tax`: **breaking**: `tax.Extensions` is now an immutable struct wrapping an unexported map, replacing the previous `map[cbc.Key]cbc.Code` type alias. JSON output is now deterministic — keys are emitted in alphabetical order. All mutation methods (`Set`, `SetIfEmpty`, `SetOneOf`, `Delete`, `Merge`, `Clean`) clone the underlying map and return a new instance, so callers must assign the result (`x.Ext = x.Ext.Set(...)`); the old "Set on nil gets silently lost" footgun no longer exists. New helpers: `tax.MakeExtensions()`, `tax.ExtensionsOf(tax.ExtMap{...})`, `tax.ExtMap` alias for `map[cbc.Key]cbc.Code`, plus `Clone`, `Keys`, `All` (iter.Seq2), `IsZero`, and `Len` methods. Struct-field tags changed from `json:"ext,omitempty"` to `json:"ext,omitzero"` (requires Go 1.24). Validation guards that previously type-asserted `value.(tax.Extensions)` should use `tax.ExtensionsFromValue(val)`, which also accepts the `*tax.Extensions` the rules framework now produces for struct-typed fields. The `tax.CleanExtensions(em)` free function has been removed; use `em.Clean()`.
+- `cbc`: `cbc.Meta` JSON output is now deterministic — keys are emitted in alphabetical order via a custom `MarshalJSON`. Type definition is unchanged (still `map[cbc.Key]string`), so indexing, `len`, `range`, and `make` continue to work as before.
 
 ### Added
 
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 - `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
+- `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.
 - `addons/es/verifactu`: Additional rules to ensure schema-valid verifactu XML will be produced.
 
 ### Fixed

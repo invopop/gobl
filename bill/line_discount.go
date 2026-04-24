@@ -25,14 +25,14 @@ type LineDiscount struct {
 	// Fixed discount amount to apply (calculated if percent present)
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// Extension codes that apply to the discount
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Normalize performs normalization on the discount and embedded objects using the
 // provided list of normalizers.
 func (ld *LineDiscount) Normalize(normalizers tax.Normalizers) {
 	ld.Code = cbc.NormalizeCode(ld.Code)
-	ld.Ext = tax.CleanExtensions(ld.Ext)
+	ld.Ext = ld.Ext.Clean()
 	normalizers.Each(ld)
 }
 
@@ -53,7 +53,7 @@ func (ld *LineDiscount) IsEmpty() bool {
 		ld.Reason == "" &&
 		(ld.Percent == nil || ld.Percent.IsZero()) &&
 		ld.Amount.IsZero() &&
-		len(ld.Ext) == 0
+		ld.Ext.IsZero()
 }
 
 // CleanLineDiscounts removes any empty discounts from the list.

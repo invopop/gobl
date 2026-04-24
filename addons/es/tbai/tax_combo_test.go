@@ -110,9 +110,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with exempt code set", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E6",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E6", tc.Ext.Get(ExtKeyExempt).String())
@@ -122,9 +122,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with export code set", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E2",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
@@ -134,9 +134,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with reverse-charge", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "S2",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyExempt).String())
@@ -146,9 +146,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with outside-scope", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "OT",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "OT", tc.Ext.Get(ExtKeyExempt).String())
@@ -158,9 +158,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with intra-community", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E5",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
@@ -170,9 +170,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("with standard", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "S1",
-			},
+			}),
 		}
 		normalizeTaxCombo(tc)
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt).String())
@@ -187,9 +187,9 @@ func TestValidateTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyExempt: "E1",
-			},
+			}),
 		}
 		err := ruleSet.Validate(tc)
 		assert.NoError(t, err)

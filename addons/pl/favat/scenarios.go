@@ -39,9 +39,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Regular Invoice",
 				i18n.PL: "Faktura Podstawowa",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "VAT",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -50,9 +50,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment Invoice",
 				i18n.PL: `Faktura Zaliczkowa`,
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "ZAL",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -61,9 +61,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement Invoice",
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "ROZ",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -72,9 +72,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Invoice",
 				i18n.PL: "Faktura Uproszczona",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "UPR",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -82,9 +82,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Credit note",
 				i18n.PL: "Faktura korygująca",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "KOR",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -93,9 +93,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment credit note",
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "KOR_ZAL",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -104,9 +104,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement credit note",
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "KOR_ROZ",
-			},
+			}),
 		},
 	},
 }

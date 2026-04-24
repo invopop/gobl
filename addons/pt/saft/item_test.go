@@ -22,9 +22,9 @@ func TestItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name: "Test Item",
 				Unit: "kg",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyProductType: "P",
-				},
+				}),
 			},
 		},
 		{
@@ -39,16 +39,16 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "empty extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{},
+				Ext: tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			err: "product type is required",
 		},
 		{
 			name: "missing extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			err: "product type is required",
 		},
@@ -80,9 +80,9 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		{
 			name: "extension present",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyProductType: "P",
-				},
+				}),
 			},
 			out: "P",
 		},
@@ -93,16 +93,16 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		{
 			name: "empty extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{},
+				Ext: tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			out: "S",
 		},
 		{
 			name: "missing extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			out: "S",
 		},
@@ -127,7 +127,7 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			addon.Normalizer(tt.item)
 			if tt.item != nil {
-				assert.Equal(t, tt.out, tt.item.Ext[saft.ExtKeyProductType])
+				assert.Equal(t, tt.out, tt.item.Ext.Get(saft.ExtKeyProductType))
 			}
 		})
 	}

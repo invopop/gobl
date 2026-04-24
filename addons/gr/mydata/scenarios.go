@@ -65,99 +65,99 @@ var invoiceScenarios = &tax.ScenarioSet{
 			// Default: if no other, more specific scenario matches,
 			// a services invoice is assumed.
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "2.1",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "1.1",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods, TagExport},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "1.3",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods, TagExport, TagEU},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "1.2",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods, tax.TagSelfBilled},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "1.4",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagServices},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "2.1",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagServices, TagExport},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "2.3",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagServices, TagExport, TagEU},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "2.2",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "5.1",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{tax.TagSimplified},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "11.3",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods, tax.TagSimplified},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "11.1",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagServices, tax.TagSimplified},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "11.2",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Tags:  []cbc.Key{tax.TagSimplified},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "11.4",
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Tags:  []cbc.Key{TagGoods, tax.TagSimplified, tax.TagSelfBilled},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyInvoiceType: "11.5",
-			},
+			}),
 		},
 	},
 }

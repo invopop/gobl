@@ -55,15 +55,11 @@ func setDefaultProductType(item *org.Item) {
 		return
 	}
 
-	if item.Ext == nil {
-		item.Ext = make(tax.Extensions)
-	}
-
-	if _, ok := item.Ext[ExtKeyProductType]; !ok {
+	if !item.Ext.Has(ExtKeyProductType) {
 		if slices.Contains(serviceUnits, item.Unit) {
-			item.Ext[ExtKeyProductType] = ProductTypeService
+			item.Ext = item.Ext.Set(ExtKeyProductType, ProductTypeService)
 		} else {
-			item.Ext[ExtKeyProductType] = ProductTypeGoods
+			item.Ext = item.Ext.Set(ExtKeyProductType, ProductTypeGoods)
 		}
 	}
 }

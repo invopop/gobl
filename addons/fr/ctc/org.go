@@ -80,9 +80,9 @@ func normalizeIdentities(party *org.Party) {
 			siren = &org.Identity{
 				Type: fr.IdentityTypeSIREN,
 				Code: cbc.Code(sirenCode),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
-				},
+				}),
 			}
 			party.Identities = append(party.Identities, siren)
 		}
@@ -102,10 +102,7 @@ func normalizeIdentity(id *org.Identity) {
 
 	// Set ISO scheme ID 0224 for private-id key (CTC-specific)
 	if id.Key == identityKeyPrivateID {
-		if id.Ext == nil {
-			id.Ext = make(tax.Extensions)
-		}
-		id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDPrivate)
+		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDPrivate)
 	}
 	// Note: Type ↔ ISO scheme ID mapping for SIREN/SIRET is handled by EN16931 addon
 }

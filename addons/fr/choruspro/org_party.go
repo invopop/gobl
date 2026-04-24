@@ -76,7 +76,7 @@ func partySchemeIs(code cbc.Code) rules.Test {
 		"party scheme is "+string(code),
 		func(val any) bool {
 			p, ok := val.(*org.Party)
-			return ok && p != nil && p.Ext != nil && p.Ext.Get(ExtKeyScheme) == code
+			return ok && p != nil && !p.Ext.IsZero() && p.Ext.Get(ExtKeyScheme) == code
 		},
 	)
 }
@@ -86,7 +86,7 @@ func partySchemeIsNot(code cbc.Code) rules.Test {
 		"party scheme is not "+string(code),
 		func(val any) bool {
 			p, ok := val.(*org.Party)
-			if !ok || p == nil || p.Ext == nil {
+			if !ok || p == nil || p.Ext.IsZero() {
 				return false
 			}
 			scheme := p.Ext.Get(ExtKeyScheme)
