@@ -56,12 +56,12 @@ var vatexValidCodes = map[cbc.Code][]cbc.Code{
 	},
 }
 
-var vatKeyMap = tax.Extensions{
+var vatKeyMap = tax.ExtensionsOf(tax.ExtMap{
 	tax.KeyStandard:     en16931.TaxCategoryStandard,
 	tax.KeyZero:         en16931.TaxCategoryZero,
 	tax.KeyExempt:       en16931.TaxCategoryExempt,
 	tax.KeyOutsideScope: en16931.TaxCategoryOutsideScope,
-}
+})
 
 func normalizeTaxCombo(tc *tax.Combo) {
 	if tc == nil || tc.Category != tax.CategoryVAT {
@@ -82,14 +82,12 @@ func normalizeTaxCombo(tc *tax.Combo) {
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
 
+		// Extensions
 		rules.Field("ext",
 			rules.Assert("01", "VATEX exemption code must be present and valid for Z/E/O categories, and must not be set for Standard (BR-KSA-CL-04)",
 				is.Func("valid SA VATEX code", taxComboHasValidVATEX),
 			),
-		),
 
-		// Extensions
-		rules.Field("ext",
 			rules.Assert("02", "VAT category code must contain one of the values (S, Z, E, O) (BR-KSA-18)",
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory,
 					en16931.TaxCategoryStandard,
@@ -102,14 +100,14 @@ func taxComboRules() *rules.Set {
 
 		// Category
 		rules.Field("cat",
-			rules.Assert("04", "tax schema id must be 'VAT' (BR-KSA-54)", is.In(tax.CategoryVAT)),
+			rules.Assert("03", "tax schema id must be 'VAT' (BR-KSA-54)", is.In(tax.CategoryVAT)),
 		),
 	)
 }
 
 func taxComboHasValidVATEX(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	if !ok {
+	ext, ok := val.(*tax.Extensions)
+	if !ok || ext == nil {
 		return false
 	}
 	category := ext.Get(untdid.ExtKeyTaxCategory)
