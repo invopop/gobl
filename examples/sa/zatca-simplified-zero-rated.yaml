@@ -1,0 +1,58 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["sa-zatca-v1"]
+uuid: "8d487816-70b8-4ade-a618-9d620b73814a"
+issue_date: "2022-09-07"
+issue_time: "12:21:28"
+code: "123456"
+regime: "SA"
+
+tax:
+  ext:
+    sa-zatca-invoice-type: "0200000"
+    untdid-document-type: "388"
+  notes: 
+    - category: "cef-vatex"
+    
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "399999999900003"
+  name: "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD"
+  identities:
+    - type: "CRN"
+      code: "1010010000"
+  addresses:
+    - street: "الامير سلطان | Prince Sultan"
+      street_extra: "المربع | Al-Murabba"
+      num: "2322"
+      locality: "الرياض | Riyadh"
+      code: "23333"
+      country: "SA"
+
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: "Medicine | الدواء"
+      price: "50.00"
+      unit: "PCE"
+    taxes:
+      - cat: VAT
+        rate: zero
+        ext:
+          untdid-tax-category: "Z"
+          cef-vatex: "VATEX-SA-35"
+  - i: 2
+    quantity: "1"
+    item:
+      name: "Shampoo | شامبو"
+      price: "21.74"
+      unit: "PCE"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+payment:
+  instructions:
+    key: "cash"

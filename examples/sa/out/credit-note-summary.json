@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "be56d66e4632335803ef21fb29f4dc5f982956acb1e00529b8971c5293fea277"
+			"val": "a8cfe56ca6eb7f4ce41006c8f0699add60f042847b4176521396bac8594fe626"
 		}
 	},
 	"doc": {
@@ -36,7 +36,17 @@
 			"ext": {
 				"sa-zatca-invoice-type": "0100010",
 				"untdid-document-type": "381"
-			}
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "zero",
+					"text": "Export of goods",
+					"ext": {
+						"untdid-tax-category": "Z"
+					}
+				}
+			]
 		},
 		"supplier": {
 			"name": "Acme Corp Saudi LLC",

@@ -1,0 +1,65 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["sa-zatca-v1"]
+uuid: "8d487816-70b8-4ade-a618-9d620b73814a"
+issue_date: "2022-09-07"
+issue_time: "12:21:28"
+code: "SME00023"
+regime: "SA"
+
+tax:
+  ext:
+    sa-zatca-invoice-type: "0100000"
+    untdid-document-type: "388"
+
+supplier:
+  tax_id:
+    country: "SA"
+    code: "399999999900003"
+  name: "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD"
+  identities:
+    - type: "CRN"
+      code: "1010010000"
+  addresses:
+    - street: "الامير سلطان | Prince Sultan"
+      street_extra: "المربع | Al-Murabba"
+      num: "2322"
+      locality: "الرياض | Riyadh"
+      code: "23333"
+      country: "SA"
+
+customer:
+  tax_id:
+    country: "SA"
+    code: "399999999800003"
+  name: "شركة نماذج فاتورة المحدودة | Fatoora Samples LTD"
+  addresses:
+    - street: "صلاح الدين | Salah Al-Din"
+      street_extra: "المروج | Al-Murooj"
+      num: "1111"
+      locality: "الرياض | Riyadh"
+      code: "12222"
+      country: "SA"
+
+lines:
+  - quantity: "2"
+    item:
+      name: "قلم رصاص"
+      price: "2.00"
+      unit: "PCE"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+delivery:
+  date: "2022-09-07"
+
+payment:
+  instructions:
+    key: "cash"
+
+discounts:
+  - reason: "discount"
+    amount: "0.00"
+    taxes:
+      - cat: VAT
+        rate: standard
