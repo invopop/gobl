@@ -112,6 +112,10 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.Assert("16", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
+		// Code 20: series and code combined max 60 chars
+		rules.Assert("20", "invoice series and code combined must be 60 characters or less",
+			is.Func("series and code fit", invoiceSeriesCodeFits),
+		),
 		// Preceding documents
 		// Code 01: preceding required when corrective
 		rules.When(
@@ -121,12 +125,16 @@ func billInvoiceRules() *rules.Set {
 			),
 		),
 		// Code 02: each preceding issue date required
+		// Code 21: each preceding series and code combined max 60 chars
 		rules.Field("preceding",
 			rules.Each(
 				rules.When(
 					is.Func("not nil", precedingDocIsNotNil),
 					rules.Field("issue_date",
 						rules.Assert("02", "issue date is required", is.Present),
+					),
+					rules.AssertIfPresent("21", "preceding series and code combined must be 60 characters or less",
+						is.Func("series and code fit", precedingSeriesCodeFits),
 					),
 				),
 			),
@@ -141,6 +149,29 @@ func billInvoiceRules() *rules.Set {
 						rules.Field("tax",
 							rules.Assert("03", "preceding invoice tax data is required for corrective invoices", is.Present),
 						),
+					),
+				),
+			),
+		),
+		// Supplier
+		// Code 18: supplier name max 120 chars
+		rules.Field("supplier",
+			rules.Field("name",
+				rules.AssertIfPresent("18", "supplier name must be 120 characters or less", is.Length(0, 120)),
+			),
+		),
+		// Customer - universal
+		// Code 19: customer name max 120 chars
+		// Code 22: non-ES customer tax ID code max 18 chars
+		rules.Field("customer",
+			rules.Field("name",
+				rules.AssertIfPresent("19", "customer name must be 120 characters or less", is.Length(0, 120)),
+			),
+			rules.Field("tax_id",
+				rules.When(
+					is.Func("non-ES tax ID", taxIDIsNonES),
+					rules.Field("code",
+						rules.AssertIfPresent("22", "non-Spanish customer tax ID code must be 18 characters or less", is.Length(0, 18)),
 					),
 				),
 			),
@@ -253,6 +284,17 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
+		// Totals - tax categories
+		// Code 23: non-retained tax rates cannot exceed 12
+		rules.Field("totals",
+			rules.Field("taxes",
+				rules.Field("categories",
+					rules.Assert("23", "non-retained tax rates cannot exceed 12",
+						is.Func("non-retained rate count within limit", taxRatesWithinLimit),
+					),
+				),
+			),
+		),
 	)
 }
 
@@ -294,4 +336,40 @@ func identityHasNonVATType(val any) bool {
 func isGeneralNote(val any) bool {
 	note, ok := val.(*org.Note)
 	return ok && note != nil && note.Key == org.NoteKeyGeneral
+}
+
+func invoiceSeriesCodeFits(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	return ok && inv != nil && seriesCodeFits(inv.Series, inv.Code)
+}
+
+func precedingSeriesCodeFits(val any) bool {
+	ref, ok := val.(*org.DocumentRef)
+	return ok && ref != nil && seriesCodeFits(ref.Series, ref.Code)
+}
+
+func seriesCodeFits(series, code cbc.Code) bool {
+	joined := series.Join(code)
+	return len(joined) <= 60
+}
+
+func taxIDIsNonES(val any) bool {
+	tid, ok := val.(*tax.Identity)
+	return ok && tid != nil && tid.Country != "" && tid.Country != "ES"
+}
+
+func taxRatesWithinLimit(val any) bool {
+	cats, ok := val.([]*tax.CategoryTotal)
+	return ok && cats != nil && countNonRetainedRates(cats) <= 12
+}
+
+func countNonRetainedRates(cats []*tax.CategoryTotal) int {
+	count := 0
+	for _, c := range cats {
+		if c == nil || c.Retained {
+			continue
+		}
+		count += len(c.Rates)
+	}
+	return count
 }
