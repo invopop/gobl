@@ -36,10 +36,10 @@ func validStandardInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2024, 6, 15),
 		IssueTime: cal.NewTime(12, 0, 0),
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				zatca.ExtKeyInvoiceTypeTransactions: "0100000",
 				untdid.ExtKeyDocumentType:           "388",
-			},
+			}),
 		},
 		Supplier: validSupplier(),
 		Customer: validCustomer(),
@@ -115,7 +115,7 @@ func validAddress() *org.Address {
 // validSimplifiedInvoice returns a simplified tax invoice (KSA-2 starts with "02").
 func validSimplifiedInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext[zatca.ExtKeyInvoiceTypeTransactions] = "0200000"
+	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0200000")
 	return inv
 }
 
@@ -123,7 +123,7 @@ func validSimplifiedInvoice() *bill.Invoice {
 // the summary bit set (position 6 = 1).
 func validSummaryInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext[zatca.ExtKeyInvoiceTypeTransactions] = "0100010"
+	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100010")
 	return inv
 }
 
@@ -132,7 +132,7 @@ func validSummaryInvoice() *bill.Invoice {
 func validCreditNote() *bill.Invoice {
 	inv := validStandardInvoice()
 	inv.Type = bill.InvoiceTypeCreditNote
-	inv.Tax.Ext[untdid.ExtKeyDocumentType] = "381"
+	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "381")
 	inv.Preceding = []*org.DocumentRef{
 		{
 			Code:      "INV-001",
@@ -147,7 +147,7 @@ func validCreditNote() *bill.Invoice {
 func validDebitNote() *bill.Invoice {
 	inv := validCreditNote()
 	inv.Type = bill.InvoiceTypeDebitNote
-	inv.Tax.Ext[untdid.ExtKeyDocumentType] = "383"
+	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "383")
 	inv.Preceding[0].Reason = "Price adjustment"
 	return inv
 }
@@ -157,7 +157,7 @@ func validDebitNote() *bill.Invoice {
 // required by BR-KSA-46.
 func validExportInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext[zatca.ExtKeyInvoiceTypeTransactions] = "0100100"
+	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100100")
 	inv.Customer.TaxID = nil
 	inv.Customer.Identities = []*org.Identity{
 		{Type: sa.IdentityTypeTIN, Code: "123456789012345"},
@@ -229,7 +229,7 @@ func TestTaxBlockExtensions(t *testing.T) {
 
 	t.Run("required ext keys missing", func(t *testing.T) {
 		inv := validStandardInvoice()
-		inv.Tax.Ext = nil
+		inv.Tax.Ext = tax.Extensions{}
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
 			"extensions untdid key document type and key invoice type transaction are required")
@@ -237,14 +237,14 @@ func TestTaxBlockExtensions(t *testing.T) {
 
 	t.Run("invalid document type code rejected", func(t *testing.T) {
 		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext[untdid.ExtKeyDocumentType] = "999"
+		inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "999")
 		assert.ErrorContains(t, rules.Validate(inv),
 			"document type must be a valid ZATCA type")
 	})
 
 	t.Run("invalid invoice transaction type rejected", func(t *testing.T) {
 		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext[zatca.ExtKeyInvoiceTypeTransactions] = "9999999"
+		inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "9999999")
 		assert.ErrorContains(t, rules.Validate(inv),
 			"invoice transaction type must be valid")
 	})
@@ -298,14 +298,14 @@ func TestSupplierRequirements(t *testing.T) {
 		inv := validStandardInvoice()
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "supplier must have a name")
+		assert.ErrorContains(t, rules.Validate(inv), "supplier name is required")
 	})
 
 	t.Run("missing addresses fails (BR-KSA-09)", func(t *testing.T) {
 		inv := validStandardInvoice()
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "supplier must have an address")
+		assert.ErrorContains(t, rules.Validate(inv), "supplier addresses are required")
 	})
 }
 
@@ -425,7 +425,7 @@ func TestSimplifiedSummaryRequirements(t *testing.T) {
 	// Build one by deriving from simplified and adding the summary bit.
 	build := func() *bill.Invoice {
 		inv := validSimplifiedInvoice()
-		inv.Tax.Ext[zatca.ExtKeyInvoiceTypeTransactions] = "0200010"
+		inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0200010")
 		return inv
 	}
 
@@ -489,9 +489,9 @@ func TestBRKSA49_25_EDUHEAExemption(t *testing.T) {
 			{
 				Category: tax.CategoryVAT,
 				Key:      tax.KeyZero,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					cef.ExtKeyVATEX: vatex,
-				},
+				}),
 			},
 		}
 	}

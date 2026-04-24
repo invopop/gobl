@@ -15,9 +15,9 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					untdid.ExtKeyDocumentType: "388",
-				},
+				}),
 			},
 		},
 	},
