@@ -340,18 +340,12 @@ func isGeneralNote(val any) bool {
 
 func invoiceSeriesCodeFits(val any) bool {
 	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	return seriesCodeFits(inv.Series, inv.Code)
+	return ok && inv != nil && seriesCodeFits(inv.Series, inv.Code)
 }
 
 func precedingSeriesCodeFits(val any) bool {
 	ref, ok := val.(*org.DocumentRef)
-	if !ok || ref == nil {
-		return true
-	}
-	return seriesCodeFits(ref.Series, ref.Code)
+	return ok && ref != nil && seriesCodeFits(ref.Series, ref.Code)
 }
 
 func seriesCodeFits(series, code cbc.Code) bool {
@@ -366,9 +360,10 @@ func taxIDIsNonES(val any) bool {
 
 func taxRatesWithinLimit(val any) bool {
 	cats, ok := val.([]*tax.CategoryTotal)
-	if !ok {
-		return true
-	}
+	return ok && cats != nil && countNonRetainedRates(cats) <= 12
+}
+
+func countNonRetainedRates(cats []*tax.CategoryTotal) int {
 	count := 0
 	for _, c := range cats {
 		if c == nil || c.Retained {
@@ -376,5 +371,5 @@ func taxRatesWithinLimit(val any) bool {
 		}
 		count += len(c.Rates)
 	}
-	return count <= 12
+	return count
 }
