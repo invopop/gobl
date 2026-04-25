@@ -313,6 +313,39 @@
             "en": "MiPyMEs Electronic Credit Note (FCE) C",
             "es": "Nota de Crédito electrónica MiPyMEs (FCE) C"
           }
+        },
+        {
+          "code": "195",
+          "name": {
+            "en": "Invoice T",
+            "es": "Factura T"
+          },
+          "desc": {
+            "en": "Tourism invoice issued under WSCT (Web Service Comprobante T) for accommodation and travel services to non-resident tourists.",
+            "es": "Factura de turismo emitida bajo el WSCT para servicios de alojamiento y viajes a turistas no residentes."
+          }
+        },
+        {
+          "code": "196",
+          "name": {
+            "en": "Debit Note T",
+            "es": "Nota de Débito T"
+          },
+          "desc": {
+            "en": "Tourism debit note issued under WSCT.",
+            "es": "Nota de débito de turismo emitida bajo el WSCT."
+          }
+        },
+        {
+          "code": "197",
+          "name": {
+            "en": "Credit Note T",
+            "es": "Nota de Crédito T"
+          },
+          "desc": {
+            "en": "Tourism credit note issued under WSCT.",
+            "es": "Nota de crédito de turismo emitida bajo el WSCT."
+          }
         }
       ]
     },
@@ -841,6 +874,93 @@
           "name": {
             "en": "Promoted Independent Worker Monotributista",
             "es": "Monotributo Trabajador Independiente Promovido"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tourism-relation",
+      "name": {
+        "en": "Argentina ARCA Tourism Issuer-Receiver Relationship",
+        "es": "Código de relación emisor-receptor para turismo"
+      },
+      "desc": {
+        "en": "Code that identifies the relationship between the issuer and the receiver for tourism\ninvoices (Comprobante T). Required on the invoice `tax.ext` when the document type is\n`195` (Invoice T), `196` (Debit Note T), or `197` (Credit Note T).\n\nCorresponds to `codigoRelacionEmisorReceptor` in the WSCT web service."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Direct Accommodation to Non-Resident Tourist",
+            "es": "Alojamiento Directo a Turista No Residente"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Accommodation to Resident Travel Agency",
+            "es": "Alojamiento a Agencia de Viaje Residente"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Accommodation to Non-Resident Travel Agency",
+            "es": "Alojamiento a Agencia de Viaje No Residente"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Resident Travel Agency to Non-Resident Travel Agency",
+            "es": "Agencia de Viaje Residente a Agencia de Viaje No Residente"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Resident Travel Agency to Non-Resident Tourist",
+            "es": "Agencia de Viaje Residente a Turista No Residente"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Resident Travel Agency to Resident Travel Agency",
+            "es": "Agencia de Viaje Residente a Agencia de Viaje Residente"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tourism-code",
+      "name": {
+        "en": "Argentina ARCA Tourism Item Code",
+        "es": "Código de ítem de turismo Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code that identifies the type of tourism item on a line. Used on line item `tax.ext`\nfor tourism invoices (Comprobante T, doc types 195/196/197).\n\nCorresponds to `codigoTurismo` in the WSCT web service. Additional codes may be\navailable via the `consultarCodigosItemTurismo` operation of the WSCT service."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Hotel without Breakfast",
+            "es": "Hotel sin desayuno"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Hotel with Breakfast",
+            "es": "Hotel con desayuno"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Surplus",
+            "es": "Excedente"
           }
         }
       ]

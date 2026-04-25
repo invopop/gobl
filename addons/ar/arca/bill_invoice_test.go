@@ -1456,6 +1456,86 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 	})
 }
 
+func TestTourismInvoiceTypeT(t *testing.T) {
+	t.Run("valid type T invoice (195) passes", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T invoice without tourism relation fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Tax.Ext = inv.Tax.Ext.Delete(arca.ExtKeyTourismRelation)
+		assertValidationError(t, inv, "tourism invoice requires 'ar-arca-tourism-relation' extension")
+	})
+
+	t.Run("type T invoice with services does not require ordering or payment", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Item.Key = org.ItemKeyServices
+		inv.Ordering = nil
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T debit note (196) is recognized as debit note", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "196")
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T credit note (197) is recognized as credit note", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "197")
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T invoice with standard doc type fails type check", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "195") // 195 is standard, not credit note
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invoice type is credit-note but ar-arca-doc-type is not a credit note")
+	})
+
+	t.Run("type T invoice (196) as standard fails type check", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeStandard
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "196") // 196 is debit note
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "doc type is a debit note but invoice type is not debit-note")
+	})
+
+	t.Run("type T invoice without tourism code on lines fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{}
+		assertValidationError(t, inv, "tourism invoice line requires 'ar-arca-tourism-code' extension")
+	})
+
+	t.Run("type T invoice without customer addresses fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Customer.Addresses = nil
+		assertValidationError(t, inv, "tourism invoice customer requires an address")
+	})
+
+	t.Run("type T invoice with non-21% VAT rate fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes[0].Rate = "reduced"
+		assertValidationError(t, inv, "tourism invoice line VAT rate must be '5'")
+	})
+}
+
 // Helper functions
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
@@ -1595,6 +1675,62 @@ func testPayment() *bill.PaymentDetails {
 				{
 					Date:   cal.NewDate(2024, 2, 15),
 					Amount: num.MakeAmount(10000, 2),
+				},
+			},
+		},
+	}
+}
+
+func testInvoiceTourism(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Addons: tax.WithAddons(arca.V4),
+		Type:   bill.InvoiceTypeStandard,
+		Series: "1",
+		Code:   "123",
+		Tax: &bill.Tax{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
+				arca.ExtKeyDocType:         "195",
+				arca.ExtKeyTourismRelation: "1",
+			}),
+		},
+		Supplier: &org.Party{
+			Name: "Test Hotel",
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "30500010912",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Foreign Tourist",
+			TaxID: &tax.Identity{
+				Country: "US",
+				Code:    "123456789",
+			},
+			Addresses: []*org.Address{
+				{
+					Street:   "5th Avenue 100",
+					Locality: "New York",
+					Country:  "US",
+				},
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Hotel Room",
+					Price: num.NewAmount(10000, 2),
+					Key:   org.ItemKeyGoods,
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+						Ext: tax.ExtensionsOf(tax.ExtMap{
+							arca.ExtKeyTourismCode: "1",
+						}),
+					},
 				},
 			},
 		},
