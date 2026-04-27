@@ -1,10 +1,9 @@
-package flow2_test
+package flow2
 
 import (
 	"strings"
 	"testing"
 
-	ctc "github.com/invopop/gobl/addons/fr/ctc/flow2"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -166,7 +165,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 }
 
 func TestPeppolKeyNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("peppol key set on SIREN inbox when none exist", func(t *testing.T) {
 		party := &org.Party{
@@ -382,7 +381,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 }
 
 func TestPrivateIDNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("private-id key sets ISO scheme ID 0224", func(t *testing.T) {
 		party := &org.Party{
@@ -449,7 +448,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 }
 
 func TestSIRENGenerationFromSIRET(t *testing.T) {
-	ad := tax.AddonForKey(ctc.V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("generated SIREN from SIRET", func(t *testing.T) {
 		party := &org.Party{
@@ -598,7 +597,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 
 func TestNormalizePartyEdgeCases(t *testing.T) {
 	t.Run("normalize nil party", func(_ *testing.T) {
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer((*org.Party)(nil))
 		// Should not crash
 	})
@@ -607,7 +606,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		assert.Len(t, party.Identities, 0)
 	})
@@ -624,7 +623,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN from SIRET, plus the original SIRET, plus 1 nil
@@ -664,7 +663,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN
@@ -703,7 +702,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should not generate duplicate SIREN
@@ -726,7 +725,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
 	})
@@ -746,7 +745,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		// First inbox should keep its peppol key, second should not get it
 		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
@@ -766,7 +765,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				nilInbox, // Another nil for good measure
 			},
 		}
-		ad := tax.AddonForKey(ctc.V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should still have 3 elements (2 nils + 1 valid inbox)
