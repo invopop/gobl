@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fc1e96ec7f527ed114e719694a9abcdce3c19457ee7ef950b3c294d61ad68901"
+			"val": "0fb627224d6cf49dc1cb7b5c06bf0ec0fdb20c5f6a11f0e5842d76599f5897dd"
 		}
 	},
 	"doc": {
@@ -12,9 +12,6 @@
 		"$regime": "FR",
 		"$addons": [
 			"fr-ctc-flow10-v1"
-		],
-		"$tags": [
-			"b2c"
 		],
 		"uuid": "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10",
 		"type": "standard",
@@ -48,17 +45,6 @@
 					"street": "20 Rue du Commerce",
 					"locality": "Paris",
 					"code": "75015",
-					"country": "FR"
-				}
-			]
-		},
-		"customer": {
-			"name": "Client Particulier",
-			"addresses": [
-				{
-					"street": "4 Rue Lafayette",
-					"locality": "Lyon",
-					"code": "69001",
 					"country": "FR"
 				}
 			]

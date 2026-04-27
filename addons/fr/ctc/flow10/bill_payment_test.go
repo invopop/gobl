@@ -47,7 +47,6 @@ func testPaymentB2C(t *testing.T) *bill.Payment {
 	return &bill.Payment{
 		Regime:    tax.WithRegime("FR"),
 		Addons:    tax.WithAddons(V1),
-		Tags:      tax.WithTags(TagB2C),
 		Type:      bill.PaymentTypeReceipt,
 		Code:      "PAY-2026-B2C-001",
 		Currency:  "EUR",

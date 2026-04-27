@@ -372,8 +372,12 @@ var vatKeyToUNTDIDCategory = map[cbc.Key]cbc.Code{
 	tax.KeyOutsideScope:   "O",
 }
 
+// invoiceIsB2C reports whether the invoice is a business-to-consumer
+// transaction. Flow 10 distinguishes B2C from B2B by the presence of a
+// Customer party — a B2C sale is to an unidentified consumer and so
+// the Customer slot is left unset.
 func invoiceIsB2C(inv *bill.Invoice) bool {
-	return inv != nil && inv.Tags.HasTags(TagB2C)
+	return inv != nil && inv.Customer == nil
 }
 
 func normalizeInvoice(inv *bill.Invoice) {

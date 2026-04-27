@@ -7,8 +7,10 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// paymentIsB2C reports whether the payment reports a B2C settlement,
+// determined by the absence of a Customer party.
 func paymentIsB2C(pmt *bill.Payment) bool {
-	return pmt != nil && pmt.Tags.HasTags(TagB2C)
+	return pmt != nil && pmt.Customer == nil
 }
 
 func paymentIsB2BAny(v any) bool {

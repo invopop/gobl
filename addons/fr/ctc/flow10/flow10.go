@@ -72,10 +72,6 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
-		Tags: []*tax.TagSet{
-			invoiceTags,
-			paymentTags,
-		},
 		Scenarios:  scenarios,
 		Normalizer: normalize,
 	}

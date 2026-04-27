@@ -90,7 +90,6 @@ func testInvoiceB2C(t *testing.T) *bill.Invoice {
 	inv := &bill.Invoice{
 		Regime:    tax.WithRegime("FR"),
 		Addons:    tax.WithAddons(V1),
-		Tags:      tax.WithTags(TagB2C),
 		Code:      "INV-2026-B2C-001",
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2026, 1, 15),

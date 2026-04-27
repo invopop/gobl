@@ -1,8 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
   - "fr-ctc-flow10-v1"
-$tags:
-  - "b2c"
 uuid: "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10"
 currency: "EUR"
 issue_date: "2026-04-15"
@@ -27,14 +25,6 @@ supplier:
     - street: "20 Rue du Commerce"
       locality: "Paris"
       code: "75015"
-      country: "FR"
-
-customer:
-  name: "Client Particulier"
-  addresses:
-    - street: "4 Rue Lafayette"
-      locality: "Lyon"
-      code: "69001"
       country: "FR"
 
 lines:
