@@ -112,6 +112,16 @@ const (
 	// stcMembreAssujettiUnique is the fixed text that pairs with TXD for
 	// suppliers operating under a single-VAT-group identity (scheme 0231).
 	stcMembreAssujettiUnique = "MEMBRE_ASSUJETTI_UNIQUE"
+
+	// noteSubjectBAR is the UNTDID 4451 text-subject code that carries
+	// the transaction category for French CTC (B2B / B2BINT / B2C / etc.).
+	noteSubjectBAR cbc.Code = "BAR"
+
+	// barTreatmentB2B is the BAR value Flow 2 reads when discriminating
+	// B2B vs other treatments inside isB2BTransaction. The default is
+	// not auto-applied — callers must add the BAR note explicitly with
+	// one of the values listed in allowedBARTreatments.
+	barTreatmentB2B = "B2B"
 )
 
 // normalizeInvoice ensures invoice settings comply with French CTC requirements
@@ -225,7 +235,7 @@ func isB2BTransaction(inv *bill.Invoice) bool {
 
 	for _, note := range inv.Notes {
 		if note != nil && !note.Ext.IsZero() {
-			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" && note.Text == "B2B" {
+			if note.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectBAR && note.Text == barTreatmentB2B {
 				// Check if note text indicates B2B transaction (B2B or B2BINT)
 				return true
 			}
@@ -813,7 +823,7 @@ func notesValidBARText(val any) bool {
 	}
 	for _, note := range notes {
 		if note != nil && !note.Ext.IsZero() {
-			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" {
+			if note.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectBAR {
 				if note.Text != "" && !slices.Contains(allowedBARTreatments, note.Text) {
 					return false
 				}
