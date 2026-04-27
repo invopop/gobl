@@ -34,37 +34,45 @@ const (
 	B2CCategoryMargin cbc.Code = "TMA1"
 )
 
-// Billing mode codes (Cadre de Facturation)
-// The prefix indicates the invoice nature:
+// Billing mode codes (Cadre de Facturation).
+// The prefix denotes the invoice nature:
 //   - B: Goods invoice (Biens)
 //   - S: Services invoice
 //   - M: Mixed/dual invoice (goods and services that are not accessory to each other)
+//
+// The numeric suffix encodes the payment context:
+//   - 1: standard invoice (payment outstanding)
+//   - 2: invoice already paid at issue
+//   - 4: final invoice issued after a down payment
+//   - 5: service invoice issued by a subcontractor
+//   - 6: service invoice issued by a co-contractor
+//   - 7: invoice subject to e-reporting (VAT already collected)
 const (
-	// BillingModeB1: Deposit of a goods invoice
+	// BillingModeB1: goods invoice — payment outstanding.
 	BillingModeB1 cbc.Code = "B1"
-	// BillingModeB2: Deposit of an already paid goods invoice
+	// BillingModeB2: goods invoice — already paid at issue.
 	BillingModeB2 cbc.Code = "B2"
-	// BillingModeB4: Deposit of a final invoice (after down payment) for goods
+	// BillingModeB4: final goods invoice after a down payment.
 	BillingModeB4 cbc.Code = "B4"
-	// BillingModeB7: Deposit of a goods invoice subject to e-reporting (VAT already collected)
+	// BillingModeB7: goods invoice subject to e-reporting (VAT already collected).
 	BillingModeB7 cbc.Code = "B7"
-	// BillingModeS1: Deposit of a service invoice
+	// BillingModeS1: service invoice — payment outstanding.
 	BillingModeS1 cbc.Code = "S1"
-	// BillingModeS2: Deposit of an already paid service invoice
+	// BillingModeS2: service invoice — already paid at issue.
 	BillingModeS2 cbc.Code = "S2"
-	// BillingModeS4: Deposit of a final invoice (after down payment) for services
+	// BillingModeS4: final service invoice after a down payment.
 	BillingModeS4 cbc.Code = "S4"
-	// BillingModeS5: Deposit by a subcontractor of a service invoice
+	// BillingModeS5: service invoice issued by a subcontractor.
 	BillingModeS5 cbc.Code = "S5"
-	// BillingModeS6: Deposit by a co-contractor of a service invoice
+	// BillingModeS6: service invoice issued by a co-contractor.
 	BillingModeS6 cbc.Code = "S6"
-	// BillingModeS7: Deposit of a service invoice subject to e-reporting (VAT already collected)
+	// BillingModeS7: service invoice subject to e-reporting (VAT already collected).
 	BillingModeS7 cbc.Code = "S7"
-	// BillingModeM1: Deposit of a dual invoice (goods and services)
+	// BillingModeM1: mixed invoice (goods and services) — payment outstanding.
 	BillingModeM1 cbc.Code = "M1"
-	// BillingModeM2: Deposit of an already paid dual invoice
+	// BillingModeM2: mixed invoice — already paid at issue.
 	BillingModeM2 cbc.Code = "M2"
-	// BillingModeM4: Deposit of a final invoice (after down payment) - dual
+	// BillingModeM4: final mixed invoice after a down payment.
 	BillingModeM4 cbc.Code = "M4"
 )
 
