@@ -357,3 +357,89 @@ func partyHasTaxIDWhenRequired(v any) bool {
 	}
 	return party.TaxID != nil && party.TaxID.Code != ""
 }
+
+// vatKeyToUNTDIDCategory maps each supported GOBL VAT rate key to its
+// UNTDID 5305 category code. The Canary Islands (IGIC / "L") and
+// Ceuta/Melilla (IPSI / "M") categories are intentionally absent since
+// they are not applicable to Flow 10.
+var vatKeyToUNTDIDCategory = map[cbc.Key]cbc.Code{
+	tax.KeyStandard:       "S",
+	tax.KeyZero:           "Z",
+	tax.KeyExempt:         "E",
+	tax.KeyReverseCharge:  "AE",
+	tax.KeyIntraCommunity: "K",
+	tax.KeyExport:         "G",
+	tax.KeyOutsideScope:   "O",
+}
+
+func invoiceIsB2C(inv *bill.Invoice) bool {
+	return inv != nil && inv.Tags.HasTags(TagB2C)
+}
+
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+	normalizeInvoiceTaxCategories(inv)
+	if invoiceIsB2C(inv) {
+		normalizeB2CCategoryOnInvoice(inv)
+		return
+	}
+	normalizeParty(inv.Supplier)
+	normalizeParty(inv.Customer)
+	normalizeInvoiceBillingMode(inv)
+}
+
+// normalizeB2CCategoryOnInvoice defaults the B2C transaction category to
+// TNT1 (not subject to French VAT) when the caller has not supplied one.
+// TNT1 is the safest default: it covers B2C sales that would otherwise
+// require explicit per-case classification (intra-EU distance sales,
+// out-of-scope, etc.), and a user wanting a narrower code must set it
+// explicitly.
+func normalizeB2CCategoryOnInvoice(inv *bill.Invoice) {
+	if inv.Tax != nil && inv.Tax.Ext.Get(ExtKeyB2CCategory) != "" {
+		return
+	}
+	if inv.Tax == nil {
+		inv.Tax = &bill.Tax{}
+	}
+	inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyB2CCategory, B2CCategoryNotTaxable)
+}
+
+// normalizeInvoiceTaxCategories sets the UNTDID 5305 category extension
+// on each VAT combo based on its rate key. Combos whose key we do not
+// map (IGIC / IPSI, or unknown) are left untouched.
+func normalizeInvoiceTaxCategories(inv *bill.Invoice) {
+	for _, line := range inv.Lines {
+		if line == nil {
+			continue
+		}
+		for _, combo := range line.Taxes {
+			if combo == nil || combo.Category != tax.CategoryVAT {
+				continue
+			}
+			if code, ok := vatKeyToUNTDIDCategory[combo.Key]; ok {
+				combo.Ext = combo.Ext.Set(untdid.ExtKeyTaxCategory, code)
+			}
+		}
+	}
+}
+
+// normalizeInvoiceBillingMode picks a sensible default for the Flow 10
+// billing-mode extension when the user has not supplied one. We default
+// to the Mixed (M) prefix since it is the safest without line-level
+// analysis: M2 when the invoice is already paid in full, M1 otherwise.
+// The user can override by setting the extension explicitly.
+func normalizeInvoiceBillingMode(inv *bill.Invoice) {
+	if inv.Tax != nil && !inv.Tax.Ext.IsZero() && inv.Tax.Ext.Get(ExtKeyBillingMode) != "" {
+		return
+	}
+	mode := BillingModeM1
+	if inv.Totals != nil && inv.Totals.Paid() {
+		mode = BillingModeM2
+	}
+	if inv.Tax == nil {
+		inv.Tax = &bill.Tax{}
+	}
+	inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyBillingMode, mode)
+}

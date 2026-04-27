@@ -367,3 +367,17 @@ func TestPercentageInListEmpty(t *testing.T) {
 	p := num.MakePercentage(20, 2)
 	assert.False(t, percentageInList(p, nil))
 }
+
+func TestNormalizeInvoiceNilSafe(t *testing.T) {
+	assert.NotPanics(t, func() { normalizeInvoice(nil) })
+}
+
+func TestNormalizeInvoiceBillingModeDefaultsM2WhenPaid(t *testing.T) {
+	due := num.MakeAmount(0, 2)
+	inv := &bill.Invoice{
+		Totals: &bill.Totals{Due: &due},
+		Tax:    &bill.Tax{},
+	}
+	normalizeInvoiceBillingMode(inv)
+	assert.Equal(t, BillingModeM2, inv.Tax.Ext.Get(ExtKeyBillingMode))
+}

@@ -163,17 +163,3 @@ func TestPaymentVATRatesAllowedNilLine(t *testing.T) {
 	p := &bill.Payment{Lines: []*bill.PaymentLine{nil}}
 	assert.True(t, paymentVATRatesAllowed(p))
 }
-
-func TestNormalizeInvoiceNilSafe(t *testing.T) {
-	assert.NotPanics(t, func() { normalizeInvoice(nil) })
-}
-
-func TestNormalizeInvoiceBillingModeDefaultsM2WhenPaid(t *testing.T) {
-	due := num.MakeAmount(0, 2)
-	inv := &bill.Invoice{
-		Totals: &bill.Totals{Due: &due},
-		Tax:    &bill.Tax{},
-	}
-	normalizeInvoiceBillingMode(inv)
-	assert.Equal(t, BillingModeM2, inv.Tax.Ext.Get(ExtKeyBillingMode))
-}
