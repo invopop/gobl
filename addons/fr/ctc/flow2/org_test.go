@@ -188,7 +188,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that peppol key was set
-		assert.Equal(t, "peppol", party.Inboxes[0].Key.String())
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("peppol key not set if another inbox already has it", func(t *testing.T) {
@@ -205,7 +205,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 			},
 			Inboxes: []*org.Inbox{
 				{
-					Key:    "peppol",
+					Key:    org.InboxKeyPeppol,
 					Scheme: "0088",
 					Code:   "1234567890123",
 				},
@@ -217,8 +217,8 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that SIREN inbox does not have peppol key
-		assert.NotEqual(t, "peppol", party.Inboxes[1].Key.String())
-		assert.Equal(t, "", party.Inboxes[1].Key.String())
+		assert.NotEqual(t, org.InboxKeyPeppol, party.Inboxes[1].Key)
+		assert.Equal(t, cbc.Key(""), party.Inboxes[1].Key)
 	})
 
 	t.Run("peppol key set even for non-French party", func(t *testing.T) {
@@ -236,7 +236,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that peppol key was set (addon usage implies French context)
-		assert.Equal(t, "peppol", party.Inboxes[0].Key.String())
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("peppol key not set if no SIREN inbox", func(t *testing.T) {
@@ -260,7 +260,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that inbox does not have peppol key
-		assert.Equal(t, "", party.Inboxes[0].Key.String())
+		assert.Equal(t, cbc.Key(""), party.Inboxes[0].Key)
 	})
 }
 
@@ -727,7 +727,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		}
 		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
-		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("normalize inbox does not override existing peppol key", func(t *testing.T) {
@@ -735,7 +735,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 			Name: "Test Party",
 			Inboxes: []*org.Inbox{
 				{
-					Key:    "peppol",
+					Key:    org.InboxKeyPeppol,
 					Scheme: "0088",
 					Code:   "existing",
 				},
@@ -748,8 +748,8 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		// First inbox should keep its peppol key, second should not get it
-		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
-		assert.NotEqual(t, cbc.Key("peppol"), party.Inboxes[1].Key)
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
+		assert.NotEqual(t, org.InboxKeyPeppol, party.Inboxes[1].Key)
 	})
 
 	t.Run("normalize inbox with nil element in array", func(t *testing.T) {
@@ -777,7 +777,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		for _, inbox := range party.Inboxes {
 			if inbox != nil {
 				nonNilCount++
-				if inbox.Key == "peppol" {
+				if inbox.Key == org.InboxKeyPeppol {
 					hasPeppol = true
 				}
 			}

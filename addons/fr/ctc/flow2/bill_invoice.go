@@ -104,6 +104,14 @@ var allowedAttachmentDescriptions = []string{
 const (
 	// attachmentFormatLisible is the attachment format category for BR-FR-18
 	attachmentFormatLisible = "LISIBLE"
+
+	// noteSubjectTXD is the UNTDID 4451 text-subject code carried on the
+	// BR-FR-CO-14 STC (single-VAT-group) mention.
+	noteSubjectTXD cbc.Code = "TXD"
+
+	// stcMembreAssujettiUnique is the fixed text that pairs with TXD for
+	// suppliers operating under a single-VAT-group identity (scheme 0231).
+	stcMembreAssujettiUnique = "MEMBRE_ASSUJETTI_UNIQUE"
 )
 
 // normalizeInvoice ensures invoice settings comply with French CTC requirements
@@ -133,14 +141,14 @@ func normalizeSTCNote(inv *bill.Invoice) {
 		return
 	}
 	for _, n := range inv.Notes {
-		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" && n.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectTXD && n.Text == stcMembreAssujettiUnique {
 			return
 		}
 	}
 	inv.Notes = append(inv.Notes, &org.Note{
 		Key:  org.NoteKeyLegal,
-		Text: "MEMBRE_ASSUJETTI_UNIQUE",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+		Text: stcMembreAssujettiUnique,
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 	})
 }
 
@@ -746,7 +754,7 @@ func notesHaveTXD(val any) bool {
 	}
 	for _, note := range notes {
 		if note != nil && !note.Ext.IsZero() {
-			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == "TXD" && note.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == noteSubjectTXD && note.Text == stcMembreAssujettiUnique {
 				return true
 			}
 		}

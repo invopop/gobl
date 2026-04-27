@@ -1197,8 +1197,8 @@ func TestSTCSupplierValidation(t *testing.T) {
 		}
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
-			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Text: stcMembreAssujettiUnique,
+			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1230,8 +1230,8 @@ func TestSTCSupplierValidation(t *testing.T) {
 		}
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
-			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Text: stcMembreAssujettiUnique,
+			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1267,8 +1267,8 @@ func TestSTCSupplierValidation(t *testing.T) {
 		}
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
-			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Text: stcMembreAssujettiUnique,
+			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1288,8 +1288,8 @@ func TestSTCSupplierValidation(t *testing.T) {
 		inv.Ordering = nil
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
-			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Text: stcMembreAssujettiUnique,
+			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1318,7 +1318,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// downstream consumer that drops it before validation.
 		kept := inv.Notes[:0]
 		for _, n := range inv.Notes {
-			if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" {
+			if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectTXD {
 				continue
 			}
 			kept = append(kept, n)
@@ -1326,8 +1326,8 @@ func TestSTCSupplierValidation(t *testing.T) {
 		inv.Notes = kept
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "TXD")
-		assert.ErrorContains(t, err, "MEMBRE_ASSUJETTI_UNIQUE")
+		assert.ErrorContains(t, err, string(noteSubjectTXD))
+		assert.ErrorContains(t, err, stcMembreAssujettiUnique)
 	})
 
 	t.Run("STC supplier auto-fills TXD note via normalizer", func(t *testing.T) {
@@ -1348,7 +1348,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		require.NoError(t, rules.Validate(inv))
 		var found bool
 		for _, n := range inv.Notes {
-			if n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" && n.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+			if n.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectTXD && n.Text == stcMembreAssujettiUnique {
 				found = true
 				break
 			}
