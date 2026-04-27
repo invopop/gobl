@@ -275,6 +275,24 @@ func TestNormalizeGeneratesSIRENFromFrenchTaxID(t *testing.T) {
 	assert.True(t, found, "expected SIREN identity to be generated from TaxID")
 }
 
+// TestNormalizeB2CGeneratesSIRENFromFrenchTaxID confirms that party
+// normalization also runs for B2C invoices, so a French supplier with
+// only a TaxID set is still normalized into a SIREN-scheme identity
+// (otherwise the supplier-SIREN rule would fail despite valid input).
+func TestNormalizeB2CGeneratesSIRENFromFrenchTaxID(t *testing.T) {
+	inv := testInvoiceB2C(t)
+	inv.Supplier.Identities = nil
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, rules.Validate(inv))
+	found := false
+	for _, id := range inv.Supplier.Identities {
+		if id.Ext.Get(iso.ExtKeySchemeID).String() == "0002" {
+			found = true
+		}
+	}
+	assert.True(t, found, "expected SIREN identity to be generated from TaxID for B2C")
+}
+
 // --- Internal helper coverage (bill_invoice.go) -------------------------
 
 func TestExtensionsValueNilPointer(t *testing.T) {

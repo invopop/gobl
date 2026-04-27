@@ -385,12 +385,16 @@ func normalizeInvoice(inv *bill.Invoice) {
 		return
 	}
 	normalizeInvoiceTaxCategories(inv)
+	// Party normalization (e.g. deriving a SIREN identity from a French
+	// TaxID) applies to both B2B and B2C: the supplier-SIREN rule fires
+	// in both branches, and on B2C the Customer slot is unset so the
+	// second call is a no-op.
+	normalizeParty(inv.Supplier)
+	normalizeParty(inv.Customer)
 	if invoiceIsB2C(inv) {
 		normalizeB2CCategoryOnInvoice(inv)
 		return
 	}
-	normalizeParty(inv.Supplier)
-	normalizeParty(inv.Customer)
 	normalizeInvoiceBillingMode(inv)
 }
 
