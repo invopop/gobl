@@ -226,23 +226,31 @@ func normalizeBillingMode(inv *bill.Invoice) {
 	inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyBillingMode, mode)
 }
 
-// isB2BTransaction determines if the transaction is B2B (business to business)
-// by checking for a note with code "BAR" and text containing "B2B"
+// isB2BTransaction determines whether the invoice should be treated as a
+// B2B transaction. Per BR-FR-22, the rule applies "if the invoice is
+// processed B2B or carries a BAR note with text B2B". Flow 2 *is* the
+// B2B addon, so the default treatment is B2B; the helper returns false
+// only when a BAR note explicitly classifies the invoice as something
+// else (B2BINT / B2C / OUTOFSCOPE / ARCHIVEONLY).
 func isB2BTransaction(inv *bill.Invoice) bool {
-	if inv == nil || len(inv.Notes) == 0 {
+	if inv == nil {
 		return false
 	}
 
 	for _, note := range inv.Notes {
-		if note != nil && !note.Ext.IsZero() {
-			if note.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectBAR && note.Text == barTreatmentB2B {
-				// Check if note text indicates B2B transaction (B2B or B2BINT)
-				return true
-			}
+		if note == nil || note.Ext.IsZero() {
+			continue
 		}
+		if note.Ext.Get(untdid.ExtKeyTextSubject) != noteSubjectBAR {
+			continue
+		}
+		// An explicit BAR note overrides the default: only B2B counts as
+		// B2B; any other treatment opts the invoice out of the B2B rules.
+		return note.Text == barTreatmentB2B
 	}
 
-	return false
+	// No BAR note → the addon's B2B default applies.
+	return true
 }
 
 // isSelfBilledInvoice checks if the invoice is self-billed based on document type

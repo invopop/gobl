@@ -462,15 +462,18 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("B2C does not require SIREN inbox", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		// Remove SIREN inbox
 		inv.Supplier.Inboxes = []*org.Inbox{
-			{
-				Scheme: "0088",
-				Code:   "1234567890123",
-			},
+			{Scheme: "0088", Code: "1234567890123"},
 		}
 		require.NoError(t, inv.Calculate())
-		// No B2B note, so not a B2B transaction
+		// Append BAR=B2C *after* Calculate so the en16931 normalizer
+		// (which rewrites the subject based on note.Key) doesn't replace
+		// "BAR" with "ABL" on a Key=legal note.
+		inv.Notes = append(inv.Notes, &org.Note{
+			Key:  org.NoteKeyLegal,
+			Text: "B2C",
+			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectBAR}),
+		})
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -2696,8 +2699,25 @@ func TestIsB2BTransactionNilInvoice(t *testing.T) {
 	assert.False(t, isB2BTransaction(nil))
 }
 
-func TestIsB2BTransactionNoNotes(t *testing.T) {
-	assert.False(t, isB2BTransaction(&bill.Invoice{}))
+func TestIsB2BTransactionNoNotesDefaultsTrue(t *testing.T) {
+	// Flow 2 is the B2B addon — absence of a BAR note means B2B by default.
+	assert.True(t, isB2BTransaction(&bill.Invoice{}))
+}
+
+func TestIsB2BTransactionExplicitB2C(t *testing.T) {
+	inv := &bill.Invoice{Notes: []*org.Note{{
+		Text: "B2C",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectBAR}),
+	}}}
+	assert.False(t, isB2BTransaction(inv))
+}
+
+func TestIsB2BTransactionExplicitB2B(t *testing.T) {
+	inv := &bill.Invoice{Notes: []*org.Note{{
+		Text: barTreatmentB2B,
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectBAR}),
+	}}}
+	assert.True(t, isB2BTransaction(inv))
 }
 
 func TestIsSelfBilledInvoiceNilInvoice(t *testing.T) {
