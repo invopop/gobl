@@ -1122,7 +1122,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		setDocumentType(inv, "262")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "at least one contract reference is required")
+		assert.ErrorContains(t, err, "ordering.contracts")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
 	})
 
@@ -1141,7 +1141,7 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 		setDocumentType(inv, "262")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "at least one contract reference is required")
+		assert.ErrorContains(t, err, "ordering.contracts")
 		assert.ErrorContains(t, err, "BR-FR-CO-03")
 	})
 
@@ -1314,12 +1314,47 @@ func TestSTCSupplierValidation(t *testing.T) {
 				TaxID: inv.Supplier.TaxID, // Reuse supplier's valid tax ID
 			},
 		}
-		// TXD note missing
 		require.NoError(t, inv.Calculate())
+		// Strip the TXD note that the normalizer auto-added to simulate a
+		// downstream consumer that drops it before validation.
+		kept := inv.Notes[:0]
+		for _, n := range inv.Notes {
+			if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" {
+				continue
+			}
+			kept = append(kept, n)
+		}
+		inv.Notes = kept
 		err := rules.Validate(inv)
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "TXD")
 		assert.ErrorContains(t, err, "MEMBRE_ASSUJETTI_UNIQUE")
+	})
+
+	t.Run("STC supplier auto-fills TXD note via normalizer", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
+			Code: "12345678",
+			Ext: tax.ExtensionsOf(tax.ExtMap{
+				iso.ExtKeySchemeID: "0231",
+			}),
+		})
+		inv.Ordering = &bill.Ordering{
+			Seller: &org.Party{
+				Name:  "Assujetti Unique",
+				TaxID: inv.Supplier.TaxID,
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+		var found bool
+		for _, n := range inv.Notes {
+			if n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" && n.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+				found = true
+				break
+			}
+		}
+		assert.True(t, found, "expected normalizer to add TXD note")
 	})
 }
 
@@ -1384,7 +1419,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		setDocumentType(inv, "384")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "exactly one preceding invoice reference")
+		assert.ErrorContains(t, err, "must reference the original invoice in preceding")
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
 	})
 
@@ -1405,7 +1440,7 @@ func TestPrecedingReferencesValidation(t *testing.T) {
 		setDocumentType(inv, "384")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "exactly one preceding invoice reference")
+		assert.ErrorContains(t, err, "must reference exactly one preceding invoice")
 		assert.ErrorContains(t, err, "BR-FR-CO-04")
 	})
 
@@ -1618,7 +1653,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		setDocumentType(inv, "386")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "advance payment document types not allowed")
+		assert.ErrorContains(t, err, "advance payment document types (386, 500, 503) are not allowed")
 	})
 
 	t.Run("factoring billing mode S4 with advance payment type 500 is invalid (BR-FR-CO-08)", func(t *testing.T) {
@@ -1633,7 +1668,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		setDocumentType(inv, "500")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "advance payment document types not allowed")
+		assert.ErrorContains(t, err, "advance payment document types (386, 500, 503) are not allowed")
 	})
 
 	t.Run("factoring billing mode M4 with advance payment type 503 is invalid (BR-FR-CO-08)", func(t *testing.T) {
@@ -1648,7 +1683,7 @@ func TestBillingModeDocumentTypeCompatibility(t *testing.T) {
 		setDocumentType(inv, "503")
 		err := rules.Validate(inv)
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "advance payment document types not allowed")
+		assert.ErrorContains(t, err, "advance payment document types (386, 500, 503) are not allowed")
 	})
 
 	t.Run("factoring billing mode B4 with standard invoice type 380 is valid (BR-FR-CO-08)", func(t *testing.T) {
@@ -2484,14 +2519,26 @@ func TestAdditionalBillingModes(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-func TestMissingRequiredNoteCodes(t *testing.T) {
+// TestRequiredNoteCodesValidation exercises the BR-FR-05 rule by stripping
+// notes AFTER Calculate so the addon's default-note normalization does
+// not refill them. This simulates a downstream consumer that drops the
+// regulatory mentions before validating.
+func TestRequiredNoteCodesValidation(t *testing.T) {
+	stripSubject := func(inv *bill.Invoice, subject cbc.Code) {
+		kept := inv.Notes[:0]
+		for _, n := range inv.Notes {
+			if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == subject {
+				continue
+			}
+			kept = append(kept, n)
+		}
+		inv.Notes = kept
+	}
+
 	t.Run("missing PMT note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"})},
-			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"})},
-		}
 		require.NoError(t, inv.Calculate())
+		stripSubject(inv, "PMT")
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
@@ -2499,11 +2546,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 
 	t.Run("missing PMD note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
-			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"})},
-		}
 		require.NoError(t, inv.Calculate())
+		stripSubject(inv, "PMD")
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
@@ -2511,11 +2555,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 
 	t.Run("missing AAB note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
-			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"})},
-		}
 		require.NoError(t, inv.Calculate())
+		stripSubject(inv, "AAB")
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
@@ -2523,10 +2564,9 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 
 	t.Run("missing multiple note codes (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
-		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
-		}
 		require.NoError(t, inv.Calculate())
+		stripSubject(inv, "PMD")
+		stripSubject(inv, "AAB")
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "missing required note codes")
 		assert.ErrorContains(t, err, "BR-FR-05")
@@ -2608,12 +2648,44 @@ func TestValidationNilChecks(t *testing.T) {
 		_ = err
 	})
 
-	t.Run("self-billed invoice helper with nil invoice", func(t *testing.T) {
+	t.Run("nil Tax is rebuilt by the normalizer", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		// Tax is required, but the helpers should handle nil gracefully
-		assert.Error(t, err)
+		// Normalizer recreates Tax and fills the mandatory extensions.
+		require.NotNil(t, inv.Tax)
+		assert.NotEmpty(t, inv.Tax.Ext.Get(ctc.ExtKeyBillingMode))
+		assert.NoError(t, rules.Validate(inv))
 	})
+}
+
+func TestNormalizeBillingModeDefaultsM1(t *testing.T) {
+	inv := testInvoiceB2BStandard(t)
+	// Strip any billing mode the fixture provided so we exercise the
+	// default path.
+	inv.Tax.Ext = inv.Tax.Ext.Delete(ctc.ExtKeyBillingMode)
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, ctc.BillingModeM1, inv.Tax.Ext.Get(ctc.ExtKeyBillingMode))
+}
+
+func TestNormalizeBillingModeDefaultsM2WhenPaid(t *testing.T) {
+	inv := testInvoiceB2BStandard(t)
+	inv.Tax.Ext = inv.Tax.Ext.Delete(ctc.ExtKeyBillingMode)
+	require.NoError(t, inv.Calculate())
+	// Re-apply M-prefix default by simulating a paid invoice via Totals.Due.
+	due := num.MakeAmount(0, 2)
+	inv.Totals.Due = &due
+	// Re-run normalize: clear the billing mode and call Calculate again so
+	// the addon normalizer picks up the now-paid totals.
+	inv.Tax.Ext = inv.Tax.Ext.Delete(ctc.ExtKeyBillingMode)
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, ctc.BillingModeM2, inv.Tax.Ext.Get(ctc.ExtKeyBillingMode))
+}
+
+func TestNormalizeBillingModePreservesUserValue(t *testing.T) {
+	inv := testInvoiceB2BStandard(t)
+	// Fixture sets S1 — re-set explicitly to make the assertion clear.
+	inv.Tax.Ext = inv.Tax.Ext.Set(ctc.ExtKeyBillingMode, ctc.BillingModeB7)
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, ctc.BillingModeB7, inv.Tax.Ext.Get(ctc.ExtKeyBillingMode))
 }

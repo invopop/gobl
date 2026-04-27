@@ -119,6 +119,93 @@ func normalizeInvoice(inv *bill.Invoice) {
 
 	// Always set rounding to currency for French CTC
 	inv.Tax.Rounding = tax.RoundingRuleCurrency
+
+	normalizeBillingMode(inv)
+	normalizeRequiredNotes(inv)
+	normalizeSTCNote(inv)
+}
+
+// normalizeSTCNote appends the BR-FR-CO-14 TXD / MEMBRE_ASSUJETTI_UNIQUE
+// note when the supplier carries an STC-scheme (0231) identity and no
+// such note has been provided yet.
+func normalizeSTCNote(inv *bill.Invoice) {
+	if !isPartyIdentitySTC(inv.Supplier) {
+		return
+	}
+	for _, n := range inv.Notes {
+		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == "TXD" && n.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+			return
+		}
+	}
+	inv.Notes = append(inv.Notes, &org.Note{
+		Key:  org.NoteKeyLegal,
+		Text: "MEMBRE_ASSUJETTI_UNIQUE",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+	})
+}
+
+// defaultRequiredNotes lists the three UNTDID 4451 mentions French CTC
+// requires on every B2B invoice (BR-FR-05). The defaults are minimal
+// regulatory placeholders — they intentionally avoid committing to
+// specific payment terms (penalty amounts, interest rates, etc.),
+// which are business-specific. Callers should override with their own
+// terms when required; supplying any note with the matching
+// untdid-text-subject suppresses the default.
+var defaultRequiredNotes = []*org.Note{
+	{
+		Key:  org.NoteKeyPayment,
+		Text: "Conditions de paiement selon les conditions générales de vente.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"}),
+	},
+	{
+		Key:  org.NoteKeyPaymentMethod,
+		Text: "Pénalités et indemnités de retard applicables conformément aux conditions générales de vente.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"}),
+	},
+	{
+		Key:  org.NoteKeyPaymentTerm,
+		Text: "Aucun escompte n'est accordé pour paiement anticipé.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"}),
+	},
+}
+
+// normalizeRequiredNotes appends any of the three regulatory PMT / PMD
+// / AAB notes that are missing from the invoice. A user-supplied note
+// carrying the same untdid-text-subject is left untouched.
+func normalizeRequiredNotes(inv *bill.Invoice) {
+	for _, def := range defaultRequiredNotes {
+		want := def.Ext.Get(untdid.ExtKeyTextSubject)
+		if invoiceHasNoteWithSubject(inv, want) {
+			continue
+		}
+		clone := *def
+		inv.Notes = append(inv.Notes, &clone)
+	}
+}
+
+func invoiceHasNoteWithSubject(inv *bill.Invoice, subject cbc.Code) bool {
+	for _, n := range inv.Notes {
+		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == subject {
+			return true
+		}
+	}
+	return false
+}
+
+// normalizeBillingMode picks a sensible default for the Flow 2
+// billing-mode extension when the caller hasn't supplied one. We
+// default to the Mixed (M) prefix since it is the safest without
+// line-level analysis: M2 when the invoice is fully paid, M1 otherwise.
+// The user can override by setting the extension explicitly.
+func normalizeBillingMode(inv *bill.Invoice) {
+	if inv.Tax.Ext.Get(ExtKeyBillingMode) != "" {
+		return
+	}
+	mode := BillingModeM1
+	if inv.Totals != nil && inv.Totals.Paid() {
+		mode = BillingModeM2
+	}
+	inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyBillingMode, mode)
 }
 
 // isB2BTransaction determines if the transaction is B2B (business to business)
@@ -257,10 +344,10 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.Func("corrective invoice", invoiceIsCorrectiveAny),
 			rules.Field("preceding",
-				rules.Assert("03", "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+				rules.Assert("03", "corrective invoices must reference the original invoice in preceding (BR-FR-CO-04)",
 					is.Present,
 				),
-				rules.Assert("04", "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+				rules.Assert("04", "corrective invoices must reference exactly one preceding invoice — multiple references are not allowed (BR-FR-CO-04)",
 					is.Length(1, 1),
 				),
 			),
@@ -291,7 +378,7 @@ func billInvoiceRules() *rules.Set {
 			is.Func("factoring mode", invoiceIsFactoringAny),
 			rules.Field("tax",
 				rules.Field("ext",
-					rules.Assert("09", "advance payment document types not allowed for factoring billing modes (BR-FR-CO-08)",
+					rules.Assert("09", "advance payment document types (386, 500, 503) are not allowed for factoring billing modes (B4, S4, M4) (BR-FR-CO-08)",
 						tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, advancePaymentDocumentTypes...),
 					),
 				),
@@ -396,10 +483,10 @@ func billInvoiceRules() *rules.Set {
 					is.Present,
 				),
 				rules.Field("contracts",
-					rules.Assert("24", "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("24", "ordering.contracts is required for consolidated credit notes (BR-FR-CO-03)",
 						is.Present,
 					),
-					rules.Assert("25", "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("25", "ordering.contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
 						is.Length(1, 0),
 					),
 				),

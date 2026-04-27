@@ -1,0 +1,384 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-flow6-v1",
+  "name": {
+    "en": "France CTC Flow 6",
+    "fr": "France CTC Flux 6"
+  },
+  "description": {
+    "en": "Support for the French CTC (Continuous Transaction Control)\nFlow 6 lifecycle messages (Cycle de Vie) exchanged between\nregistered platforms (plateformes agréées) for B2B invoices.\n\nThis addon operates on bill.Status documents. It carries the\ncode tables (ProcessConditionCode, ReasonCode, RequestedAction,\nRoleCode) that the gobl.cii CDAR converter reads to round-trip\nto and from the French PPF XML, and validates the subset of\n(key, type) / reason / action / role combinations that Flow 6\naccepts.\n\nIt does not depend on Flow 2: a platform may report lifecycle\nevents for any compliant invoice, whether or not the invoice\nitself went through the Flow 2 B2B clearance path."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
+      },
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-ctc-role",
+      "name": {
+        "en": "Party Role Code",
+        "fr": "Code rôle partie"
+      },
+      "desc": {
+        "en": "UNCL 3035 role code carried as the CDAR RoleCode for each\npopulated party on a Flow 6 lifecycle message. The normalizer\nfills the obvious defaults (Supplier → SE, Customer → BY)\nand leaves the rest for the caller to set explicitly."
+      },
+      "values": [
+        {
+          "code": "SE",
+          "name": {
+            "en": "Seller"
+          }
+        },
+        {
+          "code": "BY",
+          "name": {
+            "en": "Buyer"
+          }
+        },
+        {
+          "code": "WK",
+          "name": {
+            "en": "Work / Service Receiver"
+          }
+        },
+        {
+          "code": "DFH",
+          "name": {
+            "en": "Delivery From"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Bank"
+          }
+        },
+        {
+          "code": "SR",
+          "name": {
+            "en": "Sender"
+          }
+        },
+        {
+          "code": "DL",
+          "name": {
+            "en": "Dealer"
+          }
+        },
+        {
+          "code": "PE",
+          "name": {
+            "en": "Payee"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Payer"
+          }
+        },
+        {
+          "code": "II",
+          "name": {
+            "en": "Issuer of Invoice"
+          }
+        },
+        {
+          "code": "IV",
+          "name": {
+            "en": "Invoicee"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-reason-code",
+      "name": {
+        "en": "CDAR Reason Code",
+        "fr": "Code motif CDAR"
+      },
+      "desc": {
+        "en": "Exact CDAR ReasonCode pinned on a bill.Reason for Flow 6\nlifecycle messages. The CDAR ReasonCode dimension is 1:N\nwith bill.Reason.Key: this extension lets the caller pick\nthe precise code within a bucket. When absent, the\nconverter falls back to the default_for_key code for\nReason.Key."
+      },
+      "values": [
+        {
+          "code": "NON_TRANSMISE",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "JUSTIF_ABS",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ROUTAGE_ERR",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "AUTRE",
+          "name": {
+            "en": "other"
+          }
+        },
+        {
+          "code": "COORD_BANC_ERR",
+          "name": {
+            "en": "finance-terms"
+          }
+        },
+        {
+          "code": "TX_TVA_ERR",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "MONTANTTOTAL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "CALCUL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "NON_CONFORME",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "DOUBLON",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DEST_INC",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "DEST_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "TRANSAC_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "EMMET_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CONTRAT_TERM",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DOUBLE_FACT",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CMD_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ADR_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "SIRET_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "CODE_ROUTAGE_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_CT_ABSENT",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "PU_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "REM_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "QTE_ERR",
+          "name": {
+            "en": "quantity"
+          }
+        },
+        {
+          "code": "ART_ERR",
+          "name": {
+            "en": "items"
+          }
+        },
+        {
+          "code": "MODPAI_ERR",
+          "name": {
+            "en": "payment-terms"
+          }
+        },
+        {
+          "code": "QUALITE_ERR",
+          "name": {
+            "en": "quality"
+          }
+        },
+        {
+          "code": "LIVR_INCOMP",
+          "name": {
+            "en": "delivery"
+          }
+        },
+        {
+          "code": "REJ_SEMAN",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_UNI",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "REJ_COH",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_ADR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_CONT_B2G",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_REF_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_ASS_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "IRR_VIDE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TYPE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_SYNTAX",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_NOM_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_VID_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_EXT_DOC",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_ANTIVIRUS",
+          "name": {
+            "en": "legal"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": null
+}
