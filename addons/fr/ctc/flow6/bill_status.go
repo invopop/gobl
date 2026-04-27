@@ -60,8 +60,8 @@ func billStatusRules() *rules.Set {
 			),
 		),
 		rules.Field("lines",
-			rules.Assert("04", "at least one status line is required",
-				is.Present,
+			rules.Assert("04", "exactly one status line is required (CDAR carries a single status per CDV message)",
+				is.Func("exactly one line", statusHasExactlyOneLine),
 			),
 			rules.Each(
 				rules.Field("doc",
@@ -100,6 +100,18 @@ func billStatusRules() *rules.Set {
 			is.Func("status type consistent with line keys", statusTypeMatchesLines),
 		),
 	)
+}
+
+// statusHasExactlyOneLine enforces the CDAR invariant that a CDV
+// message carries one and only one status — a single line on the
+// bill.Status. Multiple lines would map to multiple CDARs and must be
+// split into separate documents.
+func statusHasExactlyOneLine(v any) bool {
+	lines, ok := v.([]*bill.StatusLine)
+	if !ok {
+		return false
+	}
+	return len(lines) == 1
 }
 
 func partyHasSIRENIdentity(v any) bool {

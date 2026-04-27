@@ -1,0 +1,111 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "fc1e96ec7f527ed114e719694a9abcdce3c19457ee7ef950b3c294d61ad68901"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "FR",
+		"$addons": [
+			"fr-ctc-flow10-v1"
+		],
+		"$tags": [
+			"b2c"
+		],
+		"uuid": "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10",
+		"type": "standard",
+		"series": "B2C",
+		"code": "2026-00018",
+		"issue_date": "2026-04-15",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"fr-ctc-b2c-category": "TLB1",
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Boutique Reporting SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"street": "20 Rue du Commerce",
+					"locality": "Paris",
+					"code": "75015",
+					"country": "FR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Particulier",
+			"addresses": [
+				{
+					"street": "4 Rue Lafayette",
+					"locality": "Lyon",
+					"code": "69001",
+					"country": "FR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Article de boutique",
+					"price": "59.00"
+				},
+				"sum": "59.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "20%"
+					}
+				],
+				"total": "59.00"
+			}
+		],
+		"totals": {
+			"sum": "59.00",
+			"total": "59.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "59.00",
+								"percent": "20%",
+								"amount": "11.80"
+							}
+						],
+						"amount": "11.80"
+					}
+				],
+				"sum": "11.80"
+			},
+			"tax": "11.80",
+			"total_with_tax": "70.80",
+			"payable": "70.80"
+		}
+	}
+}

@@ -105,6 +105,33 @@ func TestStatusTypeMismatchRejected(t *testing.T) {
 	assert.ErrorContains(t, err, "Status.Type must match")
 }
 
+func TestStatusRejectsMultipleLines(t *testing.T) {
+	st := testStatus(t)
+	issued := cal.MakeDate(2026, 2, 1)
+	st.Lines = append(st.Lines, &bill.StatusLine{
+		Key:  bill.StatusEventAccepted,
+		Date: &issued,
+		Doc: &org.DocumentRef{
+			Code:      "INV-2026-002",
+			IssueDate: &issued,
+		},
+	})
+	runNormalize(t, st)
+	err := rules.Validate(st)
+	assert.ErrorContains(t, err, "exactly one status line")
+}
+
+func TestStatusRejectsZeroLines(t *testing.T) {
+	st := testStatus(t)
+	st.Lines = nil
+	err := rules.Validate(st)
+	assert.ErrorContains(t, err, "exactly one status line")
+}
+
+func TestStatusHasExactlyOneLineWrongType(t *testing.T) {
+	assert.False(t, statusHasExactlyOneLine("x"))
+}
+
 // --- StatusLine validation -----------------------------------------------
 
 func TestStatusLineUnknownKeyRejected(t *testing.T) {

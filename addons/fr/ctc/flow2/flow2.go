@@ -62,11 +62,6 @@ func newAddon() *tax.AddonDef {
 
 				This addon is required for regulated invoice. This refers to invoices between two parties
 				registered for VAT in France. This addon should not be used for invoices which should be reported.
-
-				Note on currency conversion (BR-FR-CO-12): When an invoice is issued in a non-EUR
-				currency, the gobl.ubl library will automatically handle the conversion to EUR and
-				present the invoice with both the original currency and EUR equivalents for tax
-				amounts, ensuring compliance with French accounting requirements.
 			`),
 			i18n.FR: here.Doc(`
 				Support pour le CTC (Contrôle Continu des Transactions) français Flux 2
@@ -81,12 +76,6 @@ func newAddon() *tax.AddonDef {
 				Cet addon est requis pour les factures réglementées. Cela concerne les factures entre
       			deux parties assujetties à la TVA en France. Cet addon ne doit pas être utilisé pour
             	les factures qui doivent être déclarées.
-
-				Note sur la conversion de devises (BR-FR-CO-12) : Lorsqu'une facture est émise dans
-				une devise autre que l'EUR, la bibliothèque gobl.ubl gère automatiquement la conversion
-				en EUR et présente la facture avec à la fois la devise d'origine et les équivalents en
-				EUR pour les montants de TVA, garantissant la conformité avec les exigences comptables
-				françaises.
 			`),
 		},
 		Sources: []*cbc.Source{
