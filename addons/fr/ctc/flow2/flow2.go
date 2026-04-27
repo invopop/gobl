@@ -1,6 +1,6 @@
-// Package ctc handles the extensions and validation rules for the French
+// Package flow2 handles the extensions and validation rules for the French
 // CTC (Cycle de Traitement de la Commande) Flow 2 B2B e-invoicing requirements.
-package ctc
+package flow2
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
@@ -15,22 +15,22 @@ import (
 )
 
 const (
-	// Flow2Key identifies the French CTC Flow 2 addon family. Individual
+	// Key identifies the French CTC Flow 2 addon family. Individual
 	// versions append a suffix; the family key is used as the fault-code
 	// namespace so that rules that carry across versions keep stable codes.
 	// Flow 1 is a separate rule family, not a prior version of Flow 2.
-	Flow2Key cbc.Key = "fr-ctc-flow2"
+	Key cbc.Key = "fr-ctc-flow2"
 
-	// Flow2V1 is the key for the French CTC addon
-	Flow2V1 cbc.Key = Flow2Key + "-v1"
+	// V1 is the key for the French CTC Flow 2 addon
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		Flow2Key.String(),
+		Key.String(),
 		rules.GOBL.Add("FR-CTC-FLOW2"),
-		is.InContext(tax.AddonIn(Flow2V1)),
+		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		orgPartyRules(),
 		orgIdentityRules(),
@@ -41,7 +41,7 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key: Flow2V1,
+		Key: V1,
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 2",
 			i18n.FR: "France CTC Flux 2",
@@ -62,11 +62,6 @@ func newAddon() *tax.AddonDef {
 
 				This addon is required for regulated invoice. This refers to invoices between two parties
 				registered for VAT in France. This addon should not be used for invoices which should be reported.
-
-				Note on currency conversion (BR-FR-CO-12): When an invoice is issued in a non-EUR
-				currency, the gobl.ubl library will automatically handle the conversion to EUR and
-				present the invoice with both the original currency and EUR equivalents for tax
-				amounts, ensuring compliance with French accounting requirements.
 			`),
 			i18n.FR: here.Doc(`
 				Support pour le CTC (Contrôle Continu des Transactions) français Flux 2
@@ -81,12 +76,6 @@ func newAddon() *tax.AddonDef {
 				Cet addon est requis pour les factures réglementées. Cela concerne les factures entre
       			deux parties assujetties à la TVA en France. Cet addon ne doit pas être utilisé pour
             	les factures qui doivent être déclarées.
-
-				Note sur la conversion de devises (BR-FR-CO-12) : Lorsqu'une facture est émise dans
-				une devise autre que l'EUR, la bibliothèque gobl.ubl gère automatiquement la conversion
-				en EUR et présente la facture avec à la fois la devise d'origine et les équivalents en
-				EUR pour les montants de TVA, garantissant la conformité avec les exigences comptables
-				françaises.
 			`),
 		},
 		Sources: []*cbc.Source{

@@ -1,0 +1,46 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "e231e613bbb31ad364cd5b9815c69193b739eb5977cbbf533d0e985ebe2b3cfc"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$addons": [
+			"fr-ctc-flow6-v1"
+		],
+		"uuid": "2a5b6c7d-8e9f-4a1b-2c3d-4e5f6a7b8c01",
+		"type": "response",
+		"issue_date": "2026-04-16",
+		"code": "STA-2026-0001",
+		"supplier": {
+			"name": "Plateforme Agreee SARL",
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
+			"ext": {
+				"fr-ctc-role": "SE"
+			}
+		},
+		"lines": [
+			{
+				"index": 1,
+				"key": "accepted",
+				"date": "2026-04-15",
+				"doc": {
+					"issue_date": "2026-04-15",
+					"code": "2026-00042"
+				}
+			}
+		]
+	}
+}

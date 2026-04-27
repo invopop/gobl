@@ -1,10 +1,9 @@
-package ctc_test
+package flow2
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/invopop/gobl/addons/fr/ctc"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -166,7 +165,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 }
 
 func TestPeppolKeyNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("peppol key set on SIREN inbox when none exist", func(t *testing.T) {
 		party := &org.Party{
@@ -189,7 +188,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that peppol key was set
-		assert.Equal(t, "peppol", party.Inboxes[0].Key.String())
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("peppol key not set if another inbox already has it", func(t *testing.T) {
@@ -206,7 +205,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 			},
 			Inboxes: []*org.Inbox{
 				{
-					Key:    "peppol",
+					Key:    org.InboxKeyPeppol,
 					Scheme: "0088",
 					Code:   "1234567890123",
 				},
@@ -218,8 +217,8 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that SIREN inbox does not have peppol key
-		assert.NotEqual(t, "peppol", party.Inboxes[1].Key.String())
-		assert.Equal(t, "", party.Inboxes[1].Key.String())
+		assert.NotEqual(t, org.InboxKeyPeppol, party.Inboxes[1].Key)
+		assert.Equal(t, cbc.Key(""), party.Inboxes[1].Key)
 	})
 
 	t.Run("peppol key set even for non-French party", func(t *testing.T) {
@@ -237,7 +236,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that peppol key was set (addon usage implies French context)
-		assert.Equal(t, "peppol", party.Inboxes[0].Key.String())
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("peppol key not set if no SIREN inbox", func(t *testing.T) {
@@ -261,7 +260,7 @@ func TestPeppolKeyNormalization(t *testing.T) {
 		}
 		ad.Normalizer(party)
 		// Check that inbox does not have peppol key
-		assert.Equal(t, "", party.Inboxes[0].Key.String())
+		assert.Equal(t, cbc.Key(""), party.Inboxes[0].Key)
 	})
 }
 
@@ -382,7 +381,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 }
 
 func TestPrivateIDNormalization(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("private-id key sets ISO scheme ID 0224", func(t *testing.T) {
 		party := &org.Party{
@@ -449,7 +448,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 }
 
 func TestSIRENGenerationFromSIRET(t *testing.T) {
-	ad := tax.AddonForKey(ctc.Flow2V1)
+	ad := tax.AddonForKey(V1)
 
 	t.Run("generated SIREN from SIRET", func(t *testing.T) {
 		party := &org.Party{
@@ -598,7 +597,7 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 
 func TestNormalizePartyEdgeCases(t *testing.T) {
 	t.Run("normalize nil party", func(_ *testing.T) {
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer((*org.Party)(nil))
 		// Should not crash
 	})
@@ -607,7 +606,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		assert.Len(t, party.Identities, 0)
 	})
@@ -624,7 +623,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN from SIRET, plus the original SIRET, plus 1 nil
@@ -664,7 +663,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should have generated SIREN
@@ -703,7 +702,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should not generate duplicate SIREN
@@ -726,9 +725,9 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
-		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
 	})
 
 	t.Run("normalize inbox does not override existing peppol key", func(t *testing.T) {
@@ -736,7 +735,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 			Name: "Test Party",
 			Inboxes: []*org.Inbox{
 				{
-					Key:    "peppol",
+					Key:    org.InboxKeyPeppol,
 					Scheme: "0088",
 					Code:   "existing",
 				},
@@ -746,11 +745,11 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				},
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 		// First inbox should keep its peppol key, second should not get it
-		assert.Equal(t, cbc.Key("peppol"), party.Inboxes[0].Key)
-		assert.NotEqual(t, cbc.Key("peppol"), party.Inboxes[1].Key)
+		assert.Equal(t, org.InboxKeyPeppol, party.Inboxes[0].Key)
+		assert.NotEqual(t, org.InboxKeyPeppol, party.Inboxes[1].Key)
 	})
 
 	t.Run("normalize inbox with nil element in array", func(t *testing.T) {
@@ -766,7 +765,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 				nilInbox, // Another nil for good measure
 			},
 		}
-		ad := tax.AddonForKey(ctc.Flow2V1)
+		ad := tax.AddonForKey(V1)
 		ad.Normalizer(party)
 
 		// Should still have 3 elements (2 nils + 1 valid inbox)
@@ -778,7 +777,7 @@ func TestNormalizePartyEdgeCases(t *testing.T) {
 		for _, inbox := range party.Inboxes {
 			if inbox != nil {
 				nonNilCount++
-				if inbox.Key == "peppol" {
+				if inbox.Key == org.InboxKeyPeppol {
 					hasPeppol = true
 				}
 			}
@@ -899,6 +898,81 @@ func TestValidateInboxEdgeCases(t *testing.T) {
 			Code:   "ANY-CODE-FORMAT", // Different scheme, CTC doesn't validate it
 		}
 		err := rules.Validate(inbox, withAddonContext())
+		assert.NoError(t, err)
+	})
+}
+
+func TestItemMetaValidation(t *testing.T) {
+	t.Run("valid item with meta values", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+			Meta: cbc.Meta{
+				"order-id":   "12345",
+				"batch-code": "ABC-123",
+			},
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.NoError(t, err)
+	})
+
+	t.Run("item with blank meta value", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+			Meta: cbc.Meta{
+				"order-id":   "12345",
+				"batch-code": "",
+			},
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "cannot be blank")
+	})
+
+	t.Run("item with whitespace-only meta value", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+			Meta: cbc.Meta{
+				"order-id":   "12345",
+				"batch-code": "   ",
+			},
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "cannot be blank")
+	})
+
+	t.Run("item without meta", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.NoError(t, err)
+	})
+
+	t.Run("item with empty meta map", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+			Meta: cbc.Meta{},
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.NoError(t, err)
+	})
+
+	t.Run("multiple blank values", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test Item",
+			Meta: cbc.Meta{
+				"order-id":   "",
+				"batch-code": "ABC-123",
+			},
+		}
+		err := rules.Validate(item, withAddonContext())
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "cannot be blank")
+	})
+
+	t.Run("nil item", func(t *testing.T) {
+		err := rules.Validate((*org.Item)(nil), withAddonContext())
 		assert.NoError(t, err)
 	})
 }

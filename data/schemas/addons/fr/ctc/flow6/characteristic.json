@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/addons/fr/ctc/flow6/characteristic",
+  "$ref": "#/$defs/flow6.Characteristic",
+  "$defs": {
+    "flow6.Characteristic": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "ID optionally identifies the characteristic. Used by CDAR to\ncorrelate a correction with a previously reported field."
+        },
+        "type_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Type Code",
+          "description": "TypeCode is the CDAR CharacteristicTypeCode. See the TypeCode*\nconstants for reserved values Flow 6 interprets directly."
+        },
+        "reason_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Reason Code",
+          "description": "ReasonCode links this characteristic to a sibling bill.Reason\nvia its fr-ctc-reason-code extension value. Only meaningful on\nrejection / dispute / partial-acceptance lines."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description is a free-form human-readable explanation."
+        },
+        "changed": {
+          "type": "boolean",
+          "title": "Changed",
+          "description": "Changed signals whether the reported value represents a\ncorrection (true) or is being reported unchanged (false)."
+        },
+        "direction": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Direction",
+          "description": "Direction carries the CDAR AdjustmentDirectionCode — typically\n\"+\" or \"-\" when Changed is true."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name is the semantic label of the field the characteristic\nrefers to."
+        },
+        "location": {
+          "type": "string",
+          "title": "Location",
+          "description": "Location is a locator (XPath, JSON pointer, etc.) into the\nreferenced invoice identifying the specific field."
+        },
+        "value": {
+          "type": "string",
+          "title": "Value",
+          "description": "Value carries a free-form string value when the field is textual."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code carries a coded value when the field is itself a code."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percent holds a percentage value (e.g. a VAT rate correction)."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/currency/amount",
+          "title": "Amount",
+          "description": "Amount holds a monetary value paired with its currency. Used\nfor the MEN on paid lines and for any price/total correction."
+        },
+        "numeric": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Numeric",
+          "description": "Numeric holds a plain numeric value without currency."
+        },
+        "quantity": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Quantity",
+          "description": "Quantity holds a quantity value, optionally qualified by Measure."
+        },
+        "measure": {
+          "type": "string",
+          "title": "Measure",
+          "description": "Measure optionally describes the unit of Quantity or Numeric."
+        },
+        "date_time": {
+          "$ref": "https://gobl.org/draft-0/cal/date-time",
+          "title": "Date Time",
+          "description": "DateTime holds a date-time value."
+        }
+      },
+      "type": "object",
+      "description": "Characteristic mirrors the CDAR SpecifiedDocumentCharacteristic element (MDT-207 and friends) used on Flow 6 lifecycle messages."
+    }
+  }
+}

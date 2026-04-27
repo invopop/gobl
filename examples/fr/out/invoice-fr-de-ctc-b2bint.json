@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a92840e74805e6d90ff322344e421e9e0edabc54c306b54ab8d82b6d18496f3b"
+			"val": "9c3cf2a4f68045fb039c62df2498ed0eaf1cf02b5860fb4b339a49a36a8d6372"
 		}
 	},
 	"doc": {
@@ -178,6 +178,12 @@
 				"text": "No discount offered for early payment.",
 				"ext": {
 					"untdid-text-subject": "AAB"
+				}
+			},
+			{
+				"text": "B2BINT",
+				"ext": {
+					"untdid-text-subject": "BAR"
 				}
 			}
 		]

@@ -1,4 +1,4 @@
-package ctc
+package flow2
 
 import (
 	"regexp"
@@ -120,7 +120,7 @@ func normalizeInboxes(party *org.Party) {
 		if inbox == nil {
 			continue
 		}
-		if inbox.Key == "peppol" {
+		if inbox.Key == org.InboxKeyPeppol {
 			hasPeppol = true
 		}
 		if inbox.Scheme == inboxSchemeSIREN {
@@ -130,6 +130,6 @@ func normalizeInboxes(party *org.Party) {
 
 	// If no inbox has peppol key and we have a SIREN inbox, set it
 	if !hasPeppol && sirenInbox != nil {
-		sirenInbox.Key = "peppol"
+		sirenInbox.Key = org.InboxKeyPeppol
 	}
 }

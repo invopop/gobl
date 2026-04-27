@@ -1,6 +1,7 @@
-package ctc
+package flow2
 
 import (
+	"regexp"
 	"slices"
 	"strings"
 
@@ -11,10 +12,344 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
+
+// BR-FR-01/02: Invoice code validation
+// Max 35 characters, alphanumeric plus -+_/
+var invoiceCodeRegexp = regexp.MustCompile(`^[A-Za-z0-9\-\+_/]{1,35}$`)
+
+// BR-FR-04: Allowed UNTDID document types for French CTC
+var allowedDocumentTypes = []cbc.Code{
+	"380", // Commercial invoice
+	"389", // Self-billed invoice
+	"393", // Factoring invoice
+	"501", // Final invoice
+	"386", // Advance payment invoice
+	"500", // Self-billed advance payment
+	"384", // Corrective invoice
+	"471", // Prepaid amount invoice
+	"472", // Self-billed prepaid amount
+	"473", // Stand-alone credit note
+	"261", // Self-billed credit note
+	"262", // Consolidated credit note
+	"381", // Credit note
+	"396", // Factoring credit note
+	"502", // Self-billed corrective
+	"503", // Self-billed credit for claim
+}
+
+// Allowed BAR treatment values for French CTC
+var allowedBARTreatments = []string{
+	"B2B",
+	"B2BINT",
+	"B2C",
+	"OUTOFSCOPE",
+	"ARCHIVEONLY",
+}
+
+// Self-billed document types (used for BR-FR-21/BR-FR-22)
+var selfBilledDocumentTypes = []cbc.Code{
+	"389", // Self-billed invoice
+	"501", // Final invoice (self-billed context)
+	"500", // Self-billed advance payment
+	"471", // Prepaid amount invoice (self-billed context)
+	"473", // Stand-alone credit note (self-billed context)
+	"261", // Self-billed credit note
+	"502", // Self-billed corrective
+}
+
+// Corrective invoice document types (BR-FR-CO-04)
+var correctiveInvoiceTypes = []cbc.Code{
+	"384", // Corrective invoice
+	"471", // Prepaid amount invoice
+	"472", // Self-billed prepaid amount
+	"473", // Stand-alone credit note
+}
+
+// Credit note document types (BR-FR-CO-05)
+var creditNoteTypes = []cbc.Code{
+	"261", // Self-billed credit note
+	"381", // Credit note
+	"396", // Factoring credit note
+	"502", // Self-billed corrective
+	"503", // Self-billed credit for claim
+}
+
+var advancePaymentDocumentTypes = []cbc.Code{
+	"386", // Advance payment invoice
+	"500", // Self-billed advance payment
+	"503", // Self-billed credit for claim
+}
+
+// Allowed attachment description values for French CTC (BR-FR-17)
+var allowedAttachmentDescriptions = []string{
+	"RIB",                        // Bank account details (Relevé d'Identité Bancaire)
+	"LISIBLE",                    // Human-readable representation of the invoice
+	"FEUILLE_DE_STYLE",           // Style sheet for document presentation
+	"PJA",                        // Additional supporting document (Pièce Jointe Additionnelle)
+	"BON_LIVRAISON",              // Delivery note
+	"BON_COMMANDE",               // Purchase order
+	"DOCUMENT_ANNEXE",            // Annex document
+	"BORDEREAU_SUIVI",            // Follow-up form
+	"BORDEREAU_SUIVI_VALIDATION", // Validated follow-up form
+	"ETAT_ACOMPTE",               // Payment status statement
+	"FACTURE_PAIEMENT_DIRECT",    // Direct payment invoice
+	"RECAPITULATIF_COTRAITANCE",  // Co-contracting summary
+}
+
+const (
+	// attachmentFormatLisible is the attachment format category for BR-FR-18
+	attachmentFormatLisible = "LISIBLE"
+
+	// noteSubjectTXD is the UNTDID 4451 text-subject code carried on the
+	// BR-FR-CO-14 STC (single-VAT-group) mention.
+	noteSubjectTXD cbc.Code = "TXD"
+
+	// stcMembreAssujettiUnique is the fixed text that pairs with TXD for
+	// suppliers operating under a single-VAT-group identity (scheme 0231).
+	stcMembreAssujettiUnique = "MEMBRE_ASSUJETTI_UNIQUE"
+
+	// noteSubjectBAR is the UNTDID 4451 text-subject code that carries
+	// the transaction category for French CTC (B2B / B2BINT / B2C / etc.).
+	noteSubjectBAR cbc.Code = "BAR"
+
+	// barTreatmentB2B is the BAR value Flow 2 reads when discriminating
+	// B2B vs other treatments inside isB2BTransaction. The default is
+	// not auto-applied — callers must add the BAR note explicitly with
+	// one of the values listed in allowedBARTreatments.
+	barTreatmentB2B = "B2B"
+)
+
+// normalizeInvoice ensures invoice settings comply with French CTC requirements
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+
+	// Ensure Tax object exists
+	if inv.Tax == nil {
+		inv.Tax = &bill.Tax{}
+	}
+
+	// Always set rounding to currency for French CTC
+	inv.Tax.Rounding = tax.RoundingRuleCurrency
+
+	normalizeBillingMode(inv)
+	normalizeRequiredNotes(inv)
+	normalizeSTCNote(inv)
+}
+
+// normalizeSTCNote appends the BR-FR-CO-14 TXD / MEMBRE_ASSUJETTI_UNIQUE
+// note when the supplier carries an STC-scheme (0231) identity and no
+// such note has been provided yet.
+func normalizeSTCNote(inv *bill.Invoice) {
+	if !isPartyIdentitySTC(inv.Supplier) {
+		return
+	}
+	for _, n := range inv.Notes {
+		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectTXD && n.Text == stcMembreAssujettiUnique {
+			return
+		}
+	}
+	inv.Notes = append(inv.Notes, &org.Note{
+		Key:  org.NoteKeyLegal,
+		Text: stcMembreAssujettiUnique,
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
+	})
+}
+
+// defaultRequiredNotes lists the three UNTDID 4451 mentions French CTC
+// requires on every B2B invoice (BR-FR-05). The defaults are minimal
+// regulatory placeholders — they intentionally avoid committing to
+// specific payment terms (penalty amounts, interest rates, etc.),
+// which are business-specific. Callers should override with their own
+// terms when required; supplying any note with the matching
+// untdid-text-subject suppresses the default.
+var defaultRequiredNotes = []*org.Note{
+	{
+		Key:  org.NoteKeyPayment,
+		Text: "Conditions de paiement selon les conditions générales de vente.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"}),
+	},
+	{
+		Key:  org.NoteKeyPaymentMethod,
+		Text: "Pénalités et indemnités de retard applicables conformément aux conditions générales de vente.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"}),
+	},
+	{
+		Key:  org.NoteKeyPaymentTerm,
+		Text: "Aucun escompte n'est accordé pour paiement anticipé.",
+		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"}),
+	},
+}
+
+// normalizeRequiredNotes appends any of the three regulatory PMT / PMD
+// / AAB notes that are missing from the invoice. A user-supplied note
+// carrying the same untdid-text-subject is left untouched.
+func normalizeRequiredNotes(inv *bill.Invoice) {
+	for _, def := range defaultRequiredNotes {
+		want := def.Ext.Get(untdid.ExtKeyTextSubject)
+		if invoiceHasNoteWithSubject(inv, want) {
+			continue
+		}
+		clone := *def
+		inv.Notes = append(inv.Notes, &clone)
+	}
+}
+
+func invoiceHasNoteWithSubject(inv *bill.Invoice, subject cbc.Code) bool {
+	for _, n := range inv.Notes {
+		if n != nil && n.Ext.Get(untdid.ExtKeyTextSubject) == subject {
+			return true
+		}
+	}
+	return false
+}
+
+// normalizeBillingMode picks a sensible default for the Flow 2
+// billing-mode extension when the caller hasn't supplied one. We
+// default to the Mixed (M) prefix since it is the safest without
+// line-level analysis: M2 when the invoice is fully paid, M1 otherwise.
+// The user can override by setting the extension explicitly.
+func normalizeBillingMode(inv *bill.Invoice) {
+	if inv.Tax.Ext.Get(ExtKeyBillingMode) != "" {
+		return
+	}
+	mode := BillingModeM1
+	if inv.Totals != nil && inv.Totals.Paid() {
+		mode = BillingModeM2
+	}
+	inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyBillingMode, mode)
+}
+
+// isB2BTransaction determines whether the invoice should be treated as a
+// B2B transaction. Per BR-FR-22, the rule applies "if the invoice is
+// processed B2B or carries a BAR note with text B2B". Flow 2 *is* the
+// B2B addon, so the default treatment is B2B; the helper returns false
+// only when a BAR note explicitly classifies the invoice as something
+// else (B2BINT / B2C / OUTOFSCOPE / ARCHIVEONLY).
+func isB2BTransaction(inv *bill.Invoice) bool {
+	if inv == nil {
+		return false
+	}
+
+	for _, note := range inv.Notes {
+		if note == nil || note.Ext.IsZero() {
+			continue
+		}
+		if note.Ext.Get(untdid.ExtKeyTextSubject) != noteSubjectBAR {
+			continue
+		}
+		// An explicit BAR note overrides the default: only B2B counts as
+		// B2B; any other treatment opts the invoice out of the B2B rules.
+		return note.Text == barTreatmentB2B
+	}
+
+	// No BAR note → the addon's B2B default applies.
+	return true
+}
+
+// isSelfBilledInvoice checks if the invoice is self-billed based on document type
+func isSelfBilledInvoice(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	if docType == "" {
+		return false
+	}
+
+	return slices.Contains(selfBilledDocumentTypes, docType)
+}
+
+// isCorrectiveInvoice checks if the invoice is corrective based on document type
+func isCorrectiveInvoice(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	if docType == "" {
+		return false
+	}
+
+	return slices.Contains(correctiveInvoiceTypes, docType)
+}
+
+func isPartyIdentitySTC(party *org.Party) bool {
+	if party == nil || len(party.Identities) == 0 {
+		return false
+	}
+
+	for _, id := range party.Identities {
+		if id != nil && !id.Ext.IsZero() {
+			if code := id.Ext.Get(iso.ExtKeySchemeID); code == "0231" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isCreditNote(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	return slices.Contains(creditNoteTypes, docType)
+}
+
+func isConsolidatedCreditNote(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	return docType == "262" // Consolidated credit note
+}
+
+func isAdvancedInvoice(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+
+	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
+	return slices.Contains(advancePaymentDocumentTypes, docType)
+}
+
+// isFinalInvoice checks if the invoice is a final invoice based on billing mode (B2, S2, M2)
+func isFinalInvoice(inv *bill.Invoice) bool {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
+		return false
+	}
+
+	bm := inv.Tax.Ext.Get(ExtKeyBillingMode)
+	return bm == BillingModeB2 || bm == BillingModeS2 || bm == BillingModeM2
+}
+
+func isFactoringExtension(bm cbc.Code) bool {
+	return bm == BillingModeB4 || bm == BillingModeS4 || bm == BillingModeM4
+}
+
+// getPartySIREN extracts the SIREN from the party's SIREN identity
+func getPartySIREN(party *org.Party) string {
+	if party == nil {
+		return ""
+	}
+
+	// SIREN identity - check by type or ISO scheme ID 0002
+	for _, id := range party.Identities {
+		if id != nil && (id.Type == fr.IdentityTypeSIREN || (!id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDSIREN)) {
+			return string(id.Code)
+		}
+	}
+
+	return ""
+}
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
@@ -35,10 +370,10 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.Func("corrective invoice", invoiceIsCorrectiveAny),
 			rules.Field("preceding",
-				rules.Assert("03", "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+				rules.Assert("03", "corrective invoices must reference the original invoice in preceding (BR-FR-CO-04)",
 					is.Present,
 				),
-				rules.Assert("04", "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+				rules.Assert("04", "corrective invoices must reference exactly one preceding invoice — multiple references are not allowed (BR-FR-CO-04)",
 					is.Length(1, 1),
 				),
 			),
@@ -69,7 +404,7 @@ func billInvoiceRules() *rules.Set {
 			is.Func("factoring mode", invoiceIsFactoringAny),
 			rules.Field("tax",
 				rules.Field("ext",
-					rules.Assert("09", "advance payment document types not allowed for factoring billing modes (BR-FR-CO-08)",
+					rules.Assert("09", "advance payment document types (386, 500, 503) are not allowed for factoring billing modes (B4, S4, M4) (BR-FR-CO-08)",
 						tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, advancePaymentDocumentTypes...),
 					),
 				),
@@ -174,10 +509,10 @@ func billInvoiceRules() *rules.Set {
 					is.Present,
 				),
 				rules.Field("contracts",
-					rules.Assert("24", "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("24", "ordering.contracts is required for consolidated credit notes (BR-FR-CO-03)",
 						is.Present,
 					),
-					rules.Assert("25", "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("25", "ordering.contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
 						is.Length(1, 0),
 					),
 				),
@@ -437,7 +772,7 @@ func notesHaveTXD(val any) bool {
 	}
 	for _, note := range notes {
 		if note != nil && !note.Ext.IsZero() {
-			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == "TXD" && note.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
+			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == noteSubjectTXD && note.Text == stcMembreAssujettiUnique {
 				return true
 			}
 		}
@@ -496,7 +831,7 @@ func notesValidBARText(val any) bool {
 	}
 	for _, note := range notes {
 		if note != nil && !note.Ext.IsZero() {
-			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" {
+			if note.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectBAR {
 				if note.Text != "" && !slices.Contains(allowedBARTreatments, note.Text) {
 					return false
 				}

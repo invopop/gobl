@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/payment"
+$addons:
+  - "fr-ctc-flow10-v1"
+uuid: "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01"
+type: "receipt"
+currency: "EUR"
+issue_date: "2026-05-02"
+value_date: "2026-05-02"
+series: "PAY"
+code: "2026-00042"
+
+method:
+  key: "credit-transfer"
+  credit_transfer:
+    - iban: "FR7630006000011234567890189"
+      name: "Fournisseur Reporting SARL"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Fournisseur Reporting SARL"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "356000000"
+  identities:
+    - type: "SIREN"
+      code: "356000000"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Client Reporting SAS"
+
+lines:
+  - document:
+      code: "2026-00042"
+      issue_date: "2026-04-15"
+    amount: "1200.00"
+    tax:
+      categories:
+        - code: "VAT"
+          rates:
+            - percent: "20%"
+              base: "1000.00"
+              amount: "200.00"

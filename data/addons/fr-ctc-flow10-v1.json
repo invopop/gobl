@@ -1,0 +1,362 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-flow10-v1",
+  "name": {
+    "en": "France CTC Flow 10",
+    "fr": "France CTC Flux 10"
+  },
+  "description": {
+    "en": "Support for the French CTC (Continuous Transaction Control) Flow 10\ne-reporting requirements from the French electronic invoicing reform.\n\nFlow 10 covers transactions that must be reported to the tax authority\nbut are not subject to the domestic B2B clearance flow (Flow 2). This\nincludes B2C, cross-border, and out-of-scope transactions where VAT\ndata and payment data must still be transmitted to the PPF.",
+    "fr": "Support pour le CTC (Contrôle Continu des Transactions) français Flux 10\npour les exigences de e-reporting de la réforme française de la\nfacturation électronique.\n\nLe Flux 10 couvre les transactions qui doivent être déclarées à\nl'administration fiscale mais qui ne sont pas soumises au flux B2B\ndomestique (Flux 2). Cela inclut les transactions B2C, transfrontalières\net hors champ pour lesquelles les données de TVA et de paiement doivent\ntout de même être transmises au PPF."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
+      },
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-ctc-b2c-category",
+      "name": {
+        "en": "B2C Transaction Category",
+        "fr": "Catégorie de transaction B2C"
+      },
+      "desc": {
+        "en": "Classifies a B2C transaction for French Flow 10 reporting to the PPF\n(G1.68). Required on B2C invoices and B2C payments.\n\n- TLB1: Goods deliveries subject to VAT.\n- TPS1: Services subject to VAT.\n- TNT1: Goods / services not subject to French VAT, including\n  intra-EU distance sales per CGI articles 258 A and 259 B.\n- TMA1: Operations under the VAT-on-margin regime\n  (CGI articles 266-1-e, 268, 297 A).",
+        "fr": "Catégorie de transaction pour le reporting Flux 10 au PPF (G1.68).\nObligatoire sur les factures et paiements B2C.\n\n- TLB1 : Livraisons de biens soumises à la TVA.\n- TPS1 : Prestations de services soumises à la TVA.\n- TNT1 : Livraisons et prestations non soumises à la TVA en\n  France, dont les ventes à distance intracommunautaires\n  (CGI art. 258 A et 259 B).\n- TMA1 : Opérations relevant du régime de TVA sur la marge\n  (CGI art. 266-1-e, 268, 297 A)."
+      },
+      "values": [
+        {
+          "code": "TLB1",
+          "name": {
+            "en": "Goods subject to VAT",
+            "fr": "Livraisons de biens soumises à la TVA"
+          }
+        },
+        {
+          "code": "TPS1",
+          "name": {
+            "en": "Services subject to VAT",
+            "fr": "Prestations de services soumises à la TVA"
+          }
+        },
+        {
+          "code": "TNT1",
+          "name": {
+            "en": "Not subject to French VAT",
+            "fr": "Non soumis à la TVA en France"
+          }
+        },
+        {
+          "code": "TMA1",
+          "name": {
+            "en": "VAT-on-margin regime",
+            "fr": "Régime de TVA sur la marge"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-billing-mode",
+      "name": {
+        "en": "Billing Mode",
+        "fr": "Cadre de Facturation"
+      },
+      "desc": {
+        "en": "Code used to describe the billing framework of the invoice. The billing mode\nindicates the nature of goods/services and the payment context.\n\nCode prefixes indicate the invoice nature:\n- \"B\": Goods invoice (Biens)\n- \"S\": Services invoice\n- \"M\": Mixed/dual invoice (goods and services that are not accessory to each other)\n\nThe numeric suffix indicates the payment type (1=deposit, 2=already paid,\n4=final after down payment, 5=subcontractor, 6=co-contractor, 7=e-reporting).",
+        "fr": "Code utilisé pour décrire le cadre de facturation de la facture. Le mode de\nfacturation indique la nature des biens/services et le contexte de paiement.\n\nLes préfixes de code indiquent la nature de la facture :\n- \"B\" : Facture de biens\n- \"S\" : Facture de services\n- \"M\" : Facture mixte (biens et services qui ne sont pas accessoires l'un de l'autre)\n\nLe suffixe numérique indique le type de paiement (1=dépôt, 2=déjà payée,\n4=définitive après acompte, 5=sous-traitant, 6=cotraitant, 7=e-reporting)."
+      },
+      "values": [
+        {
+          "code": "B1",
+          "name": {
+            "en": "Goods - Deposit invoice",
+            "fr": "Biens - Facture de dépôt"
+          }
+        },
+        {
+          "code": "B2",
+          "name": {
+            "en": "Goods - Already paid invoice",
+            "fr": "Biens - Facture déjà payée"
+          }
+        },
+        {
+          "code": "B4",
+          "name": {
+            "en": "Goods - Final invoice (after down payment)",
+            "fr": "Biens - Facture définitive (après acompte)"
+          }
+        },
+        {
+          "code": "B7",
+          "name": {
+            "en": "Goods - E-reporting (VAT already collected)",
+            "fr": "Biens - E-reporting (TVA déjà collectée)"
+          }
+        },
+        {
+          "code": "S1",
+          "name": {
+            "en": "Services - Deposit invoice",
+            "fr": "Services - Facture de dépôt"
+          }
+        },
+        {
+          "code": "S2",
+          "name": {
+            "en": "Services - Already paid invoice",
+            "fr": "Services - Facture déjà payée"
+          }
+        },
+        {
+          "code": "S4",
+          "name": {
+            "en": "Services - Final invoice (after down payment)",
+            "fr": "Services - Facture définitive (après acompte)"
+          }
+        },
+        {
+          "code": "S5",
+          "name": {
+            "en": "Services - Subcontractor invoice",
+            "fr": "Services - Facture de sous-traitance"
+          }
+        },
+        {
+          "code": "S6",
+          "name": {
+            "en": "Services - Co-contractor invoice",
+            "fr": "Services - Facture de cotraitance"
+          }
+        },
+        {
+          "code": "S7",
+          "name": {
+            "en": "Services - E-reporting (VAT already collected)",
+            "fr": "Services - E-reporting (TVA déjà collectée)"
+          }
+        },
+        {
+          "code": "M1",
+          "name": {
+            "en": "Mixed - Deposit invoice",
+            "fr": "Mixte - Facture de dépôt"
+          }
+        },
+        {
+          "code": "M2",
+          "name": {
+            "en": "Mixed - Already paid invoice",
+            "fr": "Mixte - Facture déjà payée"
+          }
+        },
+        {
+          "code": "M4",
+          "name": {
+            "en": "Mixed - Final invoice (after down payment)",
+            "fr": "Mixte - Facture définitive (après acompte)"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "b2c",
+          "name": {
+            "en": "B2C",
+            "fr": "B2C"
+          }
+        }
+      ]
+    },
+    {
+      "schema": "bill/payment",
+      "list": [
+        {
+          "key": "b2c",
+          "name": {
+            "en": "B2C",
+            "fr": "B2C"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "380"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "389"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "393"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "501"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "386"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "500"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "ext": {
+            "untdid-document-type": "384"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "471"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "472"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "473"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "381"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "261"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "396"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "502"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "503"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}

@@ -42,12 +42,12 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-03",
-                  "desc": "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+                  "desc": "corrective invoices must reference the original invoice in preceding (BR-FR-CO-04)",
                   "tests": "present"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-04",
-                  "desc": "corrective invoices must have exactly one preceding invoice reference (BR-FR-CO-04)",
+                  "desc": "corrective invoices must reference exactly one preceding invoice — multiple references are not allowed (BR-FR-CO-04)",
                   "tests": "length between 1 and 1"
                 }
               ]
@@ -107,7 +107,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-09",
-                      "desc": "advance payment document types not allowed for factoring billing modes (BR-FR-CO-08)",
+                      "desc": "advance payment document types (386, 500, 503) are not allowed for factoring billing modes (B4, S4, M4) (BR-FR-CO-08)",
                       "tests": "ext 'untdid-document-type' not in [386, 500, 503]"
                     }
                   ]
@@ -305,12 +305,12 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-24",
-                      "desc": "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+                      "desc": "ordering.contracts is required for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "present"
                     },
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-25",
-                      "desc": "at least one contract reference is required in ordering details for consolidated credit notes (BR-FR-CO-03)",
+                      "desc": "ordering.contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "length between 1 and 0"
                     }
                   ]
