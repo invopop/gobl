@@ -89,9 +89,9 @@ func normalizeSupplier(sup *org.Party) {
 	}
 
 	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
-		if sup.Ext == nil {
-			sup.Ext = make(tax.Extensions)
+		if sup.Ext.IsZero() {
+			sup.Ext = tax.MakeExtensions()
 		}
-		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+		sup.Ext = sup.Ext.Set(ExtKeyFiscalIncentive, FiscalIncentiveDefault)
 	}
 }

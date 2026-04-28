@@ -116,7 +116,7 @@ func identitiesSchemeFormatValid(val any) error {
 		if id == nil {
 			continue
 		}
-		schemeID := id.Ext[iso.ExtKeySchemeID]
+		schemeID := id.Ext.Get(iso.ExtKeySchemeID)
 		if schemeID == cbc.CodeEmpty {
 			return errors.New("all identities must have an ISO scheme ID defined in extensions BR-FR-CO-10")
 		}
@@ -161,7 +161,7 @@ func inboxCodeValid(val any) bool {
 
 func identitySchemeIs0224(val any) bool {
 	id, ok := val.(*org.Identity)
-	return ok && id != nil && id.Ext != nil && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDPrivate
+	return ok && id != nil && !id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDPrivate
 }
 
 func inboxSchemeIs0225(val any) bool {

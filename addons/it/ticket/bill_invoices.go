@@ -28,8 +28,8 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if inv.Tax.PricesInclude == "" {
 		inv.Tax.PricesInclude = tax.CategoryVAT
 	}
-	if inv.Tax.Ext != nil && inv.Tax.Ext.Has(ExtKeyLottery) {
-		inv.Tax.Ext[ExtKeyLottery] = cbc.NormalizeAlphanumericalCode(inv.Tax.Ext[ExtKeyLottery])
+	if !inv.Tax.Ext.IsZero() && inv.Tax.Ext.Has(ExtKeyLottery) {
+		inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyLottery, cbc.NormalizeAlphanumericalCode(inv.Tax.Ext.Get(ExtKeyLottery)))
 	}
 }
 

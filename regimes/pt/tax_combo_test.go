@@ -23,9 +23,9 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 		},
 		{
@@ -45,7 +45,7 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext:      tax.Extensions{},
+				Ext:      tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
@@ -54,9 +54,9 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
@@ -92,9 +92,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "extension present",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 			out: "PT-AC",
 		},
@@ -106,7 +106,7 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "empty extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{},
+				Ext:      tax.ExtensionsOf(tax.ExtMap{}),
 			},
 			out: "PT",
 		},
@@ -114,9 +114,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "missing extension",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			out: "PT",
 		},
@@ -133,9 +133,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Country:  l10n.ES.Tax(),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					pt.ExtKeyRegion: "PT",
-				},
+				}),
 			},
 			out: "ES",
 		},
@@ -159,7 +159,7 @@ func TestTaxComboNormalization(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			pt.Normalize(tt.tc)
 			if tt.tc != nil {
-				assert.Equal(t, tt.out, tt.tc.Ext[pt.ExtKeyRegion])
+				assert.Equal(t, tt.out, tt.tc.Ext.Get(pt.ExtKeyRegion))
 			}
 		})
 	}

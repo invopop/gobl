@@ -35,10 +35,10 @@ func normalizeInvoiceCorrection(doc any) {
 	// Move the doc-type from preceding to the invoice.
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
 	if opts != nil {
-		if dt, ok := opts.Ext[ExtKeyDocType]; ok {
-			inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		if dt := opts.Ext.Get(ExtKeyDocType); dt != "" {
+			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocType: dt,
-			})
+			}))
 		}
 	}
 }
@@ -48,13 +48,13 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 	// Verifactu implying that scenarios cannot be used.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "I",
-		})
+		}))
 	case bill.InvoiceTypeCorrective:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "S",
-		})
+		}))
 	}
 
 	// Set default correction type, unless already provided.
@@ -64,20 +64,20 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 		// This is non-deterministic. May be overwritten by user *or*
 		// scenarios.
 		if !inv.Tax.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
-			inv.Tax.Ext[ExtKeyDocType] = "R1"
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, "R1")
 		}
 	}
 
 	// Normalize the third party details
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeCustomer,
-		})
+		}))
 	}
 	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeThirdParty,
-		})
+		}))
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
@@ -108,9 +108,9 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		code = ExtCodeIdentityTypeOther
 	}
 	if !code.IsEmpty() {
-		id.Ext = id.Ext.Merge(tax.Extensions{
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIdentityType: code,
-		})
+		}))
 	}
 }
 
@@ -170,6 +170,7 @@ func billInvoiceRules() *rules.Set {
 		// Code 06: customer required
 		// Code 07: customer must have tax_id or identity
 		// Code 08: customer tax_id must have code
+		// Code 17: identity country required when identity type is not NIF-VAT
 		rules.When(
 			is.Func("not simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
@@ -180,6 +181,16 @@ func billInvoiceRules() *rules.Set {
 				rules.Field("tax_id",
 					rules.Field("code",
 						rules.Assert("08", "tax ID must have a code", is.Present),
+					),
+				),
+				rules.Field("identities",
+					rules.Each(
+						rules.When(
+							is.Func("has non-VAT identity type", identityHasNonVATType),
+							rules.Field("country",
+								rules.Assert("17", "country is required when ext 'es-verifactu-identity-type' is not 02 (NIF-VAT)", is.Present),
+							),
+						),
 					),
 				),
 			),
@@ -278,6 +289,11 @@ func customerHasTaxIDOrIdentity(val any) bool {
 		return true // nil customer handled by Required check
 	}
 	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
+}
+
+func identityHasNonVATType(val any) bool {
+	id, ok := val.(*org.Identity)
+	return ok && id != nil && id.Ext.Has(ExtKeyIdentityType) && !id.Ext.Get(ExtKeyIdentityType).In(ExtCodeIdentityTypeVAT)
 }
 
 func isGeneralNote(val any) bool {

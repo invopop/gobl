@@ -24,9 +24,9 @@ func TestNoteValidation(t *testing.T) {
 			Category: "VAT",
 			Key:      "reverse-charge",
 			Text:     "Reverse charge applies",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"untdid-tax-category": "AE",
-			},
+			}),
 		}
 		assert.NoError(t, rules.Validate(n))
 	})
@@ -78,10 +78,10 @@ func TestNoteNormalize(t *testing.T) {
 			Category: "VAT",
 			Key:      "exempt",
 			Text:     "Exempt",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"untdid-tax-category": "E",
 				"empty-key":           "",
-			},
+			}),
 		}
 		n.Normalize(nil)
 		assert.Equal(t, "E", n.Ext.Get("untdid-tax-category").String())

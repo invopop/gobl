@@ -78,9 +78,9 @@ func migrateInvoiceTaxCombo(tc *tax.Combo) {
 		}
 	}
 	// 2024-09-13: Added after move to addons
-	if tc.Ext[oldExtKeyExemptionCode] != "" {
-		tc.Ext["pt-saft-exemption"] = tc.Ext[oldExtKeyExemptionCode]
-		delete(tc.Ext, oldExtKeyExemptionCode)
+	if tc.Ext.Get(oldExtKeyExemptionCode) != "" {
+		tc.Ext = tc.Ext.Set("pt-saft-exemption", tc.Ext.Get(oldExtKeyExemptionCode))
+		tc.Ext = tc.Ext.Delete(oldExtKeyExemptionCode)
 	}
 }
 
@@ -90,166 +90,166 @@ var taxRateVATExemptMigrationMap = []struct {
 }{
 	{
 		Rate: TaxRateExempt.With(TaxRateOutlay),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M01",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateIntrastate),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M02",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateImports),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M04",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateExports),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M05",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateSuspension),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M06",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateInternalOps),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M07",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateSmallRetail),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M09",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateExemptScheme),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M10",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateTobacco),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M11",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M12",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateSecondHand),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M13",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateArt),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M14",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateAntiques),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M15",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateTransmission),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M16",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateOther),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M19",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateFlatRate),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M20",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateNonDeductible),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M21",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateConsignment),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M25",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWaste),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M30",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateCivilEng),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M31",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGreenhouse),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M32",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWoods),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M33",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateB2B),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M40",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateIntraEU),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M41",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateRealEstate),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M42",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGold),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M43",
-		},
+		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateNonTaxable),
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			oldExtKeyExemptionCode: "M99",
-		},
+		}),
 	},
 }

@@ -112,9 +112,9 @@ func TestValidateAddresses(t *testing.T) {
 				TaxID: &tax.Identity{
 					Country: "BR",
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					br.ExtKeyMunicipality: "3550308", // São Paulo city code
-				},
+				}),
 			},
 		},
 		{
@@ -123,9 +123,9 @@ func TestValidateAddresses(t *testing.T) {
 				TaxID: &tax.Identity{
 					Country: "BR",
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					br.ExtKeyMunicipality: "00", // Invalid city code
-				},
+				}),
 			},
 			err: "[GOBL-BR-ORG-PARTY-01] ($.ext) Brazilian party ext must define a valid 'br-ibge-municipality' code",
 		},

@@ -85,6 +85,28 @@
           ],
           "subsets": [
             {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-PL-FAVAT-BILL-INVOICE-16",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-PL-FAVAT-BILL-INVOICE-17",
+                      "desc": "supplier tax ID code required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "field": "name",
               "assert": [
                 {

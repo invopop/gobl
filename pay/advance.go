@@ -43,7 +43,7 @@ type Advance struct {
 	// Details about how the payment was made by credit (bank) transfer.
 	CreditTransfer *CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
 	// Tax extensions required by tax regimes or addons.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional details useful for the parties involved.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -67,7 +67,7 @@ func (a *Advance) Normalize() {
 	uuid.Normalize(&a.UUID)
 	a.Ref = cbc.NormalizeString(a.Ref)
 	a.Description = cbc.NormalizeString(a.Description)
-	a.Ext = tax.CleanExtensions(a.Ext)
+	a.Ext = a.Ext.Clean()
 }
 
 // CalculateFrom will update the amount using the rate of the provided

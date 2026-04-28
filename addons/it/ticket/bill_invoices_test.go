@@ -28,9 +28,9 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				ticket.ExtKeyLottery: "12345678",
-			},
+			}),
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -70,9 +70,9 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							ticket.ExtKeyExempt: "N4",
-						},
+						}),
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -96,12 +96,12 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("test correction", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Lines[0].Ext = tax.Extensions{
+		inv.Lines[0].Ext = tax.ExtensionsOf(tax.ExtMap{
 			ticket.ExtKeyLine: "1234567890",
-		}
-		inv.Lines[1].Ext = tax.Extensions{
+		})
+		inv.Lines[1].Ext = tax.ExtensionsOf(tax.ExtMap{
 			ticket.ExtKeyLine: "1234567890",
-		}
+		})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithStamps([]*head.Stamp{
 			{
@@ -240,9 +240,9 @@ func TestInvoiceLineTaxes(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							ticket.ExtKeyExempt: row.Code,
-						},
+						}),
 					},
 				},
 			})
@@ -356,7 +356,7 @@ func TestInvoiceTax(t *testing.T) {
 
 	t.Run("lottery code length", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567"
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "1234567")
 		// Pattern validation is handled by core extension validation during Calculate,
 		// not by addon rules.
 		err := inv.Calculate()
@@ -365,16 +365,16 @@ func TestInvoiceTax(t *testing.T) {
 
 	t.Run("lottery code empty", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = ""
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "")
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("lottery code uppercase", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567a"
+		inv.Tax.Ext = inv.Tax.Ext.Set(ticket.ExtKeyLottery, "1234567a")
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "1234567A", string(inv.Tax.Ext[ticket.ExtKeyLottery]))
+		assert.Equal(t, "1234567A", string(inv.Tax.Ext.Get(ticket.ExtKeyLottery)))
 	})
 
 }

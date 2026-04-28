@@ -32,10 +32,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by CFDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansKeyMap
+	return tax.ExtensionsOf(paymentMeansKeyMap)
 }
 
-var paymentMeansKeyMap = tax.Extensions{
+var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyCash:                                "01",
 	pay.MeansKeyCheque:                              "02",
 	pay.MeansKeyCreditTransfer:                      "03",
@@ -64,9 +64,9 @@ func normalizePayInstructions(instr *pay.Instructions) {
 		return
 	}
 	if code := paymentMeansKeyMap[instr.Key]; code != "" {
-		instr.Ext = instr.Ext.Merge(tax.Extensions{
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 
@@ -75,9 +75,9 @@ func normalizePayAdvance(adv *pay.Advance) {
 		return
 	}
 	if code := paymentMeansKeyMap[adv.Key]; code != "" {
-		adv.Ext = adv.Ext.Merge(tax.Extensions{
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 

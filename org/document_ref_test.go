@@ -24,13 +24,13 @@ func TestDocumentRefNormalize(t *testing.T) {
 
 		dr := &org.DocumentRef{
 			Code: " Foo ",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				"fooo": "",
-			},
+			}),
 		}
 		dr.Normalize(nil)
 		assert.Equal(t, "Foo", dr.Code.String())
-		assert.Empty(t, dr.Ext)
+		assert.True(t, dr.Ext.IsZero())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var dr *org.DocumentRef

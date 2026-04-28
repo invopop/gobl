@@ -44,7 +44,7 @@ type RateValueDef struct {
 	// Only apply this rate if one of the tags is present in the invoice.
 	// Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Ext map of keys that can be used to filter to determine if the rate applies.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Percent rate that should be applied
@@ -96,7 +96,7 @@ func (r *RateDef) HasKey(key cbc.Key) bool {
 // Value determines the tax rate value for the provided date and zone, if applicable.
 func (r *RateDef) Value(date cal.Date, ext Extensions) *RateValueDef {
 	for _, rv := range r.Values {
-		if len(rv.Ext) > 0 {
+		if rv.Ext.Len() > 0 {
 			if !ext.Contains(rv.Ext) {
 				continue
 			}
@@ -117,7 +117,7 @@ func checkRateValuesOrder(list any) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
-		if len(v.Ext) > 0 {
+		if v.Ext.Len() > 0 {
 			// TODO: check extensions order also
 			// Not too important at the moment.
 			continue

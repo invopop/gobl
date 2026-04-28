@@ -37,10 +37,10 @@ func normalizeInvoiceCorrection(doc any) {
 	// Move the doc-type from preceding to the invoice.
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
 	if opts != nil {
-		if dt, ok := opts.Ext[ExtKeyDocType]; ok {
-			inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		if dt := opts.Ext.Get(ExtKeyDocType); dt != "" {
+			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocType: dt,
-			})
+			}))
 		}
 	}
 }
@@ -50,13 +50,13 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// SII implying that scenarios cannot be used.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "I",
-		})
+		}))
 	case bill.InvoiceTypeCorrective:
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyCorrectionType: "S",
-		})
+		}))
 	}
 
 	// Set default correction type, unless already provided.
@@ -66,20 +66,20 @@ func normalizeInvoice(inv *bill.Invoice) {
 		// This is non-deterministic. May be overwritten by user *or*
 		// scenarios.
 		if !inv.Tax.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
-			inv.Tax.Ext[ExtKeyDocType] = "R1"
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, "R1")
 		}
 	}
 
 	// Normalize the third party details
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyThirdPartyIssuer: "S",
-		})
+		}))
 	}
 	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyThirdPartyIssuer: "S",
-		})
+		}))
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
@@ -110,9 +110,9 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		code = ExtCodeIdentityTypeOther
 	}
 	if !code.IsEmpty() {
-		id.Ext = id.Ext.Merge(tax.Extensions{
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyIdentityType: code,
-		})
+		}))
 	}
 }
 

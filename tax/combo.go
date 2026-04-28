@@ -31,7 +31,7 @@ type Combo struct {
 	// Some countries require an additional surcharge (may be determined if key present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
@@ -93,7 +93,7 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 		}
 	}
 
-	c.Ext = CleanExtensions(c.Ext)
+	c.Ext = c.Ext.Clean()
 	normalizers.Each(c)
 }
 
@@ -298,7 +298,7 @@ func comboExtensionsValid(val any) bool {
 	if !ok {
 		return true
 	}
-	for k := range combo.Ext {
+	for _, k := range combo.Ext.Keys() {
 		if ExtensionForKey(k) == nil {
 			return false
 		}

@@ -84,7 +84,7 @@ func paymentSourceNotProduced(val any) bool {
 	if !ok || pmt == nil {
 		return false
 	}
-	return pmt.Ext != nil && pmt.Ext[ExtKeySource] != "" && pmt.Ext[ExtKeySource] != SourceBillingProduced
+	return !pmt.Ext.IsZero() && pmt.Ext.Get(ExtKeySource) != "" && pmt.Ext.Get(ExtKeySource) != SourceBillingProduced
 }
 
 func paymentSourceRefValid(val any) error {
@@ -107,25 +107,25 @@ func paymentCustomerNamePresent(val any) bool {
 }
 
 func paymentDocType(pmt *bill.Payment) cbc.Code {
-	if pmt.Ext == nil {
+	if pmt.Ext.IsZero() {
 		return cbc.CodeEmpty
 	}
-	return pmt.Ext[ExtKeyPaymentType]
+	return pmt.Ext.Get(ExtKeyPaymentType)
 }
 
 func normalizePayment(pmt *bill.Payment) {
-	if pmt.Ext == nil {
-		pmt.Ext = tax.Extensions{}
+	if pmt.Ext.IsZero() {
+		pmt.Ext = tax.ExtensionsOf(tax.ExtMap{})
 	}
 
 	// TODO: This could be done with scenarios when supported
 	if pmt.HasTags(TagVATCash) {
-		pmt.Ext[ExtKeyPaymentType] = PaymentTypeCash
+		pmt.Ext = pmt.Ext.Set(ExtKeyPaymentType, PaymentTypeCash)
 	} else {
-		pmt.Ext[ExtKeyPaymentType] = PaymentTypeOther
+		pmt.Ext = pmt.Ext.Set(ExtKeyPaymentType, PaymentTypeOther)
 	}
 
 	if !pmt.Ext.Has(ExtKeySource) {
-		pmt.Ext[ExtKeySource] = SourceBillingProduced
+		pmt.Ext = pmt.Ext.Set(ExtKeySource, SourceBillingProduced)
 	}
 }

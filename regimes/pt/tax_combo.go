@@ -27,18 +27,14 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		return
 	}
 
-	if tc.Ext == nil {
-		tc.Ext = make(tax.Extensions)
-	}
-
 	// Set default region
-	if _, ok := tc.Ext[ExtKeyRegion]; !ok {
-		tc.Ext[ExtKeyRegion] = RegionMainland
+	if !tc.Ext.Has(ExtKeyRegion) {
+		tc.Ext = tc.Ext.Set(ExtKeyRegion, RegionMainland)
 	}
 
 	// Override region with foreign country if present
 	if tc.Country != "" && tc.Country != l10n.PT.Tax() {
-		tc.Ext[ExtKeyRegion] = cbc.Code(isoCountry(tc.Country))
+		tc.Ext = tc.Ext.Set(ExtKeyRegion, cbc.Code(isoCountry(tc.Country)))
 	}
 }
 

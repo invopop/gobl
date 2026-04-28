@@ -138,9 +138,9 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 	// Check for monotax tag (Type C)
 	if inv.Tags.HasTags(TagMonotax) {
 		docType = getDocTypeForCategory("C", inv.Type)
-	} else if inv.Customer != nil && inv.Customer.Ext != nil {
+	} else if inv.Customer != nil && !inv.Customer.Ext.IsZero() {
 		// Check customer VAT status
-		vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+		vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 		if vatStatus.In(vatStatusesTypeA...) {
 			// Type A for VAT status 1 (Registered VAT Company), 6 (Monotributo Responsible), 13 (Social Monotributista), 16 (Promoted Independent Worker Monotributista)
 			docType = getDocTypeForCategory("A", inv.Type)
@@ -155,9 +155,9 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 
 	// Set the doc type extension
 	if docType != "" {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyDocType: docType,
-		})
+		}))
 	}
 }
 
@@ -221,9 +221,9 @@ func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
 	}
-	inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+	inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 		ExtKeyConcept: code,
-	})
+	}))
 }
 
 func billInvoiceRules() *rules.Set {
@@ -448,7 +448,7 @@ func invoiceDocType49VATStatus(val any) bool {
 	if docType != TypeUsedGoodsPurchaseInvoice {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}
@@ -464,7 +464,7 @@ func invoiceDocTypeAVATStatus(val any) bool {
 	if !docType.In(DocTypesA...) {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}
@@ -480,7 +480,7 @@ func invoiceDocTypeBVATStatus(val any) bool {
 	if !docType.In(DocTypesB...) {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}

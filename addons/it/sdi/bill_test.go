@@ -27,10 +27,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				sdi.ExtKeyDocumentType: "TD01",
 				sdi.ExtKeyFormat:       "FPA12",
-			},
+			}),
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -107,7 +107,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing tax extensions", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		inv.Tax.Ext = nil
+		inv.Tax.Ext = tax.Extensions{}
 		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "tax requires 'it-sdi-document-type' and 'it-sdi-format' extensions")
 	})
@@ -142,7 +142,7 @@ func TestInvoiceNormalization(t *testing.T) {
 	t.Run("supplier fiscal regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		ad.Normalizer(inv)
-		assert.Equal(t, "RF01", inv.Supplier.Ext[sdi.ExtKeyFiscalRegime].String())
+		assert.Equal(t, "RF01", inv.Supplier.Ext.Get(sdi.ExtKeyFiscalRegime).String())
 	})
 
 	t.Run("strip +39 from italian supplier telephone", func(t *testing.T) {
@@ -456,9 +456,9 @@ func TestChargesValidation(t *testing.T) {
 					Percent:  num.NewPercentage(22, 2),
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				sdi.ExtKeyFundType: "TC04",
-			},
+			}),
 		}
 		err := rules.Validate(c, withSDIContext())
 		assert.NoError(t, err)
@@ -474,9 +474,9 @@ func TestChargesValidation(t *testing.T) {
 		c := &bill.Charge{
 			Key:     sdi.KeyFundContribution,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				sdi.ExtKeyFundType: "TC04",
-			},
+			}),
 		}
 		err := rules.Validate(c, withSDIContext())
 		assert.ErrorContains(t, err, "fund contribution charge must have VAT tax category")
@@ -492,9 +492,9 @@ func TestChargesValidation(t *testing.T) {
 					Rate:     "standard",
 				},
 			},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				sdi.ExtKeyFundType: "TC04",
-			},
+			}),
 		}
 		err := rules.Validate(c, withSDIContext())
 		assert.ErrorContains(t, err, "fund contribution charge requires a percentage")
@@ -564,7 +564,7 @@ func TestPaymentValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
-		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String())
+		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext.Get(sdi.ExtKeyPaymentMeans).String())
 	})
 
 }
@@ -690,9 +690,9 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(tax.ExtMap{
 			sdi.ExtKeyRetained: "A",
-		},
+		}),
 		Percent: num.NewPercentage(20, 2),
 	})
 	require.NoError(t, inv.Calculate())

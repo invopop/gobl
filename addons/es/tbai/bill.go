@@ -35,8 +35,8 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	if tx == nil {
 		tx = &bill.Tax{}
 	}
-	if tx.Ext == nil {
-		tx.Ext = make(tax.Extensions)
+	if tx.Ext.IsZero() {
+		tx.Ext = tax.MakeExtensions()
 	}
 	if tx.Ext.Has(ExtKeyRegion) {
 		return
@@ -49,15 +49,15 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	// to use them to set the region code automatically.
 	switch strings.ToLower(addr.Region) {
 	case "alava", "álava", "araba", "vi":
-		tx.Ext[ExtKeyRegion] = "VI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "VI")
 	case "bizkaia", "vizcaya", "bi":
-		tx.Ext[ExtKeyRegion] = "BI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "BI")
 	case "gipuzkoa", "guipuzcoa", "guipúzcoa", "ss":
-		tx.Ext[ExtKeyRegion] = "SS"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, "SS")
 	default:
 		return
 	}
-	if len(tx.Ext) > 0 {
+	if tx.Ext.Len() > 0 {
 		inv.Tax = tx
 	}
 }

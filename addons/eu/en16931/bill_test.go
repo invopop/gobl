@@ -22,7 +22,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
+		assert.Equal(t, "380", inv.Tax.Ext.Get(untdid.ExtKeyDocumentType).String())
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -89,9 +89,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							"cef-vatex": "VATEX-EU-132",
-						},
+						}),
 					},
 				},
 			},
@@ -134,9 +134,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							"cef-vatex": "VATEX-EU-132",
-						},
+						}),
 					},
 				},
 			},
@@ -155,9 +155,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(tax.ExtMap{
 							"cef-vatex": "VATEX-EU-132",
-						},
+						}),
 					},
 				},
 			},
@@ -197,9 +197,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Exempt under Article 132",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyTaxCategory: "E",
-			},
+			}),
 		}
 		ad.Normalizer(n)
 		assert.Equal(t, tax.KeyExempt, n.Key)
@@ -210,9 +210,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Reverse charge applies",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyTaxCategory: "AE",
-			},
+			}),
 		}
 		ad.Normalizer(n)
 		assert.Equal(t, tax.KeyReverseCharge, n.Key)
@@ -224,9 +224,9 @@ func TestExemptionNoteValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 			Text:     "Exempt under Article 132",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyTaxCategory: "AE",
-			},
+			}),
 		}
 		ad.Normalizer(n)
 		assert.Equal(t, tax.KeyExempt, n.Key, "should not override existing key")
@@ -358,7 +358,7 @@ func TestNormalizeBillLineDiscount(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		ad.Normalizer(l)
-		assert.Equal(t, "67", l.Ext[untdid.ExtKeyAllowance].String())
+		assert.Equal(t, "67", l.Ext.Get(untdid.ExtKeyAllowance).String())
 	})
 	t.Run("without key", func(t *testing.T) {
 		l := &bill.LineDiscount{
@@ -366,7 +366,7 @@ func TestNormalizeBillLineDiscount(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		ad.Normalizer(l)
-		assert.Nil(t, l.Ext)
+		assert.True(t, l.Ext.IsZero())
 	})
 }
 
@@ -379,7 +379,7 @@ func TestNormalizeBillDiscount(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		ad.Normalizer(l)
-		assert.Equal(t, "67", l.Ext[untdid.ExtKeyAllowance].String())
+		assert.Equal(t, "67", l.Ext.Get(untdid.ExtKeyAllowance).String())
 	})
 	t.Run("without key", func(t *testing.T) {
 		l := &bill.Discount{
@@ -387,7 +387,7 @@ func TestNormalizeBillDiscount(t *testing.T) {
 			Amount: num.MakeAmount(100, 2),
 		}
 		ad.Normalizer(l)
-		assert.Nil(t, l.Ext)
+		assert.True(t, l.Ext.IsZero())
 	})
 }
 
@@ -400,7 +400,7 @@ func TestNormalizeBillLineCharge(t *testing.T) {
 			Amount: num.MakeAmount(1000, 2),
 		}
 		ad.Normalizer(l)
-		assert.Equal(t, "AAE", l.Ext[untdid.ExtKeyCharge].String())
+		assert.Equal(t, "AAE", l.Ext.Get(untdid.ExtKeyCharge).String())
 	})
 	t.Run("without key", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -408,7 +408,7 @@ func TestNormalizeBillLineCharge(t *testing.T) {
 			Amount: num.MakeAmount(3000, 2),
 		}
 		ad.Normalizer(l)
-		assert.Nil(t, l.Ext)
+		assert.True(t, l.Ext.IsZero())
 	})
 }
 
@@ -421,7 +421,7 @@ func TestNormalizeBillCharge(t *testing.T) {
 			Amount: num.MakeAmount(1000, 2),
 		}
 		ad.Normalizer(l)
-		assert.Equal(t, "AAE", l.Ext[untdid.ExtKeyCharge].String())
+		assert.Equal(t, "AAE", l.Ext.Get(untdid.ExtKeyCharge).String())
 	})
 	t.Run("without key", func(t *testing.T) {
 		l := &bill.Charge{
@@ -429,7 +429,7 @@ func TestNormalizeBillCharge(t *testing.T) {
 			Amount: num.MakeAmount(3000, 2),
 		}
 		ad.Normalizer(l)
-		assert.Nil(t, l.Ext)
+		assert.True(t, l.Ext.IsZero())
 	})
 }
 
@@ -442,9 +442,9 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
-					},
+					}),
 				},
 			},
 		}
@@ -454,17 +454,17 @@ func TestValidateBillDiscount(t *testing.T) {
 
 	t.Run("with extension", func(t *testing.T) {
 		l := &bill.Discount{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyAllowance: "67",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
-					},
+					}),
 				},
 			},
 		}
@@ -479,9 +479,9 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
-					},
+					}),
 				},
 			},
 		}
@@ -492,17 +492,17 @@ func TestValidateBillDiscount(t *testing.T) {
 	t.Run("with reason and extension", func(t *testing.T) {
 		l := &bill.Discount{
 			Reason: "Product sample",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyAllowance: "67",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(tax.ExtMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
-					},
+					}),
 				},
 			},
 		}
@@ -532,9 +532,9 @@ func TestValidateBillCharge(t *testing.T) {
 
 	t.Run("with extension", func(t *testing.T) {
 		l := &bill.Charge{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyCharge: "AAE",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
@@ -552,9 +552,9 @@ func TestValidateBillCharge(t *testing.T) {
 	t.Run("with reason and extension", func(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Product sample",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyCharge: "AAE",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(l, tax.AddonContext(en16931.V2017))
@@ -574,9 +574,9 @@ func TestValidateBillLineDiscount(t *testing.T) {
 
 	t.Run("Discount with extension", func(t *testing.T) {
 		d := &bill.LineDiscount{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyAllowance: "67",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
@@ -594,9 +594,9 @@ func TestValidateBillLineDiscount(t *testing.T) {
 	t.Run("Discount with reason and extension", func(t *testing.T) {
 		d := &bill.LineDiscount{
 			Reason: "Product sample",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyAllowance: "67",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(d, tax.AddonContext(en16931.V2017))
@@ -622,9 +622,9 @@ func TestValidateBillLineCharge(t *testing.T) {
 
 	t.Run("Charge with extension", func(t *testing.T) {
 		c := &bill.LineCharge{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyCharge: "AAE",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
@@ -642,9 +642,9 @@ func TestValidateBillLineCharge(t *testing.T) {
 	t.Run("Charge with reason and extension", func(t *testing.T) {
 		c := &bill.LineCharge{
 			Reason: "Product sample",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				untdid.ExtKeyCharge: "AAE",
-			},
+			}),
 			Amount: num.MakeAmount(100, 2),
 		}
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))

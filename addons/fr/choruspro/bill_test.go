@@ -95,9 +95,9 @@ func TestValidateInvoice(t *testing.T) {
 	t.Run("customer with SIRET with wrong scheme", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
 			choruspro.ExtKeyScheme: "2",
-		}
+		})
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer scheme extension must be '1'")
 	})
@@ -111,9 +111,9 @@ func TestValidateInvoice(t *testing.T) {
 				Code: "12345678901234",
 			},
 		}
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
 			choruspro.ExtKeyScheme: "1",
-		}
+		})
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
@@ -130,8 +130,8 @@ func TestValidateInvoice(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		// Remove framework extension
-		if inv.Tax != nil && inv.Tax.Ext != nil {
-			delete(inv.Tax.Ext, choruspro.ExtKeyFramework)
+		if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
+			inv.Tax.Ext = inv.Tax.Ext.Delete(choruspro.ExtKeyFramework)
 		}
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "framework extension is required")
@@ -145,10 +145,10 @@ func TestValidateInvoice(t *testing.T) {
 		if inv.Tax == nil {
 			inv.Tax = &bill.Tax{}
 		}
-		if inv.Tax.Ext == nil {
-			inv.Tax.Ext = make(tax.Extensions)
+		if inv.Tax.Ext.IsZero() {
+			inv.Tax.Ext = tax.MakeExtensions()
 		}
-		inv.Tax.Ext[choruspro.ExtKeyFramework] = "A2"
+		inv.Tax.Ext = inv.Tax.Ext.Set(choruspro.ExtKeyFramework, "A2")
 
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "must be paid in full for framework 'A2'")
@@ -157,9 +157,9 @@ func TestValidateInvoice(t *testing.T) {
 	t.Run("framework A2 with paid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyFramework: "A2",
-			},
+			}),
 		}
 		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
@@ -217,9 +217,9 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("preserves existing framework", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				choruspro.ExtKeyFramework: "A3",
-			},
+			}),
 		}
 
 		require.NoError(t, inv.Calculate())

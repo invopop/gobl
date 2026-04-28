@@ -43,7 +43,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		// Should not have extension as Spanish NIFs are already handled
-		assert.Empty(t, inv.Customer.Identities[0].Ext)
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
 	})
 
 	t.Run("customer without identities", func(t *testing.T) {
@@ -62,7 +62,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[sii.ExtKeyIdentityType])
+		assert.Equal(t, sii.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
 	})
 
 	t.Run("foreign identity normalization", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext[sii.ExtKeyIdentityType])
+		assert.Equal(t, sii.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
 	})
 
 	t.Run("resident identity normalization", func(t *testing.T) {
@@ -86,7 +86,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext[sii.ExtKeyIdentityType])
+		assert.Equal(t, sii.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
 	})
 
 	t.Run("other identity normalization", func(t *testing.T) {
@@ -98,7 +98,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext[sii.ExtKeyIdentityType])
+		assert.Equal(t, sii.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
 	})
 
 	t.Run("unknown identity key not normalized", func(t *testing.T) {
@@ -110,7 +110,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Empty(t, inv.Customer.Identities[0].Ext)
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
 	})
 
 	t.Run("multiple identities only normalizes first", func(t *testing.T) {
@@ -126,15 +126,15 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[sii.ExtKeyIdentityType])
-		assert.Empty(t, inv.Customer.Identities[1].Ext)
+		assert.Equal(t, sii.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
+		assert.True(t, inv.Customer.Identities[1].Ext.IsZero())
 	})
 
 	t.Run("self-billed", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSelfBilled)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyThirdPartyIssuer].String())
+		assert.Equal(t, "S", inv.Tax.Ext.Get(sii.ExtKeyThirdPartyIssuer).String())
 	})
 
 	t.Run("with issuer", func(t *testing.T) {
@@ -149,7 +149,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyThirdPartyIssuer].String())
+		assert.Equal(t, "S", inv.Tax.Ext.Get(sii.ExtKeyThirdPartyIssuer).String())
 	})
 }
 
@@ -164,19 +164,19 @@ func TestBillLineNormalization(t *testing.T) {
 	t.Run("with standard invoice, no item key", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.CodeEmpty, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
+		assert.Equal(t, cbc.CodeEmpty, inv.Lines[0].Taxes[0].Ext.Get(sii.ExtKeyProduct))
 	})
 	t.Run("with standard invoice, item key is goods", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyGoods
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeProductGoods, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
+		assert.Equal(t, sii.ExtCodeProductGoods, inv.Lines[0].Taxes[0].Ext.Get(sii.ExtKeyProduct))
 	})
 	t.Run("with standard invoice, item key is services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyServices
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, sii.ExtCodeProductServices, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
+		assert.Equal(t, sii.ExtCodeProductServices, inv.Lines[0].Taxes[0].Ext.Get(sii.ExtKeyProduct))
 	})
 }
 
@@ -185,7 +185,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "F1")
+		assert.Equal(t, inv.Tax.Ext.Get(sii.ExtKeyDocType).String(), "F1")
 	})
 	t.Run("standard invoice without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -196,7 +196,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		inv.Tax.Ext = nil
+		inv.Tax.Ext = tax.Extensions{}
 		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "extension 'es-sii-doc-type' is required")
 	})
@@ -232,7 +232,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "F2")
+		assert.Equal(t, inv.Tax.Ext.Get(sii.ExtKeyDocType).String(), "F2")
 	})
 
 	t.Run("simplified substitution", func(t *testing.T) {
@@ -244,8 +244,8 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, rules.Validate(inv))
 		// Should always set the doc type to R5, even if trying to override as the simplified
 		// tag has priority.
-		assert.Equal(t, "R5", inv.Tax.Ext[sii.ExtKeyDocType].String())
-		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyCorrectionType].String())
+		assert.Equal(t, "R5", inv.Tax.Ext.Get(sii.ExtKeyDocType).String())
+		assert.Equal(t, "S", inv.Tax.Ext.Get(sii.ExtKeyCorrectionType).String())
 	})
 
 	t.Run("corrective invoice requires preceding", func(t *testing.T) {
@@ -291,9 +291,9 @@ func TestInvoiceValidation(t *testing.T) {
 				Series:    "ABC",
 				Code:      "122",
 				IssueDate: &d,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					sii.ExtKeyDocType: "R1",
-				},
+				}),
 				Tax: &tax.Total{
 					Categories: []*tax.CategoryTotal{
 						{
@@ -313,7 +313,7 @@ func TestInvoiceValidation(t *testing.T) {
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Log(string(data))
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext[sii.ExtKeyDocType].String(), "R1")
+		assert.Equal(t, "R1", inv.Tax.Ext.Get(sii.ExtKeyDocType).String())
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
@@ -388,8 +388,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with same regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
-		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -397,8 +397,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with different regimes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
-		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "02"}
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "02"})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "es-sii-regime")
 		assert.ErrorContains(t, rules.Validate(inv), "must be the same in all tax combos")
@@ -407,8 +407,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with product in all tax combos", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
-		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -416,8 +416,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with product in some but not all tax combos", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
-		inv.Lines[1].Taxes[0].Ext = tax.Extensions{}
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "es-sii-product")
 		assert.ErrorContains(t, rules.Validate(inv), "must be present in all tax combos or none")
@@ -426,15 +426,15 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with non-VAT/IGIC taxes are ignored", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[1].Taxes[0].Ext = tax.Extensions{
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{
 			sii.ExtKeyRegime: "01",
-		}
+		})
 		inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 			Category: es.TaxCategoryIRPF,
 			Rate:     es.TaxRatePro,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(tax.ExtMap{
 				sii.ExtKeyRegime: "02", // Different regime, but should be ignored
-			},
+			}),
 		})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))

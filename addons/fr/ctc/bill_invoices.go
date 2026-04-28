@@ -312,7 +312,7 @@ func invoiceIsCreditNoteAny(val any) bool {
 
 func invoiceIsFactoringAny(val any) bool {
 	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+	if !ok || inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return false
 	}
 	return isFactoringExtension(inv.Tax.Ext.Get(ExtKeyBillingMode))
@@ -361,7 +361,7 @@ func identitiesHasSIREN(val any) bool {
 		return true // nil/empty passes
 	}
 	for _, id := range identities {
-		if id != nil && id.Ext != nil {
+		if id != nil && !id.Ext.IsZero() {
 			if code := id.Ext.Get(iso.ExtKeySchemeID); code == "0002" && id.Scope.Has(org.IdentityScopeLegal) {
 				return true
 			}
@@ -397,7 +397,7 @@ func orderingIdentitiesNoDupAFL(val any) bool {
 	}
 	count := 0
 	for _, id := range identities {
-		if id == nil || id.Ext == nil {
+		if id == nil || id.Ext.IsZero() {
 			continue
 		}
 		if id.Ext.Get(untdid.ExtKeyReference).String() == "AFL" {
@@ -417,7 +417,7 @@ func orderingIdentitiesNoDupAWW(val any) bool {
 	}
 	count := 0
 	for _, id := range identities {
-		if id == nil || id.Ext == nil {
+		if id == nil || id.Ext.IsZero() {
 			continue
 		}
 		if id.Ext.Get(untdid.ExtKeyReference).String() == "AWW" {
@@ -436,7 +436,7 @@ func notesHaveTXD(val any) bool {
 		return false
 	}
 	for _, note := range notes {
-		if note != nil && note.Ext != nil {
+		if note != nil && !note.Ext.IsZero() {
 			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == "TXD" && note.Text == "MEMBRE_ASSUJETTI_UNIQUE" {
 				return true
 			}
@@ -453,7 +453,7 @@ func notesHaveRequired(val any) bool {
 	required := []cbc.Code{"PMT", "PMD", "AAB"}
 	counts := make(map[cbc.Code]int)
 	for _, note := range notes {
-		if note != nil && note.Ext != nil {
+		if note != nil && !note.Ext.IsZero() {
 			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code != cbc.CodeEmpty {
 				counts[code]++
 			}
@@ -474,7 +474,7 @@ func notesNoDuplicates(val any) bool {
 	}
 	counts := make(map[cbc.Code]int)
 	for _, note := range notes {
-		if note != nil && note.Ext != nil {
+		if note != nil && !note.Ext.IsZero() {
 			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code != cbc.CodeEmpty {
 				counts[code]++
 			}
@@ -495,7 +495,7 @@ func notesValidBARText(val any) bool {
 		return true
 	}
 	for _, note := range notes {
-		if note != nil && note.Ext != nil {
+		if note != nil && !note.Ext.IsZero() {
 			if note.Ext.Get(untdid.ExtKeyTextSubject) == "BAR" {
 				if note.Text != "" && !slices.Contains(allowedBARTreatments, note.Text) {
 					return false

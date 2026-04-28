@@ -49,7 +49,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			t.Run("with code "+code.String(), func(t *testing.T) {
 				tc := &tax.Combo{
 					Category: tax.CategoryVAT,
-					Ext:      tax.Extensions{sdi.ExtKeyExempt: code},
+					Ext:      tax.ExtensionsOf(tax.ExtMap{sdi.ExtKeyExempt: code}),
 				}
 				ad.Normalizer(tc)
 				assert.Equal(t, code, tc.Ext.Get(sdi.ExtKeyExempt), "extension should be set correctly")
@@ -66,7 +66,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext:      tax.Extensions{sdi.ExtKeyExempt: "N3.2"},
+			Ext:      tax.ExtensionsOf(tax.ExtMap{sdi.ExtKeyExempt: "N3.2"}),
 		}
 		ad.Normalizer(tc)
 		assert.Equal(t, "N3.2", tc.Ext.Get(sdi.ExtKeyExempt).String())
