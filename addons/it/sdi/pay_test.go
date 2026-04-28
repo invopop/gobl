@@ -48,6 +48,28 @@ func TestPayInstructionsNormalize(t *testing.T) {
 	assert.False(t, inv.Payment.Advances[0].Ext.Has("random"))
 }
 
+func TestPayInstructionsCardSubKeysFallback(t *testing.T) {
+	addon := tax.AddonForKey(sdi.V1)
+
+	t.Run("bare card", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyCard}
+		addon.Normalizer(instr)
+		assert.Equal(t, "MP08", instr.Ext.Get(sdi.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("card+credit falls back to MP08", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyCredit)}
+		addon.Normalizer(instr)
+		assert.Equal(t, "MP08", instr.Ext.Get(sdi.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("card+debit falls back to MP08", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyDebit)}
+		addon.Normalizer(instr)
+		assert.Equal(t, "MP08", instr.Ext.Get(sdi.ExtKeyPaymentMeans).String())
+	})
+}
+
 func TestPayInstructionsValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 
@@ -70,7 +92,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Advances: []*pay.Advance{
 			{
-				Key:         pay.MeansKeyDirectDebit.With("fooo"),
+				Key:         pay.MeansKeyAny.With("fooo"),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
 			},
@@ -82,7 +104,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
-			Key: pay.MeansKeyDirectDebit.With("fooo"),
+			Key: pay.MeansKeyAny.With("fooo"),
 		},
 	}
 	require.NoError(t, inv.Calculate())

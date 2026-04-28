@@ -69,6 +69,24 @@ func TestNormalizePayInstructions(t *testing.T) {
 		assert.Equal(t, "03", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
 		assert.Equal(t, "value", instr.Ext.Get("other-extension").String())
 	})
+
+	t.Run("card+credit maps to 03", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyCredit)}
+		ad.Normalizer(instr)
+		assert.Equal(t, "03", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("card+debit maps to 04", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyDebit)}
+		ad.Normalizer(instr)
+		assert.Equal(t, "04", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("legacy debit-transfer+debit still maps to 04", func(t *testing.T) {
+		instr := &pay.Instructions{Key: pay.MeansKeyDebitTransfer.With(pay.MeansKeyDebit)}
+		ad.Normalizer(instr)
+		assert.Equal(t, "04", instr.Ext.Get(nfe.ExtKeyPaymentMeans).String())
+	})
 }
 
 func TestNormalizePayAdvance(t *testing.T) {

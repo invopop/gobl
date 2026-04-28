@@ -19,6 +19,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 - `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
 - `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.
+- `pay`: granular `MeansKeyCredit` and `MeansKeyDebit` sub-keys, intended to be composed with `MeansKeyCard` (e.g. `card+credit`, `card+debit`). Bare `card` remains valid and, where regimes distinguish, is treated as equivalent to `card+credit` for backwards compatibility.
+- `pay`: `LookupMeansCode` helper that resolves the most specific code in a means-key map and falls back through `Pop` when no exact entry is registered. Addon normalizers now use it so producers can pass granular keys without every addon needing to register them.
+- `addons/mx/cfdi`: `card+debit` now emits CFDI code `28` automatically (the headline change). `card` and `card+credit` keep emitting `04`. Legacy `other+debit` is preserved as a deprecated alias for `card+debit`.
+- `addons/br/nfe`: `card+debit` now emits NFe `tPag` code `04` (Cartão de Débito). `card` and `card+credit` emit `03`. Legacy `debit-transfer+debit` is preserved as a deprecated alias for `card+debit`.
+- `addons/pt/saft`: `card+debit` now emits SAF-T `PaymentMechanism` code `CD` (Cartão de Débito) automatically — previously producers had to set the `pt-saft-payment-means` extension manually.
+- `addons/eu/en16931`: `card+credit` and `card+debit` now emit the explicit UNCL4461 codes `54` and `55` respectively. Bare `card` keeps emitting the generic `48`.
+- `addons/it/sdi`, `addons/pl/favat`, `addons/gr/mydata`: granular card sub-keys fall back to the addon's existing single card code via `LookupMeansCode`, so callers passing `card+credit` / `card+debit` Just Work even where the regime has no native distinction.
 
 ### Fixed
 

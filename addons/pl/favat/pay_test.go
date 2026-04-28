@@ -30,6 +30,18 @@ func TestNormalizePayInstructions(t *testing.T) {
 		ad.Normalizer(instr)
 		assert.Equal(t, "5", instr.Ext.Get(favat.ExtKeyPaymentMeans).String())
 	})
+
+	t.Run("card sub-keys fall back to bare card", func(t *testing.T) {
+		for _, k := range []cbc.Key{
+			pay.MeansKeyCard,
+			pay.MeansKeyCard.With(pay.MeansKeyCredit),
+			pay.MeansKeyCard.With(pay.MeansKeyDebit),
+		} {
+			instr := &pay.Instructions{Key: k}
+			ad.Normalizer(instr)
+			assert.Equal(t, "2", instr.Ext.Get(favat.ExtKeyPaymentMeans).String(), "key=%s", k)
+		}
+	})
 }
 
 func TestNormalizePayAdvance(t *testing.T) {

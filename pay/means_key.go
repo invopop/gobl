@@ -23,6 +23,11 @@ const (
 	MeansKeyOnline         cbc.Key = "online"       // Website from which payment can be made
 	MeansKeySEPA           cbc.Key = "sepa"         // extension for SEPA payments
 	MeansKeyOther          cbc.Key = "other"
+
+	// Compositional sub-keys to qualify a payment means. Combine with
+	// `With`, e.g. `MeansKeyCard.With(MeansKeyDebit)`.
+	MeansKeyCredit cbc.Key = "credit"
+	MeansKeyDebit  cbc.Key = "debit"
 )
 
 // MeansKeyDefinitions includes all the payment means keys that
@@ -36,7 +41,17 @@ var MeansKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  MeansKeyCard,
 		Name: i18n.NewString("Card"),
-		Desc: i18n.NewString("Payment card."),
+		Desc: i18n.NewString("Payment card. For backwards compatibility, a bare `card` key is treated as equivalent to `card+credit` by addons that distinguish credit and debit cards."),
+	},
+	{
+		Key:  MeansKeyCard.With(MeansKeyCredit),
+		Name: i18n.NewString("Credit Card"),
+		Desc: i18n.NewString("Payment by credit card."),
+	},
+	{
+		Key:  MeansKeyCard.With(MeansKeyDebit),
+		Name: i18n.NewString("Debit Card"),
+		Desc: i18n.NewString("Payment by debit card."),
 	},
 	{
 		Key:  MeansKeyCreditTransfer,
@@ -98,6 +113,21 @@ var MeansKeyDefinitions = []*cbc.Definition{
 		Name: i18n.NewString("Other"),
 		Desc: i18n.NewString("Other or mutually defined means of payment."),
 	},
+}
+
+// LookupMeansCode resolves the most specific code in m for the given
+// payment means key. If key has no exact entry, the helper progressively
+// pops sub-keys (`card+debit` → `card` → empty) until a match is found.
+// This preserves backwards compatibility with addons that only registered
+// the bare `card`, while letting addons that distinguish credit vs debit
+// register explicit `card+credit` / `card+debit` entries that win.
+func LookupMeansCode(m map[cbc.Key]cbc.Code, key cbc.Key) cbc.Code {
+	for k := key; !k.IsEmpty(); k = k.Pop() {
+		if code, ok := m[k]; ok {
+			return code
+		}
+	}
+	return ""
 }
 
 // HasValidMeansKey provides a usable validator for the means key

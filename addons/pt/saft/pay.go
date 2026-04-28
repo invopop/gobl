@@ -13,16 +13,18 @@ func PaymentMeansExtensions() tax.Extensions {
 }
 
 var paymentMeansMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCard:           "CC",
-	pay.MeansKeyCreditTransfer: "TB",
-	pay.MeansKeyDebitTransfer:  "TB",
-	pay.MeansKeyCash:           "NU",
-	pay.MeansKeyPromissoryNote: "LC",
-	pay.MeansKeyNetting:        "CS",
-	pay.MeansKeyCheque:         "CH",
-	pay.MeansKeyDirectDebit:    "TB",
-	pay.MeansKeyOnline:         "DE",
-	pay.MeansKeyOther:          "OU",
+	pay.MeansKeyCard:                          "CC", // Cartão de Crédito (legacy/generic)
+	pay.MeansKeyCard.With(pay.MeansKeyCredit): "CC", // Cartão de Crédito
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):  "CD", // Cartão de Débito
+	pay.MeansKeyCreditTransfer:                "TB",
+	pay.MeansKeyDebitTransfer:                 "TB",
+	pay.MeansKeyCash:                          "NU",
+	pay.MeansKeyPromissoryNote:                "LC",
+	pay.MeansKeyNetting:                       "CS",
+	pay.MeansKeyCheque:                        "CH",
+	pay.MeansKeyDirectDebit:                   "TB",
+	pay.MeansKeyOnline:                        "DE",
+	pay.MeansKeyOther:                         "OU",
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
@@ -43,7 +45,7 @@ func mergePaymentMeans(key cbc.Key, ext tax.Extensions) tax.Extensions {
 	if key == pay.MeansKeyOther && ext.Get(ExtKeyPaymentMeans) != "" {
 		return ext // `other` won't override the extension if already set
 	}
-	if extVal, ok := paymentMeansMap[key]; ok {
+	if extVal := pay.LookupMeansCode(paymentMeansMap, key); extVal != "" {
 		return ext.Merge(
 			tax.ExtensionsOf(tax.ExtMap{ExtKeyPaymentMeans: extVal}),
 		)

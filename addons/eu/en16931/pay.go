@@ -11,7 +11,9 @@ import (
 
 var paymentMeansMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyAny:                                   "1",
-	pay.MeansKeyCard:                                  "48",
+	pay.MeansKeyCard:                                  "48", // Bank card (generic)
+	pay.MeansKeyCard.With(pay.MeansKeyCredit):         "54", // Credit card
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "55", // Debit card
 	pay.MeansKeyCreditTransfer:                        "30",
 	pay.MeansKeyDebitTransfer:                         "31",
 	pay.MeansKeyCash:                                  "10",
@@ -29,7 +31,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if val, ok := paymentMeansMap[instr.Key]; ok {
+	if val := pay.LookupMeansCode(paymentMeansMap, instr.Key); val != "" {
 		instr.Ext = instr.Ext.Merge(
 			tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyPaymentMeans: val}),
 		)

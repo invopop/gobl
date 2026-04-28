@@ -25,3 +25,32 @@ func TestMeansKey(t *testing.T) {
 	err = rules.Validate(i)
 	assert.NoError(t, err)
 }
+
+func TestLookupMeansCode(t *testing.T) {
+	m := map[cbc.Key]cbc.Code{
+		pay.MeansKeyCard:                              "04",
+		pay.MeansKeyCard.With(pay.MeansKeyDebit):      "28",
+		pay.MeansKeyCash:                              "01",
+	}
+
+	t.Run("exact match wins", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("28"), pay.LookupMeansCode(m, pay.MeansKeyCard.With(pay.MeansKeyDebit)))
+	})
+
+	t.Run("falls back through Pop", func(t *testing.T) {
+		// `card+credit` is not registered; should fall back to `card`.
+		assert.Equal(t, cbc.Code("04"), pay.LookupMeansCode(m, pay.MeansKeyCard.With(pay.MeansKeyCredit)))
+	})
+
+	t.Run("bare key match", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("01"), pay.LookupMeansCode(m, pay.MeansKeyCash))
+	})
+
+	t.Run("missing key returns empty", func(t *testing.T) {
+		assert.Equal(t, cbc.Code(""), pay.LookupMeansCode(m, pay.MeansKeyCheque))
+	})
+
+	t.Run("empty key returns empty", func(t *testing.T) {
+		assert.Equal(t, cbc.Code(""), pay.LookupMeansCode(m, cbc.KeyEmpty))
+	})
+}

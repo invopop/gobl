@@ -13,7 +13,7 @@ import (
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := saft.PaymentMeansExtensions()
 	assert.False(t, m.IsZero())
-	assert.Equal(t, 10, m.Len())
+	assert.Equal(t, 12, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("NU"))
 }
 
@@ -59,6 +59,20 @@ func TestPayInstructionsNormalization(t *testing.T) {
 				}),
 			},
 			out: "CB",
+		},
+		{
+			name: "card+credit, no ext",
+			instr: &pay.Instructions{
+				Key: pay.MeansKeyCard.With(pay.MeansKeyCredit),
+			},
+			out: "CC",
+		},
+		{
+			name: "card+debit, no ext",
+			instr: &pay.Instructions{
+				Key: pay.MeansKeyCard.With(pay.MeansKeyDebit),
+			},
+			out: "CD",
 		},
 	}
 

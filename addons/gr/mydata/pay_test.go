@@ -45,6 +45,18 @@ func TestPayInstructions(t *testing.T) {
 		ad.Normalizer(i)
 		assert.NoError(t, rules.Validate(i, withAddonContext()))
 	})
+
+	t.Run("card sub-keys fall back to bare card", func(t *testing.T) {
+		for _, k := range []cbc.Key{
+			pay.MeansKeyCard,
+			pay.MeansKeyCard.With(pay.MeansKeyCredit),
+			pay.MeansKeyCard.With(pay.MeansKeyDebit),
+		} {
+			i := &pay.Instructions{Key: k}
+			ad.Normalizer(i)
+			assert.Equal(t, "7", i.Ext.Get(mydata.ExtKeyPaymentMeans).String(), "key=%s", k)
+		}
+	})
 }
 
 func TestPayAdvance(t *testing.T) {

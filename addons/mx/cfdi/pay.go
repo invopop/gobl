@@ -23,7 +23,6 @@ const (
 	MeansKeyRemission       cbc.Key = "remission"
 	MeansKeyExpiration      cbc.Key = "expiration"
 	MeansKeySatisfyCreditor cbc.Key = "satisfy-creditor"
-	MeansKeyDebit           cbc.Key = "debit"
 	MeansKeyServices        cbc.Key = "services"
 	MeansKeyAdvance         cbc.Key = "advance"
 	MeansKeyIntermediary    cbc.Key = "intermediary"
@@ -39,7 +38,9 @@ var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyCash:                                "01",
 	pay.MeansKeyCheque:                              "02",
 	pay.MeansKeyCreditTransfer:                      "03",
-	pay.MeansKeyCard:                                "04",
+	pay.MeansKeyCard:                                "04", // legacy/generic, treated as credit card
+	pay.MeansKeyCard.With(pay.MeansKeyCredit):       "04",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):        "28",
 	pay.MeansKeyOnline.With(MeansKeyWallet):         "05",
 	pay.MeansKeyOnline:                              "06",
 	pay.MeansKeyOther.With(MeansKeyGroceryVouchers): "08",
@@ -53,7 +54,7 @@ var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyOther.With(MeansKeyRemission):       "25",
 	pay.MeansKeyOther.With(MeansKeyExpiration):      "26",
 	pay.MeansKeyOther.With(MeansKeySatisfyCreditor): "27",
-	pay.MeansKeyOther.With(MeansKeyDebit):           "28",
+	pay.MeansKeyOther.With(pay.MeansKeyDebit):       "28", // deprecated alias: use card+debit
 	pay.MeansKeyOther.With(MeansKeyServices):        "29",
 	pay.MeansKeyOther.With(MeansKeyAdvance):         "30",
 	pay.MeansKeyOther.With(MeansKeyIntermediary):    "31",
@@ -63,7 +64,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
+	if code := pay.LookupMeansCode(paymentMeansKeyMap, instr.Key); code != "" {
 		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))
@@ -74,7 +75,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 	if adv == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
+	if code := pay.LookupMeansCode(paymentMeansKeyMap, adv.Key); code != "" {
 		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))

@@ -27,6 +27,24 @@ func TestPayInstructions(t *testing.T) {
 		assert.Equal(t, "30", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
 	})
 
+	t.Run("bare card maps to 48", func(t *testing.T) {
+		m := &pay.Instructions{Key: pay.MeansKeyCard}
+		ad.Normalizer(m)
+		assert.Equal(t, "48", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("card+credit maps to 54", func(t *testing.T) {
+		m := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyCredit)}
+		ad.Normalizer(m)
+		assert.Equal(t, "54", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
+	})
+
+	t.Run("card+debit maps to 55", func(t *testing.T) {
+		m := &pay.Instructions{Key: pay.MeansKeyCard.With(pay.MeansKeyDebit)}
+		ad.Normalizer(m)
+		assert.Equal(t, "55", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		var m *pay.Instructions
 		assert.NotPanics(t, func() {

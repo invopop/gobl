@@ -35,7 +35,7 @@ func normalizePayInstructions(i *pay.Instructions) {
 	if i == nil {
 		return
 	}
-	extVal := paymentMeansMap[i.Key]
+	extVal := pay.LookupMeansCode(paymentMeansMap, i.Key)
 	if extVal != "" {
 		if i.Ext.IsZero() {
 			i.Ext = tax.MakeExtensions()
@@ -48,7 +48,7 @@ func normalizePayAdvance(a *pay.Advance) {
 	if a == nil {
 		return
 	}
-	extVal := paymentMeansMap[a.Key]
+	extVal := pay.LookupMeansCode(paymentMeansMap, a.Key)
 	if extVal != "" {
 		if a.Ext.IsZero() {
 			a.Ext = tax.MakeExtensions()
