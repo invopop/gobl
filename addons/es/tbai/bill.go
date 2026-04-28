@@ -95,14 +95,20 @@ func billInvoiceRules() *rules.Set {
 		// Customer
 		// Code 03: customer required for non-simplified invoices
 		rules.When(
-			is.Func("non-simplified", func(val any) bool {
-				inv, ok := val.(*bill.Invoice)
-				return ok && inv != nil && !inv.HasTags(tax.TagSimplified)
-			}),
+			is.Func("non-simplified", isNotSimplifiedInvoice),
 			rules.Field("customer",
 				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
 				rules.Field("tax_id",
 					rules.Assert("08", "customer tax ID is required", is.Present),
+				),
+			),
+		),
+		// Code 09: customer tax_id must not be set on simplified invoices
+		rules.When(
+			is.Func("simplified", isSimplifiedInvoice),
+			rules.Field("customer",
+				rules.Field("tax_id",
+					rules.Assert("09", "customer tax ID must not be set for simplified invoices", is.Nil),
 				),
 			),
 		),
@@ -152,4 +158,13 @@ func notesHasGeneralKey(val any) bool {
 		}
 	}
 	return false
+}
+
+func isSimplifiedInvoice(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	return ok && inv != nil && inv.HasTags(tax.TagSimplified)
+}
+
+func isNotSimplifiedInvoice(val any) bool {
+	return !isSimplifiedInvoice(val)
 }
