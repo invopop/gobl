@@ -151,8 +151,8 @@ func TestCorrectWithNormalize(t *testing.T) {
 	t.Run("copies tax extensions to preceding", func(t *testing.T) {
 		inv := testInvoiceARForCorrection(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyConcept))
 
 		err := inv.Correct(
 			bill.Credit,
@@ -162,11 +162,11 @@ func TestCorrectWithNormalize(t *testing.T) {
 
 		// Original extensions copied to preceding
 		pre := inv.Preceding[0]
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyConcept))
 
 		// Invoice doc type set via correction normalizer
-		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
 	})
 
 }

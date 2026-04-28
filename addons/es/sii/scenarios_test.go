@@ -65,7 +65,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	})
 }
 
-func TestCorrectionNormalizer(t *testing.T) {
+func TestCorrectionNormalize(t *testing.T) {
 	t.Run("ignores non-invoice document", func(t *testing.T) {
 		ad := tax.AddonForKey(sii.V1)
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
@@ -82,12 +82,12 @@ func TestCorrectionNormalizer(t *testing.T) {
 	t.Run("credit note routes doc-type to invoice", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		require.NoError(t, i.Calculate())
-		assert.Equal(t, "F1", i.Tax.Ext[sii.ExtKeyDocType].String())
+		assert.Equal(t, "F1", i.Tax.Ext.Get(sii.ExtKeyDocType).String())
 
 		require.NoError(t, i.Correct(bill.Credit, bill.WithExtension(sii.ExtKeyDocType, "R1")))
 
-		assert.Equal(t, "R1", i.Tax.Ext[sii.ExtKeyDocType].String())
+		assert.Equal(t, "R1", i.Tax.Ext.Get(sii.ExtKeyDocType).String())
 		// Doc type should not remain on preceding
-		assert.Empty(t, i.Preceding[0].Ext[sii.ExtKeyDocType])
+		assert.Empty(t, i.Preceding[0].Ext.Get(sii.ExtKeyDocType))
 	})
 }

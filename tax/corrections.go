@@ -8,13 +8,13 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// CorrectionNormalizer is a callback invoked during the Correct() process
+// CorrectionNormalize is a callback invoked during the Correct() process
 // to allow addons and regimes to perform custom normalization. The document
 // is passed as `any` to avoid circular imports; implementations should
 // type-assert to the concrete type (e.g., *bill.Invoice).
 // When called, the document's Preceding field is already set and the
 // correction options are available via the document's accessor method.
-type CorrectionNormalizer func(doc any)
+type CorrectionNormalize func(doc any)
 
 // CorrectionSet defines a set of correction definitions for
 // a selection of schemas.
@@ -37,7 +37,7 @@ type CorrectionDefinition struct {
 	// Normalize is an optional callback invoked during Correct() to allow
 	// addon/regime-specific logic to route extensions between the document
 	// and the preceding reference.
-	Normalize CorrectionNormalizer `json:"-"`
+	Normalize CorrectionNormalize `json:"-"`
 }
 
 func correctionDefinitionRules() *rules.Set {
@@ -78,7 +78,7 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		cd.CopyTax = other.CopyTax
 	}
 	// Chain normalizers so both run in sequence.
-	var norm CorrectionNormalizer
+	var norm CorrectionNormalize
 	switch {
 	case cd.Normalize != nil && other.Normalize != nil:
 		first, second := cd.Normalize, other.Normalize

@@ -3,7 +3,6 @@ package arca
 import (
 	"errors"
 	"fmt"
-	"maps"
 	"regexp"
 	"strconv"
 
@@ -49,7 +48,7 @@ var invoiceTags = &tax.TagSet{
 	},
 }
 
-// normalizeInvoiceCorrection is the CorrectionNormalizer callback for ARCA.
+// normalizeInvoiceCorrection is the CorrectionNormalize callback for ARCA.
 // It copies the invoice's original tax extensions to the preceding document
 // reference, then routes the user-provided doc-type to the invoice itself.
 func normalizeInvoiceCorrection(doc any) {
@@ -64,15 +63,14 @@ func normalizeInvoiceCorrection(doc any) {
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
 
 	// Copy the invoice's original tax extensions to preceding so that
-	// the original doc-type, concept, etc. are preserved. Clone to
-	// ensure preceding gets an independent map.
-	if inv.Tax != nil && len(inv.Tax.Ext) > 0 {
-		ref.Ext = maps.Clone(inv.Tax.Ext).Merge(ref.Ext)
+	// the original doc-type, concept, etc. are preserved.
+	if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
+		ref.Ext = inv.Tax.Ext.Merge(ref.Ext)
 	}
 
 	// Route doc-type from correction options to the invoice.
-	if opts != nil && opts.Ext != nil {
-		if docType, ok := opts.Ext[ExtKeyDocType]; ok {
+	if opts != nil {
+		if docType := opts.Ext.Get(ExtKeyDocType); docType != "" {
 			if inv.Tax == nil {
 				inv.Tax = new(bill.Tax)
 			}

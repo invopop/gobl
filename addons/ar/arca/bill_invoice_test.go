@@ -1323,21 +1323,21 @@ func TestCorrectionNormalize(t *testing.T) {
 		inv.Tax = nil
 		inv.Preceding = []*org.DocumentRef{{
 			Code: "1",
-			Ext:  tax.Extensions{arca.ExtKeyDocType: "3"},
+			Ext:  tax.ExtensionsOf(tax.ExtMap{arca.ExtKeyDocType: "3"}),
 		}}
 		err := inv.Correct(
 			bill.Credit,
 			bill.WithExtension(arca.ExtKeyDocType, "3"),
 		)
 		require.NoError(t, err)
-		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
 	})
 
 	t.Run("copies tax extensions to preceding and routes doc-type to invoice", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyConcept))
 
 		err := inv.Correct(
 			bill.Credit,
@@ -1347,29 +1347,29 @@ func TestCorrectionNormalize(t *testing.T) {
 
 		// Original extensions copied to preceding
 		pre := inv.Preceding[0]
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyConcept))
 
 		// Invoice doc type updated via correction normalizer
-		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
 	})
 
 	t.Run("credit note B", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		// Clear pre-set doc type so normalizer derives it from customer VAT status
-		delete(inv.Tax.Ext, arca.ExtKeyDocType)
+		inv.Tax.Ext = inv.Tax.Ext.Delete(arca.ExtKeyDocType)
 		inv.Customer.TaxID = nil
-		inv.Customer.Ext = nil
+		inv.Customer.Ext = tax.Extensions{}
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "12345678",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(tax.ExtMap{
 					arca.ExtKeyIdentityType: "96", // DNI
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("6"), inv.Tax.Ext[arca.ExtKeyDocType]) // Invoice B
+		assert.Equal(t, cbc.Code("6"), inv.Tax.Ext.Get(arca.ExtKeyDocType)) // Invoice B
 
 		err := inv.Correct(
 			bill.Credit,
@@ -1377,9 +1377,9 @@ func TestCorrectionNormalize(t *testing.T) {
 		)
 		require.NoError(t, err)
 
-		assert.Equal(t, cbc.Code("8"), inv.Tax.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("6"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("8"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("6"), inv.Preceding[0].Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext.Get(arca.ExtKeyConcept))
 	})
 
 	t.Run("without doc-type extension copies originals to preceding", func(t *testing.T) {
@@ -1392,8 +1392,8 @@ func TestCorrectionNormalize(t *testing.T) {
 
 		// Original extensions still copied to preceding
 		pre := inv.Preceding[0]
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), pre.Ext[arca.ExtKeyConcept])
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyConcept))
 	})
 
 	t.Run("debit note A", func(t *testing.T) {
@@ -1407,8 +1407,8 @@ func TestCorrectionNormalize(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, bill.InvoiceTypeDebitNote, inv.Type)
-		assert.Equal(t, cbc.Code("2"), inv.Tax.Ext[arca.ExtKeyDocType])
-		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext[arca.ExtKeyDocType])
+		assert.Equal(t, cbc.Code("2"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext.Get(arca.ExtKeyDocType))
 	})
 
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"maps"
 	"strings"
 
 	"github.com/invopop/gobl/cal"
@@ -283,9 +282,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 
 	cd := inv.correctionDef()
 
-	// Copy and prepare the basic fields. Clone the extensions so that
-	// correction normalizers can modify preceding.Ext without affecting
-	// the original options.
+	// Copy and prepare the basic fields.
 	pre := &org.DocumentRef{
 		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
@@ -293,7 +290,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
-		Ext:       maps.Clone(o.Ext),
+		Ext:       o.Ext,
 	}
 	if o.CopyTax && inv.Totals != nil {
 		pre.Tax = inv.Totals.Taxes.Clone()
