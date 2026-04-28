@@ -146,7 +146,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, rules.Validate(inv))
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer tax ID must not be set for simplified invoices")
 	})
 
 	t.Run("with exemption reason", func(t *testing.T) {
