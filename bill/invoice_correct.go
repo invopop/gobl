@@ -296,7 +296,13 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		pre.Tax = inv.Totals.Taxes.Clone()
 	}
 
-	// Set preceding before resetting fields so the normalizer can access it.
+	// Validate before mutating the invoice so failure leaves it untouched.
+	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
+		return err
+	}
+
+	// Mutate the invoice. Preceding must be set before the normalizer runs
+	// so callbacks can access it via inv.Preceding[0].
 	inv.Preceding = []*org.DocumentRef{pre}
 
 	inv.UUID = ""
@@ -315,10 +321,6 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	if cd != nil && cd.Normalize != nil {
 		inv.correctionOptions = o
 		cd.Normalize(inv)
-	}
-
-	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
-		return err
 	}
 
 	// Running a Calculate feels a bit out of place, but not performing

@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
@@ -63,7 +64,8 @@ func (cs CorrectionSet) Def(schema string) *CorrectionDefinition {
 	return nil
 }
 
-// Merge combines two correction definitions into a single one.
+// Merge combines two correction definitions into a new definition without
+// mutating either input.
 func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDefinition {
 	if cd == nil {
 		return other
@@ -73,9 +75,6 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	}
 	if cd.Schema != other.Schema {
 		return cd
-	}
-	if other.CopyTax {
-		cd.CopyTax = other.CopyTax
 	}
 	// Chain normalizers so both run in sequence.
 	var norm CorrectionNormalize
@@ -91,16 +90,15 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	default:
 		norm = cd.Normalize
 	}
-	cd = &CorrectionDefinition{
+	return &CorrectionDefinition{
 		Schema:         cd.Schema,
-		Types:          append(cd.Types, other.Types...),
-		Extensions:     append(cd.Extensions, other.Extensions...),
+		Types:          slices.Concat(cd.Types, other.Types),
+		Extensions:     slices.Concat(cd.Extensions, other.Extensions),
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
-		Stamps:         append(cd.Stamps, other.Stamps...),
-		CopyTax:        cd.CopyTax,
+		Stamps:         slices.Concat(cd.Stamps, other.Stamps),
+		CopyTax:        cd.CopyTax || other.CopyTax,
 		Normalize:      norm,
 	}
-	return cd
 }
 
 // HasType returns true if the correction definition has a type that matches the one provided.

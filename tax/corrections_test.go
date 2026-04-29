@@ -78,6 +78,34 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 		other := &tax.CorrectionDefinition{Schema: "note/message"}
 		assert.Equal(t, cd, cd.Merge(other))
 	})
+
+	t.Run("does not mutate inputs", func(t *testing.T) {
+		cd := &tax.CorrectionDefinition{
+			Schema:     bill.ShortSchemaInvoice,
+			Types:      []cbc.Key{"a"},
+			Extensions: []cbc.Key{facturae.ExtKeyCorrection},
+			Stamps:     []cbc.Key{"s1"},
+			CopyTax:    false,
+		}
+		other := &tax.CorrectionDefinition{
+			Schema:     bill.ShortSchemaInvoice,
+			Types:      []cbc.Key{"b"},
+			Extensions: []cbc.Key{tbai.ExtKeyCorrection},
+			Stamps:     []cbc.Key{"s2"},
+			CopyTax:    true,
+		}
+		_ = cd.Merge(other)
+
+		// Receiver must remain unchanged
+		assert.False(t, cd.CopyTax, "receiver CopyTax must not be mutated")
+		assert.Equal(t, []cbc.Key{"a"}, cd.Types)
+		assert.Equal(t, []cbc.Key{facturae.ExtKeyCorrection}, cd.Extensions)
+		assert.Equal(t, []cbc.Key{"s1"}, cd.Stamps)
+
+		// Other must remain unchanged
+		assert.True(t, other.CopyTax)
+		assert.Equal(t, []cbc.Key{"b"}, other.Types)
+	})
 }
 
 func TestCorrectionDefinitionHasType(t *testing.T) {
