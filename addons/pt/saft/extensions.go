@@ -1073,8 +1073,8 @@ var extensions = []*cbc.Definition{
 
 				| Code | Name                                               | GOBL Payment Means                                    |
 				| ---- | -------------------------------------------------- | ----------------------------------------------------- |
-				| ~CC~ | Cartão crédito                                     | ~card~                                                |
-				| ~CD~ | Cartão débito                                      | (*)                                                   |
+				| ~CC~ | Cartão crédito                                     | ~card~ or ~card+credit~                               |
+				| ~CD~ | Cartão débito                                      | ~card+debit~                                          |
 				| ~CH~ | Cheque bancário                                    | ~cheque~                                              |
 				| ~CI~ | Letter of credit                                   | (*)                                                   |
 				| ~CO~ | Cheque ou cartão oferta                            | (*)                                                   |

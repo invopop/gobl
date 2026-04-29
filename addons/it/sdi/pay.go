@@ -41,6 +41,8 @@ var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyPromissoryNote:                       "MP06",
 	pay.MeansKeyOther.With(MeansKeyPaymentSlip):      "MP07",
 	pay.MeansKeyCard:                                 "MP08",
+	pay.MeansKeyCard.With(pay.MeansKeyCredit):        "MP08",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):         "MP08",
 	pay.MeansKeyOnline:                               "MP08",
 	pay.MeansKeyDirectDebit.With(MeansKeyRID):        "MP09",
 	pay.MeansKeyDirectDebit.With(MeansKeyRIDUtility): "MP10",

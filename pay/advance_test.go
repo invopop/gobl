@@ -103,6 +103,6 @@ func TestAdvanceJSONSchemaExtend(t *testing.T) {
 	a.JSONSchemaExtend(schema)
 	prop, ok := schema.Properties.Get("key")
 	require.True(t, ok)
-	assert.Len(t, prop.AnyOf, 15)
+	assert.Len(t, prop.AnyOf, 17)
 	assert.Equal(t, cbc.Key("any"), prop.AnyOf[0].Const)
 }

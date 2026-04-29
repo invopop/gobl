@@ -15,13 +15,15 @@ const (
 )
 
 var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCash:                        "1", // Cash / Gotówka
-	pay.MeansKeyCard:                        "2", // Card / Karta
-	pay.MeansKeyOther.With(MeansKeyVoucher): "3", // Voucher / Bon
-	pay.MeansKeyCheque:                      "4", // Cheque / Czek
-	pay.MeansKeyOther.With(MeansKeyCredit):  "5", // Credit / Kredyt
-	pay.MeansKeyCreditTransfer:              "6", // Credit Transfer / Przelew
-	pay.MeansKeyOnline:                      "7", // Online / Mobilna
+	pay.MeansKeyCash: "1", // Cash / Gotówka
+	pay.MeansKeyCard: "2", // Card / Karta
+	pay.MeansKeyCard.With(pay.MeansKeyCredit): "2", // Card / Karta
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):  "2", // Card / Karta
+	pay.MeansKeyOther.With(MeansKeyVoucher):   "3", // Voucher / Bon
+	pay.MeansKeyCheque:                        "4", // Cheque / Czek
+	pay.MeansKeyOther.With(MeansKeyCredit):    "5", // Credit / Kredyt
+	pay.MeansKeyCreditTransfer:                "6", // Credit Transfer / Przelew
+	pay.MeansKeyOnline:                        "7", // Online / Mobilna
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {

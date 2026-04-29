@@ -13,7 +13,7 @@ import (
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := saft.PaymentMeansExtensions()
 	assert.False(t, m.IsZero())
-	assert.Equal(t, 10, m.Len())
+	assert.Equal(t, 12, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("NU"))
 }
 

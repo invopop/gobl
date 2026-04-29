@@ -10,8 +10,10 @@ import (
 )
 
 var paymentMeansMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyAny:                                   "1",
-	pay.MeansKeyCard:                                  "48",
+	pay.MeansKeyAny:  "1",
+	pay.MeansKeyCard: "48",
+	pay.MeansKeyCard.With(pay.MeansKeyCredit):         "48",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "55",
 	pay.MeansKeyCreditTransfer:                        "30",
 	pay.MeansKeyDebitTransfer:                         "31",
 	pay.MeansKeyCash:                                  "10",

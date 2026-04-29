@@ -17,7 +17,7 @@ import (
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := sdi.PaymentMeansExtensions()
 	assert.False(t, m.IsZero())
-	assert.Equal(t, 24, m.Len())
+	assert.Equal(t, 26, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("MP01"))
 }
 

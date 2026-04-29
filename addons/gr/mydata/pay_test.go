@@ -15,7 +15,7 @@ import (
 func TestPaymentMeans(t *testing.T) {
 	m := mydata.PaymentMeansExtensions()
 	assert.False(t, m.IsZero())
-	assert.Equal(t, 7, m.Len())
+	assert.Equal(t, 9, m.Len())
 }
 
 func TestPayInstructions(t *testing.T) {

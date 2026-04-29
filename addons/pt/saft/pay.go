@@ -13,16 +13,18 @@ func PaymentMeansExtensions() tax.Extensions {
 }
 
 var paymentMeansMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCard:           "CC",
-	pay.MeansKeyCreditTransfer: "TB",
-	pay.MeansKeyDebitTransfer:  "TB",
-	pay.MeansKeyCash:           "NU",
-	pay.MeansKeyPromissoryNote: "LC",
-	pay.MeansKeyNetting:        "CS",
-	pay.MeansKeyCheque:         "CH",
-	pay.MeansKeyDirectDebit:    "TB",
-	pay.MeansKeyOnline:         "DE",
-	pay.MeansKeyOther:          "OU",
+	pay.MeansKeyCard: "CC",
+	pay.MeansKeyCard.With(pay.MeansKeyCredit): "CC",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):  "CD",
+	pay.MeansKeyCreditTransfer:                "TB",
+	pay.MeansKeyDebitTransfer:                 "TB",
+	pay.MeansKeyCash:                          "NU",
+	pay.MeansKeyPromissoryNote:                "LC",
+	pay.MeansKeyNetting:                       "CS",
+	pay.MeansKeyCheque:                        "CH",
+	pay.MeansKeyDirectDebit:                   "TB",
+	pay.MeansKeyOnline:                        "DE",
+	pay.MeansKeyOther:                         "OU",
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {

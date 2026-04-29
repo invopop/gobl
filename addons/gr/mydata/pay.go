@@ -29,6 +29,8 @@ var paymentMeansMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyPromissoryNote:                       "5",
 	pay.MeansKeyOnline:                               "6",
 	pay.MeansKeyCard:                                 "7",
+	pay.MeansKeyCard.With(pay.MeansKeyCredit):        "7",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):         "7",
 }
 
 func normalizePayInstructions(i *pay.Instructions) {
