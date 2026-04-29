@@ -868,10 +868,6 @@
   "corrections": [
     {
       "schema": "bill/invoice",
-      "types": [
-        "credit-note",
-        "debit-note"
-      ],
       "extensions": [
         "ar-arca-doc-type"
       ]

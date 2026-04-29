@@ -25,14 +25,9 @@ const (
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	{
-		Schema: bill.ShortSchemaInvoice,
-		Types: []cbc.Key{
-			bill.InvoiceTypeCreditNote,
-			bill.InvoiceTypeDebitNote,
-		},
-		Extensions: []cbc.Key{
-			ExtKeyDocType,
-		},
+		Schema:     bill.ShortSchemaInvoice,
+		Extensions: []cbc.Key{ExtKeyDocType},
+		Normalize:  normalizeInvoiceCorrection,
 	},
 }
 
@@ -51,6 +46,37 @@ var invoiceTags = &tax.TagSet{
 			},
 		},
 	},
+}
+
+// normalizeInvoiceCorrection is the CorrectionNormalize callback for ARCA.
+// It copies the invoice's original tax extensions to the preceding document
+// reference, then routes the user-provided doc-type to the invoice itself.
+func normalizeInvoiceCorrection(doc any) {
+	inv, ok := doc.(*bill.Invoice)
+	if !ok || len(inv.Preceding) == 0 {
+		return
+	}
+	ref := inv.Preceding[0]
+	opts := inv.CorrectionOptionsValue()
+
+	// Remove user-provided doc-type from preceding since it routes to the invoice.
+	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
+
+	// Copy the invoice's original tax extensions to preceding so that
+	// the original doc-type, concept, etc. are preserved.
+	if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
+		ref.Ext = inv.Tax.Ext.Merge(ref.Ext)
+	}
+
+	// Route doc-type from correction options to the invoice.
+	if opts != nil {
+		if docType := opts.Ext.Get(ExtKeyDocType); docType != "" {
+			if inv.Tax == nil {
+				inv.Tax = new(bill.Tax)
+			}
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, docType)
+		}
+	}
 }
 
 func normalizeBillInvoice(inv *bill.Invoice) {

@@ -70,3 +70,30 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F3")
 	})
 }
+
+func TestCorrectionNormalize(t *testing.T) {
+	t.Run("ignores non-invoice document", func(t *testing.T) {
+		ad := tax.AddonForKey(verifactu.V1)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		require.NotNil(t, def.Normalize)
+		def.Normalize("not an invoice")
+	})
+
+	t.Run("ignores invoice without preceding", func(_ *testing.T) {
+		ad := tax.AddonForKey(verifactu.V1)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		def.Normalize(&bill.Invoice{})
+	})
+
+	t.Run("credit note routes doc-type to invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Calculate())
+		assert.Equal(t, "F1", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+
+		require.NoError(t, i.Correct(bill.Credit, bill.WithExtension(verifactu.ExtKeyDocType, "R1")))
+
+		assert.Equal(t, "R1", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+		// Doc type should not remain on preceding
+		assert.Empty(t, i.Preceding[0].Ext.Get(verifactu.ExtKeyDocType))
+	})
+}

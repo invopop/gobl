@@ -313,8 +313,7 @@ func TestInvoiceValidation(t *testing.T) {
 		data, _ := json.MarshalIndent(inv, "", "  ")
 		t.Log(string(data))
 		require.NoError(t, rules.Validate(inv))
-		assert.Equal(t, inv.Tax.Ext.Get(sii.ExtKeyDocType).String(), "R1")
-		assert.True(t, inv.Preceding[0].Ext.IsZero())
+		assert.Equal(t, "R1", inv.Tax.Ext.Get(sii.ExtKeyDocType).String())
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 

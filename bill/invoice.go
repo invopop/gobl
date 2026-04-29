@@ -102,6 +102,16 @@ type Invoice struct {
 	// in the main document. It is important that attachments are not used for alternative
 	// versions of the PDF, for that, see "links" inside the envelope headers.
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
+
+	// correctionOptions holds the options passed to Correct() so that
+	// correction normalizers can access them. Only set during Correct().
+	correctionOptions *CorrectionOptions `json:"-"`
+}
+
+// CorrectionOptionsValue returns the correction options used during
+// the current Correct() call. Only available inside correction normalizers.
+func (inv *Invoice) CorrectionOptionsValue() *CorrectionOptions {
+	return inv.correctionOptions
 }
 
 // CanSign returns a boolean indicating whether the invoice is ready to be signed
