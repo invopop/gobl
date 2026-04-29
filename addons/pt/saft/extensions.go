@@ -1068,7 +1068,7 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				The SAF-T's ~PaymentMechanism~ (Meios de pagamento) field specifies the payment means in a
 				sales invoice or payment. GOBL provides the ~pt-saft-payment-means~ extension to set this
-				value in your ~bill.Invoice~ advances or in you ~bill.Payment~ method. GOBL maps certain
+				value in your ~bill.Invoice~ advances or in your ~bill.Payment~ method. GOBL maps certain
 				payment mean keys automatically to this extension:
 
 				| Code | Name                                               | GOBL Payment Means                                    |
@@ -1091,7 +1091,7 @@ var extensions = []*cbc.Definition{
 				(*) For codes not mapped from a GOBL Payment Mean, use ~other~ and explicitly set the
 				extension.
 
-				For example, in an GOBL invoice:
+				For example, in a GOBL invoice:
 
 				~~~js
 				{
