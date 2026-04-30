@@ -9,22 +9,21 @@ import (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SAF-T PT.
 func PaymentMeansExtensions() tax.Extensions {
-	return tax.ExtensionsOf(paymentMeansMap)
+	return tax.ExtensionsOf(tax.ExtMap(paymentMeansMap))
 }
 
-var paymentMeansMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCard: "CC",
-	pay.MeansKeyCard.With(pay.MeansKeyCredit): "CC",
-	pay.MeansKeyCard.With(pay.MeansKeyDebit):  "CD",
-	pay.MeansKeyCreditTransfer:                "TB",
-	pay.MeansKeyDebitTransfer:                 "TB",
-	pay.MeansKeyCash:                          "NU",
-	pay.MeansKeyPromissoryNote:                "LC",
-	pay.MeansKeyNetting:                       "CS",
-	pay.MeansKeyCheque:                        "CH",
-	pay.MeansKeyDirectDebit:                   "TB",
-	pay.MeansKeyOnline:                        "DE",
-	pay.MeansKeyOther:                         "OU",
+var paymentMeansMap = cbc.CodeMap{
+	pay.MeansKeyCard:                         "CC",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit): "CD",
+	pay.MeansKeyCreditTransfer:               "TB",
+	pay.MeansKeyDebitTransfer:                "TB",
+	pay.MeansKeyCash:                         "NU",
+	pay.MeansKeyPromissoryNote:               "LC",
+	pay.MeansKeyNetting:                      "CS",
+	pay.MeansKeyCheque:                       "CH",
+	pay.MeansKeyDirectDebit:                  "TB",
+	pay.MeansKeyOnline:                       "DE",
+	pay.MeansKeyOther:                        "OU",
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
@@ -45,7 +44,7 @@ func mergePaymentMeans(key cbc.Key, ext tax.Extensions) tax.Extensions {
 	if key == pay.MeansKeyOther && ext.Get(ExtKeyPaymentMeans) != "" {
 		return ext // `other` won't override the extension if already set
 	}
-	if extVal, ok := paymentMeansMap[key]; ok {
+	if extVal := paymentMeansMap.Lookup(key); extVal != "" {
 		return ext.Merge(
 			tax.ExtensionsOf(tax.ExtMap{ExtKeyPaymentMeans: extVal}),
 		)

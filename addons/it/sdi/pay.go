@@ -29,10 +29,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return tax.ExtensionsOf(paymentMeansKeyMap)
+	return tax.ExtensionsOf(tax.ExtMap(paymentMeansKeyMap))
 }
 
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
+var paymentMeansKeyMap = cbc.CodeMap{
 	pay.MeansKeyCash:                                 "MP01",
 	pay.MeansKeyCheque:                               "MP02",
 	pay.MeansKeyBankDraft:                            "MP03",
@@ -41,8 +41,6 @@ var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
 	pay.MeansKeyPromissoryNote:                       "MP06",
 	pay.MeansKeyOther.With(MeansKeyPaymentSlip):      "MP07",
 	pay.MeansKeyCard:                                 "MP08",
-	pay.MeansKeyCard.With(pay.MeansKeyCredit):        "MP08",
-	pay.MeansKeyCard.With(pay.MeansKeyDebit):         "MP08",
 	pay.MeansKeyOnline:                               "MP08",
 	pay.MeansKeyDirectDebit.With(MeansKeyRID):        "MP09",
 	pay.MeansKeyDirectDebit.With(MeansKeyRIDUtility): "MP10",
@@ -65,7 +63,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[instr.Key]
+	extVal := paymentMeansKeyMap.Lookup(instr.Key)
 	if extVal != "" {
 		if instr.Ext.IsZero() {
 			instr.Ext = tax.MakeExtensions()
@@ -78,7 +76,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 	if adv == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[adv.Key]
+	extVal := paymentMeansKeyMap.Lookup(adv.Key)
 	if extVal != "" {
 		if adv.Ext.IsZero() {
 			adv.Ext = tax.MakeExtensions()

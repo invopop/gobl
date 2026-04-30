@@ -9,11 +9,10 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
+var paymentMeansKeyMap = cbc.CodeMap{
 	pay.MeansKeyCash:                                  "01", // Dinheiro
 	pay.MeansKeyCheque:                                "02", // Cheque
-	pay.MeansKeyCard:                                  "03", // Cartão de Crédito (generic)
-	pay.MeansKeyCard.With(pay.MeansKeyCredit):         "03", // Cartão de Crédito (specific)
+	pay.MeansKeyCard:                                  "03", // Cartão de Crédito
 	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "04", // Cartão de Débito
 	pay.MeansKeyDebitTransfer.With(pay.MeansKeyDebit): "04", // Cartão de Débito (deprecated)
 	pay.MeansKeyCreditTransfer:                        "18", // Transferência bancária
@@ -29,7 +28,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 		// `other` key does not override the extension
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
+	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
 		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))
@@ -44,7 +43,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 		// `other` key does not override the extension already set
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
+	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
 		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))

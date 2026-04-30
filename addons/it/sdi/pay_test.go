@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -17,7 +18,7 @@ import (
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := sdi.PaymentMeansExtensions()
 	assert.False(t, m.IsZero())
-	assert.Equal(t, 26, m.Len())
+	assert.Equal(t, 24, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("MP01"))
 }
 
@@ -70,7 +71,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Advances: []*pay.Advance{
 			{
-				Key:         pay.MeansKeyDirectDebit.With("fooo"),
+				Key:         cbc.Key("fooo"),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
 			},
@@ -82,7 +83,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
-			Key: pay.MeansKeyDirectDebit.With("fooo"),
+			Key: cbc.Key("fooo"),
 		},
 	}
 	require.NoError(t, inv.Calculate())

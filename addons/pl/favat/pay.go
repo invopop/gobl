@@ -13,11 +13,9 @@ const (
 	MeansKeyVoucher cbc.Key = "voucher"
 )
 
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCash: "1", // Cash / Gotówka
-	pay.MeansKeyCard: "2", // Card / Karta
-	pay.MeansKeyCard.With(pay.MeansKeyCredit):  "2", // Card / Karta
-	pay.MeansKeyCard.With(pay.MeansKeyDebit):   "2", // Card / Karta
+var paymentMeansKeyMap = cbc.CodeMap{
+	pay.MeansKeyCash:                           "1", // Cash / Gotówka
+	pay.MeansKeyCard:                           "2", // Card / Karta
 	pay.MeansKeyOther.With(MeansKeyVoucher):    "3", // Voucher / Bon
 	pay.MeansKeyCheque:                         "4", // Cheque / Czek
 	pay.MeansKeyOther.With(pay.MeansKeyCredit): "5", // Credit / Kredyt
@@ -29,7 +27,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
+	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
 		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))
@@ -40,7 +38,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 	if adv == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
+	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
 		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
 			ExtKeyPaymentMeans: code,
 		}))

@@ -21,15 +21,15 @@ Older versions - FA(1), FA(2):
 
 The FA_VAT `TFormaPlatnosci` field specifies an invoice's means of payment. The following table lists all the supported values and how GOBL will map them from the invoice's payment instructions key:
 
-| Code | Name    | GOBL Payment Instructions Key       |
-| ---- | ------- | ----------------------------------- |
-| 1    | Gotówka | `cash`                              |
-| 2    | Karta   | `card`, `card+credit`, `card+debit` |
-| 3    | Bon     | `coupon`                            |
-| 4    | Czek    | `cheque`                            |
-| 5    | Kredyt  | `loan`                              |
-| 6    | Przelew | `credit-transfer`                   |
-| 7    | Mobilna | `mobile`                            |
+| Code | Name    | GOBL Payment Instructions Key |
+| ---- | ------- | ----------------------------- |
+| 1    | Gotówka | `cash`                        |
+| 2    | Karta   | `card`                        |
+| 3    | Bon     | `coupon`                      |
+| 4    | Czek    | `cheque`                      |
+| 5    | Kredyt  | `loan`                        |
+| 6    | Przelew | `credit-transfer`             |
+| 7    | Mobilna | `mobile`                      |
 
 #### Example
 
