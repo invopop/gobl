@@ -28,7 +28,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 		return
 	}
 	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
-		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}
@@ -39,7 +39,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 		return
 	}
 	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
-		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -19,7 +20,7 @@ func TestTaxComboNormalization(t *testing.T) {
 		inv.Lines[0].Taxes[0] = &tax.Combo{
 			Category: "VAT",
 			Percent:  nil, // exempt
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"it-sdi-nature": "N1",
 			}),
 		}
@@ -33,7 +34,7 @@ func TestTaxComboNormalization(t *testing.T) {
 		inv.Lines[0].Taxes[0] = &tax.Combo{
 			Category: "IRPEF",
 			Percent:  num.NewPercentage(8, 3),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"it-sdi-retained-tax": "A",
 			}),
 		}

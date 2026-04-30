@@ -34,7 +34,7 @@ func validPayment() *bill.Payment {
 			},
 		},
 		Currency: "EUR",
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
 			saft.ExtKeySource:      saft.SourceBillingProduced,
 		}),
@@ -54,7 +54,7 @@ func validPayment() *bill.Payment {
 							Code: tax.CategoryVAT,
 							Rates: []*tax.RateTotal{
 								{
-									Ext: tax.ExtensionsOf(tax.ExtMap{
+									Ext: tax.ExtensionsOf(cbc.CodeMap{
 										pt.ExtKeyRegion:    "PT",
 										saft.ExtKeyTaxRate: "NOR",
 									}),
@@ -142,7 +142,7 @@ func TestPaymentValidation(t *testing.T) {
 
 	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Ext = tax.ExtensionsOf(tax.ExtMap{
+		pmt.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
 			saft.ExtKeySource:      saft.SourceBillingProduced,
 		})
@@ -151,7 +151,7 @@ func TestPaymentValidation(t *testing.T) {
 
 	t.Run("source billing integrated - source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Ext = tax.ExtensionsOf(tax.ExtMap{
+		pmt.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
 			saft.ExtKeySource:      saft.SourceBillingIntegrated,
 		})
@@ -164,7 +164,7 @@ func TestPaymentValidation(t *testing.T) {
 
 	t.Run("source billing manual - source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Ext = tax.ExtensionsOf(tax.ExtMap{
+		pmt.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
 			saft.ExtKeySource:      saft.SourceBillingManual,
 		})

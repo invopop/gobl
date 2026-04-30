@@ -32,7 +32,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	}
 	if val := paymentMeansMap.Lookup(instr.Key); val != "" {
 		instr.Ext = instr.Ext.Merge(
-			tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyPaymentMeans: val}),
+			tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: val}),
 		)
 	}
 }

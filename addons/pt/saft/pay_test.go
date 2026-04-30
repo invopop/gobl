@@ -37,7 +37,7 @@ func TestPayInstructionsNormalization(t *testing.T) {
 			name: "card, ext",
 			instr: &pay.Instructions{
 				Key: pay.MeansKeyCard,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
 				}),
 			},
@@ -54,7 +54,7 @@ func TestPayInstructionsNormalization(t *testing.T) {
 			name: "other, ext",
 			instr: &pay.Instructions{
 				Key: pay.MeansKeyOther,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
 				}),
 			},
@@ -96,7 +96,7 @@ func TestPayAdvanceNormalization(t *testing.T) {
 			name: "card, ext",
 			adv: &pay.Advance{
 				Key: pay.MeansKeyCard,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
 				}),
 			},
@@ -113,7 +113,7 @@ func TestPayAdvanceNormalization(t *testing.T) {
 			name: "other, ext",
 			adv: &pay.Advance{
 				Key: pay.MeansKeyOther,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
 				}),
 			},

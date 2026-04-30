@@ -32,14 +32,14 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionAzores,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(160, 3),
 					},
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionMadeira,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),
@@ -60,14 +60,14 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionAzores,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(90, 3),
 					},
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionMadeira,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),
@@ -88,21 +88,21 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionAzores,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionMadeira,
 						}),
 						Since:   cal.NewDate(2024, 10, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ExtKeyRegion: RegionMadeira,
 						}),
 						Since:   cal.NewDate(2011, 1, 1),

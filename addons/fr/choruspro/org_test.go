@@ -44,7 +44,7 @@ func TestNormalizeParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -157,7 +157,7 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -174,7 +174,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "FR",
 				Code:    "12345678901234",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -192,7 +192,7 @@ func TestValidateParty(t *testing.T) {
 					Code: "123456789",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -214,7 +214,7 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -230,7 +230,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "DE",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "2",
 			}),
 		}
@@ -252,7 +252,7 @@ func TestValidateParty(t *testing.T) {
 					Code: "123456789",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "2",
 			}),
 		}
@@ -268,7 +268,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "2",
 			}),
 		}
@@ -284,7 +284,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "3",
 			}),
 		}
@@ -300,7 +300,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "DE",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "3",
 			}),
 		}
@@ -316,7 +316,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "1",
 			}),
 		}
@@ -332,7 +332,7 @@ func TestValidateParty(t *testing.T) {
 				Country: "US",
 				Code:    "123456789",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "4",
 			}),
 		}
@@ -373,7 +373,7 @@ func TestValidateParty(t *testing.T) {
 					Code: "12345678901234",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyScheme: "2",
 			}),
 		}

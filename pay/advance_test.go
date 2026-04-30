@@ -20,7 +20,7 @@ func TestAdvanceNormalize(t *testing.T) {
 		Identify:    uuid.Identify{UUID: uuid.Zero},
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
 		}),
 	}

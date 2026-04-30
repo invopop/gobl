@@ -9,7 +9,7 @@ import (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SAF-T PT.
 func PaymentMeansExtensions() tax.Extensions {
-	return tax.ExtensionsOf(tax.ExtMap(paymentMeansMap))
+	return tax.ExtensionsOf(cbc.CodeMap(paymentMeansMap))
 }
 
 var paymentMeansMap = cbc.CodeMap{
@@ -46,7 +46,7 @@ func mergePaymentMeans(key cbc.Key, ext tax.Extensions) tax.Extensions {
 	}
 	if extVal := paymentMeansMap.Lookup(key); extVal != "" {
 		return ext.Merge(
-			tax.ExtensionsOf(tax.ExtMap{ExtKeyPaymentMeans: extVal}),
+			tax.ExtensionsOf(cbc.CodeMap{ExtKeyPaymentMeans: extVal}),
 		)
 	}
 	return ext

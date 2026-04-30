@@ -22,13 +22,13 @@ func TestCleanExtensions(t *testing.T) {
 	em2 := em.Clean()
 	assert.True(t, em2.IsZero())
 
-	em = tax.ExtensionsOf(tax.ExtMap{
+	em = tax.ExtensionsOf(cbc.CodeMap{
 		"key": "",
 	})
 	em2 = em.Clean()
 	assert.True(t, em2.IsZero())
 
-	em = tax.ExtensionsOf(tax.ExtMap{
+	em = tax.ExtensionsOf(cbc.CodeMap{
 		"key": "foo",
 		"bar": "",
 	})
@@ -49,14 +49,14 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "untdid-document-type: required")
 	})
 	t.Run("correct", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsRequire(untdid.ExtKeyDocumentType).Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("correct with extras", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 			iso.ExtKeySchemeID:        "1234",
 		})
@@ -64,7 +64,7 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("missing", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: "1234",
 		})
 		err := tax.ExtensionsRequire(untdid.ExtKeyDocumentType).Validate(em)
@@ -83,7 +83,7 @@ func TestExtensionsAllOrNoneValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("all present", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 			iso.ExtKeySchemeID:        "1234",
 		})
@@ -96,14 +96,14 @@ func TestExtensionsAllOrNoneValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("some present", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID).Validate(em)
 		assert.ErrorContains(t, err, "iso-scheme-id: required")
 	})
 	t.Run("some present reversed", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: "1234",
 		})
 		err := tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID).Validate(em)
@@ -122,14 +122,14 @@ func TestExtensionsExcludeValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("correct", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsExclude(untdid.ExtKeyDocumentType).Validate(em)
 		assert.ErrorContains(t, err, "untdid-document-type: must be blank")
 	})
 	t.Run("correct with extras", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 			iso.ExtKeySchemeID:        "1234",
 		})
@@ -149,14 +149,14 @@ func TestExtensionsAllowOneOfValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("one present", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsAllowOneOf(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID).Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("both present", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 			iso.ExtKeySchemeID:        "1234",
 		})
@@ -177,21 +177,21 @@ func TestExtensionsHasValues(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("different extensions", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: "1234",
 		})
 		err := tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389").Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("has codes", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389").Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("invalid code", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "102",
 		})
 		err := tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389").Validate(em)
@@ -210,28 +210,28 @@ func TestExtensionsExcludeCodes(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("different extensions", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: "1234",
 		})
 		err := tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, "380", "381").Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("allowed code", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "326",
 		})
 		err := tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, "380", "381").Validate(em)
 		assert.NoError(t, err)
 	})
 	t.Run("excluded code", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "380",
 		})
 		err := tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, "380", "381").Validate(em)
 		assert.ErrorContains(t, err, "untdid-document-type: value '380' not allowed")
 	})
 	t.Run("another excluded code", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyDocumentType: "381",
 		})
 		err := tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, "380", "381").Validate(em)
@@ -240,7 +240,7 @@ func TestExtensionsExcludeCodes(t *testing.T) {
 }
 
 func TestExtensionsHas(t *testing.T) {
-	em := tax.ExtensionsOf(tax.ExtMap{
+	em := tax.ExtensionsOf(cbc.CodeMap{
 		"key": "value",
 	})
 	assert.True(t, em.Has("key"))
@@ -253,14 +253,14 @@ func TestExtensionsValues(t *testing.T) {
 		assert.Empty(t, em.Values())
 	})
 	t.Run("with values", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"key1": "value1",
 			"key2": "value2",
 		})
 		assert.Equal(t, []cbc.Code{"value1", "value2"}, em.Values())
 	})
 	t.Run("sorted output", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"a": "cherry",
 			"b": "apple",
 			"c": "banana",
@@ -284,26 +284,26 @@ func TestExtensionsEquals(t *testing.T) {
 		},
 		{
 			name: "same",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 			want: true,
 		},
 		{
 			name: "different",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value2"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}),
 			want: false,
 		},
 		{
 			name: "different keys",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key2": "value"}),
 			want: false,
 		},
 		{
 			name: "different lengths",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
 			want: false,
 		},
 	}
@@ -329,26 +329,26 @@ func TestExtensionsContains(t *testing.T) {
 		},
 		{
 			name: "same",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 			want: true,
 		},
 		{
 			name: "different",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value2"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}),
 			want: false,
 		},
 		{
 			name: "different keys",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key2": "value"}),
 			want: false,
 		},
 		{
 			name: "different lengths",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 			want: true,
 		},
 	}
@@ -374,51 +374,51 @@ func TestExtensionsMerge(t *testing.T) {
 		},
 		{
 			name: "same",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 		},
 		{
 			name: "zero source",
 			em1:  tax.Extensions{},
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 		},
 		{
 			name: "zero destination",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 			em2:  tax.Extensions{},
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
 		},
 		{
 			name: "different",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value2"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value2"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}),
 		},
 		{
 			name: "different keys",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key2": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key2": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
 		},
 		{
 			name: "different lengths",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
 		},
 		{
 			name: "different lengths 2",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
 		},
 		{
 			name: "different lengths 3",
-			em1:  tax.ExtensionsOf(tax.ExtMap{"key": "value2"}),
-			em2:  tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
-			want: tax.ExtensionsOf(tax.ExtMap{"key": "value", "key2": "value"}),
+			em1:  tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}),
+			em2:  tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
+			want: tax.ExtensionsOf(cbc.CodeMap{"key": "value", "key2": "value"}),
 		},
 	}
 	for _, tt := range tests {
@@ -429,7 +429,7 @@ func TestExtensionsMerge(t *testing.T) {
 }
 
 func TestExtensionLookup(t *testing.T) {
-	em := tax.ExtensionsOf(tax.ExtMap{
+	em := tax.ExtensionsOf(cbc.CodeMap{
 		"key1": "foo",
 		"key2": "bar",
 	})
@@ -444,19 +444,19 @@ func TestExtensionGet(t *testing.T) {
 		assert.Equal(t, "", em.Get("key").String())
 	})
 	t.Run("with value", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"key": "value",
 		})
 		assert.Equal(t, "value", em.Get("key").String())
 	})
 	t.Run("missing", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"key": "value",
 		})
 		assert.Equal(t, "", em.Get("missing").String())
 	})
 	t.Run("with sub-keys", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"key": "value",
 		})
 		assert.Equal(t, "value", em.Get("key+foo").String())
@@ -467,23 +467,23 @@ func TestExtensionsSet(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		var em tax.Extensions
 		em = em.Set("key", "value")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value"}), em)
 	})
 
 	t.Run("immutable: discarded result does not mutate", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value1"})
 		em.Set("key", "value2") // result discarded
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 
 	t.Run("with new value", func(t *testing.T) {
 		em := tax.Extensions{}
 		em = em.Set("key", "value1")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 
 	t.Run("with empty value removes key", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value1"})
 		em = em.Set("key", "")
 		assert.True(t, em.IsZero())
 	})
@@ -493,19 +493,19 @@ func TestExtensionsSetIfEmpty(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		var em tax.Extensions
 		em = em.SetIfEmpty("key", "value")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value"}), em)
 	})
 
 	t.Run("with existing value stays the same", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value1"})
 		em = em.SetIfEmpty("key", "value2")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 
 	t.Run("with new value", func(t *testing.T) {
 		em := tax.Extensions{}
 		em = em.SetIfEmpty("key", "value1")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 }
 
@@ -513,25 +513,25 @@ func TestExtensionsSetOneOf(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		var em tax.Extensions
 		em = em.SetOneOf("key", "value1", "value2")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 
 	t.Run("with existing primary value and no alternatives replaces it", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value1"})
 		em = em.SetOneOf("key", "value2", "value3")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value2"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value2"}), em)
 	})
 
 	t.Run("with existing alternative value keeps it", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value3"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value3"})
 		em = em.SetOneOf("key", "value2", "value3")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value3"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value3"}), em)
 	})
 
 	t.Run("with no existing value", func(t *testing.T) {
 		em := tax.Extensions{}
 		em = em.SetOneOf("key", "value1", "value2")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value1"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value1"}), em)
 	})
 }
 
@@ -543,15 +543,15 @@ func TestExtensionsDelete(t *testing.T) {
 	})
 
 	t.Run("with value", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value"})
 		em = em.Delete("key")
 		assert.True(t, em.IsZero())
 	})
 
 	t.Run("with missing value", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"key": "value"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"key": "value"})
 		em = em.Delete("missing")
-		assert.Equal(t, tax.ExtensionsOf(tax.ExtMap{"key": "value"}), em)
+		assert.Equal(t, tax.ExtensionsOf(cbc.CodeMap{"key": "value"}), em)
 	})
 }
 
@@ -607,25 +607,25 @@ func TestExtensionHasValidCode(t *testing.T) {
 
 	t.Run("values-based: valid code passes", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-color")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-color": "red"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-color": "red"})
 		assert.True(t, rule.Check(em))
 	})
 
 	t.Run("values-based: another valid code passes", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-color")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-color": "blue"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-color": "blue"})
 		assert.True(t, rule.Check(em))
 	})
 
 	t.Run("values-based: invalid code fails", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-color")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-color": "purple"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-color": "purple"})
 		assert.False(t, rule.Check(em))
 	})
 
 	t.Run("values-based: other keys not checked", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-color")
-		em := tax.ExtensionsOf(tax.ExtMap{
+		em := tax.ExtensionsOf(cbc.CodeMap{
 			"test-regime-postal-code": "not-a-number",
 			"test-regime-color":       "green",
 		})
@@ -648,19 +648,19 @@ func TestExtensionHasValidCode(t *testing.T) {
 
 	t.Run("pattern-based: valid code passes", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-postal-code")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-postal-code": "12345"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-postal-code": "12345"})
 		assert.True(t, rule.Check(em))
 	})
 
 	t.Run("pattern-based: invalid code fails", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-postal-code")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-postal-code": "1234"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-postal-code": "1234"})
 		assert.False(t, rule.Check(em))
 	})
 
 	t.Run("pattern-based: non-matching value fails", func(t *testing.T) {
 		rule := tax.ExtensionHasValidCode("test-regime-postal-code")
-		em := tax.ExtensionsOf(tax.ExtMap{"test-regime-postal-code": "abcde"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"test-regime-postal-code": "abcde"})
 		assert.False(t, rule.Check(em))
 	})
 
@@ -694,7 +694,7 @@ func TestJSONSchemaExtend(t *testing.T) {
 
 func TestExtensionsOfEmptyReturnsZero(t *testing.T) {
 	assert.True(t, tax.ExtensionsOf(nil).IsZero())
-	assert.True(t, tax.ExtensionsOf(tax.ExtMap{}).IsZero())
+	assert.True(t, tax.ExtensionsOf(cbc.CodeMap{}).IsZero())
 }
 
 func TestExtensionsClone(t *testing.T) {
@@ -704,7 +704,7 @@ func TestExtensionsClone(t *testing.T) {
 		assert.True(t, c.IsZero())
 	})
 	t.Run("clone is independent", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1", "b": "2"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1", "b": "2"})
 		c := em.Clone()
 		assert.True(t, c.Equals(em))
 		// Mutating the clone via Set must not affect the original.
@@ -713,7 +713,7 @@ func TestExtensionsClone(t *testing.T) {
 		assert.Equal(t, "changed", c.Get("a").String())
 	})
 	t.Run("clone preserves all entries", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1", "b": "2", "c": "3"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1", "b": "2", "c": "3"})
 		c := em.Clone()
 		assert.Equal(t, 3, c.Len())
 		assert.Equal(t, em.Keys(), c.Keys())
@@ -722,7 +722,7 @@ func TestExtensionsClone(t *testing.T) {
 
 func TestExtensionsAllIterator(t *testing.T) {
 	t.Run("iterates in alphabetical key order", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"c": "cherry", "a": "apple", "b": "banana"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"c": "cherry", "a": "apple", "b": "banana"})
 		var keys []cbc.Key
 		var vals []cbc.Code
 		for k, v := range em.All() {
@@ -733,7 +733,7 @@ func TestExtensionsAllIterator(t *testing.T) {
 		assert.Equal(t, []cbc.Code{"apple", "banana", "cherry"}, vals)
 	})
 	t.Run("early break stops iteration", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1", "b": "2", "c": "3"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1", "b": "2", "c": "3"})
 		var count int
 		for range em.All() {
 			count++
@@ -779,7 +779,7 @@ func TestExtensionsMarshalJSON(t *testing.T) {
 		assert.Equal(t, `{"alpha":"a","mu":"m","zeta":"z"}`, string(b1))
 	})
 	t.Run("round-trip preserves entries", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1", "b": "2"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1", "b": "2"})
 		data, err := json.Marshal(em)
 		require.NoError(t, err)
 		var out tax.Extensions
@@ -825,13 +825,13 @@ func TestExtensionsUnmarshalJSON(t *testing.T) {
 
 func TestExtensionsFromValue(t *testing.T) {
 	t.Run("value type", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1"})
 		out, ok := tax.ExtensionsFromValue(em)
 		assert.True(t, ok)
 		assert.True(t, em.Equals(out))
 	})
 	t.Run("pointer type", func(t *testing.T) {
-		em := tax.ExtensionsOf(tax.ExtMap{"a": "1"})
+		em := tax.ExtensionsOf(cbc.CodeMap{"a": "1"})
 		out, ok := tax.ExtensionsFromValue(&em)
 		assert.True(t, ok)
 		assert.True(t, em.Equals(out))
@@ -855,7 +855,7 @@ func TestExtensionsRuleTestInterface(t *testing.T) {
 	rule := tax.ExtensionsRequire(untdid.ExtKeyDocumentType)
 	assert.Equal(t, "ext require [untdid-document-type]", rule.String())
 
-	em := tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyDocumentType: "326"})
+	em := tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyDocumentType: "326"})
 	assert.True(t, rule.Check(em))
 	assert.True(t, rule.Check(&em))
 

@@ -27,7 +27,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: "online",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
 			}),
 		},
@@ -36,7 +36,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "",
 				}),
 			},

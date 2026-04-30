@@ -121,7 +121,7 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
 			}),
 		}
@@ -191,7 +191,7 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(7, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: en16931.TaxCategoryIGIC,
 			}),
 		}
@@ -205,7 +205,7 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyZero,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
 			}),
 		}
@@ -219,7 +219,7 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(19, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
 			}),
 		}

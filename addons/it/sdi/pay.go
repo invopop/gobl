@@ -29,7 +29,7 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return tax.ExtensionsOf(tax.ExtMap(paymentMeansKeyMap))
+	return tax.ExtensionsOf(cbc.CodeMap(paymentMeansKeyMap))
 }
 
 var paymentMeansKeyMap = cbc.CodeMap{

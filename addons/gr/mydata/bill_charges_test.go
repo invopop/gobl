@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -24,7 +25,7 @@ func TestNormalizeCharge(t *testing.T) {
 	t.Run("with fee extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyFee: "13",
 			}),
 		}
@@ -36,7 +37,7 @@ func TestNormalizeCharge(t *testing.T) {
 	t.Run("with other tax extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyOtherTax: "8",
 			}),
 		}
@@ -48,7 +49,7 @@ func TestNormalizeCharge(t *testing.T) {
 	t.Run("with stamp duty extension", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyStampDuty: "1",
 			}),
 		}
@@ -69,7 +70,7 @@ func TestNormalizeCharge(t *testing.T) {
 	t.Run("with type extension set", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeOtherTax,
 				mydata.ExtKeyFee:     "13",
 			}),
@@ -82,7 +83,7 @@ func TestNormalizeCharge(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyStampDuty,
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyFee: "13",
 			}),
 		}
@@ -95,7 +96,7 @@ func TestNormalizeCharge(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyTax,
 			Amount: num.MakeAmount(500, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyOtherTax: "8",
 			}),
 		}
@@ -108,7 +109,7 @@ func TestNormalizeCharge(t *testing.T) {
 		c := &bill.Charge{
 			Key:    bill.ChargeKeyStampDuty,
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
 			}),
 		}
@@ -127,7 +128,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid fee", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: "2",
 				mydata.ExtKeyFee:     "13",
 			}),
@@ -139,7 +140,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid other tax", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType:  "3",
 				mydata.ExtKeyOtherTax: "8",
 			}),
@@ -151,7 +152,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("valid stamp duty", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType:   "4",
 				mydata.ExtKeyStampDuty: "1",
 			}),
@@ -163,7 +164,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing fee extension for fee type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1000, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
 			}),
 		}
@@ -175,7 +176,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing other tax extension for other tax type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(300, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeOtherTax,
 			}),
 		}
@@ -187,7 +188,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("missing stamp duty extension for stamp duty type", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1200, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType: mydata.TaxTypeStampDuty,
 			}),
 		}
@@ -199,7 +200,7 @@ func TestValidateCharge(t *testing.T) {
 	t.Run("multiple specific extensions", func(t *testing.T) {
 		c := &bill.Charge{
 			Amount: num.MakeAmount(1500, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				mydata.ExtKeyTaxType:  mydata.TaxTypeFee,
 				mydata.ExtKeyFee:      "13",
 				mydata.ExtKeyOtherTax: "8",

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
@@ -133,7 +134,7 @@ func TestOtherInvoiceTypeValidation(t *testing.T) {
 	inv := validInvoice()
 	inv.Type = bill.InvoiceTypeOther
 	inv.Tax = &bill.Tax{
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			mydata.ExtKeyInvoiceType: "8.2",
 		}),
 	}
@@ -183,7 +184,7 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 
 	t.Run("income cat, no type", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			mydata.ExtKeyIncomeCat: "category1_1",
 		})
 		require.NoError(t, inv.Calculate())
@@ -192,7 +193,7 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 
 	t.Run("income type, no cat", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			mydata.ExtKeyIncomeType: "E3_106",
 		})
 		require.NoError(t, inv.Calculate())
@@ -201,7 +202,7 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 
 	t.Run("income cat with type", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			mydata.ExtKeyIncomeType: "E3_106",
 			mydata.ExtKeyIncomeCat:  "category1_1",
 		})
