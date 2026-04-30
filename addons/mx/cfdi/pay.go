@@ -31,7 +31,7 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by CFDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return tax.ExtensionsOf(cbc.CodeMap(paymentMeansKeyMap))
+	return tax.ExtensionsOf(paymentMeansKeyMap)
 }
 
 var paymentMeansKeyMap = cbc.CodeMap{
