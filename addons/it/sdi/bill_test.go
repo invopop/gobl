@@ -506,7 +506,7 @@ func TestPaymentValidation(t *testing.T) {
 	t.Run("payment advances", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid up front",
 					Percent:     num.NewPercentage(100, 3),

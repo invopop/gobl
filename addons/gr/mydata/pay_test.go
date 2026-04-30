@@ -50,7 +50,7 @@ func TestPayInstructions(t *testing.T) {
 func TestPayAdvance(t *testing.T) {
 	ad := tax.AddonForKey(mydata.V1)
 	t.Run("valid cash", func(t *testing.T) {
-		i := &pay.Advance{
+		i := &pay.Record{
 			Key:         pay.MeansKeyCash,
 			Description: "Cash advance",
 		}
@@ -61,7 +61,7 @@ func TestPayAdvance(t *testing.T) {
 	})
 
 	t.Run("invalid key", func(t *testing.T) {
-		i := &pay.Advance{
+		i := &pay.Record{
 			Key:         cbc.Key("foo"),
 			Description: "Bad advance",
 		}
@@ -72,7 +72,7 @@ func TestPayAdvance(t *testing.T) {
 	})
 
 	t.Run("nil", func(t *testing.T) {
-		var i *pay.Advance
+		var i *pay.Record
 		ad.Normalizer(i)
 		assert.NoError(t, rules.Validate(i, withAddonContext()))
 	})

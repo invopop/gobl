@@ -265,6 +265,13 @@
     {
       "id": "GOBL-BILL-PAYMENT",
       "object": "bill.Payment",
+      "assert": [
+        {
+          "id": "GOBL-BILL-PAYMENT-08",
+          "desc": "methods sum must match total",
+          "tests": "methods sum"
+        }
+      ],
       "subsets": [
         {
           "field": "type",
@@ -282,11 +289,11 @@
           ]
         },
         {
-          "field": "method",
+          "field": "methods",
           "assert": [
             {
               "id": "GOBL-BILL-PAYMENT-03",
-              "desc": "payment method is required",
+              "desc": "at least one payment method is required",
               "tests": "present"
             }
           ]

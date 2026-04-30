@@ -23,7 +23,7 @@ func TestInvoiceScenarios(t *testing.T) {
 	t.Run("prepaid", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Key:         "card",
 					Description: "Pago anticipado",

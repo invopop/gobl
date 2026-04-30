@@ -79,7 +79,7 @@ func TestPayInstructionsNormalization(t *testing.T) {
 func TestPayAdvanceNormalization(t *testing.T) {
 	tests := []struct {
 		name string
-		adv  *pay.Advance
+		adv  *pay.Record
 		out  cbc.Code
 	}{
 		{
@@ -87,14 +87,14 @@ func TestPayAdvanceNormalization(t *testing.T) {
 		},
 		{
 			name: "card, no ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyCard,
 			},
 			out: "CC",
 		},
 		{
 			name: "card, ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyCard,
 				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyPaymentMeans: "CB",
@@ -104,14 +104,14 @@ func TestPayAdvanceNormalization(t *testing.T) {
 		},
 		{
 			name: "other, no ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyOther,
 			},
 			out: "OU",
 		},
 		{
 			name: "other, ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(tax.ExtMap{
 					saft.ExtKeyPaymentMeans: "CB",

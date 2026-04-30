@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
@@ -80,8 +81,7 @@ type Payment struct {
 
 	// Type of payment document being issued.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Details on how the payment was made based on the original instructions.
-	Method *pay.Instructions `json:"method,omitempty" jsonschema:"title=Method"`
+
 	// Series is used to identify groups of payments by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
@@ -116,6 +116,10 @@ type Payment struct {
 
 	// List of documents that are being paid for.
 	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
+	// Methods describes how the payment was settled. At least one method is
+	// required; multiple may be present when the payment was split across
+	// means (for example, partly card + partly cash).
+	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
 
 	// Ordering allows for additional information about the ordering process including references
 	// to other documents and alternative parties involved in the order-to-delivery process.
@@ -148,8 +152,8 @@ func paymentRules() *rules.Set {
 			rules.Assert("01", "payment type is required", is.Present),
 			rules.Assert("02", "payment type is not valid", isValidPaymentType),
 		),
-		rules.Field("method",
-			rules.Assert("03", "payment method is required", is.Present),
+		rules.Field("methods",
+			rules.Assert("03", "at least one payment method is required", is.Present),
 		),
 		rules.Field("issue_date",
 			rules.Assert("04", "payment issue date is required", is.Present),
@@ -163,7 +167,40 @@ func paymentRules() *rules.Set {
 		rules.Field("lines",
 			rules.Assert("07", "payment lines are required", is.Present),
 		),
+		rules.Assert("08", "methods sum must match total",
+			is.FuncError("methods sum", paymentMethodsSumMatchesTotal),
+		),
 	)
+}
+
+// paymentMethodsSumMatchesTotal verifies that the amounts on a payment's
+// Methods, after conversion to the document currency via ExchangeRates,
+// add up to the document Total. Methods without an explicit Currency are
+// assumed to be in the document Currency.
+func paymentMethodsSumMatchesTotal(val any) error {
+	pmt, ok := val.(*Payment)
+	if !ok || pmt == nil || len(pmt.Methods) == 0 {
+		return nil
+	}
+	sum := num.MakeAmount(0, pmt.Total.Exp())
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		from := m.Currency
+		if from == currency.CodeEmpty {
+			from = pmt.Currency
+		}
+		converted := currency.Convert(pmt.ExchangeRates, from, pmt.Currency, m.Amount)
+		if converted == nil {
+			return fmt.Errorf("missing exchange rate from %s to %s", from, pmt.Currency)
+		}
+		sum = sum.Add(*converted)
+	}
+	if sum.Compare(pmt.Total) != 0 {
+		return fmt.Errorf("sum %s does not match total %s", sum.String(), pmt.Total.String())
+	}
+	return nil
 }
 
 // Calculate performs all the normalizations and calculations required for the invoice
@@ -188,7 +225,7 @@ func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
 	pmt.Series = cbc.NormalizeCode(pmt.Series)
 	pmt.Code = cbc.NormalizeCode(pmt.Code)
 
-	tax.Normalize(normalizers, pmt.Method)
+	tax.Normalize(normalizers, pmt.Methods)
 	tax.Normalize(normalizers, pmt.Supplier)
 	tax.Normalize(normalizers, pmt.Customer)
 	tax.Normalize(normalizers, pmt.Preceding)
@@ -259,6 +296,55 @@ func (pmt *Payment) calculate() error {
 	}
 	if total != nil {
 		pmt.Total = *total
+	}
+
+	// Apply percent-based amounts and auto-fill the single-method case from
+	// the document Total when no Amount or Currency was provided.
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		m.CalculateFrom(pmt.Total)
+	}
+	if len(pmt.Methods) == 1 {
+		m := pmt.Methods[0]
+		if m != nil && m.Amount.IsZero() && m.Currency == currency.CodeEmpty {
+			m.Amount = pmt.Total
+		}
+	}
+
+	return nil
+}
+
+// UnmarshalJSON migrates documents that use the legacy singular `method`
+// field (a [pay.Instructions]) into the [Payment.Methods] slice.
+func (pmt *Payment) UnmarshalJSON(data []byte) error {
+	type Alias Payment
+	aux := struct {
+		Method *pay.Instructions `json:"method,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(pmt),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Method != nil && len(pmt.Methods) == 0 {
+		var ct *pay.CreditTransfer
+		if len(aux.Method.CreditTransfer) > 0 {
+			ct = aux.Method.CreditTransfer[0]
+		}
+		pmt.Methods = []*pay.Record{{
+			Key:            aux.Method.Key,
+			Ref:            string(aux.Method.Ref),
+			Description:    aux.Method.Detail,
+			Card:           aux.Method.Card,
+			CreditTransfer: ct,
+			DirectDebit:    aux.Method.DirectDebit,
+			Online:         aux.Method.Online,
+			Ext:            aux.Method.Ext,
+			Meta:           aux.Method.Meta,
+		}}
 	}
 	return nil
 }

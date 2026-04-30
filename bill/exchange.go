@@ -121,7 +121,7 @@ func convertPaymentDetailsInto(ex *currency.ExchangeRate, pd *PaymentDetails) *P
 	if len(pd.Advances) == 0 {
 		return &p2
 	}
-	p2.Advances = make([]*pay.Advance, len(pd.Advances))
+	p2.Advances = make([]*pay.Record, len(pd.Advances))
 	for i, a := range pd.Advances {
 		a2 := *a
 		a2.Amount = a2.Amount.

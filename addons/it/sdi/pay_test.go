@@ -30,7 +30,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 				"random": "",
 			}),
 		},
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
@@ -55,7 +55,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 		Instructions: &pay.Instructions{
 			Key: "cash",
 		},
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
@@ -68,7 +68,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	require.NoError(t, err)
 
 	inv.Payment = &bill.PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Key:         pay.MeansKeyDirectDebit.With("fooo"),
 				Description: "Test advance",

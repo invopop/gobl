@@ -562,7 +562,7 @@ func TestRemoveIncludedTax7(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	i.Payment = &bill.PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Amount: num.MakeAmount(29000, 2),
 			},
@@ -1000,7 +1000,7 @@ func TestInvoiceCalculate(t *testing.T) {
 			},
 		},
 		Payment: &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Test Advance",
 					Percent:     num.NewPercentage(30, 2), // 30%
@@ -1068,7 +1068,7 @@ func TestCalculateInverted(t *testing.T) {
 			},
 		},
 		Payment: &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Test Advance",
 					Amount:      num.MakeAmount(25000, 2),
@@ -1132,7 +1132,7 @@ func TestInvoiceEmpty(t *testing.T) {
 			{Reason: "Test Charge", Amount: num.MakeAmount(500, 2)},
 		}
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{Description: "Advance", Amount: num.MakeAmount(250, 2)},
 			},
 		}

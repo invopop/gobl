@@ -450,14 +450,14 @@
       ]
     },
     {
-      "id": "GOBL-BR-NFE-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-BR-NFE-PAY-RECORD",
+      "object": "pay.Record",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-BR-NFE-PAY-ADVANCE-01",
+              "id": "GOBL-BR-NFE-PAY-RECORD-01",
               "desc": "payment advance requires 'br-nfe-payment-means' extension",
               "tests": "ext require [br-nfe-payment-means]"
             }

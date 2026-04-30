@@ -2,8 +2,8 @@ $schema: "https://gobl.org/draft-0/bill/payment"
 $regime: "ES"
 uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
 type: "receipt"
-methods:
-  - key: "credit-transfer"
+method:
+  key: "credit-transfer"
 series: "RCT"
 code: "0001"
 issue_date: "2025-01-28"

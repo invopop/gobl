@@ -39,7 +39,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	}
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
@@ -65,7 +65,7 @@ func payInstructionsRules() *rules.Set {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("ext",
 			rules.Assert("01", fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),
 				tax.ExtensionsRequire(ExtKeyPaymentMeans),

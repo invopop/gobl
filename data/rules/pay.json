@@ -3,31 +3,26 @@
   "package": "pay",
   "subsets": [
     {
-      "id": "GOBL-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-PAY-DUEDATE",
+      "object": "pay.DueDate",
       "subsets": [
         {
-          "field": "description",
+          "field": "date",
           "assert": [
             {
-              "id": "GOBL-PAY-ADVANCE-01",
-              "desc": "description is required",
+              "id": "GOBL-PAY-DUEDATE-01",
+              "desc": "date is required",
               "tests": "present"
             }
           ]
         },
         {
-          "field": "key",
-          "subsets": [
+          "field": "amount",
+          "assert": [
             {
-              "guard": "present",
-              "assert": [
-                {
-                  "id": "GOBL-PAY-ADVANCE-02",
-                  "desc": "key must be valid",
-                  "tests": "be or starts with one of [any, card, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
-                }
-              ]
+              "id": "GOBL-PAY-DUEDATE-02",
+              "desc": "amount must not be zero",
+              "tests": "not zero"
             }
           ]
         }
@@ -78,6 +73,27 @@
       ]
     },
     {
+      "id": "GOBL-PAY-RECORD",
+      "object": "pay.Record",
+      "subsets": [
+        {
+          "field": "key",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-PAY-RECORD-01",
+                  "desc": "key must be valid",
+                  "tests": "be or starts with one of [any, card, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-PAY-TERMS",
       "object": "pay.Terms",
       "subsets": [
@@ -93,32 +109,6 @@
                   "tests": "one of [end-of-month, due-date, deferred, proximo, instant, elective, pending, advanced, delivery, undefined]"
                 }
               ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "GOBL-PAY-DUEDATE",
-      "object": "pay.DueDate",
-      "subsets": [
-        {
-          "field": "date",
-          "assert": [
-            {
-              "id": "GOBL-PAY-DUEDATE-01",
-              "desc": "date is required",
-              "tests": "present"
-            }
-          ]
-        },
-        {
-          "field": "amount",
-          "assert": [
-            {
-              "id": "GOBL-PAY-DUEDATE-02",
-              "desc": "amount must not be zero",
-              "tests": "not zero"
             }
           ]
         }

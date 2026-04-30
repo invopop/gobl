@@ -32,7 +32,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	instr.Ext = mergePaymentMeans(instr.Key, instr.Ext)
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}

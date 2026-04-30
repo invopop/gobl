@@ -35,7 +35,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	}
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
@@ -47,7 +47,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("date",
 			rules.Assert("01", "advance payment date is required", is.Present),
 		),
