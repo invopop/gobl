@@ -1,0 +1,37 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "fr-ctc-flow10-v1"
+uuid: "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10"
+currency: "EUR"
+issue_date: "2026-04-15"
+series: "B2C"
+code: "2026-00018"
+
+tax:
+  ext:
+    fr-ctc-b2c-category: "TLB1"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Boutique Reporting SARL"
+  addresses:
+    - street: "20 Rue du Commerce"
+      locality: "Paris"
+      code: "75015"
+      country: "FR"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Article de boutique"
+      price: "59.00"
+    taxes:
+      - cat: VAT
+        rate: standard

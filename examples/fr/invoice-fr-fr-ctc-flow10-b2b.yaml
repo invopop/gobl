@@ -1,0 +1,52 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "fr-ctc-flow10-v1"
+uuid: "5d3aebcf-8b7e-4f5a-9b7e-0d4c83f9e1a1"
+currency: "EUR"
+issue_date: "2026-04-15"
+series: "FAC"
+code: "2026-00042"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "732829320"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Fournisseur Reporting SARL"
+  emails:
+    - addr: "facturation@fournisseur.fr"
+  addresses:
+    - street: "12 Rue de la Reforme"
+      locality: "Paris"
+      code: "75001"
+      country: "FR"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "356000000"
+  identities:
+    - type: "SIREN"
+      code: "356000000"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Client Reporting SAS"
+  addresses:
+    - street: "8 Avenue de l'Opera"
+      locality: "Paris"
+      code: "75001"
+      country: "FR"
+
+lines:
+  - quantity: 5
+    item:
+      name: "Prestation de conseil"
+      price: "200.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard

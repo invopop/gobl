@@ -77,6 +77,9 @@ notes:
     text: "No discount offered for early payment."
     ext:
       untdid-text-subject: "AAB"
+  - text: "B2BINT"
+    ext:
+      untdid-text-subject: "BAR"
 
 payment:
   instructions:

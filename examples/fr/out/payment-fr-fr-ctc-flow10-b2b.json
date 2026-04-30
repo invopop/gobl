@@ -1,0 +1,92 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "eab4d3ed16ca4ea595ca43f716eec2d7fff6e72cf7c3b675c1bb3ecd2791b251"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/payment",
+		"$regime": "FR",
+		"$addons": [
+			"fr-ctc-flow10-v1"
+		],
+		"uuid": "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01",
+		"type": "receipt",
+		"method": {
+			"key": "credit-transfer",
+			"credit_transfer": [
+				{
+					"iban": "FR7630006000011234567890189",
+					"name": "Fournisseur Reporting SARL"
+				}
+			]
+		},
+		"series": "PAY",
+		"code": "2026-00042",
+		"issue_date": "2026-05-02",
+		"value_date": "2026-05-02",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Fournisseur Reporting SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Reporting SAS",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			},
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "356000000",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"document": {
+					"issue_date": "2026-04-15",
+					"code": "2026-00042"
+				},
+				"amount": "1200.00",
+				"tax": {
+					"categories": [
+						{
+							"code": "VAT",
+							"rates": [
+								{
+									"base": "1000.00",
+									"percent": "20%",
+									"amount": "200.00"
+								}
+							],
+							"amount": "200.00"
+						}
+					],
+					"sum": "200.00"
+				}
+			}
+		],
+		"total": "1200.00"
+	}
+}

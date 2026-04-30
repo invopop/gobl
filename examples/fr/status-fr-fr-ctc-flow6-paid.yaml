@@ -1,0 +1,27 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+$addons:
+  - "fr-ctc-flow6-v1"
+uuid: "3b6c7d8e-9f0a-4b2c-3d4e-5f6a7b8c9d01"
+issue_date: "2026-05-02"
+code: "STA-2026-0002"
+
+supplier:
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+  name: "Plateforme Agreee SARL"
+
+lines:
+  - key: "paid"
+    date: "2026-05-02"
+    doc:
+      code: "2026-00042"
+      issue_date: "2026-04-15"
+    complements:
+      - $schema: "https://gobl.org/draft-0/addons/fr/ctc/flow6/characteristic"
+        type_code: "MEN"
+        amount:
+          currency: "EUR"
+          value: "1200.00"
