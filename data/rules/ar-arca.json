@@ -310,6 +310,13 @@
                   "subsets": [
                     {
                       "field": "taxes",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-29",
+                          "desc": "tourism invoice line requires taxes",
+                          "tests": "present"
+                        }
+                      ],
                       "subsets": [
                         {
                           "each": true,

@@ -1499,7 +1499,7 @@ func TestTourismInvoiceTypeT(t *testing.T) {
 	t.Run("type T invoice with standard doc type fails type check", func(t *testing.T) {
 		inv := testInvoiceTourism(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "195") // 195 is standard, not credit note
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "195") // 195 is an invoice, not a credit note
 		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1533,6 +1533,12 @@ func TestTourismInvoiceTypeT(t *testing.T) {
 		inv := testInvoiceTourism(t)
 		inv.Lines[0].Taxes[0].Rate = "reduced"
 		assertValidationError(t, inv, "tourism invoice line VAT rate must be '5'")
+	})
+
+	t.Run("type T invoice with empty line taxes fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes = nil
+		assertValidationError(t, inv, "tourism invoice line requires taxes")
 	})
 }
 

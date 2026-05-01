@@ -337,6 +337,7 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("lines",
 				rules.Each(
 					rules.Field("taxes",
+						rules.Assert("29", "tourism invoice line requires taxes", is.Present),
 						rules.Each(
 							rules.Field("ext",
 								rules.Assert("26",
