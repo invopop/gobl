@@ -343,6 +343,51 @@
                   ]
                 }
               ]
+            },
+            {
+              "field": "discounts",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-30",
+                          "desc": "tourism invoice discount requires 'ar-arca-tourism-code' extension",
+                          "tests": "ext require [ar-arca-tourism-code]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "advances",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "ext",
+                          "assert": [
+                            {
+                              "id": "GOBL-AR-ARCA-BILL-INVOICE-31",
+                              "desc": "tourism invoice advance requires 'ar-arca-tourism-code' extension",
+                              "tests": "ext require [ar-arca-tourism-code]"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

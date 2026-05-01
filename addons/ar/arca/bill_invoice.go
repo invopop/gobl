@@ -353,6 +353,28 @@ func billInvoiceRules() *rules.Set {
 					),
 				),
 			),
+			rules.Field("discounts",
+				rules.Each(
+					rules.Field("ext",
+						rules.Assert("30",
+							fmt.Sprintf("tourism invoice discount requires '%s' extension", ExtKeyTourismCode),
+							tax.ExtensionsRequire(ExtKeyTourismCode),
+						),
+					),
+				),
+			),
+			rules.Field("payment",
+				rules.Field("advances",
+					rules.Each(
+						rules.Field("ext",
+							rules.Assert("31",
+								fmt.Sprintf("tourism invoice advance requires '%s' extension", ExtKeyTourismCode),
+								tax.ExtensionsRequire(ExtKeyTourismCode),
+							),
+						),
+					),
+				),
+			),
 		),
 	)
 }
