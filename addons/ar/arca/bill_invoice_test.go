@@ -18,6 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testItemServiceName = "Service Item"
+
 func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 	ad := tax.AddonForKey(arca.V4)
 
@@ -178,14 +180,14 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:  "Service Item",
+				Name:  testItemServiceName,
 				Price: num.NewAmount(5000, 2),
 				Key:   org.ItemKeyServices,
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1002,14 +1004,14 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:  "Service Item",
+				Name:  testItemServiceName,
 				Price: num.NewAmount(5000, 2),
 				Key:   org.ItemKeyServices,
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1311,8 +1313,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv := testInvoiceTypeC(t)
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1334,8 +1336,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1357,8 +1359,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1376,8 +1378,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "211") // FCE Invoice C
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1422,8 +1424,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1434,7 +1436,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 func TestInvoiceCurrencyValidation(t *testing.T) {
 	t.Run("non-ARS currency without exchange rates", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
-		inv.Currency = "USD"
+		inv.Currency = currency.USD
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "[GOBL-AR-ARCA-BILL-INVOICE-24] invoice must be in ARS or provide exchange rate for conversion")
@@ -1442,10 +1444,10 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 
 	t.Run("non-ARS currency with exchange rates", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
-		inv.Currency = "USD"
+		inv.Currency = currency.USD
 		inv.ExchangeRates = []*currency.ExchangeRate{
 			{
-				From:   "USD",
+				From:   currency.USD,
 				To:     "ARS",
 				Amount: num.MakeAmount(1050, 0),
 			},
@@ -1587,8 +1589,8 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 				Taxes: tax.Set{
 					{
-						Category: "VAT",
-						Rate:     "standard",
+						Category: tax.CategoryVAT,
+						Rate:     tax.KeyStandard,
 					},
 				},
 			},
@@ -1651,7 +1653,7 @@ func testInvoiceTypeC(t *testing.T) *bill.Invoice {
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name:  "Service Item",
+					Name:  testItemServiceName,
 					Price: num.NewAmount(10000, 2),
 					Key:   org.ItemKeyServices,
 				},
@@ -1731,8 +1733,8 @@ func testInvoiceTourism(t *testing.T) *bill.Invoice {
 				},
 				Taxes: tax.Set{
 					{
-						Category: "VAT",
-						Rate:     "standard",
+						Category: tax.CategoryVAT,
+						Rate:     tax.KeyStandard,
 						Ext: tax.ExtensionsOf(tax.ExtMap{
 							arca.ExtKeyTourismCode: "1",
 						}),

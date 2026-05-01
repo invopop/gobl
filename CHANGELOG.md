@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.402.0] - 2026-04-30
+
 ### Changed
 
 - `addons/pl/favat`: Moved supplier tax ID code requirement from the PL regime to the pl-favat addon.
