@@ -89,7 +89,7 @@ var vatStatusesTypeA = []cbc.Code{
 }
 
 // DocTypesCreditNote are document codes for all credit notes (A, B, C, T, and FCE variants)
-// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+// Used for validating the arca document type extension against GOBL bill.Invoice type.
 var DocTypesCreditNote = []cbc.Code{
 	"3",   // Credit Note A
 	"8",   // Credit Note B
@@ -102,7 +102,7 @@ var DocTypesCreditNote = []cbc.Code{
 }
 
 // DocTypesDebitNote are document codes for all debit notes (A, B, C, T, and FCE variants)
-// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+// Used for validating the arca document type extension against GOBL bill.Invoice type.
 var DocTypesDebitNote = []cbc.Code{
 	"2",   // Debit Note A
 	"7",   // Debit Note B
