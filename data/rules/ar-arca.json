@@ -268,6 +268,83 @@
               ]
             }
           ]
+        },
+        {
+          "guard": "doc type is T",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-25",
+                      "desc": "tourism invoice requires 'ar-arca-tourism-relation' extension",
+                      "tests": "ext require [ar-arca-tourism-relation]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-27",
+                      "desc": "tourism invoice customer requires an address",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "taxes",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-29",
+                          "desc": "tourism invoice line requires taxes",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-AR-ARCA-BILL-INVOICE-26",
+                                  "desc": "tourism invoice line requires 'ar-arca-tourism-code' extension",
+                                  "tests": "ext require [ar-arca-tourism-code]"
+                                },
+                                {
+                                  "id": "GOBL-AR-ARCA-BILL-INVOICE-28",
+                                  "desc": "tourism invoice line VAT rate must be '5' (21%) via 'ar-arca-vat-rate'",
+                                  "tests": "ext 'ar-arca-vat-rate' in [5]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },

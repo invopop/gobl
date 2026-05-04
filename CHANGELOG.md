@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `ar-arca-v4`: Type T tourism invoice support (WSCT). New extension keys `ar-arca-tourism-relation` and `ar-arca-tourism-code`, doc types 195 (Invoice T), 196 (Debit Note T), 197 (Credit Note T). Adds Type T validation rules including Rule 25 requiring `ar-arca-tourism-relation` on type T invoices, tourism code per line, customer address requirement, VAT rate constraint, and Rule 29 requiring each line to declare taxes so the per-tax checks cannot be vacuously satisfied. Ordering/payment rules skipped for type T.
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 - `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
 - `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.

@@ -319,6 +319,41 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
+		// Type T invoices require the tourism relation extension
+		rules.When(is.Func("doc type is T", invoiceDocTypeIsT),
+			rules.Field("tax",
+				rules.Field("ext",
+					rules.Assert("25",
+						fmt.Sprintf("tourism invoice requires '%s' extension", ExtKeyTourismRelation),
+						tax.ExtensionsRequire(ExtKeyTourismRelation),
+					),
+				),
+			),
+			rules.Field("customer",
+				rules.Field("addresses",
+					rules.Assert("27", "tourism invoice customer requires an address", is.Present),
+				),
+			),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("taxes",
+						rules.Assert("29", "tourism invoice line requires taxes", is.Present),
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("26",
+									fmt.Sprintf("tourism invoice line requires '%s' extension", ExtKeyTourismCode),
+									tax.ExtensionsRequire(ExtKeyTourismCode),
+								),
+								rules.Assert("28",
+									fmt.Sprintf("tourism invoice line VAT rate must be '5' (21%%) via '%s'", ExtKeyVATRate),
+									tax.ExtensionsHasCodes(ExtKeyVATRate, "5"),
+								),
+							),
+						),
+					),
+				),
+			),
+		),
 	)
 }
 
@@ -464,6 +499,9 @@ func invoiceConceptIsServices(val any) bool {
 	if !ok || inv == nil {
 		return false
 	}
+	if invoiceDocTypeIsT(inv) {
+		return false // type T (tourism) invoices don't require ordering/payment
+	}
 	concept := inv.Tax.GetExt(ExtKeyConcept)
 	return concept.In("2", "3") // Services or Products and services
 }
@@ -472,6 +510,9 @@ func invoiceConceptIsGoods(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil {
 		return false
+	}
+	if invoiceDocTypeIsT(inv) {
+		return false // type T (tourism) invoices don't use concept-based payment rules
 	}
 	concept := inv.Tax.GetExt(ExtKeyConcept)
 	return concept == "1" // Products only
@@ -484,4 +525,13 @@ func invoiceDocTypeIsC(val any) bool {
 	}
 	docType := inv.Tax.GetExt(ExtKeyDocType)
 	return docType.In(DocTypesC...)
+}
+
+func invoiceDocTypeIsT(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return false
+	}
+	docType := inv.Tax.GetExt(ExtKeyDocType)
+	return docType.In(DocTypesT...)
 }

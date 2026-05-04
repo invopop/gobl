@@ -8,12 +8,14 @@ import (
 
 // Extension keys for Argentina ARCA v4
 const (
-	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
-	ExtKeyConcept      cbc.Key = "ar-arca-concept"
-	ExtKeyIdentityType cbc.Key = "ar-arca-identity-type"
-	ExtKeyTaxType      cbc.Key = "ar-arca-tax-type"
-	ExtKeyVATRate      cbc.Key = "ar-arca-vat-rate"
-	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
+	ExtKeyDocType         cbc.Key = "ar-arca-doc-type"
+	ExtKeyConcept         cbc.Key = "ar-arca-concept"
+	ExtKeyIdentityType    cbc.Key = "ar-arca-identity-type"
+	ExtKeyTaxType         cbc.Key = "ar-arca-tax-type"
+	ExtKeyVATRate         cbc.Key = "ar-arca-vat-rate"
+	ExtKeyVATStatus       cbc.Key = "ar-arca-vat-status"
+	ExtKeyTourismRelation cbc.Key = "ar-arca-tourism-relation"
+	ExtKeyTourismCode     cbc.Key = "ar-arca-tourism-code"
 )
 
 // DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
@@ -66,6 +68,14 @@ var DocTypesC = []cbc.Code{
 	"213", // MiPyMEs Electronic Credit Note (FCE) C
 }
 
+// DocTypesT are document codes for tourism invoices (Factura T, Nota de Débito T, Nota de Crédito T).
+// These are issued under the WSCT (Web Service Comprobante T) for tourism-sector operations.
+var DocTypesT = []cbc.Code{
+	"195", // Invoice T
+	"196", // Debit Note T
+	"197", // Credit Note T
+}
+
 // TypeUsedGoodsPurchaseInvoice is the code for the used goods purchase invoice
 const TypeUsedGoodsPurchaseInvoice = "49"
 
@@ -78,25 +88,27 @@ var vatStatusesTypeA = []cbc.Code{
 	"16", // Promoted Independent Worker Monotributista
 }
 
-// DocTypesCreditNote are document codes for all credit notes (A, B, C, and FCE variants)
-// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+// DocTypesCreditNote are document codes for all credit notes (A, B, C, T, and FCE variants)
+// Used for validating the arca document type extension against GOBL bill.Invoice type.
 var DocTypesCreditNote = []cbc.Code{
 	"3",   // Credit Note A
 	"8",   // Credit Note B
 	"13",  // Credit Note C
 	"53",  // Credit Note A with withholding legend
+	"197", // Credit Note T
 	"203", // MiPyMEs Electronic Credit Note (FCE) A
 	"208", // MiPyMEs Electronic Credit Note (FCE) B
 	"213", // MiPyMEs Electronic Credit Note (FCE) C
 }
 
-// DocTypesDebitNote are document codes for all debit notes (A, B, C, and FCE variants)
-// Used for validating the arca document type extension agains GOBL bill.Invoice type.
+// DocTypesDebitNote are document codes for all debit notes (A, B, C, T, and FCE variants)
+// Used for validating the arca document type extension against GOBL bill.Invoice type.
 var DocTypesDebitNote = []cbc.Code{
 	"2",   // Debit Note A
 	"7",   // Debit Note B
 	"12",  // Debit Note C
 	"52",  // Debit Note A with withholding legend
+	"196", // Debit Note T
 	"202", // MiPyMEs Electronic Debit Note (FCE) A
 	"207", // MiPyMEs Electronic Debit Note (FCE) B
 	"212", // MiPyMEs Electronic Debit Note (FCE) C
@@ -419,6 +431,39 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "MiPyMEs Electronic Credit Note (FCE) C",
 					i18n.ES: "Nota de Crédito electrónica MiPyMEs (FCE) C",
+				},
+			},
+			{
+				Code: "195",
+				Name: i18n.String{
+					i18n.EN: "Invoice T",
+					i18n.ES: "Factura T",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Tourism invoice issued under WSCT (Web Service Comprobante T) for accommodation and travel services to non-resident tourists.",
+					i18n.ES: "Factura de turismo emitida bajo el WSCT para servicios de alojamiento y viajes a turistas no residentes.",
+				},
+			},
+			{
+				Code: "196",
+				Name: i18n.String{
+					i18n.EN: "Debit Note T",
+					i18n.ES: "Nota de Débito T",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Tourism debit note issued under WSCT.",
+					i18n.ES: "Nota de débito de turismo emitida bajo el WSCT.",
+				},
+			},
+			{
+				Code: "197",
+				Name: i18n.String{
+					i18n.EN: "Credit Note T",
+					i18n.ES: "Nota de Crédito T",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Tourism credit note issued under WSCT.",
+					i18n.ES: "Nota de crédito de turismo emitida bajo el WSCT.",
 				},
 			},
 		},
@@ -1070,6 +1115,105 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Promoted Independent Worker Monotributista",
 					i18n.ES: "Monotributo Trabajador Independiente Promovido",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTourismRelation,
+		Name: i18n.String{
+			i18n.EN: "Argentina ARCA Tourism Issuer-Receiver Relationship",
+			i18n.ES: "Código de relación emisor-receptor para turismo",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+			Code that identifies the relationship between the issuer and the receiver for tourism
+			invoices (Comprobante T). Required on the invoice ~tax.ext~ when the document type is
+			~195~ (Invoice T), ~196~ (Debit Note T), or ~197~ (Credit Note T).
+
+			Corresponds to ~codigoRelacionEmisorReceptor~ in the WSCT web service.
+		`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Direct Accommodation to Non-Resident Tourist",
+					i18n.ES: "Alojamiento Directo a Turista No Residente",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Accommodation to Resident Travel Agency",
+					i18n.ES: "Alojamiento a Agencia de Viaje Residente",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Accommodation to Non-Resident Travel Agency",
+					i18n.ES: "Alojamiento a Agencia de Viaje No Residente",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Resident Travel Agency to Non-Resident Travel Agency",
+					i18n.ES: "Agencia de Viaje Residente a Agencia de Viaje No Residente",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Resident Travel Agency to Non-Resident Tourist",
+					i18n.ES: "Agencia de Viaje Residente a Turista No Residente",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "Resident Travel Agency to Resident Travel Agency",
+					i18n.ES: "Agencia de Viaje Residente a Agencia de Viaje Residente",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTourismCode,
+		Name: i18n.String{
+			i18n.EN: "Argentina ARCA Tourism Item Code",
+			i18n.ES: "Código de ítem de turismo Argentina ARCA",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+			Code that identifies the type of tourism item on a line. Used on line item ~tax.ext~
+			for tourism invoices (Comprobante T, doc types 195/196/197).
+
+			Corresponds to ~codigoTurismo~ in the WSCT web service. Additional codes may be
+			available via the ~consultarCodigosItemTurismo~ operation of the WSCT service.
+		`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Hotel without Breakfast",
+					i18n.ES: "Hotel sin desayuno",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Hotel with Breakfast",
+					i18n.ES: "Hotel con desayuno",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Surplus",
+					i18n.ES: "Excedente",
 				},
 			},
 		},
