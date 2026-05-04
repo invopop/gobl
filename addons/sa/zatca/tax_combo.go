@@ -56,7 +56,7 @@ var vatexValidCodes = map[cbc.Code][]cbc.Code{
 	},
 }
 
-var vatKeyMap = tax.ExtensionsOf(tax.ExtMap{
+var vatKeyMap = tax.ExtensionsOf(cbc.CodeMap{
 	tax.KeyStandard:     en16931.TaxCategoryStandard,
 	tax.KeyZero:         en16931.TaxCategoryZero,
 	tax.KeyExempt:       en16931.TaxCategoryExempt,

@@ -36,7 +36,7 @@ func validStandardInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2024, 6, 15),
 		IssueTime: cal.NewTime(12, 0, 0),
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				zatca.ExtKeyInvoiceTypeTransactions: "0100000",
 				untdid.ExtKeyDocumentType:           "388",
 			}),
@@ -489,7 +489,7 @@ func TestBRKSA49_25_EDUHEAExemption(t *testing.T) {
 			{
 				Category: tax.CategoryVAT,
 				Key:      tax.KeyZero,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cef.ExtKeyVATEX: vatex,
 				}),
 			},
