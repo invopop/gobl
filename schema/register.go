@@ -74,7 +74,7 @@ func (r *registry) ids() []ID {
 // baseTypeOf removes the pointer and ensures we have a base type.
 func baseTypeOf(obj interface{}) reflect.Type {
 	typ := reflect.TypeOf(obj)
-	if typ.Kind() == reflect.Ptr {
+	if typ.Kind() == reflect.Pointer {
 		typ = typ.Elem()
 	}
 	return typ

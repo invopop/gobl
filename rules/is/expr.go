@@ -66,7 +66,7 @@ func (et *exprTest) Compile(val any) error {
 // expressions can reference the value uniformly regardless of type.
 func (et *exprTest) buildEnv(val any) any {
 	rv := reflect.ValueOf(val)
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
 			return nil
 		}

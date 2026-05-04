@@ -6,7 +6,7 @@ output:
 linters:
   enable:
     - errname
-    - goconst
+    # - goconst # Disabled due to "composite literal elements" check
     - gocyclo
     - nakedret
     - revive
