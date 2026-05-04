@@ -31,7 +31,7 @@ func TestTaxComboRule01_VATEXRequired(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexFinancialServices,
 			}),
 		})
@@ -43,7 +43,7 @@ func TestTaxComboRule01_VATEXRequired(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexRealEstate,
 			}),
 		})
@@ -65,7 +65,7 @@ func TestTaxComboRule01_VATEXRequired(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexExportGoods,
 			}),
 		})
@@ -79,7 +79,7 @@ func TestTaxComboRule01_VATEXRequired(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexOutOfScope,
 			}),
 		})
@@ -101,7 +101,7 @@ func TestTaxComboRule01_VATEXRequired(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexFinancialServices,
 			}),
 		})
@@ -131,7 +131,7 @@ func TestTaxComboRule02_StandardNoVATEX(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexFinancialServices,
 			}),
 		})
@@ -157,12 +157,12 @@ func TestTaxComboRule03_ValidCategoryCodes(t *testing.T) {
 		"exempt maps to E": {
 			key:      tax.KeyExempt,
 			expected: en16931.TaxCategoryExempt,
-			ext:      tax.ExtensionsOf(tax.ExtMap{cef.ExtKeyVATEX: zatca.VatexFinancialServices}),
+			ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexFinancialServices}),
 		},
 		"outside scope maps to O": {
 			key:      tax.KeyOutsideScope,
 			expected: en16931.TaxCategoryOutsideScope,
-			ext:      tax.ExtensionsOf(tax.ExtMap{cef.ExtKeyVATEX: zatca.VatexOutOfScope}),
+			ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexOutOfScope}),
 		},
 	}
 
@@ -188,7 +188,7 @@ func TestTaxComboRule03_ValidCategoryCodes(t *testing.T) {
 		inv := invoiceWithTaxCombo(&tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cef.ExtKeyVATEX: zatca.VatexFinancialServices,
 			}),
 		})
@@ -251,7 +251,7 @@ func TestTaxComboVATEX_PerCategoryRestrictions(t *testing.T) {
 			inv := invoiceWithTaxCombo(&tax.Combo{
 				Category: tax.CategoryVAT,
 				Key:      tc.key,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cef.ExtKeyVATEX: tc.vatex,
 				}),
 			})

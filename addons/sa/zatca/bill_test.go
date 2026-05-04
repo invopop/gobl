@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -103,7 +104,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-29",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt,
 						}),
@@ -133,7 +134,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyZero,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-32",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryZero,
 						}),
@@ -163,7 +164,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyOutsideScope,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-OOS",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryOutsideScope,
 						}),
@@ -194,7 +195,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					Category: tax.CategoryVAT,
 					Key:      tax.KeyExempt,
 					Text:     "Existing exemption note",
-					Ext:      tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt}),
+					Ext:      tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt}),
 				},
 			},
 		}
@@ -209,7 +210,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-29",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt,
 						}),
@@ -235,7 +236,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-XX-99",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt,
 						}),
@@ -260,7 +261,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-29",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt,
 						}),
@@ -277,7 +278,7 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyZero,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							cef.ExtKeyVATEX:"VATEX-SA-32",
 							untdid.ExtKeyTaxCategory: en16931.TaxCategoryZero,
 						}),

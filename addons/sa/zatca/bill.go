@@ -87,7 +87,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 			Category: tax.CategoryVAT,
 			Key:      vat.Key,
 			Text:     reason,
-			Ext:      tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTaxCategory: untdidCat}),
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTaxCategory: untdidCat}),
 		})
 	}
 }
