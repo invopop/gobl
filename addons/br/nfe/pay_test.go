@@ -76,14 +76,14 @@ func TestNormalizePayAdvance(t *testing.T) {
 	ad := tax.AddonForKey(nfe.V4)
 
 	t.Run("nil", func(t *testing.T) {
-		var adv *pay.Advance
+		var adv *pay.Record
 		assert.NotPanics(t, func() {
 			ad.Normalizer(adv)
 		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: pay.MeansKeyCard,
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "14", // must be overridden
@@ -94,7 +94,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 	})
 
 	t.Run("without match", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: "unknown-payment-means",
 		}
 		ad.Normalizer(adv)
@@ -102,7 +102,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 	})
 
 	t.Run("with other key and extension", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: pay.MeansKeyOther,
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "13", // must be kept
@@ -113,7 +113,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 	})
 
 	t.Run("with other key and no extension", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: pay.MeansKeyOther,
 		}
 		ad.Normalizer(adv)
@@ -150,7 +150,7 @@ func TestValidatePayInstructions(t *testing.T) {
 
 func TestValidatePayAdvance(t *testing.T) {
 	t.Run("with payment means", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key:         pay.MeansKeyCard,
 			Description: "Card payment",
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
@@ -162,7 +162,7 @@ func TestValidatePayAdvance(t *testing.T) {
 	})
 
 	t.Run("without payment means", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: pay.MeansKeyCard,
 		}
 		err := rules.Validate(adv, withAddonContext())
@@ -170,7 +170,7 @@ func TestValidatePayAdvance(t *testing.T) {
 	})
 
 	t.Run("nil", func(t *testing.T) {
-		var adv *pay.Advance
+		var adv *pay.Record
 		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)
 	})

@@ -2,9 +2,9 @@ $schema: https://gobl.org/draft-0/bill/payment
 $addons: ["pt-saft-v1"]
 uuid: "d7388b17-d35f-4f2e-a33e-9bca2fae9089"
 type: receipt
-method:
-  key: credit-transfer
-  detail: "Transferência bancária"
+methods:
+  - key: credit-transfer
+    description: "Transferência bancária"
 series: "RG SAMPLE"
 code: "1"
 issue_date: "2025-01-30"

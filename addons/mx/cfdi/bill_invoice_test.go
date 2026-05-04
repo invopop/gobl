@@ -94,7 +94,7 @@ func validInvoiceGlobal() *bill.Invoice {
 		cfdi.ExtKeyGlobalYear:   "2025",
 	}))
 	inv.Payment = &bill.PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Key:         pay.MeansKeyCash,
 				Description: "Prepaid",
@@ -247,7 +247,7 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 			cfdi.ExtKeyGlobalYear:   "2025",
 		}))
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Key:         pay.MeansKeyCash,
 					Description: "Prepaid",
@@ -327,7 +327,7 @@ func TestPaymentInstructionsValidation(t *testing.T) {
 func TestPaymentAdvancesValidation(t *testing.T) {
 	inv := validInvoice()
 	inv.Payment = &bill.PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "A prepayment",
 			},

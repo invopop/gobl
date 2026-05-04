@@ -6,6 +6,33 @@
   },
   "extensions": [
     {
+      "key": "es-facturae-subsidy",
+      "name": {
+        "en": "FacturaE: Subsidy",
+        "es": "FacturaE: Subvención"
+      },
+      "desc": {
+        "en": "Indicates that an advance payment came from a public grant or subsidy. Set on a payment Record's `ext` map; replaces the previous `pay.Record.Grant` boolean field.",
+        "es": "Indica que un pago anticipado proviene de una subvención o ayuda pública. Se establece en el mapa `ext` del Record de pago; reemplaza el antiguo campo booleano `pay.Record.Grant`."
+      },
+      "values": [
+        {
+          "code": "S",
+          "name": {
+            "en": "Yes",
+            "es": "Sí"
+          }
+        },
+        {
+          "code": "N",
+          "name": {
+            "en": "No",
+            "es": "No"
+          }
+        }
+      ]
+    },
+    {
       "key": "es-facturae-doc-type",
       "name": {
         "en": "FacturaE: Document Type",

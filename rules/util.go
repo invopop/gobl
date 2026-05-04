@@ -61,7 +61,7 @@ func IsEmpty(value interface{}) bool {
 		return v.Float() == 0
 	case reflect.Invalid:
 		return true
-	case reflect.Interface, reflect.Ptr:
+	case reflect.Interface, reflect.Pointer:
 		if v.IsNil() {
 			return true
 		}
@@ -87,7 +87,7 @@ func Indirect(value interface{}) (interface{}, bool) {
 	switch kind {
 	case reflect.Invalid:
 		return nil, true
-	case reflect.Ptr, reflect.Interface:
+	case reflect.Pointer, reflect.Interface:
 		if rv.IsNil() {
 			return nil, true
 		}

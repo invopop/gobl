@@ -263,6 +263,15 @@ func TestPaymentValidate(t *testing.T) {
 		require.NoError(t, pmt.Calculate())
 		require.NoError(t, rules.Validate(pmt))
 	})
+
+	t.Run("method missing key", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods = []*pay.Record{{Amount: num.MakeAmount(10000, 2)}}
+		require.NoError(t, pmt.Calculate())
+		err := rules.Validate(pmt)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "payment method key is required")
+	})
 }
 
 func testPaymentMinimal(t *testing.T) *bill.Payment {
@@ -271,8 +280,8 @@ func testPaymentMinimal(t *testing.T) *bill.Payment {
 		Series:    "P1",
 		Code:      "0123",
 		IssueDate: cal.MakeDate(2025, 1, 24),
-		Method: &pay.Instructions{
-			Key: pay.MeansKeyCard,
+		Methods: []*pay.Record{
+			{Key: pay.MeansKeyCard},
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -367,4 +376,179 @@ func TestPaymentJSONSchemaExtend(t *testing.T) {
 		assert.Len(t, js.Extras[schema.Recommended], 4)
 	})
 
+}
+
+func TestPaymentMethodsAutoFill(t *testing.T) {
+	t.Run("single method amount filled from total", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.Len(t, p.Methods, 1)
+		assert.Equal(t, "100.00", p.Methods[0].Amount.String())
+	})
+
+	t.Run("single method amount preserved when set", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods[0].Amount = num.MakeAmount(50, 0)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "50", p.Methods[0].Amount.String())
+	})
+
+	t.Run("multiple methods are not auto-filled", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "60.00", p.Methods[0].Amount.String())
+		assert.Equal(t, "40.00", p.Methods[1].Amount.String())
+	})
+
+	t.Run("mixed currency methods round-trip", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(2200, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		out := new(bill.Payment)
+		require.NoError(t, json.Unmarshal(data, out))
+		require.Len(t, out.Methods, 2)
+		assert.Equal(t, currency.USD, out.Methods[1].Currency)
+	})
+
+	t.Run("percent-based method calculated from total", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Percent: num.NewPercentage(25, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "25.00", p.Methods[0].Amount.String())
+	})
+}
+
+func TestPaymentMethodsSumMatchesTotal(t *testing.T) {
+	t.Run("single method auto-filled passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("multi-method same currency summing to total passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("multi-method sum below total fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(3000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("multi-method sum above total fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(5000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("mixed currency converted via exchange rates passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{From: currency.USD, To: currency.EUR, Amount: num.MakeAmount(50, 2)},
+		}
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("mixed currency without exchange rate fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("nil method entries are skipped", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(10000, 2)},
+			nil,
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("empty methods short-circuits to nil error", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = nil
+		// "at least one payment method is required" rule fires, but the sum
+		// rule itself should not contribute an error.
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "methods sum must match total")
+	})
+}
+
+func TestPaymentCanSign(t *testing.T) {
+	t.Run("empty code", func(t *testing.T) {
+		p := &bill.Payment{}
+		assert.False(t, p.CanSign())
+	})
+	t.Run("with code", func(t *testing.T) {
+		p := &bill.Payment{Code: "RCT/0001"}
+		assert.True(t, p.CanSign())
+	})
+}
+
+func TestPaymentLegacyMethodMigration(t *testing.T) {
+	const legacy = `{
+		"type": "receipt",
+		"series": "P1",
+		"code": "0001",
+		"issue_date": "2025-01-24",
+		"currency": "EUR",
+		"method": {
+			"key": "credit-transfer",
+			"detail": "Wire transfer from BBVA",
+			"credit_transfer": [{"iban": "ES1234567890123456789012"}]
+		},
+		"supplier": {"name": "Test Supplier"},
+		"lines": [{"document": {"code": "F1/01"}, "amount": "100.00"}],
+		"total": "100.00"
+	}`
+
+	pmt := new(bill.Payment)
+	require.NoError(t, json.Unmarshal([]byte(legacy), pmt))
+	require.Len(t, pmt.Methods, 1)
+	assert.Equal(t, pay.MeansKeyCreditTransfer, pmt.Methods[0].Key)
+	assert.Equal(t, "Wire transfer from BBVA", pmt.Methods[0].Description)
+	require.NotNil(t, pmt.Methods[0].CreditTransfer)
+	assert.Equal(t, "ES1234567890123456789012", pmt.Methods[0].CreditTransfer.IBAN)
 }

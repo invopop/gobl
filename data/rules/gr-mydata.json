@@ -378,14 +378,14 @@
       ]
     },
     {
-      "id": "GOBL-GR-MYDATA-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-GR-MYDATA-PAY-RECORD",
+      "object": "pay.Record",
       "subsets": [
         {
           "field": "key",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-PAY-ADVANCE-01",
+              "id": "GOBL-GR-MYDATA-PAY-RECORD-01",
               "desc": "payment advance key is required",
               "tests": "present"
             }
@@ -395,7 +395,7 @@
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-GR-MYDATA-PAY-ADVANCE-02",
+              "id": "GOBL-GR-MYDATA-PAY-RECORD-02",
               "desc": "payment advance requires 'gr-mydata-payment-means' extension",
               "tests": "ext require [gr-mydata-payment-means]"
             }

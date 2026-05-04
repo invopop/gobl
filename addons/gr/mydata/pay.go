@@ -44,7 +44,7 @@ func normalizePayInstructions(i *pay.Instructions) {
 	}
 }
 
-func normalizePayAdvance(a *pay.Advance) {
+func normalizePayRecord(a *pay.Record) {
 	if a == nil {
 		return
 	}
@@ -72,7 +72,7 @@ func payInstructionsRules() *rules.Set {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("key",
 			rules.Assert("01", "payment advance key is required", is.Present),
 		),

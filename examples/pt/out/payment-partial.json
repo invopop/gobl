@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ef27a5f3384f9b04cb005f3608e1d1e9cb6f38ed6918384d5b0c622e51add1b7"
+			"val": "20aa07ce3152dd66cddc4f82ac92c9b43be9da42fc83ee5fad6807299b4097f3"
 		}
 	},
 	"doc": {
@@ -15,13 +15,6 @@
 		],
 		"uuid": "d7388b17-d35f-4f2e-a33e-9bca2fae9089",
 		"type": "receipt",
-		"method": {
-			"key": "credit-transfer",
-			"detail": "Transferência bancária",
-			"ext": {
-				"pt-saft-payment-means": "TB"
-			}
-		},
 		"series": "RG SAMPLE",
 		"code": "1",
 		"issue_date": "2025-01-30",
@@ -113,6 +106,16 @@
 						}
 					],
 					"sum": "9.35"
+				}
+			}
+		],
+		"methods": [
+			{
+				"key": "credit-transfer",
+				"description": "Transferência bancária",
+				"amount": "50.00",
+				"ext": {
+					"pt-saft-payment-means": "TB"
 				}
 			}
 		],

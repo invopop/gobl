@@ -2,11 +2,13 @@ $schema: "https://gobl.org/draft-0/bill/payment"
 $regime: "ES"
 uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
 type: "receipt"
-methods:
-  - key: "credit-transfer"
 series: "RCT"
 code: "0001"
 issue_date: "2025-01-28"
+exchange_rates:
+  - from: "USD"
+    to: "EUR"
+    amount: "0.90"
 supplier:
   tax_id:
     country: "ES"
@@ -34,4 +36,19 @@ lines:
       issue_date: "2025-01-10"
       series: "SAMPLE"
       code: "001"
-    amount: "1630.00"
+      payable: "1630.00"
+    amount: "815.00"
+  - document:
+      type: "standard"
+      issue_date: "2025-01-12"
+      series: "SAMPLE"
+      code: "002"
+      payable: "400.00"
+    amount: "200.00"
+
+methods:
+  - key: "credit-transfer"
+    amount: "925.00"
+  - key: "cash"
+    currency: "USD"
+    amount: "100.00"

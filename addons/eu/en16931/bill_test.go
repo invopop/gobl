@@ -693,7 +693,7 @@ func TestValidateBillPayment(t *testing.T) {
 
 	t.Run("with due amount zero", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		advances := []*pay.Advance{
+		advances := []*pay.Record{
 			{
 				Percent:     num.NewPercentage(100, 2),
 				Description: "Advance payment",
@@ -720,7 +720,7 @@ func TestValidateBillPayment(t *testing.T) {
 	t.Run("no payment details and no amount due", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		// Add advance payment to make due amount zero
-		advances := []*pay.Advance{
+		advances := []*pay.Record{
 			{
 				Percent:     num.NewPercentage(100, 2),
 				Description: "Full advance payment",

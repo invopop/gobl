@@ -402,7 +402,7 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	t.Run("advance with nil date", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date:   nil,
 					Amount: num.MakeAmount(50, 0),
@@ -415,7 +415,7 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	t.Run("nil advance", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{nil},
+			Advances: []*pay.Record{nil},
 		}
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -427,7 +427,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 	t.Run("set default advance date", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date: nil,
 				},
@@ -443,7 +443,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.IssueDate = cal.Date{}
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date: nil,
 				},
