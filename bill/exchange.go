@@ -123,6 +123,9 @@ func convertPaymentDetailsInto(ex *currency.ExchangeRate, pd *PaymentDetails) *P
 	}
 	p2.Advances = make([]*pay.Record, len(pd.Advances))
 	for i, a := range pd.Advances {
+		if a == nil {
+			continue
+		}
 		a2 := *a
 		a2.Amount = a2.Amount.
 			Upscale(defaultCurrencyConversionAccuracy).

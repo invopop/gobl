@@ -154,6 +154,11 @@ func paymentRules() *rules.Set {
 		),
 		rules.Field("methods",
 			rules.Assert("03", "at least one payment method is required", is.Present),
+			rules.Each(
+				rules.Field("key",
+					rules.Assert("09", "payment method key is required", is.Present),
+				),
+			),
 		),
 		rules.Field("issue_date",
 			rules.Assert("04", "payment issue date is required", is.Present),
@@ -182,7 +187,11 @@ func paymentMethodsSumMatchesTotal(val any) error {
 	if !ok || pmt == nil || len(pmt.Methods) == 0 {
 		return nil
 	}
-	sum := num.MakeAmount(0, pmt.Total.Exp())
+	exp := pmt.Total.Exp()
+	if def := pmt.Currency.Def(); def != nil {
+		exp = def.Zero().Exp()
+	}
+	sum := num.MakeAmount(0, exp)
 	for _, m := range pmt.Methods {
 		if m == nil {
 			continue

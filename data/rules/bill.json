@@ -296,6 +296,23 @@
               "desc": "at least one payment method is required",
               "tests": "present"
             }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "key",
+                  "assert": [
+                    {
+                      "id": "GOBL-BILL-PAYMENT-09",
+                      "desc": "payment method key is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         },
         {

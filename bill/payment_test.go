@@ -263,6 +263,15 @@ func TestPaymentValidate(t *testing.T) {
 		require.NoError(t, pmt.Calculate())
 		require.NoError(t, rules.Validate(pmt))
 	})
+
+	t.Run("method missing key", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods = []*pay.Record{{Amount: num.MakeAmount(10000, 2)}}
+		require.NoError(t, pmt.Calculate())
+		err := rules.Validate(pmt)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "payment method key is required")
+	})
 }
 
 func testPaymentMinimal(t *testing.T) *bill.Payment {
