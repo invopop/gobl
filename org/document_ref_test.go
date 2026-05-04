@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -24,7 +25,7 @@ func TestDocumentRefNormalize(t *testing.T) {
 
 		dr := &org.DocumentRef{
 			Code: " Foo ",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"fooo": "",
 			}),
 		}

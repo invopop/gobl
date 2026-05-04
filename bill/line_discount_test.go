@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -17,7 +18,7 @@ func TestLineDiscountNormalize(t *testing.T) {
 	l := &bill.LineDiscount{
 		Code:    " FOO--BAR ",
 		Percent: num.NewPercentage(200, 3),
-		Ext:     tax.ExtensionsOf(tax.ExtMap{}),
+		Ext:     tax.ExtensionsOf(cbc.CodeMap{}),
 	}
 	l.Normalize(nil)
 	assert.Equal(t, "20.0%", l.Percent.String())

@@ -16,13 +16,13 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// TipoDeComprobante / TipoRelacion
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyDocType: "I",
 			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyDocType: "E",
 				ExtKeyRelType: "01",
 			}),
@@ -36,7 +36,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				}
 				return inv.Totals.Paid()
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyPaymentMethod: ExtCodePaymentMethodPUE, // Pago en una sola exhibición
 			}),
 		},
@@ -49,7 +49,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				}
 				return !inv.Totals.Paid()
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyPaymentMethod: ExtCodePaymentMethodPPD, // Pago en parcialidades o diferido
 			}),
 		},

@@ -16,14 +16,14 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: InvoiceTypeStandard,
 			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{tax.TagSimplified},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: InvoiceTypeSimplified,
 			}),
 		},
@@ -36,25 +36,25 @@ var invoiceScenarios = &tax.ScenarioSet{
 				}
 				return inv.HasTags(pt.TagInvoiceReceipt) || inv.Totals.Paid()
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: InvoiceTypeInvoiceReceipt,
 			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: InvoiceTypeDebitNote,
 			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: InvoiceTypeCreditNote,
 			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeProforma},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyWorkType: WorkTypeProforma,
 			}),
 		},

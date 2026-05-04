@@ -90,165 +90,165 @@ var taxRateVATExemptMigrationMap = []struct {
 }{
 	{
 		Rate: TaxRateExempt.With(TaxRateOutlay),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M01",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateIntrastate),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M02",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateImports),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M04",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateExports),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M05",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateSuspension),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M06",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateInternalOps),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M07",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateSmallRetail),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M09",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateExemptScheme),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M10",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateTobacco),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M11",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M12",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateSecondHand),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M13",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateArt),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M14",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateMargin).With(TaxRateAntiques),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M15",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateTransmission),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M16",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateOther),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M19",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateFlatRate),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M20",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateNonDeductible),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M21",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateConsignment),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M25",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWaste),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M30",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateCivilEng),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M31",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGreenhouse),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M32",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWoods),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M33",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateB2B),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M40",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateIntraEU),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M41",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateRealEstate),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M42",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGold),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M43",
 		}),
 	},
 	{
 		Rate: TaxRateExempt.With(TaxRateNonTaxable),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			oldExtKeyExemptionCode: "M99",
 		}),
 	},

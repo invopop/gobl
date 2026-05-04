@@ -94,7 +94,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Rate:     tax.RateReduced,
 			Percent:  num.NewPercentage(4, 2),
-			Ext:      tax.ExtensionsOf(tax.ExtMap{mydata.ExtKeyExemption: "3"}),
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{mydata.ExtKeyExemption: "3"}),
 		}
 		ad.Normalizer(tc)
 		assert.Equal(t, "4%", tc.Percent.String())
@@ -120,7 +120,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		for _, code := range codes {
 			tc := &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.ExtensionsOf(tax.ExtMap{mydata.ExtKeyExemption: code}),
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{mydata.ExtKeyExemption: code}),
 			}
 			ad.Normalizer(tc)
 			assert.Equal(t, code, tc.Ext.Get(mydata.ExtKeyExemption))

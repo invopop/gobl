@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -110,7 +111,7 @@ func TestDeliveryNormalization(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeNote,
 			Tax: &bill.Tax{
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyMovementType: saft.MovementTypeFixedAssets,
 				}),
 			},
@@ -146,14 +147,14 @@ func validDelivery() *bill.Delivery {
 				Item: &org.Item{
 					Name: "Test Item",
 					Unit: "one",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						saft.ExtKeyProductType: saft.ProductTypeService,
 					}),
 				},
 			},
 		},
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyMovementType: saft.MovementTypeDeliveryNote,
 			}),
 		},

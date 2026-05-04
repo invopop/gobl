@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -16,7 +17,7 @@ func TestInstructionsNormalize(t *testing.T) {
 		Key:    "online",
 		Ref:    " fooo ",
 		Detail: " Some random payment\t",
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
 		}),
 	}

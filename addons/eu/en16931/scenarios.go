@@ -22,7 +22,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "380",
 				}),
 			},
@@ -30,7 +30,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "381",
 				}),
 			},
@@ -38,7 +38,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "383",
 				}),
 			},
@@ -46,7 +46,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeCorrective,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "384",
 				}),
 			},
@@ -54,7 +54,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeProforma,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "325",
 				}),
 			},
@@ -65,7 +65,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagPartial,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "326",
 				}),
 			},
@@ -76,7 +76,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "389",
 				}),
 			},
@@ -88,7 +88,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "261",
 				}),
 			},
@@ -99,7 +99,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagPrepayment,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "386",
 				}),
 			},
@@ -110,7 +110,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagFactoring,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "393",
 				}),
 			},
@@ -121,7 +121,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagFactoring,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "396",
 				}),
 			},

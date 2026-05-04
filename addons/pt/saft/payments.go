@@ -115,7 +115,7 @@ func paymentDocType(pmt *bill.Payment) cbc.Code {
 
 func normalizePayment(pmt *bill.Payment) {
 	if pmt.Ext.IsZero() {
-		pmt.Ext = tax.ExtensionsOf(tax.ExtMap{})
+		pmt.Ext = tax.ExtensionsOf(cbc.CodeMap{})
 	}
 
 	// TODO: This could be done with scenarios when supported
