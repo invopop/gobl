@@ -64,7 +64,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	})
 	t.Run("migrate customer post code from ext", func(t *testing.T) {
 		inv := baseInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"mx-cfdi-post-code": "12345",
 		})
 		require.NoError(t, inv.Calculate())
@@ -89,13 +89,13 @@ func baseInvoice() *bill.Invoice {
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyIssuePlace: "21000",
 			}),
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "22000",
 				cfdi.ExtKeyFiscalRegime: "601",
 			}),
@@ -106,7 +106,7 @@ func baseInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "65000",
 				cfdi.ExtKeyFiscalRegime: "608",
 				cfdi.ExtKeyUse:          "G01",
@@ -123,7 +123,7 @@ func baseInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.NewAmount(10000, 2),
 					Unit:  org.UnitPackage,
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						cfdi.ExtKeyProdServ: "01010101",
 					}),
 				},

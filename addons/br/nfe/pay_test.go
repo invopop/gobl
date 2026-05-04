@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/br/nfe"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -23,7 +24,7 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("with match", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "15", // must be overridden
 			}),
 		}
@@ -42,7 +43,7 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("with other key and extension", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyOther,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "13", // must be kept
 			}),
 		}
@@ -61,7 +62,7 @@ func TestNormalizePayInstructions(t *testing.T) {
 	t.Run("preserves existing extensions", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCard,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"other-extension": "value",
 			}),
 		}
@@ -84,7 +85,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 	t.Run("with match", func(t *testing.T) {
 		adv := &pay.Record{
 			Key: pay.MeansKeyCard,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "14", // must be overridden
 			}),
 		}
@@ -103,7 +104,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 	t.Run("with other key and extension", func(t *testing.T) {
 		adv := &pay.Record{
 			Key: pay.MeansKeyOther,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "13", // must be kept
 			}),
 		}
@@ -124,7 +125,7 @@ func TestValidatePayInstructions(t *testing.T) {
 	t.Run("with payment means", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "01",
 			}),
 		}
@@ -152,7 +153,7 @@ func TestValidatePayAdvance(t *testing.T) {
 		adv := &pay.Record{
 			Key:         pay.MeansKeyCard,
 			Description: "Card payment",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "03",
 			}),
 		}

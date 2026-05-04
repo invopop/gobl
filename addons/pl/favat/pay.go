@@ -11,25 +11,24 @@ import (
 // Regime Specific Payment Means Extension Keys
 const (
 	MeansKeyVoucher cbc.Key = "voucher"
-	MeansKeyCredit  cbc.Key = "credit"
 )
 
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCash:                        "1", // Cash / Gotówka
-	pay.MeansKeyCard:                        "2", // Card / Karta
-	pay.MeansKeyOther.With(MeansKeyVoucher): "3", // Voucher / Bon
-	pay.MeansKeyCheque:                      "4", // Cheque / Czek
-	pay.MeansKeyOther.With(MeansKeyCredit):  "5", // Credit / Kredyt
-	pay.MeansKeyCreditTransfer:              "6", // Credit Transfer / Przelew
-	pay.MeansKeyOnline:                      "7", // Online / Mobilna
+var paymentMeansKeyMap = cbc.CodeMap{
+	pay.MeansKeyCash:                           "1", // Cash / Gotówka
+	pay.MeansKeyCard:                           "2", // Card / Karta
+	pay.MeansKeyOther.With(MeansKeyVoucher):    "3", // Voucher / Bon
+	pay.MeansKeyCheque:                         "4", // Cheque / Czek
+	pay.MeansKeyOther.With(pay.MeansKeyCredit): "5", // Credit / Kredyt
+	pay.MeansKeyCreditTransfer:                 "6", // Credit Transfer / Przelew
+	pay.MeansKeyOnline:                         "7", // Online / Mobilna
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
-		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}
@@ -39,8 +38,8 @@ func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
-		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}

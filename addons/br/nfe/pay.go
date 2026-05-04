@@ -9,19 +9,15 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Addon-specific Payment Means Keys
-const (
-	MeansKeyDebit cbc.Key = "debit"
-)
-
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
-	pay.MeansKeyCash:   "01", // Dinheiro
-	pay.MeansKeyCheque: "02", // Cheque
-	pay.MeansKeyCard:   "03", // Cartão de Crédito
-	pay.MeansKeyDebitTransfer.With(MeansKeyDebit): "04", // Cartão de Débito
-	pay.MeansKeyCreditTransfer:                    "18", // Transferência bancária
-	pay.MeansKeyOnline:                            "18", // Carteira Digital
-	pay.MeansKeyOther:                             "99", // Outros
+var paymentMeansKeyMap = cbc.CodeMap{
+	pay.MeansKeyCash:                                  "01", // Dinheiro
+	pay.MeansKeyCheque:                                "02", // Cheque
+	pay.MeansKeyCard:                                  "03", // Cartão de Crédito
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "04", // Cartão de Débito
+	pay.MeansKeyDebitTransfer.With(pay.MeansKeyDebit): "04", // Cartão de Débito (deprecated)
+	pay.MeansKeyCreditTransfer:                        "18", // Transferência bancária
+	pay.MeansKeyOnline:                                "18", // Carteira Digital
+	pay.MeansKeyOther:                                 "99", // Outros
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
@@ -32,8 +28,8 @@ func normalizePayInstructions(instr *pay.Instructions) {
 		// `other` key does not override the extension
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
-		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}
@@ -47,8 +43,8 @@ func normalizePayRecord(adv *pay.Record) {
 		// `other` key does not override the extension already set
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
-		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
 		}))
 	}

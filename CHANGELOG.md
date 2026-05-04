@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `tax`: **breaking**: removed the `tax.ExtMap` type alias introduced in v0.402.0. `tax.Extensions` now wraps `cbc.CodeMap` directly, and `tax.ExtensionsOf` accepts a `cbc.CodeMap`. Callers should replace `tax.ExtMap{...}` with `cbc.CodeMap{...}`.
+
+### Added
+
+- `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
+- `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
+
+## [v0.402.0] - 2026-04-30
+
+### Changed
+
 - `addons/pl/favat`: Moved supplier tax ID code requirement from the PL regime to the pl-favat addon.
 - `bill`: removed the default exchange-rate / regime-currency conversion check; addons now enforce currency convertibility where required.
 - `addons`: **breaking**: rule fault codes no longer include the addon version segment. `GOBL-AR-ARCA-V4-BILL-INVOICE-24` is now `GOBL-AR-ARCA-BILL-INVOICE-24`. Generated rule files in `data/rules/` are likewise unversioned (`ar-arca.json`, not `ar-arca-v4.json`). Each addon package now exposes a `Key` constant for the unversioned family; version constants such as `V4` are derived from it. Assertion IDs are now guaranteed stable across versions of an addon family — preserved rules keep their numeric IDs on version bumps, and an ID must never be reassigned to a different rule. Consumers pinning fault-code strings should drop the version segment.

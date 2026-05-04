@@ -31,7 +31,7 @@ var exemptTaxCategories = []cbc.Code{
 }
 
 // VAT key mapping from GOBL tax keys to UNTDID 5305 codes.
-var vatKeyMap = tax.ExtensionsOf(tax.ExtMap{
+var vatKeyMap = tax.ExtensionsOf(cbc.CodeMap{
 	tax.KeyStandard:       TaxCategoryStandard,
 	tax.KeyZero:           TaxCategoryZero,
 	tax.KeyExempt:         TaxCategoryExempt,

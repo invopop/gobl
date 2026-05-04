@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -86,7 +87,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Araba",
 		})
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				tbai.ExtKeyRegion: "BI", // not Alaba
 			}),
 		}
@@ -224,7 +225,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Series: "ABC",
 		Code:   "123",
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				tbai.ExtKeyRegion: "BI",
 			}),
 		},
@@ -254,7 +255,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					{
 						Category: "VAT",
 						Key:      "exempt",
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							tbai.ExtKeyExempt: "E1",
 						}),
 					},

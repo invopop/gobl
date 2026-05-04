@@ -20,7 +20,7 @@ func TestRecordNormalize(t *testing.T) {
 		Identify:    uuid.Identify{UUID: uuid.Zero},
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
 		}),
 	}
@@ -103,6 +103,6 @@ func TestRecordJSONSchemaExtend(t *testing.T) {
 	a.JSONSchemaExtend(schema)
 	prop, ok := schema.Properties.Get("key")
 	require.True(t, ok)
-	assert.Len(t, prop.AnyOf, 15)
+	assert.Len(t, prop.AnyOf, 17)
 	assert.Equal(t, cbc.Key("any"), prop.AnyOf[0].Const)
 }

@@ -16,7 +16,17 @@
             {
               "const": "card",
               "title": "Card",
-              "description": "Payment card."
+              "description": "Payment by card."
+            },
+            {
+              "const": "card+credit",
+              "title": "Credit Card",
+              "description": "Payment by credit card."
+            },
+            {
+              "const": "card+debit",
+              "title": "Debit Card",
+              "description": "Payment by debit card."
             },
             {
               "const": "credit-transfer",

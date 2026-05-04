@@ -95,7 +95,7 @@ func TestValidateInvoice(t *testing.T) {
 	t.Run("customer with SIRET with wrong scheme", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			choruspro.ExtKeyScheme: "2",
 		})
 		err := rules.Validate(inv)
@@ -111,7 +111,7 @@ func TestValidateInvoice(t *testing.T) {
 				Code: "12345678901234",
 			},
 		}
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			choruspro.ExtKeyScheme: "1",
 		})
 		err := rules.Validate(inv)
@@ -157,7 +157,7 @@ func TestValidateInvoice(t *testing.T) {
 	t.Run("framework A2 with paid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyFramework: "A2",
 			}),
 		}
@@ -217,7 +217,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("preserves existing framework", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyFramework: "A3",
 			}),
 		}

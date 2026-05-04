@@ -80,7 +80,7 @@ func normalizeIdentities(party *org.Party) {
 			siren = &org.Identity{
 				Type: fr.IdentityTypeSIREN,
 				Code: cbc.Code(sirenCode),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
 				}),
 			}

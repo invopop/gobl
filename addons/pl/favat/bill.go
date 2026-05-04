@@ -17,13 +17,13 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeySelfBilling: "1",
 		}))
 	}
 
 	if inv.HasTags(tax.TagReverseCharge) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyReverseCharge: "1",
 		}))
 	}

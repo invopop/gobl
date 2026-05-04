@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -175,7 +176,7 @@ func TestInvoiceTaxTagsMigration(t *testing.T) {
 func TestTaxMergeExtensions(t *testing.T) {
 	t.Run("nil tax", func(t *testing.T) {
 		var tx *bill.Tax
-		ext := tax.ExtensionsOf(tax.ExtMap{
+		ext := tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "standard",
 		})
 		tx = tx.MergeExtensions(ext)
@@ -188,22 +189,22 @@ func TestTaxMergeExtensions(t *testing.T) {
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat": "standard",
 			}),
 		}
-		tx = tx.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		tx = tx.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "reduced",
 		}))
 		assert.Equal(t, "reduced", tx.Ext.Get("vat-cat").String())
 	})
 	t.Run("new extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-test": "bar",
 			}),
 		}
-		tx = tx.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		tx = tx.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "reduced",
 		}))
 		assert.Equal(t, "reduced", tx.Ext.Get("vat-cat").String())
@@ -282,7 +283,7 @@ func TestTaxGetExt(t *testing.T) {
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat":  "standard",
 				"vat-rate": "21.0%",
 			}),
@@ -305,7 +306,7 @@ func TestTaxHasExt(t *testing.T) {
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat":  "standard",
 				"vat-rate": "21.0%",
 			}),

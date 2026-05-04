@@ -25,7 +25,7 @@ func TestNormalizePayInstructions(t *testing.T) {
 
 	t.Run("with match", func(t *testing.T) {
 		instr := &pay.Instructions{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
 		ad.Normalizer(instr)
 		assert.Equal(t, "5", instr.Ext.Get(favat.ExtKeyPaymentMeans).String())
@@ -44,7 +44,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 
 	t.Run("with match", func(t *testing.T) {
 		adv := &pay.Record{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
 		ad.Normalizer(adv)
 		assert.Equal(t, "5", adv.Ext.Get(favat.ExtKeyPaymentMeans).String())
@@ -63,7 +63,7 @@ func TestValidatePay(t *testing.T) {
 
 	t.Run("advance valid with date", func(t *testing.T) {
 		adv := &pay.Record{
-			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key:         pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			Date:        cal.NewDate(2022, 12, 27),
 			Description: "Advance payment",
 		}
@@ -74,7 +74,7 @@ func TestValidatePay(t *testing.T) {
 
 	t.Run("advance missing date", func(t *testing.T) {
 		adv := &pay.Record{
-			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key:         pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			Description: "Advance payment",
 		}
 		ad.Normalizer(adv)
@@ -92,7 +92,7 @@ func TestValidatePay(t *testing.T) {
 
 	t.Run("instructions valid", func(t *testing.T) {
 		instr := &pay.Instructions{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
 		ad.Normalizer(instr)
 		err := rules.Validate(instr, withAddonContext())
@@ -130,7 +130,7 @@ func TestPaymentMeansMapping(t *testing.T) {
 		},
 		{
 			name:     "credit",
-			key:      pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			key:      pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			expected: "5",
 		},
 		{
