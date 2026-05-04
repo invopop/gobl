@@ -42,7 +42,7 @@ func normalizeInvoiceParty(p *org.Party) {
 	if p == nil || !isColombian(p.TaxID) {
 		return
 	}
-	def := tax.ExtensionsOf(tax.ExtMap{ExtKeyFiscalResponsibility: "R-99-PN"})
+	def := tax.ExtensionsOf(cbc.CodeMap{ExtKeyFiscalResponsibility: "R-99-PN"})
 	p.Ext = def.Merge(p.Ext)
 }
 

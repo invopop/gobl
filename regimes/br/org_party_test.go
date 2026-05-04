@@ -112,7 +112,7 @@ func TestValidateAddresses(t *testing.T) {
 				TaxID: &tax.Identity{
 					Country: "BR",
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					br.ExtKeyMunicipality: "3550308", // São Paulo city code
 				}),
 			},
@@ -123,7 +123,7 @@ func TestValidateAddresses(t *testing.T) {
 				TaxID: &tax.Identity{
 					Country: "BR",
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					br.ExtKeyMunicipality: "00", // Invalid city code
 				}),
 			},

@@ -65,7 +65,7 @@ func normalizeTaxNote(n *tax.Note) {
 
 	// Forward: if key is present, ensure the ext is set
 	if code := vatKeyMap.Get(n.Key); !code.IsEmpty() {
-		n.Ext = n.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		n.Ext = n.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyTaxCategory: code,
 		}))
 	}
@@ -73,7 +73,7 @@ func normalizeTaxNote(n *tax.Note) {
 
 func normalizeBillDiscount(m *bill.Discount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyAllowance: val,
 		}))
 	}
@@ -81,7 +81,7 @@ func normalizeBillDiscount(m *bill.Discount) {
 
 func normalizeBillLineDiscount(m *bill.LineDiscount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyAllowance: val,
 		}))
 	}
@@ -89,7 +89,7 @@ func normalizeBillLineDiscount(m *bill.LineDiscount) {
 
 func normalizeBillCharge(m *bill.Charge) {
 	if val, ok := chargeKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyCharge: val,
 		}))
 	}
@@ -97,7 +97,7 @@ func normalizeBillCharge(m *bill.Charge) {
 
 func normalizeBillLineCharge(m *bill.LineCharge) {
 	if val, ok := chargeKeyMap[m.Key]; ok {
-		m.Ext = m.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		m.Ext = m.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyCharge: val,
 		}))
 	}

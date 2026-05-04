@@ -182,7 +182,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						tbai.ExtKeyExempt: "E1",
 					}),
 				},
@@ -195,7 +195,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					// The correct key would be set
 					// here automatically in normalization.
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						tbai.ExtKeyExempt: "E1",
 					}),
 				},
@@ -208,7 +208,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						"foo": "E1",
 					}),
 				},
@@ -221,7 +221,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						tbai.ExtKeyProduct: "services",
 					}),
 				},

@@ -1,6 +1,7 @@
 package choruspro
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
@@ -24,13 +25,13 @@ func normalizeOrgParty(party *org.Party) {
 		}
 		if l10n.Unions().Code(l10n.EU).HasMember(l10n.Code(party.TaxID.Country)) {
 			party.Ext = party.Ext.Merge(
-				tax.ExtensionsOf(tax.ExtMap{
+				tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyScheme: "2",
 				}),
 			)
 		} else {
 			party.Ext = party.Ext.Merge(
-				tax.ExtensionsOf(tax.ExtMap{
+				tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyScheme: "3",
 				}),
 			)
@@ -45,7 +46,7 @@ func normalizeOrgParty(party *org.Party) {
 				party.Ext = tax.MakeExtensions()
 			}
 			party.Ext = party.Ext.Merge(
-				tax.ExtensionsOf(tax.ExtMap{
+				tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyScheme: "1",
 				}),
 			)

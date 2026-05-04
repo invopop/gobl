@@ -27,7 +27,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "F1",
 				}),
 			},
@@ -47,7 +47,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSimplified,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "F2",
 				}),
 			},
@@ -69,7 +69,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagReplacement,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "F3",
 				}),
 			},
@@ -95,7 +95,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSimplified,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "R5",
 				}),
 			},
