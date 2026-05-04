@@ -55,6 +55,14 @@
 					"type": "boolean",
 					"title": "Copy Tax Totals",
 					"description": "CopyTax when true will copy the tax totals from the previous document to the\npreceding document data."
+				},
+				"additional_preceding": {
+					"items": {
+						"$ref": "https://gobl.org/draft-0/org/document-ref"
+					},
+					"type": "array",
+					"title": "Additional Preceding",
+					"description": "AdditionalPreceding allows extra preceding document references to be\nattached to the corrective invoice in addition to the one built from\nthe source document."
 				}
 			},
 			"type": "object",

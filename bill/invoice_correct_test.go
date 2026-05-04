@@ -97,6 +97,55 @@ func TestInvoiceCorrect(t *testing.T) {
 		assert.Equal(t, "156.20", inv.Preceding[0].Tax.Sum.String())
 	})
 
+	t.Run("with additional preceding", func(t *testing.T) {
+		inv := testInvoiceESForCorrection(t)
+		extra := &org.DocumentRef{
+			Type:      bill.InvoiceTypeStandard,
+			Series:    "OTHER",
+			Code:      "456",
+			IssueDate: cal.NewDate(2022, 5, 1),
+		}
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithReason("merge two prior invoices"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
+			bill.WithAdditionalPreceding(extra),
+		)
+		require.NoError(t, err)
+		require.Len(t, inv.Preceding, 2)
+		assert.Equal(t, cbc.Code("123"), inv.Preceding[0].Code, "auto-built ref stays first")
+		assert.Equal(t, cbc.Code("456"), inv.Preceding[1].Code)
+		assert.Equal(t, cbc.Code("OTHER"), inv.Preceding[1].Series)
+	})
+
+	t.Run("with additional preceding called twice appends", func(t *testing.T) {
+		inv := testInvoiceESForCorrection(t)
+		first := &org.DocumentRef{
+			Type:      bill.InvoiceTypeStandard,
+			Series:    "A",
+			Code:      "1",
+			IssueDate: cal.NewDate(2022, 1, 1),
+		}
+		second := &org.DocumentRef{
+			Type:      bill.InvoiceTypeStandard,
+			Series:    "B",
+			Code:      "2",
+			IssueDate: cal.NewDate(2022, 2, 1),
+		}
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithReason("merge"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
+			bill.WithAdditionalPreceding(first),
+			bill.WithAdditionalPreceding(second),
+		)
+		require.NoError(t, err)
+		require.Len(t, inv.Preceding, 3)
+		assert.Equal(t, cbc.Code("123"), inv.Preceding[0].Code)
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[1].Code)
+		assert.Equal(t, cbc.Code("2"), inv.Preceding[2].Code)
+	})
+
 	// France case (both corrective and credit note)
 	i = testInvoiceFRForCorrection(t)
 	err = i.Correct(bill.Corrective)
@@ -182,7 +231,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 		require.True(t, ok)
 
 		cos := schema.Definitions["bill.CorrectionOptions"]
-		assert.Equal(t, 7, cos.Properties.Len())
+		assert.Equal(t, 8, cos.Properties.Len())
 
 		pm, ok := cos.Properties.Get("ext")
 		require.True(t, ok)
@@ -194,7 +243,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 		}
 
 		// Sorry, this is copied and pasted from the test output!
-		exp := `{"properties":{"type":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"credit-note","title":"Credit Note","description":"Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."},{"const":"corrective","title":"Corrective","description":"Corrected invoice that completely *replaces* the preceding document."},{"const":"debit-note","title":"Debit Note","description":"An additional set of charges to be added to the preceding document."}],"title":"Type","description":"The type of corrective invoice to produce.","default":"credit-note"},"issue_date":{"$ref":"https://gobl.org/draft-0/cal/date","title":"Issue Date","description":"When the new corrective invoice's issue date should be set to."},"series":{"$ref":"https://gobl.org/draft-0/cbc/code","title":"Series","description":"Series to assign to the new corrective invoice.","default":"TEST"},"stamps":{"items":{"$ref":"https://gobl.org/draft-0/head/stamp"},"type":"array","title":"Stamps","description":"Stamps of the previous document to include in the preceding data."},"reason":{"type":"string","title":"Reason","description":"Human readable reason for the corrective operation."},"ext":{"properties":{"es-facturae-correction":{"oneOf":[{"const":"01","title":"Invoice code"},{"const":"02","title":"Invoice series"},{"const":"03","title":"Issue date"},{"const":"04","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"05","title":"Name and surnames/Corporate name - Receiver"},{"const":"06","title":"Issuer's Tax Identification Number"},{"const":"07","title":"Receiver's Tax Identification Number"},{"const":"08","title":"Supplier's address"},{"const":"09","title":"Customer's address"},{"const":"10","title":"Item line"},{"const":"11","title":"Applicable Tax Rate"},{"const":"12","title":"Applicable Tax Amount"},{"const":"13","title":"Applicable Date/Period"},{"const":"14","title":"Invoice Class"},{"const":"15","title":"Legal literals"},{"const":"16","title":"Taxable Base"},{"const":"80","title":"Calculation of tax outputs"},{"const":"81","title":"Calculation of tax inputs"},{"const":"82","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"83","title":"Taxable Base modified due to discounts and rebates"},{"const":"84","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"85","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}],"type":"string","title":"FacturaE Change","description":"FacturaE requires a specific and single code that explains why the previous invoice is being corrected."}},"type":"object","title":"Extensions","description":"Extensions for region specific requirements that may be added in the preceding\nor at the document level, according to the local rules.","recommended":["es-facturae-correction"]},"copy_tax":{"type":"boolean","title":"Copy Tax Totals","description":"CopyTax when true will copy the tax totals from the previous document to the\npreceding document data."}},"type":"object","required":["type"],"description":"CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.","recommended":["series","ext"]}`
+		exp := `{"properties":{"type":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"credit-note","title":"Credit Note","description":"Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."},{"const":"corrective","title":"Corrective","description":"Corrected invoice that completely *replaces* the preceding document."},{"const":"debit-note","title":"Debit Note","description":"An additional set of charges to be added to the preceding document."}],"title":"Type","description":"The type of corrective invoice to produce.","default":"credit-note"},"issue_date":{"$ref":"https://gobl.org/draft-0/cal/date","title":"Issue Date","description":"When the new corrective invoice's issue date should be set to."},"series":{"$ref":"https://gobl.org/draft-0/cbc/code","title":"Series","description":"Series to assign to the new corrective invoice.","default":"TEST"},"stamps":{"items":{"$ref":"https://gobl.org/draft-0/head/stamp"},"type":"array","title":"Stamps","description":"Stamps of the previous document to include in the preceding data."},"reason":{"type":"string","title":"Reason","description":"Human readable reason for the corrective operation."},"ext":{"properties":{"es-facturae-correction":{"oneOf":[{"const":"01","title":"Invoice code"},{"const":"02","title":"Invoice series"},{"const":"03","title":"Issue date"},{"const":"04","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"05","title":"Name and surnames/Corporate name - Receiver"},{"const":"06","title":"Issuer's Tax Identification Number"},{"const":"07","title":"Receiver's Tax Identification Number"},{"const":"08","title":"Supplier's address"},{"const":"09","title":"Customer's address"},{"const":"10","title":"Item line"},{"const":"11","title":"Applicable Tax Rate"},{"const":"12","title":"Applicable Tax Amount"},{"const":"13","title":"Applicable Date/Period"},{"const":"14","title":"Invoice Class"},{"const":"15","title":"Legal literals"},{"const":"16","title":"Taxable Base"},{"const":"80","title":"Calculation of tax outputs"},{"const":"81","title":"Calculation of tax inputs"},{"const":"82","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"83","title":"Taxable Base modified due to discounts and rebates"},{"const":"84","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"85","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}],"type":"string","title":"FacturaE Change","description":"FacturaE requires a specific and single code that explains why the previous invoice is being corrected."}},"type":"object","title":"Extensions","description":"Extensions for region specific requirements that may be added in the preceding\nor at the document level, according to the local rules.","recommended":["es-facturae-correction"]},"copy_tax":{"type":"boolean","title":"Copy Tax Totals","description":"CopyTax when true will copy the tax totals from the previous document to the\npreceding document data."},"additional_preceding":{"items":{"$ref":"https://gobl.org/draft-0/org/document-ref"},"type":"array","title":"Additional Preceding","description":"AdditionalPreceding allows extra preceding document references to be\nattached to the corrective invoice in addition to the one built from\nthe source document."}},"type":"object","required":["type"],"description":"CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.","recommended":["series","ext"]}`
 		data, err := json.Marshal(cos)
 		require.NoError(t, err)
 		if !assert.JSONEq(t, exp, string(data)) {

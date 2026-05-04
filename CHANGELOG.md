@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
+- `bill`: added `WithAdditionalPreceding` correction option that attaches caller-supplied `*org.DocumentRef` entries to a corrective invoice in addition to the reference built from the source document, enabling correction flows that reference multiple prior documents.
 
 ## [v0.402.0] - 2026-04-30
 

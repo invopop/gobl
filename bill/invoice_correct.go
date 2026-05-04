@@ -39,6 +39,10 @@ type CorrectionOptions struct {
 	// CopyTax when true will copy the tax totals from the previous document to the
 	// preceding document data.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
+	// AdditionalPreceding allows extra preceding document references to be
+	// attached to the corrective invoice in addition to the one built from
+	// the source document.
+	AdditionalPreceding []*org.DocumentRef `json:"additional_preceding,omitempty" jsonschema:"title=Additional Preceding"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -114,6 +118,17 @@ func WithCopyTax() schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.CopyTax = true
+	}
+}
+
+// WithAdditionalPreceding attaches one or more extra preceding document
+// references to the corrective invoice, in addition to the reference built
+// automatically from the source document. Can be called multiple times;
+// each call appends to any previously supplied refs.
+func WithAdditionalPreceding(refs ...*org.DocumentRef) schema.Option {
+	return func(o interface{}) {
+		opts := o.(*CorrectionOptions)
+		opts.AdditionalPreceding = append(opts.AdditionalPreceding, refs...)
 	}
 }
 
@@ -310,8 +325,9 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return err
 	}
 
-	// Replace all previous preceding data
-	inv.Preceding = []*org.DocumentRef{pre}
+	// Replace all previous preceding data with the freshly built ref,
+	// followed by any caller-supplied additional refs.
+	inv.Preceding = append([]*org.DocumentRef{pre}, o.AdditionalPreceding...)
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
