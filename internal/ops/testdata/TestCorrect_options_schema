@@ -4,6 +4,14 @@
         "bill.CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
             "properties": {
+                "additional_preceding": {
+                    "description": "AdditionalPreceding allows extra preceding document references to be\nattached to the corrective invoice in addition to the one built from\nthe source document.",
+                    "items": {
+                        "$ref": "https://gobl.org/draft-0/org/document-ref"
+                    },
+                    "title": "Additional Preceding",
+                    "type": "array"
+                },
                 "copy_tax": {
                     "description": "CopyTax when true will copy the tax totals from the previous document to the\npreceding document data.",
                     "title": "Copy Tax Totals",
