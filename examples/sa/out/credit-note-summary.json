@@ -1,0 +1,300 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "73f885721be519736af65951c84c019ebc7ad74fde7808b56aeea9dd91302e62"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"$addons": [
+			"eu-en16931-v2017",
+			"sa-zatca-v1"
+		],
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120003",
+		"type": "credit-note",
+		"series": "CN",
+		"code": "SAMPLE-CN-001",
+		"issue_date": "2024-02-05",
+		"issue_time": "09:30:00",
+		"currency": "SAR",
+		"preceding": [
+			{
+				"issue_date": "2024-01-31",
+				"series": "INV",
+				"code": "SAMPLE-001",
+				"reason": "Partial return of services after monthly close — discount applied per agreement BR-2024-AC-12",
+				"ext": {
+					"untdid-document-type": "388"
+				}
+			}
+		],
+		"tax": {
+			"rounding": "currency",
+			"ext": {
+				"sa-zatca-invoice-type": "0100010",
+				"untdid-document-type": "381"
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "zero",
+					"text": "Export of goods",
+					"ext": {
+						"untdid-tax-category": "Z"
+					}
+				}
+			]
+		},
+		"supplier": {
+			"name": "Acme Corp Saudi LLC",
+			"alias": "Acme SA",
+			"tax_id": {
+				"country": "SA",
+				"code": "312345678912343"
+			},
+			"identities": [
+				{
+					"type": "SAG",
+					"code": "1010101010"
+				}
+			],
+			"people": [
+				{
+					"name": {
+						"prefix": "Eng.",
+						"given": "Yara",
+						"surname": "Al-Harbi"
+					},
+					"role": "Billing Manager"
+				}
+			],
+			"addresses": [
+				{
+					"num": "1234",
+					"street": "King Fahd Road",
+					"street_extra": "Al Olaya",
+					"locality": "Riyadh",
+					"region": "Riyadh",
+					"code": "12345",
+					"country": "SA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@acme.sa"
+				}
+			],
+			"telephones": [
+				{
+					"label": "office",
+					"num": "+966112345678"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer LLC",
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "2020202020"
+				}
+			],
+			"addresses": [
+				{
+					"num": "5678",
+					"street": "Olaya Street",
+					"street_extra": "Al Malaz",
+					"locality": "Riyadh",
+					"region": "Riyadh",
+					"code": "54321",
+					"country": "SA"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ap@sample-consumer.sa"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"ref": "SVC-DEV-01",
+					"name": "Development services",
+					"price": "120.00",
+					"unit": "h"
+				},
+				"sum": "600.00",
+				"discounts": [
+					{
+						"reason": "Loyalty discount adjustment",
+						"percent": "10%",
+						"amount": "60.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "540.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"ref": "ITM-DESK-01",
+					"name": "Office desk return",
+					"price": "850.00",
+					"unit": "one"
+				},
+				"sum": "850.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "850.00"
+			},
+			{
+				"i": 3,
+				"quantity": "2",
+				"item": {
+					"ref": "TRV-FLT-01",
+					"name": "Domestic flights for cancelled visit",
+					"price": "300.00",
+					"unit": "one"
+				},
+				"sum": "600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"cef-vatex": "VATEX-SA-32",
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "600.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"reason": "Restocking and handling fee",
+				"amount": "50.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				]
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Refund to be processed within 14 days of receipt."
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Refund via SEPA-equivalent local transfer",
+				"credit_transfer": [
+					{
+						"iban": "SA4420000001234567891234",
+						"bic": "RJHISARIXXX",
+						"name": "Sample Consumer LLC — Refund Account"
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"delivery": {
+			"date": "2024-01-31",
+			"period": {
+				"start": "2024-01-01",
+				"end": "2024-01-31"
+			}
+		},
+		"totals": {
+			"sum": "1990.00",
+			"charge": "50.00",
+			"total": "2040.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "1440.00",
+								"percent": "15.0%",
+								"amount": "216.00"
+							},
+							{
+								"key": "zero",
+								"ext": {
+									"cef-vatex": "VATEX-SA-32",
+									"untdid-tax-category": "Z"
+								},
+								"base": "600.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "216.00"
+					}
+				],
+				"sum": "216.00"
+			},
+			"tax": "216.00",
+			"total_with_tax": "2256.00",
+			"payable": "2256.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Monthly summary credit note covering January 2024 adjustments.",
+				"ext": {
+					"untdid-text-subject": "AAI"
+				}
+			},
+			{
+				"key": "reason",
+				"text": "Customer returned 5 hours of consultancy and the office equipment delivered on 28 Jan.",
+				"ext": {
+					"untdid-text-subject": "ACD"
+				}
+			}
+		]
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -108,9 +109,11 @@ func taxComboRules() *rules.Set {
 		),
 		// BR-S-10, BR-Z-10: standard, zero-rated, IGIC, and IPSI shall NOT have a VATEX code
 		rules.When(is.Func("is non-exempt", taxComboIsNonExempt),
-			rules.Field("ext",
-				rules.Assert("07", "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
-					tax.ExtensionsExclude(cef.ExtKeyVATEX),
+			rules.When(is.FuncContext("regime is not saudi arabia", regimeIsNotSA),
+				rules.Field("ext",
+					rules.Assert("07", "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
+						tax.ExtensionsExclude(cef.ExtKeyVATEX),
+					),
 				),
 			),
 		),
@@ -145,4 +148,10 @@ func taxComboIsExempt(val any) bool {
 func taxComboIsNonExempt(val any) bool {
 	tc, ok := val.(*tax.Combo)
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)
+}
+
+func regimeIsNotSA(ctx rules.Context, _ any) bool {
+	return !ctx.Each(func(v any) bool {
+		return tax.RegimeIn(l10n.TaxCountryCode(l10n.SA)).Check(v)
+	})
 }

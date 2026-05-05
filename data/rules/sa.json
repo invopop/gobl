@@ -1,0 +1,81 @@
+{
+  "id": "GOBL-SA",
+  "package": "sa",
+  "subsets": [
+    {
+      "id": "GOBL-SA-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SA]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-SA-BILL-INVOICE-01",
+                  "desc": "supplier must have a valid tax ID code (BR-KSA-39)",
+                  "tests": "valid VAT code"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "identities",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-BILL-INVOICE-02",
+                      "desc": "supplier must have a valid identity (BR-KSA-08)",
+                      "tests": "identity must be one of: CRN/MOM/MLS/700/SAG/OTH"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SA-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SA]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ORG-IDENTITY-01",
+                  "desc": "identity code must be valid",
+                  "tests": "matches ^[a-zA-Z0-9]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SA-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [SA]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-SA-TAX-IDENTITY-01",
+                  "desc": "VAT number must be 15 digits starting/ending with 3 (BR-KSA-40)",
+                  "tests": "when present, VAT id must be valid"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
