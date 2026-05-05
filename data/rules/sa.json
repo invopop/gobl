@@ -1,10 +1,10 @@
 {
   "id": "GOBL-SA",
-  "name": "sa",
+  "package": "sa",
   "subsets": [
     {
       "id": "GOBL-SA-BILL-INVOICE",
-      "name": "bill.Invoice",
+      "object": "bill.Invoice",
       "subsets": [
         {
           "guard": "context: regime in [SA]",
@@ -14,8 +14,20 @@
               "assert": [
                 {
                   "id": "GOBL-SA-BILL-INVOICE-01",
-                  "desc": "supplier must have a valid tax ID code. An additional identity is optional but must be at most 1",
-                  "tests": "has tax ID code or CRN/MOM/MLS/700/SAG/OTH identity (BR-KSA-39), (BR-KSA-08)"
+                  "desc": "supplier must have a valid tax ID code (BR-KSA-39)",
+                  "tests": "valid VAT code"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "identities",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-BILL-INVOICE-02",
+                      "desc": "supplier must have a valid identity (BR-KSA-08)",
+                      "tests": "identity must be one of: CRN/MOM/MLS/700/SAG/OTH"
+                    }
+                  ]
                 }
               ]
             }
@@ -25,38 +37,18 @@
     },
     {
       "id": "GOBL-SA-ORG-IDENTITY",
-      "name": "org.Identity",
+      "object": "org.Identity",
       "subsets": [
         {
           "guard": "context: regime in [SA]",
           "subsets": [
             {
-              "guard": "has a type in [CRN], or has a type in [MOM], or has a type in [MLS], or has a type in [700], or has a type in [SAG], or has a type in [NAT], or has a type in [GCC], or has a type in [IQA], or has a type in [PAS], or has a type in [OTH]",
-              "subsets": [
+              "field": "code",
+              "assert": [
                 {
-                  "field": "code",
-                  "assert": [
-                    {
-                      "id": "GOBL-SA-ORG-IDENTITY-01",
-                      "desc": "identity code must be valid",
-                      "tests": "matches ^\\d{10}$"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "guard": "has a type in [TIN]",
-              "subsets": [
-                {
-                  "field": "code",
-                  "assert": [
-                    {
-                      "id": "GOBL-SA-ORG-IDENTITY-02",
-                      "desc": "identity code for type TIN must be valid",
-                      "tests": "matches ^\\d{15}$"
-                    }
-                  ]
+                  "id": "GOBL-SA-ORG-IDENTITY-01",
+                  "desc": "identity code must be valid",
+                  "tests": "matches ^[a-zA-Z0-9]*$"
                 }
               ]
             }
@@ -66,7 +58,7 @@
     },
     {
       "id": "GOBL-SA-TAX-IDENTITY",
-      "name": "tax.Identity",
+      "object": "tax.Identity",
       "subsets": [
         {
           "guard": "code in [SA]",
