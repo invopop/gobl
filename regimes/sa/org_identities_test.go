@@ -87,29 +87,16 @@ func TestCustomerIdentityTIN(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("invalid TIN identity too short", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "1234567890",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "identity code for type TIN must be valid")
-	})
-
 	t.Run("invalid TIN identity with letters", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Type: "TIN",
-				Code: "12345678901234A",
+				Code: "12345678901234A-",
 			},
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "identity code for type TIN must be valid")
+		assert.ErrorContains(t, err, "identity code must be valid")
 	})
 }

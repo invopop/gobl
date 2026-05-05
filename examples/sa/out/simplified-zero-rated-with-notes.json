@@ -1,0 +1,158 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "128247c855bd6a20c9030ea08cde6100119241331c75fbab1fcf0d55e49946f7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SA",
+		"$addons": [
+			"eu-en16931-v2017",
+			"sa-zatca-v1"
+		],
+		"uuid": "8d487816-70b8-4ade-a618-9d620b73814a",
+		"type": "standard",
+		"code": "123456",
+		"issue_date": "2022-09-07",
+		"issue_time": "12:21:28",
+		"currency": "SAR",
+		"tax": {
+			"rounding": "currency",
+			"ext": {
+				"sa-zatca-invoice-type": "0200000",
+				"untdid-document-type": "388"
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "zero",
+					"text": "Medicines",
+					"ext": {
+						"untdid-tax-category": "Z"
+					}
+				}
+			]
+		},
+		"supplier": {
+			"name": "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD",
+			"tax_id": {
+				"country": "SA",
+				"code": "399999999900003"
+			},
+			"identities": [
+				{
+					"type": "CRN",
+					"code": "1010010000"
+				}
+			],
+			"addresses": [
+				{
+					"num": "2322",
+					"street": "الامير سلطان | Prince Sultan",
+					"street_extra": "المربع | Al-Murabba",
+					"locality": "الرياض | Riyadh",
+					"code": "23333",
+					"country": "SA"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Medicine | الدواء",
+					"price": "50.00",
+					"unit": "PCE"
+				},
+				"sum": "50.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"cef-vatex": "VATEX-SA-35",
+							"untdid-tax-category": "Z"
+						}
+					}
+				],
+				"total": "50.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Shampoo | شامبو",
+					"price": "21.74",
+					"unit": "PCE"
+				},
+				"sum": "21.74",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "21.74"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Payment due within 30 days"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
+		"totals": {
+			"sum": "71.74",
+			"total": "71.74",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"ext": {
+									"cef-vatex": "VATEX-SA-35",
+									"untdid-tax-category": "Z"
+								},
+								"base": "50.00",
+								"percent": "0%",
+								"amount": "0.00"
+							},
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "21.74",
+								"percent": "15.0%",
+								"amount": "3.26"
+							}
+						],
+						"amount": "3.26"
+					}
+				],
+				"sum": "3.26"
+			},
+			"tax": "3.26",
+			"total_with_tax": "75.00",
+			"payable": "75.00"
+		}
+	}
+}

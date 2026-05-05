@@ -225,6 +225,51 @@ func TestTaxComboRule04_CategoryMustBeVAT(t *testing.T) {
 	})
 }
 
+// --- Rule 01 default branch: unrecognized tax category always passes VATEX check ---
+
+func TestTaxComboRule01_UnrecognizedCategoryPassesVATEX(t *testing.T) {
+	t.Run("unrecognized tax category with VATEX still passes VATEX rule", func(t *testing.T) {
+		// Build a valid invoice and then override the tax category to a value
+		// outside the known S/Z/E/O set (e.g. AE = reverse charge). This
+		// exercises the `default: return true` branch in taxComboHasValidVATEX.
+		inv := invoiceWithTaxCombo(&tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				cef.ExtKeyVATEX: zatca.VatexFinancialServices,
+			}),
+		})
+		require.NoError(t, inv.Calculate())
+		// Override the normalised category to one that is not S, Z, E, or O.
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(untdid.ExtKeyTaxCategory, en16931.TaxCategoryReverseCharge)
+		err := rules.Validate(inv)
+		// The VATEX rule itself must not fail — "AE" hits the default branch
+		// which returns true unconditionally. Rule 03 (category code) will fail
+		// separately, but the VATEX assertion (rule 01) must not fire.
+		assert.NotContains(t, errString(err), "VATEX exemption code must be present and valid")
+	})
+
+	t.Run("unrecognized tax category without VATEX still passes VATEX rule", func(t *testing.T) {
+		inv := invoiceWithTaxCombo(&tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+		})
+		require.NoError(t, inv.Calculate())
+		// Override the normalised category to an unknown value.
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(untdid.ExtKeyTaxCategory, en16931.TaxCategoryReverseCharge)
+		err := rules.Validate(inv)
+		assert.NotContains(t, errString(err), "VATEX exemption code must be present and valid")
+	})
+}
+
+// errString returns the error string, or empty string if nil.
+func errString(err error) string {
+	if err == nil {
+		return ""
+	}
+	return err.Error()
+}
+
 // --- Cross-cutting: VATEX must match the combo's tax category ---
 
 func TestTaxComboVATEX_PerCategoryRestrictions(t *testing.T) {

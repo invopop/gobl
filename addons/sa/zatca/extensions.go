@@ -61,28 +61,6 @@ var InvTypesSimplified = []cbc.Code{
 	"0211010",
 }
 
-var invTypesSummary = []cbc.Code{
-	"0100010",
-	"0100011",
-	"0100110",
-	"0101010",
-	"0101011",
-	"0101110",
-	"0110010",
-	"0110011",
-	"0110110",
-	"0111010",
-	"0111011",
-	"0111110",
-	"0200010",
-	"0201010",
-	"0210010",
-	"0211010",
-}
-
-// Every code in invTypeSummary already exists in InvTypeStandard
-//
-//	or InvTypesSimplified
 var validTransactionTypes = func() []cbc.Code {
 	codes := make([]cbc.Code, 0, len(InvTypesStandard)+len(InvTypesSimplified))
 	codes = append(codes, InvTypesStandard...)
