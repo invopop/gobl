@@ -7,8 +7,6 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -105,12 +103,4 @@ func hasTaxNoteForCategory(bt *bill.Tax, untdidCat cbc.Code) bool {
 		}
 	}
 	return false
-}
-
-func billDiscountRules() *rules.Set {
-	return rules.For(new(bill.Discount),
-		rules.Field("taxes",
-			rules.Assert("01", "taxes are required (BR-32)", is.Present),
-		),
-	)
 }

@@ -27,7 +27,6 @@ func init() {
 		billInvoiceRules(),
 		orgAddressRules(),
 		taxComboRules(),
-		billDiscountRules(),
 	)
 }
 
@@ -70,7 +69,5 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

@@ -232,7 +232,7 @@ func TestTaxBlockExtensions(t *testing.T) {
 		inv.Tax.Ext = tax.Extensions{}
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
-			"extensions untdid key document type and key invoice type transaction are required")
+			"extensions keys untdid document type and invoice type transaction are required")
 	})
 
 	t.Run("invalid document type code rejected", func(t *testing.T) {
@@ -327,7 +327,7 @@ func TestStandardInvoiceRequirements(t *testing.T) {
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
-			"customer name must be present in the standard tax invoice")
+			"customer name must be present (BR-KSA-71), (BR-KSA-25), (BR-KSA-42)")
 	})
 
 	t.Run("customer address street missing fails (BR-KSA-10)", func(t *testing.T) {
@@ -472,7 +472,7 @@ func TestSimplifiedSummaryRequirements(t *testing.T) {
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
-			"customer name must be present for simplified, summary invoices")
+			"customer name must be present (BR-KSA-71), (BR-KSA-25), (BR-KSA-42)")
 	})
 }
 
@@ -543,7 +543,7 @@ func TestBRKSA49_25_EDUHEAExemption(t *testing.T) {
 		withEDUHEACombo(inv, "VATEX-SA-EDU")
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
-			"customer name must be present (BR-KSA-25)")
+			"customer name must be present (BR-KSA-71), (BR-KSA-25), (BR-KSA-42)")
 	})
 }
 
