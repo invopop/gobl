@@ -151,13 +151,10 @@ func taxComboIsNonExempt(val any) bool {
 }
 
 func regimeIsNotSA(ctx rules.Context, _ any) bool {
-	isSA := false
-	ctx.Each(func(v any) bool {
+	return !ctx.Each(func(v any) bool {
 		if tax.RegimeIn(l10n.TaxCountryCode(l10n.SA)).Check(v) {
-			isSA = true
-			return false
+			return true
 		}
-		return true
+		return false
 	})
-	return !isSA
 }

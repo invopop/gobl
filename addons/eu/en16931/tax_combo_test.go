@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -226,6 +227,34 @@ func TestTaxComboValidation(t *testing.T) {
 		ad.Normalizer(c)
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "VATEX extension must not be set")
+	})
+
+	t.Run("standard with vatex code passes for SA regime", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(19, 2),
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-SA-EDU",
+			}),
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.RegimeContext(l10n.TaxCountryCode(l10n.SA)), tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("standard with vatex code passes for SA regime", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Percent:  num.NewPercentage(19, 2),
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-SA-EDU",
+			}),
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017), tax.RegimeContext(l10n.TaxCountryCode(l10n.SA)))
+		assert.NoError(t, err)
 	})
 
 	t.Run("nil", func(t *testing.T) {

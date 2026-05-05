@@ -223,6 +223,36 @@ func TestNormalizeInvoiceExemptionNotes(t *testing.T) {
 		assert.Equal(t, "Existing exemption note", inv.Tax.Notes[0].Text)
 	})
 
+	t.Run("nil note in notes slice is skipped", func(t *testing.T) {
+		inv := validStandardInvoice()
+		inv.Tax = &bill.Tax{
+			Notes: []*tax.Note{nil},
+		}
+		inv.Lines = []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Exempt item",
+					Price: num.NewAmount(100, 0),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Key:      tax.KeyExempt,
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
+							cef.ExtKeyVATEX:          "VATEX-SA-29",
+							untdid.ExtKeyTaxCategory: en16931.TaxCategoryExempt,
+						}),
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Tax.Notes, 2)
+		assert.Nil(t, inv.Tax.Notes[0])
+		assert.Equal(t, "Financial services mentioned in Article 29 of the VAT Regulations", inv.Tax.Notes[1].Text)
+	})
+
 	t.Run("unknown VATEX code does not add note", func(t *testing.T) {
 		inv := validStandardInvoice()
 		inv.Lines = []*bill.Line{
