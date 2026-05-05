@@ -91,9 +91,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 }
 
 func hasTaxNoteForCategory(bt *bill.Tax, untdidCat cbc.Code) bool {
-	if bt == nil {
-		return false
-	}
 	for _, n := range bt.Notes {
 		if n == nil {
 			continue
