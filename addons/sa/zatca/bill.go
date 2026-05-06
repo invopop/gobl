@@ -6,11 +6,10 @@ import (
 	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 )
 
-var taxExemptionReason = map[string]string{
+var taxExemptionReason = map[cbc.Code]string{
 	// Category E — Exempt from VAT
 	"VATEX-SA-29":   "Financial services mentioned in Article 29 of the VAT Regulations",
 	"VATEX-SA-29-7": "Life insurance services mentioned in Article 29 of the VAT Regulations",
@@ -52,18 +51,9 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.IssueTime = &cal.Time{}
 	}
 
-	// BR-KSA-O-01: "Not subject to VAT" lines must have a 0% rate.
-	for _, line := range inv.Lines {
-		vat := line.Taxes.Get(tax.CategoryVAT)
-		if vat == nil {
-			continue
-		}
-		if vat.Key == tax.KeyOutsideScope {
-			vat.Percent = &num.PercentageZero
-		}
-	}
-
 	// BR-KSA-83
+	// VAT categories E,Z,O must have an associated tax note. This
+	// validation adds them if not previously provided by the user
 	for _, line := range inv.Lines {
 		vat := line.Taxes.Get(tax.CategoryVAT)
 		if vat == nil {
@@ -73,7 +63,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 		if ec == cbc.CodeEmpty {
 			continue
 		}
-		reason, ok := taxExemptionReason[string(ec)]
+		reason, ok := taxExemptionReason[ec]
 		if !ok {
 			continue
 		}

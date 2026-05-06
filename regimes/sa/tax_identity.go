@@ -3,7 +3,6 @@ package sa
 import (
 	"regexp"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -23,17 +22,9 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(countryCode),
 			rules.Field("code",
-				rules.Assert("01", "VAT number must be 15 digits starting/ending with 3 (BR-KSA-40)",
-					is.Func("when present, VAT id must be valid", vatIDValid)),
+				rules.Assert("01", "VAT number must be 15 digits starting/ending with 3",
+					is.MatchesRegexp(vatIDRegexp)),
 			),
 		),
 	)
-}
-
-func vatIDValid(val any) bool {
-	code, ok := val.(cbc.Code)
-	if !ok || code.IsEmpty() {
-		return true
-	}
-	return vatIDRegexp.MatchString(code.String())
 }

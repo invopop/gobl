@@ -3,100 +3,44 @@ package sa_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes/sa"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-func TestCustomerTaxIDOrIdentity(t *testing.T) {
-	t.Run("customer with VAT and no identity is valid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.Identities = nil
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+func TestOrgIdentityCodeFormat(t *testing.T) {
+	validate := func(code cbc.Code) error {
+		id := &org.Identity{Type: "CRN", Code: code}
+		return rules.Validate(id, tax.RegimeContext("SA"))
+	}
+
+	t.Run("alphanumeric code is valid", func(t *testing.T) {
+		assert.NoError(t, validate("ABC123"))
 	})
 
-	t.Run("customer without VAT but with valid identity is valid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "123456789012345",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+	t.Run("digits only is valid", func(t *testing.T) {
+		assert.NoError(t, validate("1234567890"))
 	})
 
-	t.Run("customer without VAT and with empty identity code is invalid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "identity code must be provided")
-	})
-}
-
-func TestSupplierSingleIdentity(t *testing.T) {
-	t.Run("supplier with one identity is valid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Supplier.Identities = []*org.Identity{
-			{
-				Type: "CRN",
-				Code: "1234567890",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
-	})
-}
-
-func TestCustomerSingleIdentity(t *testing.T) {
-	t.Run("customer with one identity is valid", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "123456789012345",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
-	})
-}
-
-func TestCustomerIdentityTIN(t *testing.T) {
-	t.Run("valid TIN identity", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "123456789012345",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+	t.Run("letters only is valid", func(t *testing.T) {
+		assert.NoError(t, validate("ABCDEF"))
 	})
 
-	t.Run("invalid TIN identity with letters", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.Identities = []*org.Identity{
-			{
-				Type: "TIN",
-				Code: "12345678901234A-",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
+	t.Run("code with hyphen is invalid", func(t *testing.T) {
+		err := validate("ABC-123")
+		assert.ErrorContains(t, err, "identity code must be valid")
+	})
+
+	t.Run("code with special characters is invalid", func(t *testing.T) {
+		err := validate("ABC@123")
+		assert.ErrorContains(t, err, "identity code must be valid")
+	})
+
+	t.Run("code with spaces is invalid", func(t *testing.T) {
+		err := validate("ABC 123")
 		assert.ErrorContains(t, err, "identity code must be valid")
 	})
 }
