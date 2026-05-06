@@ -245,6 +245,14 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "es-tbai-bi-activity")
 	})
+
+	t.Run("No tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tax = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "tax is required")
+	})
 }
 
 func TestBillLineNormalization(t *testing.T) {

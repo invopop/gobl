@@ -176,14 +176,9 @@ func notesHasGeneralKey(val any) bool {
 
 func isBizkaiaIndividual(val any) bool {
 	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil {
+	if !ok || inv == nil || inv.Tax == nil || inv.Supplier == nil {
 		return false
 	}
-	if inv.Tax == nil || inv.Tax.Ext.Get(ExtKeyRegion) != ExtValueRegionBI {
-		return false
-	}
-	if inv.Supplier == nil {
-		return false
-	}
-	return es.TaxIdentityKey(inv.Supplier.TaxID) != es.TaxIdentityOrg
+	return inv.Tax.Ext.Get(ExtKeyRegion) == ExtValueRegionBI &&
+		es.TaxIdentityKey(inv.Supplier.TaxID) != es.TaxIdentityOrg
 }
