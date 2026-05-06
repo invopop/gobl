@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/eu/en16931"
+	"github.com/invopop/gobl/addons/sa/zatca"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -229,7 +229,7 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "VATEX extension must not be set")
 	})
 
-	t.Run("standard with vatex code passes for SA regime", func(t *testing.T) {
+	t.Run("standard with vatex code skips EN16931 rule for ZATCA addon", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
@@ -239,11 +239,12 @@ func TestTaxComboValidation(t *testing.T) {
 			}),
 		}
 		ad.Normalizer(c)
-		err := rules.Validate(c, tax.RegimeContext(l10n.TaxCountryCode(l10n.SA)), tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017, zatca.V1))
+		// EN 16931 rule 07 must not fire when ZATCA addon is present
+		assert.NotContains(t, err.Error(), "EU-EN16931-TAX-COMBO-07")
 	})
 
-	t.Run("standard with vatex code passes for SA regime", func(t *testing.T) {
+	t.Run("standard with vatex code skips EN16931 rule for ZATCA addon reverse order", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
@@ -253,8 +254,9 @@ func TestTaxComboValidation(t *testing.T) {
 			}),
 		}
 		ad.Normalizer(c)
-		err := rules.Validate(c, tax.AddonContext(en16931.V2017), tax.RegimeContext(l10n.TaxCountryCode(l10n.SA)))
-		assert.NoError(t, err)
+		err := rules.Validate(c, tax.AddonContext(zatca.V1, en16931.V2017))
+		// EN 16931 rule 07 must not fire when ZATCA addon is present
+		assert.NotContains(t, err.Error(), "EU-EN16931-TAX-COMBO-07")
 	})
 
 	t.Run("nil", func(t *testing.T) {

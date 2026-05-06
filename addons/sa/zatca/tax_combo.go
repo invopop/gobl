@@ -10,7 +10,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// SA VATEX exemption reason codes (subset of CEF VATEX list, per ZATCA spec).
+// SA VATEX exemption reason codes.
+// Used across the addon for rule validation.
 const (
 	VatexFinancialServices        cbc.Code = "VATEX-SA-29"
 	VatexLifeInsurance            cbc.Code = "VATEX-SA-29-7"
@@ -29,32 +30,6 @@ const (
 	VatexMilitaryGoods            cbc.Code = "VATEX-SA-MLTRY"
 	VatexOutOfScope               cbc.Code = "VATEX-SA-OOS"
 )
-
-var vatexValidCodes = map[cbc.Code][]cbc.Code{
-	en16931.TaxCategoryExempt: {
-		VatexFinancialServices,
-		VatexLifeInsurance,
-		VatexRealEstate,
-	},
-	en16931.TaxCategoryStandard: {},
-	en16931.TaxCategoryZero: {
-		VatexExportGoods,
-		VatexExportServices,
-		VatexIntlTransportGoods,
-		VatexIntlTransportPassengers,
-		VatexIntlTransportRelated,
-		VatexQualifyingTransportMeans,
-		VatexTransportRelated,
-		VatexMedicines,
-		VatexQualifyingMetals,
-		VatexPrivateEducation,
-		VatexPrivateHealthcare,
-		VatexMilitaryGoods,
-	},
-	en16931.TaxCategoryOutsideScope: {
-		VatexOutOfScope,
-	},
-}
 
 func taxComboRules() *rules.Set {
 	return rules.For(new(tax.Combo),
@@ -92,11 +67,29 @@ func taxComboHasValidVATEX(val any) bool {
 	switch category {
 	case en16931.TaxCategoryStandard:
 		return vatex == cbc.CodeEmpty
-	case en16931.TaxCategoryExempt,
-		en16931.TaxCategoryZero,
-		en16931.TaxCategoryOutsideScope:
-		allowed, ok := vatexValidCodes[category]
-		return ok && vatex.In(allowed...)
+	case en16931.TaxCategoryExempt:
+		return vatex.In(
+			VatexFinancialServices,
+			VatexLifeInsurance,
+			VatexRealEstate,
+		)
+	case en16931.TaxCategoryZero:
+		return vatex.In(
+			VatexExportGoods,
+			VatexExportServices,
+			VatexIntlTransportGoods,
+			VatexIntlTransportPassengers,
+			VatexIntlTransportRelated,
+			VatexQualifyingTransportMeans,
+			VatexTransportRelated,
+			VatexMedicines,
+			VatexQualifyingMetals,
+			VatexPrivateEducation,
+			VatexPrivateHealthcare,
+			VatexMilitaryGoods,
+		)
+	case en16931.TaxCategoryOutsideScope:
+		return vatex == VatexOutOfScope
 	default:
 		return true
 	}

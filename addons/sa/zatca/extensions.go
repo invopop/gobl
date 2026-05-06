@@ -1,7 +1,6 @@
 package zatca
 
 import (
-	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -67,11 +66,6 @@ var validTransactionTypes = func() []cbc.Code {
 	codes = append(codes, InvTypesSimplified...)
 	return codes
 }()
-
-var requiredExtensions = []cbc.Key{
-	ExtKeyInvoiceTypeTransactions,
-	untdid.ExtKeyDocumentType,
-}
 
 var extensions = []*cbc.Definition{
 	{

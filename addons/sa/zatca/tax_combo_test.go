@@ -144,42 +144,36 @@ func TestTaxComboRule02_StandardNoVATEX(t *testing.T) {
 // --- Rule 03 (BR-KSA-18): VAT category code must be one of S, Z, E, O ---
 
 func TestTaxComboRule03_ValidCategoryCodes(t *testing.T) {
-	validCategories := map[string]struct {
-		rate     cbc.Key
-		key      cbc.Key
-		expected cbc.Code
-		ext      tax.Extensions
-	}{
-		"standard maps to S": {
-			rate:     tax.RateGeneral,
-			expected: en16931.TaxCategoryStandard,
-		},
-		"exempt maps to E": {
-			key:      tax.KeyExempt,
-			expected: en16931.TaxCategoryExempt,
-			ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexFinancialServices}),
-		},
-		"outside scope maps to O": {
-			key:      tax.KeyOutsideScope,
-			expected: en16931.TaxCategoryOutsideScope,
-			ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexOutOfScope}),
-		},
+	assertValidCategory := func(t *testing.T, combo *tax.Combo, expected cbc.Code) {
+		t.Helper()
+		inv := invoiceWithTaxCombo(combo)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, expected, inv.Lines[0].Taxes[0].Ext.Get(untdid.ExtKeyTaxCategory))
+		require.NoError(t, rules.Validate(inv))
 	}
 
-	for name, tc := range validCategories {
-		t.Run(name, func(t *testing.T) {
-			inv := invoiceWithTaxCombo(&tax.Combo{
-				Category: tax.CategoryVAT,
-				Key:      tc.key,
-				Rate:     tc.rate,
-				Ext:      tc.ext,
-			})
-			require.NoError(t, inv.Calculate())
-			// Confirm the category extension was set correctly during normalization
-			assert.Equal(t, tc.expected, inv.Lines[0].Taxes[0].Ext.Get(untdid.ExtKeyTaxCategory))
-			require.NoError(t, rules.Validate(inv))
-		})
-	}
+	t.Run("standard maps to S", func(t *testing.T) {
+		assertValidCategory(t, &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+		}, en16931.TaxCategoryStandard)
+	})
+
+	t.Run("exempt maps to E", func(t *testing.T) {
+		assertValidCategory(t, &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexFinancialServices}),
+		}, en16931.TaxCategoryExempt)
+	})
+
+	t.Run("outside scope maps to O", func(t *testing.T) {
+		assertValidCategory(t, &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyOutsideScope,
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{cef.ExtKeyVATEX: zatca.VatexOutOfScope}),
+		}, en16931.TaxCategoryOutsideScope)
+	})
 
 	t.Run("category code outside the SA-allowed subset fails", func(t *testing.T) {
 		// Manually inject an EN16931-valid but ZATCA-disallowed category (e.g. AE

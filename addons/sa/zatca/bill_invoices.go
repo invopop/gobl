@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/sa"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -14,10 +13,51 @@ import (
 
 // UNTDID 1001 document type codes accepted by ZATCA.
 const (
-	DocTypeTaxInvoice cbc.Code = "388"
-	DocTypePrepayment cbc.Code = "386"
-	DocTypeDebitNote  cbc.Code = "383"
-	DocTypeCreditNote cbc.Code = "381"
+	docTypeTaxInvoice cbc.Code = "388"
+	docTypePrepayment cbc.Code = "386"
+	docTypeDebitNote  cbc.Code = "383"
+	docTypeCreditNote cbc.Code = "381"
+)
+
+// Other valid identities used by ZATCA
+const (
+	IdentityTypeTIN      cbc.Code = "TIN"
+	IdentityTypeCRN      cbc.Code = "CRN"
+	IdentityTypeMom      cbc.Code = "MOM"
+	IdentityTypeMLS      cbc.Code = "MLS"
+	IdentityType700      cbc.Code = "700"
+	IdentityTypeSAG      cbc.Code = "SAG"
+	IdentityTypeNational cbc.Code = "NAT"
+	IdentityTypeGcc      cbc.Code = "GCC"
+	IdentityTypeIqa      cbc.Code = "IQA"
+	IdentityTypePassport cbc.Code = "PAS"
+	IdentityTypeOTH      cbc.Code = "OTH"
+)
+
+var (
+	// CustomerValidIdentities groups customer accepted identities by ZATCA
+	customerValidIdentities = []cbc.Code{
+		IdentityTypeTIN,
+		IdentityTypeCRN,
+		IdentityTypeMom,
+		IdentityTypeMLS,
+		IdentityType700,
+		IdentityTypeSAG,
+		IdentityTypeNational,
+		IdentityTypeGcc,
+		IdentityTypeIqa,
+		IdentityTypePassport,
+		IdentityTypeOTH,
+	}
+
+	supplierValidIdentities = []cbc.Code{
+		IdentityTypeCRN,
+		IdentityTypeMom,
+		IdentityTypeMLS,
+		IdentityType700,
+		IdentityTypeSAG,
+		IdentityTypeOTH,
+	}
 )
 
 func billInvoiceRules() *rules.Set {
@@ -31,12 +71,16 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("tax",
 			rules.Assert("02", "tax must be present", is.Present),
 			rules.Field("ext",
-				rules.Assert("03", "extensions keys untdid document type and invoice type transaction are required",
-					tax.ExtensionsRequire(requiredExtensions...)),
-				rules.Assert("04", "document type must be a valid ZATCA type (388, 386, 383, 381) (BR-KSA-05)",
-					tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, DocTypeTaxInvoice, DocTypePrepayment, DocTypeDebitNote, DocTypeCreditNote),
+				rules.Assert("03", "untdid document type extension is required",
+					tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 				),
-				rules.Assert("05", "invoice transaction type must be valid",
+				rules.Assert("04", "invoice transaction type extension is required",
+					tax.ExtensionsRequire(ExtKeyInvoiceTypeTransactions),
+				),
+				rules.Assert("05", "document type must be a valid ZATCA type (388, 386, 383, 381) (BR-KSA-05)",
+					tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, docTypeTaxInvoice, docTypePrepayment, docTypeDebitNote, docTypeCreditNote),
+				),
+				rules.Assert("06", "invoice transaction type must be valid (BR-KSA-06)",
 					tax.ExtensionsHasCodes(ExtKeyInvoiceTypeTransactions, validTransactionTypes...),
 				),
 			),
@@ -46,13 +90,13 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.Func("credit or debit note", invoiceIsCreditOrDebitNote),
 			rules.Field("preceding",
-				rules.Assert("06", "credit and debit notes must have a billing reference", is.Present),
+				rules.Assert("07", "credit and debit notes must have a billing reference", is.Present),
 				rules.Each(
 					rules.Field("code",
-						rules.Assert("07", "billing reference must have an identifier (BR-KSA-56)", is.Present),
+						rules.Assert("08", "billing reference must have an identifier (BR-KSA-56)", is.Present),
 					),
 					rules.Field("reason",
-						rules.Assert("08", "credit and debit notes must contain the reason for issuance (BR-KSA-17)",
+						rules.Assert("09", "credit and debit notes must contain the reason for issuance (BR-KSA-17)",
 							is.Present,
 						),
 					),
@@ -67,31 +111,31 @@ func billInvoiceRules() *rules.Set {
 				rules.Field("addresses",
 					rules.Each(
 						rules.Field("street",
-							rules.Assert("09", "customer address must have a street name (BR-KSA-10)", is.Present),
+							rules.Assert("10", "customer address must have a street name (BR-KSA-10)", is.Present),
 						),
 						rules.Field("locality",
-							rules.Assert("10", "customer address must have a city name (BR-KSA-10)", is.Present),
+							rules.Assert("11", "customer address must have a city name (BR-KSA-10)", is.Present),
 						),
 						rules.Field("country",
-							rules.Assert("11", "customer address must have a country code (BR-KSA-10)", is.Present),
+							rules.Assert("12", "customer address must have a country code (BR-KSA-10)", is.Present),
 						),
 					),
 				),
-				rules.Assert("12", "customer must have a valid identification scheme for standard invoices",
+				rules.Assert("13", "customer must have a valid identification scheme for standard invoices",
 					is.Func("customer must be either VAT registered or have a valid identification (BR-KSA-14), (BR-KSA-81)", customerValidIdentity),
 				),
 			),
 			rules.Field("lines",
 				rules.Each(
 					rules.Field("taxes",
-						rules.Assert("13", "line taxes are required for standard tax invoices and associated credit notes and debit notes (BR-KSA-52)", is.Present),
+						rules.Assert("14", "line taxes are required for standard tax invoices and associated credit notes and debit notes (BR-KSA-52)", is.Present),
 					),
 				),
 			),
 			rules.Field("delivery",
-				rules.Assert("14", "delivery must be present", is.Present),
+				rules.Assert("15", "delivery must be present", is.Present),
 				rules.Field("date",
-					rules.Assert("15", "delivery must have a supply date (BR-KSA-15)", is.Present),
+					rules.Assert("16", "delivery must have a supply date (BR-KSA-15)", is.Present),
 				),
 			),
 		),
@@ -101,7 +145,7 @@ func billInvoiceRules() *rules.Set {
 			is.Func("export invoice", invoiceIsExport),
 			rules.Field("customer",
 				rules.Field("tax_id",
-					rules.Assert("16", "export invoices must not have buyer VAT registration number (BR-KSA-46)",
+					rules.Assert("17", "export invoices must not have buyer VAT registration number (BR-KSA-46)",
 						is.Empty,
 					),
 				),
@@ -114,14 +158,14 @@ func billInvoiceRules() *rules.Set {
 				is.Func("invoice is simplified and summary", invoiceIsSimplifiedAndSummary),
 			),
 			rules.Field("delivery",
-				rules.Assert("17", "delivery must be present for simplified and summary invoices", is.Present),
+				rules.Assert("18", "delivery must be present for simplified and summary invoices", is.Present),
 				rules.Field("period",
-					rules.Assert("18", "supply must have a delivery period", is.Present),
+					rules.Assert("19", "supply must have a delivery period", is.Present),
 					rules.Field("start",
-						rules.Assert("19", "delivery start date must be present (BR-KSA-72)", is.Present),
+						rules.Assert("20", "delivery start date must be present (BR-KSA-72)", is.Present),
 					),
 					rules.Field("end",
-						rules.Assert("20", "delivery end date must be present (BR-KSA-72)", is.Present),
+						rules.Assert("21", "delivery end date must be present (BR-KSA-72)", is.Present),
 					),
 				),
 			),
@@ -132,8 +176,8 @@ func billInvoiceRules() *rules.Set {
 			is.Func("has EDU or HEA tax exemption", invoiceHasEDUOrHEAExemption),
 			rules.Field("customer",
 				rules.Field("identities",
-					rules.Assert("21", "customer must have a national ID (NAT) when tax exemption is VATEX-SA-EDU or VATEX-SA-HEA (BR-KSA-49)",
-						org.IdentitiesTypeIn(sa.IdentityTypeNational),
+					rules.Assert("22", "customer must have a national ID (NAT) when tax exemption is VATEX-SA-EDU or VATEX-SA-HEA (BR-KSA-49)",
+						org.IdentitiesTypeIn(IdentityTypeNational),
 					),
 				),
 			),
@@ -147,9 +191,21 @@ func billInvoiceRules() *rules.Set {
 				is.Func("standard tax invoice", invoiceIsStandard),
 			),
 			rules.Field("customer",
-				rules.Assert("22", "customer must be present", is.Present),
+				rules.Assert("23", "customer must be present", is.Present),
 				rules.Field("name",
-					rules.Assert("23", "customer name must be present (BR-KSA-71), (BR-KSA-25), (BR-KSA-42)", is.Present),
+					rules.Assert("24", "customer name must be present (BR-KSA-71), (BR-KSA-25), (BR-KSA-42)", is.Present),
+				),
+			),
+		),
+
+		// Supplier
+		rules.Field("supplier",
+			rules.Assert("25", "supplier must have a tax ID code (BR-KSA-39)",
+				is.Func("valid VAT code", hasTaxIDCode),
+			),
+			rules.Field("identities",
+				rules.Assert("26", "supplier must have a valid identity (BR-KSA-08)",
+					is.Func("identity must be one of: CRN/MOM/MLS/700/SAG/OTH", hasOneSupplierIdentity),
 				),
 			),
 		),
@@ -203,6 +259,16 @@ func invoiceIsSimplifiedAndEDUOrHEAExemption(val any) bool {
 	return invoiceHasEDUOrHEAExemption(val) && !invoiceIsStandard(val)
 }
 
+func hasTaxIDCode(value any) bool {
+	party, _ := value.(*org.Party)
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasOneSupplierIdentity(value any) bool {
+	identities, _ := value.([]*org.Identity)
+	return len(identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(identities)
+}
+
 func invoiceHasExemption(val any, exemptions []cbc.Code) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil {
@@ -229,5 +295,5 @@ func customerValidIdentity(value any) bool {
 	if party.TaxID != nil && !party.TaxID.Code.IsEmpty() {
 		return true
 	}
-	return len(party.Identities) == 1 && org.IdentitiesTypeIn(sa.CustomerValidIdentities...).Check(party.Identities)
+	return len(party.Identities) == 1 && org.IdentitiesTypeIn(customerValidIdentities...).Check(party.Identities)
 }

@@ -15,7 +15,6 @@ const countryCode = "SA"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("sa", rules.GOBL.Add(countryCode),
-		billInvoiceRules(),
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
