@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -82,7 +83,7 @@ func TestScenarios(t *testing.T) {
 		}
 		inv.SetTags(tax.TagB2G)
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFormat: "XXXX",
 			}),
 		}
@@ -99,7 +100,7 @@ func TestScenarios(t *testing.T) {
 			Code:    "12345678903",
 		}
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFormat: "XXXX",
 			}),
 		}

@@ -64,7 +64,7 @@ func TestTermsNormalize(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		pt := &pay.Terms{
 			Key: pay.TermKeyUndefined,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
 			}),
 		}

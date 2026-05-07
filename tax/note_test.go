@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	_ "github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestNoteValidation(t *testing.T) {
 			Category: "VAT",
 			Key:      "reverse-charge",
 			Text:     "Reverse charge applies",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"untdid-tax-category": "AE",
 			}),
 		}
@@ -78,7 +79,7 @@ func TestNoteNormalize(t *testing.T) {
 			Category: "VAT",
 			Key:      "exempt",
 			Text:     "Exempt",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"untdid-tax-category": "E",
 				"empty-key":           "",
 			}),

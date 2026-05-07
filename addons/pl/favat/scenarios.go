@@ -39,7 +39,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Regular Invoice",
 				i18n.PL: "Faktura Podstawowa",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "VAT",
 			}),
 		},
@@ -50,7 +50,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment Invoice",
 				i18n.PL: `Faktura Zaliczkowa`,
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "ZAL",
 			}),
 		},
@@ -61,7 +61,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement Invoice",
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "ROZ",
 			}),
 		},
@@ -72,7 +72,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Invoice",
 				i18n.PL: "Faktura Uproszczona",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "UPR",
 			}),
 		},
@@ -82,7 +82,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Credit note",
 				i18n.PL: "Faktura korygująca",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "KOR",
 			}),
 		},
@@ -93,7 +93,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Prepayment credit note",
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "KOR_ZAL",
 			}),
 		},
@@ -104,7 +104,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Settlement credit note",
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyInvoiceType: "KOR_ROZ",
 			}),
 		},

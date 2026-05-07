@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/pt/saft"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
@@ -30,7 +31,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 			Rate:     tax.RateGeneral,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M01",
 			}),
 		}
@@ -96,7 +97,7 @@ func TestTaxComboNormalize(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(21, 3),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyTaxRate: "NOR",
 			}),
 		}
@@ -109,7 +110,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Country:  l10n.EL.Tax(),
 			Percent:  num.NewPercentage(24, 3),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyTaxRate: "NOR",
 			}),
 		}
@@ -121,7 +122,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M30", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M30",
 			}),
 		}
@@ -134,7 +135,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M05", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M05",
 			}),
 		}
@@ -147,7 +148,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M16", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M16",
 			}),
 		}
@@ -160,7 +161,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M99", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M99",
 			}),
 		}
@@ -173,7 +174,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M01", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M01",
 			}),
 		}
@@ -186,7 +187,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M44", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M44",
 			}),
 		}
@@ -199,7 +200,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M45", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M45",
 			}),
 		}
@@ -212,7 +213,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("reverse map exemption M46", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyExemption: "M46",
 			}),
 		}
@@ -225,7 +226,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("rate missing but extension present", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyTaxRate: "INT",
 			}),
 		}
@@ -238,7 +239,7 @@ func TestTaxComboNormalize(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyTaxRate: "INT",
 			}),
 		}
@@ -253,7 +254,7 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(230, 3),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "NOR",
 			}),
@@ -265,7 +266,7 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("missing rate", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion: "PT",
 			}),
 		}
@@ -277,7 +278,7 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Country:  l10n.EL.Tax(),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion: "PT",
 			}),
 		}
@@ -288,7 +289,7 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("valid exempt", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion:      "PT",
 				saft.ExtKeyTaxRate:   "ISE",
 				saft.ExtKeyExemption: "M01",
@@ -301,7 +302,7 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("missing exempt", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "ISE",
 			}),

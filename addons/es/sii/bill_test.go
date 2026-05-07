@@ -291,7 +291,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Series:    "ABC",
 				Code:      "122",
 				IssueDate: &d,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					sii.ExtKeyDocType: "R1",
 				}),
 				Tax: &tax.Total{
@@ -389,8 +389,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with same regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
-		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyRegime: "01"})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyRegime: "01"})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -398,8 +398,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with different regimes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "01"})
-		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyRegime: "02"})
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyRegime: "01"})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyRegime: "02"})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "es-sii-regime")
 		assert.ErrorContains(t, rules.Validate(inv), "must be the same in all tax combos")
@@ -408,8 +408,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with product in all tax combos", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
-		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -417,8 +417,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with product in some but not all tax combos", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
-		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{})
+		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{sii.ExtKeyProduct: sii.ExtCodeProductGoods})
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{})
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "es-sii-product")
 		assert.ErrorContains(t, rules.Validate(inv), "must be present in all tax combos or none")
@@ -427,13 +427,13 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("lines with non-VAT/IGIC taxes are ignored", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, testInvoiceLine(t))
-		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[1].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
 			sii.ExtKeyRegime: "01",
 		})
 		inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 			Category: es.TaxCategoryIRPF,
 			Rate:     es.TaxRatePro,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sii.ExtKeyRegime: "02", // Different regime, but should be ignored
 			}),
 		})

@@ -40,7 +40,7 @@ func TestScenarioSetSummary(t *testing.T) {
 		List: []*tax.Scenario{
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"xx-test": "normal",
 				}),
 			},
@@ -53,14 +53,14 @@ func TestScenarioSetSummary(t *testing.T) {
 					}
 					return inv.Totals.Paid()
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"xx-test": "paid",
 				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSimplified},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"xx-test": "simple",
 				}),
 				Note: &tax.Note{
@@ -158,7 +158,7 @@ func TestScenarioSetSummary(t *testing.T) {
 	t.Run("invoice with extensions", func(t *testing.T) {
 		doc := &scenarioTestDocument{
 			typ:  bill.InvoiceTypeStandard,
-			exts: []tax.Extensions{tax.ExtensionsOf(tax.ExtMap{"yy-test": "BAR"})},
+			exts: []tax.Extensions{tax.ExtensionsOf(cbc.CodeMap{"yy-test": "BAR"})},
 		}
 		sum := ss.SummaryFor(doc)
 		require.NotNil(t, sum)
@@ -169,8 +169,8 @@ func TestScenarioSetSummary(t *testing.T) {
 		doc := &scenarioTestDocument{
 			typ: bill.InvoiceTypeStandard,
 			exts: []tax.Extensions{
-				tax.ExtensionsOf(tax.ExtMap{"yy-test": "BAR"}),
-				tax.ExtensionsOf(tax.ExtMap{"zz-test": "FOO"}),
+				tax.ExtensionsOf(cbc.CodeMap{"yy-test": "BAR"}),
+				tax.ExtensionsOf(cbc.CodeMap{"zz-test": "FOO"}),
 			},
 		}
 		sum := ss.SummaryFor(doc)

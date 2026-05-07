@@ -25,7 +25,7 @@
                 {
                   "id": "GOBL-PAY-ADVANCE-02",
                   "desc": "key must be valid",
-                  "tests": "be or starts with one of [any, card, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
+                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
                 }
               ]
             }
@@ -53,7 +53,7 @@
                 {
                   "id": "GOBL-PAY-INSTRUCTIONS-02",
                   "desc": "key must be valid",
-                  "tests": "be or starts with one of [any, card, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
+                  "tests": "be or starts with one of [any, card, card+credit, card+debit, credit-transfer, credit-transfer+sepa, debit-transfer, cash, cheque, bank-draft, direct-debit, direct-debit+sepa, online, promissory-note, netting, other]"
                 }
               ]
             }

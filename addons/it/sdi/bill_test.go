@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -27,7 +28,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyDocumentType: "TD01",
 				sdi.ExtKeyFormat:       "FPA12",
 			}),
@@ -456,7 +457,7 @@ func TestChargesValidation(t *testing.T) {
 					Percent:  num.NewPercentage(22, 2),
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFundType: "TC04",
 			}),
 		}
@@ -474,7 +475,7 @@ func TestChargesValidation(t *testing.T) {
 		c := &bill.Charge{
 			Key:     sdi.KeyFundContribution,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFundType: "TC04",
 			}),
 		}
@@ -492,7 +493,7 @@ func TestChargesValidation(t *testing.T) {
 					Rate:     "standard",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFundType: "TC04",
 			}),
 		}
@@ -690,7 +691,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			sdi.ExtKeyRetained: "A",
 		}),
 		Percent: num.NewPercentage(20, 2),

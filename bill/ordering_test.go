@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -16,7 +17,7 @@ func TestOrderingNormalize(t *testing.T) {
 		Projects: []*org.DocumentRef{
 			{
 				Code: " Bar ",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"missing": "",
 				}),
 			},

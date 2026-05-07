@@ -32,7 +32,7 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "This is a general note test",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"untidid-text-subject": "AAI",
 			}),
 		}
@@ -44,7 +44,7 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Code: " FOO ",
 			Text: "This is a general note test",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"missing": "",
 			}),
 		}

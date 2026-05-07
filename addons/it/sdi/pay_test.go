@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -26,7 +27,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: "online",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
 			}),
 		},
@@ -35,7 +36,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "",
 				}),
 			},
@@ -70,7 +71,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	inv.Payment = &bill.PaymentDetails{
 		Advances: []*pay.Advance{
 			{
-				Key:         pay.MeansKeyDirectDebit.With("fooo"),
+				Key:         cbc.Key("fooo"),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
 			},
@@ -82,7 +83,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 
 	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
-			Key: pay.MeansKeyDirectDebit.With("fooo"),
+			Key: cbc.Key("fooo"),
 		},
 	}
 	require.NoError(t, inv.Calculate())

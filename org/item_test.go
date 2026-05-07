@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
@@ -25,7 +26,7 @@ func TestItemNormalization(t *testing.T) {
 		i := &org.Item{
 			Name:  "test item",
 			Price: num.NewAmount(100, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"test": "",
 			}),
 		}

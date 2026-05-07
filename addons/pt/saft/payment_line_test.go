@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/pt"
@@ -90,7 +91,7 @@ func TestPaymentLineValidation(t *testing.T) {
 	t.Run("too many VAT rates", func(t *testing.T) {
 		pl := validPaymentLine()
 		pl.Tax.Categories[0].Rates = append(pl.Tax.Categories[0].Rates, &tax.RateTotal{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "INT",
 			}),
@@ -196,7 +197,7 @@ func validPaymentLine() *bill.PaymentLine {
 					Code: tax.CategoryVAT,
 					Rates: []*tax.RateTotal{
 						{
-							Ext: tax.ExtensionsOf(tax.ExtMap{
+							Ext: tax.ExtensionsOf(cbc.CodeMap{
 								pt.ExtKeyRegion:    "PT",
 								saft.ExtKeyTaxRate: "NOR",
 							}),

@@ -35,13 +35,13 @@ func validInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		IssueTime: cal.NewTime(12, 34, 10),
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyIssuePlace: "21000",
 			}),
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "21000",
 				cfdi.ExtKeyFiscalRegime: "601",
 			}),
@@ -52,7 +52,7 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "65000",
 				cfdi.ExtKeyFiscalRegime: "608",
 				cfdi.ExtKeyUse:          "G01",
@@ -69,7 +69,7 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.NewAmount(10000, 2),
 					Unit:  org.UnitPackage,
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						cfdi.ExtKeyProdServ: "01010101",
 					}),
 				},
@@ -88,7 +88,7 @@ func validInvoiceGlobal() *bill.Invoice {
 	inv := validInvoice()
 	inv.Tags = tax.WithTags(cfdi.TagGlobal)
 	inv.Lines[0].Item.Ref = "TEST1234"
-	inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+	inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 		cfdi.ExtKeyGlobalPeriod: "04",
 		cfdi.ExtKeyGlobalMonth:  "01",
 		cfdi.ExtKeyGlobalYear:   "2025",
@@ -114,7 +114,7 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global period", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyGlobalPeriod: "04",
 			}),
 		}
@@ -125,7 +125,7 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global month", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyGlobalMonth: "02",
 			}),
 		}
@@ -136,7 +136,7 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global year", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyGlobalYear: "2025",
 			}),
 		}
@@ -147,7 +147,7 @@ func TestValidInvoice(t *testing.T) {
 	t.Run("with global period and month", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				cfdi.ExtKeyGlobalPeriod: "04",
 				cfdi.ExtKeyGlobalMonth:  "02",
 			}),
@@ -241,7 +241,7 @@ func TestInvoiceGlobalTagValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Tags = tax.WithTags(cfdi.TagGlobal)
 		inv.Lines[0].Item.Ref = "TEST1234"
-		inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax.Ext = inv.Tax.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			cfdi.ExtKeyGlobalPeriod: "04",
 			cfdi.ExtKeyGlobalMonth:  "01",
 			cfdi.ExtKeyGlobalYear:   "2025",
@@ -360,7 +360,7 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+	inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 		cfdi.ExtKeyFiscalRegime: "601",
 		"mx-cfdi-post-code":     "21000",
 	})
@@ -429,7 +429,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cfdi.ExtKeyProdServ: "12345678",
 				}),
 			},
@@ -439,7 +439,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(0, 2),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cfdi.ExtKeyProdServ: "12345678",
 				}),
 			},
@@ -450,7 +450,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(-5000, 2),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cfdi.ExtKeyProdServ: "12345678",
 				}),
 			},
@@ -461,7 +461,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			name: "nil price",
 			item: &org.Item{
 				Name: "Test purchase",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cfdi.ExtKeyProdServ: "12345678",
 				}),
 			},
@@ -480,7 +480,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext:   tax.ExtensionsOf(tax.ExtMap{}),
+				Ext:   tax.ExtensionsOf(cbc.CodeMap{}),
 			},
 			err: "item requires 'mx-cfdi-prod-serv' extension",
 		},
@@ -489,7 +489,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
 				}),
 			},
@@ -500,7 +500,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			item: &org.Item{
 				Name:  "Test purchase",
 				Price: num.NewAmount(10000, 2),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cfdi.ExtKeyProdServ: "AbC2",
 				}),
 			},

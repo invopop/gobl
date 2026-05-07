@@ -27,7 +27,7 @@ func TestTaxRateMigration(t *testing.T) {
 	inv = validInvoice()
 	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt"
-	inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{saft.ExtKeyExemption: "M02"})
+	inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{saft.ExtKeyExemption: "M02"})
 
 	err = inv.Calculate()
 	require.NoError(t, err)

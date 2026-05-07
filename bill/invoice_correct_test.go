@@ -152,7 +152,7 @@ func TestCorrectWithOptions(t *testing.T) {
 		Type:   bill.InvoiceTypeCreditNote,
 		Reason: "test refund",
 		Series: "R-TEST",
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			facturae.ExtKeyCorrection: "01",
 		}),
 	}

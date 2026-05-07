@@ -3,6 +3,7 @@ package bill
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -43,7 +44,7 @@ func TestPaymentDetailsNormalize(t *testing.T) {
 		Instructions: &pay.Instructions{
 			Key:    "online",
 			Detail: "Some random payment",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
 			}),
 		},

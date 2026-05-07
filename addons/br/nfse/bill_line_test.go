@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -23,7 +24,7 @@ func TestLineValidation(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: br.TaxCategoryISS,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							nfse.ExtKeyISSLiability: "1",
 						}),
 					},

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/es/verifactu"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -264,7 +265,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Series:    "ABC",
 				Code:      "122",
 				IssueDate: &d,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					verifactu.ExtKeyDocType: "R1",
 				}),
 				Tax: &tax.Total{
@@ -378,7 +379,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "B12345678",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					verifactu.ExtKeyIdentityType: "02",
 				}),
 			},

@@ -29,7 +29,7 @@ func testInvoiceB2BStandard(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Type:     bill.InvoiceTypeStandard,
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ctc.ExtKeyBillingMode:     ctc.BillingModeS1,
 				untdid.ExtKeyDocumentType: "380",
 			}),
@@ -134,21 +134,21 @@ func testInvoiceB2BStandard(t *testing.T) *bill.Invoice {
 			{
 				Key:  org.NoteKeyPayment,
 				Text: "A fixed penalty of 40 EUR will apply to any late payment.",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyTextSubject: "PMT",
 				}),
 			},
 			{
 				Key:  org.NoteKeyPaymentMethod,
 				Text: "Late payment penalties apply as per our general terms of sale.",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyTextSubject: "PMD",
 				}),
 			},
 			{
 				Key:  org.NoteKeyPaymentTerm,
 				Text: "No discount offered for early payment.",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyTextSubject: "AAB",
 				}),
 			},
@@ -249,7 +249,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// (bypassing UNTDID validation for test purposes)
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -268,7 +268,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Manually add Spanish tax category to a line (after Calculate)
 		if len(inv.Lines) > 0 && len(inv.Lines[0].Taxes) > 0 {
-			inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(tax.ExtMap{
+			inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: "L", // IGIC (Canary Islands)
 			})
 		}
@@ -282,7 +282,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -296,7 +296,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2BINT",
@@ -310,7 +310,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2C",
@@ -324,7 +324,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "OUTOFSCOPE",
@@ -338,7 +338,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "ARCHIVEONLY",
@@ -352,7 +352,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "INVALID",
@@ -370,14 +370,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Notes = append(inv.Notes,
 			&org.Note{
 				Key: org.NoteKeyLegal,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyTextSubject: "BAR",
 				}),
 				Text: "B2B",
 			},
 			&org.Note{
 				Key: org.NoteKeyLegal,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyTextSubject: "BAR",
 				}),
 				Text: "Additional BAR information",
@@ -402,7 +402,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -425,7 +425,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -452,7 +452,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -493,7 +493,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -520,7 +520,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -541,7 +541,7 @@ func TestInvoiceValidation(t *testing.T) {
 		// Add B2B note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key: org.NoteKeyLegal,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 			Text: "B2B",
@@ -632,7 +632,7 @@ func TestBillingModeNormalization(t *testing.T) {
 	t.Run("user-specified billing mode preserved", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ctc.ExtKeyBillingMode: ctc.BillingModeS5, // Subcontractor
 			}),
 		}
@@ -643,7 +643,7 @@ func TestBillingModeNormalization(t *testing.T) {
 	t.Run("invalid billing mode rejected - B8", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ctc.ExtKeyBillingMode: cbc.Code("B8"), // Not allowed
 			}),
 		}
@@ -661,7 +661,7 @@ func TestBillingModeNormalization(t *testing.T) {
 	t.Run("invalid billing mode rejected - B5", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Tax = &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ctc.ExtKeyBillingMode: cbc.Code("B5"), // Not allowed
 			}),
 		}
@@ -771,7 +771,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
@@ -788,7 +788,7 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
@@ -805,13 +805,13 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
 				{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
@@ -828,13 +828,13 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
 				{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
@@ -853,13 +853,13 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
 				{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
@@ -878,13 +878,13 @@ func TestOrderingIdentitiesValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "CT",
 					}),
 				},
 				{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "VN",
 					}),
 				},
@@ -918,7 +918,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
@@ -940,7 +940,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
@@ -962,7 +962,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AFL",
 					}),
 				},
@@ -975,7 +975,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "AWW",
 					}),
 				},
@@ -997,7 +997,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "12345",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "CT",
 					}),
 				},
@@ -1010,7 +1010,7 @@ func TestLineIdentifiersValidation(t *testing.T) {
 				},
 				Identifier: &org.Identity{
 					Code: "67890",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyReference: "VN",
 					}),
 				},
@@ -1186,7 +1186,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add STC identity to supplier
 		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
 			Code: "12345678",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0231", // STC scheme
 			}),
 		})
@@ -1199,7 +1199,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "TXD"}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1211,7 +1211,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add STC identity to supplier
 		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
 			Code: "12345678",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0231", // STC scheme
 			}),
 		})
@@ -1219,7 +1219,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ORDER-123",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						iso.ExtKeySchemeID: "0088",
 					}),
 				},
@@ -1232,7 +1232,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "TXD"}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1245,7 +1245,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add STC identity to supplier
 		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
 			Code: "12345678",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0231", // STC scheme
 			}),
 		})
@@ -1253,7 +1253,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 			Identities: []*org.Identity{
 				{
 					Code: "ORDER-123",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						iso.ExtKeySchemeID: "0088",
 					}),
 				},
@@ -1269,7 +1269,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "TXD"}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1282,7 +1282,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add STC identity to supplier
 		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
 			Code: "12345678",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0231", // STC scheme
 			}),
 		})
@@ -1290,7 +1290,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add TXD note
 		inv.Notes = append(inv.Notes, &org.Note{
 			Text: "MEMBRE_ASSUJETTI_UNIQUE",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "TXD"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "TXD"}),
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -1304,7 +1304,7 @@ func TestSTCSupplierValidation(t *testing.T) {
 		// Add STC identity to supplier
 		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
 			Code: "12345678",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0231", // STC scheme
 			}),
 		})
@@ -1819,7 +1819,7 @@ func TestSelfBilledInvoiceValidation(t *testing.T) {
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "B2B",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 		})
@@ -2221,7 +2221,7 @@ func TestSupplierValidationEdgeCases(t *testing.T) {
 		inv.Supplier.Identities = []*org.Identity{
 			{
 				Code: "OTHER-ID",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: "0088",
 				}),
 			},
@@ -2244,7 +2244,7 @@ func TestCustomerValidationEdgeCases(t *testing.T) {
 		inv.Notes = append(inv.Notes, &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "B2B",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTextSubject: "BAR",
 			}),
 		})
@@ -2253,7 +2253,7 @@ func TestCustomerValidationEdgeCases(t *testing.T) {
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "OTHER-ID",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: "0088",
 				}),
 			},
@@ -2488,8 +2488,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 	t.Run("missing PMT note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"})},
-			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"})},
+			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMD"})},
+			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "AAB"})},
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -2500,8 +2500,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 	t.Run("missing PMD note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
-			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"})},
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMT"})},
+			{Key: org.NoteKeyPaymentTerm, Text: "AAB text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "AAB"})},
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -2512,8 +2512,8 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 	t.Run("missing AAB note code (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
-			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"})},
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMT"})},
+			{Key: org.NoteKeyPaymentMethod, Text: "PMD text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMD"})},
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -2524,7 +2524,7 @@ func TestMissingRequiredNoteCodes(t *testing.T) {
 	t.Run("missing multiple note codes (BR-FR-05)", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)
 		inv.Notes = []*org.Note{
-			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"})},
+			{Key: org.NoteKeyPayment, Text: "PMT text", Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMT"})},
 		}
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)

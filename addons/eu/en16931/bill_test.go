@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -89,7 +90,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							"cef-vatex": "VATEX-EU-132",
 						}),
 					},
@@ -134,7 +135,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							"cef-vatex": "VATEX-EU-132",
 						}),
 					},
@@ -155,7 +156,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 					{
 						Category: tax.CategoryVAT,
 						Key:      tax.KeyExempt,
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							"cef-vatex": "VATEX-EU-132",
 						}),
 					},
@@ -197,7 +198,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Exempt under Article 132",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: "E",
 			}),
 		}
@@ -210,7 +211,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Reverse charge applies",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: "AE",
 			}),
 		}
@@ -224,7 +225,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 			Text:     "Exempt under Article 132",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: "AE",
 			}),
 		}
@@ -442,7 +443,7 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
 					}),
 				},
@@ -454,7 +455,7 @@ func TestValidateBillDiscount(t *testing.T) {
 
 	t.Run("with extension", func(t *testing.T) {
 		l := &bill.Discount{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyAllowance: "67",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -462,7 +463,7 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
 					}),
 				},
@@ -479,7 +480,7 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
 					}),
 				},
@@ -492,7 +493,7 @@ func TestValidateBillDiscount(t *testing.T) {
 	t.Run("with reason and extension", func(t *testing.T) {
 		l := &bill.Discount{
 			Reason: "Product sample",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyAllowance: "67",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -500,7 +501,7 @@ func TestValidateBillDiscount(t *testing.T) {
 				{
 					Category: tax.CategoryVAT,
 					Rate:     "standard",
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						untdid.ExtKeyTaxCategory: en16931.TaxCategoryStandard,
 					}),
 				},
@@ -532,7 +533,7 @@ func TestValidateBillCharge(t *testing.T) {
 
 	t.Run("with extension", func(t *testing.T) {
 		l := &bill.Charge{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -552,7 +553,7 @@ func TestValidateBillCharge(t *testing.T) {
 	t.Run("with reason and extension", func(t *testing.T) {
 		l := &bill.Charge{
 			Reason: "Product sample",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -574,7 +575,7 @@ func TestValidateBillLineDiscount(t *testing.T) {
 
 	t.Run("Discount with extension", func(t *testing.T) {
 		d := &bill.LineDiscount{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyAllowance: "67",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -594,7 +595,7 @@ func TestValidateBillLineDiscount(t *testing.T) {
 	t.Run("Discount with reason and extension", func(t *testing.T) {
 		d := &bill.LineDiscount{
 			Reason: "Product sample",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyAllowance: "67",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -622,7 +623,7 @@ func TestValidateBillLineCharge(t *testing.T) {
 
 	t.Run("Charge with extension", func(t *testing.T) {
 		c := &bill.LineCharge{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),
@@ -642,7 +643,7 @@ func TestValidateBillLineCharge(t *testing.T) {
 	t.Run("Charge with reason and extension", func(t *testing.T) {
 		c := &bill.LineCharge{
 			Reason: "Product sample",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyCharge: "AAE",
 			}),
 			Amount: num.MakeAmount(100, 2),

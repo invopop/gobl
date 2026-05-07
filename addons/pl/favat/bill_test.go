@@ -28,7 +28,7 @@ func creditNote() *bill.Invoice {
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyEffectiveDate: "1",
 				}),
 			},
@@ -165,7 +165,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 func TestExemptStandardInvoiceValidation(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
 		}),
 	}
@@ -188,7 +188,7 @@ func TestExemptStandardInvoiceValidationFailsWithoutNote(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
 		// valid exemption set but no matching note
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
 		}),
 	}
@@ -203,7 +203,7 @@ func TestExemptStandardInvoiceValidationFailsWithoutNote(t *testing.T) {
 func TestExemptStandardInvoiceValidationFailsWithTooManyNotes(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
 		}),
 	}
@@ -327,13 +327,13 @@ func TestSupplierValidation(t *testing.T) {
 func TestCustomerJSTValidation(t *testing.T) {
 	t.Run("valid JST customer with LGU recipient identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
 				}),
 			},
@@ -345,7 +345,7 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer without required identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
 		})
 		// No identities provided
@@ -357,13 +357,13 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer with identity missing code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
 				}),
 			},
@@ -376,13 +376,13 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer with wrong role identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "SOME-ID",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // Wrong role (GV member instead of LGU)
 				}),
 			},
@@ -394,7 +394,7 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("non-JST customer does not require identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "2", // Customer is NOT a Subordinate Local Government Unit
 		})
 		// No identities needed
@@ -408,13 +408,13 @@ func TestCustomerJSTValidation(t *testing.T) {
 func TestCustomerGroupVATValidation(t *testing.T) {
 	t.Run("valid GroupVAT customer with GV member identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "GV-67890",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
 				}),
 			},
@@ -426,7 +426,7 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer without required identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
 		})
 		// No identities provided
@@ -438,13 +438,13 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer with identity missing code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
 				}),
 			},
@@ -457,13 +457,13 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer with wrong role identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "SOME-ID",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Wrong role (LGU instead of GV member)
 				}),
 			},
@@ -475,7 +475,7 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("non-GroupVAT customer does not require identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "2", // Customer is NOT a Group VAT member
 		})
 		// No identities needed
@@ -489,20 +489,20 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 	t.Run("customer with both JST and GroupVAT needs both identities", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
 				}),
 			},
 			{
 				Code: "GV-67890",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
 				}),
 			},
@@ -514,14 +514,14 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 
 	t.Run("customer with both JST and GroupVAT missing JST identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "GV-67890",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // Only GV member identity
 				}),
 			},
@@ -533,14 +533,14 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 
 	t.Run("customer with both JST and GroupVAT missing GroupVAT identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Only LGU identity
 				}),
 			},
@@ -694,13 +694,13 @@ func TestNilValidation(t *testing.T) {
 func TestValidationEdgeCases(t *testing.T) {
 	t.Run("customer with identity having different role", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1",
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "TEST-123",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "5", // Different role
 				}),
 			},
@@ -712,13 +712,13 @@ func TestValidationEdgeCases(t *testing.T) {
 
 	t.Run("customer with identity matching role but no code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1",
 		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10",
 				}),
 			},

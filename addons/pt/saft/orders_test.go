@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -34,7 +35,7 @@ func TestOrderValidation(t *testing.T) {
 	t.Run("invalid work type", func(t *testing.T) {
 		ord := validOrder()
 
-		ord.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{
+		ord.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyWorkType: saft.WorkTypeProforma,
 		})
 
@@ -89,7 +90,7 @@ func TestOrderNormalization(t *testing.T) {
 		ord := &bill.Order{
 			Type: bill.OrderTypePurchase,
 			Tax: &bill.Tax{
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyWorkType: saft.WorkTypeOther,
 				}),
 			},
@@ -141,7 +142,7 @@ func validOrder() *bill.Order {
 		Addons: tax.WithAddons(saft.V1),
 		Type:   bill.OrderTypePurchase,
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyWorkType: saft.WorkTypePurchaseOrder,
 			}),
 		},
@@ -175,7 +176,7 @@ func validOrderLines() []*bill.Line {
 				Name:  "Test Item",
 				Price: num.NewAmount(100, 0),
 				Unit:  "one",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyProductType: saft.ProductTypeService,
 				}),
 			},
@@ -183,7 +184,7 @@ func validOrderLines() []*bill.Line {
 				{
 					Category: "VAT",
 					Percent:  num.NewPercentage(230, 3),
-					Ext: tax.ExtensionsOf(tax.ExtMap{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						"pt-region":        "PT",
 						saft.ExtKeyTaxRate: saft.TaxRateNormal,
 					}),
