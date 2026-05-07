@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/ar/arca"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/ar"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -70,7 +71,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"custom-key": "custom-value",
 			}),
 		}
@@ -84,7 +85,7 @@ func TestValidateTaxCombo(t *testing.T) {
 	t.Run("valid VAT combo with rate extension", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyVATRate: "5",
 			}),
 		}
