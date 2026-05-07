@@ -25,6 +25,7 @@ func init() {
 		rules.GOBL.Add("SA-ZATCA-V1"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
+		billLineRules(),
 		orgAddressRules(),
 		taxComboRules(),
 	)
