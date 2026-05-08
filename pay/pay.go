@@ -8,21 +8,21 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("pay"),
-		Advance{},
 		Card{},
 		CreditTransfer{},
 		DirectDebit{},
 		Instructions{},
 		Online{},
+		Record{},
 		Terms{},
 	)
 	rules.Register(
 		"pay",
 		rules.GOBL.Add("PAY"),
-		advanceRules(),
+		dueDateRules(),
 		instructionsRules(),
 		onlineRules(),
+		recordRules(),
 		termsRules(),
-		dueDateRules(),
 	)
 }

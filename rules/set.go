@@ -136,7 +136,7 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 		return nil
 	}
 	isNil := false
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
 			isNil = true
 		} else {
@@ -162,7 +162,7 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 	// field), By-style tests that assert value.(*T) would otherwise fail.
 	callObj := obj
 	if !isNil && rv.Kind() == reflect.Struct {
-		if reflect.TypeOf(obj).Kind() != reflect.Ptr {
+		if reflect.TypeOf(obj).Kind() != reflect.Pointer {
 			ptr := reflect.New(rv.Type())
 			ptr.Elem().Set(rv)
 			callObj = ptr.Interface()
@@ -288,7 +288,7 @@ func (s *Set) isNamespace() bool {
 // namespace-level field iteration and does not re-check the namespace guard.
 func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 	rv := reflect.ValueOf(obj)
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
 			return nil
 		}
@@ -300,7 +300,7 @@ func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 
 	objType := rv.Type()
 	callObj := obj
-	if rv.Kind() == reflect.Struct && reflect.TypeOf(obj).Kind() != reflect.Ptr {
+	if rv.Kind() == reflect.Struct && reflect.TypeOf(obj).Kind() != reflect.Pointer {
 		ptr := reflect.New(rv.Type())
 		ptr.Elem().Set(rv)
 		callObj = ptr.Interface()
@@ -352,7 +352,7 @@ func (s *Set) validateNestedValue(rc *Context, obj any) []*Fault {
 // validateNestedFieldValue handles pointers, structs, slices, and named types
 // during namespace-internal field iteration.
 func (s *Set) validateNestedFieldValue(rc *Context, fv reflect.Value) []*Fault {
-	if fv.Kind() == reflect.Ptr {
+	if fv.Kind() == reflect.Pointer {
 		if fv.IsNil() {
 			return nil
 		}
@@ -419,7 +419,7 @@ func (s *Set) validateNestedFieldValue(rc *Context, fv reflect.Value) []*Fault {
 // given subset. Fault paths are reported as [0], [1], etc. (no field-name
 // prefix; the caller's Field already contributes that).
 func validateEachValue(rc *Context, fv reflect.Value, ss *Set) []*Fault {
-	if fv.Kind() == reflect.Ptr {
+	if fv.Kind() == reflect.Pointer {
 		if fv.IsNil() {
 			return nil
 		}

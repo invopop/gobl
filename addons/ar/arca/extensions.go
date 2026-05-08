@@ -8,14 +8,14 @@ import (
 
 // Extension keys for Argentina ARCA v4
 const (
-	ExtKeyDocType         cbc.Key = "ar-arca-doc-type"
-	ExtKeyConcept         cbc.Key = "ar-arca-concept"
-	ExtKeyIdentityType    cbc.Key = "ar-arca-identity-type"
-	ExtKeyTaxType         cbc.Key = "ar-arca-tax-type"
-	ExtKeyVATRate         cbc.Key = "ar-arca-vat-rate"
-	ExtKeyVATStatus       cbc.Key = "ar-arca-vat-status"
-	ExtKeyTourismRelation cbc.Key = "ar-arca-tourism-relation"
-	ExtKeyTourismCode     cbc.Key = "ar-arca-tourism-code"
+	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
+	ExtKeyConcept      cbc.Key = "ar-arca-concept"
+	ExtKeyIdentityType cbc.Key = "ar-arca-identity-type"
+	ExtKeyTaxType      cbc.Key = "ar-arca-tax-type"
+	ExtKeyVATRate      cbc.Key = "ar-arca-vat-rate"
+	ExtKeyVATStatus    cbc.Key = "ar-arca-vat-status"
+	ExtKeyTourismType  cbc.Key = "ar-arca-tourism-type"
+	ExtKeyTourismItem  cbc.Key = "ar-arca-tourism-item"
 )
 
 // DocTypesA are document codes (Invoice A, Debit Note A, Credit Note A, and variants)
@@ -1120,7 +1120,7 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyTourismRelation,
+		Key: ExtKeyTourismType,
 		Name: i18n.String{
 			i18n.EN: "Argentina ARCA Tourism Issuer-Receiver Relationship",
 			i18n.ES: "Código de relación emisor-receptor para turismo",
@@ -1180,7 +1180,7 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyTourismCode,
+		Key: ExtKeyTourismItem,
 		Name: i18n.String{
 			i18n.EN: "Argentina ARCA Tourism Item Code",
 			i18n.ES: "Código de ítem de turismo Argentina ARCA",

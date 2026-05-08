@@ -879,7 +879,7 @@
       ]
     },
     {
-      "key": "ar-arca-tourism-relation",
+      "key": "ar-arca-tourism-type",
       "name": {
         "en": "Argentina ARCA Tourism Issuer-Receiver Relationship",
         "es": "Código de relación emisor-receptor para turismo"
@@ -933,7 +933,7 @@
       ]
     },
     {
-      "key": "ar-arca-tourism-code",
+      "key": "ar-arca-tourism-item",
       "name": {
         "en": "Argentina ARCA Tourism Item Code",
         "es": "Código de ítem de turismo Argentina ARCA"

@@ -261,30 +261,33 @@ func billInvoiceRules() *rules.Set {
 			fmt.Sprintf("document type B cannot have customer VAT status %v", vatStatusesTypeA),
 			is.Func("doc type B vat status", invoiceDocTypeBVATStatus),
 		),
-		// Services require ordering and payment
-		rules.When(is.Func("concept is services", invoiceConceptIsServices),
-			rules.Field("ordering",
-				rules.Assert("15", "ordering is required for services", is.Present),
-				rules.Field("period",
-					rules.Assert("16", "ordering period is required for services", is.Present),
+		// Concept-based payment/ordering rules apply to class A, B, and C invoices.
+		rules.When(is.Func("doc type is A, B, or C", invoiceDocTypeIsABC),
+			// Services require ordering and payment
+			rules.When(is.Func("concept is services", invoiceConceptIsServices),
+				rules.Field("ordering",
+					rules.Assert("15", "ordering is required for services", is.Present),
+					rules.Field("period",
+						rules.Assert("16", "ordering period is required for services", is.Present),
+					),
 				),
-			),
-			rules.Field("payment",
-				rules.Assert("17", "payment is required for services", is.Present),
-				rules.Field("terms",
-					rules.Assert("18", "payment terms are required for services", is.Present),
-					rules.Field("due_dates",
-						rules.Assert("19", "payment due dates are required for services", is.Present),
+				rules.Field("payment",
+					rules.Assert("17", "payment is required for services", is.Present),
+					rules.Field("terms",
+						rules.Assert("18", "payment terms are required for services", is.Present),
+						rules.Field("due_dates",
+							rules.Assert("19", "payment due dates are required for services", is.Present),
+						),
 					),
 				),
 			),
-		),
-		// Products must not have payment due dates
-		rules.When(is.Func("concept is goods", invoiceConceptIsGoods),
-			rules.Field("payment",
-				rules.Field("terms",
-					rules.Field("due_dates",
-						rules.Assert("20", "payment due dates must not be set for goods", is.Empty),
+			// Products must not have payment due dates
+			rules.When(is.Func("concept is goods", invoiceConceptIsGoods),
+				rules.Field("payment",
+					rules.Field("terms",
+						rules.Field("due_dates",
+							rules.Assert("20", "payment due dates must not be set for goods", is.Empty),
+						),
 					),
 				),
 			),
@@ -324,8 +327,8 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("tax",
 				rules.Field("ext",
 					rules.Assert("25",
-						fmt.Sprintf("tourism invoice requires '%s' extension", ExtKeyTourismRelation),
-						tax.ExtensionsRequire(ExtKeyTourismRelation),
+						fmt.Sprintf("tourism invoice requires '%s' extension", ExtKeyTourismType),
+						tax.ExtensionsRequire(ExtKeyTourismType),
 					),
 				),
 			),
@@ -341,8 +344,8 @@ func billInvoiceRules() *rules.Set {
 						rules.Each(
 							rules.Field("ext",
 								rules.Assert("26",
-									fmt.Sprintf("tourism invoice line requires '%s' extension", ExtKeyTourismCode),
-									tax.ExtensionsRequire(ExtKeyTourismCode),
+									fmt.Sprintf("tourism invoice line requires '%s' extension", ExtKeyTourismItem),
+									tax.ExtensionsRequire(ExtKeyTourismItem),
 								),
 								rules.Assert("28",
 									fmt.Sprintf("tourism invoice line VAT rate must be '5' (21%%) via '%s'", ExtKeyVATRate),
@@ -357,8 +360,8 @@ func billInvoiceRules() *rules.Set {
 				rules.Each(
 					rules.Field("ext",
 						rules.Assert("30",
-							fmt.Sprintf("tourism invoice discount requires '%s' extension", ExtKeyTourismCode),
-							tax.ExtensionsRequire(ExtKeyTourismCode),
+							fmt.Sprintf("tourism invoice discount requires '%s' extension", ExtKeyTourismItem),
+							tax.ExtensionsRequire(ExtKeyTourismItem),
 						),
 					),
 				),
@@ -368,8 +371,8 @@ func billInvoiceRules() *rules.Set {
 					rules.Each(
 						rules.Field("ext",
 							rules.Assert("31",
-								fmt.Sprintf("tourism invoice advance requires '%s' extension", ExtKeyTourismCode),
-								tax.ExtensionsRequire(ExtKeyTourismCode),
+								fmt.Sprintf("tourism invoice advance requires '%s' extension", ExtKeyTourismItem),
+								tax.ExtensionsRequire(ExtKeyTourismItem),
 							),
 						),
 					),
@@ -521,9 +524,6 @@ func invoiceConceptIsServices(val any) bool {
 	if !ok || inv == nil {
 		return false
 	}
-	if invoiceDocTypeIsT(inv) {
-		return false // type T (tourism) invoices don't require ordering/payment
-	}
 	concept := inv.Tax.GetExt(ExtKeyConcept)
 	return concept.In("2", "3") // Services or Products and services
 }
@@ -532,9 +532,6 @@ func invoiceConceptIsGoods(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil {
 		return false
-	}
-	if invoiceDocTypeIsT(inv) {
-		return false // type T (tourism) invoices don't use concept-based payment rules
 	}
 	concept := inv.Tax.GetExt(ExtKeyConcept)
 	return concept == "1" // Products only
@@ -556,4 +553,8 @@ func invoiceDocTypeIsT(val any) bool {
 	}
 	docType := inv.Tax.GetExt(ExtKeyDocType)
 	return docType.In(DocTypesT...)
+}
+
+func invoiceDocTypeIsABC(val any) bool {
+	return !invoiceDocTypeIsT(val)
 }

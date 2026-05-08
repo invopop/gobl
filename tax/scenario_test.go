@@ -124,7 +124,7 @@ func TestScenarioSetSummary(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := scenariosInvoiceExample()
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Percent:     num.NewPercentage(1, 0),
 					Description: "prepaid",

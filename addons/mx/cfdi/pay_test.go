@@ -38,14 +38,14 @@ func TestNormalizePayAdvance(t *testing.T) {
 	ad := tax.AddonForKey(cfdi.V4)
 
 	t.Run("nil", func(t *testing.T) {
-		var adv *pay.Advance
+		var adv *pay.Record
 		assert.NotPanics(t, func() {
 			ad.Normalizer(adv)
 		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: pay.MeansKeyOnline.With(cfdi.MeansKeyWallet),
 		}
 		ad.Normalizer(adv)
