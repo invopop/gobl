@@ -65,8 +65,8 @@ func validPayment() *bill.Payment {
 				},
 			},
 		},
-		Method: &pay.Instructions{
-			Key: "credit-transfer",
+		Methods: []*pay.Record{
+			{Key: "credit-transfer"},
 		},
 	}
 }
@@ -278,6 +278,7 @@ func TestPaymentTotalValidation(t *testing.T) {
 	t.Run("valid total amount", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Total = num.MakeAmount(100, 2)
+		pmt.Methods[0].Amount = pmt.Total
 		assert.NoError(t, rules.Validate(pmt, withAddonContext()))
 	})
 

@@ -146,7 +146,7 @@ func For(obj any, defs ...Def) *Set {
 	}
 
 	t := reflect.TypeOf(obj)
-	if t.Kind() == reflect.Ptr {
+	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	normPkg := func(p string) string { return strings.TrimSuffix(p, "_test") }
@@ -300,7 +300,7 @@ func compileFieldSubset(t reflect.Type, ss *Set) {
 	if ft == nil {
 		panic(fmt.Sprintf("rules: field %q not found in type %s", ss.FieldName, t.Name()))
 	}
-	if ft.Kind() == reflect.Ptr {
+	if ft.Kind() == reflect.Pointer {
 		ft = ft.Elem()
 	}
 	ss.objType = ft
@@ -312,14 +312,14 @@ func compileFieldSubset(t reflect.Type, ss *Set) {
 // recursively compiles the subset for that element type. It panics if the parent
 // type is not a slice or array.
 func compileEachSubset(t reflect.Type, ss *Set) {
-	if t.Kind() == reflect.Ptr {
+	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	if t.Kind() != reflect.Slice && t.Kind() != reflect.Array {
 		panic(fmt.Sprintf("rules: Each used on non-slice type %s", t.Name()))
 	}
 	ft := t.Elem()
-	if ft.Kind() == reflect.Ptr {
+	if ft.Kind() == reflect.Pointer {
 		ft = ft.Elem()
 	}
 	ss.objType = ft
@@ -338,7 +338,7 @@ func fieldTypeByName(t reflect.Type, name string) reflect.Type {
 		f := t.Field(i)
 		if f.Anonymous {
 			et := f.Type
-			if et.Kind() == reflect.Ptr {
+			if et.Kind() == reflect.Pointer {
 				et = et.Elem()
 			}
 			if et.Kind() == reflect.Struct {
@@ -367,7 +367,7 @@ func fieldValueByName(rv reflect.Value, name string) (reflect.Value, bool) {
 		f := rt.Field(i)
 		if f.Anonymous {
 			fv := rv.Field(i)
-			if fv.Kind() == reflect.Ptr {
+			if fv.Kind() == reflect.Pointer {
 				if fv.IsNil() {
 					continue
 				}
