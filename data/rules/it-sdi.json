@@ -484,14 +484,14 @@
       ]
     },
     {
-      "id": "GOBL-IT-SDI-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-IT-SDI-PAY-RECORD",
+      "object": "pay.Record",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-IT-SDI-PAY-ADVANCE-01",
+              "id": "GOBL-IT-SDI-PAY-RECORD-01",
               "desc": "payment advance requires 'it-sdi-payment-means' extension",
               "tests": "ext require [it-sdi-payment-means]"
             }

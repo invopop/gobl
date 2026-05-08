@@ -161,7 +161,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 				},
 			},
 			Payment: &bill.PaymentDetails{
-				Advances: []*pay.Advance{
+				Advances: []*pay.Record{
 					{
 						Description: "Test Advance",
 						Percent:     num.NewPercentage(50, 2),

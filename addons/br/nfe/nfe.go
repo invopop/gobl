@@ -51,7 +51,7 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *pay.Instructions:
 		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
+	case *pay.Record:
+		normalizePayRecord(obj)
 	}
 }

@@ -17,7 +17,7 @@
         },
         "advances": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/pay/advance"
+            "$ref": "https://gobl.org/draft-0/pay/record"
           },
           "type": "array",
           "title": "Advances",

@@ -162,7 +162,7 @@ func TestValidateInvoice(t *testing.T) {
 			}),
 		}
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid in advance",
 					Percent:     num.NewPercentage(100, 2),
