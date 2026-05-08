@@ -58,6 +58,9 @@ func testStatus(t *testing.T) *bill.Status {
 		IssueDate: cal.MakeDate(2026, 2, 2),
 		Code:      "STA-2026-0001",
 		Supplier:  frPartyWithSIREN(),
+		Customer:  customerParty(),
+		Issuer:    issuerParty(),
+		Recipient: recipientParty(),
 		Lines: []*bill.StatusLine{
 			{
 				Key:  bill.StatusEventAccepted,
@@ -71,6 +74,50 @@ func testStatus(t *testing.T) *bill.Status {
 	}
 }
 
+// issuerParty returns a buyer-end-party Issuer suitable for ack 23
+// (BR-FR-CDV-CL-03 allowed list: BY/AB/DL/SE/SR/PE/PR/II/IV). It
+// carries an inbox so the GOBL-side "sender reachable" rule passes
+// without forcing a Supplier inbox in every test.
+func issuerParty() *org.Party {
+	return &org.Party{
+		Name: "ACHETEUR",
+		Identities: []*org.Identity{{
+			Code: "200000008",
+			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, schemeIDSIREN),
+		}},
+		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBY),
+	}
+}
+
+// customerParty returns a buyer-side counterpart used as the
+// (optionally derived) Issuer/Recipient party.
+func customerParty() *org.Party {
+	return &org.Party{
+		Name: "ACHETEUR",
+		Identities: []*org.Identity{{
+			Code: "200000008",
+			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, schemeIDSIREN),
+		}},
+		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBY),
+	}
+}
+
+// recipientParty returns the seller-end-party counterpart with an
+// inbox, satisfying BR-FR-CDV-08 (recipient role ≠ WK/DFH ⇒ URIID).
+func recipientParty() *org.Party {
+	return &org.Party{
+		Name: "VENDEUR",
+		Identities: []*org.Identity{{
+			Code: "100000009",
+			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, schemeIDSIREN),
+		}},
+		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "100000009_PEP"}},
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleSE),
+	}
+}
+
 // --- bill.Status validation ----------------------------------------------
 
 func TestStatusHappyPath(t *testing.T) {
@@ -78,7 +125,6 @@ func TestStatusHappyPath(t *testing.T) {
 	runNormalize(t, st)
 	require.NoError(t, rules.Validate(st))
 	assert.Equal(t, bill.StatusTypeResponse, st.Type)
-	assert.Equal(t, RoleSE, st.Supplier.Ext.Get(ExtKeyRole))
 }
 
 func TestStatusRejectsSystemType(t *testing.T) {
@@ -92,9 +138,29 @@ func TestStatusRejectsSystemType(t *testing.T) {
 func TestStatusSupplierSIRENRequired(t *testing.T) {
 	st := testStatus(t)
 	st.Supplier.Identities = nil
+	// Strip the SE party's identity too so the normaliser can't
+	// auto-populate Supplier from it.
+	st.Recipient.Identities = nil
 	runNormalize(t, st)
 	err := rules.Validate(st)
 	assert.ErrorContains(t, err, "SIREN")
+}
+
+// TestStatusSupplierSIRENFilledFromSEParty exercises the normaliser:
+// when Supplier is missing its SIREN identity and an SE-roled party
+// (Issuer or Recipient) carries one, the SIREN propagates onto
+// Supplier so the writer can populate ref.IssuerTradeParty (MDT-129)
+// without the caller repeating the seller in two places.
+func TestStatusSupplierSIRENFilledFromSEParty(t *testing.T) {
+	st := testStatus(t)
+	st.Supplier = nil // recipient is SE-roled with SIREN 100000009
+	runNormalize(t, st)
+	require.NoError(t, rules.Validate(st))
+	require.NotNil(t, st.Supplier)
+	require.Len(t, st.Supplier.Identities, 1)
+	assert.Equal(t, cbc.Code("100000009"), st.Supplier.Identities[0].Code)
+	assert.Equal(t, schemeIDSIREN,
+		st.Supplier.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
 }
 
 func TestStatusTypeMismatchRejected(t *testing.T) {
@@ -102,7 +168,7 @@ func TestStatusTypeMismatchRejected(t *testing.T) {
 	runNormalize(t, st)
 	st.Type = bill.StatusTypeUpdate // accepted is a response code
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "Status.Type must match")
+	assert.ErrorContains(t, err, "Status.Type must be a valid pair")
 }
 
 func TestStatusRejectsMultipleLines(t *testing.T) {
@@ -185,7 +251,8 @@ func TestStatusDisputedRequiresReason(t *testing.T) {
 
 func TestStatusSuspendedRequiresReason(t *testing.T) {
 	st := testStatus(t)
-	st.Lines[0].Key = StatusEventSuspended
+	// CDV-208 Suspendue maps to stock `querying + response`.
+	st.Lines[0].Key = bill.StatusEventQuerying
 	runNormalize(t, st)
 	err := rules.Validate(st)
 	assert.ErrorContains(t, err, "require at least one reason")
@@ -218,6 +285,7 @@ func TestStatusAcceptedDoesNotRequireReason(t *testing.T) {
 func TestStatusPaidRequiresAmount(t *testing.T) {
 	st := testStatus(t)
 	st.Lines[0].Key = bill.StatusEventPaid
+	st.Type = bill.StatusTypeResponse // pin: paid pairs with both update and response
 	runNormalize(t, st)
 	err := rules.Validate(st)
 	assert.ErrorContains(t, err, "MEN")
@@ -226,6 +294,9 @@ func TestStatusPaidRequiresAmount(t *testing.T) {
 func TestStatusPaidSatisfiedByComplement(t *testing.T) {
 	st := testStatus(t)
 	st.Lines[0].Key = bill.StatusEventPaid
+	// `paid` maps to two CDAR codes (211/update, 212/response) so the
+	// normaliser cannot default Type from the key alone — pin it.
+	st.Type = bill.StatusTypeResponse
 	obj, err := schema.NewObject(&Characteristic{
 		TypeCode: TypeCodeAmountReceived,
 		Amount: &currency.Amount{
@@ -242,6 +313,7 @@ func TestStatusPaidSatisfiedByComplement(t *testing.T) {
 func TestStatusPaidWithoutMENFailsEvenWithOtherTypes(t *testing.T) {
 	st := testStatus(t)
 	st.Lines[0].Key = bill.StatusEventPaid
+	st.Type = bill.StatusTypeResponse
 	obj, err := schema.NewObject(&Characteristic{
 		TypeCode: TypeCodeAmountPaid,
 		Amount:   &currency.Amount{Currency: "EUR", Value: num.MakeAmount(100, 0)},
@@ -256,6 +328,7 @@ func TestStatusPaidWithoutMENFailsEvenWithOtherTypes(t *testing.T) {
 func TestStatusPaidMENMissingCurrencyFails(t *testing.T) {
 	st := testStatus(t)
 	st.Lines[0].Key = bill.StatusEventPaid
+	st.Type = bill.StatusTypeResponse
 	obj, err := schema.NewObject(&Characteristic{
 		TypeCode: TypeCodeAmountReceived,
 		Amount:   &currency.Amount{Value: num.MakeAmount(100, 0)},
@@ -290,7 +363,7 @@ func TestStatusCharacteristicReasonLinkMismatch(t *testing.T) {
 	st.Lines[0].Key = bill.StatusEventRejected
 	st.Lines[0].Reasons = []*bill.Reason{{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "ART_ERR"}),
+		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
 	}}
 	obj, err := schema.NewObject(&Characteristic{
 		ReasonCode: "QTE_ERR", // not matching any sibling reason
@@ -308,11 +381,11 @@ func TestStatusCharacteristicReasonLinkMatch(t *testing.T) {
 	st := testStatus(t)
 	st.Lines[0].Key = bill.StatusEventRejected
 	st.Lines[0].Reasons = []*bill.Reason{{
-		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "ART_ERR"}),
+		Key: bill.ReasonKeyLegal,
+		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
 	}}
 	obj, err := schema.NewObject(&Characteristic{
-		ReasonCode: "ART_ERR",
+		ReasonCode: "TX_TVA_ERR",
 		Name:       "description",
 		Value:      "corrected",
 	})
@@ -407,12 +480,25 @@ func TestStatusLineKeyKnownWrongType(t *testing.T) {
 	assert.False(t, statusLineKeyKnown("x"))
 }
 
-func TestStatusLinePaidHasAmountWrongType(t *testing.T) {
-	assert.True(t, statusLinePaidHasAmount(42))
+func TestStatusPaidResponseHasAmountWrongType(t *testing.T) {
+	assert.True(t, statusPaidResponseHasAmount(42))
 }
 
-func TestStatusLinePaidHasAmountNonPaidLine(t *testing.T) {
-	assert.True(t, statusLinePaidHasAmount(&bill.StatusLine{Key: bill.StatusEventAccepted}))
+func TestStatusPaidResponseHasAmountNonPaidLine(t *testing.T) {
+	st := &bill.Status{
+		Type:  bill.StatusTypeResponse,
+		Lines: []*bill.StatusLine{{Key: bill.StatusEventAccepted}},
+	}
+	assert.True(t, statusPaidResponseHasAmount(st))
+}
+
+func TestStatusPaidResponseHasAmountUpdateSkips(t *testing.T) {
+	// `paid + update` (CDV-211) does NOT require MEN.
+	st := &bill.Status{
+		Type:  bill.StatusTypeUpdate,
+		Lines: []*bill.StatusLine{{Key: bill.StatusEventPaid}},
+	}
+	assert.True(t, statusPaidResponseHasAmount(st))
 }
 
 func TestStatusLineTypeCodesKnownWrongType(t *testing.T) {

@@ -1,28 +1,44 @@
 package flow6
 
 import (
+	"slices"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 )
 
-// Extended bill.StatusLine.Key values added by Flow 6 so every CDAR
-// ProcessConditionCode maps 1:1 to a (key, type) pair. GOBL ships the
-// "plain" keys (issued, processing, accepted, rejected, paid, error);
-// the ones marked here are France-specific additions needed for CDAR.
+// Extended bill.StatusLine.Key values added by Flow 6. We reuse stock
+// GOBL keys wherever the (key, Status.Type) pair is unambiguous —
+// notably `paid + update` (CDV-211 Paiement Transmis) and
+// `paid + response` (CDV-212 Encaissée), which share the "paid"
+// semantic but distinguish transmission vs treatment phase via Type.
+//
+// Stock keys carrying CDAR codes:
+//   issued       + update   → 200 (Déposée)
+//   acknowledged + response → 202 (Reçue par PA)
+//   processing   + response → 204 (Prise en charge)
+//   accepted     + response → 205 (Approuvée)
+//   querying     + response → 208 (Suspendue) — "buyer will not proceed
+//                                                 without additional info"
+//   rejected     + response → 210 (Refusée)
+//   paid         + update   → 211 (Paiement transmis)
+//   paid         + response → 212 (Encaissée)
+//   error        + response → 213 (Rejetée sémantique)
+//
+// The keys below cover Flow 6 events that have no stock equivalent.
 const (
-	StatusEventIssuedByPlatform   cbc.Key = "issued-by-platform"
-	StatusEventReceivedByPlatform cbc.Key = "received-by-platform"
-	StatusEventMadeAvailable      cbc.Key = "made-available"
-	StatusEventPartiallyAccepted  cbc.Key = "partially-accepted"
-	StatusEventDisputed           cbc.Key = "disputed"
-	StatusEventSuspended          cbc.Key = "suspended"
-	StatusEventCompleted          cbc.Key = "completed"
-	StatusEventPaymentForwarded   cbc.Key = "payment-forwarded"
+	StatusEventIssuedByPlatform  cbc.Key = "issued-by-platform"
+	StatusEventMadeAvailable     cbc.Key = "made-available"
+	StatusEventPartiallyAccepted cbc.Key = "partially-accepted"
+	StatusEventDisputed          cbc.Key = "disputed"
+	StatusEventCompleted         cbc.Key = "completed"
 )
 
-// processEntry pairs a bill.StatusLine.Key with the bill.Status.Type it
-// implies. For Flow 6 the pair is always fixed per key: the Type is a
-// property of the CDAR code, not a disambiguator.
+// processEntry pairs a bill.StatusLine.Key with the bill.Status.Type
+// the CDV expects, alongside the wire ProcessConditionCode. A key may
+// appear in multiple entries when its (key, type) pairs map to
+// different CDAR codes — that is what allows us to share `paid`
+// across CDV-211 (update) and CDV-212 (response).
 type processEntry struct {
 	Key  cbc.Key
 	Type cbc.Key
@@ -34,16 +50,16 @@ type processEntry struct {
 var processTable = []processEntry{
 	{bill.StatusEventIssued, bill.StatusTypeUpdate, "200"},
 	{StatusEventIssuedByPlatform, bill.StatusTypeUpdate, "201"},
-	{StatusEventReceivedByPlatform, bill.StatusTypeResponse, "202"},
+	{bill.StatusEventAcknowledged, bill.StatusTypeResponse, "202"},
 	{StatusEventMadeAvailable, bill.StatusTypeResponse, "203"},
 	{bill.StatusEventProcessing, bill.StatusTypeResponse, "204"},
 	{bill.StatusEventAccepted, bill.StatusTypeResponse, "205"},
 	{StatusEventPartiallyAccepted, bill.StatusTypeResponse, "206"},
 	{StatusEventDisputed, bill.StatusTypeResponse, "207"},
-	{StatusEventSuspended, bill.StatusTypeResponse, "208"},
+	{bill.StatusEventQuerying, bill.StatusTypeResponse, "208"},
 	{StatusEventCompleted, bill.StatusTypeResponse, "209"},
 	{bill.StatusEventRejected, bill.StatusTypeResponse, "210"},
-	{StatusEventPaymentForwarded, bill.StatusTypeUpdate, "211"},
+	{bill.StatusEventPaid, bill.StatusTypeUpdate, "211"},
 	{bill.StatusEventPaid, bill.StatusTypeResponse, "212"},
 	{bill.StatusEventError, bill.StatusTypeResponse, "213"},
 }
@@ -71,16 +87,38 @@ func StatusKeyFor(code string) (cbc.Key, cbc.Key, bool) {
 	return "", "", false
 }
 
-// statusTypeForKey returns the fixed Status.Type associated with a
-// StatusLine.Key for Flow 6. The second return is false if the key has
-// no CDAR entry.
+// statusTypeForKey returns the Status.Type associated with a
+// StatusLine.Key for Flow 6 *if the key has exactly one*. Returns
+// ("", false) when the key is unknown OR when the same key is shared
+// across multiple types (e.g. `paid` covers both update/211 and
+// response/212) — in that case the caller must specify Type explicitly.
 func statusTypeForKey(key cbc.Key) (cbc.Key, bool) {
+	var found cbc.Key
+	for _, e := range processTable {
+		if e.Key != key {
+			continue
+		}
+		if found != "" && found != e.Type {
+			return "", false
+		}
+		found = e.Type
+	}
+	if found == "" {
+		return "", false
+	}
+	return found, true
+}
+
+// statusKeyKnown reports whether the key appears in the Flow 6
+// process table at least once (regardless of how many types it
+// pairs with).
+func statusKeyKnown(key cbc.Key) bool {
 	for _, e := range processTable {
 		if e.Key == key {
-			return e.Type, true
+			return true
 		}
 	}
-	return "", false
+	return false
 }
 
 // reasonEntry pairs a CDAR ReasonCode with its bucket bill.Reason.Key
@@ -182,6 +220,101 @@ var actionTable = []struct {
 	{"CNP", bill.ActionKeyCreditPartial},
 	{"CNA", bill.ActionKeyCreditAmount},
 	{"OTH", bill.ActionKeyOther},
+}
+
+// CDVSide reports which end-party plays the Issuer role on a CDV
+// message of the given process code. Used by the cii writer to
+// auto-fill IssuerTradeParty / RecipientTradeParty from Supplier and
+// Customer when the caller has not set them explicitly. The mapping
+// follows Annexe A "Acteurs CDV".
+type CDVSide string
+
+const (
+	// CDVSideBuyer — the buyer-side end-party issues the CDV
+	// (Issuer = Customer, Recipient = Supplier).
+	CDVSideBuyer CDVSide = "buyer"
+	// CDVSideSeller — the seller-side end-party issues the CDV
+	// (Issuer = Supplier, Recipient = Customer).
+	CDVSideSeller CDVSide = "seller"
+	// CDVSidePlatform — the message is issued by a platform (PA-E,
+	// PA-R) or addressed to the PPF, so neither end-party plays the
+	// issuer role. The caller must supply st.Issuer (and typically
+	// st.Recipient) explicitly.
+	CDVSidePlatform CDVSide = "platform"
+)
+
+// SideForCode returns which end-party issues a CDV with the given
+// CDAR ProcessConditionCode (per Annexe A "Acteurs CDV", treatment
+// phase). Returns CDVSideUnknown for codes not in the table.
+func SideForCode(code string) CDVSide {
+	switch code {
+	case "204", "205", "206", "207", "208", "210", "211":
+		return CDVSideBuyer
+	case "209", "212":
+		return CDVSideSeller
+	case "200", "201", "202", "203", "213":
+		return CDVSidePlatform
+	}
+	return CDVSidePlatform
+}
+
+// SideForKeyType is a convenience wrapper around SideForCode that
+// looks up the process code for a (StatusLine.Key, Status.Type) pair
+// first.
+func SideForKeyType(key, typ cbc.Key) CDVSide {
+	if code, ok := CDARProcessCodeFor(key, typ); ok {
+		return SideForCode(code)
+	}
+	return CDVSidePlatform
+}
+
+// allowedReasonsByProcessCode is the BR-FR-CDV-CL-09 table — for each
+// CDAR process code that admits Reasons, the set of CDAR ReasonCodes
+// the schematron will accept. Codes not listed here either don't carry
+// reasons (200, 201, 202, 203, 204, 205, 209, 211, 212) or carry any
+// reason (the table is the strict list per Annexe A "Tableau des motifs
+// de STATUTS").
+var allowedReasonsByProcessCode = map[string][]string{
+	"200": {"NON_TRANSMISE"},
+	"206": {
+		"AUTRE", "CMD_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+		"REF_CT_ABSENT", "REF_ERR", "PU_ERR", "REM_ERR", "QTE_ERR",
+		"ART_ERR", "MODPAI_ERR", "QUALITE_ERR", "LIVR_INCOMP",
+	},
+	"207": {
+		"AUTRE", "COORD_BANC_ERR", "TX_TVA_ERR", "MONTANTTOTAL_ERR",
+		"CALCUL_ERR", "NON_CONFORME", "DOUBLON", "DEST_ERR",
+		"TRANSAC_INC", "EMMET_INC", "CONTRAT_TERM", "DOUBLE_FACT",
+		"CMD_ERR", "ADR_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+		"REF_CT_ABSENT", "REF_ERR", "PU_ERR", "REM_ERR", "QTE_ERR",
+		"ART_ERR", "MODPAI_ERR", "QUALITE_ERR", "LIVR_INCOMP",
+	},
+	"208": {
+		"JUSTIF_ABS", "COORD_BANC_ERR", "CMD_ERR", "SIRET_ERR",
+		"CODE_ROUTAGE_ERR", "REF_CT_ABSENT", "REF_ERR",
+	},
+	"210": {
+		"TX_TVA_ERR", "MONTANTTOTAL_ERR", "CALCUL_ERR", "NON_CONFORME",
+		"DOUBLON", "DEST_ERR", "TRANSAC_INC", "EMMET_INC", "CONTRAT_TERM",
+		"DOUBLE_FACT", "CMD_ERR", "ADR_ERR", "REF_CT_ABSENT",
+	},
+	"213": {
+		"MONTANTTOTAL_ERR", "CALCUL_ERR", "DOUBLON", "ADR_ERR",
+		"REJ_SEMAN", "REJ_UNI", "REJ_COH", "REJ_ADR", "REJ_CONT_B2G",
+		"REJ_REF_PJ", "REJ_ASS_PJ",
+	},
+}
+
+// ReasonCodeAllowedForProcessCode reports whether the given CDAR
+// ReasonCode is permitted on a status line whose ProcessConditionCode is
+// processCode. Returns true when the process code does not constrain the
+// reason set (i.e. it isn't in the BR-FR-CDV-CL-09 table).
+func ReasonCodeAllowedForProcessCode(reasonCode, processCode string) bool {
+	allowed, ok := allowedReasonsByProcessCode[processCode]
+	if !ok {
+		return true
+	}
+	return slices.Contains(allowed, reasonCode)
 }
 
 // CDARActionCodeFor returns the CDAR RequestedActionCode for a

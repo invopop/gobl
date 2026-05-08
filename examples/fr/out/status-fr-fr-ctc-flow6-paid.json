@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ed8422596919262af603b76fb2038d9d7f60d4440af7c8abfa6793bd07b3aee2"
+			"val": "f791ae8f734b6259df60c7a10200022b76483f40db8ddcc8955b7d21b82d44fb"
 		}
 	},
 	"doc": {
@@ -17,7 +17,19 @@
 		"issue_date": "2026-05-02",
 		"code": "STA-2026-0002",
 		"supplier": {
-			"name": "Plateforme Agreee SARL",
+			"name": "VENDEUR SARL",
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			]
+		},
+		"issuer": {
+			"name": "VENDEUR SARL",
 			"identities": [
 				{
 					"type": "SIREN",
@@ -29,6 +41,27 @@
 			],
 			"ext": {
 				"fr-ctc-role": "SE"
+			}
+		},
+		"recipient": {
+			"name": "ACHETEUR SARL",
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "200000008",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
+			"inboxes": [
+				{
+					"scheme": "0225",
+					"code": "200000008_PEP"
+				}
+			],
+			"ext": {
+				"fr-ctc-role": "BY"
 			}
 		},
 		"lines": [

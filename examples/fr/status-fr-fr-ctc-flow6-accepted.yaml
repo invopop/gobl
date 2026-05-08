@@ -5,13 +5,33 @@ uuid: "2a5b6c7d-8e9f-4a1b-2c3d-4e5f6a7b8c01"
 issue_date: "2026-04-16"
 code: "STA-2026-0001"
 
-supplier:
+# Buyer-issued ack 23 (CDV-205, "approved"). The buyer's platform reports
+# acceptance to the seller.
+
+# `accepted` is buyer-issued (CDV-205) per Annexe A "Acteurs CDV", so
+# the flow6 normaliser:
+#   - fills issuer.fr-ctc-role=BY and recipient.fr-ctc-role=SE
+#   - propagates the SE-roled recipient's SIREN onto Supplier so it
+#     populates ref.IssuerTradeParty (MDT-129) — that's why this
+#     example doesn't need to spell out a `supplier:` block.
+issuer:
+  name: "ACHETEUR SARL"
+  identities:
+    - type: "SIREN"
+      code: "200000008"
+      ext:
+        iso-scheme-id: "0002"
+
+recipient:
+  name: "VENDEUR SARL"
   identities:
     - type: "SIREN"
       code: "732829320"
       ext:
         iso-scheme-id: "0002"
-  name: "Plateforme Agreee SARL"
+  inboxes:
+    - scheme: "0225"
+      code: "732829320_PEP"
 
 lines:
   - key: "accepted"

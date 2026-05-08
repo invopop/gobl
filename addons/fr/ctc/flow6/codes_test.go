@@ -30,8 +30,8 @@ func TestProcessCode201IssuedByPlatform(t *testing.T) {
 	assertProcessRoundTrip(t, "201", StatusEventIssuedByPlatform, bill.StatusTypeUpdate)
 }
 
-func TestProcessCode202ReceivedByPlatform(t *testing.T) {
-	assertProcessRoundTrip(t, "202", StatusEventReceivedByPlatform, bill.StatusTypeResponse)
+func TestProcessCode202Acknowledged(t *testing.T) {
+	assertProcessRoundTrip(t, "202", bill.StatusEventAcknowledged, bill.StatusTypeResponse)
 }
 
 func TestProcessCode203MadeAvailable(t *testing.T) {
@@ -54,8 +54,8 @@ func TestProcessCode207Disputed(t *testing.T) {
 	assertProcessRoundTrip(t, "207", StatusEventDisputed, bill.StatusTypeResponse)
 }
 
-func TestProcessCode208Suspended(t *testing.T) {
-	assertProcessRoundTrip(t, "208", StatusEventSuspended, bill.StatusTypeResponse)
+func TestProcessCode208Querying(t *testing.T) {
+	assertProcessRoundTrip(t, "208", bill.StatusEventQuerying, bill.StatusTypeResponse)
 }
 
 func TestProcessCode209Completed(t *testing.T) {
@@ -66,11 +66,11 @@ func TestProcessCode210Rejected(t *testing.T) {
 	assertProcessRoundTrip(t, "210", bill.StatusEventRejected, bill.StatusTypeResponse)
 }
 
-func TestProcessCode211PaymentForwarded(t *testing.T) {
-	assertProcessRoundTrip(t, "211", StatusEventPaymentForwarded, bill.StatusTypeUpdate)
+func TestProcessCode211PaidUpdate(t *testing.T) {
+	assertProcessRoundTrip(t, "211", bill.StatusEventPaid, bill.StatusTypeUpdate)
 }
 
-func TestProcessCode212Paid(t *testing.T) {
+func TestProcessCode212PaidResponse(t *testing.T) {
 	assertProcessRoundTrip(t, "212", bill.StatusEventPaid, bill.StatusTypeResponse)
 }
 
@@ -84,9 +84,21 @@ func TestProcessCodeUnknownReturnsFalse(t *testing.T) {
 }
 
 func TestProcessKeyTypeMismatchReturnsFalse(t *testing.T) {
-	// paid is a response code; querying with Type=update must miss.
-	_, ok := CDARProcessCodeFor(bill.StatusEventPaid, bill.StatusTypeUpdate)
+	// `accepted` is response-only (CDV-205); querying with Type=update
+	// must miss.
+	_, ok := CDARProcessCodeFor(bill.StatusEventAccepted, bill.StatusTypeUpdate)
 	assert.False(t, ok)
+}
+
+// `paid` is the one key that pairs with both Status.Type values:
+// update→211 (Paiement transmis), response→212 (Encaissée).
+func TestProcessKeyPaidPairsWithBothTypes(t *testing.T) {
+	code, ok := CDARProcessCodeFor(bill.StatusEventPaid, bill.StatusTypeUpdate)
+	assert.True(t, ok)
+	assert.Equal(t, "211", code)
+	code, ok = CDARProcessCodeFor(bill.StatusEventPaid, bill.StatusTypeResponse)
+	assert.True(t, ok)
+	assert.Equal(t, "212", code)
 }
 
 // assertActionRoundTrip verifies that an action code resolves to the
