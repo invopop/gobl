@@ -13,11 +13,10 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-// Record represents a single payment that has been or will be made via a
-// specific means (cash, card, credit-transfer, etc.), with its own amount and
-// optional currency. It is used both for advance payments declared on an
-// invoice (via bill.PaymentDetails.Advances) and for the methods recorded on
-// a bill.Payment document (via bill.Payment.Methods).
+// Record represents an individual payment transaction made via a specific
+// means (cash, card, credit-transfer, etc.), with its own amount and optional
+// currency. A Record is usually nested within another structure
+// such as invoice advances or payments.
 type Record struct {
 	uuid.Identify
 	// When the payment was made.

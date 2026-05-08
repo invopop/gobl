@@ -170,7 +170,7 @@
       "required": [
         "amount"
       ],
-      "description": "Record represents a single payment that has been or will be made via a specific means (cash, card, credit-transfer, etc.), with its own amount and optional currency."
+      "description": "Record represents an individual payment transaction made via a specific means (cash, card, credit-transfer, etc.), with its own amount and optional currency."
     }
   }
 }
