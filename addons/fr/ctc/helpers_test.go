@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/catalogues/iso"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/rules"
@@ -40,7 +41,7 @@ func frPartyWithSIREN() *org.Party {
 				Type:  fr.IdentityTypeSIREN,
 				Code:  "356000000",
 				Scope: org.IdentityScopeLegal,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
 				}),
 			},
@@ -64,7 +65,7 @@ func frCustomerWithSIREN() *org.Party {
 				Type:  fr.IdentityTypeSIREN,
 				Code:  "732829320",
 				Scope: org.IdentityScopeLegal,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
 				}),
 			},
@@ -87,7 +88,7 @@ func deCustomerWithVATID() *org.Party {
 			{
 				Code:  "DE111111125",
 				Scope: org.IdentityScopeLegal,
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDEUVAT,
 				}),
 			},

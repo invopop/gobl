@@ -29,7 +29,7 @@ func TestInvoicesValidation(t *testing.T) {
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "tax requires 'br-nfe-model' and 'br-nfe-presence' extensions")
 
-		inv.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			nfe.ExtKeyModel:    nfe.ModelNFe,
 			nfe.ExtKeyPresence: nfe.PresenceDelivery,
 		})
@@ -89,7 +89,7 @@ func TestInvoicesValidation(t *testing.T) {
 
 		inv.Payment.Instructions = &pay.Instructions{
 			Key: pay.MeansKeyCash,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyPaymentMeans: "01",
 			}),
 		}
@@ -206,7 +206,7 @@ func TestSupplierValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "supplier must have at least one address")
 
 		inv.Supplier.Addresses = []*org.Address{nil}
-		inv.Supplier.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3304557",
 		})
 		err = rules.Validate(inv)
@@ -248,7 +248,7 @@ func TestSupplierValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "requires 'br-ibge-municipality' extension when addresses are present")
 
-		inv.Supplier.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3304557",
 		})
 		err = rules.Validate(inv)
@@ -314,7 +314,7 @@ func TestCustomerValidation(t *testing.T) {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"br-ibge-municipality": "3550308",
 			}),
 		}
@@ -335,7 +335,7 @@ func TestCustomerValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer must have at least one address for NF-e")
 
 		inv.Customer.Addresses = []*org.Address{nil}
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3550308",
 		})
 		err = rules.Validate(inv)
@@ -386,7 +386,7 @@ func TestCustomerValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "requires 'br-ibge-municipality' extension when addresses are present")
 
-		inv.Customer.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3550308",
 		})
 		err = rules.Validate(inv)
@@ -481,7 +481,7 @@ func validInvoice() *bill.Invoice {
 					Code:     "01310100",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"br-ibge-municipality": "3304557",
 			}),
 		},
@@ -500,12 +500,12 @@ func validInvoice() *bill.Invoice {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"br-ibge-municipality": "3550308",
 			}),
 		},
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				nfe.ExtKeyModel:    nfe.ModelNFe,
 				nfe.ExtKeyPresence: nfe.PresenceInPerson,
 			}),
@@ -576,7 +576,7 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 					Code:     "01310100",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"br-ibge-municipality": "3304557",
 			}),
 		},
@@ -595,7 +595,7 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 					Code:     "01310000",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"br-ibge-municipality": "3550308",
 			}),
 		},

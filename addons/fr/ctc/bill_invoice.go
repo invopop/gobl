@@ -260,7 +260,7 @@ func normalizeSTCNote(inv *bill.Invoice) {
 	inv.Notes = append(inv.Notes, &org.Note{
 		Key:  org.NoteKeyLegal,
 		Text: stcMembreAssujettiUnique,
-		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: noteSubjectTXD}),
 	})
 }
 
@@ -270,17 +270,17 @@ var defaultRequiredNotes = []*org.Note{
 	{
 		Key:  org.NoteKeyPayment,
 		Text: "Conditions de paiement selon les conditions générales de vente.",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMT"}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMT"}),
 	},
 	{
 		Key:  org.NoteKeyPaymentMethod,
 		Text: "Pénalités et indemnités de retard applicables conformément aux conditions générales de vente.",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "PMD"}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMD"}),
 	},
 	{
 		Key:  org.NoteKeyPaymentTerm,
 		Text: "Aucun escompte n'est accordé pour paiement anticipé.",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{untdid.ExtKeyTextSubject: "AAB"}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "AAB"}),
 	},
 }
 

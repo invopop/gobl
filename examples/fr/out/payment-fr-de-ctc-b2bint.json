@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b73d2745b02510c4af2430013c7e9107d9212d284e10934fe07ad667f19abdd7"
+			"val": "4cabf1cc377c67f69ddfd206b0029a896cb22604600d8b41eb9787e828c812a7"
 		}
 	},
 	"doc": {
@@ -15,15 +15,6 @@
 		],
 		"uuid": "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01",
 		"type": "receipt",
-		"method": {
-			"key": "credit-transfer",
-			"credit_transfer": [
-				{
-					"iban": "FR7630006000011234567890189",
-					"name": "Fournisseur Reporting SARL"
-				}
-			]
-		},
 		"series": "PAY",
 		"code": "2026-00042",
 		"issue_date": "2026-05-02",
@@ -85,6 +76,16 @@
 						}
 					],
 					"sum": "200.00"
+				}
+			}
+		],
+		"methods": [
+			{
+				"key": "credit-transfer",
+				"amount": "1200.00",
+				"credit_transfer": {
+					"iban": "FR7630006000011234567890189",
+					"name": "Fournisseur Reporting SARL"
 				}
 			}
 		],

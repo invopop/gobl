@@ -197,14 +197,14 @@
       ]
     },
     {
-      "id": "GOBL-PL-FAVAT-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-PL-FAVAT-PAY-RECORD",
+      "object": "pay.Record",
       "subsets": [
         {
           "field": "date",
           "assert": [
             {
-              "id": "GOBL-PL-FAVAT-PAY-ADVANCE-01",
+              "id": "GOBL-PL-FAVAT-PAY-RECORD-01",
               "desc": "advance payment date is required",
               "tests": "present"
             }

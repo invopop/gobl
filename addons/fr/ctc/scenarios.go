@@ -22,7 +22,7 @@ var scenarios = []*tax.ScenarioSet{
 			{
 				// 380 — Sales invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "380",
 				}),
 			},
@@ -30,7 +30,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 389 — Self-billed invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSelfBilled},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "389",
 				}),
 			},
@@ -38,7 +38,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 393 — Factored invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "393",
 				}),
 			},
@@ -46,7 +46,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 501 — Self-invoiced factored invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSelfBilled, tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "501",
 				}),
 			},
@@ -56,7 +56,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 386 — Deposit invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagPrepayment},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "386",
 				}),
 			},
@@ -64,7 +64,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 500 — Self-invoiced deposit invoice
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSelfBilled, tax.TagPrepayment},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "500",
 				}),
 			},
@@ -73,7 +73,7 @@ var scenarios = []*tax.ScenarioSet{
 			{
 				// 384 — Corrective invoice
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "384",
 				}),
 			},
@@ -81,7 +81,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 471 — Self-billed corrective invoice
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
 				Tags:  []cbc.Key{tax.TagSelfBilled},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "471",
 				}),
 			},
@@ -89,7 +89,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 472 — Factored corrective invoice
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
 				Tags:  []cbc.Key{tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "472",
 				}),
 			},
@@ -97,7 +97,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 473 — Self-billed factored corrective invoice
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
 				Tags:  []cbc.Key{tax.TagSelfBilled, tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "473",
 				}),
 			},
@@ -106,7 +106,7 @@ var scenarios = []*tax.ScenarioSet{
 			{
 				// 381 — Credit memo
 				Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "381",
 				}),
 			},
@@ -114,7 +114,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 261 — Self-billed credit memo
 				Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 				Tags:  []cbc.Key{tax.TagSelfBilled},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "261",
 				}),
 			},
@@ -122,7 +122,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 396 — Factored credit memo
 				Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 				Tags:  []cbc.Key{tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "396",
 				}),
 			},
@@ -130,7 +130,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 502 — Self-invoiced and factored credit memo
 				Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 				Tags:  []cbc.Key{tax.TagSelfBilled, tax.TagFactoring},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "502",
 				}),
 			},
@@ -138,7 +138,7 @@ var scenarios = []*tax.ScenarioSet{
 				// 503 — Down-payment invoice credit memo
 				Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 				Tags:  []cbc.Key{tax.TagPrepayment},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "503",
 				}),
 			},

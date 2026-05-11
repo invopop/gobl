@@ -117,6 +117,41 @@
               "tests": "has general note"
             }
           ]
+        },
+        {
+          "guard": "Bizkaia individual",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-ES-TBAI-BILL-INVOICE-10",
+                      "desc": "extension 'es-tbai-bi-activity' is required for Bizkaia individuals",
+                      "tests": "ext require [es-tbai-bi-activity]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-ES-TBAI-BILL-INVOICE-11",
+                  "desc": "extension 'es-tbai-bi-activity' must be a valid Bizkaia activity code (epígrafe)",
+                  "tests": "ext 'es-tbai-bi-activity' matches pattern '^\\d{1,7}$'"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

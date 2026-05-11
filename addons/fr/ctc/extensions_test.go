@@ -3,6 +3,7 @@ package ctc
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,11 +17,11 @@ func TestExtValueUnknownType(t *testing.T) {
 }
 
 func TestExtValueFromValue(t *testing.T) {
-	e := tax.ExtensionsOf(tax.ExtMap{"k": "v"})
+	e := tax.ExtensionsOf(cbc.CodeMap{"k": "v"})
 	assert.False(t, extValue(e).IsZero())
 }
 
 func TestExtValueFromPointer(t *testing.T) {
-	e := tax.ExtensionsOf(tax.ExtMap{"k": "v"})
+	e := tax.ExtensionsOf(cbc.CodeMap{"k": "v"})
 	assert.False(t, extValue(&e).IsZero())
 }

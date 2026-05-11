@@ -37,7 +37,7 @@ func TestElectronicAddressValidation(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIREN,
 					Code: "123456789",
-					Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"}),
+					Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"}),
 				},
 			},
 			Inboxes: []*org.Inbox{{Scheme: cbc.Code("0225"), Code: "123456789"}},
@@ -178,7 +178,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: "ABC123XYZ",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{"iso-scheme-id": "0224"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0224"}),
 			}},
 		}
 		assert.NoError(t, rules.Validate(party, withAddonContext()))
@@ -188,7 +188,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: "ABC123-info_data/route",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{"iso-scheme-id": "0224"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0224"}),
 			}},
 		}
 		assert.NoError(t, rules.Validate(party, withAddonContext()))
@@ -198,7 +198,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: "ABC123@invalid",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{"iso-scheme-id": "0224"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0224"}),
 			}},
 		}
 		err := rules.Validate(party, withAddonContext())
@@ -209,7 +209,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: "ABC123",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{"iso-scheme-id": "0002"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0002"}),
 			}},
 		}
 		assert.NoError(t, rules.Validate(party, withAddonContext()))
@@ -231,7 +231,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: cbc.Code(longCode),
-				Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0224"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0224"}),
 			}},
 		}
 		assert.NoError(t, rules.Validate(party, withAddonContext()))
@@ -242,7 +242,7 @@ func TestIdentitySchemeFormatValidation(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{{
 				Code: cbc.Code(tooLong),
-				Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0224"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0224"}),
 			}},
 		}
 		err := rules.Validate(party, withAddonContext())
@@ -270,7 +270,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 			Identities: []*org.Identity{{
 				Key:  cbc.Key("private-id"),
 				Code: "ABC123XYZ",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{"other-key": "other-value"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{"other-key": "other-value"}),
 			}},
 		}
 		ad.Normalizer(party)
@@ -293,7 +293,7 @@ func TestPrivateIDNormalization(t *testing.T) {
 			Identities: []*org.Identity{{
 				Key:  cbc.Key("private-id"),
 				Code: "ABC123XYZ",
-				Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "9999"}),
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "9999"}),
 			}},
 		}
 		ad.Normalizer(party)
@@ -365,7 +365,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("0224 code over 100 chars rejected", func(t *testing.T) {
 		id := &org.Identity{
 			Code: cbc.Code(strings.Repeat("A", 101)),
-			Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0224"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0224"}),
 		}
 		err := rules.Validate(id, withAddonContext())
 		assert.ErrorContains(t, err, "must be no more than 100")
@@ -374,7 +374,7 @@ func TestValidateIdentityEdgeCases(t *testing.T) {
 	t.Run("0224 valid code", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "VALID-CODE_123",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0224"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0224"}),
 		}
 		assert.NoError(t, rules.Validate(id, withAddonContext()))
 	})
@@ -393,12 +393,12 @@ func TestValidatePartyEdgeCases(t *testing.T) {
 				{
 					Type: fr.IdentityTypeSIRET,
 					Code: "12345678901234",
-					Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0009"}),
+					Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0009"}),
 				},
 				{
 					Type: fr.IdentityTypeSIREN,
 					Code: "999999999",
-					Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"}),
+					Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"}),
 				},
 			},
 		}
@@ -501,8 +501,8 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 			Identities: []*org.Identity{
-				{Code: "123", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
-				{Code: "456", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
+				{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
+				{Code: "456", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
 			},
 		}
 		err := rules.Validate(party, withAddonContext())
@@ -515,7 +515,7 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 			Name: "Test Party",
 			Identities: []*org.Identity{
 				nilID,
-				{Code: "123", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
+				{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
 			},
 		}
 		assert.NoError(t, rules.Validate(party, withAddonContext()))
@@ -525,8 +525,8 @@ func TestValidateIdentitySchemeFormatEdgeCases(t *testing.T) {
 		party := &org.Party{
 			Name: "Test Party",
 			Identities: []*org.Identity{
-				{Code: "", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0224"})},
-				{Code: "valid-id", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
+				{Code: "", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0224"})},
+				{Code: "valid-id", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
 			},
 		}
 		err := rules.Validate(party, withAddonContext())
@@ -658,7 +658,7 @@ func TestEnsureIdentityEmptyCode(t *testing.T) {
 func TestEnsureIdentityExistingSchemeLeftUntouched(t *testing.T) {
 	p := &org.Party{Identities: []*org.Identity{{
 		Code: "existing",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"}),
 	}}}
 	ensureIdentity(p, "", "new", "0002")
 	assert.Len(t, p.Identities, 1)
@@ -676,16 +676,16 @@ func TestPartyLegalSchemeIDNoSchemeExt(t *testing.T) {
 
 func TestPartyLegalSchemeIDLegalScopeWins(t *testing.T) {
 	p := &org.Party{Identities: []*org.Identity{
-		{Code: "A", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0227"})},
-		{Code: "B", Scope: org.IdentityScopeLegal, Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
+		{Code: "A", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0227"})},
+		{Code: "B", Scope: org.IdentityScopeLegal, Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
 	}}
 	assert.Equal(t, "0002", partyLegalSchemeID(p))
 }
 
 func TestPartyLegalSchemeIDFallbackUsed(t *testing.T) {
 	p := &org.Party{Identities: []*org.Identity{
-		{Code: "A", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "9999"})},
-		{Code: "B", Ext: tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "0002"})},
+		{Code: "A", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "9999"})},
+		{Code: "B", Ext: tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0002"})},
 	}}
 	assert.Equal(t, "0002", partyLegalSchemeID(p))
 }
@@ -695,7 +695,7 @@ func TestPartyLegalSchemeIDFallbackUsed(t *testing.T) {
 func TestPartyUnknownRoleRejected(t *testing.T) {
 	p := &org.Party{
 		Name: "Agent",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{ExtKeyRole: "XXX"}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: "XXX"}),
 	}
 	err := rules.Validate(p, addonContext())
 	assert.ErrorContains(t, err, "UNCL 3035")
@@ -704,7 +704,7 @@ func TestPartyUnknownRoleRejected(t *testing.T) {
 func TestPartyKnownRoleAccepted(t *testing.T) {
 	p := &org.Party{
 		Name: "Platform",
-		Ext:  tax.ExtensionsOf(tax.ExtMap{ExtKeyRole: RoleWK}),
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleWK}),
 	}
 	assert.NoError(t, rules.Validate(p, addonContext()))
 }
@@ -721,7 +721,7 @@ func TestPartyForeignIdentitySchemeAccepted(t *testing.T) {
 		Name: "Foreign Counterparty",
 		Identities: []*org.Identity{{
 			Code: "X",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "9999"}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "9999"}),
 		}},
 	}
 	assert.NoError(t, rules.Validate(p, addonContext()))

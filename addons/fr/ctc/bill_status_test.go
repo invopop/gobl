@@ -28,7 +28,7 @@ func statusSupplierParty() *org.Party {
 		Identities: []*org.Identity{
 			{
 				Code: "356000000",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
 				}),
 			},
@@ -120,7 +120,7 @@ func TestStatusRejectsSTCIdentityScheme(t *testing.T) {
 	// Flow 2 invoice but not on a Flow 6 CDV.
 	st.Supplier.Identities = append(st.Supplier.Identities, &org.Identity{
 		Code: "12345678",
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: "0231",
 		}),
 	})
@@ -368,7 +368,7 @@ func TestStatusCharacteristicReasonLinkMismatch(t *testing.T) {
 	st.Lines[0].Key = bill.StatusEventRejected
 	st.Lines[0].Reasons = []*bill.Reason{{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
 	}}
 	obj, err := schema.NewObject(&Characteristic{
 		ReasonCode: "QTE_ERR",
@@ -387,7 +387,7 @@ func TestStatusCharacteristicReasonLinkMatch(t *testing.T) {
 	st.Lines[0].Key = bill.StatusEventRejected
 	st.Lines[0].Reasons = []*bill.Reason{{
 		Key: bill.ReasonKeyLegal,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
 	}}
 	obj, err := schema.NewObject(&Characteristic{
 		ReasonCode: "TX_TVA_ERR",
@@ -404,7 +404,7 @@ func TestStatusCharacteristicReasonLinkMatch(t *testing.T) {
 
 func TestReasonNormalizerFillsKeyFromExt(t *testing.T) {
 	r := &bill.Reason{
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "QTE_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "QTE_ERR"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, bill.ReasonKeyQuantity, r.Key)
@@ -419,7 +419,7 @@ func TestReasonNormalizerFillsExtFromKey(t *testing.T) {
 func TestReasonNormalizerLeavesBothWhenSet(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "ART_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "ART_ERR"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, bill.ReasonKeyItems, r.Key)
@@ -428,7 +428,7 @@ func TestReasonNormalizerLeavesBothWhenSet(t *testing.T) {
 
 func TestReasonNormalizerLeavesUnknownExtAlone(t *testing.T) {
 	r := &bill.Reason{
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "NOPE"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "NOPE"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, cbc.Key(""), r.Key)
@@ -437,7 +437,7 @@ func TestReasonNormalizerLeavesUnknownExtAlone(t *testing.T) {
 func TestReasonRulesRejectInconsistentExt(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "QTE_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "QTE_ERR"}),
 	}
 	err := rules.Validate(r, addonContext())
 	assert.ErrorContains(t, err, "must match reason.key")
@@ -446,7 +446,7 @@ func TestReasonRulesRejectInconsistentExt(t *testing.T) {
 func TestReasonExtUnknownCodeRejected(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(tax.ExtMap{ExtKeyReasonCode: "NOPE"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "NOPE"}),
 	}
 	err := rules.Validate(r, addonContext())
 	assert.ErrorContains(t, err, "must match reason.key")

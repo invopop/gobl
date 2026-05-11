@@ -26,9 +26,11 @@ func testPaymentB2B(t *testing.T) *bill.Payment {
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2026, 2, 1),
 		ValueDate: &paid,
-		Method:    &pay.Instructions{Key: pay.MeansKeyCreditTransfer},
-		Supplier:  frPartyWithSIREN(),
-		Customer:  frCustomerWithSIREN(),
+		Methods: []*pay.Record{
+			{Key: pay.MeansKeyCreditTransfer, Amount: num.MakeAmount(12000, 2), Currency: "EUR"},
+		},
+		Supplier: frPartyWithSIREN(),
+		Customer: frCustomerWithSIREN(),
 		Lines: []*bill.PaymentLine{
 			{
 				Document: &org.DocumentRef{
@@ -52,8 +54,10 @@ func testPaymentB2C(t *testing.T) *bill.Payment {
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2026, 2, 1),
 		ValueDate: &paid,
-		Method:    &pay.Instructions{Key: pay.MeansKeyCreditTransfer},
-		Supplier:  frPartyWithSIREN(),
+		Methods: []*pay.Record{
+			{Key: pay.MeansKeyCreditTransfer, Amount: num.MakeAmount(12000, 2), Currency: "EUR"},
+		},
+		Supplier: frPartyWithSIREN(),
 		Lines: []*bill.PaymentLine{
 			{Amount: num.MakeAmount(12000, 2)},
 		},

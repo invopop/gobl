@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -89,7 +90,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	err = rules.Validate(inv)
 	assert.ErrorContains(t, err, "[GOBL-ES-FACTURAE-BILL-INVOICE-05] ($.preceding[0].issue_date) preceding document issue date is required; [GOBL-ES-FACTURAE-BILL-INVOICE-06] ($.preceding[0].ext) preceding document ext require 'es-facturae-correction' extension")
 
-	inv.Preceding[0].Ext = tax.ExtensionsOf(tax.ExtMap{
+	inv.Preceding[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
 		facturae.ExtKeyCorrection: "01",
 	})
 	inv.Preceding[0].IssueDate = cal.NewDate(2022, 6, 13)

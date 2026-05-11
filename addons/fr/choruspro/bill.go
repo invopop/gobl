@@ -2,6 +2,7 @@ package choruspro
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -27,7 +28,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// complexity of trying to apply scenarios.
 	if !inv.Tax.Ext.Has(ExtKeyFramework) {
 		inv.Tax.Ext = inv.Tax.Ext.Merge(
-			tax.ExtensionsOf(tax.ExtMap{
+			tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyFramework: ExtFrameworkCodeSupplier,
 			}),
 		)

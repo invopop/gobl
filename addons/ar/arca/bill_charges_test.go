@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -18,7 +19,7 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "1", // National Taxes
 			}),
 		}
@@ -40,7 +41,7 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"other-ext": "value",
 			}),
 		}
@@ -51,7 +52,7 @@ func TestChargeValidation(t *testing.T) {
 	t.Run("tax type present but missing percent", func(t *testing.T) {
 		charge := &bill.Charge{
 			Key: bill.ChargeKeyTax,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "1",
 			}),
 			// No percent
@@ -74,7 +75,7 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "99", // TaxTypeOther
 			}),
 			// No reason
@@ -88,7 +89,7 @@ func TestChargeValidation(t *testing.T) {
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
 			Reason:  "Custom tax description",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "99", // TaxTypeOther
 			}),
 		}
@@ -100,7 +101,7 @@ func TestChargeValidation(t *testing.T) {
 		charge := &bill.Charge{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(10, 2),
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "1", // TaxTypeNationalTaxes
 			}),
 			// No reason provided
@@ -170,7 +171,7 @@ func testInvoiceWithCharge(t *testing.T) *bill.Invoice {
 		{
 			Key:     bill.ChargeKeyTax,
 			Percent: num.NewPercentage(3, 2), // 3%
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				arca.ExtKeyTaxType: "5", // Gross Income Tax
 			}),
 		},

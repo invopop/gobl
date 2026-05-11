@@ -9,10 +9,10 @@ value_date: "2026-05-02"
 series: "PAY"
 code: "2026-00042"
 
-method:
-  key: "credit-transfer"
-  credit_transfer:
-    - iban: "FR7630006000011234567890189"
+methods:
+  - key: "credit-transfer"
+    credit_transfer:
+      iban: "FR7630006000011234567890189"
       name: "Fournisseur Reporting SARL"
 
 supplier:

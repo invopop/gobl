@@ -229,7 +229,7 @@ func TestSuppliersValidation(t *testing.T) {
 			assert.Contains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
 		}
 
-		sup.Ext = tax.ExtensionsOf(tax.ExtMap{
+		sup.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			nfse.ExtKeySimples:         "1",
 			"br-ibge-municipality":     "12345678",
 			nfse.ExtKeyFiscalIncentive: "2",
@@ -261,7 +261,7 @@ func TestSuppliersNormalization(t *testing.T) {
 		{
 			name: "does not override fiscal incentive",
 			supplier: &org.Party{
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyFiscalIncentive: "1",
 				}),
 			},

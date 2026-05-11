@@ -49,11 +49,11 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	// to use them to set the region code automatically.
 	switch strings.ToLower(addr.Region) {
 	case "alava", "álava", "araba", "vi":
-		tx.Ext = tx.Ext.Set(ExtKeyRegion, "VI")
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionVI)
 	case "bizkaia", "vizcaya", "bi":
-		tx.Ext = tx.Ext.Set(ExtKeyRegion, "BI")
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionBI)
 	case "gipuzkoa", "guipuzcoa", "guipúzcoa", "ss":
-		tx.Ext = tx.Ext.Set(ExtKeyRegion, "SS")
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionSS)
 	default:
 		return
 	}
@@ -138,6 +138,26 @@ func billInvoiceRules() *rules.Set {
 				is.Func("has general note", notesHasGeneralKey),
 			),
 		),
+		// Supplier
+		// Code 10: activity ext required for Bizkaia individuals (Modelo 140 LROE)
+		// Code 11: activity ext, when present, must be a valid epígrafe code
+		rules.When(
+			is.Func("Bizkaia individual", isBizkaiaIndividual),
+			rules.Field("supplier",
+				rules.Field("ext",
+					rules.Assert("10", fmt.Sprintf("extension '%s' is required for Bizkaia individuals", ExtKeyBIActivity),
+						tax.ExtensionsRequire(ExtKeyBIActivity),
+					),
+				),
+			),
+		),
+		rules.Field("supplier",
+			rules.Field("ext",
+				rules.Assert("11", fmt.Sprintf("extension '%s' must be a valid Bizkaia activity code (epígrafe)", ExtKeyBIActivity),
+					tax.ExtensionHasValidCode(ExtKeyBIActivity),
+				),
+			),
+		),
 	)
 }
 
@@ -152,4 +172,13 @@ func notesHasGeneralKey(val any) bool {
 		}
 	}
 	return false
+}
+
+func isBizkaiaIndividual(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Tax == nil || inv.Supplier == nil {
+		return false
+	}
+	return inv.Tax.Ext.Get(ExtKeyRegion) == ExtValueRegionBI &&
+		es.TaxIdentityKey(inv.Supplier.TaxID) != es.TaxIdentityOrg
 }

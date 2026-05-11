@@ -21,7 +21,7 @@ func PaymentMeansExtensions() tax.Extensions {
 	return tax.ExtensionsOf(paymentMeansMap)
 }
 
-var paymentMeansMap = map[cbc.Key]cbc.Code{
+var paymentMeansMap = cbc.CodeMap{
 	pay.MeansKeyCreditTransfer:                       "1",
 	pay.MeansKeyCreditTransfer.With(MeansKeyForeign): "2",
 	pay.MeansKeyCash:                                 "3",
@@ -35,7 +35,7 @@ func normalizePayInstructions(i *pay.Instructions) {
 	if i == nil {
 		return
 	}
-	extVal := paymentMeansMap[i.Key]
+	extVal := paymentMeansMap.Lookup(i.Key)
 	if extVal != "" {
 		if i.Ext.IsZero() {
 			i.Ext = tax.MakeExtensions()
@@ -44,11 +44,11 @@ func normalizePayInstructions(i *pay.Instructions) {
 	}
 }
 
-func normalizePayAdvance(a *pay.Advance) {
+func normalizePayRecord(a *pay.Record) {
 	if a == nil {
 		return
 	}
-	extVal := paymentMeansMap[a.Key]
+	extVal := paymentMeansMap.Lookup(a.Key)
 	if extVal != "" {
 		if a.Ext.IsZero() {
 			a.Ext = tax.MakeExtensions()
@@ -72,7 +72,7 @@ func payInstructionsRules() *rules.Set {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("key",
 			rules.Assert("01", "payment advance key is required", is.Present),
 		),

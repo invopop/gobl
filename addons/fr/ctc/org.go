@@ -158,7 +158,7 @@ func ensureIdentity(party *org.Party, typ cbc.Code, code cbc.Code, schemeID stri
 	party.Identities = append(party.Identities, &org.Identity{
 		Type: typ,
 		Code: code,
-		Ext: tax.ExtensionsOf(tax.ExtMap{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			iso.ExtKeySchemeID: cbc.Code(schemeID),
 		}),
 		Scope: org.IdentityScopeLegal,
@@ -200,7 +200,7 @@ func normalizeIdentities(party *org.Party) {
 			siren = &org.Identity{
 				Type: fr.IdentityTypeSIREN,
 				Code: cbc.Code(sirenCode),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: identitySchemeIDSIREN,
 				}),
 			}
