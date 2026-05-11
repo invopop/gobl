@@ -27,6 +27,9 @@ issuer:
       code: "732829320"
       ext:
         iso-scheme-id: "0002"
+  inboxes:
+    - scheme: "0225"
+      code: "732829320_PEP"
 
 recipient:
   name: "ACHETEUR SARL"

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f791ae8f734b6259df60c7a10200022b76483f40db8ddcc8955b7d21b82d44fb"
+			"val": "853810a6d1af963e160c3ac127462b05957997bf002f658ee20bac900922ecc2"
 		}
 	},
 	"doc": {
@@ -37,6 +37,12 @@
 					"ext": {
 						"iso-scheme-id": "0002"
 					}
+				}
+			],
+			"inboxes": [
+				{
+					"scheme": "0225",
+					"code": "732829320_PEP"
 				}
 			],
 			"ext": {

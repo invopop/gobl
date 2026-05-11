@@ -137,9 +137,11 @@ func partyHasRole(v any) bool {
 	return p.Ext.Get(ExtKeyRole) != ""
 }
 
-// recipientHasInboxWhenRequired enforces BR-FR-CDV-08: if the recipient
-// role is not WK or DFH, the URIID (inbox) is mandatory.
-func recipientHasInboxWhenRequired(v any) bool {
+// partyHasInboxWhenRequired enforces BR-FR-CDV-08: a party whose role
+// is not WK (legal representative) or DFH (declarant for VAT grouping)
+// must carry a URIID (electronic inbox). We enforce for both issuer
+// and supplier to simplify emmission.
+func partyHasInboxWhenRequired(v any) bool {
 	p, ok := v.(*org.Party)
 	if !ok || p == nil {
 		return true
@@ -178,6 +180,9 @@ func billStatusRules() *rules.Set {
 			rules.Assert("15", "issuer.ext.fr-ctc-role must be set; the allowed values depend on ack TypeCode (BR-FR-CDV-CL-03)",
 				is.Func("issuer has fr-ctc-role", partyHasRole),
 			),
+			rules.Assert("20", "issuer must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
+				is.Func("issuer has inbox unless WK/DFH", partyHasInboxWhenRequired),
+			),
 		),
 		rules.Field("recipient",
 			rules.Assert("16", "recipient is required — maps to ExchangedDocument/RecipientTradeParty (MDG-23) per BR-FR-CDV-CL-04",
@@ -187,7 +192,7 @@ func billStatusRules() *rules.Set {
 				is.Func("recipient has fr-ctc-role", partyHasRole),
 			),
 			rules.Assert("18", "recipient must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
-				is.Func("recipient has inbox unless WK/DFH", recipientHasInboxWhenRequired),
+				is.Func("recipient has inbox unless WK/DFH", partyHasInboxWhenRequired),
 			),
 		),
 		rules.Field("lines",
@@ -276,8 +281,7 @@ func statusLineKeyKnown(v any) bool {
 // key=paid on a response status (CDAR 212 Encaissée) must carry a
 // Characteristic with TypeCode=MEN and Amount populated. The same
 // `paid` key on an update status (CDAR 211 Paiement transmis) does
-// not require the MEN — that's why this rule is at the status level
-// and gated on st.Type.
+// not require the MEN.
 func statusPaidResponseHasAmount(v any) bool {
 	st, ok := v.(*bill.Status)
 	if !ok || st == nil {

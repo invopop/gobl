@@ -76,8 +76,8 @@ func testStatus(t *testing.T) *bill.Status {
 
 // issuerParty returns a buyer-end-party Issuer suitable for ack 23
 // (BR-FR-CDV-CL-03 allowed list: BY/AB/DL/SE/SR/PE/PR/II/IV). It
-// carries an inbox so the GOBL-side "sender reachable" rule passes
-// without forcing a Supplier inbox in every test.
+// carries an inbox so BR-FR-CDV-08 (issuer role ≠ WK/DFH ⇒ URIID)
+// is satisfied.
 func issuerParty() *org.Party {
 	return &org.Party{
 		Name: "ACHETEUR",

@@ -11,7 +11,8 @@ import (
 const (
 	// ExtKeyRole carries the CDAR RoleCode for a party (UNCL 3035 subset).
 	// Applied per populated party (Supplier / Customer / Issuer / Recipient)
-	// on a bill.Status message.
+	// on a bill.Status message. For example, an issuer party with RoleCode=SE
+	// is the seller.
 	ExtKeyRole cbc.Key = "fr-ctc-role"
 
 	// ExtKeyReasonCode pins the exact CDAR ReasonCode for a bill.Reason.
@@ -56,7 +57,7 @@ var extensions = []*cbc.Definition{
 			{Code: RoleWK, Name: i18n.String{i18n.EN: "Work / Service Receiver"}},
 			{Code: RoleDFH, Name: i18n.String{i18n.EN: "Delivery From"}},
 			{Code: RoleAB, Name: i18n.String{i18n.EN: "Bank"}},
-			{Code: RoleSR, Name: i18n.String{i18n.EN: "Sender"}},
+			{Code: RoleSR, Name: i18n.String{i18n.EN: "Sender / Issuer on behalf of"}},
 			{Code: RoleDL, Name: i18n.String{i18n.EN: "Dealer"}},
 			{Code: RolePE, Name: i18n.String{i18n.EN: "Payee"}},
 			{Code: RolePR, Name: i18n.String{i18n.EN: "Payer"}},

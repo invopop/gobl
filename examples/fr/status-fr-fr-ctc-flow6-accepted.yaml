@@ -21,6 +21,9 @@ issuer:
       code: "200000008"
       ext:
         iso-scheme-id: "0002"
+  inboxes:
+    - scheme: "0225"
+      code: "200000008_PEP"
 
 recipient:
   name: "VENDEUR SARL"
