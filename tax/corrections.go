@@ -9,13 +9,11 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// CorrectionNormalize is a callback invoked during the Correct() process
-// to allow addons and regimes to perform custom normalization. The document
-// is passed as `any` to avoid circular imports; implementations should
-// type-assert to the concrete type (e.g., *bill.Invoice).
-// When called, the document's Preceding field is already set and the
-// correction options are available via the document's accessor method.
-type CorrectionNormalize func(doc any)
+// CorrectionNormalizer defines an object that can be used to normalize a document
+// during the correction process.
+type CorrectionNormalizer interface {
+	Normalize(doc any)
+}
 
 // CorrectionSet defines a set of correction definitions for
 // a selection of schemas.
@@ -35,10 +33,10 @@ type CorrectionDefinition struct {
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Copy tax from the preceding document to the document ref.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
-	// Normalize is an optional callback invoked during Correct() to allow
+	// Normalizer is an optional implementation of the CorrectionNormalizer to allow
 	// addon/regime-specific logic to route extensions between the document
 	// and the preceding reference.
-	Normalize CorrectionNormalize `json:"-"`
+	Normalizer CorrectionNormalizer `json:"-"`
 }
 
 func correctionDefinitionRules() *rules.Set {
@@ -47,7 +45,6 @@ func correctionDefinitionRules() *rules.Set {
 			rules.Assert("01", "schema is required", is.Present),
 		),
 	)
-
 }
 
 // Def provides the correction definition in the set for the
@@ -64,6 +61,16 @@ func (cs CorrectionSet) Def(schema string) *CorrectionDefinition {
 	return nil
 }
 
+type multiCorrectionNormalizer struct {
+	normalizers []CorrectionNormalizer
+}
+
+func (mcn *multiCorrectionNormalizer) Normalize(doc any) {
+	for _, n := range mcn.normalizers {
+		n.Normalize(doc)
+	}
+}
+
 // Merge combines two correction definitions into a new definition without
 // mutating either input.
 func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDefinition {
@@ -77,18 +84,14 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		return cd
 	}
 	// Chain normalizers so both run in sequence.
-	var norm CorrectionNormalize
+	var norm CorrectionNormalizer
 	switch {
-	case cd.Normalize != nil && other.Normalize != nil:
-		first, second := cd.Normalize, other.Normalize
-		norm = func(doc any) {
-			first(doc)
-			second(doc)
-		}
-	case other.Normalize != nil:
-		norm = other.Normalize
+	case cd.Normalizer != nil && other.Normalizer != nil:
+		norm = &multiCorrectionNormalizer{normalizers: []CorrectionNormalizer{cd.Normalizer, other.Normalizer}}
+	case other.Normalizer != nil:
+		norm = other.Normalizer
 	default:
-		norm = cd.Normalize
+		norm = cd.Normalizer
 	}
 	return &CorrectionDefinition{
 		Schema:         cd.Schema,
@@ -97,7 +100,7 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         slices.Concat(cd.Stamps, other.Stamps),
 		CopyTax:        cd.CopyTax || other.CopyTax,
-		Normalize:      norm,
+		Normalizer:     norm,
 	}
 }
 

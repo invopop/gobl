@@ -1294,7 +1294,7 @@ func TestCorrectionDefinitions(t *testing.T) {
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, def)
 		assert.True(t, def.HasExtension(arca.ExtKeyDocType))
-		assert.NotNil(t, def.Normalize)
+		assert.NotNil(t, def.Normalizer)
 	})
 }
 
@@ -1302,17 +1302,16 @@ func TestCorrectionNormalize(t *testing.T) {
 	t.Run("ignores non-invoice document", func(t *testing.T) {
 		ad := tax.AddonForKey(arca.V4)
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
-		require.NotNil(t, def.Normalize)
+		require.NotNil(t, def.Normalizer)
 		// Should not panic with a non-invoice type.
-		def.Normalize("not an invoice")
+		def.Normalizer.Normalize("not an invoice")
 	})
 
 	t.Run("ignores invoice without preceding", func(_ *testing.T) {
 		ad := tax.AddonForKey(arca.V4)
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
-		inv := &bill.Invoice{}
 		// Should not panic when Preceding is empty.
-		def.Normalize(inv)
+		def.Normalizer.Normalize(&bill.CorrectionNormalize{Invoice: &bill.Invoice{}})
 	})
 
 	t.Run("handles nil tax on invoice", func(t *testing.T) {

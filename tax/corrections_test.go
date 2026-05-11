@@ -151,27 +151,32 @@ func TestCorrectionDefinitionHasExtension(t *testing.T) {
 	})
 }
 
-func TestCorrectionNormalizeMerge(t *testing.T) {
+type testCorrectionNormalizer struct {
+	label string
+	calls *[]string
+}
+
+func (n *testCorrectionNormalizer) Normalize(_ any) {
+	*n.calls = append(*n.calls, n.label)
+}
+
+func TestCorrectionNormalizerMerge(t *testing.T) {
 	var calls []string
 
 	cd1 := &tax.CorrectionDefinition{
-		Schema: bill.ShortSchemaInvoice,
-		Normalize: func(_ any) {
-			calls = append(calls, "first")
-		},
+		Schema:     bill.ShortSchemaInvoice,
+		Normalizer: &testCorrectionNormalizer{label: "first", calls: &calls},
 	}
 	cd2 := &tax.CorrectionDefinition{
-		Schema: bill.ShortSchemaInvoice,
-		Normalize: func(_ any) {
-			calls = append(calls, "second")
-		},
+		Schema:     bill.ShortSchemaInvoice,
+		Normalizer: &testCorrectionNormalizer{label: "second", calls: &calls},
 	}
 
 	t.Run("chains both normalizers", func(t *testing.T) {
 		calls = nil
 		merged := cd1.Merge(cd2)
-		assert.NotNil(t, merged.Normalize)
-		merged.Normalize(nil)
+		assert.NotNil(t, merged.Normalizer)
+		merged.Normalizer.Normalize(nil)
 		assert.Equal(t, []string{"first", "second"}, calls)
 	})
 
@@ -179,8 +184,8 @@ func TestCorrectionNormalizeMerge(t *testing.T) {
 		calls = nil
 		noNorm := &tax.CorrectionDefinition{Schema: bill.ShortSchemaInvoice}
 		merged := cd1.Merge(noNorm)
-		assert.NotNil(t, merged.Normalize)
-		merged.Normalize(nil)
+		assert.NotNil(t, merged.Normalizer)
+		merged.Normalizer.Normalize(nil)
 		assert.Equal(t, []string{"first"}, calls)
 	})
 
@@ -188,8 +193,8 @@ func TestCorrectionNormalizeMerge(t *testing.T) {
 		calls = nil
 		noNorm := &tax.CorrectionDefinition{Schema: bill.ShortSchemaInvoice}
 		merged := noNorm.Merge(cd2)
-		assert.NotNil(t, merged.Normalize)
-		merged.Normalize(nil)
+		assert.NotNil(t, merged.Normalizer)
+		merged.Normalizer.Normalize(nil)
 		assert.Equal(t, []string{"second"}, calls)
 	})
 
@@ -197,6 +202,6 @@ func TestCorrectionNormalizeMerge(t *testing.T) {
 		noNorm1 := &tax.CorrectionDefinition{Schema: bill.ShortSchemaInvoice}
 		noNorm2 := &tax.CorrectionDefinition{Schema: bill.ShortSchemaInvoice}
 		merged := noNorm1.Merge(noNorm2)
-		assert.Nil(t, merged.Normalize)
+		assert.Nil(t, merged.Normalizer)
 	})
 }

@@ -75,14 +75,14 @@ func TestCorrectionNormalize(t *testing.T) {
 	t.Run("ignores non-invoice document", func(t *testing.T) {
 		ad := tax.AddonForKey(verifactu.V1)
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
-		require.NotNil(t, def.Normalize)
-		def.Normalize("not an invoice")
+		require.NotNil(t, def.Normalizer)
+		def.Normalizer.Normalize("not an invoice")
 	})
 
 	t.Run("ignores invoice without preceding", func(_ *testing.T) {
 		ad := tax.AddonForKey(verifactu.V1)
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
-		def.Normalize(&bill.Invoice{})
+		def.Normalizer.Normalize(&bill.CorrectionNormalize{Invoice: &bill.Invoice{}})
 	})
 
 	t.Run("credit note routes doc-type to invoice", func(t *testing.T) {

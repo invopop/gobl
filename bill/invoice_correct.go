@@ -44,6 +44,14 @@ type CorrectionOptions struct {
 	data json.RawMessage `json:"-"`
 }
 
+// CorrectionNormalize is the structure passed to the correction normalizer to allow
+// regime specific logic to route extensions between the document and the preceding
+// reference alongside the correction options.
+type CorrectionNormalize struct {
+	Opts    *CorrectionOptions
+	Invoice *Invoice
+}
+
 // WithOptions takes an already completed CorrectionOptions instance and
 // uses this as a base instead of passing individual options. This is useful
 // for passing options from an API, developers should use the regular option
@@ -318,9 +326,12 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Let the correction normalizer handle extension routing if defined.
-	if cd != nil && cd.Normalize != nil {
-		inv.correctionOptions = o
-		cd.Normalize(inv)
+	if cd != nil && cd.Normalizer != nil {
+		cn := &CorrectionNormalize{
+			Opts:    o,
+			Invoice: inv,
+		}
+		cd.Normalizer.Normalize(cn)
 	}
 
 	// Running a Calculate feels a bit out of place, but not performing

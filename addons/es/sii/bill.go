@@ -19,25 +19,28 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 		Extensions: []cbc.Key{
 			ExtKeyDocType,
 		},
-		CopyTax:   true,
-		Normalize: normalizeInvoiceCorrection,
+		CopyTax:    true,
+		Normalizer: new(billCorrectionNormalizer),
 	},
 }
 
-// normalizeInvoiceCorrection routes the user-provided doc-type extension
-// from the preceding document reference to the invoice's Tax.Ext.
-func normalizeInvoiceCorrection(doc any) {
-	inv, ok := doc.(*bill.Invoice)
-	if !ok || len(inv.Preceding) == 0 {
+type billCorrectionNormalizer struct{}
+
+func (*billCorrectionNormalizer) Normalize(doc any) {
+	in, ok := doc.(*bill.CorrectionNormalize)
+	if !ok || in == nil {
+		return
+	}
+	inv := in.Invoice
+	if inv == nil || len(inv.Preceding) == 0 {
 		return
 	}
 	ref := inv.Preceding[0]
-	opts := inv.CorrectionOptionsValue()
 
 	// Move the doc-type from preceding to the invoice.
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
-	if opts != nil {
-		if dt := opts.Ext.Get(ExtKeyDocType); dt != "" {
+	if in.Opts != nil {
+		if dt := in.Opts.Ext.Get(ExtKeyDocType); dt != "" {
 			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
 				ExtKeyDocType: dt,
 			}))
