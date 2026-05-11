@@ -24,7 +24,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 type billCorrectionNormalizer struct{}
 
-func (cn *billCorrectionNormalizer) Normalize(doc any) {
+func (*billCorrectionNormalizer) Normalize(doc any) {
 	in, ok := doc.(*bill.CorrectionNormalize)
 	if !ok || in == nil {
 		return
