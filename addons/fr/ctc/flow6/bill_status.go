@@ -18,6 +18,22 @@ func normalizeStatus(st *bill.Status) {
 	if st == nil {
 		return
 	}
+
+	// If the caller pinned fr-ctc-status-code but left Line.Key /
+	// Status.Type blank, fill them from the process table. Mirrors the
+	// reason-code direction in normalizeReason: ext and key are two
+	// sides of the same lookup.
+	if code := st.Ext.Get(ExtKeyStatusCode).String(); code != "" {
+		if key, typ, ok := StatusKeyFor(code); ok {
+			if len(st.Lines) > 0 && st.Lines[0] != nil && st.Lines[0].Key == "" {
+				st.Lines[0].Key = key
+			}
+			if st.Type == "" {
+				st.Type = typ
+			}
+		}
+	}
+
 	// Default Type from the first line's Key — each Flow 6 line key has
 	// exactly one associated Status.Type in the process table.
 	if st.Type == "" {

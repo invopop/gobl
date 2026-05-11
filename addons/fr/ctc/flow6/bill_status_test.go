@@ -163,6 +163,21 @@ func TestStatusSupplierSIRENFilledFromSEParty(t *testing.T) {
 		st.Supplier.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
 }
 
+// TestStatusKeyFilledFromStatusCodeExt exercises the reverse-direction
+// normalisation: when the caller pins fr-ctc-status-code but leaves
+// line.Key / Status.Type blank, both fields get filled from the
+// process table.
+func TestStatusKeyFilledFromStatusCodeExt(t *testing.T) {
+	st := testStatus(t)
+	st.Type = ""
+	st.Lines[0].Key = ""
+	st.Ext = st.Ext.Set(ExtKeyStatusCode, "205")
+	runNormalize(t, st)
+	require.NoError(t, rules.Validate(st))
+	assert.Equal(t, bill.StatusEventAccepted, st.Lines[0].Key)
+	assert.Equal(t, bill.StatusTypeResponse, st.Type)
+}
+
 func TestStatusTypeMismatchRejected(t *testing.T) {
 	st := testStatus(t)
 	runNormalize(t, st)
