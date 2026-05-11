@@ -1,8 +1,9 @@
-package flow2
+package ctc
 
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -15,17 +16,29 @@ import (
 
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
+		rules.Field("ext",
+			rules.Assert("01", "fr-ctc-role must be one of the UNCL 3035 subset: SE, BY, WK, DFH, AB, SR, DL, PE, PR, II, IV",
+				is.Func("known fr-ctc-role", partyRoleKnown),
+			),
+		),
 		rules.Field("identities",
-			rules.Assert("01", "SIRET and SIREN must be coherent (BR-FR-09/10)",
+			rules.Assert("02", "SIRET and SIREN must be coherent (BR-FR-09/10)",
 				is.Func("SIRET/SIREN coherent", identitiesSIRETSIRENCoherent),
 			),
-			rules.Assert("02", "identity scheme format invalid (BR-FR-CO-10)",
+			rules.Assert("03", "identity scheme format invalid (BR-FR-CO-10)",
 				is.FuncError("valid scheme format", identitiesSchemeFormatValid),
+			),
+			rules.Each(
+				rules.Field("ext",
+					rules.Assert("04", "identity scheme (iso-scheme-id) must be one of the ICD 6523 codes accepted by Flow 6",
+						is.Func("scheme in Flow 6 allowed set", partyIdentitySchemeAllowed),
+					),
+				),
 			),
 		),
 		rules.Field("inboxes",
 			rules.Each(
-				rules.Assert("03", "inbox code format invalid",
+				rules.Assert("05", "inbox code format invalid",
 					is.Func("valid inbox", inboxCodeValid),
 				),
 			),
@@ -76,6 +89,27 @@ func orgItemRules() *rules.Set {
 }
 
 // --- Helper functions ---
+
+func partyRoleKnown(v any) bool {
+	ext := extValue(v)
+	role := ext.Get(ExtKeyRole)
+	if role == "" {
+		return true
+	}
+	return slices.Contains(allowedRoleCodes, role)
+}
+
+func partyIdentitySchemeAllowed(v any) bool {
+	ext := extValue(v)
+	if ext.IsZero() {
+		return true
+	}
+	scheme := ext.Get(iso.ExtKeySchemeID).String()
+	if scheme == "" {
+		return true
+	}
+	return slices.Contains(allowedFlow6IdentitySchemes, scheme)
+}
 
 func identitiesSIRETSIRENCoherent(val any) bool {
 	identities, ok := val.([]*org.Identity)

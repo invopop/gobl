@@ -1,4 +1,4 @@
-package flow10
+package ctc
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -8,12 +8,19 @@ import (
 )
 
 // paymentIsB2C reports whether the payment reports a B2C settlement,
-// determined by the absence of a Customer party.
+// determined by the absence of a Customer party. Payments themselves
+// are not routed by residency — every payment runs the Flow 10
+// e-reporting ruleset regardless of where the parties are based — so
+// "B2C" here is only used to mean "no customer present".
 func paymentIsB2C(pmt *bill.Payment) bool {
 	return pmt != nil && pmt.Customer == nil
 }
 
-func paymentIsB2BAny(v any) bool {
+// paymentHasCustomerAny is the "has Customer party" predicate used to
+// gate the per-line invoice-reference rules. Despite the historical
+// "B2B" labelling, it does not imply cross-border: a domestic FR-FR
+// payment receipt has a customer and goes through this branch.
+func paymentHasCustomerAny(v any) bool {
 	pmt, ok := v.(*bill.Payment)
 	return ok && !paymentIsB2C(pmt)
 }
@@ -26,46 +33,39 @@ func billPaymentRules() *rules.Set {
 				is.In(bill.PaymentTypeReceipt),
 			),
 		),
-		// Payment date and at least one line (needed to report the amount
-		// per rate) apply to both B2B and B2C payments.
 		rules.Field("value_date",
 			rules.Assert("02", "payment value_date (settlement date) is required",
 				is.Present,
 			),
 		),
-		// VAT rates reported on payment lines are constrained to the same
-		// G1.24 whitelist as invoices, applied to both B2B and B2C.
-		rules.Assert("07", "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+		rules.Assert("03", "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
 			is.Func("allowed Flow 10 VAT rates", paymentVATRatesAllowed),
 		),
-		// Supplier SIREN identifies the French reporting party on the
-		// payment. Required for both B2B and B2C.
 		rules.Field("supplier",
-			rules.Assert("08", "supplier is required",
+			rules.Assert("04", "supplier is required",
 				is.Present,
 			),
-			rules.Assert("09", "supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
+			rules.Assert("05", "supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
 				is.Func("party has SIREN", partyHasSIREN),
 			),
 		),
-		// Only B2B payments must carry an invoice reference per line
-		// (invoice ID and issue date) so they can be reconciled against
-		// the settled invoice.
+		// Per-line invoice references are required when the payment
+		// carries a Customer (cleared invoice receipts), not B2C settlements.
 		rules.When(
-			is.Func("B2B payment", paymentIsB2BAny),
+			is.Func("payment has customer", paymentHasCustomerAny),
 			rules.Field("lines",
 				rules.Each(
 					rules.Field("document",
-						rules.Assert("04", "each payment line must reference a document (invoice) on B2B payments",
+						rules.Assert("06", "each payment line must reference a document (invoice) when a customer is present",
 							is.Present,
 						),
 						rules.Field("code",
-							rules.Assert("05", "payment line document code (invoice ID) is required on B2B payments",
+							rules.Assert("07", "payment line document code (invoice ID) is required when a customer is present",
 								is.Present,
 							),
 						),
 						rules.Field("issue_date",
-							rules.Assert("06", "payment line document issue_date (invoice issue date) is required on B2B payments",
+							rules.Assert("08", "payment line document issue_date (invoice issue date) is required when a customer is present",
 								is.Present,
 							),
 						),

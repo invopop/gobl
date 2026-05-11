@@ -1,6 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/payment"
 $addons:
-  - "fr-ctc-flow10-v1"
+  - "fr-ctc-v1"
 uuid: "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01"
 type: "receipt"
 currency: "EUR"
@@ -28,18 +28,13 @@ supplier:
 
 customer:
   tax_id:
-    country: "FR"
-    code: "356000000"
-  identities:
-    - type: "SIREN"
-      code: "356000000"
-      ext:
-        iso-scheme-id: "0002"
-  name: "Client Reporting SAS"
+    country: "DE"
+    code: "111111125"
+  name: "Kunde Deutschland GmbH"
 
 lines:
   - document:
-      code: "2026-00042"
+      code: "2026-INT-001"
       issue_date: "2026-04-15"
     amount: "1200.00"
     tax:

@@ -4,13 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f0f6363de7f3234d2e5f0f47b8659eddaa3531c276f837bdc423440068f3edc9"
+			"val": "926e915228135293354bb22ccb3fdf00fdd7483158275a7952c9c727253b0325"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/status",
 		"$addons": [
-			"fr-ctc-flow6-v1"
+			"fr-ctc-v1"
 		],
 		"uuid": "3b6c7d8e-9f0a-4b2c-3d4e-5f6a7b8c9d01",
 		"type": "response",
@@ -23,6 +23,7 @@
 			"name": "VENDEUR SARL",
 			"identities": [
 				{
+					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -35,6 +36,7 @@
 			"name": "VENDEUR SARL",
 			"identities": [
 				{
+					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -44,6 +46,7 @@
 			],
 			"inboxes": [
 				{
+					"key": "peppol",
 					"scheme": "0225",
 					"code": "732829320_PEP"
 				}
@@ -56,6 +59,7 @@
 			"name": "ACHETEUR SARL",
 			"identities": [
 				{
+					"scope": "legal",
 					"type": "SIREN",
 					"code": "200000008",
 					"ext": {
@@ -65,6 +69,7 @@
 			],
 			"inboxes": [
 				{
+					"key": "peppol",
 					"scheme": "0225",
 					"code": "200000008_PEP"
 				}
@@ -84,7 +89,7 @@
 				},
 				"complements": [
 					{
-						"$schema": "https://gobl.org/draft-0/addons/fr/ctc/flow6/characteristic",
+						"$schema": "https://gobl.org/draft-0/addons/fr/ctc/characteristic",
 						"type_code": "MEN",
 						"amount": {
 							"currency": "EUR",

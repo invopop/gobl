@@ -4,14 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "eab4d3ed16ca4ea595ca43f716eec2d7fff6e72cf7c3b675c1bb3ecd2791b251"
+			"val": "b73d2745b02510c4af2430013c7e9107d9212d284e10934fe07ad667f19abdd7"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/payment",
 		"$regime": "FR",
 		"$addons": [
-			"fr-ctc-flow10-v1"
+			"fr-ctc-v1"
 		],
 		"uuid": "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01",
 		"type": "receipt",
@@ -37,6 +37,7 @@
 			},
 			"identities": [
 				{
+					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -46,17 +47,17 @@
 			]
 		},
 		"customer": {
-			"name": "Client Reporting SAS",
+			"name": "Kunde Deutschland GmbH",
 			"tax_id": {
-				"country": "FR",
-				"code": "39356000000"
+				"country": "DE",
+				"code": "111111125"
 			},
 			"identities": [
 				{
-					"type": "SIREN",
-					"code": "356000000",
+					"scope": "legal",
+					"code": "DE111111125",
 					"ext": {
-						"iso-scheme-id": "0002"
+						"iso-scheme-id": "0223"
 					}
 				}
 			]
@@ -66,7 +67,7 @@
 				"i": 1,
 				"document": {
 					"issue_date": "2026-04-15",
-					"code": "2026-00042"
+					"code": "2026-INT-001"
 				},
 				"amount": "1200.00",
 				"tax": {

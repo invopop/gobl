@@ -1,6 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
-  - "fr-ctc-flow10-v1"
+  - "fr-ctc-v1"
 uuid: "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10"
 currency: "EUR"
 issue_date: "2026-04-15"
@@ -35,3 +35,11 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+
+payment:
+  terms:
+    detail: "Paiement comptant"
+  instructions:
+    key: "credit-transfer"
+    ext:
+      untdid-payment-means: "30"

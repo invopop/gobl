@@ -1,24 +1,21 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "fr-ctc-v1",
-  "requires": [
-    "eu-en16931-v2017"
-  ],
   "name": {
-    "en": "France CTC Flow 2",
-    "fr": "France CTC Flux 2"
+    "en": "France CTC",
+    "fr": "France CTC"
   },
   "description": {
-    "en": "Support for the French CTC (Cycle de Traitement de la Commande) Flow 2 B2B\ne-invoicing requirements from the French electronic invoicing reform.\n\nThis addon provides the necessary structures and validations to ensure compliance\nwith the French CTC specifications for B2B electronic invoicing.\n\nIt requires the EN16931 addon as it extends the European standard with French-specific\nrequirements for the e-invoicing reform.\n\nNote on currency conversion (BR-FR-CO-12): When an invoice is issued in a non-EUR\ncurrency, the gobl.ubl library will automatically handle the conversion to EUR and\npresent the invoice with both the original currency and EUR equivalents for tax\namounts, ensuring compliance with French accounting requirements.",
-    "fr": "Support pour le CTC (Cycle de Traitement de la Commande) français Flux 2\npour les exigences de facturation électronique B2B de la réforme française.\n\nCet addon fournit les structures et validations nécessaires pour assurer la\nconformité avec les spécifications CTC françaises pour la facturation électronique B2B.\n\nIl nécessite l'addon EN16931 car il étend le standard européen avec des exigences\nspécifiques françaises pour la réforme de la facturation électronique.\n\nNote sur la conversion de devises (BR-FR-CO-12) : Lorsqu'une facture est émise dans\nune devise autre que l'EUR, la bibliothèque gobl.ubl gère automatiquement la conversion\nen EUR et présente la facture avec à la fois la devise d'origine et les équivalents en\nEUR pour les montants de TVA, garantissant la conformité avec les exigences comptables\nfrançaises."
+    "en": "Support for the French CTC (Continuous Transaction Control)\ne-invoicing and e-reporting reform.\n\nThe addon covers three of the flows defined by the French\nspecification:\n\n- Flow 2 (\"facturation\"): domestic B2B clearance, applied\n  to invoices issued between two parties identifiable as\n  French (SIREN or French VAT ID on both sides).\n- Flow 10 (\"e-reporting\"): reporting of transactions that\n  fall outside Flow 2 clearance — B2C sales, cross-border\n  B2B, and payment receipts subject to e-reporting.\n- Flow 6 (\"cycle de vie\"): lifecycle status messages\n  (bill.Status) exchanged between registered platforms.\n\nThe invoice ruleset is dispatched at validation time based\non whether both parties resolve as French. There is no\ncaller-facing switch: identify the parties correctly and\nthe right flow runs.",
+    "fr": "Support pour la réforme française CTC (Contrôle Continu\ndes Transactions) de la facturation et du e-reporting.\n\nL'addon couvre trois flux du cahier des charges :\n\n- Flux 2 (« facturation ») : clearance B2B domestique,\n  appliqué aux factures émises entre deux parties\n  identifiables comme françaises (SIREN ou numéro de TVA\n  français des deux côtés).\n- Flux 10 (« e-reporting ») : déclaration des transactions\n  hors flux 2 — ventes B2C, B2B transfrontalières et\n  encaissements soumis au e-reporting.\n- Flux 6 (« cycle de vie ») : statuts cycle de vie\n  (bill.Status) échangés entre plateformes agréées.\n\nLe jeu de règles applicable aux factures est sélectionné\nau moment de la validation selon que les deux parties\nsont françaises ou non. Aucun commutateur explicite n'est\nexposé : il suffit d'identifier correctement les parties."
   },
   "sources": [
     {
       "title": {
-        "en": "French CTC Specifications",
-        "fr": "Spécifications CTC françaises"
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
       },
-      "url": "https://www.impots.gouv.fr/e-invoicing-et-e-reporting-702-evolutions"
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
     }
   ],
   "extensions": [
@@ -125,36 +122,671 @@
           }
         }
       ]
-    }
-  ],
-  "tags": [
+    },
     {
-      "schema": "bill/invoice",
-      "list": [
+      "key": "fr-ctc-b2c-category",
+      "name": {
+        "en": "B2C Transaction Category",
+        "fr": "Catégorie de transaction B2C"
+      },
+      "desc": {
+        "en": "Classifies a B2C transaction for French e-reporting to the PPF\n(G1.68). Required on Flow 10 B2C invoices.\n\n- TLB1: Goods deliveries subject to VAT.\n- TPS1: Services subject to VAT.\n- TNT1: Goods / services not subject to French VAT, including\n  intra-EU distance sales per CGI articles 258 A and 259 B.\n- TMA1: Operations under the VAT-on-margin regime\n  (CGI articles 266-1-e, 268, 297 A).",
+        "fr": "Catégorie de transaction pour le e-reporting au PPF (G1.68).\nObligatoire sur les factures B2C en Flux 10.\n\n- TLB1 : Livraisons de biens soumises à la TVA.\n- TPS1 : Prestations de services soumises à la TVA.\n- TNT1 : Livraisons et prestations non soumises à la TVA en\n  France, dont les ventes à distance intracommunautaires\n  (CGI art. 258 A et 259 B).\n- TMA1 : Opérations relevant du régime de TVA sur la marge\n  (CGI art. 266-1-e, 268, 297 A)."
+      },
+      "values": [
         {
-          "key": "final",
+          "code": "TLB1",
           "name": {
-            "en": "Final Invoice",
-            "fr": "Facture définitive"
+            "en": "Goods subject to VAT",
+            "fr": "Livraisons de biens soumises à la TVA"
           }
         },
         {
-          "key": "b2b-int",
+          "code": "TPS1",
           "name": {
-            "en": "International B2B",
-            "fr": "B2B International"
+            "en": "Services subject to VAT",
+            "fr": "Prestations de services soumises à la TVA"
           }
         },
         {
-          "key": "archive-only",
+          "code": "TNT1",
           "name": {
-            "en": "Archive Only",
-            "fr": "Archivage uniquement"
+            "en": "Not subject to French VAT",
+            "fr": "Non soumis à la TVA en France"
+          }
+        },
+        {
+          "code": "TMA1",
+          "name": {
+            "en": "VAT-on-margin regime",
+            "fr": "Régime de TVA sur la marge"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-role",
+      "name": {
+        "en": "Party Role Code",
+        "fr": "Code rôle partie"
+      },
+      "desc": {
+        "en": "UNCL 3035 role code carried as the CDAR RoleCode for each\npopulated party on a Flow 6 lifecycle message. The normalizer\nfills the obvious defaults (Supplier → SE, Customer → BY)\nand leaves the rest for the caller to set explicitly."
+      },
+      "values": [
+        {
+          "code": "SE",
+          "name": {
+            "en": "Seller"
+          }
+        },
+        {
+          "code": "BY",
+          "name": {
+            "en": "Buyer"
+          }
+        },
+        {
+          "code": "WK",
+          "name": {
+            "en": "Work / Service Receiver"
+          }
+        },
+        {
+          "code": "DFH",
+          "name": {
+            "en": "Delivery From"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Bank"
+          }
+        },
+        {
+          "code": "SR",
+          "name": {
+            "en": "Sender / Issuer on behalf of"
+          }
+        },
+        {
+          "code": "DL",
+          "name": {
+            "en": "Dealer"
+          }
+        },
+        {
+          "code": "PE",
+          "name": {
+            "en": "Payee"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Payer"
+          }
+        },
+        {
+          "code": "II",
+          "name": {
+            "en": "Issuer of Invoice"
+          }
+        },
+        {
+          "code": "IV",
+          "name": {
+            "en": "Invoicee"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-reason-code",
+      "name": {
+        "en": "CDAR Reason Code",
+        "fr": "Code motif CDAR"
+      },
+      "desc": {
+        "en": "Exact CDAR ReasonCode pinned on a bill.Reason for Flow 6\nlifecycle messages. The CDAR ReasonCode dimension is 1:N\nwith bill.Reason.Key: this extension lets the caller pick\nthe precise code within a bucket. When absent, the\nconverter falls back to the default_for_key code for\nReason.Key."
+      },
+      "values": [
+        {
+          "code": "NON_TRANSMISE",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "JUSTIF_ABS",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ROUTAGE_ERR",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "AUTRE",
+          "name": {
+            "en": "other"
+          }
+        },
+        {
+          "code": "COORD_BANC_ERR",
+          "name": {
+            "en": "finance-terms"
+          }
+        },
+        {
+          "code": "TX_TVA_ERR",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "MONTANTTOTAL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "CALCUL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "NON_CONFORME",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "DOUBLON",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DEST_INC",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "DEST_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "TRANSAC_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "EMMET_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CONTRAT_TERM",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DOUBLE_FACT",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CMD_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ADR_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "SIRET_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "CODE_ROUTAGE_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_CT_ABSENT",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "PU_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "REM_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "QTE_ERR",
+          "name": {
+            "en": "quantity"
+          }
+        },
+        {
+          "code": "ART_ERR",
+          "name": {
+            "en": "items"
+          }
+        },
+        {
+          "code": "MODPAI_ERR",
+          "name": {
+            "en": "payment-terms"
+          }
+        },
+        {
+          "code": "QUALITE_ERR",
+          "name": {
+            "en": "quality"
+          }
+        },
+        {
+          "code": "LIVR_INCOMP",
+          "name": {
+            "en": "delivery"
+          }
+        },
+        {
+          "code": "REJ_SEMAN",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_UNI",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "REJ_COH",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_ADR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_CONT_B2G",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_REF_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_ASS_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "IRR_VIDE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TYPE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_SYNTAX",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_NOM_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_VID_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_EXT_DOC",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_ANTIVIRUS",
+          "name": {
+            "en": "legal"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-status-code",
+      "name": {
+        "en": "CDAR Process Condition Code",
+        "fr": "Code condition processus CDAR"
+      },
+      "desc": {
+        "en": "CDAR ProcessConditionCode (MDT-9) identifying the lifecycle\nevent reported by the Flow 6 message. The normalizer derives\nit from the (StatusLine.Key, Status.Type) pair; callers can\npre-set it to pin a specific code (e.g. when round-tripping\na parsed CDV)."
+      },
+      "values": [
+        {
+          "code": "200",
+          "name": {
+            "en": "Déposée"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "Émise par la plateforme"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "Reçue par PA"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "Mise à disposition"
+          }
+        },
+        {
+          "code": "204",
+          "name": {
+            "en": "Prise en charge"
+          }
+        },
+        {
+          "code": "205",
+          "name": {
+            "en": "Approuvée"
+          }
+        },
+        {
+          "code": "206",
+          "name": {
+            "en": "Approuvée partiellement"
+          }
+        },
+        {
+          "code": "207",
+          "name": {
+            "en": "En litige"
+          }
+        },
+        {
+          "code": "208",
+          "name": {
+            "en": "Suspendue"
+          }
+        },
+        {
+          "code": "209",
+          "name": {
+            "en": "Complétée"
+          }
+        },
+        {
+          "code": "210",
+          "name": {
+            "en": "Refusée"
+          }
+        },
+        {
+          "code": "211",
+          "name": {
+            "en": "Paiement transmis"
+          }
+        },
+        {
+          "code": "212",
+          "name": {
+            "en": "Encaissée"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "Rejetée sémantique"
           }
         }
       ]
     }
   ],
-  "scenarios": null,
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "380"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "389"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "393"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "501"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "386"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "500"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "ext": {
+            "untdid-document-type": "384"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "471"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "472"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "473"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "381"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "261"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "396"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "502"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "503"
+          }
+        }
+      ]
+    }
+  ],
   "corrections": null
 }

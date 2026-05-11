@@ -1,6 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
-  - "fr-ctc-flow2-v1"
+  - "fr-ctc-v1"
 uuid: "d4e5f6a7-8901-23de-f012-456789012abc"
 currency: "EUR"
 issue_date: "2024-06-15"
@@ -11,6 +11,9 @@ tax:
   ext:
     fr-ctc-billing-mode: "B7"
     untdid-document-type: "380"
+  notes:
+    - key: exempt
+      text: "Reverse charge: intra-community supply of services (CGI art. 283-2; VATEX-EU-IC)."
 
 supplier:
   tax_id:
@@ -77,9 +80,6 @@ notes:
     text: "No discount offered for early payment."
     ext:
       untdid-text-subject: "AAB"
-  - text: "B2BINT"
-    ext:
-      untdid-text-subject: "BAR"
 
 payment:
   instructions:

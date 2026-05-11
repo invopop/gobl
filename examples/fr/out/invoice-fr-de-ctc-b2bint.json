@@ -4,15 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9c3cf2a4f68045fb039c62df2498ed0eaf1cf02b5860fb4b339a49a36a8d6372"
+			"val": "2bbd7ae324f8609660857268fee6b1e87682daeb9c96fc1dc25fafc9b09ae9d9"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
 		"$addons": [
-			"eu-en16931-v2017",
-			"fr-ctc-flow2-v1"
+			"fr-ctc-v1"
 		],
 		"uuid": "d4e5f6a7-8901-23de-f012-456789012abc",
 		"type": "standard",
@@ -21,11 +20,16 @@
 		"issue_date": "2024-06-15",
 		"currency": "EUR",
 		"tax": {
-			"rounding": "currency",
 			"ext": {
 				"fr-ctc-billing-mode": "B7",
 				"untdid-document-type": "380"
-			}
+			},
+			"notes": [
+				{
+					"key": "exempt",
+					"text": "Reverse charge: intra-community supply of services (CGI art. 283-2; VATEX-EU-IC)."
+				}
+			]
 		},
 		"supplier": {
 			"name": "Fournisseur France SARL",
@@ -71,6 +75,15 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"identities": [
+				{
+					"scope": "legal",
+					"code": "DE111111125",
+					"ext": {
+						"iso-scheme-id": "0223"
+					}
+				}
+			],
 			"inboxes": [
 				{
 					"email": "buchhaltung@kunde.de"
@@ -107,7 +120,7 @@
 						"key": "exempt",
 						"ext": {
 							"cef-vatex": "VATEX-EU-IC",
-							"untdid-tax-category": "E"
+							"untdid-tax-category": "K"
 						}
 					}
 				],
@@ -125,10 +138,7 @@
 						"iban": "FR7630006000011234567890189",
 						"name": "Fournisseur France SARL"
 					}
-				],
-				"ext": {
-					"untdid-payment-means": "30"
-				}
+				]
 			}
 		},
 		"totals": {
@@ -143,7 +153,7 @@
 								"key": "exempt",
 								"ext": {
 									"cef-vatex": "VATEX-EU-IC",
-									"untdid-tax-category": "E"
+									"untdid-tax-category": "K"
 								},
 								"base": "1000.00",
 								"amount": "0.00"
@@ -178,12 +188,6 @@
 				"text": "No discount offered for early payment.",
 				"ext": {
 					"untdid-text-subject": "AAB"
-				}
-			},
-			{
-				"text": "B2BINT",
-				"ext": {
-					"untdid-text-subject": "BAR"
 				}
 			}
 		]

@@ -1,4 +1,4 @@
-package flow6
+package ctc
 
 import (
 	"slices"
@@ -11,18 +11,13 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// schemeIDSIREN is the ISO/IEC 6523 scheme for SIREN identities.
-const schemeIDSIREN = "0002"
-
 func normalizeStatus(st *bill.Status) {
 	if st == nil {
 		return
 	}
 
 	// If the caller pinned fr-ctc-status-code but left Line.Key /
-	// Status.Type blank, fill them from the process table. Mirrors the
-	// reason-code direction in normalizeReason: ext and key are two
-	// sides of the same lookup.
+	// Status.Type blank, fill them from the process table.
 	if code := st.Ext.Get(ExtKeyStatusCode).String(); code != "" {
 		if key, typ, ok := StatusKeyFor(code); ok {
 			if len(st.Lines) > 0 && st.Lines[0] != nil && st.Lines[0].Key == "" {
@@ -34,8 +29,7 @@ func normalizeStatus(st *bill.Status) {
 		}
 	}
 
-	// Default Type from the first line's Key — each Flow 6 line key has
-	// exactly one associated Status.Type in the process table.
+	// Default Type from the first line's Key.
 	if st.Type == "" {
 		for _, line := range st.Lines {
 			if line == nil {
@@ -49,9 +43,7 @@ func normalizeStatus(st *bill.Status) {
 	}
 
 	// Deduce the fr-ctc-role on Issuer / Recipient from the line's
-	// (key, type) → side mapping per Annexe A "Acteurs CDV". Saves the
-	// caller from spelling out a role that's already implied by the
-	// process code. If the caller already set a role, leave it alone.
+	// (key, type) → side mapping per Annexe A "Acteurs CDV".
 	if len(st.Lines) > 0 && st.Lines[0] != nil {
 		issuerRole, recipientRole := rolesForSide(SideForKeyType(st.Lines[0].Key, st.Type))
 		if issuerRole != "" {
@@ -63,19 +55,11 @@ func normalizeStatus(st *bill.Status) {
 	}
 
 	// Propagate the SE-roled party's SIREN onto Supplier when missing.
-	// The seller's SIREN is what populates ref.IssuerTradeParty
-	// (MDT-129, BR-FR-CDV-13); when the seller already shows up as
-	// Issuer or Recipient, the caller shouldn't have to repeat the
-	// identity on Supplier. Only copies the SIREN identity (other
-	// fields stay caller-controlled).
 	if siren := siRENFromSEParty(st.Issuer, st.Recipient); siren != nil {
 		st.Supplier = ensureSIRENOnSupplier(st.Supplier, siren)
 	}
 
-	// Surface the CDAR ProcessConditionCode on the document so the
-	// wire-level event identifier is visible without consulting the
-	// converter. Skip when the caller already pinned a code (e.g.
-	// round-tripping a parsed CDV) — the validator catches mismatches.
+	// Surface the CDAR ProcessConditionCode on the document.
 	if len(st.Lines) > 0 && st.Lines[0] != nil && st.Ext.Get(ExtKeyStatusCode) == "" {
 		if code, ok := CDARProcessCodeFor(st.Lines[0].Key, st.Type); ok {
 			st.Ext = st.Ext.Set(ExtKeyStatusCode, cbc.Code(code))
@@ -97,7 +81,7 @@ func siRENFromSEParty(candidates ...*org.Party) *org.Identity {
 			if id == nil || id.Ext.IsZero() {
 				continue
 			}
-			if id.Ext.Get(iso.ExtKeySchemeID).String() == schemeIDSIREN {
+			if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN {
 				return id
 			}
 		}
@@ -108,8 +92,7 @@ func siRENFromSEParty(candidates ...*org.Party) *org.Identity {
 // ensureSIRENOnSupplier returns a Supplier party that carries the
 // given SIREN identity, creating one if it was nil and appending the
 // identity if the existing Supplier doesn't already carry the same
-// SIREN. The identity is shallow-copied so caller-side mutations on
-// the source don't leak.
+// SIREN.
 func ensureSIRENOnSupplier(p *org.Party, siren *org.Identity) *org.Party {
 	clone := *siren
 	if p == nil {
@@ -119,7 +102,7 @@ func ensureSIRENOnSupplier(p *org.Party, siren *org.Identity) *org.Party {
 		if id == nil || id.Ext.IsZero() {
 			continue
 		}
-		if id.Ext.Get(iso.ExtKeySchemeID).String() == schemeIDSIREN &&
+		if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN &&
 			id.Code == siren.Code {
 			return p
 		}
@@ -129,9 +112,7 @@ func ensureSIRENOnSupplier(p *org.Party, siren *org.Identity) *org.Party {
 }
 
 // rolesForSide returns the (Issuer.role, Recipient.role) pair implied
-// by an Annexe A side. Empty strings mean "no derivation possible" —
-// the caller must supply the role explicitly (e.g. platform-issued
-// codes, where Issuer is WK and the recipient role varies).
+// by an Annexe A side.
 func rolesForSide(side CDVSide) (issuer, recipient cbc.Code) {
 	switch side {
 	case CDVSideBuyer:
@@ -165,8 +146,7 @@ func partyHasRole(v any) bool {
 
 // partyHasInboxWhenRequired enforces BR-FR-CDV-08: a party whose role
 // is not WK (legal representative) or DFH (declarant for VAT grouping)
-// must carry a URIID (electronic inbox). We enforce for both issuer
-// and supplier to simplify emmission.
+// must carry a URIID (electronic inbox).
 func partyHasInboxWhenRequired(v any) bool {
 	p, ok := v.(*org.Party)
 	if !ok || p == nil {
@@ -192,18 +172,18 @@ func billStatusRules() *rules.Set {
 			),
 		),
 		rules.Field("supplier",
-			rules.Assert("02", "supplier is required — its SIREN populates ref.IssuerTradeParty (MDT-129, BR-FR-CDV-13)",
+			rules.Assert("02", "supplier is required (BR-FR-CDV-13)",
 				is.Present,
 			),
 			rules.Assert("03", "supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
-				is.Func("supplier has SIREN", partyHasSIRENIdentity),
+				is.Func("supplier has SIREN", statusPartyHasSIRENIdentity),
 			),
 		),
 		rules.Field("issuer",
-			rules.Assert("14", "issuer is required — maps to ExchangedDocument/IssuerTradeParty (MDG-16) per BR-FR-CDV-CL-03",
+			rules.Assert("14", "issuer is required (BR-FR-CDV-CL-03)",
 				is.Present,
 			),
-			rules.Assert("15", "issuer.ext.fr-ctc-role must be set; the allowed values depend on ack TypeCode (BR-FR-CDV-CL-03)",
+			rules.Assert("15", "issuer.ext.fr-ctc-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-03)",
 				is.Func("issuer has fr-ctc-role", partyHasRole),
 			),
 			rules.Assert("20", "issuer must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
@@ -211,10 +191,10 @@ func billStatusRules() *rules.Set {
 			),
 		),
 		rules.Field("recipient",
-			rules.Assert("16", "recipient is required — maps to ExchangedDocument/RecipientTradeParty (MDG-23) per BR-FR-CDV-CL-04",
+			rules.Assert("16", "recipient is required (BR-FR-CDV-CL-04)",
 				is.Present,
 			),
-			rules.Assert("17", "recipient.ext.fr-ctc-role must be set (BR-FR-CDV-CL-04: BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH)",
+			rules.Assert("17", "recipient.ext.fr-ctc-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-04)",
 				is.Func("recipient has fr-ctc-role", partyHasRole),
 			),
 			rules.Assert("18", "recipient must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
@@ -222,7 +202,7 @@ func billStatusRules() *rules.Set {
 			),
 		),
 		rules.Field("lines",
-			rules.Assert("04", "exactly one status line is required (CDAR carries a single status per CDV message)",
+			rules.Assert("04", "exactly one status line is required",
 				is.Func("exactly one line", statusHasExactlyOneLine),
 			),
 			rules.Each(
@@ -250,7 +230,7 @@ func billStatusRules() *rules.Set {
 				rules.Assert("09", "Characteristic.ReasonCode must match the fr-ctc-reason-code of some sibling Reason on the same status line",
 					is.Func("characteristic reason link resolves", statusLineReasonLinksResolve),
 				),
-				rules.Assert("10", "Characteristic.TypeCode must be one of the MDT-207 values: MEN, MPA, RAP, ESC, RAB, REM, MAP, MAPTTC, MNA, MNATTC, CBB, DIV, DVA, MAJ",
+				rules.Assert("10", "Characteristic.TypeCode must be one of the MDT-207 values",
 					is.Func("characteristic type code known", statusLineTypeCodesKnown),
 				),
 			),
@@ -271,8 +251,7 @@ func billStatusRules() *rules.Set {
 }
 
 // statusCodeMatchesLine ensures the fr-ctc-status-code ext, when set,
-// is consistent with the (line.Key, Status.Type) pair. Empty ext is
-// permitted on input — the normalizer fills it.
+// is consistent with the (line.Key, Status.Type) pair.
 func statusCodeMatchesLine(v any) bool {
 	st, ok := v.(*bill.Status)
 	if !ok || st == nil {
@@ -293,9 +272,7 @@ func statusCodeMatchesLine(v any) bool {
 }
 
 // statusHasExactlyOneLine enforces the CDAR invariant that a CDV
-// message carries one and only one status — a single line on the
-// bill.Status. Multiple lines would map to multiple CDARs and must be
-// split into separate documents.
+// message carries one and only one status.
 func statusHasExactlyOneLine(v any) bool {
 	lines, ok := v.([]*bill.StatusLine)
 	if !ok {
@@ -304,7 +281,7 @@ func statusHasExactlyOneLine(v any) bool {
 	return len(lines) == 1
 }
 
-func partyHasSIRENIdentity(v any) bool {
+func statusPartyHasSIRENIdentity(v any) bool {
 	p, ok := v.(*org.Party)
 	if !ok || p == nil {
 		return false
@@ -313,7 +290,7 @@ func partyHasSIRENIdentity(v any) bool {
 		if id == nil || id.Ext.IsZero() {
 			continue
 		}
-		if id.Ext.Get(iso.ExtKeySchemeID).String() == schemeIDSIREN {
+		if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN {
 			return true
 		}
 	}
@@ -330,9 +307,7 @@ func statusLineKeyKnown(v any) bool {
 
 // statusPaidResponseHasAmount checks BR-FR-CDV-14: every line with
 // key=paid on a response status (CDAR 212 Encaissée) must carry a
-// Characteristic with TypeCode=MEN and Amount populated. The same
-// `paid` key on an update status (CDAR 211 Paiement transmis) does
-// not require the MEN.
+// Characteristic with TypeCode=MEN and Amount populated.
 func statusPaidResponseHasAmount(v any) bool {
 	st, ok := v.(*bill.Status)
 	if !ok || st == nil {
@@ -353,7 +328,7 @@ func statusPaidResponseHasAmount(v any) bool {
 }
 
 // lineHasMENAmount returns true if the given line carries a
-// flow6.Characteristic complement with TypeCode=MEN and a populated
+// Characteristic complement with TypeCode=MEN and a populated
 // Amount (value + currency).
 func lineHasMENAmount(line *bill.StatusLine) bool {
 	for _, obj := range line.Complements {
@@ -399,7 +374,7 @@ func statusLineTypeCodesKnown(v any) bool {
 
 // statusLineReasonLinksResolve ensures that every Characteristic on the
 // line whose ReasonCode is set matches the fr-ctc-reason-code of some
-// sibling bill.Reason on the same line. An unset ReasonCode is allowed.
+// sibling bill.Reason on the same line.
 func statusLineReasonLinksResolve(v any) bool {
 	line, ok := v.(*bill.StatusLine)
 	if !ok || line == nil {
@@ -436,9 +411,7 @@ func lineHasReasonCode(line *bill.StatusLine, code cbc.Code) bool {
 }
 
 // reasonRequiredStatusKeys lists the Flow 6 status-line keys that BR-FR-CDV-15
-// designates as carrying mandatory motifs. The 501 "IRRECEVABLE" status
-// from the CSV is not in our process table (it's PPF-ingress-only) and
-// is deliberately omitted — if we ever model it, add it here.
+// designates as carrying mandatory motifs.
 var reasonRequiredStatusKeys = []cbc.Key{
 	bill.StatusEventRejected,
 	bill.StatusEventError,
@@ -448,11 +421,7 @@ var reasonRequiredStatusKeys = []cbc.Key{
 }
 
 // statusReasonCodesAllowed enforces BR-FR-CDV-CL-09 at the
-// bill.Status level: each Reason on each line must carry an
-// fr-ctc-reason-code permitted for the (line.Key, st.Type) →
-// ProcessConditionCode pair. Lives at the status level because the
-// pair-lookup needs Type — line-only keys like `paid` are ambiguous
-// (211 update vs 212 response) without it.
+// bill.Status level.
 func statusReasonCodesAllowed(v any) bool {
 	st, ok := v.(*bill.Status)
 	if !ok || st == nil {
@@ -516,8 +485,7 @@ func statusTypeMatchesLines(v any) bool {
 // -- bill.Reason --------------------------------------------------------
 
 // normalizeReason fills in the other side of the Reason.Key ↔ Ext
-// relationship when exactly one side is set. The extension carries the
-// exact CDAR ReasonCode; the Key is the bucket.
+// relationship when exactly one side is set.
 func normalizeReason(r *bill.Reason) {
 	if r == nil {
 		return
@@ -577,8 +545,6 @@ func reasonExtMatchesKey(v any) bool {
 	if !ok {
 		return false
 	}
-	// Key may be empty when normalization has not yet run; the
-	// normalizer fills it from the ext.
 	if r.Key == "" {
 		return true
 	}

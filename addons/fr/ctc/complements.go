@@ -1,4 +1,4 @@
-package flow6
+package ctc
 
 import (
 	"github.com/invopop/gobl/cal"
@@ -23,17 +23,14 @@ import (
 // The shape is intentionally close to CDAR so the converter can
 // round-trip losslessly; most fields are optional.
 type Characteristic struct {
-	// ID optionally identifies the characteristic. Used by CDAR to
-	// correlate a correction with a previously reported field.
+	// ID optionally identifies the characteristic.
 	ID string `json:"id,omitempty" jsonschema:"title=ID"`
 
-	// TypeCode is the CDAR CharacteristicTypeCode. See the TypeCode*
-	// constants for reserved values Flow 6 interprets directly.
+	// TypeCode is the CDAR CharacteristicTypeCode.
 	TypeCode cbc.Code `json:"type_code,omitempty" jsonschema:"title=Type Code"`
 
 	// ReasonCode links this characteristic to a sibling bill.Reason
-	// via its fr-ctc-reason-code extension value. Only meaningful on
-	// rejection / dispute / partial-acceptance lines.
+	// via its fr-ctc-reason-code extension value.
 	ReasonCode cbc.Code `json:"reason_code,omitempty" jsonschema:"title=Reason Code"`
 
 	// Description is a free-form human-readable explanation.
@@ -43,8 +40,7 @@ type Characteristic struct {
 	// correction (true) or is being reported unchanged (false).
 	Changed *bool `json:"changed,omitempty" jsonschema:"title=Changed"`
 
-	// Direction carries the CDAR AdjustmentDirectionCode — typically
-	// "+" or "-" when Changed is true.
+	// Direction carries the CDAR AdjustmentDirectionCode.
 	Direction cbc.Code `json:"direction,omitempty" jsonschema:"title=Direction"`
 
 	// Name is the semantic label of the field the characteristic
@@ -64,8 +60,7 @@ type Characteristic struct {
 	// Percent holds a percentage value (e.g. a VAT rate correction).
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 
-	// Amount holds a monetary value paired with its currency. Used
-	// for the MEN on paid lines and for any price/total correction.
+	// Amount holds a monetary value paired with its currency.
 	Amount *currency.Amount `json:"amount,omitempty" jsonschema:"title=Amount"`
 
 	// Numeric holds a plain numeric value without currency.
@@ -81,9 +76,7 @@ type Characteristic struct {
 	DateTime *cal.DateTime `json:"date_time,omitempty" jsonschema:"title=Date Time"`
 }
 
-// Characteristic.TypeCode values (MDT-207). The list comes from the
-// French CTC Flow 6 specification; additional codes may be added as
-// the spec evolves.
+// Characteristic.TypeCode values (MDT-207).
 const (
 	// Payment-related amounts
 	TypeCodeAmountReceived    cbc.Code = "MEN"    // Montant encaissé (TTC)

@@ -1,4 +1,4 @@
-package flow6
+package ctc
 
 import (
 	"slices"
@@ -36,10 +36,7 @@ const (
 )
 
 // processEntry pairs a bill.StatusLine.Key with the bill.Status.Type
-// the CDV expects, alongside the wire ProcessConditionCode. A key may
-// appear in multiple entries when its (key, type) pairs map to
-// different CDAR codes — that is what allows us to share `paid`
-// across CDV-211 (update) and CDV-212 (response).
+// the CDV expects, alongside the wire ProcessConditionCode.
 type processEntry struct {
 	Key  cbc.Key
 	Type cbc.Key
@@ -66,8 +63,7 @@ var processTable = []processEntry{
 }
 
 // CDARProcessCodeFor returns the CDAR ProcessConditionCode for a bill
-// StatusLine.Key + Status.Type pair. Returns ("", false) if the pair is
-// unknown or the Type does not match the fixed Type for the key.
+// StatusLine.Key + Status.Type pair.
 func CDARProcessCodeFor(key cbc.Key, typ cbc.Key) (string, bool) {
 	for _, e := range processTable {
 		if e.Key == key && e.Type == typ {
@@ -78,7 +74,7 @@ func CDARProcessCodeFor(key cbc.Key, typ cbc.Key) (string, bool) {
 }
 
 // StatusKeyFor returns the (StatusLine.Key, Status.Type) pair for a CDAR
-// ProcessConditionCode. Returns ("", "", false) if the code is unknown.
+// ProcessConditionCode.
 func StatusKeyFor(code string) (cbc.Key, cbc.Key, bool) {
 	for _, e := range processTable {
 		if e.Code == code {
@@ -89,10 +85,7 @@ func StatusKeyFor(code string) (cbc.Key, cbc.Key, bool) {
 }
 
 // statusTypeForKey returns the Status.Type associated with a
-// StatusLine.Key for Flow 6 *if the key has exactly one*. Returns
-// ("", false) when the key is unknown OR when the same key is shared
-// across multiple types (e.g. `paid` covers both update/211 and
-// response/212) — in that case the caller must specify Type explicitly.
+// StatusLine.Key for Flow 6 *if the key has exactly one*.
 func statusTypeForKey(key cbc.Key) (cbc.Key, bool) {
 	var found cbc.Key
 	for _, e := range processTable {
@@ -111,8 +104,7 @@ func statusTypeForKey(key cbc.Key) (cbc.Key, bool) {
 }
 
 // statusKeyKnown reports whether the key appears in the Flow 6
-// process table at least once (regardless of how many types it
-// pairs with).
+// process table at least once.
 func statusKeyKnown(key cbc.Key) bool {
 	for _, e := range processTable {
 		if e.Key == key {
@@ -133,7 +125,7 @@ type reasonEntry struct {
 
 // reasonTable lists all 45 French CDAR reason codes and the bill.Reason
 // bucket they roll up to. IsDefault marks the code the generator should
-// emit when the caller only sets Reason.Key (see CDARReasonCodeFor).
+// emit when the caller only sets Reason.Key.
 var reasonTable = []reasonEntry{
 	// Business rejection reasons (codes carried on 206 / 207 / 208 / 210).
 	{"NON_TRANSMISE", bill.ReasonKeyUnknownReceiver, false},
@@ -186,8 +178,7 @@ var reasonTable = []reasonEntry{
 }
 
 // CDARReasonCodeFor returns the default CDAR ReasonCode for a
-// bill.Reason.Key. Used on generate when the caller did not pin an
-// exact code via Reason.Ext["fr-ctc-reason-code"].
+// bill.Reason.Key.
 func CDARReasonCodeFor(key cbc.Key) (string, bool) {
 	for _, e := range reasonTable {
 		if e.Key == key && e.IsDefault {
@@ -198,8 +189,7 @@ func CDARReasonCodeFor(key cbc.Key) (string, bool) {
 }
 
 // ReasonKeyFor returns the bucket bill.Reason.Key for a CDAR
-// ReasonCode. Used on parse and by the normalizer to fill Reason.Key
-// from the extension.
+// ReasonCode.
 func ReasonKeyFor(code string) (cbc.Key, bool) {
 	for _, e := range reasonTable {
 		if e.Code == code {
@@ -224,10 +214,7 @@ var actionTable = []struct {
 }
 
 // CDVSide reports which end-party plays the Issuer role on a CDV
-// message of the given process code. Used by the cii writer to
-// auto-fill IssuerTradeParty / RecipientTradeParty from Supplier and
-// Customer when the caller has not set them explicitly. The mapping
-// follows Annexe A "Acteurs CDV".
+// message of the given process code.
 type CDVSide string
 
 const (
@@ -239,14 +226,13 @@ const (
 	CDVSideSeller CDVSide = "seller"
 	// CDVSidePlatform — the message is issued by a platform (PA-E,
 	// PA-R) or addressed to the PPF, so neither end-party plays the
-	// issuer role. The caller must supply st.Issuer (and typically
-	// st.Recipient) explicitly.
+	// issuer role.
 	CDVSidePlatform CDVSide = "platform"
 )
 
 // SideForCode returns which end-party issues a CDV with the given
 // CDAR ProcessConditionCode (per Annexe A "Acteurs CDV", treatment
-// phase). Returns CDVSideUnknown for codes not in the table.
+// phase).
 func SideForCode(code string) CDVSide {
 	switch code {
 	case "204", "205", "206", "207", "208", "210", "211":
@@ -271,10 +257,7 @@ func SideForKeyType(key, typ cbc.Key) CDVSide {
 
 // allowedReasonsByProcessCode is the BR-FR-CDV-CL-09 table — for each
 // CDAR process code that admits Reasons, the set of CDAR ReasonCodes
-// the schematron will accept. Codes not listed here either don't carry
-// reasons (200, 201, 202, 203, 204, 205, 209, 211, 212) or carry any
-// reason (the table is the strict list per Annexe A "Tableau des motifs
-// de STATUTS").
+// the schematron will accept.
 var allowedReasonsByProcessCode = map[string][]string{
 	"200": {"NON_TRANSMISE"},
 	"206": {
@@ -308,8 +291,7 @@ var allowedReasonsByProcessCode = map[string][]string{
 
 // ReasonCodeAllowedForProcessCode reports whether the given CDAR
 // ReasonCode is permitted on a status line whose ProcessConditionCode is
-// processCode. Returns true when the process code does not constrain the
-// reason set (i.e. it isn't in the BR-FR-CDV-CL-09 table).
+// processCode.
 func ReasonCodeAllowedForProcessCode(reasonCode, processCode string) bool {
 	allowed, ok := allowedReasonsByProcessCode[processCode]
 	if !ok {

@@ -1,24 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/addons/fr/ctc/flow6/characteristic",
-  "$ref": "#/$defs/flow6.Characteristic",
+  "$id": "https://gobl.org/draft-0/addons/fr/ctc/characteristic",
+  "$ref": "#/$defs/ctc.Characteristic",
   "$defs": {
-    "flow6.Characteristic": {
+    "ctc.Characteristic": {
       "properties": {
         "id": {
           "type": "string",
           "title": "ID",
-          "description": "ID optionally identifies the characteristic. Used by CDAR to\ncorrelate a correction with a previously reported field."
+          "description": "ID optionally identifies the characteristic."
         },
         "type_code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Type Code",
-          "description": "TypeCode is the CDAR CharacteristicTypeCode. See the TypeCode*\nconstants for reserved values Flow 6 interprets directly."
+          "description": "TypeCode is the CDAR CharacteristicTypeCode."
         },
         "reason_code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Reason Code",
-          "description": "ReasonCode links this characteristic to a sibling bill.Reason\nvia its fr-ctc-reason-code extension value. Only meaningful on\nrejection / dispute / partial-acceptance lines."
+          "description": "ReasonCode links this characteristic to a sibling bill.Reason\nvia its fr-ctc-reason-code extension value."
         },
         "description": {
           "type": "string",
@@ -33,7 +33,7 @@
         "direction": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Direction",
-          "description": "Direction carries the CDAR AdjustmentDirectionCode — typically\n\"+\" or \"-\" when Changed is true."
+          "description": "Direction carries the CDAR AdjustmentDirectionCode."
         },
         "name": {
           "type": "string",
@@ -63,7 +63,7 @@
         "amount": {
           "$ref": "https://gobl.org/draft-0/currency/amount",
           "title": "Amount",
-          "description": "Amount holds a monetary value paired with its currency. Used\nfor the MEN on paid lines and for any price/total correction."
+          "description": "Amount holds a monetary value paired with its currency."
         },
         "numeric": {
           "$ref": "https://gobl.org/draft-0/num/amount",

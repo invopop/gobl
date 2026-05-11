@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "414ec7ddd1f304e0c796d1f93be0c330e4a0502ab8cd88235a92a7c07d93b61c"
+			"val": "06a94209d23cad09d46cbe518bd47eeb62ebd673947c3ea0b9503f180effc264"
 		}
 	},
 	"doc": {
@@ -12,7 +12,7 @@
 		"$regime": "FR",
 		"$addons": [
 			"eu-en16931-v2017",
-			"fr-ctc-flow2-v1"
+			"fr-ctc-v1"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",

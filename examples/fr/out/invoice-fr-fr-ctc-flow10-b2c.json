@@ -4,14 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0fb627224d6cf49dc1cb7b5c06bf0ec0fdb20c5f6a11f0e5842d76599f5897dd"
+			"val": "f6d97cf5dff94cd50a9d59808e4634a2e8450e5e4d2ab434a3f751d93b34f66e"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
 		"$addons": [
-			"fr-ctc-flow10-v1"
+			"fr-ctc-v1"
 		],
 		"uuid": "8c2b4a1d-d7e2-4d6e-9c1f-3a8b9d4f2e10",
 		"type": "standard",
@@ -33,6 +33,7 @@
 			},
 			"identities": [
 				{
+					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -69,6 +70,17 @@
 				"total": "59.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"notes": "Paiement comptant"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"ext": {
+					"untdid-payment-means": "30"
+				}
+			}
+		},
 		"totals": {
 			"sum": "59.00",
 			"total": "59.00",

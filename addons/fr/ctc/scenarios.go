@@ -1,4 +1,4 @@
-package flow10
+package ctc
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -7,11 +7,13 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Flow 10 accepts a curated subset of UNTDID 1001 document type codes.
-// The scenarios below map GOBL invoice types (+ tag combinations) to the
-// corresponding UNTDID code via untdid.ExtKeyDocumentType. The list is
-// intentionally self-contained so Flow 10 can operate without requiring
-// the en16931 addon.
+// scenarios is a self-contained UNTDID 1001 document-type mapping for
+// French CTC invoices. It does not assume eu-en16931 is also declared
+// (en16931 is only mandatory for Flow 2 clearance and is enforced via
+// the rule set, not as an addon dependency), so we duplicate the
+// document-type rows for the codes that en16931 also covers. When both
+// addons are listed the rows merge with the same value — last-write
+// is harmless because the value is identical.
 var scenarios = []*tax.ScenarioSet{
 	{
 		Schema: bill.ShortSchemaInvoice,
@@ -144,11 +146,16 @@ var scenarios = []*tax.ScenarioSet{
 	},
 }
 
-// allowedDocumentTypes is the whitelist of UNTDID 1001 codes permitted on a
-// Flow 10 invoice (B2B scope). Kept in sync with the scenarios above.
-var allowedDocumentTypes = []cbc.Code{
+// allowedInvoiceDocumentTypes is the whitelist of UNTDID 1001 codes
+// permitted on a French CTC invoice (covers both Flow 2 and Flow 10).
+// Kept as a flat list because the rule that consumes it checks for
+// presence/absence rather than the type+tag combination.
+var allowedInvoiceDocumentTypes = []cbc.Code{
 	"380", "389", "393", "501",
 	"386", "500",
 	"384", "471", "472", "473",
 	"381", "261", "396", "502", "503",
+	// Flow 2-only: consolidated credit note. Not driven by a scenario;
+	// the caller sets the extension explicitly.
+	"262",
 }
