@@ -60,7 +60,7 @@ type Line struct {
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Extension codes that apply to the line
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // SubLine provides a simplified line that can be embedded inside other lines

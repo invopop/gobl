@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -67,8 +67,8 @@ func handleBuild(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToo
 		return mcp.NewToolResultError("'data' argument is required"), nil
 	}
 
-	opts := &cli.BuildOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.BuildOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: bytes.NewReader([]byte(dataStr)),
 		},
 	}
@@ -80,7 +80,7 @@ func handleBuild(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToo
 		opts.Envelop = envelop
 	}
 
-	result, err := cli.Build(ctx, opts)
+	result, err := ops.Build(ctx, opts)
 	if err != nil {
 		return toolResultFromError(err), nil
 	}
@@ -106,7 +106,7 @@ func handleValidate(ctx context.Context, request mcp.CallToolRequest) (*mcp.Call
 		return mcp.NewToolResultError("'data' argument is required"), nil
 	}
 
-	err := cli.Validate(ctx, bytes.NewReader([]byte(dataStr)))
+	err := ops.Validate(ctx, bytes.NewReader([]byte(dataStr)))
 	if err != nil {
 		return toolResultFromError(err), nil
 	}
@@ -138,8 +138,8 @@ func handleCorrect(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 		return mcp.NewToolResultError("'data' argument is required"), nil
 	}
 
-	opts := &cli.CorrectOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.CorrectOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: bytes.NewReader([]byte(dataStr)),
 		},
 	}
@@ -151,7 +151,7 @@ func handleCorrect(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 		opts.OptionsSchema = schema
 	}
 
-	result, err := cli.Correct(ctx, opts)
+	result, err := ops.Correct(ctx, opts)
 	if err != nil {
 		return toolResultFromError(err), nil
 	}
@@ -177,13 +177,13 @@ func handleReplicate(ctx context.Context, request mcp.CallToolRequest) (*mcp.Cal
 		return mcp.NewToolResultError("'data' argument is required"), nil
 	}
 
-	opts := &cli.ReplicateOptions{
-		ParseOptions: &cli.ParseOptions{
+	opts := &ops.ReplicateOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: bytes.NewReader([]byte(dataStr)),
 		},
 	}
 
-	result, err := cli.Replicate(ctx, opts)
+	result, err := ops.Replicate(ctx, opts)
 	if err != nil {
 		return toolResultFromError(err), nil
 	}

@@ -14,6 +14,7 @@ func init() {
 		Invoice{},
 		Order{},
 		Payment{},
+		Status{},
 		// Sub-schemas - used by primaries
 		Charge{},
 		Discount{},
@@ -40,6 +41,11 @@ func init() {
 		paymentLineRules(),
 		taxRules(),
 		totalsRules(),
+		statusRules(),
+		statusLineRules(),
+		reasonRules(),
+		actionRules(),
+		conditionRules(),
 	)
 }
 
@@ -49,4 +55,5 @@ const (
 	ShortSchemaDelivery = "bill/delivery"
 	ShortSchemaInvoice  = "bill/invoice"
 	ShortSchemaPayment  = "bill/payment"
+	ShortSchemaStatus   = "bill/status"
 )

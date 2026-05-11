@@ -11,8 +11,13 @@ import (
 )
 
 const (
+	// Key identifies the TicketBAI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "es-tbai"
+
 	// V1 for TicketBAI versions 1.x
-	V1 cbc.Key = "es-tbai-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -27,8 +32,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("ES-TBAI-V1"),
+		Key.String(),
+		rules.GOBL.Add("ES-TBAI"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		taxComboRules(),

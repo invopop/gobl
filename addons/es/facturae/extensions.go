@@ -10,9 +10,37 @@ const (
 	ExtKeyCorrection   cbc.Key = "es-facturae-correction"
 	ExtKeyDocType      cbc.Key = "es-facturae-doc-type"
 	ExtKeyInvoiceClass cbc.Key = "es-facturae-invoice-class"
+	ExtKeySubsidy      cbc.Key = "es-facturae-subsidy"
 )
 
 var extensions = []*cbc.Definition{
+	{
+		Key: ExtKeySubsidy,
+		Name: i18n.String{
+			i18n.EN: "FacturaE: Subsidy",
+			i18n.ES: "FacturaE: Subvención",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Indicates that an advance payment came from a public grant or subsidy. Set on a payment Record's `ext` map; replaces the previous `pay.Record.Grant` boolean field.",
+			i18n.ES: "Indica que un pago anticipado proviene de una subvención o ayuda pública. Se establece en el mapa `ext` del Record de pago; reemplaza el antiguo campo booleano `pay.Record.Grant`.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "S",
+				Name: i18n.String{
+					i18n.EN: "Yes",
+					i18n.ES: "Sí",
+				},
+			},
+			{
+				Code: "N",
+				Name: i18n.String{
+					i18n.EN: "No",
+					i18n.ES: "No",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyDocType,
 		Name: i18n.String{

@@ -3,6 +3,7 @@ package currency
 import (
 	"fmt"
 
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
 )
 
@@ -17,6 +18,15 @@ const CodeEmpty Code = ""
 func (c Code) Validate() error {
 	return inDefinitions(c)
 }
+
+// IsCodeDefined provides a rule validation that ensures the currency code is
+// defined in the GOBL source.
+var IsCodeDefined = is.Func("valid currency code", func(val any) bool {
+	if c, ok := val.(Code); ok {
+		return c == CodeEmpty || Get(c) != nil
+	}
+	return false
+})
 
 func inDefinitions(code Code) error {
 	if code == CodeEmpty {
@@ -36,6 +46,16 @@ func (c Code) Def() *Def {
 // String provides the currency code as a string.
 func (c Code) String() string {
 	return string(c)
+}
+
+// In checks if the code is in the provided list of codes.
+func (c Code) In(codes ...Code) bool {
+	for _, v := range codes {
+		if c == v {
+			return true
+		}
+	}
+	return false
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

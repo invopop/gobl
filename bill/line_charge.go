@@ -35,14 +35,14 @@ type LineCharge struct {
 	// Fixed or resulting charge amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// Extension codes that apply to the charge
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // Normalize performs normalization on the charge and embedded objects using the
 // provided list of normalizers.
 func (lc *LineCharge) Normalize(normalizers tax.Normalizers) {
 	lc.Code = cbc.NormalizeCode(lc.Code)
-	lc.Ext = tax.CleanExtensions(lc.Ext)
+	lc.Ext = lc.Ext.Clean()
 	normalizers.Each(lc)
 }
 
@@ -81,7 +81,7 @@ func (lc *LineCharge) IsEmpty() bool {
 		lc.Reason == "" &&
 		(lc.Percent == nil || lc.Percent.IsZero()) &&
 		lc.Amount.IsZero() &&
-		len(lc.Ext) == 0
+		lc.Ext.IsZero()
 }
 
 // CleanLineCharges removes any empty charges from the list.

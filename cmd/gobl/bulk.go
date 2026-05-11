@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/spf13/cobra"
 )
 
@@ -30,10 +30,10 @@ func (o *bulkOpts) runE(cmd *cobra.Command, args []string) error {
 	if o.indent {
 		enc.SetIndent("", "\t")
 	}
-	opts := &cli.BulkOptions{
+	opts := &ops.BulkOptions{
 		In: in,
 	}
-	for result := range cli.Bulk(ctx, opts) {
+	for result := range ops.Bulk(ctx, opts) {
 		if err := enc.Encode(result); err != nil {
 			return err
 		}

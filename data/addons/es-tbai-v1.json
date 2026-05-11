@@ -211,6 +211,35 @@
           }
         }
       ]
+    },
+    {
+      "key": "es-tbai-bi-activity",
+      "name": {
+        "en": "Activity Code (Bizkaia)",
+        "es": "Código de Actividad (Bizkaia)"
+      },
+      "desc": {
+        "en": "Economic activity code (epígrafe) for individual issuers submitting through\nBizkaia's LROE Modelo 140 register. Not required for organisations, who\nfile through Modelo 240."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Batuz LROE list of activity codes",
+            "es": "Lista de epígrafes LROE Batuz"
+          },
+          "url": "https://www.batuz.eus/fitxategiak/batuz/lroe/batuz_lroe_lista_epigrafes_v1_0_4.xlsx",
+          "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        },
+        {
+          "title": {
+            "en": "LROE Modelo 140 specification",
+            "es": "Especificación LROE Modelo 140"
+          },
+          "url": "https://www.batuz.eus/fitxategiak/batuz/lroe/lroe_140_v_1_0.pdf",
+          "content_type": "application/pdf"
+        }
+      ],
+      "pattern": "^\\d{1,7}$"
     }
   ],
   "scenarios": null,

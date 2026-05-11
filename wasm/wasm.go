@@ -11,7 +11,7 @@ import (
 	"os"
 	"syscall/js"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 )
 
 func main() {
@@ -32,15 +32,15 @@ func main() {
 }
 
 func processMessages(r io.Reader) {
-	bulkOpts := &cli.BulkOptions{
+	bulkOpts := &ops.BulkOptions{
 		In: r,
 	}
-	for result := range cli.Bulk(context.TODO(), bulkOpts) {
+	for result := range ops.Bulk(context.TODO(), bulkOpts) {
 		postMessage(result)
 	}
 }
 
-func postMessage(result *cli.BulkResponse) {
+func postMessage(result *ops.BulkResponse) {
 	response := js.Global().Get("Object").New()
 	if result.ReqID != "" {
 		response.Set("req_id", result.ReqID)

@@ -12,8 +12,8 @@ import (
 
 func TestPaymentMeansExtensions(t *testing.T) {
 	m := saft.PaymentMeansExtensions()
-	assert.NotEmpty(t, m)
-	assert.Len(t, m, 10)
+	assert.False(t, m.IsZero())
+	assert.Equal(t, 11, m.Len())
 	assert.Equal(t, pay.MeansKeyCash, m.Lookup("NU"))
 }
 
@@ -37,9 +37,9 @@ func TestPayInstructionsNormalization(t *testing.T) {
 			name: "card, ext",
 			instr: &pay.Instructions{
 				Key: pay.MeansKeyCard,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
-				},
+				}),
 			},
 			out: "CC",
 		},
@@ -54,9 +54,9 @@ func TestPayInstructionsNormalization(t *testing.T) {
 			name: "other, ext",
 			instr: &pay.Instructions{
 				Key: pay.MeansKeyOther,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
-				},
+				}),
 			},
 			out: "CB",
 		},
@@ -71,7 +71,7 @@ func TestPayInstructionsNormalization(t *testing.T) {
 				// Nothing to check. Not panicking is enough.
 				return
 			}
-			assert.Equal(t, tt.out, tt.instr.Ext[saft.ExtKeyPaymentMeans])
+			assert.Equal(t, tt.out, tt.instr.Ext.Get(saft.ExtKeyPaymentMeans))
 		})
 	}
 }
@@ -79,7 +79,7 @@ func TestPayInstructionsNormalization(t *testing.T) {
 func TestPayAdvanceNormalization(t *testing.T) {
 	tests := []struct {
 		name string
-		adv  *pay.Advance
+		adv  *pay.Record
 		out  cbc.Code
 	}{
 		{
@@ -87,35 +87,35 @@ func TestPayAdvanceNormalization(t *testing.T) {
 		},
 		{
 			name: "card, no ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyCard,
 			},
 			out: "CC",
 		},
 		{
 			name: "card, ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyCard,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
-				},
+				}),
 			},
 			out: "CC",
 		},
 		{
 			name: "other, no ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyOther,
 			},
 			out: "OU",
 		},
 		{
 			name: "other, ext",
-			adv: &pay.Advance{
+			adv: &pay.Record{
 				Key: pay.MeansKeyOther,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyPaymentMeans: "CB",
-				},
+				}),
 			},
 			out: "CB",
 		},
@@ -130,7 +130,7 @@ func TestPayAdvanceNormalization(t *testing.T) {
 				// Nothing to check. Not panicking is enough.
 				return
 			}
-			assert.Equal(t, tt.out, tt.adv.Ext[saft.ExtKeyPaymentMeans])
+			assert.Equal(t, tt.out, tt.adv.Ext.Get(saft.ExtKeyPaymentMeans))
 		})
 	}
 }

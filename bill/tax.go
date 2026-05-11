@@ -29,7 +29,7 @@ type Tax struct {
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Notes contains tax-related notes, typically used for exemption reasons
 	// or other tax-specific explanations associated with particular tax categories.
@@ -58,7 +58,7 @@ func (t *Tax) MergeNotes(notes ...*tax.Note) *Tax {
 // MergeExtensions makes it easier to add extensions to the tax object
 // by automatically handling nil data, and replying a new updated instance.
 func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {
-	if len(ext) == 0 {
+	if ext.IsZero() {
 		return t
 	}
 	if t == nil {
@@ -99,7 +99,7 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	case "round-then-sum":
 		t.Rounding = tax.RoundingRuleCurrency
 	}
-	t.Ext = tax.CleanExtensions(t.Ext)
+	t.Ext = t.Ext.Clean()
 	tax.Normalize(normalizers, t.Notes)
 	normalizers.Each(t)
 }

@@ -21,6 +21,6 @@ func TestNormalizeOrgItem(t *testing.T) {
 	t.Run("with standard invoice", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "services", inv.Lines[0].Item.Ext[ticket.ExtKeyProduct].String())
+		assert.Equal(t, "services", inv.Lines[0].Item.Ext.Get(ticket.ExtKeyProduct).String())
 	})
 }

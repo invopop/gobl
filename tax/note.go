@@ -18,7 +18,7 @@ type Note struct {
 	// Text contains the exemption reason or explanation.
 	Text string `json:"text" jsonschema:"title=Text"`
 	// Extensions for additional structured data.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // SameAs returns true if the two notes refer to the same tax situation,
@@ -35,7 +35,7 @@ func (n *Note) Normalize(normalizers Normalizers) {
 	if n == nil {
 		return
 	}
-	n.Ext = CleanExtensions(n.Ext)
+	n.Ext = n.Ext.Clean()
 	normalizers.Each(n)
 }
 

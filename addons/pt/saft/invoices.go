@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -64,12 +65,12 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 		inv.Tax = new(bill.Tax)
 	}
 
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = make(tax.Extensions)
+	if inv.Tax.Ext.IsZero() {
+		inv.Tax.Ext = tax.MakeExtensions()
 	}
 
 	if !inv.Tax.Ext.Has(ExtKeySource) {
-		inv.Tax.Ext[ExtKeySource] = SourceBillingProduced
+		inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeySource, SourceBillingProduced)
 	}
 }
 
@@ -96,6 +97,7 @@ func normalizeInvoiceValueDate(inv *bill.Invoice) {
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("15", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
 		// Tax ext must have either work type or invoice type
 		rules.Assert("01",
 			fmt.Sprintf("either '%s' or '%s' must be set", ExtKeyWorkType, ExtKeyInvoiceType),
@@ -198,10 +200,10 @@ func invoiceWorkTypeValid(val any) error {
 		return nil
 	}
 	ext := invoiceTaxExt(inv)
-	wt, ok := ext[ExtKeyWorkType]
-	if !ok {
+	if !ext.Has(ExtKeyWorkType) {
 		return nil
 	}
+	wt := ext.Get(ExtKeyWorkType)
 	if !slices.Contains(invoiceWorkTypes, wt) {
 		return fmt.Errorf("value '%s' invalid", wt)
 	}
@@ -248,7 +250,8 @@ func invoiceSourceNotProduced(val any) bool {
 		return false
 	}
 	ext := invoiceTaxExt(inv)
-	return ext[ExtKeySource] != "" && ext[ExtKeySource] != SourceBillingProduced
+	src := ext.Get(ExtKeySource)
+	return src != "" && src != SourceBillingProduced
 }
 
 // invoiceTaxHasSourceRef checks that the tax extensions include the source ref key.
@@ -272,23 +275,23 @@ func invoiceSourceRefValid(val any) error {
 
 // invoiceTaxExt safely returns the invoice's tax extensions.
 func invoiceTaxExt(inv *bill.Invoice) tax.Extensions {
-	if inv.Tax == nil || inv.Tax.Ext == nil {
-		return nil
+	if inv.Tax == nil {
+		return tax.Extensions{}
 	}
 	return inv.Tax.Ext
 }
 
 func validateSourceRef(docType cbc.Code, ext tax.Extensions) error {
-	if ext == nil {
+	if ext.IsZero() {
 		return nil
 	}
 
-	if ext[ExtKeySource] != SourceBillingManual {
+	if ext.Get(ExtKeySource) != SourceBillingManual {
 		// source ref format only validated for manual documents
 		return nil
 	}
 
-	ref := ext[ExtKeySourceRef].String()
+	ref := ext.Get(ExtKeySourceRef).String()
 	if ref == "" || docType == "" {
 		return nil
 	}
@@ -377,13 +380,13 @@ func (r codeFormatRule) Validate(val any) error {
 }
 
 func invoiceDocType(inv *bill.Invoice) cbc.Code {
-	if inv.Tax == nil || inv.Tax.Ext == nil {
+	if inv.Tax == nil || inv.Tax.Ext.IsZero() {
 		return cbc.CodeEmpty
 	}
 	if inv.Tax.Ext.Has(ExtKeyInvoiceType) {
-		return inv.Tax.Ext[ExtKeyInvoiceType]
+		return inv.Tax.Ext.Get(ExtKeyInvoiceType)
 	}
-	return inv.Tax.Ext[ExtKeyWorkType]
+	return inv.Tax.Ext.Get(ExtKeyWorkType)
 }
 
 func isInvoiceReceipt(inv *bill.Invoice) bool {

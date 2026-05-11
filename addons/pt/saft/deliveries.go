@@ -41,7 +41,7 @@ func deliveryHasMovementType(val any) bool {
 	if !ok || dlv == nil {
 		return true
 	}
-	if dlv.Tax == nil || dlv.Tax.Ext == nil {
+	if dlv.Tax == nil || dlv.Tax.Ext.IsZero() {
 		return false
 	}
 	return tax.ExtensionsRequire(ExtKeyMovementType).Check(dlv.Tax.Ext)
@@ -65,10 +65,10 @@ func deliveryCodeFormatValid(val any) error {
 }
 
 func movementDocType(dlv *bill.Delivery) cbc.Code {
-	if dlv.Tax == nil || dlv.Tax.Ext == nil {
+	if dlv.Tax == nil || dlv.Tax.Ext.IsZero() {
 		return cbc.CodeEmpty
 	}
-	return dlv.Tax.Ext[ExtKeyMovementType]
+	return dlv.Tax.Ext.Get(ExtKeyMovementType)
 }
 
 func normalizeDelivery(dlv *bill.Delivery) {
@@ -76,17 +76,17 @@ func normalizeDelivery(dlv *bill.Delivery) {
 		dlv.Tax = new(bill.Tax)
 	}
 
-	if dlv.Tax.Ext == nil {
-		dlv.Tax.Ext = make(tax.Extensions)
+	if dlv.Tax.Ext.IsZero() {
+		dlv.Tax.Ext = tax.MakeExtensions()
 	}
 
 	if !dlv.Tax.Ext.Has(ExtKeyMovementType) {
 		// Map delivery types to movement types
 		switch dlv.Type {
 		case bill.DeliveryTypeNote:
-			dlv.Tax.Ext[ExtKeyMovementType] = MovementTypeDeliveryNote
+			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
 		case bill.DeliveryTypeWaybill:
-			dlv.Tax.Ext[ExtKeyMovementType] = MovementTypeWaybill
+			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
 		}
 	}
 }

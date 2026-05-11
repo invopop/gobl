@@ -1,0 +1,24 @@
+$schema: "https://gobl.org/draft-0/bill/status"
+uuid: "0194c26e-e6c3-7b44-ad20-a2b3c4d5e6f7"
+type: "system"
+series: "SS"
+code: "00101"
+issue_date: "2025-04-15"
+issue_time: "21:05:00"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Provide One S.L."
+
+lines:
+  - key: "event-anomaly"
+    description: Chain traceability issue detected
+    complements:
+      - $schema: "https://verifactu.gobl.org/v0/event-anomaly"
+        type: "07"
+        event:
+          type: "01"
+          timestamp: "2024-11-19T10:00:00+01:00"
+          fingerprint: "ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789"

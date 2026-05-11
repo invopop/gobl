@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/spf13/cobra"
 )
 
@@ -47,5 +47,5 @@ func (opts *validateOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	return cli.Validate(ctx, input)
+	return ops.Validate(ctx, input)
 }

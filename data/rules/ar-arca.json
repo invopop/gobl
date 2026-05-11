@@ -1,0 +1,347 @@
+{
+  "id": "GOBL-AR-ARCA",
+  "package": "ar-arca",
+  "guard": "context: addon in [ar-arca-v4]",
+  "subsets": [
+    {
+      "id": "GOBL-AR-ARCA-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-24",
+          "desc": "invoice must be in ARS or provide exchange rate for conversion",
+          "tests": "can convert to [ARS]"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-05",
+          "desc": "invoice type is credit-note but ar-arca-doc-type is not a credit note",
+          "tests": "type matches doc type credit note"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-06",
+          "desc": "invoice type is debit-note but ar-arca-doc-type is not a debit note",
+          "tests": "type matches doc type debit note"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-07",
+          "desc": "ar-arca-doc-type is a credit note but invoice type is not credit-note",
+          "tests": "doc type credit note matches type"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-08",
+          "desc": "doc type is a debit note but invoice type is not debit-note",
+          "tests": "doc type debit note matches type"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-12",
+          "desc": "document type 49 (Used Goods Purchase Invoice) requires customer VAT status to be 5 (Final Consumer)",
+          "tests": "doc type 49 vat status"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-13",
+          "desc": "document type A requires customer VAT status to be one of [1 6 13 16]",
+          "tests": "doc type A vat status"
+        },
+        {
+          "id": "GOBL-AR-ARCA-BILL-INVOICE-14",
+          "desc": "document type B cannot have customer VAT status [1 6 13 16]",
+          "tests": "doc type B vat status"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "series",
+          "assert": [
+            {
+              "id": "GOBL-AR-ARCA-BILL-INVOICE-01",
+              "desc": "series is required",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-AR-ARCA-BILL-INVOICE-02",
+              "desc": "series must be a valid number between 1 and 99998",
+              "tests": "valid series"
+            }
+          ]
+        },
+        {
+          "field": "tax",
+          "assert": [
+            {
+              "id": "GOBL-AR-ARCA-BILL-INVOICE-03",
+              "desc": "tax is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-04",
+                  "desc": "tax requires 'ar-arca-doc-type' extension",
+                  "tests": "ext require [ar-arca-doc-type]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "customer required",
+          "subsets": [
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-09",
+                  "desc": "customer is required",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "assert": [
+            {
+              "id": "GOBL-AR-ARCA-BILL-INVOICE-10",
+              "desc": "must have a tax_id, or an identity with ext 'ar-arca-identity-type'",
+              "tests": "has tax ID or identity"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-11",
+                  "desc": "customer requires 'ar-arca-vat-status' extension",
+                  "tests": "ext require [ar-arca-vat-status]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "concept is services",
+          "subsets": [
+            {
+              "field": "ordering",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-15",
+                  "desc": "ordering is required for services",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "period",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-16",
+                      "desc": "ordering period is required for services",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "payment",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-17",
+                  "desc": "payment is required for services",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "terms",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-18",
+                      "desc": "payment terms are required for services",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "due_dates",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-19",
+                          "desc": "payment due dates are required for services",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "concept is goods",
+          "subsets": [
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "terms",
+                  "subsets": [
+                    {
+                      "field": "due_dates",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-20",
+                          "desc": "payment due dates must not be set for goods",
+                          "tests": "empty"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice type in [credit-note, debit-note]",
+          "subsets": [
+            {
+              "field": "preceding",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-INVOICE-21",
+                  "desc": "preceding documents are required for credit/debit notes",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "preceding",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-22",
+                      "desc": "preceding document requires 'ar-arca-doc-type' extension",
+                      "tests": "ext require [ar-arca-doc-type]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "doc type is C",
+          "subsets": [
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "taxes",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-23",
+                          "desc": "type C invoices (simplified tax scheme) must not have taxes on lines",
+                          "tests": "empty"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-AR-ARCA-BILL-CHARGE",
+      "object": "bill.Charge",
+      "subsets": [
+        {
+          "guard": "key is tax",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-CHARGE-01",
+                  "desc": "tax charge requires 'ar-arca-tax-type' extension",
+                  "tests": "ext require [ar-arca-tax-type]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "has tax type ext",
+          "subsets": [
+            {
+              "field": "percent",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-CHARGE-02",
+                  "desc": "percent is required when tax type is set",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "tax type is other",
+          "subsets": [
+            {
+              "field": "reason",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-BILL-CHARGE-03",
+                  "desc": "reason is required when tax type is 'other'",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-AR-ARCA-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "category is VAT",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-AR-ARCA-TAX-COMBO-01",
+                  "desc": "VAT combo requires 'ar-arca-vat-rate' extension",
+                  "tests": "ext require [ar-arca-vat-rate]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

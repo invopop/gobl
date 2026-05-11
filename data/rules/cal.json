@@ -56,6 +56,17 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-CAL-TIMESTAMP",
+      "object": "cal.Timestamp",
+      "assert": [
+        {
+          "id": "GOBL-CAL-TIMESTAMP-01",
+          "desc": "invalid timestamp",
+          "tests": "valid timestamp"
+        }
+      ]
     }
   ]
 }

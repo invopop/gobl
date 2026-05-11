@@ -29,10 +29,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansKeyMap
+	return tax.ExtensionsOf(paymentMeansKeyMap)
 }
 
-var paymentMeansKeyMap = tax.Extensions{
+var paymentMeansKeyMap = cbc.CodeMap{
 	pay.MeansKeyCash:                                 "MP01",
 	pay.MeansKeyCheque:                               "MP02",
 	pay.MeansKeyBankDraft:                            "MP03",
@@ -63,25 +63,25 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[instr.Key]
+	extVal := paymentMeansKeyMap.Lookup(instr.Key)
 	if extVal != "" {
-		if instr.Ext == nil {
-			instr.Ext = make(tax.Extensions)
+		if instr.Ext.IsZero() {
+			instr.Ext = tax.MakeExtensions()
 		}
-		instr.Ext[ExtKeyPaymentMeans] = extVal
+		instr.Ext = instr.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[adv.Key]
+	extVal := paymentMeansKeyMap.Lookup(adv.Key)
 	if extVal != "" {
-		if adv.Ext == nil {
-			adv.Ext = make(tax.Extensions)
+		if adv.Ext.IsZero() {
+			adv.Ext = tax.MakeExtensions()
 		}
-		adv.Ext[ExtKeyPaymentMeans] = extVal
+		adv.Ext = adv.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 
@@ -97,7 +97,7 @@ func payInstructionsRules() *rules.Set {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("ext",
 			rules.Assert("01",
 				fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),

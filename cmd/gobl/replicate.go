@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/spf13/cobra"
 )
 
@@ -42,13 +42,13 @@ func (o *replicateOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	rOpts := &cli.ReplicateOptions{
-		ParseOptions: &cli.ParseOptions{
+	rOpts := &ops.ReplicateOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: input,
 		},
 	}
 
-	obj, err := cli.Replicate(ctx, rOpts)
+	obj, err := ops.Replicate(ctx, rOpts)
 	if err != nil {
 		return err
 	}

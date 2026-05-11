@@ -11,8 +11,13 @@ import (
 )
 
 const (
+	// Key identifies the ARCA addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "ar-arca"
+
 	// V4 for ARCA version 4
-	V4 cbc.Key = "ar-arca-v4"
+	V4 cbc.Key = Key + "-v4"
 )
 
 // ARCA Official Codes to include in stamps
@@ -28,8 +33,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V4.String(),
-		rules.GOBL.Add("AR-ARCA-V4"),
+		Key.String(),
+		rules.GOBL.Add("AR-ARCA"),
 		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		billChargeRules(),

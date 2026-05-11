@@ -65,7 +65,7 @@ func (inv *Invoice) GetTaxCategories() []cbc.Code {
 func (inv *Invoice) GetExtensions() []tax.Extensions {
 	exts := make([]tax.Extensions, 0)
 	if inv.Tax != nil {
-		if len(inv.Tax.Ext) > 0 {
+		if inv.Tax.Ext.Len() > 0 {
 			exts = append(exts, inv.Tax.Ext)
 		}
 	}
@@ -131,7 +131,7 @@ func (inv *Invoice) prepareScenarios() error {
 	}
 
 	// Apply extensions at the document level
-	if len(ss.Ext) > 0 {
+	if ss.Ext.Len() > 0 {
 		inv.Tax = inv.Tax.MergeExtensions(ss.Ext)
 	}
 

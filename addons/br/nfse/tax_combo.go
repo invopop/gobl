@@ -38,9 +38,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 
 	if !tc.Ext.Has(ExtKeyISSLiability) {
-		if tc.Ext == nil {
-			tc.Ext = make(tax.Extensions)
+		if tc.Ext.IsZero() {
+			tc.Ext = tax.MakeExtensions()
 		}
-		tc.Ext[ExtKeyISSLiability] = ISSLiabilityDefault
+		tc.Ext = tc.Ext.Set(ExtKeyISSLiability, ISSLiabilityDefault)
 	}
 }

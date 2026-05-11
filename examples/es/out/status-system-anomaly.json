@@ -1,0 +1,45 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1cf972ff3adada056467cd142cffb0f95b90e885da6593a818c5923c73d4a0d7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$regime": "ES",
+		"uuid": "0194c26e-e6c3-7b44-ad20-a2b3c4d5e6f7",
+		"type": "system",
+		"issue_date": "2025-04-15",
+		"issue_time": "21:05:00",
+		"series": "SS",
+		"code": "00101",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			}
+		},
+		"lines": [
+			{
+				"index": 1,
+				"key": "event-anomaly",
+				"description": "Chain traceability issue detected",
+				"complements": [
+					{
+						"$schema": "https://verifactu.gobl.org/v0/event-anomaly",
+						"event": {
+							"fingerprint": "ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789",
+							"timestamp": "2024-11-19T10:00:00+01:00",
+							"type": "01"
+						},
+						"type": "07"
+					}
+				]
+			}
+		]
+	}
+}

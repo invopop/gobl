@@ -28,7 +28,7 @@ type RateTotal struct {
 	// Tax key if supported by the category.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// If the rate is defined with extensions, they'll be used to group by also.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
 	// Percentage of the rate. Will be nil when taxes are **exempt**.

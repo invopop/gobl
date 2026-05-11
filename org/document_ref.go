@@ -52,7 +52,7 @@ type DocumentRef struct {
 	// calculate the remaining amount due and taxes.
 	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`
 	// Extensions for additional codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Meta contains additional information about the document.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -67,7 +67,7 @@ func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
 	dr.Code = cbc.NormalizeCode(dr.Code)
 	dr.Reason = cbc.NormalizeString(dr.Reason)
 	dr.URL = cbc.NormalizeString(dr.URL)
-	dr.Ext = tax.CleanExtensions(dr.Ext)
+	dr.Ext = dr.Ext.Clean()
 
 	tax.Normalize(normalizers, dr.Identities)
 	tax.Normalize(normalizers, dr.Tax)

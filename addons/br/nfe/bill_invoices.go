@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
@@ -19,6 +20,7 @@ const (
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("34", "invoice must be in BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
 		// Supplier validation
 		rules.Field("supplier",
 			rules.Field("tax_id",
@@ -185,14 +187,14 @@ func invoiceIsNFe(val any) bool {
 
 // taxExtIsNFe checks if the tax extensions indicate NF-e model.
 func taxExtIsNFe(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext[ExtKeyModel] == ModelNFe
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyModel) == ModelNFe
 }
 
 // taxExtIsNFCe checks if the tax extensions indicate NFC-e model.
 func taxExtIsNFCe(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	return ok && ext[ExtKeyModel] == ModelNFCe
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyModel) == ModelNFCe
 }
 
 // isReasonNote checks if a note has the reason key.
@@ -234,5 +236,5 @@ func amountZeroOrPositive(val any) bool {
 }
 
 func isNFe(t *bill.Tax) bool {
-	return t != nil && t.Ext[ExtKeyModel] == ModelNFe
+	return t != nil && t.Ext.Get(ExtKeyModel) == ModelNFe
 }

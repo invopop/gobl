@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	"github.com/spf13/cobra"
 )
 
@@ -53,8 +53,8 @@ func (o *correctOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	cOpts := &cli.CorrectOptions{
-		ParseOptions: &cli.ParseOptions{
+	cOpts := &ops.CorrectOptions{
+		ParseOptions: &ops.ParseOptions{
 			Input: input,
 		},
 		OptionsSchema: o.options,
@@ -63,7 +63,7 @@ func (o *correctOpts) runE(cmd *cobra.Command, args []string) error {
 		Data:          []byte(o.data),
 	}
 
-	obj, err := cli.Correct(ctx, cOpts)
+	obj, err := ops.Correct(ctx, cOpts)
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
@@ -25,14 +26,14 @@ func TestItemNormalization(t *testing.T) {
 		i := &org.Item{
 			Name:  "test item",
 			Price: num.NewAmount(100, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"test": "",
-			},
+			}),
 		}
 		i.Normalize(nil)
 		assert.Equal(t, "test item", i.Name)
 		assert.Equal(t, num.NewAmount(100, 2), i.Price)
-		assert.Nil(t, i.Ext)
+		assert.True(t, i.Ext.IsZero())
 	})
 	t.Run("clean ref", func(t *testing.T) {
 		i := &org.Item{

@@ -32,7 +32,7 @@ type Instructions struct {
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Extension key-pairs values defined by a tax regime.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Non-structured additional data that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -109,7 +109,7 @@ func (i *Instructions) Normalize() {
 	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Detail = cbc.NormalizeString(i.Detail)
 	i.Notes = cbc.NormalizeString(i.Notes)
-	i.Ext = tax.CleanExtensions(i.Ext)
+	i.Ext = i.Ext.Clean()
 }
 
 // UnmarshalJSON is used to handle the migration of the Online's

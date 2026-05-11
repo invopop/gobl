@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -24,13 +25,13 @@ func TestDocumentRefNormalize(t *testing.T) {
 
 		dr := &org.DocumentRef{
 			Code: " Foo ",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"fooo": "",
-			},
+			}),
 		}
 		dr.Normalize(nil)
 		assert.Equal(t, "Foo", dr.Code.String())
-		assert.Empty(t, dr.Ext)
+		assert.True(t, dr.Ext.IsZero())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var dr *org.DocumentRef

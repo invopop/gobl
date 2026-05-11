@@ -22,14 +22,17 @@ type billable interface {
 	HasTags(tags ...cbc.Key) bool
 	GetTags() []cbc.Key
 
+	// Public methods
+	GetCurrency() currency.Code
+	GetExchangeRates() []*currency.ExchangeRate
+
+	// private methods
 	getIssueDate() cal.Date
 	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
 	getCustomer() *org.Party
-	getCurrency() currency.Code
-	getExchangeRates() []*currency.ExchangeRate
 	getLines() []*Line
 	getDiscounts() []*Discount
 	getCharges() []*Charge
@@ -37,6 +40,7 @@ type billable interface {
 	getTotals() *Totals
 	getComplements() []*schema.Object
 
+	// private setters
 	setIssueDate(cal.Date)
 	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
@@ -48,22 +52,13 @@ func calculate(doc billable) error {
 	date := calculateIssueDateAndTime(r, doc)
 
 	// Convert empty or invalid currency to the regime's currency
-	if doc.getCurrency() == currency.CodeEmpty || doc.getCurrency().Def() == nil {
+	if doc.GetCurrency() == currency.CodeEmpty || doc.GetCurrency().Def() == nil {
 		if r == nil {
-			return fmt.Errorf("currency: missing")
+			return fmt.Errorf("currency: missing or invalid")
 		}
 		doc.setCurrency(r.Currency)
 	}
-	cur := doc.getCurrency()
-
-	// Check exchange rate is available if regime uses a different currency
-	if r != nil && r.Currency != currency.CodeEmpty && cur != r.Currency {
-		rates := doc.getExchangeRates()
-		if currency.MatchExchangeRate(rates, cur, r.Currency) == nil &&
-			currency.MatchExchangeRate(rates, r.Currency, cur) == nil {
-			return fmt.Errorf("currency: no exchange rate defined for '%v' to '%v'", cur, r.Currency)
-		}
-	}
+	cur := doc.GetCurrency()
 
 	if doc.HasTags(tax.TagBypass) {
 		// Stop all further calculations
@@ -107,7 +102,7 @@ func calculate(doc billable) error {
 	calculateOrgDocumentRefs(doc.getPreceding(), cur, rr)
 
 	// Lines
-	if err := calculateLines(doc.getLines(), cur, doc.getExchangeRates(), rr); err != nil {
+	if err := calculateLines(doc.getLines(), cur, doc.GetExchangeRates(), rr); err != nil {
 		return fmt.Errorf("lines: %w", err)
 	}
 	t.Sum = calculateLineSum(doc.getLines(), cur)
@@ -138,7 +133,7 @@ func calculate(doc billable) error {
 	// Now figure out the tax totals
 	t.Taxes = new(tax.Total)
 	tc := &tax.TotalCalculator{
-		Currency: doc.getCurrency(),
+		Currency: doc.GetCurrency(),
 		Rounding: rr,
 		Country:  r.GetCountry(),
 		Date:     *date,

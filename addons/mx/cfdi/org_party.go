@@ -14,10 +14,10 @@ func normalizeParty(p *org.Party) {
 	idents := make([]*org.Identity, 0)
 	for _, v := range p.Identities {
 		if v.Key.In(migratedExtensionKeys...) {
-			if p.Ext == nil {
-				p.Ext = make(tax.Extensions)
+			if p.Ext.IsZero() {
+				p.Ext = tax.MakeExtensions()
 			}
-			p.Ext[v.Key] = v.Code
+			p.Ext = p.Ext.Set(v.Key, v.Code)
 		} else {
 			idents = append(idents, v)
 		}

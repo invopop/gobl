@@ -24,7 +24,7 @@ func TestPayInstructions(t *testing.T) {
 			Key: pay.MeansKeyCreditTransfer,
 		}
 		ad.Normalizer(m)
-		assert.Equal(t, "30", m.Ext[untdid.ExtKeyPaymentMeans].String())
+		assert.Equal(t, "30", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
 	})
 
 	t.Run("nil", func(t *testing.T) {
@@ -50,7 +50,7 @@ func TestPayInstructions(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "30", inv.Payment.Instructions.Ext[untdid.ExtKeyPaymentMeans].String())
+		assert.Equal(t, "30", inv.Payment.Instructions.Ext.Get(untdid.ExtKeyPaymentMeans).String())
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})

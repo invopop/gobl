@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal/cli"
+	"github.com/invopop/gobl/internal/ops"
 	goblnet "github.com/invopop/gobl/net"
 )
 
@@ -54,7 +54,7 @@ func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
 				return err
 			}
 		}
-		return cli.VerifyRemote(ctx, input, goblnet.NewClient(), addr)
+		return ops.VerifyRemote(ctx, input, goblnet.NewClient(), addr)
 	}
 
 	pbFilename, err := expandHome(v.publicKeyFile)
@@ -72,5 +72,5 @@ func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return cli.Verify(ctx, input, key)
+	return ops.Verify(ctx, input, key)
 }

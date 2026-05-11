@@ -91,6 +91,49 @@ func TestExchangeRateConvert(t *testing.T) {
 	assert.Equal(t, "100629", a.String())
 }
 
+type convertible struct {
+	cur   currency.Code
+	rates []*currency.ExchangeRate
+}
+
+func (c *convertible) GetCurrency() currency.Code                 { return c.cur }
+func (c *convertible) GetExchangeRates() []*currency.ExchangeRate { return c.rates }
+
+func TestCanConvertTo(t *testing.T) {
+	test := currency.CanConvertTo(currency.EUR)
+	assert.Equal(t, "can convert to [EUR]", test.String())
+
+	t.Run("same currency", func(t *testing.T) {
+		obj := &convertible{cur: currency.EUR}
+		assert.True(t, test.Check(obj))
+	})
+
+	t.Run("matching exchange rate", func(t *testing.T) {
+		obj := &convertible{cur: currency.USD, rates: sampleRates()}
+		assert.True(t, test.Check(obj))
+	})
+
+	t.Run("no matching exchange rate", func(t *testing.T) {
+		obj := &convertible{cur: currency.GBP, rates: sampleRates()}
+		assert.False(t, test.Check(obj))
+	})
+
+	t.Run("no exchange rates", func(t *testing.T) {
+		obj := &convertible{cur: currency.USD}
+		assert.False(t, test.Check(obj))
+	})
+
+	t.Run("multiple target currencies", func(t *testing.T) {
+		multi := currency.CanConvertTo(currency.EUR, currency.GBP)
+		obj := &convertible{cur: currency.USD, rates: sampleRates()}
+		assert.True(t, multi.Check(obj))
+	})
+
+	t.Run("non-exchangeable value", func(t *testing.T) {
+		assert.False(t, test.Check("not an object"))
+	})
+}
+
 func TestConvert(t *testing.T) {
 	rates := sampleRates()
 	a := num.MakeAmount(10000, 2)

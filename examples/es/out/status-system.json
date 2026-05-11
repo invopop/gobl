@@ -1,0 +1,75 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "025bac235cead9ef0656896a87158a69af435649d296e8ea834bbdc471bb9aad"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/status",
+		"$regime": "ES",
+		"uuid": "0194c26e-e6c3-7b44-ad20-a2b3c4d5e6f7",
+		"type": "system",
+		"issue_date": "2025-04-15",
+		"issue_time": "09:15:00",
+		"series": "SS",
+		"code": "0001",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"index": 1,
+				"key": "error",
+				"doc": {
+					"issue_date": "2025-04-14",
+					"series": "SAMPLE",
+					"code": "003"
+				},
+				"description": "Document failed schema validation during submission",
+				"reasons": [
+					{
+						"key": "legal",
+						"description": "Tax identification number format is invalid",
+						"conditions": [
+							{
+								"code": "ERR-VAL-010",
+								"paths": [
+									"supplier.tax_id.code"
+								],
+								"message": "Tax ID does not match expected format for country ES"
+							}
+						]
+					}
+				],
+				"actions": [
+					{
+						"key": "reissue",
+						"description": "Correct the supplier tax ID and resubmit"
+					}
+				]
+			}
+		]
+	}
+}

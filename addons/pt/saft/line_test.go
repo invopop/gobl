@@ -6,6 +6,7 @@ import (
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -59,9 +60,9 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						saft.ExtKeyExemption: "M04",
-					},
+					}),
 				},
 			},
 		}
@@ -87,9 +88,9 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						saft.ExtKeyExemption: "M04",
-					},
+					}),
 				},
 			},
 		}
@@ -121,9 +122,9 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						saft.ExtKeyExemption: "M04",
-					},
+					}),
 				},
 			},
 		}
@@ -141,9 +142,9 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
+					Ext: tax.ExtensionsOf(cbc.CodeMap{
 						saft.ExtKeyExemption: "INVALID",
-					},
+					}),
 				},
 			},
 		}
@@ -169,11 +170,11 @@ func TestLineValidation(t *testing.T) {
 		line.Taxes = tax.Set{
 			{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyExemption: "M04",
 					saft.ExtKeyTaxRate:   saft.TaxRateExempt,
 					"pt-region":          "PT",
-				},
+				}),
 			},
 		}
 		line.Notes = []*org.Note{
@@ -192,9 +193,9 @@ func TestLineValidation(t *testing.T) {
 		line.Taxes = tax.Set{
 			{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyExemption: "M04",
-				},
+				}),
 			},
 		}
 		err := rules.Validate(line, withAddonContext())
@@ -220,9 +221,9 @@ func TestLineValidation(t *testing.T) {
 		line.Taxes = tax.Set{
 			{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyExemption: "M04",
-				},
+				}),
 			},
 		}
 		line.Notes = []*org.Note{
@@ -242,9 +243,9 @@ func TestLineValidation(t *testing.T) {
 		line.Taxes = tax.Set{
 			{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyExemption: "M04",
-				},
+				}),
 			},
 		}
 		line.Notes = []*org.Note{
@@ -323,9 +324,9 @@ func validLine() *bill.Line {
 		Item: &org.Item{
 			Name: "Test Item",
 			Unit: "one",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyProductType: saft.ProductTypeService,
-			},
+			}),
 		},
 	}
 }

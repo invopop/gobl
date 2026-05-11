@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -69,8 +70,8 @@ func TestScenarios(t *testing.T) {
 		}
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
-		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "TD01", inv.Tax.Ext[sdi.ExtKeyDocumentType].String())
+		assert.Equal(t, 2, inv.Tax.Ext.Len())
+		assert.Equal(t, "TD01", inv.Tax.Ext.Get(sdi.ExtKeyDocumentType).String())
 	})
 
 	t.Run("overwrite previous values with tag", func(t *testing.T) {
@@ -82,13 +83,13 @@ func TestScenarios(t *testing.T) {
 		}
 		inv.SetTags(tax.TagB2G)
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFormat: "XXXX",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "FPA12", inv.Tax.Ext[sdi.ExtKeyFormat].String())
+		assert.Equal(t, 2, inv.Tax.Ext.Len())
+		assert.Equal(t, "FPA12", inv.Tax.Ext.Get(sdi.ExtKeyFormat).String())
 	})
 
 	t.Run("overwrite previous values without tags", func(t *testing.T) {
@@ -99,13 +100,13 @@ func TestScenarios(t *testing.T) {
 			Code:    "12345678903",
 		}
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				sdi.ExtKeyFormat: "XXXX",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "FPR12", inv.Tax.Ext[sdi.ExtKeyFormat].String())
+		assert.Equal(t, 2, inv.Tax.Ext.Len())
+		assert.Equal(t, "FPR12", inv.Tax.Ext.Get(sdi.ExtKeyFormat).String())
 	})
 }
 
@@ -120,7 +121,7 @@ func TestInvoiceGetExtensions(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		ext := inv.GetExtensions()
 		assert.Len(t, ext, 2)
-		assert.Equal(t, "FPR12", ext[0][sdi.ExtKeyFormat].String())
+		assert.Equal(t, "FPR12", ext[0].Get(sdi.ExtKeyFormat).String())
 	})
 	t.Run("missing lines", func(t *testing.T) {
 		inv := baseInvoice(t)
