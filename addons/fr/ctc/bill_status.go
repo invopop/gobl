@@ -55,7 +55,7 @@ func normalizeStatus(st *bill.Status) {
 	}
 
 	// Propagate the SE-roled party's SIREN onto Supplier when missing.
-	if siren := siRENFromSEParty(st.Issuer, st.Recipient); siren != nil {
+	if siren := sirenFromSEParty(st.Issuer, st.Recipient); siren != nil {
 		st.Supplier = ensureSIRENOnSupplier(st.Supplier, siren)
 	}
 
@@ -67,9 +67,11 @@ func normalizeStatus(st *bill.Status) {
 	}
 }
 
-// siRENFromSEParty returns the first SIREN identity carried by an
-// SE-roled party among the given candidates, or nil.
-func siRENFromSEParty(candidates ...*org.Party) *org.Identity {
+// sirenFromSEParty returns the first SIREN identity carried by an
+// SE-roled party among the given candidates, or nil. Relies on the
+// addon normaliser having set iso-scheme-id=0002 on SIREN identities
+// (see normalizeIdentity in org.go).
+func sirenFromSEParty(candidates ...*org.Party) *org.Identity {
 	for _, p := range candidates {
 		if p == nil {
 			continue
@@ -145,8 +147,10 @@ func partyHasRole(v any) bool {
 }
 
 // partyHasInboxWhenRequired enforces BR-FR-CDV-08: a party whose role
-// is not WK (legal representative) or DFH (declarant for VAT grouping)
-// must carry a URIID (electronic inbox).
+// is not WK (dematerialisation platform / operator) and not DFH
+// (PPF) must carry a URIID (electronic inbox). WK and DFH are the
+// two routing infrastructure roles whose endpoint is implied by the
+// CDV channel itself, so an explicit inbox would be redundant.
 func partyHasInboxWhenRequired(v any) bool {
 	p, ok := v.(*org.Party)
 	if !ok || p == nil {

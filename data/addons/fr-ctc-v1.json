@@ -171,73 +171,84 @@
         "fr": "Code rôle partie"
       },
       "desc": {
-        "en": "UNCL 3035 role code carried as the CDAR RoleCode for each\npopulated party on a Flow 6 lifecycle message. The normalizer\nfills the obvious defaults (Supplier → SE, Customer → BY)\nand leaves the rest for the caller to set explicitly."
+        "en": "UNCL 3035 role code carried as the CDAR RoleCode (MDT-158)\nfor each populated party on a Flow 6 lifecycle message.\nLabels follow the French CTC specification, which assigns\nCDAR-specific meanings to WK (dematerialisation platform /\noperator) and DFH (Portail Public de Facturation).\nThe normalizer fills the obvious defaults (Supplier → SE,\nCustomer → BY) and leaves the rest for the caller to set\nexplicitly."
       },
       "values": [
         {
-          "code": "SE",
-          "name": {
-            "en": "Seller"
-          }
-        },
-        {
           "code": "BY",
           "name": {
-            "en": "Buyer"
-          }
-        },
-        {
-          "code": "WK",
-          "name": {
-            "en": "Work / Service Receiver"
-          }
-        },
-        {
-          "code": "DFH",
-          "name": {
-            "en": "Delivery From"
-          }
-        },
-        {
-          "code": "AB",
-          "name": {
-            "en": "Bank"
-          }
-        },
-        {
-          "code": "SR",
-          "name": {
-            "en": "Sender / Issuer on behalf of"
+            "en": "Buyer",
+            "fr": "Acheteur"
           }
         },
         {
           "code": "DL",
           "name": {
-            "en": "Dealer"
+            "en": "Factor",
+            "fr": "Affactureur"
+          }
+        },
+        {
+          "code": "SE",
+          "name": {
+            "en": "Seller",
+            "fr": "Vendeur"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Buyer's agent",
+            "fr": "Agent d'acheteur"
+          }
+        },
+        {
+          "code": "SR",
+          "name": {
+            "en": "Seller's agent",
+            "fr": "Agent de vendeur"
+          }
+        },
+        {
+          "code": "WK",
+          "name": {
+            "en": "Dematerialisation platform or operator",
+            "fr": "Plateforme ou opérateur de dématérialisation"
+          }
+        },
+        {
+          "code": "DFH",
+          "name": {
+            "en": "Portail Public de Facturation (PPF)",
+            "fr": "Portail Public de Facturation"
           }
         },
         {
           "code": "PE",
           "name": {
-            "en": "Payee"
+            "en": "Payee",
+            "fr": "Bénéficiaire"
           }
         },
         {
           "code": "PR",
           "name": {
-            "en": "Payer"
+            "en": "Payer",
+            "fr": "Payeur"
           }
         },
         {
           "code": "II",
           "name": {
-            "en": "Issuer of Invoice"
+            "en": "Invoicer",
+            "fr": "Émetteur de la facture"
           }
         },
         {
           "code": "IV",
           "name": {
-            "en": "Invoicee"
+            "en": "Invoicee",
+            "fr": "Destinataire de la facture"
           }
         }
       ]

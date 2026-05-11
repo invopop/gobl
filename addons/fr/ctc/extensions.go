@@ -62,18 +62,21 @@ const (
 	BillingModeM4 cbc.Code = "M4"
 )
 
-// Flow 6 party role codes (UNCL 3035 subset accepted by CDAR).
+// Flow 6 party role codes — UNCL 3035 subset repurposed by CDAR
+// (MDT-158). Labels follow the French specification, NOT the generic
+// UNCL 3035 names: WK and DFH in particular have CDAR-specific
+// meanings (dematerialisation platform / French public portal).
 const (
-	RoleSE  cbc.Code = "SE"  // Seller
-	RoleBY  cbc.Code = "BY"  // Buyer
-	RoleWK  cbc.Code = "WK"  // Work/Service receiver
-	RoleDFH cbc.Code = "DFH" // Delivery from
-	RoleAB  cbc.Code = "AB"  // Bank
-	RoleSR  cbc.Code = "SR"  // Sender / issuer on behalf of
-	RoleDL  cbc.Code = "DL"  // Dealer / intermediary
-	RolePE  cbc.Code = "PE"  // Payee
-	RolePR  cbc.Code = "PR"  // Payer
-	RoleII  cbc.Code = "II"  // Issuer of invoice
+	RoleBY  cbc.Code = "BY"  // Acheteur (Buyer)
+	RoleDL  cbc.Code = "DL"  // Affactureur (Factor)
+	RoleSE  cbc.Code = "SE"  // Vendeur (Seller)
+	RoleAB  cbc.Code = "AB"  // Agent d'acheteur (Buyer's agent)
+	RoleSR  cbc.Code = "SR"  // Agent de vendeur (Seller's agent)
+	RoleWK  cbc.Code = "WK"  // Plateforme / opérateur de dématérialisation
+	RoleDFH cbc.Code = "DFH" // Portail public de facturation (PPF)
+	RolePE  cbc.Code = "PE"  // Bénéficiaire (Payee)
+	RolePR  cbc.Code = "PR"  // Payeur (Payer)
+	RoleII  cbc.Code = "II"  // Invoicer (issuer of invoice)
 	RoleIV  cbc.Code = "IV"  // Invoicee
 )
 
@@ -172,24 +175,28 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				UNCL 3035 role code carried as the CDAR RoleCode for each
-				populated party on a Flow 6 lifecycle message. The normalizer
-				fills the obvious defaults (Supplier → SE, Customer → BY)
-				and leaves the rest for the caller to set explicitly.
+				UNCL 3035 role code carried as the CDAR RoleCode (MDT-158)
+				for each populated party on a Flow 6 lifecycle message.
+				Labels follow the French CTC specification, which assigns
+				CDAR-specific meanings to WK (dematerialisation platform /
+				operator) and DFH (Portail Public de Facturation).
+				The normalizer fills the obvious defaults (Supplier → SE,
+				Customer → BY) and leaves the rest for the caller to set
+				explicitly.
 			`),
 		},
 		Values: []*cbc.Definition{
-			{Code: RoleSE, Name: i18n.String{i18n.EN: "Seller"}},
-			{Code: RoleBY, Name: i18n.String{i18n.EN: "Buyer"}},
-			{Code: RoleWK, Name: i18n.String{i18n.EN: "Work / Service Receiver"}},
-			{Code: RoleDFH, Name: i18n.String{i18n.EN: "Delivery From"}},
-			{Code: RoleAB, Name: i18n.String{i18n.EN: "Bank"}},
-			{Code: RoleSR, Name: i18n.String{i18n.EN: "Sender / Issuer on behalf of"}},
-			{Code: RoleDL, Name: i18n.String{i18n.EN: "Dealer"}},
-			{Code: RolePE, Name: i18n.String{i18n.EN: "Payee"}},
-			{Code: RolePR, Name: i18n.String{i18n.EN: "Payer"}},
-			{Code: RoleII, Name: i18n.String{i18n.EN: "Issuer of Invoice"}},
-			{Code: RoleIV, Name: i18n.String{i18n.EN: "Invoicee"}},
+			{Code: RoleBY, Name: i18n.String{i18n.EN: "Buyer", i18n.FR: "Acheteur"}},
+			{Code: RoleDL, Name: i18n.String{i18n.EN: "Factor", i18n.FR: "Affactureur"}},
+			{Code: RoleSE, Name: i18n.String{i18n.EN: "Seller", i18n.FR: "Vendeur"}},
+			{Code: RoleAB, Name: i18n.String{i18n.EN: "Buyer's agent", i18n.FR: "Agent d'acheteur"}},
+			{Code: RoleSR, Name: i18n.String{i18n.EN: "Seller's agent", i18n.FR: "Agent de vendeur"}},
+			{Code: RoleWK, Name: i18n.String{i18n.EN: "Dematerialisation platform or operator", i18n.FR: "Plateforme ou opérateur de dématérialisation"}},
+			{Code: RoleDFH, Name: i18n.String{i18n.EN: "Portail Public de Facturation (PPF)", i18n.FR: "Portail Public de Facturation"}},
+			{Code: RolePE, Name: i18n.String{i18n.EN: "Payee", i18n.FR: "Bénéficiaire"}},
+			{Code: RolePR, Name: i18n.String{i18n.EN: "Payer", i18n.FR: "Payeur"}},
+			{Code: RoleII, Name: i18n.String{i18n.EN: "Invoicer", i18n.FR: "Émetteur de la facture"}},
+			{Code: RoleIV, Name: i18n.String{i18n.EN: "Invoicee", i18n.FR: "Destinataire de la facture"}},
 		},
 	},
 	{

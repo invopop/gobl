@@ -278,11 +278,19 @@ func TestPrivateIDNormalization(t *testing.T) {
 		assert.Equal(t, "other-value", party.Identities[0].Ext.Get("other-key").String())
 	})
 
-	t.Run("non-private-id identity not modified", func(t *testing.T) {
+	t.Run("SIREN identity gets scheme 0002 from normaliser", func(t *testing.T) {
 		party := &org.Party{
 			Identities: []*org.Identity{
 				{Type: fr.IdentityTypeSIREN, Code: "123456789"},
 			},
+		}
+		ad.Normalizer(party)
+		assert.Equal(t, "0002", party.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
+	})
+
+	t.Run("untyped identity without private-id key not modified", func(t *testing.T) {
+		party := &org.Party{
+			Identities: []*org.Identity{{Code: "ABC123"}},
 		}
 		ad.Normalizer(party)
 		assert.True(t, party.Identities[0].Ext.IsZero())

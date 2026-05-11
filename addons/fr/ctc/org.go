@@ -20,6 +20,8 @@ const (
 
 	// identitySchemeIDSIREN is the ISO scheme ID for SIREN identities.
 	identitySchemeIDSIREN = "0002"
+	// identitySchemeIDSIRET is the ISO scheme ID for SIRET identities.
+	identitySchemeIDSIRET = "0009"
 	// identitySchemeIDEUVAT is the ISO scheme ID for EU (non-French) intra-community VAT.
 	identitySchemeIDEUVAT = "0223"
 	// identitySchemeIDNonEU is the ISO scheme ID for non-EU party identifiers.
@@ -214,7 +216,11 @@ func normalizeIdentities(party *org.Party) {
 	}
 }
 
-// normalizeIdentity handles per-identity normalization (private-id key).
+// normalizeIdentity handles per-identity normalization: maps the
+// private-id key to scheme 0224 and the SIREN/SIRET identity types
+// to schemes 0002/0009 respectively. The fr-ctc addon owns this
+// mapping so it works even when eu-en16931 is not declared (Flow 6
+// or standalone Flow 10 callers).
 func normalizeIdentity(id *org.Identity) {
 	if id == nil {
 		return
@@ -222,8 +228,12 @@ func normalizeIdentity(id *org.Identity) {
 	if id.Key == identityKeyPrivateID {
 		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDPrivate)
 	}
-	// Note: Type ↔ ISO scheme ID mapping for SIREN/SIRET is handled by
-	// the EN16931 addon.
+	if id.Type == fr.IdentityTypeSIREN && id.Ext.Get(iso.ExtKeySchemeID) == "" {
+		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDSIREN)
+	}
+	if id.Type == fr.IdentityTypeSIRET && id.Ext.Get(iso.ExtKeySchemeID) == "" {
+		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDSIRET)
+	}
 }
 
 // normalizeInboxes flags the SIREN-scope inbox with the peppol key
