@@ -19,7 +19,7 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeCreditNote,
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "FC", // default
 				}),
 			},
@@ -27,7 +27,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSimplified,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "FA",
 				}),
 			},
@@ -35,7 +35,7 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyDocType: "AF",
 				}),
 			},
@@ -44,7 +44,7 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "OO", // Original Invoice
 				}),
 			},
@@ -54,34 +54,34 @@ var scenarios = []*tax.ScenarioSet{
 					bill.InvoiceTypeCreditNote,
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "OR", // Corrective
 				}),
 			},
 			{
 				Tags: []cbc.Key{es.TagSummary},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "OC", // Summary
 				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{es.TagCopy},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "CO", // Copy of the original
 				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeCorrective},
 				Tags:  []cbc.Key{es.TagCopy},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "CR", // Copy of the corrective
 				}),
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{es.TagCopy, es.TagSummary},
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					ExtKeyInvoiceClass: "CC", // Copy of the summary
 				}),
 			},

@@ -158,7 +158,7 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 
 	// Set the doc type extension
 	if docType != "" {
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyDocType: docType,
 		}))
 	}
@@ -224,7 +224,7 @@ func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
 	}
-	inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+	inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 		ExtKeyConcept: code,
 	}))
 }

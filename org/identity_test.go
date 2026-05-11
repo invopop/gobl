@@ -96,7 +96,7 @@ func TestIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Type: cbc.Code("FOO"),
 			Code: "BAR",
-			Ext:  tax.ExtensionsOf(tax.ExtMap{}),
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{}),
 		}
 		id.Normalize()
 		assert.Equal(t, "FOO", id.Type.String())
@@ -105,7 +105,7 @@ func TestIdentityNormalize(t *testing.T) {
 	t.Run("with extension", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0004",
 			}),
 		}
@@ -119,7 +119,7 @@ func TestIdentityRules(t *testing.T) {
 	t.Run("with basics", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0004",
 			}),
 		}
@@ -287,12 +287,12 @@ func TestIdentityForExtKey(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		idents := []*org.Identity{
 			{
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("foo"): "bar",
 				}),
 			},
 			{
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("baz"): "qux",
 				}),
 			},
@@ -308,7 +308,7 @@ func TestIdentityForExtKey(t *testing.T) {
 			},
 			{
 				Code: "5678",
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("baz"): "qux",
 				}),
 			},

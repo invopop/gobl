@@ -396,14 +396,14 @@
       ]
     },
     {
-      "id": "GOBL-MX-CFDI-PAY-ADVANCE",
-      "object": "pay.Advance",
+      "id": "GOBL-MX-CFDI-PAY-RECORD",
+      "object": "pay.Record",
       "subsets": [
         {
           "field": "ext",
           "assert": [
             {
-              "id": "GOBL-MX-CFDI-PAY-ADVANCE-01",
+              "id": "GOBL-MX-CFDI-PAY-RECORD-01",
               "desc": "payment advance requires 'mx-cfdi-payment-means' extension",
               "tests": "ext require [mx-cfdi-payment-means]"
             }

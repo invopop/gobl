@@ -28,7 +28,7 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ticket.ExtKeyLottery: "12345678",
 			}),
 		},
@@ -70,7 +70,7 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ticket.ExtKeyExempt: "N4",
 						}),
 					},
@@ -96,10 +96,10 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("test correction", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Lines[0].Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
 			ticket.ExtKeyLine: "1234567890",
 		})
-		inv.Lines[1].Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Lines[1].Ext = tax.ExtensionsOf(cbc.CodeMap{
 			ticket.ExtKeyLine: "1234567890",
 		})
 		require.NoError(t, inv.Calculate())
@@ -240,7 +240,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Ext: tax.ExtensionsOf(tax.ExtMap{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							ticket.ExtKeyExempt: row.Code,
 						}),
 					},

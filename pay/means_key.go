@@ -23,6 +23,10 @@ const (
 	MeansKeyOnline         cbc.Key = "online"       // Website from which payment can be made
 	MeansKeySEPA           cbc.Key = "sepa"         // extension for SEPA payments
 	MeansKeyOther          cbc.Key = "other"
+
+	// Sub-keys to qualify payment means.
+	MeansKeyCredit cbc.Key = "credit"
+	MeansKeyDebit  cbc.Key = "debit"
 )
 
 // MeansKeyDefinitions includes all the payment means keys that
@@ -36,7 +40,17 @@ var MeansKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  MeansKeyCard,
 		Name: i18n.NewString("Card"),
-		Desc: i18n.NewString("Payment card."),
+		Desc: i18n.NewString("Payment by card."),
+	},
+	{
+		Key:  MeansKeyCard.With(MeansKeyCredit),
+		Name: i18n.NewString("Credit Card"),
+		Desc: i18n.NewString("Payment by credit card."),
+	},
+	{
+		Key:  MeansKeyCard.With(MeansKeyDebit),
+		Name: i18n.NewString("Debit Card"),
+		Desc: i18n.NewString("Payment by debit card."),
 	},
 	{
 		Key:  MeansKeyCreditTransfer,

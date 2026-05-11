@@ -30,7 +30,7 @@ func validInvoice() *bill.Invoice {
 		Regime: tax.WithRegime("PT"),
 		Addons: tax.WithAddons(saft.V1),
 		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
 				saft.ExtKeySource:      saft.SourceBillingProduced,
 			}),
@@ -84,7 +84,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := calculatedInvoice(t)
-		inv.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{})
+		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{})
 		assert.ErrorContains(t, rules.Validate(inv), "either 'pt-saft-work-type' or 'pt-saft-invoice-type' must be set")
 
 		inv.Tax = nil
@@ -103,7 +103,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("work doc type only", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Series = "PF SERIES-A"
-		inv.Tax.Ext = tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			saft.ExtKeyWorkType: saft.WorkTypeProforma,
 			saft.ExtKeySource:   saft.SourceBillingProduced,
 		})
@@ -402,7 +402,7 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	t.Run("advance with nil date", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date:   nil,
 					Amount: num.MakeAmount(50, 0),
@@ -415,7 +415,7 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	t.Run("nil advance", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{nil},
+			Advances: []*pay.Record{nil},
 		}
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -427,7 +427,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 	t.Run("set default advance date", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date: nil,
 				},
@@ -443,7 +443,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.IssueDate = cal.Date{}
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Date: nil,
 				},

@@ -98,7 +98,7 @@ func normalize(doc any) {
 		normalizeItem(obj)
 	case *pay.Instructions:
 		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
+	case *pay.Record:
+		normalizePayRecord(obj)
 	}
 }

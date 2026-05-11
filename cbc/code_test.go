@@ -606,6 +606,42 @@ func TestCodeMapHas(t *testing.T) {
 	assert.False(t, cbc.CodeMapHas("foo").Check(cm))
 }
 
+func TestCodeMapLookup(t *testing.T) {
+	m := cbc.CodeMap{
+		"card":          "04",
+		"card+debit":    "28",
+		"online+wallet": "05",
+		"online":        "06",
+	}
+
+	t.Run("exact match", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("04"), m.Lookup("card"))
+		assert.Equal(t, cbc.Code("28"), m.Lookup("card+debit"))
+	})
+
+	t.Run("fallback to base key", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("04"), m.Lookup("card+credit"))
+	})
+
+	t.Run("fallback through subkeys", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("06"), m.Lookup("online+foo+bar"))
+	})
+
+	t.Run("more specific entry wins", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("05"), m.Lookup("online+wallet"))
+	})
+
+	t.Run("no match returns empty", func(t *testing.T) {
+		assert.Equal(t, cbc.CodeEmpty, m.Lookup("cash"))
+		assert.Equal(t, cbc.CodeEmpty, m.Lookup(""))
+	})
+
+	t.Run("nil map", func(t *testing.T) {
+		var nm cbc.CodeMap
+		assert.Equal(t, cbc.CodeEmpty, nm.Lookup("card"))
+	})
+}
+
 func TestCodeJSONSchema(t *testing.T) {
 	s := cbc.Code("").JSONSchema()
 	assert.Equal(t, "string", s.Type)

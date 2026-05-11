@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -93,7 +94,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Key:  "gln",
 			Code: "1234567890123",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "9999",
 			}),
 		}
@@ -116,7 +117,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		id := &org.Identity{
 			Type: "SIREN",
 			Code: "1234567890123",
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "9999",
 			}),
 		}

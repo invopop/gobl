@@ -31,7 +31,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Ext: tax.ExtensionsOf(tax.ExtMap{cfdi.ExtKeyProdServ: ts.Code})}
+		item := &org.Item{Ext: tax.ExtensionsOf(cbc.CodeMap{cfdi.ExtKeyProdServ: ts.Code})}
 		addon.Normalizer(item)
 		assert.Equal(t, ts.Expected, item.Ext.Get(cfdi.ExtKeyProdServ))
 	}

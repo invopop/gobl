@@ -39,7 +39,7 @@ func (*billCorrectionNormalizer) Normalize(doc any) {
 	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
 	if in.Opts != nil {
 		if dt := in.Opts.Ext.Get(ExtKeyDocType); dt != "" {
-			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyDocType: dt,
 			}))
 		}
@@ -51,11 +51,11 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 	// Verifactu implying that scenarios cannot be used.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote:
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyCorrectionType: "I",
 		}))
 	case bill.InvoiceTypeCorrective:
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyCorrectionType: "S",
 		}))
 	}
@@ -73,12 +73,12 @@ func normalizeBillInvoice(inv *bill.Invoice) {
 
 	// Normalize the third party details
 	if inv.HasTags(tax.TagSelfBilled) {
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeCustomer,
 		}))
 	}
 	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
-		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(tax.ExtMap{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyIssuerType: ExtCodeIssuerTypeThirdParty,
 		}))
 	}
@@ -111,7 +111,7 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		code = ExtCodeIdentityTypeOther
 	}
 	if !code.IsEmpty() {
-		id.Ext = id.Ext.Merge(tax.ExtensionsOf(tax.ExtMap{
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyIdentityType: code,
 		}))
 	}

@@ -214,6 +214,20 @@ func (cs CodeMap) Has(keys ...Key) bool {
 	return true
 }
 
+// Lookup returns the code matching the provided key, falling back to less
+// specific keys by progressively popping the last subkey.
+func (cs CodeMap) Lookup(k Key) Code {
+	for {
+		if c, ok := cs[k]; ok {
+			return c
+		}
+		if k.IsEmpty() {
+			return CodeEmpty
+		}
+		k = k.Pop()
+	}
+}
+
 // Equals returns true if the code map has the same keys and values as the provided
 // map.
 func (cs CodeMap) Equals(other CodeMap) bool {

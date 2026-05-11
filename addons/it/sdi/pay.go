@@ -32,7 +32,7 @@ func PaymentMeansExtensions() tax.Extensions {
 	return tax.ExtensionsOf(paymentMeansKeyMap)
 }
 
-var paymentMeansKeyMap = map[cbc.Key]cbc.Code{
+var paymentMeansKeyMap = cbc.CodeMap{
 	pay.MeansKeyCash:                                 "MP01",
 	pay.MeansKeyCheque:                               "MP02",
 	pay.MeansKeyBankDraft:                            "MP03",
@@ -63,7 +63,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[instr.Key]
+	extVal := paymentMeansKeyMap.Lookup(instr.Key)
 	if extVal != "" {
 		if instr.Ext.IsZero() {
 			instr.Ext = tax.MakeExtensions()
@@ -72,11 +72,11 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	}
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[adv.Key]
+	extVal := paymentMeansKeyMap.Lookup(adv.Key)
 	if extVal != "" {
 		if adv.Ext.IsZero() {
 			adv.Ext = tax.MakeExtensions()
@@ -97,7 +97,7 @@ func payInstructionsRules() *rules.Set {
 }
 
 func payAdvanceRules() *rules.Set {
-	return rules.For(new(pay.Advance),
+	return rules.For(new(pay.Record),
 		rules.Field("ext",
 			rules.Assert("01",
 				fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),

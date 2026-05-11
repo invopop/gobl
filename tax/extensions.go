@@ -53,19 +53,8 @@ import (
 // guarantee copy-on-write semantics and deterministic (alphabetical) JSON
 // output.
 type Extensions struct {
-	m ExtMap
+	m cbc.CodeMap
 }
-
-// ExtMap is a short alias for the bare map type used to construct
-// Extensions. It lets callers write
-//
-//	tax.ExtensionsOf(tax.ExtMap{
-//	    "key1": "code1",
-//	    "key2": "code2",
-//	})
-//
-// instead of spelling out `map[cbc.Key]cbc.Code` at every site.
-type ExtMap = map[cbc.Key]cbc.Code
 
 // MakeExtensions returns an empty Extensions ready to be populated via chained
 // Set calls.
@@ -75,7 +64,7 @@ func MakeExtensions() Extensions {
 
 // ExtensionsOf builds a new Extensions from the provided map. The map is
 // copied so later mutations of the source do not affect the Extensions.
-func ExtensionsOf(m ExtMap) Extensions {
+func ExtensionsOf(m cbc.CodeMap) Extensions {
 	if len(m) == 0 {
 		return Extensions{}
 	}
@@ -136,8 +125,8 @@ func (e Extensions) Clone() Extensions {
 
 // clone returns a new underlying map with the provided extra capacity
 // pre-allocated. Always returns a non-nil map.
-func (e Extensions) clone(extra int) ExtMap {
-	nm := make(ExtMap, len(e.m)+extra)
+func (e Extensions) clone(extra int) cbc.CodeMap {
+	nm := make(cbc.CodeMap, len(e.m)+extra)
 	for k, v := range e.m {
 		nm[k] = v
 	}
@@ -193,16 +182,7 @@ func (e Extensions) Delete(key cbc.Key) Extensions {
 // If the key is composed of sub-keys and no exact match is found, the key
 // is progressively shortened until a match is found or the key is empty.
 func (e Extensions) Get(k cbc.Key) cbc.Code {
-	if len(e.m) == 0 {
-		return ""
-	}
-	for k != cbc.KeyEmpty {
-		if v, ok := e.m[k]; ok {
-			return v
-		}
-		k = k.Pop()
-	}
-	return ""
+	return e.m.Lookup(k)
 }
 
 // Has returns true if the Extensions contains entries for all the provided
@@ -325,7 +305,7 @@ func (e Extensions) Clean() Extensions {
 	if len(e.m) == 0 {
 		return Extensions{}
 	}
-	nm := make(map[cbc.Key]cbc.Code, len(e.m))
+	nm := make(cbc.CodeMap, len(e.m))
 	for k, v := range e.m {
 		if v == cbc.CodeEmpty {
 			continue
@@ -375,7 +355,7 @@ func (e *Extensions) UnmarshalJSON(data []byte) error {
 		e.m = nil
 		return nil
 	}
-	var m map[cbc.Key]cbc.Code
+	var m cbc.CodeMap
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}

@@ -37,7 +37,7 @@ func baseInvoice() *bill.Invoice {
 					Region:   "Bogotá",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				dian.ExtKeyMunicipality:         "11001",
 				dian.ExtKeyFiscalResponsibility: "O-13",
 			}),
@@ -54,7 +54,7 @@ func baseInvoice() *bill.Invoice {
 					Region:   "Atlántico",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				dian.ExtKeyMunicipality:         "08638",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			}),
@@ -84,7 +84,7 @@ func creditNote() *bill.Invoice {
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
-				Ext: tax.ExtensionsOf(tax.ExtMap{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					dian.ExtKeyCreditCode: "2", // revoked
 				}),
 			},
@@ -101,7 +101,7 @@ func creditNote() *bill.Invoice {
 					Region:   "Bogotá",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				dian.ExtKeyMunicipality:         "11001",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			}),
@@ -118,7 +118,7 @@ func creditNote() *bill.Invoice {
 					Region:   "Atlántico",
 				},
 			},
-			Ext: tax.ExtensionsOf(tax.ExtMap{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				dian.ExtKeyMunicipality:         "08638",
 				dian.ExtKeyFiscalResponsibility: "O-47",
 			}),
