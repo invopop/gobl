@@ -19,6 +19,13 @@ const (
 	// When set, takes precedence over the default_for_key lookup that the
 	// converter would otherwise perform from Reason.Key.
 	ExtKeyReasonCode cbc.Key = "fr-ctc-reason-code"
+
+	// ExtKeyStatusCode surfaces the CDAR ProcessConditionCode (MDT-9)
+	// on a bill.Status. Normalised from the (line.Key, Status.Type)
+	// pair via the Flow 6 process table; carried on the GOBL document
+	// so the wire-level event identifier is visible without consulting
+	// the converter.
+	ExtKeyStatusCode cbc.Key = "fr-ctc-status-code"
 )
 
 // Flow 6 party role codes (UNCL 3035 subset accepted by CDAR).
@@ -83,6 +90,23 @@ var extensions = []*cbc.Definition{
 		},
 		Values: reasonCodeDefinitions(),
 	},
+	{
+		Key: ExtKeyStatusCode,
+		Name: i18n.String{
+			i18n.EN: "CDAR Process Condition Code",
+			i18n.FR: "Code condition processus CDAR",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				CDAR ProcessConditionCode (MDT-9) identifying the lifecycle
+				event reported by the Flow 6 message. The normalizer derives
+				it from the (StatusLine.Key, Status.Type) pair; callers can
+				pre-set it to pin a specific code (e.g. when round-tripping
+				a parsed CDV).
+			`),
+		},
+		Values: statusCodeDefinitions(),
+	},
 }
 
 // extValue unwraps a tax.Extensions value whether the rules engine has
@@ -110,6 +134,40 @@ func reasonCodeDefinitions() []*cbc.Definition {
 			Code: cbc.Code(e.Code),
 			Name: i18n.String{i18n.EN: string(e.Key)},
 		}
+	}
+	return out
+}
+
+// processCodeLabels carries the official CDAR libellé for each
+// ProcessConditionCode. Kept next to the extension definition so the
+// extension catalogue stays self-documenting.
+var processCodeLabels = map[string]string{
+	"200": "Déposée",
+	"201": "Émise par la plateforme",
+	"202": "Reçue par PA",
+	"203": "Mise à disposition",
+	"204": "Prise en charge",
+	"205": "Approuvée",
+	"206": "Approuvée partiellement",
+	"207": "En litige",
+	"208": "Suspendue",
+	"209": "Complétée",
+	"210": "Refusée",
+	"211": "Paiement transmis",
+	"212": "Encaissée",
+	"213": "Rejetée sémantique",
+}
+
+// statusCodeDefinitions builds the value list for fr-ctc-status-code
+// from the authoritative processTable — single source of truth for the
+// codes the addon accepts.
+func statusCodeDefinitions() []*cbc.Definition {
+	out := make([]*cbc.Definition, 0, len(processTable))
+	for _, e := range processTable {
+		out = append(out, &cbc.Definition{
+			Code: cbc.Code(e.Code),
+			Name: i18n.String{i18n.EN: processCodeLabels[e.Code]},
+		})
 	}
 	return out
 }

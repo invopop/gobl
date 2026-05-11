@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "853810a6d1af963e160c3ac127462b05957997bf002f658ee20bac900922ecc2"
+			"val": "f0f6363de7f3234d2e5f0f47b8659eddaa3531c276f837bdc423440068f3edc9"
 		}
 	},
 	"doc": {
@@ -16,6 +16,9 @@
 		"type": "response",
 		"issue_date": "2026-05-02",
 		"code": "STA-2026-0002",
+		"ext": {
+			"fr-ctc-status-code": "212"
+		},
 		"supplier": {
 			"name": "VENDEUR SARL",
 			"identities": [

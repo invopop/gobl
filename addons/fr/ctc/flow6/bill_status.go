@@ -55,6 +55,16 @@ func normalizeStatus(st *bill.Status) {
 	if siren := siRENFromSEParty(st.Issuer, st.Recipient); siren != nil {
 		st.Supplier = ensureSIRENOnSupplier(st.Supplier, siren)
 	}
+
+	// Surface the CDAR ProcessConditionCode on the document so the
+	// wire-level event identifier is visible without consulting the
+	// converter. Skip when the caller already pinned a code (e.g.
+	// round-tripping a parsed CDV) — the validator catches mismatches.
+	if len(st.Lines) > 0 && st.Lines[0] != nil && st.Ext.Get(ExtKeyStatusCode) == "" {
+		if code, ok := CDARProcessCodeFor(st.Lines[0].Key, st.Type); ok {
+			st.Ext = st.Ext.Set(ExtKeyStatusCode, cbc.Code(code))
+		}
+	}
 }
 
 // siRENFromSEParty returns the first SIREN identity carried by an
@@ -238,7 +248,32 @@ func billStatusRules() *rules.Set {
 		rules.Assert("07", "status line with key 'paid' on a response status (CDAR 212) must carry a Characteristic complement with Amount (value + currency) set — this is the MEN (BR-FR-CDV-14)",
 			is.Func("amount received set when paid response", statusPaidResponseHasAmount),
 		),
+		rules.Assert("21", "ext.fr-ctc-status-code must match the CDAR ProcessConditionCode implied by (line.Key, Status.Type)",
+			is.Func("status code matches key/type", statusCodeMatchesLine),
+		),
 	)
+}
+
+// statusCodeMatchesLine ensures the fr-ctc-status-code ext, when set,
+// is consistent with the (line.Key, Status.Type) pair. Empty ext is
+// permitted on input — the normalizer fills it.
+func statusCodeMatchesLine(v any) bool {
+	st, ok := v.(*bill.Status)
+	if !ok || st == nil {
+		return true
+	}
+	code := st.Ext.Get(ExtKeyStatusCode).String()
+	if code == "" {
+		return true
+	}
+	if len(st.Lines) == 0 || st.Lines[0] == nil {
+		return true
+	}
+	expected, ok := CDARProcessCodeFor(st.Lines[0].Key, st.Type)
+	if !ok {
+		return true
+	}
+	return code == expected
 }
 
 // statusHasExactlyOneLine enforces the CDAR invariant that a CDV

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "02881541cc28ba94c5de53383f785273cbc21403fe2955ae90378081bc48c470"
+			"val": "6a106b9fc25e7a10e3e0e048753e1161c171c6a4c69848a58ed85fb43ff0b7e7"
 		}
 	},
 	"doc": {
@@ -16,6 +16,9 @@
 		"type": "response",
 		"issue_date": "2026-04-16",
 		"code": "STA-2026-0001",
+		"ext": {
+			"fr-ctc-status-code": "205"
+		},
 		"supplier": {
 			"identities": [
 				{
