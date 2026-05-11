@@ -895,10 +895,7 @@ func partyHasSIRENInbox(val any) bool {
 	}
 	for _, inbox := range party.Inboxes {
 		if inbox != nil && inbox.Scheme == inboxSchemeSIREN {
-			if !strings.HasPrefix(string(inbox.Code), siren) {
-				return false
-			}
-			return true
+			return strings.HasPrefix(string(inbox.Code), siren)
 		}
 	}
 	return false
