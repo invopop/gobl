@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `addons/fr/ctc`: consolidated French CTC support. The previous `fr-ctc-flow2`, `fr-ctc-flow6` and `fr-ctc-flow10` addons are folded into a single `fr-ctc-v1` addon: invoice rule sets are dispatched at validation time (both parties French → Flow 2 clearance, otherwise Flow 10 e-reporting), and Flow 6 lifecycle messages (`bill.Status`) run unconditionally. `eu-en16931-v2017` is no longer a hard `Requires` — the Flow 2 branch enforces it as a soft assertion so Flow 10 / Flow 6 callers don't have to pull it in.
+- `addons/fr/ctc`: consolidated French CTC support. invoice rule sets are dispatched at validation time, and Flow 6 lifecycle messages (`bill.Status`) run unconditionally. `eu-en16931-v2017` is no longer a hard `Requires`.
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 - `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
 - `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.
