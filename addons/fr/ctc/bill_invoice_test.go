@@ -357,6 +357,62 @@ func TestInvoiceB2BFlow10ExemptHappyWithSellerVATAndNote(t *testing.T) {
 	require.NoError(t, rules.Validate(inv))
 }
 
+// TestInvoiceB2BFlow10ExemptOrderingSellerHasVATID covers the tax
+// representative arrangement: a non-EU supplier (scheme 0227, no
+// TaxID required by rule 54) sells exempt goods to a French customer
+// and the French tax representative carries the VAT ID via
+// ordering.seller. Rule 55 must accept the ordering.seller VAT ID in
+// lieu of supplier.TaxID.
+func TestInvoiceB2BFlow10ExemptOrderingSellerHasVATID(t *testing.T) {
+	inv := testInvoiceB2BFlow10(t)
+	// Replace the French supplier with a non-EU one. Scheme 0227 doesn't
+	// trigger rule 54's TaxID requirement, leaving rule 55 (exempt
+	// reliance on ordering.seller VAT) as the meaningful check.
+	inv.Supplier = &org.Party{
+		Name: "Foreign Supplier Inc",
+		// Foreign TaxID — the FR regime requires a tax_id code or a
+		// SIREN/SIRET identity on the supplier, so we give the foreign
+		// company its own (non-French) tax ID. The Flow 10 rule 54
+		// requirement to carry a TaxID *when scheme is SIREN/EU-VAT*
+		// does not apply here: the legal identity is non-EU (0227).
+		TaxID: &tax.Identity{
+			Country: "US",
+			Code:    "12-3456789",
+		},
+		Identities: []*org.Identity{
+			{
+				Code:  "US-12345",
+				Scope: org.IdentityScopeLegal,
+				Ext: tax.ExtensionsOf(tax.ExtMap{
+					iso.ExtKeySchemeID: "0227",
+				}),
+			},
+		},
+		Addresses: []*org.Address{{Country: "US"}},
+	}
+	inv.Customer = frCustomerWithSIREN()
+	inv.Lines[0].Taxes = tax.Set{
+		{Category: tax.CategoryVAT, Key: tax.KeyExempt},
+	}
+	inv.Ordering = &bill.Ordering{
+		Seller: &org.Party{
+			Name: "Représentant Fiscal SARL",
+			TaxID: &tax.Identity{
+				Country: "FR",
+				Code:    "39356000000",
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	if inv.Tax == nil {
+		inv.Tax = &bill.Tax{}
+	}
+	inv.Tax.Notes = []*tax.Note{
+		{Key: tax.KeyExempt, Text: "Exempt — represented by French tax rep"},
+	}
+	require.NoError(t, rules.Validate(inv))
+}
+
 func TestInvoiceB2CDefaultsCategoryToTNT1(t *testing.T) {
 	inv := testInvoiceB2C(t)
 	inv.Tax.Ext = inv.Tax.Ext.Delete(ExtKeyB2CCategory)
@@ -943,10 +999,24 @@ func TestConsolidatedCreditNoteValidation(t *testing.T) {
 }
 
 func TestSTCSupplierValidation(t *testing.T) {
-	// NOTE: A happy-path STC test cannot pass because identity scheme 0231
-	// is not in allowedFlow6IdentitySchemes (org_party rule 04). The
-	// failure-path STC tests below still exercise the bill_invoice STC
-	// rules because they expect errors regardless of which rule fires.
+	t.Run("STC supplier happy path", func(t *testing.T) {
+		inv := testInvoiceB2BStandard(t)
+		inv.Supplier.Identities = append(inv.Supplier.Identities, &org.Identity{
+			Code: "12345678",
+			Ext: tax.ExtensionsOf(tax.ExtMap{
+				iso.ExtKeySchemeID: "0231",
+			}),
+		})
+		inv.Ordering = &bill.Ordering{
+			Seller: &org.Party{
+				Name:  "Assujetti Unique",
+				TaxID: inv.Supplier.TaxID,
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// normalizeSTCNote auto-appends the TXD / MEMBRE_ASSUJETTI_UNIQUE note.
+		require.NoError(t, rules.Validate(inv))
+	})
 
 	t.Run("STC supplier seller missing tax ID", func(t *testing.T) {
 		inv := testInvoiceB2BStandard(t)

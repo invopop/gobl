@@ -788,6 +788,11 @@
           "id": "GOBL-FR-CTC-BILL-STATUS-21",
           "desc": "ext.fr-ctc-status-code must match the CDAR ProcessConditionCode implied by (line.Key, Status.Type)",
           "tests": "status code matches key/type"
+        },
+        {
+          "id": "GOBL-FR-CTC-BILL-STATUS-22",
+          "desc": "every CDV party identity scheme must be in the Flow 6 allow-list (STC 0231 is rejected — it is a Flow 2 invoice concept)",
+          "tests": "CDV identity schemes allowed"
         }
       ],
       "subsets": [
@@ -1004,23 +1009,6 @@
               "id": "GOBL-FR-CTC-ORG-PARTY-03",
               "desc": "identity scheme format invalid (BR-FR-CO-10)",
               "tests": "valid scheme format"
-            }
-          ],
-          "subsets": [
-            {
-              "each": true,
-              "subsets": [
-                {
-                  "field": "ext",
-                  "assert": [
-                    {
-                      "id": "GOBL-FR-CTC-ORG-PARTY-04",
-                      "desc": "identity scheme (iso-scheme-id) must be one of the ICD 6523 codes accepted by Flow 6",
-                      "tests": "scheme in Flow 6 allowed set"
-                    }
-                  ]
-                }
-              ]
             }
           ]
         },

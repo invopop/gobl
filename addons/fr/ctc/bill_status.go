@@ -247,7 +247,35 @@ func billStatusRules() *rules.Set {
 		rules.Assert("21", "ext.fr-ctc-status-code must match the CDAR ProcessConditionCode implied by (line.Key, Status.Type)",
 			is.Func("status code matches key/type", statusCodeMatchesLine),
 		),
+		rules.Assert("22", "every CDV party identity scheme must be in the Flow 6 allow-list (STC 0231 is rejected — it is a Flow 2 invoice concept)",
+			is.Func("CDV identity schemes allowed", statusPartiesIdentitySchemesAllowed),
+		),
 	)
+}
+
+// statusPartiesIdentitySchemesAllowed rejects any identity whose
+// iso-scheme-id falls outside allowedFlow6IdentitySchemes on any of
+// the four party slots on a bill.Status.
+func statusPartiesIdentitySchemesAllowed(v any) bool {
+	st, ok := v.(*bill.Status)
+	if !ok || st == nil {
+		return true
+	}
+	for _, p := range []*org.Party{st.Supplier, st.Customer, st.Issuer, st.Recipient} {
+		if p == nil {
+			continue
+		}
+		for _, id := range p.Identities {
+			if id == nil || id.Ext.IsZero() {
+				continue
+			}
+			scheme := id.Ext.Get(iso.ExtKeySchemeID).String()
+			if scheme != "" && !slices.Contains(allowedFlow6IdentitySchemes, scheme) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // statusCodeMatchesLine ensures the fr-ctc-status-code ext, when set,

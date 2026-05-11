@@ -114,6 +114,21 @@ func TestStatusHappyPath(t *testing.T) {
 	assert.Equal(t, bill.StatusTypeResponse, st.Type)
 }
 
+func TestStatusRejectsSTCIdentityScheme(t *testing.T) {
+	st := testStatus(t)
+	// Add an STC (0231) identity on the supplier — admissible on a
+	// Flow 2 invoice but not on a Flow 6 CDV.
+	st.Supplier.Identities = append(st.Supplier.Identities, &org.Identity{
+		Code: "12345678",
+		Ext: tax.ExtensionsOf(tax.ExtMap{
+			iso.ExtKeySchemeID: "0231",
+		}),
+	})
+	runNormalize(t, st)
+	err := rules.Validate(st)
+	assert.ErrorContains(t, err, "Flow 6 allow-list")
+}
+
 func TestStatusRejectsSystemType(t *testing.T) {
 	st := testStatus(t)
 	runNormalize(t, st)

@@ -709,21 +709,22 @@ func TestPartyKnownRoleAccepted(t *testing.T) {
 	assert.NoError(t, rules.Validate(p, addonContext()))
 }
 
-func TestPartyUnknownIdentitySchemeRejected(t *testing.T) {
+// TestPartyForeignIdentitySchemeAccepted confirms that an addon-wide
+// party check does NOT reject foreign / unknown iso-scheme-ids on
+// secondary identities — required for Flow 10 cross-border B2B, where
+// a foreign customer may legitimately declare an identifier in a
+// scheme outside the French / Flow 6 allow-list. Flow-specific
+// constraints (Flow 6 rule 22 on bill.Status, Flow 10 rules 53/58 on
+// legal identities) handle stricter checks at their level.
+func TestPartyForeignIdentitySchemeAccepted(t *testing.T) {
 	p := &org.Party{
-		Name: "Agent",
+		Name: "Foreign Counterparty",
 		Identities: []*org.Identity{{
 			Code: "X",
 			Ext:  tax.ExtensionsOf(tax.ExtMap{iso.ExtKeySchemeID: "9999"}),
 		}},
 	}
-	err := rules.Validate(p, addonContext())
-	assert.ErrorContains(t, err, "ICD 6523")
-}
-
-func TestPartyIdentitySchemeAllowedEmptyScheme(t *testing.T) {
-	e := tax.ExtensionsOf(tax.ExtMap{"some-other": "x"})
-	assert.True(t, partyIdentitySchemeAllowed(e))
+	assert.NoError(t, rules.Validate(p, addonContext()))
 }
 
 func TestPartyRoleKnownEmptyExtPasses(t *testing.T) {

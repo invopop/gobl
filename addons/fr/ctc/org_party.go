@@ -28,13 +28,6 @@ func orgPartyRules() *rules.Set {
 			rules.Assert("03", "identity scheme format invalid (BR-FR-CO-10)",
 				is.FuncError("valid scheme format", identitiesSchemeFormatValid),
 			),
-			rules.Each(
-				rules.Field("ext",
-					rules.Assert("04", "identity scheme (iso-scheme-id) must be one of the ICD 6523 codes accepted by Flow 6",
-						is.Func("scheme in Flow 6 allowed set", partyIdentitySchemeAllowed),
-					),
-				),
-			),
 		),
 		rules.Field("inboxes",
 			rules.Each(
@@ -97,18 +90,6 @@ func partyRoleKnown(v any) bool {
 		return true
 	}
 	return slices.Contains(allowedRoleCodes, role)
-}
-
-func partyIdentitySchemeAllowed(v any) bool {
-	ext := extValue(v)
-	if ext.IsZero() {
-		return true
-	}
-	scheme := ext.Get(iso.ExtKeySchemeID).String()
-	if scheme == "" {
-		return true
-	}
-	return slices.Contains(allowedFlow6IdentitySchemes, scheme)
 }
 
 func identitiesSIRETSIRENCoherent(val any) bool {

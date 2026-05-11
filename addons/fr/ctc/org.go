@@ -58,9 +58,11 @@ var schemeIDsRequiringVAT = []string{
 }
 
 // allowedFlow6IdentitySchemes is the ICD 6523 subset CDAR accepts on
-// Flow 6 party identities — SIREN plus the commonly used foreign
-// identifier schemes. Parties with identities outside this set should
-// not be reported in a Flow 6 CDV.
+// Flow 6 (CDV lifecycle) party identities. STC (0231 — assujetti
+// unique) is intentionally absent: it is a Flow 2 invoice concept
+// and must not appear on a CDV. Used by bill_status rule 22; not
+// applied addon-wide because Flow 10 cross-border B2B may legitimately
+// carry foreign identifier schemes outside this list.
 var allowedFlow6IdentitySchemes = []string{
 	"0002", // SIREN
 	"0009", // SIRET
