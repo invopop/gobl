@@ -14,20 +14,21 @@ import (
 // semantic but distinguish transmission vs treatment phase via Type.
 //
 // Stock keys carrying CDAR codes:
-//   issued       + update   → 200 (Déposée)
-//   acknowledged + response → 202 (Reçue par PA)
-//   processing   + response → 204 (Prise en charge)
-//   accepted     + response → 205 (Approuvée)
-//   querying     + response → 208 (Suspendue) — "buyer will not proceed
-//                                                 without additional info"
-//   rejected     + response → 210 (Refusée)
-//   paid         + update   → 211 (Paiement transmis)
-//   paid         + response → 212 (Encaissée)
-//   error        + response → 213 (Rejetée sémantique)
+//
+//	issued       + update   → 200 (Déposée)
+//	issued       + response → 201 (Émise par la plateforme)
+//	acknowledged + response → 202 (Reçue par PA)
+//	processing   + response → 204 (Prise en charge)
+//	accepted     + response → 205 (Approuvée)
+//	querying     + response → 208 (Suspendue) — "buyer will not proceed
+//	                                              without additional info"
+//	rejected     + response → 210 (Refusée)
+//	paid         + update   → 211 (Paiement transmis)
+//	paid         + response → 212 (Encaissée)
+//	error        + response → 213 (Rejetée sémantique)
 //
 // The keys below cover Flow 6 events that have no stock equivalent.
 const (
-	StatusEventIssuedByPlatform  cbc.Key = "issued-by-platform"
 	StatusEventMadeAvailable     cbc.Key = "made-available"
 	StatusEventPartiallyAccepted cbc.Key = "partially-accepted"
 	StatusEventDisputed          cbc.Key = "disputed"
@@ -49,7 +50,7 @@ type processEntry struct {
 // Flow 6 CDAR messages. Order is stable and matches the spec table.
 var processTable = []processEntry{
 	{bill.StatusEventIssued, bill.StatusTypeUpdate, "200"},
-	{StatusEventIssuedByPlatform, bill.StatusTypeUpdate, "201"},
+	{bill.StatusEventIssued, bill.StatusTypeResponse, "201"},
 	{bill.StatusEventAcknowledged, bill.StatusTypeResponse, "202"},
 	{StatusEventMadeAvailable, bill.StatusTypeResponse, "203"},
 	{bill.StatusEventProcessing, bill.StatusTypeResponse, "204"},

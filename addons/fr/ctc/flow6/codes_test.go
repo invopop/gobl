@@ -27,7 +27,7 @@ func TestProcessCode200Issued(t *testing.T) {
 }
 
 func TestProcessCode201IssuedByPlatform(t *testing.T) {
-	assertProcessRoundTrip(t, "201", StatusEventIssuedByPlatform, bill.StatusTypeUpdate)
+	assertProcessRoundTrip(t, "201", bill.StatusEventIssued, bill.StatusTypeResponse)
 }
 
 func TestProcessCode202Acknowledged(t *testing.T) {
