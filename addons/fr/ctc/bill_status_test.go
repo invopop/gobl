@@ -545,3 +545,67 @@ func TestLineHasReasonCodeNilReason(t *testing.T) {
 func TestReasonExtMatchesKeyWrongType(t *testing.T) {
 	assert.True(t, reasonExtMatchesKey("x"))
 }
+
+// --- defensive coverage: nil / wrong-type / empty-slice guards --------
+
+func TestSetPartyRoleDefaultNilParty(t *testing.T) {
+	assert.NotPanics(t, func() { setPartyRoleDefault(nil, RoleSE) })
+}
+
+func TestSetPartyRoleDefaultExistingNotOverridden(t *testing.T) {
+	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleBY})}
+	setPartyRoleDefault(p, RoleSE)
+	assert.Equal(t, RoleBY, p.Ext.Get(ExtKeyRole))
+}
+
+func TestPartyHasRoleWrongType(t *testing.T) {
+	assert.False(t, partyHasRole("x"))
+}
+
+func TestPartyHasRoleEmptyExt(t *testing.T) {
+	assert.False(t, partyHasRole(&org.Party{}))
+}
+
+func TestPartyHasInboxWhenRequiredWrongType(t *testing.T) {
+	assert.True(t, partyHasInboxWhenRequired("x"))
+}
+
+func TestPartyHasInboxWhenRequiredWKRole(t *testing.T) {
+	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleWK})}
+	assert.True(t, partyHasInboxWhenRequired(p))
+}
+
+func TestStatusPartiesIdentitySchemesAllowedWrongType(t *testing.T) {
+	assert.True(t, statusPartiesIdentitySchemesAllowed("x"))
+}
+
+func TestStatusReasonCodesAllowedWrongType(t *testing.T) {
+	assert.True(t, statusReasonCodesAllowed("x"))
+}
+
+func TestStatusReasonCodesAllowedNilReason(t *testing.T) {
+	st := &bill.Status{
+		Type: bill.StatusTypeResponse,
+		Lines: []*bill.StatusLine{{
+			Key:     bill.StatusEventRejected,
+			Reasons: []*bill.Reason{nil},
+		}},
+	}
+	assert.True(t, statusReasonCodesAllowed(st))
+}
+
+// TestEnsureSIRENOnSupplierAlreadyCarries covers the "supplier already
+// carries the SIREN" early-return path that the happy-path tests don't
+// reach (since the test fixture aligns supplier and recipient SIRENs).
+func TestEnsureSIRENOnSupplierAlreadyCarries(t *testing.T) {
+	siren := &org.Identity{
+		Code: "356000000",
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0002"}),
+	}
+	p := &org.Party{Identities: []*org.Identity{
+		{Code: "356000000", Ext: tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0002"})},
+	}}
+	got := ensureSIRENOnSupplier(p, siren)
+	assert.Same(t, p, got)
+	assert.Len(t, got.Identities, 1)
+}

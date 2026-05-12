@@ -738,3 +738,46 @@ func TestPartyForeignIdentitySchemeAccepted(t *testing.T) {
 func TestPartyRoleKnownEmptyExtPasses(t *testing.T) {
 	assert.True(t, partyRoleKnown(tax.Extensions{}))
 }
+
+// --- defensive coverage: nil / wrong-type guards ----------------------
+
+func TestSirenFromFrenchTaxIDNilSIRETEntry(t *testing.T) {
+	p := &org.Party{Identities: []*org.Identity{nil}}
+	got := sirenFromFrenchTaxID("FR39356000000", p)
+	assert.Equal(t, "356000000", got)
+}
+
+func TestPartyCarriesSIRENNilParty(t *testing.T) {
+	assert.False(t, partyCarriesSIREN(nil))
+}
+
+func TestPartyCarriesSIRENNilIdentity(t *testing.T) {
+	p := &org.Party{Identities: []*org.Identity{nil}}
+	assert.False(t, partyCarriesSIREN(p))
+}
+
+// TestNormalizeIdentityMapsSIRENTypeToScheme confirms the addon
+// normaliser sets iso-scheme-id=0002 on a SIREN-typed identity even
+// without eu-en16931 declared. Downstream validators can therefore
+// rely on the scheme-id ext being present after normalisation.
+func TestNormalizeIdentityMapsSIRENTypeToScheme(t *testing.T) {
+	id := &org.Identity{Type: "SIREN", Code: "356000000"}
+	normalizeIdentity(id)
+	assert.Equal(t, identitySchemeIDSIREN, id.Ext.Get(iso.ExtKeySchemeID).String())
+}
+
+func TestNormalizeIdentityMapsSIRETTypeToScheme(t *testing.T) {
+	id := &org.Identity{Type: "SIRET", Code: "35600000000011"}
+	normalizeIdentity(id)
+	assert.Equal(t, identitySchemeIDSIRET, id.Ext.Get(iso.ExtKeySchemeID).String())
+}
+
+func TestNormalizeIdentityPreservesExistingScheme(t *testing.T) {
+	id := &org.Identity{
+		Type: "SIREN",
+		Code: "356000000",
+		Ext:  tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "9999"}),
+	}
+	normalizeIdentity(id)
+	assert.Equal(t, "9999", id.Ext.Get(iso.ExtKeySchemeID).String())
+}

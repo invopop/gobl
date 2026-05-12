@@ -20,7 +20,7 @@
             {
               "id": "GOBL-FR-CTC-BILL-INVOICE-02",
               "desc": "domestic French B2B invoices must also declare the eu-en16931-v2017 addon",
-              "tests": "has eu-en16931-v2017 addon"
+              "tests": "has addon eu-en16931-v2017"
             },
             {
               "id": "GOBL-FR-CTC-BILL-INVOICE-03",

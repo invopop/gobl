@@ -359,3 +359,9 @@ func TestStatusTypeForKeyUnknown(t *testing.T) {
 	_, ok := statusTypeForKey("unknown")
 	assert.False(t, ok)
 }
+
+func TestReasonCodeAllowedForProcessCodeUnknownProcess(t *testing.T) {
+	// Unknown process code → no allow-list, falls through to true (the
+	// bucket-consistency rule still catches mismatches).
+	assert.True(t, ReasonCodeAllowedForProcessCode("DEST_INC", "999"))
+}

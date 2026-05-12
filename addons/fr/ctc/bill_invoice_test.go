@@ -1572,25 +1572,6 @@ func TestInvoiceIsNotDomesticFrenchAnyWrongType(t *testing.T) {
 	assert.False(t, invoiceIsNotDomesticFrenchAny("x"))
 }
 
-func TestInvoiceHasEN16931AddonNonInvoice(t *testing.T) {
-	// Non-invoice input returns true (rule is invoice-specific).
-	assert.True(t, invoiceHasEN16931Addon("x"))
-}
-
-func TestInvoiceHasEN16931AddonNilInvoice(t *testing.T) {
-	assert.True(t, invoiceHasEN16931Addon((*bill.Invoice)(nil)))
-}
-
-func TestInvoiceHasEN16931AddonPresent(t *testing.T) {
-	inv := &bill.Invoice{Addons: tax.WithAddons(V1, "eu-en16931-v2017")}
-	assert.True(t, invoiceHasEN16931Addon(inv))
-}
-
-func TestInvoiceHasEN16931AddonMissing(t *testing.T) {
-	inv := &bill.Invoice{Addons: tax.WithAddons(V1)}
-	assert.False(t, invoiceHasEN16931Addon(inv))
-}
-
 func TestInvoiceMissingEN16931OnFlow2(t *testing.T) {
 	inv := testInvoiceB2BStandard(t)
 	require.NoError(t, inv.Calculate())
@@ -1598,4 +1579,126 @@ func TestInvoiceMissingEN16931OnFlow2(t *testing.T) {
 	inv.Addons = tax.WithAddons(V1)
 	err := rules.Validate(inv)
 	assert.ErrorContains(t, err, "eu-en16931-v2017")
+}
+
+// --- defensive coverage: nil / wrong-type / empty-slice guards --------
+
+func TestInvoiceCodeValidNonInvoice(t *testing.T) {
+	assert.True(t, invoiceCodeValid(42))
+}
+
+func TestInvoiceCodeValidEmptyCode(t *testing.T) {
+	assert.True(t, invoiceCodeValid(&bill.Invoice{}))
+}
+
+func TestPrecedingDocCodeValidNonDocumentRef(t *testing.T) {
+	assert.True(t, precedingDocCodeValid(42))
+}
+
+func TestPrecedingDocCodeValidNil(t *testing.T) {
+	assert.True(t, precedingDocCodeValid((*org.DocumentRef)(nil)))
+}
+
+func TestInvoiceIsFactoringAnyNonInvoice(t *testing.T) {
+	assert.False(t, invoiceIsFactoringAny(42))
+}
+
+func TestInvoiceIsFactoringAnyEmptyTax(t *testing.T) {
+	assert.False(t, invoiceIsFactoringAny(&bill.Invoice{}))
+}
+
+func TestIsCorrectiveInvoiceEmptyExt(t *testing.T) {
+	assert.False(t, isCorrectiveInvoice(&bill.Invoice{Tax: &bill.Tax{}}))
+}
+
+func TestIsCreditNoteEmptyExt(t *testing.T) {
+	assert.False(t, isCreditNote(&bill.Invoice{Tax: &bill.Tax{}}))
+}
+
+func TestIsConsolidatedCreditNoteEmptyExt(t *testing.T) {
+	assert.False(t, isConsolidatedCreditNote(&bill.Invoice{Tax: &bill.Tax{}}))
+}
+
+func TestIsAdvancedInvoiceEmptyExt(t *testing.T) {
+	assert.False(t, isAdvancedInvoice(&bill.Invoice{Tax: &bill.Tax{}}))
+}
+
+func TestIsFinalInvoiceEmptyExt(t *testing.T) {
+	assert.False(t, isFinalInvoice(&bill.Invoice{Tax: &bill.Tax{}}))
+}
+
+func TestIsPartyIdentitySTCNilIdentity(t *testing.T) {
+	p := &org.Party{Identities: []*org.Identity{nil}}
+	assert.False(t, isPartyIdentitySTC(p))
+}
+
+func TestIsPartyIdentitySTCEmptyExt(t *testing.T) {
+	p := &org.Party{Identities: []*org.Identity{{Code: "X"}}}
+	assert.False(t, isPartyIdentitySTC(p))
+}
+
+func TestGetPartySIRENEmpty(t *testing.T) {
+	p := &org.Party{Identities: []*org.Identity{{Code: "X"}}}
+	assert.Equal(t, "", getPartySIREN(p))
+}
+
+func TestIdentitiesHasLegalSIRENNilEntry(t *testing.T) {
+	assert.False(t, identitiesHasLegalSIREN([]*org.Identity{nil}))
+}
+
+func TestPartyHasSIRENInboxNoSIREN(t *testing.T) {
+	p := &org.Party{Inboxes: []*org.Inbox{{Scheme: inboxSchemeSIREN, Code: "X"}}}
+	assert.True(t, partyHasSIRENInbox(p))
+}
+
+func TestOrderingIdentitiesNoDupWrongType(t *testing.T) {
+	assert.True(t, orderingIdentitiesNoDup("x", "AFL"))
+}
+
+func TestOrderingIdentitiesNoDupNilEntry(t *testing.T) {
+	assert.True(t, orderingIdentitiesNoDup([]*org.Identity{nil}, "AFL"))
+}
+
+func TestNotesHaveRequiredEmpty(t *testing.T) {
+	assert.False(t, notesHaveRequired([]*org.Note{}))
+}
+
+func TestNotesHaveRequiredNilEntry(t *testing.T) {
+	assert.False(t, notesHaveRequired([]*org.Note{nil}))
+}
+
+func TestInvoiceHasNoteWithSubjectNilNote(t *testing.T) {
+	inv := &bill.Invoice{Notes: []*org.Note{nil}}
+	assert.False(t, invoiceHasNoteWithSubject(inv, "PMT"))
+}
+
+func TestNormalizeRequiredNotesNoOpWhenPresent(t *testing.T) {
+	inv := &bill.Invoice{
+		Notes: []*org.Note{
+			{Key: org.NoteKeyPayment, Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMT"})},
+			{Key: org.NoteKeyPaymentMethod, Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "PMD"})},
+			{Key: org.NoteKeyPaymentTerm, Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyTextSubject: "AAB"})},
+		},
+	}
+	before := len(inv.Notes)
+	normalizeRequiredNotes(inv)
+	assert.Equal(t, before, len(inv.Notes))
+}
+
+func TestNormalizeB2CCategoryOnInvoicePreservesExisting(t *testing.T) {
+	inv := &bill.Invoice{Tax: &bill.Tax{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyB2CCategory: B2CCategoryGoods}),
+	}}
+	normalizeB2CCategoryOnInvoice(inv)
+	assert.Equal(t, B2CCategoryGoods, inv.Tax.Ext.Get(ExtKeyB2CCategory))
+}
+
+func TestNormalizeInvoiceTaxCategoriesNilLine(t *testing.T) {
+	inv := &bill.Invoice{Lines: []*bill.Line{nil}}
+	assert.NotPanics(t, func() { normalizeInvoiceTaxCategories(inv) })
+}
+
+func TestNormalizeInvoiceTaxCategoriesNilCombo(t *testing.T) {
+	inv := &bill.Invoice{Lines: []*bill.Line{{Taxes: tax.Set{nil}}}}
+	assert.NotPanics(t, func() { normalizeInvoiceTaxCategories(inv) })
 }

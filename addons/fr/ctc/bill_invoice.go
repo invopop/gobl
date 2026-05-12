@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
@@ -155,24 +156,6 @@ func invoiceIsDomesticFrenchAny(v any) bool {
 func invoiceIsNotDomesticFrenchAny(v any) bool {
 	inv, ok := v.(*bill.Invoice)
 	return ok && !invoiceIsDomesticFrench(inv)
-}
-
-// en16931V2017Key is the addon key the Flow 2 ruleset requires to be
-// declared on the invoice. Hard-coded to avoid importing the en16931
-// package — that import would make en16931 a static dependency of
-// fr-ctc, which is exactly what the Flow 2 en16931-addon rule below
-// was added to avoid.
-const en16931V2017Key cbc.Key = "eu-en16931-v2017"
-
-// invoiceHasEN16931Addon reports whether the invoice carries the
-// eu-en16931-v2017 addon. Used by the Flow 2 dispatcher to make
-// en16931 a soft requirement only for domestic French B2B.
-func invoiceHasEN16931Addon(v any) bool {
-	inv, ok := v.(*bill.Invoice)
-	if !ok || inv == nil {
-		return true
-	}
-	return slices.Contains(inv.Addons.List, en16931V2017Key)
 }
 
 // -- Normalisation --------------------------------------------------------
@@ -374,7 +357,7 @@ func flow2InvoiceDefs() []rules.Def {
 		// on the addon so that pure Flow 10 / Flow 6 callers don't
 		// have to drag it in.
 		rules.Assert("02", "domestic French B2B invoices must also declare the eu-en16931-v2017 addon",
-			is.Func("has eu-en16931-v2017 addon", invoiceHasEN16931Addon),
+			tax.HasAddon(en16931.V2017),
 		),
 		// Invoice code validation (BR-FR-01/02).
 		rules.Assert("03", "must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
