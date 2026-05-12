@@ -17,28 +17,36 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 		Extensions: []cbc.Key{
 			ExtKeyDocType,
 		},
-		CopyTax: true,
+		CopyTax:    true,
+		Normalizer: new(billCorrectionNormalizer),
 	},
 }
 
-func normalizeBillInvoice(inv *bill.Invoice) {
-	// Try to move any preceding choices to the document level
-	for _, row := range inv.Preceding {
-		if row == nil || row.Ext.Len() == 0 {
-			continue
-		}
-		found := false
-		if row.Ext.Has(ExtKeyDocType) {
-			if inv.Tax == nil || !found {
-				inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
-					ExtKeyDocType: row.Ext.Get(ExtKeyDocType),
-				}))
-				found = true // only assign first one
-			}
-			row.Ext = row.Ext.Delete(ExtKeyDocType)
+type billCorrectionNormalizer struct{}
+
+func (*billCorrectionNormalizer) Normalize(doc any) {
+	in, ok := doc.(*bill.CorrectionNormalize)
+	if !ok || in == nil {
+		return
+	}
+	inv := in.Invoice
+	if inv == nil || len(inv.Preceding) == 0 {
+		return
+	}
+	ref := inv.Preceding[0]
+
+	// Move the doc-type from preceding to the invoice.
+	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
+	if in.Opts != nil {
+		if dt := in.Opts.Ext.Get(ExtKeyDocType); dt != "" {
+			inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyDocType: dt,
+			}))
 		}
 	}
+}
 
+func normalizeBillInvoice(inv *bill.Invoice) {
 	// Try to normalize the correction type, which is especially complex for
 	// Verifactu implying that scenarios cannot be used.
 	switch inv.Type {
