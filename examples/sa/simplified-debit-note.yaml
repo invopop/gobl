@@ -7,19 +7,14 @@ issue_time: "10:00:00"
 series: "DN"
 code: "DN-001"
 regime: "SA"
-
-tax:
-  ext:
-    sa-zatca-invoice-type: "0200000"
-    untdid-document-type: "383"
+$tags: 
+  - simplified
 
 preceding:
   - series: ""
     code: "SAMPLE-001"
     issue_date: "2022-02-01"
     reason: "Price adjustment for development services"
-    ext:
-      untdid-document-type: "388"
 
 supplier:
   tax_id:

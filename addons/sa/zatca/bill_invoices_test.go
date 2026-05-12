@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/cef"
-	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -23,9 +22,11 @@ import (
 // Test fixtures
 // ============================================================================
 
-// validStandardInvoice returns a fully valid ZATCA standard tax invoice
-// (KSA-2 = "0100000", document type "388"). Used as the base for every
-// positive and negative test in this file.
+// validStandardInvoice returns a fully valid ZATCA standard tax invoice.
+// Used as the base for every positive and negative test in this file.
+// The KSA-2 invoice-transaction-type (-> "0100000") and the UNTDID document
+// type (-> "388") are populated by the ZATCA / EN 16931 scenarios during
+// Calculate(), driven by inv.Type = "standard" with no tags.
 func validStandardInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Regime:    tax.WithRegime("SA"),
@@ -35,14 +36,9 @@ func validStandardInvoice() *bill.Invoice {
 		Code:      "INV-001",
 		IssueDate: cal.MakeDate(2024, 6, 15),
 		IssueTime: cal.NewTime(12, 0, 0),
-		Tax: &bill.Tax{
-			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				zatca.ExtKeyInvoiceTypeTransactions: "0100000",
-				untdid.ExtKeyDocumentType:           "388",
-			}),
-		},
-		Supplier: validSupplier(),
-		Customer: validCustomer(),
+		Tax:       &bill.Tax{}, // KSA-2 + UNTDID populated by scenarios during Calculate()
+		Supplier:  validSupplier(),
+		Customer:  validCustomer(),
 		Delivery: &bill.DeliveryDetails{
 			Date: cal.NewDate(2024, 6, 15),
 			Period: &cal.Period{
@@ -112,27 +108,35 @@ func validAddress() *org.Address {
 	}
 }
 
-// validSimplifiedInvoice returns a simplified tax invoice (KSA-2 starts with "02").
+// validSimplifiedInvoice returns a simplified tax invoice. tax.TagSimplified
+// drives the ZATCA scenario which populates KSA-2 = "0200000" during
+// Calculate(); no hard-coding needed.
 func validSimplifiedInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0200000")
+	inv.SetTags(tax.TagSimplified)
 	return inv
 }
 
 // validSummaryInvoice returns a standard summary tax invoice — KSA-2 with
-// the summary bit set (position 6 = 1).
+// the summary bit set (position 6 = 1). Note: there is no ZATCA scenario
+// for Standard + Summary; this fixture sets KSA-2 manually for the sanity
+// fixture test but it will be reset to "0100000" by the Standard scenario
+// during Calculate(). Kept here for backwards-compatibility with the
+// TestValidFixtures sanity check.
 func validSummaryInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
 	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100010")
 	return inv
 }
 
-// validCreditNote returns a credit note (document type 381) that references
-// a preceding invoice with reason — both required by ZATCA.
+// validCreditNote returns a credit note that references a preceding invoice
+// with reason — both required by ZATCA. The UNTDID document type is set by
+// the EN 16931 scenario from inv.Type during Calculate(). KSA-2 is hard-coded
+// because no ZATCA scenario targets credit-note / debit-note types.
 func validCreditNote() *bill.Invoice {
 	inv := validStandardInvoice()
 	inv.Type = bill.InvoiceTypeCreditNote
-	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "381")
+	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100000")
 	inv.Preceding = []*org.DocumentRef{
 		{
 			Code:      "INV-001",
@@ -143,21 +147,23 @@ func validCreditNote() *bill.Invoice {
 	return inv
 }
 
-// validDebitNote returns a debit note (document type 383).
+// validDebitNote returns a debit note. UNTDID document type is set by the
+// EN 16931 scenario from inv.Type during Calculate(); KSA-2 is inherited
+// from validCreditNote (hard-coded "0100000") for the same reason.
 func validDebitNote() *bill.Invoice {
 	inv := validCreditNote()
 	inv.Type = bill.InvoiceTypeDebitNote
-	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "383")
 	inv.Preceding[0].Reason = "Price adjustment"
 	return inv
 }
 
 // validExportInvoice returns a standard tax invoice with the export bit
-// set in KSA-2 (position 5 = 1) and a non-VAT-registered customer, as
-// required by BR-KSA-46.
+// set in KSA-2 (position 5 = 1). tax.TagExport drives the ZATCA scenario
+// which populates KSA-2 = "0100100" during Calculate(); no hard-coding
+// needed. Customer is non-VAT-registered as required by BR-KSA-46.
 func validExportInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100100")
+	inv.SetTags(tax.TagExport)
 	inv.Customer.TaxID = nil
 	inv.Customer.Identities = []*org.Identity{
 		{Type: zatca.IdentityTypeTIN, Code: "123456789012345"},
@@ -226,30 +232,17 @@ func TestTaxBlockExtensions(t *testing.T) {
 	// Note: rule 02 ("tax must be present") is unreachable from invoice tests
 	// because Calculate() auto-creates an empty Tax block before validation.
 	// Coverage of that path would require directly invoking the rule chain.
-
-	t.Run("missing document type ext key", func(t *testing.T) {
-		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			zatca.ExtKeyInvoiceTypeTransactions: "0100000",
-		})
-		assert.ErrorContains(t, rules.Validate(inv),
-			"untdid document type extension is required")
-	})
+	//
+	// The UNTDID document type extension is populated by EN 16931 and ZATCA
+	// scenarios from inv.Type during Calculate(), so tests no longer pre-set
+	// it or assert on its specific values — that coverage lives in the EN 16931
+	// addon's scenarios_test.go.
 
 	t.Run("missing invoice transaction type ext key", func(t *testing.T) {
 		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			untdid.ExtKeyDocumentType: "388",
-		})
+		inv.Tax.Ext = inv.Tax.Ext.Delete(zatca.ExtKeyInvoiceTypeTransactions)
 		assert.ErrorContains(t, rules.Validate(inv),
 			"invoice transaction type extension is required")
-	})
-
-	t.Run("invalid document type code rejected", func(t *testing.T) {
-		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "999")
-		assert.ErrorContains(t, rules.Validate(inv),
-			"document type must be a valid ZATCA type")
 	})
 
 	t.Run("invalid invoice transaction type rejected", func(t *testing.T) {
@@ -546,10 +539,13 @@ func TestBRKSA46_ExportInvoiceCustomerVAT(t *testing.T) {
 
 func TestSimplifiedSummaryRequirements(t *testing.T) {
 	// "Simplified-and-summary" means an invoice with KSA-2 of the form 02....1.
-	// Build one by deriving from simplified and adding the summary bit.
+	// Build one by deriving from simplified and adding the summary tag.
+	// The [TagSimplified, TagSummary] combination drives the ZATCA
+	// "Simplified and summary" scenario which sets KSA-2 = "0200010"
+	// during Calculate(); no hard-coding needed.
 	build := func() *bill.Invoice {
 		inv := validSimplifiedInvoice()
-		inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0200010")
+		inv.SetTags(tax.TagSimplified, zatca.TagSummary)
 		return inv
 	}
 
@@ -690,5 +686,174 @@ func TestNilGuards(t *testing.T) {
 		inv.Tax = nil
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "tax must be present")
+	})
+}
+
+// ============================================================================
+// Group I — Every code in validTransactionTypes must validate cleanly
+// ============================================================================
+//
+// Codes registered as scenarios in scenarios.go are exercised via $tags so
+// that the scenario engine populates KSA-2 during Calculate(). Codes NOT
+// registered as scenarios are written to inv.Tax.Ext AFTER Calculate(), so
+// the default Standard scenario (Types=[Standard], no tags) doesn't
+// overwrite them back to "0100000".
+//
+// Each KSA-2 code is its own subtest — no for-loops — so a failure points
+// at the exact code that broke.
+
+// hasExportBit returns true when KSA-2 position 4 (the export flag) is set,
+// which triggers BR-KSA-46 — the customer must NOT carry a VAT registration.
+func hasExportBit(code cbc.Code) bool {
+	return len(code) >= 5 && code[4] == '1'
+}
+
+// clearCustomerVAT removes the customer's VAT ID and replaces it with a
+// non-VAT TIN identity so the invoice satisfies BR-KSA-46 (export bit set)
+// while still meeting BR-KSA-14/81 when the form is Standard (TT=01).
+func clearCustomerVAT(inv *bill.Invoice) {
+	inv.Customer.TaxID = nil
+	inv.Customer.Identities = []*org.Identity{
+		{Type: zatca.IdentityTypeTIN, Code: "123456789012345"},
+	}
+}
+
+// assertSACodeViaScenario builds a Standard-type invoice with the provided
+// tags, runs Calculate (scenarios fire), validates, and asserts the
+// resulting KSA-2 equals the expected code. Used for codes scenarios.go
+// derives from (Type, $tags).
+func assertSACodeViaScenario(t *testing.T, expected cbc.Code, tags ...cbc.Key) {
+	t.Helper()
+	inv := validStandardInvoice()
+	if len(tags) > 0 {
+		inv.SetTags(tags...)
+	}
+	if hasExportBit(expected) {
+		clearCustomerVAT(inv)
+	}
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, rules.Validate(inv))
+	assert.Equal(t, expected, inv.Tax.Ext.Get(zatca.ExtKeyInvoiceTypeTransactions))
+}
+
+// assertSACodeHardCoded builds a Standard-type invoice, runs Calculate (the
+// default Standard scenario populates KSA-2 = "0100000"), then overrides
+// KSA-2 to the target code and validates. Used for codes in
+// validTransactionTypes that scenarios.go does not cover.
+func assertSACodeHardCoded(t *testing.T, code cbc.Code) {
+	t.Helper()
+	inv := validStandardInvoice()
+	if hasExportBit(code) {
+		clearCustomerVAT(inv)
+	}
+	require.NoError(t, inv.Calculate())
+	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, code)
+	require.NoError(t, rules.Validate(inv))
+}
+
+func TestAllValidTransactionTypes(t *testing.T) {
+	// --- Scenario-driven codes (via $tags) ---
+
+	t.Run("0100000 standard default", func(t *testing.T) {
+		assertSACodeViaScenario(t, "0100000")
+	})
+	t.Run("0100010 standard+summary", func(t *testing.T) {
+		assertSACodeViaScenario(t, "0100010", zatca.TagSummary)
+	})
+	t.Run("0100100 standard+export", func(t *testing.T) {
+		assertSACodeViaScenario(t, "0100100", tax.TagExport)
+	})
+	t.Run("0200000 simplified default", func(t *testing.T) {
+		assertSACodeViaScenario(t, "0200000", tax.TagSimplified)
+	})
+	t.Run("0200010 simplified+summary", func(t *testing.T) {
+		assertSACodeViaScenario(t, "0200010", tax.TagSimplified, zatca.TagSummary)
+	})
+
+	// --- Hard-coded Standard codes (TT=01) not covered by scenarios.go ---
+
+	t.Run("0100001 standard+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0100001")
+	})
+	t.Run("0100011 standard+summary+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0100011")
+	})
+	t.Run("0100110 standard+export+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0100110")
+	})
+	t.Run("0101000 standard+nominal", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101000")
+	})
+	t.Run("0101001 standard+nominal+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101001")
+	})
+	t.Run("0101010 standard+nominal+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101010")
+	})
+	t.Run("0101011 standard+nominal+summary+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101011")
+	})
+	t.Run("0101100 standard+nominal+export", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101100")
+	})
+	t.Run("0101110 standard+nominal+export+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0101110")
+	})
+	t.Run("0110000 standard+third-party", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110000")
+	})
+	t.Run("0110001 standard+third-party+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110001")
+	})
+	t.Run("0110010 standard+third-party+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110010")
+	})
+	t.Run("0110011 standard+third-party+summary+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110011")
+	})
+	t.Run("0110100 standard+third-party+export", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110100")
+	})
+	t.Run("0110110 standard+third-party+export+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0110110")
+	})
+	t.Run("0111000 standard+third-party+nominal", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111000")
+	})
+	t.Run("0111001 standard+third-party+nominal+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111001")
+	})
+	t.Run("0111010 standard+third-party+nominal+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111010")
+	})
+	t.Run("0111011 standard+third-party+nominal+summary+self-billed", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111011")
+	})
+	t.Run("0111100 standard+third-party+nominal+export", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111100")
+	})
+	t.Run("0111110 standard+third-party+nominal+export+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0111110")
+	})
+
+	// --- Hard-coded Simplified codes (TT=02) not covered by scenarios.go ---
+
+	t.Run("0201000 simplified+nominal", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0201000")
+	})
+	t.Run("0201010 simplified+nominal+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0201010")
+	})
+	t.Run("0210000 simplified+third-party", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0210000")
+	})
+	t.Run("0210010 simplified+third-party+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0210010")
+	})
+	t.Run("0211000 simplified+third-party+nominal", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0211000")
+	})
+	t.Run("0211010 simplified+third-party+nominal+summary", func(t *testing.T) {
+		assertSACodeHardCoded(t, "0211010")
 	})
 }

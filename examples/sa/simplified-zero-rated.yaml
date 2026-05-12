@@ -5,11 +5,9 @@ issue_date: "2022-09-07"
 issue_time: "12:21:28"
 code: "123456"
 regime: "SA"
-
-tax:
-  ext:
-    sa-zatca-invoice-type: "0200000"
-    untdid-document-type: "388"
+type: "standard"
+$tags: 
+  - simplified
 
 supplier:
   tax_id:

@@ -64,6 +64,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
+		Tags:       tags,
 		Scenarios:  scenarios,
 		Normalizer: normalize,
 	}

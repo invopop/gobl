@@ -11,10 +11,6 @@ exchange_rates:
     to: "SAR"
     amount: 3.75
 
-tax:
-  ext:
-    sa-zatca-invoice-type: "0100000"
-    untdid-document-type: "388"
 supplier:
   tax_id:
     country: "SA"

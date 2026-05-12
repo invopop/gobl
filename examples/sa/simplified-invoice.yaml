@@ -5,11 +5,10 @@ issue_date: "2022-02-01"
 issue_time: "12:00:00"
 code: "SAMPLE-001"
 regime: "SA"
-
-tax:
-  ext:
-    sa-zatca-invoice-type: "0200000"
-    untdid-document-type: "388"
+type: "standard"
+$tags: 
+  - simplified
+  
 supplier:
   tax_id:
     country: "SA"

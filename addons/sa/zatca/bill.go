@@ -51,9 +51,13 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.IssueTime = &cal.Time{}
 	}
 
-	// BR-KSA-83
-	// VAT categories E,Z,O must have an associated tax note. This
-	// validation adds them if not previously provided by the user
+	normalizeTaxNotes(inv)
+}
+
+// BR-KSA-83
+// VAT categories E,Z,O must have an associated tax note. This
+// validation adds them if not previously provided by the user
+func normalizeTaxNotes(inv *bill.Invoice) {
 	for _, line := range inv.Lines {
 		vat := line.Taxes.Get(tax.CategoryVAT)
 		if vat == nil {

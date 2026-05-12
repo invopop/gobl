@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "128247c855bd6a20c9030ea08cde6100119241331c75fbab1fcf0d55e49946f7"
+			"val": "d181b3f8861545610c314c9b801e25bdce464a5b6201d092f7887ad855200884"
 		}
 	},
 	"doc": {
@@ -13,6 +13,9 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"sa-zatca-v1"
+		],
+		"$tags": [
+			"simplified"
 		],
 		"uuid": "8d487816-70b8-4ade-a618-9d620b73814a",
 		"type": "standard",

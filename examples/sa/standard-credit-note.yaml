@@ -8,18 +8,11 @@ series: "CN"
 code: "CN-001"
 regime: "SA"
 
-tax:
-  ext:
-    sa-zatca-invoice-type: "0100000"
-    untdid-document-type: "381"
-
 preceding:
   - series: ""
     code: "SAMPLE-001"
     issue_date: "2022-02-01"
     reason: "Return of development services"
-    ext:
-      untdid-document-type: "388"
 
 supplier:
   tax_id:

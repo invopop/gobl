@@ -152,6 +152,9 @@ func taxComboIsNonExempt(val any) bool {
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)
 }
 
+// addonIsNotZATCA returns true when the SA ZATCA addon is absent from the
+// validation context. It is used as a negative guard so that BR-S-10/BR-Z-10
+// remains the default and is only skipped for the ZATCA exception.
 func addonIsNotZATCA(ctx rules.Context, _ any) bool {
 	return !ctx.Each(func(v any) bool {
 		return tax.AddonIn("sa-zatca-v1").Check(v)
