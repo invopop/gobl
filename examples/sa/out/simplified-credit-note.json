@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2c3916293488968396d351b1190b3522e99a7ab667028c0b7b6deaaa51342f0b"
+			"val": "51f87fcd5e0d55b4f0de8039ca1e094482675d351fa5f832259faad1436a8905"
 		}
 	},
 	"doc": {
@@ -13,6 +13,9 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"sa-zatca-v1"
+		],
+		"$tags": [
+			"simplified"
 		],
 		"uuid": "a1b2c3d4-3333-4aaa-bbbb-000000000003",
 		"type": "credit-note",
@@ -25,10 +28,7 @@
 			{
 				"issue_date": "2022-02-01",
 				"code": "SAMPLE-001",
-				"reason": "Return of development services",
-				"ext": {
-					"untdid-document-type": "388"
-				}
+				"reason": "Return of development services"
 			}
 		],
 		"tax": {

@@ -33,8 +33,7 @@ func New() *tax.RegimeDef {
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Saudi Arabia's tax system is administered by the Zakat, Tax and
-				Customs Authority (ZATCA). VAT was introduced on January 1, 2018,
-				at 5% and increased to 15% on July 1, 2020.
+				Customs Authority (ZATCA).
 
 				Businesses must register for VAT if annual taxable supplies exceed
 				SAR 375,000, with voluntary registration available above SAR 187,500.

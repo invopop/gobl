@@ -4,12 +4,9 @@ uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 issue_date: "2022-02-01"
 issue_time: "12:00:00"
 code: "SAMPLE-001"
+type: "standard"
 regime: "SA"
 
-tax:
-  ext:
-    sa-zatca-invoice-type: "0100000"
-    untdid-document-type: "388"
 supplier:
   tax_id:
     country: "SA"

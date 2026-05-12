@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "73f885721be519736af65951c84c019ebc7ad74fde7808b56aeea9dd91302e62"
+			"val": "08a2137ce49ee0decb36f65e01f9dd3f0e3d1aae197e77a747332bdfa9982992"
 		}
 	},
 	"doc": {
@@ -13,6 +13,9 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"sa-zatca-v1"
+		],
+		"$tags": [
+			"summary"
 		],
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120003",
 		"type": "credit-note",
@@ -23,13 +26,11 @@
 		"currency": "SAR",
 		"preceding": [
 			{
+				"type": "standard",
 				"issue_date": "2024-01-31",
 				"series": "INV",
 				"code": "SAMPLE-001",
-				"reason": "Partial return of services after monthly close — discount applied per agreement BR-2024-AC-12",
-				"ext": {
-					"untdid-document-type": "388"
-				}
+				"reason": "Partial return of services after monthly close — discount applied per agreement BR-2024-AC-12"
 			}
 		],
 		"tax": {

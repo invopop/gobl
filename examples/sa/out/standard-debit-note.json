@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "95e8d6ab6749a448fe0c78375ed1276677a9fc3d519e10900762236557279f30"
+			"val": "2172f997d80e7ab0e16044785160a3e5764184d2f8fbf7d1b14944ea2cdf6972"
 		}
 	},
 	"doc": {
@@ -25,10 +25,7 @@
 			{
 				"issue_date": "2022-02-01",
 				"code": "SAMPLE-001",
-				"reason": "Price adjustment for development services",
-				"ext": {
-					"untdid-document-type": "388"
-				}
+				"reason": "Price adjustment for development services"
 			}
 		],
 		"tax": {

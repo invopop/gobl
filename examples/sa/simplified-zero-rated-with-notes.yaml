@@ -5,11 +5,11 @@ issue_date: "2022-09-07"
 issue_time: "12:21:28"
 code: "123456"
 regime: "SA"
+type: "standard"
+$tags: 
+  - simplified
 
 tax:
-  ext:
-    sa-zatca-invoice-type: "0200000"
-    untdid-document-type: "388"
   rounding: "currency"
   notes: 
     - cat: "VAT"
@@ -45,7 +45,6 @@ lines:
       - cat: VAT
         rate: zero
         ext:
-          untdid-tax-category: "Z"
           cef-vatex: "VATEX-SA-35"
   - i: 2
     quantity: "1"
