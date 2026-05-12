@@ -156,10 +156,10 @@ func TestPaymentHasCustomerAnyWrongType(t *testing.T) {
 }
 
 func TestPaymentVATRatesAllowedWrongType(t *testing.T) {
-	assert.True(t, paymentVATRatesAllowed("x"))
+	assert.True(t, paymentVATPercentsAllowed("x"))
 }
 
 func TestPaymentVATRatesAllowedNilLine(t *testing.T) {
 	p := &bill.Payment{Lines: []*bill.PaymentLine{nil}}
-	assert.True(t, paymentVATRatesAllowed(p))
+	assert.True(t, paymentVATPercentsAllowed(p))
 }

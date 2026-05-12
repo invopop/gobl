@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -179,27 +180,15 @@ type implementsAddon interface {
 	GetAddons() []cbc.Key
 }
 
-// HasAddon provides a test to check that an object provided to the test
-// responds to the GetAddons method and declares at least one of the
-// given addon keys. Symmetric with AddonIn.
-func HasAddon(keys ...cbc.Key) rules.Test {
-	parts := make([]string, len(keys))
-	for i, k := range keys {
-		parts[i] = k.String()
-	}
-	desc := "has addon " + strings.Join(parts, " or ")
-	return is.Func(desc, func(value any) bool {
+// HasAddon provides a test to check that an object provided to the test responds to the
+// GetAddons method and that the addon key provided is supported.
+func HasAddon(key cbc.Key) rules.Test {
+	return is.Func(fmt.Sprintf("has addon %v", key), func(value any) bool {
 		obj, ok := value.(implementsAddon)
 		if !ok {
 			return false // do not continue
 		}
-		declared := obj.GetAddons()
-		for _, k := range keys {
-			if k.In(declared...) {
-				return true
-			}
-		}
-		return false
+		return key.In(obj.GetAddons()...)
 	})
 }
 

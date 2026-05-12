@@ -551,7 +551,7 @@ func TestInvoiceHasExemptTaxNoteWrongType(t *testing.T) {
 }
 
 func TestInvoiceVATRatesAllowedWrongType(t *testing.T) {
-	assert.True(t, invoiceVATRatesAllowed("x"))
+	assert.True(t, invoiceVATPercentsAllowed("x"))
 }
 
 func TestMustParsePercentagesPanicsOnBadInput(t *testing.T) {

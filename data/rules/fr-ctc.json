@@ -479,8 +479,8 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-BILL-INVOICE-46",
-                  "desc": "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
-                  "tests": "allowed Flow 10 VAT rates"
+                  "desc": "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+                  "tests": "allowed Flow 10 VAT percents"
                 }
               ],
               "subsets": [
@@ -676,8 +676,8 @@
       "assert": [
         {
           "id": "GOBL-FR-CTC-BILL-PAYMENT-03",
-          "desc": "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
-          "tests": "allowed Flow 10 VAT rates"
+          "desc": "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+          "tests": "allowed Flow 10 VAT percents"
         }
       ],
       "subsets": [

@@ -84,9 +84,9 @@ var allowedAttachmentDescriptions = []string{
 	"RECAPITULATIF_COTRAITANCE",
 }
 
-// allowedVATRates is the whitelist of VAT percentages authorised on a
+// allowedVATPercents is the whitelist of VAT percentages authorised on a
 // Flow 10 invoice / payment (G1.24).
-var allowedVATRates = mustParsePercentages(
+var allowedVATPercents = mustParsePercentages(
 	"0%", "0.9%", "1.05%", "1.75%", "2.1%", "5.5%", "7%", "8.5%",
 	"9.2%", "9.6%", "10%", "13%", "19.6%", "20%", "20.6%",
 )
@@ -583,7 +583,7 @@ func flow2InvoiceDefs() []rules.Def {
 // (Flow 10 e-reporting) invoice — B2C or cross-border B2B.
 func flow10InvoiceDefs() []rules.Def {
 	return []rules.Def{
-		// B2C rules: category, supplier SIREN, VAT rate whitelist.
+		// B2C rules: category, supplier SIREN, VAT percent whitelist.
 		rules.When(
 			is.Func("B2C invoice", invoiceIsB2CAny),
 			rules.Field("tax",
@@ -601,8 +601,8 @@ func flow10InvoiceDefs() []rules.Def {
 					is.Func("party has SIREN", partyHasSIREN),
 				),
 			),
-			rules.Assert("46", "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
-				is.Func("allowed Flow 10 VAT rates", invoiceVATRatesAllowed),
+			rules.Assert("46", "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+				is.Func("allowed Flow 10 VAT percents", invoiceVATPercentsAllowed),
 			),
 		),
 		rules.Field("supplier",
@@ -1048,7 +1048,7 @@ func invoiceIsCrossBorderB2BAny(v any) bool {
 	return ok && !invoiceIsB2C(inv)
 }
 
-func invoiceVATRatesAllowed(v any) bool {
+func invoiceVATPercentsAllowed(v any) bool {
 	inv, ok := v.(*bill.Invoice)
 	if !ok || inv == nil {
 		return true
@@ -1061,7 +1061,7 @@ func invoiceVATRatesAllowed(v any) bool {
 			if combo == nil || combo.Category != tax.CategoryVAT || combo.Percent == nil {
 				continue
 			}
-			if !percentageInList(*combo.Percent, allowedVATRates) {
+			if !percentageInList(*combo.Percent, allowedVATPercents) {
 				return false
 			}
 		}

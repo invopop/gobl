@@ -38,8 +38,8 @@ func billPaymentRules() *rules.Set {
 				is.Present,
 			),
 		),
-		rules.Assert("03", "every VAT line rate must be one of the Flow 10 permitted percentages (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
-			is.Func("allowed Flow 10 VAT rates", paymentVATRatesAllowed),
+		rules.Assert("03", "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+			is.Func("allowed Flow 10 VAT percents", paymentVATPercentsAllowed),
 		),
 		rules.Field("supplier",
 			rules.Assert("04", "supplier is required",
@@ -76,9 +76,10 @@ func billPaymentRules() *rules.Set {
 	)
 }
 
-// paymentVATRatesAllowed reports whether every VAT rate total on the
-// payment's lines matches one of the G1.24 whitelist percentages.
-func paymentVATRatesAllowed(v any) bool {
+// paymentVATPercentsAllowed reports whether every VAT percent
+// declared on the payment's line totals matches one of the G1.24
+// whitelist values.
+func paymentVATPercentsAllowed(v any) bool {
 	pmt, ok := v.(*bill.Payment)
 	if !ok || pmt == nil {
 		return true
@@ -95,7 +96,7 @@ func paymentVATRatesAllowed(v any) bool {
 				if rate == nil || rate.Percent == nil {
 					continue
 				}
-				if !percentageInList(*rate.Percent, allowedVATRates) {
+				if !percentageInList(*rate.Percent, allowedVATPercents) {
 					return false
 				}
 			}
