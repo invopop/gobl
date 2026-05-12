@@ -412,6 +412,20 @@ func TestInvoicePaymentValidation(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "cannot be blank")
 	})
 
+	t.Run("advance with negative amount", func(t *testing.T) {
+		d := cal.NewDate(2024, 1, 1)
+		inv := calculatedInvoice(t)
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{
+					Date:   d,
+					Amount: num.MakeAmount(-50, 0),
+				},
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(inv), "must be no less than 0")
+	})
+
 	t.Run("nil advance", func(t *testing.T) {
 		inv := calculatedInvoice(t)
 		inv.Payment = &bill.PaymentDetails{
