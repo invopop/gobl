@@ -9,11 +9,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `tax`: **breaking**: removed the `tax.ExtMap` type alias introduced in v0.402.0. `tax.Extensions` now wraps `cbc.CodeMap` directly, and `tax.ExtensionsOf` accepts a `cbc.CodeMap`. Callers should replace `tax.ExtMap{...}` with `cbc.CodeMap{...}`.
+- `addons/eu/en16931`: BR-S-10 / BR-Z-10 VATEX exclusion is now skipped when the `sa-zatca-v1` addon is active, since ZATCA requires VATEX codes on standard and zero-rated tax combos.
 
 ### Added
 
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
+- `sa`: Added Saudi Arabia tax regime, including tax categories, tax identity validation, and organization identity types.
+- `sa-zatca-v1`: Added ZATCA addon for Saudi Arabia Phase 2 e-invoicing, covering standard and simplified invoices, credit and debit notes, party and line-level validation rules, tax-combo rules with VATEX support, invoice scenarios, and the `zatca-qr` stamp key for the base64-encoded TLV QR carried by every ZATCA invoice.
 
 ## [v0.402.0] - 2026-04-30
 
