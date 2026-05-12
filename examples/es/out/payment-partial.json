@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "867a0e61406d3b7bed5c0f049a97576db2be783f8fb8d2406811065691d5a2d1"
+			"val": "c1c7bf0a26fa5968f476a6ae5eee74f017d45e09440d5ff6e238c2d4c4e75ab4"
 		}
 	},
 	"doc": {
@@ -16,6 +16,13 @@
 		"code": "0001",
 		"issue_date": "2025-01-28",
 		"currency": "EUR",
+		"exchange_rates": [
+			{
+				"from": "USD",
+				"to": "EUR",
+				"amount": "0.90"
+			}
+		],
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
@@ -52,17 +59,38 @@
 					"type": "standard",
 					"issue_date": "2025-01-10",
 					"series": "SAMPLE",
-					"code": "001"
+					"code": "001",
+					"payable": "1630.00"
 				},
-				"amount": "1630.00"
+				"payable": "1630.00",
+				"amount": "815.00",
+				"due": "815.00"
+			},
+			{
+				"i": 2,
+				"document": {
+					"type": "standard",
+					"issue_date": "2025-01-12",
+					"series": "SAMPLE",
+					"code": "002",
+					"payable": "400.00"
+				},
+				"payable": "400.00",
+				"amount": "200.00",
+				"due": "200.00"
 			}
 		],
 		"methods": [
 			{
 				"key": "credit-transfer",
-				"amount": "1630.00"
+				"amount": "925.00"
+			},
+			{
+				"key": "cash",
+				"amount": "100.00",
+				"currency": "USD"
 			}
 		],
-		"total": "1630.00"
+		"total": "1015.00"
 	}
 }

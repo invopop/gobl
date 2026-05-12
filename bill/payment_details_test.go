@@ -21,7 +21,7 @@ func TestPaymentDetailsValidation(t *testing.T) {
 func TestPaymentDetailsResetAdvances(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := &PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid in advance",
 					Amount:      num.MakeAmount(10, 0),
@@ -60,7 +60,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	zero := num.MakeAmount(0, 2)
 	total := num.MakeAmount(20000, 2)
 	p := &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Percent:     num.NewPercentage(10, 2),
@@ -71,7 +71,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	assert.Equal(t, "20.00", p.Advances[0].Amount.String())
 
 	p = &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Amount:      num.MakeAmount(10, 0),
@@ -85,7 +85,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	assert.Equal(t, "10.00", ta.String())
 
 	p = &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Amount:      num.MakeAmount(10, 0),
@@ -109,7 +109,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		total := num.MakeAmount(20845, 3)
 		p := &PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid in advance",
 					Percent:     num.NewPercentage(100, 2),
@@ -124,7 +124,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 
 	t.Run("with nil advances", func(t *testing.T) {
 		p := &PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				nil,
 			},
 		}

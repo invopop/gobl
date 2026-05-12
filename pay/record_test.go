@@ -15,8 +15,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAdvanceNormalize(t *testing.T) {
-	a := &pay.Advance{
+func TestRecordNormalize(t *testing.T) {
+	a := &pay.Record{
 		Identify:    uuid.Identify{UUID: uuid.Zero},
 		Description: "Test advance",
 		Percent:     num.NewPercentage(100, 2),
@@ -24,34 +24,34 @@ func TestAdvanceNormalize(t *testing.T) {
 			"random": "",
 		}),
 	}
-	a.Normalize()
+	a.Normalize(nil)
 	assert.Empty(t, a.UUID)
 	assert.True(t, a.Ext.IsZero())
 
 	a = nil
 	assert.NotPanics(t, func() {
-		a.Normalize()
+		a.Normalize(nil)
 	})
 
 }
 
-func TestAdvanceUnmarshal(t *testing.T) {
-	a := new(pay.Advance)
+func TestRecordUnmarshal(t *testing.T) {
+	a := new(pay.Record)
 	err := json.Unmarshal([]byte(`{"desc":"foo"}`), a)
 	require.NoError(t, err)
 	assert.Equal(t, "foo", a.Description)
 }
 
-func TestAdvanceCalculateFrom(t *testing.T) {
+func TestRecordCalculateFrom(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
-		a := &pay.Advance{
+		a := &pay.Record{
 			Percent: num.NewPercentage(10, 2),
 		}
 		a.CalculateFrom(num.MakeAmount(1000, 2))
 		assert.Equal(t, num.NewAmount(100, 2).String(), a.Amount.String())
 	})
 	t.Run("nil", func(t *testing.T) {
-		a := &pay.Advance{
+		a := &pay.Record{
 			Percent: nil,
 		}
 		a.CalculateFrom(num.MakeAmount(1000, 2))
@@ -59,23 +59,23 @@ func TestAdvanceCalculateFrom(t *testing.T) {
 	})
 }
 
-func TestAdvanceValidate(t *testing.T) {
+func TestRecordValidate(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
-		a := &pay.Advance{
+		a := &pay.Record{
 			Identify:    uuid.Identify{UUID: uuid.Zero},
 			Description: "Test advance",
 			Percent:     num.NewPercentage(100, 2),
 		}
 		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("invalid", func(t *testing.T) {
-		a := &pay.Advance{
+	t.Run("valid without description", func(t *testing.T) {
+		a := &pay.Record{
 			Amount: num.MakeAmount(100, 2),
 		}
-		assert.ErrorContains(t, rules.Validate(a), "description is required")
+		assert.NoError(t, rules.Validate(a))
 	})
 	t.Run("valid means key", func(t *testing.T) {
-		a := &pay.Advance{
+		a := &pay.Record{
 			Description: "Test advance",
 			Percent:     num.NewPercentage(100, 2),
 			Key:         pay.MeansKeyCard,
@@ -83,7 +83,7 @@ func TestAdvanceValidate(t *testing.T) {
 		assert.NoError(t, rules.Validate(a))
 	})
 	t.Run("invalid means key", func(t *testing.T) {
-		a := &pay.Advance{
+		a := &pay.Record{
 			Description: "Test advance",
 			Percent:     num.NewPercentage(100, 2),
 			Key:         "invalid",
@@ -92,14 +92,14 @@ func TestAdvanceValidate(t *testing.T) {
 	})
 }
 
-func TestAdvanceJSONSchemaExtend(t *testing.T) {
+func TestRecordJSONSchemaExtend(t *testing.T) {
 	schema := &jsonschema.Schema{
 		Properties: jsonschema.NewProperties(),
 	}
 	schema.Properties.Set("key", &jsonschema.Schema{
 		Type: "string",
 	})
-	a := &pay.Advance{}
+	a := &pay.Record{}
 	a.JSONSchemaExtend(schema)
 	prop, ok := schema.Properties.Get("key")
 	require.True(t, ok)

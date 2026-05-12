@@ -12,6 +12,7 @@ const (
 	ExtKeyExempt     cbc.Key = "es-tbai-exemption"
 	ExtKeyProduct    cbc.Key = "es-tbai-product"
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
+	ExtKeyBIActivity cbc.Key = "es-tbai-bi-activity"
 )
 
 // Extension values for product key.
@@ -19,6 +20,13 @@ const (
 	ExtValueProductGoods    cbc.Code = "goods"
 	ExtValueProductServices cbc.Code = "services"
 	ExtValueProductResale   cbc.Code = "resale"
+)
+
+// Extension values for region key.
+const (
+	ExtValueRegionVI cbc.Code = "VI" // Araba
+	ExtValueRegionBI cbc.Code = "BI" // Bizkaia
+	ExtValueRegionSS cbc.Code = "SS" // Gipuzkoa
 )
 
 var extensions = []*cbc.Definition{
@@ -37,21 +45,21 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "VI",
+				Code: ExtValueRegionVI,
 				Name: i18n.String{
 					i18n.EN: "Araba",
 					i18n.ES: "Álava",
 				},
 			},
 			{
-				Code: "BI",
+				Code: ExtValueRegionBI,
 				Name: i18n.String{
 					i18n.EN: "Bizkaia",
 					i18n.ES: "Vizcaya",
 				},
 			},
 			{
-				Code: "SS",
+				Code: ExtValueRegionSS,
 				Name: i18n.String{
 					i18n.EN: "Gipuzkoa",
 					i18n.ES: "Guipúzcoa",
@@ -273,5 +281,38 @@ var extensions = []*cbc.Definition{
 				},
 			},
 		},
+	},
+	{
+		Key: ExtKeyBIActivity,
+		Name: i18n.String{
+			i18n.EN: "Activity Code (Bizkaia)",
+			i18n.ES: "Código de Actividad (Bizkaia)",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Economic activity code (epígrafe) for individual issuers submitting through
+				Bizkaia's LROE Modelo 140 register. Not required for organisations, who
+				file through Modelo 240.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Batuz LROE list of activity codes",
+					i18n.ES: "Lista de epígrafes LROE Batuz",
+				},
+				URL:         "https://www.batuz.eus/fitxategiak/batuz/lroe/batuz_lroe_lista_epigrafes_v1_0_4.xlsx",
+				ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "LROE Modelo 140 specification",
+					i18n.ES: "Especificación LROE Modelo 140",
+				},
+				URL:         "https://www.batuz.eus/fitxategiak/batuz/lroe/lroe_140_v_1_0.pdf",
+				ContentType: "application/pdf",
+			},
+		},
+		Pattern: `^\d{1,7}$`,
 	},
 }
