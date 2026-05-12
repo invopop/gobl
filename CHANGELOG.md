@@ -12,9 +12,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `tax`: Added `CorrectionNormalize` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
+- `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
 - `es-tbai-v1`: added `es-tbai-bi-activity` extension for the Bizkaia activity code (epígrafe) required for individual suppliers.
+
+### Fixed
+
+- `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
+- `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+- `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 
 ## [v0.402.0] - 2026-04-30
 
@@ -30,8 +38,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `tax`: Added `CorrectionNormalize` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
-- `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
 - `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
 - `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.
@@ -40,9 +46,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
-- `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
-- `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `rules`: Anonymous embedded struct fields are now also checked from the parent.
 
 ## [v0.401.0] - 2026-04-17
