@@ -16,6 +16,9 @@ import (
 const (
 	// V1 is the key for the ZATCA e-invoicing addon version 1.
 	V1 cbc.Key = "sa-zatca-v1"
+
+	// StampQR is the base64-encoded TLV QR code carried by every ZATCA invoice.
+	StampQR cbc.Key = "zatca-qr"
 )
 
 func init() {

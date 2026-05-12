@@ -361,7 +361,7 @@
           "guard": "is non-exempt",
           "subsets": [
             {
-              "guard": "regime is not saudi arabia",
+              "guard": "addon is not ZATCA",
               "subsets": [
                 {
                   "field": "ext",
