@@ -8,43 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `addons/fr/ctc`: **breaking**: the French CTC addon has been **removed from core** and is now published as a standalone, opt-in module, [`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc), carrying the full Flow 2 / Flow 6 / Flow 10 extensions, normalizers, and validation rules. Projects that handle French CTC documents must add a blank import of the addon (`_ "github.com/invopop/gobl.fr.ctc/addon"`); the `$addons` keys (`fr-ctc-v1`, `fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`) still require the addon to be loaded at `Validate`/`Calculate` time, so a document declaring one without the module imported fails with `add-on must be registered`.
-
-### Added
-
-- `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
-- `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
-- `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
-- `rules`: `is.OneOf` and `is.AnyOf` testers (the latter renamed from `is.Or`), plus `rules.Ignore` / by-code fault dropping in the rules engine.
-- `tax`: `Addons.AddAddons` helper for meta-addon normalizers that attach further addons based on document content; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
-- `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
-
-## [v0.403.0] - 2026-05-13
-
-### Changed
-
-- `pay`: **breaking**: `pay.Advance` renamed to `pay.Record` — a Record is a single payment event (means + amount + currency + optional date/percent/extensions) and is the shape used both for advances on invoices and for payment methods on payment documents. The previous names (`pay.Advance` and the transitional `pay.Method`) are **removed** with no aliases; consumers must update to `pay.Record`. The schema URL is now `https://gobl.org/draft-0/pay/record` (the previous `pay/advance` schema is gone). The `description` field is no longer required by validation (it was a poor fit for payment-document methods); contexts that need it should enforce it themselves. The `pay.Record.Grant` boolean field has been **removed** — FacturaE consumers should set the new `es-facturae-subsidy` extension (`"S"`) on the record's `ext` map instead.
-- `bill`: **breaking**: `bill.Payment.Method` (`*pay.Instructions`) replaced by `bill.Payment.Methods` (`[]*pay.Record`) so a single payment document can record multiple methods with their own amounts and currencies (required for Portugal's SAF-T, among others). Documents that use the old singular `method` JSON field are migrated transparently via `UnmarshalJSON` into a single-element `methods` array. When exactly one method is present and its `amount` is zero, `Calculate()` auto-fills it from the document `Total`. Validation now also enforces that the sum of method amounts (converted to the document currency via `ExchangeRates` where needed) equals the document `Total` — partial payments must have method amounts that line up with the line totals being paid.
 - `tax`: **breaking**: removed the `tax.ExtMap` type alias introduced in v0.402.0. `tax.Extensions` now wraps `cbc.CodeMap` directly, and `tax.ExtensionsOf` accepts a `cbc.CodeMap`. Callers should replace `tax.ExtMap{...}` with `cbc.CodeMap{...}`.
+- `addons/eu/en16931`: BR-S-10 / BR-Z-10 VATEX exclusion is now skipped when the `sa-zatca-v1` addon is active, since ZATCA requires VATEX codes on standard and zero-rated tax combos.
 
 ### Added
 
-- `tax`: Added `CorrectionNormalize` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
-- `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
-- `es-tbai-v1`: added `es-tbai-bi-activity` extension for the Bizkaia activity code (epígrafe) required for individual suppliers.
-- `pt-saft-v1`: added rule to check that advance payment amounts on invoices are no less than 0 as required by the SAF-T spec.
-- `regimes/es`: added `IRNR` (Impuesto sobre la Renta de no Residentes) tax category for non-resident income tax withholdings. Rates depend on the type of income and recipient, so they are supplied per invoice rather than predefined.
-- `pay`: `pay.Record` gains `DirectDebit` and `Online` fields so it can fully describe any payment means recorded on a payment document. Its `Normalize` method now accepts `tax.Normalizers` and threads them through to the means-specific nested structs (`Card`, `CreditTransfer`, `DirectDebit`, `Online`) so addons can extend or transform those directly.
-- `addons/es/facturae`: new `es-facturae-subsidy` extension (values `S`/`N`, matching the Spanish convention used by `es/sii` and `es/verifactu`) for flagging advance payments that come from a public grant or subsidy. Replaces the removed `pay.Record.Grant` boolean.
-- `ar-arca-v4`: Type T tourism invoice support (WSCT) with new extension keys `ar-arca-tourism-type` and `ar-arca-tourism-item`.
-
-### Fixed
-
-- `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
-- `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
-- `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+- `sa`: Added Saudi Arabia tax regime, including tax categories, tax identity validation, and organization identity types.
+- `sa-zatca-v1`: Added ZATCA addon for Saudi Arabia Phase 2 e-invoicing, covering standard and simplified invoices, credit and debit notes, party and line-level validation rules, tax-combo rules with VATEX support, invoice scenarios, and the `zatca-qr` stamp key for the base64-encoded TLV QR carried by every ZATCA invoice.
 
 ## [v0.402.0] - 2026-04-30
 
