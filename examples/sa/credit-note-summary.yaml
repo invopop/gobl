@@ -10,14 +10,12 @@ type: "credit-note"
 $tags:
   - summary
 
-tax: 
-  ext: 
-    sa-zatca-invoice-type: "0100010"
 preceding:
   - series: "INV"
     code: "SAMPLE-001"
     issue_date: "2024-01-31"
     reason: "Partial return of services after monthly close — discount applied per agreement BR-2024-AC-12"
+    type: standard
     type: standard
 
 notes:
