@@ -35,7 +35,6 @@ const (
 )
 
 var (
-	// CustomerValidIdentities groups customer accepted identities by ZATCA
 	customerValidIdentities = []cbc.Code{
 		IdentityTypeTIN,
 		IdentityTypeCRN,

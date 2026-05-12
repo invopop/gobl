@@ -85,4 +85,20 @@ func TestTaxIdentityNormalization(t *testing.T) {
 		rd.NormalizeObject(tID)
 		assert.Equal(t, cbc.Code("312345678912343"), tID.Code)
 	})
+
+	t.Run("empty code is left untouched", func(t *testing.T) {
+		tID := &tax.Identity{Country: "SA", Code: ""}
+		rd := tax.RegimeDefFor("SA")
+		assert.NotNil(t, rd)
+		rd.NormalizeObject(tID)
+		assert.Equal(t, cbc.Code(""), tID.Code)
+	})
+
+	t.Run("strips whitespace and country prefix", func(t *testing.T) {
+		tID := &tax.Identity{Country: "SA", Code: " SA 3123-4567 8912343 "}
+		rd := tax.RegimeDefFor("SA")
+		assert.NotNil(t, rd)
+		rd.NormalizeObject(tID)
+		assert.Equal(t, cbc.Code("312345678912343"), tID.Code)
+	})
 }
