@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `es`: added `IRNR` (Impuesto sobre la Renta de no Residentes) retained tax category for income obtained without permanent establishment in Spain. Specific tax rates are not included.
 - `tax`: Added `CorrectionNormalize` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
 - `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
