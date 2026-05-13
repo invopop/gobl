@@ -5,7 +5,7 @@
     "en": "Kingdom of Saudi Arabia"
   },
   "description": {
-    "en": "Saudi Arabia's tax system is administered by the Zakat, Tax and\nCustoms Authority (ZATCA). VAT was introduced on January 1, 2018,\nat 5% and increased to 15% on July 1, 2020.\n\nBusinesses must register for VAT if annual taxable supplies exceed\nSAR 375,000, with voluntary registration available above SAR 187,500.\nRegistered businesses receive a VAT Identification Number which must\nappear on all tax invoices.\n\nSimplified tax invoices may be used for B2C transactions. Both credit\nnotes and debit notes are supported for invoice corrections."
+    "en": "Saudi Arabia's tax system is administered by the Zakat, Tax and\nCustoms Authority (ZATCA).\n\nBusinesses must register for VAT if annual taxable supplies exceed\nSAR 375,000, with voluntary registration available above SAR 187,500.\nRegistered businesses receive a VAT Identification Number which must\nappear on all tax invoices.\n\nSimplified tax invoices may be used for B2C transactions. Both credit\nnotes and debit notes are supported for invoice corrections."
   },
   "sources": [
     {

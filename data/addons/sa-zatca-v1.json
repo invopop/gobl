@@ -258,6 +258,34 @@
       "pattern": "^0[12][01]{5}$"
     }
   ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "summary",
+          "name": {
+            "ar": "ملخص",
+            "en": "Summary"
+          }
+        },
+        {
+          "key": "third-party",
+          "name": {
+            "ar": "طرف ثالث",
+            "en": "Third-party"
+          }
+        },
+        {
+          "key": "nominal",
+          "name": {
+            "ar": "اسمية",
+            "en": "Nominal"
+          }
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
@@ -267,7 +295,69 @@
             "standard"
           ],
           "ext": {
+            "sa-zatca-invoice-type": "0100000",
             "untdid-document-type": "388"
+          }
+        },
+        {
+          "type": [
+            "credit-note",
+            "debit-note"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0100000"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0200000"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "export"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0100100"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "summary"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0100010"
+          }
+        },
+        {
+          "tags": [
+            "summary",
+            "simplified"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0200010"
+          }
+        },
+        {
+          "tags": [
+            "simplified",
+            "summary"
+          ],
+          "ext": {
+            "sa-zatca-invoice-type": "0200010"
           }
         }
       ]
