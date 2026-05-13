@@ -7,6 +7,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// ZATCA custom tags to be used to
+// determine invoice transaction type
 const (
 	TagSummary    cbc.Key = "summary"
 	TagThirdParty cbc.Key = "third-party"

@@ -14,7 +14,7 @@
               "assert": [
                 {
                   "id": "GOBL-SA-ORG-IDENTITY-01",
-                  "desc": "identity code must be valid",
+                  "desc": "SA identity code must be valid",
                   "tests": "matches ^[a-zA-Z0-9]*$"
                 }
               ]
