@@ -26,6 +26,7 @@ func init() {
 // Local tax category definitions which are not considered standard.
 const (
 	TaxCategoryIRPF cbc.Code = "IRPF"
+	TaxCategoryIRNR cbc.Code = "IRNR"
 	TaxCategoryIGIC cbc.Code = "IGIC"
 	TaxCategoryIPSI cbc.Code = "IPSI"
 )
