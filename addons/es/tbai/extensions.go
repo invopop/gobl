@@ -13,6 +13,7 @@ const (
 	ExtKeyProduct    cbc.Key = "es-tbai-product"
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 	ExtKeyBIActivity cbc.Key = "es-tbai-bi-activity"
+	ExtKeyRegime     cbc.Key = "es-tbai-regime"
 )
 
 // Extension values for product key.
@@ -278,6 +279,165 @@ var extensions = []*cbc.Definition{
 					i18n.ES: "Factura rectificativa: facturas simplificadas",
 					i18n.EN: "Rectified invoice: simplified invoices",
 					i18n.EU: "Faktura zuzentzaile: faktura erraztuetan",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyRegime,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI VAT Regime Key",
+			i18n.ES: "Clave de Régimen de IVA TicketBAI",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Identifies the VAT regime or operation classification applied to the
+				transaction. Maps to the ~ClaveRegimenIvaOpTrascendencia~ field, with
+				values taken from the TicketBAI XSD.
+
+				The regime code is normally assigned per tax combo. If no regime code
+				is provided, GOBL will try to assign a code from the following contexts:
+
+				| Combo Context              | Regime Code |
+				|----------------------------|-------------|
+				| Key ~export~               | ~02~        |
+				| Has surcharge              | ~51~        |
+				| Invoice tag ~simplified-scheme~ | ~52~   |
+				| Otherwise                  | ~01~        |
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "General regime operation",
+					i18n.ES: "Operación de régimen general",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "Export",
+					i18n.ES: "Exportación",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Special regime for used goods, art objects, antiques and collectibles",
+					i18n.ES: "Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Special regime for investment gold",
+					i18n.ES: "Régimen especial del oro de inversión",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Special regime for travel agencies",
+					i18n.ES: "Régimen especial de las agencias de viajes",
+				},
+			},
+			{
+				Code: "06",
+				Name: i18n.String{
+					i18n.EN: "Special regime for VAT groups (Advanced Level)",
+					i18n.ES: "Régimen especial grupo de entidades en IVA (Nivel Avanzado)",
+				},
+			},
+			{
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "Special cash accounting regime",
+					i18n.ES: "Régimen especial del criterio de caja",
+				},
+			},
+			{
+				Code: "08",
+				Name: i18n.String{
+					i18n.EN: "Operations subject to IPSI/IGIC",
+					i18n.ES: "Operaciones sujetas al IPSI/IGIC",
+				},
+			},
+			{
+				Code: "09",
+				Name: i18n.String{
+					i18n.EN: "Billing of travel agency services acting as mediators in name and on behalf of others",
+					i18n.ES: "Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras en nombre y por cuenta ajena",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Collection of professional fees or industrial property rights on behalf of third parties",
+					i18n.ES: "Cobros por cuenta de terceros de honorarios profesionales o de derechos derivados de la propiedad industrial",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations subject to withholding",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio sujetos a retención",
+				},
+			},
+			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations not subject to withholding",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio no sujetos a retención",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations, both subject and not subject to withholding",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio sujetas y no sujetas a retención",
+				},
+			},
+			{
+				Code: "14",
+				Name: i18n.String{
+					i18n.EN: "Invoice with pending VAT accrual in work certifications for Public Administration",
+					i18n.ES: "Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública",
+				},
+			},
+			{
+				Code: "15",
+				Name: i18n.String{
+					i18n.EN: "Invoice with pending VAT accrual in successive tract operations",
+					i18n.ES: "Factura con IVA pendiente de devengo en operaciones de tracto sucesivo",
+				},
+			},
+			{
+				Code: "17",
+				Name: i18n.String{
+					i18n.EN: "Operation under OSS or IOSS regimes",
+					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el Capítulo XI del Título IX (OSS e IOSS)",
+				},
+			},
+			{
+				Code: "51",
+				Name: i18n.String{
+					i18n.EN: "Operations under the equivalence surcharge regime",
+					i18n.ES: "Operaciones en recargo de equivalencia",
+				},
+			},
+			{
+				Code: "52",
+				Name: i18n.String{
+					i18n.EN: "Operations under the simplified VAT regime",
+					i18n.ES: "Operaciones en régimen simplificado",
+				},
+			},
+			{
+				Code: "53",
+				Name: i18n.String{
+					i18n.EN: "Operations carried out by or for entities without a permanent establishment",
+					i18n.ES: "Operaciones realizadas por o para entidades sin establecimiento permanente",
 				},
 			},
 		},

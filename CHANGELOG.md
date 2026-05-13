@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-tbai-v1`: added `es-tbai-regime` extension for `ClaveRegimenIvaOpTrascendencia`, with per-combo normalization defaults (export → 02, surcharge → 51, simplified-scheme tag → 52, otherwise 01).
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed

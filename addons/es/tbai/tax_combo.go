@@ -22,6 +22,21 @@ func normalizeTaxCombo(tc *tax.Combo) {
 
 		prepareTaxComboKey(tc)
 
+		// Try to determine the regime code from per-combo signals if not
+		// already set. The default "01" fallback and the invoice-wide
+		// simplified-scheme override are handled at the invoice level so
+		// that all signals can cascade in the correct order.
+		if tc.Key == tax.KeyExport {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "02")
+		}
+		// Surcharge can be detected either by an explicitly-populated
+		// Surcharge field (e.g. in unit tests) or by the equivalence
+		// suffix on the rate key, since combo.calculate() runs after
+		// normalization in the invoice flow.
+		if tc.Surcharge != nil || tc.Rate.Has(es.TaxRateEquivalence) {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "51")
+		}
+
 		// Deterministically set the exemption code.
 		switch tc.Key {
 		case tax.KeyStandard, tax.KeyZero: // Default

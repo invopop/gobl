@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
@@ -93,6 +94,64 @@ func TestInvoiceNormalization(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, tbai.ExtValueRegionBI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+	})
+
+	t.Run("regime defaults to 01", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("01"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+	})
+
+	t.Run("regime 51 with equivalence surcharge", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral.With(es.TaxRateEquivalence),
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("51"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+	})
+
+	t.Run("regime 52 with simplified-scheme tag", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(es.TagSimplifiedScheme)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("52"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+	})
+
+	t.Run("regime 02 with export key", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExport,
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("02"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+	})
+
+	t.Run("regime explicit override is preserved", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(es.TagSimplifiedScheme)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				tbai.ExtKeyRegime: "07",
+			}),
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("07"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
 	})
 }
 

@@ -178,6 +178,49 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt).String())
 		assert.Equal(t, tax.KeyStandard, tc.Key)
 	})
+
+	t.Run("regime - export sets 02", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExport,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, cbc.Code("02"), tc.Ext.Get(ExtKeyRegime))
+	})
+
+	t.Run("regime - surcharge sets 51", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category:  tax.CategoryVAT,
+			Rate:      tax.RateGeneral.With(es.TaxRateEquivalence),
+			Percent:   num.NewPercentage(210, 3),
+			Surcharge: num.NewPercentage(52, 3),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, cbc.Code("51"), tc.Ext.Get(ExtKeyRegime))
+	})
+
+	t.Run("regime - default 01 set at invoice level, not combo", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+		}
+		normalizeTaxCombo(tc)
+		// The combo normalizer only sets the regime for per-combo signals
+		// (export, surcharge). The fallback 01 is handled at invoice level.
+		assert.Empty(t, tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	t.Run("regime - explicit user value is preserved", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExport,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyRegime: "05",
+			}),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, cbc.Code("05"), tc.Ext.Get(ExtKeyRegime))
+	})
 }
 
 func TestValidateTaxCombo(t *testing.T) {

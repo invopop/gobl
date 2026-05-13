@@ -28,6 +28,32 @@ func normalizeInvoice(inv *bill.Invoice) {
 		return
 	}
 	normalizeInvoiceTax(inv)
+	normalizeInvoiceRegime(inv)
+}
+
+// normalizeInvoiceRegime applies the invoice-wide regime defaults across the
+// VAT/IGIC tax combos in the invoice's lines after the per-combo normalization
+// has already set codes for export and surcharge cases. Explicit values are
+// always preserved.
+func normalizeInvoiceRegime(inv *bill.Invoice) {
+	simplified := inv.HasTags(es.TagSimplifiedScheme)
+	for _, line := range inv.Lines {
+		if line == nil {
+			continue
+		}
+		for _, tc := range line.Taxes {
+			if tc == nil {
+				continue
+			}
+			if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
+				continue
+			}
+			if simplified {
+				tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "52")
+			}
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
+		}
+	}
 }
 
 func normalizeInvoiceTax(inv *bill.Invoice) {
