@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
 - `es-tbai-v1`: added `es-tbai-bi-activity` extension for the Bizkaia activity code (epígrafe) required for individual suppliers.
 - `pt-saft-v1`: added rule to check that advance payment amounts on invoices are no less than 0 as required by the SAF-T spec.
+- `regimes/es`: added `IRNR` (Impuesto sobre la Renta de no Residentes) tax category for non-resident income tax withholdings. Rates depend on the type of income and recipient, so they are supplied per invoice rather than predefined.
 
 ### Fixed
 
