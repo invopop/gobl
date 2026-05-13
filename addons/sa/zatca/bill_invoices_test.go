@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/cef"
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -118,25 +119,23 @@ func validSimplifiedInvoice() *bill.Invoice {
 }
 
 // validSummaryInvoice returns a standard summary tax invoice — KSA-2 with
-// the summary bit set (position 6 = 1). Note: there is no ZATCA scenario
-// for Standard + Summary; this fixture sets KSA-2 manually for the sanity
-// fixture test but it will be reset to "0100000" by the Standard scenario
-// during Calculate(). Kept here for backwards-compatibility with the
-// TestValidFixtures sanity check.
+// the summary bit set (position 6 = 1). zatca.TagSummary drives the ZATCA
+// "Standard + Summary" scenario which populates KSA-2 = "0100010" during
+// Calculate(); no hard-coding needed.
 func validSummaryInvoice() *bill.Invoice {
 	inv := validStandardInvoice()
-	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100010")
+	inv.SetTags(zatca.TagSummary)
 	return inv
 }
 
 // validCreditNote returns a credit note that references a preceding invoice
-// with reason — both required by ZATCA. The UNTDID document type is set by
-// the EN 16931 scenario from inv.Type during Calculate(). KSA-2 is hard-coded
-// because no ZATCA scenario targets credit-note / debit-note types.
+// with reason — both required by ZATCA. The UNTDID document type and KSA-2
+// are both populated by scenarios during Calculate(): EN 16931 sets UNTDID
+// from inv.Type, and the ZATCA credit/debit-note scenario sets KSA-2 to
+// "0100000".
 func validCreditNote() *bill.Invoice {
 	inv := validStandardInvoice()
 	inv.Type = bill.InvoiceTypeCreditNote
-	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "0100000")
 	inv.Preceding = []*org.DocumentRef{
 		{
 			Code:      "INV-001",
@@ -147,9 +146,9 @@ func validCreditNote() *bill.Invoice {
 	return inv
 }
 
-// validDebitNote returns a debit note. UNTDID document type is set by the
-// EN 16931 scenario from inv.Type during Calculate(); KSA-2 is inherited
-// from validCreditNote (hard-coded "0100000") for the same reason.
+// validDebitNote returns a debit note. UNTDID document type and KSA-2 are
+// both populated by scenarios during Calculate() (same path as
+// validCreditNote — the ZATCA credit/debit scenario covers both types).
 func validDebitNote() *bill.Invoice {
 	inv := validCreditNote()
 	inv.Type = bill.InvoiceTypeDebitNote
@@ -246,8 +245,12 @@ func TestTaxBlockExtensions(t *testing.T) {
 	})
 
 	t.Run("invalid invoice transaction type rejected", func(t *testing.T) {
-		inv := calculated(t, validStandardInvoice())
-		inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, "9999999")
+		inv := validStandardInvoice()
+		inv.Type = bill.InvoiceTypeOther
+		inv.Tax.Ext = inv.Tax.Ext.
+			Set(untdid.ExtKeyDocumentType, "388").
+			Set(zatca.ExtKeyInvoiceTypeTransactions, "9999999")
+		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv),
 			"invoice transaction type must be valid")
 	})
@@ -695,9 +698,13 @@ func TestNilGuards(t *testing.T) {
 //
 // Codes registered as scenarios in scenarios.go are exercised via $tags so
 // that the scenario engine populates KSA-2 during Calculate(). Codes NOT
-// registered as scenarios are written to inv.Tax.Ext AFTER Calculate(), so
-// the default Standard scenario (Types=[Standard], no tags) doesn't
-// overwrite them back to "0100000".
+// registered as scenarios use bill.InvoiceTypeOther, which by contract
+// bypasses every regime/addon scenario (see bill/invoice_type.go: "implies
+// that any scenarios defined in tax regimes or addons will not be
+// applied"). Because no scenario fires, both UNTDID and KSA-2 must be set
+// manually on inv.Tax.Ext. Validation still routes the right rule cascade
+// because invoiceIsStandard / invoiceIsExport / invoiceIsSimplifiedAndSummary
+// inspect the KSA-2 prefix and bits, not inv.Type.
 //
 // Each KSA-2 code is its own subtest — no for-loops — so a failure points
 // at the exact code that broke.
@@ -736,18 +743,23 @@ func assertSACodeViaScenario(t *testing.T, expected cbc.Code, tags ...cbc.Key) {
 	assert.Equal(t, expected, inv.Tax.Ext.Get(zatca.ExtKeyInvoiceTypeTransactions))
 }
 
-// assertSACodeHardCoded builds a Standard-type invoice, runs Calculate (the
-// default Standard scenario populates KSA-2 = "0100000"), then overrides
-// KSA-2 to the target code and validates. Used for codes in
-// validTransactionTypes that scenarios.go does not cover.
+// assertSACodeHardCoded builds an "other"-typed invoice — which bypasses
+// every regime/addon scenario per bill.InvoiceTypeOther's contract — then
+// hardcodes UNTDID = 388 and the target KSA-2 code on inv.Tax.Ext, runs
+// Calculate (no scenario overwrites the preset values), and validates.
+// Used for the codes in validTransactionTypes that scenarios.go does not
+// cover.
 func assertSACodeHardCoded(t *testing.T, code cbc.Code) {
 	t.Helper()
 	inv := validStandardInvoice()
+	inv.Type = bill.InvoiceTypeOther
 	if hasExportBit(code) {
 		clearCustomerVAT(inv)
 	}
+	inv.Tax.Ext = inv.Tax.Ext.
+		Set(untdid.ExtKeyDocumentType, "388").
+		Set(zatca.ExtKeyInvoiceTypeTransactions, code)
 	require.NoError(t, inv.Calculate())
-	inv.Tax.Ext = inv.Tax.Ext.Set(zatca.ExtKeyInvoiceTypeTransactions, code)
 	require.NoError(t, rules.Validate(inv))
 }
 
