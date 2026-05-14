@@ -22,7 +22,7 @@ const (
 	ExtCodeIdentityTypeVAT      cbc.Code = "02" // NIF-VAT identity (VIES)
 	ExtCodeIdentityTypePassport cbc.Code = "03" // Passport
 	ExtCodeIdentityTypeForeign  cbc.Code = "04" // Foreign Identity Document
-	ExtCodeIdentityTypeResident cbc.Code = "05" // Spanish Resident Foreigner Identity Card
+	ExtCodeIdentityTypeResident cbc.Code = "05" // Residential Certificate
 	ExtCodeIdentityTypeOther    cbc.Code = "06" // Other Identity Document
 )
 

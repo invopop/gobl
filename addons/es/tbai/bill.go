@@ -32,6 +32,48 @@ func normalizeInvoice(inv *bill.Invoice) {
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
+// normalizeInvoiceRegime applies the invoice-wide regime defaults across every
+// VAT/IGIC tax combo on the invoice — lines, charges and discounts — after
+// the per-combo normalizer has already set codes for export and surcharge
+// cases. The simplified-scheme tag overrides the default, and explicit values
+// are always preserved.
+func normalizeInvoiceRegime(inv *bill.Invoice) {
+	simplified := inv.HasTags(es.TagSimplifiedScheme)
+	apply := func(tc *tax.Combo) {
+		if tc == nil || !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
+			return
+		}
+		if simplified {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "52")
+		}
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
+	}
+	for _, line := range inv.Lines {
+		if line == nil {
+			continue
+		}
+		for _, tc := range line.Taxes {
+			apply(tc)
+		}
+	}
+	for _, ch := range inv.Charges {
+		if ch == nil {
+			continue
+		}
+		for _, tc := range ch.Taxes {
+			apply(tc)
+		}
+	}
+	for _, d := range inv.Discounts {
+		if d == nil {
+			continue
+		}
+		for _, tc := range d.Taxes {
+			apply(tc)
+		}
+	}
+}
+
 // normalizeInvoicePartyIdentity sets the identity-type extension on the first
 // non-Spanish-NIF identity of the customer based on its key, so that
 // ~gobl.ticketbai~ can read the L7 IDType code directly from the extension.
@@ -62,31 +104,6 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		id.Ext = id.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyIdentityType: code,
 		}))
-	}
-}
-
-// normalizeInvoiceRegime applies the invoice-wide regime defaults across the
-// VAT/IGIC tax combos in the invoice's lines after the per-combo normalization
-// has already set codes for export and surcharge cases. Explicit values are
-// always preserved.
-func normalizeInvoiceRegime(inv *bill.Invoice) {
-	simplified := inv.HasTags(es.TagSimplifiedScheme)
-	for _, line := range inv.Lines {
-		if line == nil {
-			continue
-		}
-		for _, tc := range line.Taxes {
-			if tc == nil {
-				continue
-			}
-			if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-				continue
-			}
-			if simplified {
-				tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "52")
-			}
-			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
-		}
 	}
 }
 

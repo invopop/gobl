@@ -22,10 +22,15 @@ func normalizeTaxCombo(tc *tax.Combo) {
 
 		prepareTaxComboKey(tc)
 
-		// Try to determine the regime code from per-combo signals if not
-		// already set. The default "01" fallback and the invoice-wide
-		// simplified-scheme override are handled at the invoice level so
-		// that all signals can cascade in the correct order.
+		// Per-combo regime signals only. The simplified-scheme tag → 52
+		// override and the "01" default depend on invoice-wide state
+		// (~bill.Invoice.Tax.Tags~) that ~normalizeTaxCombo~ does not
+		// receive — it's called by ~tax.Normalize~ per combo, with no
+		// pointer back to the parent invoice — so those are applied in
+		// ~normalizeInvoiceRegime~ at the invoice level, walking every
+		// combo on lines, charges, and discounts. Per-combo signals
+		// (export key, surcharge) stay here because they're fully
+		// determined by the combo itself.
 		if tc.Key == tax.KeyExport {
 			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "02")
 		}

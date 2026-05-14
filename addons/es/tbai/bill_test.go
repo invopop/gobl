@@ -1,9 +1,8 @@
-package tbai_test
+package tbai
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
@@ -18,7 +17,7 @@ import (
 
 func TestInvoiceNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		ad := tax.AddonForKey(tbai.V1)
+		ad := tax.AddonForKey(V1)
 		var inv *bill.Invoice
 		assert.NotPanics(t, func() {
 			ad.Normalizer(inv)
@@ -39,7 +38,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Vizcaya",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtValueRegionBI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+		assert.Equal(t, ExtValueRegionBI, inv.Tax.Ext.Get(ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Gipuzkoa", func(t *testing.T) {
@@ -49,7 +48,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Gipuzkoa",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtValueRegionSS, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+		assert.Equal(t, ExtValueRegionSS, inv.Tax.Ext.Get(ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Álava (accent)", func(t *testing.T) {
@@ -59,7 +58,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Álava",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtValueRegionVI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+		assert.Equal(t, ExtValueRegionVI, inv.Tax.Ext.Get(ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
@@ -69,7 +68,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Araba",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtValueRegionVI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+		assert.Equal(t, ExtValueRegionVI, inv.Tax.Ext.Get(ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
@@ -89,11 +88,11 @@ func TestInvoiceNormalization(t *testing.T) {
 		})
 		inv.Tax = &bill.Tax{
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				tbai.ExtKeyRegion: tbai.ExtValueRegionBI, // not Alaba
+				ExtKeyRegion: ExtValueRegionBI, // not Alaba
 			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtValueRegionBI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
+		assert.Equal(t, ExtValueRegionBI, inv.Tax.Ext.Get(ExtKeyRegion))
 	})
 
 	t.Run("regime defaults to 01", func(t *testing.T) {
@@ -104,7 +103,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("01"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+		assert.Equal(t, cbc.Code("01"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("regime 51 with equivalence surcharge", func(t *testing.T) {
@@ -114,7 +113,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Rate:     tax.RateGeneral.With(es.TaxRateEquivalence),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("51"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+		assert.Equal(t, cbc.Code("51"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("regime 52 with simplified-scheme tag", func(t *testing.T) {
@@ -126,7 +125,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("52"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+		assert.Equal(t, cbc.Code("52"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("regime 02 with export key", func(t *testing.T) {
@@ -136,7 +135,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Key:      tax.KeyExport,
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("02"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+		assert.Equal(t, cbc.Code("02"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("regime explicit override is preserved", func(t *testing.T) {
@@ -147,11 +146,32 @@ func TestInvoiceNormalization(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Rate:     tax.RateGeneral,
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				tbai.ExtKeyRegime: "07",
+				ExtKeyRegime: "07",
 			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("07"), inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyRegime))
+		assert.Equal(t, cbc.Code("07"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
+	})
+
+	t.Run("regime applied to invoice-level charges and discounts", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{{
+			Reason: "handling",
+			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{Category: tax.CategoryVAT, Rate: tax.RateGeneral},
+			},
+		}}
+		inv.Discounts = []*bill.Discount{{
+			Reason: "loyalty",
+			Amount: num.MakeAmount(50, 2),
+			Taxes: tax.Set{
+				{Category: tax.CategoryVAT, Rate: tax.RateGeneral},
+			},
+		}}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("01"), inv.Charges[0].Taxes[0].Ext.Get(ExtKeyRegime))
+		assert.Equal(t, cbc.Code("01"), inv.Discounts[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 }
 
@@ -197,7 +217,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 	})
 
 	t.Run("foreign identity normalization", func(t *testing.T) {
@@ -210,7 +230,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 	})
 
 	t.Run("resident identity normalization", func(t *testing.T) {
@@ -223,7 +243,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 	})
 
 	t.Run("other identity normalization", func(t *testing.T) {
@@ -236,7 +256,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 	})
 
 	t.Run("unknown identity key not normalized", func(t *testing.T) {
@@ -259,12 +279,12 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			{
 				Code: "AA123456",
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
-					tbai.ExtKeyIdentityType: tbai.ExtCodeIdentityTypeOther,
+					ExtKeyIdentityType: ExtCodeIdentityTypeOther,
 				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 	})
 
 	t.Run("multiple identities only normalizes first", func(t *testing.T) {
@@ -281,7 +301,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, tbai.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.Equal(t, ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(ExtKeyIdentityType))
 		assert.True(t, inv.Customer.Identities[1].Ext.IsZero())
 	})
 }
@@ -295,7 +315,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("with services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(tbai.ExtKeyProduct, "services")
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(ExtKeyProduct, "services")
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})
@@ -328,7 +348,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Country: "CH",
 				Code:    "CH-OTHER-9001",
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
-					tbai.ExtKeyIdentityType: tbai.ExtCodeIdentityTypeOther,
+					ExtKeyIdentityType: ExtCodeIdentityTypeOther,
 				}),
 			},
 		}
@@ -403,7 +423,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Correct(
 			bill.Credit,
-			bill.WithExtension(tbai.ExtKeyCorrection, "R4"),
+			bill.WithExtension(ExtKeyCorrection, "R4"),
 		))
 		assert.Len(t, inv.Preceding, 1)
 		assert.NoError(t, rules.Validate(inv))
@@ -422,7 +442,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
 		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			tbai.ExtKeyBIActivity: "722300",
+			ExtKeyBIActivity: "722300",
 		})
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
@@ -437,7 +457,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("VI individual without activity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Tax.Ext = inv.Tax.Ext.Set(tbai.ExtKeyRegion, tbai.ExtValueRegionVI)
+		inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyRegion, ExtValueRegionVI)
 		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
@@ -445,7 +465,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("SS individual without activity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Tax.Ext = inv.Tax.Ext.Set(tbai.ExtKeyRegion, tbai.ExtValueRegionSS)
+		inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyRegion, ExtValueRegionSS)
 		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
@@ -455,7 +475,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
 		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			tbai.ExtKeyBIActivity: "abc",
+			ExtKeyBIActivity: "abc",
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -466,7 +486,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
 		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			tbai.ExtKeyBIActivity: "12345678",
+			ExtKeyBIActivity: "12345678",
 		})
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -484,7 +504,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 func TestBillLineNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		ad := tax.AddonForKey(tbai.V1)
+		ad := tax.AddonForKey(V1)
 		var line *bill.Line
 		assert.NotPanics(t, func() {
 			ad.Normalizer(line)
@@ -493,20 +513,20 @@ func TestBillLineNormalization(t *testing.T) {
 	t.Run("with standard invoice, set default", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "services", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
+		assert.Equal(t, "services", inv.Lines[0].Taxes[0].Ext.Get(ExtKeyProduct).String())
 	})
 	t.Run("with standard invoice, set override for goods", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyGoods
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "goods", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
+		assert.Equal(t, "goods", inv.Lines[0].Taxes[0].Ext.Get(ExtKeyProduct).String())
 	})
 	t.Run("with standard invoice, set override for resale", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyGoods
-		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(tbai.ExtKeyProduct, "resale")
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(ExtKeyProduct, "resale")
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "resale", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
+		assert.Equal(t, "resale", inv.Lines[0].Taxes[0].Ext.Get(ExtKeyProduct).String())
 	})
 }
 
@@ -520,12 +540,12 @@ func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	return &bill.Invoice{
-		Addons: tax.WithAddons(tbai.V1),
+		Addons: tax.WithAddons(V1),
 		Series: "ABC",
 		Code:   "123",
 		Tax: &bill.Tax{
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				tbai.ExtKeyRegion: tbai.ExtValueRegionBI,
+				ExtKeyRegion: ExtValueRegionBI,
 			}),
 		},
 		Supplier: &org.Party{
@@ -555,7 +575,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Category: "VAT",
 						Key:      "exempt",
 						Ext: tax.ExtensionsOf(cbc.CodeMap{
-							tbai.ExtKeyExempt: "E1",
+							ExtKeyExempt: "E1",
 						}),
 					},
 				},
@@ -568,4 +588,108 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 	}
+}
+
+func TestNormalizeInvoiceRegimeDefensive(t *testing.T) {
+	t.Run("nil line/charge/discount is skipped", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Lines:     []*bill.Line{nil},
+			Charges:   []*bill.Charge{nil},
+			Discounts: []*bill.Discount{nil},
+		}
+		assert.NotPanics(t, func() { normalizeInvoiceRegime(inv) })
+	})
+
+	t.Run("nil tax combo is skipped", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Lines:     []*bill.Line{{Taxes: tax.Set{nil}}},
+			Charges:   []*bill.Charge{{Taxes: tax.Set{nil}}},
+			Discounts: []*bill.Discount{{Taxes: tax.Set{nil}}},
+		}
+		assert.NotPanics(t, func() { normalizeInvoiceRegime(inv) })
+	})
+
+	t.Run("non VAT/IGIC category is skipped", func(t *testing.T) {
+		tc := &tax.Combo{Category: tax.CategoryGST}
+		inv := &bill.Invoice{
+			Lines: []*bill.Line{{Taxes: tax.Set{tc}}},
+		}
+		normalizeInvoiceRegime(inv)
+		assert.True(t, tc.Ext.IsZero())
+	})
+
+	t.Run("charge/discount VAT combos get the default 01", func(t *testing.T) {
+		ch := &tax.Combo{Category: tax.CategoryVAT}
+		d := &tax.Combo{Category: tax.CategoryVAT}
+		inv := &bill.Invoice{
+			Charges:   []*bill.Charge{{Taxes: tax.Set{ch}}},
+			Discounts: []*bill.Discount{{Taxes: tax.Set{d}}},
+		}
+		normalizeInvoiceRegime(inv)
+		assert.Equal(t, cbc.Code("01"), ch.Ext.Get(ExtKeyRegime))
+		assert.Equal(t, cbc.Code("01"), d.Ext.Get(ExtKeyRegime))
+	})
+}
+
+func TestNormalizeBillLineNoVAT(t *testing.T) {
+	line := &bill.Line{
+		Quantity: num.MakeAmount(1, 0),
+		Item:     &org.Item{Name: "x", Price: num.NewAmount(100, 2)},
+		Taxes: tax.Set{
+			{Category: tax.CategoryGST},
+		},
+	}
+	assert.NotPanics(t, func() { normalizeBillLine(line) })
+	assert.True(t, line.Taxes[0].Ext.IsZero())
+}
+
+func TestNotesHasGeneralKeyWrongType(t *testing.T) {
+	assert.False(t, notesHasGeneralKey("not a slice"))
+	assert.False(t, notesHasGeneralKey(nil))
+}
+
+func TestNotesHasGeneralKeyNoGeneralNote(t *testing.T) {
+	notes := []*org.Note{
+		{Key: org.NoteKeyLegal, Text: "legal"},
+	}
+	assert.False(t, notesHasGeneralKey(notes))
+}
+
+func TestNormalizeInvoicePartyIdentityNilCustomer(t *testing.T) {
+	assert.NotPanics(t, func() { normalizeInvoicePartyIdentity(nil) })
+}
+
+func TestNormalizeInvoicePartyIdentityUnkeyedNoExt(t *testing.T) {
+	cus := &org.Party{
+		Identities: []*org.Identity{
+			{Code: "X"},
+		},
+	}
+	normalizeInvoicePartyIdentity(cus)
+	assert.True(t, cus.Identities[0].Ext.IsZero())
+}
+
+func TestNormalizeInvoicePartyIdentitySpanishNIFShortCircuits(t *testing.T) {
+	cus := &org.Party{
+		TaxID: &tax.Identity{Country: "ES", Code: "B12345678"},
+		Identities: []*org.Identity{
+			{Key: org.IdentityKeyPassport, Code: "AA"},
+		},
+	}
+	normalizeInvoicePartyIdentity(cus)
+	assert.True(t, cus.Identities[0].Ext.IsZero())
+}
+
+func TestNormalizeInvoicePartyIdentityEmptyIdentities(t *testing.T) {
+	cus := &org.Party{}
+	assert.NotPanics(t, func() { normalizeInvoicePartyIdentity(cus) })
+}
+
+func TestNormalizeInvoiceNil(t *testing.T) {
+	assert.NotPanics(t, func() { normalizeInvoice(nil) })
+}
+
+func TestIsBizkaiaIndividualWrongType(t *testing.T) {
+	assert.False(t, isBizkaiaIndividual("not an invoice"))
+	assert.False(t, isBizkaiaIndividual(nil))
 }
