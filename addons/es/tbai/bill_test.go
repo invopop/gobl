@@ -308,12 +308,49 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer is required for non-simplified invoices")
 	})
 
-	t.Run("missing customer tax ID", func(t *testing.T) {
+	t.Run("missing customer tax ID and identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer tax ID is required")
+		assert.ErrorContains(t, err, "must have a tax_id or an identity with ext 'es-tbai-identity-type'")
+	})
+
+	t.Run("customer with identity-type extension but no tax ID is valid", func(t *testing.T) {
+		// Mirrors the verifactu pattern: an identity carrying the
+		// es-tbai-identity-type extension is enough to satisfy the
+		// customer-identification rule even when tax_id is nil.
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Country: "CH",
+				Code:    "CH-OTHER-9001",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					tbai.ExtKeyIdentityType: tbai.ExtCodeIdentityTypeOther,
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("customer with identity but no identity-type extension is rejected", func(t *testing.T) {
+		// An identity without the extension (and without a recognised
+		// key the normalizer would map to one) does not satisfy code 08.
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Country: "CH",
+				Code:    "CH-XYZ-001",
+				Key:     "unknown",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "must have a tax_id or an identity with ext 'es-tbai-identity-type'")
 	})
 
 	t.Run("simplified invoice without customer", func(t *testing.T) {

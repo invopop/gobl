@@ -154,6 +154,8 @@ func billInvoiceRules() *rules.Set {
 		),
 		// Customer
 		// Code 03: customer required for non-simplified invoices
+		// Code 08: customer must have tax_id or an identity carrying the
+		//          es-tbai-identity-type extension (the L7 IDType code).
 		rules.When(
 			is.Func("non-simplified", func(val any) bool {
 				inv, ok := val.(*bill.Invoice)
@@ -161,8 +163,8 @@ func billInvoiceRules() *rules.Set {
 			}),
 			rules.Field("customer",
 				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
-				rules.Field("tax_id",
-					rules.Assert("08", "customer tax ID is required", is.Present),
+				rules.Assert("08", "customer must have a tax_id or an identity with ext 'es-tbai-identity-type'",
+					is.Func("has tax_id or identity-type identity", customerHasTaxIDOrIdentity),
 				),
 			),
 		),
@@ -241,4 +243,12 @@ func isBizkaiaIndividual(val any) bool {
 	}
 	return inv.Tax.Ext.Get(ExtKeyRegion) == ExtValueRegionBI &&
 		es.TaxIdentityKey(inv.Supplier.TaxID) != es.TaxIdentityOrg
+}
+
+func customerHasTaxIDOrIdentity(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return true // nil customer handled by the presence check above
+	}
+	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
 }
