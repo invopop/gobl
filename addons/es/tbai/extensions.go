@@ -8,12 +8,22 @@ import (
 
 // Extension keys for TicketBAI
 const (
-	ExtKeyRegion     cbc.Key = "es-tbai-region"
-	ExtKeyExempt     cbc.Key = "es-tbai-exemption"
-	ExtKeyProduct    cbc.Key = "es-tbai-product"
-	ExtKeyCorrection cbc.Key = "es-tbai-correction"
-	ExtKeyBIActivity cbc.Key = "es-tbai-bi-activity"
-	ExtKeyRegime     cbc.Key = "es-tbai-regime"
+	ExtKeyRegion       cbc.Key = "es-tbai-region"
+	ExtKeyExempt       cbc.Key = "es-tbai-exemption"
+	ExtKeyProduct      cbc.Key = "es-tbai-product"
+	ExtKeyCorrection   cbc.Key = "es-tbai-correction"
+	ExtKeyBIActivity   cbc.Key = "es-tbai-bi-activity"
+	ExtKeyRegime       cbc.Key = "es-tbai-regime"
+	ExtKeyIdentityType cbc.Key = "es-tbai-identity-type"
+)
+
+// Identity Type Codes - subset of the L7 list assigned to identities.
+const (
+	ExtCodeIdentityTypeVAT      cbc.Code = "02" // NIF-VAT identity (VIES)
+	ExtCodeIdentityTypePassport cbc.Code = "03" // Passport
+	ExtCodeIdentityTypeForeign  cbc.Code = "04" // Foreign Identity Document
+	ExtCodeIdentityTypeResident cbc.Code = "05" // Spanish Resident Foreigner Identity Card
+	ExtCodeIdentityTypeOther    cbc.Code = "06" // Other Identity Document
 )
 
 // Extension values for product key.
@@ -474,5 +484,104 @@ var extensions = []*cbc.Definition{
 			},
 		},
 		Pattern: `^\d{1,7}$`,
+	},
+	{
+		Key: ExtKeyIdentityType,
+		Name: i18n.String{
+			i18n.EN: "Identity Type Code",
+			i18n.ES: "Código de Tipo de Identidad",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Identity code used to identify the type of identity document used by the customer
+				when there is no tax identifier available. Maps to the ~IDType~ value under
+				~IDOtro~ in the TicketBAI XML.
+
+				The regular Party Tax Identity is preferred over using a specific identity type
+				code, and will be mapped automatically as follows:
+
+				- Spanish Tax IDs will be mapped to the ~NIF~ field.
+				- EU Tax IDs will be mapped to the ~IDOtro~ field with code ~02~.
+				- Non-EU Tax IDs will be mapped to the ~IDOtro~ field with code ~04~.
+
+				The following identity ~key~ values will be mapped automatically to an extension
+				by the addon:
+
+				| Identity Key | Extension Code |
+				|--------------|----------------|
+				| ~passport~   | ~03~           |
+				| ~foreign~    | ~04~           |
+				| ~resident~   | ~05~           |
+				| ~other~      | ~06~           |
+
+				Example identity of a UK passport:
+
+				~~~
+				{
+					"identities": [
+						{
+							"key": "passport",
+							"country": "GB",
+							"code": "123456789"
+						}
+					]
+				}
+				~~~
+
+				Will be normalized to:
+
+				~~~
+				{
+					"identities": [
+						{
+							"key": "passport",
+							"country": "GB",
+							"code": "123456789",
+							"ext": {
+								"es-tbai-identity-type": "03"
+							}
+						}
+					]
+				}
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeIdentityTypeVAT,
+				Name: i18n.String{
+					i18n.EN: "NIF-VAT Identity (VIES)",
+					i18n.ES: "NIF-VAT (VIES)",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypePassport,
+				Name: i18n.String{
+					i18n.EN: "Passport",
+					i18n.ES: "Pasaporte",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeForeign,
+				Name: i18n.String{
+					i18n.EN: "Foreign Identity Document",
+					i18n.ES: "Documento de Identidad Extranjero",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeResident,
+				Name: i18n.String{
+					i18n.EN: "Residential Certificate",
+					i18n.ES: "Certificado Residencia",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeOther,
+				Name: i18n.String{
+					i18n.EN: "Other Identity Document",
+					i18n.ES: "Otro Documento Probatorio",
+				},
+			},
+		},
 	},
 }

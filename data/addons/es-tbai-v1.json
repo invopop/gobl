@@ -385,6 +385,53 @@
         }
       ],
       "pattern": "^\\d{1,7}$"
+    },
+    {
+      "key": "es-tbai-identity-type",
+      "name": {
+        "en": "Identity Type Code",
+        "es": "Código de Tipo de Identidad"
+      },
+      "desc": {
+        "en": "Identity code used to identify the type of identity document used by the customer\nwhen there is no tax identifier available. Maps to the `IDType` value under\n`IDOtro` in the TicketBAI XML.\n\nThe regular Party Tax Identity is preferred over using a specific identity type\ncode, and will be mapped automatically as follows:\n\n- Spanish Tax IDs will be mapped to the `NIF` field.\n- EU Tax IDs will be mapped to the `IDOtro` field with code `02`.\n- Non-EU Tax IDs will be mapped to the `IDOtro` field with code `04`.\n\nThe following identity `key` values will be mapped automatically to an extension\nby the addon:\n\n| Identity Key | Extension Code |\n|--------------|----------------|\n| `passport`   | `03`           |\n| `foreign`    | `04`           |\n| `resident`   | `05`           |\n| `other`      | `06`           |\n\nExample identity of a UK passport:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nWill be normalized to:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-tbai-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```"
+      },
+      "values": [
+        {
+          "code": "02",
+          "name": {
+            "en": "NIF-VAT Identity (VIES)",
+            "es": "NIF-VAT (VIES)"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Passport",
+            "es": "Pasaporte"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Foreign Identity Document",
+            "es": "Documento de Identidad Extranjero"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Residential Certificate",
+            "es": "Certificado Residencia"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Other Identity Document",
+            "es": "Otro Documento Probatorio"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,

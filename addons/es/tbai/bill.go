@@ -29,6 +29,40 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 	normalizeInvoiceTax(inv)
 	normalizeInvoiceRegime(inv)
+	normalizeInvoicePartyIdentity(inv.Customer)
+}
+
+// normalizeInvoicePartyIdentity sets the identity-type extension on the first
+// non-Spanish-NIF identity of the customer based on its key, so that
+// ~gobl.ticketbai~ can read the L7 IDType code directly from the extension.
+// Spanish NIFs are handled via the ~NIF~ field and need no extension.
+func normalizeInvoicePartyIdentity(cus *org.Party) {
+	if cus == nil {
+		return
+	}
+	if cus.TaxID != nil && cus.TaxID.Country == "ES" && cus.TaxID.Code != "" {
+		return
+	}
+	if len(cus.Identities) == 0 {
+		return
+	}
+	id := cus.Identities[0]
+	var code cbc.Code
+	switch id.Key {
+	case org.IdentityKeyPassport:
+		code = ExtCodeIdentityTypePassport
+	case org.IdentityKeyForeign:
+		code = ExtCodeIdentityTypeForeign
+	case org.IdentityKeyResident:
+		code = ExtCodeIdentityTypeResident
+	case org.IdentityKeyOther:
+		code = ExtCodeIdentityTypeOther
+	}
+	if !code.IsEmpty() {
+		id.Ext = id.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
+			ExtKeyIdentityType: code,
+		}))
+	}
 }
 
 // normalizeInvoiceRegime applies the invoice-wide regime defaults across the

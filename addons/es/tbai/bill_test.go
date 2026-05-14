@@ -155,6 +155,137 @@ func TestInvoiceNormalization(t *testing.T) {
 	})
 }
 
+func TestInvoicePartyNormalization(t *testing.T) {
+	t.Run("regular Spanish customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "ES",
+			Code:    "B12345678",
+		}
+		require.NoError(t, inv.Calculate())
+	})
+
+	t.Run("Spanish customer with identities is not normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "ES",
+			Code:    "B12345678",
+		}
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
+	})
+
+	t.Run("customer without identities", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+	})
+
+	t.Run("passport identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+	})
+
+	t.Run("foreign identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyForeign,
+				Code: "FOR123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+	})
+
+	t.Run("resident identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyResident,
+				Code: "RES123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+	})
+
+	t.Run("other identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyOther,
+				Code: "OTH123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+	})
+
+	t.Run("unknown identity key not normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  "unknown",
+				Code: "UNK123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.True(t, inv.Customer.Identities[0].Ext.IsZero())
+	})
+
+	t.Run("explicit extension on unkeyed identity preserved", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "AA123456",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					tbai.ExtKeyIdentityType: tbai.ExtCodeIdentityTypeOther,
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+	})
+
+	t.Run("multiple identities only normalizes first", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+			{
+				Key:  org.IdentityKeyForeign,
+				Code: "FOR123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tbai.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(tbai.ExtKeyIdentityType))
+		assert.True(t, inv.Customer.Identities[1].Ext.IsZero())
+	})
+}
+
 func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
