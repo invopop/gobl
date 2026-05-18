@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ba8150a494d88dd4afdde80be802a370fd5bcce3faf37676337b7661d4c689b6"
+			"val": "ae170445b26a5d9a8da6b70d38006d6dfa0c15d55eafe265c7c116c34f05dc26"
 		}
 	},
 	"doc": {
@@ -81,6 +81,7 @@
 						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
+							"es-tbai-exemption": "RL",
 							"es-tbai-product": "services",
 							"es-tbai-regime": "01"
 						}
@@ -101,6 +102,7 @@
 								"country": "NL",
 								"key": "standard",
 								"ext": {
+									"es-tbai-exemption": "RL",
 									"es-tbai-product": "services",
 									"es-tbai-regime": "01"
 								},

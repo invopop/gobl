@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -28,15 +29,58 @@ func normalizeInvoice(inv *bill.Invoice) {
 		return
 	}
 	normalizeInvoiceTax(inv)
+	normalizeInvoiceCustomerRates(inv)
 	normalizeInvoiceRegime(inv)
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
-// normalizeInvoiceRegime applies the invoice-wide regime defaults across every
-// VAT/IGIC tax combo on the invoice — lines, charges and discounts — after
-// the per-combo normalizer has already set codes for export and surcharge
-// cases. The simplified-scheme tag overrides the default, and explicit values
-// are always preserved.
+// normalizeInvoiceCustomerRates flags VAT/IGIC combos as "no sujeta" when the
+// invoice carries the ~customer-rates~ tag with a non-Spanish customer.
+func normalizeInvoiceCustomerRates(inv *bill.Invoice) {
+	if !inv.HasTags(tax.TagCustomerRates) {
+		return
+	}
+	if inv.Customer == nil || inv.Customer.TaxID == nil {
+		return
+	}
+	country := inv.Customer.TaxID.Country
+	if country == "" || country == l10n.ES.Tax() {
+		return
+	}
+	apply := func(tc *tax.Combo) {
+		if tc == nil || !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
+			return
+		}
+		tc.Ext = tc.Ext.SetOneOf(ExtKeyExempt, "RL", "IE")
+	}
+	for _, line := range inv.Lines {
+		if line == nil {
+			continue
+		}
+		for _, tc := range line.Taxes {
+			apply(tc)
+		}
+	}
+	for _, ch := range inv.Charges {
+		if ch == nil {
+			continue
+		}
+		for _, tc := range ch.Taxes {
+			apply(tc)
+		}
+	}
+	for _, d := range inv.Discounts {
+		if d == nil {
+			continue
+		}
+		for _, tc := range d.Taxes {
+			apply(tc)
+		}
+	}
+}
+
+// normalizeInvoiceRegime fills in the regime code on every VAT/IGIC combo:
+// ~52~ under the simplified-scheme tag, ~01~ otherwise.
 func normalizeInvoiceRegime(inv *bill.Invoice) {
 	simplified := inv.HasTags(es.TagSimplifiedScheme)
 	apply := func(tc *tax.Combo) {
@@ -74,10 +118,8 @@ func normalizeInvoiceRegime(inv *bill.Invoice) {
 	}
 }
 
-// normalizeInvoicePartyIdentity sets the identity-type extension on the first
-// non-Spanish-NIF identity of the customer based on its key, so that
-// ~gobl.ticketbai~ can read the L7 IDType code directly from the extension.
-// Spanish NIFs are handled via the ~NIF~ field and need no extension.
+// normalizeInvoicePartyIdentity maps the customer's first identity key onto the
+// es-tbai-identity-type extension when no Spanish NIF is present.
 func normalizeInvoicePartyIdentity(cus *org.Party) {
 	if cus == nil {
 		return

@@ -205,8 +205,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyStandard,
 		}
 		normalizeTaxCombo(tc)
-		// The combo normalizer only sets the regime for per-combo signals
-		// (export, surcharge). The fallback 01 is handled at invoice level.
+		// Fallback 01 is applied at invoice level, not here.
 		assert.Empty(t, tc.Ext.Get(ExtKeyRegime).String())
 	})
 
