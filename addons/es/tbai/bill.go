@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -34,86 +33,59 @@ func normalizeInvoice(inv *bill.Invoice) {
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
-// normalizeInvoiceCustomerRates flags VAT/IGIC combos as "no sujeta" when the
-// invoice carries the ~customer-rates~ tag with a non-Spanish customer.
+// normalizeInvoiceCustomerRates is a backward-compatibility shim: when the
+// invoice carries the ~customer-rates~ tag, any VAT/IGIC/IPSI combo still in
+// the ~standard~ key gets a default ~RL~ exemption code. Combos that have
+// already been classified (an explicit Key, an ext code already set, an
+// explicit Country handled by the tax-combo normalizer) are left untouched.
 func normalizeInvoiceCustomerRates(inv *bill.Invoice) {
 	if !inv.HasTags(tax.TagCustomerRates) {
 		return
 	}
-	if inv.Customer == nil || inv.Customer.TaxID == nil {
-		return
-	}
-	country := inv.Customer.TaxID.Country
-	if country == "" || country == l10n.ES.Tax() {
-		return
-	}
-	apply := func(tc *tax.Combo) {
-		if tc == nil || !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-			return
+	forEachVATCombo(inv, func(tc *tax.Combo) {
+		if tc.Key == tax.KeyStandard {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyExempt, "RL")
 		}
-		tc.Ext = tc.Ext.SetOneOf(ExtKeyExempt, "RL", "IE")
-	}
-	for _, line := range inv.Lines {
-		if line == nil {
-			continue
-		}
-		for _, tc := range line.Taxes {
-			apply(tc)
-		}
-	}
-	for _, ch := range inv.Charges {
-		if ch == nil {
-			continue
-		}
-		for _, tc := range ch.Taxes {
-			apply(tc)
-		}
-	}
-	for _, d := range inv.Discounts {
-		if d == nil {
-			continue
-		}
-		for _, tc := range d.Taxes {
-			apply(tc)
-		}
-	}
+	})
 }
 
-// normalizeInvoiceRegime fills in the regime code on every VAT/IGIC combo:
-// ~52~ under the simplified-scheme tag, ~01~ otherwise.
+// normalizeInvoiceRegime fills in the fallback regime code on every VAT/IGIC
+// combo: ~52~ under the simplified-scheme tag, ~01~ otherwise. Per-combo
+// signals (export → ~02~, surcharge → ~51~) set earlier in normalizeTaxCombo
+// take precedence because SetIfEmpty no-ops on a populated key.
 func normalizeInvoiceRegime(inv *bill.Invoice) {
-	simplified := inv.HasTags(es.TagSimplifiedScheme)
-	apply := func(tc *tax.Combo) {
-		if tc == nil || !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
-			return
+	fallback := cbc.Code("01")
+	if inv.HasTags(es.TagSimplifiedScheme) {
+		fallback = "52"
+	}
+	forEachVATCombo(inv, func(tc *tax.Combo) {
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, fallback)
+	})
+}
+
+// forEachVATCombo applies fn to every VAT/IGIC/IPSI combo in the invoice's
+// lines, charges, and discounts. Nil entries are skipped.
+func forEachVATCombo(inv *bill.Invoice, fn func(*tax.Combo)) {
+	apply := func(combos tax.Set) {
+		for _, tc := range combos {
+			if tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI) {
+				fn(tc)
+			}
 		}
-		if simplified {
-			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "52")
-		}
-		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
 	}
 	for _, line := range inv.Lines {
-		if line == nil {
-			continue
-		}
-		for _, tc := range line.Taxes {
-			apply(tc)
+		if line != nil {
+			apply(line.Taxes)
 		}
 	}
 	for _, ch := range inv.Charges {
-		if ch == nil {
-			continue
-		}
-		for _, tc := range ch.Taxes {
-			apply(tc)
+		if ch != nil {
+			apply(ch.Taxes)
 		}
 	}
 	for _, d := range inv.Discounts {
-		if d == nil {
-			continue
-		}
-		for _, tc := range d.Taxes {
-			apply(tc)
+		if d != nil {
+			apply(d.Taxes)
 		}
 	}
 }

@@ -1,0 +1,127 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "fb4281a692647abe10fdd508c98a6dcb7dbfdbeb0162c50c690b77db0799d29b"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"$tags": [
+			"customer-rates"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "PASS",
+		"code": "0003",
+		"issue_date": "2024-07-19",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Jane Doe",
+			"identities": [
+				{
+					"country": "GB",
+					"key": "passport",
+					"code": "543210987",
+					"ext": {
+						"es-tbai-identity-type": "03"
+					}
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"key": "services",
+					"name": "Guided tour booking fee",
+					"price": "75.00"
+				},
+				"sum": "150.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"es-tbai-exemption": "RL",
+							"es-tbai-product": "services",
+							"es-tbai-regime": "01"
+						}
+					}
+				],
+				"total": "150.00"
+			}
+		],
+		"totals": {
+			"sum": "150.00",
+			"total": "150.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"es-tbai-exemption": "RL",
+									"es-tbai-product": "services",
+									"es-tbai-regime": "01"
+								},
+								"base": "150.00",
+								"percent": "21.0%",
+								"amount": "31.50"
+							}
+						],
+						"amount": "31.50"
+					}
+				],
+				"sum": "31.50"
+			},
+			"tax": "31.50",
+			"total_with_tax": "181.50",
+			"payable": "181.50"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Tourist booking identified by passport."
+			}
+		]
+	}
+}

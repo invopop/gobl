@@ -629,17 +629,14 @@ func TestNormalizeInvoiceRegimeDefensive(t *testing.T) {
 func TestNormalizeInvoiceCustomerRates(t *testing.T) {
 	makeInvoice := func() *bill.Invoice {
 		return &bill.Invoice{
-			Customer: &org.Party{
-				TaxID: &tax.Identity{Country: "GB", Code: "GB123"},
-			},
 			Lines: []*bill.Line{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT}}},
+				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
 			},
 			Charges: []*bill.Charge{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT}}},
+				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
 			},
 			Discounts: []*bill.Discount{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT}}},
+				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
 			},
 		}
 	}
@@ -650,24 +647,20 @@ func TestNormalizeInvoiceCustomerRates(t *testing.T) {
 		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
 	})
 
-	t.Run("Spanish customer is a no-op", func(t *testing.T) {
-		inv := makeInvoice()
-		inv.Customer.TaxID.Country = "ES"
-		inv.SetTags(tax.TagCustomerRates)
-		normalizeInvoiceCustomerRates(inv)
-		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
-	})
-
-	t.Run("foreign customer with tag sets RL on every VAT combo", func(t *testing.T) {
+	t.Run("standard combos pick up RL by default", func(t *testing.T) {
 		inv := makeInvoice()
 		inv.SetTags(tax.TagCustomerRates)
 		normalizeInvoiceCustomerRates(inv)
-		assert.Equal(t, cbc.Code("RL"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyExempt))
-		assert.Equal(t, cbc.Code("RL"), inv.Charges[0].Taxes[0].Ext.Get(ExtKeyExempt))
-		assert.Equal(t, cbc.Code("RL"), inv.Discounts[0].Taxes[0].Ext.Get(ExtKeyExempt))
+		for _, tc := range []*tax.Combo{
+			inv.Lines[0].Taxes[0],
+			inv.Charges[0].Taxes[0],
+			inv.Discounts[0].Taxes[0],
+		} {
+			assert.Equal(t, cbc.Code("RL"), tc.Ext.Get(ExtKeyExempt))
+		}
 	})
 
-	t.Run("explicit IE is preserved", func(t *testing.T) {
+	t.Run("existing exempt code is preserved", func(t *testing.T) {
 		inv := makeInvoice()
 		inv.SetTags(tax.TagCustomerRates)
 		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "IE"})
@@ -675,31 +668,24 @@ func TestNormalizeInvoiceCustomerRates(t *testing.T) {
 		assert.Equal(t, cbc.Code("IE"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyExempt))
 	})
 
-	t.Run("non-VAT combos are skipped", func(t *testing.T) {
+	t.Run("non-standard key is untouched", func(t *testing.T) {
 		inv := makeInvoice()
+		inv.Lines[0].Taxes[0].Key = tax.KeyReverseCharge
 		inv.SetTags(tax.TagCustomerRates)
-		inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryGST}}
 		normalizeInvoiceCustomerRates(inv)
 		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
 	})
 
-	t.Run("customer without tax ID is skipped", func(t *testing.T) {
+	t.Run("non-VAT/IGIC/IPSI combos are skipped", func(t *testing.T) {
 		inv := makeInvoice()
 		inv.SetTags(tax.TagCustomerRates)
-		inv.Customer.TaxID = nil
-		assert.NotPanics(t, func() { normalizeInvoiceCustomerRates(inv) })
+		inv.Lines[0].Taxes[0].Category = tax.CategoryGST
+		normalizeInvoiceCustomerRates(inv)
 		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
-	})
-
-	t.Run("nil customer is skipped", func(t *testing.T) {
-		inv := &bill.Invoice{}
-		inv.SetTags(tax.TagCustomerRates)
-		assert.NotPanics(t, func() { normalizeInvoiceCustomerRates(inv) })
 	})
 
 	t.Run("nil line/charge/discount is skipped", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Customer:  &org.Party{TaxID: &tax.Identity{Country: "GB", Code: "X"}},
 			Lines:     []*bill.Line{nil},
 			Charges:   []*bill.Charge{nil},
 			Discounts: []*bill.Discount{nil},
@@ -710,7 +696,6 @@ func TestNormalizeInvoiceCustomerRates(t *testing.T) {
 
 	t.Run("nil combo is skipped", func(t *testing.T) {
 		inv := &bill.Invoice{
-			Customer:  &org.Party{TaxID: &tax.Identity{Country: "GB", Code: "X"}},
 			Lines:     []*bill.Line{{Taxes: tax.Set{nil}}},
 			Charges:   []*bill.Charge{{Taxes: tax.Set{nil}}},
 			Discounts: []*bill.Discount{{Taxes: tax.Set{nil}}},

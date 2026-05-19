@@ -1,0 +1,122 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "fb4d23f1bd9f1e171e2e2dd209776e778e29ff8085fc9b13a14db2bbf804deaa"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "EQS",
+		"code": "0007",
+		"issue_date": "2024-06-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Mayorista Bilbaíno S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Comercio Minorista",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "100",
+				"item": {
+					"key": "goods",
+					"name": "Wholesale mug pack",
+					"price": "5.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general+eqs",
+						"percent": "21.0%",
+						"surcharge": "5.2%",
+						"ext": {
+							"es-tbai-product": "goods",
+							"es-tbai-regime": "51"
+						}
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "500.00",
+			"total": "500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"es-tbai-product": "goods",
+									"es-tbai-regime": "51"
+								},
+								"base": "500.00",
+								"percent": "21.0%",
+								"surcharge": {
+									"percent": "5.2%",
+									"amount": "26.00"
+								},
+								"amount": "105.00"
+							}
+						],
+						"amount": "105.00",
+						"surcharge": "26.00"
+					}
+				],
+				"sum": "131.00"
+			},
+			"tax": "131.00",
+			"total_with_tax": "631.00",
+			"payable": "631.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Sale to retailer under the equivalence surcharge regime."
+			}
+		]
+	}
+}

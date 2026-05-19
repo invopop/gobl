@@ -79,13 +79,32 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
-	t.Run("outside scope", func(t *testing.T) {
+	t.Run("outside scope defaults to RL", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
 		}
 		normalizeTaxCombo(tc)
+		assert.Equal(t, "RL", tc.Ext.Get(ExtKeyExempt).String())
+	})
+
+	t.Run("outside scope preserves manually set OT", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyOutsideScope,
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "OT"}),
+		}
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "OT", tc.Ext.Get(ExtKeyExempt).String())
+	})
+
+	t.Run("outside scope IGIC combo yields IE", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Key:      tax.KeyOutsideScope,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "IE", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
 	t.Run("reverse charge", func(t *testing.T) {
@@ -97,14 +116,36 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
-	t.Run("foreign country", func(t *testing.T) {
+	t.Run("foreign EU country yields IE", func(t *testing.T) {
 		tc := &tax.Combo{
 			Country:  "FR",
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
 		}
 		normalizeTaxCombo(tc)
+		assert.Equal(t, cbc.Code("IE"), tc.Ext.Get(ExtKeyExempt))
+	})
+
+	t.Run("foreign non-EU country yields RL", func(t *testing.T) {
+		tc := &tax.Combo{
+			Country:  "JP",
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+		}
+		normalizeTaxCombo(tc)
 		assert.Equal(t, cbc.Code("RL"), tc.Ext.Get(ExtKeyExempt))
+	})
+
+	t.Run("foreign EU country overrides pre-set OT with IE", func(t *testing.T) {
+		// The foreign-country branch uses an unconditional Set, so OT/VT
+		// are not preserved here (unlike the KeyOutsideScope branch).
+		tc := &tax.Combo{
+			Country:  "FR",
+			Category: tax.CategoryVAT,
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "OT"}),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, cbc.Code("IE"), tc.Ext.Get(ExtKeyExempt))
 	})
 
 	t.Run("with exempt code set", func(t *testing.T) {

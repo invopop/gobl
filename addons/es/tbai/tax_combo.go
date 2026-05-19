@@ -12,11 +12,15 @@ import (
 
 func normalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
-	case tax.CategoryVAT, es.TaxCategoryIGIC:
+	case tax.CategoryVAT:
 		if tc.Country != "" && tc.Country != l10n.ES.Tax() {
-			// Assume this is a not subject to VAT
-			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExempt, "RL", "IE")
+			if l10n.Union(l10n.EU).HasMember(tc.Country.Code()) {
+				tc.Ext = tc.Ext.
+					Set(ExtKeyExempt, "IE")
+			} else {
+				tc.Ext = tc.Ext.
+					Set(ExtKeyExempt, "RL")
+			}
 			return
 		}
 
@@ -41,7 +45,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				Set(ExtKeyExempt, "S2")
 		case tax.KeyOutsideScope:
 			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExempt, "OT", "RL", "VT", "IE")
+				SetOneOf(ExtKeyExempt, "RL", "IE", "OT", "VT")
 		case tax.KeyExempt:
 			tc.Ext = tc.Ext.
 				SetOneOf(ExtKeyExempt, "E1", "E6")
@@ -52,6 +56,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Ext = tc.Ext.
 				Set(ExtKeyExempt, "E5")
 		}
+	case es.TaxCategoryIGIC:
+		tc.Ext = tc.Ext.
+			Set(ExtKeyExempt, "IE")
 	}
 }
 
@@ -89,9 +96,6 @@ func prepareTaxComboKey(tc *tax.Combo) {
 		tc.Key = tax.KeyExport
 	case "E5":
 		tc.Key = tax.KeyIntraCommunity
-	case "S1":
-		tc.Key = tax.KeyStandard
-		tc.Ext = tc.Ext.Delete(ExtKeyExempt)
 	case "S2":
 		tc.Key = tax.KeyReverseCharge
 	case "OT", "RL", "VT", "IE":
