@@ -92,6 +92,16 @@
                           "tests": "present"
                         }
                       ]
+                    },
+                    {
+                      "field": "amount",
+                      "assert": [
+                        {
+                          "id": "GOBL-PT-SAFT-BILL-INVOICE-16",
+                          "desc": "must be no less than 0",
+                          "tests": "min 0"
+                        }
+                      ]
                     }
                   ]
                 }
