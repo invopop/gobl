@@ -49,6 +49,7 @@ var (
 		IdentityTypeOTH,
 	}
 
+	// SupplierValidIdentities holds ZATCA specific supplier identitites
 	SupplierValidIdentities = []cbc.Code{
 		IdentityTypeCRN,
 		IdentityTypeMom,
