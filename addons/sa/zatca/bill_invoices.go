@@ -49,7 +49,7 @@ var (
 		IdentityTypeOTH,
 	}
 
-	supplierValidIdentities = []cbc.Code{
+	SupplierValidIdentities = []cbc.Code{
 		IdentityTypeCRN,
 		IdentityTypeMom,
 		IdentityTypeMLS,
@@ -265,7 +265,7 @@ func hasTaxIDCode(value any) bool {
 
 func hasOneSupplierIdentity(value any) bool {
 	identities, _ := value.([]*org.Identity)
-	return len(identities) == 1 && org.IdentitiesTypeIn(supplierValidIdentities...).Check(identities)
+	return len(identities) == 1 && org.IdentitiesTypeIn(SupplierValidIdentities...).Check(identities)
 }
 
 func invoiceHasExemption(val any, exemptions []cbc.Code) bool {
