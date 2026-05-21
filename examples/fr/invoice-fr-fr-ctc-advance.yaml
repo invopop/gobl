@@ -10,7 +10,7 @@ code: "2024-AV-001"
 
 tax:
   ext:
-    fr-ctc-billing-mode: "B1"
+    dgfip-billing-mode: "B1"
     untdid-document-type: "386"
 
 supplier:

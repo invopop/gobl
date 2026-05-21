@@ -10,7 +10,7 @@ code: "STA-2026-0001"
 
 # `accepted` is buyer-issued (CDV-205) per Annexe A "Acteurs CDV", so
 # the flow6 normaliser:
-#   - fills issuer.fr-ctc-role=BY and recipient.fr-ctc-role=SE
+#   - fills issuer.fr-ctc-flow6-role=BY and recipient.fr-ctc-flow6-role=SE
 #   - propagates the SE-roled recipient's SIREN onto Supplier so it
 #     populates ref.IssuerTradeParty (MDT-129) — that's why this
 #     example doesn't need to spell out a `supplier:` block.

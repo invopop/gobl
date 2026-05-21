@@ -220,7 +220,22 @@ func (pmt *Payment) Calculate() error {
 	if pmt.Regime.IsEmpty() {
 		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
 	}
+	// Track which addon normalizers have already been applied so the
+	// follow-up passes only run normalizers for newly-added addons.
+	seen := make(map[cbc.Key]bool)
+	for _, def := range pmt.AddonDefs() {
+		if def != nil {
+			seen[def.Key] = true
+		}
+	}
 	pmt.Normalize(pmt.normalizers())
+	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
+		newNorms := tax.ExtractNormalizersForNew(pmt, seen)
+		if len(newNorms) == 0 {
+			break
+		}
+		pmt.Normalize(newNorms)
+	}
 	return pmt.calculate()
 }
 

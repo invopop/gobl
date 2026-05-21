@@ -4,25 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "50202b9d3b460812e4e10a4eaa3d502d931f8887de1108f8e44db0630f9c097c"
+			"val": "c2896d25f1e85a42bc8a4d09923b2671fd67d6849dfeadb02930a0ef763fd750"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/status",
 		"$addons": [
-			"fr-ctc-v1"
+			"fr-ctc-v1",
+			"fr-ctc-flow6-v1"
 		],
 		"uuid": "2a5b6c7d-8e9f-4a1b-2c3d-4e5f6a7b8c01",
 		"type": "response",
 		"issue_date": "2026-04-16",
 		"code": "STA-2026-0001",
 		"ext": {
-			"fr-ctc-status-code": "205"
+			"fr-ctc-flow6-status-code": "205"
 		},
 		"supplier": {
 			"identities": [
 				{
-					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -35,7 +35,6 @@
 			"name": "ACHETEUR SARL",
 			"identities": [
 				{
-					"scope": "legal",
 					"type": "SIREN",
 					"code": "200000008",
 					"ext": {
@@ -51,14 +50,13 @@
 				}
 			],
 			"ext": {
-				"fr-ctc-role": "BY"
+				"fr-ctc-flow6-role": "BY"
 			}
 		},
 		"recipient": {
 			"name": "VENDEUR SARL",
 			"identities": [
 				{
-					"scope": "legal",
 					"type": "SIREN",
 					"code": "732829320",
 					"ext": {
@@ -74,7 +72,7 @@
 				}
 			],
 			"ext": {
-				"fr-ctc-role": "SE"
+				"fr-ctc-flow6-role": "SE"
 			}
 		},
 		"lines": [

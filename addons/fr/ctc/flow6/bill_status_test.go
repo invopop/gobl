@@ -1,4 +1,4 @@
-package ctc
+package flow6
 
 import (
 	"testing"
@@ -7,11 +7,8 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -36,9 +33,8 @@ func statusSupplierParty() *org.Party {
 	}
 }
 
-// issuerParty returns a buyer-side Issuer (BR-FR-CDV-CL-03 allowed:
-// BY/AB/DL/SE/SR/PE/PR/II/IV) with a SIREN identity and inbox so
-// BR-FR-CDV-08 is satisfied.
+// issuerParty returns a buyer-side Issuer with a SIREN identity and
+// inbox so BR-FR-CDV-08 is satisfied.
 func issuerParty() *org.Party {
 	return &org.Party{
 		Name: "ACHETEUR",
@@ -64,10 +60,7 @@ func statusCustomerParty() *org.Party {
 }
 
 // recipientParty returns the seller-end Recipient counterpart with an
-// inbox so BR-FR-CDV-08 is satisfied. Carries the same SIREN as the
-// document-level Supplier — both represent the same seller legal
-// entity, just at different endpoints — so the normaliser's
-// ensureSIRENOnSupplier no-ops instead of duplicating the identity.
+// inbox so BR-FR-CDV-08 is satisfied.
 func recipientParty() *org.Party {
 	return &org.Party{
 		Name: "VENDEUR",
@@ -287,119 +280,6 @@ func TestStatusAcceptedDoesNotRequireReason(t *testing.T) {
 	require.NoError(t, rules.Validate(st))
 }
 
-// --- Paid: MEN Characteristic required -----------------------------------
-
-func TestStatusPaidRequiresAmount(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventPaid
-	st.Type = bill.StatusTypeResponse
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "MEN")
-}
-
-func TestStatusPaidSatisfiedByComplement(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventPaid
-	st.Type = bill.StatusTypeResponse
-	obj, err := schema.NewObject(&Characteristic{
-		TypeCode: TypeCodeAmountReceived,
-		Amount: &currency.Amount{
-			Currency: "EUR",
-			Value:    num.MakeAmount(125000, 2),
-		},
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	require.NoError(t, rules.Validate(st))
-}
-
-func TestStatusPaidWithoutMENFailsEvenWithOtherTypes(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventPaid
-	st.Type = bill.StatusTypeResponse
-	obj, err := schema.NewObject(&Characteristic{
-		TypeCode: TypeCodeAmountPaid,
-		Amount:   &currency.Amount{Currency: "EUR", Value: num.MakeAmount(100, 0)},
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	err = rules.Validate(st)
-	assert.ErrorContains(t, err, "MEN")
-}
-
-func TestStatusPaidMENMissingCurrencyFails(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventPaid
-	st.Type = bill.StatusTypeResponse
-	obj, err := schema.NewObject(&Characteristic{
-		TypeCode: TypeCodeAmountReceived,
-		Amount:   &currency.Amount{Value: num.MakeAmount(100, 0)},
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	err = rules.Validate(st)
-	assert.ErrorContains(t, err, "MEN")
-}
-
-// --- MDT-207 TypeCode whitelist ------------------------------------------
-
-func TestStatusCharacteristicUnknownTypeCodeRejected(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventPaid
-	obj, err := schema.NewObject(&Characteristic{
-		TypeCode: "BOGUS",
-		Amount:   &currency.Amount{Currency: "EUR", Value: num.MakeAmount(100, 0)},
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	err = rules.Validate(st)
-	assert.ErrorContains(t, err, "MDT-207")
-}
-
-// --- Characteristic ReasonCode link --------------------------------------
-
-func TestStatusCharacteristicReasonLinkMismatch(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventRejected
-	st.Lines[0].Reasons = []*bill.Reason{{
-		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
-	}}
-	obj, err := schema.NewObject(&Characteristic{
-		ReasonCode: "QTE_ERR",
-		Name:       "description",
-		Value:      "wrong",
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	err = rules.Validate(st)
-	assert.ErrorContains(t, err, "ReasonCode must match")
-}
-
-func TestStatusCharacteristicReasonLinkMatch(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventRejected
-	st.Lines[0].Reasons = []*bill.Reason{{
-		Key: bill.ReasonKeyLegal,
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "TX_TVA_ERR"}),
-	}}
-	obj, err := schema.NewObject(&Characteristic{
-		ReasonCode: "TX_TVA_ERR",
-		Name:       "description",
-		Value:      "corrected",
-	})
-	require.NoError(t, err)
-	st.Lines[0].Complements = []*schema.Object{obj}
-	runNormalize(t, st)
-	require.NoError(t, rules.Validate(st))
-}
-
 // --- bill.Reason validation + normalization ------------------------------
 
 func TestReasonNormalizerFillsKeyFromExt(t *testing.T) {
@@ -485,42 +365,6 @@ func TestStatusLineKeyKnownWrongType(t *testing.T) {
 	assert.False(t, statusLineKeyKnown("x"))
 }
 
-func TestStatusPaidResponseHasAmountWrongType(t *testing.T) {
-	assert.True(t, statusPaidResponseHasAmount(42))
-}
-
-func TestStatusPaidResponseHasAmountNonPaidLine(t *testing.T) {
-	st := &bill.Status{
-		Type:  bill.StatusTypeResponse,
-		Lines: []*bill.StatusLine{{Key: bill.StatusEventAccepted}},
-	}
-	assert.True(t, statusPaidResponseHasAmount(st))
-}
-
-func TestStatusPaidResponseHasAmountUpdateSkips(t *testing.T) {
-	st := &bill.Status{
-		Type:  bill.StatusTypeUpdate,
-		Lines: []*bill.StatusLine{{Key: bill.StatusEventPaid}},
-	}
-	assert.True(t, statusPaidResponseHasAmount(st))
-}
-
-func TestStatusLineTypeCodesKnownWrongType(t *testing.T) {
-	assert.True(t, statusLineTypeCodesKnown("x"))
-}
-
-func TestStatusLineTypeCodesKnownEmptyLine(t *testing.T) {
-	assert.True(t, statusLineTypeCodesKnown(&bill.StatusLine{}))
-}
-
-func TestStatusLineReasonLinksResolveWrongType(t *testing.T) {
-	assert.True(t, statusLineReasonLinksResolve("x"))
-}
-
-func TestStatusLineReasonLinksResolveEmptyComplements(t *testing.T) {
-	assert.True(t, statusLineReasonLinksResolve(&bill.StatusLine{}))
-}
-
 func TestStatusLineRequiresReasonWrongType(t *testing.T) {
 	assert.True(t, statusLineRequiresReason("x"))
 }
@@ -535,11 +379,6 @@ func TestStatusTypeMatchesLinesUnknownLineKey(t *testing.T) {
 		Lines: []*bill.StatusLine{{Key: "unknown"}},
 	}
 	assert.True(t, statusTypeMatchesLines(st))
-}
-
-func TestLineHasReasonCodeNilReason(t *testing.T) {
-	line := &bill.StatusLine{Reasons: []*bill.Reason{nil}}
-	assert.False(t, lineHasReasonCode(line, "ART_ERR"))
 }
 
 func TestReasonExtMatchesKeyWrongType(t *testing.T) {
@@ -594,9 +433,6 @@ func TestStatusReasonCodesAllowedNilReason(t *testing.T) {
 	assert.True(t, statusReasonCodesAllowed(st))
 }
 
-// TestEnsureSIRENOnSupplierAlreadyCarries covers the "supplier already
-// carries the SIREN" early-return path that the happy-path tests don't
-// reach (since the test fixture aligns supplier and recipient SIRENs).
 func TestEnsureSIRENOnSupplierAlreadyCarries(t *testing.T) {
 	siren := &org.Identity{
 		Code: "356000000",

@@ -4,14 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2bbd7ae324f8609660857268fee6b1e87682daeb9c96fc1dc25fafc9b09ae9d9"
+			"val": "d17dc25cecca7eeaf113e260e4dd8fbbdb147210c8f06194c333d912b5ca37b4"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
 		"$addons": [
-			"fr-ctc-v1"
+			"fr-ctc-v1",
+			"fr-ctc-flow10-v1"
 		],
 		"uuid": "d4e5f6a7-8901-23de-f012-456789012abc",
 		"type": "standard",
@@ -21,7 +22,7 @@
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"fr-ctc-billing-mode": "B7",
+				"dgfip-billing-mode": "B7",
 				"untdid-document-type": "380"
 			},
 			"notes": [

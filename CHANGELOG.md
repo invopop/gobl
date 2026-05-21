@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `fr-ctc-v1`: **breaking**: the previously monolithic `fr-ctc-v1` addon has been replaced by a meta-addon plus three flow-specific addons. Declaring `fr-ctc-v1` now means "I want French CTC support"; the addon's normalizer inspects the document and appends the appropriate flow addon (`fr-ctc-flow2-v1` for domestic B2B clearance invoices, `fr-ctc-flow6-v1` for `bill.Status` lifecycle messages, `fr-ctc-flow10-v1` for B2C / cross-border B2B e-reporting invoices and payment receipts). Callers who want explicit control can declare the flow-specific addon directly. All the rules and extensions formerly under `fr-ctc-v1` have moved into the appropriate flow subpackages.
+- `tax`: added `tax.ExtractNormalizersForNew(obj, seen)` and changed `bill.Invoice.Calculate`, `bill.Status.Calculate` and `bill.Payment.Calculate` to loop normalizer extraction so that addons appended to the document's addon list during normalization (e.g. by the `fr-ctc-v1` meta-addon) get their own normalizers extracted and run in the same `Calculate()` pass. Single-pass behaviour is preserved when no normalizer mutates the addon list.
+
+### Added
+
+- `catalogues/dgfip`: new catalogue for the French tax authority (DGFiP) shared code-sets. Currently owns the `dgfip-billing-mode` extension (replaces `fr-ctc-billing-mode`), shared by `fr-ctc-flow2-v1` and `fr-ctc-flow10-v1`.
+- `fr-ctc-flow2-v1`: new addon for Flow 2 domestic B2B clearance invoices. Requires `eu-en16931-v2017`.
+- `fr-ctc-flow6-v1`: new addon for Flow 6 ("Cycle de Vie") lifecycle status messages on `bill.Status`. Owns the `fr-ctc-flow6-role`, `fr-ctc-flow6-reason-code` and `fr-ctc-flow6-status-code` extensions. Registers the `Characteristic` complement at `gobl.org/draft-0/addons/fr/ctc/flow6/characteristic` (was `gobl.org/draft-0/addons/fr/ctc/characteristic`).
+- `fr-ctc-flow10-v1`: new addon for Flow 10 e-reporting: B2C invoices, cross-border B2B invoices and payment receipts. Owns the `fr-ctc-flow10-b2c-category` extension (replaces `fr-ctc-b2c-category`).
+
+### Removed
+
+- `fr-ctc-v1`: the old monolithic implementation (rules, extensions and dispatch logic baked into a single addon) is gone; the addon key still exists but now resolves to the meta-addon described above. The following extension keys have been **renamed without alias** and callers must migrate:
+  - `fr-ctc-billing-mode` → `dgfip-billing-mode`
+  - `fr-ctc-b2c-category` → `fr-ctc-flow10-b2c-category`
+  - `fr-ctc-role` → `fr-ctc-flow6-role`
+  - `fr-ctc-reason-code` → `fr-ctc-flow6-reason-code`
+  - `fr-ctc-status-code` → `fr-ctc-flow6-status-code`
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed

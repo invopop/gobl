@@ -1,6 +1,10 @@
 package tax
 
-import "reflect"
+import (
+	"reflect"
+
+	"github.com/invopop/gobl/cbc"
+)
 
 // Normalizer is used for functions that will normalize the provided object
 // ensuring that all the data is aligned with expected values, and adding
@@ -39,6 +43,34 @@ func ExtractNormalizers(obj any) Normalizers {
 	if n, ok := obj.(addonsImpl); ok {
 		n.normalizeAddons()
 		for _, a := range n.AddonDefs() {
+			normalizers = normalizers.Append(a.Normalizer)
+		}
+	}
+	return normalizers
+}
+
+// ExtractNormalizersForNew returns the addon normalizers for the given
+// object whose keys are NOT yet present in `seen`. The `seen` map is
+// updated to include the keys of returned normalizers. This is the
+// hook used by the bill Calculate methods to support meta-addons that
+// dynamically append further addons during normalization: call it in a
+// loop after the initial pass and run the returned normalizers until
+// no new keys appear.
+//
+// Unlike ExtractNormalizers, this never returns the regime normalizer
+// (which only needs to run on the initial pass).
+func ExtractNormalizersForNew(obj any, seen map[cbc.Key]bool) Normalizers {
+	if obj == nil {
+		return nil
+	}
+	normalizers := make(Normalizers, 0)
+	if n, ok := obj.(addonsImpl); ok {
+		n.normalizeAddons()
+		for _, a := range n.AddonDefs() {
+			if a == nil || seen[a.Key] {
+				continue
+			}
+			seen[a.Key] = true
 			normalizers = normalizers.Append(a.Normalizer)
 		}
 	}

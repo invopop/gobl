@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "06a94209d23cad09d46cbe518bd47eeb62ebd673947c3ea0b9503f180effc264"
+			"val": "54405bc90a43e7c29c48ae56dfd95d1cf136b00d4574ff2b2ad98029003d59d9"
 		}
 	},
 	"doc": {
@@ -12,7 +12,8 @@
 		"$regime": "FR",
 		"$addons": [
 			"eu-en16931-v2017",
-			"fr-ctc-v1"
+			"fr-ctc-v1",
+			"fr-ctc-flow2-v1"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -23,7 +24,7 @@
 		"tax": {
 			"rounding": "currency",
 			"ext": {
-				"fr-ctc-billing-mode": "B7",
+				"dgfip-billing-mode": "B7",
 				"untdid-document-type": "380"
 			}
 		},

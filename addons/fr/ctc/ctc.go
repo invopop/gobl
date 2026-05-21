@@ -1,112 +1,70 @@
-// Package ctc bundles the French CTC (Continuous Transaction Control)
-// e-invoicing and e-reporting addon. It covers:
+// Package ctc registers the French CTC meta-addon (fr-ctc-v1) which
+// inspects each GOBL document at normalize-time and appends the
+// appropriate flow-specific addon (fr-ctc-flow2-v1, fr-ctc-flow6-v1,
+// or fr-ctc-flow10-v1) so the right validation rules fire without the
+// caller having to know which flow applies.
 //
-//   - Flow 2: domestic B2B clearance (cleared between two French parties).
-//   - Flow 10: e-reporting for B2C, cross-border or other transactions
-//     that fall outside the Flow 2 clearance perimeter.
-//   - Flow 6: lifecycle status messages (Cycle de Vie) on bill.Status
-//     documents exchanged between registered platforms.
-//
-// The invoice rule set is dispatched at validation time: an invoice
-// whose supplier and customer both resolve as French (SIREN identity or
-// French tax ID) runs the Flow 2 rule set; everything else runs the
-// Flow 10 reporting rule set. Flow 6 operates on a separate document
-// type (bill.Status) and does not need a predicate.
+// The flow-specific addons live in subpackages and are independent:
+// callers can declare any of them directly if they prefer.
 package ctc
 
 import (
+	"github.com/invopop/gobl/addons/fr/ctc/flow10"
+	"github.com/invopop/gobl/addons/fr/ctc/flow2"
+	"github.com/invopop/gobl/addons/fr/ctc/flow6"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
-	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
-	// Key identifies the French CTC addon family.
+	// Key identifies the French CTC meta-addon family.
 	Key cbc.Key = "fr-ctc"
 
-	// V1 is the key for the first version of the French CTC addon.
+	// V1 is the first version of the French CTC meta-addon.
 	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
-	tax.RegisterAddonDef(newAddon())
-	schema.Register(schema.GOBL.Add("addons/fr/ctc"),
-		Characteristic{},
-	)
-	rules.RegisterWithGuard(
-		Key.String(),
-		rules.GOBL.Add("FR-CTC"),
-		is.InContext(tax.AddonIn(V1)),
-		billInvoiceRules(),
-		billPaymentRules(),
-		billStatusRules(),
-		billReasonRules(),
-		billActionRules(),
-		orgPartyRules(),
-		orgIdentityRules(),
-		orgInboxRules(),
-		orgItemRules(),
-	)
+	tax.RegisterAddonDef(newV1Addon())
 }
 
-func newAddon() *tax.AddonDef {
+func newV1Addon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "France CTC",
-			i18n.FR: "France CTC",
+			i18n.EN: "France CTC (auto-dispatch)",
+			i18n.FR: "France CTC (dispatch automatique)",
 		},
-		// eu-en16931-v2017 is required only when the dispatcher selects
-		// Flow 2 (domestic French B2B clearance); the Flow 2 ruleset
-		// enforces it. Flow 10 and Flow 6 work standalone.
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Support for the French CTC (Continuous Transaction Control)
-				e-invoicing and e-reporting reform.
+				Meta-addon for the French CTC (Continuous Transaction
+				Control) reform. Inspects each GOBL document at
+				normalize-time and appends the appropriate flow-specific
+				addon — fr-ctc-flow2-v1 (domestic B2B clearance),
+				fr-ctc-flow6-v1 (lifecycle status messages) or
+				fr-ctc-flow10-v1 (B2C / cross-border B2B e-reporting and
+				payment receipts) — so the right validation rules fire
+				without the caller having to know which flow applies.
 
-				The addon covers three of the flows defined by the French
-				specification:
-
-				- Flow 2 ("facturation"): domestic B2B clearance, applied
-				  to invoices issued between two parties identifiable as
-				  French (SIREN or French VAT ID on both sides).
-				- Flow 10 ("e-reporting"): reporting of transactions that
-				  fall outside Flow 2 clearance — B2C sales, cross-border
-				  B2B, and payment receipts subject to e-reporting.
-				- Flow 6 ("cycle de vie"): lifecycle status messages
-				  (bill.Status) exchanged between registered platforms.
-
-				The invoice ruleset is dispatched at validation time based
-				on whether both parties resolve as French. There is no
-				caller-facing switch: identify the parties correctly and
-				the right flow runs.
+				Callers who prefer explicit control can declare any of
+				the flow-specific addons directly.
 			`),
 			i18n.FR: here.Doc(`
-				Support pour la réforme française CTC (Contrôle Continu
-				des Transactions) de la facturation et du e-reporting.
-
-				L'addon couvre trois flux du cahier des charges :
-
-				- Flux 2 (« facturation ») : clearance B2B domestique,
-				  appliqué aux factures émises entre deux parties
-				  identifiables comme françaises (SIREN ou numéro de TVA
-				  français des deux côtés).
-				- Flux 10 (« e-reporting ») : déclaration des transactions
-				  hors flux 2 — ventes B2C, B2B transfrontalières et
-				  encaissements soumis au e-reporting.
-				- Flux 6 (« cycle de vie ») : statuts cycle de vie
-				  (bill.Status) échangés entre plateformes agréées.
-
-				Le jeu de règles applicable aux factures est sélectionné
-				au moment de la validation selon que les deux parties
-				sont françaises ou non. Aucun commutateur explicite n'est
-				exposé : il suffit d'identifier correctement les parties.
+				Méta-addon de la réforme française CTC. Inspecte chaque
+				document GOBL au moment de la normalisation et ajoute
+				automatiquement l'addon de flux approprié — fr-ctc-flow2-v1
+				(clearance B2B domestique), fr-ctc-flow6-v1 (cycle de vie)
+				ou fr-ctc-flow10-v1 (e-reporting B2C / B2B transfrontalier
+				et encaissements) — afin que les règles de validation
+				adaptées se déclenchent sans que l'appelant n'ait à
+				connaître le flux applicable.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -118,8 +76,6 @@ func newAddon() *tax.AddonDef {
 				URL: "https://www.impots.gouv.fr/specifications-externes-b2b",
 			},
 		},
-		Extensions: extensions,
-		Scenarios:  scenarios,
 		Normalizer: normalize,
 	}
 }
@@ -127,14 +83,64 @@ func newAddon() *tax.AddonDef {
 func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		normalizeInvoice(obj)
+		obj.Addons.AddAddons(dispatchInvoice(obj))
 	case *bill.Status:
-		normalizeStatus(obj)
-	case *bill.Reason:
-		normalizeReason(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *org.Identity:
-		normalizeIdentity(obj)
+		obj.Addons.AddAddons(flow6.V1)
+	case *bill.Payment:
+		obj.Addons.AddAddons(dispatchPayment(obj))
 	}
+}
+
+// dispatchPayment picks the flow addon for a payment. A payment of
+// type advice (CDAR 211) or receipt (CDAR 212) exchanged between two
+// French parties is a Flow 6 CDV message. Everything else — payment
+// requests, B2C settlements, cross-border B2B receipts — is e-reporting
+// to the DGFiP via Flow 10.
+func dispatchPayment(pmt *bill.Payment) cbc.Key {
+	if pmt == nil {
+		return flow10.V1
+	}
+	if _, ok := flow6.PaymentCDARCodeFor(pmt.Type); !ok {
+		return flow10.V1
+	}
+	if partyIsFrench(pmt.Supplier) && partyIsFrench(pmt.Customer) {
+		return flow6.V1
+	}
+	return flow10.V1
+}
+
+// dispatchInvoice picks the flow addon for an invoice based on its
+// parties: two French parties → Flow 2 clearance; otherwise Flow 10
+// e-reporting (B2C if no customer, cross-border B2B if customer is
+// non-French).
+func dispatchInvoice(inv *bill.Invoice) cbc.Key {
+	if partyIsFrench(inv.Supplier) && partyIsFrench(inv.Customer) {
+		return flow2.V1
+	}
+	return flow10.V1
+}
+
+// partyIsFrench mirrors the helper of the same name in flow2/org.go.
+// Duplicated here to keep the meta-addon's import graph trivial and
+// the dispatcher easy to reason about: SIREN identity OR French TaxID
+// counts as French.
+func partyIsFrench(party *org.Party) bool {
+	if party == nil {
+		return false
+	}
+	if party.TaxID != nil && l10n.Code(party.TaxID.Country) == l10n.FR {
+		return true
+	}
+	for _, id := range party.Identities {
+		if id == nil {
+			continue
+		}
+		if id.Type == fr.IdentityTypeSIREN {
+			return true
+		}
+		if !id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID).String() == "0002" {
+			return true
+		}
+	}
+	return false
 }

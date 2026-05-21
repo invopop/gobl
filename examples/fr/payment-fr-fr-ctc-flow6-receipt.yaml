@@ -1,0 +1,43 @@
+# A Flow 6 payment receipt between two French parties. The fr-ctc-v1
+# meta-addon inspects the document, sees both parties are French and
+# the type is `receipt`, and routes it to fr-ctc-flow6-v1 — which
+# normalises the CDAR ProcessConditionCode to "212" (Encaissée) and
+# defaults the party roles (Supplier → SE, Customer → BY).
+#
+# A `type: advice` document follows the same shape and resolves to
+# CDAR 211 (Paiement transmis) with the roles flipped.
+$schema: "https://gobl.org/draft-0/bill/payment"
+$addons:
+  - "fr-ctc-v1"
+uuid: "3b6c7d8e-9f0a-4b2c-3d4e-5f6a7b8c9d01"
+type: "receipt"
+issue_date: "2026-05-02"
+value_date: "2026-05-02"
+code: "PMT-2026-0042"
+currency: "EUR"
+
+supplier:
+  name: "VENDEUR SARL"
+  identities:
+    - type: "SIREN"
+      code: "732829320"
+      ext:
+        iso-scheme-id: "0002"
+
+customer:
+  name: "ACHETEUR SARL"
+  identities:
+    - type: "SIREN"
+      code: "200000008"
+      ext:
+        iso-scheme-id: "0002"
+
+methods:
+  - key: "credit-transfer"
+    amount: "1200.00"
+
+lines:
+  - amount: "1200.00"
+    document:
+      code: "2026-00042"
+      issue_date: "2026-04-15"

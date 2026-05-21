@@ -1,0 +1,492 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-flow6-v1",
+  "name": {
+    "en": "France CTC Flow 6 (Cycle de Vie)",
+    "fr": "France CTC Flux 6 (Cycle de Vie)"
+  },
+  "description": {
+    "en": "Support for Flow 6 (\"Cycle de Vie\") lifecycle status\nmessages of the French CTC reform. Carries the CDAR\nProcessConditionCode on bill.Status documents exchanged\nbetween registered dematerialisation platforms (PDPs)\nand the Portail Public de Facturation (PPF).",
+    "fr": "Support du Flux 6 (« Cycle de Vie ») de la réforme\nfrançaise CTC. Porte le ProcessConditionCode CDAR sur\nles documents bill.Status échangés entre les plateformes\nde dématérialisation agréées (PDP) et le Portail Public\nde Facturation (PPF)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
+      },
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-ctc-flow6-role",
+      "name": {
+        "en": "Party Role Code",
+        "fr": "Code rôle partie"
+      },
+      "desc": {
+        "en": "UNCL 3035 role code carried as the CDAR RoleCode (MDT-158)\nfor each populated party on a Flow 6 lifecycle message.\nLabels follow the French CTC specification, which assigns\nCDAR-specific meanings to WK (dematerialisation platform /\noperator) and DFH (Portail Public de Facturation).\nThe normalizer fills the obvious defaults (Supplier → SE,\nCustomer → BY) and leaves the rest for the caller to set\nexplicitly."
+      },
+      "values": [
+        {
+          "code": "BY",
+          "name": {
+            "en": "Buyer",
+            "fr": "Acheteur"
+          }
+        },
+        {
+          "code": "DL",
+          "name": {
+            "en": "Factor",
+            "fr": "Affactureur"
+          }
+        },
+        {
+          "code": "SE",
+          "name": {
+            "en": "Seller",
+            "fr": "Vendeur"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Buyer's agent",
+            "fr": "Agent d'acheteur"
+          }
+        },
+        {
+          "code": "SR",
+          "name": {
+            "en": "Seller's agent",
+            "fr": "Agent de vendeur"
+          }
+        },
+        {
+          "code": "WK",
+          "name": {
+            "en": "Dematerialisation platform or operator",
+            "fr": "Plateforme ou opérateur de dématérialisation"
+          }
+        },
+        {
+          "code": "DFH",
+          "name": {
+            "en": "Portail Public de Facturation (PPF)",
+            "fr": "Portail Public de Facturation"
+          }
+        },
+        {
+          "code": "PE",
+          "name": {
+            "en": "Payee",
+            "fr": "Bénéficiaire"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Payer",
+            "fr": "Payeur"
+          }
+        },
+        {
+          "code": "II",
+          "name": {
+            "en": "Invoicer",
+            "fr": "Émetteur de la facture"
+          }
+        },
+        {
+          "code": "IV",
+          "name": {
+            "en": "Invoicee",
+            "fr": "Destinataire de la facture"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-flow6-reason-code",
+      "name": {
+        "en": "CDAR Reason Code",
+        "fr": "Code motif CDAR"
+      },
+      "desc": {
+        "en": "Exact CDAR ReasonCode pinned on a bill.Reason for Flow 6\nlifecycle messages. The CDAR ReasonCode dimension is 1:N\nwith bill.Reason.Key: this extension lets the caller pick\nthe precise code within a bucket. When absent, the\nconverter falls back to the default_for_key code for\nReason.Key."
+      },
+      "values": [
+        {
+          "code": "NON_TRANSMISE",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "JUSTIF_ABS",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ROUTAGE_ERR",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "AUTRE",
+          "name": {
+            "en": "other"
+          }
+        },
+        {
+          "code": "COORD_BANC_ERR",
+          "name": {
+            "en": "finance-terms"
+          }
+        },
+        {
+          "code": "TX_TVA_ERR",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "MONTANTTOTAL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "CALCUL_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "NON_CONFORME",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "DOUBLON",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DEST_INC",
+          "name": {
+            "en": "unknown-receiver"
+          }
+        },
+        {
+          "code": "DEST_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "TRANSAC_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "EMMET_INC",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CONTRAT_TERM",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "DOUBLE_FACT",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "CMD_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "ADR_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "SIRET_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "CODE_ROUTAGE_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_CT_ABSENT",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REF_ERR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "PU_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "REM_ERR",
+          "name": {
+            "en": "prices"
+          }
+        },
+        {
+          "code": "QTE_ERR",
+          "name": {
+            "en": "quantity"
+          }
+        },
+        {
+          "code": "ART_ERR",
+          "name": {
+            "en": "items"
+          }
+        },
+        {
+          "code": "MODPAI_ERR",
+          "name": {
+            "en": "payment-terms"
+          }
+        },
+        {
+          "code": "QUALITE_ERR",
+          "name": {
+            "en": "quality"
+          }
+        },
+        {
+          "code": "LIVR_INCOMP",
+          "name": {
+            "en": "delivery"
+          }
+        },
+        {
+          "code": "REJ_SEMAN",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_UNI",
+          "name": {
+            "en": "not-recognized"
+          }
+        },
+        {
+          "code": "REJ_COH",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_ADR",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_CONT_B2G",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "REJ_REF_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "REJ_ASS_PJ",
+          "name": {
+            "en": "references"
+          }
+        },
+        {
+          "code": "IRR_VIDE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TYPE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_SYNTAX",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_NOM_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_VID_PJ",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_EXT_DOC",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_TAILLE_F",
+          "name": {
+            "en": "legal"
+          }
+        },
+        {
+          "code": "IRR_ANTIVIRUS",
+          "name": {
+            "en": "legal"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-flow6-status-code",
+      "name": {
+        "en": "CDAR Process Condition Code",
+        "fr": "Code condition processus CDAR"
+      },
+      "desc": {
+        "en": "CDAR ProcessConditionCode (MDT-9) identifying the lifecycle\nevent reported by the Flow 6 message. The normalizer derives\nit from the (StatusLine.Key, Status.Type) pair; callers can\npre-set it to pin a specific code (e.g. when round-tripping\na parsed CDV)."
+      },
+      "values": [
+        {
+          "code": "200",
+          "name": {
+            "en": "Déposée"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "Émise par la plateforme"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "Reçue par PA"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "Mise à disposition"
+          }
+        },
+        {
+          "code": "204",
+          "name": {
+            "en": "Prise en charge"
+          }
+        },
+        {
+          "code": "205",
+          "name": {
+            "en": "Approuvée"
+          }
+        },
+        {
+          "code": "206",
+          "name": {
+            "en": "Approuvée partiellement"
+          }
+        },
+        {
+          "code": "207",
+          "name": {
+            "en": "En litige"
+          }
+        },
+        {
+          "code": "208",
+          "name": {
+            "en": "Suspendue"
+          }
+        },
+        {
+          "code": "209",
+          "name": {
+            "en": "Complétée"
+          }
+        },
+        {
+          "code": "210",
+          "name": {
+            "en": "Refusée"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "Rejetée sémantique"
+          }
+        },
+        {
+          "code": "211",
+          "name": {
+            "en": "Paiement transmis"
+          }
+        },
+        {
+          "code": "212",
+          "name": {
+            "en": "Encaissée"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": null
+}

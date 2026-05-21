@@ -1,4 +1,4 @@
-package ctc
+package flow10
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -8,18 +8,13 @@ import (
 )
 
 // paymentIsB2C reports whether the payment reports a B2C settlement,
-// determined by the absence of a Customer party. Payments themselves
-// are not routed by residency — every payment runs the Flow 10
-// e-reporting ruleset regardless of where the parties are based — so
-// "B2C" here is only used to mean "no customer present".
+// determined by the absence of a Customer party.
 func paymentIsB2C(pmt *bill.Payment) bool {
 	return pmt != nil && pmt.Customer == nil
 }
 
 // paymentHasCustomerAny is the "has Customer party" predicate used to
-// gate the per-line invoice-reference rules. Despite the historical
-// "B2B" labelling, it does not imply cross-border: a domestic FR-FR
-// payment receipt has a customer and goes through this branch.
+// gate the per-line invoice-reference rules.
 func paymentHasCustomerAny(v any) bool {
 	pmt, ok := v.(*bill.Payment)
 	return ok && !paymentIsB2C(pmt)
@@ -27,7 +22,6 @@ func paymentHasCustomerAny(v any) bool {
 
 func billPaymentRules() *rules.Set {
 	return rules.For(new(bill.Payment),
-		// Flow 10 only reports payment receipts, not requests or advices.
 		rules.Field("type",
 			rules.Assert("01", "payment type must be 'receipt' for Flow 10 reporting",
 				is.In(bill.PaymentTypeReceipt),
@@ -38,7 +32,7 @@ func billPaymentRules() *rules.Set {
 				is.Present,
 			),
 		),
-		rules.Assert("03", "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
+		rules.Assert("03", "every VAT line percent must be one of the Flow 10 permitted values (G1.24)",
 			is.Func("allowed Flow 10 VAT percents", paymentVATPercentsAllowed),
 		),
 		rules.Field("supplier",
@@ -49,8 +43,6 @@ func billPaymentRules() *rules.Set {
 				is.Func("party has SIREN", partyHasSIREN),
 			),
 		),
-		// Per-line invoice references are required when the payment
-		// carries a Customer (cleared invoice receipts), not B2C settlements.
 		rules.When(
 			is.Func("payment has customer", paymentHasCustomerAny),
 			rules.Field("lines",
@@ -76,9 +68,6 @@ func billPaymentRules() *rules.Set {
 	)
 }
 
-// paymentVATPercentsAllowed reports whether every VAT percent
-// declared on the payment's line totals matches one of the G1.24
-// whitelist values.
 func paymentVATPercentsAllowed(v any) bool {
 	pmt, ok := v.(*bill.Payment)
 	if !ok || pmt == nil {

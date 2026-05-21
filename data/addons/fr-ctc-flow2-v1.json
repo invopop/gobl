@@ -1,0 +1,193 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-flow2-v1",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "France CTC Flow 2 (B2B Clearance)",
+    "fr": "France CTC Flux 2 (Clearance B2B)"
+  },
+  "description": {
+    "en": "Support for Flow 2 (\"facturation\") of the French CTC\nreform: domestic B2B clearance, applied to invoices\nexchanged between two parties identifiable as French\n(SIREN or French VAT ID on both sides). Built on the\nEU EN16931 CIUS profile (declared as a dependency).",
+    "fr": "Support du Flux 2 (« facturation ») de la réforme\nfrançaise CTC : clearance B2B domestique appliquée aux\nfactures émises entre deux parties identifiables comme\nfrançaises (SIREN ou TVA française des deux côtés).\nBâti sur le profil CIUS EU EN16931 (déclaré comme\ndépendance)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
+      },
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
+    }
+  ],
+  "extensions": [],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "380"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "389"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "393"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "501"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "386"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "500"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "ext": {
+            "untdid-document-type": "384"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "471"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "472"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "473"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "381"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "261"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "396"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed",
+            "factoring"
+          ],
+          "ext": {
+            "untdid-document-type": "502"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "503"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}

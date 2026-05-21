@@ -1,4 +1,4 @@
-package ctc
+package flow6
 
 import (
 	"slices"
@@ -12,22 +12,6 @@ import (
 // notably `paid + update` (CDV-211 Paiement Transmis) and
 // `paid + response` (CDV-212 Encaissée), which share the "paid"
 // semantic but distinguish transmission vs treatment phase via Type.
-//
-// Stock keys carrying CDAR codes:
-//
-//	issued       + update   → 200 (Déposée)
-//	issued       + response → 201 (Émise par la plateforme)
-//	acknowledged + response → 202 (Reçue par PA)
-//	processing   + response → 204 (Prise en charge)
-//	accepted     + response → 205 (Approuvée)
-//	querying     + response → 208 (Suspendue) — "buyer will not proceed
-//	                                              without additional info"
-//	rejected     + response → 210 (Refusée)
-//	paid         + update   → 211 (Paiement transmis)
-//	paid         + response → 212 (Encaissée)
-//	error        + response → 213 (Rejetée sémantique)
-//
-// The keys below cover Flow 6 events that have no stock equivalent.
 const (
 	StatusEventMadeAvailable     cbc.Key = "made-available"
 	StatusEventPartiallyAccepted cbc.Key = "partially-accepted"
@@ -44,7 +28,10 @@ type processEntry struct {
 }
 
 // processTable is the authoritative ProcessConditionCode mapping for
-// Flow 6 CDAR messages. Order is stable and matches the spec table.
+// Flow 6 CDAR messages carried on bill.Status. The two payment-related
+// codes — 211 (Paiement transmis) and 212 (Encaissée) — are NOT here:
+// payments are expressed as bill.Payment documents (type=advice → 211,
+// type=receipt → 212). See PaymentCDARCodeFor in bill_payment.go.
 var processTable = []processEntry{
 	{bill.StatusEventIssued, bill.StatusTypeUpdate, "200"},
 	{bill.StatusEventIssued, bill.StatusTypeResponse, "201"},
@@ -57,8 +44,6 @@ var processTable = []processEntry{
 	{bill.StatusEventQuerying, bill.StatusTypeResponse, "208"},
 	{StatusEventCompleted, bill.StatusTypeResponse, "209"},
 	{bill.StatusEventRejected, bill.StatusTypeResponse, "210"},
-	{bill.StatusEventPaid, bill.StatusTypeUpdate, "211"},
-	{bill.StatusEventPaid, bill.StatusTypeResponse, "212"},
 	{bill.StatusEventError, bill.StatusTypeResponse, "213"},
 }
 
@@ -123,9 +108,8 @@ type reasonEntry struct {
 	IsDefault bool
 }
 
-// reasonTable lists all 45 French CDAR reason codes and the bill.Reason
-// bucket they roll up to. IsDefault marks the code the generator should
-// emit when the caller only sets Reason.Key.
+// reasonTable lists all French CDAR reason codes and the bill.Reason
+// bucket they roll up to.
 var reasonTable = []reasonEntry{
 	// Business rejection reasons (codes carried on 206 / 207 / 208 / 210).
 	{"NON_TRANSMISE", bill.ReasonKeyUnknownReceiver, false},
@@ -218,11 +202,9 @@ var actionTable = []struct {
 type CDVSide string
 
 const (
-	// CDVSideBuyer — the buyer-side end-party issues the CDV
-	// (Issuer = Customer, Recipient = Supplier).
+	// CDVSideBuyer — the buyer-side end-party issues the CDV.
 	CDVSideBuyer CDVSide = "buyer"
-	// CDVSideSeller — the seller-side end-party issues the CDV
-	// (Issuer = Supplier, Recipient = Customer).
+	// CDVSideSeller — the seller-side end-party issues the CDV.
 	CDVSideSeller CDVSide = "seller"
 	// CDVSidePlatform — the message is issued by a platform (PA-E,
 	// PA-R) or addressed to the PPF, so neither end-party plays the
@@ -290,8 +272,8 @@ var allowedReasonsByProcessCode = map[string][]string{
 }
 
 // ReasonCodeAllowedForProcessCode reports whether the given CDAR
-// ReasonCode is permitted on a status line whose ProcessConditionCode is
-// processCode.
+// ReasonCode is permitted on a status line whose ProcessConditionCode
+// is processCode.
 func ReasonCodeAllowedForProcessCode(reasonCode, processCode string) bool {
 	allowed, ok := allowedReasonsByProcessCode[processCode]
 	if !ok {

@@ -529,7 +529,22 @@ func (st *Status) Calculate() error {
 	if st.Regime.IsEmpty() {
 		st.SetRegime(partyTaxCountry(st.Supplier))
 	}
+	// Track which addon normalizers have already been applied so the
+	// follow-up passes only run normalizers for newly-added addons.
+	seen := make(map[cbc.Key]bool)
+	for _, def := range st.AddonDefs() {
+		if def != nil {
+			seen[def.Key] = true
+		}
+	}
 	st.Normalize(st.normalizers())
+	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
+		newNorms := tax.ExtractNormalizersForNew(st, seen)
+		if len(newNorms) == 0 {
+			break
+		}
+		st.Normalize(newNorms)
+	}
 	return st.calculate()
 }
 

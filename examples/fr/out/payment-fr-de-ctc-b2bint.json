@@ -4,14 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4cabf1cc377c67f69ddfd206b0029a896cb22604600d8b41eb9787e828c812a7"
+			"val": "02db52b25e7fb0f3ba9838d10f0645b4e9e418b0158f22a2855d1da6f0d6e3f4"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/payment",
 		"$regime": "FR",
 		"$addons": [
-			"fr-ctc-v1"
+			"fr-ctc-v1",
+			"fr-ctc-flow10-v1"
 		],
 		"uuid": "1f4d3e8a-9b6c-4d2e-8e7f-7a3c4d5e6f01",
 		"type": "receipt",

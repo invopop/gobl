@@ -10,7 +10,7 @@ code: "2024-00001"
 
 tax:
   ext:
-    fr-ctc-billing-mode: "B7"
+    dgfip-billing-mode: "B7"
     untdid-document-type: "380"
 
 supplier:

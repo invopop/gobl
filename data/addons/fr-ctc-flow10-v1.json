@@ -1,0 +1,118 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-ctc-flow10-v1",
+  "name": {
+    "en": "France CTC Flow 10 (E-Reporting)",
+    "fr": "France CTC Flux 10 (E-Reporting)"
+  },
+  "description": {
+    "en": "Support for the French CTC Flow 10 e-reporting reform.\nCovers transactions that fall outside Flow 2 clearance:\nB2C sales, cross-border B2B invoices, and payment receipts\nsubject to e-reporting to the DGFiP via the PPF.",
+    "fr": "Support pour le Flux 10 « e-reporting » de la réforme\nfrançaise CTC. Couvre les transactions hors clearance\nFlux 2 : ventes B2C, factures B2B transfrontalières et\nencaissements soumis au e-reporting à la DGFiP via le\nPortail Public de Facturation (PPF)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "External Specifications",
+        "fr": "Spécifications Externes"
+      },
+      "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-ctc-flow10-b2c-category",
+      "name": {
+        "en": "B2C Transaction Category",
+        "fr": "Catégorie de transaction B2C"
+      },
+      "desc": {
+        "en": "Classifies a B2C transaction for French e-reporting to the PPF\n(G1.68). Required on Flow 10 B2C invoices.\n\n- TLB1: Goods deliveries subject to VAT.\n- TPS1: Services subject to VAT.\n- TNT1: Goods / services not subject to French VAT,\n  including intra-EU distance sales per CGI articles 258 A\n  and 259 B.\n- TMA1: Operations under the VAT-on-margin regime\n  (CGI articles 266-1-e, 268, 297 A).",
+        "fr": "Catégorie de transaction pour le e-reporting au PPF (G1.68).\nObligatoire sur les factures B2C en Flux 10."
+      },
+      "values": [
+        {
+          "code": "TLB1",
+          "name": {
+            "en": "Goods subject to VAT",
+            "fr": "Livraisons de biens soumises à la TVA"
+          }
+        },
+        {
+          "code": "TPS1",
+          "name": {
+            "en": "Services subject to VAT",
+            "fr": "Prestations de services soumises à la TVA"
+          }
+        },
+        {
+          "code": "TNT1",
+          "name": {
+            "en": "Not subject to French VAT",
+            "fr": "Non soumis à la TVA en France"
+          }
+        },
+        {
+          "code": "TMA1",
+          "name": {
+            "en": "VAT-on-margin regime",
+            "fr": "Régime de TVA sur la marge"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "380"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "386"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "ext": {
+            "untdid-document-type": "384"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "381"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "prepayment"
+          ],
+          "ext": {
+            "untdid-document-type": "503"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}

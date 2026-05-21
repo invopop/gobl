@@ -1,7 +1,8 @@
-package ctc
+package flow10
 
 import (
-	"regexp"
+	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -10,37 +11,30 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
-// Inbox / identity scheme constants used across the addon.
+// Identity scheme constants used by Flow 10 reporting.
 const (
-	// inboxSchemeSIREN is the scheme code for SIREN-based addresses (ISO/IEC 6523).
-	inboxSchemeSIREN cbc.Code = "0225"
-
 	// identitySchemeIDSIREN is the ISO scheme ID for SIREN identities.
 	identitySchemeIDSIREN = "0002"
 	// identitySchemeIDSIRET is the ISO scheme ID for SIRET identities.
 	identitySchemeIDSIRET = "0009"
-	// identitySchemeIDEUVAT is the ISO scheme ID for EU (non-French) intra-community VAT.
+	// identitySchemeIDEUVAT is the ISO scheme ID for EU (non-French)
+	// intra-community VAT.
 	identitySchemeIDEUVAT = "0223"
-	// identitySchemeIDNonEU is the ISO scheme ID for non-EU party identifiers.
+	// identitySchemeIDNonEU is the ISO scheme ID for non-EU party
+	// identifiers.
 	identitySchemeIDNonEU = "0227"
-	// identitySchemeIDRIDET is the ISO scheme ID for New Caledonia RIDET.
+	// identitySchemeIDRIDET is the ISO scheme ID for New Caledonia
+	// RIDET.
 	identitySchemeIDRIDET = "0228"
-	// identitySchemeIDTAHITI is the ISO scheme ID for French Polynesia TAHITI.
+	// identitySchemeIDTAHITI is the ISO scheme ID for French Polynesia
+	// TAHITI.
 	identitySchemeIDTAHITI = "0229"
-
-	// identityKeyPrivateID is the key for private ID identities.
-	identityKeyPrivateID cbc.Key = "private-id"
-	// identitySchemeIDPrivate is the ISO scheme ID for identities requiring
-	// alphanumeric format (CTC-specific 0224 private ID).
-	identitySchemeIDPrivate = "0224"
 )
-
-// sirenInboxFormatRegex enforces the alphanumeric + `-+_/` format
-// shared by SIREN-scope inboxes and private-id identity codes.
-var sirenInboxFormatRegex = regexp.MustCompile(`^[A-Za-z0-9+\-_/]+$`)
 
 // allowedPartySchemeIDs lists the scheme IDs permitted for the legal
 // identity of a Flow 10 B2B party (supplier or customer), per G2.19.
@@ -59,52 +53,17 @@ var schemeIDsRequiringVAT = []string{
 	identitySchemeIDEUVAT,
 }
 
-// allowedFlow6IdentitySchemes is the ICD 6523 subset CDAR accepts on
-// Flow 6 (CDV lifecycle) party identities. STC (0231 — assujetti
-// unique) is intentionally absent: it is a Flow 2 invoice concept
-// and must not appear on a CDV. Used by bill_status rule 22; not
-// applied addon-wide because Flow 10 cross-border B2B may legitimately
-// carry foreign identifier schemes outside this list.
-var allowedFlow6IdentitySchemes = []string{
-	"0002", // SIREN
-	"0009", // SIRET
-	"0223", // EU VAT
-	"0224", // Private ID
-	"0226", // European VAT
-	"0227", // Non-EU
-	"0228", // RIDET (New Caledonia)
-	"0229", // TAHITI (French Polynesia)
-	"0238", // Peppol participant ID
-}
-
-// allowedRoleCodes is the UNCL 3035 subset that the fr-ctc-role
-// extension accepts.
-var allowedRoleCodes = []cbc.Code{
-	RoleSE, RoleBY, RoleWK, RoleDFH, RoleAB, RoleSR,
-	RoleDL, RolePE, RolePR, RoleII, RoleIV,
-}
-
 func normalizeParty(party *org.Party) {
 	if party == nil {
 		return
 	}
-
-	// Derive identities from TaxID for Flow 10 reporting (SIREN for
-	// French, EU-VAT identity for other EU countries). The Flow 2
-	// SIREN-from-SIRET path is handled below in normalizeIdentities.
 	normalizePartyFromTaxID(party)
-
-	// Normalize identities (SIREN-from-SIRET, legal scope).
 	normalizeIdentities(party)
-
-	// Normalize inboxes (peppol key on SIREN inbox).
-	normalizeInboxes(party)
 }
 
-// normalizePartyFromTaxID attempts to derive a legal identity from the
-// party's TaxID when no matching identity is present. Mirrors the
-// pre-merge flow10 behaviour: French TaxID → SIREN identity; other-EU
-// TaxID → EU-VAT identity.
+// normalizePartyFromTaxID derives a legal identity from the party's
+// TaxID when no matching identity is present. French TaxID → SIREN
+// identity; other-EU TaxID → EU-VAT identity.
 func normalizePartyFromTaxID(party *org.Party) {
 	if party.TaxID == nil {
 		return
@@ -167,22 +126,17 @@ func ensureIdentity(party *org.Party, typ cbc.Code, code cbc.Code, schemeID stri
 	})
 }
 
-// normalizeIdentities handles SIRET → SIREN derivation and legal-scope
-// assignment.
 func normalizeIdentities(party *org.Party) {
 	if party == nil || len(party.Identities) == 0 {
 		return
 	}
-
 	var siret, siren *org.Identity
 	hasLegalScope := false
-
 	for _, id := range party.Identities {
 		if id == nil {
 			continue
 		}
 		normalizeIdentity(id)
-
 		if id.Type == fr.IdentityTypeSIRET {
 			siret = id
 		}
@@ -193,8 +147,7 @@ func normalizeIdentities(party *org.Party) {
 			hasLegalScope = true
 		}
 	}
-
-	// BR-FR-09/10: Generate SIREN from SIRET if needed.
+	// Generate SIREN from SIRET if needed.
 	if siret != nil && siren == nil {
 		siretCode := string(siret.Code)
 		if len(siretCode) == 14 {
@@ -209,24 +162,14 @@ func normalizeIdentities(party *org.Party) {
 			party.Identities = append(party.Identities, siren)
 		}
 	}
-
-	// Set SIREN scope to legal if no other identity has legal scope.
 	if siren != nil && !hasLegalScope {
 		siren.Scope = org.IdentityScopeLegal
 	}
 }
 
-// normalizeIdentity handles per-identity normalization: maps the
-// private-id key to scheme 0224 and the SIREN/SIRET identity types
-// to schemes 0002/0009 respectively. The fr-ctc addon owns this
-// mapping so it works even when eu-en16931 is not declared (Flow 6
-// or standalone Flow 10 callers).
 func normalizeIdentity(id *org.Identity) {
 	if id == nil {
 		return
-	}
-	if id.Key == identityKeyPrivateID {
-		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDPrivate)
 	}
 	if id.Type == fr.IdentityTypeSIREN && id.Ext.Get(iso.ExtKeySchemeID) == "" {
 		id.Ext = id.Ext.Set(iso.ExtKeySchemeID, identitySchemeIDSIREN)
@@ -236,37 +179,16 @@ func normalizeIdentity(id *org.Identity) {
 	}
 }
 
-// normalizeInboxes flags the SIREN-scope inbox with the peppol key
-// when no other inbox already carries it.
-func normalizeInboxes(party *org.Party) {
-	if party == nil || len(party.Inboxes) == 0 {
-		return
+func isEUNonFrance(c l10n.Code) bool {
+	if c == l10n.FR || c == "" {
+		return false
 	}
-
-	hasPeppol := false
-	var sirenInbox *org.Inbox
-	for _, inbox := range party.Inboxes {
-		if inbox == nil {
-			continue
-		}
-		if inbox.Key == org.InboxKeyPeppol {
-			hasPeppol = true
-		}
-		if inbox.Scheme == inboxSchemeSIREN {
-			sirenInbox = inbox
-		}
-	}
-	if !hasPeppol && sirenInbox != nil {
-		sirenInbox.Key = org.InboxKeyPeppol
-	}
+	eu := l10n.Union(l10n.EU)
+	return eu != nil && eu.HasMember(c)
 }
 
-// -- Predicates used across addon files ---------------------------------
-
-// partyLegalSchemeID returns the ICD 6523 scheme ID of the identity the
-// party presents as its legal identifier. Prefers an identity scoped as
-// "legal"; failing that, the first identity that declares a known
-// scheme ID.
+// partyLegalSchemeID returns the ICD 6523 scheme ID of the identity
+// the party presents as its legal identifier.
 func partyLegalSchemeID(party *org.Party) string {
 	if party == nil {
 		return ""
@@ -290,24 +212,6 @@ func partyLegalSchemeID(party *org.Party) string {
 	return fallback
 }
 
-func isEUNonFrance(c l10n.Code) bool {
-	if c == l10n.FR || c == "" {
-		return false
-	}
-	eu := l10n.Union(l10n.EU)
-	return eu != nil && eu.HasMember(c)
-}
-
-// partyHasSIREN reports whether the party carries a SIREN-scheme
-// (0002) identity.
-func partyHasSIREN(v any) bool {
-	party, ok := v.(*org.Party)
-	if !ok || party == nil {
-		return false
-	}
-	return partyCarriesSIREN(party)
-}
-
 func partyCarriesSIREN(party *org.Party) bool {
 	if party == nil {
 		return false
@@ -326,19 +230,68 @@ func partyCarriesSIREN(party *org.Party) bool {
 	return false
 }
 
-// partyIsFrench returns true when the party is identifiable as French —
-// either it carries a SIREN identity or its TaxID is registered under
-// the French regime. Used by the invoice-rule dispatcher to pick the
-// Flow 2 ruleset.
-func partyIsFrench(party *org.Party) bool {
-	if party == nil {
+// partyHasSIREN reports whether the party carries a SIREN-scheme
+// (0002) identity.
+func partyHasSIREN(v any) bool {
+	party, ok := v.(*org.Party)
+	if !ok || party == nil {
 		return false
 	}
-	if partyCarriesSIREN(party) {
+	return partyCarriesSIREN(party)
+}
+
+func partyHasAllowedLegalScheme(v any) bool {
+	party, ok := v.(*org.Party)
+	if !ok || party == nil {
+		return false
+	}
+	return slices.Contains(allowedPartySchemeIDs, partyLegalSchemeID(party))
+}
+
+func partyHasTaxIDWhenRequired(v any) bool {
+	party, ok := v.(*org.Party)
+	if !ok || party == nil {
 		return true
 	}
-	if party.TaxID != nil && l10n.Code(party.TaxID.Country) == l10n.FR {
+	scheme := partyLegalSchemeID(party)
+	if !slices.Contains(schemeIDsRequiringVAT, scheme) {
 		return true
 	}
-	return false
+	return party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func partyHasVATCode(p *org.Party) bool {
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
+func orgPartyRules() *rules.Set {
+	return rules.For(new(org.Party),
+		rules.Field("identities",
+			rules.Assert("01", "identity scheme format invalid (BR-FR-CO-10)",
+				is.FuncError("valid scheme format", identitiesSchemeFormatValid),
+			),
+		),
+	)
+}
+
+func identitiesSchemeFormatValid(val any) error {
+	identities, ok := val.([]*org.Identity)
+	if !ok || len(identities) == 0 {
+		return nil
+	}
+	schemes := make(map[cbc.Code]bool)
+	for _, id := range identities {
+		if id == nil {
+			continue
+		}
+		schemeID := id.Ext.Get(iso.ExtKeySchemeID)
+		if schemeID == cbc.CodeEmpty {
+			return errors.New("all identities must have an ISO scheme ID defined in extensions BR-FR-CO-10")
+		}
+		if schemes[schemeID] {
+			return fmt.Errorf("duplicate identities with ISO scheme ID '%s' are not allowed (BR-FR-CO-10)", schemeID)
+		}
+		schemes[schemeID] = true
+	}
+	return nil
 }
