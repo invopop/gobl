@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
 
+### Fixed
+
+- `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
+
 ## [v0.402.0] - 2026-04-30
 
 ### Changed
