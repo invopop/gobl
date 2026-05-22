@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "449cbbae5f62e3c42da4507aea03341cbb577646d239a07be37ad33cde8c7098"
+			"val": "03d91fa5d7cdfbbfe4cc225dd09c7a24838643a0d5ca0f72ec51e99385bf39a5"
 		}
 	},
 	"doc": {
@@ -53,9 +53,13 @@
 		},
 		"customer": {
 			"name": "Sample Consumer LLC",
+			"tax_id": {
+				"country": "SA",
+				"code": "399999999900003"
+			},
 			"identities": [
 				{
-					"type": "TIN",
+					"type": "CRN",
 					"code": "123456789012345"
 				}
 			],

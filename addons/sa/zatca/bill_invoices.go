@@ -209,6 +209,21 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
+
+		// Self-billed
+		rules.When(
+			is.Func("invoice is self-billed", invoiceIsSelfBilled),
+			rules.Field("customer",
+				rules.Assert("27", "customer must have a tax ID code (BR-KSA-39)",
+					is.Func("valid VAT code", hasTaxIDCode),
+				),
+				rules.Field("identities",
+					rules.Assert("28", "customer must have a valid identity (BR-KSA-08)",
+						is.Func("identity must be one of: CRN/MOM/MLS/700/SAG/OTH", hasOneSupplierIdentity),
+					),
+				),
+			),
+		),
 	)
 }
 
@@ -240,6 +255,11 @@ func invoiceIsExport(val any) bool {
 func invoiceIsSummary(val any) bool {
 	code := getInvTypeCode(val)
 	return code != "" && code[5] == '1'
+}
+
+func invoiceIsSelfBilled(val any) bool {
+	code := getInvTypeCode(val)
+	return code != "" && code[6] == '1'
 }
 
 func invoiceIsSimplifiedAndSummary(val any) bool {
