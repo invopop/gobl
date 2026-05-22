@@ -170,6 +170,24 @@ func validExportInvoice() *bill.Invoice {
 	return inv
 }
 
+// validSelfBilledInvoice returns a standard tax invoice with the self-billed
+// bit set in KSA-2 (position 7 = 1 → "0100001"). There is no scenario for
+// self-billed, so we use bill.InvoiceTypeOther (which bypasses scenarios)
+// and hard-code UNTDID + KSA-2 directly. The customer carries a CRN
+// identity so BR-KSA-08 (rule 28) is satisfied; TaxID is kept so BR-KSA-39
+// (rule 27) is satisfied.
+func validSelfBilledInvoice() *bill.Invoice {
+	inv := validStandardInvoice()
+	inv.Type = bill.InvoiceTypeOther
+	inv.Tax.Ext = inv.Tax.Ext.
+		Set(untdid.ExtKeyDocumentType, "388").
+		Set(zatca.ExtKeyInvoiceTypeTransactions, "0100001")
+	inv.Customer.Identities = []*org.Identity{
+		{Type: zatca.IdentityTypeCRN, Code: "1234567890"},
+	}
+	return inv
+}
+
 // calculated runs Calculate on the invoice and returns it, failing the
 // test if calculation fails. Convenience wrapper used in the tests.
 func calculated(t *testing.T, inv *bill.Invoice) *bill.Invoice {
@@ -200,6 +218,9 @@ func TestValidFixtures(t *testing.T) {
 	})
 	t.Run("export invoice", func(t *testing.T) {
 		require.NoError(t, rules.Validate(calculated(t, validExportInvoice())))
+	})
+	t.Run("self-billed invoice", func(t *testing.T) {
+		require.NoError(t, rules.Validate(calculated(t, validSelfBilledInvoice())))
 	})
 }
 
@@ -715,6 +736,13 @@ func hasExportBit(code cbc.Code) bool {
 	return len(code) >= 5 && code[4] == '1'
 }
 
+// hasSelfBilledBit returns true when KSA-2 position 6 (the self-billed flag)
+// is set, which triggers BR-KSA-39 / BR-KSA-08 on the customer — the
+// customer must have a tax ID and exactly one supplier-style identity.
+func hasSelfBilledBit(code cbc.Code) bool {
+	return len(code) >= 7 && code[6] == '1'
+}
+
 // clearCustomerVAT removes the customer's VAT ID and replaces it with a
 // non-VAT TIN identity so the invoice satisfies BR-KSA-46 (export bit set)
 // while still meeting BR-KSA-14/81 when the form is Standard (TT=01).
@@ -722,6 +750,15 @@ func clearCustomerVAT(inv *bill.Invoice) {
 	inv.Customer.TaxID = nil
 	inv.Customer.Identities = []*org.Identity{
 		{Type: zatca.IdentityTypeTIN, Code: "123456789012345"},
+	}
+}
+
+// setCustomerSelfBilledIdentity gives the customer a single supplier-style
+// identity (CRN) so the invoice satisfies BR-KSA-08 when the self-billed
+// bit is set. It does not touch TaxID — BR-KSA-39 still requires it.
+func setCustomerSelfBilledIdentity(inv *bill.Invoice) {
+	inv.Customer.Identities = []*org.Identity{
+		{Type: zatca.IdentityTypeCRN, Code: "1234567890"},
 	}
 }
 
@@ -755,6 +792,9 @@ func assertSACodeHardCoded(t *testing.T, code cbc.Code) {
 	inv.Type = bill.InvoiceTypeOther
 	if hasExportBit(code) {
 		clearCustomerVAT(inv)
+	}
+	if hasSelfBilledBit(code) {
+		setCustomerSelfBilledIdentity(inv)
 	}
 	inv.Tax.Ext = inv.Tax.Ext.
 		Set(untdid.ExtKeyDocumentType, "388").
@@ -867,5 +907,134 @@ func TestAllValidTransactionTypes(t *testing.T) {
 	})
 	t.Run("0211010 simplified+third-party+nominal+summary", func(t *testing.T) {
 		assertSACodeHardCoded(t, "0211010")
+	})
+}
+
+// ============================================================================
+// Group J — Rules 27-28: Self-billed invoices require customer tax ID and
+//                        a valid supplier-style identity
+//                        (BR-KSA-39, BR-KSA-08)
+// ============================================================================
+
+func TestSelfBilledCustomerTaxIDRequired(t *testing.T) {
+	t.Run("baseline self-billed invoice passes", func(t *testing.T) {
+		require.NoError(t, rules.Validate(calculated(t, validSelfBilledInvoice())))
+	})
+
+	t.Run("customer without tax ID fails (BR-KSA-39)", func(t *testing.T) {
+		inv := validSelfBilledInvoice()
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a tax ID code")
+	})
+
+	t.Run("customer with empty tax ID code fails (BR-KSA-39)", func(t *testing.T) {
+		inv := validSelfBilledInvoice()
+		inv.Customer.TaxID = &tax.Identity{Country: "SA", Code: ""}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a tax ID code")
+	})
+}
+
+func TestSelfBilledCustomerIdentities(t *testing.T) {
+	withIdentity := func(idType cbc.Code, code string) *bill.Invoice {
+		inv := validSelfBilledInvoice()
+		inv.Customer.Identities = []*org.Identity{
+			{Type: idType, Code: cbc.Code(code)},
+		}
+		return inv
+	}
+
+	t.Run("customer with no identities fails (BR-KSA-08)", func(t *testing.T) {
+		inv := validSelfBilledInvoice()
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a valid identity")
+	})
+
+	t.Run("CRN identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeCRN, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("MOM identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeMom, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("MLS identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeMLS, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("700 identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityType700, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("SAG identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeSAG, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("OTH identity passes", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeOTH, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("invalid identity type fails (BR-KSA-08)", func(t *testing.T) {
+		inv := withIdentity("INVALID", "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a valid identity")
+	})
+
+	t.Run("NAT identity fails — not in supplier-style list (BR-KSA-08)", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeNational, "1234567890")
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a valid identity")
+	})
+
+	t.Run("TIN identity fails — not in supplier-style list (BR-KSA-08)", func(t *testing.T) {
+		inv := withIdentity(zatca.IdentityTypeTIN, "123456789012345")
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a valid identity")
+	})
+
+	t.Run("two identities fails (BR-KSA-08)", func(t *testing.T) {
+		inv := validSelfBilledInvoice()
+		inv.Customer.Identities = []*org.Identity{
+			{Type: zatca.IdentityTypeCRN, Code: "1234567890"},
+			{Type: zatca.IdentityTypeMLS, Code: "1234567890"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv),
+			"customer must have a valid identity")
+	})
+}
+
+func TestSelfBilledRuleDoesNotApplyWhenBitUnset(t *testing.T) {
+	// Non-self-billed invoices must NOT be subject to the self-billed
+	// cascade — a standard invoice without customer identities should
+	// still pass (when the customer carries a VAT ID, BR-KSA-14/81 is
+	// already satisfied).
+	t.Run("standard invoice without customer identity passes", func(t *testing.T) {
+		inv := validStandardInvoice()
+		require.Nil(t, inv.Customer.Identities)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+		// Sanity: KSA-2 self-billed bit is unset.
+		assert.NotEqual(t, byte('1'), inv.Tax.Ext.Get(zatca.ExtKeyInvoiceTypeTransactions).String()[6])
 	})
 }

@@ -30,8 +30,11 @@ supplier:
       country: "SA"
 
 customer:
+  tax_id:
+    country: "SA"
+    code: "399999999900003"
   identities:
-    - type: "TIN"
+    - type: "CRN"
       code: "123456789012345"
   name: "Sample Consumer LLC"
   addresses:
