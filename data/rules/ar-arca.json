@@ -124,82 +124,87 @@
           ]
         },
         {
-          "guard": "concept is services",
+          "guard": "doc type is A, B, or C",
           "subsets": [
             {
-              "field": "ordering",
-              "assert": [
-                {
-                  "id": "GOBL-AR-ARCA-BILL-INVOICE-15",
-                  "desc": "ordering is required for services",
-                  "tests": "present"
-                }
-              ],
+              "guard": "concept is services",
               "subsets": [
                 {
-                  "field": "period",
+                  "field": "ordering",
                   "assert": [
                     {
-                      "id": "GOBL-AR-ARCA-BILL-INVOICE-16",
-                      "desc": "ordering period is required for services",
-                      "tests": "present"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "field": "payment",
-              "assert": [
-                {
-                  "id": "GOBL-AR-ARCA-BILL-INVOICE-17",
-                  "desc": "payment is required for services",
-                  "tests": "present"
-                }
-              ],
-              "subsets": [
-                {
-                  "field": "terms",
-                  "assert": [
-                    {
-                      "id": "GOBL-AR-ARCA-BILL-INVOICE-18",
-                      "desc": "payment terms are required for services",
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-15",
+                      "desc": "ordering is required for services",
                       "tests": "present"
                     }
                   ],
                   "subsets": [
                     {
-                      "field": "due_dates",
+                      "field": "period",
                       "assert": [
                         {
-                          "id": "GOBL-AR-ARCA-BILL-INVOICE-19",
-                          "desc": "payment due dates are required for services",
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-16",
+                          "desc": "ordering period is required for services",
                           "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "payment",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-17",
+                      "desc": "payment is required for services",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "terms",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-18",
+                          "desc": "payment terms are required for services",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "field": "due_dates",
+                          "assert": [
+                            {
+                              "id": "GOBL-AR-ARCA-BILL-INVOICE-19",
+                              "desc": "payment due dates are required for services",
+                              "tests": "present"
+                            }
+                          ]
                         }
                       ]
                     }
                   ]
                 }
               ]
-            }
-          ]
-        },
-        {
-          "guard": "concept is goods",
-          "subsets": [
+            },
             {
-              "field": "payment",
+              "guard": "concept is goods",
               "subsets": [
                 {
-                  "field": "terms",
+                  "field": "payment",
                   "subsets": [
                     {
-                      "field": "due_dates",
-                      "assert": [
+                      "field": "terms",
+                      "subsets": [
                         {
-                          "id": "GOBL-AR-ARCA-BILL-INVOICE-20",
-                          "desc": "payment due dates must not be set for goods",
-                          "tests": "empty"
+                          "field": "due_dates",
+                          "assert": [
+                            {
+                              "id": "GOBL-AR-ARCA-BILL-INVOICE-20",
+                              "desc": "payment due dates must not be set for goods",
+                              "tests": "empty"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -260,6 +265,128 @@
                           "id": "GOBL-AR-ARCA-BILL-INVOICE-23",
                           "desc": "type C invoices (simplified tax scheme) must not have taxes on lines",
                           "tests": "empty"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "doc type is T",
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-25",
+                      "desc": "tourism invoice requires 'ar-arca-tourism-type' extension",
+                      "tests": "ext require [ar-arca-tourism-type]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "subsets": [
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-AR-ARCA-BILL-INVOICE-27",
+                      "desc": "tourism invoice customer requires an address",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "taxes",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-29",
+                          "desc": "tourism invoice line requires taxes",
+                          "tests": "present"
+                        }
+                      ],
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-AR-ARCA-BILL-INVOICE-26",
+                                  "desc": "tourism invoice line requires 'ar-arca-tourism-item' extension",
+                                  "tests": "ext require [ar-arca-tourism-item]"
+                                },
+                                {
+                                  "id": "GOBL-AR-ARCA-BILL-INVOICE-28",
+                                  "desc": "tourism invoice line VAT rate must be '5' (21%) via 'ar-arca-vat-rate'",
+                                  "tests": "ext 'ar-arca-vat-rate' in [5]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "discounts",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-AR-ARCA-BILL-INVOICE-30",
+                          "desc": "tourism invoice discount requires 'ar-arca-tourism-item' extension",
+                          "tests": "ext require [ar-arca-tourism-item]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "payment",
+              "subsets": [
+                {
+                  "field": "advances",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "ext",
+                          "assert": [
+                            {
+                              "id": "GOBL-AR-ARCA-BILL-INVOICE-31",
+                              "desc": "tourism invoice advance requires 'ar-arca-tourism-item' extension",
+                              "tests": "ext require [ar-arca-tourism-item]"
+                            }
+                          ]
                         }
                       ]
                     }

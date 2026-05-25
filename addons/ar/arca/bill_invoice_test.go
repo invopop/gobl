@@ -18,6 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testItemServiceName = "Service Item"
+
 func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 	ad := tax.AddonForKey(arca.V4)
 
@@ -178,14 +180,14 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:  "Service Item",
+				Name:  testItemServiceName,
 				Price: num.NewAmount(5000, 2),
 				Key:   org.ItemKeyServices,
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1002,14 +1004,14 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
-				Name:  "Service Item",
+				Name:  testItemServiceName,
 				Price: num.NewAmount(5000, 2),
 				Key:   org.ItemKeyServices,
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1288,16 +1290,128 @@ func TestValidateFunctionsWithNilValues(t *testing.T) {
 }
 
 func TestCorrectionDefinitions(t *testing.T) {
-	t.Run("correction definitions exist for credit and debit notes", func(t *testing.T) {
+	t.Run("correction definitions", func(t *testing.T) {
 		ad := tax.AddonForKey(arca.V4)
 		require.NotNil(t, ad.Corrections)
-		// Check that invoice correction definition exists
 		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, def)
-		assert.True(t, def.HasType(bill.InvoiceTypeCreditNote))
-		assert.True(t, def.HasType(bill.InvoiceTypeDebitNote))
 		assert.True(t, def.HasExtension(arca.ExtKeyDocType))
+		assert.NotNil(t, def.Normalizer)
 	})
+}
+
+func TestCorrectionNormalize(t *testing.T) {
+	t.Run("ignores non-invoice document", func(t *testing.T) {
+		ad := tax.AddonForKey(arca.V4)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		require.NotNil(t, def.Normalizer)
+		// Should not panic with a non-invoice type.
+		def.Normalizer.Normalize("not an invoice")
+	})
+
+	t.Run("ignores invoice without preceding", func(_ *testing.T) {
+		ad := tax.AddonForKey(arca.V4)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		// Should not panic when Preceding is empty.
+		def.Normalizer.Normalize(&bill.CorrectionNormalize{Invoice: &bill.Invoice{}})
+	})
+
+	t.Run("handles nil tax on invoice", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+		// Simulate a correction normalizer call with nil Tax
+		// but with correction options containing a doc-type.
+		inv.Tax = nil
+		inv.Preceding = []*org.DocumentRef{{
+			Code: "1",
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{arca.ExtKeyDocType: "3"}),
+		}}
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"),
+		)
+		require.NoError(t, err)
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+	})
+
+	t.Run("copies tax extensions to preceding and routes doc-type to invoice", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Tax.Ext.Get(arca.ExtKeyConcept))
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "3"), // Credit Note A
+		)
+		require.NoError(t, err)
+
+		// Original extensions copied to preceding
+		pre := inv.Preceding[0]
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyConcept))
+
+		// Invoice doc type updated via correction normalizer
+		assert.Equal(t, cbc.Code("3"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+	})
+
+	t.Run("credit note B", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		// Clear pre-set doc type so normalizer derives it from customer VAT status
+		inv.Tax.Ext = inv.Tax.Ext.Delete(arca.ExtKeyDocType)
+		inv.Customer.TaxID = nil
+		inv.Customer.Ext = tax.Extensions{}
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Code: "12345678",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					arca.ExtKeyIdentityType: "96", // DNI
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.Code("6"), inv.Tax.Ext.Get(arca.ExtKeyDocType)) // Invoice B
+
+		err := inv.Correct(
+			bill.Credit,
+			bill.WithExtension(arca.ExtKeyDocType, "8"), // Credit Note B
+		)
+		require.NoError(t, err)
+
+		assert.Equal(t, cbc.Code("8"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("6"), inv.Preceding[0].Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext.Get(arca.ExtKeyConcept))
+	})
+
+	t.Run("without doc-type extension copies originals to preceding", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+
+		// Correct without providing a doc-type extension
+		err := inv.Correct(bill.Credit)
+		require.NoError(t, err)
+
+		// Original extensions still copied to preceding
+		pre := inv.Preceding[0]
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), pre.Ext.Get(arca.ExtKeyConcept))
+	})
+
+	t.Run("debit note A", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		require.NoError(t, inv.Calculate())
+
+		err := inv.Correct(
+			bill.Debit,
+			bill.WithExtension(arca.ExtKeyDocType, "2"), // Debit Note A
+		)
+		require.NoError(t, err)
+
+		assert.Equal(t, bill.InvoiceTypeDebitNote, inv.Type)
+		assert.Equal(t, cbc.Code("2"), inv.Tax.Ext.Get(arca.ExtKeyDocType))
+		assert.Equal(t, cbc.Code("1"), inv.Preceding[0].Ext.Get(arca.ExtKeyDocType))
+	})
+
 }
 
 func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
@@ -1311,8 +1425,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv := testInvoiceTypeC(t)
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1334,8 +1448,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1357,8 +1471,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Preceding = testPreceding()
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1376,8 +1490,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "211") // FCE Invoice C
 		inv.Lines[0].Taxes = tax.Set{
 			{
-				Category: "VAT",
-				Rate:     "standard",
+				Category: tax.CategoryVAT,
+				Rate:     tax.KeyStandard,
 			},
 		}
 		assertValidationError(t, inv, "type C invoices (simplified tax scheme) must not have taxes on lines")
@@ -1422,8 +1536,8 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 			},
 			Taxes: tax.Set{
 				{
-					Category: "VAT",
-					Rate:     "standard",
+					Category: tax.CategoryVAT,
+					Rate:     tax.KeyStandard,
 				},
 			},
 		})
@@ -1434,7 +1548,7 @@ func TestTypeCInvoiceLineTaxesValidation(t *testing.T) {
 func TestInvoiceCurrencyValidation(t *testing.T) {
 	t.Run("non-ARS currency without exchange rates", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
-		inv.Currency = "USD"
+		inv.Currency = currency.USD
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "[GOBL-AR-ARCA-BILL-INVOICE-24] invoice must be in ARS or provide exchange rate for conversion")
@@ -1442,10 +1556,10 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 
 	t.Run("non-ARS currency with exchange rates", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
-		inv.Currency = "USD"
+		inv.Currency = currency.USD
 		inv.ExchangeRates = []*currency.ExchangeRate{
 			{
-				From:   "USD",
+				From:   currency.USD,
 				To:     "ARS",
 				Amount: num.MakeAmount(1050, 0),
 			},
@@ -1453,6 +1567,138 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
+	})
+}
+
+func TestTourismInvoiceTypeT(t *testing.T) {
+	t.Run("valid type T invoice (195) passes", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T invoice without tourism relation fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Tax.Ext = inv.Tax.Ext.Delete(arca.ExtKeyTourismType)
+		assertValidationError(t, inv, "tourism invoice requires 'ar-arca-tourism-type' extension")
+	})
+
+	t.Run("type T invoice with services does not require ordering or payment", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Item.Key = org.ItemKeyServices
+		inv.Ordering = nil
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T debit note (196) is recognized as debit note", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "196")
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T credit note (197) is recognized as credit note", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "197")
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T invoice with standard doc type fails type check", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "195") // 195 is an invoice, not a credit note
+		inv.Preceding = testPreceding()
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invoice type is credit-note but ar-arca-doc-type is not a credit note")
+	})
+
+	t.Run("type T invoice (196) as standard fails type check", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Type = bill.InvoiceTypeStandard
+		inv.Tax.Ext = inv.Tax.Ext.Set(arca.ExtKeyDocType, "196") // 196 is debit note
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "doc type is a debit note but invoice type is not debit-note")
+	})
+
+	t.Run("type T invoice without tourism code on lines fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{}
+		assertValidationError(t, inv, "tourism invoice line requires 'ar-arca-tourism-item' extension")
+	})
+
+	t.Run("type T invoice without customer addresses fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Customer.Addresses = nil
+		assertValidationError(t, inv, "tourism invoice customer requires an address")
+	})
+
+	t.Run("type T invoice with non-21% VAT rate fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes[0].Rate = "reduced"
+		assertValidationError(t, inv, "tourism invoice line VAT rate must be '5'")
+	})
+
+	t.Run("type T invoice with empty line taxes fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Lines[0].Taxes = nil
+		assertValidationError(t, inv, "tourism invoice line requires taxes")
+	})
+
+	t.Run("type T invoice with discount missing tourism code fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Discounts = []*bill.Discount{
+			{Reason: "Promo", Amount: num.MakeAmount(1000, 2)},
+		}
+		assertValidationError(t, inv, "tourism invoice discount requires 'ar-arca-tourism-item' extension")
+	})
+
+	t.Run("type T invoice with discount carrying tourism code passes", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Discounts = []*bill.Discount{
+			{
+				Reason: "Promo",
+				Amount: num.MakeAmount(1000, 2),
+				Ext:    tax.ExtensionsOf(cbc.CodeMap{arca.ExtKeyTourismItem: "1"}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("type T invoice with advance missing tourism code fails", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{Description: "Deposit", Amount: num.MakeAmount(1000, 2)},
+			},
+		}
+		assertValidationError(t, inv, "tourism invoice advance requires 'ar-arca-tourism-item' extension")
+	})
+
+	t.Run("type T invoice with advance carrying tourism code passes", func(t *testing.T) {
+		inv := testInvoiceTourism(t)
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{
+					Description: "Deposit",
+					Amount:      num.MakeAmount(1000, 2),
+					Ext:         tax.ExtensionsOf(cbc.CodeMap{arca.ExtKeyTourismItem: "1"}),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -1501,8 +1747,8 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 				Taxes: tax.Set{
 					{
-						Category: "VAT",
-						Rate:     "standard",
+						Category: tax.CategoryVAT,
+						Rate:     tax.KeyStandard,
 					},
 				},
 			},
@@ -1565,7 +1811,7 @@ func testInvoiceTypeC(t *testing.T) *bill.Invoice {
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name:  "Service Item",
+					Name:  testItemServiceName,
 					Price: num.NewAmount(10000, 2),
 					Key:   org.ItemKeyServices,
 				},
@@ -1595,6 +1841,62 @@ func testPayment() *bill.PaymentDetails {
 				{
 					Date:   cal.NewDate(2024, 2, 15),
 					Amount: num.MakeAmount(10000, 2),
+				},
+			},
+		},
+	}
+}
+
+func testInvoiceTourism(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Addons: tax.WithAddons(arca.V4),
+		Type:   bill.InvoiceTypeStandard,
+		Series: "1",
+		Code:   "123",
+		Tax: &bill.Tax{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				arca.ExtKeyDocType:     "195",
+				arca.ExtKeyTourismType: "1",
+			}),
+		},
+		Supplier: &org.Party{
+			Name: "Test Hotel",
+			TaxID: &tax.Identity{
+				Country: "AR",
+				Code:    "30500010912",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Foreign Tourist",
+			TaxID: &tax.Identity{
+				Country: "US",
+				Code:    "123456789",
+			},
+			Addresses: []*org.Address{
+				{
+					Street:   "5th Avenue 100",
+					Locality: "New York",
+					Country:  "US",
+				},
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Hotel Room",
+					Price: num.NewAmount(10000, 2),
+					Key:   org.ItemKeyGoods,
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     tax.KeyStandard,
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
+							arca.ExtKeyTourismItem: "1",
+						}),
+					},
 				},
 			},
 		},
