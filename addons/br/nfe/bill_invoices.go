@@ -169,6 +169,19 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
+		// Lines: NF-e requires CFOP on each line
+		rules.When(
+			is.Func("invoice is NFe", invoiceIsNFe),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("ext",
+						rules.Assert("35", fmt.Sprintf("NF-e lines require '%s' extension", ExtKeyCFOP),
+							tax.ExtensionsRequire(ExtKeyCFOP),
+						),
+					),
+				),
+			),
+		),
 	)
 }
 
