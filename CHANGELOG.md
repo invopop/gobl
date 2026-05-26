@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/eu/en16931`: BR-S-10 / BR-Z-10 VATEX exclusion is now skipped when the `sa-zatca-v1` addon is active, since ZATCA requires VATEX codes on standard and zero-rated tax combos.
+
+### Added
+
+- `regimes/sa`: Added Saudi Arabia tax regime, including tax categories, tax identity validation, and organization identity types.
+- `sa-zatca-v1`: Added ZATCA addon for Saudi Arabia Phase 2 e-invoicing, covering standard and simplified invoices, credit and debit notes, party and line-level validation rules, tax-combo rules with VATEX support, invoice scenarios, and the `zatca-qr` stamp key for the base64-encoded TLV QR carried by every ZATCA invoice.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
@@ -13,7 +22,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pay`: **breaking**: `pay.Advance` renamed to `pay.Record` — a Record is a single payment event (means + amount + currency + optional date/percent/extensions) and is the shape used both for advances on invoices and for payment methods on payment documents. The previous names (`pay.Advance` and the transitional `pay.Method`) are **removed** with no aliases; consumers must update to `pay.Record`. The schema URL is now `https://gobl.org/draft-0/pay/record` (the previous `pay/advance` schema is gone). The `description` field is no longer required by validation (it was a poor fit for payment-document methods); contexts that need it should enforce it themselves. The `pay.Record.Grant` boolean field has been **removed** — FacturaE consumers should set the new `es-facturae-subsidy` extension (`"S"`) on the record's `ext` map instead.
 - `bill`: **breaking**: `bill.Payment.Method` (`*pay.Instructions`) replaced by `bill.Payment.Methods` (`[]*pay.Record`) so a single payment document can record multiple methods with their own amounts and currencies (required for Portugal's SAF-T, among others). Documents that use the old singular `method` JSON field are migrated transparently via `UnmarshalJSON` into a single-element `methods` array. When exactly one method is present and its `amount` is zero, `Calculate()` auto-fills it from the document `Total`. Validation now also enforces that the sum of method amounts (converted to the document currency via `ExchangeRates` where needed) equals the document `Total` — partial payments must have method amounts that line up with the line totals being paid.
 - `tax`: **breaking**: removed the `tax.ExtMap` type alias introduced in v0.402.0. `tax.Extensions` now wraps `cbc.CodeMap` directly, and `tax.ExtensionsOf` accepts a `cbc.CodeMap`. Callers should replace `tax.ExtMap{...}` with `cbc.CodeMap{...}`.
-- `addons/eu/en16931`: BR-S-10 / BR-Z-10 VATEX exclusion is now skipped when the `sa-zatca-v1` addon is active, since ZATCA requires VATEX codes on standard and zero-rated tax combos.
 
 ### Added
 
@@ -21,8 +29,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
 - `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
 - `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
-- `sa`: Added Saudi Arabia tax regime, including tax categories, tax identity validation, and organization identity types.
-- `sa-zatca-v1`: Added ZATCA addon for Saudi Arabia Phase 2 e-invoicing, covering standard and simplified invoices, credit and debit notes, party and line-level validation rules, tax-combo rules with VATEX support, invoice scenarios, and the `zatca-qr` stamp key for the base64-encoded TLV QR carried by every ZATCA invoice.
 - `es-tbai-v1`: added `es-tbai-bi-activity` extension for the Bizkaia activity code (epígrafe) required for individual suppliers.
 - `pt-saft-v1`: added rule to check that advance payment amounts on invoices are no less than 0 as required by the SAF-T spec.
 - `regimes/es`: added `IRNR` (Impuesto sobre la Renta de no Residentes) tax category for non-resident income tax withholdings. Rates depend on the type of income and recipient, so they are supplied per invoice rather than predefined.
