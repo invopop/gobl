@@ -1,0 +1,66 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AD",
+  "uuid": "b8e2d8f4-1c3a-4e2b-9f1d-3a7c5e8b2d4f",
+  "code": "2024-001",
+  "currency": "EUR",
+  "issue_date": "2024-03-15",
+  "supplier": {
+    "name": "Andorra FC SL",
+    "tax_id": {
+      "country": "AD",
+      "code": "L132950X"
+    },
+    "addresses": [
+      {
+        "street": "Carrer Major 12",
+        "locality": "Andorra la Vella",
+        "country": "AD"
+      }
+    ]
+  },
+  "customer": {
+    "name": "GERARD PIQUE SA",
+    "tax_id": {
+      "country": "AD",
+      "code": "A059888N"
+    },
+    "addresses": [
+      {
+        "street": "Avinguda Meritxell 45",
+        "locality": "Andorra la Vella",
+        "country": "AD"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "10",
+      "item": {
+        "name": "Consulting services",
+        "price": "150.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general",
+          "key": "standard"
+        }
+      ]
+    },
+    {
+      "quantity": "5",
+      "item": {
+        "name": "Technical manuals",
+        "price": "20.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "reduced",
+          "key": "standard"
+        }
+      ]
+    }
+  ]
+}
