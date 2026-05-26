@@ -36,7 +36,7 @@
         {
           "code": "B1",
           "name": {
-            "en": "Goods - Deposit invoice",
+            "en": "Goods - Standard invoice",
             "fr": "Biens - Facture de dépôt"
           }
         },
@@ -64,7 +64,7 @@
         {
           "code": "S1",
           "name": {
-            "en": "Services - Deposit invoice",
+            "en": "Services - Standard invoice",
             "fr": "Services - Facture de dépôt"
           }
         },
@@ -106,7 +106,7 @@
         {
           "code": "M1",
           "name": {
-            "en": "Mixed - Deposit invoice",
+            "en": "Mixed - Standard invoice",
             "fr": "Mixte - Facture de dépôt"
           }
         },

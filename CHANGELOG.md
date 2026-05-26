@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `fr-ctc-billing-mode`: Incorrect translation from France - English in `B1`, `S1` and `M1` codes. 
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed

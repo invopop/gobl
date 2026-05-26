@@ -83,7 +83,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: BillingModeB1,
 				Name: i18n.String{
-					i18n.EN: "Goods - Deposit invoice",
+					i18n.EN: "Goods - Standard invoice",
 					i18n.FR: "Biens - Facture de dépôt",
 				},
 			},
@@ -111,7 +111,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: BillingModeS1,
 				Name: i18n.String{
-					i18n.EN: "Services - Deposit invoice",
+					i18n.EN: "Services - Standard invoice",
 					i18n.FR: "Services - Facture de dépôt",
 				},
 			},
@@ -153,7 +153,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: BillingModeM1,
 				Name: i18n.String{
-					i18n.EN: "Mixed - Deposit invoice",
+					i18n.EN: "Mixed - Standard invoice",
 					i18n.FR: "Mixte - Facture de dépôt",
 				},
 			},
