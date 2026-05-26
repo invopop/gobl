@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+- `regimes/ad`: Andorra (AD) tax regime with IGI (Impost General Indirecte) support, NRT identity validation and normalisation.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
