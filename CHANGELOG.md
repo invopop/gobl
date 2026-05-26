@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: Added `DeliveryTypeReturn` (`return`) delivery type for documenting goods being sent back to the supplier.
+- `pt-saft-v1`: Added `MovementTypeReturn` (`GD` — Guia de Devolução) extension value, automatically set when the delivery type is `return`.
+- `pt-saft-v1`: Added rules for delivery `preceding` references.
+- `regimes/pt`: Added `StampProviderATDocCode` (`at-doc-code`) stamp provider key for the AT document code.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed

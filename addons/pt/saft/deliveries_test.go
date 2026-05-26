@@ -81,6 +81,74 @@ func TestDeliveryValidation(t *testing.T) {
 
 		// dlv.Supplier = nil is caught by core GOBL rules (supplier is required)
 	})
+
+	t.Run("waybill without customer", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Type = bill.DeliveryTypeWaybill
+		dlv.Series = "GT SERIES-A"
+		dlv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			saft.ExtKeyMovementType: saft.MovementTypeWaybill,
+		})
+		dlv.Customer = nil
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("nil preceding", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = nil
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("valid preceding", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("missing series", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+	})
+
+	t.Run("missing code", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+	})
+
+	t.Run("several preceding documents", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+			{
+				Series:    "GR SERIES-A",
+				Code:      "2",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "the length must be no more than 1")
+	})
 }
 
 func TestDeliveryNormalization(t *testing.T) {
@@ -105,6 +173,16 @@ func TestDeliveryNormalization(t *testing.T) {
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
 		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
+	})
+
+	t.Run("return type", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type: bill.DeliveryTypeReturn,
+		}
+		addon.Normalizer(dlv)
+		require.NotNil(t, dlv.Tax)
+		require.NotNil(t, dlv.Tax.Ext)
+		assert.Equal(t, saft.MovementTypeReturn, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 
 	t.Run("respect existing value", func(t *testing.T) {

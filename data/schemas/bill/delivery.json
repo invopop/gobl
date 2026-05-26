@@ -51,6 +51,11 @@
               "const": "receipt",
               "title": "Delivery Receipt",
               "description": "A delivery receipt is a document that is signed by the person who receives\ngoods to confirm that they have been received."
+            },
+            {
+              "const": "return",
+              "title": "Return Note",
+              "description": "A return note documents goods being sent back to the supplier (e.g. unsold\nstock, defective items, or leftover product after a delivery run)."
             }
           ],
           "title": "Type",

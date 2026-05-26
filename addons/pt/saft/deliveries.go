@@ -33,6 +33,17 @@ func billDeliveryRules() *rules.Set {
 		rules.Field("despatch_date",
 			rules.Assert("06", "cannot be blank", is.Present),
 		),
+		rules.Field("preceding",
+			rules.Assert("07", "the length must be no more than 1", is.Length(0, 1)),
+			rules.Each(
+				rules.Field("series",
+					rules.Assert("08", "cannot be blank", is.Present),
+				),
+				rules.Field("code",
+					rules.Assert("09", "cannot be blank", is.Present),
+				),
+			),
+		),
 	)
 }
 
@@ -87,6 +98,8 @@ func normalizeDelivery(dlv *bill.Delivery) {
 			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
 		case bill.DeliveryTypeWaybill:
 			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
+		case bill.DeliveryTypeReturn:
+			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeReturn)
 		}
 	}
 }

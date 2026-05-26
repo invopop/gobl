@@ -1363,10 +1363,16 @@ var extensions = []*cbc.Definition{
 
 				The table below shows how this mapping is done:
 
-				| Code | Name                | GOBL Type     |
-				| ---- | ------------------- | ------------- |
-				| ~GR~ | Delivery note       | ~note~        |
-				| ~GT~ | Waybill             | ~waybill~     |
+				| Code | Name                                            | GOBL Type     |
+				| ---- | ----------------------------------------------- | ------------- |
+				| ~GR~ | Guia de Remessa (Delivery note)                 | ~note~        |
+				| ~GT~ | Guia de Transporte (Transport guide)            | ~waybill~     |
+				| ~GD~ | Guia de Devolução (Return note)                 | ~return~      |
+				| ~GA~ | Guia de Movimentação de Ativos Próprios         | _(explicit)_  |
+				| ~GC~ | Guia de Consignação                             | _(explicit)_  |
+
+				The ~GA~ and ~GC~ movement types have no equivalent GOBL delivery type, so they
+				must be set explicitly via the ~pt-saft-movement-type~ extension.
 
 				Example:
 
