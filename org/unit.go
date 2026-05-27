@@ -119,7 +119,7 @@ type DefUnit struct {
 	Unit Unit `json:"unit" jsonschema:"title=Unit"`
 	// Name of the Unit
 	Name string `json:"name" jsonschema:"title=Name"`
-	// Short is a human readable abbreviation or symbol for the unit (e.g. "m³").
+	// Short is a human-readable abbreviation or symbol for the unit (e.g. "m³").
 	// When empty, Name should be used instead.
 	Short string `json:"short,omitempty" jsonschema:"title=Short"`
 	// Description of the unit
