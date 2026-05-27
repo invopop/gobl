@@ -92,7 +92,7 @@ var DeliveryTypes = []*cbc.Definition{
 				that any scenarios defined in tax regimes or addons will not be applied.
 
 				This is useful for being able to create deliveries with custom types in extensions,
-				but is not recommend for general use.
+				but is not recommended for general use.
 			`),
 		},
 	},
