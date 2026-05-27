@@ -53,7 +53,7 @@ func TestDefUnitDisplayShort(t *testing.T) {
 	assert.Equal(t, "Boxes", d.DisplayShort(), "should fall back to Name when Short is empty")
 }
 
-func TestUnitJSONSChema(t *testing.T) {
+func TestUnitJSONSchema(t *testing.T) {
 	u := org.Unit("h")
 	schema := u.JSONSchema()
 	assert.Equal(t, schema.Title, "Unit")
