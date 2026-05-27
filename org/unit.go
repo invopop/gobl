@@ -119,10 +119,22 @@ type DefUnit struct {
 	Unit Unit `json:"unit" jsonschema:"title=Unit"`
 	// Name of the Unit
 	Name string `json:"name" jsonschema:"title=Name"`
+	// Short is a human readable abbreviation or symbol for the unit (e.g. "m³").
+	// When empty, Name should be used instead.
+	Short string `json:"short,omitempty" jsonschema:"title=Short"`
 	// Description of the unit
 	Description string `json:"description" jsonschema:"title=Description"`
 	// Standard UN/ECE code
 	UNECE cbc.Code `json:"unece" jsonschema:"title=UN/ECE Unit Code"`
+}
+
+// DisplayShort provides the short display name for the unit, falling back
+// to Name when no specific short form is defined.
+func (d DefUnit) DisplayShort() string {
+	if d.Short != "" {
+		return d.Short
+	}
+	return d.Name
 }
 
 // UnitDefinitions describes each of the unit constants.
@@ -130,86 +142,86 @@ type DefUnit struct {
 var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
-	{UnitMilligram, "Milligrams", "", "MGM"},
-	{UnitGram, "Metric grams", "", "GRM"},
-	{UnitKilogram, "Metric kilograms", "", "KGM"},
-	{UnitMetricTon, "Metric tons", "", "TNE"},
-	{UnitMillimetre, "Milimetres", "", "MMT"},
-	{UnitCentimetre, "Centimetres", "", "CMT"},
-	{UnitDecimetre, "Decimetres", "A unit of length equal to one-tenth of a metre.", "DMT"},
-	{UnitMetre, "Metres", "", "MTR"},
-	{UnitKilometre, "Kilometers", "", "KMT"},
-	{UnitInch, "Inches", "", "INH"},
-	{UnitFoot, "Feet", "", "FOT"},
-	{UnitSquareMilimetre, "Square millimetres", "", "MMK"},
-	{UnitSquareCentimetre, "Square centimetres", "", "CMK"},
-	{UnitSquareDecimetre, "Square decimetres", "", "DMK"},
-	{UnitSquareMetre, "Square metres", "", "MTK"},
-	{UnitAcre, "Acres", "A unit of area equal to 43,560 square feet.", "ACR"},
-	{UnitHectare, "Hectares", "A unit of area equal to 10,000 square metres.", "HAR"},
-	{UnitCubicMilimetre, "Cubic millimetres", "", "MMQ"},
-	{UnitCubicCentimetre, "Cubic centimetres", "", "CMQ"},
-	{UnitCubicDecimetre, "Cubic decimetres", "", "DMQ"},
-	{UnitCubicMetre, "Cubic metres", "", "MTQ"},
-	{UnitMillilitre, "Millilitres", "", "MLT"},
-	{UnitCentilitre, "Centilitres", "", "CLT"},
-	{UnitLitre, "Litres", "", "LTR"},
-	{UnitWatt, "Watts", "", "WTT"},
-	{UnitKilowatt, "Kilowatts", "", "KWT"},
-	{UnitKilowattHour, "Kilowatt Hours", "", "KWH"},
-	{UnitRate, "Rate", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
-	{UnitMonth, "Months", "Unit of time equal to 1/12 of a year of 365,25 days.", "MON"},
-	{UnitDay, "Days", "", "DAY"},
-	{UnitSecond, "Seconds", "", "SEC"},
-	{UnitHour, "Hours", "", "HUR"},
-	{UnitMinute, "Minutes", "", "MIN"},
-	{UnitPiece, "Pieces", "A unit of count defining the number of pieces (piece: a single item, article or exemplar).", "H87"},
-	{UnitItem, "Items", " A unit of count defining the number of items regarded as separate units.", "EA"},
-	{UnitPair, "Pairs", "A unit of count defining the number of pairs (pair: item described by two's).", "PR"},
-	{UnitDozen, "Dozens", "A unit of count defining the number of units in multiples of 12.", "DZN"},
-	{UnitAssortment, "Assortments", "A unit of count defining the number of assortments (assortment: a collection of items or components of a single product packaged together).", "AS"},
-	{UnitService, "Service Units", "A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).", "E48"},
-	{UnitJob, "Jobs", "A unit of count defining the number of jobs.", "E51"},
-	{UnitActivity, "Activities", "A unit of count defining the number of activities (activity: a unit of work or action).", "ACT"},
-	{UnitTrip, "Trips", "A unit of count defining the number of trips (trip: a journey to a place and back again).", "E54"},
-	{UnitGroup, "Groups", "A unit of count defining the number of groups (group: set of items classified together).", "10"},
-	{UnitOutfit, "Outfits", "A unit of count defining the number of outfits (outfit: a complete set of equipment / materials / objects used for a specific purpose).", "11"},
-	{UnitKit, "Kits", "A unit of count defining the number of kits (kit: tub, barrel or pail).", "KT"},
-	{UnitBaseBox, "Base Boxes", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
-	{UnitBulkPack, "Bulk Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
-	{UnitOne, "One", "A single generic unit of a service or product.", "C62"},
+	{UnitMilligram, "Milligrams", "mg", "", "MGM"},
+	{UnitGram, "Metric grams", "g", "", "GRM"},
+	{UnitKilogram, "Metric kilograms", "kg", "", "KGM"},
+	{UnitMetricTon, "Metric tons", "Tons", "", "TNE"},
+	{UnitMillimetre, "Milimetres", "mm", "", "MMT"},
+	{UnitCentimetre, "Centimetres", "cm", "", "CMT"},
+	{UnitDecimetre, "Decimetres", "dm", "A unit of length equal to one-tenth of a metre.", "DMT"},
+	{UnitMetre, "Meters", "m", "", "MTR"},
+	{UnitKilometre, "Kilometers", "km", "", "KMT"},
+	{UnitInch, "Inches", "in", "", "INH"},
+	{UnitFoot, "Feet", "ft", "", "FOT"},
+	{UnitSquareMilimetre, "Square millimetres", "mm²", "", "MMK"},
+	{UnitSquareCentimetre, "Square centimetres", "cm²", "", "CMK"},
+	{UnitSquareDecimetre, "Square decimetres", "dm²", "", "DMK"},
+	{UnitSquareMetre, "Square metres", "m²", "", "MTK"},
+	{UnitAcre, "Acres", "", "A unit of area equal to 43,560 square feet.", "ACR"},
+	{UnitHectare, "Hectares", "", "A unit of area equal to 10,000 square metres.", "HAR"},
+	{UnitCubicMilimetre, "Cubic millimetres", "mm³", "", "MMQ"},
+	{UnitCubicCentimetre, "Cubic centimetres", "cm³", "", "CMQ"},
+	{UnitCubicDecimetre, "Cubic decimetres", "dm³", "", "DMQ"},
+	{UnitCubicMetre, "Cubic metres", "m³", "", "MTQ"},
+	{UnitMillilitre, "Millilitres", "ml", "", "MLT"},
+	{UnitCentilitre, "Centilitres", "cl", "", "CLT"},
+	{UnitLitre, "Litres", "l", "", "LTR"},
+	{UnitWatt, "Watts", "", "", "WTT"},
+	{UnitKilowatt, "Kilowatts", "kW", "", "KWT"},
+	{UnitKilowattHour, "Kilowatt Hours", "kWh", "", "KWH"},
+	{UnitRate, "Rate", "", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
+	{UnitMonth, "Months", "", "Unit of time equal to 1/12 of a year of 365,25 days.", "MON"},
+	{UnitDay, "Days", "", "", "DAY"},
+	{UnitSecond, "Seconds", "", "", "SEC"},
+	{UnitHour, "Hours", "", "", "HUR"},
+	{UnitMinute, "Minutes", "", "", "MIN"},
+	{UnitPiece, "Pieces", "", "A unit of count defining the number of pieces (piece: a single item, article or exemplar).", "H87"},
+	{UnitItem, "Items", "", " A unit of count defining the number of items regarded as separate units.", "EA"},
+	{UnitPair, "Pairs", "", "A unit of count defining the number of pairs (pair: item described by two's).", "PR"},
+	{UnitDozen, "Dozens", "", "A unit of count defining the number of units in multiples of 12.", "DZN"},
+	{UnitAssortment, "Assortments", "", "A unit of count defining the number of assortments (assortment: a collection of items or components of a single product packaged together).", "AS"},
+	{UnitService, "Service Units", "Services", "A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).", "E48"},
+	{UnitJob, "Jobs", "", "A unit of count defining the number of jobs.", "E51"},
+	{UnitActivity, "Activities", "", "A unit of count defining the number of activities (activity: a unit of work or action).", "ACT"},
+	{UnitTrip, "Trips", "", "A unit of count defining the number of trips (trip: a journey to a place and back again).", "E54"},
+	{UnitGroup, "Groups", "", "A unit of count defining the number of groups (group: set of items classified together).", "10"},
+	{UnitOutfit, "Outfits", "", "A unit of count defining the number of outfits (outfit: a complete set of equipment / materials / objects used for a specific purpose).", "11"},
+	{UnitKit, "Kits", "", "A unit of count defining the number of kits (kit: tub, barrel or pail).", "KT"},
+	{UnitBaseBox, "Base Boxes", "", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
+	{UnitBulkPack, "Bulk Packs", "Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
+	{UnitOne, "One", "", "A single generic unit of a service or product.", "C62"},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
-	{UnitBag, "Bags", "", "XBG"},
-	{UnitBox, "Boxes", "", "XBX"},
-	{UnitBin, "Bins", "", "XBI"},
-	{UnitCan, "Cans", "", "XCA"},
-	{UnitTub, "Tubs", "", "XTB"},
-	{UnitCase, "Cases", "", "XCS"},
-	{UnitTray, "Trays", "", "XDS"},    // plastic
-	{UnitPortion, "Portions", "", ""}, // non-standard (src: ES)
-	{UnitSet, "Sets", "A unit of count defining the number of sets (set: a number of objects grouped together).", "SET"},
-	{UnitRoll, "Rolls", "", "XRO"},
-	{UnitCarton, "Cartons", "", "XCT"},
-	{UnitCylinder, "Cylinders", "", "XCY"},
-	{UnitBarrel, "Barrels", "", "XBA"},
-	{UnitJerrican, "Jerricans", "Jerrican, cylindrical", "XJY"},
-	{UnitCarboy, "Carboys", "", "XCO"},    // non-protected
-	{UnitDemijohn, "Demijohn", "", "XDJ"}, // non-protected
-	{UnitBottle, "Bottles", "", "XBO"},    // non-protected, cylindrical
-	{UnitSixPack, "Six Packs", "", ""},    // non-standard (src: ES)
-	{UnitCanister, "Canisters", "", "XCI"},
-	{UnitPackage, "Packages", "Standard packaging unit.", "XPK"},
-	{UnitBunch, "Bunches", "", "XBH"},
-	{UnitTetraBrik, "Tetra-Briks", "", ""}, // non-standard (src: ES)
-	{UnitPallet, "Pallets", "", "XPX"},
-	{UnitReel, "Reels", "", "XRL"},
-	{UnitSack, "Sacks", "", "XSA"},
-	{UnitSheet, "Sheets", "", "XST"},
-	{UnitEnvelope, "Envelopes", "", "XEN"},
-	{UnitLot, "Lot", "", "XLT"},
-	{UnitUnit, "Unit", "A type of package composed of a single item or object, not otherwise specified as a unit of transport equipment.", "XUN"},
+	{UnitBag, "Bags", "", "", "XBG"},
+	{UnitBox, "Boxes", "", "", "XBX"},
+	{UnitBin, "Bins", "", "", "XBI"},
+	{UnitCan, "Cans", "", "", "XCA"},
+	{UnitTub, "Tubs", "", "", "XTB"},
+	{UnitCase, "Cases", "", "", "XCS"},
+	{UnitTray, "Trays", "", "", "XDS"},    // plastic
+	{UnitPortion, "Portions", "", "", ""}, // non-standard (src: ES)
+	{UnitSet, "Sets", "", "A unit of count defining the number of sets (set: a number of objects grouped together).", "SET"},
+	{UnitRoll, "Rolls", "", "", "XRO"},
+	{UnitCarton, "Cartons", "", "", "XCT"},
+	{UnitCylinder, "Cylinders", "", "", "XCY"},
+	{UnitBarrel, "Barrels", "", "", "XBA"},
+	{UnitJerrican, "Jerricans", "", "Jerrican, cylindrical", "XJY"},
+	{UnitCarboy, "Carboys", "", "", "XCO"},        // non-protected
+	{UnitDemijohn, "Demijohns", "", "", "XDJ"},    // non-protected
+	{UnitBottle, "Bottles", "", "", "XBO"},        // non-protected, cylindrical
+	{UnitSixPack, "Six Packs", "6 packs", "", ""}, // non-standard (src: ES)
+	{UnitCanister, "Canisters", "", "", "XCI"},
+	{UnitPackage, "Packages", "", "Standard packaging unit.", "XPK"},
+	{UnitBunch, "Bunches", "", "", "XBH"},
+	{UnitTetraBrik, "Tetra-Briks", "Tetrabriks", "", ""}, // non-standard (src: ES)
+	{UnitPallet, "Pallets", "", "", "XPX"},
+	{UnitReel, "Reels", "", "", "XRL"},
+	{UnitSack, "Sacks", "", "", "XSA"},
+	{UnitSheet, "Sheets", "", "", "XST"},
+	{UnitEnvelope, "Envelopes", "", "", "XEN"},
+	{UnitLot, "Lot", "", "", "XLT"},
+	{UnitUnit, "Unit", "", "A type of package composed of a single item or object, not otherwise specified as a unit of transport equipment.", "XUN"},
 }
 
 func unitRules() *rules.Set {

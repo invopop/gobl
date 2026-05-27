@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `org`: `org.DefUnit` gains a `Short` field holding a human-readable abbreviation or symbol for the unit (e.g. `m³`). It is only populated where it adds information over the unit key/name; the new `DefUnit.DisplayShort()` accessor returns `Short` when set and falls back to `Name` otherwise.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
