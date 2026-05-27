@@ -176,7 +176,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitHour, "Hours", "", "", "HUR"},
 	{UnitMinute, "Minutes", "", "", "MIN"},
 	{UnitPiece, "Pieces", "", "A unit of count defining the number of pieces (piece: a single item, article or exemplar).", "H87"},
-	{UnitItem, "Items", "", " A unit of count defining the number of items regarded as separate units.", "EA"},
+	{UnitItem, "Items", "", "A unit of count defining the number of items regarded as separate units.", "EA"},
 	{UnitPair, "Pairs", "", "A unit of count defining the number of pairs (pair: item described by two's).", "PR"},
 	{UnitDozen, "Dozens", "", "A unit of count defining the number of units in multiples of 12.", "DZN"},
 	{UnitAssortment, "Assortments", "", "A unit of count defining the number of assortments (assortment: a collection of items or components of a single product packaged together).", "AS"},
