@@ -246,8 +246,9 @@ func (dlv *Delivery) Calculate() error {
 	}
 	dlv.Normalize(dlv.normalizers())
 
+	supportedTags := dlv.supportedTags()
 	for _, tag := range dlv.Tags.List {
-		if !tag.In(dlv.supportedTags()...) {
+		if !tag.In(supportedTags...) {
 			return fmt.Errorf("$tags: '%s' undefined", tag)
 		}
 	}
