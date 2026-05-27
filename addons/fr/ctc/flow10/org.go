@@ -1,8 +1,6 @@
 package flow10
 
 import (
-	"errors"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -212,8 +210,11 @@ func partyLegalSchemeID(party *org.Party) string {
 	return fallback
 }
 
-func partyCarriesSIREN(party *org.Party) bool {
-	if party == nil {
+// partyHasSIREN reports whether the party carries a SIREN-scheme
+// (0002) identity.
+func partyHasSIREN(v any) bool {
+	party, ok := v.(*org.Party)
+	if !ok || party == nil {
 		return false
 	}
 	for _, id := range party.Identities {
@@ -228,16 +229,6 @@ func partyCarriesSIREN(party *org.Party) bool {
 		}
 	}
 	return false
-}
-
-// partyHasSIREN reports whether the party carries a SIREN-scheme
-// (0002) identity.
-func partyHasSIREN(v any) bool {
-	party, ok := v.(*org.Party)
-	if !ok || party == nil {
-		return false
-	}
-	return partyCarriesSIREN(party)
 }
 
 func partyHasAllowedLegalScheme(v any) bool {
@@ -267,31 +258,41 @@ func partyHasVATCode(p *org.Party) bool {
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
 		rules.Field("identities",
-			rules.Assert("01", "identity scheme format invalid (BR-FR-CO-10)",
-				is.FuncError("valid scheme format", identitiesSchemeFormatValid),
+			rules.Assert("01", "party identities must not duplicate iso-scheme-id values (BR-FR-CO-10)",
+				is.Func("unique iso-scheme-id", identitiesSchemesUnique),
+			),
+			rules.Each(
+				rules.Field("ext",
+					rules.Assert("02", "party identity ext iso-scheme-id is required (BR-FR-CO-10)",
+						tax.ExtensionsRequire(iso.ExtKeySchemeID),
+					),
+				),
 			),
 		),
 	)
 }
 
-func identitiesSchemeFormatValid(val any) error {
+// identitiesSchemesUnique reports whether the slice contains at most
+// one identity per iso-scheme-id value. Empty extensions are ignored
+// (the per-identity rule covers them).
+func identitiesSchemesUnique(val any) bool {
 	identities, ok := val.([]*org.Identity)
 	if !ok || len(identities) == 0 {
-		return nil
+		return true
 	}
-	schemes := make(map[cbc.Code]bool)
+	seen := make(map[cbc.Code]bool, len(identities))
 	for _, id := range identities {
 		if id == nil {
 			continue
 		}
 		schemeID := id.Ext.Get(iso.ExtKeySchemeID)
 		if schemeID == cbc.CodeEmpty {
-			return errors.New("all identities must have an ISO scheme ID defined in extensions BR-FR-CO-10")
+			continue
 		}
-		if schemes[schemeID] {
-			return fmt.Errorf("duplicate identities with ISO scheme ID '%s' are not allowed (BR-FR-CO-10)", schemeID)
+		if seen[schemeID] {
+			return false
 		}
-		schemes[schemeID] = true
+		seen[schemeID] = true
 	}
-	return nil
+	return true
 }

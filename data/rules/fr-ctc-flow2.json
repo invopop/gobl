@@ -14,7 +14,7 @@
         },
         {
           "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-02",
-          "desc": "must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
+          "desc": "invoice code (with series, when set) must be 1-35 characters of alphanumerics plus -+_/ (BR-FR-01/02)",
           "tests": "valid invoice code"
         }
       ],
@@ -27,7 +27,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-03",
-                  "desc": "preceding code must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
+                  "desc": "invoice preceding code (with series, when set) must be 1-35 characters of alphanumerics plus -+_/ (BR-FR-01/02)",
                   "tests": "valid preceding code"
                 }
               ]
@@ -35,19 +35,19 @@
           ]
         },
         {
-          "guard": "corrective invoice",
+          "guard": "invoice tax ext untdid-document-type in [384, 471, 472, 473]",
           "subsets": [
             {
               "field": "preceding",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-04",
-                  "desc": "corrective invoices must reference the original invoice in preceding (BR-FR-CO-04)",
+                  "desc": "invoice preceding is required for corrective invoices (BR-FR-CO-04)",
                   "tests": "present"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-05",
-                  "desc": "corrective invoices must reference exactly one preceding invoice — multiple references are not allowed (BR-FR-CO-04)",
+                  "desc": "invoice preceding must contain exactly one reference for corrective invoices (BR-FR-CO-04)",
                   "tests": "length between 1 and 1"
                 }
               ]
@@ -55,14 +55,14 @@
           ]
         },
         {
-          "guard": "credit note",
+          "guard": "invoice tax ext untdid-document-type in [261, 381, 396, 502, 503]",
           "subsets": [
             {
               "field": "preceding",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-06",
-                  "desc": "credit notes must have at least one preceding invoice reference (BR-FR-CO-05)",
+                  "desc": "invoice preceding must contain at least one reference for credit notes (BR-FR-CO-05)",
                   "tests": "present"
                 }
               ]
@@ -74,7 +74,7 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-07",
-              "desc": "tax is required",
+              "desc": "invoice tax is required",
               "tests": "present"
             }
           ],
@@ -84,12 +84,12 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-08",
-                  "desc": "UNTDID document type must be valid (BR-FR-04)",
+                  "desc": "invoice tax ext untdid-document-type must be a valid Flow 2 document type (BR-FR-04)",
                   "tests": "ext 'untdid-document-type' in [380, 389, 393, 501, 386, 500, 384, 471, 472, 473, 381, 261, 396, 502, 503, 262]"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-09",
-                  "desc": "billing mode extension is required",
+                  "desc": "invoice tax ext dgfip-billing-mode is required",
                   "tests": "ext require [dgfip-billing-mode]"
                 }
               ]
@@ -97,7 +97,7 @@
           ]
         },
         {
-          "guard": "factoring mode",
+          "guard": "invoice tax ext dgfip-billing-mode in [B4, S4, M4]",
           "subsets": [
             {
               "field": "tax",
@@ -107,7 +107,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-10",
-                      "desc": "advance payment document types (386, 500, 503) are not allowed for factoring billing modes (B4, S4, M4) (BR-FR-CO-08)",
+                      "desc": "invoice tax ext untdid-document-type must not be an advance-payment code (386, 500, 503) when billing mode is factoring (B4, S4, M4) (BR-FR-CO-08)",
                       "tests": "ext 'untdid-document-type' not in [386, 500, 503]"
                     }
                   ]
@@ -124,7 +124,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-11",
-                  "desc": "seller electronic address required for French B2B invoices (BR-FR-13)",
+                  "desc": "invoice supplier inboxes are required for French B2B invoices (BR-FR-13)",
                   "tests": "present"
                 }
               ]
@@ -134,7 +134,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-12",
-                  "desc": "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
+                  "desc": "invoice supplier identities must include a SIREN identity with iso-scheme-id 0002 and scope legal (BR-FR-10/11)",
                   "tests": "has SIREN (legal scope)"
                 }
               ]
@@ -142,14 +142,14 @@
           ]
         },
         {
-          "guard": "not self-billed",
+          "guard": "invoice tax ext untdid-document-type not in [389, 501, 500, 471, 473, 261, 502]",
           "subsets": [
             {
               "field": "supplier",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-13",
-                  "desc": "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
+                  "desc": "invoice supplier must have an inbox with scheme 0225 matching the SIREN code (BR-FR-21/22)",
                   "tests": "has SIREN inbox"
                 }
               ]
@@ -164,7 +164,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-14",
-                  "desc": "buyer electronic address required for French B2B invoices (BR-FR-13)",
+                  "desc": "invoice customer inboxes are required for French B2B invoices (BR-FR-13)",
                   "tests": "present"
                 }
               ]
@@ -174,7 +174,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-15",
-                  "desc": "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
+                  "desc": "invoice customer identities must include a SIREN identity with iso-scheme-id 0002 and scope legal (BR-FR-10/11)",
                   "tests": "has SIREN (legal scope)"
                 }
               ]
@@ -182,14 +182,14 @@
           ]
         },
         {
-          "guard": "self-billed",
+          "guard": "invoice tax ext untdid-document-type in [389, 501, 500, 471, 473, 261, 502]",
           "subsets": [
             {
               "field": "customer",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-16",
-                  "desc": "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
+                  "desc": "invoice customer must have an inbox with scheme 0225 matching the SIREN code (BR-FR-21/22)",
                   "tests": "has SIREN inbox"
                 }
               ]
@@ -204,27 +204,27 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-17",
-                  "desc": "only one ordering identity with UNTDID reference 'AFL' is allowed (BR-FR-30)",
-                  "tests": "no dup AFL"
+                  "desc": "invoice ordering identities must not contain more than one entry with UNTDID reference 'AFL' (BR-FR-30)",
+                  "tests": "identities have at most one ext untdid-reference=AFL"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-18",
-                  "desc": "only one ordering identity with UNTDID reference 'AWW' is allowed (BR-FR-30)",
-                  "tests": "no dup AWW"
+                  "desc": "invoice ordering identities must not contain more than one entry with UNTDID reference 'AWW' (BR-FR-30)",
+                  "tests": "identities have at most one ext untdid-reference=AWW"
                 }
               ]
             }
           ]
         },
         {
-          "guard": "supplier STC",
+          "guard": "invoice supplier is under STC scheme",
           "subsets": [
             {
               "field": "ordering",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-19",
-                  "desc": "ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)",
+                  "desc": "invoice ordering is required when supplier is under STC scheme (BR-FR-CO-15)",
                   "tests": "present"
                 }
               ],
@@ -234,7 +234,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-20",
-                      "desc": "seller is required when supplier is under STC scheme (BR-FR-CO-15)",
+                      "desc": "invoice ordering seller is required when supplier is under STC scheme (BR-FR-CO-15)",
                       "tests": "present"
                     }
                   ],
@@ -244,7 +244,7 @@
                       "assert": [
                         {
                           "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-21",
-                          "desc": "tax ID is required when supplier is under STC scheme (BR-FR-CO-15)",
+                          "desc": "invoice ordering seller tax_id is required when supplier is under STC scheme (BR-FR-CO-15)",
                           "tests": "present"
                         }
                       ],
@@ -254,7 +254,7 @@
                           "assert": [
                             {
                               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-22",
-                              "desc": "code is required when supplier is under STC scheme (BR-FR-CO-15)",
+                              "desc": "invoice ordering seller tax_id code is required when supplier is under STC scheme (BR-FR-CO-15)",
                               "tests": "present"
                             }
                           ]
@@ -270,7 +270,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-23",
-                  "desc": "for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-CO-14)",
+                  "desc": "invoice notes must include an entry with subject TXD and text MEMBRE_ASSUJETTI_UNIQUE when supplier is under STC scheme (BR-FR-CO-14)",
                   "tests": "has TXD note"
                 }
               ]
@@ -278,14 +278,14 @@
           ]
         },
         {
-          "guard": "consolidated credit note",
+          "guard": "invoice tax ext untdid-document-type in [262]",
           "subsets": [
             {
               "field": "ordering",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-24",
-                  "desc": "ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)",
+                  "desc": "invoice ordering is required for consolidated credit notes (BR-FR-CO-03)",
                   "tests": "present"
                 }
               ],
@@ -295,12 +295,12 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-25",
-                      "desc": "ordering.contracts is required for consolidated credit notes (BR-FR-CO-03)",
+                      "desc": "invoice ordering contracts is required for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "present"
                     },
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-26",
-                      "desc": "ordering.contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
+                      "desc": "invoice ordering contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "length between 1 and 0"
                     }
                   ]
@@ -312,7 +312,7 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-27",
-                  "desc": "delivery details are required for consolidated credit notes (BR-FR-CO-03)",
+                  "desc": "invoice delivery is required for consolidated credit notes (BR-FR-CO-03)",
                   "tests": "present"
                 }
               ],
@@ -322,7 +322,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-28",
-                      "desc": "delivery period is required for consolidated credit notes (BR-FR-CO-03)",
+                      "desc": "invoice delivery period is required for consolidated credit notes (BR-FR-CO-03)",
                       "tests": "present"
                     }
                   ]
@@ -332,24 +332,29 @@
           ]
         },
         {
-          "guard": "not advance or final",
-          "assert": [
+          "guard": "invoice tax ext untdid-document-type not in [386, 500, 503]",
+          "subsets": [
             {
-              "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-29",
-              "desc": "due dates must not be before invoice issue date (BR-FR-CO-07)",
-              "tests": "due dates valid"
+              "guard": "invoice tax ext dgfip-billing-mode not in [B2, S2, M2]",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-29",
+                  "desc": "invoice payment terms due_dates must not be before the invoice issue date (BR-FR-CO-07)",
+                  "tests": "due dates valid"
+                }
+              ]
             }
           ]
         },
         {
-          "guard": "final invoice",
+          "guard": "invoice tax ext dgfip-billing-mode in [B2, S2, M2]",
           "subsets": [
             {
               "field": "payment",
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-30",
-                  "desc": "payment details are required for final invoices (BR-FR-CO-09)",
+                  "desc": "invoice payment is required for final invoices (BR-FR-CO-09)",
                   "tests": "present"
                 }
               ],
@@ -359,7 +364,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-31",
-                      "desc": "payment terms required for final invoices (BR-FR-CO-09)",
+                      "desc": "invoice payment terms is required for final invoices (BR-FR-CO-09)",
                       "tests": "present"
                     }
                   ],
@@ -369,7 +374,7 @@
                       "assert": [
                         {
                           "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-32",
-                          "desc": "at least one due date required for final invoices (BR-FR-CO-09)",
+                          "desc": "invoice payment terms due_dates must contain at least one entry for final invoices (BR-FR-CO-09)",
                           "tests": "present"
                         }
                       ]
@@ -383,13 +388,13 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-34",
-                  "desc": "advance amount must equal total with tax for final invoices (BR-FR-CO-09)",
-                  "tests": "advances match"
+                  "desc": "invoice totals advance must equal total_with_tax for final invoices (BR-FR-CO-09)",
+                  "tests": "advances match total_with_tax"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-35",
-                  "desc": "payable amount must be zero for final invoices (BR-FR-CO-09)",
-                  "tests": "payable zero"
+                  "desc": "invoice totals payable must be zero for final invoices (BR-FR-CO-09)",
+                  "tests": "payable is zero"
                 }
               ],
               "subsets": [
@@ -398,7 +403,7 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-33",
-                      "desc": "advance amount is required for already-paid invoices (BR-FR-CO-09)",
+                      "desc": "invoice totals advance is required for final invoices (BR-FR-CO-09)",
                       "tests": "present"
                     }
                   ]
@@ -412,18 +417,18 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-36",
-              "desc": "notes are required for French CTC invoices (BR-FR-05)",
+              "desc": "invoice notes are required for French CTC invoices (BR-FR-05)",
               "tests": "present"
             },
             {
               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-37",
-              "desc": "missing required note codes (BR-FR-05)",
-              "tests": "has required notes"
+              "desc": "invoice notes must include entries with subjects PMT, PMD and AAB (BR-FR-05)",
+              "tests": "has required note subjects"
             },
             {
               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-38",
-              "desc": "duplicate note codes found (BR-FR-06/BR-FR-30)",
-              "tests": "no duplicate notes"
+              "desc": "invoice notes must not contain duplicate subjects PMT, PMD, AAB or TXD (BR-FR-06/BR-FR-30)",
+              "tests": "no duplicate note subjects"
             }
           ]
         },
@@ -432,8 +437,8 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-41",
-              "desc": "only one attachment with description 'LISIBLE' is allowed per invoice (BR-FR-18)",
-              "tests": "unique LISIBLE"
+              "desc": "invoice attachments must not contain more than one entry with description 'LISIBLE' (BR-FR-18)",
+              "tests": "at most one LISIBLE"
             }
           ],
           "subsets": [
@@ -445,12 +450,12 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-39",
-                      "desc": "must be one of the allowed attachment descriptions (BR-FR-17)",
+                      "desc": "invoice attachment description is required (BR-FR-17)",
                       "tests": "present"
                     },
                     {
                       "id": "GOBL-FR-CTC-FLOW2-BILL-INVOICE-40",
-                      "desc": "must be one of the allowed attachment descriptions (BR-FR-17)",
+                      "desc": "invoice attachment description must be one of the allowed values (BR-FR-17)",
                       "tests": "one of [RIB, LISIBLE, FEUILLE_DE_STYLE, PJA, BON_LIVRAISON, BON_COMMANDE, DOCUMENT_ANNEXE, BORDEREAU_SUIVI, BORDEREAU_SUIVI_VALIDATION, ETAT_ACOMPTE, FACTURE_PAIEMENT_DIRECT, RECAPITULATIF_COTRAITANCE]"
                     }
                   ]

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2ab828f2472fe9aff44382e3d4ab3318c6e30ff80b28cea6a14838751c6ee8b9"
+			"val": "66eac15a71369d409eb91285253be75060de40666f6695769dd62343b45534fd"
 		}
 	},
 	"doc": {
@@ -20,7 +20,8 @@
 		"value_date": "2026-05-02",
 		"currency": "EUR",
 		"ext": {
-			"fr-ctc-flow6-status-code": "212"
+			"fr-ctc-flow6-condition": "MEN",
+			"fr-ctc-flow6-status": "212"
 		},
 		"supplier": {
 			"name": "VENDEUR SARL",

@@ -21,7 +21,7 @@
       "url": "https://www.impots.gouv.fr/specifications-externes-b2b"
     }
   ],
-  "extensions": [],
+  "extensions": null,
   "scenarios": [
     {
       "schema": "bill/invoice",

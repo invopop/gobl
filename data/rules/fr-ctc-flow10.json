@@ -15,48 +15,6 @@
       ],
       "subsets": [
         {
-          "guard": "B2C invoice",
-          "assert": [
-            {
-              "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-05",
-              "desc": "every VAT line percent must be one of the Flow 10 permitted values (G1.24): 0, 0.9, 1.05, 1.75, 2.1, 5.5, 7, 8.5, 9.2, 9.6, 10, 13, 19.6, 20, 20.6",
-              "tests": "allowed Flow 10 VAT percents"
-            }
-          ],
-          "subsets": [
-            {
-              "field": "tax",
-              "subsets": [
-                {
-                  "field": "ext",
-                  "assert": [
-                    {
-                      "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-02",
-                      "desc": "B2C transaction category extension (fr-ctc-flow10-b2c-category) is required on B2C invoices (G1.68)",
-                      "tests": "has B2C category"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "field": "supplier",
-              "assert": [
-                {
-                  "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-03",
-                  "desc": "supplier is required on B2C invoice",
-                  "tests": "present"
-                },
-                {
-                  "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-04",
-                  "desc": "supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002) on a B2C invoice",
-                  "tests": "party has SIREN"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "field": "supplier",
           "subsets": [
             {
@@ -69,8 +27,8 @@
                       "field": "country",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-06",
-                          "desc": "supplier address must include country",
+                          "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-02",
+                          "desc": "invoice supplier address country is required",
                           "tests": "present"
                         }
                       ]
@@ -94,8 +52,8 @@
                       "field": "country",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-07",
-                          "desc": "customer address must include country",
+                          "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-03",
+                          "desc": "invoice customer address country is required",
                           "tests": "present"
                         }
                       ]
@@ -107,7 +65,49 @@
           ]
         },
         {
-          "guard": "cross-border B2B invoice",
+          "guard": "invoice is B2C (no customer)",
+          "assert": [
+            {
+              "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-07",
+              "desc": "invoice VAT line percent must be one of the Flow 10 permitted values 0%, 0.9%, 1.05%, 1.75%, 2.1%, 5.5%, 7%, 8.5%, 9.2%, 9.6%, 10%, 13%, 19.6%, 20%, 20.6% (G1.24)",
+              "tests": "allowed Flow 10 VAT percents"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "tax",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-04",
+                      "desc": "invoice tax ext fr-ctc-flow10-b2c-category is required on B2C invoices (G1.68)",
+                      "tests": "ext require [fr-ctc-flow10-b2c-category]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-05",
+                  "desc": "invoice supplier is required on B2C invoices",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-06",
+                  "desc": "invoice supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002) on a B2C invoice",
+                  "tests": "party has SIREN"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "invoice is B2B (has customer)",
           "subsets": [
             {
               "field": "tax",
@@ -117,20 +117,20 @@
                   "assert": [
                     {
                       "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-08",
-                      "desc": "invoice document type must be one of the Flow 10 permitted UNTDID 1001 codes",
-                      "tests": "allowed Flow 10 document type"
+                      "desc": "invoice tax ext untdid-document-type must be one of the Flow 10 permitted UNTDID 1001 codes",
+                      "tests": "ext 'untdid-document-type' in [380, 386, 384, 381, 503]"
                     },
                     {
                       "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-09",
-                      "desc": "billing mode extension (dgfip-billing-mode) is required (G1.02)",
-                      "tests": "has billing mode"
+                      "desc": "invoice tax ext dgfip-billing-mode is required (G1.02)",
+                      "tests": "ext require [dgfip-billing-mode]"
                     }
                   ]
                 }
               ]
             },
             {
-              "guard": "billing mode is final-after-advance (B4/S4/M4)",
+              "guard": "invoice tax ext dgfip-billing-mode in [B4, S4, M4]",
               "subsets": [
                 {
                   "field": "tax",
@@ -140,8 +140,8 @@
                       "assert": [
                         {
                           "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-10",
-                          "desc": "final-after-advance billing mode (B4/S4/M4) cannot be combined with an advance-payment document type (386/500/503) (G1.60)",
-                          "tests": "not advance-payment doc type"
+                          "desc": "invoice tax ext untdid-document-type must not be an advance-payment code (386, 500, 503) when billing mode is final-after-advance (B4, S4, M4) (G1.60)",
+                          "tests": "ext 'untdid-document-type' not in [386, 500, 503]"
                         }
                       ]
                     }
@@ -154,17 +154,17 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-11",
-                  "desc": "supplier is required for Flow 10 B2B invoice (G2.19)",
+                  "desc": "invoice supplier is required for Flow 10 B2B invoices (G2.19)",
                   "tests": "present"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-12",
-                  "desc": "supplier must declare a legal identity with an allowed ICD 6523 scheme (G2.19): 0002, 0223, 0227, 0228 or 0229",
+                  "desc": "invoice supplier must declare a legal identity with an allowed ICD 6523 scheme (0002, 0223, 0227, 0228 or 0229) (G2.19)",
                   "tests": "party has allowed legal scheme"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-13",
-                  "desc": "supplier TaxID is required when legal identity scheme is SIREN (0002) or EU VAT (0223) (G2.33)",
+                  "desc": "invoice supplier tax_id is required when legal identity scheme is SIREN (0002) or EU VAT (0223) (G2.33)",
                   "tests": "party has TaxID when required"
                 }
               ]
@@ -174,12 +174,12 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-14",
-                  "desc": "supplier VAT ID or ordering.seller (tax representative) VAT ID is required when the invoice VAT breakdown contains an exempt (E) category",
+                  "desc": "invoice supplier tax_id or ordering.seller tax_id is required when the VAT breakdown contains an exempt (E) category",
                   "tests": "supplier or tax rep has VAT ID"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-15",
-                  "desc": "invoice with an exempt (E) VAT category must include an exemption reason in tax.notes (key=exempt, non-empty text)",
+                  "desc": "invoice tax.notes must include an exempt-reason entry (key=exempt with non-empty text) when the VAT breakdown contains an exempt (E) category",
                   "tests": "has exempt tax note"
                 }
               ]
@@ -189,17 +189,17 @@
               "assert": [
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-16",
-                  "desc": "customer is required for Flow 10 B2B invoice (G2.19)",
+                  "desc": "invoice customer is required for Flow 10 B2B invoices (G2.19)",
                   "tests": "present"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-17",
-                  "desc": "customer must declare a legal identity with an allowed ICD 6523 scheme (G2.19): 0002, 0223, 0227, 0228 or 0229",
+                  "desc": "invoice customer must declare a legal identity with an allowed ICD 6523 scheme (0002, 0223, 0227, 0228 or 0229) (G2.19)",
                   "tests": "party has allowed legal scheme"
                 },
                 {
                   "id": "GOBL-FR-CTC-FLOW10-BILL-INVOICE-18",
-                  "desc": "customer TaxID is required when legal identity scheme is SIREN (0002) or EU VAT (0223) (G2.33)",
+                  "desc": "invoice customer tax_id is required when legal identity scheme is SIREN (0002) or EU VAT (0223) (G2.33)",
                   "tests": "party has TaxID when required"
                 }
               ]
@@ -214,7 +214,7 @@
       "assert": [
         {
           "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-03",
-          "desc": "every VAT line percent must be one of the Flow 10 permitted values (G1.24)",
+          "desc": "payment VAT line percent must be one of the Flow 10 permitted values (G1.24)",
           "tests": "allowed Flow 10 VAT percents"
         }
       ],
@@ -244,18 +244,18 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-04",
-              "desc": "supplier is required",
+              "desc": "payment supplier is required",
               "tests": "present"
             },
             {
               "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-05",
-              "desc": "supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
+              "desc": "payment supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
               "tests": "party has SIREN"
             }
           ]
         },
         {
-          "guard": "payment has customer",
+          "guard": "payment is B2B (has customer)",
           "subsets": [
             {
               "field": "lines",
@@ -268,7 +268,7 @@
                       "assert": [
                         {
                           "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-06",
-                          "desc": "each payment line must reference a document (invoice) when a customer is present",
+                          "desc": "payment line document is required when a customer is present",
                           "tests": "present"
                         }
                       ],
@@ -278,7 +278,7 @@
                           "assert": [
                             {
                               "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-07",
-                              "desc": "payment line document code (invoice ID) is required when a customer is present",
+                              "desc": "payment line document code is required when a customer is present",
                               "tests": "present"
                             }
                           ]
@@ -288,7 +288,7 @@
                           "assert": [
                             {
                               "id": "GOBL-FR-CTC-FLOW10-BILL-PAYMENT-08",
-                              "desc": "payment line document issue_date (invoice issue date) is required when a customer is present",
+                              "desc": "payment line document issue_date is required when a customer is present",
                               "tests": "present"
                             }
                           ]
@@ -312,8 +312,25 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW10-ORG-PARTY-01",
-              "desc": "identity scheme format invalid (BR-FR-CO-10)",
-              "tests": "valid scheme format"
+              "desc": "party identities must not duplicate iso-scheme-id values (BR-FR-CO-10)",
+              "tests": "unique iso-scheme-id"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CTC-FLOW10-ORG-PARTY-02",
+                      "desc": "party identity ext iso-scheme-id is required (BR-FR-CO-10)",
+                      "tests": "ext require [iso-scheme-id]"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

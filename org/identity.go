@@ -134,6 +134,17 @@ func IdentitiesTypeIn(typ ...cbc.Code) rules.Test {
 	}
 }
 
+// IdentitiesExtensionIn provides a test that will determine if at least one
+// of the identities defined includes an extension with the defined key and one
+// of the suggested values.
+func IdentitiesExtensionIn(key cbc.Key, value ...cbc.Code) rules.Test {
+	return identitiesTest{
+		desc:   fmt.Sprintf("has a ext [%s] in [%s]", key, strings.Join(cbc.CodeStrings(value), ", ")),
+		ext:    key,
+		values: value,
+	}
+}
+
 // IdentitiesKeyIn provides a test that will determine if at least one
 // of the identities defined includes one with one of the defined keys.
 func IdentitiesKeyIn(key ...cbc.Key) rules.Test {
@@ -144,9 +155,11 @@ func IdentitiesKeyIn(key ...cbc.Key) rules.Test {
 }
 
 type identitiesTest struct {
-	desc string
-	typs []cbc.Code
-	keys []cbc.Key
+	desc   string
+	typs   []cbc.Code
+	keys   []cbc.Key
+	ext    cbc.Key
+	values []cbc.Code
 }
 
 // Check will determine if the provided identities array complies with the criteria.
@@ -172,8 +185,16 @@ func (v identitiesTest) String() string {
 }
 
 func (v identitiesTest) matches(row *Identity) bool {
-	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
-		(len(v.keys) == 0 || row.Key.In(v.keys...))
+	if len(v.typs) > 0 {
+		return row.Type.In(v.typs...)
+	}
+	if len(v.keys) > 0 {
+		return row.Key.In(v.keys...)
+	}
+	if !v.ext.IsEmpty() {
+		return row.Ext.Get(v.ext).In(v.values...)
+	}
+	return false
 }
 
 // IdentityForType helps return the identity with a matching type code.

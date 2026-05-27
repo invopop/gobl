@@ -169,15 +169,16 @@ func TestStatusDispatchesFlow6(t *testing.T) {
 		IssueDate: cal.MakeDate(2026, 2, 2),
 		Code:      "STA-2026-0001",
 		Supplier: &org.Party{
-			Name: "Platform",
+			Name: "Vendeur",
 			Identities: []*org.Identity{{
 				Code: "356000000",
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					iso.ExtKeySchemeID: "0002",
 				}),
 			}},
+			Inboxes: []*org.Inbox{{Scheme: "0225", Code: "356000000_PEP"}},
 		},
-		Issuer: &org.Party{
+		Customer: &org.Party{
 			Name: "Acheteur",
 			Identities: []*org.Identity{{
 				Code: "200000008",
@@ -185,16 +186,8 @@ func TestStatusDispatchesFlow6(t *testing.T) {
 			}},
 			Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
 		},
-		Recipient: &org.Party{
-			Name: "Vendeur",
-			Identities: []*org.Identity{{
-				Code: "356000000",
-				Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, "0002"),
-			}},
-			Inboxes: []*org.Inbox{{Scheme: "0225", Code: "356000000_PEP"}},
-		},
 		Lines: []*bill.StatusLine{{
-			Key:  bill.StatusEventAccepted,
+			Key:  bill.StatusLineAccepted,
 			Date: &issued,
 			Doc:  &org.DocumentRef{Code: "INV-2026-001", IssueDate: &issued},
 		}},
@@ -202,7 +195,7 @@ func TestStatusDispatchesFlow6(t *testing.T) {
 	require.NoError(t, st.Calculate())
 	assert.Contains(t, st.Addons.List, flow6.V1)
 	// Flow 6 normalizer should have derived the status type from the
-	// line key (StatusEventAccepted → response).
+	// line key (StatusLineAccepted → response).
 	assert.Equal(t, bill.StatusTypeResponse, st.Type)
 }
 
@@ -251,7 +244,7 @@ func TestPaymentReceiptBetweenFrenchPartiesDispatchesFlow6(t *testing.T) {
 	assert.Contains(t, pmt.Addons.List, flow6.V1)
 	assert.NotContains(t, pmt.Addons.List, flow10.V1, "domestic French payment should not be flow10")
 	// flow6 normalizer should have set the CDAR status code to 212.
-	assert.Equal(t, cbc.Code("212"), pmt.Ext.Get("fr-ctc-flow6-status-code"))
+	assert.Equal(t, cbc.Code("212"), pmt.Ext.Get(flow6.ExtKeyStatus))
 }
 
 func TestPaymentRequestBetweenFrenchPartiesDispatchesFlow10(t *testing.T) {

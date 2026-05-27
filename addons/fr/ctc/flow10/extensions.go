@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/tax"
 )
 
 // Flow 10 extension keys.
@@ -63,17 +62,3 @@ var extensions = []*cbc.Definition{
 	},
 }
 
-// extValue unwraps a tax.Extensions value whether the rules engine has
-// passed it to us by value or by pointer.
-func extValue(v any) tax.Extensions {
-	switch e := v.(type) {
-	case tax.Extensions:
-		return e
-	case *tax.Extensions:
-		if e == nil {
-			return tax.Extensions{}
-		}
-		return *e
-	}
-	return tax.Extensions{}
-}

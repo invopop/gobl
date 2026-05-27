@@ -5,27 +5,12 @@ uuid: "2a5b6c7d-8e9f-4a1b-2c3d-4e5f6a7b8c01"
 issue_date: "2026-04-16"
 code: "STA-2026-0001"
 
-# Buyer-issued ack 23 (CDV-205, "approved"). The buyer's platform reports
-# acceptance to the seller.
-
-# `accepted` is buyer-issued (CDV-205) per Annexe A "Acteurs CDV", so
-# the flow6 normaliser:
-#   - fills issuer.fr-ctc-flow6-role=BY and recipient.fr-ctc-flow6-role=SE
-#   - propagates the SE-roled recipient's SIREN onto Supplier so it
-#     populates ref.IssuerTradeParty (MDT-129) — that's why this
-#     example doesn't need to spell out a `supplier:` block.
-issuer:
-  name: "ACHETEUR SARL"
-  identities:
-    - type: "SIREN"
-      code: "200000008"
-      ext:
-        iso-scheme-id: "0002"
-  inboxes:
-    - scheme: "0225"
-      code: "200000008_PEP"
-
-recipient:
+# Buyer-issued ack (CDV-205, "approved"). The buyer's platform reports
+# acceptance back to the seller's invoice. The fr-ctc-flow6 normaliser
+# fills the seller (Supplier) role with SE and the buyer (Customer)
+# with BY automatically, and derives the CDAR ProcessConditionCode
+# from the line's (Key, Type) pair.
+supplier:
   name: "VENDEUR SARL"
   identities:
     - type: "SIREN"
@@ -35,6 +20,17 @@ recipient:
   inboxes:
     - scheme: "0225"
       code: "732829320_PEP"
+
+customer:
+  name: "ACHETEUR SARL"
+  identities:
+    - type: "SIREN"
+      code: "200000008"
+      ext:
+        iso-scheme-id: "0002"
+  inboxes:
+    - scheme: "0225"
+      code: "200000008_PEP"
 
 lines:
   - key: "accepted"

@@ -6,28 +6,6 @@
     {
       "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS",
       "object": "bill.Status",
-      "assert": [
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-08",
-          "desc": "Status.Type must be a valid pair with each StatusLine.Key in the Flow 6 process table",
-          "tests": "status type consistent with line keys"
-        },
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-19",
-          "desc": "each Reason's fr-ctc-flow6-reason-code must be allowed for the line's CDAR ProcessConditionCode (BR-FR-CDV-CL-09)",
-          "tests": "reason codes allowed for status"
-        },
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-21",
-          "desc": "ext.fr-ctc-flow6-status-code must match the CDAR ProcessConditionCode implied by (line.Key, Status.Type)",
-          "tests": "status code matches key/type"
-        },
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-22",
-          "desc": "every CDV party identity scheme must be in the Flow 6 allow-list (STC 0231 is rejected — it is a Flow 2 invoice concept)",
-          "tests": "CDV identity schemes allowed"
-        }
-      ],
       "subsets": [
         {
           "field": "type",
@@ -40,57 +18,86 @@
           ]
         },
         {
-          "field": "supplier",
+          "field": "ext",
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-02",
-              "desc": "supplier is required (BR-FR-CDV-13)",
-              "tests": "present"
-            },
+              "desc": "status ext fr-ctc-flow6-status must be a Status-applicable ProcessConditionCode (200-210 or 213); codes 211, 212 belong on bill.Payment",
+              "tests": "ext 'fr-ctc-flow6-status' in [200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 213]"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-03",
-              "desc": "supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
-              "tests": "supplier has SIREN"
+              "desc": "status supplier is required (BR-FR-CDV-13)",
+              "tests": "present"
+            },
+            {
+              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-04",
+              "desc": "status supplier must have an inbox when its role is not WK or DFH (BR-FR-CDV-08)",
+              "tests": "supplier has inbox unless WK/DFH"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-05",
+                  "desc": "status supplier ext fr-ctc-flow6-role is required (BR-FR-CDV-CL-03)",
+                  "tests": "ext require [fr-ctc-flow6-role]"
+                }
+              ]
+            },
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-06",
+                  "desc": "status supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
+                  "tests": "has a ext [iso-scheme-id] in [0002]"
+                }
+              ]
             }
           ]
         },
         {
-          "field": "issuer",
+          "field": "customer",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-14",
-              "desc": "issuer is required (BR-FR-CDV-CL-03)",
+              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-07",
+              "desc": "status customer is required (BR-FR-CDV-CL-04)",
               "tests": "present"
             },
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-15",
-              "desc": "issuer.ext.fr-ctc-flow6-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-03)",
-              "tests": "issuer has fr-ctc-flow6-role"
-            },
-            {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-20",
-              "desc": "issuer must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
-              "tests": "issuer has inbox unless WK/DFH"
+              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-08",
+              "desc": "status customer must have an inbox when its role is not WK or DFH (BR-FR-CDV-08)",
+              "tests": "customer has inbox unless WK/DFH"
             }
-          ]
-        },
-        {
-          "field": "recipient",
-          "assert": [
+          ],
+          "subsets": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-16",
-              "desc": "recipient is required (BR-FR-CDV-CL-04)",
-              "tests": "present"
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-09",
+                  "desc": "status customer ext fr-ctc-flow6-role is required (BR-FR-CDV-CL-04)",
+                  "tests": "ext require [fr-ctc-flow6-role]"
+                }
+              ]
             },
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-17",
-              "desc": "recipient.ext.fr-ctc-flow6-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-04)",
-              "tests": "recipient has fr-ctc-flow6-role"
-            },
-            {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-18",
-              "desc": "recipient must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
-              "tests": "recipient has inbox unless WK/DFH"
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-10",
+                  "desc": "status customer must have at least one identity with an iso-scheme-id in the Flow 6 allow-list; STC 0231 is a Flow 2 invoice concept",
+                  "tests": "has a ext [iso-scheme-id] in [0002, 0009, 0223, 0224, 0226, 0227, 0228, 0229, 0238]"
+                }
+              ]
             }
           ]
         },
@@ -98,33 +105,21 @@
           "field": "lines",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-04",
-              "desc": "exactly one status line is required",
-              "tests": "exactly one line"
+              "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-11",
+              "desc": "status lines must contain exactly one entry",
+              "tests": "present, length between 1 and 1"
             }
           ],
           "subsets": [
             {
               "each": true,
-              "assert": [
-                {
-                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-06",
-                  "desc": "status line key must be a recognised Flow 6 event",
-                  "tests": "known Flow 6 status event"
-                },
-                {
-                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-13",
-                  "desc": "status lines with key rejected / error / disputed / partially-accepted / suspended require at least one reason (BR-FR-CDV-15)",
-                  "tests": "reason required for rejection-like statuses"
-                }
-              ],
               "subsets": [
                 {
                   "field": "doc",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-05",
-                      "desc": "status line must reference a document (BR-FR-CDV-10)",
+                      "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-12",
+                      "desc": "status line doc is required (BR-FR-CDV-10)",
                       "tests": "present"
                     }
                   ],
@@ -133,8 +128,8 @@
                       "field": "code",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-11",
-                          "desc": "referenced invoice code is required (BR-FR-CDV-10)",
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-13",
+                          "desc": "status line doc code is required (BR-FR-CDV-10)",
                           "tests": "present"
                         }
                       ]
@@ -143,9 +138,234 @@
                       "field": "issue_date",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-12",
-                          "desc": "referenced invoice issue date is required (BR-FR-CDV-11)",
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-14",
+                          "desc": "status line doc issue_date is required (BR-FR-CDV-11)",
                           "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "key",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-15",
+                      "desc": "status line key must be a recognised Flow 6 event",
+                      "tests": "one of [issued, acknowledged, processing, accepted, querying, rejected, error]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "status line key in [rejected, querying, error]",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-16",
+                          "desc": "status line reasons require at least one entry when key is rejected, querying or error (BR-FR-CDV-14)",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 200",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-17",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 200 (Déposée — transmission rejection) must be NON_TRANSMISE (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [NON_TRANSMISE]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 206",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-18",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 206 (Approuvée partiellement) must be one of AUTRE, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [AUTRE, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 207",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-19",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 207 (En litige) must be one of AUTRE, COORD_BANC_ERR, TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [AUTRE, COORD_BANC_ERR, TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 208",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-20",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 208 (Suspendue) must be one of JUSTIF_ABS, COORD_BANC_ERR, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [JUSTIF_ABS, COORD_BANC_ERR, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 210",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-21",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 210 (Refusée) must be one of TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, REF_CT_ABSENT (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, REF_CT_ABSENT]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "guard": "line status code 213",
+                  "subsets": [
+                    {
+                      "field": "reasons",
+                      "subsets": [
+                        {
+                          "each": true,
+                          "subsets": [
+                            {
+                              "field": "ext",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-22",
+                                  "desc": "status line reason ext fr-ctc-flow6-reason for status code 213 (Rejetée sémantique) must be one of MONTANTTOTAL_ERR, CALCUL_ERR, DOUBLON, ADR_ERR, REJ_SEMAN, REJ_UNI, REJ_COH, REJ_ADR, REJ_CONT_B2G, REJ_REF_PJ, REJ_ASS_PJ (BR-FR-CDV-CL-09)",
+                                  "tests": "ext 'fr-ctc-flow6-reason' in [MONTANTTOTAL_ERR, CALCUL_ERR, DOUBLON, ADR_ERR, REJ_SEMAN, REJ_UNI, REJ_COH, REJ_ADR, REJ_CONT_B2G, REJ_REF_PJ, REJ_ASS_PJ]"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "status type in [response]",
+          "subsets": [
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "key",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-23",
+                          "desc": "status line key must be consistent with status type 'response'",
+                          "tests": "one of [acknowledged, processing, accepted, querying, rejected, error]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "status type in [update]",
+          "subsets": [
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "key",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-STATUS-24",
+                          "desc": "status line key must be consistent with status type 'update'",
+                          "tests": "one of [issued]"
                         }
                       ]
                     }
@@ -160,25 +380,13 @@
     {
       "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT",
       "object": "bill.Payment",
-      "assert": [
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-10",
-          "desc": "ext.fr-ctc-flow6-status-code must match the CDAR ProcessConditionCode implied by the payment type",
-          "tests": "status code matches type"
-        },
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-11",
-          "desc": "every CDV party identity scheme must be in the Flow 6 allow-list (STC 0231 is rejected — it is a Flow 2 invoice concept)",
-          "tests": "CDV identity schemes allowed"
-        }
-      ],
       "subsets": [
         {
           "field": "type",
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-01",
-              "desc": "payment type must be 'advice' (CDAR 211) or 'receipt' (CDAR 212) for a Flow 6 CDV message — 'request' is not a CDV event",
+              "desc": "payment type must be 'advice' (CDAR 211) or 'receipt' (CDAR 212); 'request' is not a Flow 6 CDV event",
               "tests": "one of [advice, receipt]"
             }
           ]
@@ -188,13 +396,37 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-02",
-              "desc": "supplier is required (BR-FR-CDV-13)",
+              "desc": "payment supplier is required (BR-FR-CDV-13)",
               "tests": "present"
-            },
+            }
+          ],
+          "subsets": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-03",
-              "desc": "supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
-              "tests": "supplier has SIREN"
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-03",
+                  "desc": "payment supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
+                  "tests": "has a ext [iso-scheme-id] in [0002]"
+                }
+              ],
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-04",
+                          "desc": "payment supplier identity ext iso-scheme-id must be in the Flow 6 allow-list; STC 0231 is a Flow 2 invoice concept",
+                          "tests": "ext 'iso-scheme-id' in [0002, 0009, 0223, 0224, 0226, 0227, 0228, 0229, 0238]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -202,14 +434,63 @@
           "field": "customer",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-04",
-              "desc": "customer is required (BR-FR-CDV-CL-04)",
-              "tests": "present"
-            },
-            {
               "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-05",
-              "desc": "customer must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
-              "tests": "customer has SIREN"
+              "desc": "payment customer is required (BR-FR-CDV-CL-04)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-06",
+                  "desc": "payment customer must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
+                  "tests": "has a ext [iso-scheme-id] in [0002]"
+                }
+              ],
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-07",
+                          "desc": "payment customer identity ext iso-scheme-id must be in the Flow 6 allow-list; STC 0231 is a Flow 2 invoice concept",
+                          "tests": "ext 'iso-scheme-id' in [0002, 0009, 0223, 0224, 0226, 0227, 0228, 0229, 0238]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "payee",
+          "subsets": [
+            {
+              "field": "identities",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-08",
+                          "desc": "payment payee identity ext iso-scheme-id must be in the Flow 6 allow-list; STC 0231 is a Flow 2 invoice concept",
+                          "tests": "ext 'iso-scheme-id' in [0002, 0009, 0223, 0224, 0226, 0227, 0228, 0229, 0238]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -217,8 +498,8 @@
           "field": "lines",
           "assert": [
             {
-              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-06",
-              "desc": "exactly one payment line is required (a CDV references a single invoice)",
+              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-09",
+              "desc": "payment lines must contain exactly one entry (a CDV references a single invoice)",
               "tests": "exactly one line"
             }
           ],
@@ -230,8 +511,8 @@
                   "field": "document",
                   "assert": [
                     {
-                      "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-07",
-                      "desc": "payment line must reference the underlying invoice (BR-FR-CDV-10)",
+                      "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-10",
+                      "desc": "payment line document is required (BR-FR-CDV-10)",
                       "tests": "present"
                     }
                   ],
@@ -240,8 +521,8 @@
                       "field": "code",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-08",
-                          "desc": "referenced invoice code is required (BR-FR-CDV-10)",
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-11",
+                          "desc": "payment line document code is required (BR-FR-CDV-10)",
                           "tests": "present"
                         }
                       ]
@@ -250,13 +531,58 @@
                       "field": "issue_date",
                       "assert": [
                         {
-                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-09",
-                          "desc": "referenced invoice issue date is required (BR-FR-CDV-11)",
+                          "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-12",
+                          "desc": "payment line document issue_date is required (BR-FR-CDV-11)",
                           "tests": "present"
                         }
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-13",
+              "desc": "payment ext fr-ctc-flow6-status must be a Payment-applicable ProcessConditionCode (211 advice or 212 receipt); codes 200-210, 213 belong on bill.Status",
+              "tests": "ext 'fr-ctc-flow6-status' in [211, 212]"
+            },
+            {
+              "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-14",
+              "desc": "payment ext fr-ctc-flow6-condition must be a Payment-applicable CharacteristicTypeCode (MEN, MPA, RAP); status-only codes (CBB, DIV, DVA, MAJ, MAP, MAPTTC, MNA, MNATTC, ESC, RAB, REM) belong on a bill.Reason under bill.Status",
+              "tests": "ext 'fr-ctc-flow6-condition' in [MEN, MPA, RAP]"
+            }
+          ]
+        },
+        {
+          "guard": "payment type in [advice]",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-15",
+                  "desc": "payment ext fr-ctc-flow6-status for an advice payment must be ProcessConditionCode 211 (Paiement transmis)",
+                  "tests": "ext 'fr-ctc-flow6-status' in [211]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "payment type in [receipt]",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-FR-CTC-FLOW6-BILL-PAYMENT-16",
+                  "desc": "payment ext fr-ctc-flow6-status for a receipt payment must be ProcessConditionCode 212 (Encaissée)",
+                  "tests": "ext 'fr-ctc-flow6-status' in [212]"
                 }
               ]
             }
@@ -267,26 +593,19 @@
     {
       "id": "GOBL-FR-CTC-FLOW6-BILL-REASON",
       "object": "bill.Reason",
-      "assert": [
-        {
-          "id": "GOBL-FR-CTC-FLOW6-BILL-REASON-02",
-          "desc": "fr-ctc-flow6-reason-code must be a known CDAR code and its bucket must match reason.key",
-          "tests": "reason ext code consistent with key"
-        }
-      ],
       "subsets": [
         {
-          "field": "key",
-          "subsets": [
+          "field": "ext",
+          "assert": [
             {
-              "guard": "present",
-              "assert": [
-                {
-                  "id": "GOBL-FR-CTC-FLOW6-BILL-REASON-01",
-                  "desc": "reason key is not a recognised bill.ReasonKeys value",
-                  "tests": "one of [none, references, legal, unknown-receiver, quality, delivery, prices, quantity, items, payment-terms, not-recognized, finance-terms, partial, other]"
-                }
-              ]
+              "id": "GOBL-FR-CTC-FLOW6-BILL-REASON-01",
+              "desc": "reason ext fr-ctc-flow6-reason must be a known CDAR ReasonCode",
+              "tests": "ext 'fr-ctc-flow6-reason' in [NON_TRANSMISE, JUSTIF_ABS, ROUTAGE_ERR, AUTRE, COORD_BANC_ERR, TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_INC, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP, REJ_SEMAN, REJ_UNI, REJ_COH, REJ_ADR, REJ_CONT_B2G, REJ_REF_PJ, REJ_ASS_PJ, IRR_VIDE_F, IRR_TYPE_F, IRR_SYNTAX, IRR_TAILLE_PJ, IRR_NOM_PJ, IRR_VID_PJ, IRR_EXT_DOC, IRR_TAILLE_F, IRR_ANTIVIRUS]"
+            },
+            {
+              "id": "GOBL-FR-CTC-FLOW6-BILL-REASON-02",
+              "desc": "reason ext fr-ctc-flow6-condition must be a Status-applicable CharacteristicTypeCode (CBB, DIV, DVA, MAJ, MAP, MAPTTC, MNA, MNATTC, ESC, RAB, REM); MEN, MPA, RAP belong on bill.Payment",
+              "tests": "ext 'fr-ctc-flow6-condition' in [CBB, DIV, DVA, MAJ, MAP, MAPTTC, MNA, MNATTC, ESC, RAB, REM]"
             }
           ]
         }
@@ -297,17 +616,12 @@
       "object": "bill.Action",
       "subsets": [
         {
-          "field": "key",
-          "subsets": [
+          "field": "ext",
+          "assert": [
             {
-              "guard": "present",
-              "assert": [
-                {
-                  "id": "GOBL-FR-CTC-FLOW6-BILL-ACTION-01",
-                  "desc": "action key is not a recognised bill.ActionKeys value",
-                  "tests": "one of [none, provide, reissue, credit-full, credit-partial, credit-amount, other]"
-                }
-              ]
+              "id": "GOBL-FR-CTC-FLOW6-BILL-ACTION-01",
+              "desc": "action ext fr-ctc-flow6-action must be a known CDAR RequestedActionCode (MDT-121)",
+              "tests": "ext 'fr-ctc-flow6-action' in [NOA, PIN, NIN, CNF, CNP, CNA, OTH]"
             }
           ]
         }
@@ -322,7 +636,7 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-01",
-              "desc": "fr-ctc-flow6-role must be one of the UNCL 3035 subset: SE, BY, WK, DFH, AB, SR, DL, PE, PR, II, IV",
+              "desc": "party ext fr-ctc-flow6-role must be one of the UNCL 3035 subset: SE, BY, WK, DFH, AB, SR, DL, PE, PR, II, IV",
               "tests": "known fr-ctc-flow6-role"
             }
           ]
@@ -332,13 +646,55 @@
           "assert": [
             {
               "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-02",
-              "desc": "SIRET and SIREN must be coherent (BR-FR-09/10)",
+              "desc": "party identities SIRET and SIREN codes must be coherent (BR-FR-09/10)",
               "tests": "SIRET/SIREN coherent"
             },
             {
               "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-03",
-              "desc": "identity scheme format invalid (BR-FR-CO-10)",
-              "tests": "valid scheme format"
+              "desc": "party identities must not duplicate iso-scheme-id values (BR-FR-CO-10)",
+              "tests": "unique iso-scheme-id"
+            }
+          ],
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-04",
+                      "desc": "party identity ext iso-scheme-id is required (BR-FR-CO-10)",
+                      "tests": "ext require [iso-scheme-id]"
+                    },
+                    {
+                      "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-05",
+                      "desc": "party identity ext iso-scheme-id must be one of the Flow 6 allowed schemes (BR-FR-CO-10)",
+                      "tests": "ext 'iso-scheme-id' in [0002, 0009, 0223, 0224, 0226, 0227, 0228, 0229, 0238]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "scheme 0224 (private-id)",
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-06",
+                          "desc": "party identity code for private-id (0224) must not exceed 100 characters (BR-FR-26)",
+                          "tests": "length between 0 and 100"
+                        },
+                        {
+                          "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-07",
+                          "desc": "party identity code for private-id (0224) must contain only alphanumeric characters and +, -, _, / (BR-FR-24)",
+                          "tests": "matches ^[A-Za-z0-9+\\-_/]+$"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -349,8 +705,8 @@
               "each": true,
               "assert": [
                 {
-                  "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-05",
-                  "desc": "inbox code format invalid",
+                  "id": "GOBL-FR-CTC-FLOW6-ORG-PARTY-08",
+                  "desc": "party inbox code format is invalid",
                   "tests": "valid inbox"
                 }
               ]

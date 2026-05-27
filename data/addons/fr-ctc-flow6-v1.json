@@ -26,7 +26,7 @@
         "fr": "Code rôle partie"
       },
       "desc": {
-        "en": "UNCL 3035 role code carried as the CDAR RoleCode (MDT-158)\nfor each populated party on a Flow 6 lifecycle message.\nLabels follow the French CTC specification, which assigns\nCDAR-specific meanings to WK (dematerialisation platform /\noperator) and DFH (Portail Public de Facturation).\nThe normalizer fills the obvious defaults (Supplier → SE,\nCustomer → BY) and leaves the rest for the caller to set\nexplicitly."
+        "en": "UNCL 3035 role code carried as the CDAR RoleCode (MDT-158)\non each populated party of any Flow 6 lifecycle message\n— set on Supplier / Customer of both bill.Status and\nbill.Payment. Labels follow the French CTC\nspecification, which assigns CDAR-specific meanings to\nWK (dematerialisation platform / operator) and DFH\n(Portail Public de Facturation). The normalizer fills\nthe obvious defaults (Supplier → SE, Customer → BY)\nand leaves the rest for the caller to set explicitly."
       },
       "values": [
         {
@@ -34,6 +34,13 @@
           "name": {
             "en": "Buyer",
             "fr": "Acheteur"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Buyer's agent",
+            "fr": "Agent d'acheteur"
           }
         },
         {
@@ -48,13 +55,6 @@
           "name": {
             "en": "Seller",
             "fr": "Vendeur"
-          }
-        },
-        {
-          "code": "AB",
-          "name": {
-            "en": "Buyer's agent",
-            "fr": "Agent d'acheteur"
           }
         },
         {
@@ -109,379 +109,609 @@
       ]
     },
     {
-      "key": "fr-ctc-flow6-reason-code",
+      "key": "fr-ctc-flow6-reason",
       "name": {
         "en": "CDAR Reason Code",
         "fr": "Code motif CDAR"
       },
       "desc": {
-        "en": "Exact CDAR ReasonCode pinned on a bill.Reason for Flow 6\nlifecycle messages. The CDAR ReasonCode dimension is 1:N\nwith bill.Reason.Key: this extension lets the caller pick\nthe precise code within a bucket. When absent, the\nconverter falls back to the default_for_key code for\nReason.Key."
+        "en": "Exact CDAR ReasonCode pinned on a bill.Reason under a\nbill.Status — Status-only (bill.Payment has no\nReasons). The CDAR ReasonCode dimension is 1:N with\nbill.Reason.Key: this extension lets the caller pick\nthe precise code within a bucket. The normalizer\nderives a default from Reason.Key (see\nnormalizeReason); callers can override to one of the\nbucket's other allowed codes."
       },
       "values": [
         {
           "code": "NON_TRANSMISE",
           "name": {
-            "en": "unknown-receiver"
+            "en": "Not transmitted",
+            "fr": "Non transmise"
           }
         },
         {
           "code": "JUSTIF_ABS",
           "name": {
-            "en": "references"
+            "en": "Justification absent",
+            "fr": "Justificatif absent"
           }
         },
         {
           "code": "ROUTAGE_ERR",
           "name": {
-            "en": "unknown-receiver"
+            "en": "Routing error",
+            "fr": "Erreur de routage"
           }
         },
         {
           "code": "AUTRE",
           "name": {
-            "en": "other"
+            "en": "Other",
+            "fr": "Autre"
           }
         },
         {
           "code": "COORD_BANC_ERR",
           "name": {
-            "en": "finance-terms"
+            "en": "Bank account details error",
+            "fr": "Erreur de coordonnées bancaires"
           }
         },
         {
           "code": "TX_TVA_ERR",
           "name": {
-            "en": "legal"
+            "en": "VAT rate error",
+            "fr": "Erreur de taux de TVA"
           }
         },
         {
           "code": "MONTANTTOTAL_ERR",
           "name": {
-            "en": "prices"
+            "en": "Total amount error",
+            "fr": "Erreur de montant total"
           }
         },
         {
           "code": "CALCUL_ERR",
           "name": {
-            "en": "prices"
+            "en": "Calculation error",
+            "fr": "Erreur de calcul"
           }
         },
         {
           "code": "NON_CONFORME",
           "name": {
-            "en": "legal"
+            "en": "Non-compliant",
+            "fr": "Non conforme"
           }
         },
         {
           "code": "DOUBLON",
           "name": {
-            "en": "not-recognized"
+            "en": "Duplicate",
+            "fr": "Doublon"
           }
         },
         {
           "code": "DEST_INC",
           "name": {
-            "en": "unknown-receiver"
+            "en": "Unknown recipient",
+            "fr": "Destinataire inconnu"
           }
         },
         {
           "code": "DEST_ERR",
           "name": {
-            "en": "references"
+            "en": "Recipient error",
+            "fr": "Erreur de destinataire"
           }
         },
         {
           "code": "TRANSAC_INC",
           "name": {
-            "en": "not-recognized"
+            "en": "Unknown transaction",
+            "fr": "Transaction inconnue"
           }
         },
         {
           "code": "EMMET_INC",
           "name": {
-            "en": "not-recognized"
+            "en": "Unknown issuer",
+            "fr": "Émetteur inconnu"
           }
         },
         {
           "code": "CONTRAT_TERM",
           "name": {
-            "en": "not-recognized"
+            "en": "Contract terminated",
+            "fr": "Contrat terminé"
           }
         },
         {
           "code": "DOUBLE_FACT",
           "name": {
-            "en": "not-recognized"
+            "en": "Double invoicing",
+            "fr": "Double facturation"
           }
         },
         {
           "code": "CMD_ERR",
           "name": {
-            "en": "references"
+            "en": "Order reference error",
+            "fr": "Erreur de référence de commande"
           }
         },
         {
           "code": "ADR_ERR",
           "name": {
-            "en": "references"
+            "en": "Address error",
+            "fr": "Erreur d'adresse"
           }
         },
         {
           "code": "SIRET_ERR",
           "name": {
-            "en": "references"
+            "en": "SIRET error",
+            "fr": "Erreur de SIRET"
           }
         },
         {
           "code": "CODE_ROUTAGE_ERR",
           "name": {
-            "en": "references"
+            "en": "Routing code error",
+            "fr": "Erreur de code de routage"
           }
         },
         {
           "code": "REF_CT_ABSENT",
           "name": {
-            "en": "references"
+            "en": "Contract reference absent",
+            "fr": "Référence contrat absente"
           }
         },
         {
           "code": "REF_ERR",
           "name": {
-            "en": "references"
+            "en": "Reference error",
+            "fr": "Erreur de référence"
           }
         },
         {
           "code": "PU_ERR",
           "name": {
-            "en": "prices"
+            "en": "Unit price error",
+            "fr": "Erreur de prix unitaire"
           }
         },
         {
           "code": "REM_ERR",
           "name": {
-            "en": "prices"
+            "en": "Discount error",
+            "fr": "Erreur de remise"
           }
         },
         {
           "code": "QTE_ERR",
           "name": {
-            "en": "quantity"
+            "en": "Quantity error",
+            "fr": "Erreur de quantité"
           }
         },
         {
           "code": "ART_ERR",
           "name": {
-            "en": "items"
+            "en": "Item error",
+            "fr": "Erreur d'article"
           }
         },
         {
           "code": "MODPAI_ERR",
           "name": {
-            "en": "payment-terms"
+            "en": "Payment method error",
+            "fr": "Erreur de mode de paiement"
           }
         },
         {
           "code": "QUALITE_ERR",
           "name": {
-            "en": "quality"
+            "en": "Quality issue",
+            "fr": "Problème de qualité"
           }
         },
         {
           "code": "LIVR_INCOMP",
           "name": {
-            "en": "delivery"
+            "en": "Incomplete delivery",
+            "fr": "Livraison incomplète"
           }
         },
         {
           "code": "REJ_SEMAN",
           "name": {
-            "en": "legal"
+            "en": "Semantic rejection",
+            "fr": "Rejet sémantique"
           }
         },
         {
           "code": "REJ_UNI",
           "name": {
-            "en": "not-recognized"
+            "en": "Uniqueness violation",
+            "fr": "Rejet pour unicité"
           }
         },
         {
           "code": "REJ_COH",
           "name": {
-            "en": "legal"
+            "en": "Coherence rejection",
+            "fr": "Rejet de cohérence"
           }
         },
         {
           "code": "REJ_ADR",
           "name": {
-            "en": "references"
+            "en": "Address rejection",
+            "fr": "Rejet d'adresse"
           }
         },
         {
           "code": "REJ_CONT_B2G",
           "name": {
-            "en": "legal"
+            "en": "B2G context rejection",
+            "fr": "Rejet contexte B2G"
           }
         },
         {
           "code": "REJ_REF_PJ",
           "name": {
-            "en": "references"
+            "en": "Attachment reference rejection",
+            "fr": "Rejet référence pièce jointe"
           }
         },
         {
           "code": "REJ_ASS_PJ",
           "name": {
-            "en": "references"
+            "en": "Attachment association rejection",
+            "fr": "Rejet association pièce jointe"
           }
         },
         {
           "code": "IRR_VIDE_F",
           "name": {
-            "en": "legal"
+            "en": "Empty file",
+            "fr": "Fichier vide"
           }
         },
         {
           "code": "IRR_TYPE_F",
           "name": {
-            "en": "legal"
+            "en": "Invalid file type",
+            "fr": "Type de fichier invalide"
           }
         },
         {
           "code": "IRR_SYNTAX",
           "name": {
-            "en": "legal"
+            "en": "Syntax error",
+            "fr": "Erreur de syntaxe"
           }
         },
         {
           "code": "IRR_TAILLE_PJ",
           "name": {
-            "en": "legal"
+            "en": "Attachment size",
+            "fr": "Taille de pièce jointe"
           }
         },
         {
           "code": "IRR_NOM_PJ",
           "name": {
-            "en": "legal"
+            "en": "Attachment name",
+            "fr": "Nom de pièce jointe"
           }
         },
         {
           "code": "IRR_VID_PJ",
           "name": {
-            "en": "legal"
+            "en": "Empty attachment",
+            "fr": "Pièce jointe vide"
           }
         },
         {
           "code": "IRR_EXT_DOC",
           "name": {
-            "en": "legal"
+            "en": "External document",
+            "fr": "Document externe"
           }
         },
         {
           "code": "IRR_TAILLE_F",
           "name": {
-            "en": "legal"
+            "en": "File size",
+            "fr": "Taille de fichier"
           }
         },
         {
           "code": "IRR_ANTIVIRUS",
           "name": {
-            "en": "legal"
+            "en": "Antivirus",
+            "fr": "Antivirus"
           }
         }
       ]
     },
     {
-      "key": "fr-ctc-flow6-status-code",
+      "key": "fr-ctc-flow6-status",
       "name": {
         "en": "CDAR Process Condition Code",
         "fr": "Code condition processus CDAR"
       },
       "desc": {
-        "en": "CDAR ProcessConditionCode (MDT-9) identifying the lifecycle\nevent reported by the Flow 6 message. The normalizer derives\nit from the (StatusLine.Key, Status.Type) pair; callers can\npre-set it to pin a specific code (e.g. when round-tripping\na parsed CDV)."
+        "en": "CDAR ProcessConditionCode (MDT-9) identifying the\nlifecycle event reported by the Flow 6 message.\nUnified vocabulary; the rules narrow the allow-list\nper document type:\n\n  - bill.Status accepts 200 / 201 / 202 / 203 / 204 /\n    205 / 206 / 207 / 208 / 209 / 210 / 213. The\n    normalizer derives the value from the\n    (StatusLine.Key, Status.Type) pair via processTable.\n  - bill.Payment accepts 211 (Paiement transmis) and\n    212 (Encaissée). The normalizer derives the value\n    from bill.Payment.Type (advice → 211, receipt →\n    212).\n\nCallers can pre-set the ext directly to pin a specific\ncode (e.g. when round-tripping a parsed CDV)."
       },
       "values": [
         {
           "code": "200",
           "name": {
-            "en": "Déposée"
+            "en": "Deposited",
+            "fr": "Déposée"
           }
         },
         {
           "code": "201",
           "name": {
-            "en": "Émise par la plateforme"
+            "en": "Issued by platform",
+            "fr": "Émise par la plateforme"
           }
         },
         {
           "code": "202",
           "name": {
-            "en": "Reçue par PA"
+            "en": "Received by PA",
+            "fr": "Reçue par PA"
           }
         },
         {
           "code": "203",
           "name": {
-            "en": "Mise à disposition"
+            "en": "Made available",
+            "fr": "Mise à disposition"
           }
         },
         {
           "code": "204",
           "name": {
-            "en": "Prise en charge"
+            "en": "Taken into account",
+            "fr": "Prise en charge"
           }
         },
         {
           "code": "205",
           "name": {
-            "en": "Approuvée"
+            "en": "Approved",
+            "fr": "Approuvée"
           }
         },
         {
           "code": "206",
           "name": {
-            "en": "Approuvée partiellement"
+            "en": "Partially approved",
+            "fr": "Approuvée partiellement"
           }
         },
         {
           "code": "207",
           "name": {
-            "en": "En litige"
+            "en": "In dispute",
+            "fr": "En litige"
           }
         },
         {
           "code": "208",
           "name": {
-            "en": "Suspendue"
+            "en": "Suspended",
+            "fr": "Suspendue"
           }
         },
         {
           "code": "209",
           "name": {
-            "en": "Complétée"
+            "en": "Completed",
+            "fr": "Complétée"
           }
         },
         {
           "code": "210",
           "name": {
-            "en": "Refusée"
-          }
-        },
-        {
-          "code": "213",
-          "name": {
-            "en": "Rejetée sémantique"
+            "en": "Rejected",
+            "fr": "Refusée"
           }
         },
         {
           "code": "211",
           "name": {
-            "en": "Paiement transmis"
+            "en": "Payment transmitted",
+            "fr": "Paiement transmis"
           }
         },
         {
           "code": "212",
           "name": {
-            "en": "Encaissée"
+            "en": "Cashed in",
+            "fr": "Encaissée"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "Semantically rejected",
+            "fr": "Rejetée sémantique"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-flow6-condition",
+      "name": {
+        "en": "Flow 6 Condition Code",
+        "fr": "Code condition Flux 6"
+      },
+      "desc": {
+        "en": "CDAR CharacteristicTypeCode (MDT-207). Unified\nvocabulary; the rules narrow the allow-list per\ndocument type:\n\n  - On bill.Reason under bill.Status: CBB, DIV, DVA,\n    MAJ (field-level corrections), MAP / MAPTTC /\n    MNA / MNATTC (partial-approval / rejection\n    amounts), ESC / RAB / REM (discount markers).\n    Each Reason carries 0..1 condition (CDAR\n    cardinality); to convey multiple characteristics\n    for the same status line, add multiple Reasons.\n    bill.Condition entries on each Reason are reserved\n    for Peppol cac:Condition-style business-rule\n    codes describing the affected field and value.\n  - On bill.Payment.Ext: MEN (Encaissé), MPA (Payé),\n    RAP (Reste à payer). The normalizer defaults the\n    value from bill.Payment.Type (receipt → MEN,\n    advice → MPA); partial payments can override to\n    RAP."
+      },
+      "values": [
+        {
+          "code": "CBB",
+          "name": {
+            "en": "Bank details to modify",
+            "fr": "Coordonnées bancaires à modifier"
+          }
+        },
+        {
+          "code": "DIV",
+          "name": {
+            "en": "Invalid data",
+            "fr": "Donnée invalide"
+          }
+        },
+        {
+          "code": "DVA",
+          "name": {
+            "en": "Expected valid data",
+            "fr": "Donnée valide attendue"
+          }
+        },
+        {
+          "code": "MAJ",
+          "name": {
+            "en": "Replacement value",
+            "fr": "Donnée à prendre en compte"
+          }
+        },
+        {
+          "code": "MAP",
+          "name": {
+            "en": "Approved amount (excl. VAT)",
+            "fr": "Montant HT approuvé"
+          }
+        },
+        {
+          "code": "MAPTTC",
+          "name": {
+            "en": "Approved amount (incl. VAT)",
+            "fr": "Montant TTC approuvé"
+          }
+        },
+        {
+          "code": "MNA",
+          "name": {
+            "en": "Rejected amount (excl. VAT)",
+            "fr": "Montant HT non approuvé"
+          }
+        },
+        {
+          "code": "MNATTC",
+          "name": {
+            "en": "Rejected amount (incl. VAT)",
+            "fr": "Montant TTC non approuvé"
+          }
+        },
+        {
+          "code": "ESC",
+          "name": {
+            "en": "Discount granted",
+            "fr": "Escompte accordé"
+          }
+        },
+        {
+          "code": "RAB",
+          "name": {
+            "en": "Rebate granted",
+            "fr": "Rabais accordé"
+          }
+        },
+        {
+          "code": "REM",
+          "name": {
+            "en": "Reduction granted",
+            "fr": "Remise accordée"
+          }
+        },
+        {
+          "code": "MEN",
+          "name": {
+            "en": "Amount received",
+            "fr": "Montant encaissé"
+          }
+        },
+        {
+          "code": "MPA",
+          "name": {
+            "en": "Amount paid",
+            "fr": "Montant payé"
+          }
+        },
+        {
+          "code": "RAP",
+          "name": {
+            "en": "Amount remaining",
+            "fr": "Reste à payer"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-ctc-flow6-action",
+      "name": {
+        "en": "Flow 6 Action Code",
+        "fr": "Code action Flux 6"
+      },
+      "desc": {
+        "en": "CDAR RequestedActionCode (MDT-121) carried on a\nbill.Action under a bill.Status line. Tells the issuer\nwhat to do next with the referenced invoice — reissue\nit, send a credit note, provide more information, etc.\nThe normalizer derives the default from bill.Action.Key\n(NOA / PIN / NIN / CNF / CNP / CNA / OTH);\ncallers can override directly on the extension when\nround-tripping a parsed CDV."
+      },
+      "values": [
+        {
+          "code": "NOA",
+          "name": {
+            "en": "No action",
+            "fr": "Aucune action"
+          }
+        },
+        {
+          "code": "PIN",
+          "name": {
+            "en": "Provide information",
+            "fr": "Fournir des informations"
+          }
+        },
+        {
+          "code": "NIN",
+          "name": {
+            "en": "Reissue invoice",
+            "fr": "Réémettre la facture"
+          }
+        },
+        {
+          "code": "CNF",
+          "name": {
+            "en": "Credit note (full)",
+            "fr": "Avoir total"
+          }
+        },
+        {
+          "code": "CNP",
+          "name": {
+            "en": "Credit note (partial)",
+            "fr": "Avoir partiel"
+          }
+        },
+        {
+          "code": "CNA",
+          "name": {
+            "en": "Credit note (amount)",
+            "fr": "Avoir d'un montant"
+          }
+        },
+        {
+          "code": "OTH",
+          "name": {
+            "en": "Other",
+            "fr": "Autre"
           }
         }
       ]

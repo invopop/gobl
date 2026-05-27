@@ -100,7 +100,7 @@ func dispatchPayment(pmt *bill.Payment) cbc.Key {
 	if pmt == nil {
 		return flow10.V1
 	}
-	if _, ok := flow6.PaymentCDARCodeFor(pmt.Type); !ok {
+	if pmt.Type != bill.PaymentTypeAdvice && pmt.Type != bill.PaymentTypeReceipt {
 		return flow10.V1
 	}
 	if partyIsFrench(pmt.Supplier) && partyIsFrench(pmt.Customer) {

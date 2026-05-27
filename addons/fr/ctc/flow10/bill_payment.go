@@ -7,17 +7,19 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// paymentIsB2C reports whether the payment reports a B2C settlement,
+// paymentIsB2CDoc reports whether the payment reports a B2C settlement,
 // determined by the absence of a Customer party.
-func paymentIsB2C(pmt *bill.Payment) bool {
+func paymentIsB2CDoc(pmt *bill.Payment) bool {
 	return pmt != nil && pmt.Customer == nil
 }
 
-// paymentHasCustomerAny is the "has Customer party" predicate used to
-// gate the per-line invoice-reference rules.
-func paymentHasCustomerAny(v any) bool {
-	pmt, ok := v.(*bill.Payment)
-	return ok && !paymentIsB2C(pmt)
+// paymentIsB2B returns a Test that passes when the payment has a
+// customer party (B2B settlement).
+func paymentIsB2B() rules.Test {
+	return is.Func("payment is B2B (has customer)", func(v any) bool {
+		pmt, ok := v.(*bill.Payment)
+		return ok && !paymentIsB2CDoc(pmt)
+	})
 }
 
 func billPaymentRules() *rules.Set {
@@ -32,32 +34,32 @@ func billPaymentRules() *rules.Set {
 				is.Present,
 			),
 		),
-		rules.Assert("03", "every VAT line percent must be one of the Flow 10 permitted values (G1.24)",
+		rules.Assert("03", "payment VAT line percent must be one of the Flow 10 permitted values (G1.24)",
 			is.Func("allowed Flow 10 VAT percents", paymentVATPercentsAllowed),
 		),
 		rules.Field("supplier",
-			rules.Assert("04", "supplier is required",
+			rules.Assert("04", "payment supplier is required",
 				is.Present,
 			),
-			rules.Assert("05", "supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
+			rules.Assert("05", "payment supplier must have a SIREN identity (ISO/IEC 6523 scheme 0002)",
 				is.Func("party has SIREN", partyHasSIREN),
 			),
 		),
 		rules.When(
-			is.Func("payment has customer", paymentHasCustomerAny),
+			paymentIsB2B(),
 			rules.Field("lines",
 				rules.Each(
 					rules.Field("document",
-						rules.Assert("06", "each payment line must reference a document (invoice) when a customer is present",
+						rules.Assert("06", "payment line document is required when a customer is present",
 							is.Present,
 						),
 						rules.Field("code",
-							rules.Assert("07", "payment line document code (invoice ID) is required when a customer is present",
+							rules.Assert("07", "payment line document code is required when a customer is present",
 								is.Present,
 							),
 						),
 						rules.Field("issue_date",
-							rules.Assert("08", "payment line document issue_date (invoice issue date) is required when a customer is present",
+							rules.Assert("08", "payment line document issue_date is required when a customer is present",
 								is.Present,
 							),
 						),

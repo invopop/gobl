@@ -84,6 +84,8 @@ func normalize(doc any) {
 		normalizePayment(obj)
 	case *bill.Reason:
 		normalizeReason(obj)
+	case *bill.Action:
+		normalizeAction(obj)
 	case *org.Party:
 		normalizeParty(obj)
 	case *org.Identity:

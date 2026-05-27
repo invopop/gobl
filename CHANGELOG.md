@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `fr-ctc-v1`: **breaking**: the previously monolithic `fr-ctc-v1` addon has been replaced by a meta-addon plus three flow-specific addons. Declaring `fr-ctc-v1` now means "I want French CTC support"; the addon's normalizer inspects the document and appends the appropriate flow addon (`fr-ctc-flow2-v1` for domestic B2B clearance invoices, `fr-ctc-flow6-v1` for `bill.Status` lifecycle messages, `fr-ctc-flow10-v1` for B2C / cross-border B2B e-reporting invoices and payment receipts). Callers who want explicit control can declare the flow-specific addon directly. All the rules and extensions formerly under `fr-ctc-v1` have moved into the appropriate flow subpackages.
 - `tax`: added `tax.ExtractNormalizersForNew(obj, seen)` and changed `bill.Invoice.Calculate`, `bill.Status.Calculate` and `bill.Payment.Calculate` to loop normalizer extraction so that addons appended to the document's addon list during normalization (e.g. by the `fr-ctc-v1` meta-addon) get their own normalizers extracted and run in the same `Calculate()` pass. Single-pass behaviour is preserved when no normalizer mutates the addon list.
+- `bill`: **breaking** `Status` reason `Condition` and `conditions` renamed to `Fault` and `faults`.
+- `rules/is`: renamed `Or` method to `OneOf` (XOR) and `AnyOf` (OR).
 
 ### Added
 

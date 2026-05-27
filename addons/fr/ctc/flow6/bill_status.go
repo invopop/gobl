@@ -1,6 +1,7 @@
 package flow6
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/invopop/gobl/bill"
@@ -9,6 +10,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
 
 func normalizeStatus(st *bill.Status) {
@@ -16,79 +18,107 @@ func normalizeStatus(st *bill.Status) {
 		return
 	}
 
-	// If the caller pinned fr-ctc-flow6-status-code but left
-	// Line.Key / Status.Type blank, fill them from the process table.
-	if code := st.Ext.Get(ExtKeyStatusCode).String(); code != "" {
-		if key, typ, ok := StatusKeyFor(code); ok {
-			if len(st.Lines) > 0 && st.Lines[0] != nil && st.Lines[0].Key == "" {
-				st.Lines[0].Key = key
-			}
-			if st.Type == "" {
-				st.Type = typ
-			}
-		}
+	// Ensure the supplier and customer parties carry the expected CDV role when missing.
+	if st.Supplier != nil {
+		st.Supplier.Ext = st.Supplier.Ext.SetIfEmpty(ExtKeyRole, RoleSeller)
+	}
+	if st.Customer != nil {
+		st.Customer.Ext = st.Customer.Ext.SetIfEmpty(ExtKeyRole, RoleBuyer)
 	}
 
-	// Default Type from the first line's Key.
-	if st.Type == "" {
-		for _, line := range st.Lines {
-			if line == nil {
-				continue
-			}
-			if typ, ok := statusTypeForKey(line.Key); ok {
-				st.Type = typ
-				break
-			}
-		}
+	for _, line := range st.Lines {
+		// There should only be one line
+		normalizeStatusLine(st, line)
+	}
+}
+
+func normalizeStatusLine(s *bill.Status, line *bill.StatusLine) {
+	if line == nil {
+		return
 	}
 
-	// Deduce the fr-ctc-flow6-role on Issuer / Recipient from the
-	// line's (key, type) → side mapping per Annexe A "Acteurs CDV".
-	if len(st.Lines) > 0 && st.Lines[0] != nil {
-		issuerRole, recipientRole := rolesForSide(SideForKeyType(st.Lines[0].Key, st.Type))
-		if issuerRole != "" {
-			setPartyRoleDefault(st.Issuer, issuerRole)
-		}
-		if recipientRole != "" {
-			setPartyRoleDefault(st.Recipient, recipientRole)
-		}
-	}
+	// If the line already has an extension, this will set the key.
+	prepareStatusWithLine(s, line)
 
-	// Propagate the SE-roled party's SIREN onto Supplier when missing.
-	if siren := sirenFromSEParty(st.Issuer, st.Recipient); siren != nil {
-		st.Supplier = ensureSIRENOnSupplier(st.Supplier, siren)
-	}
-
-	// Surface the CDAR ProcessConditionCode on the document.
-	if len(st.Lines) > 0 && st.Lines[0] != nil && st.Ext.Get(ExtKeyStatusCode) == "" {
-		if code, ok := CDARProcessCodeFor(st.Lines[0].Key, st.Type); ok {
-			st.Ext = st.Ext.Set(ExtKeyStatusCode, cbc.Code(code))
+	switch s.Type {
+	case bill.StatusTypeUpdate, bill.StatusTypeSystem:
+		// Issue and System status types
+		switch line.Key {
+		case bill.StatusLineIssued:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "200")
+		default:
+			line.Ext = line.Ext.Delete(ExtKeyStatus)
+		}
+	case bill.StatusTypeResponse:
+		// Response types from the invoice recipient.
+		switch line.Key {
+		case bill.StatusLineIssued:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "201")
+		case bill.StatusLineAcknowledged:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "202")
+		case bill.StatusLineProcessing:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "204")
+		case bill.StatusLineAccepted:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "205")
+		case bill.StatusLineQuerying:
+			line.Ext = line.Ext.Set(ExtKeyStatus, "208")
+		case bill.StatusLineRejected:
+			line.Ext = line.Ext.SetOneOf(ExtKeyStatus,
+				"210", // rejected (default)
+				"207", // disputed
+				"206", // partially accepted
+			)
+		default:
+			line.Ext = line.Ext.Delete(ExtKeyStatus)
 		}
 	}
 }
 
-// sirenFromSEParty returns the first SIREN identity carried by an
-// SE-roled party among the given candidates, or nil. Relies on the
-// addon normaliser having set iso-scheme-id=0002 on SIREN identities
-// (see normalizeIdentity in org.go).
-func sirenFromSEParty(candidates ...*org.Party) *org.Identity {
-	for _, p := range candidates {
-		if p == nil {
-			continue
+func prepareStatusWithLine(s *bill.Status, line *bill.StatusLine) {
+	sk := line.Ext.Get(ExtKeyStatus)
+	if !sk.IsEmpty() {
+		switch sk {
+		case "200":
+			s.Type = bill.StatusTypeUpdate
+			line.Key = bill.StatusLineIssued
+		case "201":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineIssued
+		case "202":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineAcknowledged
+		case "204":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineProcessing
+		case "205":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineAccepted
+		case "206", "207", "210":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineRejected
+		case "208":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineQuerying
+		case "213":
+			s.Type = bill.StatusTypeResponse
+			line.Key = bill.StatusLineError
 		}
-		if p.Ext.Get(ExtKeyRole) != RoleSE {
-			continue
-		}
-		for _, id := range p.Identities {
-			if id == nil || id.Ext.IsZero() {
-				continue
-			}
-			if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN {
-				return id
-			}
-		}
+		return
 	}
-	return nil
+	if !s.Type.IsEmpty() {
+		return
+	}
+	// No ext, no Type: derive Type from the line.Key. Issued is the
+	// only line key that's ambiguous (update→200 vs response→201);
+	// default to update there.
+	switch line.Key {
+	case bill.StatusLineIssued:
+		s.Type = bill.StatusTypeUpdate
+	case bill.StatusLineAcknowledged, bill.StatusLineProcessing,
+		bill.StatusLineAccepted, bill.StatusLineQuerying,
+		bill.StatusLineRejected, bill.StatusLineError:
+		s.Type = bill.StatusTypeResponse
+	}
 }
 
 // ensureSIRENOnSupplier returns a Supplier party that carries the
@@ -111,18 +141,6 @@ func ensureSIRENOnSupplier(p *org.Party, siren *org.Identity) *org.Party {
 	}
 	p.Identities = append(p.Identities, &clone)
 	return p
-}
-
-// rolesForSide returns the (Issuer.role, Recipient.role) pair implied
-// by an Annexe A side.
-func rolesForSide(side CDVSide) (issuer, recipient cbc.Code) {
-	switch side {
-	case CDVSideBuyer:
-		return RoleBY, RoleSE
-	case CDVSideSeller:
-		return RoleSE, RoleBY
-	}
-	return "", ""
 }
 
 func setPartyRoleDefault(p *org.Party, role cbc.Code) {
@@ -155,7 +173,7 @@ func partyHasInboxWhenRequired(v any) bool {
 		return true
 	}
 	role := p.Ext.Get(ExtKeyRole)
-	if role == RoleWK || role == RoleDFH {
+	if role == RolePlatform || role == RolePPF {
 		return true
 	}
 	for _, ib := range p.Inboxes {
@@ -173,77 +191,227 @@ func billStatusRules() *rules.Set {
 				is.In(bill.StatusTypeResponse, bill.StatusTypeUpdate),
 			),
 		),
+		rules.Field("ext",
+			rules.Assert("02", "status ext fr-ctc-flow6-status must be a Status-applicable ProcessConditionCode (200-210 or 213); codes 211, 212 belong on bill.Payment",
+				tax.ExtensionsHasCodes(ExtKeyStatus, statusProcessCodes...),
+			),
+		),
 		rules.Field("supplier",
-			rules.Assert("02", "supplier is required (BR-FR-CDV-13)",
+			rules.Assert("03", "status supplier is required (BR-FR-CDV-13)",
 				is.Present,
 			),
-			rules.Assert("03", "supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
-				is.Func("supplier has SIREN", statusPartyHasSIRENIdentity),
+			rules.Assert("04", "status supplier must have an inbox when its role is not WK or DFH (BR-FR-CDV-08)",
+				is.Func("supplier has inbox unless WK/DFH", partyHasInboxWhenRequired),
+			),
+			rules.Field("ext",
+				rules.Assert("05", fmt.Sprintf("status supplier ext %s is required (BR-FR-CDV-CL-03)", ExtKeyRole),
+					tax.ExtensionsRequire(ExtKeyRole),
+				),
+			),
+			rules.Field("identities",
+				rules.Assert("06", "status supplier must have an identity with ISO/IEC 6523 scheme 0002 (SIREN)",
+					org.IdentitiesExtensionIn(iso.ExtKeySchemeID, identitySchemeIDSIREN),
+				),
 			),
 		),
-		rules.Field("issuer",
-			rules.Assert("14", "issuer is required (BR-FR-CDV-CL-03)",
+		rules.Field("customer",
+			rules.Assert("07", "status customer is required (BR-FR-CDV-CL-04)",
 				is.Present,
 			),
-			rules.Assert("15", "issuer.ext.fr-ctc-flow6-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-03)",
-				is.Func("issuer has fr-ctc-flow6-role", partyHasRole),
+			rules.Assert("08", "status customer must have an inbox when its role is not WK or DFH (BR-FR-CDV-08)",
+				is.Func("customer has inbox unless WK/DFH", partyHasInboxWhenRequired),
 			),
-			rules.Assert("20", "issuer must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
-				is.Func("issuer has inbox unless WK/DFH", partyHasInboxWhenRequired),
+			rules.Field("ext",
+				rules.Assert("09", fmt.Sprintf("status customer ext %s is required (BR-FR-CDV-CL-04)", ExtKeyRole),
+					tax.ExtensionsRequire(ExtKeyRole),
+				),
 			),
-		),
-		rules.Field("recipient",
-			rules.Assert("16", "recipient is required (BR-FR-CDV-CL-04)",
-				is.Present,
-			),
-			rules.Assert("17", "recipient.ext.fr-ctc-flow6-role must be set. Allowed values are BY/DL/SE/AB/SR/PE/PR/II/IV/WK/DFH (BR-FR-CDV-CL-04)",
-				is.Func("recipient has fr-ctc-flow6-role", partyHasRole),
-			),
-			rules.Assert("18", "recipient must have an electronic address (inbox) when its role is not WK or DFH (BR-FR-CDV-08)",
-				is.Func("recipient has inbox unless WK/DFH", partyHasInboxWhenRequired),
+			rules.Field("identities",
+				rules.Assert("10", "status customer must have at least one identity with an iso-scheme-id in the Flow 6 allow-list; STC 0231 is a Flow 2 invoice concept",
+					org.IdentitiesExtensionIn(iso.ExtKeySchemeID, allowedFlow6IdentitySchemes...),
+				),
 			),
 		),
 		rules.Field("lines",
-			rules.Assert("04", "exactly one status line is required",
-				is.Func("exactly one line", statusHasExactlyOneLine),
+			rules.Assert("11", "status lines must contain exactly one entry",
+				is.Present, is.Length(1, 1),
 			),
 			rules.Each(
 				rules.Field("doc",
-					rules.Assert("05", "status line must reference a document (BR-FR-CDV-10)",
+					rules.Assert("12", "status line doc is required (BR-FR-CDV-10)",
 						is.Present,
 					),
 					rules.Field("code",
-						rules.Assert("11", "referenced invoice code is required (BR-FR-CDV-10)",
+						rules.Assert("13", "status line doc code is required (BR-FR-CDV-10)",
 							is.Present,
 						),
 					),
 					rules.Field("issue_date",
-						rules.Assert("12", "referenced invoice issue date is required (BR-FR-CDV-11)",
+						rules.Assert("14", "status line doc issue_date is required (BR-FR-CDV-11)",
 							is.Present,
 						),
 					),
 				),
-				rules.Assert("06", "status line key must be a recognised Flow 6 event",
-					is.Func("known Flow 6 status event", statusLineKeyKnown),
+				rules.Field("key",
+					rules.Assert("15", "status line key must be a recognised Flow 6 event",
+						is.In(
+							bill.StatusLineIssued, bill.StatusLineAcknowledged,
+							bill.StatusLineProcessing, bill.StatusLineAccepted,
+							bill.StatusLineQuerying, bill.StatusLineRejected,
+							bill.StatusLineError,
+						),
+					),
 				),
-				rules.Assert("13", "status lines with key rejected / error / disputed / partially-accepted / suspended require at least one reason (BR-FR-CDV-15)",
-					is.Func("reason required for rejection-like statuses", statusLineRequiresReason),
+				rules.When(
+					bill.StatusLineKeyIn(bill.StatusLineRejected, bill.StatusLineQuerying, bill.StatusLineError),
+					rules.Field("reasons",
+						rules.Assert("16", "status line reasons require at least one entry when key is rejected, querying or error (BR-FR-CDV-14)",
+							is.Present,
+						),
+					),
+				),
+				// Each Reason's CDAR ReasonCode must be in the allow-list
+				// for the line's ProcessConditionCode (the
+				// line.Ext[ExtKeyStatus] value derived by
+				// normalizeStatusLine).
+				rules.When(
+					lineHasStatusCode("200"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("17", "status line reason ext fr-ctc-flow6-reason for status code 200 (Déposée — transmission rejection) must be NON_TRANSMISE (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason, "NON_TRANSMISE"),
+								),
+							),
+						),
+					),
+				),
+				rules.When(
+					lineHasStatusCode("206"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("18", "status line reason ext fr-ctc-flow6-reason for status code 206 (Approuvée partiellement) must be one of AUTRE, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason,
+										"AUTRE", "CMD_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+										"REF_CT_ABSENT", "REF_ERR", "PU_ERR", "REM_ERR", "QTE_ERR",
+										"ART_ERR", "MODPAI_ERR", "QUALITE_ERR", "LIVR_INCOMP",
+									),
+								),
+							),
+						),
+					),
+				),
+				rules.When(
+					lineHasStatusCode("207"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("19", "status line reason ext fr-ctc-flow6-reason for status code 207 (En litige) must be one of AUTRE, COORD_BANC_ERR, TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR, PU_ERR, REM_ERR, QTE_ERR, ART_ERR, MODPAI_ERR, QUALITE_ERR, LIVR_INCOMP (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason,
+										"AUTRE", "COORD_BANC_ERR", "TX_TVA_ERR", "MONTANTTOTAL_ERR",
+										"CALCUL_ERR", "NON_CONFORME", "DOUBLON", "DEST_ERR",
+										"TRANSAC_INC", "EMMET_INC", "CONTRAT_TERM", "DOUBLE_FACT",
+										"CMD_ERR", "ADR_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+										"REF_CT_ABSENT", "REF_ERR", "PU_ERR", "REM_ERR", "QTE_ERR",
+										"ART_ERR", "MODPAI_ERR", "QUALITE_ERR", "LIVR_INCOMP",
+									),
+								),
+							),
+						),
+					),
+				),
+				rules.When(
+					lineHasStatusCode("208"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("20", "status line reason ext fr-ctc-flow6-reason for status code 208 (Suspendue) must be one of JUSTIF_ABS, COORD_BANC_ERR, CMD_ERR, SIRET_ERR, CODE_ROUTAGE_ERR, REF_CT_ABSENT, REF_ERR (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason,
+										"JUSTIF_ABS", "COORD_BANC_ERR", "CMD_ERR", "SIRET_ERR",
+										"CODE_ROUTAGE_ERR", "REF_CT_ABSENT", "REF_ERR",
+									),
+								),
+							),
+						),
+					),
+				),
+				rules.When(
+					lineHasStatusCode("210"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("21", "status line reason ext fr-ctc-flow6-reason for status code 210 (Refusée) must be one of TX_TVA_ERR, MONTANTTOTAL_ERR, CALCUL_ERR, NON_CONFORME, DOUBLON, DEST_ERR, TRANSAC_INC, EMMET_INC, CONTRAT_TERM, DOUBLE_FACT, CMD_ERR, ADR_ERR, REF_CT_ABSENT (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason,
+										"TX_TVA_ERR", "MONTANTTOTAL_ERR", "CALCUL_ERR", "NON_CONFORME",
+										"DOUBLON", "DEST_ERR", "TRANSAC_INC", "EMMET_INC", "CONTRAT_TERM",
+										"DOUBLE_FACT", "CMD_ERR", "ADR_ERR", "REF_CT_ABSENT",
+									),
+								),
+							),
+						),
+					),
+				),
+				rules.When(
+					lineHasStatusCode("213"),
+					rules.Field("reasons",
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("22", "status line reason ext fr-ctc-flow6-reason for status code 213 (Rejetée sémantique) must be one of MONTANTTOTAL_ERR, CALCUL_ERR, DOUBLON, ADR_ERR, REJ_SEMAN, REJ_UNI, REJ_COH, REJ_ADR, REJ_CONT_B2G, REJ_REF_PJ, REJ_ASS_PJ (BR-FR-CDV-CL-09)",
+									tax.ExtensionsHasCodes(ExtKeyReason,
+										"MONTANTTOTAL_ERR", "CALCUL_ERR", "DOUBLON", "ADR_ERR",
+										"REJ_SEMAN", "REJ_UNI", "REJ_COH", "REJ_ADR", "REJ_CONT_B2G",
+										"REJ_REF_PJ", "REJ_ASS_PJ",
+									),
+								),
+							),
+						),
+					),
 				),
 			),
 		),
-		rules.Assert("08", "Status.Type must be a valid pair with each StatusLine.Key in the Flow 6 process table",
-			is.Func("status type consistent with line keys", statusTypeMatchesLines),
+		rules.When(
+			bill.StatusTypeIn(bill.StatusTypeResponse),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("key",
+						rules.Assert("23", "status line key must be consistent with status type 'response'",
+							is.In(
+								bill.StatusLineAcknowledged, bill.StatusLineProcessing,
+								bill.StatusLineAccepted, bill.StatusLineQuerying,
+								bill.StatusLineRejected, bill.StatusLineError,
+							),
+						),
+					),
+				),
+			),
 		),
-		rules.Assert("19", "each Reason's fr-ctc-flow6-reason-code must be allowed for the line's CDAR ProcessConditionCode (BR-FR-CDV-CL-09)",
-			is.Func("reason codes allowed for status", statusReasonCodesAllowed),
-		),
-		rules.Assert("21", "ext.fr-ctc-flow6-status-code must match the CDAR ProcessConditionCode implied by (line.Key, Status.Type)",
-			is.Func("status code matches key/type", statusCodeMatchesLine),
-		),
-		rules.Assert("22", "every CDV party identity scheme must be in the Flow 6 allow-list (STC 0231 is rejected — it is a Flow 2 invoice concept)",
-			is.Func("CDV identity schemes allowed", statusPartiesIdentitySchemesAllowed),
+		rules.When(
+			bill.StatusTypeIn(bill.StatusTypeUpdate),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("key",
+						rules.Assert("24", "status line key must be consistent with status type 'update'",
+							is.In(
+								bill.StatusLineIssued,
+							),
+						),
+					),
+				),
+			),
 		),
 	)
+}
+
+// lineHasStatusCode gates a rules.When on the line's CDAR
+// ProcessConditionCode (line.Ext[ExtKeyStatus] — set by
+// normalizeStatusLine from the (Status.Type, line.Key) pair). Used to
+// branch BR-FR-CDV-CL-09's per-process-code reason allow-lists.
+func lineHasStatusCode(code cbc.Code) rules.Test {
+	return is.Func(fmt.Sprintf("line status code %s", code), func(v any) bool {
+		line, ok := v.(*bill.StatusLine)
+		return ok && line != nil && line.Ext.Get(ExtKeyStatus) == code
+	})
 }
 
 // statusPartiesIdentitySchemesAllowed rejects any identity whose
@@ -254,7 +422,7 @@ func statusPartiesIdentitySchemesAllowed(v any) bool {
 	if !ok || st == nil {
 		return true
 	}
-	for _, p := range []*org.Party{st.Supplier, st.Customer, st.Issuer, st.Recipient} {
+	for _, p := range []*org.Party{st.Supplier, st.Customer} {
 		if p == nil {
 			continue
 		}
@@ -262,137 +430,10 @@ func statusPartiesIdentitySchemesAllowed(v any) bool {
 			if id == nil || id.Ext.IsZero() {
 				continue
 			}
-			scheme := id.Ext.Get(iso.ExtKeySchemeID).String()
-			if scheme != "" && !slices.Contains(allowedFlow6IdentitySchemes, scheme) {
+			scheme := id.Ext.Get(iso.ExtKeySchemeID)
+			if scheme != cbc.CodeEmpty && !slices.Contains(allowedFlow6IdentitySchemes, scheme) {
 				return false
 			}
-		}
-	}
-	return true
-}
-
-// statusCodeMatchesLine ensures the fr-ctc-flow6-status-code ext, when
-// set, is consistent with the (line.Key, Status.Type) pair.
-func statusCodeMatchesLine(v any) bool {
-	st, ok := v.(*bill.Status)
-	if !ok || st == nil {
-		return true
-	}
-	code := st.Ext.Get(ExtKeyStatusCode).String()
-	if code == "" {
-		return true
-	}
-	if len(st.Lines) == 0 || st.Lines[0] == nil {
-		return true
-	}
-	expected, ok := CDARProcessCodeFor(st.Lines[0].Key, st.Type)
-	if !ok {
-		return true
-	}
-	return code == expected
-}
-
-// statusHasExactlyOneLine enforces the CDAR invariant that a CDV
-// message carries one and only one status.
-func statusHasExactlyOneLine(v any) bool {
-	lines, ok := v.([]*bill.StatusLine)
-	if !ok {
-		return false
-	}
-	return len(lines) == 1
-}
-
-func statusPartyHasSIRENIdentity(v any) bool {
-	p, ok := v.(*org.Party)
-	if !ok || p == nil {
-		return false
-	}
-	for _, id := range p.Identities {
-		if id == nil || id.Ext.IsZero() {
-			continue
-		}
-		if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN {
-			return true
-		}
-	}
-	return false
-}
-
-func statusLineKeyKnown(v any) bool {
-	line, ok := v.(*bill.StatusLine)
-	if !ok || line == nil {
-		return false
-	}
-	return statusKeyKnown(line.Key)
-}
-
-// reasonRequiredStatusKeys lists the Flow 6 status-line keys that
-// BR-FR-CDV-15 designates as carrying mandatory motifs.
-var reasonRequiredStatusKeys = []cbc.Key{
-	bill.StatusEventRejected,
-	bill.StatusEventError,
-	bill.StatusEventQuerying,
-	StatusEventDisputed,
-	StatusEventPartiallyAccepted,
-}
-
-// statusReasonCodesAllowed enforces BR-FR-CDV-CL-09 at the
-// bill.Status level.
-func statusReasonCodesAllowed(v any) bool {
-	st, ok := v.(*bill.Status)
-	if !ok || st == nil {
-		return true
-	}
-	for _, line := range st.Lines {
-		if line == nil {
-			continue
-		}
-		processCode, ok := CDARProcessCodeFor(line.Key, st.Type)
-		if !ok {
-			continue
-		}
-		for _, r := range line.Reasons {
-			if r == nil {
-				continue
-			}
-			code := r.Ext.Get(ExtKeyReasonCode).String()
-			if code == "" {
-				continue
-			}
-			if !ReasonCodeAllowedForProcessCode(code, processCode) {
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func statusLineRequiresReason(v any) bool {
-	line, ok := v.(*bill.StatusLine)
-	if !ok || line == nil {
-		return true
-	}
-	if !slices.Contains(reasonRequiredStatusKeys, line.Key) {
-		return true
-	}
-	return len(line.Reasons) > 0
-}
-
-func statusTypeMatchesLines(v any) bool {
-	st, ok := v.(*bill.Status)
-	if !ok || st == nil {
-		return true
-	}
-	for _, line := range st.Lines {
-		if line == nil {
-			continue
-		}
-		expected, ok := statusTypeForKey(line.Key)
-		if !ok {
-			continue
-		}
-		if expected != st.Type {
-			return false
 		}
 	}
 	return true
@@ -400,97 +441,247 @@ func statusTypeMatchesLines(v any) bool {
 
 // -- bill.Reason --------------------------------------------------------
 
-// normalizeReason fills in the other side of the Reason.Key ↔ Ext
-// relationship when exactly one side is set.
+// normalizeReason maps between bill.Reason.Key (Peppol-aligned
+// rejection bucket) and the CDAR extensions on the Reason. Following
+// addons/es/verifactu/tax.go's normalizeTaxCombo pattern: a reverse
+// step via prepareReasonKey recovers Key from a previously-set
+// ReasonCode extension, then a forward switch chains SetOneOf calls
+// so the CDAR ReasonCode (fr-ctc-flow6-reason) and CharacteristicType
+// (fr-ctc-flow6-condition) defaults are populated when missing,
+// while an explicit caller pick within the bucket is preserved.
+//
+// The Reason carries one fr-ctc-flow6-condition value (CDAR cardinality
+// 0..1 per SpecifiedDocumentStatus). For multiple kinds of
+// characteristic on the same status line — e.g. DIV + DVA — add
+// multiple Reasons. The bill.Condition entries on each Reason are
+// reserved for Peppol cac:Condition-style business-rule codes
+// describing the affected field and value.
 func normalizeReason(r *bill.Reason) {
 	if r == nil {
 		return
 	}
-	ext := r.Ext.Get(ExtKeyReasonCode).String()
-	switch {
-	case r.Key == "" && ext != "":
-		if key, ok := ReasonKeyFor(ext); ok {
-			r.Key = key
-		}
-	case r.Key != "" && ext == "":
-		if code, ok := CDARReasonCodeFor(r.Key); ok {
-			r.Ext = r.Ext.Set(ExtKeyReasonCode, cbc.Code(code))
-		}
+
+	// Reverse step: fill Reason.Key from the CDAR ReasonCode ext
+	// when only the ext is set (round-tripping a parsed CDV).
+	prepareReasonKey(r)
+
+	// Forward step: per bucket, SetOneOf defaults each ext to the
+	// first listed CDAR code and preserves any caller-set value that
+	// already matches one of the bucket's other allowed codes.
+	switch r.Key {
+	case bill.ReasonKeyFinanceTerms:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "COORD_BANC_ERR").
+			SetOneOf(ExtKeyCondition,
+				ConditionBankDetailsUpdate, ConditionInvalidData,
+				ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyOther:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "AUTRE").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyLegal:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason,
+				"NON_CONFORME", "TX_TVA_ERR",
+				"REJ_SEMAN", "REJ_COH", "REJ_CONT_B2G",
+				"IRR_VIDE_F", "IRR_TYPE_F", "IRR_SYNTAX",
+				"IRR_TAILLE_PJ", "IRR_NOM_PJ", "IRR_VID_PJ",
+				"IRR_EXT_DOC", "IRR_TAILLE_F", "IRR_ANTIVIRUS",
+			).
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyNotRecognized:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason,
+				"DOUBLON", "TRANSAC_INC", "EMMET_INC",
+				"CONTRAT_TERM", "DOUBLE_FACT", "REJ_UNI",
+			).
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyUnknownReceiver:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason,
+				"DEST_INC", "NON_TRANSMISE", "ROUTAGE_ERR",
+			).
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyReferences:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason,
+				"CMD_ERR", "JUSTIF_ABS", "DEST_ERR",
+				"ADR_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+				"REF_CT_ABSENT", "REF_ERR",
+				"REJ_ADR", "REJ_REF_PJ", "REJ_ASS_PJ",
+			).
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyPrices:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason,
+				"PU_ERR", "MONTANTTOTAL_ERR", "CALCUL_ERR", "REM_ERR",
+			).
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyQuantity:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "QTE_ERR").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyItems:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "ART_ERR").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyPaymentTerms:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "MODPAI_ERR").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyQuality:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "QUALITE_ERR").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
+	case bill.ReasonKeyDelivery:
+		r.Ext = r.Ext.
+			SetOneOf(ExtKeyReason, "LIVR_INCOMP").
+			SetOneOf(ExtKeyCondition,
+				ConditionInvalidData, ConditionExpectedData, ConditionReplacementData,
+			)
 	}
+}
+
+// normalizeAction maps between bill.Action.Key (Peppol-aligned) and
+// the CDAR RequestedActionCode (MDT-121) extension. Mirrors
+// normalizeReason: a reverse step via prepareActionKey recovers Key
+// from a previously-set ext, then a forward switch chains SetOneOf
+// calls to default the ext when missing while preserving any
+// caller-set value.
+func normalizeAction(a *bill.Action) {
+	if a == nil {
+		return
+	}
+	prepareActionKey(a)
+	switch a.Key {
+	case bill.ActionKeyNone:
+		a.Ext = a.Ext.Set(ExtKeyAction, "NOA")
+	case bill.ActionKeyProvide:
+		a.Ext = a.Ext.Set(ExtKeyAction, "PIN")
+	case bill.ActionKeyReissue:
+		a.Ext = a.Ext.Set(ExtKeyAction, "NIN")
+	case bill.ActionKeyCreditFull:
+		a.Ext = a.Ext.Set(ExtKeyAction, "CNF")
+	case bill.ActionKeyCreditPartial:
+		a.Ext = a.Ext.Set(ExtKeyAction, "CNP")
+	case bill.ActionKeyCreditAmount:
+		a.Ext = a.Ext.Set(ExtKeyAction, "CNA")
+	case bill.ActionKeyOther:
+		a.Ext = a.Ext.Set(ExtKeyAction, "OTH")
+	}
+}
+
+// prepareActionKey reverse-maps the CDAR RequestedActionCode
+// extension to its bill.Action.Key when the caller has only set the
+// ext (e.g. when round-tripping a parsed CDV).
+func prepareActionKey(a *bill.Action) {
+	if !a.Key.IsEmpty() {
+		return
+	}
+	switch a.Ext.Get(ExtKeyAction) {
+	case "NOA":
+		a.Key = bill.ActionKeyNone
+	case "PIN":
+		a.Key = bill.ActionKeyProvide
+	case "NIN":
+		a.Key = bill.ActionKeyReissue
+	case "CNF":
+		a.Key = bill.ActionKeyCreditFull
+	case "CNP":
+		a.Key = bill.ActionKeyCreditPartial
+	case "CNA":
+		a.Key = bill.ActionKeyCreditAmount
+	case "OTH":
+		a.Key = bill.ActionKeyOther
+	}
+}
+
+// billActionRules validates the fr-ctc-flow6-action extension carried
+// on a bill.Action under a bill.Status. tax.ExtensionHasValidCode
+// reads the registered Values list of ExtKeyAction.
+func billActionRules() *rules.Set {
+	return rules.For(new(bill.Action),
+		rules.Field("ext",
+			rules.Assert("01", "action ext fr-ctc-flow6-action must be a known CDAR RequestedActionCode (MDT-121)",
+				tax.ExtensionHasValidCode(ExtKeyAction),
+			),
+		),
+	)
 }
 
 func billReasonRules() *rules.Set {
 	return rules.For(new(bill.Reason),
-		rules.Field("key",
-			rules.AssertIfPresent("01", "reason key is not a recognised bill.ReasonKeys value",
-				is.In(reasonKeyAnySlice()...),
+		rules.Field("ext",
+			rules.Assert("01", "reason ext fr-ctc-flow6-reason must be a known CDAR ReasonCode",
+				tax.ExtensionHasValidCode(ExtKeyReason),
 			),
-		),
-		rules.Assert("02", "fr-ctc-flow6-reason-code must be a known CDAR code and its bucket must match reason.key",
-			is.Func("reason ext code consistent with key", reasonExtMatchesKey),
-		),
-	)
-}
-
-var validReasonKeys = func() []cbc.Key {
-	keys := make([]cbc.Key, 0, len(bill.ReasonKeys))
-	for _, def := range bill.ReasonKeys {
-		keys = append(keys, def.Key)
-	}
-	return keys
-}()
-
-func reasonKeyAnySlice() []any {
-	out := make([]any, len(validReasonKeys))
-	for i, k := range validReasonKeys {
-		out[i] = k
-	}
-	return out
-}
-
-func reasonExtMatchesKey(v any) bool {
-	r, ok := v.(*bill.Reason)
-	if !ok || r == nil {
-		return true
-	}
-	ext := r.Ext.Get(ExtKeyReasonCode).String()
-	if ext == "" {
-		return true
-	}
-	bucket, ok := ReasonKeyFor(ext)
-	if !ok {
-		return false
-	}
-	if r.Key == "" {
-		return true
-	}
-	return bucket == r.Key
-}
-
-// -- bill.Action --------------------------------------------------------
-
-var validActionKeys = func() []cbc.Key {
-	keys := make([]cbc.Key, 0, len(bill.ActionKeys))
-	for _, def := range bill.ActionKeys {
-		keys = append(keys, def.Key)
-	}
-	return keys
-}()
-
-func actionKeyAnySlice() []any {
-	out := make([]any, len(validActionKeys))
-	for i, k := range validActionKeys {
-		out[i] = k
-	}
-	return out
-}
-
-func billActionRules() *rules.Set {
-	return rules.For(new(bill.Action),
-		rules.Field("key",
-			rules.AssertIfPresent("01", "action key is not a recognised bill.ActionKeys value",
-				is.In(actionKeyAnySlice()...),
+			rules.Assert("02", "reason ext fr-ctc-flow6-condition must be a Status-applicable CharacteristicTypeCode (CBB, DIV, DVA, MAJ, MAP, MAPTTC, MNA, MNATTC, ESC, RAB, REM); MEN, MPA, RAP belong on bill.Payment",
+				tax.ExtensionsHasCodes(ExtKeyCondition, statusConditionCodes...),
 			),
 		),
 	)
+}
+
+// prepareReasonKey reverse-maps the CDAR ReasonCode extension to its
+// bill.Reason.Key bucket when the caller has only set the ext (e.g.
+// when round-tripping a parsed CDV).
+func prepareReasonKey(r *bill.Reason) {
+	if !r.Key.IsEmpty() {
+		return
+	}
+	switch r.Ext.Get(ExtKeyReason) {
+	case "COORD_BANC_ERR":
+		r.Key = bill.ReasonKeyFinanceTerms
+	case "AUTRE":
+		r.Key = bill.ReasonKeyOther
+	case "NON_CONFORME", "TX_TVA_ERR",
+		"REJ_SEMAN", "REJ_COH", "REJ_CONT_B2G",
+		"IRR_VIDE_F", "IRR_TYPE_F", "IRR_SYNTAX",
+		"IRR_TAILLE_PJ", "IRR_NOM_PJ", "IRR_VID_PJ",
+		"IRR_EXT_DOC", "IRR_TAILLE_F", "IRR_ANTIVIRUS":
+		r.Key = bill.ReasonKeyLegal
+	case "DOUBLON", "TRANSAC_INC", "EMMET_INC",
+		"CONTRAT_TERM", "DOUBLE_FACT", "REJ_UNI":
+		r.Key = bill.ReasonKeyNotRecognized
+	case "DEST_INC", "NON_TRANSMISE", "ROUTAGE_ERR":
+		r.Key = bill.ReasonKeyUnknownReceiver
+	case "CMD_ERR", "JUSTIF_ABS", "DEST_ERR",
+		"ADR_ERR", "SIRET_ERR", "CODE_ROUTAGE_ERR",
+		"REF_CT_ABSENT", "REF_ERR",
+		"REJ_ADR", "REJ_REF_PJ", "REJ_ASS_PJ":
+		r.Key = bill.ReasonKeyReferences
+	case "PU_ERR", "MONTANTTOTAL_ERR", "CALCUL_ERR", "REM_ERR":
+		r.Key = bill.ReasonKeyPrices
+	case "QTE_ERR":
+		r.Key = bill.ReasonKeyQuantity
+	case "ART_ERR":
+		r.Key = bill.ReasonKeyItems
+	case "MODPAI_ERR":
+		r.Key = bill.ReasonKeyPaymentTerms
+	case "QUALITE_ERR":
+		r.Key = bill.ReasonKeyQuality
+	case "LIVR_INCOMP":
+		r.Key = bill.ReasonKeyDelivery
+	}
 }

@@ -17,11 +17,10 @@ import (
 // --- Helpers --------------------------------------------------------------
 
 // statusSupplierParty returns a French supplier party with a SIREN
-// identity carried via the iso-scheme-id extension. Used as the
-// document-level Supplier on a bill.Status.
+// identity, an inbox satisfying BR-FR-CDV-08, and an SE role.
 func statusSupplierParty() *org.Party {
 	return &org.Party{
-		Name: "Test Platform SARL",
+		Name: "VENDEUR SARL",
 		Identities: []*org.Identity{
 			{
 				Code: "356000000",
@@ -30,6 +29,8 @@ func statusSupplierParty() *org.Party {
 				}),
 			},
 		},
+		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "356000000_PEP"}},
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleSeller),
 	}
 }
 
@@ -43,7 +44,7 @@ func issuerParty() *org.Party {
 			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, identitySchemeIDSIREN),
 		}},
 		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
-		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBY),
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBuyer),
 	}
 }
 
@@ -55,7 +56,7 @@ func statusCustomerParty() *org.Party {
 			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, identitySchemeIDSIREN),
 		}},
 		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
-		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBY),
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBuyer),
 	}
 }
 
@@ -69,7 +70,7 @@ func recipientParty() *org.Party {
 			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, identitySchemeIDSIREN),
 		}},
 		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "356000000_PEP"}},
-		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleSE),
+		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleSeller),
 	}
 }
 
@@ -83,11 +84,9 @@ func testStatus(t *testing.T) *bill.Status {
 		Code:      "STA-2026-0001",
 		Supplier:  statusSupplierParty(),
 		Customer:  statusCustomerParty(),
-		Issuer:    issuerParty(),
-		Recipient: recipientParty(),
 		Lines: []*bill.StatusLine{
 			{
-				Key:  bill.StatusEventAccepted,
+				Key:  bill.StatusLineAccepted,
 				Date: &issued,
 				Doc: &org.DocumentRef{
 					Code:      "INV-2026-001",
@@ -119,7 +118,7 @@ func TestStatusRejectsSTCIdentityScheme(t *testing.T) {
 	})
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "Flow 6 allow-list")
+	assert.ErrorContains(t, err, "Flow 6 allowed schemes")
 }
 
 func TestStatusRejectsSystemType(t *testing.T) {
@@ -127,40 +126,25 @@ func TestStatusRejectsSystemType(t *testing.T) {
 	runNormalize(t, st)
 	st.Type = bill.StatusTypeSystem
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "status type must be one of")
+	assert.ErrorContains(t, err, "type must be one of")
 }
 
 func TestStatusSupplierSIRENRequired(t *testing.T) {
 	st := testStatus(t)
 	st.Supplier.Identities = nil
-	// Strip the SE party's identity too so the normaliser cannot
-	// auto-populate Supplier from it.
-	st.Recipient.Identities = nil
 	runNormalize(t, st)
 	err := rules.Validate(st)
 	assert.ErrorContains(t, err, "SIREN")
-}
-
-func TestStatusSupplierSIRENFilledFromSEParty(t *testing.T) {
-	st := testStatus(t)
-	st.Supplier = nil // recipient is SE-roled with SIREN 356000000
-	runNormalize(t, st)
-	require.NoError(t, rules.Validate(st))
-	require.NotNil(t, st.Supplier)
-	require.Len(t, st.Supplier.Identities, 1)
-	assert.Equal(t, cbc.Code("356000000"), st.Supplier.Identities[0].Code)
-	assert.Equal(t, identitySchemeIDSIREN,
-		st.Supplier.Identities[0].Ext.Get(iso.ExtKeySchemeID).String())
 }
 
 func TestStatusKeyFilledFromStatusCodeExt(t *testing.T) {
 	st := testStatus(t)
 	st.Type = ""
 	st.Lines[0].Key = ""
-	st.Ext = st.Ext.Set(ExtKeyStatusCode, "205")
+	st.Lines[0].Ext = st.Lines[0].Ext.Set(ExtKeyStatus, "205")
 	runNormalize(t, st)
 	require.NoError(t, rules.Validate(st))
-	assert.Equal(t, bill.StatusEventAccepted, st.Lines[0].Key)
+	assert.Equal(t, bill.StatusLineAccepted, st.Lines[0].Key)
 	assert.Equal(t, bill.StatusTypeResponse, st.Type)
 }
 
@@ -169,14 +153,14 @@ func TestStatusTypeMismatchRejected(t *testing.T) {
 	runNormalize(t, st)
 	st.Type = bill.StatusTypeUpdate // accepted is a response code
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "Status.Type must be a valid pair")
+	assert.ErrorContains(t, err, "consistent with status type 'update'")
 }
 
 func TestStatusRejectsMultipleLines(t *testing.T) {
 	st := testStatus(t)
 	issued := cal.MakeDate(2026, 2, 1)
 	st.Lines = append(st.Lines, &bill.StatusLine{
-		Key:  bill.StatusEventAccepted,
+		Key:  bill.StatusLineAccepted,
 		Date: &issued,
 		Doc: &org.DocumentRef{
 			Code:      "INV-2026-002",
@@ -185,18 +169,14 @@ func TestStatusRejectsMultipleLines(t *testing.T) {
 	})
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "exactly one status line")
+	assert.ErrorContains(t, err, "status lines must contain exactly one entry")
 }
 
 func TestStatusRejectsZeroLines(t *testing.T) {
 	st := testStatus(t)
 	st.Lines = nil
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "exactly one status line")
-}
-
-func TestStatusHasExactlyOneLineWrongType(t *testing.T) {
-	assert.False(t, statusHasExactlyOneLine("x"))
+	assert.ErrorContains(t, err, "status lines must contain exactly one entry")
 }
 
 // --- StatusLine validation -----------------------------------------------
@@ -221,7 +201,7 @@ func TestStatusLineDocCodeRequired(t *testing.T) {
 	st.Lines[0].Doc.Code = ""
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "invoice code is required")
+	assert.ErrorContains(t, err, "status line doc code is required")
 }
 
 func TestStatusLineDocIssueDateRequired(t *testing.T) {
@@ -229,49 +209,33 @@ func TestStatusLineDocIssueDateRequired(t *testing.T) {
 	st.Lines[0].Doc.IssueDate = nil
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "invoice issue date is required")
+	assert.ErrorContains(t, err, "status line doc issue_date is required")
 }
 
 // --- BR-FR-CDV-15: reason required on rejection-like statuses -----------
 
 func TestStatusRejectedRequiresReason(t *testing.T) {
 	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventRejected
+	st.Lines[0].Key = bill.StatusLineRejected
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "require at least one reason")
-}
-
-func TestStatusDisputedRequiresReason(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = StatusEventDisputed
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "require at least one reason")
+	assert.ErrorContains(t, err, "reasons require at least one entry")
 }
 
 func TestStatusSuspendedRequiresReason(t *testing.T) {
 	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventQuerying
+	st.Lines[0].Key = bill.StatusLineQuerying
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "require at least one reason")
-}
-
-func TestStatusPartiallyAcceptedRequiresReason(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = StatusEventPartiallyAccepted
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "require at least one reason")
+	assert.ErrorContains(t, err, "reasons require at least one entry")
 }
 
 func TestStatusErrorRequiresReason(t *testing.T) {
 	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusEventError
+	st.Lines[0].Key = bill.StatusLineError
 	runNormalize(t, st)
 	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "require at least one reason")
+	assert.ErrorContains(t, err, "reasons require at least one entry")
 }
 
 func TestStatusAcceptedDoesNotRequireReason(t *testing.T) {
@@ -284,7 +248,7 @@ func TestStatusAcceptedDoesNotRequireReason(t *testing.T) {
 
 func TestReasonNormalizerFillsKeyFromExt(t *testing.T) {
 	r := &bill.Reason{
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "QTE_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "QTE_ERR"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, bill.ReasonKeyQuantity, r.Key)
@@ -293,43 +257,243 @@ func TestReasonNormalizerFillsKeyFromExt(t *testing.T) {
 func TestReasonNormalizerFillsExtFromKey(t *testing.T) {
 	r := &bill.Reason{Key: bill.ReasonKeyItems}
 	runNormalize(t, r)
-	assert.Equal(t, "ART_ERR", r.Ext.Get(ExtKeyReasonCode).String())
+	assert.Equal(t, "ART_ERR", r.Ext.Get(ExtKeyReason).String())
 }
 
 func TestReasonNormalizerLeavesBothWhenSet(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "ART_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "ART_ERR"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, bill.ReasonKeyItems, r.Key)
-	assert.Equal(t, "ART_ERR", r.Ext.Get(ExtKeyReasonCode).String())
+	assert.Equal(t, "ART_ERR", r.Ext.Get(ExtKeyReason).String())
 }
 
 func TestReasonNormalizerLeavesUnknownExtAlone(t *testing.T) {
 	r := &bill.Reason{
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "NOPE"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "NOPE"}),
 	}
 	runNormalize(t, r)
 	assert.Equal(t, cbc.Key(""), r.Key)
 }
 
-func TestReasonRulesRejectInconsistentExt(t *testing.T) {
+// SetOneOf semantics in the normalizer: a CDAR ReasonCode that does
+// not belong to the Reason.Key bucket is replaced with the bucket's
+// default rather than failing validation. Mirrors how verifactu
+// normalizes inconsistent tax-combo ext values.
+func TestReasonNormalizerReplacesInconsistentExt(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "QTE_ERR"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "QTE_ERR"}),
 	}
-	err := rules.Validate(r, addonContext())
-	assert.ErrorContains(t, err, "must match reason.key")
+	runNormalize(t, r)
+	assert.Equal(t, cbc.Code("ART_ERR"), r.Ext.Get(ExtKeyReason))
 }
 
-func TestReasonExtUnknownCodeRejected(t *testing.T) {
+func TestReasonNormalizerReplacesUnknownExt(t *testing.T) {
 	r := &bill.Reason{
 		Key: bill.ReasonKeyItems,
-		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReasonCode: "NOPE"}),
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "NOPE"}),
+	}
+	runNormalize(t, r)
+	assert.Equal(t, cbc.Code("ART_ERR"), r.Ext.Get(ExtKeyReason))
+}
+
+// A caller can pick a non-default code from the bucket and the
+// normalizer leaves it alone.
+func TestReasonNormalizerPreservesNonDefaultCode(t *testing.T) {
+	r := &bill.Reason{
+		Key: bill.ReasonKeyPrices,
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: "CALCUL_ERR"}),
+	}
+	runNormalize(t, r)
+	assert.Equal(t, cbc.Code("CALCUL_ERR"), r.Ext.Get(ExtKeyReason))
+}
+
+// --- Reason.Ext[fr-ctc-flow6-condition] → CDAR MDT-207 ------------------
+
+// A rejected status with two sibling Reasons — one flagged DIV
+// (invalid value), one flagged DVA (expected value) — passes
+// validation. The CDAR cardinality (0..1 TypeCode per
+// SpecifiedDocumentStatus) is honoured by spreading the two
+// characteristics across separate Reasons. The accompanying
+// bill.Condition entries are reserved for Peppol cac:Condition-style
+// business-rule codes.
+func TestStatusRejectedSiblingInvalidAndExpected(t *testing.T) {
+	st := testStatus(t)
+	st.Lines[0].Key = bill.StatusLineRejected
+	st.Lines[0].Reasons = []*bill.Reason{
+		{
+			Key: bill.ReasonKeyLegal,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyReason:    "TX_TVA_ERR",
+				ExtKeyCondition: ConditionInvalidData,
+			}),
+		},
+		{
+			Key: bill.ReasonKeyLegal,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyReason:    "TX_TVA_ERR",
+				ExtKeyCondition: ConditionExpectedData,
+			}),
+		},
+	}
+	runNormalize(t, st)
+	require.NoError(t, rules.Validate(st))
+}
+
+// An unknown fr-ctc-flow6-condition value is rejected by
+// tax.ExtensionHasValidCode using the registered Values list.
+func TestReasonRejectsUnknownConditionExt(t *testing.T) {
+	r := &bill.Reason{
+		Key: bill.ReasonKeyLegal,
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
+			ExtKeyReason:    "TX_TVA_ERR",
+			ExtKeyCondition: "BOGUS",
+		}),
 	}
 	err := rules.Validate(r, addonContext())
-	assert.ErrorContains(t, err, "must match reason.key")
+	assert.ErrorContains(t, err, "fr-ctc-flow6-condition")
+}
+
+// Every Status-applicable MDT-207 code is accepted on a bill.Reason.
+// The 3 payment-amount markers (MEN / MPA / RAP) are explicitly
+// excluded — they live on bill.Payment, not bill.Reason — and the
+// rule rejects them; see TestReasonRejectsPaymentConditionCodes.
+func TestReasonAcceptsAllStatusConditionCodes(t *testing.T) {
+	for _, code := range []cbc.Code{
+		ConditionBankDetailsUpdate, ConditionInvalidData,
+		ConditionExpectedData, ConditionReplacementData,
+		ConditionAmountApprovedHT, ConditionAmountApprovedTTC,
+		ConditionAmountRejectedHT, ConditionAmountRejectedTTC,
+		ConditionDiscount, ConditionRebate, ConditionReduction,
+	} {
+		r := &bill.Reason{
+			Key: bill.ReasonKeyLegal,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyReason:    "TX_TVA_ERR",
+				ExtKeyCondition: code,
+			}),
+		}
+		assert.NoError(t, rules.Validate(r, addonContext()), "code %s", code)
+	}
+}
+
+// Payment-related ProcessConditionCodes (211, 212) are rejected on a
+// bill.Status — those belong on bill.Payment.
+func TestStatusRejectsPaymentProcessCodes(t *testing.T) {
+	for _, code := range []cbc.Code{"211", "212"} {
+		st := testStatus(t)
+		runNormalize(t, st)
+		st.Ext = st.Ext.Set(ExtKeyStatus, code)
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "Status-applicable", "code %s", code)
+	}
+}
+
+// --- fr-ctc-flow6-action (MDT-121 / BR-FR-CDV-CL-10) -------------------
+
+// Action normalizer fills the ext from the Key bucket.
+func TestActionNormalizerFillsExtFromKey(t *testing.T) {
+	a := &bill.Action{Key: bill.ActionKeyReissue}
+	runNormalize(t, a)
+	assert.Equal(t, cbc.Code("NIN"), a.Ext.Get(ExtKeyAction))
+}
+
+// Action normalizer reverse-maps the Key from the ext (round-trip).
+func TestActionNormalizerFillsKeyFromExt(t *testing.T) {
+	a := &bill.Action{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyAction: "CNP"}),
+	}
+	runNormalize(t, a)
+	assert.Equal(t, bill.ActionKeyCreditPartial, a.Key)
+	assert.Equal(t, cbc.Code("CNP"), a.Ext.Get(ExtKeyAction))
+}
+
+// Every MDT-121 code defined in actionTable is accepted by the rule.
+// The normalizer fills the Action.Key from the ext so core
+// bill.Action validation (which requires Key) also passes.
+func TestActionAcceptsAllMDT121Codes(t *testing.T) {
+	for _, code := range []cbc.Code{"NOA", "PIN", "NIN", "CNF", "CNP", "CNA", "OTH"} {
+		a := &bill.Action{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyAction: code}),
+		}
+		runNormalize(t, a)
+		assert.NoError(t, rules.Validate(a, addonContext()), "code %s", code)
+	}
+}
+
+// Unknown action codes are rejected by tax.ExtensionHasValidCode using
+// the registered Values list. We pin a valid Key so the failure
+// surfaces from the flow6 rule, not the core "action key required".
+func TestActionRejectsUnknownCode(t *testing.T) {
+	a := &bill.Action{
+		Key: bill.ActionKeyOther,
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyAction: "BOGUS"}),
+	}
+	err := rules.Validate(a, addonContext())
+	assert.ErrorContains(t, err, "fr-ctc-flow6-action")
+}
+
+// Payment-amount codes (MEN / MPA / RAP) are rejected on a Reason.
+func TestReasonRejectsPaymentConditionCodes(t *testing.T) {
+	for _, code := range []cbc.Code{
+		ConditionAmountReceived, ConditionAmountPaid, ConditionAmountRemaining,
+	} {
+		r := &bill.Reason{
+			Key: bill.ReasonKeyLegal,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyReason:    "TX_TVA_ERR",
+				ExtKeyCondition: code,
+			}),
+		}
+		err := rules.Validate(r, addonContext())
+		assert.ErrorContains(t, err, "belong on bill.Payment", "code %s", code)
+	}
+}
+
+// The normalizer defaults Reason.Ext[fr-ctc-flow6-condition] per
+// bucket: finance-terms → CBB, everything else → DIV.
+func TestReasonNormalizerDefaultsConditionExt(t *testing.T) {
+	cases := []struct {
+		key  cbc.Key
+		want cbc.Code
+	}{
+		{bill.ReasonKeyFinanceTerms, ConditionBankDetailsUpdate},
+		{bill.ReasonKeyLegal, ConditionInvalidData},
+		{bill.ReasonKeyPrices, ConditionInvalidData},
+		{bill.ReasonKeyItems, ConditionInvalidData},
+		{bill.ReasonKeyQuality, ConditionInvalidData},
+		{bill.ReasonKeyDelivery, ConditionInvalidData},
+		{bill.ReasonKeyOther, ConditionInvalidData},
+	}
+	for _, c := range cases {
+		r := &bill.Reason{Key: c.key}
+		runNormalize(t, r)
+		assert.Equal(t, c.want, r.Ext.Get(ExtKeyCondition), "key %s", c.key)
+	}
+}
+
+// Caller-supplied DVA / MAJ survive normalization (SetOneOf keeps any
+// value that is already one of the bucket's allowed codes).
+func TestReasonNormalizerPreservesExplicitConditionExt(t *testing.T) {
+	r := &bill.Reason{
+		Key: bill.ReasonKeyPrices,
+		Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyCondition: ConditionExpectedData}),
+	}
+	runNormalize(t, r)
+	assert.Equal(t, ConditionExpectedData, r.Ext.Get(ExtKeyCondition))
+}
+
+// none / partial / empty keys carry no characteristic context, so the
+// normalizer leaves the ext blank.
+func TestReasonNormalizerSkipsConditionExtForNonCorrectiveKeys(t *testing.T) {
+	for _, k := range []cbc.Key{bill.ReasonKeyNone, bill.ReasonKeyPartial, ""} {
+		r := &bill.Reason{Key: k}
+		runNormalize(t, r)
+		assert.Empty(t, r.Ext.Get(ExtKeyCondition).String(), "key %s", k)
+	}
 }
 
 // --- Internal helper coverage (nil / wrong-type defensive branches) -----
@@ -348,53 +512,16 @@ func TestNormalizeReasonNilSafe(t *testing.T) {
 	assert.NotPanics(t, func() { normalizeReason(nil) })
 }
 
-func TestStatusPartyHasSIRENIdentityWrongType(t *testing.T) {
-	assert.False(t, statusPartyHasSIRENIdentity("not a party"))
-}
-
-func TestStatusPartyHasSIRENIdentityNilParty(t *testing.T) {
-	assert.False(t, statusPartyHasSIRENIdentity((*org.Party)(nil)))
-}
-
-func TestStatusPartyHasSIRENIdentityWithoutExt(t *testing.T) {
-	p := &org.Party{Identities: []*org.Identity{{Code: "X"}}}
-	assert.False(t, statusPartyHasSIRENIdentity(p))
-}
-
-func TestStatusLineKeyKnownWrongType(t *testing.T) {
-	assert.False(t, statusLineKeyKnown("x"))
-}
-
-func TestStatusLineRequiresReasonWrongType(t *testing.T) {
-	assert.True(t, statusLineRequiresReason("x"))
-}
-
-func TestStatusTypeMatchesLinesWrongType(t *testing.T) {
-	assert.True(t, statusTypeMatchesLines("x"))
-}
-
-func TestStatusTypeMatchesLinesUnknownLineKey(t *testing.T) {
-	st := &bill.Status{
-		Type:  bill.StatusTypeResponse,
-		Lines: []*bill.StatusLine{{Key: "unknown"}},
-	}
-	assert.True(t, statusTypeMatchesLines(st))
-}
-
-func TestReasonExtMatchesKeyWrongType(t *testing.T) {
-	assert.True(t, reasonExtMatchesKey("x"))
-}
-
 // --- defensive coverage: nil / wrong-type / empty-slice guards --------
 
 func TestSetPartyRoleDefaultNilParty(t *testing.T) {
-	assert.NotPanics(t, func() { setPartyRoleDefault(nil, RoleSE) })
+	assert.NotPanics(t, func() { setPartyRoleDefault(nil, RoleSeller) })
 }
 
 func TestSetPartyRoleDefaultExistingNotOverridden(t *testing.T) {
-	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleBY})}
-	setPartyRoleDefault(p, RoleSE)
-	assert.Equal(t, RoleBY, p.Ext.Get(ExtKeyRole))
+	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleBuyer})}
+	setPartyRoleDefault(p, RoleSeller)
+	assert.Equal(t, RoleBuyer, p.Ext.Get(ExtKeyRole))
 }
 
 func TestPartyHasRoleWrongType(t *testing.T) {
@@ -410,27 +537,12 @@ func TestPartyHasInboxWhenRequiredWrongType(t *testing.T) {
 }
 
 func TestPartyHasInboxWhenRequiredWKRole(t *testing.T) {
-	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleWK})}
+	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RolePlatform})}
 	assert.True(t, partyHasInboxWhenRequired(p))
 }
 
 func TestStatusPartiesIdentitySchemesAllowedWrongType(t *testing.T) {
 	assert.True(t, statusPartiesIdentitySchemesAllowed("x"))
-}
-
-func TestStatusReasonCodesAllowedWrongType(t *testing.T) {
-	assert.True(t, statusReasonCodesAllowed("x"))
-}
-
-func TestStatusReasonCodesAllowedNilReason(t *testing.T) {
-	st := &bill.Status{
-		Type: bill.StatusTypeResponse,
-		Lines: []*bill.StatusLine{{
-			Key:     bill.StatusEventRejected,
-			Reasons: []*bill.Reason{nil},
-		}},
-	}
-	assert.True(t, statusReasonCodesAllowed(st))
 }
 
 func TestEnsureSIRENOnSupplierAlreadyCarries(t *testing.T) {

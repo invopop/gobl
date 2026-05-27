@@ -10,6 +10,8 @@ import (
 // Ordering provides additional information about the ordering process including references
 // to other documents and alternative parties involved in the order-to-delivery process.
 type Ordering struct {
+	/*** IDENTIFIERS ***/
+
 	// Identifier assigned by the customer or buyer for internal routing purposes.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Any additional Codes, IDs, SKUs, or other regional or custom
@@ -20,6 +22,9 @@ type Ordering struct {
 	// Period of time that the document refers to often used in addition to the details
 	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
+
+	/*** PARTIES ***/
+
 	// Party who is responsible for issuing payment, if not the same as the customer.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
 	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
@@ -27,6 +32,9 @@ type Ordering struct {
 	// Issuer represents a third party responsible for issuing the document, but is not
 	// responsible for tax. Some tax regimes and formats require this field.
 	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
+
+	/*** DOCUMENTS ***/
+
 	// Projects this document refers to.
 	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`
 	// The identification of contracts.

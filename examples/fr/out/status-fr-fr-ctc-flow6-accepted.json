@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c2896d25f1e85a42bc8a4d09923b2671fd67d6849dfeadb02930a0ef763fd750"
+			"val": "6471dc0c3cac7265586798fb02a20c2d7c8559e4cbc1484df4e5a5c09965c8e4"
 		}
 	},
 	"doc": {
@@ -17,43 +17,7 @@
 		"type": "response",
 		"issue_date": "2026-04-16",
 		"code": "STA-2026-0001",
-		"ext": {
-			"fr-ctc-flow6-status-code": "205"
-		},
 		"supplier": {
-			"identities": [
-				{
-					"type": "SIREN",
-					"code": "732829320",
-					"ext": {
-						"iso-scheme-id": "0002"
-					}
-				}
-			]
-		},
-		"issuer": {
-			"name": "ACHETEUR SARL",
-			"identities": [
-				{
-					"type": "SIREN",
-					"code": "200000008",
-					"ext": {
-						"iso-scheme-id": "0002"
-					}
-				}
-			],
-			"inboxes": [
-				{
-					"key": "peppol",
-					"scheme": "0225",
-					"code": "200000008_PEP"
-				}
-			],
-			"ext": {
-				"fr-ctc-flow6-role": "BY"
-			}
-		},
-		"recipient": {
 			"name": "VENDEUR SARL",
 			"identities": [
 				{
@@ -75,6 +39,28 @@
 				"fr-ctc-flow6-role": "SE"
 			}
 		},
+		"customer": {
+			"name": "ACHETEUR SARL",
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "200000008",
+					"ext": {
+						"iso-scheme-id": "0002"
+					}
+				}
+			],
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0225",
+					"code": "200000008_PEP"
+				}
+			],
+			"ext": {
+				"fr-ctc-flow6-role": "BY"
+			}
+		},
 		"lines": [
 			{
 				"index": 1,
@@ -83,6 +69,9 @@
 				"doc": {
 					"issue_date": "2026-04-15",
 					"code": "2026-00042"
+				},
+				"ext": {
+					"fr-ctc-flow6-status": "205"
 				}
 			}
 		]

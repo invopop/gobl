@@ -16,12 +16,16 @@ func init() {
 		Payment{},
 		Status{},
 		// Sub-schemas - used by primaries
+		Action{},
 		Charge{},
+		DeliveryDetails{},
 		Discount{},
+		Fault{},
 		Line{},
 		Ordering{},
 		PaymentDetails{},
-		DeliveryDetails{},
+		Reason{},
+		StatusLine{},
 		Tax{},
 		Totals{},
 	)
@@ -45,7 +49,7 @@ func init() {
 		statusLineRules(),
 		reasonRules(),
 		actionRules(),
-		conditionRules(),
+		faultRules(),
 	)
 }
 

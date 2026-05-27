@@ -1,8 +1,6 @@
 package flow6
 
 import (
-	"errors"
-	"fmt"
 	"regexp"
 	"slices"
 	"strings"
@@ -13,6 +11,7 @@ import (
 	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
 
 // Identity scheme constants used by Flow 6.
@@ -41,7 +40,7 @@ var sirenInboxFormatRegex = regexp.MustCompile(`^[A-Za-z0-9+\-_/]+$`)
 // Flow 6 (CDV lifecycle) party identities. STC (0231 — assujetti
 // unique) is intentionally absent: it is a Flow 2 invoice concept and
 // must not appear on a CDV.
-var allowedFlow6IdentitySchemes = []string{
+var allowedFlow6IdentitySchemes = []cbc.Code{
 	"0002", // SIREN
 	"0009", // SIRET
 	"0223", // EU VAT
@@ -56,8 +55,8 @@ var allowedFlow6IdentitySchemes = []string{
 // allowedRoleCodes is the UNCL 3035 subset that the fr-ctc-flow6-role
 // extension accepts.
 var allowedRoleCodes = []cbc.Code{
-	RoleSE, RoleBY, RoleWK, RoleDFH, RoleAB, RoleSR,
-	RoleDL, RolePE, RolePR, RoleII, RoleIV,
+	RoleSeller, RoleBuyer, RolePlatform, RolePPF, RoleBuyerAgent, RoleSellerAgent,
+	RoleFactor, RolePayee, RolePayer, RoleIssuer, RoleInvoicee,
 }
 
 // normalizeParty handles the per-party normalisation Flow 6 requires:
@@ -117,21 +116,42 @@ func normalizeInboxes(party *org.Party) {
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
 		rules.Field("ext",
-			rules.Assert("01", "fr-ctc-flow6-role must be one of the UNCL 3035 subset: SE, BY, WK, DFH, AB, SR, DL, PE, PR, II, IV",
+			rules.Assert("01", "party ext fr-ctc-flow6-role must be one of the UNCL 3035 subset: SE, BY, WK, DFH, AB, SR, DL, PE, PR, II, IV",
 				is.Func("known fr-ctc-flow6-role", partyRoleKnown),
 			),
 		),
 		rules.Field("identities",
-			rules.Assert("02", "SIRET and SIREN must be coherent (BR-FR-09/10)",
+			rules.Assert("02", "party identities SIRET and SIREN codes must be coherent (BR-FR-09/10)",
 				is.Func("SIRET/SIREN coherent", identitiesSIRETSIRENCoherent),
 			),
-			rules.Assert("03", "identity scheme format invalid (BR-FR-CO-10)",
-				is.FuncError("valid scheme format", identitiesSchemeFormatValid),
+			rules.Assert("03", "party identities must not duplicate iso-scheme-id values (BR-FR-CO-10)",
+				is.Func("unique iso-scheme-id", identitiesSchemesUnique),
+			),
+			rules.Each(
+				rules.Field("ext",
+					rules.Assert("04", "party identity ext iso-scheme-id is required (BR-FR-CO-10)",
+						tax.ExtensionsRequire(iso.ExtKeySchemeID),
+					),
+					rules.Assert("05", "party identity ext iso-scheme-id must be one of the Flow 6 allowed schemes (BR-FR-CO-10)",
+						tax.ExtensionsHasCodes(iso.ExtKeySchemeID, allowedFlow6IdentitySchemes...),
+					),
+				),
+				rules.When(
+					is.Func("scheme 0224 (private-id)", identitySchemeIsPrivate),
+					rules.Field("code",
+						rules.Assert("06", "party identity code for private-id (0224) must not exceed 100 characters (BR-FR-26)",
+							is.Length(0, 100),
+						),
+						rules.Assert("07", "party identity code for private-id (0224) must contain only alphanumeric characters and +, -, _, / (BR-FR-24)",
+							is.MatchesRegexp(sirenInboxFormatRegex),
+						),
+					),
+				),
 			),
 		),
 		rules.Field("inboxes",
 			rules.Each(
-				rules.Assert("05", "inbox code format invalid",
+				rules.Assert("08", "party inbox code format is invalid",
 					is.Func("valid inbox", inboxCodeValid),
 				),
 			),
@@ -177,39 +197,37 @@ func identitiesSIRETSIRENCoherent(val any) bool {
 	return true
 }
 
-func identitiesSchemeFormatValid(val any) error {
+// identitiesSchemesUnique reports whether the slice contains at most
+// one identity per iso-scheme-id value. Empty extensions are ignored
+// (the per-identity rule covers them).
+func identitiesSchemesUnique(val any) bool {
 	identities, ok := val.([]*org.Identity)
 	if !ok || len(identities) == 0 {
-		return nil
+		return true
 	}
-	schemes := make(map[cbc.Code]bool)
+	seen := make(map[cbc.Code]bool, len(identities))
 	for _, id := range identities {
 		if id == nil {
 			continue
 		}
 		schemeID := id.Ext.Get(iso.ExtKeySchemeID)
 		if schemeID == cbc.CodeEmpty {
-			return errors.New("all identities must have an ISO scheme ID defined in extensions BR-FR-CO-10")
+			continue
 		}
-		if schemes[schemeID] {
-			return fmt.Errorf("duplicate identities with ISO scheme ID '%s' are not allowed (BR-FR-CO-10)", schemeID)
+		if seen[schemeID] {
+			return false
 		}
-		if schemeID == identitySchemeIDPrivate {
-			code := string(id.Code)
-			if code == "" {
-				schemes[schemeID] = true
-				continue
-			}
-			if len(code) > 100 {
-				return errors.New("identity with ISO scheme ID 0224 (private-id) must not exceed 100 characters (BR-FR-26)")
-			}
-			if !sirenInboxFormatRegex.MatchString(code) {
-				return errors.New("identity with ISO scheme ID 0224 (private-id) must contain only alphanumeric characters and +, -, _, / (BR-FR-24)")
-			}
-		}
-		schemes[schemeID] = true
+		seen[schemeID] = true
 	}
-	return nil
+	return true
+}
+
+// identitySchemeIsPrivate reports whether the identity carries the
+// private-id (0224) iso-scheme-id extension. Used to gate the
+// 0224-specific length/format rules.
+func identitySchemeIsPrivate(val any) bool {
+	id, ok := val.(*org.Identity)
+	return ok && id != nil && id.Ext.Get(iso.ExtKeySchemeID) == identitySchemeIDPrivate
 }
 
 func inboxCodeValid(val any) bool {

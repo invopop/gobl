@@ -77,7 +77,6 @@ func newV1Addon() *tax.AddonDef {
 				URL: "https://www.impots.gouv.fr/specifications-externes-b2b",
 			},
 		},
-		Extensions: extensions,
 		Scenarios:  scenarios,
 		Normalizer: normalize,
 	}

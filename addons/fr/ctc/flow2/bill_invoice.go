@@ -1,7 +1,10 @@
 package flow2
 
 import (
+	"fmt"
 	"regexp"
+	"slices"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/dgfip"
@@ -13,8 +16,6 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-
-	"slices"
 )
 
 // invoiceCodeRegexp enforces BR-FR-01/02 invoice-code format: max 35
@@ -23,7 +24,7 @@ var invoiceCodeRegexp = regexp.MustCompile(`^[A-Za-z0-9\-\+_/]{1,35}$`)
 
 // allowedAttachmentDescriptions enumerates the BR-FR-17 attachment
 // descriptions accepted on a French CTC invoice.
-var allowedAttachmentDescriptions = []string{
+var allowedAttachmentDescriptions = []any{
 	"RIB",
 	"LISIBLE",
 	"FEUILLE_DE_STYLE",
@@ -36,18 +37,6 @@ var allowedAttachmentDescriptions = []string{
 	"ETAT_ACOMPTE",
 	"FACTURE_PAIEMENT_DIRECT",
 	"RECAPITULATIF_COTRAITANCE",
-}
-
-// vatKeyToUNTDIDCategory maps each supported GOBL VAT rate key to its
-// UNTDID 5305 category code.
-var vatKeyToUNTDIDCategory = map[cbc.Key]cbc.Code{
-	tax.KeyStandard:       "S",
-	tax.KeyZero:           "Z",
-	tax.KeyExempt:         "E",
-	tax.KeyReverseCharge:  "AE",
-	tax.KeyIntraCommunity: "K",
-	tax.KeyExport:         "G",
-	tax.KeyOutsideScope:   "O",
 }
 
 const (
@@ -69,7 +58,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if inv == nil {
 		return
 	}
-	normalizeInvoiceTaxCategories(inv)
 	normalizeParty(inv.Supplier)
 	normalizeParty(inv.Customer)
 	if inv.Tax == nil {
@@ -79,25 +67,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	normalizeBillingMode(inv)
 	normalizeRequiredNotes(inv)
 	normalizeSTCNote(inv)
-}
-
-func normalizeInvoiceTaxCategories(inv *bill.Invoice) {
-	for _, line := range inv.Lines {
-		if line == nil {
-			continue
-		}
-		for _, combo := range line.Taxes {
-			if combo == nil || combo.Category != tax.CategoryVAT {
-				continue
-			}
-			if combo.Ext.Get(untdid.ExtKeyTaxCategory) != "" {
-				continue
-			}
-			if code, ok := vatKeyToUNTDIDCategory[combo.Key]; ok {
-				combo.Ext = combo.Ext.Set(untdid.ExtKeyTaxCategory, code)
-			}
-		}
-	}
 }
 
 func normalizeBillingMode(inv *bill.Invoice) {
@@ -175,51 +144,51 @@ func billInvoiceRules() *rules.Set {
 		rules.Assert("01", "invoice must be in EUR or provide an exchange rate to EUR",
 			currency.CanConvertTo(currency.EUR),
 		),
-		rules.Assert("02", "must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
+		rules.Assert("02", "invoice code (with series, when set) must be 1-35 characters of alphanumerics plus -+_/ (BR-FR-01/02)",
 			is.Func("valid invoice code", invoiceCodeValid),
 		),
 		rules.Field("preceding",
 			rules.Each(
-				rules.Assert("03", "preceding code must be 1-35 characters, alphanumeric plus -+_/ (BR-FR-01/02), including the series",
+				rules.Assert("03", "invoice preceding code (with series, when set) must be 1-35 characters of alphanumerics plus -+_/ (BR-FR-01/02)",
 					is.Func("valid preceding code", precedingDocCodeValid),
 				),
 			),
 		),
 		rules.When(
-			is.Func("corrective invoice", invoiceIsCorrectiveAny),
+			invoiceTaxExtIn(untdid.ExtKeyDocumentType, correctiveInvoiceTypes...),
 			rules.Field("preceding",
-				rules.Assert("04", "corrective invoices must reference the original invoice in preceding (BR-FR-CO-04)",
+				rules.Assert("04", "invoice preceding is required for corrective invoices (BR-FR-CO-04)",
 					is.Present,
 				),
-				rules.Assert("05", "corrective invoices must reference exactly one preceding invoice — multiple references are not allowed (BR-FR-CO-04)",
+				rules.Assert("05", "invoice preceding must contain exactly one reference for corrective invoices (BR-FR-CO-04)",
 					is.Length(1, 1),
 				),
 			),
 		),
 		rules.When(
-			is.Func("credit note", invoiceIsCreditNoteAny),
+			invoiceTaxExtIn(untdid.ExtKeyDocumentType, creditNoteTypes...),
 			rules.Field("preceding",
-				rules.Assert("06", "credit notes must have at least one preceding invoice reference (BR-FR-CO-05)",
+				rules.Assert("06", "invoice preceding must contain at least one reference for credit notes (BR-FR-CO-05)",
 					is.Present,
 				),
 			),
 		),
 		rules.Field("tax",
-			rules.Assert("07", "tax is required", is.Present),
+			rules.Assert("07", "invoice tax is required", is.Present),
 			rules.Field("ext",
-				rules.Assert("08", "UNTDID document type must be valid (BR-FR-04)",
+				rules.Assert("08", "invoice tax ext untdid-document-type must be a valid Flow 2 document type (BR-FR-04)",
 					tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, allowedInvoiceDocumentTypes...),
 				),
-				rules.Assert("09", "billing mode extension is required",
+				rules.Assert("09", "invoice tax ext dgfip-billing-mode is required",
 					tax.ExtensionsRequire(dgfip.ExtKeyBillingMode),
 				),
 			),
 		),
 		rules.When(
-			is.Func("factoring mode", invoiceIsFactoringAny),
+			invoiceTaxExtIn(dgfip.ExtKeyBillingMode, dgfip.BillingModeB4, dgfip.BillingModeS4, dgfip.BillingModeM4),
 			rules.Field("tax",
 				rules.Field("ext",
-					rules.Assert("10", "advance payment document types (386, 500, 503) are not allowed for factoring billing modes (B4, S4, M4) (BR-FR-CO-08)",
+					rules.Assert("10", "invoice tax ext untdid-document-type must not be an advance-payment code (386, 500, 503) when billing mode is factoring (B4, S4, M4) (BR-FR-CO-08)",
 						tax.ExtensionsExcludeCodes(untdid.ExtKeyDocumentType, advancePaymentDocumentTypes...),
 					),
 				),
@@ -227,70 +196,70 @@ func billInvoiceRules() *rules.Set {
 		),
 		rules.Field("supplier",
 			rules.Field("inboxes",
-				rules.Assert("11", "seller electronic address required for French B2B invoices (BR-FR-13)",
+				rules.Assert("11", "invoice supplier inboxes are required for French B2B invoices (BR-FR-13)",
 					is.Present,
 				),
 			),
 			rules.Field("identities",
-				rules.Assert("12", "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
+				rules.Assert("12", "invoice supplier identities must include a SIREN identity with iso-scheme-id 0002 and scope legal (BR-FR-10/11)",
 					is.Func("has SIREN (legal scope)", identitiesHasLegalSIREN),
 				),
 			),
 		),
 		rules.When(
-			is.Func("not self-billed", invoiceIsNotSelfBilledAny),
+			invoiceTaxExtNotIn(untdid.ExtKeyDocumentType, selfBilledDocumentTypes...),
 			rules.Field("supplier",
-				rules.Assert("13", "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
+				rules.Assert("13", "invoice supplier must have an inbox with scheme 0225 matching the SIREN code (BR-FR-21/22)",
 					is.Func("has SIREN inbox", partyHasSIRENInbox),
 				),
 			),
 		),
 		rules.Field("customer",
 			rules.Field("inboxes",
-				rules.Assert("14", "buyer electronic address required for French B2B invoices (BR-FR-13)",
+				rules.Assert("14", "invoice customer inboxes are required for French B2B invoices (BR-FR-13)",
 					is.Present,
 				),
 			),
 			rules.Field("identities",
-				rules.Assert("15", "SIREN identity required for French parties with scheme 0002 and scope legal (BR-FR-10/11)",
+				rules.Assert("15", "invoice customer identities must include a SIREN identity with iso-scheme-id 0002 and scope legal (BR-FR-10/11)",
 					is.Func("has SIREN (legal scope)", identitiesHasLegalSIREN),
 				),
 			),
 		),
 		rules.When(
-			is.Func("self-billed", invoiceIsSelfBilledAny),
+			invoiceTaxExtIn(untdid.ExtKeyDocumentType, selfBilledDocumentTypes...),
 			rules.Field("customer",
-				rules.Assert("16", "party must have endpoint ID with scheme 0225 (SIREN) (BR-FR-21/22)",
+				rules.Assert("16", "invoice customer must have an inbox with scheme 0225 matching the SIREN code (BR-FR-21/22)",
 					is.Func("has SIREN inbox", partyHasSIRENInbox),
 				),
 			),
 		),
 		rules.Field("ordering",
 			rules.Field("identities",
-				rules.Assert("17", "only one ordering identity with UNTDID reference 'AFL' is allowed (BR-FR-30)",
-					is.Func("no dup AFL", orderingIdentitiesNoDupAFL),
+				rules.Assert("17", "invoice ordering identities must not contain more than one entry with UNTDID reference 'AFL' (BR-FR-30)",
+					identitiesNoDupExt(untdid.ExtKeyReference, "AFL"),
 				),
-				rules.Assert("18", "only one ordering identity with UNTDID reference 'AWW' is allowed (BR-FR-30)",
-					is.Func("no dup AWW", orderingIdentitiesNoDupAWW),
+				rules.Assert("18", "invoice ordering identities must not contain more than one entry with UNTDID reference 'AWW' (BR-FR-30)",
+					identitiesNoDupExt(untdid.ExtKeyReference, "AWW"),
 				),
 			),
 		),
 		rules.When(
-			is.Func("supplier STC", invoiceSupplierIsSTC),
+			invoiceSupplierIsSTC(),
 			rules.Field("ordering",
-				rules.Assert("19", "ordering with seller is required when supplier is under STC scheme (BR-FR-CO-15)",
+				rules.Assert("19", "invoice ordering is required when supplier is under STC scheme (BR-FR-CO-15)",
 					is.Present,
 				),
 				rules.Field("seller",
-					rules.Assert("20", "seller is required when supplier is under STC scheme (BR-FR-CO-15)",
+					rules.Assert("20", "invoice ordering seller is required when supplier is under STC scheme (BR-FR-CO-15)",
 						is.Present,
 					),
 					rules.Field("tax_id",
-						rules.Assert("21", "tax ID is required when supplier is under STC scheme (BR-FR-CO-15)",
+						rules.Assert("21", "invoice ordering seller tax_id is required when supplier is under STC scheme (BR-FR-CO-15)",
 							is.Present,
 						),
 						rules.Field("code",
-							rules.Assert("22", "code is required when supplier is under STC scheme (BR-FR-CO-15)",
+							rules.Assert("22", "invoice ordering seller tax_id code is required when supplier is under STC scheme (BR-FR-CO-15)",
 								is.Present,
 							),
 						),
@@ -298,55 +267,58 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 			rules.Field("notes",
-				rules.Assert("23", "for sellers with STC scheme (0231), a note with code 'TXD' and text 'MEMBRE_ASSUJETTI_UNIQUE' is required (BR-FR-CO-14)",
+				rules.Assert("23", "invoice notes must include an entry with subject TXD and text MEMBRE_ASSUJETTI_UNIQUE when supplier is under STC scheme (BR-FR-CO-14)",
 					is.Func("has TXD note", notesHaveTXD),
 				),
 			),
 		),
 		rules.When(
-			is.Func("consolidated credit note", invoiceIsConsolidatedCreditNoteAny),
+			invoiceTaxExtIn(untdid.ExtKeyDocumentType, "262"),
 			rules.Field("ordering",
-				rules.Assert("24", "ordering with contracts is required for consolidated credit notes (BR-FR-CO-03)",
+				rules.Assert("24", "invoice ordering is required for consolidated credit notes (BR-FR-CO-03)",
 					is.Present,
 				),
 				rules.Field("contracts",
-					rules.Assert("25", "ordering.contracts is required for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("25", "invoice ordering contracts is required for consolidated credit notes (BR-FR-CO-03)",
 						is.Present,
 					),
-					rules.Assert("26", "ordering.contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("26", "invoice ordering contracts must contain at least one entry for consolidated credit notes (BR-FR-CO-03)",
 						is.Length(1, 0),
 					),
 				),
 			),
 			rules.Field("delivery",
-				rules.Assert("27", "delivery details are required for consolidated credit notes (BR-FR-CO-03)",
+				rules.Assert("27", "invoice delivery is required for consolidated credit notes (BR-FR-CO-03)",
 					is.Present,
 				),
 				rules.Field("period",
-					rules.Assert("28", "delivery period is required for consolidated credit notes (BR-FR-CO-03)",
+					rules.Assert("28", "invoice delivery period is required for consolidated credit notes (BR-FR-CO-03)",
 						is.Present,
 					),
 				),
 			),
 		),
 		rules.When(
-			is.Func("not advance or final", invoiceIsNotAdvanceOrFinalAny),
-			rules.Assert("29", "due dates must not be before invoice issue date (BR-FR-CO-07)",
-				is.Func("due dates valid", invoiceDueDatesValid),
+			invoiceTaxExtNotIn(untdid.ExtKeyDocumentType, advancePaymentDocumentTypes...),
+			rules.When(
+				invoiceTaxExtNotIn(dgfip.ExtKeyBillingMode, dgfip.BillingModeB2, dgfip.BillingModeS2, dgfip.BillingModeM2),
+				rules.Assert("29", "invoice payment terms due_dates must not be before the invoice issue date (BR-FR-CO-07)",
+					is.Func("due dates valid", invoiceDueDatesValid),
+				),
 			),
 		),
 		rules.When(
-			is.Func("final invoice", invoiceIsFinalAny),
+			invoiceTaxExtIn(dgfip.ExtKeyBillingMode, dgfip.BillingModeB2, dgfip.BillingModeS2, dgfip.BillingModeM2),
 			rules.Field("payment",
-				rules.Assert("30", "payment details are required for final invoices (BR-FR-CO-09)",
+				rules.Assert("30", "invoice payment is required for final invoices (BR-FR-CO-09)",
 					is.Present,
 				),
 				rules.Field("terms",
-					rules.Assert("31", "payment terms required for final invoices (BR-FR-CO-09)",
+					rules.Assert("31", "invoice payment terms is required for final invoices (BR-FR-CO-09)",
 						is.Present,
 					),
 					rules.Field("due_dates",
-						rules.Assert("32", "at least one due date required for final invoices (BR-FR-CO-09)",
+						rules.Assert("32", "invoice payment terms due_dates must contain at least one entry for final invoices (BR-FR-CO-09)",
 							is.Present,
 						),
 					),
@@ -354,203 +326,143 @@ func billInvoiceRules() *rules.Set {
 			),
 			rules.Field("totals",
 				rules.Field("advance",
-					rules.Assert("33", "advance amount is required for already-paid invoices (BR-FR-CO-09)",
+					rules.Assert("33", "invoice totals advance is required for final invoices (BR-FR-CO-09)",
 						is.Present,
 					),
 				),
-				rules.Assert("34", "advance amount must equal total with tax for final invoices (BR-FR-CO-09)",
-					is.Func("advances match", finalInvoiceAdvancesMatch),
+				rules.Assert("34", "invoice totals advance must equal total_with_tax for final invoices (BR-FR-CO-09)",
+					is.Func("advances match total_with_tax", finalInvoiceAdvancesMatch),
 				),
-				rules.Assert("35", "payable amount must be zero for final invoices (BR-FR-CO-09)",
-					is.Func("payable zero", finalInvoicePayableZero),
+				rules.Assert("35", "invoice totals payable must be zero for final invoices (BR-FR-CO-09)",
+					is.Func("payable is zero", finalInvoicePayableZero),
 				),
 			),
 		),
 		rules.Field("notes",
-			rules.Assert("36", "notes are required for French CTC invoices (BR-FR-05)", is.Present),
-			rules.Assert("37", "missing required note codes (BR-FR-05)",
-				is.Func("has required notes", notesHaveRequired),
+			rules.Assert("36", "invoice notes are required for French CTC invoices (BR-FR-05)",
+				is.Present,
 			),
-			rules.Assert("38", "duplicate note codes found (BR-FR-06/BR-FR-30)",
-				is.Func("no duplicate notes", notesNoDuplicates),
+			rules.Assert("37", "invoice notes must include entries with subjects PMT, PMD and AAB (BR-FR-05)",
+				is.Func("has required note subjects", notesHaveRequired),
+			),
+			rules.Assert("38", "invoice notes must not contain duplicate subjects PMT, PMD, AAB or TXD (BR-FR-06/BR-FR-30)",
+				is.Func("no duplicate note subjects", notesNoDuplicates),
 			),
 		),
 		rules.Field("attachments",
 			rules.Each(
 				rules.Field("description",
-					rules.Assert("39", "must be one of the allowed attachment descriptions (BR-FR-17)",
+					rules.Assert("39", "invoice attachment description is required (BR-FR-17)",
 						is.Present,
 					),
-					rules.Assert("40", "must be one of the allowed attachment descriptions (BR-FR-17)",
-						is.In(toAnySlice(allowedAttachmentDescriptions)...),
+					rules.Assert("40", "invoice attachment description must be one of the allowed values (BR-FR-17)",
+						is.In(allowedAttachmentDescriptions...),
 					),
 				),
 			),
-			rules.Assert("41", "only one attachment with description 'LISIBLE' is allowed per invoice (BR-FR-18)",
-				is.Func("unique LISIBLE", attachmentsUniqueLISIBLE),
+			rules.Assert("41", "invoice attachments must not contain more than one entry with description 'LISIBLE' (BR-FR-18)",
+				is.Func("at most one LISIBLE", attachmentsAtMostOneLISIBLE),
 			),
 		),
 	)
 }
 
-// -- Predicates -----------------------------------------------------------
+// -- Rule-level guards ----------------------------------------------------
 
+// invoiceTaxExtIn returns a Test that passes when bill.Invoice.Tax.Ext[key]
+// matches one of the provided codes. Used to gate per-document-type or
+// per-billing-mode branches without writing a dedicated predicate.
+func invoiceTaxExtIn(key cbc.Key, codes ...cbc.Code) rules.Test {
+	return is.Func(
+		fmt.Sprintf("invoice tax ext %s in [%s]", key, joinCodes(codes)),
+		func(v any) bool {
+			inv, ok := v.(*bill.Invoice)
+			if !ok || inv == nil || inv.Tax == nil {
+				return false
+			}
+			return slices.Contains(codes, inv.Tax.Ext.Get(key))
+		},
+	)
+}
+
+// invoiceTaxExtNotIn is the negation of invoiceTaxExtIn. A missing
+// Tax or empty value counts as "not in" — the guarded rule fires.
+func invoiceTaxExtNotIn(key cbc.Key, codes ...cbc.Code) rules.Test {
+	return is.Func(
+		fmt.Sprintf("invoice tax ext %s not in [%s]", key, joinCodes(codes)),
+		func(v any) bool {
+			inv, ok := v.(*bill.Invoice)
+			if !ok || inv == nil || inv.Tax == nil {
+				return true
+			}
+			return !slices.Contains(codes, inv.Tax.Ext.Get(key))
+		},
+	)
+}
+
+// invoiceSupplierIsSTC returns a Test that passes when the invoice's
+// Supplier carries an STC (iso-scheme-id 0231) identity.
+func invoiceSupplierIsSTC() rules.Test {
+	return is.Func("invoice supplier is under STC scheme", func(v any) bool {
+		inv, ok := v.(*bill.Invoice)
+		return ok && inv != nil && isPartyIdentitySTC(inv.Supplier)
+	})
+}
+
+// identitiesNoDupExt returns a Test for an []*org.Identity slice that
+// passes unless more than one identity carries the (key, code) pair.
+func identitiesNoDupExt(key cbc.Key, code cbc.Code) rules.Test {
+	return is.Func(
+		fmt.Sprintf("identities have at most one ext %s=%s", key, code),
+		func(v any) bool {
+			identities, ok := v.([]*org.Identity)
+			if !ok {
+				return true
+			}
+			count := 0
+			for _, id := range identities {
+				if id == nil || id.Ext.IsZero() {
+					continue
+				}
+				if id.Ext.Get(key) == code {
+					count++
+					if count > 1 {
+						return false
+					}
+				}
+			}
+			return true
+		},
+	)
+}
+
+// -- Imperative predicates ------------------------------------------------
+
+// invoiceCodeValid checks the {series, code} pair against BR-FR-01/02.
+// Series.Join produces a derived string that no field-level matcher can
+// reach, so this stays as an imperative predicate.
 func invoiceCodeValid(val any) bool {
 	inv, ok := val.(*bill.Invoice)
 	if !ok || inv == nil || inv.Code == cbc.CodeEmpty {
 		return true
 	}
-	invoiceID := string(inv.Code)
+	id := string(inv.Code)
 	if inv.Series != cbc.CodeEmpty {
-		invoiceID = string(inv.Series.Join(inv.Code))
+		id = string(inv.Series.Join(inv.Code))
 	}
-	return invoiceCodeRegexp.MatchString(invoiceID)
+	return invoiceCodeRegexp.MatchString(id)
 }
 
 func precedingDocCodeValid(val any) bool {
-	docRef, ok := val.(*org.DocumentRef)
-	if !ok || docRef == nil || docRef.Code == cbc.CodeEmpty {
+	ref, ok := val.(*org.DocumentRef)
+	if !ok || ref == nil || ref.Code == cbc.CodeEmpty {
 		return true
 	}
-	invoiceID := string(docRef.Code)
-	if docRef.Series != cbc.CodeEmpty {
-		invoiceID = string(docRef.Series.Join(docRef.Code))
+	id := string(ref.Code)
+	if ref.Series != cbc.CodeEmpty {
+		id = string(ref.Series.Join(ref.Code))
 	}
-	return invoiceCodeRegexp.MatchString(invoiceID)
-}
-
-func invoiceIsCorrectiveAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && isCorrectiveInvoice(inv)
-}
-
-func invoiceIsCreditNoteAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && isCreditNote(inv)
-}
-
-func invoiceIsFactoringAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	if !ok || inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	return isFactoringExtension(inv.Tax.Ext.Get(dgfip.ExtKeyBillingMode))
-}
-
-func invoiceIsNotSelfBilledAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && !isSelfBilledInvoice(inv)
-}
-
-func invoiceIsSelfBilledAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && isSelfBilledInvoice(inv)
-}
-
-func invoiceSupplierIsSTC(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && isPartyIdentitySTC(inv.Supplier)
-}
-
-func invoiceIsConsolidatedCreditNoteAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && isConsolidatedCreditNote(inv)
-}
-
-func invoiceIsNotAdvanceOrFinalAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && !isAdvancedInvoice(inv) && !isFinalInvoice(inv)
-}
-
-func invoiceIsFinalAny(val any) bool {
-	inv, ok := val.(*bill.Invoice)
-	return ok && isFinalInvoice(inv)
-}
-
-func isSelfBilledInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	if docType == "" {
-		return false
-	}
-	return slices.Contains(selfBilledDocumentTypes, docType)
-}
-
-func isCorrectiveInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	if docType == "" {
-		return false
-	}
-	return slices.Contains(correctiveInvoiceTypes, docType)
-}
-
-func isCreditNote(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	return slices.Contains(creditNoteTypes, docType)
-}
-
-func isConsolidatedCreditNote(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	return docType == "262"
-}
-
-func isAdvancedInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	docType := inv.Tax.Ext.Get(untdid.ExtKeyDocumentType)
-	return slices.Contains(advancePaymentDocumentTypes, docType)
-}
-
-func isFinalInvoice(inv *bill.Invoice) bool {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext.IsZero() {
-		return false
-	}
-	bm := inv.Tax.Ext.Get(dgfip.ExtKeyBillingMode)
-	return bm == dgfip.BillingModeB2 || bm == dgfip.BillingModeS2 || bm == dgfip.BillingModeM2
-}
-
-func isFactoringExtension(bm cbc.Code) bool {
-	return bm == dgfip.BillingModeB4 || bm == dgfip.BillingModeS4 || bm == dgfip.BillingModeM4
-}
-
-func orderingIdentitiesNoDupAFL(val any) bool {
-	return orderingIdentitiesNoDup(val, "AFL")
-}
-
-func orderingIdentitiesNoDupAWW(val any) bool {
-	return orderingIdentitiesNoDup(val, "AWW")
-}
-
-func orderingIdentitiesNoDup(val any, ref string) bool {
-	identities, ok := val.([]*org.Identity)
-	if !ok {
-		return true
-	}
-	count := 0
-	for _, id := range identities {
-		if id == nil || id.Ext.IsZero() {
-			continue
-		}
-		if id.Ext.Get(untdid.ExtKeyReference).String() == ref {
-			count++
-			if count > 1 {
-				return false
-			}
-		}
-	}
-	return true
+	return invoiceCodeRegexp.MatchString(id)
 }
 
 func notesHaveTXD(val any) bool {
@@ -558,11 +470,12 @@ func notesHaveTXD(val any) bool {
 	if !ok || len(notes) == 0 {
 		return false
 	}
-	for _, note := range notes {
-		if note != nil && !note.Ext.IsZero() {
-			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code == noteSubjectTXD && note.Text == stcMembreAssujettiUnique {
-				return true
-			}
+	for _, n := range notes {
+		if n == nil || n.Ext.IsZero() {
+			continue
+		}
+		if n.Ext.Get(untdid.ExtKeyTextSubject) == noteSubjectTXD && n.Text == stcMembreAssujettiUnique {
+			return true
 		}
 	}
 	return false
@@ -570,20 +483,18 @@ func notesHaveTXD(val any) bool {
 
 func notesHaveRequired(val any) bool {
 	notes, ok := val.([]*org.Note)
-	if !ok || len(notes) == 0 {
+	if !ok {
 		return false
 	}
-	required := []cbc.Code{"PMT", "PMD", "AAB"}
-	counts := make(map[cbc.Code]int)
-	for _, note := range notes {
-		if note != nil && !note.Ext.IsZero() {
-			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code != cbc.CodeEmpty {
-				counts[code]++
-			}
+	seen := make(map[cbc.Code]bool, 3)
+	for _, n := range notes {
+		if n == nil || n.Ext.IsZero() {
+			continue
 		}
+		seen[n.Ext.Get(untdid.ExtKeyTextSubject)] = true
 	}
-	for _, code := range required {
-		if counts[code] == 0 {
+	for _, code := range [...]cbc.Code{"PMT", "PMD", "AAB"} {
+		if !seen[code] {
 			return false
 		}
 	}
@@ -595,16 +506,14 @@ func notesNoDuplicates(val any) bool {
 	if !ok || len(notes) == 0 {
 		return true
 	}
-	counts := make(map[cbc.Code]int)
-	for _, note := range notes {
-		if note != nil && !note.Ext.IsZero() {
-			if code := note.Ext.Get(untdid.ExtKeyTextSubject); code != cbc.CodeEmpty {
-				counts[code]++
-			}
+	counts := make(map[cbc.Code]int, len(notes))
+	for _, n := range notes {
+		if n == nil || n.Ext.IsZero() {
+			continue
 		}
+		counts[n.Ext.Get(untdid.ExtKeyTextSubject)]++
 	}
-	checkUnique := []cbc.Code{"PMT", "PMD", "AAB", "TXD"}
-	for _, code := range checkUnique {
+	for _, code := range [...]cbc.Code{"PMT", "PMD", "AAB", "TXD"} {
 		if counts[code] > 1 {
 			return false
 		}
@@ -632,42 +541,46 @@ func invoiceDueDatesValid(val any) bool {
 }
 
 func finalInvoiceAdvancesMatch(val any) bool {
-	totals, ok := val.(*bill.Totals)
-	if !ok || totals == nil || totals.Advances == nil {
+	t, ok := val.(*bill.Totals)
+	if !ok || t == nil || t.Advances == nil {
 		return true
 	}
-	return totals.Advances.Equals(totals.TotalWithTax)
+	return t.Advances.Equals(t.TotalWithTax)
 }
 
 func finalInvoicePayableZero(val any) bool {
-	totals, ok := val.(*bill.Totals)
-	if !ok || totals == nil {
+	t, ok := val.(*bill.Totals)
+	if !ok || t == nil {
 		return true
 	}
-	if totals.Due != nil {
-		return totals.Due.Equals(num.AmountZero)
+	if t.Due != nil {
+		return t.Due.Equals(num.AmountZero)
 	}
-	return totals.Payable.Equals(num.AmountZero)
+	return t.Payable.Equals(num.AmountZero)
 }
 
-func attachmentsUniqueLISIBLE(val any) bool {
+func attachmentsAtMostOneLISIBLE(val any) bool {
 	attachments, ok := val.([]*org.Attachment)
 	if !ok || len(attachments) == 0 {
 		return true
 	}
 	count := 0
-	for _, att := range attachments {
-		if att != nil && att.Description == attachmentFormatLisible {
+	for _, a := range attachments {
+		if a != nil && a.Description == attachmentFormatLisible {
 			count++
+			if count > 1 {
+				return false
+			}
 		}
 	}
-	return count <= 1
+	return true
 }
 
-func toAnySlice(ss []string) []any {
-	out := make([]any, len(ss))
-	for i, s := range ss {
-		out[i] = s
+// joinCodes is a small helper used only by the guard-name strings.
+func joinCodes(codes []cbc.Code) string {
+	ss := make([]string, len(codes))
+	for i, c := range codes {
+		ss[i] = string(c)
 	}
-	return out
+	return strings.Join(ss, ", ")
 }

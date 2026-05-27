@@ -83,5 +83,7 @@ func normalize(doc any) {
 		normalizeParty(obj)
 	case *org.Identity:
 		normalizeIdentity(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }
