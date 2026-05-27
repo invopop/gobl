@@ -146,7 +146,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitGram, "Metric grams", "g", "", "GRM"},
 	{UnitKilogram, "Metric kilograms", "kg", "", "KGM"},
 	{UnitMetricTon, "Metric tons", "Tons", "", "TNE"},
-	{UnitMillimetre, "Milimetres", "mm", "", "MMT"},
+	{UnitMillimetre, "Millimetres", "mm", "", "MMT"},
 	{UnitCentimetre, "Centimetres", "cm", "", "CMT"},
 	{UnitDecimetre, "Decimetres", "dm", "A unit of length equal to one-tenth of a metre.", "DMT"},
 	{UnitMetre, "Meters", "m", "", "MTR"},
