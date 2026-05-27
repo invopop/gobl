@@ -23,7 +23,12 @@ const (
 	DeliveryTypeNote    cbc.Key = "note"
 	DeliveryTypeWaybill cbc.Key = "waybill"
 	DeliveryTypeReceipt cbc.Key = "receipt"
-	DeliveryTypeReturn  cbc.Key = "return"
+	DeliveryTypeOther   cbc.Key = "other"
+)
+
+// Delivery document tags.
+const (
+	TagReturn cbc.Key = "return"
 )
 
 // DeliveryTypes provides the list of supported delivery documents in GOBL.
@@ -77,19 +82,42 @@ var DeliveryTypes = []*cbc.Definition{
 		},
 	},
 	{
-		Key: DeliveryTypeReturn,
+		Key: DeliveryTypeOther,
 		Name: i18n.String{
-			i18n.EN: "Return Note",
+			i18n.EN: "Other",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				A return note documents goods being sent back to the supplier.
+				Any other type of delivery that does not fit into the standard categories and implies
+				that any scenarios defined in tax regimes or addons will not be applied.
+
+				This is useful for being able to create deliveries with custom types in extensions,
+				but is not recommend for general use.
 			`),
 		},
 	},
 }
 
 var isValidDeliveryType = cbc.InKeyDefs(DeliveryTypes)
+
+var defaultDeliveryTags = &tax.TagSet{
+	Schema: ShortSchemaDelivery,
+	List: []*cbc.Definition{
+		{
+			Key: TagReturn,
+			Name: i18n.String{
+				i18n.EN: "Return",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that the delivery document represents a return of goods to the supplier.
+					Use this tag in combination with a supported delivery type to indicate a return
+					rather than a forward delivery.
+				`),
+			},
+		},
+	},
+}
 
 // Delivery document used to describe the delivery of goods or potentially also services.
 type Delivery struct {
@@ -99,7 +127,7 @@ type Delivery struct {
 	uuid.Identify
 
 	// Type of delivery document.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt,return"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt,other"`
 	// Series is used to identify groups of deliveries by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
@@ -217,7 +245,25 @@ func (dlv *Delivery) Calculate() error {
 		dlv.SetRegime(partyTaxCountry(dlv.Supplier))
 	}
 	dlv.Normalize(dlv.normalizers())
+
+	for _, tag := range dlv.Tags.List {
+		if !tag.In(dlv.supportedTags()...) {
+			return fmt.Errorf("$tags: '%s' undefined", tag)
+		}
+	}
+
 	return calculate(dlv)
+}
+
+func (dlv *Delivery) supportedTags() []cbc.Key {
+	ts := defaultDeliveryTags
+	if r := dlv.RegimeDef(); r != nil {
+		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaDelivery))
+	}
+	for _, a := range dlv.AddonDefs() {
+		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaDelivery))
+	}
+	return ts.Keys()
 }
 
 // Normalize is run as part of the Calculate method to ensure that the delivery
@@ -375,6 +421,7 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
+	dlv.Tags.JSONSchemaExtendWithDefs(js, defaultDeliveryTags.List)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

@@ -175,10 +175,11 @@ func TestDeliveryNormalization(t *testing.T) {
 		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 
-	t.Run("return type", func(t *testing.T) {
+	t.Run("return tag", func(t *testing.T) {
 		dlv := &bill.Delivery{
-			Type: bill.DeliveryTypeReturn,
+			Type: bill.DeliveryTypeNote,
 		}
+		dlv.SetTags(bill.TagReturn)
 		addon.Normalizer(dlv)
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)

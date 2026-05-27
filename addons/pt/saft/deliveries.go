@@ -92,14 +92,16 @@ func normalizeDelivery(dlv *bill.Delivery) {
 	}
 
 	if !dlv.Tax.Ext.Has(ExtKeyMovementType) {
-		// Map delivery types to movement types
-		switch dlv.Type {
-		case bill.DeliveryTypeNote:
-			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
-		case bill.DeliveryTypeWaybill:
-			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
-		case bill.DeliveryTypeReturn:
+		// Map delivery types and tags to movement types.
+		if dlv.HasTags(bill.TagReturn) {
 			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeReturn)
+		} else {
+			switch dlv.Type {
+			case bill.DeliveryTypeNote:
+				dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
+			case bill.DeliveryTypeWaybill:
+				dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
+			}
 		}
 	}
 }
