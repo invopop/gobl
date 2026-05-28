@@ -11,20 +11,10 @@
           "field": "supplier",
           "subsets": [
             {
-              "field": "tax_id",
-              "assert": [
-                {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-01",
-                  "desc": "supplier tax ID is required (F-INV034)",
-                  "tests": "present"
-                }
-              ]
-            },
-            {
               "field": "inboxes",
               "assert": [
                 {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-02",
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-01",
                   "desc": "supplier inboxes are required (F-INV031)",
                   "tests": "present"
                 }
@@ -39,7 +29,7 @@
               "field": "inboxes",
               "assert": [
                 {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-03",
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-02",
                   "desc": "customer inboxes are required (F-INV044)",
                   "tests": "present"
                 }
@@ -49,7 +39,7 @@
               "field": "people",
               "assert": [
                 {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-04",
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-03",
                   "desc": "customer people are required (F-INV046)",
                   "tests": "present"
                 }
@@ -64,7 +54,7 @@
               "field": "code",
               "assert": [
                 {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-05",
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-04",
                   "desc": "ordering code is required when ordering is set (F-INV024)",
                   "tests": "present"
                 }

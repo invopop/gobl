@@ -77,14 +77,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("missing supplier tax ID (F-INV034)", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "F-INV034")
-	})
-
 	t.Run("missing supplier inboxes (F-INV031)", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Inboxes = nil
