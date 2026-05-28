@@ -701,7 +701,9 @@ func (Status) JSONSchemaExtend(js *jsonschema.Schema) {
 func (StatusLine) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	if its, ok := props.Get("key"); ok {
-		its.AnyOf = make([]*jsonschema.Schema, len(StatusLineKeys))
+		// Status line keys are a closed set: only the predefined keys are
+		// permitted, so enumerate them with OneOf (no open-ended fallback).
+		its.OneOf = make([]*jsonschema.Schema, len(StatusLineKeys))
 		for i, kd := range StatusLineKeys {
 			its.OneOf[i] = &jsonschema.Schema{
 				Const:       kd.Key.String(),
@@ -771,7 +773,7 @@ func statusLineRules() *rules.Set {
 			rules.Assert("01", "status line key is required",
 				is.Present,
 			),
-			rules.Assert("02", "status line key is valid",
+			rules.Assert("02", "status line key is not valid",
 				isValidStatusLineKey,
 			),
 		),

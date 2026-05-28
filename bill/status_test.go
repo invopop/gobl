@@ -623,7 +623,7 @@ func TestStatusDefinitions(t *testing.T) {
 	})
 
 	t.Run("status line keys count", func(t *testing.T) {
-		assert.Len(t, bill.StatusLineKeys, 8)
+		assert.Len(t, bill.StatusLineKeys, 9)
 	})
 
 	t.Run("reason keys count", func(t *testing.T) {
@@ -699,13 +699,12 @@ func TestStatusLineJSONSchemaExtend(t *testing.T) {
 
 	prop, ok := js.Properties.Get("key")
 	require.True(t, ok)
-	// Status line keys allow an open-ended "Other" fallback entry in
-	// addition to the defined events, so AnyOf has one extra element.
-	require.Len(t, prop.AnyOf, len(bill.StatusLineKeys)+1)
-	assert.Equal(t, bill.StatusLineKeys[0].Key.String(), prop.AnyOf[0].Const)
-	assert.Equal(t, bill.StatusLineKeys[0].Name.String(), prop.AnyOf[0].Title)
-	assert.Equal(t, bill.StatusLineKeys[0].Desc.String(), prop.AnyOf[0].Description)
-	assert.Equal(t, "Other", prop.AnyOf[len(bill.StatusLineKeys)].Title)
+	// Status line keys are a closed set — only the predefined keys are
+	// permitted, enumerated via OneOf with no open-ended fallback.
+	require.Len(t, prop.OneOf, len(bill.StatusLineKeys))
+	assert.Equal(t, bill.StatusLineKeys[0].Key.String(), prop.OneOf[0].Const)
+	assert.Equal(t, bill.StatusLineKeys[0].Name.String(), prop.OneOf[0].Title)
+	assert.Equal(t, bill.StatusLineKeys[0].Desc.String(), prop.OneOf[0].Description)
 }
 
 func TestReasonJSONSchemaExtend(t *testing.T) {
