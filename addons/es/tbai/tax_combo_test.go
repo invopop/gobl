@@ -240,14 +240,13 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, cbc.Code("51"), tc.Ext.Get(ExtKeyRegime))
 	})
 
-	t.Run("regime - default 01 set at invoice level, not combo", func(t *testing.T) {
+	t.Run("regime - default 01 when unset", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 		}
 		normalizeTaxCombo(tc)
-		// Fallback 01 is applied at invoice level, not here.
-		assert.Empty(t, tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, cbc.Code("01"), tc.Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("regime - explicit user value is preserved", func(t *testing.T) {

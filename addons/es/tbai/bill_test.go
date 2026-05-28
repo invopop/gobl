@@ -116,18 +116,6 @@ func TestInvoiceNormalization(t *testing.T) {
 		assert.Equal(t, cbc.Code("51"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
 
-	t.Run("regime 52 with simplified-scheme tag", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.SetTags(es.TagSimplifiedScheme)
-		inv.Lines[0].Taxes[0] = &tax.Combo{
-			Category: tax.CategoryVAT,
-			Key:      tax.KeyStandard,
-			Rate:     tax.RateGeneral,
-		}
-		require.NoError(t, inv.Calculate())
-		assert.Equal(t, cbc.Code("52"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyRegime))
-	})
-
 	t.Run("regime 02 with export key", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0] = &tax.Combo{
@@ -140,7 +128,6 @@ func TestInvoiceNormalization(t *testing.T) {
 
 	t.Run("regime explicit override is preserved", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.SetTags(es.TagSimplifiedScheme)
 		inv.Lines[0].Taxes[0] = &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
@@ -597,126 +584,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 	}
-}
-
-func TestNormalizeInvoiceRegimeDefensive(t *testing.T) {
-	t.Run("nil line/charge/discount is skipped", func(t *testing.T) {
-		inv := &bill.Invoice{
-			Lines:     []*bill.Line{nil},
-			Charges:   []*bill.Charge{nil},
-			Discounts: []*bill.Discount{nil},
-		}
-		assert.NotPanics(t, func() { normalizeInvoiceRegime(inv) })
-	})
-
-	t.Run("nil tax combo is skipped", func(t *testing.T) {
-		inv := &bill.Invoice{
-			Lines:     []*bill.Line{{Taxes: tax.Set{nil}}},
-			Charges:   []*bill.Charge{{Taxes: tax.Set{nil}}},
-			Discounts: []*bill.Discount{{Taxes: tax.Set{nil}}},
-		}
-		assert.NotPanics(t, func() { normalizeInvoiceRegime(inv) })
-	})
-
-	t.Run("non VAT/IGIC category is skipped", func(t *testing.T) {
-		tc := &tax.Combo{Category: tax.CategoryGST}
-		inv := &bill.Invoice{
-			Lines: []*bill.Line{{Taxes: tax.Set{tc}}},
-		}
-		normalizeInvoiceRegime(inv)
-		assert.True(t, tc.Ext.IsZero())
-	})
-
-	t.Run("charge/discount VAT combos get the default 01", func(t *testing.T) {
-		ch := &tax.Combo{Category: tax.CategoryVAT}
-		d := &tax.Combo{Category: tax.CategoryVAT}
-		inv := &bill.Invoice{
-			Charges:   []*bill.Charge{{Taxes: tax.Set{ch}}},
-			Discounts: []*bill.Discount{{Taxes: tax.Set{d}}},
-		}
-		normalizeInvoiceRegime(inv)
-		assert.Equal(t, cbc.Code("01"), ch.Ext.Get(ExtKeyRegime))
-		assert.Equal(t, cbc.Code("01"), d.Ext.Get(ExtKeyRegime))
-	})
-}
-
-func TestNormalizeInvoiceCustomerRates(t *testing.T) {
-	makeInvoice := func() *bill.Invoice {
-		return &bill.Invoice{
-			Lines: []*bill.Line{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
-			},
-			Charges: []*bill.Charge{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
-			},
-			Discounts: []*bill.Discount{
-				{Taxes: tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyStandard}}},
-			},
-		}
-	}
-
-	t.Run("tag not set is a no-op", func(t *testing.T) {
-		inv := makeInvoice()
-		normalizeInvoiceCustomerRates(inv)
-		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
-	})
-
-	t.Run("standard combos pick up RL by default", func(t *testing.T) {
-		inv := makeInvoice()
-		inv.SetTags(tax.TagCustomerRates)
-		normalizeInvoiceCustomerRates(inv)
-		for _, tc := range []*tax.Combo{
-			inv.Lines[0].Taxes[0],
-			inv.Charges[0].Taxes[0],
-			inv.Discounts[0].Taxes[0],
-		} {
-			assert.Equal(t, cbc.Code("RL"), tc.Ext.Get(ExtKeyExempt))
-		}
-	})
-
-	t.Run("existing exempt code is preserved", func(t *testing.T) {
-		inv := makeInvoice()
-		inv.SetTags(tax.TagCustomerRates)
-		inv.Lines[0].Taxes[0].Ext = tax.ExtensionsOf(cbc.CodeMap{ExtKeyExempt: "IE"})
-		normalizeInvoiceCustomerRates(inv)
-		assert.Equal(t, cbc.Code("IE"), inv.Lines[0].Taxes[0].Ext.Get(ExtKeyExempt))
-	})
-
-	t.Run("non-standard key is untouched", func(t *testing.T) {
-		inv := makeInvoice()
-		inv.Lines[0].Taxes[0].Key = tax.KeyReverseCharge
-		inv.SetTags(tax.TagCustomerRates)
-		normalizeInvoiceCustomerRates(inv)
-		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
-	})
-
-	t.Run("non-VAT/IGIC/IPSI combos are skipped", func(t *testing.T) {
-		inv := makeInvoice()
-		inv.SetTags(tax.TagCustomerRates)
-		inv.Lines[0].Taxes[0].Category = tax.CategoryGST
-		normalizeInvoiceCustomerRates(inv)
-		assert.True(t, inv.Lines[0].Taxes[0].Ext.IsZero())
-	})
-
-	t.Run("nil line/charge/discount is skipped", func(t *testing.T) {
-		inv := &bill.Invoice{
-			Lines:     []*bill.Line{nil},
-			Charges:   []*bill.Charge{nil},
-			Discounts: []*bill.Discount{nil},
-		}
-		inv.SetTags(tax.TagCustomerRates)
-		assert.NotPanics(t, func() { normalizeInvoiceCustomerRates(inv) })
-	})
-
-	t.Run("nil combo is skipped", func(t *testing.T) {
-		inv := &bill.Invoice{
-			Lines:     []*bill.Line{{Taxes: tax.Set{nil}}},
-			Charges:   []*bill.Charge{{Taxes: tax.Set{nil}}},
-			Discounts: []*bill.Discount{{Taxes: tax.Set{nil}}},
-		}
-		inv.SetTags(tax.TagCustomerRates)
-		assert.NotPanics(t, func() { normalizeInvoiceCustomerRates(inv) })
-	})
 }
 
 func TestNormalizeBillLineNoVAT(t *testing.T) {

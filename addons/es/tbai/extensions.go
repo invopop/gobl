@@ -319,7 +319,6 @@ var extensions = []*cbc.Definition{
 				|----------------------------|-------------|
 				| Key ~export~               | ~02~        |
 				| Has surcharge              | ~51~        |
-				| Invoice tag ~simplified-scheme~ | ~52~   |
 				| Otherwise                  | ~01~        |
 			`),
 		},

@@ -21,19 +21,19 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				tc.Ext = tc.Ext.
 					Set(ExtKeyExempt, "RL")
 			}
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
 			return
 		}
 
 		prepareTaxComboKey(tc)
 
-		// Per-combo regime signals; invoice-wide defaults are applied in
-		// normalizeInvoiceRegime.
 		if tc.Key == tax.KeyExport {
 			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "02")
 		}
 		if tc.Surcharge != nil || tc.Rate.Has(es.TaxRateEquivalence) {
 			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "51")
 		}
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
 
 		// Deterministically set the exemption code.
 		switch tc.Key {

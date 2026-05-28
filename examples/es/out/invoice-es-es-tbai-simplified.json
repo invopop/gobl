@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f5e83ddf05d37a824a8a4b805b581fd83cb4f0f37ca01dcb8e170f7a7b986ddf"
+			"val": "69c209a4303724b9278fa17b8add117be09d46b368c4157c37a0aab75ec62fe7"
 		}
 	},
 	"doc": {
@@ -12,9 +12,6 @@
 		"$regime": "ES",
 		"$addons": [
 			"es-tbai-v1"
-		],
-		"$tags": [
-			"simplified-scheme"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -25,14 +22,7 @@
 		"tax": {
 			"ext": {
 				"es-tbai-region": "SS"
-			},
-			"notes": [
-				{
-					"cat": "VAT",
-					"key": "simplified-scheme",
-					"text": "Factura expedida por contribuyente en régimen simplificado."
-				}
-			]
+			}
 		},
 		"supplier": {
 			"name": "Talleres del Norte S.L.",

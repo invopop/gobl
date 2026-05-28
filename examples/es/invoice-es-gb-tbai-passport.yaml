@@ -1,6 +1,5 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons: ["es-tbai-v1"]
-$tags: ["customer-rates"]
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "EUR"
 issue_date: "2024-07-19"
@@ -37,7 +36,9 @@ lines:
       price: "75.00"
     taxes:
       - cat: VAT
-        rate: standard
+        key: outside-scope
+        ext:
+          es-tbai-exemption: "RL"
 
 notes:
   - key: "general"

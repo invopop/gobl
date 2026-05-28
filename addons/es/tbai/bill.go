@@ -29,8 +29,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 	normalizeInvoiceTax(inv)
 	normalizeInvoiceSimplified(inv)
-	normalizeInvoiceCustomerRates(inv)
-	normalizeInvoiceRegime(inv)
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
@@ -48,63 +46,6 @@ func normalizeInvoiceSimplified(inv *bill.Invoice) {
 		inv.Tax = tx
 	}
 	tx.Ext = tx.Ext.Set(ExtKeySimplified, ExtValueSimplifiedYes)
-}
-
-// normalizeInvoiceCustomerRates is a backward-compatibility shim: when the
-// invoice carries the ~customer-rates~ tag, any VAT/IGIC/IPSI combo still in
-// the ~standard~ key gets a default ~RL~ exemption code. Combos that have
-// already been classified (an explicit Key, an ext code already set, an
-// explicit Country handled by the tax-combo normalizer) are left untouched.
-func normalizeInvoiceCustomerRates(inv *bill.Invoice) {
-	if !inv.HasTags(tax.TagCustomerRates) {
-		return
-	}
-	forEachVATCombo(inv, func(tc *tax.Combo) {
-		if tc.Key == tax.KeyStandard {
-			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyExempt, "RL")
-		}
-	})
-}
-
-// normalizeInvoiceRegime fills in the fallback regime code on every VAT/IGIC
-// combo: ~52~ under the simplified-scheme tag, ~01~ otherwise. Per-combo
-// signals (export → ~02~, surcharge → ~51~) set earlier in normalizeTaxCombo
-// take precedence because SetIfEmpty no-ops on a populated key.
-func normalizeInvoiceRegime(inv *bill.Invoice) {
-	fallback := cbc.Code("01")
-	if inv.HasTags(es.TagSimplifiedScheme) {
-		fallback = "52"
-	}
-	forEachVATCombo(inv, func(tc *tax.Combo) {
-		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, fallback)
-	})
-}
-
-// forEachVATCombo applies fn to every VAT/IGIC/IPSI combo in the invoice's
-// lines, charges, and discounts. Nil entries are skipped.
-func forEachVATCombo(inv *bill.Invoice, fn func(*tax.Combo)) {
-	apply := func(combos tax.Set) {
-		for _, tc := range combos {
-			if tc != nil && tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI) {
-				fn(tc)
-			}
-		}
-	}
-	for _, line := range inv.Lines {
-		if line != nil {
-			apply(line.Taxes)
-		}
-	}
-	for _, ch := range inv.Charges {
-		if ch != nil {
-			apply(ch.Taxes)
-		}
-	}
-	for _, d := range inv.Discounts {
-		if d != nil {
-			apply(d.Taxes)
-		}
-	}
 }
 
 // normalizeInvoicePartyIdentity maps the customer's first identity key onto the
@@ -207,7 +148,10 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.Func("non-simplified", func(val any) bool {
 				inv, ok := val.(*bill.Invoice)
-				return ok && inv != nil && !inv.HasTags(tax.TagSimplified)
+				if !ok || inv == nil {
+					return false
+				}
+				return inv.Tax == nil || !inv.Tax.Ext.Get(ExtKeySimplified).In(ExtValueSimplifiedYes)
 			}),
 			rules.Field("customer",
 				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
