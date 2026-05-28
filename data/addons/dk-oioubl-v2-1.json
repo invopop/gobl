@@ -1,0 +1,29 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "dk-oioubl-v2-1",
+  "name": {
+    "da": "Dansk OIOUBL 2.1",
+    "en": "Danish OIOUBL 2.1"
+  },
+  "description": {
+    "da": "Understøttelse af den danske OIOUBL 2.1-standard, som anvendes på\nNemHandel-netværket og har været obligatorisk for offentlige\nindkøb (B2G) i Danmark siden 2005.",
+    "en": "Support for the Danish OIOUBL 2.1 standard used on the NemHandel\ne-invoicing network, mandatory for business-to-government (B2G)\ntransactions in Denmark since 2005.\n\nOIOUBL 2.1 is a national profile of UBL 2.1, maintained by\nErhvervsstyrelsen (the Danish Business Authority). Unlike many\nEuropean profiles it predates and does not extend EN 16931.\n\nThis addon translates the OIOUBL Schematron rules (v1.17.1, live\nsince 2026-05-18) into GOBL validations. OIOUBL 2.1 is scheduled\nto be replaced by NemHandel BIS 4 starting in 2028."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "OIOUBL 2.1 documentation overview"
+      },
+      "url": "https://nemhandel.dk/vejledning-oioubl-dokumentationsoversigt"
+    },
+    {
+      "title": {
+        "en": "OIOUBL Schematron v1.17.1 (released 2026-02-19)"
+      },
+      "url": "https://nemhandel.dk/oioubl-21-schematron-version-1171"
+    }
+  ],
+  "extensions": null,
+  "scenarios": null,
+  "corrections": null
+}
