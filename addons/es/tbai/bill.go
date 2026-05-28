@@ -28,9 +28,26 @@ func normalizeInvoice(inv *bill.Invoice) {
 		return
 	}
 	normalizeInvoiceTax(inv)
+	normalizeInvoiceSimplified(inv)
 	normalizeInvoiceCustomerRates(inv)
 	normalizeInvoiceRegime(inv)
 	normalizeInvoicePartyIdentity(inv.Customer)
+}
+
+// normalizeInvoiceSimplified sets es-tbai-simplified = ~S~ on the invoice's
+// tax extensions when the generic ~simplified~ tag is present, so downstream
+// conversion can route on the extension rather than the tag. The default
+// (no tag) is left unset and treated as ~N~ by consumers.
+func normalizeInvoiceSimplified(inv *bill.Invoice) {
+	if !inv.HasTags(tax.TagSimplified) {
+		return
+	}
+	tx := inv.Tax
+	if tx == nil {
+		tx = &bill.Tax{}
+		inv.Tax = tx
+	}
+	tx.Ext = tx.Ext.Set(ExtKeySimplified, ExtValueSimplifiedYes)
 }
 
 // normalizeInvoiceCustomerRates is a backward-compatibility shim: when the

@@ -15,6 +15,13 @@ const (
 	ExtKeyBIActivity   cbc.Key = "es-tbai-bi-activity"
 	ExtKeyRegime       cbc.Key = "es-tbai-regime"
 	ExtKeyIdentityType cbc.Key = "es-tbai-identity-type"
+	ExtKeySimplified   cbc.Key = "es-tbai-simplified"
+)
+
+// Extension values for the simplified flag.
+const (
+	ExtValueSimplifiedYes cbc.Code = "S"
+	ExtValueSimplifiedNo  cbc.Code = "N"
 )
 
 // Identity Type Codes - subset of the L7 list assigned to identities.
@@ -580,6 +587,36 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Other Identity Document",
 					i18n.ES: "Otro Documento Probatorio",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySimplified,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI Simplified Invoice Flag",
+			i18n.ES: "Indicador de Factura Simplificada TicketBAI",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Flag that maps to the ~FacturaSimplificada~ field in TicketBAI
+				documents. Set automatically by GOBL during normalization based
+				on the ~simplified~ tag: ~S~ when the tag is present, ~N~ otherwise.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtValueSimplifiedYes,
+				Name: i18n.String{
+					i18n.EN: "Yes",
+					i18n.ES: "Sí",
+				},
+			},
+			{
+				Code: ExtValueSimplifiedNo,
+				Name: i18n.String{
+					i18n.EN: "No",
+					i18n.ES: "No",
 				},
 			},
 		},

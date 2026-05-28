@@ -173,6 +173,20 @@ func TestInvoiceNormalization(t *testing.T) {
 		assert.Equal(t, cbc.Code("01"), inv.Charges[0].Taxes[0].Ext.Get(ExtKeyRegime))
 		assert.Equal(t, cbc.Code("01"), inv.Discounts[0].Taxes[0].Ext.Get(ExtKeyRegime))
 	})
+
+	t.Run("simplified tag sets es-tbai-simplified=S", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		inv.SetTags(tax.TagSimplified)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, ExtValueSimplifiedYes, inv.Tax.Ext.Get(ExtKeySimplified))
+	})
+
+	t.Run("no simplified tag leaves es-tbai-simplified unset", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Tax.Ext.Get(ExtKeySimplified).String())
+	})
 }
 
 func TestInvoicePartyNormalization(t *testing.T) {
