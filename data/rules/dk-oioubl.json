@@ -63,6 +63,128 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-DK-OIOUBL-BILL-STATUS",
+      "object": "bill.Status",
+      "subsets": [
+        {
+          "guard": "response status type",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-05",
+                  "desc": "code is required (F-APR005)",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-06",
+                  "desc": "supplier must have a tax ID or identities (F-APR040)",
+                  "tests": "has tax id or identities"
+                },
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-07",
+                  "desc": "supplier must have a name or identities (F-LIB022)",
+                  "tests": "has name or identities"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "inboxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-STATUS-01",
+                      "desc": "supplier inboxes are required (F-APR008)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-02",
+                  "desc": "customer is required for a response",
+                  "tests": "present"
+                },
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-08",
+                  "desc": "customer must have a name or identities (F-LIB022)",
+                  "tests": "has name or identities"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "inboxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-STATUS-03",
+                      "desc": "customer inboxes are required (F-APR012)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "issuer",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-10",
+                  "desc": "issuer must have a tax ID or identities when set (F-APR048)",
+                  "tests": "has tax id or identities"
+                },
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-11",
+                  "desc": "issuer must have a name or identities when set (F-LIB022)",
+                  "tests": "has name or identities"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "inboxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-STATUS-09",
+                      "desc": "issuer inboxes are required when issuer is set (F-APR047)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "doc",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-OIOUBL-BILL-STATUS-04",
+                          "desc": "line document reference is required for a response (cf. F-APR016, F-APR025)",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
