@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
+- `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
