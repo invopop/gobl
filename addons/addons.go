@@ -15,6 +15,7 @@ import (
 	_ "github.com/invopop/gobl/addons/co/dian"
 	_ "github.com/invopop/gobl/addons/de/xrechnung"
 	_ "github.com/invopop/gobl/addons/de/zugferd"
+	_ "github.com/invopop/gobl/addons/dk/oioubl-v2-1"
 	_ "github.com/invopop/gobl/addons/es/facturae"
 	_ "github.com/invopop/gobl/addons/es/sii"
 	_ "github.com/invopop/gobl/addons/es/tbai"
