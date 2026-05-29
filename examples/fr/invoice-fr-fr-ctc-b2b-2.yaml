@@ -7,6 +7,9 @@ issue_date: "2024-06-13"
 series: "FAC"
 code: "2024-00001"
 
+tax:
+  ext:
+    dgfip-billing-mode: "B7"
 supplier:
   tax_id:
     country: "FR"
