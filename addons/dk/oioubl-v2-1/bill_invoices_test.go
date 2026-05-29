@@ -131,4 +131,36 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})
+
+	t.Run("missing invoice code fails (F-INV009)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV009")
+	})
+
+	t.Run("zero line quantity fails (F-INV147)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Quantity = num.MakeAmount(0, 0)
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV147")
+	})
+
+	t.Run("line order ref without invoice ordering fails (F-INV142)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Order = "PO-LINE-1"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV142")
+	})
+
+	t.Run("line order ref with invoice ordering passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Order = "PO-LINE-1"
+		inv.Ordering = &bill.Ordering{Code: "PO-2026-001"}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
 }

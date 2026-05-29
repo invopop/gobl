@@ -8,6 +8,16 @@
       "object": "bill.Invoice",
       "subsets": [
         {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-DK-OIOUBL-BILL-INVOICE-05",
+              "desc": "invoice code is required (F-INV009)",
+              "tests": "present"
+            }
+          ]
+        },
+        {
           "field": "supplier",
           "subsets": [
             {
@@ -48,6 +58,21 @@
           ]
         },
         {
+          "guard": "any line has order ref",
+          "subsets": [
+            {
+              "field": "ordering",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-07",
+                  "desc": "ordering is required when any line has an order reference (F-INV142)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "field": "ordering",
           "subsets": [
             {
@@ -57,6 +82,26 @@
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-04",
                   "desc": "ordering code is required when ordering is set (F-INV024)",
                   "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "lines",
+          "subsets": [
+            {
+              "each": true,
+              "subsets": [
+                {
+                  "field": "quantity",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-06",
+                      "desc": "line quantity must not be zero (F-INV147)",
+                      "tests": "non-zero amount"
+                    }
+                  ]
                 }
               ]
             }
