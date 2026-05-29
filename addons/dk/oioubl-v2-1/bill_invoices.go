@@ -2,10 +2,20 @@ package oioubl
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
+
+// validPaymentMeansCodes is the OIOUBL 2.1 codelist for cbc:PaymentMeansCode,
+// per F-LIB100. UNTDID 4461 is broader; the addon rejects any code outside
+// this subset before the gobl.ubl converter emits it.
+var validPaymentMeansCodes = []cbc.Code{
+	"1", "10", "20", "31", "42", "48", "49", "50", "58", "59", "93", "97",
+}
 
 // Rule citations reference the OIOUBL Invoice schematron (F-INV) first and
 // the CreditNote equivalent (F-CRN) second where one exists. F-INV142 is
@@ -61,6 +71,14 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("delivery",
 			rules.When(is.Func("receiver set without identities or addresses", deliveryReceiverWithoutLocationData),
 				rules.Assert("11", "delivery requires either identities or receiver.addresses (F-INV239 / F-CRN158)", is.Func("never", neverTrue)),
+			),
+		),
+		rules.Field("payment",
+			rules.Field("instructions",
+				rules.Field("ext",
+					rules.AssertIfPresent("12", "payment-means code must be one of the OIOUBL allowed values (F-LIB100)",
+						tax.ExtensionsHasCodes(untdid.ExtKeyPaymentMeans, validPaymentMeansCodes...)),
+				),
 			),
 		),
 		rules.Field("lines",

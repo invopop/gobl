@@ -123,6 +123,31 @@
           ]
         },
         {
+          "field": "payment",
+          "subsets": [
+            {
+              "field": "instructions",
+              "subsets": [
+                {
+                  "field": "ext",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-OIOUBL-BILL-INVOICE-12",
+                          "desc": "payment-means code must be one of the OIOUBL allowed values (F-LIB100)",
+                          "tests": "ext 'untdid-payment-means' in [1, 10, 20, 31, 42, 48, 49, 50, 58, 59, 93, 97]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "field": "lines",
           "subsets": [
             {
