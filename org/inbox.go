@@ -1,6 +1,8 @@
 package org
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -49,7 +51,10 @@ func (i *Inbox) Normalize() {
 	if is.EmailFormat.Check(code) {
 		i.Email = code
 		i.Code = ""
-	} else if is.URL.Check(code) {
+	} else if strings.Contains(code, "://") && is.URL.Check(code) {
+		// Only route a code into URL when it carries an explicit scheme.
+		// Otherwise permissive URL validation misclassifies dotted codes
+		// (e.g. the Peppol participant ID "BE0425.260.668") as URLs.
 		i.URL = code
 		i.Code = ""
 	}

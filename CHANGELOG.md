@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `org`: `Inbox.Normalize()` no longer misclassifies a dotted `code` (e.g. the Peppol participant ID `BE0425.260.668`) as a `url`. A code is only routed into `url` when it carries an explicit scheme (`://`), keeping schemeless identifiers in `code`.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
