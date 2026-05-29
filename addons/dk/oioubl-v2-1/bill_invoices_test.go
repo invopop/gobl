@@ -163,4 +163,107 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})
+
+	t.Run("rounding above 10.00 fails (F-INV338)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		excess := num.MakeAmount(1500, 2)
+		inv.Totals.Rounding = &excess
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV338")
+	})
+
+	t.Run("rounding below -10.00 fails (F-INV338)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		excess := num.MakeAmount(-1500, 2)
+		inv.Totals.Rounding = &excess
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV338")
+	})
+
+	t.Run("rounding within range passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		amount := num.MakeAmount(500, 2)
+		inv.Totals.Rounding = &amount
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("negative line discount fails (F-INV335)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Discounts = []*bill.LineDiscount{
+			{Amount: num.MakeAmount(-500, 2)},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV335")
+	})
+
+	t.Run("negative line charge fails (F-INV335)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Charges = []*bill.LineCharge{
+			{Amount: num.MakeAmount(-500, 2)},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV335")
+	})
+}
+
+func testCreditNoteStandard(t *testing.T) *bill.Invoice {
+	t.Helper()
+	inv := testInvoiceStandard(t)
+	inv.Type = bill.InvoiceTypeCreditNote
+	inv.Code = "CN-1000"
+	return inv
+}
+
+func TestCreditNoteValidation(t *testing.T) {
+	t.Run("standard credit note", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		require.NoError(t, cn.Calculate())
+		require.NoError(t, rules.Validate(cn))
+	})
+
+	t.Run("missing credit-note code fails (F-CRN006)", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		cn.Code = ""
+		require.NoError(t, cn.Calculate())
+		err := rules.Validate(cn)
+		assert.ErrorContains(t, err, "F-INV009")
+	})
+
+	t.Run("zero credit-note line quantity fails (F-CRN088)", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		cn.Lines[0].Quantity = num.MakeAmount(0, 0)
+		require.NoError(t, cn.Calculate())
+		err := rules.Validate(cn)
+		assert.ErrorContains(t, err, "F-INV147")
+	})
+
+	t.Run("missing supplier inboxes fails (F-CRN028)", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		cn.Supplier.Inboxes = nil
+		require.NoError(t, cn.Calculate())
+		err := rules.Validate(cn)
+		assert.ErrorContains(t, err, "F-INV031")
+	})
+
+	t.Run("credit note with line order ref does not fire F-INV142", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		cn.Lines[0].Order = "PO-LINE-1"
+		require.NoError(t, cn.Calculate())
+		assert.NoError(t, rules.Validate(cn))
+	})
+
+	t.Run("negative credit-note line discount fails (F-CRN203)", func(t *testing.T) {
+		cn := testCreditNoteStandard(t)
+		cn.Lines[0].Discounts = []*bill.LineDiscount{
+			{Amount: num.MakeAmount(-500, 2)},
+		}
+		require.NoError(t, cn.Calculate())
+		err := rules.Validate(cn)
+		assert.ErrorContains(t, err, "F-INV335")
+	})
 }

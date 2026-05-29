@@ -12,7 +12,7 @@
           "assert": [
             {
               "id": "GOBL-DK-OIOUBL-BILL-INVOICE-05",
-              "desc": "invoice code is required (F-INV009)",
+              "desc": "invoice code is required (F-INV009 / F-CRN006)",
               "tests": "present"
             }
           ]
@@ -25,7 +25,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-01",
-                  "desc": "supplier inboxes are required (F-INV031)",
+                  "desc": "supplier inboxes are required (F-INV031 / F-CRN028)",
                   "tests": "present"
                 }
               ]
@@ -40,7 +40,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-02",
-                  "desc": "customer inboxes are required (F-INV044)",
+                  "desc": "customer inboxes are required (F-INV044 / F-CRN040)",
                   "tests": "present"
                 }
               ]
@@ -50,7 +50,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-03",
-                  "desc": "customer people are required (F-INV046)",
+                  "desc": "customer people are required (F-INV046 / F-CRN042)",
                   "tests": "present"
                 }
               ]
@@ -58,14 +58,14 @@
           ]
         },
         {
-          "guard": "any line has order ref",
+          "guard": "non-credit-note invoice with line order ref",
           "subsets": [
             {
               "field": "ordering",
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-07",
-                  "desc": "ordering is required when any line has an order reference (F-INV142)",
+                  "desc": "ordering is required when any invoice line has an order reference (F-INV142)",
                   "tests": "present"
                 }
               ]
@@ -80,8 +80,28 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-04",
-                  "desc": "ordering code is required when ordering is set (F-INV024)",
+                  "desc": "ordering code is required when ordering is set (F-INV024 / F-CRN025)",
                   "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "totals",
+          "subsets": [
+            {
+              "field": "rounding",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-08",
+                      "desc": "rounding must be between -10.00 and 10.00 (F-INV338 / F-CRN208)",
+                      "tests": "in rounding range"
+                    }
+                  ]
                 }
               ]
             }
@@ -98,8 +118,48 @@
                   "assert": [
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-INVOICE-06",
-                      "desc": "line quantity must not be zero (F-INV147)",
+                      "desc": "line quantity must not be zero (F-INV147 / F-CRN088)",
                       "tests": "non-zero amount"
+                    }
+                  ]
+                },
+                {
+                  "field": "discounts",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "amount",
+                          "assert": [
+                            {
+                              "id": "GOBL-DK-OIOUBL-BILL-INVOICE-09",
+                              "desc": "line discount amount must not be negative (F-INV335 / F-CRN203)",
+                              "tests": "non-negative amount"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "charges",
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "amount",
+                          "assert": [
+                            {
+                              "id": "GOBL-DK-OIOUBL-BILL-INVOICE-10",
+                              "desc": "line charge amount must not be negative (F-INV335 / F-CRN203)",
+                              "tests": "non-negative amount"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
