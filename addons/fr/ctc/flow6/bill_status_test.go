@@ -34,20 +34,6 @@ func statusSupplierParty() *org.Party {
 	}
 }
 
-// issuerParty returns a buyer-side Issuer with a SIREN identity and
-// inbox so BR-FR-CDV-08 is satisfied.
-func issuerParty() *org.Party {
-	return &org.Party{
-		Name: "ACHETEUR",
-		Identities: []*org.Identity{{
-			Code: "200000008",
-			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, identitySchemeIDSIREN),
-		}},
-		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
-		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBuyer),
-	}
-}
-
 func statusCustomerParty() *org.Party {
 	return &org.Party{
 		Name: "ACHETEUR",
@@ -57,20 +43,6 @@ func statusCustomerParty() *org.Party {
 		}},
 		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "200000008_PEP"}},
 		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleBuyer),
-	}
-}
-
-// recipientParty returns the seller-end Recipient counterpart with an
-// inbox so BR-FR-CDV-08 is satisfied.
-func recipientParty() *org.Party {
-	return &org.Party{
-		Name: "VENDEUR",
-		Identities: []*org.Identity{{
-			Code: "356000000",
-			Ext:  tax.MakeExtensions().Set(iso.ExtKeySchemeID, identitySchemeIDSIREN),
-		}},
-		Inboxes: []*org.Inbox{{Scheme: "0225", Code: "356000000_PEP"}},
-		Ext:     tax.MakeExtensions().Set(ExtKeyRole, RoleSeller),
 	}
 }
 

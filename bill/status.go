@@ -538,7 +538,7 @@ type Action struct {
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Faults provides a more formal structure for describing with a specific
+// Fault provides a more formal structure for describing with a specific
 // code what has been unacceptable about the source document, including
 // potentially references to the fields causing issues.
 type Fault struct {

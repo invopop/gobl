@@ -63,36 +63,36 @@ func TestAnyOfCheckWithContext(t *testing.T) {
 
 	t.Run("context-aware inner test passes", func(t *testing.T) {
 		inner := contextTest{key: "k", expect: "v"}
-		any := is.AnyOf(inner)
+		aoTest := is.AnyOf(inner)
 		rc := &rules.Context{}
 		rc.Set("k", "v")
-		ct := any.(rules.ContextualTest)
+		ct := aoTest.(rules.ContextualTest)
 		assert.True(t, ct.CheckWithContext(rc, nil))
 	})
 
 	t.Run("all fail", func(t *testing.T) {
 		inner := contextTest{key: "k", expect: "v"}
-		any := is.AnyOf(inner)
+		aoTest := is.AnyOf(inner)
 		rc := &rules.Context{}
 		rc.Set("k", "other")
-		ct := any.(rules.ContextualTest)
+		ct := aoTest.(rules.ContextualTest)
 		assert.False(t, ct.CheckWithContext(rc, nil))
 	})
 
 	t.Run("mix of ContextualTest and plain Test", func(t *testing.T) {
 		inner := contextTest{key: "k", expect: "v"}
-		any := is.AnyOf(alwaysFail, inner)
+		aoTest := is.AnyOf(alwaysFail, inner)
 		rc := &rules.Context{}
 		rc.Set("k", "v")
-		ct := any.(rules.ContextualTest)
+		ct := aoTest.(rules.ContextualTest)
 		assert.True(t, ct.CheckWithContext(rc, nil))
 	})
 
 	t.Run("plain test passes in CheckWithContext", func(t *testing.T) {
 		alwaysPass := is.Func("pass", func(any) bool { return true })
-		any := is.AnyOf(alwaysPass)
+		aoTest := is.AnyOf(alwaysPass)
 		rc := &rules.Context{}
-		ct := any.(rules.ContextualTest)
+		ct := aoTest.(rules.ContextualTest)
 		assert.True(t, ct.CheckWithContext(rc, nil))
 	})
 }

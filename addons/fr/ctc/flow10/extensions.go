@@ -61,4 +61,3 @@ var extensions = []*cbc.Definition{
 		},
 	},
 }
-
