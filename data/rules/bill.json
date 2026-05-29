@@ -781,7 +781,7 @@
             },
             {
               "id": "GOBL-BILL-STATUSLINE-02",
-              "desc": "status line key is valid",
+              "desc": "status line key is not valid",
               "tests": "one of [issued, acknowledged, processing, querying, rejected, accepted, paid, error, other]"
             }
           ]
