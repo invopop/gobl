@@ -209,6 +209,40 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "F-INV335")
 	})
+
+	t.Run("delivery with receiver and addresses passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{
+			Receiver: &org.Party{
+				Name: "Modtager A/S",
+				Addresses: []*org.Address{
+					{Street: "Leveringsvej 2", Locality: "Odense", Code: "5000", Country: "DK"},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("delivery with receiver only and no identities fails (F-INV239)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{
+			Receiver: &org.Party{Name: "Modtager A/S"},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "F-INV239")
+	})
+
+	t.Run("delivery with receiver and identities passes (no addresses)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{
+			Receiver:   &org.Party{Name: "Modtager A/S"},
+			Identities: []*org.Identity{{Code: "DEL-LOC-1"}},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
 }
 
 func testCreditNoteStandard(t *testing.T) *bill.Invoice {

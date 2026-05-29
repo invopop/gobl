@@ -54,6 +54,15 @@ func billInvoiceRules() *rules.Set {
 				rules.AssertIfPresent("08", "rounding must be between -10.00 and 10.00 (F-INV338 / F-CRN208)", is.Func("in rounding range", roundingInRange)),
 			),
 		),
+		// F-INV239 / F-CRN158: gobl.ubl emits cac:DeliveryLocation whenever
+		// delivery.receiver is set; the schematron then requires either an ID
+		// (sourced from delivery.identities[0].code) or an Address (sourced
+		// from receiver.addresses).
+		rules.Field("delivery",
+			rules.When(is.Func("receiver set without identities or addresses", deliveryReceiverWithoutLocationData),
+				rules.Assert("11", "delivery requires either identities or receiver.addresses (F-INV239 / F-CRN158)", is.Func("never", neverTrue)),
+			),
+		),
 		rules.Field("lines",
 			rules.Each(
 				rules.Field("quantity",
@@ -112,6 +121,23 @@ func amountNonNegative(val any) bool {
 		return a == nil || !a.IsNegative()
 	}
 	return true
+}
+
+func deliveryReceiverWithoutLocationData(val any) bool {
+	del, ok := val.(*bill.DeliveryDetails)
+	if !ok || del == nil || del.Receiver == nil {
+		return false
+	}
+	for _, id := range del.Identities {
+		if !id.Code.IsEmpty() {
+			return false
+		}
+	}
+	return len(del.Receiver.Addresses) == 0
+}
+
+func neverTrue(any) bool {
+	return false
 }
 
 func roundingInRange(val any) bool {

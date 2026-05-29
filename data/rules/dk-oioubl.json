@@ -108,6 +108,21 @@
           ]
         },
         {
+          "field": "delivery",
+          "subsets": [
+            {
+              "guard": "receiver set without identities or addresses",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-11",
+                  "desc": "delivery requires either identities or receiver.addresses (F-INV239 / F-CRN158)",
+                  "tests": "never"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "field": "lines",
           "subsets": [
             {
