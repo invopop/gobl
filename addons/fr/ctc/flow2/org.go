@@ -56,7 +56,7 @@ func normalizePartyFromTaxID(party *org.Party) {
 	if code == "" || country != l10n.FR {
 		return
 	}
-	ensureIdentity(party, fr.IdentityTypeSIREN, cbc.Code(sirenFromFrenchTaxID(code, party)), identitySchemeIDSIREN)
+	ensureSIRENIdentity(party, cbc.Code(sirenFromFrenchTaxID(code, party)))
 }
 
 func sirenFromFrenchTaxID(taxCode string, party *org.Party) string {
@@ -80,20 +80,22 @@ func sirenFromFrenchTaxID(taxCode string, party *org.Party) string {
 	return digits
 }
 
-func ensureIdentity(party *org.Party, typ cbc.Code, code cbc.Code, schemeID string) {
+// ensureSIRENIdentity appends a SIREN legal identity (ISO scheme 0002)
+// when the party does not already carry one.
+func ensureSIRENIdentity(party *org.Party, code cbc.Code) {
 	if code == "" {
 		return
 	}
 	for _, id := range party.Identities {
-		if id != nil && !id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID).String() == schemeID {
+		if id != nil && !id.Ext.IsZero() && id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN {
 			return
 		}
 	}
 	party.Identities = append(party.Identities, &org.Identity{
-		Type: typ,
+		Type: fr.IdentityTypeSIREN,
 		Code: code,
 		Ext: tax.ExtensionsOf(cbc.CodeMap{
-			iso.ExtKeySchemeID: cbc.Code(schemeID),
+			iso.ExtKeySchemeID: cbc.Code(identitySchemeIDSIREN),
 		}),
 		Scope: org.IdentityScopeLegal,
 	})

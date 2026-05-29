@@ -226,6 +226,33 @@ func TestReasonNormalizerFillsKeyFromExt(t *testing.T) {
 	assert.Equal(t, bill.ReasonKeyQuantity, r.Key)
 }
 
+// TestReasonKeyFromEachReasonCode exercises prepareReasonKey across
+// every CDAR ReasonCode bucket (one representative code each), so the
+// reverse mapping and the matching forward bucket are both covered.
+func TestReasonKeyFromEachReasonCode(t *testing.T) {
+	cases := map[cbc.Code]cbc.Key{
+		"COORD_BANC_ERR": bill.ReasonKeyFinanceTerms,
+		"AUTRE":          bill.ReasonKeyOther,
+		"NON_CONFORME":   bill.ReasonKeyLegal,
+		"DOUBLON":        bill.ReasonKeyNotRecognized,
+		"DEST_INC":       bill.ReasonKeyUnknownReceiver,
+		"CMD_ERR":        bill.ReasonKeyReferences,
+		"PU_ERR":         bill.ReasonKeyPrices,
+		"QTE_ERR":        bill.ReasonKeyQuantity,
+		"ART_ERR":        bill.ReasonKeyItems,
+		"MODPAI_ERR":     bill.ReasonKeyPaymentTerms,
+		"QUALITE_ERR":    bill.ReasonKeyQuality,
+		"LIVR_INCOMP":    bill.ReasonKeyDelivery,
+	}
+	for code, want := range cases {
+		t.Run(string(code), func(t *testing.T) {
+			r := &bill.Reason{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyReason: code})}
+			runNormalize(t, r)
+			assert.Equal(t, want, r.Key)
+		})
+	}
+}
+
 func TestReasonNormalizerFillsExtFromKey(t *testing.T) {
 	r := &bill.Reason{Key: bill.ReasonKeyItems}
 	runNormalize(t, r)
@@ -496,14 +523,6 @@ func TestSetPartyRoleDefaultExistingNotOverridden(t *testing.T) {
 	assert.Equal(t, RoleBuyer, p.Ext.Get(ExtKeyRole))
 }
 
-func TestPartyHasRoleWrongType(t *testing.T) {
-	assert.False(t, partyHasRole("x"))
-}
-
-func TestPartyHasRoleEmptyExt(t *testing.T) {
-	assert.False(t, partyHasRole(&org.Party{}))
-}
-
 func TestPartyHasInboxWhenRequiredWrongType(t *testing.T) {
 	assert.True(t, partyHasInboxWhenRequired("x"))
 }
@@ -511,21 +530,4 @@ func TestPartyHasInboxWhenRequiredWrongType(t *testing.T) {
 func TestPartyHasInboxWhenRequiredWKRole(t *testing.T) {
 	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RolePlatform})}
 	assert.True(t, partyHasInboxWhenRequired(p))
-}
-
-func TestStatusPartiesIdentitySchemesAllowedWrongType(t *testing.T) {
-	assert.True(t, statusPartiesIdentitySchemesAllowed("x"))
-}
-
-func TestEnsureSIRENOnSupplierAlreadyCarries(t *testing.T) {
-	siren := &org.Identity{
-		Code: "356000000",
-		Ext:  tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0002"}),
-	}
-	p := &org.Party{Identities: []*org.Identity{
-		{Code: "356000000", Ext: tax.ExtensionsOf(cbc.CodeMap{"iso-scheme-id": "0002"})},
-	}}
-	got := ensureSIRENOnSupplier(p, siren)
-	assert.Same(t, p, got)
-	assert.Len(t, got.Identities, 1)
 }

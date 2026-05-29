@@ -2,7 +2,6 @@ package flow6
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/iso"
@@ -121,28 +120,6 @@ func prepareStatusWithLine(s *bill.Status, line *bill.StatusLine) {
 	}
 }
 
-// ensureSIRENOnSupplier returns a Supplier party that carries the
-// given SIREN identity, creating one if it was nil and appending the
-// identity if the existing Supplier doesn't already carry the same
-// SIREN.
-func ensureSIRENOnSupplier(p *org.Party, siren *org.Identity) *org.Party {
-	clone := *siren
-	if p == nil {
-		return &org.Party{Identities: []*org.Identity{&clone}}
-	}
-	for _, id := range p.Identities {
-		if id == nil || id.Ext.IsZero() {
-			continue
-		}
-		if id.Ext.Get(iso.ExtKeySchemeID).String() == identitySchemeIDSIREN &&
-			id.Code == siren.Code {
-			return p
-		}
-	}
-	p.Identities = append(p.Identities, &clone)
-	return p
-}
-
 func setPartyRoleDefault(p *org.Party, role cbc.Code) {
 	if p == nil {
 		return
@@ -151,17 +128,6 @@ func setPartyRoleDefault(p *org.Party, role cbc.Code) {
 		return
 	}
 	p.Ext = p.Ext.Set(ExtKeyRole, role)
-}
-
-func partyHasRole(v any) bool {
-	p, ok := v.(*org.Party)
-	if !ok || p == nil {
-		return false
-	}
-	if p.Ext.IsZero() {
-		return false
-	}
-	return p.Ext.Get(ExtKeyRole) != ""
 }
 
 // partyHasInboxWhenRequired enforces BR-FR-CDV-08: a party whose role
@@ -412,31 +378,6 @@ func lineHasStatusCode(code cbc.Code) rules.Test {
 		line, ok := v.(*bill.StatusLine)
 		return ok && line != nil && line.Ext.Get(ExtKeyStatus) == code
 	})
-}
-
-// statusPartiesIdentitySchemesAllowed rejects any identity whose
-// iso-scheme-id falls outside allowedFlow6IdentitySchemes on any of
-// the four party slots on a bill.Status.
-func statusPartiesIdentitySchemesAllowed(v any) bool {
-	st, ok := v.(*bill.Status)
-	if !ok || st == nil {
-		return true
-	}
-	for _, p := range []*org.Party{st.Supplier, st.Customer} {
-		if p == nil {
-			continue
-		}
-		for _, id := range p.Identities {
-			if id == nil || id.Ext.IsZero() {
-				continue
-			}
-			scheme := id.Ext.Get(iso.ExtKeySchemeID)
-			if scheme != cbc.CodeEmpty && !slices.Contains(allowedFlow6IdentitySchemes, scheme) {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 // -- bill.Reason --------------------------------------------------------
