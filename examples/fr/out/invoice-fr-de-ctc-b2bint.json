@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d17dc25cecca7eeaf113e260e4dd8fbbdb147210c8f06194c333d912b5ca37b4"
+			"val": "817fcf0ee94be974e41dd2785156950d3bf46ace55a9b997ccac221dc57e0385"
 		}
 	},
 	"doc": {
@@ -121,7 +121,7 @@
 						"key": "exempt",
 						"ext": {
 							"cef-vatex": "VATEX-EU-IC",
-							"untdid-tax-category": "K"
+							"untdid-tax-category": "E"
 						}
 					}
 				],
@@ -154,7 +154,7 @@
 								"key": "exempt",
 								"ext": {
 									"cef-vatex": "VATEX-EU-IC",
-									"untdid-tax-category": "K"
+									"untdid-tax-category": "E"
 								},
 								"base": "1000.00",
 								"amount": "0.00"
