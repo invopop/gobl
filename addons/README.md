@@ -227,6 +227,32 @@ not import a helper.
 The rules framework is documented in [`rules/README.md`](../rules/README.md);
 this section covers conventions specific to addons.
 
+### Scope: data-model integrity vs. format compliance
+
+An addon's rules exist to protect **its own data model** — that the
+extensions it defines carry registered codes (with the right
+per-document-type partitions) and that the document is a shape its
+normalizer can handle. That is the floor that lets downstream code rely
+on the addon's output.
+
+Rules that re-implement a **format specification** (a country's
+e-invoicing Schematron, the EN16931 syntax binding, etc.) are usually
+better owned by the format **converter** project, not the addon:
+
+- The converter maps closely to the spec/Schematron and is the
+  authoritative compliance check and source of detailed rejection
+  feedback; duplicating those rules in the addon risks drift and bloat.
+- Substantive **legal** correctness (tax calculation, valid rates,
+  mandatory content) belongs in core `bill`/`tax` and the **regime**,
+  which run regardless of format.
+
+The French CTC addons (`addons/fr/ctc/*`) follow this split: they keep
+extension/shape integrity only, and the `gobl.frctc` converter owns the
+`BR-FR-*` / `G1.*`/`G2.*` business rules. Use `CONTRIBUTING.md`'s
+"minimum complexity for legal correctness" as the test: if a rule
+encodes the *format spec* rather than the *law* or the *addon's own data
+model*, prefer the converter.
+
 ### Compose with built-in testers
 
 Prefer composed `rules.When` / `rules.Field` / `rules.Each` with

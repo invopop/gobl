@@ -101,14 +101,6 @@ func TestStatusRejectsSystemType(t *testing.T) {
 	assert.ErrorContains(t, err, "type must be one of")
 }
 
-func TestStatusSupplierSIRENRequired(t *testing.T) {
-	st := testStatus(t)
-	st.Supplier.Identities = nil
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "SIREN")
-}
-
 func TestStatusKeyFilledFromStatusCodeExt(t *testing.T) {
 	st := testStatus(t)
 	st.Type = ""
@@ -119,39 +111,6 @@ func TestStatusKeyFilledFromStatusCodeExt(t *testing.T) {
 	assert.Equal(t, bill.StatusLineAccepted, st.Lines[0].Key)
 	assert.Equal(t, bill.StatusTypeResponse, st.Type)
 }
-
-func TestStatusTypeMismatchRejected(t *testing.T) {
-	st := testStatus(t)
-	runNormalize(t, st)
-	st.Type = bill.StatusTypeUpdate // accepted is a response code
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "consistent with status type 'update'")
-}
-
-func TestStatusRejectsMultipleLines(t *testing.T) {
-	st := testStatus(t)
-	issued := cal.MakeDate(2026, 2, 1)
-	st.Lines = append(st.Lines, &bill.StatusLine{
-		Key:  bill.StatusLineAccepted,
-		Date: &issued,
-		Doc: &org.DocumentRef{
-			Code:      "INV-2026-002",
-			IssueDate: &issued,
-		},
-	})
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "status lines must contain exactly one entry")
-}
-
-func TestStatusRejectsZeroLines(t *testing.T) {
-	st := testStatus(t)
-	st.Lines = nil
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "status lines must contain exactly one entry")
-}
-
-// --- StatusLine validation -----------------------------------------------
 
 func TestStatusLineUnknownKeyRejected(t *testing.T) {
 	st := testStatus(t)
@@ -166,48 +125,6 @@ func TestStatusLineEmptyKeyRejected(t *testing.T) {
 	st.Lines[0].Key = ""
 	err := rules.Validate(st)
 	assert.Error(t, err)
-}
-
-func TestStatusLineDocCodeRequired(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Doc.Code = ""
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "status line doc code is required")
-}
-
-func TestStatusLineDocIssueDateRequired(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Doc.IssueDate = nil
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "status line doc issue_date is required")
-}
-
-// --- BR-FR-CDV-15: reason required on rejection-like statuses -----------
-
-func TestStatusRejectedRequiresReason(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusLineRejected
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "reasons require at least one entry")
-}
-
-func TestStatusSuspendedRequiresReason(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusLineQuerying
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "reasons require at least one entry")
-}
-
-func TestStatusErrorRequiresReason(t *testing.T) {
-	st := testStatus(t)
-	st.Lines[0].Key = bill.StatusLineError
-	runNormalize(t, st)
-	err := rules.Validate(st)
-	assert.ErrorContains(t, err, "reasons require at least one entry")
 }
 
 func TestStatusAcceptedDoesNotRequireReason(t *testing.T) {
@@ -521,13 +438,4 @@ func TestSetPartyRoleDefaultExistingNotOverridden(t *testing.T) {
 	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RoleBuyer})}
 	setPartyRoleDefault(p, RoleSeller)
 	assert.Equal(t, RoleBuyer, p.Ext.Get(ExtKeyRole))
-}
-
-func TestPartyHasInboxWhenRequiredWrongType(t *testing.T) {
-	assert.True(t, partyHasInboxWhenRequired("x"))
-}
-
-func TestPartyHasInboxWhenRequiredWKRole(t *testing.T) {
-	p := &org.Party{Ext: tax.ExtensionsOf(cbc.CodeMap{ExtKeyRole: RolePlatform})}
-	assert.True(t, partyHasInboxWhenRequired(p))
 }

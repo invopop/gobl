@@ -135,24 +135,3 @@ var allowedInvoiceDocumentTypes = []cbc.Code{
 	"381", "261", "396", "502", "503",
 	"262",
 }
-
-// Self-billed document types (BR-FR-21/22).
-var selfBilledDocumentTypes = []cbc.Code{
-	"389", "501", "500", "471", "473", "261", "502",
-}
-
-// Corrective invoice document types (BR-FR-CO-04).
-var correctiveInvoiceTypes = []cbc.Code{
-	"384", "471", "472", "473",
-}
-
-// Credit note document types (BR-FR-CO-05).
-var creditNoteTypes = []cbc.Code{
-	"261", "381", "396", "502", "503",
-}
-
-// advancePaymentDocumentTypes are the UNTDID 1001 codes representing
-// advance-payment invoices (forbidden combined with B4/S4/M4 modes).
-var advancePaymentDocumentTypes = []cbc.Code{
-	"386", "500", "503",
-}

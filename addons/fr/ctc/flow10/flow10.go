@@ -1,7 +1,13 @@
 // Package flow10 implements the French CTC Flow 10 ("e-reporting")
-// rules for transactions that fall outside the Flow 2 clearance
+// support for transactions that fall outside the Flow 2 clearance
 // perimeter: B2C sales, cross-border B2B invoices, and payment
 // receipts subject to e-reporting to the French tax authority.
+//
+// The addon owns the data model: the French CTC extensions, their
+// normalization, and the minimal rules that protect the integrity of
+// those extensions and the document shape. French CTC format/Schematron
+// compliance (the G1.*/G2.* business rules) and detailed rejection
+// reporting are owned by the gobl.frctc converter.
 package flow10
 
 import (
@@ -34,7 +40,6 @@ func init() {
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billPaymentRules(),
-		orgPartyRules(),
 	)
 }
 

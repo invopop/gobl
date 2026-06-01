@@ -1,7 +1,13 @@
 // Package flow2 implements the French CTC Flow 2 ("facturation")
-// rules for domestic B2B clearance invoices exchanged between two
+// support for domestic B2B clearance invoices exchanged between two
 // French parties. Built on the EU EN16931 CIUS profile (which is
 // declared via the addon's Requires).
+//
+// The addon owns the data model: the French CTC extensions, their
+// normalization, and the minimal rules that protect the integrity of
+// those extensions and the document shape. French CTC format/Schematron
+// compliance (the BR-FR-* business rules) and detailed rejection
+// reporting are owned by the gobl.frctc converter.
 package flow2
 
 import (
@@ -34,10 +40,6 @@ func init() {
 		rules.GOBL.Add(Namespace),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
-		orgPartyRules(),
-		orgIdentityRules(),
-		orgInboxRules(),
-		orgItemRules(),
 	)
 }
 

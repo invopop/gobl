@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/dgfip"
 	"github.com/invopop/gobl/catalogues/iso"
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -150,30 +151,13 @@ func TestInvoiceB2CDefaultsCategoryToTNT1(t *testing.T) {
 	assert.Equal(t, B2CCategoryNotTaxable, inv.Tax.Ext.Get(ExtKeyB2CCategory))
 }
 
-func TestInvoiceB2CMissingSupplierSIRENFails(t *testing.T) {
-	inv := testInvoiceB2C(t)
-	inv.Supplier.Identities = nil
-	inv.Supplier.TaxID = nil
-	assert.Error(t, rules.Validate(inv))
-}
-
-func TestInvoiceB2BMissingBillingModeFails(t *testing.T) {
+// The addon validates only the integrity of its own extensions: an
+// unrecognised UNTDID document type is rejected. E-reporting business
+// rules (G1.*/G2.*) are the converter's responsibility.
+func TestInvoiceRejectsUnknownDocumentType(t *testing.T) {
 	inv := testInvoiceB2BCrossBorder(t)
-	inv.Tax.Ext = inv.Tax.Ext.Delete(dgfip.ExtKeyBillingMode)
-	assert.Error(t, rules.Validate(inv))
-}
-
-func TestInvoiceB2CVATRateRejectedOutsideWhitelist(t *testing.T) {
-	inv := testInvoiceB2C(t)
-	inv.Lines[0].Taxes = tax.Set{
-		{Category: tax.CategoryVAT, Percent: num.NewPercentage(35, 2)},
-	}
-	assert.Error(t, rules.Validate(inv))
-}
-
-func TestInvoiceB2BMissingSupplierAddressCountryFails(t *testing.T) {
-	inv := testInvoiceB2BCrossBorder(t)
-	inv.Supplier.Addresses[0].Country = ""
+	require.NoError(t, inv.Calculate())
+	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "999")
 	assert.Error(t, rules.Validate(inv))
 }
 

@@ -1,6 +1,12 @@
 // Package flow6 implements the French CTC Flow 6 ("Cycle de Vie")
-// lifecycle status messages exchanged between registered platforms
-// on a bill.Status document.
+// lifecycle status and payment messages exchanged between registered
+// platforms on bill.Status and bill.Payment documents.
+//
+// The addon owns the data model: the French CTC extensions, their
+// normalization, and the minimal rules that protect the integrity of
+// those extensions and the document shape. French CTC format/Schematron
+// compliance (the BR-FR-CDV-* business rules) and detailed rejection
+// reporting are owned by the gobl.frctc converter.
 package flow6
 
 import (

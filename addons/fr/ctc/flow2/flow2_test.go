@@ -131,21 +131,13 @@ func TestInvoiceB2BHappyPath(t *testing.T) {
 	require.NoError(t, rules.Validate(inv))
 }
 
-func TestInvoiceCodeFormatRejectsBadChars(t *testing.T) {
+// The addon validates only the integrity of its own extensions: an
+// unrecognised UNTDID document type is rejected. Format/business rules
+// (BR-FR-*) are the converter's responsibility.
+func TestInvoiceRejectsUnknownDocumentType(t *testing.T) {
 	inv := testInvoiceB2BStandard(t)
-	inv.Code = "INVALID CODE WITH SPACE"
-	assert.Error(t, rules.Validate(inv))
-}
-
-func TestInvoiceMissingNotesFails(t *testing.T) {
-	inv := testInvoiceB2BStandard(t)
-	inv.Notes = nil
-	assert.Error(t, rules.Validate(inv))
-}
-
-func TestInvoiceMissingBillingModeFails(t *testing.T) {
-	inv := testInvoiceB2BStandard(t)
-	inv.Tax.Ext = inv.Tax.Ext.Delete(dgfip.ExtKeyBillingMode)
+	require.NoError(t, inv.Calculate())
+	inv.Tax.Ext = inv.Tax.Ext.Set(untdid.ExtKeyDocumentType, "999")
 	assert.Error(t, rules.Validate(inv))
 }
 
