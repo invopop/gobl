@@ -142,6 +142,16 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "guard": "bank-transfer payment means without a payee account",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-13",
+                      "desc": "a credit transfer account (IBAN or number) is required for bank-transfer payment means (F-LIB107 / F-LIB126)",
+                      "tests": "never"
+                    }
+                  ]
                 }
               ]
             }

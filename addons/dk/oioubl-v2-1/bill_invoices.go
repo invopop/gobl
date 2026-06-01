@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -78,6 +79,9 @@ func billInvoiceRules() *rules.Set {
 				rules.Field("ext",
 					rules.AssertIfPresent("12", "payment-means code must be one of the OIOUBL allowed values (F-LIB100)",
 						tax.ExtensionsHasCodes(untdid.ExtKeyPaymentMeans, validPaymentMeansCodes...)),
+				),
+				rules.When(is.Func("bank-transfer payment means without a payee account", bankTransferMissingAccount),
+					rules.Assert("13", "a credit transfer account (IBAN or number) is required for bank-transfer payment means (F-LIB107 / F-LIB126)", is.Func("never", neverTrue)),
 				),
 			),
 		),
@@ -156,6 +160,28 @@ func deliveryReceiverWithoutLocationData(val any) bool {
 
 func neverTrue(any) bool {
 	return false
+}
+
+// bankTransferCodes are the OIOUBL PaymentMeansCode values that settle to a
+// payee bank account (42 domestic, 31 IBAN). OIOUBL then requires the account
+// identifier (F-LIB107 for 31, F-LIB126 for 42), which GOBL core leaves optional.
+var bankTransferCodes = []cbc.Code{"31", "42"}
+
+func bankTransferMissingAccount(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	code := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
+	if !code.In(bankTransferCodes...) {
+		return false
+	}
+	for _, ct := range instr.CreditTransfer {
+		if ct != nil && (ct.IBAN != "" || ct.Number != "") {
+			return false
+		}
+	}
+	return true
 }
 
 func roundingInRange(val any) bool {

@@ -274,6 +274,44 @@ func TestInvoiceValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		assert.ErrorContains(t, err, "F-LIB100")
 	})
+
+	t.Run("bank-transfer code 42 with account passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "42"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "1234567890"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("bank-transfer code 42 without account fails (F-LIB126)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "42"}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB126")
+	})
+
+	t.Run("bank-transfer code 31 without account fails (F-LIB107)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
+				CreditTransfer: []*pay.CreditTransfer{{Name: "Bank, no account number"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
+	})
 }
 
 func testCreditNoteStandard(t *testing.T) *bill.Invoice {
