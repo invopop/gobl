@@ -19,7 +19,7 @@ const netSendTimeout = 10 * time.Second
 type NetSendOptions struct {
 	Input    io.Reader
 	To       net.Address
-	Insecure bool        // when true: use http:// and accept host:port form
+	Insecure bool         // when true: use http:// and accept host:port form
 	Client   *http.Client // optional; defaults to a 10s-timeout client
 }
 

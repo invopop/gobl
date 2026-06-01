@@ -64,7 +64,7 @@ func setupNetServer(t *testing.T) (*httptest.Server, string) {
 	writeRawParty(t, dc.PartyFile, &org.Party{Name: "Me"})
 
 	client := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
-		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()):  jwkBytes(t, testPeerKey),
+		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 		net.Address(testServeDomain).KeyURL(privateKey.ID()): jwkBytes(t, privateKey),
 	}}))
 

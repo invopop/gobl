@@ -43,13 +43,13 @@ const netWhoTimeout = 10 * time.Second
 
 // NetWhoOptions configures NetWho.
 type NetWhoOptions struct {
-	Target    net.Address       // domain being queried
-	From      net.Address       // caller's GOBL Net address (signs the request)
-	FromKey   *dsig.PrivateKey  // caller's signing key
-	FromParty *org.Party        // caller's party, sent as the request document
-	Insecure  bool              // query over http:// and permit host:port
-	Fetcher   net.Fetcher       // optional (for /keys); defaults to net.NewHTTPFetcher()
-	Client    *http.Client      // optional (for POST /who); defaults to 10s timeout
+	Target    net.Address      // domain being queried
+	From      net.Address      // caller's GOBL Net address (signs the request)
+	FromKey   *dsig.PrivateKey // caller's signing key
+	FromParty *org.Party       // caller's party, sent as the request document
+	Insecure  bool             // query over http:// and permit host:port
+	Fetcher   net.Fetcher      // optional (for /keys); defaults to net.NewHTTPFetcher()
+	Client    *http.Client     // optional (for POST /who); defaults to 10s timeout
 }
 
 // NetWho performs an authenticated GOBL Net party exchange: it POSTs a

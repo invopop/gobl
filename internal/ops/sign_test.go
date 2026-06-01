@@ -73,13 +73,13 @@ func TestSignSetsTimestamp(t *testing.T) {
 
 	p, err := head.SignedPayload(env.Signatures[0])
 	require.NoError(t, err)
-	require.NotNil(t, p.Ts, "signing must stamp ts automatically")
+	require.NotNil(t, p.TS, "signing must stamp ts automatically")
 	// cal.Timestamp truncates to millisecond precision, so widen the
 	// window by 1ms on each side to avoid spurious failures.
 	assert.True(t,
-		!p.Ts.Time.Before(before.Add(-time.Millisecond)) &&
-			!p.Ts.Time.After(after.Add(time.Millisecond)),
-		"ts %v should fall within [%v, %v]", p.Ts.Time, before, after,
+		!p.TS.Time.Before(before.Add(-time.Millisecond)) &&
+			!p.TS.Time.After(after.Add(time.Millisecond)),
+		"ts %v should fall within [%v, %v]", p.TS.Time, before, after,
 	)
 }
 

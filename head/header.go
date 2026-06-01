@@ -158,7 +158,7 @@ type SigningPayload struct {
 	Digest *dsig.Digest   `json:"dig"`
 	Iss    cbc.URI        `json:"iss,omitempty"`
 	Aud    cbc.URI        `json:"aud,omitempty"`
-	Ts     *cal.Timestamp `json:"ts,omitempty"`
+	TS     *cal.Timestamp `json:"ts,omitempty"`
 }
 
 func (h *Header) payload(iss, aud cbc.URI, ts *cal.Timestamp) *SigningPayload {
@@ -167,7 +167,7 @@ func (h *Header) payload(iss, aud cbc.URI, ts *cal.Timestamp) *SigningPayload {
 		Digest: h.Digest,
 		Iss:    iss,
 		Aud:    aud,
-		Ts:     ts,
+		TS:     ts,
 	}
 }
 
@@ -202,7 +202,7 @@ func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 		if err := h.matchPayload(p); err != nil {
 			return err
 		}
-		if err := k.Allows(p.Ts); err != nil {
+		if err := k.Allows(p.TS); err != nil {
 			return err
 		}
 		return nil

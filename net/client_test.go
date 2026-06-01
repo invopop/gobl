@@ -167,4 +167,3 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		assert.Equal(t, maxBodySize, len(body))
 	})
 }
-

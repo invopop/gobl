@@ -296,8 +296,8 @@ func ensureKeys(dc domainConfig, out io.Writer) (map[string][]byte, error) {
 			present, missing = dc.PrivateKeyFile, dc.KeysDir
 		}
 		return nil, fmt.Errorf(
-			"net serve: inconsistent key setup — %s exists but %s does not. "+
-				"Remove both to auto-generate, or supply both.",
+			"net serve: inconsistent key setup — %s exists but %s does not "+
+				"(remove both to auto-generate, or supply both)",
 			present, missing,
 		)
 	}

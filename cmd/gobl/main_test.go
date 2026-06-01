@@ -79,14 +79,11 @@ func TestInputFilename(t *testing.T) {
 	assert.Equal(t, "foo.json", inputFilename([]string{"foo.json"}))
 }
 
-func TestRunExecutesRootCommand(t *testing.T) {
+func TestRunExecutesRootCommand(_ *testing.T) {
 	// Drive `run()` via an invocation that doesn't actually need any
-	// stdin. The default --help-like flow exits successfully.
+	// stdin. Cobra prints help when no args are given and returns nil;
+	// we only need to confirm it doesn't panic.
 	stdout, _ := testy.RedirIO(nil, func() {
-		// run() routes through root().cmd().ExecuteContext, which
-		// reads os.Args. We don't expose a clean override, so we just
-		// confirm calling run with no args doesn't panic.
-		// (Without args, cobra prints help and returns nil.)
 		_ = run()
 	})
 	_, _ = io.ReadAll(stdout)
