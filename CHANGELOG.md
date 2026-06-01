@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/nz`: New Zealand (NZ) GST regime. Includes standard rate (15%, with historical 12.5% and 10% rates), accommodation reduced rate (9%), zero-rated and exempt supplies, IRD number validation with two-pass modulo-11 checksum, NZBN (New Zealand Business Number) as an optional organisation identity with GS1 Mod-10 checksum, and credit/debit note corrections.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
