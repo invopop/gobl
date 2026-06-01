@@ -152,6 +152,26 @@
                       "tests": "never"
                     }
                   ]
+                },
+                {
+                  "guard": "giro payment means without a valid OIOUBL payment id",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-14",
+                      "desc": "Giro (payment-means 50) requires a dk-oioubl-payment-id of 01, 04 or 15 (F-LIB144 / F-LIB147)",
+                      "tests": "never"
+                    }
+                  ]
+                },
+                {
+                  "guard": "fik payment means without a valid OIOUBL payment id",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-15",
+                      "desc": "FIK (payment-means 93) requires a dk-oioubl-payment-id of 71, 73 or 75 (F-LIB152)",
+                      "tests": "never"
+                    }
+                  ]
                 }
               ]
             }

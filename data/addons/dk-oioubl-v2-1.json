@@ -23,7 +23,56 @@
       "url": "https://nemhandel.dk/oioubl-21-schematron-version-1171"
     }
   ],
-  "extensions": null,
+  "extensions": [
+    {
+      "key": "dk-oioubl-payment-id",
+      "name": {
+        "da": "OIOUBL Betalings-ID (Giro/FIK kortart)",
+        "en": "OIOUBL Payment ID (Giro/FIK kortart)"
+      },
+      "desc": {
+        "en": "Identifies the OIOUBL `cbc:PaymentID` \"kortart\" code that\naccompanies the Danish Giro and FIK payment methods. It is mandatory\nfor `PaymentMeansCode` 50 (Giro, values 01/04/15) and 93\n(FIK, values 71/73/75), per the OIOUBL Common schematron."
+      },
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Giro payment type 01"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Giro payment type 04"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Giro payment type 15"
+          }
+        },
+        {
+          "code": "71",
+          "name": {
+            "en": "FIK payment type 71"
+          }
+        },
+        {
+          "code": "73",
+          "name": {
+            "en": "FIK payment type 73"
+          }
+        },
+        {
+          "code": "75",
+          "name": {
+            "en": "FIK payment type 75"
+          }
+        }
+      ]
+    }
+  ],
   "scenarios": null,
   "corrections": null
 }

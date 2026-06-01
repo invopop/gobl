@@ -83,6 +83,12 @@ func billInvoiceRules() *rules.Set {
 				rules.When(is.Func("bank-transfer payment means without a payee account", bankTransferMissingAccount),
 					rules.Assert("13", "a credit transfer account (IBAN or number) is required for bank-transfer payment means (F-LIB107 / F-LIB126)", is.Func("never", neverTrue)),
 				),
+				rules.When(is.Func("giro payment means without a valid OIOUBL payment id", giroPaymentIDInvalid),
+					rules.Assert("14", "Giro (payment-means 50) requires a dk-oioubl-payment-id of 01, 04 or 15 (F-LIB144 / F-LIB147)", is.Func("never", neverTrue)),
+				),
+				rules.When(is.Func("fik payment means without a valid OIOUBL payment id", fikPaymentIDInvalid),
+					rules.Assert("15", "FIK (payment-means 93) requires a dk-oioubl-payment-id of 71, 73 or 75 (F-LIB152)", is.Func("never", neverTrue)),
+				),
 			),
 		),
 		rules.Field("lines",
@@ -182,6 +188,28 @@ func bankTransferMissingAccount(val any) bool {
 		}
 	}
 	return true
+}
+
+func giroPaymentIDInvalid(val any) bool {
+	return paymentIDInvalidFor(val, "50", giroPaymentIDs)
+}
+
+func fikPaymentIDInvalid(val any) bool {
+	return paymentIDInvalidFor(val, "93", fikPaymentIDs)
+}
+
+// paymentIDInvalidFor reports whether the instruction uses the given OIOUBL
+// payment-means code but lacks a dk-oioubl-payment-id from the allowed set
+// (covering both the mandatory-presence and the codelist checks).
+func paymentIDInvalidFor(val any, code cbc.Code, allowed []cbc.Code) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	if instr.Ext.Get(untdid.ExtKeyPaymentMeans) != code {
+		return false
+	}
+	return !instr.Ext.Get(ExtKeyPaymentID).In(allowed...)
 }
 
 func roundingInRange(val any) bool {

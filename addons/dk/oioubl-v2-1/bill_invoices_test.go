@@ -312,6 +312,75 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
 	})
+
+	t.Run("Giro code 50 with payment id passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyPaymentMeans: "50",
+					oioubl.ExtKeyPaymentID:    "04",
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("Giro code 50 without payment id fails (F-LIB144)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50"}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB144")
+	})
+
+	t.Run("Giro code 50 with a FIK payment id fails (F-LIB147)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyPaymentMeans: "50",
+					oioubl.ExtKeyPaymentID:    "71",
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB147")
+	})
+
+	t.Run("FIK code 93 with payment id passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyPaymentMeans: "93",
+					oioubl.ExtKeyPaymentID:    "73",
+				}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("FIK code 93 without payment id fails (F-LIB152)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93"}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB152")
+	})
 }
 
 func testCreditNoteStandard(t *testing.T) *bill.Invoice {
