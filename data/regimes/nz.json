@@ -1,0 +1,162 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "New Zealand"
+  },
+  "description": {
+    "en": "New Zealand's tax system is administered by Inland Revenue\n(Te Tari Taake). Goods and Services Tax (GST) applies at a standard\nrate of 15% to most goods and services. A reduced rate applies to\nlong-term accommodation of 28 or more consecutive days, equivalent\nto 60% of the full standard rate.\n\nZero-rated supplies include exported goods, international transport\nservices, and certain land transfers between GST-registered parties.\nExempt supplies include residential dwelling rent and most financial\nservices.\n\nBusinesses with annual turnover of NZD 60,000 or more must register\nfor GST. The GST registration number is the same as the IRD number\n(Inland Revenue Department number), an 8 or 9 digit identifier\nvalidated using a two-pass modulo-11 checksum algorithm.\n\nBusinesses are also identified by a New Zealand Business Number\n(NZBN), a 13-digit GS1 Global Location Number used for Peppol\ne-invoicing. E-invoicing via the Peppol network using the PINT A-NZ\nspecification is mandatory for government agencies and large suppliers\nto government.\n\nSupply Correction Information (credit and debit notes) may be issued\nto correct a previously issued invoice."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Inland Revenue New Zealand"
+      },
+      "url": "https://www.ird.govt.nz"
+    }
+  ],
+  "time_zone": "Pacific/Auckland",
+  "country": "NZ",
+  "currency": "NZD",
+  "tax_scheme": "GST",
+  "identities": [
+    {
+      "code": "NZBN",
+      "name": {
+        "en": "New Zealand Business Number (NZBN)"
+      },
+      "desc": {
+        "en": "The New Zealand Business Number (NZBN) is a unique 13-digit identifier\nissued to all businesses registered in New Zealand. It is based on the\nGS1 Global Location Number (GLN) standard and is used as the Peppol\nparticipant identifier for e-invoicing. Mandatory for businesses with\nannual turnover of NZD 60,000 or more."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "en": "Applies to most goods and services in New Zealand."
+          },
+          "values": [
+            {
+              "since": "2010-10-01",
+              "percent": "15%"
+            },
+            {
+              "since": "1989-07-01",
+              "percent": "12.5%"
+            },
+            {
+              "since": "1986-10-01",
+              "percent": "10%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Accommodation Rate"
+          },
+          "desc": {
+            "en": "Applies to long-term accommodation of 28 or more consecutive days. Equivalent to 60% of the standard rate applied to the full charge."
+          },
+          "values": [
+            {
+              "since": "2010-10-01",
+              "percent": "9%"
+            },
+            {
+              "since": "1989-07-01",
+              "percent": "7.5%"
+            },
+            {
+              "since": "1986-10-01",
+              "percent": "6%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "GST - Inland Revenue New Zealand"
+          },
+          "url": "https://www.ird.govt.nz/gst"
+        }
+      ]
+    }
+  ]
+}
