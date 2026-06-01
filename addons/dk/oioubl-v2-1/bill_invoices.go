@@ -165,9 +165,10 @@ func neverTrue(any) bool {
 }
 
 // bankTransferCodes are the OIOUBL PaymentMeansCode values that settle to a
-// payee bank account (42 domestic, 31 IBAN). OIOUBL then requires the account
-// identifier (F-LIB107 for 31, F-LIB126 for 42), which GOBL core leaves optional.
-var bankTransferCodes = []cbc.Code{"31", "42"}
+// payee bank account: 42 (domestic), 31 (IBAN), and 30 (generic credit transfer,
+// which the gobl.ubl converter maps to 31). OIOUBL then requires the account
+// identifier (F-LIB107 for 30/31, F-LIB126 for 42), which GOBL core leaves optional.
+var bankTransferCodes = []cbc.Code{"30", "31", "42"}
 
 func bankTransferMissingAccount(val any) bool {
 	instr, ok := val.(*pay.Instructions)

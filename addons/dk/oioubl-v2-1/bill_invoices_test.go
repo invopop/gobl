@@ -314,6 +314,18 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
 	})
 
+	t.Run("generic credit-transfer code 30 without account fails (F-LIB107)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "30"}),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
+	})
+
 	t.Run("Giro code 50 with payment id passes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
