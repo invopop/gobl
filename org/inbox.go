@@ -11,6 +11,9 @@ const (
 	// InboxKeyPeppol is the key used to identify a Peppol inbox and apply
 	// normalization rules for participant IDs.
 	InboxKeyPeppol cbc.Key = "peppol"
+	// InboxKeyGOBL identifies a GOBL Net inbox. Its Code holds the
+	// participant's GOBL Net address (an FQDN).
+	InboxKeyGOBL cbc.Key = "gobl"
 )
 
 // Inbox is used to store data about a connection with a service that is responsible

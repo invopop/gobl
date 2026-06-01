@@ -5,11 +5,13 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/go-jose/go-jose/v4"
 	"github.com/google/uuid"
+	"github.com/invopop/gobl/cal"
 )
 
 const defaultKeyUse = "sig"
@@ -27,10 +29,26 @@ type PrivateKey struct {
 	jwk *jose.JSONWebKey
 }
 
-// PublicKey is generated from the private key and can be shared freely as it
-// cannot be used to create signatures.
+// PublicKey is generated from the private key and can be shared freely
+// as it cannot be used to create signatures.
+//
+// In addition to the standard JWK members carried in the embedded JWK,
+// a PublicKey may declare a validity window via ValidFrom and
+// ValidUntil. Both are optional; when set they bound the signing time
+// any signature produced by this key is allowed to carry (see Allows
+// and the signed `ts` in head.SigningPayload). The fields serialise as
+// the RFC 7517 §4 extension members `valid_from` / `valid_until`,
+// which JOSE consumers that do not recognise them MUST ignore.
 type PublicKey struct {
 	jwk *jose.JSONWebKey
+
+	// ValidFrom is the earliest time at which this key may sign. nil
+	// means no lower bound.
+	ValidFrom *cal.Timestamp
+	// ValidUntil is the latest time at which this key may sign. nil
+	// means no upper bound; a value in the past indicates a retired
+	// key whose historical signatures still verify.
+	ValidUntil *cal.Timestamp
 }
 
 // NewPublicKey creates a PublicKey from a jose.JSONWebKey.
@@ -167,9 +185,52 @@ func (k *PrivateKey) MarshalJSON() ([]byte, error) {
 	return k.jwk.MarshalJSON()
 }
 
-// MarshalJSON provides the JSON version of the key.
+// MarshalJSON emits the standard JWK fields, with `valid_from` and
+// `valid_until` flattened into the same JSON object when set.
 func (k *PublicKey) MarshalJSON() ([]byte, error) {
-	return k.jwk.MarshalJSON()
+	b, err := k.jwk.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	if k.ValidFrom == nil && k.ValidUntil == nil {
+		return b, nil
+	}
+	m := make(map[string]json.RawMessage)
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, fmt.Errorf("dsig: marshal public key: %w", err)
+	}
+	if k.ValidFrom != nil {
+		v, err := json.Marshal(k.ValidFrom)
+		if err != nil {
+			return nil, err
+		}
+		m["valid_from"] = v
+	}
+	if k.ValidUntil != nil {
+		v, err := json.Marshal(k.ValidUntil)
+		if err != nil {
+			return nil, err
+		}
+		m["valid_until"] = v
+	}
+	return json.Marshal(m)
+}
+
+// Allows reports whether the given signing time falls within this
+// key's declared validity window. A nil ts (signature without a
+// timestamp) skips the check; absent bounds on the key skip their
+// respective half of the check.
+func (k *PublicKey) Allows(ts *cal.Timestamp) error {
+	if ts == nil {
+		return nil
+	}
+	if k.ValidFrom != nil && ts.Time.Before(k.ValidFrom.Time) {
+		return fmt.Errorf("dsig: signing time %s is before key's valid_from %s", ts, k.ValidFrom)
+	}
+	if k.ValidUntil != nil && ts.Time.After(k.ValidUntil.Time) {
+		return fmt.Errorf("dsig: signing time %s is after key's valid_until %s", ts, k.ValidUntil)
+	}
+	return nil
 }
 
 // UnmarshalJSON parses the JSON private key data. You should perform
@@ -181,11 +242,24 @@ func (k *PrivateKey) UnmarshalJSON(data []byte) error {
 	return k.jwk.UnmarshalJSON(data)
 }
 
-// UnmarshalJSON parses the JSON public key data. You should perform
-// validation on the key to ensure it was provided correctly.
+// UnmarshalJSON parses the JSON public key data, including the
+// optional `valid_from` / `valid_until` extension members. You should
+// perform validation on the key to ensure it was provided correctly.
 func (k *PublicKey) UnmarshalJSON(data []byte) error {
 	if k.jwk == nil {
 		k.jwk = new(jose.JSONWebKey)
 	}
-	return k.jwk.UnmarshalJSON(data)
+	if err := k.jwk.UnmarshalJSON(data); err != nil {
+		return err
+	}
+	aux := struct {
+		ValidFrom  *cal.Timestamp `json:"valid_from"`
+		ValidUntil *cal.Timestamp `json:"valid_until"`
+	}{}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	k.ValidFrom = aux.ValidFrom
+	k.ValidUntil = aux.ValidUntil
+	return nil
 }

@@ -2,13 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal/ops"
+	goblnet "github.com/invopop/gobl/net"
 )
 
 type signOpts struct {
@@ -18,6 +22,8 @@ type signOpts struct {
 	setStrings     map[string]string
 	template       string
 	privateKeyFile string
+	domain         string
+	audience       string
 	docType        string
 
 	// Command options
@@ -47,6 +53,8 @@ func (opts *signOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&opts.setStrings, "set-string", nil, "Set STRING value from the command line")
 	f.StringVarP(&opts.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&opts.privateKeyFile, "key", "k", defaultKeyFilename, "Private key file for signing")
+	f.StringVar(&opts.domain, "domain", "", "Sign with the key from ~/.config/gobl/<domain>/ and stamp iss=gobl:<domain>")
+	f.StringVar(&opts.audience, "to", "", "GOBL Net address to bind the signature to (stamps aud=gobl:<to>)")
 	f.StringVarP(&opts.docType, "type", "t", "", "Specify the document type")
 
 	return cmd
@@ -77,7 +85,20 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	key, err := loadPrivateKey(opts.privateKeyFile)
+	keyFile := opts.privateKeyFile
+	var iss, aud cbc.URI
+	if opts.domain != "" {
+		if cmd.Flags().Changed("key") {
+			return errors.New("--domain and --key are mutually exclusive")
+		}
+		keyFile = filepath.Join(defaultConfigDir(), opts.domain, "private.jwk")
+		iss = goblnet.Address(opts.domain).URI()
+	}
+	if opts.audience != "" {
+		aud = goblnet.Address(opts.audience).URI()
+	}
+
+	key, err := loadPrivateKey(keyFile)
 	if err != nil {
 		return err
 	}
@@ -92,6 +113,8 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 			DocType:   opts.docType,
 		},
 		PrivateKey: key,
+		Iss:        iss,
+		Aud:        aud,
 	}
 
 	env, err := ops.Sign(ctx, signOpts)

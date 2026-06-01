@@ -6,6 +6,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `head`: signing payload is now `{uuid, dig, iss, aud, ts}` — each signature carries the signer's verifiable GOBL Net identity (`iss`), an optional bound audience (`aud`), and a UTC signing timestamp (`ts`, a `cal.Timestamp` auto-set by `Sign`). `iss`/`aud` are `gobl:` `cbc.URI` values. `head.SigningPayload` is exported and `head.SignedPayload(sig)` extracts the lot. Header `from`/`to` remain unsigned intent/routing fields.
+- `head`: `Header.Sign`/`Envelope.Sign` now take `(key, iss, aud cbc.URI, opts...)`; `Sign` always stamps the current UTC time into the signed `ts`. `Contains` is deprecated in favour of `Verify`.
+- `dsig`: **removed** `WithGN` / `Signature.GN()` / the `gn` JWS header — the signer's address now lives in the signed `iss`. `dsig` signs generic payloads again (`WithJKU` retained).
+- `net`: **breaking** — the bulk `/.well-known/gobl/keys` endpoint is removed in favour of per-key lookup at `/.well-known/gobl/keys/<kid>`. Unknown kids return `404 Not Found`. `Client.FetchKey(ctx, addr, kid)` (and the convenience `FetchPublicKey`) fetches a single JWK directly. `Address.KeysURL()` is replaced by `Address.KeyURL(kid)`; the new `net.KeyPath(kid)` helper builds the path.
+- `dsig`: **breaking** — `dsig.PublicKey` now carries optional `ValidFrom` / `ValidUntil` (`*cal.Timestamp`) fields that serialise as the RFC 7517 §4 extension members `valid_from` / `valid_until`; standard JOSE consumers ignore them. New `PublicKey.Allows(ts)` enforces the window. `head.Header.Verify` automatically calls `Allows(p.Ts)` after the JWS verification, so every signed-envelope verification now enforces the key's validity window regardless of caller.
+- `cmd/gobl`, `internal/ops`: **breaking** — domain on-disk layout for published keys is now `<domain>/keys/<kid>.json` (one file per `kid`) instead of a single `<domain>/keys.json` JWKS. The server validates filename-equals-kid on startup and serves each file verbatim at `/.well-known/gobl/keys/<kid>`. `gobl net serve --keys` becomes `--keys-dir`. Rotation is filesystem ops; the model maps 1-to-1 to a future row-per-kid database.
+- `net`/`dsig`: **breaking** — `net.PublishedKey`, `net.KeySet`, `net.NewKeySet`, `net.ErrKeyNotFound`, `net.ErrKeySetInvalid` and the formerly-introduced `dsig.KeySet` / `dsig.ErrKeyNotFound` are all removed. Verifiers consume per-kid lookups via `net.Client.FetchKey` (returns `*dsig.PublicKey`); there is no in-memory "set of keys" abstraction. Freshly generated keys (via `gobl init` / `gobl net serve`) are stamped with `valid_from = now`.
+- `net`: `Client.VerifyEnvelope(ctx, env, expectedAud)` reads `iss` from the signed payload, fetches that issuer's published key from the per-key endpoint, verifies, optionally checks `aud`, enforces the key's validity window against the signed `ts`, and returns the issuer address.
+- `cmd/gobl`: `sign --domain X [--to Y]` stamps `iss=gobl:X` and `aud=gobl:Y` (replacing the previous `gn`).
+- `cmd/gobl`: `keygen` is deprecated in favour of `init <domain>`.
+- `cmd/gobl`: command errors that aren't already a `gobl.Error` are wrapped so the JSON error body always carries a `key` and `message` (previously such errors rendered as `{}`).
+- `net`: `Client.WhoIs` no longer requires the `/who` party to be countersigned by a known authority — it verifies the domain's own self-signature and reports any recognised authority as `Identity.Endorser` (optional, best-effort).
+
+### Added
+
+- `net`: new package for GOBL Net remote verification using FQDN-based addresses (e.g., `billing.invopop.com`).
+- `net`: `Address` type with deterministic per-key URL derivation (`Address.KeyURL(kid)`) and topic generation from reversed FQDN.
+- `net`: `KeySet` is an in-memory wrapper around a standard RFC 7517 JWKS, used to parse `<domain>/keys.json` on the server.
+- `net`: `Client` with `FetchPublicKey` and `VerifyEnvelope` for remote verification via per-key lookup.
+- `net`: `Authorities` global and `RegisterAuthority` for pinned trust anchors.
+- `dsig`: `WithGN` signer option and `GN()` reader for the `gn` (GOBL Net) JWS header.
+- `dsig`: `NewPublicKey` constructor from `jose.JSONWebKey`.
+- `head`: `Sign` and `Verify` methods on `Header`, signing only the immutable payload (UUID + Digest).
+- `cmd/gobl`: `verify` command now supports `--address` / `--remote` flags for remote key discovery.
+- `cbc`: new `URI` scalar type (a generic `scheme:opaque` URI with `Scheme()`/`Opaque()` accessors and a `format: uri` JSON Schema).
+- `head`: `from`/`to` header fields (`cbc.URI`) identifying an envelope's issuer and receiver (e.g. `gobl:samlown.example.com`, `peppol:9920:x3157928m`, `mailto:billing@example.com`). Unsigned header metadata; scheme interpretation is left to consumers.
+- `org`: `Endpoint` model (`uuid` + `label` + `cbc.URI`) and `Party.Endpoints`, the going-forward way to carry addresses; `Party.Endpoint(scheme)` looks one up by URI scheme. `org.Inbox` is retained for formats that still need it (e.g. Italy's SDI/FatturaPA).
+- `cmd/gobl`: `net serve` derives the ACME domain from the party's `gobl:` endpoint.
+- `cmd/gobl`: `init <domain>` scaffolds a per-domain identity under `~/.config/gobl/<domain>/` (auto-generated keypair + a raw `party.json` template with a pre-filled `gobl:<domain>` endpoint).
+- `cmd/gobl`: `net serve` auto-discovers every `<domain>/` directory under the config dir and routes incoming requests by the HTTP `Host` header (multi-tenant); `--domain` restricts to one and explicit `--party`/`--keys` selects a single manual identity. The `/who` party is signed on demand with the domain key (`gn=<domain>`), appending to any external authority signature already present. ACME issues for all discovered domains.
+- `cmd/gobl`: `sign --domain <d>` signs with the key from `~/.config/gobl/<d>/` and stamps `gn=<d>` on the signature.
+- `cmd/gobl`: `net who <address> --from <domain>` performs an authenticated mutual party exchange — it POSTs a signed request and returns the target's verified `org.Party`.
+- `net serve`: `/who` is an authenticated `POST` exchange (signed request in, party response signed with `iss`/`aud` reversed); `/inbox` enforces `aud` when present; an optional per-domain `allow.json` gates `/who` and `/inbox` by signer address.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
@@ -97,23 +133,6 @@ Major GOBL release: migrating from the old validation methods to the new "rules"
 In addition, the "serve" CLI command has been improved to offer a self-hosted version of the GOBL Builder and API that includes support to use as an MCP (model context protocol) server.
 
 ### Added
-
-- `net`: new package for GOBL Net remote verification using FQDN-based addresses (e.g., `billing.invopop.com`).
-- `net`: `Address` type with deterministic JWKS URL derivation and topic generation from reversed FQDN.
-- `net`: `KeySet` struct extending standard JWKS with optional digest and signatures, allowing a trusted authority to endorse a set of public keys.
-- `net`: `Client` with `FetchKeySet`, `VerifyEnvelope`, and `VerifyKeySet` for full chain verification (pinned authority keys + 1-hop remote lookup).
-- `net`: `Authorities` global and `RegisterAuthority` for pinned trust anchors.
-- `dsig`: `WithGN` signer option and `GN()` reader for the `gn` (GOBL Net) JWS header.
-- `dsig`: `NewPublicKey` constructor from `jose.JSONWebKey`.
-- `head`: `Sign` and `Verify` methods on `Header`, signing only the immutable payload (UUID + Digest).
-- `cmd/gobl`: `verify` command now supports `--address` / `--remote` flags for remote key discovery.
-
-### Changed
-
-- `head`: Signing payload reduced to UUID + Digest only; stamps, links, tags, meta, and notes are no longer locked by signing.
-- `head`: `Contains` method deprecated in favour of `Verify`.
-- `envelope`: `Sign` now accepts variadic `dsig.SignerOption` and delegates to `Header.Sign`.
-- `envelope`: `verifySignature` delegates to `Header.Verify`.
 
 - `rules`: new package to help define validation rules and execute them on top of any object.
 - `cmd/gobl`: MCP server support via `gobl mcp` CLI command using stdio transport.

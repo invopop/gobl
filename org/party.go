@@ -26,6 +26,8 @@ type Party struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Details of physical people who represent the party.
 	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
+	// Endpoints to which electronic documents may be sent, identified by URI.
+	Endpoints []*Endpoint `json:"endpoints,omitempty" jsonschema:"title=Endpoints"`
 	// Digital inboxes used for forwarding electronic versions of documents
 	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 	// Regular post addresses for where information should be sent if needed.
@@ -77,6 +79,7 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 
 	tax.Normalize(normalizers, p.People)
 	tax.Normalize(normalizers, p.Identities)
+	tax.Normalize(normalizers, p.Endpoints)
 	tax.Normalize(normalizers, p.Inboxes)
 	tax.Normalize(normalizers, p.Addresses)
 	tax.Normalize(normalizers, p.Telephones)

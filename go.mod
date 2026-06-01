@@ -1,6 +1,6 @@
 module github.com/invopop/gobl
 
-go 1.24.0
+go 1.25.0
 
 require (
 	cloud.google.com/go v0.116.0
@@ -16,9 +16,10 @@ require (
 	github.com/invopop/yaml v0.3.1
 	github.com/magefile/mage v1.15.0
 	github.com/mark3labs/mcp-go v0.46.0
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	gitlab.com/flimzy/testy v0.14.0
+	golang.org/x/crypto v0.52.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -34,11 +35,11 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/net v0.54.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 

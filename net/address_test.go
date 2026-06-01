@@ -86,9 +86,30 @@ func TestParseAddress(t *testing.T) {
 	}
 }
 
-func TestAddressJWKSURL(t *testing.T) {
+func TestAddressString(t *testing.T) {
+	assert.Equal(t, "billing.invopop.com", Address("billing.invopop.com").String())
+}
+
+func TestAddressKeyURL(t *testing.T) {
 	a := Address("billing.invopop.com")
-	assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/jwks.json", a.JWKSURL())
+	assert.Equal(t,
+		"https://billing.invopop.com/.well-known/gobl/keys/key-1",
+		a.KeyURL("key-1"),
+	)
+}
+
+func TestKeyPath(t *testing.T) {
+	assert.Equal(t, "/.well-known/gobl/keys/abc", KeyPath("abc"))
+}
+
+func TestAddressWhoURL(t *testing.T) {
+	a := Address("billing.invopop.com")
+	assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/who", a.WhoURL())
+}
+
+func TestAddressInboxURL(t *testing.T) {
+	a := Address("billing.invopop.com")
+	assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/inbox", a.InboxURL())
 }
 
 func TestAddressTopic(t *testing.T) {

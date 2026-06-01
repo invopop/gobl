@@ -7,14 +7,16 @@ var (
 	ErrAddressEmpty = errors.New("net: address is empty")
 	// ErrAddressInvalid is returned when the address is not a valid FQDN.
 	ErrAddressInvalid = errors.New("net: invalid address")
-	// ErrFetchFailed is returned when the JWKS could not be fetched.
-	ErrFetchFailed = errors.New("net: failed to fetch JWKS")
-	// ErrKeyNotFound is returned when the requested key ID is not in the JWKS.
-	ErrKeyNotFound = errors.New("net: key not found in JWKS")
-	// ErrNoGNHeader is returned when a signature does not contain a gn header.
-	ErrNoGNHeader = errors.New("net: signature does not contain a gn header")
+	// ErrFetchFailed is returned when a well-known resource could not be fetched.
+	ErrFetchFailed = errors.New("net: failed to fetch resource")
 	// ErrVerifyFailed is returned when verification fails.
 	ErrVerifyFailed = errors.New("net: verification failed")
-	// ErrKeySetInvalid is returned when a KeySet is malformed.
-	ErrKeySetInvalid = errors.New("net: invalid key set")
+	// ErrUnknownAuthority is returned when a /who envelope is signed by an
+	// address not in the Authorities list.
+	ErrUnknownAuthority = errors.New("net: endorser is not a recognised authority")
+	// ErrPartyMissing is returned when a /who response does not contain an
+	// org.Party document.
+	ErrPartyMissing = errors.New("net: /who response did not contain a party document")
+	// ErrInboxRejected is returned when an inbox endpoint rejects an envelope.
+	ErrInboxRejected = errors.New("net: inbox rejected envelope")
 )

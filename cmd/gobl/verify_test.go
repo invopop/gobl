@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -93,4 +94,35 @@ func Test_verify(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestVerifyCmdRemoteAddressInvalid(t *testing.T) {
+	v := verify()
+	c := v.cmd()
+	c.SetOut(new(bytes.Buffer))
+	c.SetErr(new(bytes.Buffer))
+	c.SetIn(strings.NewReader(`{}`))
+	c.SetArgs([]string{"--address", "single-label", "-"})
+	err := c.Execute()
+	require.Error(t, err)
+}
+
+func TestVerifyCmdRemoteShortCircuit(t *testing.T) {
+	// --remote with malformed JSON drives the remote-verify path to
+	// an error at the JSON-unmarshal step (before Validate).
+	v := verify()
+	c := v.cmd()
+	c.SetOut(new(bytes.Buffer))
+	c.SetErr(new(bytes.Buffer))
+	c.SetIn(strings.NewReader("\t\t\t@@:"))
+	c.SetArgs([]string{"--remote", "-"})
+	err := c.Execute()
+	require.Error(t, err)
+}
+
+func TestVerifyCmdCtor(t *testing.T) {
+	v := verify()
+	require.NotNil(t, v)
+	c := v.cmd()
+	assert.Equal(t, "verify [infile]", c.Use)
 }

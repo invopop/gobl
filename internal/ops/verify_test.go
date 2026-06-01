@@ -8,7 +8,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/net"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -81,5 +83,88 @@ func TestVerify(t *testing.T) {
 		} else {
 			assert.EqualError(t, err, tt.err)
 		}
+	})
+}
+
+func TestVerifyInvalidYAML(t *testing.T) {
+	err := Verify(context.Background(), bytes.NewReader([]byte("\t\t\t\n@@:")), publicKey)
+	require.Error(t, err)
+}
+
+func TestVerifyValidationFail(t *testing.T) {
+	// Envelope missing digest -> validation fails (not a signature error).
+	err := Verify(context.Background(), bytes.NewReader([]byte(`{}`)), publicKey)
+	require.Error(t, err)
+}
+
+func TestVerifyReadError(t *testing.T) {
+	err := Verify(context.Background(), errReader{}, publicKey)
+	require.Error(t, err)
+}
+
+func TestVerifyRemote(t *testing.T) {
+	addr := net.Address("billing.invopop.com")
+	// Sign with iss set so VerifyRemote can resolve the issuer.
+	env, err := Sign(context.Background(), &SignOptions{
+		ParseOptions: &ParseOptions{
+			Input: testFileReader(t, "testdata/invoice-es-es.env.yaml"),
+			SetFile: map[string]string{
+				"doc": "testdata/invoice-es-es.yaml",
+			},
+		},
+		PrivateKey: privateKey,
+		Iss:        addr.URI(),
+	})
+	require.NoError(t, err)
+	body, err := json.Marshal(env)
+	require.NoError(t, err)
+
+	// Build a fetcher that serves the matching public key for whichever
+	// kid is requested.
+	pkBytes, err := json.Marshal(privateKey.Public())
+	require.NoError(t, err)
+	c := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
+		addr.KeyURL(privateKey.ID()): pkBytes,
+	}}))
+
+	t.Run("success no address pin", func(t *testing.T) {
+		assert.NoError(t, VerifyRemote(context.Background(), bytes.NewReader(body), c, ""))
+	})
+
+	t.Run("address pin matches", func(t *testing.T) {
+		assert.NoError(t, VerifyRemote(context.Background(), bytes.NewReader(body), c, addr))
+	})
+
+	t.Run("address pin mismatch", func(t *testing.T) {
+		err := VerifyRemote(context.Background(), bytes.NewReader(body), c, net.Address("other.example"))
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "expected other.example")
+	})
+
+	t.Run("invalid JSON", func(t *testing.T) {
+		err := VerifyRemote(context.Background(), bytes.NewReader([]byte("\t\t\t\n@@:")), c, "")
+		require.Error(t, err)
+	})
+
+	t.Run("read error", func(t *testing.T) {
+		err := VerifyRemote(context.Background(), errReader{}, c, "")
+		require.Error(t, err)
+	})
+
+	t.Run("validation fails", func(t *testing.T) {
+		err := VerifyRemote(context.Background(), bytes.NewReader([]byte(`{}`)), c, "")
+		require.Error(t, err)
+	})
+
+	t.Run("verify fails", func(t *testing.T) {
+		// Tamper with the envelope so VerifyEnvelope rejects it.
+		var env map[string]any
+		require.NoError(t, json.Unmarshal(body, &env))
+		// Remove signatures so Signed() returns false.
+		delete(env, "sigs")
+		tampered, err := json.Marshal(env)
+		require.NoError(t, err)
+		err = VerifyRemote(context.Background(), bytes.NewReader(tampered), c, "")
+		require.Error(t, err)
 	})
 }

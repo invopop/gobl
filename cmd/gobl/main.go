@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,8 @@ import (
 	"syscall"
 
 	"github.com/spf13/cobra"
+
+	"github.com/invopop/gobl"
 )
 
 // build data provided by goreleaser and mage setup
@@ -68,9 +71,17 @@ func encode(in any, out io.WriteCloser, indent bool) error {
 }
 
 func printError(err error) {
+	// Normalise to a *gobl.Error so the JSON body always carries a
+	// "key" and "message"; a plain error would otherwise marshal to "{}".
+	var ge *gobl.Error
+	if errors.As(err, &ge) {
+		err = ge
+	} else {
+		err = gobl.ErrInternal.WithCause(err)
+	}
 	enc := json.NewEncoder(os.Stderr)
 	enc.SetIndent("", "\t") // always indent errors
-	if err = enc.Encode(err); err != nil {
+	if encErr := enc.Encode(err); encErr != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 	}
 }

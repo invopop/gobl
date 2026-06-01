@@ -4,9 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+	"time"
 
-	"github.com/go-jose/go-jose/v4"
 	"github.com/invopop/gobl/dsig"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,33 +26,33 @@ func (m *mockFetcher) Fetch(_ context.Context, url string) ([]byte, error) {
 	return m.data, m.err
 }
 
-func TestFetchKeySet(t *testing.T) {
+func TestFetchPublicKey(t *testing.T) {
 	ctx := context.Background()
 	key := dsig.NewES256Key()
 	pub := key.Public()
 
-	// Build a valid JWKS response
 	pubData, err := json.Marshal(pub)
 	require.NoError(t, err)
-	jwksData := []byte(`{"keys":[` + string(pubData) + `]}`)
 
-	t.Run("success", func(t *testing.T) {
-		mock := &mockFetcher{data: jwksData}
+	t.Run("found", func(t *testing.T) {
+		mock := &mockFetcher{data: pubData}
 		c := NewClient(WithFetcher(mock))
 
-		ks, err := c.FetchKeySet(ctx, Address("billing.invopop.com"))
+		pk, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), key.ID())
 		require.NoError(t, err)
-		assert.NotNil(t, ks)
-		assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/jwks.json", mock.url)
-		assert.Len(t, ks.Keys, 1)
-		assert.Equal(t, key.ID(), ks.Keys[0].KeyID)
+		assert.Equal(t, key.ID(), pk.ID())
+		assert.Equal(t,
+			"https://billing.invopop.com/.well-known/gobl/keys/"+key.ID(),
+			mock.url, "client hits the per-key endpoint",
+		)
 	})
 
-	t.Run("fetch error", func(t *testing.T) {
-		mock := &mockFetcher{err: ErrFetchFailed}
+	t.Run("kid mismatch", func(t *testing.T) {
+		// Fetcher returns a JWK whose kid does not match the requested kid.
+		mock := &mockFetcher{data: pubData}
 		c := NewClient(WithFetcher(mock))
 
-		_, err := c.FetchKeySet(ctx, Address("billing.invopop.com"))
+		_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), "other-kid")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
@@ -58,70 +61,110 @@ func TestFetchKeySet(t *testing.T) {
 		mock := &mockFetcher{data: []byte("not json")}
 		c := NewClient(WithFetcher(mock))
 
-		_, err := c.FetchKeySet(ctx, Address("billing.invopop.com"))
+		_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), key.ID())
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+	})
+
+	t.Run("fetch error", func(t *testing.T) {
+		mock := &mockFetcher{err: ErrFetchFailed}
+		c := NewClient(WithFetcher(mock))
+
+		_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), key.ID())
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 
 	t.Run("invalid address", func(t *testing.T) {
-		mock := &mockFetcher{data: jwksData}
+		mock := &mockFetcher{data: pubData}
 		c := NewClient(WithFetcher(mock))
 
-		_, err := c.FetchKeySet(ctx, Address(""))
+		_, err := c.FetchPublicKey(ctx, Address(""), key.ID())
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrAddressEmpty))
 	})
-}
 
-func TestFetchPublicKey(t *testing.T) {
-	ctx := context.Background()
-	key := dsig.NewES256Key()
-	pub := key.Public()
-
-	pubData, err := json.Marshal(pub)
-	require.NoError(t, err)
-	jwksData := []byte(`{"keys":[` + string(pubData) + `]}`)
-
-	t.Run("found", func(t *testing.T) {
-		mock := &mockFetcher{data: jwksData}
+	t.Run("empty kid", func(t *testing.T) {
+		mock := &mockFetcher{data: pubData}
 		c := NewClient(WithFetcher(mock))
 
-		pk, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), key.ID())
-		require.NoError(t, err)
-		assert.Equal(t, key.ID(), pk.ID())
-	})
-
-	t.Run("not found", func(t *testing.T) {
-		mock := &mockFetcher{data: jwksData}
-		c := NewClient(WithFetcher(mock))
-
-		_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), "nonexistent-kid")
+		_, err := c.FetchPublicKey(ctx, Address("billing.invopop.com"), "")
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrKeyNotFound))
+		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 }
 
-func TestKeySetKeyLookup(t *testing.T) {
-	key := dsig.NewES256Key()
-	pub := key.Public()
+func TestNewHTTPFetcher(t *testing.T) {
+	f := NewHTTPFetcher()
+	require.NotNil(t, f)
+	require.NotNil(t, f.Client)
+	assert.Equal(t, defaultTimeout, f.Client.Timeout)
+}
 
-	pubData, err := json.Marshal(pub)
-	require.NoError(t, err)
+func TestHTTPFetcherFetch(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, http.MethodGet, r.Method)
+			assert.Equal(t, "application/json", r.Header.Get("Accept"))
+			_, _ = w.Write([]byte(`{"ok":true}`))
+		}))
+		defer srv.Close()
 
-	var jwk jose.JSONWebKey
-	require.NoError(t, json.Unmarshal(pubData, &jwk))
-
-	ks := &KeySet{Keys: []jose.JSONWebKey{jwk}}
-
-	t.Run("found", func(t *testing.T) {
-		pk, err := ks.Key(key.ID())
+		body, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x")
 		require.NoError(t, err)
-		assert.Equal(t, key.ID(), pk.ID())
+		assert.Equal(t, `{"ok":true}`, string(body))
 	})
 
-	t.Run("not found", func(t *testing.T) {
-		_, err := ks.Key("wrong-kid")
+	t.Run("non-200", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			http.Error(w, "nope", http.StatusNotFound)
+		}))
+		defer srv.Close()
+
+		_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrKeyNotFound))
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.Contains(t, err.Error(), "HTTP 404")
+	})
+
+	t.Run("invalid URL", func(t *testing.T) {
+		_, err := NewHTTPFetcher().Fetch(context.Background(), "://broken")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+	})
+
+	t.Run("nil context", func(t *testing.T) {
+		// NewRequestWithContext panics on a nil context, so the func
+		// must error rather than crash.
+		var ctx context.Context //nolint:staticcheck
+		_, err := NewHTTPFetcher().Fetch(ctx, "http://example.invalid")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+	})
+
+	t.Run("transport error", func(t *testing.T) {
+		// Unreachable address (port 1 is privileged + usually closed).
+		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
+		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+	})
+
+	t.Run("body too large is truncated", func(t *testing.T) {
+		// Send a body larger than maxBodySize. The fetcher uses
+		// io.LimitReader, so it returns exactly maxBodySize bytes and
+		// no error.
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			// Stream more than 1 MiB.
+			w.Header().Set("Content-Type", "application/json")
+			big := strings.Repeat("a", maxBodySize+1024)
+			_, _ = w.Write([]byte(big))
+		}))
+		defer srv.Close()
+
+		body, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL)
+		require.NoError(t, err)
+		assert.Equal(t, maxBodySize, len(body))
 	})
 }
+

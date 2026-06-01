@@ -1,14 +1,15 @@
 package net
 
-import "github.com/invopop/gobl/dsig"
+// Authorities is the hardcoded set of GOBL Net Addresses considered
+// trusted KYC vendors. An identity returned by Client.WhoIs is only
+// considered endorsed if its /who envelope is signed by one of these.
+//
+// The list is intentionally empty in this release; entries are added
+// here as vendors come online.
+var Authorities = []Address{}
 
-// Authorities contains the built-in trusted authority public keys used
-// as the first check when verifying KeySet signatures. Initially empty;
-// populate via RegisterAuthority or WithAuthorities on Client.
-var Authorities []*dsig.PublicKey
-
-// RegisterAuthority adds a public key to the global set of trusted
-// authority keys.
-func RegisterAuthority(key *dsig.PublicKey) {
-	Authorities = append(Authorities, key)
+// RegisterAuthority adds an address to the global set of trusted
+// authority addresses.
+func RegisterAuthority(addr Address) {
+	Authorities = append(Authorities, addr)
 }

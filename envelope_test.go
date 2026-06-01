@@ -109,7 +109,7 @@ func TestEnvelopeDocument(t *testing.T) {
 	}
 
 	assert.Empty(t, e.Signatures)
-	assert.NoError(t, e.Sign(testKey), "signing envelope")
+	assert.NoError(t, e.Sign(testKey, "", ""), "signing envelope")
 	assert.NotEmpty(t, e.Signatures, "expected a signature")
 
 	assert.NoError(t, e.Validate(), "did not expect validation error")
@@ -159,7 +159,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Head.AddStamp(&head.Stamp{Provider: cbc.Key("test"), Value: "test"})
 		err := e.Calculate()
 		assert.NoError(t, err)
-		require.NoError(t, e.Sign(testKey))
+		require.NoError(t, e.Sign(testKey, "", ""))
 		assert.NotEmpty(t, e.Head.Stamps)
 
 		// remove signatures
@@ -248,7 +248,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
 				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
-				assert.NoError(t, env.Sign(key))
+				assert.NoError(t, env.Sign(key, "", ""))
 				return env
 			},
 		},
@@ -257,7 +257,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
 				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
-				assert.NoError(t, env.Sign(key))
+				assert.NoError(t, env.Sign(key, "", ""))
 				msg := env.Extract().(*note.Message)
 				msg.Content = "bar"
 				return env
@@ -314,20 +314,20 @@ func TestEnvelopeSign(t *testing.T) {
 	t.Run("will sign", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Foooo"}))
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		assert.NoError(t, err)
 		assert.Len(t, env.Signatures, 1)
 	})
 	t.Run("cannot sign invalid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		assert.NoError(t, err)
 		assert.True(t, env.Signed())
 	})
@@ -335,17 +335,31 @@ func TestEnvelopeSign(t *testing.T) {
 	t.Run("unsign document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		assert.NoError(t, err)
 		env.Unsign()
 		assert.False(t, env.Signed())
+	})
+
+	t.Run("from/to are outside the signed payload", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		env.Head.From = cbc.URI("gobl:samlown.example.com")
+		env.Head.To = cbc.URI("peppol:9920:x3157928m")
+		require.NoError(t, env.Sign(testKey, "", ""))
+		require.NoError(t, env.Verify(testKey.Public()))
+
+		// Mutating the routing addresses after signing must NOT break
+		// verification, proving they are not part of the signed payload.
+		env.Head.To = cbc.URI("mailto:someone@example.com")
+		assert.NoError(t, env.Verify(testKey.Public()))
 	})
 
 	t.Run("checks for header", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
 		env.Head = nil // remove header
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		assert.Error(t, err)
 		assert.ErrorContains(t, err, "validation: header required")
 	})
@@ -361,7 +375,7 @@ func TestEnvelopeSign(t *testing.T) {
 		inv.Code = "" // blank, so cannot sign
 		require.NoError(t, env.Calculate())
 
-		err = env.Sign(testKey)
+		err = env.Sign(testKey, "", "")
 		assert.ErrorContains(t, err, "[GOBL-ENVELOPE-13] envelope doc is not ready to be signed, check code or other key fields")
 
 	})
@@ -530,7 +544,7 @@ func TestEnvelopeVerify(t *testing.T) {
 	t.Run("valid signature", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		require.NoError(t, err)
 		err = env.Verify()
 		assert.NoError(t, err)
@@ -547,7 +561,7 @@ func TestEnvelopeVerify(t *testing.T) {
 	t.Run("changes", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
-		err := env.Sign(testKey)
+		err := env.Sign(testKey, "", "")
 		require.NoError(t, err)
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
 		err = env.Verify()
@@ -568,7 +582,7 @@ func TestEnvelopeVerifySignature(t *testing.T) {
 	t.Run("valid, no key", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
-		assert.NoError(t, env.Sign(testKey))
+		assert.NoError(t, env.Sign(testKey, "", ""))
 		assert.NoError(t, env.VerifySignature(env.Signatures[0]))
 	})
 

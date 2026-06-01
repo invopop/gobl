@@ -4,15 +4,31 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules/is"
 )
 
 const (
+	// Scheme is the URI scheme used by GOBL Net addresses, e.g.
+	// "gobl:acme.example.com".
+	Scheme = "gobl"
+
 	// WellKnownPath is the base path for GOBL Net well-known URLs.
 	WellKnownPath = "/.well-known/gobl"
-	// JWKSPath is the full well-known path for JWKS discovery.
-	JWKSPath = WellKnownPath + "/jwks.json"
+	// KeysPath is the base of the per-key endpoint; the full path for a
+	// single key is KeysPath + "/" + kid.
+	KeysPath = WellKnownPath + "/keys"
+	// WhoPath is the well-known path serving the signed Party envelope.
+	WhoPath = WellKnownPath + "/who"
+	// InboxPath is the well-known path accepting envelope deliveries.
+	InboxPath = WellKnownPath + "/inbox"
 )
+
+// KeyPath returns the well-known path serving a single public key by
+// its key ID. Use this to construct lookup URLs.
+func KeyPath(kid string) string {
+	return KeysPath + "/" + kid
+}
 
 // Address represents a GOBL Net address, which is a fully qualified
 // domain name (FQDN) used for key discovery and network identification.
@@ -43,9 +59,26 @@ func (a Address) String() string {
 	return string(a)
 }
 
-// JWKSURL returns the deterministic JWKS discovery URL for this address.
-func (a Address) JWKSURL() string {
-	return "https://" + string(a) + JWKSPath
+// URI returns the address as a gobl: scheme cbc.URI, e.g.
+// "gobl:acme.example.com", suitable for a signature's iss/aud.
+func (a Address) URI() cbc.URI {
+	return cbc.URI(Scheme + ":" + string(a))
+}
+
+// KeyURL returns the deterministic discovery URL for a single public
+// key (by kid) published by this address.
+func (a Address) KeyURL(kid string) string {
+	return "https://" + string(a) + KeyPath(kid)
+}
+
+// WhoURL returns the deterministic identity (who) URL for this address.
+func (a Address) WhoURL() string {
+	return "https://" + string(a) + WhoPath
+}
+
+// InboxURL returns the deterministic inbox URL for this address.
+func (a Address) InboxURL() string {
+	return "https://" + string(a) + InboxPath
 }
 
 // Topic reverses the FQDN labels to produce a notification topic string.

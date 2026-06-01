@@ -3,6 +3,7 @@ package head
 import (
 	"errors"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/rules"
@@ -44,6 +45,14 @@ type Header struct {
 
 	// Any information that may be relevant to other humans about this envelope
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// From is the URI-form transport address of the envelope's issuer,
+	// e.g. "gobl:samlown.example.com" or "peppol:9920:x3157928m".
+	From cbc.URI `json:"from,omitempty" jsonschema:"title=From"`
+
+	// To is the URI-form transport address of the envelope's intended
+	// receiver.
+	To cbc.URI `json:"to,omitempty" jsonschema:"title=To"`
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.
@@ -138,60 +147,90 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 	return LinkByCategoryAndKey(h.Links, category, key)
 }
 
-// signingPayload defines the minimal set of fields that are locked
-// by signing. Only the UUID and Digest are immutable after signing;
-// stamps, links, tags, meta, and notes can be added post-signing.
-type signingPayload struct {
-	UUID   uuid.UUID    `json:"uuid"`
-	Digest *dsig.Digest `json:"dig"`
+// SigningPayload defines the fields locked by a signature. UUID and
+// Digest identify the document; Iss and Aud are the verifiable GOBL Net
+// origin and audience of *this* signature (gobl: URIs); Ts is the time
+// the signature was produced (set automatically by Sign). Header stamps,
+// links, tags, meta, notes and the (unsigned, intent-level) From/To
+// fields can still be modified after signing.
+type SigningPayload struct {
+	UUID   uuid.UUID      `json:"uuid"`
+	Digest *dsig.Digest   `json:"dig"`
+	Iss    cbc.URI        `json:"iss,omitempty"`
+	Aud    cbc.URI        `json:"aud,omitempty"`
+	Ts     *cal.Timestamp `json:"ts,omitempty"`
 }
 
-func (h *Header) payload() *signingPayload {
-	return &signingPayload{
+func (h *Header) payload(iss, aud cbc.URI, ts *cal.Timestamp) *SigningPayload {
+	return &SigningPayload{
 		UUID:   h.UUID,
 		Digest: h.Digest,
+		Iss:    iss,
+		Aud:    aud,
+		Ts:     ts,
 	}
 }
 
-// Sign creates a JWS signature of the header's signing payload (UUID + Digest)
-// using the provided private key.
-func (h *Header) Sign(key *dsig.PrivateKey, opts ...dsig.SignerOption) (*dsig.Signature, error) {
-	return dsig.NewSignature(key, h.payload(), opts...)
+// Sign creates a JWS signature over the header's document identity
+// (UUID + Digest) together with the signer's GOBL Net identity (iss),
+// the optional audience (aud) it is bound to, and the current UTC
+// timestamp (ts), bound into the signed payload.
+func (h *Header) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...dsig.SignerOption) (*dsig.Signature, error) {
+	ts := cal.TimestampNow()
+	return dsig.NewSignature(key, h.payload(iss, aud, &ts), opts...)
 }
 
-// Verify checks that the provided signature was created from this header's
-// signing payload. If public keys are provided, the signature must also be
-// cryptographically valid against at least one of them.
+// Verify checks that the signature covers this header's document
+// identity (UUID + Digest). If public keys are provided, the signature
+// must also be cryptographically valid against at least one of them,
+// and when that key declares a validity window the signed `ts` MUST
+// fall within it. The signed iss/aud are part of the statement and are
+// not validated here — read them with SignedPayload.
 func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
-	expected := h.payload()
 	if len(keys) == 0 {
-		p := new(signingPayload)
+		p := new(SigningPayload)
 		if err := sig.UnsafePayload(p); err != nil {
 			return ErrSignaturePayload
 		}
-		return matchPayload(expected, p)
+		return h.matchPayload(p)
 	}
 	for _, k := range keys {
-		p := new(signingPayload)
+		p := new(SigningPayload)
 		if err := sig.VerifyPayload(k, p); err != nil {
 			continue
 		}
-		return matchPayload(expected, p)
+		if err := h.matchPayload(p); err != nil {
+			return err
+		}
+		if err := k.Allows(p.Ts); err != nil {
+			return err
+		}
+		return nil
 	}
 	return ErrSignatureKeyMismatch
 }
 
-func matchPayload(expected, actual *signingPayload) error {
-	if expected.UUID.String() != actual.UUID.String() {
+// SignedPayload extracts the (unverified) signed payload from a
+// signature, used to read iss before fetching the signer's keys.
+func SignedPayload(sig *dsig.Signature) (*SigningPayload, error) {
+	p := new(SigningPayload)
+	if err := sig.UnsafePayload(p); err != nil {
+		return nil, ErrSignaturePayload
+	}
+	return p, nil
+}
+
+func (h *Header) matchPayload(actual *SigningPayload) error {
+	if h.UUID.String() != actual.UUID.String() {
 		return ErrSignatureMismatch
 	}
-	if expected.Digest == nil || actual.Digest == nil {
-		if expected.Digest != actual.Digest {
+	if h.Digest == nil || actual.Digest == nil {
+		if h.Digest != actual.Digest {
 			return ErrSignatureMismatch
 		}
 		return nil
 	}
-	if err := expected.Digest.Equals(actual.Digest); err != nil {
+	if err := h.Digest.Equals(actual.Digest); err != nil {
 		return ErrSignatureMismatch
 	}
 	return nil

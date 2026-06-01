@@ -3,6 +3,8 @@ package head_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/rules"
@@ -54,6 +56,28 @@ func TestHeaderValidation(t *testing.T) {
 		}
 		err := rules.Validate(h)
 		assert.ErrorContains(t, err, "duplicate link keys are not allowed")
+	})
+
+	t.Run("valid from/to", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		h.From = cbc.URI("gobl:samlown.example.com")
+		h.To = cbc.URI("peppol:9920:x3157928m")
+		assert.NoError(t, rules.Validate(h))
+	})
+
+	t.Run("empty from/to allowed", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		assert.NoError(t, rules.Validate(h))
+	})
+
+	t.Run("invalid to", func(t *testing.T) {
+		h := head.NewHeader()
+		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+		h.To = cbc.URI("no scheme")
+		err := rules.Validate(h)
+		assert.ErrorContains(t, err, "valid absolute URI")
 	})
 }
 
@@ -176,4 +200,46 @@ func TestHeaderContains(t *testing.T) {
 	assert.False(t, h1.Contains(h2))
 	h2.Notes = h1.Notes
 	assert.True(t, h1.Contains(h2))
+}
+
+func TestHeaderVerifyEnforcesValidityWindow(t *testing.T) {
+	priv := dsig.NewES256Key()
+	pub := priv.Public()
+
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	if err != nil {
+		t.Fatalf("Sign: %v", err)
+	}
+
+	// No window on the key: verify succeeds.
+	assert.NoError(t, h.Verify(sig, pub))
+
+	// Window in the future: signed ts (now) is before valid_from.
+	future := mustParseTS(t, "2099-01-01T00:00:00Z")
+	pub.ValidFrom = &future
+	pub.ValidUntil = nil
+	err = h.Verify(sig, pub)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "before key's valid_from")
+
+	// Window in the past: signed ts is after valid_until.
+	past := mustParseTS(t, "2000-01-01T00:00:00Z")
+	pub.ValidFrom = nil
+	pub.ValidUntil = &past
+	err = h.Verify(sig, pub)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "after key's valid_until")
+}
+
+func mustParseTS(t *testing.T, s string) cal.Timestamp {
+	t.Helper()
+	ts, err := cal.ParseTimestamp(s)
+	if err != nil {
+		t.Fatalf("ParseTimestamp(%q): %v", s, err)
+	}
+	return ts
 }

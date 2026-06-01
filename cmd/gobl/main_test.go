@@ -1,12 +1,15 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
+
+	"github.com/invopop/gobl"
 )
 
 func Test_root(t *testing.T) {
@@ -46,6 +49,47 @@ func Test_root(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPrintErrorPlain(t *testing.T) {
+	// Plain error -> wrapped as gobl.ErrInternal so the JSON body has
+	// "key" and "message".
+	_, stderr := testy.RedirIO(nil, func() {
+		printError(errors.New("boom"))
+	})
+	b, _ := io.ReadAll(stderr)
+	out := string(b)
+	assert.Contains(t, out, "internal")
+}
+
+func TestPrintErrorGoblError(t *testing.T) {
+	// Already a gobl.Error -> passes through unchanged.
+	_, stderr := testy.RedirIO(nil, func() {
+		printError(gobl.ErrInput.WithReason("nope"))
+	})
+	b, _ := io.ReadAll(stderr)
+	out := string(b)
+	assert.Contains(t, out, "input")
+	assert.Contains(t, out, "nope")
+}
+
+func TestInputFilename(t *testing.T) {
+	assert.Equal(t, "", inputFilename(nil))
+	assert.Equal(t, "", inputFilename([]string{"-"}))
+	assert.Equal(t, "foo.json", inputFilename([]string{"foo.json"}))
+}
+
+func TestRunExecutesRootCommand(t *testing.T) {
+	// Drive `run()` via an invocation that doesn't actually need any
+	// stdin. The default --help-like flow exits successfully.
+	stdout, _ := testy.RedirIO(nil, func() {
+		// run() routes through root().cmd().ExecuteContext, which
+		// reads os.Args. We don't expose a clean override, so we just
+		// confirm calling run with no args doesn't panic.
+		// (Without args, cobra prints help and returns nil.)
+		_ = run()
+	})
+	_, _ = io.ReadAll(stdout)
 }
 
 func Test_version(t *testing.T) {

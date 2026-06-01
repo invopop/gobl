@@ -28,10 +28,11 @@ func keygen(root *rootOpts) *keygenOpts {
 
 func (k *keygenOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "keygen [flags] [outfile]",
-		Short: "Generate a keypair",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  k.runE,
+		Use:        "keygen [flags] [outfile]",
+		Short:      "Generate a keypair",
+		Args:       cobra.MaximumNArgs(1),
+		RunE:       k.runE,
+		Deprecated: "use `gobl init <domain>` to set up a domain identity (keys + party) instead.",
 	}
 
 	f := cmd.Flags()

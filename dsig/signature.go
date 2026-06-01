@@ -18,7 +18,6 @@ type Signature struct {
 // signatures.
 type signerOptions struct {
 	jku string
-	gn  string
 }
 
 // SignerOption defines the callback to be used to define one of the signer options.
@@ -33,17 +32,8 @@ func WithJKU(jku string) SignerOption {
 	}
 }
 
-// WithGN adds the "gn" (GOBL Net) header field to the signature,
-// storing the FQDN address used for remote key discovery and verification.
-func WithGN(address string) SignerOption {
-	return func(so *signerOptions) {
-		so.gn = address
-	}
-}
-
 const (
 	headerJKU jose.HeaderKey = "jku"
-	headerGN  jose.HeaderKey = "gn"
 )
 
 var (
@@ -76,9 +66,6 @@ func NewSignature(key *PrivateKey, data interface{}, opts ...SignerOption) (*Sig
 	joseOpts := new(jose.SignerOptions)
 	if so.jku != "" {
 		joseOpts.WithHeader(headerJKU, so.jku)
-	}
-	if so.gn != "" {
-		joseOpts.WithHeader(headerGN, so.gn)
 	}
 	signer, err := jose.NewSigner(sk, joseOpts)
 	if err != nil {
@@ -138,19 +125,6 @@ func (s *Signature) JKU() string {
 		return ""
 	}
 	return jku
-}
-
-// GN returns the signature's "gn" (GOBL Net) header value, which
-// contains the FQDN used for remote key discovery.
-func (s *Signature) GN() string {
-	if s.jws == nil || len(s.jws.Signatures) == 0 {
-		return ""
-	}
-	gn, ok := s.jws.Signatures[0].Header.ExtraHeaders[headerGN].(string)
-	if !ok {
-		return ""
-	}
-	return gn
 }
 
 // String provides the compact form signature.

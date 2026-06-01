@@ -94,7 +94,7 @@ func codeRules() *rules.Set {
 		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
 			is.Length(0, int(CodeMaxLength)),
 		),
-		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
+		rules.AssertIfPresent("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
 			is.Matches(CodePattern),
 		),
 	)
@@ -185,7 +185,7 @@ func InCodes(codes ...Code) rules.Test {
 
 func codeMapRules() *rules.Set {
 	return rules.For(CodeMap{},
-		rules.Assert("01", "all code map keys must be valid",
+		rules.AssertIfPresent("01", "all code map keys must be valid",
 			is.Func("valid keys", codeMapKeysValid),
 		),
 	)
@@ -194,7 +194,7 @@ func codeMapRules() *rules.Set {
 func codeMapKeysValid(v any) bool {
 	m, ok := v.(CodeMap)
 	if !ok {
-		return true
+		return false
 	}
 	for k := range m {
 		if rules.Validate(k) != nil {

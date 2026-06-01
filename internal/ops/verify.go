@@ -8,7 +8,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
-	goblnet "github.com/invopop/gobl/net"
+	"github.com/invopop/gobl/net"
 )
 
 // Verify reads a GOBL document from in, and returns an error if there are any
@@ -39,7 +39,7 @@ func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 
 // VerifyRemote reads a GOBL envelope and verifies it using remote
 // JWKS discovery via the GOBL Net client.
-func VerifyRemote(ctx context.Context, in io.Reader, client *goblnet.Client, addr goblnet.Address) error {
+func VerifyRemote(ctx context.Context, in io.Reader, client *net.Client, addr net.Address) error {
 	body, err := io.ReadAll(cancelableReader(ctx, in))
 	if err != nil {
 		return gobl.ErrInput.WithCause(err)
@@ -51,8 +51,12 @@ func VerifyRemote(ctx context.Context, in io.Reader, client *goblnet.Client, add
 	if err := env.Validate(); err != nil {
 		return gobl.ErrValidation.WithCause(err)
 	}
-	if err := client.VerifyEnvelope(ctx, env, addr); err != nil {
+	issuer, err := client.VerifyEnvelope(ctx, env, "")
+	if err != nil {
 		return gobl.ErrValidation.WithCause(err)
+	}
+	if addr != "" && issuer != addr {
+		return gobl.ErrValidation.WithReason("envelope signed by %s, expected %s", issuer, addr)
 	}
 	return nil
 }

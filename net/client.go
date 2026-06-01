@@ -64,7 +64,7 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string) ([]byte, error) {
 // and remote verification.
 type Client struct {
 	fetcher     Fetcher
-	authorities []*dsig.PublicKey
+	authorities []Address
 }
 
 // ClientOption configures a Client.
@@ -77,11 +77,11 @@ func WithFetcher(f Fetcher) ClientOption {
 	}
 }
 
-// WithAuthorities adds trusted authority public keys to the client,
-// supplementing the built-in Authorities.
-func WithAuthorities(keys ...*dsig.PublicKey) ClientOption {
+// WithAuthorities adds trusted authority GOBL Net Addresses to the
+// client, supplementing the built-in Authorities.
+func WithAuthorities(addrs ...Address) ClientOption {
 	return func(c *Client) {
-		c.authorities = append(c.authorities, keys...)
+		c.authorities = append(c.authorities, addrs...)
 	}
 }
 
@@ -89,7 +89,7 @@ func WithAuthorities(keys ...*dsig.PublicKey) ClientOption {
 func NewClient(opts ...ClientOption) *Client {
 	c := &Client{
 		fetcher:     NewHTTPFetcher(),
-		authorities: append([]*dsig.PublicKey{}, Authorities...),
+		authorities: append([]Address{}, Authorities...),
 	}
 	for _, opt := range opts {
 		opt(c)
@@ -97,32 +97,34 @@ func NewClient(opts ...ClientOption) *Client {
 	return c
 }
 
-// FetchKeySet retrieves the KeySet from the well-known URL derived from
-// the given Address. The response is compatible with both standard JWKS
-// and GOBL's extended KeySet format.
-func (c *Client) FetchKeySet(ctx context.Context, addr Address) (*KeySet, error) {
+// FetchKey retrieves a single public key (with its optional validity
+// window) from the well-known per-key URL derived from the given
+// address and kid. The response body is a JWK (RFC 7517) possibly
+// augmented with the `valid_from` / `valid_until` extension members
+// understood by dsig.PublicKey.
+func (c *Client) FetchKey(ctx context.Context, addr Address, kid string) (*dsig.PublicKey, error) {
 	if err := addr.Validate(); err != nil {
 		return nil, err
 	}
-	url := addr.JWKSURL()
-	data, err := c.fetcher.Fetch(ctx, url)
+	if kid == "" {
+		return nil, fmt.Errorf("%w: kid is required", ErrFetchFailed)
+	}
+	data, err := c.fetcher.Fetch(ctx, addr.KeyURL(kid))
 	if err != nil {
 		return nil, err
 	}
-	ks := new(KeySet)
-	if err := json.Unmarshal(data, ks); err != nil {
-		return nil, fmt.Errorf("%w: invalid KeySet response: %v", ErrFetchFailed, err)
+	pk := new(dsig.PublicKey)
+	if err := json.Unmarshal(data, pk); err != nil {
+		return nil, fmt.Errorf("%w: invalid JWK response: %v", ErrFetchFailed, err)
 	}
-	return ks, nil
+	if pk.ID() != kid {
+		return nil, fmt.Errorf("%w: kid mismatch (got %q, want %q)", ErrFetchFailed, pk.ID(), kid)
+	}
+	return pk, nil
 }
 
-// FetchPublicKey retrieves the KeySet for the given address and finds
-// the key matching the provided kid. Returns a dsig.PublicKey ready
-// for verification.
+// FetchPublicKey is an alias for FetchKey retained for clarity at
+// call sites that only need the verification primitive.
 func (c *Client) FetchPublicKey(ctx context.Context, addr Address, kid string) (*dsig.PublicKey, error) {
-	ks, err := c.FetchKeySet(ctx, addr)
-	if err != nil {
-		return nil, err
-	}
-	return ks.Key(kid)
+	return c.FetchKey(ctx, addr, kid)
 }

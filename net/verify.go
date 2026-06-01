@@ -5,121 +5,55 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 )
 
-// KeySetVerification contains the result of verifying a KeySet's
-// endorsement signatures.
-type KeySetVerification struct {
-	// Signed indicates whether the KeySet had any signatures.
-	Signed bool
-	// Authority is the GOBL Net address of the signer, extracted from the
-	// gn header. Empty if the KeySet was verified against a pinned authority.
-	Authority Address
-	// Pinned is true if the KeySet was verified against a built-in
-	// or client-configured authority key.
-	Pinned bool
-}
-
 // VerifyEnvelope performs remote verification of a signed GOBL envelope.
-// It extracts the "gn" header from the first signature to derive the JWKS URL,
-// fetches the key set, finds the signing key by kid, and verifies the
-// signature and header contents.
-//
-// If addr is provided (non-empty), it overrides the gn header in the signature.
-func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, addr Address) error {
+// It reads the signer's GOBL Net identity (iss) from the first
+// signature's signed payload, fetches that address's public keys, and
+// verifies the signature. When expectedAud is non-empty, the signature's
+// signed audience (aud) must equal it. The verified issuer address is
+// returned.
+func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud cbc.URI) (Address, error) {
 	if !env.Signed() {
-		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 
 	sig := env.Signatures[0]
-
-	// Determine address: explicit parameter or from gn header
-	if addr == "" {
-		gn := sig.GN()
-		if gn == "" {
-			return ErrNoGNHeader
-		}
-		var err error
-		addr, err = ParseAddress(gn)
-		if err != nil {
-			return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-		}
+	p, err := head.SignedPayload(sig)
+	if err != nil {
+		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+	}
+	if p.Iss == "" {
+		return "", fmt.Errorf("%w: signature has no iss", ErrVerifyFailed)
+	}
+	if p.Iss.Scheme() != Scheme {
+		return "", fmt.Errorf("%w: iss %q is not a gobl address", ErrVerifyFailed, p.Iss)
+	}
+	issuer := Address(p.Iss.Opaque())
+	if err := issuer.Validate(); err != nil {
+		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 
 	kid := sig.KeyID()
 	if kid == "" {
-		return fmt.Errorf("%w: signature has no key ID", ErrVerifyFailed)
+		return "", fmt.Errorf("%w: signature has no key ID", ErrVerifyFailed)
 	}
 
-	pubKey, err := c.FetchPublicKey(ctx, addr, kid)
+	pubKey, err := c.FetchKey(ctx, issuer, kid)
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
-
+	// env.Verify enforces the key's validity window against the signed
+	// `ts` via head.Header.Verify.
 	if err := env.Verify(pubKey); err != nil {
-		return fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 
-	return nil
-}
-
-// VerifyKeySet checks the endorsement signatures on a KeySet.
-//
-// The verification flow:
-//  1. If the KeySet is not signed, returns {Signed: false} (not an error).
-//  2. Tries to verify against pinned authority keys (built-in + client-configured).
-//  3. If no pinned key matches, extracts the "gn" header from the signature,
-//     fetches that authority's KeySet, and verifies (max 1 hop, no further recursion).
-func (c *Client) VerifyKeySet(ctx context.Context, ks *KeySet) (*KeySetVerification, error) {
-	if !ks.Signed() {
-		return &KeySetVerification{Signed: false}, nil
+	if expectedAud != "" && p.Aud != expectedAud {
+		return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrVerifyFailed, p.Aud, expectedAud)
 	}
 
-	// Try pinned authority keys first
-	if len(c.authorities) > 0 {
-		if err := ks.Verify(c.authorities...); err == nil {
-			return &KeySetVerification{
-				Signed: true,
-				Pinned: true,
-			}, nil
-		}
-	}
-
-	// Extract authority address from the first signature's gn header
-	sig := ks.Signatures[0]
-	gn := sig.GN()
-	if gn == "" {
-		return nil, fmt.Errorf("%w: KeySet signature has no gn header and no pinned authority matched", ErrVerifyFailed)
-	}
-
-	authorityAddr, err := ParseAddress(gn)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	kid := sig.KeyID()
-	if kid == "" {
-		return nil, fmt.Errorf("%w: KeySet signature has no key ID", ErrVerifyFailed)
-	}
-
-	// Fetch the authority's KeySet (1 hop, no further recursion)
-	authorityKS, err := c.FetchKeySet(ctx, authorityAddr)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	authorityKey, err := authorityKS.Key(kid)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	if err := ks.Verify(authorityKey); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	return &KeySetVerification{
-		Signed:    true,
-		Authority: authorityAddr,
-		Pinned:    false,
-	}, nil
+	return issuer, nil
 }

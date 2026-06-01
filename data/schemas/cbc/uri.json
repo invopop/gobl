@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cbc/uri",
+  "$ref": "#/$defs/cbc.URI",
+  "$defs": {
+    "cbc.URI": {
+      "type": "string",
+      "maxLength": 2048,
+      "format": "uri",
+      "title": "URI",
+      "description": "Uniform Resource Identifier in scheme:opaque form used to identify a\nresource or address, e.g. \"gobl:acme.example.com\" or\n\"peppol:9920:x3157928m\"."
+    }
+  }
+}

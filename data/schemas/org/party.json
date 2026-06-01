@@ -55,6 +55,14 @@
           "title": "People",
           "description": "Details of physical people who represent the party."
         },
+        "endpoints": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/endpoint"
+          },
+          "type": "array",
+          "title": "Endpoints",
+          "description": "Endpoints to which electronic documents may be sent, identified by URI."
+        },
         "inboxes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/inbox"
