@@ -73,21 +73,6 @@
           ]
         },
         {
-          "field": "ordering",
-          "subsets": [
-            {
-              "field": "code",
-              "assert": [
-                {
-                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-04",
-                  "desc": "ordering code is required when ordering is set (F-INV024 / F-CRN025)",
-                  "tests": "present"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "field": "totals",
           "subsets": [
             {
@@ -137,7 +122,7 @@
                         {
                           "id": "GOBL-DK-OIOUBL-BILL-INVOICE-12",
                           "desc": "payment-means code must be one of the OIOUBL allowed values (F-LIB100)",
-                          "tests": "ext 'untdid-payment-means' in [1, 10, 20, 31, 42, 48, 49, 50, 58, 59, 93, 97]"
+                          "tests": "ext 'untdid-payment-means' in [1, 10, 20, 30, 31, 42, 48, 49, 50, 58, 59, 93, 97]"
                         }
                       ]
                     }

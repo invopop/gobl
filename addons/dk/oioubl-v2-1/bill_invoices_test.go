@@ -113,24 +113,12 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("ordering absent is allowed", func(t *testing.T) {
+	t.Run("ordering present with only accounting cost is allowed", func(t *testing.T) {
+		// OIOUBL F-INV024 only constrains cac:OrderReference/ID; an accounting
+		// cost emits cbc:AccountingCost, not an OrderReference, so no code is
+		// required here.
 		inv := testInvoiceStandard(t)
-		inv.Ordering = nil
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
-	})
-
-	t.Run("ordering present without code fails (F-INV024)", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{}
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "F-INV024")
-	})
-
-	t.Run("ordering present with code passes", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{Code: "PO-2026-001"}
+		inv.Ordering = &bill.Ordering{Cost: "5050"}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})
@@ -256,6 +244,19 @@ func TestInvoiceValidation(t *testing.T) {
 				CreditTransfer: []*pay.CreditTransfer{
 					{IBAN: "DK5000400440116243"},
 				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("generic credit-transfer code 30 passes (converter maps it to 31)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "30"}),
+				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243"}},
 			},
 		}
 		require.NoError(t, inv.Calculate())

@@ -11,11 +11,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// validPaymentMeansCodes is the OIOUBL 2.1 codelist for cbc:PaymentMeansCode,
-// per F-LIB100. UNTDID 4461 is broader; the addon rejects any code outside
-// this subset before the gobl.ubl converter emits it.
+// validPaymentMeansCodes are the UNTDID 4461 payment-means values accepted for
+// OIOUBL (F-LIB100). It includes "30" (generic credit transfer) because the
+// gobl.ubl converter maps it to OIOUBL's "31"; the remaining values are emitted
+// as-is. Codes outside this set can't produce valid OIOUBL output.
 var validPaymentMeansCodes = []cbc.Code{
-	"1", "10", "20", "31", "42", "48", "49", "50", "58", "59", "93", "97",
+	"1", "10", "20", "30", "31", "42", "48", "49", "50", "58", "59", "93", "97",
 }
 
 // Rule citations reference the OIOUBL Invoice schematron (F-INV) first and
@@ -53,11 +54,6 @@ func billInvoiceRules() *rules.Set {
 		rules.When(is.Func("non-credit-note invoice with line order ref", invoiceWithLineOrderRef),
 			rules.Field("ordering",
 				rules.Assert("07", "ordering is required when any invoice line has an order reference (F-INV142)", is.Present),
-			),
-		),
-		rules.Field("ordering",
-			rules.Field("code",
-				rules.Assert("04", "ordering code is required when ordering is set (F-INV024 / F-CRN025)", is.Present),
 			),
 		),
 		rules.Field("totals",
