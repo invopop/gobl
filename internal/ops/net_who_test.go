@@ -11,6 +11,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/net"
 	"github.com/invopop/gobl/org"
 	"github.com/stretchr/testify/assert"
@@ -51,7 +52,7 @@ func TestNetWho(t *testing.T) {
 	targetKey := new(dsig.PrivateKey)
 	require.NoError(t, json.Unmarshal(privBytes, targetKey))
 
-	party, err := NetWho(context.Background(), &NetWhoOptions{
+	env, err := NetWho(context.Background(), &NetWhoOptions{
 		Target:    "acme.example",
 		From:      net.Address(testPeerDomain),
 		FromKey:   testPeerKey,
@@ -66,7 +67,17 @@ func TestNetWho(t *testing.T) {
 		}},
 	})
 	require.NoError(t, err)
-	require.NotNil(t, party)
+	require.NotNil(t, env)
+	require.True(t, env.Signed(), "returned envelope retains the target's signature")
+
+	// The signed payload binds the response to the caller.
+	p, err := head.SignedPayload(env.Signatures[0])
+	require.NoError(t, err)
+	assert.Equal(t, net.Address("acme.example").URI(), p.Iss)
+	assert.Equal(t, net.Address(testPeerDomain).URI(), p.Aud)
+
+	party, ok := env.Extract().(*org.Party)
+	require.True(t, ok)
 	assert.Equal(t, "acme.example", party.Name)
 	require.Len(t, party.Endpoints, 1)
 	assert.Equal(t, "gobl:acme.example", party.Endpoints[0].URI.String())

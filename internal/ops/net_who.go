@@ -56,8 +56,11 @@ type NetWhoOptions struct {
 // signed request envelope (the caller's party, iss=gobl:from,
 // aud=gobl:target) to the target's /who endpoint, verifies the response
 // is signed by the target (iss=gobl:target) and bound to the caller
-// (aud=gobl:from), and returns the target's verified org.Party.
-func NetWho(ctx context.Context, opts *NetWhoOptions) (*org.Party, error) {
+// (aud=gobl:from), and returns the verified envelope. Callers that
+// only need the party can read it via `env.Extract().(*org.Party)`;
+// returning the whole envelope preserves the signature and signed
+// `iss`/`aud`/`ts` so the artifact remains independently verifiable.
+func NetWho(ctx context.Context, opts *NetWhoOptions) (*gobl.Envelope, error) {
 	if opts.Target == "" {
 		return nil, gobl.ErrInput.WithReason("target address is required")
 	}
@@ -150,9 +153,10 @@ func NetWho(ctx context.Context, opts *NetWhoOptions) (*org.Party, error) {
 		return nil, fmt.Errorf("net who: response not signed by %s with a published key", wantIss)
 	}
 
-	party, ok := respEnv.Extract().(*org.Party)
-	if !ok || party == nil {
+	// Sanity check: the protocol defines /who responses to wrap an
+	// org.Party. Other document types indicate a misbehaving peer.
+	if _, ok := respEnv.Extract().(*org.Party); !ok {
 		return nil, fmt.Errorf("net who: /who response document is not an org.Party")
 	}
-	return party, nil
+	return respEnv, nil
 }
