@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,14 +19,17 @@ import (
 const prefix = "/v0"
 
 func TestServeRunE(t *testing.T) {
-	t.Parallel()
+	// Capture slog output into a buffer for this test.
+	prev := slog.Default()
+	logBuf := new(bytes.Buffer)
+	slog.SetDefault(slog.New(slog.NewTextHandler(logBuf, nil)))
+	t.Cleanup(func() { slog.SetDefault(prev) })
 
 	// Create a context that we cancel immediately to stop the server.
 	ctx, cancel := context.WithCancel(context.Background())
 
 	cmd := &cobra.Command{}
-	buf := &bytes.Buffer{}
-	cmd.SetOut(buf)
+	cmd.SetOut(new(bytes.Buffer))
 	cmd.SetContext(ctx)
 
 	s := serve()
@@ -36,8 +40,8 @@ func TestServeRunE(t *testing.T) {
 
 	err := s.runE(cmd, nil)
 	assert.NoError(t, err)
-	assert.Contains(t, buf.String(), "GOBL")
-	assert.Contains(t, buf.String(), "Shutting down...")
+	assert.Contains(t, logBuf.String(), "GOBL serve starting")
+	assert.Contains(t, logBuf.String(), "Shutting down")
 }
 
 func TestServeVersion(t *testing.T) {

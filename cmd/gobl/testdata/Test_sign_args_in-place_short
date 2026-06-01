@@ -2,7 +2,8 @@
   rootOpts: (*main.rootOpts)({
     indent: (bool) false,
     overwriteOutputFile: (bool) false,
-    inPlace: (bool) true
+    inPlace: (bool) true,
+    jsonLogs: (bool) false
   }),
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,

@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyEnvelope(ctx, env, expectedAud)` reads `iss` from the signed payload, fetches that issuer's published key from the per-key endpoint, verifies, optionally checks `aud`, enforces the key's validity window against the signed `ts`, and returns the issuer address.
 - `cmd/gobl`: `sign --domain X [--to Y]` stamps `iss=gobl:X` and `aud=gobl:Y` (replacing the previous `gn`).
 - `cmd/gobl`: `keygen` is deprecated in favour of `init <domain>`.
-- `cmd/gobl`: command errors that aren't already a `gobl.Error` are wrapped so the JSON error body always carries a `key` and `message` (previously such errors rendered as `{}`).
+- `cmd/gobl`: all operator-facing output now flows through `log/slog`. A new top-level `--json` flag switches log output between the default human-readable text and structured JSON (one entry per line). Logs go to **stderr**; result output (signed envelopes, `/who` party JSON, `version` JSON) stays on **stdout**. CLI errors are emitted as a single `command failed` log entry with `key` / `message` / `faults`.
+- `internal/ops`: `gobl net serve` now emits structured access logs for every HTTP request — one baseline `http_request` entry plus handler-specific `keys.lookup`, `who.exchange` / `who.rejected`, `inbox.accepted` / `inbox.rejected`, `inbox.write_failed` entries with high-signal fields (`caller`, `envelope`, `reason`, `status`, `duration_ms`). Startup messages (`generated keypair`, `initialised domain`, `GOBL Net listening`, `ACME enabled`, `Shutting down`) are now structured too.
 - `net`: `Client.WhoIs` no longer requires the `/who` party to be countersigned by a known authority — it verifies the domain's own self-signature and reports any recognised authority as `Identity.Endorser` (optional, best-effort).
 
 ### Added

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -68,7 +67,7 @@ func setupNetServer(t *testing.T) (*httptest.Server, string) {
 		net.Address(testServeDomain).KeyURL(privateKey.ID()): jwkBytes(t, privateKey),
 	}}))
 
-	h, err := buildDomainHandler(dc, client, io.Discard)
+	h, err := buildDomainHandler(dc, client, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(h)
 	t.Cleanup(srv.Close)
@@ -174,7 +173,7 @@ func callHandleWho(t *testing.T, partyEnvBytes []byte, priv *dsig.PrivateKey) *h
 		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 	}}))
 	self := net.Address(testServeDomain).URI()
-	h := handleWho(client, partyEnvBytes, priv, self, nil, false)
+	h := handleWho(discardLog(), client, partyEnvBytes, priv, self, nil, false)
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, net.WhoPath, bytes.NewReader(signedRequest(t, testServeDomain)))
 	h(rec, req)
@@ -224,7 +223,7 @@ func TestNetServeInboxWriteFails(t *testing.T) {
 	client := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
 		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 	}}))
-	h, err := buildDomainHandler(dc, client, io.Discard)
+	h, err := buildDomainHandler(dc, client, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
@@ -285,7 +284,7 @@ func TestNetServeWhoForbidden(t *testing.T) {
 	client := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
 		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 	}}))
-	h, err := buildDomainHandler(dc, client, io.Discard)
+	h, err := buildDomainHandler(dc, client, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
@@ -338,7 +337,7 @@ func TestNetServeInboxForbidden(t *testing.T) {
 	client := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
 		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 	}}))
-	h, err := buildDomainHandler(dc, client, io.Discard)
+	h, err := buildDomainHandler(dc, client, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()

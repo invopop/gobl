@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	stdnet "net"
 	"net/http"
 	"os"
@@ -51,8 +52,9 @@ type NetServeOptions struct {
 	PrivateKeyFile string
 	InboxDir       string
 
-	Client *net.Client // optional; defaults to net.NewClient()
-	Out    io.Writer   // optional; defaults to os.Stdout
+	Client *net.Client  // optional; defaults to net.NewClient()
+	Out    io.Writer    // optional; defaults to os.Stdout (reserved for results, currently unused)
+	Log    *slog.Logger // optional; defaults to slog.Default()
 
 	// Port overrides (zero means use the default — 80 / 443).
 	HTTPPort  int
@@ -79,6 +81,16 @@ type domainConfig struct {
 	PartyFile      string
 	InboxDir       string
 	AllowFile      string
+}
+
+// logger returns the configured slog.Logger, falling back to slog.Default()
+// so library callers (and tests) get sensible behaviour without explicit
+// wiring.
+func (o *NetServeOptions) logger() *slog.Logger {
+	if o != nil && o.Log != nil {
+		return o.Log
+	}
+	return slog.Default()
 }
 
 // domainConfigFor builds the standard paths for a domain inside configDir.
@@ -151,10 +163,6 @@ func discoverDomains(configDir string) ([]domainConfig, error) {
 // options (manual mode). Multi-domain serving uses buildRouter. It is
 // exported so tests can drive the resulting handler via httptest.
 func NetServeHandler(opts *NetServeOptions) (http.Handler, error) {
-	out := opts.Out
-	if out == nil {
-		out = io.Discard
-	}
 	client := opts.Client
 	if client == nil {
 		client = net.NewClient()
@@ -166,7 +174,7 @@ func NetServeHandler(opts *NetServeOptions) (http.Handler, error) {
 		PartyFile:      opts.PartyFile,
 		InboxDir:       opts.InboxDir,
 	}
-	return buildDomainHandler(dc, client, out)
+	return buildDomainHandler(dc, client, opts.logger())
 }
 
 // buildDomainHandler prepares one domain's on-disk state (keys, party,
@@ -175,8 +183,8 @@ func NetServeHandler(opts *NetServeOptions) (http.Handler, error) {
 //   - GET  /keys  — open, serves the public JWKS.
 //   - POST /who   — authenticated party exchange (see handleWho).
 //   - POST /inbox — authenticated envelope delivery (see handleInbox).
-func buildDomainHandler(dc domainConfig, client *net.Client, out io.Writer) (http.Handler, error) {
-	keysByKID, err := ensureKeys(dc, out)
+func buildDomainHandler(dc domainConfig, client *net.Client, log *slog.Logger) (http.Handler, error) {
+	keysByKID, err := ensureKeys(dc, log)
 	if err != nil {
 		return nil, err
 	}
@@ -204,19 +212,21 @@ func buildDomainHandler(dc domainConfig, client *net.Client, out io.Writer) (htt
 		self = net.Address(dc.Domain).URI()
 	}
 
+	l := logger(log)
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET "+net.KeysPath+"/{kid}", handleKey(keysByKID))
-	mux.HandleFunc("POST "+net.WhoPath, handleWho(client, partyEnvBytes, priv, self, allow, present))
-	mux.HandleFunc("POST "+net.InboxPath, handleInbox(client, dc.InboxDir, self, allow, present))
-	return mux, nil
+	mux.HandleFunc("GET "+net.KeysPath+"/{kid}", handleKey(l, keysByKID))
+	mux.HandleFunc("POST "+net.WhoPath, handleWho(l, client, partyEnvBytes, priv, self, allow, present))
+	mux.HandleFunc("POST "+net.InboxPath, handleInbox(l, client, dc.InboxDir, self, allow, present))
+	return accessLog(l, mux), nil
 }
 
 // handleKey serves a single published JWK by its kid path value, or 404
 // if the kid is not in the domain's published set.
-func handleKey(keysByKID map[string][]byte) http.HandlerFunc {
+func handleKey(log *slog.Logger, keysByKID map[string][]byte) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		kid := r.PathValue("kid")
 		body, ok := keysByKID[kid]
+		log.Info("keys.lookup", "kid", kid, "found", ok)
 		if !ok {
 			http.NotFound(w, r)
 			return
@@ -230,13 +240,13 @@ func handleKey(keysByKID map[string][]byte) http.HandlerFunc {
 // buildRouter returns an HTTP handler dispatching by the request Host
 // header to the matching domain's handler. A single unnamed identity
 // (manual mode without a domain) is served for all hosts.
-func buildRouter(domains []domainConfig, client *net.Client, out io.Writer) (http.Handler, error) {
+func buildRouter(domains []domainConfig, client *net.Client, log *slog.Logger) (http.Handler, error) {
 	if len(domains) == 1 && domains[0].Domain == "" {
-		return buildDomainHandler(domains[0], client, out)
+		return buildDomainHandler(domains[0], client, log)
 	}
 	handlers := make(map[string]http.Handler, len(domains))
 	for _, dc := range domains {
-		h, err := buildDomainHandler(dc, client, out)
+		h, err := buildDomainHandler(dc, client, log)
 		if err != nil {
 			return nil, err
 		}
@@ -265,7 +275,7 @@ func stripPort(host string) string {
 // private key file exist, a fresh ECDSA P-256 keypair is generated and
 // persisted (single-key bootstrap). If only one of the two exists the
 // setup is inconsistent.
-func ensureKeys(dc domainConfig, out io.Writer) (map[string][]byte, error) {
+func ensureKeys(dc domainConfig, log *slog.Logger) (map[string][]byte, error) {
 	keysExists := dirExists(dc.KeysDir)
 	privExists := fileExists(dc.PrivateKeyFile)
 
@@ -288,7 +298,7 @@ func ensureKeys(dc domainConfig, out io.Writer) (map[string][]byte, error) {
 		return keysByKID, nil
 
 	case !keysExists && !privExists:
-		return generateKeypair(dc.KeysDir, dc.PrivateKeyFile, out)
+		return generateKeypair(dc.KeysDir, dc.PrivateKeyFile, log)
 
 	default:
 		present, missing := dc.KeysDir, dc.PrivateKeyFile
@@ -342,7 +352,7 @@ func readKeysDir(dir string) (map[string][]byte, error) {
 // key to privFile (0600) and the public key to keysDir/<kid>.json
 // (stamping valid_from = now), logs the action, and returns the
 // per-kid JWK map.
-func generateKeypair(keysDir, privFile string, out io.Writer) (map[string][]byte, error) {
+func generateKeypair(keysDir, privFile string, log *slog.Logger) (map[string][]byte, error) {
 	if err := os.MkdirAll(filepath.Dir(privFile), 0o700); err != nil {
 		return nil, fmt.Errorf("net serve: create config dir: %w", err)
 	}
@@ -365,8 +375,16 @@ func generateKeypair(keysDir, privFile string, out io.Writer) (map[string][]byte
 	if err := os.WriteFile(keyFile, pubBytes, 0o644); err != nil {
 		return nil, fmt.Errorf("net serve: write key file: %w", err)
 	}
-	fmt.Fprintf(out, "Generated new keypair (kid=%s): %s, %s\n", priv.ID(), privFile, keyFile) //nolint:errcheck
+	logger(log).Info("generated keypair", "kid", priv.ID(), "private", privFile, "key_file", keyFile)
 	return map[string][]byte{priv.ID(): pubBytes}, nil
+}
+
+// logger normalises a possibly-nil *slog.Logger to slog.Default().
+func logger(l *slog.Logger) *slog.Logger {
+	if l != nil {
+		return l
+	}
+	return slog.Default()
 }
 
 // dirExists reports whether path exists and is a directory.
@@ -504,7 +522,8 @@ func NetServe(ctx context.Context, opts *NetServeOptions) error {
 		return gobl.ErrInput.WithReason("net serve: no domains configured — run `gobl init <domain>` or pass --party/--keys")
 	}
 
-	router, err := buildRouter(domains, opts.Client, opts.Out)
+	log := opts.logger()
+	router, err := buildRouter(domains, opts.Client, log)
 	if err != nil {
 		return err
 	}
@@ -521,7 +540,7 @@ func NetServe(ctx context.Context, opts *NetServeOptions) error {
 		m := newAutocertManager(opts, names)
 		httpHandler = m.HTTPHandler(router)
 		tlsConfig = m.TLSConfig()
-		fmt.Fprintf(opts.Out, "ACME enabled for domains: %s\n", strings.Join(names, ", ")) //nolint:errcheck
+		log.Info("ACME enabled", "domains", names)
 	case opts.CertFile != "" && opts.KeyFile != "":
 		cert, err := tls.LoadX509KeyPair(opts.CertFile, opts.KeyFile)
 		if err != nil {
@@ -583,9 +602,10 @@ func serveOnListeners(
 	srvCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	fmt.Fprintf(opts.Out, "GOBL Net listening on HTTP %s\n", httpLn.Addr()) //nolint:errcheck
+	log := opts.logger()
+	log.Info("GOBL Net listening", "scheme", "http", "addr", httpLn.Addr().String())
 	if httpsLn != nil {
-		fmt.Fprintf(opts.Out, "GOBL Net listening on HTTPS %s\n", httpsLn.Addr()) //nolint:errcheck
+		log.Info("GOBL Net listening", "scheme", "https", "addr", httpsLn.Addr().String())
 	}
 
 	errCh := make(chan error, 2)
@@ -611,7 +631,7 @@ func serveOnListeners(
 	}
 
 	<-srvCtx.Done()
-	fmt.Fprintln(opts.Out, "Shutting down...") //nolint:errcheck
+	log.Info("Shutting down")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), netServeShutdownTimeout)
 	defer shutdownCancel()
@@ -683,61 +703,72 @@ func serveBytes(body []byte) http.HandlerFunc {
 // POSTs a signed envelope (iss=gobl:caller, aud=gobl:self); the server
 // verifies it, allow-lists the caller, and responds with its own party
 // envelope signed with iss/aud reversed (iss=gobl:self, aud=gobl:caller).
-func handleWho(client *net.Client, partyEnvBytes []byte, priv *dsig.PrivateKey, self cbc.URI, allow map[net.Address]bool, present bool) http.HandlerFunc {
+func handleWho(log *slog.Logger, client *net.Client, partyEnvBytes []byte, priv *dsig.PrivateKey, self cbc.URI, allow map[net.Address]bool, present bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(io.LimitReader(r.Body, netInboxMaxBody))
 		if err != nil {
+			log.Warn("who.rejected", "reason", "read_body", "remote", r.RemoteAddr, "error", err.Error())
 			http.Error(w, "could not read body", http.StatusBadRequest)
 			return
 		}
 		req := new(gobl.Envelope)
 		if err := json.Unmarshal(body, req); err != nil {
+			log.Warn("who.rejected", "reason", "bad_body", "remote", r.RemoteAddr)
 			http.Error(w, "invalid envelope JSON", http.StatusBadRequest)
 			return
 		}
 		caller, err := client.VerifyEnvelope(r.Context(), req, self)
 		if err != nil {
+			log.Warn("who.rejected", "reason", "verify_failed", "remote", r.RemoteAddr, "error", err.Error())
 			http.Error(w, "request verification failed: "+err.Error(), http.StatusUnauthorized)
 			return
 		}
 		if !allowed(allow, present, caller) {
+			log.Warn("who.rejected", "reason", "not_allowed", "caller", string(caller))
 			http.Error(w, "caller not accepted", http.StatusForbidden)
 			return
 		}
 
 		resp := new(gobl.Envelope)
 		if err := json.Unmarshal(partyEnvBytes, resp); err != nil {
+			log.Error("who.party_load_failed", "caller", string(caller), "error", err.Error())
 			http.Error(w, "could not load party", http.StatusInternalServerError)
 			return
 		}
 		if err := resp.Sign(priv, self, caller.URI()); err != nil {
+			log.Error("who.sign_failed", "caller", string(caller), "error", err.Error())
 			http.Error(w, "could not sign party: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		out, err := json.Marshal(resp)
 		if err != nil {
+			log.Error("who.encode_failed", "caller", string(caller), "error", err.Error())
 			http.Error(w, "could not encode party", http.StatusInternalServerError)
 			return
 		}
+		log.Info("who.exchange", "caller", string(caller))
 		serveBytes(out)(w, r)
 	}
 }
 
-func handleInbox(client *net.Client, dir string, self cbc.URI, allow map[net.Address]bool, present bool) http.HandlerFunc {
+func handleInbox(log *slog.Logger, client *net.Client, dir string, self cbc.URI, allow map[net.Address]bool, present bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(io.LimitReader(r.Body, netInboxMaxBody))
 		if err != nil {
+			log.Warn("inbox.rejected", "reason", "read_body", "remote", r.RemoteAddr, "error", err.Error())
 			http.Error(w, "could not read body", http.StatusBadRequest)
 			return
 		}
 
 		env := new(gobl.Envelope)
 		if err := json.Unmarshal(body, env); err != nil {
+			log.Warn("inbox.rejected", "reason", "bad_body", "remote", r.RemoteAddr)
 			http.Error(w, "invalid envelope JSON", http.StatusBadRequest)
 			return
 		}
 
 		if err := env.Validate(); err != nil {
+			log.Warn("inbox.rejected", "reason", "validation", "remote", r.RemoteAddr, "error", err.Error())
 			http.Error(w, "envelope failed validation: "+err.Error(), http.StatusUnprocessableEntity)
 			return
 		}
@@ -747,14 +778,17 @@ func handleInbox(client *net.Client, dir string, self cbc.URI, allow map[net.Add
 		// names a different recipient.
 		sender, err := client.VerifyEnvelope(r.Context(), env, "")
 		if err != nil {
+			log.Warn("inbox.rejected", "reason", "verify_failed", "remote", r.RemoteAddr, "error", err.Error())
 			http.Error(w, "signature verification failed: "+err.Error(), http.StatusUnauthorized)
 			return
 		}
 		if p, perr := head.SignedPayload(env.Signatures[0]); perr == nil && self != "" && p.Aud != "" && p.Aud != self {
+			log.Warn("inbox.rejected", "reason", "aud_mismatch", "caller", string(sender), "aud", string(p.Aud))
 			http.Error(w, "envelope audience does not match this inbox", http.StatusUnauthorized)
 			return
 		}
 		if !allowed(allow, present, sender) {
+			log.Warn("inbox.rejected", "reason", "not_allowed", "caller", string(sender))
 			http.Error(w, "sender not accepted", http.StatusForbidden)
 			return
 		}
@@ -762,15 +796,18 @@ func handleInbox(client *net.Client, dir string, self cbc.URI, allow map[net.Add
 		filename := filepath.Join(dir, env.Head.UUID.String()+".json")
 		f, err := os.Create(filename)
 		if err != nil {
+			log.Error("inbox.write_failed", "caller", string(sender), "envelope", env.Head.UUID.String(), "error", err.Error())
 			http.Error(w, "could not write inbox file", http.StatusInternalServerError)
 			return
 		}
 		defer f.Close() //nolint:errcheck
 		if _, err := f.Write(body); err != nil {
+			log.Error("inbox.write_failed", "caller", string(sender), "envelope", env.Head.UUID.String(), "error", err.Error())
 			http.Error(w, "could not write inbox file", http.StatusInternalServerError)
 			return
 		}
 
+		log.Info("inbox.accepted", "caller", string(sender), "envelope", env.Head.UUID.String())
 		w.WriteHeader(http.StatusAccepted)
 	}
 }

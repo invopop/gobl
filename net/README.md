@@ -504,6 +504,55 @@ The package exports the following sentinel errors:
 All callers using `errors.Is` against these sentinels MUST continue to
 work after wrapping with `fmt.Errorf("%w: ...", err)`.
 
+## 10a. Logging
+
+All operator-facing log output goes through `log/slog` and is written
+to **stderr**. Result output (signed envelopes, the `/who` party JSON,
+`gobl version`'s JSON) stays on **stdout**, so a pipeline like
+`gobl sign … | gobl net send …` is unaffected by logging.
+
+The format is controlled by the top-level `--json` flag:
+
+| flag         | stderr format        | example                                          |
+|--------------|----------------------|--------------------------------------------------|
+| (default)    | slog text            | `time=… level=INFO msg=listening scheme=http addr=:8080` |
+| `--json`     | slog JSON-per-line   | `{"time":"…","level":"INFO","msg":"listening","scheme":"http","addr":":8080"}` |
+
+### Startup messages (`gobl net serve`)
+
+- `generated keypair` — emitted on first boot (auto-keygen). Fields:
+  `kid`, `private`, `key_file`.
+- `initialised domain` — emitted by `gobl init`. Fields: `domain`,
+  `party`, `inbox`.
+- `GOBL Net listening` — once per listener. Fields: `scheme`
+  (`http`/`https`), `addr`.
+- `ACME enabled` — when ACME is configured. Field: `domains`.
+- `Shutting down` — emitted on graceful shutdown.
+
+### Access logs
+
+Every HTTP request emits one **baseline** entry plus one or more
+**handler-specific** entries with high-signal fields:
+
+| msg              | level | fields                                                                |
+|------------------|-------|-----------------------------------------------------------------------|
+| `http_request`   | INFO  | `method`, `path`, `host`, `remote`, `status`, `duration_ms`           |
+| `keys.lookup`    | INFO  | `kid`, `found`                                                        |
+| `who.exchange`   | INFO  | `caller` (verified `iss` as FQDN)                                     |
+| `who.rejected`   | WARN  | `reason` (`bad_body`/`verify_failed`/`not_allowed`), `remote`/`caller`/`error` |
+| `inbox.accepted` | INFO  | `caller`, `envelope` (UUID)                                           |
+| `inbox.rejected` | WARN  | `reason` (`bad_body`/`validation`/`verify_failed`/`aud_mismatch`/`not_allowed`), `caller`/`aud`/`error` |
+| `inbox.write_failed` | ERROR | `caller`, `envelope`, `error`                                       |
+| `who.party_load_failed` / `who.sign_failed` / `who.encode_failed` | ERROR | `caller`, `error` |
+
+### Error reporting
+
+A CLI command that fails emits a single `command failed` entry on
+stderr with `key=<gobl-error-key>` and (when present) `message=…` and
+`faults=…`. With `--json` the same fields appear as a JSON object.
+Successful commands write no log output and their result still lands
+on stdout.
+
 ## 11. Security Considerations
 
 ### 11.1 Trust Model

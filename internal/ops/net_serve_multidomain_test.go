@@ -3,7 +3,6 @@ package ops
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -181,7 +180,7 @@ func TestMultiDomainRouter(t *testing.T) {
 		net.Address(peer).KeyURL(peerKey.ID()): jwkBytes(t, peerKey),
 	}}))
 
-	router, err := buildRouter(domains, client, io.Discard)
+	router, err := buildRouter(domains, client, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(router)
 	defer srv.Close()

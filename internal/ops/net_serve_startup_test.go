@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
+	"log/slog"
 	stdnet "net"
 	"os"
 	"path/filepath"
@@ -17,6 +19,19 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// discardLog returns a slog.Logger that swallows all output, suitable
+// for tests that don't care about log content.
+func discardLog() *slog.Logger {
+	return slog.New(slog.NewTextHandler(io.Discard, nil))
+}
+
+// captureLog returns a slog.Logger that writes text-formatted entries
+// to buf, plus the buf itself so tests can assert on the captured output.
+func captureLog() (*slog.Logger, *bytes.Buffer) {
+	buf := new(bytes.Buffer)
+	return slog.New(slog.NewTextHandler(buf, nil)), buf
+}
 
 // writeRawParty writes a raw (unsigned) org.Party to path.
 func writeRawParty(t *testing.T, path string, party *org.Party) {
@@ -59,16 +74,16 @@ func TestEnsureKeysAutoGenerates(t *testing.T) {
 	dc := dcFor(dir, "")
 
 	before := time.Now().UTC()
-	out := new(bytes.Buffer)
-	keysByKID, err := ensureKeys(dc, out)
+	log, buf := captureLog()
+	keysByKID, err := ensureKeys(dc, log)
 	require.NoError(t, err)
 	after := time.Now().UTC()
 
 	assert.DirExists(t, dc.KeysDir)
 	assert.FileExists(t, dc.PrivateKeyFile)
 
-	logged := out.String()
-	assert.Contains(t, logged, "Generated new keypair")
+	logged := buf.String()
+	assert.Contains(t, logged, "generated keypair")
 	assert.Contains(t, logged, dc.PrivateKeyFile)
 
 	privBytes, err := os.ReadFile(dc.PrivateKeyFile)
@@ -108,7 +123,7 @@ func TestEnsureKeysRejectsPartialState(t *testing.T) {
 	dc := dcFor(dir, "")
 	writeKey(t, dc.KeysDir, dsig.NewES256Key()) // only the public side
 
-	_, err := ensureKeys(dc, new(bytes.Buffer))
+	_, err := ensureKeys(dc, discardLog())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "inconsistent key setup")
 }
@@ -119,7 +134,7 @@ func TestEnsureKeysRejectsMismatchedKid(t *testing.T) {
 	writeKey(t, dc.KeysDir, dsig.NewES256Key())
 	writePrivate(t, dc.PrivateKeyFile, dsig.NewES256Key())
 
-	_, err := ensureKeys(dc, new(bytes.Buffer))
+	_, err := ensureKeys(dc, discardLog())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not published under")
 }
@@ -135,7 +150,7 @@ func TestEnsureKeysRejectsMismatchedFilename(t *testing.T) {
 	require.NoError(t, os.WriteFile(filepath.Join(dc.KeysDir, "wrong-name.json"), b, 0o644))
 	writePrivate(t, dc.PrivateKeyFile, k)
 
-	_, err = ensureKeys(dc, new(bytes.Buffer))
+	_, err = ensureKeys(dc, discardLog())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "does not match JWK kid")
 }
@@ -362,7 +377,7 @@ func TestEnsureKeysOnlyKeysDirExists(t *testing.T) {
 	dir := t.TempDir()
 	dc := dcFor(dir, "")
 	writeKey(t, dc.KeysDir, dsig.NewES256Key())
-	_, err := ensureKeys(dc, new(bytes.Buffer))
+	_, err := ensureKeys(dc, discardLog())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "inconsistent key setup")
 }
@@ -373,7 +388,7 @@ func TestEnsureKeysBadPrivateKey(t *testing.T) {
 	dc := dcFor(dir, "")
 	writeKey(t, dc.KeysDir, dsig.NewES256Key())
 	require.NoError(t, os.WriteFile(dc.PrivateKeyFile, []byte("not json"), 0o600))
-	_, err := ensureKeys(dc, new(bytes.Buffer))
+	_, err := ensureKeys(dc, discardLog())
 	require.Error(t, err)
 }
 
@@ -383,7 +398,7 @@ func TestEnsureKeysEmptyKeysDir(t *testing.T) {
 	// keys dir exists but is empty (no <kid>.json files).
 	require.NoError(t, os.MkdirAll(dc.KeysDir, 0o755))
 	writePrivate(t, dc.PrivateKeyFile, privateKey)
-	_, err := ensureKeys(dc, new(bytes.Buffer))
+	_, err := ensureKeys(dc, discardLog())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "contains no JWKs")
 }
@@ -435,7 +450,7 @@ func TestBuildRouterSingleUnnamed(t *testing.T) {
 	writePrivate(t, dc.PrivateKeyFile, privateKey)
 	writeRawParty(t, dc.PartyFile, &org.Party{Name: "Solo"})
 
-	h, err := buildRouter([]domainConfig{dc}, nil, new(bytes.Buffer))
+	h, err := buildRouter([]domainConfig{dc}, nil, discardLog())
 	require.NoError(t, err)
 	require.NotNil(t, h)
 }
@@ -449,13 +464,13 @@ func TestNetServeRunCancel(t *testing.T) {
 
 	port := freePort(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	out := new(bytes.Buffer)
+	log, buf := captureLog()
 	doneCh := make(chan error, 1)
 	go func() {
 		doneCh <- NetServe(ctx, &NetServeOptions{
 			ConfigDir: configDir,
 			HTTPPort:  port,
-			Out:       out,
+			Log:       log,
 		})
 	}()
 	// Let the goroutine reach Serve before shutting it down.
@@ -468,8 +483,9 @@ func TestNetServeRunCancel(t *testing.T) {
 		t.Fatal("NetServe did not return after cancel")
 	}
 	// Confirm it logged the listening address.
-	assert.Contains(t, out.String(), "GOBL Net listening on HTTP")
-	assert.Contains(t, out.String(), "Shutting down")
+	assert.Contains(t, buf.String(), "GOBL Net listening")
+	assert.Contains(t, buf.String(), "scheme=http")
+	assert.Contains(t, buf.String(), "Shutting down")
 }
 
 // freePort returns a TCP port that's currently free on 127.0.0.1.
@@ -500,7 +516,7 @@ func TestNetServeWithACMETest(t *testing.T) {
 	initTestDomain(t, configDir, "x.example")
 
 	ctx, cancel := context.WithCancel(context.Background())
-	out := new(bytes.Buffer)
+	log, buf := captureLog()
 	doneCh := make(chan error, 1)
 	go func() {
 		doneCh <- NetServe(ctx, &NetServeOptions{
@@ -510,7 +526,7 @@ func TestNetServeWithACMETest(t *testing.T) {
 			HTTPPort:  freePort(t),
 			HTTPSPort: freePort(t),
 			CertDir:   filepath.Join(configDir, "certs"),
-			Out:       out,
+			Log:       log,
 		})
 	}()
 	time.Sleep(50 * time.Millisecond)
@@ -520,7 +536,7 @@ func TestNetServeWithACMETest(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("NetServe did not return after cancel")
 	}
-	assert.Contains(t, out.String(), "ACME enabled for domains")
+	assert.Contains(t, buf.String(), "ACME enabled")
 }
 
 func TestNetServeACMEManualMode(t *testing.T) {
@@ -579,7 +595,7 @@ func TestGenerateKeypairWriteErrors(t *testing.T) {
 		require.NoError(t, os.MkdirAll(ro, 0o500))
 		t.Cleanup(func() { _ = os.Chmod(ro, 0o755) })
 
-		_, err := generateKeypair(filepath.Join(dir, "keys"), filepath.Join(ro, "sub", "private.jwk"), new(bytes.Buffer))
+		_, err := generateKeypair(filepath.Join(dir, "keys"), filepath.Join(ro, "sub", "private.jwk"), discardLog())
 		require.Error(t, err)
 	})
 	t.Run("keys dir not writable", func(t *testing.T) {
@@ -589,7 +605,7 @@ func TestGenerateKeypairWriteErrors(t *testing.T) {
 		t.Cleanup(func() { _ = os.Chmod(ro, 0o755) })
 
 		// Private file path is fine; keysDir path is inside a non-writable parent.
-		_, err := generateKeypair(filepath.Join(ro, "keys"), filepath.Join(dir, "private.jwk"), new(bytes.Buffer))
+		_, err := generateKeypair(filepath.Join(ro, "keys"), filepath.Join(dir, "private.jwk"), discardLog())
 		require.Error(t, err)
 	})
 }
@@ -647,7 +663,7 @@ func TestBuildRouterPropagatesDomainError(t *testing.T) {
 	dc := dcFor(dir, "broken.example")
 	// Write keys/ dir without private.jwk to trigger the "inconsistent" path.
 	writeKey(t, dc.KeysDir, dsig.NewES256Key())
-	_, err := buildRouter([]domainConfig{dc}, nil, new(bytes.Buffer))
+	_, err := buildRouter([]domainConfig{dc}, nil, discardLog())
 	require.Error(t, err)
 }
 
@@ -660,7 +676,7 @@ func TestBuildDomainHandlerErrors(t *testing.T) {
 		dc := dcFor(dir, "")
 		writeKey(t, dc.KeysDir, privateKey)
 		require.NoError(t, os.WriteFile(dc.PrivateKeyFile, []byte("not json"), 0o600))
-		_, err := buildDomainHandler(dc, nil, new(bytes.Buffer))
+		_, err := buildDomainHandler(dc, nil, discardLog())
 		require.Error(t, err)
 	})
 
@@ -669,7 +685,7 @@ func TestBuildDomainHandlerErrors(t *testing.T) {
 		dc := dcFor(dir, "")
 		writeKey(t, dc.KeysDir, privateKey)
 		writePrivate(t, dc.PrivateKeyFile, privateKey)
-		_, err := buildDomainHandler(dc, nil, new(bytes.Buffer))
+		_, err := buildDomainHandler(dc, nil, discardLog())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "party file not found")
 	})
@@ -681,7 +697,7 @@ func TestBuildDomainHandlerErrors(t *testing.T) {
 		writePrivate(t, dc.PrivateKeyFile, privateKey)
 		writeRawParty(t, dc.PartyFile, &org.Party{Name: "Me"})
 		require.NoError(t, os.WriteFile(dc.AllowFile, []byte("not json"), 0o644))
-		_, err := buildDomainHandler(dc, nil, new(bytes.Buffer))
+		_, err := buildDomainHandler(dc, nil, discardLog())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid allow list")
 	})
@@ -694,7 +710,7 @@ func TestBuildDomainHandlerErrors(t *testing.T) {
 		writeRawParty(t, dc.PartyFile, &org.Party{Name: "Me"})
 		// Pre-create dc.InboxDir as a regular file so MkdirAll fails.
 		require.NoError(t, os.WriteFile(dc.InboxDir, []byte("x"), 0o644))
-		_, err := buildDomainHandler(dc, nil, new(bytes.Buffer))
+		_, err := buildDomainHandler(dc, nil, discardLog())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "create inbox dir")
 	})

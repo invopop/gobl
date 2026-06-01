@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -19,6 +20,7 @@ type InitOptions struct {
 	Name      string // optional party name seed
 	Force     bool   // overwrite a non-empty existing directory
 	Out       io.Writer
+	Log       *slog.Logger // optional; defaults to slog.Default()
 }
 
 // InitDomain scaffolds a new GOBL Net domain identity under
@@ -28,10 +30,7 @@ type InitOptions struct {
 // inbox/ directory. The party is intentionally left unsigned — serve
 // signs it on demand.
 func InitDomain(opts *InitOptions) error {
-	out := opts.Out
-	if out == nil {
-		out = os.Stdout
-	}
+	log := logger(opts.Log)
 	if opts.Domain == "" {
 		return fmt.Errorf("init: domain is required")
 	}
@@ -46,7 +45,7 @@ func InitDomain(opts *InitOptions) error {
 		return fmt.Errorf("init: create domain dir: %w", err)
 	}
 
-	if _, err := generateKeypair(dc.KeysDir, dc.PrivateKeyFile, out); err != nil {
+	if _, err := generateKeypair(dc.KeysDir, dc.PrivateKeyFile, log); err != nil {
 		return err
 	}
 
@@ -67,6 +66,6 @@ func InitDomain(opts *InitOptions) error {
 		return fmt.Errorf("init: create inbox dir: %w", err)
 	}
 
-	fmt.Fprintf(out, "Initialised domain %s: %s, %s\n", opts.Domain, dc.PartyFile, dc.InboxDir) //nolint:errcheck
+	log.Info("initialised domain", "domain", opts.Domain, "party", dc.PartyFile, "inbox", dc.InboxDir)
 	return nil
 }

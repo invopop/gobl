@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -51,8 +51,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	if addr == "" {
 		addr = ":80"
 	}
-	fmt.Fprintf(cmd.OutOrStdout(), "GOBL %s\n", gobl.VERSION) //nolint:errcheck
-	fmt.Fprintf(cmd.OutOrStdout(), "Listening on %s\n", addr) //nolint:errcheck
+	slog.Info("GOBL serve starting", "version", gobl.VERSION, "addr", addr)
 
 	var startErr error
 	go func() {
@@ -64,7 +63,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	}()
 
 	<-ctx.Done()
-	fmt.Fprintln(cmd.OutOrStdout(), "Shutting down...") //nolint:errcheck
+	slog.Info("Shutting down")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()

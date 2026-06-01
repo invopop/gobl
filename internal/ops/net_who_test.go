@@ -1,7 +1,6 @@
 package ops
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -40,7 +39,7 @@ func TestNetWho(t *testing.T) {
 	serverClient := net.NewClient(net.WithFetcher(&mapFetcher{data: map[string][]byte{
 		net.Address(testPeerDomain).KeyURL(testPeerKey.ID()): jwkBytes(t, testPeerKey),
 	}}))
-	handler, err := buildDomainHandler(dc, serverClient, new(bytes.Buffer))
+	handler, err := buildDomainHandler(dc, serverClient, discardLog())
 	require.NoError(t, err)
 	srv := httptest.NewServer(handler)
 	defer srv.Close()

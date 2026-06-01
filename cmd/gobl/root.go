@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"io"
+	"log/slog"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ type rootOpts struct {
 	indent              bool // when true, indent output, mainly for testing
 	overwriteOutputFile bool
 	inPlace             bool
+	jsonLogs            bool // when true, emit structured JSON log lines (otherwise text)
 }
 
 func root() *rootOpts {
@@ -47,6 +49,10 @@ func (o *rootOpts) setFlags(cmd *cobra.Command) {
 	f.BoolVarP(&o.indent, "indent", "i", false, "format JSON output with indentation")
 	f.BoolVarP(&o.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
 	f.BoolVarP(&o.inPlace, "in-place", "w", false, "overwrite the input file in place  (only outputs JSON)")
+	f.BoolVar(&o.jsonLogs, "json", false, "emit logs and error reports as structured JSON on stderr (result output is unaffected)")
+	cobra.OnInitialize(func() {
+		slog.SetDefault(newLogger(o.jsonLogs))
+	})
 }
 
 func (o *rootOpts) outputFilename(args []string) string {
