@@ -111,6 +111,12 @@ func billInvoiceRules() *rules.Set {
 				rules.When(is.Func("fik payment means without a valid OIOUBL payment id", fikPaymentIDInvalid),
 					rules.Assert("15", "FIK (payment-means 93) requires a dk-oioubl-payment-id of 71, 73 or 75 (F-LIB152)", is.Func("never", neverTrue)),
 				),
+				rules.When(is.Func("giro payment means without a 7-8 digit payee account", giroAccountInvalid),
+					rules.Assert("21", "Giro (payment-means 50) requires a 7 or 8 digit payee account (F-LIB319 / F-LIB320 / F-LIB321)", is.Func("never", neverTrue)),
+				),
+				rules.When(is.Func("fik payment means without an 8-character creditor account", fikAccountInvalid),
+					rules.Assert("22", "FIK (payment-means 93) requires an 8-character creditor account (F-LIB305)", is.Func("never", neverTrue)),
+				),
 			),
 		),
 		rules.Field("lines",
@@ -302,6 +308,48 @@ func giroPaymentIDInvalid(val any) bool {
 
 func fikPaymentIDInvalid(val any) bool {
 	return paymentIDInvalidFor(val, "93", fikPaymentIDs)
+}
+
+// giroAccountInvalid reports whether a Giro (payment-means 50) instruction's
+// payee account is missing or not 7-8 numeric digits (F-LIB319/320/321).
+func giroAccountInvalid(val any) bool {
+	return accountLengthInvalid(val, "50", isGiroAccountNumber)
+}
+
+// fikAccountInvalid reports whether a FIK (payment-means 93) instruction's
+// creditor account is missing or not exactly 8 characters (F-LIB305).
+func fikAccountInvalid(val any) bool {
+	return accountLengthInvalid(val, "93", func(s string) bool { return len(s) == 8 })
+}
+
+// accountLengthInvalid fires when the instruction uses the given payment-means
+// code but no credit transfer carries an account number satisfying ok.
+func accountLengthInvalid(val any, code cbc.Code, ok func(string) bool) bool {
+	instr, isInstr := val.(*pay.Instructions)
+	if !isInstr || instr == nil {
+		return false
+	}
+	if instr.Ext.Get(untdid.ExtKeyPaymentMeans) != code {
+		return false
+	}
+	for _, ct := range instr.CreditTransfer {
+		if ct != nil && ok(ct.Number) {
+			return false
+		}
+	}
+	return true
+}
+
+func isGiroAccountNumber(s string) bool {
+	if len(s) < 7 || len(s) > 8 {
+		return false
+	}
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 // paymentIDInvalidFor reports whether the instruction uses the given OIOUBL

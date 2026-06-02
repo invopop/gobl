@@ -408,6 +408,7 @@ func TestInvoiceValidation(t *testing.T) {
 					untdid.ExtKeyPaymentMeans: "50",
 					oioubl.ExtKeyPaymentID:    "04",
 				}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -450,10 +451,37 @@ func TestInvoiceValidation(t *testing.T) {
 					untdid.ExtKeyPaymentMeans: "93",
 					oioubl.ExtKeyPaymentID:    "73",
 				}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
 			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("Giro code 50 with a non-7-8-digit account fails (F-LIB321)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB321")
+	})
+
+	t.Run("FIK code 93 with a non-8-character account fails (F-LIB305)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "73"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "123"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB305")
 	})
 
 	t.Run("FIK code 93 without payment id fails (F-LIB152)", func(t *testing.T) {
