@@ -24,6 +24,18 @@ var validPaymentMeansCodes = []cbc.Code{
 // the CreditNote equivalent (F-CRN) second where one exists. F-INV142 is
 // invoice-only because OIOUBL CreditNote uses BillingReference rather than
 // OrderLineReference.
+//
+// Deliberately NOT enforced here: F-LIB318 (line quantity unitCode must be in
+// the OIOUBL codelist). OIOUBL 2.1 ships an older UN/ECE Rec 20 subset (~1100
+// codes) that omits common current codes — GOBL's `piece` (H87), `km` (KMT) and
+// the packaging units (box/bottle/pallet → X**) are not accepted, and most have
+// no OIOUBL equivalent to map to. Enforcing it would mean either maintaining the
+// full ~1100-code allowlist in the addon (a codelist-value check that belongs in
+// gobl.ubl, not here) or emitting a fabricated fallback (e.g. ZZ "mutually
+// defined"). Instead the converter emits the real Rec 20 code and the phive
+// schematron rejects an out-of-list unit downstream — the authoritative gate for
+// codelist values. So an invoice using e.g. `piece` fails at generation with
+// F-LIB318 and the user picks an OIOUBL-valid unit (C62/each).
 
 var (
 	roundingMin = num.MakeAmount(-1000, 2)
