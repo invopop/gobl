@@ -19,6 +19,11 @@ const (
 	// the EN 16931 UNTDID tax category so the gobl.ubl serializer emits it
 	// directly instead of mapping the codes itself.
 	ExtKeyTaxCategory cbc.Key = "dk-oioubl-tax-category"
+
+	// ExtKeyPaymentChannel carries the OIOUBL paymentchannelcode-1.1 value
+	// emitted as cbc:PaymentChannelCode. The addon normalizer derives it from
+	// the payment means so the gobl.ubl serializer emits it directly.
+	ExtKeyPaymentChannel cbc.Key = "dk-oioubl-payment-channel"
 )
 
 // OIOUBL taxcategoryid-1.1 category codes.
@@ -26,6 +31,13 @@ const (
 	ExtValueTaxCategoryStandardRated cbc.Code = "StandardRated"
 	ExtValueTaxCategoryZeroRated     cbc.Code = "ZeroRated"
 	ExtValueTaxCategoryReverseCharge cbc.Code = "ReverseCharge"
+)
+
+// OIOUBL paymentchannelcode-1.1 values.
+const (
+	ExtValuePaymentChannelIBAN cbc.Code = "IBAN"
+	ExtValuePaymentChannelGiro cbc.Code = "DK:GIRO"
+	ExtValuePaymentChannelFIK  cbc.Code = "DK:FIK"
 )
 
 // OIOUBL Giro (code 50) PaymentID values.
@@ -91,6 +103,26 @@ var extensions = []*cbc.Definition{
 			{Code: ExtValueTaxCategoryStandardRated, Name: i18n.String{i18n.EN: "Standard rated"}},
 			{Code: ExtValueTaxCategoryZeroRated, Name: i18n.String{i18n.EN: "Zero rated"}},
 			{Code: ExtValueTaxCategoryReverseCharge, Name: i18n.String{i18n.EN: "Reverse charge"}},
+		},
+	},
+	{
+		Key: ExtKeyPaymentChannel,
+		Name: i18n.String{
+			i18n.EN: "OIOUBL Payment Channel",
+			i18n.DA: "OIOUBL Betalingskanal",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The OIOUBL ` + "`paymentchannelcode-1.1`" + ` value emitted as
+				` + "`cbc:PaymentChannelCode`" + `. Derived from the payment means
+				during normalization: Giro (50) → DK:GIRO, FIK (93) → DK:FIK, and
+				other settled means → IBAN (direct debit carries no channel).
+			`),
+		},
+		Values: []*cbc.Definition{
+			{Code: ExtValuePaymentChannelIBAN, Name: i18n.String{i18n.EN: "IBAN bank transfer"}},
+			{Code: ExtValuePaymentChannelGiro, Name: i18n.String{i18n.EN: "Danish Giro"}},
+			{Code: ExtValuePaymentChannelFIK, Name: i18n.String{i18n.EN: "Danish FIK"}},
 		},
 	},
 }

@@ -3,13 +3,47 @@ package oioubl
 import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 )
 
 // normalize applies the OIOUBL-specific normalizations during Calculate.
 func normalize(doc any) {
-	if c, ok := doc.(*tax.Combo); ok {
-		normalizeTaxCombo(c)
+	switch obj := doc.(type) {
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
+	case *pay.Instructions:
+		normalizePayInstructions(obj)
+	}
+}
+
+// normalizePayInstructions records the OIOUBL paymentchannelcode-1.1 value in the
+// dk-oioubl-payment-channel extension, derived from the payment means, so the
+// gobl.ubl serializer emits cbc:PaymentChannelCode directly.
+func normalizePayInstructions(instr *pay.Instructions) {
+	if instr == nil {
+		return
+	}
+	if ch := oioublPaymentChannel(instr.Ext.Get(untdid.ExtKeyPaymentMeans)); ch != "" {
+		instr.Ext = instr.Ext.Set(ExtKeyPaymentChannel, ch)
+	}
+}
+
+// oioublPaymentChannel maps a UNTDID 4461 payment means to its OIOUBL payment
+// channel: Giro (50) → DK:GIRO, FIK (93) → DK:FIK, direct debit (49) carries no
+// channel, and every other settled means defaults to IBAN.
+func oioublPaymentChannel(means cbc.Code) cbc.Code {
+	switch means {
+	case "":
+		return ""
+	case "50":
+		return ExtValuePaymentChannelGiro
+	case "93":
+		return ExtValuePaymentChannelFIK
+	case "49":
+		return ""
+	default:
+		return ExtValuePaymentChannelIBAN
 	}
 }
 

@@ -67,5 +67,7 @@ func TestNormalizeStandardUnchanged(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	assert.Equal(t, "S", inv.Lines[0].Taxes[0].Ext.Get(untdid.ExtKeyTaxCategory).String())
 	assert.Equal(t, "StandardRated", inv.Lines[0].Taxes[0].Ext.Get(oioubl.ExtKeyTaxCategory).String())
+	assert.Equal(t, "IBAN", inv.Payment.Instructions.Ext.Get(oioubl.ExtKeyPaymentChannel).String(),
+		"a bank transfer should carry the IBAN payment channel")
 	require.NoError(t, rules.Validate(inv))
 }

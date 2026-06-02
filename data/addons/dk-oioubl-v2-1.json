@@ -101,6 +101,36 @@
           }
         }
       ]
+    },
+    {
+      "key": "dk-oioubl-payment-channel",
+      "name": {
+        "da": "OIOUBL Betalingskanal",
+        "en": "OIOUBL Payment Channel"
+      },
+      "desc": {
+        "en": "The OIOUBL `paymentchannelcode-1.1` value emitted as\n`cbc:PaymentChannelCode`. Derived from the payment means\nduring normalization: Giro (50) → DK:GIRO, FIK (93) → DK:FIK, and\nother settled means → IBAN (direct debit carries no channel)."
+      },
+      "values": [
+        {
+          "code": "IBAN",
+          "name": {
+            "en": "IBAN bank transfer"
+          }
+        },
+        {
+          "code": "DK:GIRO",
+          "name": {
+            "en": "Danish Giro"
+          }
+        },
+        {
+          "code": "DK:FIK",
+          "name": {
+            "en": "Danish FIK"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,
