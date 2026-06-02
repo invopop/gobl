@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `num`: `Amount.Multiply` now uses `math/big` for the integer product and division instead of `float64`, preventing a silent `int64` overflow that produced large negative results when multiplying a price with many decimal places (e.g. `3.0888382687927107`) by a large integer quantity.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
