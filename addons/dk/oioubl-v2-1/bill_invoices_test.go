@@ -404,6 +404,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: pay.MeansKeyCreditTransfer,
+				Ref: "1234567890",
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyPaymentMeans: "50",
 					oioubl.ExtKeyPaymentID:    "04",
@@ -413,6 +414,64 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("Giro code 50 kortart 04 without a reference fails (F-LIB145)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyPaymentMeans: "50",
+					oioubl.ExtKeyPaymentID:    "04",
+				}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB145")
+	})
+
+	t.Run("FIK code 93 kortart 71 with a 15-digit reference passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "000000000012345",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("FIK code 93 kortart 71 with a wrong-length reference fails (F-LIB156)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "12345",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB156")
+	})
+
+	t.Run("FIK code 93 kortart 71 with a non-numeric reference fails (F-LIB336)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "ABC123DEF456789",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB336")
 	})
 
 	t.Run("Giro code 50 without payment id fails (F-LIB144)", func(t *testing.T) {

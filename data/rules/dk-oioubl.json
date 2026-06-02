@@ -194,6 +194,16 @@
                   ]
                 },
                 {
+                  "guard": "structured giro/fik payment id without a valid reference",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-23",
+                      "desc": "structured Giro/FIK payment id (04/15/71/75) requires a numeric payment reference of the required length (F-LIB145 / F-LIB153 / F-LIB156 / F-LIB157 / F-LIB312 / F-LIB336)",
+                      "tests": "never"
+                    }
+                  ]
+                },
+                {
                   "guard": "giro payment means without a 7-8 digit payee account",
                   "assert": [
                     {

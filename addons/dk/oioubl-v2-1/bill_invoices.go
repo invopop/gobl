@@ -111,6 +111,9 @@ func billInvoiceRules() *rules.Set {
 				rules.When(is.Func("fik payment means without a valid OIOUBL payment id", fikPaymentIDInvalid),
 					rules.Assert("15", "FIK (payment-means 93) requires a dk-oioubl-payment-id of 71, 73 or 75 (F-LIB152)", is.Func("never", neverTrue)),
 				),
+				rules.When(is.Func("structured giro/fik payment id without a valid reference", structuredPaymentRefInvalid),
+					rules.Assert("23", "structured Giro/FIK payment id (04/15/71/75) requires a numeric payment reference of the required length (F-LIB145 / F-LIB153 / F-LIB156 / F-LIB157 / F-LIB312 / F-LIB336)", is.Func("never", neverTrue)),
+				),
 				rules.When(is.Func("giro payment means without a 7-8 digit payee account", giroAccountInvalid),
 					rules.Assert("21", "Giro (payment-means 50) requires a 7 or 8 digit payee account (F-LIB319 / F-LIB320 / F-LIB321)", is.Func("never", neverTrue)),
 				),
@@ -334,6 +337,45 @@ func accountLengthInvalid(val any, code cbc.Code, ok func(string) bool) bool {
 	}
 	for _, ct := range instr.CreditTransfer {
 		if ct != nil && ok(ct.Number) {
+			return false
+		}
+	}
+	return true
+}
+
+// structuredPaymentRefInvalid reports whether a Giro/FIK instruction using a
+// structured kortart (Giro 04/15, FIK 71/75) is missing the numeric payment
+// reference that OIOUBL emits as cbc:InstructionID, or carries one of the wrong
+// length: mandatory F-LIB145 (Giro) / F-LIB153 (FIK), numeric F-LIB312 (Giro) /
+// F-LIB336 (FIK), length F-LIB149 (Giro <=16) / F-LIB156 (FIK 71 = 15) /
+// F-LIB157 (FIK 75 = 16). The simple kortart (Giro 01, FIK 73) carry no
+// reference and are emitted without an InstructionID, so they need no rule.
+func structuredPaymentRefInvalid(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	means := instr.Ext.Get(untdid.ExtKeyPaymentMeans)
+	ref := instr.Ref.String()
+	switch instr.Ext.Get(ExtKeyPaymentID) {
+	case "04", "15":
+		return means == "50" && !isNumericOfLen(ref, 1, 16)
+	case "71":
+		return means == "93" && !isNumericOfLen(ref, 15, 15)
+	case "75":
+		return means == "93" && !isNumericOfLen(ref, 16, 16)
+	}
+	return false
+}
+
+// isNumericOfLen reports whether s consists only of ASCII digits and has a
+// length within [minLen, maxLen].
+func isNumericOfLen(s string, minLen, maxLen int) bool {
+	if len(s) < minLen || len(s) > maxLen {
+		return false
+	}
+	for _, r := range s {
+		if r < '0' || r > '9' {
 			return false
 		}
 	}
