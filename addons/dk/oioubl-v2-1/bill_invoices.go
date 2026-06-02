@@ -114,6 +114,12 @@ func billInvoiceRules() *rules.Set {
 				rules.When(is.Func("structured giro/fik payment id without a valid reference", structuredPaymentRefInvalid),
 					rules.Assert("23", "structured Giro/FIK payment id (04/15/71/75) requires a numeric payment reference of the required length (F-LIB145 / F-LIB153 / F-LIB156 / F-LIB157 / F-LIB312 / F-LIB336)", is.Func("never", neverTrue)),
 				),
+				rules.When(is.Func("fik kortart 73 carrying a payment reference", fik73WithReference),
+					rules.Assert("24", "FIK payment id 73 must not carry a payment reference, OIOUBL has no element for it (F-LIB275)", is.Func("never", neverTrue)),
+				),
+				rules.When(is.Func("giro kortart 01 with an over-long payment reference", giro01ReferenceTooLong),
+					rules.Assert("25", "Giro payment id 01 payment reference must be at most 16 characters (F-LIB149)", is.Func("never", neverTrue)),
+				),
 				rules.When(is.Func("giro payment means without a 7-8 digit payee account", giroAccountInvalid),
 					rules.Assert("21", "Giro (payment-means 50) requires a 7 or 8 digit payee account (F-LIB319 / F-LIB320 / F-LIB321)", is.Func("never", neverTrue)),
 				),
@@ -366,6 +372,32 @@ func structuredPaymentRefInvalid(val any) bool {
 		return means == "93" && !isNumericOfLen(ref, 16, 16)
 	}
 	return false
+}
+
+// fik73WithReference reports whether a FIK (payment-means 93) instruction uses
+// the simple kortart 73, which forbids cbc:InstructionID, yet carries a payment
+// reference that OIOUBL has nowhere to put (F-LIB275).
+func fik73WithReference(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	return instr.Ext.Get(untdid.ExtKeyPaymentMeans) == "93" &&
+		instr.Ext.Get(ExtKeyPaymentID) == "73" &&
+		instr.Ref != ""
+}
+
+// giro01ReferenceTooLong reports whether a Giro (payment-means 50) instruction
+// using kortart 01 carries a payment reference longer than the 16 characters
+// OIOUBL allows in cbc:InstructionID (F-LIB149).
+func giro01ReferenceTooLong(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	return instr.Ext.Get(untdid.ExtKeyPaymentMeans) == "50" &&
+		instr.Ext.Get(ExtKeyPaymentID) == "01" &&
+		len(instr.Ref.String()) > 16
 }
 
 // isNumericOfLen reports whether s consists only of ASCII digits and has a

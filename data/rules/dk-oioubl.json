@@ -204,6 +204,26 @@
                   ]
                 },
                 {
+                  "guard": "fik kortart 73 carrying a payment reference",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-24",
+                      "desc": "FIK payment id 73 must not carry a payment reference, OIOUBL has no element for it (F-LIB275)",
+                      "tests": "never"
+                    }
+                  ]
+                },
+                {
+                  "guard": "giro kortart 01 with an over-long payment reference",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-25",
+                      "desc": "Giro payment id 01 payment reference must be at most 16 characters (F-LIB149)",
+                      "tests": "never"
+                    }
+                  ]
+                },
+                {
                   "guard": "giro payment means without a 7-8 digit payee account",
                   "assert": [
                     {

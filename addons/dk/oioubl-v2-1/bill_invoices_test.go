@@ -474,6 +474,48 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB336")
 	})
 
+	t.Run("FIK code 93 kortart 73 with a reference fails (F-LIB275)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "12345678",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "73"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB275")
+	})
+
+	t.Run("Giro code 50 kortart 01 with a short reference passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "REF12345",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("Giro code 50 kortart 01 with an over-long reference fails (F-LIB149)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "12345678901234567",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB149")
+	})
+
 	t.Run("Giro code 50 without payment id fails (F-LIB144)", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
