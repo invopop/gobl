@@ -38,6 +38,7 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key:        V2_1,
 		Extensions: extensions,
+		Normalizer: normalize,
 		Name: i18n.String{
 			i18n.EN: "Danish OIOUBL 2.1",
 			i18n.DA: "Dansk OIOUBL 2.1",

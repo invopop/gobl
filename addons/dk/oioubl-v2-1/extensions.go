@@ -13,6 +13,19 @@ const (
 	// methods. The payment reference itself is carried separately in the GOBL
 	// payment instruction's Ref (emitted as cbc:InstructionID).
 	ExtKeyPaymentID cbc.Key = "dk-oioubl-payment-id"
+
+	// ExtKeyTaxCategory carries the OIOUBL taxcategoryid-1.1 category code
+	// emitted as cac:TaxCategory/cbc:ID. The addon normalizer derives it from
+	// the EN 16931 UNTDID tax category so the gobl.ubl serializer emits it
+	// directly instead of mapping the codes itself.
+	ExtKeyTaxCategory cbc.Key = "dk-oioubl-tax-category"
+)
+
+// OIOUBL taxcategoryid-1.1 category codes.
+const (
+	ExtValueTaxCategoryStandardRated cbc.Code = "StandardRated"
+	ExtValueTaxCategoryZeroRated     cbc.Code = "ZeroRated"
+	ExtValueTaxCategoryReverseCharge cbc.Code = "ReverseCharge"
 )
 
 // OIOUBL Giro (code 50) PaymentID values.
@@ -58,6 +71,26 @@ var extensions = []*cbc.Definition{
 			{Code: ExtValuePaymentIDFIK71, Name: i18n.String{i18n.EN: "FIK payment type 71"}},
 			{Code: ExtValuePaymentIDFIK73, Name: i18n.String{i18n.EN: "FIK payment type 73"}},
 			{Code: ExtValuePaymentIDFIK75, Name: i18n.String{i18n.EN: "FIK payment type 75"}},
+		},
+	},
+	{
+		Key: ExtKeyTaxCategory,
+		Name: i18n.String{
+			i18n.EN: "OIOUBL Tax Category",
+			i18n.DA: "OIOUBL Momskategori",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The OIOUBL ` + "`taxcategoryid-1.1`" + ` category code emitted as
+				` + "`cac:TaxCategory/cbc:ID`" + `. Derived from the EN 16931 UNTDID
+				tax category during normalization (S → StandardRated, Z → ZeroRated,
+				AE → ReverseCharge; VAT-exempt is reported as ZeroRated).
+			`),
+		},
+		Values: []*cbc.Definition{
+			{Code: ExtValueTaxCategoryStandardRated, Name: i18n.String{i18n.EN: "Standard rated"}},
+			{Code: ExtValueTaxCategoryZeroRated, Name: i18n.String{i18n.EN: "Zero rated"}},
+			{Code: ExtValueTaxCategoryReverseCharge, Name: i18n.String{i18n.EN: "Reverse charge"}},
 		},
 	},
 }

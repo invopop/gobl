@@ -71,6 +71,36 @@
           }
         }
       ]
+    },
+    {
+      "key": "dk-oioubl-tax-category",
+      "name": {
+        "da": "OIOUBL Momskategori",
+        "en": "OIOUBL Tax Category"
+      },
+      "desc": {
+        "en": "The OIOUBL `taxcategoryid-1.1` category code emitted as\n`cac:TaxCategory/cbc:ID`. Derived from the EN 16931 UNTDID\ntax category during normalization (S → StandardRated, Z → ZeroRated,\nAE → ReverseCharge; VAT-exempt is reported as ZeroRated)."
+      },
+      "values": [
+        {
+          "code": "StandardRated",
+          "name": {
+            "en": "Standard rated"
+          }
+        },
+        {
+          "code": "ZeroRated",
+          "name": {
+            "en": "Zero rated"
+          }
+        },
+        {
+          "code": "ReverseCharge",
+          "name": {
+            "en": "Reverse charge"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,
