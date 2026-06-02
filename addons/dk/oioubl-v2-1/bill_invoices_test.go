@@ -52,7 +52,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				{Scheme: "0184", Code: "88146328"},
 			},
 			People: []*org.Person{
-				{Name: &org.Name{Given: "Anders", Surname: "Jensen"}},
+				{
+					Name:       &org.Name{Given: "Anders", Surname: "Jensen"},
+					Identities: []*org.Identity{{Label: "Contact", Code: "C-001"}},
+				},
 			},
 			Addresses: []*org.Address{
 				{Number: "5", Street: "Bygaden", Locality: "Aarhus", Code: "8000", Country: "DK"},
@@ -355,6 +358,15 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes = tax.Set{{Category: "VAT", Key: "standard", Percent: &zero}}
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB382")
+	})
+
+	t.Run("customer contact without an identity fails (F-INV051)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.People = []*org.Person{
+			{Name: &org.Name{Given: "Mette", Surname: "Sørensen"}},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-INV051")
 	})
 
 	t.Run("generic credit-transfer code 30 without account fails (F-LIB107)", func(t *testing.T) {

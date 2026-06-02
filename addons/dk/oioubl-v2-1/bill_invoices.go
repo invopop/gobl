@@ -54,6 +54,8 @@ func billInvoiceRules() *rules.Set {
 			// gobl.ubl picks one Person at emit time, so the addon asserts presence only.
 			rules.Field("people",
 				rules.Assert("03", "customer people are required (F-INV046 / F-CRN042)", is.Present),
+				rules.Assert("20", "the customer contact person requires an identity code for the OIOUBL Contact/ID (F-INV051)",
+					is.Func("first person has an identity code", firstPersonHasIdentityCode)),
 			),
 			rules.Field("addresses",
 				rules.Assert("17", "customer address must be a complete OIOUBL StructuredDK address: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a building number or PO box (F-LIB035)",
@@ -183,6 +185,20 @@ func deliveryReceiverWithoutLocationData(val any) bool {
 
 func neverTrue(any) bool {
 	return false
+}
+
+// firstPersonHasIdentityCode reports whether the first contact person carries an
+// identity code. The gobl.ubl converter maps it to the OIOUBL cac:Contact/cbc:ID,
+// which is mandatory for the customer (F-INV051); without it the converter would
+// have to fabricate a value, so the addon requires real data instead. An empty
+// people set passes here since rule 03 governs presence.
+func firstPersonHasIdentityCode(val any) bool {
+	people, ok := val.([]*org.Person)
+	if !ok || len(people) == 0 {
+		return true
+	}
+	p := people[0]
+	return p != nil && len(p.Identities) > 0 && !p.Identities[0].Code.IsEmpty()
 }
 
 // addressStructuredDKComplete reports whether the first address (the one the

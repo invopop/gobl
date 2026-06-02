@@ -62,6 +62,11 @@
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-03",
                   "desc": "customer people are required (F-INV046 / F-CRN042)",
                   "tests": "present"
+                },
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-20",
+                  "desc": "the customer contact person requires an identity code for the OIOUBL Contact/ID (F-INV051)",
+                  "tests": "first person has an identity code"
                 }
               ]
             },
