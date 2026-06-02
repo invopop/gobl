@@ -42,8 +42,8 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("01", "supplier inboxes are required (F-INV031 / F-CRN028)", is.Present),
 			),
 			rules.Field("addresses",
-				rules.Assert("16", "supplier address requires a street number or PO box (F-LIB035)",
-					is.Func("first address has a number or PO box", firstAddressHasNumberOrPOBox)),
+				rules.Assert("16", "supplier address must be a complete OIOUBL StructuredDK address: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a building number or PO box (F-LIB035)",
+					is.Func("complete StructuredDK address", addressStructuredDKComplete)),
 			),
 		),
 		rules.Field("customer",
@@ -56,8 +56,8 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("03", "customer people are required (F-INV046 / F-CRN042)", is.Present),
 			),
 			rules.Field("addresses",
-				rules.Assert("17", "customer address requires a street number or PO box (F-LIB035)",
-					is.Func("first address has a number or PO box", firstAddressHasNumberOrPOBox)),
+				rules.Assert("17", "customer address must be a complete OIOUBL StructuredDK address: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a building number or PO box (F-LIB035)",
+					is.Func("complete StructuredDK address", addressStructuredDKComplete)),
 			),
 		),
 		rules.When(is.Func("non-credit-note invoice with line order ref", invoiceWithLineOrderRef),
@@ -88,6 +88,9 @@ func billInvoiceRules() *rules.Set {
 				rules.When(is.Func("bank-transfer payment means without a payee account", bankTransferMissingAccount),
 					rules.Assert("13", "a credit transfer account (IBAN or number) is required for bank-transfer payment means (F-LIB107 / F-LIB126)", is.Func("never", neverTrue)),
 				),
+				rules.When(is.Func("iban bank-transfer credit transfer without a BIC", ibanTransferMissingBIC),
+					rules.Assert("18", "a BIC is required on the credit transfer for IBAN bank-transfer payment means 30/31 (F-LIB113)", is.Func("never", neverTrue)),
+				),
 				rules.When(is.Func("giro payment means without a valid OIOUBL payment id", giroPaymentIDInvalid),
 					rules.Assert("14", "Giro (payment-means 50) requires a dk-oioubl-payment-id of 01, 04 or 15 (F-LIB144 / F-LIB147)", is.Func("never", neverTrue)),
 				),
@@ -117,6 +120,15 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
+	)
+}
+
+// billTaxComboRules returns the OIOUBL 2.1 rule set applied to every tax combo
+// (line- and document-level), validated by type the way GOBL validates combos.
+func billTaxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.Assert("01", "standard-rated VAT must have a percent greater than zero (F-LIB382)",
+			is.Func("standard-rated has a positive percent", standardRatedHasPositivePercent)),
 	)
 }
 
@@ -173,17 +185,64 @@ func neverTrue(any) bool {
 	return false
 }
 
-// firstAddressHasNumberOrPOBox reports whether the first address (the one the
-// gobl.ubl converter emits) carries a street number or PO box. OIOUBL's
-// StructuredDK address format requires one or the other (F-LIB035). An empty
-// address set passes here since EN 16931 already governs address presence.
-func firstAddressHasNumberOrPOBox(val any) bool {
+// addressStructuredDKComplete reports whether the first address (the one the
+// gobl.ubl converter emits) carries everything OIOUBL's StructuredDK format
+// requires: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a
+// building number or PO box (F-LIB035). An empty address set passes here since
+// EN 16931 already governs address presence.
+func addressStructuredDKComplete(val any) bool {
 	addrs, ok := val.([]*org.Address)
 	if !ok || len(addrs) == 0 {
 		return true
 	}
 	a := addrs[0]
-	return a != nil && (a.Number != "" || a.PostOfficeBox != "")
+	if a == nil {
+		return true
+	}
+	hasPostbox := a.PostOfficeBox != ""
+	hasCode := a.Code != ""
+	hasStreet := a.Street != "" || hasPostbox
+	hasNumber := a.Number != "" || hasPostbox
+	return hasCode && hasStreet && hasNumber
+}
+
+// ibanTransferMissingBIC reports whether an IBAN bank-transfer instruction
+// (payment-means 30, which the converter maps to 31, or 31 itself) carries a
+// credit transfer with no BIC. OIOUBL requires the FinancialInstitution/ID for
+// the IBAN channel (F-LIB113), which the converter sources from the BIC.
+func ibanTransferMissingBIC(val any) bool {
+	instr, ok := val.(*pay.Instructions)
+	if !ok || instr == nil {
+		return false
+	}
+	if !instr.Ext.Get(untdid.ExtKeyPaymentMeans).In("30", "31") {
+		return false
+	}
+	for _, ct := range instr.CreditTransfer {
+		if ct != nil && ct.BIC == "" {
+			return true
+		}
+	}
+	return false
+}
+
+// standardRatedHasPositivePercent reports whether a tax combo that maps to the
+// OIOUBL StandardRated category (UNTDID 5305 "S") carries a percent greater than
+// zero. OIOUBL rejects StandardRated with a zero or absent percent (F-LIB382).
+func standardRatedHasPositivePercent(val any) bool {
+	var combo *tax.Combo
+	switch c := val.(type) {
+	case *tax.Combo:
+		combo = c
+	case tax.Combo:
+		combo = &c
+	default:
+		return true
+	}
+	if combo == nil || combo.Ext.Get(untdid.ExtKeyTaxCategory) != "S" {
+		return true
+	}
+	return combo.Percent != nil && !combo.Percent.Base().IsZero() && !combo.Percent.Base().IsNegative()
 }
 
 // bankTransferCodes are the OIOUBL PaymentMeansCode values that settle to a

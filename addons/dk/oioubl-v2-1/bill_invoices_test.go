@@ -242,7 +242,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Key: pay.MeansKeyCreditTransfer,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
 				CreditTransfer: []*pay.CreditTransfer{
-					{IBAN: "DK5000400440116243"},
+					{IBAN: "DK5000400440116243", BIC: "DABADKKK"},
 				},
 			},
 		}
@@ -256,7 +256,7 @@ func TestInvoiceValidation(t *testing.T) {
 			Instructions: &pay.Instructions{
 				Key:            pay.MeansKeyCreditTransfer,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "30"}),
-				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243"}},
+				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243", BIC: "DABADKKK"}},
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -312,6 +312,49 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
+	})
+
+	t.Run("bank-transfer code 31 without a BIC fails (F-LIB113)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
+				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB113")
+	})
+
+	t.Run("address without a postal code fails (F-LIB033)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = []*org.Address{
+			{Number: "1", Street: "Hovedgaden", Locality: "København", Country: "DK"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB033")
+	})
+
+	t.Run("address without a street or PO box fails (F-LIB034)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = []*org.Address{
+			{Number: "1", Locality: "København", Code: "1000", Country: "DK"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB034")
+	})
+
+	t.Run("standard-rated VAT with zero percent fails (F-LIB382)", func(t *testing.T) {
+		// The OIOUBL StandardRated category is derived from the eu-en16931
+		// untdid-tax-category extension, so this rule is exercised in the real
+		// [eu-en16931-v2017, dk-oioubl-v2-1] stack that DK invoices always use.
+		inv := testInvoiceStandard(t)
+		inv.Addons = tax.WithAddons("eu-en16931-v2017", oioubl.V2_1)
+		zero := num.MakePercentage(0, 3)
+		inv.Lines[0].Taxes = tax.Set{{Category: "VAT", Key: "standard", Percent: &zero}}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB382")
 	})
 
 	t.Run("generic credit-transfer code 30 without account fails (F-LIB107)", func(t *testing.T) {

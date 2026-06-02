@@ -35,8 +35,8 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-16",
-                  "desc": "supplier address requires a street number or PO box (F-LIB035)",
-                  "tests": "first address has a number or PO box"
+                  "desc": "supplier address must be a complete OIOUBL StructuredDK address: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a building number or PO box (F-LIB035)",
+                  "tests": "complete StructuredDK address"
                 }
               ]
             }
@@ -70,8 +70,8 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-17",
-                  "desc": "customer address requires a street number or PO box (F-LIB035)",
-                  "tests": "first address has a number or PO box"
+                  "desc": "customer address must be a complete OIOUBL StructuredDK address: a postal code (F-LIB033), a street name or PO box (F-LIB034), and a building number or PO box (F-LIB035)",
+                  "tests": "complete StructuredDK address"
                 }
               ]
             }
@@ -154,6 +154,16 @@
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-INVOICE-13",
                       "desc": "a credit transfer account (IBAN or number) is required for bank-transfer payment means (F-LIB107 / F-LIB126)",
+                      "tests": "never"
+                    }
+                  ]
+                },
+                {
+                  "guard": "iban bank-transfer credit transfer without a BIC",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-INVOICE-18",
+                      "desc": "a BIC is required on the credit transfer for IBAN bank-transfer payment means 30/31 (F-LIB113)",
                       "tests": "never"
                     }
                   ]
@@ -363,6 +373,17 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DK-OIOUBL-TAX-COMBO",
+      "object": "tax.Combo",
+      "assert": [
+        {
+          "id": "GOBL-DK-OIOUBL-TAX-COMBO-01",
+          "desc": "standard-rated VAT must have a percent greater than zero (F-LIB382)",
+          "tests": "standard-rated has a positive percent"
         }
       ]
     }

@@ -30,6 +30,7 @@ func init() {
 		is.InContext(tax.AddonIn(V2_1)),
 		billInvoiceRules(),
 		billStatusRules(),
+		billTaxComboRules(),
 	)
 }
 
