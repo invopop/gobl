@@ -474,6 +474,34 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB336")
 	})
 
+	t.Run("FIK code 93 kortart 75 with a 16-digit reference passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "0000000000123456",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "75"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("FIK code 93 kortart 75 with a 15-digit reference fails (F-LIB157)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key:            pay.MeansKeyCreditTransfer,
+				Ref:            "000000000012345",
+				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "75"}),
+				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB157")
+	})
+
 	t.Run("FIK code 93 kortart 73 with a reference fails (F-LIB275)", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
