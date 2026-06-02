@@ -415,15 +415,7 @@ func isNumericOfLen(s string, minLen, maxLen int) bool {
 }
 
 func isGiroAccountNumber(s string) bool {
-	if len(s) < 7 || len(s) > 8 {
-		return false
-	}
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
-		}
-	}
-	return true
+	return isNumericOfLen(s, 7, 8)
 }
 
 // paymentIDInvalidFor reports whether the instruction uses the given OIOUBL
