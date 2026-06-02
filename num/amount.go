@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -149,9 +150,29 @@ func (a Amount) Sub(b Amount) Amount {
 
 // Multiply the amount by the provided amount.
 func (a Amount) Multiply(a2 Amount) Amount {
-	v := (float64(a.value) * float64(a2.value)) / float64(intPow(10, a2.exp))
+	// Use big.Int for the multiplication to avoid both int64 overflow and
+	// float64 precision loss when a price has many decimal places.
+	product := new(big.Int).Mul(big.NewInt(a.value), big.NewInt(a2.value))
+	if a2.exp > 0 {
+		div := big.NewInt(intPow(10, a2.exp))
+		// Round half-away-from-zero before integer division.
+		half := new(big.Int).Rsh(div, 1)
+		if product.Sign() >= 0 {
+			product.Add(product, half)
+		} else {
+			product.Sub(product, half)
+		}
+		product.Quo(product, div)
+	}
+	// If the result still exceeds int64 range (e.g. two large integers with
+	// exp == 0), reduce a's precision by one place and retry.
+	if !product.IsInt64() {
+		if a.exp > 0 {
+			return a.Rescale(a.exp - 1).Multiply(a2)
+		}
+	}
 	return Amount{
-		value: int64(math.Round(v)),
+		value: product.Int64(),
 		exp:   a.exp,
 	}
 }

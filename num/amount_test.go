@@ -225,6 +225,17 @@ func TestMultiply(t *testing.T) {
 	}
 }
 
+func TestMultiplyOverflow(t *testing.T) {
+	// A price with 16 decimal places multiplied by a large quantity used to
+	// silently overflow int64 and produce a large negative line sum (~-922.34).
+	price, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	qty := num.MakeAmount(439, 0)
+	result := price.Multiply(qty)
+	assert.False(t, result.IsNegative(), "line sum must not be negative")
+	assert.Equal(t, "1356.00", result.RescaleDown(2).String())
+}
+
 func TestDivide(t *testing.T) {
 	tests := []struct {
 		a, b, e num.Amount
