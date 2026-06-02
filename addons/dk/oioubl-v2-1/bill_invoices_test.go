@@ -39,7 +39,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				{Scheme: "0184", Code: "12345674"},
 			},
 			Addresses: []*org.Address{
-				{Street: "Hovedgaden 1", Locality: "København", Code: "1000", Country: "DK"},
+				{Number: "1", Street: "Hovedgaden", Locality: "København", Code: "1000", Country: "DK"},
 			},
 		},
 		Customer: &org.Party{
@@ -55,7 +55,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				{Name: &org.Name{Given: "Anders", Surname: "Jensen"}},
 			},
 			Addresses: []*org.Address{
-				{Street: "Bygaden 5", Locality: "Aarhus", Code: "8000", Country: "DK"},
+				{Number: "5", Street: "Bygaden", Locality: "Aarhus", Code: "8000", Country: "DK"},
 			},
 		},
 		Lines: []*bill.Line{
@@ -324,6 +324,24 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
+	})
+
+	t.Run("supplier address without a number or PO box fails (F-LIB035)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = []*org.Address{
+			{Street: "Hovedgaden", Locality: "København", Code: "1000", Country: "DK"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "F-LIB035")
+	})
+
+	t.Run("address with a PO box and no number passes (F-LIB035)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = []*org.Address{
+			{PostOfficeBox: "2700", Street: "Hovedgaden", Locality: "København", Code: "1000", Country: "DK"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("Giro code 50 with payment id passes", func(t *testing.T) {

@@ -29,6 +29,16 @@
                   "tests": "present"
                 }
               ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-16",
+                  "desc": "supplier address requires a street number or PO box (F-LIB035)",
+                  "tests": "first address has a number or PO box"
+                }
+              ]
             }
           ]
         },
@@ -52,6 +62,16 @@
                   "id": "GOBL-DK-OIOUBL-BILL-INVOICE-03",
                   "desc": "customer people are required (F-INV046 / F-CRN042)",
                   "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-INVOICE-17",
+                  "desc": "customer address requires a street number or PO box (F-LIB035)",
+                  "tests": "first address has a number or PO box"
                 }
               ]
             }

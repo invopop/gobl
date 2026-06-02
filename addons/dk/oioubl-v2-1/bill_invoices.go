@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -40,6 +41,10 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("inboxes",
 				rules.Assert("01", "supplier inboxes are required (F-INV031 / F-CRN028)", is.Present),
 			),
+			rules.Field("addresses",
+				rules.Assert("16", "supplier address requires a street number or PO box (F-LIB035)",
+					is.Func("first address has a number or PO box", firstAddressHasNumberOrPOBox)),
+			),
 		),
 		rules.Field("customer",
 			rules.Field("inboxes",
@@ -49,6 +54,10 @@ func billInvoiceRules() *rules.Set {
 			// gobl.ubl picks one Person at emit time, so the addon asserts presence only.
 			rules.Field("people",
 				rules.Assert("03", "customer people are required (F-INV046 / F-CRN042)", is.Present),
+			),
+			rules.Field("addresses",
+				rules.Assert("17", "customer address requires a street number or PO box (F-LIB035)",
+					is.Func("first address has a number or PO box", firstAddressHasNumberOrPOBox)),
 			),
 		),
 		rules.When(is.Func("non-credit-note invoice with line order ref", invoiceWithLineOrderRef),
@@ -162,6 +171,19 @@ func deliveryReceiverWithoutLocationData(val any) bool {
 
 func neverTrue(any) bool {
 	return false
+}
+
+// firstAddressHasNumberOrPOBox reports whether the first address (the one the
+// gobl.ubl converter emits) carries a street number or PO box. OIOUBL's
+// StructuredDK address format requires one or the other (F-LIB035). An empty
+// address set passes here since EN 16931 already governs address presence.
+func firstAddressHasNumberOrPOBox(val any) bool {
+	addrs, ok := val.([]*org.Address)
+	if !ok || len(addrs) == 0 {
+		return true
+	}
+	a := addrs[0]
+	return a != nil && (a.Number != "" || a.PostOfficeBox != "")
 }
 
 // bankTransferCodes are the OIOUBL PaymentMeansCode values that settle to a
