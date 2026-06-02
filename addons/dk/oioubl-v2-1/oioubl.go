@@ -52,9 +52,10 @@ func newAddon() *tax.AddonDef {
 				Erhvervsstyrelsen (the Danish Business Authority). Unlike many
 				European profiles it predates and does not extend EN 16931.
 
-				This addon translates the OIOUBL Schematron rules (v1.17.1, live
-				since 2026-05-18) into GOBL validations. OIOUBL 2.1 is scheduled
-				to be replaced by NemHandel BIS 4 starting in 2028.
+				This addon translates the OIOUBL Schematron rules (v1.17.2, the
+				hotfix live since 2026-05-18, superseding 1.17.1) into GOBL
+				validations. OIOUBL 2.1 is scheduled to be replaced by NemHandel
+				BIS 4 starting in 2028.
 			`),
 			i18n.DA: here.Doc(`
 				Understøttelse af den danske OIOUBL 2.1-standard, som anvendes på
@@ -71,9 +72,9 @@ func newAddon() *tax.AddonDef {
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "OIOUBL Schematron v1.17.1 (released 2026-02-19)",
+					i18n.EN: "OIOUBL Schematron v1.17.2 (hotfix, live 2026-05-18)",
 				},
-				URL: "https://nemhandel.dk/oioubl-21-schematron-version-1171",
+				URL: "https://git.erst.dk/openebusiness/common/-/tree/master/released/oioubl",
 			},
 		},
 	}
