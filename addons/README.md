@@ -35,10 +35,10 @@ service that handles documents for an external addon must import that module.
 ### The approved-addon registry
 
 So that an external addon's key is still a recognised, schema-valid `$addons`
-value even where the implementation is not compiled in, core keeps a curated
-list of **approved** external addons in
-[`tax/addons_external_list.go`](../tax/addons_external_list.go). Entries on this
-list:
+value even where the implementation is not compiled in, this package keeps a
+curated list of **approved** external addons in
+[`external.go`](./external.go), alongside the in-core addon imports. Entries on
+this list:
 
 - appear in the JSON Schema `$addons` enum (via `AddonList.JSONSchemaExtend`), and
 - record the implementing module for provenance.
@@ -48,8 +48,8 @@ relax the strict runtime contract above.
 
 ### Adding an approved addon
 
-Approval is a reviewed pull request that adds a `RegisterApprovedAddon` entry to
-`tax/addons_external_list.go`. A new entry should satisfy:
+Approval is a reviewed pull request that adds a `tax.RegisterApprovedAddon` entry
+to [`external.go`](./external.go). A new entry should satisfy:
 
 - the implementation is a public module under `github.com/invopop` that
   auto-registers via `init()` + `tax.RegisterAddonDef`;

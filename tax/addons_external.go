@@ -51,10 +51,9 @@ func (c *externalAddonCollection) add(ea *ExternalAddon) {
 }
 
 // RegisterApprovedAddon adds an external addon to the curated list of addons
-// recognised by GOBL. See [ExternalAddon] for the semantics. Expected to be
-// called only from init functions in this package — adding an entry to the
-// curated list (see addons_external_list.go) is the approval step, reviewed
-// via pull request.
+// recognised by GOBL. See [ExternalAddon] for the semantics. The curated list
+// is maintained in the addons package (addons/external.go); adding an entry
+// there is the approval step, reviewed via pull request.
 func RegisterApprovedAddon(ea *ExternalAddon) {
 	approvedAddons.add(ea)
 }

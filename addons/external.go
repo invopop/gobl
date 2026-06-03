@@ -1,16 +1,21 @@
-package tax
+package addons
 
-import "github.com/invopop/gobl/i18n"
+import (
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/tax"
+)
 
 // This file is the curated list of approved external addons — addons whose
 // implementation lives in a separate Go module but whose keys GOBL recognises
-// (see [ExternalAddon]). Adding an entry here is the approval step and must be
+// (see [tax.ExternalAddon]). It sits alongside the in-core addon imports above
+// so the full set of addons GOBL knows about — bundled and external — is
+// visible in one place. Adding an entry here is the approval step and must be
 // reviewed via pull request.
 //
 // Approval checklist for a new entry:
 //
 //   - The implementation lives in a public module under github.com/invopop and
-//     auto-registers via init() + RegisterAddonDef when imported.
+//     auto-registers via init() + tax.RegisterAddonDef when imported.
 //   - The key follows the "<addon>-vN" convention and will not collide with an
 //     in-core addon key.
 //   - Consumers that process documents declaring the key import the module, so
@@ -21,7 +26,7 @@ import "github.com/invopop/gobl/i18n"
 func init() {
 	const frCTCModule = "github.com/invopop/gobl.fr.ctc"
 
-	RegisterApprovedAddon(&ExternalAddon{
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "fr-ctc-v1",
 		Name: i18n.String{
 			i18n.EN: "France CTC (auto-dispatch)",
@@ -29,7 +34,7 @@ func init() {
 		},
 		Module: frCTCModule,
 	})
-	RegisterApprovedAddon(&ExternalAddon{
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "fr-ctc-flow2-v1",
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 2 (B2B Clearance)",
@@ -37,7 +42,7 @@ func init() {
 		},
 		Module: frCTCModule,
 	})
-	RegisterApprovedAddon(&ExternalAddon{
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "fr-ctc-flow6-v1",
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 6 (Cycle de Vie)",
@@ -45,7 +50,7 @@ func init() {
 		},
 		Module: frCTCModule,
 	})
-	RegisterApprovedAddon(&ExternalAddon{
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "fr-ctc-flow10-v1",
 		Name: i18n.String{
 			i18n.EN: "France CTC Flow 10 (E-Reporting)",

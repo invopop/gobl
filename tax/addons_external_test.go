@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -12,28 +12,36 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestApprovedAddons(t *testing.T) {
-	approved := tax.ApprovedAddons()
-	require.NotEmpty(t, approved)
+// These tests exercise the approved external-addon registry mechanism with a
+// synthetic key, independent of the curated list (which lives in the addons
+// package). See addons/external_test.go for the fr-ctc entries.
 
-	byKey := make(map[cbc.Key]*tax.ExternalAddon, len(approved))
-	for _, ea := range approved {
-		byKey[ea.Key] = ea
+func TestApprovedAddonRegistry(t *testing.T) {
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key:    "test-external-v1",
+		Name:   i18n.String{i18n.EN: "Test External Addon"},
+		Module: "github.com/example/test",
+	})
+
+	var got *tax.ExternalAddon
+	for _, ea := range tax.ApprovedAddons() {
+		if ea.Key == "test-external-v1" {
+			got = ea
+		}
 	}
+	require.NotNil(t, got, "approved addon should be listed")
+	assert.Equal(t, "github.com/example/test", got.Module)
 
-	for _, key := range []cbc.Key{"fr-ctc-v1", "fr-ctc-flow2-v1", "fr-ctc-flow6-v1", "fr-ctc-flow10-v1"} {
-		ea, ok := byKey[key]
-		require.Truef(t, ok, "expected %s on the approved list", key)
-		assert.NotEmpty(t, ea.Name.String(), "%s should carry a name", key)
-		assert.Equal(t, "github.com/invopop/gobl.fr.ctc", ea.Module, "%s module", key)
-	}
-
-	// None of the approved CTC keys are runtime-registered in core (their
-	// implementation lives in the external module), so AddonForKey is nil.
-	assert.Nil(t, tax.AddonForKey("fr-ctc-v1"))
+	// Being approved does not register a usable addon at runtime.
+	assert.Nil(t, tax.AddonForKey("test-external-v1"))
 }
 
 func TestApprovedAddonInJSONSchema(t *testing.T) {
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key:  "test-external-schema-v1",
+		Name: i18n.String{i18n.EN: "Test External Schema Addon"},
+	})
+
 	js := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(`{
 		"type": "array",
@@ -48,9 +56,11 @@ func TestApprovedAddonInJSONSchema(t *testing.T) {
 			consts[k] = o.Title
 		}
 	}
-	// Approved-but-not-registered keys still appear as valid $addons options.
-	assert.Contains(t, consts, "fr-ctc-v1")
-	assert.Equal(t, "France CTC Flow 6 (Cycle de Vie)", consts["fr-ctc-flow6-v1"])
+	// Approved-but-not-registered keys still appear as valid $addons options...
+	assert.Equal(t, "Test External Schema Addon", consts["test-external-schema-v1"])
+	// ...alongside the runtime-registered ones.
+	require.NotEmpty(t, tax.AllAddonDefs())
+	assert.Contains(t, consts, tax.AllAddonDefs()[0].Key.String())
 }
 
 // TestApprovedAddonStillRequiresRegistration locks in the key contract: being
@@ -58,11 +68,16 @@ func TestApprovedAddonInJSONSchema(t *testing.T) {
 // Validating a document that declares an approved-but-unloaded addon must still
 // fail "add-on must be registered".
 func TestApprovedAddonStillRequiresRegistration(t *testing.T) {
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key:  "test-external-runtime-v1",
+		Name: i18n.String{i18n.EN: "Test External Runtime Addon"},
+	})
+
 	type testStruct struct {
 		tax.Addons
 		Name string `json:"test"`
 	}
-	ts := &testStruct{Addons: tax.WithAddons("fr-ctc-v1"), Name: "Test"}
+	ts := &testStruct{Addons: tax.WithAddons("test-external-runtime-v1"), Name: "Test"}
 
 	err := rules.Validate(ts)
 	assert.ErrorContains(t, err, "add-on must be registered")
