@@ -83,17 +83,17 @@ func TestPublicKeyAllows(t *testing.T) {
 	until := cal.TimestampOf(time.Date(2027, 1, 1, 0, 0, 0, 0, time.UTC))
 	pk := &PublicKey{ValidFrom: &from, ValidUntil: &until}
 
-	before := cal.TimestampOf(time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC))
-	inside := cal.TimestampOf(time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC))
-	after := cal.TimestampOf(time.Date(2027, 2, 1, 0, 0, 0, 0, time.UTC))
+	before := time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC)
+	inside := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
+	after := time.Date(2027, 2, 1, 0, 0, 0, 0, time.UTC)
 
-	assert.NoError(t, pk.Allows(&inside))
-	assert.Error(t, pk.Allows(&before))
-	assert.Error(t, pk.Allows(&after))
-	assert.NoError(t, pk.Allows(nil), "nil ts is permitted")
+	assert.NoError(t, pk.Allows(inside))
+	assert.Error(t, pk.Allows(before))
+	assert.Error(t, pk.Allows(after))
+	assert.NoError(t, pk.Allows(time.Time{}), "zero-value t (no iat) is permitted")
 
-	// Unbounded key accepts any ts.
-	assert.NoError(t, (&PublicKey{}).Allows(&inside))
+	// Unbounded key accepts any t.
+	assert.NoError(t, (&PublicKey{}).Allows(inside))
 }
 
 func TestPublicKeyUnmarshalBad(t *testing.T) {

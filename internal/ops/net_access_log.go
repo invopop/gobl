@@ -54,3 +54,24 @@ func accessLog(log *slog.Logger, next http.Handler) http.Handler {
 		)
 	})
 }
+
+// corsAllowAll wraps next with permissive CORS headers so browser-side
+// JWT tooling (jwt.io, OIDC consumers) can fetch /.well-known/jwks.json
+// and the per-kid endpoint from any origin. /who and /inbox also pick
+// up the same headers — those endpoints are authenticated by the
+// signed request body, not the browser origin, so opening CORS does
+// not weaken anything. OPTIONS preflight short-circuits to 204.
+func corsAllowAll(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("Access-Control-Allow-Origin", "*")
+		h.Set("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS")
+		h.Set("Access-Control-Allow-Headers", "Content-Type, Accept")
+		h.Set("Access-Control-Max-Age", "86400")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}

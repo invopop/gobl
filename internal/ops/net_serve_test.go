@@ -209,6 +209,38 @@ func TestNetServeInboxValidationFails(t *testing.T) {
 	assert.NotEqual(t, http.StatusAccepted, resp.StatusCode)
 }
 
+// TestNetServeInboxRejectsTraversalUUID confirms that a payload trying
+// to escape the inbox directory via the head.uuid field is rejected
+// (env.Validate enforces UUID format; handleInbox re-parses as
+// defence-in-depth) and that no file is written outside the inbox dir.
+func TestNetServeInboxRejectsTraversalUUID(t *testing.T) {
+	srv, inboxDir := setupNetServer(t)
+
+	// Send a fully-formed envelope but with a path-traversal payload
+	// in head.uuid. Since UUIDs are signed (the digest covers the
+	// header), the signature won't match — but Validate / the UUID
+	// re-parse fires before signature verification anyway, so the
+	// 422 is what we expect.
+	body := []byte(`{"$schema":"https://gobl.org/draft-0/envelope","head":{"uuid":"../../etc/passwd","dig":{"alg":"sha256","val":"x"}},"doc":{}}`)
+	resp, err := http.Post(srv.URL+net.InboxPath, "application/json", bytes.NewReader(body))
+	require.NoError(t, err)
+	defer resp.Body.Close() //nolint:errcheck
+	assert.NotEqual(t, http.StatusAccepted, resp.StatusCode)
+
+	// Nothing was written inside the inbox dir...
+	files, err := os.ReadDir(inboxDir)
+	require.NoError(t, err)
+	assert.Empty(t, files)
+
+	// ...nor anywhere up the path. Walk a few levels above and assert
+	// no "passwd"-like artefacts appeared.
+	parent := filepath.Dir(filepath.Dir(inboxDir))
+	for _, suspect := range []string{"passwd", "passwd.json", "etc"} {
+		_, statErr := os.Stat(filepath.Join(parent, suspect))
+		assert.True(t, os.IsNotExist(statErr), "traversal artefact at %s/%s should not exist", parent, suspect)
+	}
+}
+
 func TestNetServeInboxWriteFails(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("write-permission tests do not apply when running as root")

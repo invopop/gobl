@@ -198,6 +198,40 @@ func TestStatusRecorderRespectsFirst(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, rec.status)
 }
 
+func TestCORSAllowAll(t *testing.T) {
+	srv, _, _ := setupServerWithLog(t)
+
+	t.Run("GET response carries ACAO=*", func(t *testing.T) {
+		resp, err := http.Get(srv.URL + net.JWKSPath)
+		require.NoError(t, err)
+		_ = resp.Body.Close()
+		assert.Equal(t, "*", resp.Header.Get("Access-Control-Allow-Origin"))
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
+
+	t.Run("OPTIONS preflight returns 204 with full CORS headers", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodOptions, srv.URL+net.JWKSPath, nil)
+		require.NoError(t, err)
+		req.Header.Set("Origin", "https://jwt.io")
+		req.Header.Set("Access-Control-Request-Method", "GET")
+		resp, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+		_ = resp.Body.Close()
+		assert.Equal(t, http.StatusNoContent, resp.StatusCode)
+		assert.Equal(t, "*", resp.Header.Get("Access-Control-Allow-Origin"))
+		assert.Contains(t, resp.Header.Get("Access-Control-Allow-Methods"), "GET")
+		assert.Contains(t, resp.Header.Get("Access-Control-Allow-Headers"), "Content-Type")
+		assert.NotEmpty(t, resp.Header.Get("Access-Control-Max-Age"))
+	})
+
+	t.Run("per-kid endpoint also carries ACAO", func(t *testing.T) {
+		resp, err := http.Get(srv.URL + net.KeyPath(privateKey.ID()))
+		require.NoError(t, err)
+		_ = resp.Body.Close()
+		assert.Equal(t, "*", resp.Header.Get("Access-Control-Allow-Origin"))
+	})
+}
+
 func TestAccessLogMiddlewareDirect(t *testing.T) {
 	// Drive the middleware directly to confirm field shape.
 	buf := new(bytes.Buffer)

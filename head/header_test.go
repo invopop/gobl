@@ -202,6 +202,25 @@ func TestHeaderContains(t *testing.T) {
 	assert.True(t, h1.Contains(h2))
 }
 
+func TestHeaderSignNoJKU(t *testing.T) {
+	// jku is intentionally not auto-stamped — generic JWT verifiers
+	// resolve keys via <iss>/.well-known/jwks.json.
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, cbc.URI("gobl:acme.example"), cbc.URI(""))
+	if err != nil {
+		t.Fatalf("Sign: %v", err)
+	}
+	parsed, err := dsig.ParseSignature(sig.String())
+	if err != nil {
+		t.Fatalf("ParseSignature: %v", err)
+	}
+	assert.Equal(t, "", parsed.JKU())
+}
+
 func TestHeaderVerifyEnforcesValidityWindow(t *testing.T) {
 	priv := dsig.NewES256Key()
 	pub := priv.Public()

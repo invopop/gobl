@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -27,6 +28,7 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/net"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/uuid"
 )
 
 const (
@@ -213,11 +215,77 @@ func buildDomainHandler(dc domainConfig, client *net.Client, log *slog.Logger) (
 	}
 
 	l := logger(log)
+	jwksBytes, keyCount, err := buildJWKS(keysByKID)
+	if err != nil {
+		return nil, err
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET "+net.KeysPath+"/{kid}", handleKey(l, keysByKID))
+	mux.HandleFunc("GET "+net.JWKSPath, handleJWKS(l, jwksBytes, keyCount))
 	mux.HandleFunc("POST "+net.WhoPath, handleWho(l, client, partyEnvBytes, priv, self, allow, present))
 	mux.HandleFunc("POST "+net.InboxPath, handleInbox(l, client, dc.InboxDir, self, allow, present))
-	return accessLog(l, mux), nil
+	return accessLog(l, corsAllowAll(mux)), nil
+}
+
+// buildJWKS materialises the bulk JWK Set response by sorting the
+// published keys newest-first (by valid_from descending, with
+// UUIDv7 kid descending as a tie-breaker) and wrapping them in the
+// standard `{"keys":[...]}` envelope. Returned bytes are ready to be
+// served as application/json verbatim.
+func buildJWKS(keysByKID map[string][]byte) ([]byte, int, error) {
+	type entry struct {
+		kid       string
+		validFrom *cal.Timestamp
+		raw       json.RawMessage
+	}
+	entries := make([]entry, 0, len(keysByKID))
+	for kid, body := range keysByKID {
+		pk := new(dsig.PublicKey)
+		if err := json.Unmarshal(body, pk); err != nil {
+			return nil, 0, fmt.Errorf("net serve: build jwks: parse %s: %w", kid, err)
+		}
+		entries = append(entries, entry{
+			kid:       kid,
+			validFrom: pk.ValidFrom,
+			raw:       append(json.RawMessage(nil), body...),
+		})
+	}
+	sort.SliceStable(entries, func(i, j int) bool {
+		ai, aj := entries[i].validFrom, entries[j].validFrom
+		switch {
+		case ai != nil && aj != nil:
+			if !ai.Time.Equal(aj.Time) {
+				return ai.Time.After(aj.Time)
+			}
+		case ai != nil && aj == nil:
+			return true // keys with valid_from sort before keys without
+		case ai == nil && aj != nil:
+			return false
+		}
+		// Fall back to kid descending — UUIDv7 kids are time-ordered.
+		return entries[i].kid > entries[j].kid
+	})
+	out := struct {
+		Keys []json.RawMessage `json:"keys"`
+	}{Keys: make([]json.RawMessage, len(entries))}
+	for i, e := range entries {
+		out.Keys[i] = e.raw
+	}
+	b, err := json.Marshal(out)
+	if err != nil {
+		return nil, 0, fmt.Errorf("net serve: build jwks: %w", err)
+	}
+	return b, len(entries), nil
+}
+
+// handleJWKS serves the pre-built JWK Set bytes verbatim.
+func handleJWKS(log *slog.Logger, body []byte, count int) http.HandlerFunc {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		log.Info("jwks.served", "count", count)
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+		_, _ = w.Write(body)
+	}
 }
 
 // handleKey serves a single published JWK by its kid path value, or 404
@@ -793,21 +861,33 @@ func handleInbox(log *slog.Logger, client *net.Client, dir string, self cbc.URI,
 			return
 		}
 
-		filename := filepath.Join(dir, env.Head.UUID.String()+".json")
+		// Re-parse the UUID before using it as a filename component.
+		// env.Validate() above has already rejected non-UUID values,
+		// but re-parsing here is defence-in-depth: any future change
+		// that weakens upstream validation cannot let a path-traversal
+		// payload reach filepath.Join. The parsed canonical form is
+		// guaranteed to match [0-9a-f-]{36}.
+		parsedUUID, err := uuid.Parse(env.Head.UUID.String())
+		if err != nil {
+			log.Warn("inbox.rejected", "reason", "malformed_uuid", "caller", string(sender), "error", err.Error())
+			http.Error(w, "envelope UUID is malformed", http.StatusUnprocessableEntity)
+			return
+		}
+		filename := filepath.Join(dir, parsedUUID.String()+".json")
 		f, err := os.Create(filename)
 		if err != nil {
-			log.Error("inbox.write_failed", "caller", string(sender), "envelope", env.Head.UUID.String(), "error", err.Error())
+			log.Error("inbox.write_failed", "caller", string(sender), "envelope", parsedUUID.String(), "error", err.Error())
 			http.Error(w, "could not write inbox file", http.StatusInternalServerError)
 			return
 		}
 		defer f.Close() //nolint:errcheck
 		if _, err := f.Write(body); err != nil {
-			log.Error("inbox.write_failed", "caller", string(sender), "envelope", env.Head.UUID.String(), "error", err.Error())
+			log.Error("inbox.write_failed", "caller", string(sender), "envelope", parsedUUID.String(), "error", err.Error())
 			http.Error(w, "could not write inbox file", http.StatusInternalServerError)
 			return
 		}
 
-		log.Info("inbox.accepted", "caller", string(sender), "envelope", env.Head.UUID.String())
+		log.Info("inbox.accepted", "caller", string(sender), "envelope", parsedUUID.String())
 		w.WriteHeader(http.StatusAccepted)
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/go-jose/go-jose/v4"
 	"github.com/google/uuid"
@@ -75,7 +76,9 @@ func newKey(pk interface{}, alg string) *PrivateKey {
 	k.jwk.Key = pk
 	k.jwk.Algorithm = alg
 	k.jwk.Use = defaultKeyUse
-	k.jwk.KeyID = uuid.Must(uuid.NewRandom()).String()
+	// UUIDv7 is time-ordered, so a JWK Set sorted by kid descending is
+	// also chronological without an extra timestamp field.
+	k.jwk.KeyID = uuid.Must(uuid.NewV7()).String()
 	return k
 }
 
@@ -217,18 +220,18 @@ func (k *PublicKey) MarshalJSON() ([]byte, error) {
 }
 
 // Allows reports whether the given signing time falls within this
-// key's declared validity window. A nil ts (signature without a
-// timestamp) skips the check; absent bounds on the key skip their
-// respective half of the check.
-func (k *PublicKey) Allows(ts *cal.Timestamp) error {
-	if ts == nil {
+// key's declared validity window. A zero-value t (signature without
+// an issued-at timestamp) skips the check; absent bounds on the key
+// skip their respective half of the check.
+func (k *PublicKey) Allows(t time.Time) error {
+	if t.IsZero() {
 		return nil
 	}
-	if k.ValidFrom != nil && ts.Time.Before(k.ValidFrom.Time) {
-		return fmt.Errorf("dsig: signing time %s is before key's valid_from %s", ts, k.ValidFrom)
+	if k.ValidFrom != nil && t.Before(k.ValidFrom.Time) {
+		return fmt.Errorf("dsig: signing time %s is before key's valid_from %s", t.Format(time.RFC3339), k.ValidFrom)
 	}
-	if k.ValidUntil != nil && ts.Time.After(k.ValidUntil.Time) {
-		return fmt.Errorf("dsig: signing time %s is after key's valid_until %s", ts, k.ValidUntil)
+	if k.ValidUntil != nil && t.After(k.ValidUntil.Time) {
+		return fmt.Errorf("dsig: signing time %s is after key's valid_until %s", t.Format(time.RFC3339), k.ValidUntil)
 	}
 	return nil
 }

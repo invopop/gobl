@@ -92,20 +92,26 @@ The following constants are defined in `net/address.go`:
 | `KeyPath(kid)`   | `/.well-known/gobl/keys/<kid>`       |
 | `WhoPath`        | `/.well-known/gobl/who`              |
 | `InboxPath`      | `/.well-known/gobl/inbox`            |
+| `JWKSPath`       | `/.well-known/jwks.json`             |
 
-For an Address `A`, the canonical URLs are
+For an Address `A`, the canonical URI and URLs are
 
 ```
-https://<A>/.well-known/gobl/keys/<kid>   ← KeyURL(kid)
-https://<A>/.well-known/gobl/who          ← WhoURL()
-https://<A>/.well-known/gobl/inbox        ← InboxURL()
+gobl:<A>                                   ← Address.URI()  (iss / aud value)
+https://<A>/.well-known/gobl/keys/<kid>    ← KeyURL(kid)
+https://<A>/.well-known/gobl/who           ← WhoURL()
+https://<A>/.well-known/gobl/inbox         ← InboxURL()
+https://<A>/.well-known/jwks.json          ← JWKSURL()
 ```
 
-There is **no** bulk JWKS endpoint. Verification only needs lookup by
-`kid` (which is in every signature's protected header), and a per-key
-endpoint scales gracefully as keys rotate: an absent or retired kid
-simply returns `404 Not Found`, and the response payload remains a
-single JWK regardless of how many keys the domain has ever published.
+The protocol exposes two key-discovery surfaces:
+
+1. **Per-kid** at `/.well-known/gobl/keys/<kid>` — single-JWK lookups,
+   used by `Client.FetchKey` during verification. Scales as keys
+   rotate; an absent or retired kid returns `404`.
+2. **Bulk JWKS** at `/.well-known/jwks.json` — standard RFC 7517 JWK
+   Set, used by generic JWT tooling (jwt.io, OIDC-style verifiers)
+   that resolves the `jku` header on each signature.
 
 The scheme MUST be `https`. HTTP is not a permitted alternative for
 production deployments; the `gobl net send --insecure` flag exists solely
@@ -141,24 +147,53 @@ them, so the response remains a conformant JWK for any standard JOSE
 consumer.
 
 When set, the validity window bounds the signing time that each
-signature may carry in its signed payload (`ts`). A verifier rejects a
-signature whose `ts` falls outside `[valid_from, valid_until]`. The
-checks degrade gracefully: an absent bound on the key, or an absent
-`ts` on the signature, simply skips that half of the comparison.
+signature may carry in its signed payload (`iat`). A verifier rejects
+a signature whose `iat` falls outside `[valid_from, valid_until]`.
+The checks degrade gracefully: an absent bound on the key, or an
+absent `iat` on the signature, simply skips that half of the
+comparison.
 
 `valid_from` is stamped automatically when a key is generated (by
 `gobl init` or `gobl net serve`'s autogeneration). `valid_until` is
 left empty and is meant to be set when the operator rotates the key out
 — either at retirement, or in advance of a planned rotation. A retired
 key remains published so that historical envelopes signed within its
-window still verify; only signatures with a `ts` past `valid_until` are
-rejected.
+window still verify; only signatures with an `iat` past `valid_until`
+are rejected.
 
 Verifiers MUST treat unknown kids as `404 Not Found`; this is how a
 domain expresses that a key has been removed entirely (as distinct from
-"retired but still serving historical verification"). No endpoint
-enumerates the full set of keys — verifiers always look up by the
-specific `kid` named in a signature's protected header.
+"retired but still serving historical verification"). The per-kid path
+is the only one GOBL's own `Client.FetchKey` uses.
+
+### 4a. Bulk JWKS endpoint (jwt.io interop)
+
+In addition to the per-kid endpoint, the server publishes a standard
+RFC 7517 JWK Set at `/.well-known/jwks.json`. This is provided as a
+convenience for operators inspecting their keys via `curl` and for
+third-party JOSE tooling that prefers to fetch a full key set by URL
+rather than per-kid. GOBL Net's own verifier
+(`Client.FetchKey` → per-kid endpoint) does not use it.
+
+Response shape:
+
+```json
+{
+  "keys": [
+    { "kty": "EC", "kid": "<newest UUIDv7>", "valid_from": "…", … },
+    { "kty": "EC", "kid": "<older  UUIDv7>", "valid_until": "…", … }
+  ]
+}
+```
+
+Keys are returned **newest first**, ordered by `valid_from`
+descending; entries without a `valid_from` sort last. Since key IDs
+are UUIDv7 (time-ordered), kid descending is the deterministic
+tie-breaker.
+
+The JOSE header on each signature carries `alg` and `kid` only. The
+signed payload's `iss` value names the issuing GOBL Net address; a
+verifier resolves that to the per-kid URL via `Client.FetchKey`.
 
 The key type and the validity-window enforcement live in the `dsig`
 package: a published key is a `dsig.PublicKey`. `head.Header.Verify`
@@ -193,26 +228,27 @@ does *not* live inside the key material itself.
 
 ## 5. Signatures
 
-### 5.1 Signed identities: `iss` / `aud` / `ts`
+### 5.1 Signed identities: `iss` / `aud` / `iat`
 
-Each signature signs a payload of `{uuid, dig, iss, aud, ts}`:
+Each signature signs a payload of `{uuid, dig, iss, aud, iat}`:
 
 - `uuid` + `dig` identify the document (immutable after signing).
 - `iss` is the signer's verifiable GOBL Net address as a `gobl:` URI
-  (e.g. `gobl:billing.invopop.com`). The verifier reads it to discover
-  *which* per-key endpoint to fetch.
+  (e.g. `gobl:billing.invopop.com`). The verifier reads it to
+  discover *which* per-key endpoint to fetch.
 - `aud` is the optional GOBL Net address the signature is bound to. When
   present, the recipient checks `aud == self` to reject misrouted or
   replayed envelopes.
-- `ts` is the signing time as a UTC RFC 3339 timestamp
-  (`cal.Timestamp`). It is set automatically by `Sign`; verifiers read
-  it but no freshness policy is enforced by default — receivers may
-  apply their own max-age window when relevant.
+- `iat` is the signing time as a JWT-standard NumericDate (Unix
+  seconds, per RFC 7519 §2). It is set automatically by `Sign`;
+  verifiers read it for the per-key validity window check but no
+  freshness policy is enforced by default — receivers may apply their
+  own max-age window when relevant.
 
-Because `iss`/`aud`/`ts` are inside the signed payload, the origin,
+Because `iss`/`aud`/`iat` are inside the signed payload, the origin,
 audience, and signing time are all tamper-proof. Multiple parties may
 countersign the same document (shared `uuid`+`dig`) each with their own
-`iss`/`aud`/`ts`.
+`iss`/`aud`/`iat`.
 
 The header `from`/`to` (`cbc.URI`) are a *separate*, unsigned layer for
 intent/routing in any scheme; they are never used for verification.

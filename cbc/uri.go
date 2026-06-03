@@ -49,6 +49,27 @@ func (u URI) Opaque() string {
 	return p.Opaque
 }
 
+// Host returns the URI's host component (for hierarchical URIs like
+// "https://acme.example/x"), or an empty string if the URI cannot be
+// parsed or carries no host (e.g. opaque URIs such as "mailto:a@b").
+func (u URI) Host() string {
+	p, err := url.Parse(string(u))
+	if err != nil {
+		return ""
+	}
+	return p.Host
+}
+
+// Path returns the URI's path component (for hierarchical URIs), or
+// an empty string if the URI cannot be parsed or carries no path.
+func (u URI) Path() string {
+	p, err := url.Parse(string(u))
+	if err != nil {
+		return ""
+	}
+	return p.Path
+}
+
 // Validate ensures the URI is well-formed.
 func (u URI) Validate() error {
 	return rules.Validate(u)

@@ -2,8 +2,8 @@ package head
 
 import (
 	"errors"
+	"time"
 
-	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/rules"
@@ -148,36 +148,40 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 }
 
 // SigningPayload defines the fields locked by a signature. UUID and
-// Digest identify the document; Iss and Aud are the verifiable GOBL Net
-// origin and audience of *this* signature (gobl: URIs); Ts is the time
-// the signature was produced (set automatically by Sign). Header stamps,
-// links, tags, meta, notes and the (unsigned, intent-level) From/To
-// fields can still be modified after signing.
+// Digest identify the document; Iss and Aud are the verifiable origin
+// and audience of *this* signature (https URLs); IssuedAt is the time
+// the signature was produced as a JWT-standard NumericDate (Unix
+// seconds, per RFC 7519 §2). Header stamps, links, tags, meta, notes
+// and the (unsigned, intent-level) From/To fields can still be
+// modified after signing.
 type SigningPayload struct {
-	UUID   uuid.UUID      `json:"uuid"`
-	Digest *dsig.Digest   `json:"dig"`
-	Iss    cbc.URI        `json:"iss,omitempty"`
-	Aud    cbc.URI        `json:"aud,omitempty"`
-	TS     *cal.Timestamp `json:"ts,omitempty"`
+	UUID     uuid.UUID    `json:"uuid"`
+	Digest   *dsig.Digest `json:"dig"`
+	Iss      cbc.URI      `json:"iss,omitempty"`
+	Aud      cbc.URI      `json:"aud,omitempty"`
+	IssuedAt int64        `json:"iat,omitempty"`
 }
 
-func (h *Header) payload(iss, aud cbc.URI, ts *cal.Timestamp) *SigningPayload {
+func (h *Header) payload(iss, aud cbc.URI, iat int64) *SigningPayload {
 	return &SigningPayload{
-		UUID:   h.UUID,
-		Digest: h.Digest,
-		Iss:    iss,
-		Aud:    aud,
-		TS:     ts,
+		UUID:     h.UUID,
+		Digest:   h.Digest,
+		Iss:      iss,
+		Aud:      aud,
+		IssuedAt: iat,
 	}
 }
 
 // Sign creates a JWS signature over the header's document identity
 // (UUID + Digest) together with the signer's GOBL Net identity (iss),
 // the optional audience (aud) it is bound to, and the current UTC
-// timestamp (ts), bound into the signed payload.
+// time as a JWT-standard `iat` claim (Unix seconds). Generic JWT
+// verifiers resolve the public keys by fetching
+// `<iss>/.well-known/jwks.json` from the HTTPS iss URL — no `jku`
+// header is needed.
 func (h *Header) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...dsig.SignerOption) (*dsig.Signature, error) {
-	ts := cal.TimestampNow()
-	return dsig.NewSignature(key, h.payload(iss, aud, &ts), opts...)
+	iat := time.Now().UTC().Unix()
+	return dsig.NewSignature(key, h.payload(iss, aud, iat), opts...)
 }
 
 // Verify checks that the signature covers this header's document
@@ -202,7 +206,11 @@ func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 		if err := h.matchPayload(p); err != nil {
 			return err
 		}
-		if err := k.Allows(p.TS); err != nil {
+		var iat time.Time
+		if p.IssuedAt > 0 {
+			iat = time.Unix(p.IssuedAt, 0).UTC()
+		}
+		if err := k.Allows(iat); err != nil {
 			return err
 		}
 		return nil

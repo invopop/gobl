@@ -65,21 +65,19 @@ func TestSignInvalidKey(t *testing.T) {
 }
 
 // TestSignSetsTimestamp asserts that signing automatically stamps the
-// signed payload with a UTC timestamp close to "now".
+// signed payload with a JWT-standard `iat` (Unix seconds) close to
+// "now".
 func TestSignSetsTimestamp(t *testing.T) {
-	before := time.Now().UTC()
+	before := time.Now().UTC().Unix()
 	env := signIss(t, "gobl:a.example", "gobl:b.example")
-	after := time.Now().UTC()
+	after := time.Now().UTC().Unix()
 
 	p, err := head.SignedPayload(env.Signatures[0])
 	require.NoError(t, err)
-	require.NotNil(t, p.TS, "signing must stamp ts automatically")
-	// cal.Timestamp truncates to millisecond precision, so widen the
-	// window by 1ms on each side to avoid spurious failures.
+	require.NotZero(t, p.IssuedAt, "signing must stamp iat automatically")
 	assert.True(t,
-		!p.TS.Time.Before(before.Add(-time.Millisecond)) &&
-			!p.TS.Time.After(after.Add(time.Millisecond)),
-		"ts %v should fall within [%v, %v]", p.TS.Time, before, after,
+		p.IssuedAt >= before && p.IssuedAt <= after,
+		"iat %d should fall within [%d, %d]", p.IssuedAt, before, after,
 	)
 }
 

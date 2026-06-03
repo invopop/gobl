@@ -22,6 +22,11 @@ const (
 	WhoPath = WellKnownPath + "/who"
 	// InboxPath is the well-known path accepting envelope deliveries.
 	InboxPath = WellKnownPath + "/inbox"
+	// JWKSPath is the bulk JWK Set endpoint published at the root
+	// well-known directory so generic JWT tooling (jwt.io, OIDC-style
+	// verifiers) can resolve `jku` and verify signatures without
+	// out-of-band key exchange.
+	JWKSPath = "/.well-known/jwks.json"
 )
 
 // KeyPath returns the well-known path serving a single public key by
@@ -60,9 +65,18 @@ func (a Address) String() string {
 }
 
 // URI returns the address as a gobl: scheme cbc.URI, e.g.
-// "gobl:acme.example.com", suitable for a signature's iss/aud.
+// "gobl:acme.example.com", suitable for a signature's iss/aud. The
+// scheme labels the identity as a GOBL Net address rather than a
+// generic HTTPS service.
 func (a Address) URI() cbc.URI {
 	return cbc.URI(Scheme + ":" + string(a))
+}
+
+// JWKSURL returns the deterministic JWK Set discovery URL for this
+// address. The matching JOSE `jku` header on a signature points here
+// so generic JWT verifiers can fetch the public keys automatically.
+func (a Address) JWKSURL() string {
+	return "https://" + string(a) + JWKSPath
 }
 
 // KeyURL returns the deterministic discovery URL for a single public
