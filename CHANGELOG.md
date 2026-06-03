@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
 - `rules`: `is.OneOf` and `is.AnyOf` testers (the latter renamed from `is.Or`), plus `rules.Ignore` / by-code fault dropping in the rules engine.
 - `tax`: `Addons.AddAddons` helper for meta-addon normalizers that attach further addons based on document content; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
-- `pkg/examples`: reusable helpers (`Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, `TestUUID`) plus a `pkg/examples/exampletest.Run` test entry point, so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
+- `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
 
 ## [v0.403.0] - 2026-05-13
 

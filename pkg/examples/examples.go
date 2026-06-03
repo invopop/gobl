@@ -1,12 +1,14 @@
 // Package examples provides reusable helpers for converting GOBL example
-// documents into calculated, validated JSON envelopes and locating their
-// golden output files. It captures the conventions used by GOBL's own example
+// documents into calculated, validated JSON envelopes and verifying them
+// against golden output. It captures the conventions used by GOBL's own example
 // suite (a fixed envelope UUID, envelope-vs-document detection, and tab-indented
 // output) so that external addon and converter modules can ship example
 // documents tested exactly the same way.
 //
-// The companion subpackage pkg/examples/exampletest wraps these helpers into a
-// single test entry point.
+// Run is the single test entry point; Convert, Sources, GoldenPath and
+// IsEnvelope are exposed for callers that need a custom harness. The package
+// is intended for use from tests (Run takes a *testing.T), and the addon(s)
+// under test must already be registered in the test binary.
 package examples
 
 import (

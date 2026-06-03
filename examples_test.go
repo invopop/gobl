@@ -4,7 +4,7 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/invopop/gobl/pkg/examples/exampletest"
+	"github.com/invopop/gobl/pkg/examples"
 )
 
 // skipExamplePaths excludes non-example files from the repo-wide walk. (The
@@ -27,5 +27,5 @@ var updateExamples = flag.Bool("update", false, "Update the examples in the repo
 // their golden output. The conversion and comparison logic is shared with
 // external addon modules via pkg/examples.
 func TestConvertExamplesToJSON(t *testing.T) {
-	exampletest.Run(t, ".", *updateExamples, skipExamplePaths...)
+	examples.Run(t, ".", *updateExamples, skipExamplePaths...)
 }
