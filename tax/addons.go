@@ -77,6 +77,31 @@ func (as *Addons) SetAddons(addons ...cbc.Key) {
 	as.List = addons
 }
 
+// AddAddons appends the given keys to the addon list, skipping any
+// that are empty or already present. Safe to call across multiple
+// normalize passes; meta-addon normalizers use it to attach further
+// addons based on document content.
+func (as *Addons) AddAddons(keys ...cbc.Key) {
+	if as == nil {
+		return
+	}
+	for _, key := range keys {
+		if key == "" {
+			continue
+		}
+		found := false
+		for _, k := range as.List {
+			if k == key {
+				found = true
+				break
+			}
+		}
+		if !found {
+			as.List = append(as.List, key)
+		}
+	}
+}
+
 // GetAddons provides the list of addon keys in use.
 func (as Addons) GetAddons() []cbc.Key {
 	return as.List

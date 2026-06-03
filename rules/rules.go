@@ -184,6 +184,27 @@ func Assert(id Code, desc string, tests ...Test) Def {
 	}
 }
 
+// Ignore registers fully-qualified fault codes to suppress from the validation
+// result whenever the enclosing set is active (its guard passes and its type
+// matches). Codes must match exactly — there is no prefix or wildcard matching.
+// Wrap in rules.When(...) to gate activation, e.g. to drop a fault only under a
+// specific profile. Used by an addon to relax a fault emitted by another addon.
+func Ignore(codes ...Code) Def {
+	return func(s *Set) {
+		s.Ignore = append(s.Ignore, codes...)
+	}
+}
+
+// WithIgnore returns a validation option that suppresses the given
+// fully-qualified fault codes from the result, exactly as a set-level
+// rules.Ignore would. Intended for call-site suppression (e.g. format
+// converters) and as the primitive behind head.Header.Ignore.
+func WithIgnore(codes ...Code) WithContext {
+	return func(rc *Context) {
+		rc.addIgnores(codes...)
+	}
+}
+
 // presentGuard is an internal Test used by AssertIfPresent to skip nil or
 // empty values without creating a dependency on the is package.
 type presentGuard struct{}
@@ -492,7 +513,26 @@ func Validate(obj any, opts ...WithContext) Faults {
 		}
 	}
 
-	return newFaults(faults...)
+	// Drop any faults whose code an active set marked for suppression via
+	// rules.Ignore. Applied once over the aggregate so suppression is
+	// independent of the order in which namespaces ran.
+	return filterIgnored(rc, newFaults(faults...))
+}
+
+// filterIgnored removes faults whose code an active set marked for suppression
+// via rules.Ignore during this validation session. Returns the input unchanged
+// when nothing was ignored.
+func filterIgnored(rc *Context, fs Faults) Faults {
+	if fs == nil || rc == nil || len(rc.ignores) == 0 {
+		return fs
+	}
+	var kept []*Fault
+	for _, f := range fs.List() {
+		if !rc.isIgnored(f.code) {
+			kept = append(kept, f)
+		}
+	}
+	return newFaults(kept...)
 }
 
 func jsonFieldName(f reflect.StructField) string {

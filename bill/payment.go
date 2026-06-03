@@ -3,6 +3,7 @@ package bill
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -72,6 +73,22 @@ var PaymentTypes = []*cbc.Definition{
 
 var isValidPaymentType = cbc.InKeyDefs(PaymentTypes)
 
+// PaymentTypeIn returns a test that passes when the Payment's Type is
+// one of the provided values. Intended as a guard inside rules.When
+// when an addon needs per-type rule branches.
+func PaymentTypeIn(types ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("payment type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
+		func(obj any) bool {
+			pmt, ok := obj.(*Payment)
+			if !ok || pmt == nil {
+				return false
+			}
+			return pmt.Type.In(types...)
+		},
+	)
+}
+
 // A Payment is used to link an invoice or invoices with a payment transaction.
 type Payment struct {
 	tax.Regime
@@ -114,16 +131,16 @@ type Payment struct {
 	// Legal entity that receives the payment if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 
+	// Ordering allows for additional information about the ordering process including references
+	// to other documents and alternative parties involved in the order-to-delivery process.
+	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
+
 	// List of documents that are being paid for.
 	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
 	// Methods describes how the payment was settled. At least one method is
 	// required; multiple may be present when the payment was split across
 	// means (for example, partly card + partly cash).
 	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
-
-	// Ordering allows for additional information about the ordering process including references
-	// to other documents and alternative parties involved in the order-to-delivery process.
-	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
 	// Total amount to be paid in this payment, either positive or negative according to the
 	// line types and totals. Calculated automatically.
@@ -220,7 +237,22 @@ func (pmt *Payment) Calculate() error {
 	if pmt.Regime.IsEmpty() {
 		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
 	}
+	// Track which addon normalizers have already been applied so the
+	// follow-up passes only run normalizers for newly-added addons.
+	seen := make(map[cbc.Key]bool)
+	for _, def := range pmt.AddonDefs() {
+		if def != nil {
+			seen[def.Key] = true
+		}
+	}
 	pmt.Normalize(pmt.normalizers())
+	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
+		newNorms := tax.ExtractNormalizersForNew(pmt, seen)
+		if len(newNorms) == 0 {
+			break
+		}
+		pmt.Normalize(newNorms)
+	}
 	return pmt.calculate()
 }
 

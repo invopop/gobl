@@ -13,5 +13,5 @@ supplier:
   name: "Provide One S.L."
 
 lines:
-  - key: "shutdown"
+  - key: "other"
     description: "System was shutdown"
