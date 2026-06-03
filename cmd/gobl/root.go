@@ -25,6 +25,15 @@ func (o *rootOpts) cmd() *cobra.Command {
 		Use:           "gobl",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		// Apply the --json flag to slog after cobra parses flags but
+		// before any subcommand runs. Kept on the command (not via
+		// cobra.OnInitialize) because OnInitialize mutates a
+		// package-global slice and races with parallel tests that
+		// build their own root commands.
+		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
+			slog.SetDefault(newLogger(o.jsonLogs))
+			return nil
+		},
 	}
 
 	o.setFlags(cmd)
@@ -50,9 +59,6 @@ func (o *rootOpts) setFlags(cmd *cobra.Command) {
 	f.BoolVarP(&o.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
 	f.BoolVarP(&o.inPlace, "in-place", "w", false, "overwrite the input file in place  (only outputs JSON)")
 	f.BoolVar(&o.jsonLogs, "json", false, "emit logs and error reports as structured JSON on stderr (result output is unaffected)")
-	cobra.OnInitialize(func() {
-		slog.SetDefault(newLogger(o.jsonLogs))
-	})
 }
 
 func (o *rootOpts) outputFilename(args []string) string {
