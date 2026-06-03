@@ -317,7 +317,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "F-LIB107")
 	})
 
-	t.Run("bank-transfer code 31 without a BIC fails (F-LIB113)", func(t *testing.T) {
+	t.Run("bank-transfer code 31 without a BIC passes (F-LIB113 rolled back)", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
@@ -327,7 +327,9 @@ func TestInvoiceValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "F-LIB113")
+		// F-LIB113 (BIC mandatory) is commented out in the schematron, so OIOUBL
+		// does not require a BIC; rule 18 no longer fires.
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("address without a postal code fails (F-LIB033)", func(t *testing.T) {

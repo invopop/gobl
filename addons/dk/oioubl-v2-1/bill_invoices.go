@@ -187,6 +187,14 @@ func quantityNonZero(val any) bool {
 	return true
 }
 
+// amountNonNegative backs rules 09/10 (F-INV335). The schematron forbids a
+// negative AllowanceCharge.Amount only "if InvoicedQuantity or Price.PriceAmount
+// is not negative", i.e. a negative allowance is permitted on a line whose
+// quantity or price is itself negative. This check is unconditional — slightly
+// stricter than F-INV335 — which is intentional and safe here: GOBL models
+// corrections as credit notes (a distinct document type with positive line
+// amounts), so a line with a negative quantity or price does not arise, and the
+// exception never applies. Revisit if GOBL ever emits negative line quantities.
 func amountNonNegative(val any) bool {
 	switch a := val.(type) {
 	case num.Amount:
@@ -253,19 +261,15 @@ func addressStructuredDKComplete(val any) bool {
 // (payment-means 30, which the converter maps to 31, or 31 itself) carries a
 // credit transfer with no BIC. OIOUBL requires the FinancialInstitution/ID for
 // the IBAN channel (F-LIB113), which the converter sources from the BIC.
-func ibanTransferMissingBIC(val any) bool {
-	instr, ok := val.(*pay.Instructions)
-	if !ok || instr == nil {
-		return false
-	}
-	if !instr.Ext.Get(untdid.ExtKeyPaymentMeans).In("30", "31") {
-		return false
-	}
-	for _, ct := range instr.CreditTransfer {
-		if ct != nil && ct.BIC == "" {
-			return true
-		}
-	}
+// ibanTransferMissingBIC gates rule 18 (the BIC requirement, F-LIB113). The
+// detector always returns false because F-LIB113 is rolled back in the OIOUBL
+// schematron — its assertion is commented out at the source ("Implementated -
+// but roolback at 20170823") — so OIOUBL does not require a BIC on an IBAN
+// credit transfer. Requiring one would reject documents the format accepts.
+// The rule is kept (registered + cited) rather than deleted so it is a one-line
+// change to re-enable: restore the payment-means 30/31 + empty-BIC check below
+// if F-LIB113 is ever reinstated.
+func ibanTransferMissingBIC(_ any) bool {
 	return false
 }
 
