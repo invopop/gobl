@@ -114,15 +114,18 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
-		// Exemption notes: BR-*-10 requires either VATEX code or exemption note
-		rules.Assert("08", "exempt tax categories require either a VATEX code or an exemption note",
-			is.Func("exemption notes", func(val any) bool {
-				inv, ok := val.(*bill.Invoice)
-				if !ok || inv == nil {
-					return true
-				}
-				return validateExemptionNotesCheck(inv)
-			}),
+		// Exemption notes: BR-*-10 requires either VATEX code or exemption note.
+		// Skipped for OIOUBL, which has no exempt category and requires no reason.
+		rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
+			rules.Assert("08", "exempt tax categories require either a VATEX code or an exemption note",
+				is.Func("exemption notes", func(val any) bool {
+					inv, ok := val.(*bill.Invoice)
+					if !ok || inv == nil {
+						return true
+					}
+					return validateExemptionNotesCheck(inv)
+				}),
+			),
 		),
 		// Lines: BR-16 requires at least one line
 		rules.Field("lines",

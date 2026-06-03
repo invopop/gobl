@@ -27,8 +27,9 @@ func bankPayment() *bill.PaymentDetails {
 }
 
 // TestNormalizeExemptToZeroRated checks that a VAT-exempt line keeps its GOBL
-// exempt category (so EN 16931 still requires the reason) while carrying the
-// OIOUBL ZeroRated category in the dk-oioubl-tax-category extension.
+// exempt category while carrying the OIOUBL ZeroRated category in the
+// dk-oioubl-tax-category extension. A VATEX reason remains allowed (and is
+// carried through), even though OIOUBL no longer requires one.
 func TestNormalizeExemptToZeroRated(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Addons = tax.WithAddons(en16931.V2017, oioubl.V2_1)
@@ -47,16 +48,30 @@ func TestNormalizeExemptToZeroRated(t *testing.T) {
 	require.NoError(t, rules.Validate(inv))
 }
 
-// TestNormalizeExemptStillRequiresReason confirms EN 16931's exemption-reason
-// requirement is preserved (the GOBL category stays exempt), so the addon needs
-// no rule of its own.
-func TestNormalizeExemptStillRequiresReason(t *testing.T) {
+// TestNormalizeExemptNeedsNoReason confirms that, with the OIOUBL addon present,
+// EN 16931's exemption-reason requirement is relaxed: OIOUBL 2.1 has no exempt
+// category (exempt is reported as ZeroRated, which requires no reason), so a
+// VAT-exempt line with neither a VATEX code nor an exemption note validates.
+func TestNormalizeExemptNeedsNoReason(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Addons = tax.WithAddons(en16931.V2017, oioubl.V2_1)
 	inv.Lines[0].Taxes = tax.Set{{Category: "VAT", Key: tax.KeyExempt}}
 	inv.Payment = bankPayment()
 	require.NoError(t, inv.Calculate())
-	assert.ErrorContains(t, rules.Validate(inv), "exempt")
+	assert.NoError(t, rules.Validate(inv))
+}
+
+// TestNormalizeReverseChargeNeedsNoReason confirms the same relaxation for
+// reverse-charge: OIOUBL reports it as the ReverseCharge category, which carries
+// no exemption reason, so the EN 16931 exemption-note requirement is skipped.
+func TestNormalizeReverseChargeNeedsNoReason(t *testing.T) {
+	inv := testInvoiceStandard(t)
+	inv.Addons = tax.WithAddons(en16931.V2017, oioubl.V2_1)
+	inv.Lines[0].Taxes = tax.Set{{Category: "VAT", Key: tax.KeyReverseCharge}}
+	inv.Payment = bankPayment()
+	require.NoError(t, inv.Calculate())
+	assert.NoError(t, rules.Validate(inv))
+	assert.Equal(t, "ReverseCharge", inv.Lines[0].Taxes[0].Ext.Get(oioubl.ExtKeyTaxCategory).String())
 }
 
 // TestNormalizeStandardUnchanged confirms the normalizer only touches exempt.
