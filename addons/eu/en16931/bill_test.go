@@ -5,6 +5,7 @@ import (
 	"time"
 
 	_ "github.com/invopop/gobl"
+	oioubl "github.com/invopop/gobl/addons/dk/oioubl-v2-1"
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
@@ -76,6 +77,36 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
+	})
+}
+
+func TestOIOUBLCarveOuts(t *testing.T) {
+	t.Run("due invoice without payment fails without OIOUBL (BR-CO-25)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "payment details are required")
+	})
+
+	t.Run("due invoice without payment skips BR-CO-25 for OIOUBL addon", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Addons = tax.WithAddons(en16931.V2017, oioubl.V2_1)
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		if err := rules.Validate(inv); err != nil {
+			assert.NotContains(t, err.Error(), "payment details are required")
+			assert.NotContains(t, err.Error(), "payment terms are required")
+		}
+	})
+
+	t.Run("exempt without reason skips the exemption-note rule for OIOUBL addon", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Addons = tax.WithAddons(en16931.V2017, oioubl.V2_1)
+		inv.Lines[0].Taxes = tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyExempt}}
+		require.NoError(t, inv.Calculate())
+		if err := rules.Validate(inv); err != nil {
+			assert.NotContains(t, err.Error(), "exempt tax categories require")
+		}
 	})
 }
 

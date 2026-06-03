@@ -3,6 +3,7 @@ package en16931_test
 import (
 	"testing"
 
+	oioubl "github.com/invopop/gobl/addons/dk/oioubl-v2-1"
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/addons/sa/zatca"
 	"github.com/invopop/gobl/catalogues/untdid"
@@ -257,6 +258,18 @@ func TestTaxComboValidation(t *testing.T) {
 		err := rules.Validate(c, tax.AddonContext(zatca.V1, en16931.V2017))
 		// EN 16931 rule 07 must not fire when ZATCA addon is present
 		assert.NotContains(t, err.Error(), "EU-EN16931-TAX-COMBO-07")
+	})
+
+	t.Run("exempt without vatex skips EN16931 rule for OIOUBL addon", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		ad.Normalizer(c)
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017, oioubl.V2_1))
+		// EN 16931 rule 06 (BR-E-10) must not fire when the OIOUBL addon is
+		// present: OIOUBL has no exempt category and requires no reason.
+		assert.NoError(t, err)
 	})
 
 	t.Run("nil", func(t *testing.T) {
