@@ -143,12 +143,16 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("05", "customer addresses are required (BR-10)", is.Present),
 			),
 		),
-		// Payment: BR-CO-25 requires payment details when amount is due
-		rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
-			rules.Field("payment",
-				rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),
-				rules.Field("terms",
-					rules.Assert("07", "payment terms are required when amount is due (BR-CO-25)", is.Present),
+		// Payment: BR-CO-25 requires payment details when amount is due.
+		// Skipped for OIOUBL, which mandates neither payment means nor terms
+		// (its payment rules are all conditional on a means being present).
+		rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
+			rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
+				rules.Field("payment",
+					rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),
+					rules.Field("terms",
+						rules.Assert("07", "payment terms are required when amount is due (BR-CO-25)", is.Present),
+					),
 				),
 			),
 		),
