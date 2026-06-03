@@ -46,14 +46,43 @@ this list:
 Being on the approved list is **recognition and governance only** — it does not
 relax the strict runtime contract above.
 
-### Adding an approved addon
+### Expectations of an external addon
 
-Approval is a reviewed pull request that adds a `tax.RegisterApprovedAddon` entry
-to [`external.go`](./external.go). A new entry should satisfy:
+An external addon is held to the same standards as an in-core one, plus the
+requirements that come with living in its own repository. Before its key is
+approved, the module must satisfy all of the following.
 
-- the implementation is a public module under `github.com/invopop` that
-  auto-registers via `init()` + `tax.RegisterAddonDef`;
-- the key follows the `<addon>-vN` convention and does not collide with an
+**The standard addon requirements** — everything expected of any GOBL addon:
+
+- a clear scope and a versioned key (`<addon>-vN`) that does not collide with an
   in-core addon key;
-- consumers that process documents declaring the key import the module, so the
-  strict runtime check still passes.
+- extensions, normalizers, scenarios, and validation rules defined in idiomatic
+  GOBL style, with stable fault codes;
+- self-registration via `init()` + `tax.RegisterAddonDef` so a blank import is
+  all a consumer needs;
+- a `README` documenting the addon's purpose, the flows/documents it covers, and
+  how to use it.
+
+**Additional requirements for an external module:**
+
+- **Public module** under `github.com/invopop`, importable on its own.
+- **Automated linting and testing are mandatory.** The repository must run
+  `golangci-lint` and `go test` in CI (GitHub Actions) on every pull request,
+  mirroring this repository's `lint` and `test` workflows, and the default
+  branch must be green.
+- **Status badges must be present** in the module `README` — at least build
+  (lint/test), code coverage, latest release tag, and Go reference — so its
+  health is visible at a glance.
+- **At least 90% test coverage** is required, reported through the CI coverage
+  pipeline (e.g. Codecov) and kept at or above that threshold.
+- **Example documents** for each supported flow/document, verified with the
+  shared [`pkg/examples`](../pkg/examples) helpers (`examples.Run`), so behaviour
+  is exercised end to end and stays stable.
+
+**Approval** is then a reviewed pull request that adds a
+`tax.RegisterApprovedAddon` entry to [`external.go`](./external.go), once the
+above are met and consumers that process documents declaring the key import the
+module (so the strict runtime check still passes).
+
+[`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc) is the
+reference implementation of an external addon following these expectations.
