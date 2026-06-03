@@ -290,13 +290,37 @@ func addonDefRules() *rules.Set {
 	)
 }
 
-// JSONSchemaExtend will add the addon options to the JSON list.
+// JSONSchemaExtend will add the addon options to the JSON list. The enum is
+// the union of the runtime-registered addons and the curated list of approved
+// external addons (see ApprovedAddons), so a key whose implementation lives in
+// a separate module is still a recognised `$addons` value. A registered
+// definition takes precedence over an approved stub of the same key. Note that
+// being listed here does not relax the runtime "$addons must be registered"
+// check — the module must still be imported for validation to succeed.
 func (AddonList) JSONSchemaExtend(js *jsonschema.Schema) {
-	js.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
-	for i, ao := range AllAddonDefs() {
+	titles := make(map[cbc.Key]string)
+	keys := make([]cbc.Key, 0)
+	add := func(k cbc.Key, title string) {
+		if _, ok := titles[k]; !ok {
+			keys = append(keys, k)
+		}
+		titles[k] = title
+	}
+	for _, ao := range AllAddonDefs() {
+		add(ao.Key, ao.Name.String())
+	}
+	for _, ea := range ApprovedAddons() {
+		if _, ok := titles[ea.Key]; ok {
+			continue // a registered definition wins over an approved stub
+		}
+		add(ea.Key, ea.Name.String())
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i].String() < keys[j].String() })
+	js.Items.OneOf = make([]*jsonschema.Schema, len(keys))
+	for i, k := range keys {
 		js.Items.OneOf[i] = &jsonschema.Schema{
-			Const: ao.Key.String(),
-			Title: ao.Name.String(),
+			Const: k.String(),
+			Title: titles[k],
 		}
 	}
 }

@@ -56,6 +56,22 @@
             "title": "Chorus Pro"
           },
           {
+            "const": "fr-ctc-flow10-v1",
+            "title": "France CTC Flow 10 (E-Reporting)"
+          },
+          {
+            "const": "fr-ctc-flow2-v1",
+            "title": "France CTC Flow 2 (B2B Clearance)"
+          },
+          {
+            "const": "fr-ctc-flow6-v1",
+            "title": "France CTC Flow 6 (Cycle de Vie)"
+          },
+          {
+            "const": "fr-ctc-v1",
+            "title": "France CTC (auto-dispatch)"
+          },
+          {
             "const": "fr-facturx-v1",
             "title": "French Factur-X v1"
           },
