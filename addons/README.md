@@ -21,7 +21,7 @@ in-core one: its `init()` calls `tax.RegisterAddonDef`, so a consumer just adds 
 blank import:
 
 ```go
-import _ "github.com/invopop/gobl.fr.ctc"
+import _ "github.com/invopop/gobl.fr.ctc/addon"
 ```
 
 ### The runtime contract is strict
