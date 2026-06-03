@@ -3,6 +3,7 @@
 package oioubl
 
 import (
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -36,7 +37,10 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key:        V2_1,
+		Key: V2_1,
+		Requires: []cbc.Key{
+			en16931.V2017,
+		},
 		Extensions: extensions,
 		Normalizer: normalize,
 		Name: i18n.String{

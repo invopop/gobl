@@ -242,7 +242,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
 				CreditTransfer: []*pay.CreditTransfer{
 					{IBAN: "DK5000400440116243", BIC: "DABADKKK"},
@@ -257,7 +257,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "30"}),
 				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243", BIC: "DABADKKK"}},
 			},
@@ -270,7 +270,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "57"}),
 			},
 		}
@@ -283,7 +283,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "42"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "1234567890"}},
 			},
@@ -296,7 +296,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "42"}),
 			},
 		}
@@ -308,7 +308,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
 				CreditTransfer: []*pay.CreditTransfer{{Name: "Bank, no account number"}},
 			},
@@ -321,7 +321,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "31"}),
 				CreditTransfer: []*pay.CreditTransfer{{IBAN: "DK5000400440116243"}},
 			},
@@ -373,7 +373,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "30"}),
 			},
 		}
@@ -403,7 +403,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ref: "1234567890",
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyPaymentMeans: "50",
@@ -420,7 +420,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyPaymentMeans: "50",
 					oioubl.ExtKeyPaymentID:    "04",
@@ -436,7 +436,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "000000000012345",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -450,7 +450,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "12345",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -464,7 +464,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "ABC123DEF456789",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "71"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -478,7 +478,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "0000000000123456",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "75"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -492,7 +492,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "000000000012345",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "75"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -506,7 +506,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "12345678",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "73"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345678"}},
@@ -520,7 +520,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "REF12345",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
@@ -534,7 +534,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ref:            "12345678901234567",
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "01234567"}},
@@ -548,7 +548,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50"}),
 			},
 		}
@@ -560,7 +560,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyPaymentMeans: "50",
 					oioubl.ExtKeyPaymentID:    "71",
@@ -575,7 +575,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyPaymentMeans: "93",
 					oioubl.ExtKeyPaymentID:    "73",
@@ -591,7 +591,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "50", oioubl.ExtKeyPaymentID: "01"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "12345"}},
 			},
@@ -604,7 +604,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key:            pay.MeansKeyCreditTransfer,
+				Key:            pay.MeansKeyOther,
 				Ext:            tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93", oioubl.ExtKeyPaymentID: "73"}),
 				CreditTransfer: []*pay.CreditTransfer{{Number: "123"}},
 			},
@@ -617,7 +617,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
-				Key: pay.MeansKeyCreditTransfer,
+				Key: pay.MeansKeyOther,
 				Ext: tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: "93"}),
 			},
 		}
