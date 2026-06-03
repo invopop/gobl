@@ -16,7 +16,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
 - `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
 - `rules`: `is.OneOf` and `is.AnyOf` testers (the latter renamed from `is.Or`), plus `rules.Ignore` / by-code fault dropping in the rules engine.
-- `catalogues/dgfip`: new DGFiP catalogue of French CTC billing-mode and related extension definitions, shared by the external CTC addon and converters.
 - `tax`: `Addons.AddAddons` helper for meta-addon normalizers that attach further addons based on document content; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
 
 ## [v0.403.0] - 2026-05-13
