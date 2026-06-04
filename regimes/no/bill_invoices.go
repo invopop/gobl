@@ -46,7 +46,10 @@ func hasSupplierTaxIDOrIdentity(value any) bool {
 		return true
 	}
 	for _, id := range party.Identities {
-		if id.Type == IdentityTypeOrgNr {
+		if id == nil {
+			continue
+		}
+		if id.Type == IdentityTypeOrgNr && id.Code != "" {
 			return true
 		}
 	}
