@@ -34,18 +34,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Alminnelig sats for de fleste varer og tjenester.",
 				},
 				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(250, 3),
-						Since:   cal.NewDate(2005, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(240, 3),
-						Since:   cal.NewDate(2001, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(230, 3),
-						Since:   cal.NewDate(1995, 1, 1),
-					},
+					{Percent: num.MakePercentage(250, 3)},
 				},
 			},
 			{
@@ -60,26 +49,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Næringsmidler, vann og avløpstjenester.",
 				},
 				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(150, 3),
-						Since:   cal.NewDate(2012, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(140, 3),
-						Since:   cal.NewDate(2007, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(130, 3),
-						Since:   cal.NewDate(2006, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(110, 3),
-						Since:   cal.NewDate(2005, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2001, 7, 1),
-					},
+					{Percent: num.MakePercentage(150, 3)},
 				},
 			},
 			{
@@ -94,34 +64,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Transport, overnatting, kino, kringkasting.",
 				},
 				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2021, 10, 1),
-					},
-					{
-						Percent: num.MakePercentage(60, 3), // COVID temporary reduction
-						Since:   cal.NewDate(2020, 4, 1),
-					},
-					{
-						Percent: num.MakePercentage(120, 3),
-						Since:   cal.NewDate(2018, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(100, 3),
-						Since:   cal.NewDate(2016, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(80, 3),
-						Since:   cal.NewDate(2006, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(70, 3),
-						Since:   cal.NewDate(2005, 1, 1),
-					},
-					{
-						Percent: num.MakePercentage(60, 3),
-						Since:   cal.NewDate(2004, 3, 1),
-					},
+					{Percent: num.MakePercentage(120, 3)},
 				},
 			},
 			{
@@ -136,11 +79,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.NB: "Råfisk (viltlevende marine ressurser via fiskesalgslag).",
 				},
 				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(1111, 4),
-						// §5-8 merverdiavgiftsloven (2009 Act)
-						Since: cal.NewDate(2009, 1, 1),
-					},
+					{Percent: num.MakePercentage(1111, 4)},
 				},
 			},
 		},
@@ -155,10 +94,15 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Title: i18n.String{
+					i18n.EN: "Stortingsvedtak om merverdiavgift for 2026",
+				},
+				URL: "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2752",
+			},
+			{
+				Title: i18n.String{
 					i18n.NB: "Lovdata - merverdiavgiftsloven",
 				},
 				URL: "https://lovdata.no/dokument/NL/lov/2009-06-19-58",
-				At:  cal.NewDateTime(2025, 6, 15, 0, 0, 0),
 			},
 		},
 	},
