@@ -5,7 +5,7 @@
     "nb": "Norge"
   },
   "description": {
-    "en": "The Norwegian tax regime covers VAT (merverdiavgift) with four\nrates: general (25%), reduced (15%), super-reduced (12%), and\nspecial (11.11%). Identity validation supports\norganisasjonsnummer with mod-11 check digits."
+    "en": "Norway applies VAT (merverdiavgift, MVA), administered by the\nNorwegian Tax Administration (Skatteetaten), at a standard rate\nwith reduced and special rates for certain goods and services.\n\nBusinesses are identified by their organisasjonsnummer, validated\nwith a mod-11 check digit; the VAT number is the organisation\nnumber followed by \"MVA\"."
   },
   "time_zone": "Europe/Oslo",
   "country": "NO",
