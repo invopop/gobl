@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/no"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,56 +45,30 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 func TestValidateTaxIdentity(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		name string
-		code cbc.Code
-		err  string
+		name  string
+		code  cbc.Code
+		valid bool
 	}{
-		{name: "valid code", code: "923456783"},
-		{name: "valid code starting with 8", code: "889640782"},
-		{name: "empty code", code: ""},
-		{
-			name: "too short",
-			code: "92345678",
-			err:  "must have 9 digits",
-		},
-		{
-			name: "too long",
-			code: "9234567830",
-			err:  "must have 9 digits",
-		},
-		{
-			name: "non-numeric",
-			code: "92345678A",
-			err:  "must only contain digits",
-		},
-		{
-			name: "first digit not 8 or 9",
-			code: "723456783",
-			err:  "first digit must be 8 or 9",
-		},
-		{
-			name: "bad check digit",
-			code: "923456780",
-			err:  "checksum mismatch",
-		},
-		{
-			// 850000000: sum = 8*3 + 5*2 = 34, 34 % 11 = 1, check = 10 → invalid
-			name: "check digit would be 10",
-			code: "850000000",
-			err:  "invalid check digit",
-		},
+		{name: "valid code", code: "923456783", valid: true},
+		{name: "valid code starting with 8", code: "889640782", valid: true},
+		{name: "empty code", code: "", valid: true},
+		{name: "too short", code: "92345678"},
+		{name: "too long", code: "9234567830"},
+		{name: "non-numeric", code: "92345678A"},
+		{name: "first digit not 8 or 9", code: "723456783"},
+		{name: "bad check digit", code: "923456780"},
+		// 850000000: sum = 8*3 + 5*2 = 34, 34 % 11 = 1, check = 10 → invalid
+		{name: "check digit would be 10", code: "850000000"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "NO", Code: tt.code}
-			err := no.Validate(tID)
-			if tt.err == "" {
+			err := rules.Validate(tID)
+			if tt.valid {
 				assert.NoError(t, err)
-			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+			} else if assert.Error(t, err) {
+				assert.Contains(t, err.Error(), "invalid organisasjonsnummer")
 			}
 		})
 	}

@@ -1,0 +1,114 @@
+{
+  "id": "GOBL-NO",
+  "package": "no",
+  "subsets": [
+    {
+      "id": "GOBL-NO-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [NO]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-NO-TAX-IDENTITY-01",
+                      "desc": "invalid organisasjonsnummer",
+                      "tests": "valid mod-11 org number"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-NO-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [NO]",
+          "subsets": [
+            {
+              "guard": "type in [ON]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-NO-ORG-IDENTITY-01",
+                      "desc": "invalid organisasjonsnummer",
+                      "tests": "valid mod-11 org number"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-NO-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [NO]",
+          "subsets": [
+            {
+              "guard": "not simplified",
+              "subsets": [
+                {
+                  "field": "supplier",
+                  "subsets": [
+                    {
+                      "field": "addresses",
+                      "assert": [
+                        {
+                          "id": "GOBL-NO-BILL-INVOICE-01",
+                          "desc": "supplier address is required on standard invoices",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "customer",
+                  "assert": [
+                    {
+                      "id": "GOBL-NO-BILL-INVOICE-02",
+                      "desc": "customer is required on standard invoices",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "invoice type in [credit-note, debit-note]",
+              "subsets": [
+                {
+                  "field": "preceding",
+                  "assert": [
+                    {
+                      "id": "GOBL-NO-BILL-INVOICE-03",
+                      "desc": "preceding document is required for credit and debit notes",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

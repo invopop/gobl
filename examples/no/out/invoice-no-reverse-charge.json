@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f4026fd9356d19338676750abc22703466e83fe565369cb303faa37508fe69dd"
+			"val": "abe375be5da303689d8db190efd68ff58b622f4a90015ab25998b716a125f25f"
 		}
 	},
 	"doc": {
@@ -19,6 +19,15 @@
 		"code": "0003",
 		"issue_date": "2025-06-20",
 		"currency": "NOK",
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge",
+					"text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
+				}
+			]
+		},
 		"supplier": {
 			"name": "Eksempel AS",
 			"tax_id": {
@@ -88,13 +97,6 @@
 			"tax": "0.00",
 			"total_with_tax": "10000.00",
 			"payable": "10000.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "reverse-charge",
-				"text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
-			}
-		]
+		}
 	}
 }

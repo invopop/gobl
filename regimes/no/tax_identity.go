@@ -1,12 +1,12 @@
 package no
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // taxCodeWeights are the mod-11 multipliers for Norwegian organisasjonsnummer
@@ -14,66 +14,64 @@ import (
 // See: https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/
 var taxCodeWeights = []int{3, 2, 7, 6, 5, 4, 3, 2}
 
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn(CountryCode),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid organisasjonsnummer",
+					is.Func("valid mod-11 org number", isValidOrgNumber),
+				),
+			),
+		),
+	)
+}
+
 // normalizeTaxIdentity performs standard tax identity normalization, and then
-// removes the "MVA" suffix common in Norwegian VAT numbers.
+// removes the "MVA" suffix common in Norwegian VAT numbers
+// (e.g. "NO 923 456 783 MVA").
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
 		return
 	}
 	tax.NormalizeIdentity(tID)
-	// Strip the "MVA" suffix common in Norwegian VAT numbers (e.g. "NO 923 456 783 MVA").
 	tID.Code = cbc.Code(strings.TrimSuffix(string(tID.Code), "MVA"))
 }
 
-// validateTaxIdentity checks the Norwegian organisasjonsnummer using mod-11.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
-		),
-	)
-}
-
-func validateTaxCode(value any) error {
-	code, _ := value.(cbc.Code)
-	if code == "" {
-		return nil
+// isValidOrgNumber reports whether the value is a valid Norwegian
+// organisasjonsnummer: nine digits, starting with 8 or 9, with a mod-11 check
+// digit. The same number is the basis for both the tax identity and the `ON`
+// organization identity (org.nr + "MVA" forms the VAT number).
+func isValidOrgNumber(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok {
+		return false
 	}
-
-	if len(code) != 9 {
-		return errors.New("must have 9 digits")
+	s := code.String()
+	if len(s) != 9 {
+		return false
 	}
-
-	// All characters must be digits.
-	for _, r := range code {
+	for _, r := range s {
 		if r < '0' || r > '9' {
-			return errors.New("must only contain digits")
+			return false
 		}
 	}
-
-	// First digit must be 8 or 9.
-	if code[0] != '8' && code[0] != '9' {
-		return errors.New("first digit must be 8 or 9")
+	// Norwegian organisasjonsnummer are currently allocated in the 8 and 9
+	// number series.
+	if s[0] != '8' && s[0] != '9' {
+		return false
 	}
 
-	// Mod-11 check digit validation.
 	sum := 0
 	for i, w := range taxCodeWeights {
-		sum += int(code[i]-'0') * w
+		sum += int(s[i]-'0') * w
 	}
 	remainder := sum % 11
-	var check int
-	if remainder == 0 {
-		check = 0
-	} else {
+	check := 0
+	if remainder != 0 {
 		check = 11 - remainder
 	}
 	if check == 10 {
-		return errors.New("invalid check digit")
+		return false
 	}
-	if int(code[8]-'0') != check {
-		return errors.New("checksum mismatch")
-	}
-
-	return nil
+	return int(s[8]-'0') == check
 }

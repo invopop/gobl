@@ -22,6 +22,5 @@ func TestNew(t *testing.T) {
 	assert.Empty(t, regime.Tags)
 	assert.Len(t, regime.Corrections, 1)
 	assert.NotNil(t, regime.Scenarios)
-	assert.NotNil(t, regime.Validator)
 	assert.NotNil(t, regime.Normalizer)
 }

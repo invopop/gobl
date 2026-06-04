@@ -9,11 +9,20 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Norway.
+const CountryCode l10n.TaxCountryCode = "NO"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("no", rules.GOBL.Add("NO"),
+		taxIdentityRules(),
+		orgIdentityRules(),
+		billInvoiceRules(),
+	)
 }
 
 // New instantiates a new Norwegian tax regime.
@@ -63,22 +72,8 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
-		Validator:  Validate,
 		Normalizer: Normalize,
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateOrgIdentity(obj)
-	}
-	return nil
 }
 
 // Normalize performs any regime-specific normalizations.

@@ -6,6 +6,8 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/no"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,45 +47,40 @@ func TestNormalizeOrgIdentity(t *testing.T) {
 
 func TestValidateOrgIdentity(t *testing.T) {
 	t.Parallel()
+
+	opts := []rules.WithContext{
+		tax.RegimeContext(no.CountryCode),
+	}
+
 	tests := []struct {
-		name string
-		code cbc.Code
-		err  string
+		name  string
+		code  cbc.Code
+		valid bool
 	}{
-		{name: "valid code", code: "923456783"},
+		{name: "valid code", code: "923456783", valid: true},
 		{name: "empty code", code: ""},
-		{
-			name: "bad check digit",
-			code: "923456780",
-			err:  "checksum mismatch",
-		},
-		{
-			name: "too short",
-			code: "92345678",
-			err:  "must have 9 digits",
-		},
+		{name: "bad check digit", code: "923456780"},
+		{name: "too short", code: "92345678"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Type: no.IdentityTypeOrgNr, Code: tt.code}
-			err := no.Validate(id)
-			if tt.err == "" {
+			err := rules.Validate(id, opts...)
+			if tt.valid {
 				assert.NoError(t, err)
-			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+			} else if assert.Error(t, err) {
+				assert.Contains(t, err.Error(), "invalid organisasjonsnummer")
 			}
 		})
 	}
 
 	t.Run("nil identity", func(t *testing.T) {
-		assert.NoError(t, no.Validate((*org.Identity)(nil)))
+		assert.NoError(t, rules.Validate((*org.Identity)(nil), opts...))
 	})
 
 	t.Run("unknown type skipped", func(t *testing.T) {
-		id := &org.Identity{Type: "OTHER", Code: "invalid"}
-		assert.NoError(t, no.Validate(id))
+		id := &org.Identity{Type: "OTHER", Code: "923456783"}
+		assert.NoError(t, rules.Validate(id, opts...))
 	})
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -112,7 +113,7 @@ func TestInvoiceValidation(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing supplier name", func(t *testing.T) {
@@ -120,8 +121,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "invoice supplier name is required")
 	})
 
 	t.Run("missing supplier address", func(t *testing.T) {
@@ -129,8 +130,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (addresses: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier address is required on standard invoices")
 	})
 
 	t.Run("supplier without tax ID is valid", func(t *testing.T) {
@@ -138,7 +139,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer", func(t *testing.T) {
@@ -146,8 +147,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: cannot be blank.")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer is required on standard invoices")
 	})
 
 	t.Run("missing customer name", func(t *testing.T) {
@@ -155,8 +156,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "invoice customer name required when tax ID is set")
 	})
 
 	t.Run("customer without address is valid", func(t *testing.T) {
@@ -164,7 +165,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("credit note without preceding", func(t *testing.T) {
@@ -172,8 +173,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "preceding: cannot be blank.")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "preceding document is required for credit and debit notes")
 	})
 
 	t.Run("debit note without preceding", func(t *testing.T) {
@@ -181,8 +182,8 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeDebitNote
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "preceding: cannot be blank.")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "preceding document is required for credit and debit notes")
 	})
 
 	t.Run("standard invoice with preceding is allowed", func(t *testing.T) {
@@ -192,7 +193,7 @@ func TestInvoiceValidation(t *testing.T) {
 			{Code: "TEST-0001"},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 }
 
@@ -203,7 +204,7 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice allows customer", func(t *testing.T) {
@@ -213,7 +214,7 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 			Name: "Optional Kunde AS",
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice does not require supplier address", func(t *testing.T) {
@@ -221,7 +222,7 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice does not require supplier tax ID", func(t *testing.T) {
@@ -229,7 +230,7 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("simplified invoice still requires supplier name", func(t *testing.T) {
@@ -237,7 +238,7 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "invoice supplier name is required")
 	})
 }

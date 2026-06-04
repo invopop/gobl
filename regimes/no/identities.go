@@ -4,7 +4,9 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -28,22 +30,26 @@ var identityTypeDefinitions = []*cbc.Definition{
 	},
 }
 
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		rules.When(
+			is.InContext(tax.RegimeIn(CountryCode)),
+			rules.When(
+				org.IdentityTypeIn(IdentityTypeOrgNr),
+				rules.Field("code",
+					rules.Assert("01", "invalid organisasjonsnummer",
+						is.Func("valid mod-11 org number", isValidOrgNumber),
+					),
+				),
+			),
+		),
+	)
+}
+
 // normalizeOrgIdentity strips non-numeric characters from the organization number.
 func normalizeOrgIdentity(id *org.Identity) {
 	if id == nil || id.Type != IdentityTypeOrgNr {
 		return
 	}
 	id.Code = cbc.NormalizeNumericalCode(id.Code)
-}
-
-// validateOrgIdentity checks the Norwegian organisasjonsnummer using the same
-// mod-11 algorithm as the tax identity. The organisation number is the base
-// for the VAT number (org.nr + "MVA").
-func validateOrgIdentity(id *org.Identity) error {
-	if id == nil || id.Type != IdentityTypeOrgNr {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxCode)),
-	)
 }

@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,11 +19,11 @@ func TestScenarios(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Tags = tax.Tags{List: []cbc.Key{tax.TagReverseCharge}}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 
 		found := false
-		for _, n := range inv.Notes {
-			if n.Src == tax.TagReverseCharge {
+		for _, n := range inv.Tax.Notes {
+			if n.Key == tax.KeyReverseCharge {
 				assert.Contains(t, n.Text, "Omvendt avgiftsplikt")
 				found = true
 			}
@@ -41,12 +42,11 @@ func TestScenarios(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 
-		// Verify the note is injected
 		found := false
-		for _, n := range inv.Notes {
-			if n.Src == tax.TagReverseCharge {
+		for _, n := range inv.Tax.Notes {
+			if n.Key == tax.KeyReverseCharge {
 				found = true
 			}
 		}
