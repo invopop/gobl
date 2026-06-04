@@ -331,7 +331,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-06",
-                  "desc": "supplier must have a tax ID or identities (F-APR040)",
+                  "desc": "supplier must have a tax ID or identities (F-APR041)",
                   "tests": "has tax id or identities"
                 },
                 {
@@ -346,7 +346,7 @@
                   "assert": [
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-STATUS-01",
-                      "desc": "supplier inboxes are required (F-APR008)",
+                      "desc": "supplier inboxes are required (F-APR012)",
                       "tests": "present"
                     }
                   ]
@@ -373,7 +373,7 @@
                   "assert": [
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-STATUS-03",
-                      "desc": "customer inboxes are required (F-APR012)",
+                      "desc": "customer inboxes are required (F-APR008)",
                       "tests": "present"
                     }
                   ]
@@ -385,7 +385,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-10",
-                  "desc": "issuer must have a tax ID or identities when set (F-APR048)",
+                  "desc": "issuer must have a tax ID or identities when set (F-APR040)",
                   "tests": "has tax id or identities"
                 },
                 {
@@ -400,7 +400,7 @@
                   "assert": [
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-STATUS-09",
-                      "desc": "issuer inboxes are required when issuer is set (F-APR047)",
+                      "desc": "issuer inboxes are required when issuer is set (F-APR008)",
                       "tests": "present"
                     }
                   ]
@@ -412,7 +412,7 @@
               "assert": [
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-13",
-                  "desc": "recipient must have a tax ID or identities when set (F-APR040)",
+                  "desc": "recipient must have a tax ID or identities when set (F-APR041)",
                   "tests": "has tax id or identities"
                 },
                 {
@@ -427,7 +427,7 @@
                   "assert": [
                     {
                       "id": "GOBL-DK-OIOUBL-BILL-STATUS-12",
-                      "desc": "recipient inboxes are required when recipient is set (F-APR008)",
+                      "desc": "recipient inboxes are required when recipient is set (F-APR012)",
                       "tests": "present"
                     }
                   ]

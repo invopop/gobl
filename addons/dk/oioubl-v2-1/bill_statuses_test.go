@@ -57,21 +57,21 @@ func TestStatusValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "F-APR005")
 	})
 
-	t.Run("missing supplier inboxes (F-APR008)", func(t *testing.T) {
+	t.Run("missing supplier inboxes (F-APR012)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Supplier.Inboxes = nil
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR008")
+		assert.ErrorContains(t, err, "F-APR012")
 	})
 
-	t.Run("supplier without tax ID or identities (F-APR040)", func(t *testing.T) {
+	t.Run("supplier without tax ID or identities (F-APR041)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Supplier.TaxID = nil
 		st.Supplier.Identities = nil
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR040")
+		assert.ErrorContains(t, err, "F-APR041")
 	})
 
 	t.Run("supplier with identities and no tax ID passes", func(t *testing.T) {
@@ -118,12 +118,12 @@ func TestStatusValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer is required")
 	})
 
-	t.Run("missing customer inboxes (F-APR012)", func(t *testing.T) {
+	t.Run("missing customer inboxes (F-APR008)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Customer.Inboxes = nil
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR012")
+		assert.ErrorContains(t, err, "F-APR008")
 	})
 
 	t.Run("customer without name or identities (F-LIB022)", func(t *testing.T) {
@@ -141,7 +141,7 @@ func TestStatusValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(st))
 	})
 
-	t.Run("issuer set without inboxes (F-APR047)", func(t *testing.T) {
+	t.Run("issuer set without inboxes (F-APR008)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Issuer = &org.Party{
 			Name:  "Invopop",
@@ -149,10 +149,10 @@ func TestStatusValidation(t *testing.T) {
 		}
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR047")
+		assert.ErrorContains(t, err, "F-APR008")
 	})
 
-	t.Run("issuer set without tax ID or identities (F-APR048)", func(t *testing.T) {
+	t.Run("issuer set without tax ID or identities (F-APR040)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Issuer = &org.Party{
 			Name:    "Invopop",
@@ -160,7 +160,7 @@ func TestStatusValidation(t *testing.T) {
 		}
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR048")
+		assert.ErrorContains(t, err, "F-APR040")
 	})
 
 	t.Run("issuer set without name or identities (F-LIB022)", func(t *testing.T) {
@@ -191,7 +191,7 @@ func TestStatusValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(st))
 	})
 
-	t.Run("recipient set without inboxes (F-APR008)", func(t *testing.T) {
+	t.Run("recipient set without inboxes (F-APR012)", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Recipient = &org.Party{
 			Name:  "Forsendelses Hub A/S",
@@ -199,7 +199,7 @@ func TestStatusValidation(t *testing.T) {
 		}
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "F-APR008")
+		assert.ErrorContains(t, err, "F-APR012")
 	})
 
 	t.Run("recipient fully populated passes", func(t *testing.T) {
