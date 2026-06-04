@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `addons/fr/ctc`: **breaking**: the French CTC addon has been **removed from core** and is now published as a standalone, opt-in module, [`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc), carrying the full Flow 2 / Flow 6 / Flow 10 extensions, normalizers, and validation rules. Projects that handle French CTC documents must add a blank import of the addon (`_ "github.com/invopop/gobl.fr.ctc/addon"`); the `$addons` keys (`fr-ctc-v1`, `fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`) still require the addon to be loaded at `Validate`/`Calculate` time, so a document declaring one without the module imported fails with `add-on must be registered`.
+- **breaking**: the GOBL CLI (`cmd/gobl`), the HTTP API handler (`pkg/api`), the MCP server, the operations engine (`internal/ops`), and the WebAssembly build (`wasm/`) have **moved out of core** into [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev), which composes this library with the full addon set. Core is now a pure document library (schemas, tax/document model, addons, data). Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`. The `github.com/invopop/gobl/cmd/gobl` and `github.com/invopop/gobl/pkg/api` import paths are gone (`internal/ops`/`internal/mcp` were internal, so no external breakage there).
 
 ### Added
 
