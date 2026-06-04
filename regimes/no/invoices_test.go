@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/no"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -125,21 +126,25 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "invoice supplier name is required")
 	})
 
-	t.Run("missing supplier address", func(t *testing.T) {
+	t.Run("supplier without tax ID but with org identity is valid", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.Supplier.Addresses = nil
+		// Not VAT-registered: no tax ID, but still identified by org number.
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{Type: no.IdentityTypeOrgNr, Code: "923456783"},
+		}
 		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "supplier address is required on standard invoices")
+		require.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("supplier without tax ID is valid", func(t *testing.T) {
+	t.Run("supplier without tax ID or org identity is invalid", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, rules.Validate(inv))
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier must have a tax ID or an organization number identity")
 	})
 
 	t.Run("missing customer", func(t *testing.T) {
@@ -174,16 +179,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeCreditNote
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding document is required for credit and debit notes")
-	})
-
-	t.Run("debit note without preceding", func(t *testing.T) {
-		t.Parallel()
-		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeDebitNote
-		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "preceding document is required for credit and debit notes")
+		assert.ErrorContains(t, err, "preceding document is required for credit notes")
 	})
 
 	t.Run("standard invoice with preceding is allowed", func(t *testing.T) {
@@ -217,18 +213,15 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 		require.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("simplified invoice does not require supplier address", func(t *testing.T) {
+	t.Run("simplified invoice does not require supplier VAT tax ID", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
-		inv.Supplier.Addresses = nil
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, rules.Validate(inv))
-	})
-
-	t.Run("simplified invoice does not require supplier tax ID", func(t *testing.T) {
-		t.Parallel()
-		inv := testInvoiceSimplified(t)
+		// The seller org number (§ 5-1-2) is still required, but a VAT tax ID
+		// is not: a sub-threshold supplier identified only by org number is ok.
 		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{Type: no.IdentityTypeOrgNr, Code: "923456783"},
+		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 	})

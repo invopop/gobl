@@ -51,11 +51,13 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}{
 		{name: "valid code", code: "923456783", valid: true},
 		{name: "valid code starting with 8", code: "889640782", valid: true},
+		// brreg validates by mod-11 only; the leading digit is not constrained,
+		// so a mod-11-valid number outside the 8/9 series must be accepted.
+		{name: "valid code not starting with 8 or 9", code: "123456785", valid: true},
 		{name: "empty code", code: "", valid: true},
 		{name: "too short", code: "92345678"},
 		{name: "too long", code: "9234567830"},
 		{name: "non-numeric", code: "92345678A"},
-		{name: "first digit not 8 or 9", code: "723456783"},
 		{name: "bad check digit", code: "923456780"},
 		// 850000000: sum = 8*3 + 5*2 = 34, 34 % 11 = 1, check = 10 → invalid
 		{name: "check digit would be 10", code: "850000000"},

@@ -68,8 +68,7 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "credit-note",
-        "debit-note"
+        "credit-note"
       ]
     }
   ],

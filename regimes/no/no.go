@@ -60,12 +60,14 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Oslo",
 		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
+		// Norwegian bookkeeping law (bokføringsforskriften § 5-2-7) only
+		// recognises the kreditnota (credit note) for correcting an issued
+		// sales document; there is no debit-note concept.
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
-					bill.InvoiceTypeDebitNote,
 				},
 			},
 		},

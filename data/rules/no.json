@@ -62,23 +62,18 @@
           "guard": "context: regime in [NO]",
           "subsets": [
             {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-NO-BILL-INVOICE-01",
+                  "desc": "supplier must have a tax ID or an organization number identity",
+                  "tests": "has tax ID or org identity"
+                }
+              ]
+            },
+            {
               "guard": "not simplified",
               "subsets": [
-                {
-                  "field": "supplier",
-                  "subsets": [
-                    {
-                      "field": "addresses",
-                      "assert": [
-                        {
-                          "id": "GOBL-NO-BILL-INVOICE-01",
-                          "desc": "supplier address is required on standard invoices",
-                          "tests": "present"
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   "field": "customer",
                   "assert": [
@@ -92,14 +87,14 @@
               ]
             },
             {
-              "guard": "invoice type in [credit-note, debit-note]",
+              "guard": "invoice type in [credit-note]",
               "subsets": [
                 {
                   "field": "preceding",
                   "assert": [
                     {
                       "id": "GOBL-NO-BILL-INVOICE-03",
-                      "desc": "preceding document is required for credit and debit notes",
+                      "desc": "preceding document is required for credit notes",
                       "tests": "present"
                     }
                   ]
