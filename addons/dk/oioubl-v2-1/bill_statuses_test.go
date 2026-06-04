@@ -91,6 +91,25 @@ func TestStatusValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "F-LIB022")
 	})
 
+	t.Run("name-less supplier with a non-legal identity fails (F-LIB022)", func(t *testing.T) {
+		// A tax-scope-only identity yields no PartyLegalEntity, so it cannot
+		// produce valid OIOUBL and must be rejected.
+		st := testStatusResponse(t)
+		st.Supplier.Name = ""
+		st.Supplier.Identities = []*org.Identity{{Scope: org.IdentityScopeTax, Code: "88146328"}}
+		require.NoError(t, st.Calculate())
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "F-LIB022")
+	})
+
+	t.Run("name-less supplier with a legal identity passes", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Supplier.Name = ""
+		st.Supplier.Identities = []*org.Identity{{Scope: org.IdentityScopeLegal, Code: "88146328"}}
+		require.NoError(t, st.Calculate())
+		assert.NoError(t, rules.Validate(st))
+	})
+
 	t.Run("missing customer", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Customer = nil

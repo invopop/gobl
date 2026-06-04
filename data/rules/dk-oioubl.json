@@ -336,8 +336,8 @@
                 },
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-07",
-                  "desc": "supplier must have a name or identities (F-LIB022)",
-                  "tests": "has name or identities"
+                  "desc": "supplier must have a name or legal identity (F-LIB022)",
+                  "tests": "has name or legal identity"
                 }
               ],
               "subsets": [
@@ -363,8 +363,8 @@
                 },
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-08",
-                  "desc": "customer must have a name or identities (F-LIB022)",
-                  "tests": "has name or identities"
+                  "desc": "customer must have a name or legal identity (F-LIB022)",
+                  "tests": "has name or legal identity"
                 }
               ],
               "subsets": [
@@ -390,8 +390,8 @@
                 },
                 {
                   "id": "GOBL-DK-OIOUBL-BILL-STATUS-11",
-                  "desc": "issuer must have a name or identities when set (F-LIB022)",
-                  "tests": "has name or identities"
+                  "desc": "issuer must have a name or legal identity when set (F-LIB022)",
+                  "tests": "has name or legal identity"
                 }
               ],
               "subsets": [
