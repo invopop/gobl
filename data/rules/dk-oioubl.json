@@ -408,6 +408,33 @@
               ]
             },
             {
+              "field": "recipient",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-13",
+                  "desc": "recipient must have a tax ID or identities when set (F-APR040)",
+                  "tests": "has tax id or identities"
+                },
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-14",
+                  "desc": "recipient must have a name or legal identity when set (F-LIB022)",
+                  "tests": "has name or legal identity"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "inboxes",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-OIOUBL-BILL-STATUS-12",
+                      "desc": "recipient inboxes are required when recipient is set (F-APR008)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "field": "lines",
               "subsets": [
                 {

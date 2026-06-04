@@ -41,6 +41,17 @@ func billStatusRules() *rules.Set {
 				rules.Assert("11", "issuer must have a name or legal identity when set (F-LIB022)",
 					is.Func("has name or legal identity", partyHasNameOrLegalIdentity)),
 			),
+			// A recipient, when present, replaces the supplier as the document's
+			// ReceiverParty, so it carries the same requirements as the supplier.
+			rules.Field("recipient",
+				rules.Field("inboxes",
+					rules.Assert("12", "recipient inboxes are required when recipient is set (F-APR008)", is.Present),
+				),
+				rules.Assert("13", "recipient must have a tax ID or identities when set (F-APR040)",
+					is.Func("has tax id or identities", partyHasTaxIDOrIdentities)),
+				rules.Assert("14", "recipient must have a name or legal identity when set (F-LIB022)",
+					is.Func("has name or legal identity", partyHasNameOrLegalIdentity)),
+			),
 			rules.Field("lines",
 				rules.Each(
 					rules.Field("doc",

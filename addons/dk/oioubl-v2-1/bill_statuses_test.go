@@ -185,6 +185,34 @@ func TestStatusValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(st))
 	})
 
+	t.Run("recipient absent is allowed", func(t *testing.T) {
+		st := testStatusResponse(t)
+		require.NoError(t, st.Calculate())
+		assert.NoError(t, rules.Validate(st))
+	})
+
+	t.Run("recipient set without inboxes (F-APR008)", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Recipient = &org.Party{
+			Name:  "Forsendelses Hub A/S",
+			TaxID: &tax.Identity{Country: "DK", Code: "12345674"},
+		}
+		require.NoError(t, st.Calculate())
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "F-APR008")
+	})
+
+	t.Run("recipient fully populated passes", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Recipient = &org.Party{
+			Name:    "Forsendelses Hub A/S",
+			TaxID:   &tax.Identity{Country: "DK", Code: "12345674"},
+			Inboxes: []*org.Inbox{{Scheme: "0184", Code: "12345674"}},
+		}
+		require.NoError(t, st.Calculate())
+		assert.NoError(t, rules.Validate(st))
+	})
+
 	t.Run("missing line doc", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Lines[0].Doc = nil
