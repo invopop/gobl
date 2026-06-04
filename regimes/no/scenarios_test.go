@@ -11,11 +11,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestScenarios does not use t.Parallel: scenario notes are shared
+// package-level values that Calculate normalizes in place, so running the
+// note-injecting subtests concurrently would race (matching the convention of
+// the other regimes' scenario tests).
 func TestScenarios(t *testing.T) {
-	t.Parallel()
-
 	t.Run("reverse charge tag", func(t *testing.T) {
-		t.Parallel()
 		inv := testInvoiceStandard(t)
 		inv.Tags = tax.Tags{List: []cbc.Key{tax.TagReverseCharge}}
 		require.NoError(t, inv.Calculate())
@@ -32,7 +33,6 @@ func TestScenarios(t *testing.T) {
 	})
 
 	t.Run("reverse charge exempt produces zero tax", func(t *testing.T) {
-		t.Parallel()
 		inv := testInvoiceStandard(t)
 		inv.Tags = tax.Tags{List: []cbc.Key{tax.TagReverseCharge}}
 		inv.Lines[0].Taxes = tax.Set{
