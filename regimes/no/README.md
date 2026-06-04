@@ -7,9 +7,10 @@ Find example GOBL files in the [`examples`](../../examples/no) (uncalculated doc
 ## Public Documentation
 
 - [Skatteetaten - VAT rates](https://www.skatteetaten.no/en/rates/value-added-tax/)
-- [Lovdata - Merverdiavgiftsloven](https://lovdata.no/dokument/NL/lov/2009-06-19-58)
+- [Lovdata - Merverdiavgiftsloven (VAT Act)](https://lovdata.no/dokument/NL/lov/2009-06-19-58)
+- [Lovdata - Bokføringsforskriften (Bookkeeping Regulation), ch. 5](https://lovdata.no/dokument/SF/forskrift/2004-12-01-1558/KAPITTEL_5)
+- [Lovdata - Stortingsvedtak om merverdiavgift for 2026](https://lovdata.no/dokument/STV/forskrift/2025-12-18-2752)
 - [Brønnøysundregistrene - Organisation number](https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/)
-- [Altinn - Invoice requirements](https://info.altinn.no/en/start-and-run-business/accounts-and-auditing/accounting/invoices-sales-documentation/)
 
 ## VAT Rates
 
