@@ -53,57 +53,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": "GOBL-NO-BILL-INVOICE",
-      "object": "bill.Invoice",
-      "subsets": [
-        {
-          "guard": "context: regime in [NO]",
-          "subsets": [
-            {
-              "field": "supplier",
-              "assert": [
-                {
-                  "id": "GOBL-NO-BILL-INVOICE-01",
-                  "desc": "supplier must have a tax ID or an organization number identity",
-                  "tests": "has tax ID or org identity"
-                }
-              ]
-            },
-            {
-              "guard": "not simplified",
-              "subsets": [
-                {
-                  "field": "customer",
-                  "assert": [
-                    {
-                      "id": "GOBL-NO-BILL-INVOICE-02",
-                      "desc": "customer is required on standard invoices",
-                      "tests": "present"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "guard": "invoice type in [credit-note]",
-              "subsets": [
-                {
-                  "field": "preceding",
-                  "assert": [
-                    {
-                      "id": "GOBL-NO-BILL-INVOICE-03",
-                      "desc": "preceding document is required for credit notes",
-                      "tests": "present"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   ]
 }

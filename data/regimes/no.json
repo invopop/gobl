@@ -24,26 +24,6 @@
       }
     }
   ],
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "cat": [
-            "VAT"
-          ],
-          "note": {
-            "cat": "VAT",
-            "key": "reverse-charge",
-            "text": "Reverse charge / Omvendt avgiftsplikt – Merverdiavgift ikke beregnet."
-          }
-        }
-      ]
-    }
-  ],
   "corrections": [
     {
       "schema": "bill/invoice",

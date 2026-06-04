@@ -21,7 +21,6 @@ func init() {
 	rules.Register("no", rules.GOBL.Add("NO"),
 		taxIdentityRules(),
 		orgIdentityRules(),
-		billInvoiceRules(),
 	)
 }
 
@@ -57,9 +56,6 @@ func New() *tax.RegimeDef {
 					bill.InvoiceTypeCreditNote,
 				},
 			},
-		},
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
 		},
 		Normalizer: Normalize,
 	}
