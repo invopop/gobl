@@ -1,14 +1,17 @@
 # GOBL Net
 
 > ⚠️ **EXPERIMENTAL** — GOBL Net is under active development. The package
-> API, CLI commands (`gobl net`, `gobl init`), on-disk layout, and the wire
-> protocol may change without notice and are not yet covered by any
-> stability guarantee.
+> API and the wire protocol may change without notice and are not yet
+> covered by any stability guarantee.
 
-**Status:** Draft. This document describes the current state of the implementation
-in the `github.com/invopop/gobl/net` package, the `internal/ops` helpers that
-back the `gobl net` CLI, and related supporting code in `dsig`. The protocol
-is pre-1.0 and subject to change.
+**Status:** Draft. This document is the wire-protocol specification for
+GOBL Net and describes the current state of the
+`github.com/invopop/gobl/net` package and related supporting code in
+`dsig`. CLI commands (`gobl init`, `gobl net who/send/serve`, `gobl sign
+--domain …`, `gobl verify --remote`) and the reference server live in
+[`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net) —
+that README covers on-disk layout, ACME, structured logging, and the
+operational stances. The protocol is pre-1.0 and subject to change.
 
 ## Abstract
 
@@ -114,8 +117,8 @@ The protocol exposes two key-discovery surfaces:
    that resolves the `jku` header on each signature.
 
 The scheme MUST be `https`. HTTP is not a permitted alternative for
-production deployments; the `gobl net send --insecure` flag exists solely
-for local development.
+production deployments; client tooling MAY offer an opt-in for plain
+HTTP solely for local development.
 
 Responses are always JSON, so file extensions are omitted from the paths.
 
@@ -153,13 +156,12 @@ The checks degrade gracefully: an absent bound on the key, or an
 absent `iat` on the signature, simply skips that half of the
 comparison.
 
-`valid_from` is stamped automatically when a key is generated (by
-`gobl init` or `gobl net serve`'s autogeneration). `valid_until` is
-left empty and is meant to be set when the operator rotates the key out
-— either at retirement, or in advance of a planned rotation. A retired
-key remains published so that historical envelopes signed within its
-window still verify; only signatures with an `iat` past `valid_until`
-are rejected.
+`valid_from` is stamped automatically when a key is generated.
+`valid_until` is left empty and is meant to be set when the operator
+rotates the key out — either at retirement, or in advance of a
+planned rotation. A retired key remains published so that historical
+envelopes signed within its window still verify; only signatures with
+an `iat` past `valid_until` are rejected.
 
 Verifiers MUST treat unknown kids as `404 Not Found`; this is how a
 domain expresses that a key has been removed entirely (as distinct from
@@ -201,27 +203,13 @@ calls `dsig.PublicKey.Allows` automatically, so every signed-envelope
 verifier — whether through GOBL Net or a direct `Envelope.Verify` call
 — enforces the window.
 
-On-disk, each domain stores its published keys as individual files
-under `<config-dir>/<domain>/keys/`, named by the key's `kid`:
-
-```
-~/.config/gobl/billing.invopop.com/
-├── private.jwk                              ← the active signing key
-├── keys/
-│   ├── 9f8b…json                            ← currently published key
-│   └── 4c10…json                            ← retired key (valid_until set)
-├── party.json
-├── allow.json
-└── inbox/
-```
-
-The server reads the directory on startup, validates that every
-filename matches the `kid` in its JWK, and serves each file verbatim
-at `/.well-known/gobl/keys/<kid>`. Rotation is just file ops: drop a
-new `<kid>.json` to publish a key, edit one to set `valid_until` to
-retire it, or `rm` it entirely to drop it from the published set
-(future requests for that `kid` return `404`). The model is a 1:1
-mapping to a future database table — one row per `kid`.
+A conforming server MUST serve each published key verbatim at
+`/.well-known/gobl/keys/<kid>` and the bulk set at
+`/.well-known/jwks.json`. The reference implementation in
+`gobl.dev`'s `gobl net serve` stores one file per `kid` on disk and
+maps 1:1 to a future row-per-`kid` database — but the on-disk layout
+is an implementation detail of that server, not part of this
+protocol.
 
 Endorsement of a participant happens at the identity layer (see §6) and
 does *not* live inside the key material itself.
@@ -284,9 +272,9 @@ issuer address:
 a signed envelope (`iss=gobl:caller`, `aud=gobl:target`, document = the
 caller's `org.Party`); the target verifies it, applies its allow-list,
 and responds with its own party envelope signed `iss=gobl:target`,
-`aud=gobl:caller`. The `ops.NetWho` helper / `gobl net who` performs the
-exchange and verifies the response is signed by the target and bound to
-the caller.
+`aud=gobl:caller`. A conforming client performs the exchange and
+verifies the response is signed by the target and bound to the
+caller.
 
 ### 6.3 Trusted Authorities (optional)
 
@@ -367,158 +355,18 @@ In this release the server does not return a signed receipt on 202; the
 response body is empty. A future `net.Response` type may carry an
 acknowledgement body.
 
-## 9. Command Line
+## 9. Reference Implementation
 
-### 9.1 `gobl verify`
+GOBL Net's reference client lives in this package (`net.Client`,
+`net.Address`, `net.Authorities`). The reference server and the
+operator-facing CLI (`gobl init`, `gobl net who/send/serve`,
+`gobl sign --domain …`, `gobl verify --remote`) live in
+[`gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net), which also
+documents the server's on-disk layout, ACME setup, multi-tenant
+routing, structured logging, and Docker deployment.
 
-Supports remote verification via two flags:
-
-- `-a, --address <fqdn>` — Require the verified issuer (`iss`) to equal
-  this address.
-- `-r, --remote` — Fetch the verifying key from the issuer published in
-  the signature's signed `iss`.
-
-### 9.2 `gobl net serve`
-
-Starts the HTTP server described in §8. The server always listens on an
-HTTP port (default 80). When a TLS source is configured, it additionally
-listens on an HTTPS port (default 443) and serves identical content
-there — there is no redirect from HTTP to HTTPS; senders choose the
-scheme they want and verify the certificate themselves.
-
-**Config directory.** All on-disk state defaults to a single base
-directory (`--config-dir`, default `~/.config/gobl/`):
-
-| File                              | Purpose                                          |
-|-----------------------------------|--------------------------------------------------|
-| `<config-dir>/keys/<kid>.json`    | One public JWK per `kid`, served at `/keys/<kid>`. Override the directory with `--keys-dir`. |
-| `<config-dir>/private.jwk`        | Active signing key paired with one of the published keys. Override with `--private-key`. |
-| `<config-dir>/party.json`         | Raw `org.Party` (or a signed envelope) served, signed per-request, at `/who`. Override with `--party`. |
-| `<config-dir>/allow.json`         | Optional accept-list (array of addresses) gating `/who` and `/inbox`; absent = accept any verified caller. |
-| `<config-dir>/inbox/`             | Directory accepted envelopes are written into. Override with `--inbox`. |
-| `<config-dir>/certs/`             | ACME certificate cache. Override with `--cert-dir`. |
-
-(In multi-domain mode these live under `<config-dir>/<domain>/`.)
-
-**Startup behavior:**
-
-- **Auto-key-generation.** If neither `keys/` nor `private.jwk` exists,
-  the server generates an ECDSA P-256 keypair, writes `private.jwk`
-  (0600) and `keys/<kid>.json` (with `valid_from = now`), and logs the
-  new kid plus the paths. If only one of the two exists, startup fails
-  with a clear error — the operator's setup is inconsistent.
-- **Filename ↔ kid invariant.** Every file in `keys/` MUST be named
-  `<kid>.json` where `kid` equals the JWK's `kid` field. A mismatch is
-  a startup error. Non-`.json` entries and subdirectories are ignored.
-- **Active key check.** The `private.jwk`'s `kid` MUST be one of the
-  published kids in `keys/`. Otherwise startup fails.
-- **Party self-signature.** The party envelope MUST contain at least
-  one signature whose `kid` is present in `keys/` and which verifies
-  against that key. Endorser signatures (from KYC vendors) are allowed
-  alongside and are served verbatim — they simply don't satisfy this
-  check on their own. Startup fails with a clear error if no
-  self-signature is present.
-- **Missing party.** If `party.env.json` is absent, the server fails
-  to start with bootstrap instructions naming both the expected path
-  and the `gobl sign` invocation needed to produce the file from a
-  Party JSON.
-
-**Optional port overrides:**
-
-- `--http-port <int>` — HTTP listen port (default 80).
-- `--https-port <int>` — HTTPS listen port (default 443). Only used when
-  a TLS source is configured.
-
-**TLS sources** (mutually exclusive):
-
-- `--acme-live` — Activate HTTPS via Let's Encrypt (production directory).
-  Requires `--domain`. Also RECOMMENDED: `--acme-email`.
-- `--acme-test` — Same as `--acme-live` but uses Let's Encrypt's staging
-  directory. Use this while iterating to avoid the production rate
-  limits. Issued certificates are not trusted by browsers.
-- `--tls-cert <path>` + `--tls-key <path>` — Operator-supplied PEM
-  cert + key (corporate CA, externally-managed cert lifecycle,
-  self-signed for testing).
-
-**ACME-specific flags:**
-
-- `--domain <fqdn>` — Hostname the ACME client is allowed to issue for.
-  MUST match the participant's GOBL Net address. **Optional**: when
-  omitted, it is derived from the party's GOBL inbox (see below).
-- `--acme-email <email>` — Account email registered with the ACME
-  directory (RECOMMENDED by LE). **Optional**: when omitted, it is
-  derived from the party's first email address.
-- `--cert-dir <path>` — Directory used to cache ACME-issued
-  certificates. Default `<config-dir>/certs/`.
-
-**Derivation from the party.** The served party envelope is the source
-of truth for the participant's identity, so the ACME domain and account
-email do not need to be passed as flags:
-
-- **Domain** — taken from the party's GOBL inbox: an
-  `org.Party.inboxes` entry with `key: "gobl"` whose `code` is the
-  participant's GOBL Net address (FQDN). Example:
-
-  ```json
-  {"inboxes": [{"key": "gobl", "code": "samlown.example.com"}]}
-  ```
-
-  If neither `--domain` nor a GOBL inbox is present, ACME startup fails
-  with a clear error.
-- **Email** — taken from the party's first `org.Party.emails` entry.
-  Email is optional for ACME, so an absent email is not an error.
-
-An explicit `--domain` / `--acme-email` flag always overrides the
-party-derived value.
-
-**Three operational stances:**
-
-| Stance                                          | Listens on             | Use when                                          |
-|-------------------------------------------------|------------------------|---------------------------------------------------|
-| default (no TLS flags)                          | HTTP only              | Behind a reverse proxy that terminates TLS upstream. |
-| `--acme-live` / `--acme-test` + `--domain`      | HTTP + HTTPS           | Direct internet exposure; LE manages the cert.    |
-| `--tls-cert` + `--tls-key`                      | HTTP + HTTPS           | Cert is sourced elsewhere (corporate CA, etc.).   |
-
-**Docker deployment:**
-
-Containers can bind privileged ports inside their own network namespace
-without host-level privilege, so the simplest deployment is:
-
-```
-docker run \
-    -p 80:80 -p 443:443 \
-    -v gobl-config:/root/.config/gobl \
-    gobl net serve
-```
-
-When the container itself runs unprivileged (e.g. `USER 1000` images),
-pick high ports inside and remap externally:
-
-```
-docker run \
-    -p 80:8080 -p 443:8443 \
-    -v gobl-config:/home/gobl/.config/gobl \
-    gobl net serve --http-port 8080 --https-port 8443
-```
-
-**ACME operational sequence:** start the server → ACME challenge
-(HTTP-01 on the HTTP port, with TLS-ALPN-01 fallback on the HTTPS port)
-→ cert issued and cached → ready. If the public internet cannot reach
-the HTTP or HTTPS port for the configured `--domain`, the challenge
-fails and the server logs a clear error. Successful issuance
-double-checks that the deployment is actually reachable.
-
-### 9.3 `gobl net send`
-
-Reads a signed envelope from a file or stdin and POSTs it to the
-destination's inbox endpoint:
-
-- `-t, --to <fqdn>` — Destination Address.
-- `--insecure` — Use `http://` and permit `host:port` form in `--to`
-  (development only).
-
-Exit status is 0 on a 202 response; any other status returns
-`ErrInboxRejected`.
+The protocol is transport-defined; any conforming implementation can
+serve the well-known endpoints from §8 over HTTPS.
 
 ## 10. Errors
 
@@ -540,55 +388,6 @@ The package exports the following sentinel errors:
 All callers using `errors.Is` against these sentinels MUST continue to
 work after wrapping with `fmt.Errorf("%w: ...", err)`.
 
-## 10a. Logging
-
-All operator-facing log output goes through `log/slog` and is written
-to **stderr**. Result output (signed envelopes, the `/who` party JSON,
-`gobl version`'s JSON) stays on **stdout**, so a pipeline like
-`gobl sign … | gobl net send …` is unaffected by logging.
-
-The format is controlled by the top-level `--json` flag:
-
-| flag         | stderr format        | example                                          |
-|--------------|----------------------|--------------------------------------------------|
-| (default)    | slog text            | `time=… level=INFO msg=listening scheme=http addr=:8080` |
-| `--json`     | slog JSON-per-line   | `{"time":"…","level":"INFO","msg":"listening","scheme":"http","addr":":8080"}` |
-
-### Startup messages (`gobl net serve`)
-
-- `generated keypair` — emitted on first boot (auto-keygen). Fields:
-  `kid`, `private`, `key_file`.
-- `initialised domain` — emitted by `gobl init`. Fields: `domain`,
-  `party`, `inbox`.
-- `GOBL Net listening` — once per listener. Fields: `scheme`
-  (`http`/`https`), `addr`.
-- `ACME enabled` — when ACME is configured. Field: `domains`.
-- `Shutting down` — emitted on graceful shutdown.
-
-### Access logs
-
-Every HTTP request emits one **baseline** entry plus one or more
-**handler-specific** entries with high-signal fields:
-
-| msg              | level | fields                                                                |
-|------------------|-------|-----------------------------------------------------------------------|
-| `http_request`   | INFO  | `method`, `path`, `host`, `remote`, `status`, `duration_ms`           |
-| `keys.lookup`    | INFO  | `kid`, `found`                                                        |
-| `who.exchange`   | INFO  | `caller` (verified `iss` as FQDN)                                     |
-| `who.rejected`   | WARN  | `reason` (`bad_body`/`verify_failed`/`not_allowed`), `remote`/`caller`/`error` |
-| `inbox.accepted` | INFO  | `caller`, `envelope` (UUID)                                           |
-| `inbox.rejected` | WARN  | `reason` (`bad_body`/`validation`/`verify_failed`/`aud_mismatch`/`not_allowed`), `caller`/`aud`/`error` |
-| `inbox.write_failed` | ERROR | `caller`, `envelope`, `error`                                       |
-| `who.party_load_failed` / `who.sign_failed` / `who.encode_failed` | ERROR | `caller`, `error` |
-
-### Error reporting
-
-A CLI command that fails emits a single `command failed` entry on
-stderr with `key=<gobl-error-key>` and (when present) `message=…` and
-`faults=…`. With `--json` the same fields appear as a JSON object.
-Successful commands write no log output and their result still lands
-on stdout.
-
 ## 11. Security Considerations
 
 ### 11.1 Trust Model
@@ -608,13 +407,6 @@ rely on the host's TLS certificate to establish that the served content
 originates from the named Address. Operators MUST ensure that TLS
 certificate issuance is properly controlled for any Address they intend
 to use as an identity.
-
-When the server is started with `--acme-live` (or `--acme-test`), the
-successful issuance of a Let's Encrypt certificate doubles as a
-reachability check: it proves that the public internet can reach the
-configured `--domain` on the HTTP/HTTPS ports. In the default plain-HTTP
-mode no such guarantee exists, and operators MUST verify their upstream
-TLS proxy independently.
 
 ### 11.3 Authority Trust
 
