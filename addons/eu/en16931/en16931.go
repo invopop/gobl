@@ -109,7 +109,7 @@ func normalize(doc any) {
 	case *pay.Instructions:
 		normalizePayInstructions(obj)
 	case *tax.Combo:
-		normalizeTaxCombo(obj)
+		NormalizeTaxCombo(obj)
 	case *bill.Discount:
 		normalizeBillDiscount(obj)
 	case *bill.LineDiscount:

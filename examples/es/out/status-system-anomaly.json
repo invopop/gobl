@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1cf972ff3adada056467cd142cffb0f95b90e885da6593a818c5923c73d4a0d7"
+			"val": "3548cf6cf820828857dfab76460f1e46e584e7695484c5854e1b24b5d2bf8925"
 		}
 	},
 	"doc": {
@@ -26,7 +26,7 @@
 		"lines": [
 			{
 				"index": 1,
-				"key": "event-anomaly",
+				"key": "other",
 				"description": "Chain traceability issue detected",
 				"complements": [
 					{

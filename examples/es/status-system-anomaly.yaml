@@ -13,7 +13,7 @@ supplier:
   name: "Provide One S.L."
 
 lines:
-  - key: "event-anomaly"
+  - key: "other"
     description: Chain traceability issue detected
     complements:
       - $schema: "https://verifactu.gobl.org/v0/event-anomaly"

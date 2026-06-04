@@ -259,6 +259,11 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
+// maxAddonResolutionPasses caps the iteration in Calculate that picks
+// up addons appended by meta-addon normalizers during normalization.
+// In practice one extra pass is enough; the cap is a safety net.
+const maxAddonResolutionPasses = 4
+
 // Calculate performs all the normalizations and calculations required for the invoice
 // totals and taxes. If the original invoice only includes partial calculations, this
 // will figure out what's missing.
@@ -268,7 +273,22 @@ func (inv *Invoice) Calculate() error {
 		inv.SetRegime(partyTaxCountry(inv.Supplier))
 	}
 
+	// Track which addon normalizers have already been applied so the
+	// follow-up passes only run normalizers for newly-added addons.
+	seen := make(map[cbc.Key]bool)
+	for _, def := range inv.AddonDefs() {
+		if def != nil {
+			seen[def.Key] = true
+		}
+	}
 	inv.Normalize(tax.ExtractNormalizers(inv))
+	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
+		newNorms := tax.ExtractNormalizersForNew(inv, seen)
+		if len(newNorms) == 0 {
+			break
+		}
+		inv.Normalize(newNorms)
+	}
 
 	for _, tag := range inv.Tags.List {
 		if !tag.In(inv.supportedTags()...) {

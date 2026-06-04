@@ -212,6 +212,38 @@ func TestEnvelopeCompleteErrors(t *testing.T) {
 	})
 }
 
+func TestEnvelopeHeaderIgnore(t *testing.T) {
+	// An empty note fails with a single content-required fault.
+	code := rules.Validate(&note.Message{}).First().Code()
+	require.Equal(t, rules.Code("GOBL-NOTE-MESSAGE-01"), code)
+
+	build := func() *gobl.Envelope {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(&note.Message{}))
+		return e
+	}
+
+	t.Run("baseline fails without ignore", func(t *testing.T) {
+		err := build().Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
+
+	t.Run("header ignore suppresses the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{code}
+		assert.NoError(t, e.Validate())
+	})
+
+	t.Run("unrelated ignore leaves the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{"GOBL-SOMETHING-ELSE-01"}
+		err := e.Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
+}
+
 func TestEnvelopeValidate(t *testing.T) {
 	key := dsig.NewES256Key()
 	tests := []struct {
