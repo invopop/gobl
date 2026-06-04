@@ -38,14 +38,12 @@ func init() {
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V2_1,
-		Requires: []cbc.Key{
-			en16931.V2017,
-		},
-		Extensions: extensions,
-		Normalizer: normalize,
 		Name: i18n.String{
 			i18n.EN: "Danish OIOUBL 2.1",
 			i18n.DA: "Dansk OIOUBL 2.1",
+		},
+		Requires: []cbc.Key{
+			en16931.V2017,
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
@@ -82,5 +80,7 @@ func newAddon() *tax.AddonDef {
 				URL: "https://git.erst.dk/openebusiness/common/-/tree/master/released/oioubl",
 			},
 		},
+		Extensions: extensions,
+		Normalizer: normalize,
 	}
 }
