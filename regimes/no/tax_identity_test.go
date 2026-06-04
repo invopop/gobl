@@ -51,9 +51,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}{
 		{name: "valid code", code: "923456783", valid: true},
 		{name: "valid code starting with 8", code: "889640782", valid: true},
-		// Brønnøysundregistrene validates by mod-11 only; the leading digit is
-		// not constrained, so a mod-11-valid number outside the 8/9 series must
-		// be accepted.
 		{name: "valid code not starting with 8 or 9", code: "123456785", valid: true},
 		{name: "empty code", code: "", valid: true},
 		{name: "too short", code: "92345678"},

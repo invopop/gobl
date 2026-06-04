@@ -216,8 +216,6 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 	t.Run("simplified invoice does not require supplier VAT tax ID", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
-		// The seller org number (§ 5-1-2) is still required, but a VAT tax ID
-		// is not: a sub-threshold supplier identified only by org number is ok.
 		inv.Supplier.TaxID = nil
 		inv.Supplier.Identities = []*org.Identity{
 			{Type: no.IdentityTypeOrgNr, Code: "923456783"},

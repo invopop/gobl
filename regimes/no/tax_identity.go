@@ -38,14 +38,9 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 }
 
 // isValidOrgNumber reports whether the value is a valid Norwegian
-// organisasjonsnummer: nine digits validated by a mod-11 check digit. The same
-// number is the basis for both the tax identity and the `ON` organization
-// identity (org.nr + "MVA" forms the VAT number).
-//
-// Per Brønnøysundregistrene the only structural rule is the mod-11 check digit;
-// the leading-digit "8 or 9" range is an allocation convention, not a
-// validation rule, so we deliberately do not enforce it (it would reject
-// otherwise-valid numbers allocated outside that range).
+// organisasjonsnummer: nine digits with a mod-11 check digit. The leading-digit
+// "8 or 9" range is an allocation convention, not a validation rule, so it is
+// deliberately not enforced.
 func isValidOrgNumber(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok {
