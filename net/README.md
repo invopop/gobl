@@ -84,6 +84,27 @@ normalizations and constraints:
 Inputs that contain a scheme, port, or path MUST be rejected with
 `ErrAddressInvalid`. An empty input MUST be rejected with `ErrAddressEmpty`.
 
+**Examples.** Accepted (after normalization):
+
+| Input                       | Parsed Address          |
+|-----------------------------|-------------------------|
+| `billing.invopop.com`       | `billing.invopop.com`   |
+| `sub.domain.example.org`    | `sub.domain.example.org`|
+| `Billing.Invopop.COM`       | `billing.invopop.com`   |
+| `billing.invopop.com.`      | `billing.invopop.com`   |
+| `  billing.invopop.com  `   | `billing.invopop.com`   |
+
+Rejected:
+
+| Input                  | Error                |
+|------------------------|----------------------|
+| `` (empty)             | `ErrAddressEmpty`    |
+| `localhost`            | `ErrAddressInvalid` (single label) |
+| `http://example.com`   | `ErrAddressInvalid` (scheme) |
+| `example.com/path`     | `ErrAddressInvalid` (path)   |
+| `example.com:8080`     | `ErrAddressInvalid` (port)   |
+| `not valid!.com`       | `ErrAddressInvalid` (illegal characters) |
+
 ### 3.2 Well-Known Paths
 
 The following constants are defined in `net/address.go`:
