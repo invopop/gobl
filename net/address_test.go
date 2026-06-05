@@ -112,6 +112,11 @@ func TestAddressInboxURL(t *testing.T) {
 	assert.Equal(t, "https://billing.invopop.com/.well-known/gobl/inbox", a.InboxURL())
 }
 
+func TestAddressJWKSURL(t *testing.T) {
+	a := Address("billing.invopop.com")
+	assert.Equal(t, "https://billing.invopop.com/.well-known/jwks.json", a.JWKSURL())
+}
+
 func TestAddressTopic(t *testing.T) {
 	tests := []struct {
 		addr Address

@@ -108,3 +108,19 @@ func TestPublicKeyUnmarshalBadValidFrom(t *testing.T) {
 	err := json.Unmarshal([]byte(`{"kty":"EC","crv":"P-256","kid":"x","x":"AA","y":"BB","valid_from":12345}`), pk)
 	require.Error(t, err)
 }
+
+func TestPrivateKeyValidateInvalidJOSE(t *testing.T) {
+	// A jwk with a kid but a bogus Key (string) is not jose-valid, so
+	// the "jose key is invalid" branch fires.
+	k := &PrivateKey{jwk: &jose.JSONWebKey{KeyID: "x", Key: "not-a-key"}}
+	err := k.Validate()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "jose key is invalid")
+}
+
+func TestPublicKeyValidateInvalidJOSE(t *testing.T) {
+	k := &PublicKey{jwk: &jose.JSONWebKey{KeyID: "x", Key: "not-a-key"}}
+	err := k.Validate()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "jose key is invalid")
+}

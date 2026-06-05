@@ -245,3 +245,37 @@ func TestSignatureUnsafePayloadUnmarshalFail(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "unsafe payload")
 }
+
+func TestSignatureVerifyWrongKey(t *testing.T) {
+	// Verify against a key that didn't sign the payload — exercises
+	// the ErrKeyMismatch return in Verify.
+	signer := dsig.NewES256Key()
+	other := dsig.NewES256Key()
+
+	sig, err := dsig.NewSignature(signer, "hello")
+	require.NoError(t, err)
+
+	_, err = sig.Verify(other.Public())
+	require.Error(t, err)
+	assert.ErrorIs(t, err, dsig.ErrKeyMismatch)
+}
+
+func TestSignatureVerifyPayloadWrongKey(t *testing.T) {
+	signer := dsig.NewES256Key()
+	other := dsig.NewES256Key()
+
+	sig, err := dsig.NewSignature(signer, "hello")
+	require.NoError(t, err)
+
+	var target string
+	err = sig.VerifyPayload(other.Public(), &target)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, dsig.ErrKeyMismatch)
+}
+
+func TestSignatureKeyID(t *testing.T) {
+	priv := dsig.NewES256Key()
+	sig, err := dsig.NewSignature(priv, "hello")
+	require.NoError(t, err)
+	assert.Equal(t, priv.ID(), sig.KeyID())
+}

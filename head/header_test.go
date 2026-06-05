@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewHeader(t *testing.T) {
@@ -272,6 +273,139 @@ func TestHeaderVerifyEnforcesValidityWindow(t *testing.T) {
 	err = h.Verify(sig, pub)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "after key's valid_until")
+}
+
+func TestHeaderVerifyNoKeys(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	require.NoError(t, err)
+
+	// No keys: signature is decoded with UnsafePayload and matched
+	// against the header without cryptographic verification.
+	assert.NoError(t, h.Verify(sig))
+
+	// A header whose UUID doesn't match what was signed.
+	other := head.NewHeader()
+	other.UUID = uuid.V7()
+	other.Digest = h.Digest
+	err = other.Verify(sig)
+	assert.ErrorIs(t, err, head.ErrSignatureMismatch)
+}
+
+func TestHeaderVerifyKeyMismatch(t *testing.T) {
+	signer := dsig.NewES256Key()
+	other := dsig.NewES256Key()
+
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(signer, cbc.URI(""), cbc.URI(""))
+	require.NoError(t, err)
+
+	// Verifying against a key that didn't sign it: no key matches.
+	err = h.Verify(sig, other.Public())
+	assert.ErrorIs(t, err, head.ErrSignatureKeyMismatch)
+}
+
+func TestSignedPayload(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv,
+		cbc.URI("gobl:alice.example"),
+		cbc.URI("gobl:bob.example"))
+	require.NoError(t, err)
+
+	p, err := head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Equal(t, h.UUID, p.UUID)
+	assert.Equal(t, cbc.URI("gobl:alice.example"), p.Iss)
+	assert.Equal(t, cbc.URI("gobl:bob.example"), p.Aud)
+	assert.NotZero(t, p.IssuedAt)
+}
+
+func TestSignedPayloadDecodeError(t *testing.T) {
+	// A signature whose payload is a JSON string (rather than an
+	// object) fails to decode into a SigningPayload struct, hitting
+	// SignedPayload's error branch.
+	priv := dsig.NewES256Key()
+	sig, err := dsig.NewSignature(priv, "not-an-object")
+	require.NoError(t, err)
+	_, err = head.SignedPayload(sig)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, head.ErrSignaturePayload)
+}
+
+func TestHeaderVerifyPayloadDecodeError(t *testing.T) {
+	priv := dsig.NewES256Key()
+	sig, err := dsig.NewSignature(priv, "not-an-object")
+	require.NoError(t, err)
+
+	// Keyless path: UnsafePayload fails to decode into a SigningPayload.
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+	err = h.Verify(sig)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, head.ErrSignaturePayload)
+}
+
+func TestHeaderMatchPayloadBothDigestNil(t *testing.T) {
+	priv := dsig.NewES256Key()
+
+	// Sign a header with nil digest; both sides end up with nil
+	// digest in matchPayload, exercising the "both nil → ok" branch.
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = nil
+
+	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	require.NoError(t, err)
+
+	assert.NoError(t, h.Verify(sig, priv.Public()))
+}
+
+func TestHeaderMatchPayloadDigestEqualsFail(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	require.NoError(t, err)
+
+	// Mutate the digest value after signing; Digest.Equals now reports a
+	// mismatch rather than the field-nil branch.
+	swapped := *h
+	swapped.Digest = dsig.NewSHA256Digest([]byte(`{"x":2}`))
+	err = swapped.Verify(sig, priv.Public())
+	assert.ErrorIs(t, err, head.ErrSignatureMismatch)
+}
+
+func TestHeaderMatchPayloadDigestNil(t *testing.T) {
+	priv := dsig.NewES256Key()
+
+	// Sign a header that has a digest; then try to verify against a
+	// header whose digest is nil — the mismatch hits the
+	// "h.Digest == nil || actual.Digest == nil" branch.
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	require.NoError(t, err)
+
+	stripped := *h
+	stripped.Digest = nil
+	err = stripped.Verify(sig, priv.Public())
+	assert.ErrorIs(t, err, head.ErrSignatureMismatch)
 }
 
 func mustParseTS(t *testing.T, s string) cal.Timestamp {

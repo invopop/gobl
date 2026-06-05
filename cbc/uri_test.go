@@ -67,6 +67,29 @@ func TestURISchemeOpaqueParseErrors(t *testing.T) {
 	}
 	assert.Equal(t, "", bad.Scheme())
 	assert.Equal(t, "", bad.Opaque())
+	assert.Equal(t, "", bad.Host())
+	assert.Equal(t, "", bad.Path())
+}
+
+func TestURIHostPath(t *testing.T) {
+	// Hierarchical URI: host + path populated, opaque empty.
+	h := cbc.URI("https://acme.example/keys/abc")
+	assert.Equal(t, "https", h.Scheme())
+	assert.Equal(t, "acme.example", h.Host())
+	assert.Equal(t, "/keys/abc", h.Path())
+	assert.Equal(t, "", h.Opaque())
+
+	// Opaque URI: host and path empty.
+	o := cbc.URI("mailto:billing@example.com")
+	assert.Equal(t, "mailto", o.Scheme())
+	assert.Equal(t, "", o.Host())
+	assert.Equal(t, "", o.Path())
+	assert.Equal(t, "billing@example.com", o.Opaque())
+
+	// gobl: address — opaque-form, no host or path.
+	g := cbc.URI("gobl:acme.example.com")
+	assert.Equal(t, "", g.Host())
+	assert.Equal(t, "", g.Path())
 }
 
 func TestValidURINonURIValue(t *testing.T) {

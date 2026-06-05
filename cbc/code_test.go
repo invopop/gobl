@@ -599,11 +599,33 @@ func TestCodeMapHas(t *testing.T) {
 		"foo": cbc.Code("01"),
 		"bar": cbc.Code("02"),
 	}
-	assert.True(t, cbc.CodeMapHas("foo", "bar").Check(cm))
+	rule := cbc.CodeMapHas("foo", "bar")
+	assert.True(t, rule.Check(cm))
 	assert.False(t, cbc.CodeMapHas("foo", "dom").Check(cm))
 
 	cm = nil
 	assert.False(t, cbc.CodeMapHas("foo").Check(cm))
+
+	// String renders the required keys for the rules engine's failure message.
+	assert.Contains(t, rule.String(), "foo")
+	assert.Contains(t, rule.String(), "bar")
+
+	// Check rejects non-CodeMap values.
+	assert.False(t, rule.Check("not a code map"))
+}
+
+func TestInCodes(t *testing.T) {
+	tester := cbc.InCodes("AA", "BB")
+
+	assert.True(t, tester.Check(cbc.Code("AA")))
+	assert.False(t, tester.Check(cbc.Code("ZZ")))
+
+	// Non-Code input is rejected.
+	assert.False(t, tester.Check("AA"))
+
+	// String renders the candidate codes for error messages.
+	assert.Contains(t, tester.String(), "AA")
+	assert.Contains(t, tester.String(), "BB")
 }
 
 func TestCodeMapLookup(t *testing.T) {

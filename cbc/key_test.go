@@ -123,6 +123,20 @@ func TestHasValidKeyIn(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestHasKeyRuleStringCheck(t *testing.T) {
+	rule := cbc.HasValidKeyIn("pro", "standard")
+
+	// String renders the elements for use in rules engine error messages.
+	assert.Contains(t, rule.String(), "pro")
+	assert.Contains(t, rule.String(), "standard")
+
+	// Check is the predicate used by the rules engine's is.Func dispatch.
+	assert.True(t, rule.Check(cbc.Key("standard+late")))
+	assert.False(t, rule.Check(cbc.Key("other")))
+	assert.False(t, rule.Check(cbc.KeyEmpty))
+	assert.False(t, rule.Check("not-a-key"))
+}
+
 func TestKeyJSONSchema(t *testing.T) {
 	data := []byte(`{"description":"Text identifier to be used instead of a code for a more verbose but readable identifier.", "maxLength":64, "minLength":1, "pattern":"^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$", "title":"Key", "type":"string"}`)
 	k := cbc.Key("standard")
