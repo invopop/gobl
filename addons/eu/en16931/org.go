@@ -131,7 +131,16 @@ func normalizeOrgParty(p *org.Party) {
 	if p == nil {
 		return
 	}
+	normalizeOrgPartyEndpoints(p)
+}
+
+// peppolEndpointScheme is the URI scheme used for Peppol participant
+// identifier endpoints (CEN/Peppol SMP and AS4 spec).
+const peppolEndpointScheme = "iso6523-actorid-upis"
+
+func normalizeOrgPartyEndpoints(p *org.Party) {
 	if p.Endpoint(peppolEndpointScheme) != nil {
+		// No peppol endpoint, return
 		return
 	}
 	for _, in := range p.Inboxes {
@@ -150,9 +159,6 @@ func normalizeOrgParty(p *org.Party) {
 	}
 }
 
-// peppolEndpointScheme is the URI scheme used for Peppol participant
-// identifier endpoints (CEN/Peppol SMP and AS4 spec).
-const peppolEndpointScheme = "iso6523-actorid-upis"
 
 func orgItemRules() *rules.Set {
 	return rules.For(new(org.Item),

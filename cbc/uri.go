@@ -106,10 +106,7 @@ func uriRules() *rules.Set {
 // matching the rest of the cbc validators) and otherwise requires a
 // parseable absolute URI with a non-empty scheme and value.
 func validURI(val any) bool {
-	u, ok := val.(URI)
-	if !ok || u == "" {
-		return false
-	}
+	u, _ := val.(URI)
 	p, err := url.Parse(string(u))
 	if err != nil {
 		return false

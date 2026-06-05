@@ -14,8 +14,10 @@ func TestURIValidate(t *testing.T) {
 	valid := []cbc.URI{
 		"gobl:acme.example.com",
 		"iso6523-actorid-upis::9920:b12312312",
+		"iso6523-actorid-upis:9920:b12312312", // for missing :
 		"mailto:billing@example.com",
 		"https://x.example/y",
+		"", // empty, skipped
 	}
 	for _, u := range valid {
 		t.Run("valid/"+string(u), func(t *testing.T) {
@@ -51,6 +53,12 @@ func TestURIAccessors(t *testing.T) {
 	assert.Equal(t, "iso6523-actorid-upis", u.Scheme())
 	assert.Equal(t, ":9920:x3157928m", u.Opaque())
 	assert.Equal(t, "iso6523-actorid-upis::9920:x3157928m", u.String())
+
+	// Just one colon
+	u2 := cbc.URI("iso6523-actorid-upis:9920:x3157928m")
+	assert.Equal(t, "iso6523-actorid-upis", u2.Scheme())
+	assert.Equal(t, "9920:x3157928m", u2.Opaque())
+	assert.Equal(t, "iso6523-actorid-upis:9920:x3157928m", u2.String())
 
 	g := cbc.URI("gobl:acme.example.com")
 	assert.Equal(t, "gobl", g.Scheme())

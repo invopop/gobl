@@ -36,14 +36,3 @@ func endpointRules() *rules.Set {
 		),
 	)
 }
-
-// Endpoint returns the party's first endpoint whose URI uses the given
-// scheme, or nil if none is present.
-func (p *Party) Endpoint(scheme string) *Endpoint {
-	for _, e := range p.Endpoints {
-		if e != nil && e.URI.Scheme() == scheme {
-			return e
-		}
-	}
-	return nil
-}

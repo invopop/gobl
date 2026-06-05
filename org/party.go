@@ -88,6 +88,17 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(p)
 }
 
+// Endpoint returns the party's first endpoint whose URI uses the given
+// scheme, or nil if none is present.
+func (p *Party) Endpoint(scheme string) *Endpoint {
+	for _, e := range p.Endpoints {
+		if e != nil && e.URI.Scheme() == scheme {
+			return e
+		}
+	}
+	return nil
+}
+
 // JSONSchemaExtend adds extra details to the schema.
 func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
