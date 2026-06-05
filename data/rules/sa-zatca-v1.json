@@ -332,6 +332,33 @@
               ]
             }
           ]
+        },
+        {
+          "guard": "invoice is self-billed",
+          "subsets": [
+            {
+              "field": "customer",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-27",
+                  "desc": "customer must have a tax ID code (BR-KSA-39)",
+                  "tests": "valid VAT code"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "identities",
+                  "assert": [
+                    {
+                      "id": "GOBL-SA-ZATCA-V1-BILL-INVOICE-28",
+                      "desc": "customer must have a valid identity (BR-KSA-08)",
+                      "tests": "identity must be one of: CRN/MOM/MLS/700/SAG/OTH"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
