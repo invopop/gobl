@@ -17,19 +17,6 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// EndpointResolver is an optional interface that envelope-embedded
-// documents may implement to declare which party endpoints the
-// envelope should be routed from and to. When implemented, the
-// envelope's calculation step copies the URIs from the nominated
-// endpoints into Head.From / Head.To — but only when those fields
-// are not already populated by the caller. A nil return from
-// FromEndpoint / ToEndpoint leaves the corresponding header field
-// empty.
-type EndpointResolver interface {
-	FromEndpoint() *org.Endpoint
-	ToEndpoint() *org.Endpoint
-}
-
 // Envelope wraps around a document adding headers and
 // digital signatures. An Envelope is similar to a regular envelope
 // in the physical world, it keeps the contents safe and helps
@@ -48,6 +35,19 @@ type Envelope struct {
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
+
+// EndpointResolver is an optional interface that envelope-embedded
+// documents may implement to declare which party endpoints the
+// envelope should be routed from and to. When implemented, the
+// envelope's calculation step copies the URIs from the nominated
+// endpoints into Head.From / Head.To — but only when those fields
+// are not already populated by the caller. A nil return from
+// FromEndpoint / ToEndpoint leaves the corresponding header field
+// empty.
+type EndpointResolver interface {
+	FromEndpoint() *org.Endpoint
+	ToEndpoint() *org.Endpoint
+}
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
