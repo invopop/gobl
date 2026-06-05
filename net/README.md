@@ -26,9 +26,15 @@ documents. It binds a document signature to a fully qualified domain name
 - `/.well-known/gobl/inbox` — a write endpoint that accepts signed
   envelopes addressed to the holder.
 
-Trust in an identity is anchored to a list of approved *KYC vendor*
-addresses. Trust is not anchored to specific public keys, so a vendor may
-rotate keys at will without breaking endorsements.
+Trust in an identity is anchored to the TLS certificate for the
+Address's FQDN: a signature's verifiable origin lives in its signed
+`iss`, the verifier fetches the corresponding public key from
+`https://<iss>/.well-known/gobl/keys/<kid>`, and the HTTPS connection
+proves the response really came from that FQDN. KYC vendors
+("Authorities") are an optional endorsement layer on top of that
+anchor — a participant MAY carry a vendor's countersignature, and
+verifiers MAY treat that countersignature as additional evidence;
+neither side is required to.
 
 The protocol layers on top of standards already in use by GOBL:
 
@@ -50,8 +56,9 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
 
 - **Address** — An FQDN identifying a GOBL Net participant, e.g.
   `billing.invopop.com`. Represented in code as `net.Address`.
-- **Published key** — A `dsig.PublicKey` (an RFC 7517 JWK plus the optional `valid_from` / `valid_until` extension members) served at `/.well-known/gobl/keys/<kid>`.
-  Represented in code as `net.KeySet`.
+- **Published key** — A `dsig.PublicKey` (an RFC 7517 JWK plus the
+  optional `valid_from` / `valid_until` extension members) served at
+  `/.well-known/gobl/keys/<kid>`.
 - **Party Envelope** — A signed GOBL Envelope whose document is an
   `org.Party`, exchanged at the who endpoint.
 - **iss / aud** — Fields in a signature's *signed payload* carrying the
@@ -134,8 +141,10 @@ The protocol exposes two key-discovery surfaces:
    used by `Client.FetchKey` during verification. Scales as keys
    rotate; an absent or retired kid returns `404`.
 2. **Bulk JWKS** at `/.well-known/jwks.json` — standard RFC 7517 JWK
-   Set, used by generic JWT tooling (jwt.io, OIDC-style verifiers)
-   that resolves the `jku` header on each signature.
+   Set. GOBL Net signatures do **not** carry a `jku` header, so this
+   endpoint is for tooling that fetches a JWK Set by convention
+   (e.g. derived from the signer's domain) rather than from a JWS
+   header reference.
 
 The scheme MUST be `https`. HTTP is not a permitted alternative for
 production deployments; client tooling MAY offer an opt-in for plain
@@ -283,7 +292,7 @@ issuer address:
    `valid_from` / `valid_until`).
 4. The envelope is verified against that public key.
 5. If `expectedAud` is non-empty, the signed `aud` MUST equal it.
-6. If the key declares a validity window, the signed `ts` MUST fall
+6. If the key declares a validity window, the signed `iat` MUST fall
    within `[valid_from, valid_until]` (each bound optional).
 7. The verified issuer address is returned.
 
@@ -300,9 +309,13 @@ caller.
 ### 6.3 Trusted Authorities (optional)
 
 The package-level slice `net.Authorities` holds GOBL Net addresses
-treated as trusted KYC vendors. Endorsement is optional and best-effort:
-a party may carry an authority's countersignature in addition to its own
-self-signature, but no endpoint *requires* it.
+treated as trusted KYC vendors. The default list is empty;
+`net.RegisterAuthority` or the `WithAuthorities` client option add to
+it. The list is an opt-in policy hook for verifiers that want to
+require an authority countersignature on a `/who` response — no
+endpoint *requires* it, no envelope verification path consults it
+automatically, and the protocol's trust anchor (§11.1) does not
+depend on it.
 
 ## 7. Discovery Transport
 
@@ -397,12 +410,9 @@ The package exports the following sentinel errors:
 |------------------------|------------------------------------------------------------------|
 | `ErrAddressEmpty`      | Empty input to `ParseAddress`.                                   |
 | `ErrAddressInvalid`    | Input is not a valid FQDN per §3.1.                              |
-| `ErrFetchFailed`       | Well-known resource fetch failed (network, non-200, oversize, malformed). |
-| `ErrKeyNotFound`       | The requested `kid` was not found in the KeySet.                 |
-| `ErrNoGNHeader`        | Signature has no `gn` header and none was provided.              |
-| `ErrVerifyFailed`      | Envelope verification failed.                                    |
-| `ErrKeySetInvalid`     | KeySet is malformed.                                             |
-| `ErrUnknownAuthority`  | A `/who` envelope is signed by an address not in `Authorities`.  |
+| `ErrFetchFailed`       | Well-known resource fetch failed (network, non-200, malformed).  |
+| `ErrVerifyFailed`      | Envelope verification failed (no signature, non-`gobl:` `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window). |
+| `ErrUnknownAuthority`  | An endorser on a `/who` envelope is not in `Authorities` (only raised by callers that opt into authority enforcement). |
 | `ErrPartyMissing`      | A `/who` response did not contain an `org.Party` document.       |
 | `ErrInboxRejected`     | A receiving inbox did not return 202.                            |
 
@@ -413,13 +423,20 @@ work after wrapping with `fmt.Errorf("%w: ...", err)`.
 
 ### 11.1 Trust Model
 
-The `gn` header is a discovery hint and carries no inherent trust. A
-forged `gn` header pointing to an attacker-controlled host can only
-produce a signature that verifies against an attacker-controlled key —
-which is then distinguishable from the expected identity at the
-application layer. Callers that already know the expected Address SHOULD
-supply it explicitly to `VerifyEnvelope` rather than relying on the
-embedded hint.
+A signature's verifiable origin is the signed `iss` URI. Verification
+fetches the public key from
+`https://<iss-fqdn>/.well-known/gobl/keys/<kid>`, and the HTTPS
+connection's certificate proves the response really came from that
+FQDN. The trust anchor is therefore the Web PKI binding of the
+Address to the entity that controls its TLS certificate.
+
+A forged `iss` pointing to an attacker-controlled host can only
+produce a signature that verifies against an attacker-controlled key
+served from that host — distinguishable from the expected identity
+at the application layer. Callers that already know the expected
+Address SHOULD pass it as `expectedAud` to `Client.VerifyEnvelope`,
+or compare the returned issuer Address against an allow-list before
+acting on the document.
 
 ### 11.2 TLS
 
@@ -431,19 +448,24 @@ to use as an identity.
 
 ### 11.3 Authority Trust
 
-`Authorities` is a small allowlist of FQDNs. An attacker who gains the
-ability to issue a TLS certificate for any address in `Authorities` can
-serve a forged `/who` for any participant and pass `WhoIs` verification.
-The KYC vendor list MUST therefore be kept short and reviewed regularly.
+`Authorities` is an opt-in allowlist of FQDNs (see §6.3). For
+verifiers that *do* enforce it, the threat is symmetrical to §11.1
+but multiplied: an attacker who gains the ability to issue a TLS
+certificate for any address in `Authorities` can serve a forged
+`/who` for any participant whose envelopes the verifier accepts on
+the strength of that authority's countersignature. Where this hook
+is used, the KYC vendor list MUST be kept short and reviewed
+regularly.
 
 ### 11.4 Inbox Authentication
 
 The inbox endpoint verifies the sender's signature before persisting an
-envelope, but does *not* require the sender to be a known KYC-endorsed
-participant. Operators that need to restrict inbox acceptance to known
-correspondents MUST apply additional filtering (e.g. wrap the
-`Client.VerifyEnvelope` call with a `WhoIs` check against the sender's
-address).
+envelope, but does *not* require the sender to be a known
+KYC-endorsed participant. Operators that need to restrict inbox
+acceptance to known correspondents MUST apply additional filtering —
+typically a per-domain `allow.json` (see §2) gating `iss`, or an
+application-level `/who` exchange against the sender's address before
+acting on the document.
 
 ### 11.5 Response Size
 
