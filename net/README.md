@@ -382,12 +382,20 @@ allow-list (if present) is applied to `iss`. Status codes:
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
 
-The request body size is capped at 1 MiB. On 202 the envelope is written
-to the configured inbox directory under `<envelope-uuid>.json`.
+The request body size is capped at 1 MiB. The protocol does not
+mandate where or how an accepted envelope is persisted — that is an
+implementation decision for the operator running the inbox (a
+filesystem directory, an object store, a database row, a message
+queue, an in-process handler, …). A 202 simply MUST mean the
+envelope is durable enough that the server is willing to confirm
+receipt. The reference server in
+[`gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net) writes
+each accepted envelope to `<config>/<domain>/inbox/<envelope-uuid>.json`;
+that layout is one valid choice, not a protocol requirement.
 
-In this release the server does not return a signed receipt on 202; the
-response body is empty. A future `net.Response` type may carry an
-acknowledgement body.
+In this release the server does not return a signed receipt on 202;
+the response body is empty. A future `net.Response` type may carry
+an acknowledgement body.
 
 ## 9. Reference Implementation
 
