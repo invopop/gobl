@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "78405effccdcc2a4f907bc59501dd0a023ba81ade4fe155169f0609c173012c2"
+			"val": "e7eb88fde97dee5fe44f460b9cfbf404e48e07d65a91ac7cf492e4963a0d9611"
 		}
 	},
 	"doc": {
@@ -38,6 +38,11 @@
 					"ext": {
 						"iso-scheme-id": "0184"
 					}
+				}
+			],
+			"endpoints": [
+				{
+					"uri": "iso6523-actorid-upis::0184:13585628"
 				}
 			],
 			"inboxes": [
@@ -77,6 +82,11 @@
 					"ext": {
 						"iso-scheme-id": "0184"
 					}
+				}
+			],
+			"endpoints": [
+				{
+					"uri": "iso6523-actorid-upis::0184:88146328"
 				}
 			],
 			"inboxes": [

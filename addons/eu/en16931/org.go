@@ -120,6 +120,40 @@ func normalizeOrgInbox(i *org.Inbox) {
 	}
 }
 
+// normalizeOrgParty migrates a peppol-keyed inbox into an
+// `iso6523-actorid-upis::<scheme>:<code>` endpoint so callers can
+// adopt the new endpoints model without touching their existing
+// party data. The source inbox is left in place — many operators
+// still consume it — so this is purely additive. If the party
+// already carries an `iso6523-actorid-upis` endpoint, no copy is
+// made.
+func normalizeOrgParty(p *org.Party) {
+	if p == nil {
+		return
+	}
+	if p.Endpoint(peppolEndpointScheme) != nil {
+		return
+	}
+	for _, in := range p.Inboxes {
+		if in == nil || in.Key != org.InboxKeyPeppol {
+			continue
+		}
+		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
+			continue
+		}
+		uri := cbc.URI(peppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
+		p.Endpoints = append(p.Endpoints, &org.Endpoint{
+			Label: in.Label,
+			URI:   uri,
+		})
+		return
+	}
+}
+
+// peppolEndpointScheme is the URI scheme used for Peppol participant
+// identifier endpoints (CEN/Peppol SMP and AS4 spec).
+const peppolEndpointScheme = "iso6523-actorid-upis"
+
 func orgItemRules() *rules.Set {
 	return rules.For(new(org.Item),
 		rules.Field("unit",

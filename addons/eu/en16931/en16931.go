@@ -128,5 +128,7 @@ func normalize(doc any) {
 		normalizeOrgIdentity(obj)
 	case *org.Inbox:
 		normalizeOrgInbox(obj)
+	case *org.Party:
+		normalizeOrgParty(obj)
 	}
 }

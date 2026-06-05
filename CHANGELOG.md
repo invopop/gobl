@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc`: new `URI` scalar type (a generic `scheme:opaque` URI with `Scheme()`/`Opaque()`/`Host()`/`Path()` accessors and a `format: uri` JSON Schema).
 - `head`: `from`/`to` header fields (`cbc.URI`) identifying an envelope's issuer and receiver (e.g. `gobl:samlown.example.com`, `iso6523-actorid-upis::9920:x3157928m`, `mailto:billing@example.com`). Unsigned header metadata; scheme interpretation is left to consumers.
 - `org`: `Endpoint` model (`uuid` + `label` + `cbc.URI`) and `Party.Endpoints`, the going-forward way to carry addresses; `Party.Endpoint(scheme)` looks one up by URI scheme. `org.Inbox` is retained for formats that still need it (e.g. Italy's SDI/FatturaPA).
+- `addons/eu/en16931`: migration helper — when a party carries a `peppol`-keyed `org.Inbox`, the normalizer additively copies it into an `iso6523-actorid-upis::<scheme>:<code>` `org.Endpoint`. The source inbox is left in place for back-compat with consumers that still read it; an existing `iso6523-actorid-upis` endpoint blocks the copy (no duplicates).
 
 ## [v0.403.0] - 2026-05-13
 
