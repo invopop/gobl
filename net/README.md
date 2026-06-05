@@ -394,8 +394,7 @@ each accepted envelope to `<config>/<domain>/inbox/<envelope-uuid>.json`;
 that layout is one valid choice, not a protocol requirement.
 
 In this release the server does not return a signed receipt on 202;
-the response body is empty. A future `net.Response` type may carry
-an acknowledgement body.
+the response body is empty.
 
 ## 9. Reference Implementation
 
