@@ -99,6 +99,21 @@ func (p *Party) Endpoint(scheme string) *Endpoint {
 	return nil
 }
 
+// FirstEndpoint returns the party's first endpoint, or nil if the
+// party is nil or has none. Endpoint order is operator-controlled —
+// the first entry is treated as the preferred routing address.
+func (p *Party) FirstEndpoint() *Endpoint {
+	if p == nil {
+		return nil
+	}
+	for _, e := range p.Endpoints {
+		if e != nil {
+			return e
+		}
+	}
+	return nil
+}
+
 // JSONSchemaExtend adds extra details to the schema.
 func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{

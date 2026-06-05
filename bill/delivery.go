@@ -347,6 +347,52 @@ func (dlv *Delivery) setTotals(t *Totals) {
 	dlv.Totals = t
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this delivery document. Despatch documents
+// (advice / note / waybill) flow from the despatcher (or supplier
+// when no explicit despatcher is set) to the receiver (or customer).
+// A `receipt` flows the other way — from the party that received the
+// goods back to the despatcher.
+func (dlv *Delivery) FromEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryReceiverEndpoint(dlv)
+	}
+	return deliveryDespatcherEndpoint(dlv)
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this delivery document. Inverse of FromEndpoint.
+func (dlv *Delivery) ToEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryDespatcherEndpoint(dlv)
+	}
+	return deliveryReceiverEndpoint(dlv)
+}
+
+// deliveryDespatcherEndpoint prefers the explicit Despatcher party,
+// falling back to the Supplier when no despatcher is set.
+func deliveryDespatcherEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Despatcher.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Supplier.FirstEndpoint()
+}
+
+// deliveryReceiverEndpoint prefers the explicit Receiver party,
+// falling back to the Customer when no receiver is set.
+func deliveryReceiverEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Receiver.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Customer.FirstEndpoint()
+}
+
 /** ---- **/
 
 // JSONSchemaExtend extends the schema with additional property details

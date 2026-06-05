@@ -635,6 +635,39 @@ func (st *Status) calculate() error {
 	return nil
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this status document. A `response` flows from the customer
+// back to the supplier; an `update` flows the other way. A `system`
+// status (third-party / clearance system) has no inherent direction
+// so this returns nil.
+func (st *Status) FromEndpoint() *org.Endpoint {
+	if st == nil {
+		return nil
+	}
+	switch st.Type {
+	case StatusTypeResponse:
+		return st.Customer.FirstEndpoint()
+	case StatusTypeUpdate:
+		return st.Supplier.FirstEndpoint()
+	}
+	return nil
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this status document. See FromEndpoint for direction.
+func (st *Status) ToEndpoint() *org.Endpoint {
+	if st == nil {
+		return nil
+	}
+	switch st.Type {
+	case StatusTypeResponse:
+		return st.Supplier.FirstEndpoint()
+	case StatusTypeUpdate:
+		return st.Customer.FirstEndpoint()
+	}
+	return nil
+}
+
 // Normalize normalizes the status line's sub-objects.
 func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
 	if sl == nil {

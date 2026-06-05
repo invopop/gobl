@@ -19,6 +19,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
@@ -659,4 +660,56 @@ func testNoteExample() *note.Message {
 	m.Content = testMessageContent
 	m.UUID = uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002")
 	return m
+}
+
+func TestEnvelopeCalculateSetsFromTo(t *testing.T) {
+	mkInvoice := func() *bill.Invoice {
+		// Minimal invoice with parties carrying endpoints; we only need
+		// Calculate() to succeed enough to call normalizeRouting.
+		return &bill.Invoice{
+			Currency: "EUR",
+			Supplier: &org.Party{
+				Name:      "Supplier",
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Name:      "Customer",
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+	}
+
+	t.Run("populates empty From/To from the document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("preserves operator-set From", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		env.Head = head.NewHeader()
+		env.Head.From = "gobl:override.example"
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:override.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("note.Message does not implement EndpointResolver", func(t *testing.T) {
+		// A document without From/To resolution leaves the header empty
+		// and Calculate still succeeds.
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "hi"}))
+		assert.Empty(t, string(env.Head.From))
+		assert.Empty(t, string(env.Head.To))
+	})
+
+	t.Run("self-billed invoice flips routing during Calculate", func(t *testing.T) {
+		inv := mkInvoice()
+		inv.Tags.List = []cbc.Key{"self-billed"}
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(inv))
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.To)
+	})
 }

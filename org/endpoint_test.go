@@ -40,6 +40,40 @@ func TestEndpointNormalizeNil(t *testing.T) {
 	assert.NotPanics(t, func() { e.Normalize() })
 }
 
+func TestPartyFirstEndpoint(t *testing.T) {
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.Nil(t, p.FirstEndpoint())
+	})
+
+	t.Run("no endpoints", func(t *testing.T) {
+		p := &org.Party{Name: "Acme"}
+		assert.Nil(t, p.FirstEndpoint())
+	})
+
+	t.Run("returns first entry", func(t *testing.T) {
+		p := &org.Party{
+			Endpoints: []*org.Endpoint{
+				{URI: "gobl:acme.example.com"},
+				{URI: "iso6523-actorid-upis::9920:x3157928m"},
+			},
+		}
+		require.NotNil(t, p.FirstEndpoint())
+		assert.Equal(t, "gobl:acme.example.com", p.FirstEndpoint().URI.String())
+	})
+
+	t.Run("skips nil entries", func(t *testing.T) {
+		p := &org.Party{
+			Endpoints: []*org.Endpoint{
+				nil,
+				{URI: "gobl:acme.example.com"},
+			},
+		}
+		require.NotNil(t, p.FirstEndpoint())
+		assert.Equal(t, "gobl:acme.example.com", p.FirstEndpoint().URI.String())
+	})
+}
+
 func TestPartyEndpointLookup(t *testing.T) {
 	p := &org.Party{
 		Endpoints: []*org.Endpoint{

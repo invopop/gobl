@@ -10,11 +10,25 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
+
+// EndpointResolver is an optional interface that envelope-embedded
+// documents may implement to declare which party endpoints the
+// envelope should be routed from and to. When implemented, the
+// envelope's calculation step copies the URIs from the nominated
+// endpoints into Head.From / Head.To — but only when those fields
+// are not already populated by the caller. A nil return from
+// FromEndpoint / ToEndpoint leaves the corresponding header field
+// empty.
+type EndpointResolver interface {
+	FromEndpoint() *org.Endpoint
+	ToEndpoint() *org.Endpoint
+}
 
 // Envelope wraps around a document adding headers and
 // digital signatures. An Envelope is similar to a regular envelope
@@ -297,6 +311,7 @@ func (e *Envelope) calculate() error {
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.V7()
 	}
+	e.normalizeRouting()
 	var err error
 	e.Head.Digest, err = e.Digest()
 	if err != nil {
@@ -304,6 +319,30 @@ func (e *Envelope) calculate() error {
 	}
 
 	return nil
+}
+
+// normalizeRouting populates Head.From / Head.To from the embedded
+// document when (a) the document implements EndpointResolver and (b)
+// the relevant header field is empty. Operator-set From / To values
+// are preserved; missing endpoints are quietly skipped.
+func (e *Envelope) normalizeRouting() {
+	if e.Head == nil || e.Document == nil {
+		return
+	}
+	r, ok := e.Document.Instance().(EndpointResolver)
+	if !ok {
+		return
+	}
+	if e.Head.From == "" {
+		if ep := r.FromEndpoint(); ep != nil {
+			e.Head.From = ep.URI
+		}
+	}
+	if e.Head.To == "" {
+		if ep := r.ToEndpoint(); ep != nil {
+			e.Head.To = ep.URI
+		}
+	}
 }
 
 // Digest calculates a digital digest using the canonical JSON of the document.

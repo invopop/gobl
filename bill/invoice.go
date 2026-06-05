@@ -419,6 +419,33 @@ func (inv *Invoice) setTotals(t *Totals) {
 	inv.Totals = t
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this invoice. By default that's the supplier; when the
+// invoice is tagged `self-billed` the customer issues the invoice on
+// behalf of the supplier, so the direction inverts.
+func (inv *Invoice) FromEndpoint() *org.Endpoint {
+	if inv == nil {
+		return nil
+	}
+	if inv.HasTags(tax.TagSelfBilled) {
+		return inv.Customer.FirstEndpoint()
+	}
+	return inv.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this invoice. Inverse of FromEndpoint — see notes there
+// on the self-billed flip.
+func (inv *Invoice) ToEndpoint() *org.Endpoint {
+	if inv == nil {
+		return nil
+	}
+	if inv.HasTags(tax.TagSelfBilled) {
+		return inv.Supplier.FirstEndpoint()
+	}
+	return inv.Customer.FirstEndpoint()
+}
+
 /** ---- **/
 
 // UnmarshalJSON implements the json.Unmarshaler interface and provides any

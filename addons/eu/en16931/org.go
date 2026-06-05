@@ -159,7 +159,6 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 	}
 }
 
-
 func orgItemRules() *rules.Set {
 	return rules.For(new(org.Item),
 		rules.Field("unit",
