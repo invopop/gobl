@@ -83,23 +83,34 @@ Parsing is performed by `net.ParseAddress` and applies the following
 normalizations and constraints:
 
 1. Surrounding whitespace is trimmed.
-2. The address is lowercased.
-3. A trailing dot, if present, is stripped.
+2. A trailing dot, if present, is stripped.
+3. The input is normalised to its ASCII (A-Label / Punycode) form via
+   `golang.org/x/net/idna` Lookup profile (IDNA2008). This converts
+   any U-Labels to A-Labels and lowercases ASCII labels in one step;
+   invalid IDN labels MUST be rejected with `ErrAddressInvalid`.
 4. The result MUST satisfy `is.DNSName` (RFC 1035 label syntax).
 5. The result MUST contain at least one dot (i.e. at least two labels).
 
 Inputs that contain a scheme, port, or path MUST be rejected with
 `ErrAddressInvalid`. An empty input MUST be rejected with `ErrAddressEmpty`.
 
+**Canonical form.** Addresses on the wire — in `iss`, `aud`,
+well-known URLs, allow-lists, and identity files — MUST be ASCII
+A-Labels. Implementations are free to accept U-Label input from
+humans (e.g. CLI flags) but MUST normalise to A-Label before
+signing, fetching, or comparing.
+
 **Examples.** Accepted (after normalization):
 
-| Input                       | Parsed Address          |
-|-----------------------------|-------------------------|
-| `billing.invopop.com`       | `billing.invopop.com`   |
-| `sub.domain.example.org`    | `sub.domain.example.org`|
-| `Billing.Invopop.COM`       | `billing.invopop.com`   |
-| `billing.invopop.com.`      | `billing.invopop.com`   |
-| `  billing.invopop.com  `   | `billing.invopop.com`   |
+| Input                       | Parsed Address           |
+|-----------------------------|--------------------------|
+| `billing.invopop.com`       | `billing.invopop.com`    |
+| `sub.domain.example.org`    | `sub.domain.example.org` |
+| `Billing.Invopop.COM`       | `billing.invopop.com`    |
+| `billing.invopop.com.`      | `billing.invopop.com`    |
+| `  billing.invopop.com  `   | `billing.invopop.com`    |
+| `München.DE`                | `xn--mnchen-3ya.de`      |
+| `xn--mnchen-3ya.de`         | `xn--mnchen-3ya.de`      |
 
 Rejected:
 
@@ -111,6 +122,7 @@ Rejected:
 | `example.com/path`     | `ErrAddressInvalid` (path)   |
 | `example.com:8080`     | `ErrAddressInvalid` (port)   |
 | `not valid!.com`       | `ErrAddressInvalid` (illegal characters) |
+| `-bad.com`             | `ErrAddressInvalid` (invalid IDN label) |
 
 ### 3.2 Well-Known Paths
 
@@ -254,9 +266,14 @@ Each signature signs a payload of `{uuid, dig, iss, aud, iat}`:
 - `iss` is the signer's verifiable GOBL Net address as a `gobl:` URI
   (e.g. `gobl:billing.invopop.com`). The verifier reads it to
   discover *which* per-key endpoint to fetch.
-- `aud` is the optional GOBL Net address the signature is bound to. When
-  present, the recipient checks `aud == self` to reject misrouted or
-  replayed envelopes.
+- `aud` is the GOBL Net address the signature is bound to. It is
+  optional at the protocol layer (e.g. a self-signed identity
+  document, or an envelope archived for later inspection, may omit
+  it), but **inboxes MUST require it** (§8.3): an envelope POSTed
+  to a `/inbox` MUST carry `aud == <inbox-owner>`, otherwise the
+  request is rejected. Binding the audience inside the signature
+  prevents the same valid invoice from being replayed against
+  multiple inboxes.
 - `iat` is the signing time as a JWT-standard NumericDate (Unix
   seconds, per RFC 7519 §2). It is set automatically by `Sign`;
   verifiers read it for the per-key validity window check but no
@@ -276,6 +293,30 @@ intent/routing in any scheme; they are never used for verification.
 `Envelope.Sign(key, iss, aud)` (→ `head.Header.Sign`) signs the document
 identity plus the signer's `iss` and optional `aud`. Both may be empty
 for a plain, non-GOBL-Net signature.
+
+### 5.3 X.509 evidence (optional, long-term storage)
+
+JWS allows an `x5c` header carrying an X.509 certificate chain (RFC
+7515 §4.1.6). GOBL Net does **not** use `x5c` for signature
+verification — the trust anchor is the signed `iss` resolved through
+the per-key endpoint, secured by the issuer's TLS certificate (see
+§11.1). But signers MAY stamp `x5c` on a signature as additional,
+self-contained evidence for archival and long-term verification: a
+recipient who keeps the envelope for many years, long after the
+issuer's `/.well-known/gobl/keys/<kid>` may have stopped responding,
+can still verify the signature against the embedded chain and walk
+that chain to a CA they trust at audit time.
+
+Treat `x5c` as supplementary evidence, not as a replacement for §11.1:
+the chain proves that *some* CA-attested entity signed the document,
+but does not bind the signature to a GOBL Net Address. Verifiers MAY
+consult `x5c` for archival proofs, but for live verification of an
+inbox or `/who` exchange the signed `iss` + Web PKI MUST be the
+authoritative chain.
+
+The library does not stamp `x5c` automatically. Operators with an
+archival need can add it via a future `dsig.WithX5C` option or by
+constructing the JWS with the underlying go-jose options directly.
 
 ## 6. Verification
 
@@ -371,14 +412,17 @@ with its own party envelope signed
 
 Accepts a signed GOBL Envelope. The signer (`iss`) is verified against
 its published key (fetched from `<iss>/.well-known/gobl/keys/<kid>`);
-if the envelope carries an `aud` it MUST equal this inbox; the
-allow-list (if present) is applied to `iss`. Status codes:
+the signed `aud` MUST be present and MUST equal this inbox's
+Address — envelopes signed without an audience, or bound to a
+different audience, MUST be rejected. The allow-list (if present) is
+applied to `iss`. Status codes:
 
 | Status                       | Cause                                                |
 |------------------------------|------------------------------------------------------|
 | `202 Accepted`               | Envelope parsed, validated, signature verified, persisted. |
 | `400 Bad Request`            | Body could not be read or did not decode as JSON.    |
-| `401 Unauthorized`           | Envelope signature did not verify.                   |
+| `401 Unauthorized`           | Envelope signature did not verify, or `aud` missing / not equal to this inbox. |
+| `403 Forbidden`              | Caller (`iss`) not on the domain's allow-list.       |
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
 

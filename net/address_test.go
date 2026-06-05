@@ -70,6 +70,26 @@ func TestParseAddress(t *testing.T) {
 			input:   "not valid!.com",
 			wantErr: ErrAddressInvalid,
 		},
+		{
+			name:  "U-Label normalised to A-Label",
+			input: "münchen.de",
+			want:  Address("xn--mnchen-3ya.de"),
+		},
+		{
+			name:  "A-Label accepted verbatim",
+			input: "xn--mnchen-3ya.de",
+			want:  Address("xn--mnchen-3ya.de"),
+		},
+		{
+			name:  "U-Label with uppercase + trailing dot",
+			input: "München.DE.",
+			want:  Address("xn--mnchen-3ya.de"),
+		},
+		{
+			name:    "invalid IDN label",
+			input:   "-bad.com", // labels MUST NOT start with a hyphen
+			wantErr: ErrAddressInvalid,
+		},
 	}
 
 	for _, tt := range tests {
