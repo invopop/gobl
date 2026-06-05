@@ -63,7 +63,7 @@ func TestHeaderValidation(t *testing.T) {
 		h := head.NewHeader()
 		h.Digest = dsig.NewSHA256Digest([]byte("testing"))
 		h.From = cbc.URI("gobl:samlown.example.com")
-		h.To = cbc.URI("peppol:9920:x3157928m")
+		h.To = cbc.URI("iso6523-actorid-upis::9920:x3157928m")
 		assert.NoError(t, rules.Validate(h))
 	})
 

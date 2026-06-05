@@ -33,7 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `dsig`: `NewPublicKey` constructor from `jose.JSONWebKey`.
 - `head`: `Sign` and `Verify` methods on `Header`, signing only the immutable payload (UUID + Digest + iss/aud/iat).
 - `cbc`: new `URI` scalar type (a generic `scheme:opaque` URI with `Scheme()`/`Opaque()`/`Host()`/`Path()` accessors and a `format: uri` JSON Schema).
-- `head`: `from`/`to` header fields (`cbc.URI`) identifying an envelope's issuer and receiver (e.g. `gobl:samlown.example.com`, `peppol:9920:x3157928m`, `mailto:billing@example.com`). Unsigned header metadata; scheme interpretation is left to consumers.
+- `head`: `from`/`to` header fields (`cbc.URI`) identifying an envelope's issuer and receiver (e.g. `gobl:samlown.example.com`, `iso6523-actorid-upis::9920:x3157928m`, `mailto:billing@example.com`). Unsigned header metadata; scheme interpretation is left to consumers.
 - `org`: `Endpoint` model (`uuid` + `label` + `cbc.URI`) and `Party.Endpoints`, the going-forward way to carry addresses; `Party.Endpoint(scheme)` looks one up by URI scheme. `org.Inbox` is retained for formats that still need it (e.g. Italy's SDI/FatturaPA).
 
 ## [v0.403.0] - 2026-05-13

@@ -10,7 +10,7 @@ import (
 // Endpoint identifies an address to which electronic documents may be
 // sent, expressed as a single URI. The URI scheme identifies the
 // network or namespace, e.g. "gobl:acme.example.com" (GOBL Net),
-// "peppol:9920:x3157928m" (Peppol), or "mailto:billing@example.com".
+// "iso6523-actorid-upis::9920:x3157928m" (Peppol), or "mailto:billing@example.com".
 type Endpoint struct {
 	uuid.Identify
 

@@ -377,7 +377,7 @@ func TestEnvelopeSign(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
 		env.Head.From = cbc.URI("gobl:samlown.example.com")
-		env.Head.To = cbc.URI("peppol:9920:x3157928m")
+		env.Head.To = cbc.URI("iso6523-actorid-upis::9920:x3157928m")
 		require.NoError(t, env.Sign(testKey, "", ""))
 		require.NoError(t, env.Verify(testKey.Public()))
 

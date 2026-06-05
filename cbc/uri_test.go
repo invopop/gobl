@@ -13,7 +13,7 @@ import (
 func TestURIValidate(t *testing.T) {
 	valid := []cbc.URI{
 		"gobl:acme.example.com",
-		"peppol:9920:b12312312",
+		"iso6523-actorid-upis::9920:b12312312",
 		"mailto:billing@example.com",
 		"https://x.example/y",
 	}
@@ -44,10 +44,13 @@ func TestURIValidate(t *testing.T) {
 }
 
 func TestURIAccessors(t *testing.T) {
-	u := cbc.URI("peppol:9920:x3157928m")
-	assert.Equal(t, "peppol", u.Scheme())
-	assert.Equal(t, "9920:x3157928m", u.Opaque())
-	assert.Equal(t, "peppol:9920:x3157928m", u.String())
+	// Peppol participant identifier as a URI per the CEN/Peppol spec:
+	// scheme is "iso6523-actorid-upis"; the leading "::" in the wire
+	// form leaves a colon at the start of the opaque part.
+	u := cbc.URI("iso6523-actorid-upis::9920:x3157928m")
+	assert.Equal(t, "iso6523-actorid-upis", u.Scheme())
+	assert.Equal(t, ":9920:x3157928m", u.Opaque())
+	assert.Equal(t, "iso6523-actorid-upis::9920:x3157928m", u.String())
 
 	g := cbc.URI("gobl:acme.example.com")
 	assert.Equal(t, "gobl", g.Scheme())
@@ -55,7 +58,7 @@ func TestURIAccessors(t *testing.T) {
 
 	parsed, err := u.Parse()
 	require.NoError(t, err)
-	assert.Equal(t, "peppol", parsed.Scheme)
+	assert.Equal(t, "iso6523-actorid-upis", parsed.Scheme)
 }
 
 func TestURISchemeOpaqueParseErrors(t *testing.T) {

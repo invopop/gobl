@@ -66,9 +66,9 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   bound to (`aud`), both as `gobl:` `cbc.URI` values. These are the
   authoritative, tamper-proof identities.
 - **header from / to** — Optional unsigned `cbc.URI` fields on the
-  envelope header expressing *intent/routing* in any scheme (`peppol:`,
-  `mailto:`, `gobl:`…). Useful for interop with other formats; not used
-  for verification.
+  envelope header expressing *intent/routing* in any scheme
+  (`iso6523-actorid-upis:`, `mailto:`, `gobl:`…). Useful for interop
+  with other formats; not used for verification.
 - **allow-list** — Optional `<domain>/allow.json` (array of addresses)
   restricting which callers a domain accepts on `/who` and `/inbox`.
 

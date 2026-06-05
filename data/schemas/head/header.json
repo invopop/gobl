@@ -53,7 +53,7 @@
         "from": {
           "$ref": "https://gobl.org/draft-0/cbc/uri",
           "title": "From",
-          "description": "From is the URI-form transport address of the envelope's issuer,\ne.g. \"gobl:samlown.example.com\" or \"peppol:9920:x3157928m\"."
+          "description": "From is the URI-form transport address of the envelope's issuer,\ne.g. \"gobl:samlown.example.com\" or\n\"iso6523-actorid-upis::9920:x3157928m\"."
         },
         "to": {
           "$ref": "https://gobl.org/draft-0/cbc/uri",

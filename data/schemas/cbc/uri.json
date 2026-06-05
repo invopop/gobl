@@ -8,7 +8,7 @@
       "maxLength": 2048,
       "format": "uri",
       "title": "URI",
-      "description": "Uniform Resource Identifier in scheme:opaque form used to identify a\nresource or address, e.g. \"gobl:acme.example.com\" or\n\"peppol:9920:x3157928m\"."
+      "description": "Uniform Resource Identifier in scheme:opaque form used to identify a\nresource or address, e.g. \"gobl:acme.example.com\" or\n\"iso6523-actorid-upis::9920:x3157928m\"."
     }
   }
 }

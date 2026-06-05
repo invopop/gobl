@@ -43,13 +43,13 @@ func TestEndpointNormalizeNil(t *testing.T) {
 func TestPartyEndpointLookup(t *testing.T) {
 	p := &org.Party{
 		Endpoints: []*org.Endpoint{
-			{URI: "peppol:9920:x3157928m"},
+			{URI: "iso6523-actorid-upis::9920:x3157928m"},
 			{URI: "gobl:acme.example.com"},
 			{URI: "mailto:billing@example.com"},
 		},
 	}
 	assert.Equal(t, "gobl:acme.example.com", p.Endpoint("gobl").URI.String())
-	assert.Equal(t, "peppol:9920:x3157928m", p.Endpoint("peppol").URI.String())
+	assert.Equal(t, "iso6523-actorid-upis::9920:x3157928m", p.Endpoint("iso6523-actorid-upis").URI.String())
 	assert.Equal(t, "mailto:billing@example.com", p.Endpoint("mailto").URI.String())
 	assert.Nil(t, p.Endpoint("ftp"))
 }

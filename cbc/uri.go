@@ -15,8 +15,9 @@ var URIMaxLength uint64 = 2048
 
 // URI is a Uniform Resource Identifier in `scheme:opaque` form, used to
 // identify a resource or address. Examples include "gobl:acme.example.com",
-// "peppol:9920:b123123123", and "mailto:billing@example.com". The scheme
-// names the namespace; its interpretation is left to consumers.
+// "iso6523-actorid-upis::9920:b123123123" (a Peppol participant
+// identifier), and "mailto:billing@example.com". The scheme names the
+// namespace; its interpretation is left to consumers.
 type URI string
 
 // String provides the string representation of the URI.
@@ -85,7 +86,7 @@ func (URI) JSONSchema() *jsonschema.Schema {
 		Description: here.Doc(`
 			Uniform Resource Identifier in scheme:opaque form used to identify a
 			resource or address, e.g. "gobl:acme.example.com" or
-			"peppol:9920:x3157928m".
+			"iso6523-actorid-upis::9920:x3157928m".
 		`),
 	}
 }
