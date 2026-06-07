@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	stdnet "net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -110,7 +111,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x")
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL+"/x")
 		require.NoError(t, err)
 		assert.Equal(t, `{"ok":true}`, string(body))
 	})
@@ -121,7 +122,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL)
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 		assert.Contains(t, err.Error(), "HTTP 404")
@@ -162,8 +163,55 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL)
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
 		require.NoError(t, err)
 		assert.Equal(t, maxBodySize, len(body))
+	})
+}
+
+func TestHTTPFetcherRejectsNonPublicAddresses(t *testing.T) {
+	// The default HTTPFetcher must refuse to dial loopback / private /
+	// link-local / unspecified addresses to prevent SSRF via a signed
+	// `iss` URI.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer srv.Close()
+
+	_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrFetchFailed))
+	assert.Contains(t, err.Error(), "refusing to dial non-public address")
+}
+
+func TestIsPublicIP(t *testing.T) {
+	tests := []struct {
+		ip   string
+		want bool
+	}{
+		{"8.8.8.8", true},
+		{"1.1.1.1", true},
+		{"2606:4700:4700::1111", true},
+		{"127.0.0.1", false},       // loopback
+		{"::1", false},             // loopback
+		{"10.0.0.1", false},        // private
+		{"192.168.1.1", false},     // private
+		{"172.16.0.1", false},      // private
+		{"169.254.169.254", false}, // link-local (AWS metadata)
+		{"fe80::1", false},         // link-local
+		{"0.0.0.0", false},         // unspecified
+		{"::", false},              // unspecified
+		{"224.0.0.1", false},       // multicast
+	}
+	for _, tc := range tests {
+		t.Run(tc.ip, func(t *testing.T) {
+			ip := stdnet.ParseIP(tc.ip)
+			require.NotNil(t, ip, "parse")
+			assert.Equal(t, tc.want, isPublicIP(ip))
+		})
+	}
+
+	t.Run("nil IP", func(t *testing.T) {
+		assert.False(t, isPublicIP(nil))
 	})
 }

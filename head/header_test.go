@@ -329,6 +329,25 @@ func TestSignedPayload(t *testing.T) {
 	assert.Equal(t, cbc.URI("gobl:alice.example"), p.Iss)
 	assert.Equal(t, cbc.URI("gobl:bob.example"), p.Aud)
 	assert.NotZero(t, p.IssuedAt)
+	assert.Equal(t, cbc.KeyEmpty, p.Scope, "no scope by default")
+}
+
+func TestHeaderSignWithScope(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	sig, err := h.Sign(priv,
+		cbc.URI("gobl:authority.example"),
+		cbc.URI("gobl:subject.example"),
+		head.WithScope(head.ScopeVerified))
+	require.NoError(t, err)
+
+	p, err := head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Equal(t, head.ScopeVerified, p.Scope)
+	assert.Equal(t, cbc.URI("gobl:authority.example"), p.Iss)
 }
 
 func TestSignedPayloadDecodeError(t *testing.T) {

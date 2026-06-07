@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	stdnet "net"
 	"net/http"
 	"time"
 
@@ -15,6 +16,54 @@ const (
 	defaultTimeout = 10 * time.Second
 	maxBodySize    = 1 << 20 // 1MB
 )
+
+// dialTimeout is the per-attempt timeout for the SSRF-safe dialer.
+const dialTimeout = 5 * time.Second
+
+// safeDialContext is the DialContext used by the default HTTPFetcher.
+// It resolves the target host and refuses to connect when any of the
+// resolved IPs is a loopback, private, link-local, or unspecified
+// address — the standard SSRF defense for a client that dials hosts
+// derived from signed payloads (a `gobl:` `iss` URI). Tests and local
+// development should inject a custom Fetcher rather than relaxing
+// this default.
+func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, error) {
+	host, port, err := stdnet.SplitHostPort(addr)
+	if err != nil {
+		return nil, err
+	}
+	ips, err := stdnet.DefaultResolver.LookupIP(ctx, "ip", host)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+	}
+	for _, ip := range ips {
+		if !isPublicIP(ip) {
+			return nil, fmt.Errorf("%w: refusing to dial non-public address %s (%s)", ErrFetchFailed, host, ip)
+		}
+	}
+	d := &stdnet.Dialer{Timeout: dialTimeout}
+	return d.DialContext(ctx, network, stdnet.JoinHostPort(host, port))
+}
+
+// isPublicIP reports whether ip is a routable, non-special address.
+// A loopback, private (RFC 1918 / RFC 6598), link-local, multicast,
+// unspecified, or interface-local-multicast IP is rejected.
+func isPublicIP(ip stdnet.IP) bool {
+	if ip == nil {
+		return false
+	}
+	switch {
+	case ip.IsLoopback(),
+		ip.IsPrivate(),
+		ip.IsLinkLocalUnicast(),
+		ip.IsLinkLocalMulticast(),
+		ip.IsInterfaceLocalMulticast(),
+		ip.IsUnspecified(),
+		ip.IsMulticast():
+		return false
+	}
+	return true
+}
 
 // Fetcher defines the interface for fetching data from a URL.
 type Fetcher interface {
@@ -27,10 +76,33 @@ type HTTPFetcher struct {
 }
 
 // NewHTTPFetcher creates an HTTPFetcher with sensible defaults.
+// The fetcher's transport rejects any dial whose resolved IP is
+// loopback, private, link-local, multicast, or unspecified, to
+// prevent SSRF attacks via a signed `iss` URI. There is no public
+// escape hatch for the SSRF guard; in-process test fixtures should
+// inject their own Fetcher via WithFetcher.
 func NewHTTPFetcher() *HTTPFetcher {
+	return newHTTPFetcher(false)
+}
+
+// newHTTPFetcher is the internal constructor. allowLoopback bypasses
+// the SSRF guard so unit tests can talk to httptest servers bound to
+// 127.0.0.1. Not exported.
+func newHTTPFetcher(allowLoopback bool) *HTTPFetcher {
+	transport := &http.Transport{
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   dialTimeout,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+	if !allowLoopback {
+		transport.DialContext = safeDialContext
+	}
 	return &HTTPFetcher{
 		Client: &http.Client{
-			Timeout: defaultTimeout,
+			Timeout:   defaultTimeout,
+			Transport: transport,
 		},
 	}
 }

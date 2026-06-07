@@ -294,7 +294,34 @@ intent/routing in any scheme; they are never used for verification.
 identity plus the signer's `iss` and optional `aud`. Both may be empty
 for a plain, non-GOBL-Net signature.
 
-### 5.3 X.509 evidence (optional, long-term storage)
+### 5.3 Authority countersignatures and scope
+
+A `/who` response (and any envelope an Authority chooses to endorse)
+MAY carry one or more countersignatures from addresses in the
+verifier's `Authorities` list (§6.3). An Authority countersignature
+SHOULD include a `scope` claim in its signed payload declaring the
+level of confidence the Authority is asserting:
+
+| Scope (`cbc.Key`) | Meaning                                                                                        |
+|-------------------|------------------------------------------------------------------------------------------------|
+| (omitted)         | No assertion beyond the cryptographic facts of the signature itself.                           |
+| `registered`      | The Authority has confirmed the subject controls the named GOBL Net address (FQDN ownership).  |
+| `verified`        | The Authority has performed full identity verification (e.g. KYC) in addition to registration. |
+
+Scope is set with the `head.WithScope` signing option:
+
+```go
+env.Sign(authorityKey, authorityAddr.URI(), subjectAddr.URI(),
+    head.WithScope(head.ScopeVerified))
+```
+
+Verifiers MAY require a minimum scope per use case (`registered`
+suffices for `/who` discovery; `verified` may be required before
+acting on inbox deliveries from new counterparties). Operators MAY
+define additional scope keys; `registered` and `verified` are the
+baseline values the protocol recognises.
+
+### 5.4 X.509 evidence (optional, long-term storage)
 
 JWS allows an `x5c` header carrying an X.509 certificate chain (RFC
 7515 §4.1.6). GOBL Net does **not** use `x5c` for signature
@@ -347,16 +374,28 @@ and responds with its own party envelope signed `iss=gobl:target`,
 verifies the response is signed by the target and bound to the
 caller.
 
-### 6.3 Trusted Authorities (optional)
+### 6.3 Trusted Authorities
 
 The package-level slice `net.Authorities` holds GOBL Net addresses
 treated as trusted KYC vendors. The default list is empty;
 `net.RegisterAuthority` or the `WithAuthorities` client option add to
-it. The list is an opt-in policy hook for verifiers that want to
-require an authority countersignature on a `/who` response — no
-endpoint *requires* it, no envelope verification path consults it
-automatically, and the protocol's trust anchor (§11.1) does not
-depend on it.
+it.
+
+`Client.VerifyAuthority(ctx, env)` returns nil iff the envelope
+carries at least one signature whose signed `iss` is in the client's
+authorities AND that signature cryptographically verifies against
+the authority's published key. It returns `ErrUnknownAuthority` when
+no candidate signature is from a known authority (or none has been
+registered) and `ErrVerifyFailed` when a candidate fails its crypto
+check.
+
+The protocol does **not** mandate when callers must invoke
+`VerifyAuthority`. The recommended policy: `/who` consumers SHOULD
+require an authority countersignature by default and only relax it
+for explicitly self-signed lookups (bootstrap, internal discovery).
+The trust anchor in §11.1 — TLS-bound `iss` — does not depend on
+authorities; authorities are an additional, opt-in policy layer on
+top.
 
 ## 7. Discovery Transport
 
@@ -367,6 +406,7 @@ The default `HTTPFetcher` enforces:
 | Parameter             | Value              |
 |-----------------------|--------------------|
 | Request timeout       | 10 seconds         |
+| Dial timeout          | 5 seconds          |
 | Maximum response size | 1 MiB              |
 | Required `Accept`     | `application/json` |
 | Required scheme       | `https`            |
@@ -374,6 +414,17 @@ The default `HTTPFetcher` enforces:
 
 Responses larger than 1 MiB are truncated. Any non-200 response causes
 `ErrFetchFailed`.
+
+**SSRF defense.** The fetcher's transport refuses to dial any host
+whose resolved IP is loopback, private (RFC 1918 / RFC 6598),
+link-local, multicast, or unspecified. A signed `iss` URI is
+attacker-controlled, so the FQDN it names could resolve to an
+internal service (e.g. AWS metadata at `169.254.169.254`, a
+container's localhost, a corporate intranet) — refusing those at
+dial time prevents the verifier from being used as an SSRF gadget.
+There is no public escape hatch; in-process test fixtures (e.g.
+`httptest`) should inject their own `Fetcher` via
+`net.WithFetcher`.
 
 ### 7.2 Pluggable Fetcher
 
@@ -523,7 +574,19 @@ acting on the document.
 The 1 MiB cap on Key, Who, and inbox bodies limits memory amplification
 from hostile or misconfigured peers.
 
-### 11.6 Address Canonicalization
+### 11.6 SSRF / non-public dial targets
+
+A signed `iss` URI is supplied by the signer, so a verifier that
+blindly fetches `https://<iss-fqdn>/.well-known/...` could be
+tricked into hitting an internal address controlled by the attacker
+(loopback, cloud metadata at `169.254.169.254`, an RFC 1918 host on
+the verifier's network). The default `HTTPFetcher` defends against
+this by resolving the host at dial time and refusing any loopback,
+private, link-local, multicast, or unspecified address (see §7.1).
+Operators that swap in a custom `Fetcher` SHOULD apply equivalent
+checks.
+
+### 11.7 Address Canonicalization
 
 `ParseAddress` lowercases and strips trailing dots before validation, so
 two visually distinct strings such as `Example.COM.` and `example.com`

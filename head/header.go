@@ -166,39 +166,88 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 
 // SigningPayload defines the fields locked by a signature. UUID and
 // Digest identify the document; Iss and Aud are the verifiable origin
-// and audience of *this* signature (https URLs); IssuedAt is the time
-// the signature was produced as a JWT-standard NumericDate (Unix
-// seconds, per RFC 7519 §2). Header stamps, links, tags, meta, notes
-// and the (unsigned, intent-level) From/To fields can still be
-// modified after signing.
+// and audience of *this* signature (as `gobl:` URIs); IssuedAt is the
+// time the signature was produced as a JWT-standard NumericDate (Unix
+// seconds, per RFC 7519 §2). Scope (optional, set via head.WithScope)
+// is the signer's assertion about the level of confidence in the
+// document — e.g. `head.ScopeRegistered` for an address-only check,
+// `head.ScopeVerified` for a KYC-verified countersignature. Header
+// stamps, links, tags, meta, notes and the (unsigned, intent-level)
+// From/To fields can still be modified after signing.
 type SigningPayload struct {
 	UUID     uuid.UUID    `json:"uuid"`
 	Digest   *dsig.Digest `json:"dig"`
 	Iss      cbc.URI      `json:"iss,omitempty"`
 	Aud      cbc.URI      `json:"aud,omitempty"`
 	IssuedAt int64        `json:"iat,omitempty"`
+	Scope    cbc.Key      `json:"scope,omitempty"`
 }
 
-func (h *Header) payload(iss, aud cbc.URI, iat int64) *SigningPayload {
+// Known scope values that an Authority can assert when
+// countersigning a /who response (or any envelope it endorses).
+// Operators MAY define additional scope keys; these are the
+// baseline values the protocol recognises.
+const (
+	// ScopeRegistered asserts that the signer has confirmed the
+	// subject controls the named GOBL Net address (e.g. via a
+	// challenge-response over the address's published key). No
+	// identity check beyond ownership of the FQDN.
+	ScopeRegistered cbc.Key = "registered"
+	// ScopeVerified asserts that the signer has performed full
+	// identity verification of the subject (e.g. KYC) in addition
+	// to the address ownership check.
+	ScopeVerified cbc.Key = "verified"
+)
+
+// SignOption configures a call to Header.Sign / Envelope.Sign.
+type SignOption func(*signOptions)
+
+type signOptions struct {
+	scope  cbc.Key
+	signer []dsig.SignerOption
+}
+
+// WithScope sets the signer's confidence-level assertion in the
+// signed payload, e.g. head.ScopeRegistered or head.ScopeVerified.
+// Default (no option) leaves Scope empty — the signer makes no
+// assertion beyond the cryptographic facts the signature already
+// proves.
+func WithScope(scope cbc.Key) SignOption {
+	return func(o *signOptions) { o.scope = scope }
+}
+
+// WithSignerOption forwards a low-level dsig.SignerOption (e.g.
+// dsig.WithJKU) through to the underlying JWS signer.
+func WithSignerOption(opts ...dsig.SignerOption) SignOption {
+	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
+}
+
+func (h *Header) payload(iss, aud cbc.URI, iat int64, scope cbc.Key) *SigningPayload {
 	return &SigningPayload{
 		UUID:     h.UUID,
 		Digest:   h.Digest,
 		Iss:      iss,
 		Aud:      aud,
 		IssuedAt: iat,
+		Scope:    scope,
 	}
 }
 
 // Sign creates a JWS signature over the header's document identity
 // (UUID + Digest) together with the signer's GOBL Net identity (iss),
-// the optional audience (aud) it is bound to, and the current UTC
-// time as a JWT-standard `iat` claim (Unix seconds). Generic JWT
+// the optional audience (aud) it is bound to, the current UTC time
+// as a JWT-standard `iat` claim (Unix seconds), and any optional
+// scope assertion configured via head.WithScope. Generic JWT
 // verifiers resolve the public keys by fetching
 // `<iss>/.well-known/jwks.json` from the HTTPS iss URL — no `jku`
 // header is needed.
-func (h *Header) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...dsig.SignerOption) (*dsig.Signature, error) {
+func (h *Header) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...SignOption) (*dsig.Signature, error) {
+	so := new(signOptions)
+	for _, opt := range opts {
+		opt(so)
+	}
 	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(iss, aud, iat), opts...)
+	return dsig.NewSignature(key, h.payload(iss, aud, iat, so.scope), so.signer...)
 }
 
 // Verify checks that the signature covers this header's document

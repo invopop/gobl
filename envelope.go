@@ -226,7 +226,7 @@ func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 // iss is the signer's verifiable GOBL Net address (a gobl: URI) and aud is
 // the optional GOBL Net audience the signature is bound to; either may be
 // empty.
-func (e *Envelope) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...dsig.SignerOption) error {
+func (e *Envelope) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...head.SignOption) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
 	}
