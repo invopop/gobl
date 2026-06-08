@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
+	"golang.org/x/text/unicode/norm"
 )
 
 const (
@@ -62,18 +63,20 @@ var (
 const CodeEmpty Code = ""
 
 // NormalizeCode applies the default, lenient normalization to a code: it
-// removes any control or non-printable characters and trims leading and
-// trailing whitespace, but otherwise leaves the contents untouched. This is the
-// normalization applied automatically to every cbc.Code in a document. Use
+// applies Unicode NFC normalization (so canonically-equivalent codes compare
+// equal), removes any control or non-printable characters, and trims leading
+// and trailing whitespace, but otherwise leaves the contents untouched. This is
+// the normalization applied automatically to every cbc.Code in a document. Use
 // NormalizeStrictCode for the stricter cleaning required by machine-readable
 // identifiers.
 func NormalizeCode(c Code) Code {
-	s := strings.Map(func(r rune) rune {
+	s := norm.NFC.String(c.String())
+	s = strings.Map(func(r rune) rune {
 		if !unicode.IsPrint(r) {
 			return -1 // drop control and other non-printable characters
 		}
 		return r
-	}, c.String())
+	}, s)
 	return Code(strings.TrimSpace(s))
 }
 

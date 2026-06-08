@@ -118,6 +118,11 @@ func TestNormalizeCode(t *testing.T) {
 			code: cbc.Code("foo\t\x00bar\n"),
 			want: cbc.Code("foobar"),
 		},
+		{
+			name: "NFC composes combining marks",
+			code: cbc.Code("cafe\u0301"), // "e" + combining acute accent (decomposed)
+			want: cbc.Code("caf\u00e9"),  // single composed "e-acute"
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
