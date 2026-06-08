@@ -1,0 +1,79 @@
+{
+  "id": "GOBL-AD",
+  "package": "ad",
+  "subsets": [
+    {
+      "id": "GOBL-AD-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [AD]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-AD-BILL-INVOICE-01",
+                  "desc": "invoice supplier in Andorra must have an NRT tax ID code or an NRT identity",
+                  "tests": "has NRT"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-AD-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [AD]",
+          "subsets": [
+            {
+              "guard": "type in [NRT]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-AD-ORG-IDENTITY-01",
+                      "desc": "identity code for type NRT must be valid",
+                      "tests": "valid NRT"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-AD-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [AD]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-AD-TAX-IDENTITY-01",
+                      "desc": "invalid Andorran tax identity code (NRT)",
+                      "tests": "valid NRT"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

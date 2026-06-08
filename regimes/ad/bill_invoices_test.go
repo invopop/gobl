@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	adregime "github.com/invopop/gobl/regimes/ad"
+	"github.com/invopop/gobl/regimes/ad"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
@@ -18,7 +18,7 @@ import (
 // to test specific failure cases.
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Regime:   tax.WithRegime(adregime.CountryCode),
+		Regime:   tax.WithRegime(ad.CountryCode),
 		Currency: "EUR",
 		Code:     "0001",
 		Supplier: &org.Party{
@@ -42,10 +42,10 @@ func validInvoice() *bill.Invoice {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Consulting service",
-					Price: num.NewAmount(100, 0), // ← NewAmount returns *num.Amount directly
+					Price: num.NewAmount(100, 0),
 				},
 				Taxes: tax.Set{
-					{Category: tax.CategoryVAT, Rate: tax.RateGeneral},
+					{Category: ad.TaxCategoryIGI, Rate: tax.RateGeneral},
 				},
 			},
 		},
@@ -58,29 +58,18 @@ func TestValidInvoice(t *testing.T) {
 	require.NoError(t, rules.Validate(inv))
 }
 
-func TestValidInvoiceWithNRTIdentity(t *testing.T) {
-	// Supplier below IGI threshold — has NRT org identity but no tax ID code
+func TestMissingSupplierTaxID(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.TaxID = nil
-	inv.Supplier.Identities = []*org.Identity{
-		{Type: adregime.IdentityTypeNRT, Code: "F123456A"},
-	}
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, rules.Validate(inv))
-}
-
-func TestMissingSupplierNRT(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier.TaxID = nil // no tax ID and no org identity
 	require.NoError(t, inv.Calculate())
 	require.ErrorContains(t, rules.Validate(inv),
-		"invoice supplier in Andorra must have an NRT tax ID code or an NRT identity")
+		"supplier must have an NRT tax ID code")
 }
 
 func TestSupplierTaxIDWithoutCode(t *testing.T) {
 	inv := validInvoice()
-	inv.Supplier.TaxID = &tax.Identity{Country: "AD"} // present but no code
+	inv.Supplier.TaxID = &tax.Identity{Country: "AD"}
 	require.NoError(t, inv.Calculate())
 	require.ErrorContains(t, rules.Validate(inv),
-		"invoice supplier in Andorra must have an NRT tax ID code or an NRT identity")
+		"supplier must have an NRT tax ID code")
 }

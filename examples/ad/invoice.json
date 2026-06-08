@@ -42,7 +42,7 @@
       },
       "taxes": [
         {
-          "cat": "VAT",
+          "cat": "IGI",
           "rate": "general",
           "key": "standard"
         }
@@ -56,7 +56,7 @@
       },
       "taxes": [
         {
-          "cat": "VAT",
+          "cat": "IGI",
           "rate": "reduced",
           "key": "standard"
         }

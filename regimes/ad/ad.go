@@ -15,11 +15,13 @@ import (
 // CountryCode is the tax country code for Andorra.
 const CountryCode = "AD"
 
+// TaxCategoryIGI is the Andorran Impost General Indirecte tax category.
+const TaxCategoryIGI cbc.Code = "IGI"
+
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("ad", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
-		orgIdentityRules(),
 		taxIdentityRules(),
 	)
 }
@@ -27,11 +29,12 @@ func init() {
 // New provides the tax region definition for Andorra.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   CountryCode,
-		Currency:  currency.EUR,
-		TaxScheme: tax.CategoryVAT,
+		Country:  CountryCode,
+		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Andorra",
+			i18n.ES: "Andorra",
+			i18n.CA: "Andorra",
 		},
 		Sources: []*cbc.Source{
 			{
@@ -48,13 +51,10 @@ func New() *tax.RegimeDef {
 				its own indirect tax regime.
 
 				The Impost General Indirecte (IGI), introduced on 1 January 2013 by
-				Llei 11/2012, replaced the previous sales tax system. IGI applies at
-				five rates: a super-reduced rate (0%) for healthcare, education, gold
-				investment and certain non-profit services; a reduced rate (1%) for
-				food, books and magazines; a special rate (2.5%) for public transport
-				and cultural services; the general rate (4.5%); and an increased rate
-				(9.5%) for banking and financial services. The 4.5% general rate is
-				the lowest standard indirect-tax rate in Europe.
+				Llei 11/2012, replaced the previous sales tax system. IGI applies five
+				rate tiers covering general commerce, essential goods, cultural and
+				transport services, financial services, and exempt activities. Rates
+				are defined in the tax categories below.
 
 				All taxpayers (resident or non-resident, natural or legal) are
 				identified by a Número de Registre Tributari (NRT). The NRT consists
@@ -66,11 +66,10 @@ func New() *tax.RegimeDef {
 				format-only; semantic verification requires the official portal.
 
 				Andorra uses the euro as its official currency under a monetary
-				agreement with the European Union, although it does not mint coins
-				as a full eurozone member would.
+				agreement with the European Union.
 			`),
 		},
-		Identities: identityDefinitions, // from org_identities.go
+		Identities: identityDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

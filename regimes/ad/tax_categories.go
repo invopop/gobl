@@ -19,7 +19,7 @@ import (
 func taxCategories() []*tax.CategoryDef {
 	return []*tax.CategoryDef{
 		{
-			Code: tax.CategoryVAT,
+			Code: TaxCategoryIGI,
 			Name: i18n.String{
 				i18n.EN: "IGI",
 				i18n.CA: "IGI",
@@ -33,7 +33,7 @@ func taxCategories() []*tax.CategoryDef {
 			Sources: []*cbc.Source{
 				{
 					Title: i18n.NewString("Departament de Tributs i de Fronteres - IGI"),
-					URL:   "https://www.e-tramits.ad/tramits/impostos/igi", // ("Quins són els tipus de gravamen de l'IGI?" section)
+					URL:   "https://www.e-tramits.ad/tramits/impostos/igi",
 				},
 			},
 			Retained: false,
@@ -49,8 +49,7 @@ func taxCategories() []*tax.CategoryDef {
 						i18n.ES: "Tipo de gravamen general",
 					},
 					Description: i18n.String{
-						i18n.EN: "Standard IGI rate applied to most goods and services. " +
-							"At 4.5% it is the lowest standard indirect tax rate in Europe.",
+						i18n.EN: "Standard IGI rate applied to most goods and services.",
 					},
 					Values: []*tax.RateValueDef{
 						{

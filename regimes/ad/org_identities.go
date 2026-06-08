@@ -8,8 +8,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -43,53 +41,33 @@ var identityDefinitions = []*cbc.Definition{
 				special-purpose entities.
 
 				The NRT is used for all tax declarations including IGI, corporate
-				tax, and customs. Entities below the €40,000 annual IGI threshold
-				hold an NRT but are not required to register for IGI.
+				tax, and customs.
 			`),
 		},
 	},
 }
 
 // normalizeIdentity cleans NRT input before validation runs.
-// Strips hyphens and spaces, uppercases, and removes any "AD" country prefix.
-// Examples:
+// Strips hyphens and spaces, uppercases, and removes any "AD" or "NRT"
+// prefixes in any order.
 //
 //	L-132950-X  →  L132950X
 //	l132950x    →  L132950X
 //	ADL132950X  →  L132950X
-//  NRTL132950X →  L132950X
-
+//	NRT L132950X → L132950X
 func normalizeIdentity(id *org.Identity) {
 	if id == nil || id.Type != IdentityTypeNRT {
 		return
 	}
 	code := strings.ToUpper(id.Code.String())
 	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
-	code = strings.TrimPrefix(code, string(l10n.AD)) // strip "AD" country prefix
-	code = strings.TrimPrefix(code, "NRT")           // strip "NRT" label prefix
-	id.Code = cbc.Code(code)
-}
-
-func orgIdentityRules() *rules.Set {
-	return rules.For(new(org.Identity),
-		rules.When(
-			is.InContext(tax.RegimeIn(CountryCode)),
-			rules.When(
-				org.IdentityTypeIn(IdentityTypeNRT),
-				rules.Field("code",
-					rules.Assert("01", "identity code for type NRT must be valid",
-						is.Func("valid NRT", orgIdentityCheckNRT),
-					),
-				),
-			),
-		),
-	)
-}
-
-func orgIdentityCheckNRT(value any) bool {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return false
+	for {
+		prev := code
+		code = strings.TrimPrefix(code, string(l10n.AD))
+		code = strings.TrimPrefix(code, "NRT")
+		if code == prev {
+			break
+		}
 	}
-	return reNRT.MatchString(code.String())
+	id.Code = cbc.Code(code)
 }
