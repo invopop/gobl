@@ -21,14 +21,18 @@ const (
 // Code represents a string used to uniquely identify the data we're looking
 // at. We use "code" instead of "id", to re-enforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
-// Codes are standardized so that when validated they must contain between
-// 1 and 64 inclusive english alphabet letters or numbers with optional
-// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
-// colons (`:`), commas (`,`), ampersand (`&`), or spaces (` `) to separate blocks.
-// Each block must only be separated by a single symbol.
 //
-// The objective is to have a code that is easy to read and understand, while
-// still being unique and easy to validate.
+// By default codes are treated leniently so that values coming from other
+// systems and formats can be preserved as-is: normalization applies Unicode NFC,
+// removes control and other non-printable characters, and trims surrounding
+// whitespace (see NormalizeCode), while validation only requires that the code
+// be no longer than 64 characters and contain no control characters or leading
+// or trailing whitespace.
+//
+// Fields that need a stricter, canonical format (letters, numbers, and single
+// `.`, `-`, `:`, `/`, `,`, `_`, `&`, or space separators between blocks) can opt
+// in using NormalizeStrictCode for normalization and the StrictCode test for
+// validation.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -194,8 +198,8 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		MinLength: &CodeMinLength,
 		MaxLength: &CodeMaxLength,
 		Description: here.Doc(`
-			Text identifier with a limit of 64 characters and no leading or trailing
-			whitespace.
+			Text identifier with a limit of 64 characters, no control characters, and
+			no leading or trailing whitespace.
 		`),
 	}
 }

@@ -9,7 +9,7 @@
       "minLength": 1,
       "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f]([^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
       "title": "Code",
-      "description": "Text identifier with a limit of 64 characters and no leading or trailing\nwhitespace."
+      "description": "Text identifier with a limit of 64 characters, no control characters, and\nno leading or trailing whitespace."
     }
   }
 }
