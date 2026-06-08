@@ -13,8 +13,8 @@
         },
         {
           "id": "GOBL-CBC-CODE-02",
-          "desc": "codes must not have leading or trailing whitespace",
-          "tests": "matches ^\\S(.*\\S)?$"
+          "desc": "codes must not contain control characters or leading or trailing whitespace",
+          "tests": "matches ^[^\\s\\x00-\\x1f\\x7f-\\x9f]([^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$"
         }
       ]
     },

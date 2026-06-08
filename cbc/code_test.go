@@ -113,6 +113,11 @@ func TestNormalizeCode(t *testing.T) {
 			code: cbc.Code("FL-C 64-3,5"),
 			want: cbc.Code("FL-C 64-3,5"),
 		},
+		{
+			name: "control characters removed",
+			code: cbc.Code("foo\t\x00bar\n"),
+			want: cbc.Code("foobar"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

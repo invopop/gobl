@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -42,11 +43,11 @@ var (
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 64
 
-	// CodePatternLenient is the default code validation pattern. It only
-	// rejects codes with leading or trailing whitespace, leaving the contents
-	// otherwise unconstrained. Use CodePattern (via StrictCode) for the
-	// stricter canonical format.
-	CodePatternLenient       = `^\S(.*\S)?$`
+	// CodePatternLenient is the default code validation pattern. It rejects
+	// leading or trailing whitespace and any control character (C0, DEL, and
+	// C1), leaving the contents otherwise unconstrained. Use CodePattern (via
+	// StrictCode) for the stricter canonical format.
+	CodePatternLenient       = `^[^\s\x00-\x1f\x7f-\x9f]([^\x00-\x1f\x7f-\x9f]*[^\s\x00-\x1f\x7f-\x9f])?$`
 	CodePatternLenientRegexp = regexp.MustCompile(CodePatternLenient)
 )
 
@@ -60,12 +61,20 @@ var (
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
-// NormalizeCode applies the default, lenient normalization to a code: it simply
-// trims leading and trailing whitespace. This is the normalization applied
-// automatically to every cbc.Code in a document. Use NormalizeStrictCode for
-// the stricter cleaning required by machine-readable identifiers.
+// NormalizeCode applies the default, lenient normalization to a code: it
+// removes any control or non-printable characters and trims leading and
+// trailing whitespace, but otherwise leaves the contents untouched. This is the
+// normalization applied automatically to every cbc.Code in a document. Use
+// NormalizeStrictCode for the stricter cleaning required by machine-readable
+// identifiers.
 func NormalizeCode(c Code) Code {
-	return Code(strings.TrimSpace(c.String()))
+	s := strings.Map(func(r rune) rune {
+		if !unicode.IsPrint(r) {
+			return -1 // drop control and other non-printable characters
+		}
+		return r
+	}, c.String())
+	return Code(strings.TrimSpace(s))
 }
 
 // NormalizeStrictCode cleans the code into its canonical strict form: leading
@@ -112,7 +121,7 @@ func codeRules() *rules.Set {
 		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
 			is.Length(0, int(CodeMaxLength)),
 		),
-		rules.Assert("02", "codes must not have leading or trailing whitespace",
+		rules.Assert("02", "codes must not contain control characters or leading or trailing whitespace",
 			is.Matches(CodePatternLenient),
 		),
 	)
