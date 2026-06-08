@@ -1,6 +1,7 @@
 package oioubl
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
@@ -14,6 +15,8 @@ func normalize(doc any) {
 		normalizeTaxCombo(obj)
 	case *pay.Instructions:
 		normalizePayInstructions(obj)
+	case *bill.StatusLine:
+		normalizeStatusLine(obj)
 	}
 }
 
@@ -74,6 +77,58 @@ func oioublTaxCategory(untdidCat cbc.Code) cbc.Code {
 		return ExtValueTaxCategoryZeroRated
 	case "AE":
 		return ExtValueTaxCategoryReverseCharge
+	}
+	return ""
+}
+
+// normalizeStatusLine records the OIOUBL responsecode-1.1 value in the
+// dk-oioubl-response-code extension, derived from the GOBL status event, so the
+// gobl.ubl serializer emits cac:Response/cbc:ResponseCode directly. On an inbound
+// document the line carries the parsed extension but no event, so the mapping is
+// applied in reverse to recover the GOBL status event.
+func normalizeStatusLine(line *bill.StatusLine) {
+	if line == nil {
+		return
+	}
+	if code := oioublResponseCode(line.Key); code != "" && line.Ext.Get(ExtKeyResponseCode) == "" {
+		line.Ext = line.Ext.Set(ExtKeyResponseCode, code)
+	}
+	if line.Key == "" {
+		if event := goblStatusEvent(line.Ext.Get(ExtKeyResponseCode)); event != "" {
+			line.Key = event
+		}
+	}
+}
+
+// oioublResponseCode maps a GOBL status event to its OIOUBL responsecode-1.1
+// value. Events without an OIOUBL counterpart (issued, processing, paid, …) map
+// to nothing and are rejected by the addon validation rules (F-APR018).
+func oioublResponseCode(event cbc.Key) cbc.Code {
+	switch event {
+	case bill.StatusEventAccepted:
+		return ExtValueResponseCodeBusinessAccept
+	case bill.StatusEventRejected:
+		return ExtValueResponseCodeBusinessReject
+	case bill.StatusEventAcknowledged:
+		return ExtValueResponseCodeTechnicalAccept
+	case bill.StatusEventError:
+		return ExtValueResponseCodeTechnicalReject
+	}
+	return ""
+}
+
+// goblStatusEvent reverses oioublResponseCode for inbound documents. ProfileReject
+// has no dedicated GOBL event and folds into error, alongside TechnicalReject.
+func goblStatusEvent(code cbc.Code) cbc.Key {
+	switch code {
+	case ExtValueResponseCodeBusinessAccept:
+		return bill.StatusEventAccepted
+	case ExtValueResponseCodeBusinessReject:
+		return bill.StatusEventRejected
+	case ExtValueResponseCodeTechnicalAccept:
+		return bill.StatusEventAcknowledged
+	case ExtValueResponseCodeTechnicalReject, ExtValueResponseCodeProfileReject:
+		return bill.StatusEventError
 	}
 	return ""
 }

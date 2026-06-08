@@ -134,6 +134,48 @@
           }
         }
       ]
+    },
+    {
+      "key": "dk-oioubl-response-code",
+      "name": {
+        "da": "OIOUBL Svarkode",
+        "en": "OIOUBL Response Code"
+      },
+      "desc": {
+        "en": "The OIOUBL `responsecode-1.1` value emitted as\n`cac:Response/cbc:ResponseCode` on an Invoice Response.\nDerived from the GOBL status event during normalization (accepted →\nBusinessAccept, rejected → BusinessReject, acknowledged →\nTechnicalAccept, error → TechnicalReject); the reverse is applied\nwhen parsing an inbound document."
+      },
+      "values": [
+        {
+          "code": "BusinessAccept",
+          "name": {
+            "en": "Business accept"
+          }
+        },
+        {
+          "code": "BusinessReject",
+          "name": {
+            "en": "Business reject"
+          }
+        },
+        {
+          "code": "TechnicalAccept",
+          "name": {
+            "en": "Technical accept"
+          }
+        },
+        {
+          "code": "TechnicalReject",
+          "name": {
+            "en": "Technical reject"
+          }
+        },
+        {
+          "code": "ProfileReject",
+          "name": {
+            "en": "Profile reject"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,

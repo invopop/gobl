@@ -24,6 +24,13 @@ const (
 	// emitted as cbc:PaymentChannelCode. The addon normalizer derives it from
 	// the payment means so the gobl.ubl serializer emits it directly.
 	ExtKeyPaymentChannel cbc.Key = "dk-oioubl-payment-channel"
+
+	// ExtKeyResponseCode carries the OIOUBL responsecode-1.1 value for an
+	// ApplicationResponse (Invoice Response) status line, emitted as
+	// cac:Response/cbc:ResponseCode. The addon normalizer derives it from the
+	// GOBL status event (and conversely derives the event from a parsed value)
+	// so the gobl.ubl serializer emits it directly instead of mapping the codes.
+	ExtKeyResponseCode cbc.Key = "dk-oioubl-response-code"
 )
 
 // OIOUBL taxcategoryid-1.1 category codes.
@@ -38,6 +45,16 @@ const (
 	ExtValuePaymentChannelIBAN cbc.Code = "IBAN"
 	ExtValuePaymentChannelGiro cbc.Code = "DK:GIRO"
 	ExtValuePaymentChannelFIK  cbc.Code = "DK:FIK"
+)
+
+// OIOUBL responsecode-1.1 values accepted by the ApplicationResponse schematron
+// (F-APR018 allows five of the six codelist values; ProfileAccept is rejected).
+const (
+	ExtValueResponseCodeBusinessAccept  cbc.Code = "BusinessAccept"
+	ExtValueResponseCodeBusinessReject  cbc.Code = "BusinessReject"
+	ExtValueResponseCodeTechnicalAccept cbc.Code = "TechnicalAccept"
+	ExtValueResponseCodeTechnicalReject cbc.Code = "TechnicalReject"
+	ExtValueResponseCodeProfileReject   cbc.Code = "ProfileReject"
 )
 
 // OIOUBL Giro (code 50) PaymentID values.
@@ -123,6 +140,30 @@ var extensions = []*cbc.Definition{
 			{Code: ExtValuePaymentChannelIBAN, Name: i18n.String{i18n.EN: "IBAN bank transfer"}},
 			{Code: ExtValuePaymentChannelGiro, Name: i18n.String{i18n.EN: "Danish Giro"}},
 			{Code: ExtValuePaymentChannelFIK, Name: i18n.String{i18n.EN: "Danish FIK"}},
+		},
+	},
+	{
+		Key: ExtKeyResponseCode,
+		Name: i18n.String{
+			i18n.EN: "OIOUBL Response Code",
+			i18n.DA: "OIOUBL Svarkode",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The OIOUBL ` + "`responsecode-1.1`" + ` value emitted as
+				` + "`cac:Response/cbc:ResponseCode`" + ` on an Invoice Response.
+				Derived from the GOBL status event during normalization (accepted →
+				BusinessAccept, rejected → BusinessReject, acknowledged →
+				TechnicalAccept, error → TechnicalReject); the reverse is applied
+				when parsing an inbound document.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{Code: ExtValueResponseCodeBusinessAccept, Name: i18n.String{i18n.EN: "Business accept"}},
+			{Code: ExtValueResponseCodeBusinessReject, Name: i18n.String{i18n.EN: "Business reject"}},
+			{Code: ExtValueResponseCodeTechnicalAccept, Name: i18n.String{i18n.EN: "Technical accept"}},
+			{Code: ExtValueResponseCodeTechnicalReject, Name: i18n.String{i18n.EN: "Technical reject"}},
+			{Code: ExtValueResponseCodeProfileReject, Name: i18n.String{i18n.EN: "Profile reject"}},
 		},
 	},
 }

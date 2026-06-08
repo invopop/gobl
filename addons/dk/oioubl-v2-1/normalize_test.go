@@ -86,3 +86,20 @@ func TestNormalizeStandardUnchanged(t *testing.T) {
 		"a bank transfer should carry the IBAN payment channel")
 	require.NoError(t, rules.Validate(inv))
 }
+
+func TestNormalizeStatusResponseCode(t *testing.T) {
+	t.Run("event maps to the OIOUBL response code (outbound)", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Lines[0].Key = bill.StatusEventAcknowledged
+		require.NoError(t, st.Calculate())
+		assert.Equal(t, "TechnicalAccept", st.Lines[0].Ext.Get(oioubl.ExtKeyResponseCode).String())
+	})
+
+	t.Run("parsed response code recovers the event (inbound)", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Lines[0].Key = ""
+		st.Lines[0].Ext = tax.ExtensionsOf(cbc.CodeMap{oioubl.ExtKeyResponseCode: "BusinessReject"})
+		require.NoError(t, st.Calculate())
+		assert.Equal(t, bill.StatusEventRejected, st.Lines[0].Key)
+	})
+}
