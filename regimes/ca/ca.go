@@ -6,12 +6,16 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
+	norm.Register("ca",
+		norm.When(tax.IdentityIn("CA"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // Tax categories specific for Canada.
@@ -49,8 +53,7 @@ func New() *tax.RegimeDef {
 				and debit notes for invoice corrections.
 			`),
 		},
-		TimeZone:   "America/Toronto", // Toronto
-		Normalizer: Normalize,
+		TimeZone: "America/Toronto", // Toronto
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

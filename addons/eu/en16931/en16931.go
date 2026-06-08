@@ -3,11 +3,9 @@
 package en16931
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -43,6 +41,22 @@ func init() {
 		orgInboxRules(),
 		orgAddressRules(),
 		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V2017)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(NormalizeTaxCombo),
+		norm.For(normalizeBillDiscount),
+		norm.For(normalizeBillLineDiscount),
+		norm.For(normalizeBillCharge),
+		norm.For(normalizeBillLineCharge),
+		norm.For(normalizeTaxNote),
+		norm.For(normalizeOrgNote),
+		norm.For(normalizeOrgItem),
+		norm.For(normalizeOrgIdentity),
+		norm.For(normalizeOrgInbox),
 	)
 }
 
@@ -97,36 +111,6 @@ func newAddon() *tax.AddonDef {
 				exemption note covering it.
 			`),
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *tax.Combo:
-		NormalizeTaxCombo(obj)
-	case *bill.Discount:
-		normalizeBillDiscount(obj)
-	case *bill.LineDiscount:
-		normalizeBillLineDiscount(obj)
-	case *bill.Charge:
-		normalizeBillCharge(obj)
-	case *bill.LineCharge:
-		normalizeBillLineCharge(obj)
-	case *tax.Note:
-		normalizeTaxNote(obj)
-	case *org.Note:
-		normalizeOrgNote(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
-	case *org.Inbox:
-		normalizeOrgInbox(obj)
+		Scenarios: scenarios,
 	}
 }

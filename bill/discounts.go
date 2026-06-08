@@ -120,19 +120,6 @@ type Discount struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize performs normalization on the line and embedded objects using the
-// provided list of normalizers.
-func (m *Discount) Normalize(normalizers tax.Normalizers) {
-	if m == nil {
-		return
-	}
-	m.Code = cbc.NormalizeCode(m.Code)
-	m.Taxes = tax.CleanSet(m.Taxes)
-	m.Ext = m.Ext.Clean()
-	normalizers.Each(m)
-	tax.Normalize(normalizers, m.Taxes)
-}
-
 func discountRules() *rules.Set {
 	return rules.For(new(Discount),
 		rules.When(is.Expr("Base != nil"),

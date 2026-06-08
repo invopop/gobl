@@ -7,8 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
@@ -57,6 +56,15 @@ func init() {
 		foodVouchersRules(),
 		fuelAccountBalanceRules(),
 	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeParty),
+		norm.For(normalizeItem),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -83,22 +91,6 @@ func newAddon() *tax.AddonDef {
 				},
 			},
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *org.Item:
-		normalizeItem(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Record:
-		normalizePayRecord(obj)
+		Scenarios: scenarios,
 	}
 }

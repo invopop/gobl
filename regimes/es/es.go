@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -20,6 +21,11 @@ func init() {
 		rules.GOBL.Add("ES"),
 		billInvoiceRules(),
 		taxIdentityRules(),
+	)
+	// Tax identities are normalized by their own country's regime, so the
+	// guard matches the identity's country rather than the document context.
+	norm.Register("es",
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
@@ -104,7 +110,6 @@ func New() *tax.RegimeDef {
 		},
 		Identities: identityDefinitions(),
 		Categories: taxCategories(),
-		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios(),
 		},

@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -15,6 +16,9 @@ func init() {
 	rules.Register("ar", rules.GOBL.Add("AR"),
 		billInvoiceRules(),
 		taxIdentityRules(),
+	)
+	norm.Register("ar",
+		norm.When(tax.IdentityIn("AR"), norm.For(normalizeTaxIdentity)),
 	)
 }
 
@@ -76,7 +80,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Argentina/Buenos_Aires",
-		Normalizer:  Normalize,
 		Categories:  taxCategories(),
 		Corrections: correctionDefinitions(),
 	}

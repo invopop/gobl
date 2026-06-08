@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("ie", rules.GOBL.Add("IE"), taxIdentityRules())
+	norm.Register("ie",
+		norm.When(tax.IdentityIn("IE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New instantiates a new Irish regime.
@@ -48,7 +52,6 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		Normalizer: Normalize,
 	}
 }
 

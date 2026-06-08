@@ -7,15 +7,25 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules(), orgIdentityRules())
+	norm.Register("it",
+		norm.When(tax.IdentityIn("IT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard("it", is.InContext(tax.RegimeIn("IT")),
+		norm.For(normalizeIdentity),
+		norm.For(normalizeParty),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 // CountryCode is the tax country code for Italy.
@@ -72,8 +82,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Rome",
 		Identities: identityKeyDefinitions, // identities.go
 		Scenarios:  scenarios,              // scenarios.go
-		Normalizer: Normalize,
-		Categories: categories, // categories.go
+		Categories: categories,             // categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -218,7 +219,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				Price: num.NewAmount(-1000, 2),
 			},
 		}
-		line.Normalize(nil)
+		norm.Normalize(line)
 		assert.Equal(t, "10.00", line.Item.Price.String())
 		assert.Equal(t, "-1", line.Quantity.String())
 	})
@@ -235,7 +236,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				},
 			},
 		}
-		line.Normalize(nil)
+		norm.Normalize(line)
 		bd := line.Breakdown[0]
 		assert.Equal(t, "10.00", bd.Item.Price.String())
 		assert.Equal(t, "-1", bd.Quantity.String())
@@ -253,7 +254,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				},
 			},
 		}
-		line.Normalize(nil)
+		norm.Normalize(line)
 		bd := line.Breakdown[0]
 		assert.Nil(t, bd.Item.Price)
 		assert.Equal(t, "1", bd.Quantity.String())
@@ -265,7 +266,7 @@ func TestLineNormalize(t *testing.T) {
 	t.Run("nil line", func(t *testing.T) {
 		var line *Line
 		assert.NotPanics(t, func() {
-			line.Normalize(nil)
+			norm.Normalize(line)
 			assert.Nil(t, line)
 		})
 	})
@@ -276,7 +277,7 @@ func TestLineNormalize(t *testing.T) {
 			},
 		}
 		assert.NotPanics(t, func() {
-			line.Normalize(nil)
+			norm.Normalize(line)
 		})
 		assert.Len(t, line.Breakdown, 0)
 	})
@@ -314,7 +315,7 @@ func TestLineNormalize(t *testing.T) {
 				},
 			},
 		}
-		line.Normalize(nil)
+		norm.Normalize(line)
 		assert.Len(t, line.Discounts, 0)
 		assert.Len(t, line.Charges, 0)
 		assert.Len(t, line.Breakdown[0].Discounts, 0)

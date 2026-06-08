@@ -59,9 +59,6 @@ type AddonDef struct {
 	// documents can be sent.
 	Inboxes []*cbc.Definition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 
-	// Normalizer performs the normalization rules for the add-on.
-	Normalizer func(doc any) `json:"-"`
-
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`

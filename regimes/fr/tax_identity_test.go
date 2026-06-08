@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
-	r := fr.New()
 	tests := []struct {
 		Code     cbc.Code
 		Expected cbc.Code
@@ -47,7 +46,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "FR", Code: ts.Code}
-		r.NormalizeObject(tID)
+		norm.Normalize(tID)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }

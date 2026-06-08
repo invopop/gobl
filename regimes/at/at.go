@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("at", rules.GOBL.Add("AT"), taxIdentityRules())
+	norm.Register("at",
+		norm.When(tax.IdentityIn("AT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New provides the tax region definition
@@ -44,8 +48,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.erechnung.gv.at/erb",
 			},
 		},
-		TimeZone:   "Europe/Vienna",
-		Normalizer: Normalize,
+		TimeZone: "Europe/Vienna",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},

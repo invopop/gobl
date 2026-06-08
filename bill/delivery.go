@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -204,43 +205,8 @@ func (dlv *Delivery) Calculate() error {
 	if dlv.Regime.IsEmpty() {
 		dlv.SetRegime(partyTaxCountry(dlv.Supplier))
 	}
-	dlv.Normalize(dlv.normalizers())
+	norm.Normalize(dlv)
 	return calculate(dlv)
-}
-
-// Normalize is run as part of the Calculate method to ensure that the delivery
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
-	if dlv.Type == cbc.KeyEmpty {
-		dlv.Type = DeliveryTypeAdvice
-	}
-	dlv.Series = cbc.NormalizeCode(dlv.Series)
-	dlv.Code = cbc.NormalizeCode(dlv.Code)
-
-	tax.Normalize(normalizers, dlv.Tax)
-	tax.Normalize(normalizers, dlv.Supplier)
-	tax.Normalize(normalizers, dlv.Customer)
-	tax.Normalize(normalizers, dlv.Despatcher)
-	tax.Normalize(normalizers, dlv.Receiver)
-	tax.Normalize(normalizers, dlv.Preceding)
-	tax.Normalize(normalizers, dlv.Lines)
-	tax.Normalize(normalizers, dlv.Discounts)
-	tax.Normalize(normalizers, dlv.Charges)
-	tax.Normalize(normalizers, dlv.Notes)
-	normalizers.Each(dlv)
-}
-
-// normalizers returns the normalizers for the delivery.
-func (dlv *Delivery) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := dlv.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range dlv.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 // ConvertInto will use the defined exchange rates in the delivery to convert all the prices

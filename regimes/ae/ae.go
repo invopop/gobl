@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("ae", rules.GOBL.Add("AE"), taxIdentityRules())
+	norm.Register("ae",
+		norm.When(tax.IdentityIn("AE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New provides the tax region definition for AE.
@@ -61,7 +65,6 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
 }

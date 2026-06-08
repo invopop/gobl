@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("ch", rules.GOBL.Add("CH"), taxIdentityRules())
+	norm.Register("ch",
+		norm.When(tax.IdentityIn("CH"), norm.For(normalizeTaxIdentity)),
+	)
 }
 
 // New provides the tax region definition
@@ -44,8 +48,7 @@ func New() *tax.RegimeDef {
 				transactions.
 			`),
 		},
-		TimeZone:   "Europe/Zurich",
-		Normalizer: Normalize,
+		TimeZone: "Europe/Zurich",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},

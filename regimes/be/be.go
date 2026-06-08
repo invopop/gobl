@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("be", rules.GOBL.Add("BE"), taxIdentityRules(), billInvoiceRules())
+	norm.Register("be",
+		norm.When(tax.IdentityIn("BE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New provides the tax region definition
@@ -49,7 +53,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "Europe/Brussels",
-		Normalizer: Normalize,
 		Identities: identityDefinitions,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),

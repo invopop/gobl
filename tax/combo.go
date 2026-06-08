@@ -2,7 +2,6 @@ package tax
 
 import (
 	"encoding/json"
-	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -37,64 +36,6 @@ type Combo struct {
 	retained bool `json:"-"`
 	// Copied from the category definition, implies this tax combo is informative
 	informative bool `json:"-"`
-}
-
-// Normalize tries to normalize the data inside the tax combo.
-func (c *Combo) Normalize(normalizers Normalizers) {
-	if c == nil {
-		return
-	}
-
-	switch c.Category {
-	case CategoryVAT:
-		switch c.Rate {
-		case KeyZero:
-			c.Key = KeyZero
-			c.Rate = cbc.KeyEmpty
-			if c.Percent == nil {
-				c.Percent = num.NewPercentage(0, 2)
-			}
-		case KeyExempt:
-			// This can cause problems with backwards compatibility as the "exempt"
-			// rate was used too widely. Addons will need to try and account for this.
-			c.Key = KeyExempt
-			c.Rate = cbc.KeyEmpty
-		case KeyExempt.With("reverse-charge"):
-			c.Key = KeyReverseCharge
-			c.Rate = cbc.KeyEmpty
-			c.Percent = nil
-		case KeyExempt.With("export"):
-			c.Key = KeyExport
-			c.Rate = cbc.KeyEmpty
-		case KeyExempt.With("eea"), KeyExempt.With("export").With("eea"):
-			c.Key = KeyIntraCommunity
-			c.Rate = cbc.KeyEmpty
-		default:
-			// Make no further assumptions about the key, but try to replace standard
-			// rate with general.
-			if c.Rate == KeyStandard {
-				c.Rate = RateGeneral
-			} else if found, ok := strings.CutPrefix(c.Rate.String(), "standard+"); ok {
-				c.Rate = cbc.Key(RateGeneral.String() + "+" + found)
-			}
-		}
-
-		switch c.Key {
-		case cbc.KeyEmpty:
-			// Special case for zero percent which has no additional rates
-			if c.Percent != nil && c.Percent.IsZero() {
-				c.Key = KeyZero
-			}
-		case KeyZero:
-			if c.Percent == nil {
-				zp := num.PercentageZero
-				c.Percent = &zp
-			}
-		}
-	}
-
-	c.Ext = c.Ext.Clean()
-	normalizers.Each(c)
 }
 
 func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {

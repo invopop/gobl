@@ -2,9 +2,9 @@
 package arca
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -40,6 +40,12 @@ func init() {
 		billChargeRules(),
 		taxComboRules(),
 	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -64,15 +70,5 @@ func newAddon() *tax.AddonDef {
 			invoiceTags,
 		},
 		Corrections: invoiceCorrectionDefinitions,
-		Normalizer:  normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

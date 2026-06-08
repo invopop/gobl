@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
 	"github.com/invopop/gobl/rules"
@@ -16,7 +17,7 @@ func TestPartyNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var p *org.Party
 		assert.NotPanics(t, func() {
-			p.Normalize(nil)
+			norm.Normalize(p)
 		})
 	})
 	t.Run("for known regime", func(t *testing.T) {
@@ -27,7 +28,7 @@ func TestPartyNormalize(t *testing.T) {
 				Code:    "423 429 12.G",
 			},
 		}
-		party.Normalize(nil)
+		norm.Normalize(&party)
 		assert.Empty(t, party.GetRegime())
 		assert.Equal(t, "ES", party.TaxID.Country.String())
 		assert.Equal(t, "ES42342912G", party.TaxID.String())
@@ -55,7 +56,7 @@ func TestPartyNormalize(t *testing.T) {
 				Code:    "423 429 12.G",
 			},
 		}
-		party.Normalize(nil) // unknown entry should not cause problem
+		norm.Normalize(&party) // unknown entry should not cause problem
 		assert.Equal(t, "42342912G", party.TaxID.Code.String())
 	})
 
@@ -84,14 +85,11 @@ func TestPartyNormalize(t *testing.T) {
 				},
 			},
 		}
-		party.Normalize(nil)
+		norm.Normalize(&party)
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
 	})
 
 	t.Run("for regime without normalizer", func(t *testing.T) {
-		rd := tax.RegimeDefFor("US")
-		require.Nil(t, rd.Normalizer) // Ensure the regime has no normalizer
-
 		party := org.Party{
 			Regime: tax.WithRegime("US"),
 			Name:   "Invopop",
@@ -106,7 +104,7 @@ func TestPartyAddressNill(t *testing.T) {
 	party := org.Party{
 		Addresses: []*org.Address{nil},
 	}
-	party.Normalize(nil)
+	norm.Normalize(&party)
 	assert.NoError(t, rules.Validate(&party))
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +15,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("gr", rules.GOBL.Add("GR"), taxIdentityRules())
+	norm.Register("gr",
+		norm.When(tax.IdentityIn("EL"), norm.For(normalizeTaxIdentity)),
+	)
 }
 
 // Official IAPR codes to include in stamps.
@@ -73,7 +77,6 @@ func New() *tax.RegimeDef {
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
 		Corrections:            corrections,
-		Normalizer:             Normalize,
 		Categories:             taxCategories,
 	}
 }

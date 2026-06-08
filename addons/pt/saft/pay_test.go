@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -62,11 +63,9 @@ func TestPayInstructionsNormalization(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			addon.Normalizer(tt.instr)
+			norm.Normalize(tt.instr, tax.AddonContext(saft.V1))
 			if tt.instr == nil {
 				// Nothing to check. Not panicking is enough.
 				return
@@ -121,11 +120,9 @@ func TestPayAdvanceNormalization(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			addon.Normalizer(tt.adv)
+			norm.Normalize(tt.adv, tax.AddonContext(saft.V1))
 			if tt.adv == nil {
 				// Nothing to check. Not panicking is enough.
 				return

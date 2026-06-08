@@ -3,10 +3,9 @@ package choruspro
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -31,6 +30,13 @@ func init() {
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		orgPartyRules(),
+	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeBillLine),
+		norm.For(normalizeOrgParty),
 	)
 }
 
@@ -72,17 +78,5 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
-		Normalizer: normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *bill.Line:
-		normalizeBillLine(obj)
-	case *org.Party:
-		normalizeOrgParty(obj)
 	}
 }

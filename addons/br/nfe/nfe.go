@@ -5,7 +5,7 @@ package nfe
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -32,6 +32,12 @@ func init() {
 		payInstructionsRules(),
 		payAdvanceRules(),
 	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -40,18 +46,8 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Brazil NF-e 4.00",
 		},
-		Normalizer: normalize,
 		Extensions: extensions,
 		Scenarios:  scenarios,
 		Identities: identities,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Record:
-		normalizePayRecord(obj)
 	}
 }

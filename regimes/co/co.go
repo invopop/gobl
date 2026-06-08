@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -13,6 +14,9 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("co", rules.GOBL.Add("CO"), taxIdentityRules())
+	norm.Register("co",
+		norm.When(tax.IdentityIn("CO"), norm.For(normalizeTaxIdentity)),
+	)
 }
 
 // New provides the tax region definition
@@ -58,8 +62,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf",
 			},
 		},
-		TimeZone:   "America/Bogota",
-		Normalizer: Normalize,
+		TimeZone: "America/Bogota",
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

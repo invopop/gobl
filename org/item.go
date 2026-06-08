@@ -59,21 +59,6 @@ type Item struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize performs any required normalizations on the Item.
-func (i *Item) Normalize(normalizers tax.Normalizers) {
-	if i == nil {
-		return
-	}
-	i.Name = cbc.NormalizeString(i.Name)
-	i.Description = cbc.NormalizeString(i.Description)
-	i.Ref = cbc.NormalizeCode(i.Ref)
-	i.Ext = i.Ext.Clean()
-
-	tax.Normalize(normalizers, i.Identities)
-	tax.Normalize(normalizers, i.Images)
-	normalizers.Each(i)
-}
-
 func itemRules() *rules.Set {
 	return rules.For(new(Item),
 		rules.Field("name",

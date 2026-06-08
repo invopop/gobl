@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -18,6 +19,9 @@ func init() {
 		"gb",
 		rules.GOBL.Add("GB"),
 		taxIdentityRules(),
+	)
+	norm.Register("gb",
+		norm.When(tax.IdentityIn("GB"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id, altCountryCodes...) })),
 	)
 }
 
@@ -62,8 +66,7 @@ func New() *tax.RegimeDef {
 				corrections.
 			`),
 		},
-		TimeZone:   "Europe/London",
-		Normalizer: Normalize,
+		TimeZone: "Europe/London",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},

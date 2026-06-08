@@ -6,14 +6,22 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
+	norm.Register("mx",
+		norm.When(tax.IdentityIn("MX"), norm.For(normalizeTaxIdentity)),
+	)
+	norm.RegisterWithGuard("mx", is.InContext(tax.RegimeIn("MX")),
+		norm.For(normalizeInvoice), // *bill.Invoice
+	)
 }
 
 // Official SAT codes to include in stamps.
@@ -84,7 +92,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
-		Normalizer:  Normalize,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
 	}

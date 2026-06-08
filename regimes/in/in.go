@@ -7,9 +7,11 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -20,6 +22,12 @@ func init() {
 		orgIdentityRules(),
 		orgItemRules(),
 		taxIdentityRules(),
+	)
+	norm.Register("in",
+		norm.When(tax.IdentityIn("IN"), norm.For(normalizeTaxIdentity)),
+	)
+	norm.RegisterWithGuard("in", is.InContext(tax.RegimeIn("IN")),
+		norm.For(normalizeOrgIdentity),
 	)
 }
 
@@ -78,7 +86,6 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
 }

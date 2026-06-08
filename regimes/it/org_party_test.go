@@ -3,6 +3,7 @@ package it_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -10,8 +11,6 @@ import (
 )
 
 func TestPartyNormalization(t *testing.T) {
-	r := tax.RegimeDefFor("IT")
-
 	t.Run("normalize customer", func(t *testing.T) {
 		cus := testCustomer(t)
 		cus.TaxID = &tax.Identity{
@@ -19,7 +18,7 @@ func TestPartyNormalization(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 			Type:    "individual",
 		}
-		r.Normalizer(cus)
+		norm.Normalize(cus, tax.RegimeContext("IT"))
 		assert.Empty(t, cus.TaxID.Code)
 		assert.Empty(t, cus.TaxID.Type) //nolint:staticcheck
 		assert.Len(t, cus.Identities, 1)
@@ -34,7 +33,7 @@ func TestPartyNormalization(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 			Type:    "individual",
 		}
-		r.Normalizer(cus)
+		norm.Normalize(cus, tax.RegimeContext("IT"))
 		assert.Equal(t, "RSSGNN60R30H501U", cus.TaxID.Code.String())
 		assert.Len(t, cus.Identities, 0)
 	})
@@ -43,7 +42,7 @@ func TestPartyNormalization(t *testing.T) {
 		cus := testCustomer(t)
 		cus.TaxID = nil
 		assert.NotPanics(t, func() {
-			r.Normalizer(cus)
+			norm.Normalize(cus, tax.RegimeContext("IT"))
 		})
 	})
 }

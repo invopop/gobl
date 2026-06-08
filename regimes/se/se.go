@@ -7,9 +7,11 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -19,6 +21,12 @@ const CountryCode l10n.TaxCountryCode = "SE"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules(), billInvoiceRules(), orgIdentityRules())
+	norm.Register("se",
+		norm.When(tax.IdentityIn("SE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard("se", is.InContext(tax.RegimeIn("SE")),
+		norm.For(normalizeOrgIdentity), // *org.Identity
+	)
 }
 
 // New instantiates a new Swedish regime.
@@ -76,7 +84,6 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		Normalizer: Normalize,
 	}
 }
 

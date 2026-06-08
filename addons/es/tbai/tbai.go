@@ -2,9 +2,9 @@
 package tbai
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -38,6 +38,13 @@ func init() {
 		billInvoiceRules(),
 		taxComboRules(),
 	)
+	norm.RegisterWithGuard(
+		Key.String(),
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeBillLine),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -47,18 +54,6 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
-		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *bill.Line:
-		normalizeBillLine(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

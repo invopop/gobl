@@ -7,8 +7,10 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,6 +20,13 @@ func init() {
 		billInvoiceRules(),
 		taxComboRules(),
 		taxIdentityRules(),
+	)
+	norm.Register("pt",
+		norm.When(tax.IdentityIn("PT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard("pt", is.InContext(tax.RegimeIn("PT")),
+		norm.For(migrateInvoiceRates), // *bill.Invoice
+		norm.For(normalizeTaxCombo),   // *tax.Combo
 	)
 }
 
@@ -75,7 +84,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
-		Normalizer: Normalize,
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
