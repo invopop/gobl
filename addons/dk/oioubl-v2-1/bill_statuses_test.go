@@ -221,6 +221,41 @@ func TestStatusValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "line document reference is required")
 	})
 
+	t.Run("unsupported status event (F-APR018)", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Lines[0].Key = bill.StatusEventPaid
+		require.NoError(t, st.Calculate())
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "F-APR018")
+	})
+
+	t.Run("acknowledged event is supported", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Lines[0].Key = bill.StatusEventAcknowledged
+		require.NoError(t, st.Calculate())
+		assert.NoError(t, rules.Validate(st))
+	})
+
+	t.Run("more than one response line (F-APR051)", func(t *testing.T) {
+		st := testStatusResponse(t)
+		st.Lines = append(st.Lines, &bill.StatusLine{
+			Key: bill.StatusEventAccepted,
+			Doc: &org.DocumentRef{Code: "INV1001"},
+		})
+		require.NoError(t, st.Calculate())
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "F-APR051")
+	})
+
+	t.Run("no response line is rejected by core", func(t *testing.T) {
+		// The empty case is GOBL core's responsibility (a status needs at least
+		// one line); the OIOUBL rule only adds the single-response upper bound.
+		st := testStatusResponse(t)
+		st.Lines = nil
+		require.NoError(t, st.Calculate())
+		assert.Error(t, rules.Validate(st))
+	})
+
 	t.Run("non-response status skips F-APR rules", func(t *testing.T) {
 		st := testStatusResponse(t)
 		st.Type = bill.StatusTypeSystem

@@ -436,10 +436,27 @@
             },
             {
               "field": "lines",
+              "assert": [
+                {
+                  "id": "GOBL-DK-OIOUBL-BILL-STATUS-16",
+                  "desc": "a response carries exactly one document response (F-APR051 / F-APR054)",
+                  "tests": "length between 1 and 1"
+                }
+              ],
               "subsets": [
                 {
                   "each": true,
                   "subsets": [
+                    {
+                      "field": "key",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-OIOUBL-BILL-STATUS-15",
+                          "desc": "response status event must be one OIOUBL supports (F-APR018)",
+                          "tests": "one of [accepted, rejected, acknowledged, error]"
+                        }
+                      ]
+                    },
                     {
                       "field": "doc",
                       "assert": [

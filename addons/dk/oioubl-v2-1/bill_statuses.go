@@ -59,7 +59,23 @@ func billStatusRules() *rules.Set {
 					is.Func("has name or legal identity", partyHasNameOrLegalIdentity)),
 			),
 			rules.Field("lines",
+				// An OIOUBL ApplicationResponse carries exactly one Response for one
+				// referenced document (F-APR051 / F-APR054); the converter maps each
+				// status line to a DocumentResponse, so it must hold a single line.
+				rules.Assert("16", "a response carries exactly one document response (F-APR051 / F-APR054)", is.Length(1, 1)),
 				rules.Each(
+					// Only the four events the responsecode-1.1 code list accepts are
+					// representable; everything else (issued, processing, paid, …) has
+					// no OIOUBL response code (F-APR018).
+					rules.Field("key",
+						rules.Assert("15", "response status event must be one OIOUBL supports (F-APR018)",
+							is.In(
+								bill.StatusEventAccepted,
+								bill.StatusEventRejected,
+								bill.StatusEventAcknowledged,
+								bill.StatusEventError,
+							)),
+					),
 					rules.Field("doc",
 						rules.Assert("04", "line document reference is required for a response (cf. F-APR016, F-APR025)", is.Present),
 					),
