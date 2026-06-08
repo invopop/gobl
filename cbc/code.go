@@ -41,6 +41,13 @@ var (
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 64
+
+	// CodePatternLenient is the default code validation pattern. It only
+	// rejects codes with leading or trailing whitespace, leaving the contents
+	// otherwise unconstrained. Use CodePattern (via StrictCode) for the
+	// stricter canonical format.
+	CodePatternLenient       = `^\S(.*\S)?$`
+	CodePatternLenientRegexp = regexp.MustCompile(CodePatternLenient)
 )
 
 var (
@@ -53,49 +60,60 @@ var (
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
-// NormalizeCode attempts to clean and normalize the provided code so that
-// it matches what we'd expect instead of raising validation errors.
+// NormalizeCode applies the default, lenient normalization to a code: it simply
+// trims leading and trailing whitespace. This is the normalization applied
+// automatically to every cbc.Code in a document. Use NormalizeStrictCode for
+// the stricter cleaning required by machine-readable identifiers.
 func NormalizeCode(c Code) Code {
-	code := c.String()
-	code = strings.TrimSpace(code)
+	return Code(strings.TrimSpace(c.String()))
+}
+
+// NormalizeStrictCode cleans the code into its canonical strict form: leading
+// and trailing whitespace is trimmed, repeated separators are collapsed, and
+// any character outside the permitted set is removed.
+func NormalizeStrictCode(c Code) Code {
+	code := strings.TrimSpace(c.String())
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
-// NormalizeUpperCode cleans and normalizes the code, ensuring
+// NormalizeUpperCode cleans and normalizes the code to its strict form, ensuring
 // all letters are uppercase while preserving valid separators.
 func NormalizeUpperCode(c Code) Code {
-	code := NormalizeCode(c).String()
-	code = strings.ToUpper(code)
-	return Code(code)
+	return Code(strings.ToUpper(NormalizeStrictCode(c).String()))
 }
 
-// NormalizeAlphanumericalCode cleans and normalizes the code,
-// ensuring all letters are uppercase while also removing
-// non-alphanumerical characters.
+// NormalizeAlphanumericalCode cleans and normalizes the code to its strict form,
+// ensuring all letters are uppercase while also removing non-alphanumerical
+// characters.
 func NormalizeAlphanumericalCode(c Code) Code {
-	code := NormalizeCode(c).String()
-	code = strings.ToUpper(code)
+	code := strings.ToUpper(NormalizeStrictCode(c).String())
 	code = codeNonAlphanumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
-// NormalizeNumericalCode cleans and normalizes the code, while also
-// removing non-numerical characters.
+// NormalizeNumericalCode cleans and normalizes the code to its strict form, while
+// also removing non-numerical characters.
 func NormalizeNumericalCode(c Code) Code {
-	code := NormalizeCode(c).String()
+	code := NormalizeStrictCode(c).String()
 	code = codeNonNumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
+
+// StrictCode is a validation test that ensures a code matches the strict
+// canonical pattern (letters, numbers, and single separators). Use it on the
+// fields of machine-readable identifiers that require the stricter format; the
+// default code validation only rejects leading or trailing whitespace.
+var StrictCode = is.MatchesRegexp(CodePatternRegexp)
 
 func codeRules() *rules.Set {
 	return rules.For(Code(""),
 		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
 			is.Length(0, int(CodeMaxLength)),
 		),
-		rules.Assert("02", "codes must only contain letters, numbers, and optionally separated by .-:/,_& or space",
-			is.Matches(CodePattern),
+		rules.Assert("02", "codes must not have leading or trailing whitespace",
+			is.Matches(CodePatternLenient),
 		),
 	)
 }
@@ -159,13 +177,13 @@ func (c Code) JoinWith(separator Code, c2 Code) Code {
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:      "string",
-		Pattern:   CodePattern,
+		Pattern:   CodePatternLenient,
 		Title:     "Code",
 		MinLength: &CodeMinLength,
 		MaxLength: &CodeMaxLength,
 		Description: here.Doc(`
-			Alphanumerical text identifier with upper-case letters and limits on using
-			special characters or whitespace to separate blocks.
+			Text identifier with a limit of 64 characters and no leading or trailing
+			whitespace.
 		`),
 	}
 }

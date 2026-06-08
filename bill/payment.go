@@ -164,6 +164,12 @@ func (pmt *Payment) CanSign() bool {
 	return !pmt.Code.IsEmpty()
 }
 
+func normalizePayment(pmt *Payment) {
+	if pmt.Type == cbc.KeyEmpty {
+		pmt.Type = PaymentTypeReceipt
+	}
+}
+
 func paymentRules() *rules.Set {
 	return rules.For(new(Payment),
 		rules.Field("type",

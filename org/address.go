@@ -106,3 +106,20 @@ func (a *Address) numberFirst() bool {
 		return false
 	}
 }
+
+func normalizeAddress(a *Address) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.PostOfficeBox = cbc.NormalizeString(a.PostOfficeBox)
+	a.Number = cbc.NormalizeString(a.Number)
+	a.Floor = cbc.NormalizeString(a.Floor)
+	a.Block = cbc.NormalizeString(a.Block)
+	a.Door = cbc.NormalizeString(a.Door)
+	a.Street = cbc.NormalizeString(a.Street)
+	a.StreetExtra = cbc.NormalizeString(a.StreetExtra)
+	a.Locality = cbc.NormalizeString(a.Locality)
+	a.Region = cbc.NormalizeString(a.Region)
+	a.State = cbc.NormalizeAlphanumericalCode(a.State)
+}

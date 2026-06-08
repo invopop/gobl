@@ -104,6 +104,13 @@ type Charge struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+func normalizeCharge(m *Charge) {
+	if m == nil {
+		return
+	}
+	m.Taxes = tax.CleanSet(m.Taxes)
+}
+
 func chargeRules() *rules.Set {
 	return rules.For(new(Charge),
 		rules.When(is.Expr("Base != nil"),

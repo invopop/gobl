@@ -86,6 +86,19 @@ func (t *Tax) HasExt(key cbc.Key) bool {
 	return t.Ext.Has(key)
 }
 
+func normalizeBillTax(t *Tax) {
+	if t == nil {
+		return
+	}
+	// migration for old rounding rules
+	switch t.Rounding {
+	case "sum-then-round":
+		t.Rounding = tax.RoundingRulePrecise
+	case "round-then-sum":
+		t.Rounding = tax.RoundingRuleCurrency
+	}
+}
+
 func taxRules() *rules.Set {
 	return rules.For(new(Tax),
 		rules.Field("rounding",

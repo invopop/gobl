@@ -125,6 +125,9 @@ func identityRules() *rules.Set {
 		rules.Field("code",
 			rules.Assert("02", "tax id code must have a valid format", is.Matches(IdentityCodePattern)),
 		),
+		rules.Field("scheme",
+			rules.AssertIfPresent("03", "tax id scheme must be a valid code", cbc.StrictCode),
+		),
 	)
 }
 

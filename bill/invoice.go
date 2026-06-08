@@ -111,6 +111,12 @@ func (inv *Invoice) CanSign() bool {
 	return inv != nil && !inv.Code.IsEmpty()
 }
 
+func normalizeInvoice(inv *Invoice) {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
+}
+
 func invoiceRules() *rules.Set {
 	return rules.For(new(Invoice),
 		rules.Field("type",

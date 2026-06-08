@@ -120,6 +120,13 @@ type Discount struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+func normalizeDiscount(m *Discount) {
+	if m == nil {
+		return
+	}
+	m.Taxes = tax.CleanSet(m.Taxes)
+}
+
 func discountRules() *rules.Set {
 	return rules.For(new(Discount),
 		rules.When(is.Expr("Base != nil"),

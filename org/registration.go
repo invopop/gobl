@@ -28,8 +28,20 @@ type Registration struct {
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 }
 
-// Normalize ensures the registration is in a canonical format.
-func (r *Registration) Normalize() {
+func registrationRules() *rules.Set {
+	return rules.For(new(Registration),
+		rules.Field("currency",
+			rules.AssertIfPresent("01", "registration currency must be a valid ISO 4217 code",
+				is.FuncError("is valid currency", func(val any) error {
+					c, _ := val.(currency.Code)
+					return c.Validate()
+				}),
+			),
+		),
+	)
+}
+
+func normalizeRegistration(r *Registration) {
 	if r == nil {
 		return
 	}
@@ -43,17 +55,4 @@ func (r *Registration) Normalize() {
 	r.Page = cbc.NormalizeString(r.Page)
 	r.Entry = cbc.NormalizeString(r.Entry)
 	r.Other = cbc.NormalizeString(r.Other)
-}
-
-func registrationRules() *rules.Set {
-	return rules.For(new(Registration),
-		rules.Field("currency",
-			rules.AssertIfPresent("01", "registration currency must be a valid ISO 4217 code",
-				is.FuncError("is valid currency", func(val any) error {
-					c, _ := val.(currency.Code)
-					return c.Validate()
-				}),
-			),
-		),
-	)
 }

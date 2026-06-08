@@ -236,17 +236,6 @@ type Note struct {
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize will perform basic normalization on the Note.
-func (n *Note) Normalize() {
-	if n == nil {
-		return
-	}
-	uuid.Normalize(&n.UUID)
-	n.Code = cbc.NormalizeCode(n.Code)
-	n.Text = cbc.NormalizeString(n.Text)
-	n.Ext = n.Ext.Clean()
-}
-
 func noteRules() *rules.Set {
 	return rules.For(new(Note),
 		rules.Field("text",
@@ -318,4 +307,12 @@ func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 			Description: v.Desc.String(),
 		}
 	}
+}
+
+func normalizeNote(n *Note) {
+	if n == nil {
+		return
+	}
+	uuid.Normalize(&n.UUID)
+	n.Text = cbc.NormalizeString(n.Text)
 }

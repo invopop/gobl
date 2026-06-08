@@ -614,7 +614,7 @@ func TestFaultNormalize(t *testing.T) {
 	t.Run("normalizes code", func(t *testing.T) {
 		f := &bill.Fault{Code: "  ERR--001  "}
 		norm.Normalize(f)
-		assert.Equal(t, cbc.Code("ERR-001"), f.Code)
+		assert.Equal(t, cbc.Code("ERR--001"), f.Code)
 	})
 }
 

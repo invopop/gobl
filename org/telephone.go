@@ -18,20 +18,19 @@ type Telephone struct {
 	Number string `json:"num" jsonschema:"title=Number"`
 }
 
-// Normalize will try to remove any unnecessary whitespace from the telephone number.
-func (t *Telephone) Normalize() {
-	if t == nil {
-		return
-	}
-	uuid.Normalize(&t.UUID)
-	t.Label = cbc.NormalizeString(t.Label)
-	t.Number = strings.TrimSpace(t.Number)
-}
-
 func telephoneRules() *rules.Set {
 	return rules.For(new(Telephone),
 		rules.Field("num",
 			rules.Assert("01", "telephone number is required", is.Present),
 		),
 	)
+}
+
+func normalizeTelephone(t *Telephone) {
+	if t == nil {
+		return
+	}
+	uuid.Normalize(&t.UUID)
+	t.Label = cbc.NormalizeString(t.Label)
+	t.Number = strings.TrimSpace(t.Number)
 }

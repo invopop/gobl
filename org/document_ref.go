@@ -84,3 +84,12 @@ func documentRefRules() *rules.Set {
 		),
 	)
 }
+
+func normalizeDocumentRef(dr *DocumentRef) {
+	if dr == nil {
+		return
+	}
+	uuid.Normalize(&dr.UUID)
+	dr.Reason = cbc.NormalizeString(dr.Reason)
+	dr.URL = cbc.NormalizeString(dr.URL)
+}

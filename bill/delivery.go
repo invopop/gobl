@@ -179,6 +179,12 @@ func (dlv *Delivery) CanSign() bool {
 	return !dlv.Code.IsEmpty()
 }
 
+func normalizeDelivery(dlv *Delivery) {
+	if dlv.Type == cbc.KeyEmpty {
+		dlv.Type = DeliveryTypeAdvice
+	}
+}
+
 func deliveryRules() *rules.Set {
 	return rules.For(new(Delivery),
 		rules.Field("type",

@@ -157,6 +157,12 @@ func (ord *Order) CanSign() bool {
 	return !ord.Code.IsEmpty()
 }
 
+func normalizeOrder(ord *Order) {
+	if ord.Type == cbc.KeyEmpty {
+		ord.Type = OrderTypePurchase
+	}
+}
+
 func orderRules() *rules.Set {
 	return rules.For(new(Order),
 		rules.Field("type",

@@ -23,7 +23,7 @@ func TestLineDiscountNormalize(t *testing.T) {
 	}
 	norm.Normalize(l)
 	assert.Equal(t, "20.0%", l.Percent.String())
-	assert.Equal(t, "FOO-BAR", l.Code.String())
+	assert.Equal(t, "FOO--BAR", l.Code.String())
 	assert.True(t, l.Ext.IsZero())
 }
 

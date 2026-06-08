@@ -90,3 +90,11 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 		}
 	}
 }
+
+func normalizeItem(i *Item) {
+	if i == nil {
+		return
+	}
+	i.Name = cbc.NormalizeString(i.Name)
+	i.Description = cbc.NormalizeString(i.Description)
+}

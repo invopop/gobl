@@ -50,19 +50,6 @@ type Attachment struct {
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type"`
 }
 
-// Normalize will try to clean the attachment information.
-func (a *Attachment) Normalize() {
-	if a == nil {
-		return
-	}
-	uuid.Normalize(&a.UUID)
-	a.Code = cbc.NormalizeCode(a.Code)
-	a.Name = cbc.NormalizeString(a.Name)
-	a.Description = cbc.NormalizeString(a.Description)
-	a.URL = cbc.NormalizeString(a.URL)
-	a.MIME = cbc.NormalizeString(a.MIME)
-}
-
 func attachmentRules() *rules.Set {
 	return rules.For(new(Attachment),
 		rules.Field("url",
@@ -85,4 +72,15 @@ func attachmentRules() *rules.Set {
 			),
 		),
 	)
+}
+
+func normalizeAttachment(a *Attachment) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.Name = cbc.NormalizeString(a.Name)
+	a.Description = cbc.NormalizeString(a.Description)
+	a.URL = cbc.NormalizeString(a.URL)
+	a.MIME = cbc.NormalizeString(a.MIME)
 }

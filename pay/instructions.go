@@ -101,17 +101,6 @@ func onlineRules() *rules.Set {
 	)
 }
 
-// Normalize will try to normalize the instructions.
-func (i *Instructions) Normalize() {
-	if i == nil {
-		return
-	}
-	i.Ref = cbc.NormalizeCode(i.Ref)
-	i.Detail = cbc.NormalizeString(i.Detail)
-	i.Notes = cbc.NormalizeString(i.Notes)
-	i.Ext = i.Ext.Clean()
-}
-
 // UnmarshalJSON is used to handle the migration of the Online's
 // properties to Label and URL.
 func (u *Online) UnmarshalJSON(data []byte) error {
