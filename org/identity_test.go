@@ -245,6 +245,39 @@ func TestIdentityTests(t *testing.T) {
 		assert.False(t, org.IdentitiesTypeIn("FOO").Check("not-an-identity"))
 		assert.False(t, org.IdentitiesTypeIn("FOO").Check(nil))
 	})
+
+	t.Run("IdentitiesExtensionIn matches", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0002"})},
+			{Code: "456"},
+		}
+		assert.True(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn no match on value", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0009"})},
+		}
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn no match on key", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"other": "0002"})},
+		}
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn multiple values", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0009"})},
+		}
+		assert.True(t, org.IdentitiesExtensionIn("scheme", "0002", "0009").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn string", func(t *testing.T) {
+		assert.Equal(t, "has a ext [scheme] in [0002, 0009]",
+			org.IdentitiesExtensionIn("scheme", "0002", "0009").String())
+	})
+	t.Run("IdentitiesExtensionIn non-identity type", func(t *testing.T) {
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check("nope"))
+	})
 }
 
 func TestIdentityForType(t *testing.T) {

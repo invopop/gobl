@@ -57,6 +57,26 @@ func TestHeaderValidation(t *testing.T) {
 	})
 }
 
+func TestHeaderRulesContext(t *testing.T) {
+	// The accumulator on rules.Context is unexported, so behaviour is
+	// covered end-to-end in the envelope tests; here we only guard the
+	// nil / empty cases against panics.
+	t.Run("nil header is a no-op", func(t *testing.T) {
+		var h *head.Header
+		assert.NotPanics(t, func() { h.RulesContext()(new(rules.Context)) })
+	})
+
+	t.Run("empty ignore list is a no-op", func(t *testing.T) {
+		h := &head.Header{}
+		assert.NotPanics(t, func() { h.RulesContext()(new(rules.Context)) })
+	})
+
+	t.Run("populated ignore list yields a usable option", func(t *testing.T) {
+		h := &head.Header{Ignore: []rules.Code{"GOBL-NOTE-MESSAGE-01"}}
+		assert.NotPanics(t, func() { h.RulesContext()(new(rules.Context)) })
+	})
+}
+
 func TestHeaderAddStamp(t *testing.T) {
 	h := head.NewHeader()
 	h.AddStamp(&head.Stamp{Provider: "foo", Value: "bar"})

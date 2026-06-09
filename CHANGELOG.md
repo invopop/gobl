@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/fr/ctc`: **breaking**: the French CTC addon has been **removed from core** and is now published as a standalone, opt-in module, [`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc), carrying the full Flow 2 / Flow 6 / Flow 10 extensions, normalizers, and validation rules. Projects that handle French CTC documents must add a blank import of the addon (`_ "github.com/invopop/gobl.fr.ctc/addon"`); the `$addons` keys (`fr-ctc-v1`, `fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`) still require the addon to be loaded at `Validate`/`Calculate` time, so a document declaring one without the module imported fails with `add-on must be registered`.
+
+### Added
+
+- `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
+- `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
+- `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
+- `rules`: `is.OneOf` and `is.AnyOf` testers (the latter renamed from `is.Or`), plus `rules.Ignore` / by-code fault dropping in the rules engine.
+- `tax`: `Addons.AddAddons` helper for meta-addon normalizers that attach further addons based on document content; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
+- `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
