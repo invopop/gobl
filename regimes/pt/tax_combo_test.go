@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/rules"
@@ -157,7 +158,7 @@ func TestTaxComboNormalization(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pt.Normalize(tt.tc)
+			norm.Normalize(tt.tc, tax.RegimeContext("PT"))
 			if tt.tc != nil {
 				assert.Equal(t, tt.out, tt.tc.Ext.Get(pt.ExtKeyRegion))
 			}

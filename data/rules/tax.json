@@ -167,6 +167,21 @@
               "tests": "matches ^[A-Z0-9Ñ\\\u0026]+$"
             }
           ]
+        },
+        {
+          "field": "scheme",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-TAX-IDENTITY-03",
+                  "desc": "tax id scheme must be a valid code",
+                  "tests": "matches ^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?[A-ZÑa-z0-9]+)*$"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

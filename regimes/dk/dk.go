@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -20,6 +21,9 @@ func init() {
 		billInvoiceRules(),
 		orgIdentityRules(),
 		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }
 
@@ -61,14 +65,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Normalizer: Normalize,
-	}
-}
-
-// Normalize will perform any regime specific normalization.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }

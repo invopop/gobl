@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
@@ -155,10 +156,9 @@ func TestInvoicePartyNormalization(t *testing.T) {
 
 func TestBillLineNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		ad := tax.AddonForKey(sii.V1)
 		var line *bill.Line
 		assert.NotPanics(t, func() {
-			ad.Normalizer(line)
+			norm.Normalize(line, tax.AddonContext(sii.V1))
 		})
 	})
 	t.Run("with standard invoice, no item key", func(t *testing.T) {

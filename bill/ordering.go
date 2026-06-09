@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
 )
 
 // Ordering provides additional information about the ordering process including references
@@ -49,25 +48,4 @@ type Ordering struct {
 	Despatch []*org.DocumentRef `json:"despatch,omitempty" jsonschema:"title=Despatch Advice"`
 	// Tender advice, the identification of the call for tender or lot the document relates to.
 	Tender []*org.DocumentRef `json:"tender,omitempty" jsonschema:"title=Tender Advice"`
-}
-
-// Normalize attempts to clean and normalize the Ordering data.
-func (o *Ordering) Normalize(normalizers tax.Normalizers) {
-	if o == nil {
-		return
-	}
-	o.Code = cbc.NormalizeCode(o.Code)
-	o.Cost = cbc.NormalizeCode(o.Cost)
-	tax.Normalize(normalizers, o.Identities)
-	tax.Normalize(normalizers, o.Projects)
-	tax.Normalize(normalizers, o.Contracts)
-	tax.Normalize(normalizers, o.Purchases)
-	tax.Normalize(normalizers, o.Sales)
-	tax.Normalize(normalizers, o.Receiving)
-	tax.Normalize(normalizers, o.Despatch)
-	tax.Normalize(normalizers, o.Tender)
-	tax.Normalize(normalizers, o.Buyer)
-	tax.Normalize(normalizers, o.Seller)
-	tax.Normalize(normalizers, o.Issuer)
-	normalizers.Each(o)
 }

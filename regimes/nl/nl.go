@@ -6,23 +6,26 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for the Netherlands.
+const CountryCode = "NL"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("nl", rules.GOBL.Add("NL"),
+	rules.Register("nl", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
-
-// CountryCode is the tax country code for the Netherlands.
-const CountryCode l10n.TaxCountryCode = "NL"
 
 // New provides the Dutch region definition
 func New() *tax.RegimeDef {
@@ -56,7 +59,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Amsterdam",
 		Identities: identityDefinitions,
-		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
@@ -71,12 +73,4 @@ func New() *tax.RegimeDef {
 		Categories: taxCategories,
 	}
 
-}
-
-// Normalize performs region specific calculations on the document.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	}
 }

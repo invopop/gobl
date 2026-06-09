@@ -5,11 +5,9 @@ package sdi
 import (
 	"errors"
 
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -41,6 +39,14 @@ func init() {
 		payInstructionsRules(),
 		payAdvanceRules(),
 	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeAddress),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -53,24 +59,8 @@ func newAddon() *tax.AddonDef {
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
-		Inboxes:    inboxes,
-		Normalizer: normalize,
-		Scenarios:  scenarios,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Record:
-		normalizePayRecord(obj)
-	case *org.Address:
-		normalizeAddress(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
+		Inboxes:   inboxes,
+		Scenarios: scenarios,
 	}
 }
 

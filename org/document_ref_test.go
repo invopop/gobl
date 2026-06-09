@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -29,14 +30,14 @@ func TestDocumentRefNormalize(t *testing.T) {
 				"fooo": "",
 			}),
 		}
-		dr.Normalize(nil)
+		norm.Normalize(dr)
 		assert.Equal(t, "Foo", dr.Code.String())
 		assert.True(t, dr.Ext.IsZero())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var dr *org.DocumentRef
 		assert.NotPanics(t, func() {
-			dr.Normalize(nil)
+			norm.Normalize(dr)
 		})
 	})
 

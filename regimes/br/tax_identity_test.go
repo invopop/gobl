@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -95,7 +95,7 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "BR", Code: tt.code}
-			br.Normalize(tID)
+			norm.Normalize(tID)
 			assert.Equal(t, tt.want, tID.Code)
 		})
 	}

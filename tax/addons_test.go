@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -38,7 +39,7 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	t.Run("test addon normalization", func(t *testing.T) {
 		ts.Addons.List = tax.AddonList{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
-		_ = tax.ExtractNormalizers(ts)
+		norm.Normalize(ts)
 		assert.Equal(t, tax.AddonList{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
 	})
 }
