@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,11 +15,9 @@ import (
 )
 
 func TestNormalizeCharge(t *testing.T) {
-	ad := tax.AddonForKey(mydata.V1)
-
 	t.Run("nil charge", func(t *testing.T) {
 		var c *bill.Charge
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Nil(t, c)
 	})
 
@@ -29,7 +28,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyFee: "13",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeFee, c.Ext.Get(mydata.ExtKeyTaxType).String())
 		assert.Equal(t, "13", c.Ext.Get(mydata.ExtKeyFee).String())
 	})
@@ -41,7 +40,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyOtherTax: "8",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
 		assert.Equal(t, "8", c.Ext.Get(mydata.ExtKeyOtherTax).String())
 	})
@@ -53,7 +52,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyStampDuty: "1",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
 		assert.Equal(t, "1", c.Ext.Get(mydata.ExtKeyStampDuty).String())
 	})
@@ -63,7 +62,7 @@ func TestNormalizeCharge(t *testing.T) {
 			Amount: num.MakeAmount(1000, 2),
 			Reason: "Some charge",
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.True(t, c.Ext.IsZero())
 	})
 
@@ -75,7 +74,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyFee:     "13",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
 	})
 
@@ -87,7 +86,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyFee: "13",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
 		assert.Equal(t, "13", c.Ext.Get(mydata.ExtKeyFee).String())
 	})
@@ -100,7 +99,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyOtherTax: "8",
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeOtherTax, c.Ext.Get(mydata.ExtKeyTaxType).String())
 		assert.Equal(t, "8", c.Ext.Get(mydata.ExtKeyOtherTax).String())
 	})
@@ -113,7 +112,7 @@ func TestNormalizeCharge(t *testing.T) {
 				mydata.ExtKeyTaxType: mydata.TaxTypeFee,
 			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(mydata.V1))
 		assert.Equal(t, mydata.TaxTypeStampDuty, c.Ext.Get(mydata.ExtKeyTaxType).String())
 	})
 }

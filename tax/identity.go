@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
@@ -110,14 +111,10 @@ func (id *Identity) GetScheme() cbc.Code {
 
 // Normalize will attempt to perform a regional tax normalization
 // on the tax identity. Identities are an exception to the normal
-// normalization rules as they cannot be normalized using addons.
+// normalization rules as they are normalized by their own country's
+// tax regime, never by the document regime or an addon.
 func (id *Identity) Normalize() {
-	if r := id.Regime(); r != nil {
-		r.NormalizeObject(id)
-	} else {
-		// Fallback to common normalization
-		NormalizeIdentity(id)
-	}
+	norm.Normalize(id)
 }
 
 func identityRules() *rules.Set {
@@ -127,6 +124,9 @@ func identityRules() *rules.Set {
 		),
 		rules.Field("code",
 			rules.Assert("02", "tax id code must have a valid format", is.Matches(IdentityCodePattern)),
+		),
+		rules.Field("scheme",
+			rules.AssertIfPresent("03", "tax id scheme must be a valid code", cbc.StrictCode),
 		),
 	)
 }

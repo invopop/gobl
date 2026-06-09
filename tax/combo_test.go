@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -18,7 +19,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "general",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Rate, tax.RateGeneral)
 	})
@@ -27,7 +28,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "standard",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Rate, tax.RateGeneral)
 	})
@@ -36,7 +37,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "standard+eqs",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Rate.String(), "general+eqs")
 	})
@@ -45,7 +46,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "zero",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Key, tax.KeyZero)
 		assert.Equal(t, c.Percent.String(), "0%")
@@ -56,7 +57,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Key:      tax.KeyZero,
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, "0%", c.Percent.String())
 	})
 	t.Run("migrate exempt rate", func(t *testing.T) {
@@ -64,7 +65,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "exempt",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, tax.KeyExempt, c.Key)
 		assert.Empty(t, c.Rate)
@@ -75,7 +76,7 @@ func TestComboNormalize(t *testing.T) {
 			Key:      tax.KeyExempt,
 			Rate:     "exempt",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, tax.KeyExempt, c.Key)
 		assert.Empty(t, c.Rate)
@@ -85,7 +86,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "exempt+reverse-charge",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Key, tax.KeyReverseCharge)
 		assert.Empty(t, c.Rate)
@@ -95,7 +96,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "exempt+export",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Key, tax.KeyExport)
 		assert.Empty(t, c.Rate)
@@ -105,7 +106,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Rate:     "exempt+export+eea",
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Key, tax.KeyIntraCommunity)
 		assert.Empty(t, c.Rate)
@@ -115,7 +116,7 @@ func TestComboNormalize(t *testing.T) {
 			Category: "VAT",
 			Percent:  num.NewPercentage(0, 2),
 		}
-		c.Normalize(nil)
+		norm.Normalize(c)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Key, tax.KeyZero)
 		assert.Empty(t, c.Rate)

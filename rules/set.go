@@ -28,6 +28,8 @@ type Set struct {
 	Assert []*Assertion `json:"assert,omitempty"`
 	// Subsets are additional sets of rules to apply recursively to the struct associated with this set of rules. They will be applied in order, and their assertions will be evaluated after the assertions in this set. Subsets can also have their own Test conditions, which will be evaluated independently.
 	Subsets []*Set `json:"subsets,omitempty"`
+	// Ignore lists fully-qualified fault codes to suppress from the validation result whenever this set is active (its guard passes and its type matches). Codes are foreign (emitted by other namespaces) and are therefore NOT namespace-prefixed at registration.
+	Ignore []Code `json:"ignore,omitempty"`
 
 	objType   reflect.Type
 	typeIndex map[reflect.Type][]*Set // maps objType → subsets targeting that type
@@ -126,7 +128,7 @@ func (s *Set) Validate(obj any, opts ...WithContext) Faults {
 		opt(rc)
 	}
 	collectContext(rc, obj)
-	return s.validate(rc, obj)
+	return filterIgnored(rc, s.validate(rc, obj))
 }
 
 // validate is the internal context-aware implementation of Validate.
@@ -172,6 +174,12 @@ func (s *Set) validate(rc *Context, obj any) Faults {
 	// Evaluate the When condition; skip the set if it doesn't match.
 	if s.Guard != nil && !runTest(rc, s.Guard, callObj) {
 		return nil
+	}
+
+	// The set is active: record any fault codes it wants suppressed. These
+	// are applied as a final filter over the aggregate result in Validate.
+	if rc != nil && len(s.Ignore) > 0 {
+		rc.addIgnores(s.Ignore...)
 	}
 
 	var faults []*Fault

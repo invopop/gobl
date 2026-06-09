@@ -10,6 +10,9 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for United States of America.
+const CountryCode = "US"
+
 func init() {
 	tax.RegisterRegimeDef(New())
 }
@@ -22,7 +25,7 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "US",
+		Country:  CountryCode,
 		Currency: currency.USD,
 		Name: i18n.String{
 			i18n.EN: "United States of America",

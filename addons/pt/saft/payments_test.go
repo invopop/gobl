@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -229,19 +230,18 @@ func TestPaymentSourceRefFormatValidation(t *testing.T) {
 }
 
 func TestPaymentNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
 
 	t.Run("general", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = tax.Extensions{}
-		addon.Normalizer(pmt)
+		norm.Normalize(pmt, tax.AddonContext(saft.V1))
 		assert.Equal(t, "RG", pmt.Ext.Get(saft.ExtKeyPaymentType).String())
 	})
 
 	t.Run("VAT cash", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.SetTags("vat-cash")
-		addon.Normalizer(pmt)
+		norm.Normalize(pmt, tax.AddonContext(saft.V1))
 		assert.Equal(t, "RC", pmt.Ext.Get(saft.ExtKeyPaymentType).String())
 	})
 
@@ -249,7 +249,7 @@ func TestPaymentNormalization(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = tax.Extensions{}
 
-		addon.Normalizer(pmt)
+		norm.Normalize(pmt, tax.AddonContext(saft.V1))
 
 		require.NotNil(t, pmt.Ext)
 		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext.Get(saft.ExtKeySource))
@@ -259,7 +259,7 @@ func TestPaymentNormalization(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = pmt.Ext.Delete(saft.ExtKeySource)
 
-		addon.Normalizer(pmt)
+		norm.Normalize(pmt, tax.AddonContext(saft.V1))
 
 		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext.Get(saft.ExtKeySource))
 	})
@@ -268,7 +268,7 @@ func TestPaymentNormalization(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = pmt.Ext.Set(saft.ExtKeySource, saft.SourceBillingIntegrated)
 
-		addon.Normalizer(pmt)
+		norm.Normalize(pmt, tax.AddonContext(saft.V1))
 
 		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext.Get(saft.ExtKeySource))
 	})

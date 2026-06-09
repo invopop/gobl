@@ -157,6 +157,20 @@ func (e *Envelope) Validate() error {
 	return wrapError(rules.Validate(e))
 }
 
+// RulesContext injects validation directives carried on the envelope header
+// (currently Header.Ignore) into the validation context. rules.Validate calls
+// it automatically on the root object. We bridge through the envelope here
+// rather than have collectContext discover Header.RulesContext directly, since
+// the header is a pointer field and the field scan only resolves ContextAdders
+// on value (embedded) fields.
+func (e *Envelope) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		if e != nil && e.Head != nil {
+			e.Head.RulesContext()(rc)
+		}
+	}
+}
+
 // Verify checks the envelope's signatures to ensure the headers they contain
 // still matches with the current headers. If a list of public keys are provided,
 // they will be used to ensure that the signatures we're signed by at least

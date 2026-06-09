@@ -215,7 +215,7 @@ var UnitDefinitions = []DefUnit{
 func unitRules() *rules.Set {
 	return rules.For(Unit(""),
 		rules.Assert("01", "unit must be a valid value or UN/ECE code",
-			is.Or(
+			is.AnyOf(
 				is.MatchesRegexp(regexpUNECEUnit),
 				is.In(validUnitValues()...),
 			),

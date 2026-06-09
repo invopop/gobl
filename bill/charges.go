@@ -104,17 +104,8 @@ type Charge struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize performs normalization on the line and embedded objects using the
-// provided list of normalizers.
-func (m *Charge) Normalize(normalizers tax.Normalizers) {
-	if m == nil {
-		return
-	}
-	m.Code = cbc.NormalizeCode(m.Code)
+func normalizeCharge(m *Charge) {
 	m.Taxes = tax.CleanSet(m.Taxes)
-	m.Ext = m.Ext.Clean()
-	tax.Normalize(normalizers, m.Taxes)
-	normalizers.Each(m)
 }
 
 func chargeRules() *rules.Set {
