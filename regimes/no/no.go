@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -34,7 +33,7 @@ func init() {
 // New instantiates a new Norwegian tax regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   l10n.NO.Tax(),
+		Country:   CountryCode,
 		Currency:  currency.NOK,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
