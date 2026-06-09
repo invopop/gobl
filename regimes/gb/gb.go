@@ -20,7 +20,7 @@ func init() {
 		rules.GOBL.Add("GB"),
 		taxIdentityRules(),
 	)
-	norm.Register("gb",
+	norm.Register(
 		norm.When(tax.IdentityIn("GB"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id, altCountryCodes...) })),
 	)
 }

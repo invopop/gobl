@@ -24,7 +24,7 @@ func init() {
 	)
 	// Tax identities are normalized by their own country's regime, so the
 	// guard matches the identity's country rather than the document context.
-	norm.Register("es",
+	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }

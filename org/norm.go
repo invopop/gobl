@@ -9,7 +9,7 @@ import (
 // recursion into nested values, the global cleaning of codes and extensions,
 // and the application of regime/addon normalizers.
 func init() {
-	norm.Register("org",
+	norm.Register(
 		norm.For(normalizeParty),
 		norm.For(normalizePerson),
 		norm.For(normalizeItem),

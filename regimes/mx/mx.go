@@ -16,10 +16,10 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
-	norm.Register("mx",
+	norm.Register(
 		norm.When(tax.IdentityIn("MX"), norm.For(normalizeTaxIdentity)),
 	)
-	norm.RegisterWithGuard("mx", is.InContext(tax.RegimeIn("MX")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("MX")),
 		norm.For(normalizeInvoice), // *bill.Invoice
 	)
 }

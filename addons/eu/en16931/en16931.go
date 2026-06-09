@@ -43,7 +43,6 @@ func init() {
 		taxComboRules(),
 	)
 	norm.RegisterWithGuard(
-		Key.String(),
 		is.InContext(tax.AddonIn(V2017)),
 		norm.For(normalizeBillInvoice),
 		norm.For(normalizePayInstructions),

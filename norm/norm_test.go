@@ -27,7 +27,7 @@ type mRoot struct {
 }
 
 func init() {
-	Register("normtest",
+	Register(
 		For(func(r *mRoot) { r.Name = strings.ToUpper(r.Name) }),
 		For(func(i *mItem) { i.Code = strings.ToUpper(i.Code) }),
 		For(func(s *mSub) { s.Val = strings.ToUpper(s.Val) }),
@@ -66,7 +66,7 @@ type oParent struct {
 }
 
 func init() {
-	Register("normtest",
+	Register(
 		For(func(p *oParent) { *p.order = append(*p.order, "parent") }),
 		For(func(c *oChild) { *c.order = append(*c.order, "child") }),
 	)
@@ -102,10 +102,10 @@ func ctxHas(key string) rules.Test {
 }
 
 func init() {
-	RegisterWithGuard("normtest", ctxHas("guard"),
+	RegisterWithGuard(ctxHas("guard"),
 		For(func(r *ordRoot) { *r.trace = append(*r.trace, "guarded") }),
 	)
-	Register("normtest",
+	Register(
 		For(func(r *ordRoot) { *r.trace = append(*r.trace, "intrinsic") }),
 	)
 }
@@ -134,7 +134,7 @@ func (r gRoot) RulesContext() rules.WithContext {
 }
 
 func init() {
-	RegisterWithGuard("normtest", ctxHas("on"),
+	RegisterWithGuard(ctxHas("on"),
 		For(func(r *gRoot) { *r.hits++ }),
 	)
 }
@@ -167,7 +167,7 @@ func (r metaRoot) RulesContext() rules.WithContext {
 
 func init() {
 	// Unguarded: on first sight, append key "B" (idempotent).
-	Register("normtest",
+	Register(
 		For(func(r *metaRoot) {
 			for _, k := range r.Keys {
 				if k == "B" {
@@ -178,7 +178,7 @@ func init() {
 		}),
 	)
 	// Guarded by "B": only runs once "B" is present in context.
-	RegisterWithGuard("normtest", ctxHas("B"),
+	RegisterWithGuard(ctxHas("B"),
 		For(func(c *metaChild) { *c.count++ }),
 	)
 }
@@ -208,7 +208,7 @@ func (r runawayRoot) RulesContext() rules.WithContext {
 }
 
 func init() {
-	Register("normtest",
+	Register(
 		For(func(r *runawayRoot) {
 			*r.passes++
 			// Always add a brand-new key, so the key set never stabilises.
@@ -221,4 +221,55 @@ func TestNormalizePassCap(t *testing.T) {
 	passes := 0
 	Normalize(&runawayRoot{passes: &passes})
 	assert.Equal(t, maxPasses, passes, "runaway key growth is bounded by maxPasses")
+}
+
+// --- walk reaches maps, interfaces, arrays and pointers; When guards by value ---
+
+type wLeaf struct{ Name string }
+
+type wContainer struct {
+	ByKey map[string]*wLeaf // map with pointer values
+	Iface any               // interface holding a pointer
+	Arr   [2]wLeaf          // array of struct values
+	Ptr   *wLeaf            // pointer (may be nil)
+
+	guarded bool // set by a When-guarded normalizer
+}
+
+func init() {
+	Register(
+		For(func(l *wLeaf) { l.Name = strings.ToUpper(l.Name) }),
+	)
+	// When with a per-value (non-contextual) guard, exercising the plain
+	// Test.Check path in runTest.
+	Register(
+		When(is.Func("is container", func(v any) bool {
+			_, ok := v.(*wContainer)
+			return ok
+		}),
+			For(func(c *wContainer) { c.guarded = true }),
+		),
+	)
+}
+
+func TestNormalizeWalksContainers(t *testing.T) {
+	c := &wContainer{
+		ByKey: map[string]*wLeaf{"a": {Name: "x"}},
+		Iface: &wLeaf{Name: "y"},
+		Arr:   [2]wLeaf{{Name: "p"}, {Name: "q"}},
+		Ptr:   &wLeaf{Name: "z"},
+	}
+	Normalize(c)
+	assert.Equal(t, "X", c.ByKey["a"].Name, "pointer values in maps are normalized")
+	assert.Equal(t, "Y", c.Iface.(*wLeaf).Name, "pointers behind interfaces are normalized")
+	assert.Equal(t, "P", c.Arr[0].Name, "array elements are normalized")
+	assert.Equal(t, "Q", c.Arr[1].Name)
+	assert.Equal(t, "Z", c.Ptr.Name, "pointer fields are normalized")
+	assert.True(t, c.guarded, "When-guarded normalizer ran")
+}
+
+func TestNormalizeWalksNilMembers(t *testing.T) {
+	c := &wContainer{} // nil map, nil interface, nil pointer, zero array
+	assert.NotPanics(t, func() { Normalize(c) })
+	assert.True(t, c.guarded, "node normalizer still runs with nil members")
 }

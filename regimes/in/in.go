@@ -23,10 +23,10 @@ func init() {
 		orgItemRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("in",
+	norm.Register(
 		norm.When(tax.IdentityIn("IN"), norm.For(normalizeTaxIdentity)),
 	)
-	norm.RegisterWithGuard("in", is.InContext(tax.RegimeIn("IN")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("IN")),
 		norm.For(normalizeOrgIdentity),
 	)
 }

@@ -21,18 +21,18 @@ type registered struct {
 // (as in rules) is needed.
 var typeIndex = make(map[reflect.Type][]*registered)
 
-// Register adds one or more normalizers to the global registry. The pkg label
-// is informational (it identifies the owning package, mirroring rules.Register)
-// and plays no part in matching.
-func Register(pkg string, sets ...*Set) {
-	RegisterWithGuard(pkg, nil, sets...)
+// Register adds one or more normalizers to the global registry. Normalizers are
+// matched purely by the type they target, so no namespace or package label is
+// required.
+func Register(sets ...*Set) {
+	RegisterWithGuard(nil, sets...)
 }
 
 // RegisterWithGuard adds one or more normalizers behind a shared guard. The
 // guard is typically a context test such as is.InContext(tax.AddonIn(V4)) or
 // is.InContext(tax.RegimeIn("ES")) so that the normalizers only run for
 // documents using that addon or regime.
-func RegisterWithGuard(pkg string, guard rules.Test, sets ...*Set) {
+func RegisterWithGuard(guard rules.Test, sets ...*Set) {
 	var base []rules.Test
 	if guard != nil {
 		base = []rules.Test{guard}

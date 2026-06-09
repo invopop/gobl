@@ -33,7 +33,6 @@ func init() {
 		payAdvanceRules(),
 	)
 	norm.RegisterWithGuard(
-		Key.String(),
 		is.InContext(tax.AddonIn(V4)),
 		norm.For(normalizePayInstructions),
 		norm.For(normalizePayRecord),

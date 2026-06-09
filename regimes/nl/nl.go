@@ -20,7 +20,7 @@ func init() {
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("nl",
+	norm.Register(
 		norm.When(tax.IdentityIn("NL"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

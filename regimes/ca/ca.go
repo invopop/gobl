@@ -13,7 +13,7 @@ import (
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	norm.Register("ca",
+	norm.Register(
 		norm.When(tax.IdentityIn("CA"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

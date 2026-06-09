@@ -22,7 +22,7 @@ func init() {
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("dk",
+	norm.Register(
 		norm.When(tax.IdentityIn("DK"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

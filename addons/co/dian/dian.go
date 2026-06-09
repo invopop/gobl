@@ -36,7 +36,6 @@ func init() {
 		billInvoiceRules(),
 	)
 	norm.RegisterWithGuard(
-		Key.String(),
 		is.InContext(tax.AddonIn(V2)),
 		norm.For(normalizeInvoice),
 	)

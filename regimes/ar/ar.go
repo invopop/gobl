@@ -17,7 +17,7 @@ func init() {
 		billInvoiceRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("ar",
+	norm.Register(
 		norm.When(tax.IdentityIn("AR"), norm.For(normalizeTaxIdentity)),
 	)
 }

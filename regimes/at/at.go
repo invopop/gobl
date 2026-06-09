@@ -15,7 +15,7 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("at", rules.GOBL.Add("AT"), taxIdentityRules())
-	norm.Register("at",
+	norm.Register(
 		norm.When(tax.IdentityIn("AT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

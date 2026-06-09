@@ -14,7 +14,7 @@ import (
 // no normalizer here: the global cbc.Code and tax.Extensions normalizers cover
 // them automatically.
 func init() {
-	norm.Register("bill",
+	norm.Register(
 		norm.For(normalizeInvoice),
 		norm.For(normalizeDelivery),
 		norm.For(normalizePayment),

@@ -39,7 +39,6 @@ func init() {
 		billPaymentLineRules(),
 	)
 	norm.RegisterWithGuard(
-		Key.String(),
 		is.InContext(tax.AddonIn(V1)),
 		norm.For(normalizeTaxCombo),
 		norm.For(normalizeItem),

@@ -18,10 +18,10 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules(), orgIdentityRules())
-	norm.Register("it",
+	norm.Register(
 		norm.When(tax.IdentityIn("IT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard("it", is.InContext(tax.RegimeIn("IT")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("IT")),
 		norm.For(normalizeIdentity),
 		norm.For(normalizeParty),
 		norm.For(normalizeTaxCombo),

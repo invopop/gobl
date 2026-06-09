@@ -10,7 +10,7 @@ import (
 // norm engine handles recursion, the global cleaning of codes and extensions,
 // and the application of regime/addon normalizers.
 func init() {
-	norm.Register("pay",
+	norm.Register(
 		norm.For(normalizeRecord),
 		norm.For(normalizeInstructions),
 		norm.For(normalizeTerms),

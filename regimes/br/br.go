@@ -21,7 +21,7 @@ func init() {
 		orgPartyRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("br",
+	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

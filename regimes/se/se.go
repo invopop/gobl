@@ -21,10 +21,10 @@ const CountryCode l10n.TaxCountryCode = "SE"
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules(), billInvoiceRules(), orgIdentityRules())
-	norm.Register("se",
+	norm.Register(
 		norm.When(tax.IdentityIn("SE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard("se", is.InContext(tax.RegimeIn("SE")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("SE")),
 		norm.For(normalizeOrgIdentity), // *org.Identity
 	)
 }

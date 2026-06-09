@@ -21,10 +21,10 @@ func init() {
 		taxComboRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("pt",
+	norm.Register(
 		norm.When(tax.IdentityIn("PT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard("pt", is.InContext(tax.RegimeIn("PT")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("PT")),
 		norm.For(migrateInvoiceRates), // *bill.Invoice
 		norm.For(normalizeTaxCombo),   // *tax.Combo
 	)

@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	norm.Register("tax",
+	norm.Register(
 		// Global cleanup applied to every cbc.Code and tax.Extensions wherever
 		// they appear in a document, so individual normalizers don't need to
 		// trim codes or clean extensions by hand. NormalizeCode only trims

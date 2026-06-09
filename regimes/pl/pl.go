@@ -16,7 +16,7 @@ func init() {
 	rules.Register("pl", rules.GOBL.Add("PL"),
 		taxIdentityRules(),
 	)
-	norm.Register("pl",
+	norm.Register(
 		norm.When(tax.IdentityIn("PL"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }

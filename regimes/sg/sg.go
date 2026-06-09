@@ -24,10 +24,10 @@ func init() {
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("sg",
+	norm.Register(
 		norm.When(tax.IdentityIn("SG"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard("sg", is.InContext(tax.RegimeIn("SG")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("SG")),
 		norm.For(normalizeIdentity), // *org.Identity
 	)
 }

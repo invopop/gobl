@@ -32,7 +32,7 @@ func init() {
 		orgIdentityRules(),
 		taxIdentityRules(),
 	)
-	norm.Register("fr",
+	norm.Register(
 		norm.When(tax.IdentityIn("FR"), norm.For(normalizeTaxIdentity)),
 	)
 }
