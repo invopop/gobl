@@ -74,10 +74,9 @@ func (as *Addons) SetAddons(addons ...cbc.Key) {
 	as.List = addons
 }
 
-// AddAddons appends the given keys to the addon list, skipping any
-// that are empty or already present. Safe to call across multiple
-// normalize passes; meta-addon normalizers use it to attach further
-// addons based on document content.
+// AddAddons appends the given keys to the addon list, skipping any that are
+// empty or already present. Use it to declare addons programmatically before
+// calculating a document; addons cannot be added during normalization.
 func (as *Addons) AddAddons(keys ...cbc.Key) {
 	if as == nil {
 		return
@@ -116,15 +115,33 @@ func (as Addons) AddonDefs() []*AddonDef {
 	return list
 }
 
-// normalizeAddons ensures that the list of addons is normalized and is normally
-// performed internally when preparing the list of normalizers to use.
-func (as *Addons) normalizeAddons() {
+// PrepareNormalization expands the addon list to include the dependencies
+// (Requires) of every declared addon, transitively, dropping any keys that are
+// not registered. The norm engine calls this once before normalizing so that
+// the required addons' normalizers are applied in a single pass.
+func (as *Addons) PrepareNormalization() {
+	if as == nil {
+		return
+	}
+	seen := make(map[cbc.Key]bool, len(as.List))
 	list := make([]cbc.Key, 0, len(as.List))
-	for _, ak := range as.List {
-		if ad := AddonForKey(ak); ad != nil {
-			list = cbc.AppendUniqueKeys(list, ad.Requires...)
-			list = cbc.AppendUniqueKeys(list, ad.Key)
+	var add func(k cbc.Key)
+	add = func(k cbc.Key) {
+		if seen[k] {
+			return
 		}
+		seen[k] = true
+		ad := AddonForKey(k)
+		if ad == nil {
+			return // unregistered keys are dropped (validation reports them)
+		}
+		for _, r := range ad.Requires {
+			add(r)
+		}
+		list = append(list, ad.Key)
+	}
+	for _, ak := range as.List {
+		add(ak)
 	}
 	as.List = list
 }

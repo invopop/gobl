@@ -6,27 +6,27 @@ import (
 	"github.com/invopop/gobl/rules"
 )
 
-// maxPasses caps the number of normalization passes. A second pass is needed
-// only when a meta-addon normalizer appends further addons during the first
-// pass; one extra pass is enough in practice, the rest is a safety net.
-const maxPasses = 4
+// preparer is implemented by embedded helpers (such as tax.Addons) that must
+// finalise their state before normalization. The engine calls it once, up
+// front, so the single walk sees the complete set of applicable normalizers —
+// notably tax.Addons expanding its dependencies (Requires) so the required
+// addons' normalizers are applied.
+type preparer interface {
+	PrepareNormalization()
+}
 
 // Normalize applies every registered normalizer that matches a value reachable
 // from doc. doc must be a pointer so that mutations persist. The object graph
-// is walked depth-first and post-order: a node's children are normalized before
-// the node's own normalizers run, so addon/regime normalizers always see
+// is walked once, depth-first and post-order: a node's children are normalized
+// before the node's own normalizers run, so addon/regime normalizers always see
 // fully-normalized children.
 //
 // Guards are evaluated against a validation context built from opts and from
 // the root's embedded rules.ContextAdder fields (tax.Regime, tax.Addons), so
 // context guards such as is.InContext(tax.AddonIn(V4)) apply to nested values
-// without needing access to the root.
-//
-// Meta-addons may append further addons while normalizing (tax.Addons.AddAddons).
-// Normalize detects this by re-collecting the context after each pass and walks
-// again until the set of context keys stabilises (bounded by maxPasses). Because
-// normalizers are idempotent, re-applying already-run normalizers on a later
-// pass is harmless.
+// without needing access to the root. The complete addon set (declared plus
+// dependencies) is resolved before the walk via prepare; normalizers cannot
+// add further addons during normalization.
 func Normalize(doc any, opts ...rules.WithContext) {
 	if doc == nil {
 		return
@@ -36,19 +36,45 @@ func Normalize(doc any, opts ...rules.WithContext) {
 		return
 	}
 
-	var prevKeys map[rules.ContextKey]bool
-	for pass := 0; pass < maxPasses; pass++ {
-		rc := &rules.Context{}
-		for _, opt := range opts {
-			opt(rc)
+	rc := &rules.Context{}
+	for _, opt := range opts {
+		opt(rc)
+	}
+	prepare(doc)
+	collectContext(rc, doc)
+	walk(rc, rv)
+}
+
+// prepare gives the root and its exported fields a chance to finalise their
+// state before the context is collected and the document is walked. Since
+// tax.Regime and tax.Addons are embedded at the top of document structs, a
+// single-level scan over the root is sufficient.
+func prepare(obj any) {
+	if p, ok := obj.(preparer); ok {
+		p.PrepareNormalization()
+	}
+	rv := reflect.ValueOf(obj)
+	if rv.Kind() == reflect.Pointer {
+		if rv.IsNil() {
+			return
 		}
-		collectContext(rc, doc)
-		keys := keySet(rc)
-		if pass > 0 && sameKeys(keys, prevKeys) {
-			break // no addon was appended by the previous pass: fixpoint reached
+		rv = rv.Elem()
+	}
+	if rv.Kind() != reflect.Struct {
+		return
+	}
+	rt := rv.Type()
+	for i := range rt.NumField() {
+		if !rt.Field(i).IsExported() {
+			continue
 		}
-		walk(rc, rv)
-		prevKeys = keys
+		fv := rv.Field(i)
+		if !fv.CanAddr() {
+			continue
+		}
+		if p, ok := fv.Addr().Interface().(preparer); ok {
+			p.PrepareNormalization()
+		}
 	}
 }
 
@@ -165,27 +191,4 @@ func collectContext(rc *rules.Context, obj any) {
 			ca.RulesContext()(rc)
 		}
 	}
-}
-
-// keySet returns the distinct context keys as a set.
-func keySet(rc *rules.Context) map[rules.ContextKey]bool {
-	keys := rc.Keys()
-	set := make(map[rules.ContextKey]bool, len(keys))
-	for _, k := range keys {
-		set[k] = true
-	}
-	return set
-}
-
-// sameKeys reports whether two context key sets are identical.
-func sameKeys(a, b map[rules.ContextKey]bool) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for k := range a {
-		if !b[k] {
-			return false
-		}
-	}
-	return true
 }

@@ -16,11 +16,6 @@ func init() {
 		// a raw code (e.g. org.Inbox).
 		norm.For(func(c *cbc.Code) { *c = cbc.NormalizeCode(*c) }),
 		norm.For(func(e *Extensions) { *e = e.Clean() }),
-		// Expand any addon dependencies (Requires) into the addon list. This
-		// runs on every pass; once a required addon key appears, the norm
-		// engine re-collects the context and applies that addon's normalizers
-		// on the following pass.
-		norm.For(func(as *Addons) { as.normalizeAddons() }),
 		norm.For(normalizeCombo),
 		// Tax identities are an exception to the normal normalization rules:
 		// they are normalized by their own country's regime (not the document

@@ -150,7 +150,8 @@ func TestNormalizeGuardGating(t *testing.T) {
 	assert.Equal(t, 0, off, "guarded normalizer is skipped when its key is absent")
 }
 
-// --- meta-addon: a key appended mid-run activates a guarded normalizer ---
+// --- single pass: a key added during the walk does NOT activate a guarded
+// normalizer (the engine does not re-collect context or re-walk) ---
 
 type metaChild struct{ count *int }
 type metaRoot struct {
@@ -167,61 +168,23 @@ func (r metaRoot) RulesContext() rules.WithContext {
 }
 
 func init() {
-	// Unguarded: on first sight, append key "B" (idempotent).
+	// Appends key "B" during the walk.
 	Register(
-		For(func(r *metaRoot) {
-			for _, k := range r.Keys {
-				if k == "B" {
-					return
-				}
-			}
-			r.Keys = append(r.Keys, "B")
-		}),
+		For(func(r *metaRoot) { r.Keys = append(r.Keys, "B") }),
 	)
-	// Guarded by "B": only runs once "B" is present in context.
+	// Guarded by "B": would only run if the context were re-collected.
 	RegisterWithGuard(ctxHas("B"),
 		For(func(c *metaChild) { *c.count++ }),
 	)
 }
 
-func TestNormalizeMetaAddonPass(t *testing.T) {
+func TestNormalizeSinglePass(t *testing.T) {
 	count := 0
 	r := &metaRoot{Keys: []string{"A"}, Child: metaChild{count: &count}}
 	Normalize(r)
-	assert.Contains(t, r.Keys, "B", "meta normalizer appended the addon key")
-	assert.Equal(t, 1, count,
-		"normalizer guarded by the appended key ran on the follow-up pass")
-}
-
-// --- pass cap: keys that never stabilise stop at maxPasses ---
-
-type runawayRoot struct {
-	Keys   []string
-	passes *int
-}
-
-func (r runawayRoot) RulesContext() rules.WithContext {
-	return func(rc *rules.Context) {
-		for _, k := range r.Keys {
-			rc.Set(rules.ContextKey(k), k)
-		}
-	}
-}
-
-func init() {
-	Register(
-		For(func(r *runawayRoot) {
-			*r.passes++
-			// Always add a brand-new key, so the key set never stabilises.
-			r.Keys = append(r.Keys, strings.Repeat("k", len(r.Keys)+1))
-		}),
-	)
-}
-
-func TestNormalizePassCap(t *testing.T) {
-	passes := 0
-	Normalize(&runawayRoot{passes: &passes})
-	assert.Equal(t, maxPasses, passes, "runaway key growth is bounded by maxPasses")
+	assert.Contains(t, r.Keys, "B", "the normalizer still mutated the value")
+	assert.Equal(t, 0, count,
+		"a key added during the walk is not re-applied: normalization is a single pass")
 }
 
 // --- walk reaches maps, interfaces, arrays and pointers; When guards by value ---
@@ -287,18 +250,6 @@ func TestEngineDefensiveBranches(t *testing.T) {
 	t.Run("non-struct pointer root is a no-op", func(t *testing.T) {
 		n := 0
 		assert.NotPanics(t, func() { Normalize(&n) })
-	})
-
-	t.Run("sameKeys compares content, not just length", func(t *testing.T) {
-		assert.True(t, sameKeys(
-			map[rules.ContextKey]bool{"a": true},
-			map[rules.ContextKey]bool{"a": true}))
-		assert.False(t, sameKeys(
-			map[rules.ContextKey]bool{"a": true},
-			map[rules.ContextKey]bool{"b": true}))
-		assert.False(t, sameKeys(
-			map[rules.ContextKey]bool{"a": true},
-			map[rules.ContextKey]bool{"a": true, "b": true}))
 	})
 
 	t.Run("registering a nil set is ignored", func(t *testing.T) {
