@@ -3,6 +3,7 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +13,7 @@ func TestWebsiteNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var w *org.Website
 		assert.NotPanics(t, func() {
-			w.Normalize()
+			norm.Normalize(w)
 		})
 	})
 	w := &org.Website{
@@ -21,7 +22,7 @@ func TestWebsiteNormalize(t *testing.T) {
 		URL:   "   https://example.com/path?q=1   ",
 	}
 
-	w.Normalize()
+	norm.Normalize(w)
 
 	assert.Equal(t, "My Site", w.Label)
 	assert.Equal(t, "Main  Site", w.Title)
@@ -49,7 +50,7 @@ func TestWebsiteValidate(t *testing.T) {
 			}
 
 			// Ensure Normalize helps when there is surrounding whitespace.
-			w.Normalize()
+			norm.Normalize(w)
 
 			err := rules.Validate(w)
 

@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -175,26 +176,23 @@ func TestExemptionNoteValidation(t *testing.T) {
 	})
 
 	t.Run("nil tax note normalization", func(t *testing.T) {
-		ad := tax.AddonForKey(en16931.V2017)
 		var n *tax.Note
 		assert.NotPanics(t, func() {
-			ad.Normalizer(n)
+			norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		})
 	})
 
 	t.Run("non-VAT note skips normalization", func(t *testing.T) {
-		ad := tax.AddonForKey(en16931.V2017)
 		n := &tax.Note{
 			Category: "IGIC",
 			Key:      "exempt",
 			Text:     "Some IGIC exemption",
 		}
-		ad.Normalizer(n)
+		norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		assert.False(t, n.Ext.Has(untdid.ExtKeyTaxCategory))
 	})
 
 	t.Run("note normalization derives key from ext", func(t *testing.T) {
-		ad := tax.AddonForKey(en16931.V2017)
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Exempt under Article 132",
@@ -202,12 +200,11 @@ func TestExemptionNoteValidation(t *testing.T) {
 				untdid.ExtKeyTaxCategory: "E",
 			}),
 		}
-		ad.Normalizer(n)
+		norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, tax.KeyExempt, n.Key)
 	})
 
 	t.Run("note normalization derives key for reverse charge", func(t *testing.T) {
-		ad := tax.AddonForKey(en16931.V2017)
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Text:     "Reverse charge applies",
@@ -215,12 +212,11 @@ func TestExemptionNoteValidation(t *testing.T) {
 				untdid.ExtKeyTaxCategory: "AE",
 			}),
 		}
-		ad.Normalizer(n)
+		norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, tax.KeyReverseCharge, n.Key)
 	})
 
 	t.Run("note normalization does not override existing key", func(t *testing.T) {
-		ad := tax.AddonForKey(en16931.V2017)
 		n := &tax.Note{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
@@ -229,7 +225,7 @@ func TestExemptionNoteValidation(t *testing.T) {
 				untdid.ExtKeyTaxCategory: "AE",
 			}),
 		}
-		ad.Normalizer(n)
+		norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, tax.KeyExempt, n.Key, "should not override existing key")
 	})
 
@@ -351,14 +347,13 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 }
 
 func TestNormalizeBillLineDiscount(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with key", func(t *testing.T) {
 		l := &bill.LineDiscount{
 			Key:    "sample",
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "67", l.Ext.Get(untdid.ExtKeyAllowance).String())
 	})
 	t.Run("without key", func(t *testing.T) {
@@ -366,20 +361,19 @@ func TestNormalizeBillLineDiscount(t *testing.T) {
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.True(t, l.Ext.IsZero())
 	})
 }
 
 func TestNormalizeBillDiscount(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with key", func(t *testing.T) {
 		l := &bill.Discount{
 			Key:    "sample",
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "67", l.Ext.Get(untdid.ExtKeyAllowance).String())
 	})
 	t.Run("without key", func(t *testing.T) {
@@ -387,20 +381,19 @@ func TestNormalizeBillDiscount(t *testing.T) {
 			Reason: "Product sample",
 			Amount: num.MakeAmount(100, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.True(t, l.Ext.IsZero())
 	})
 }
 
 func TestNormalizeBillLineCharge(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with key", func(t *testing.T) {
 		l := &bill.LineCharge{
 			Key:    "outlay",
 			Reason: "Notary costs",
 			Amount: num.MakeAmount(1000, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "AAE", l.Ext.Get(untdid.ExtKeyCharge).String())
 	})
 	t.Run("without key", func(t *testing.T) {
@@ -408,20 +401,19 @@ func TestNormalizeBillLineCharge(t *testing.T) {
 			Reason: "Additional costs",
 			Amount: num.MakeAmount(3000, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.True(t, l.Ext.IsZero())
 	})
 }
 
 func TestNormalizeBillCharge(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("with key", func(t *testing.T) {
 		l := &bill.Charge{
 			Key:    "outlay",
 			Reason: "Notary costs",
 			Amount: num.MakeAmount(1000, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "AAE", l.Ext.Get(untdid.ExtKeyCharge).String())
 	})
 	t.Run("without key", func(t *testing.T) {
@@ -429,7 +421,7 @@ func TestNormalizeBillCharge(t *testing.T) {
 			Reason: "Additional costs",
 			Amount: num.MakeAmount(3000, 2),
 		}
-		ad.Normalizer(l)
+		norm.Normalize(l, tax.AddonContext(en16931.V2017))
 		assert.True(t, l.Ext.IsZero())
 	})
 }

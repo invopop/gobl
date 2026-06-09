@@ -28,23 +28,6 @@ type Registration struct {
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 }
 
-// Normalize ensures the registration is in a canonical format.
-func (r *Registration) Normalize() {
-	if r == nil {
-		return
-	}
-	uuid.Normalize(&r.UUID)
-	r.Label = cbc.NormalizeString(r.Label)
-	r.Office = cbc.NormalizeString(r.Office)
-	r.Book = cbc.NormalizeString(r.Book)
-	r.Volume = cbc.NormalizeString(r.Volume)
-	r.Sheet = cbc.NormalizeString(r.Sheet)
-	r.Section = cbc.NormalizeString(r.Section)
-	r.Page = cbc.NormalizeString(r.Page)
-	r.Entry = cbc.NormalizeString(r.Entry)
-	r.Other = cbc.NormalizeString(r.Other)
-}
-
 func registrationRules() *rules.Set {
 	return rules.For(new(Registration),
 		rules.Field("currency",
@@ -56,4 +39,17 @@ func registrationRules() *rules.Set {
 			),
 		),
 	)
+}
+
+func normalizeRegistration(r *Registration) {
+	uuid.Normalize(&r.UUID)
+	r.Label = cbc.NormalizeString(r.Label)
+	r.Office = cbc.NormalizeString(r.Office)
+	r.Book = cbc.NormalizeString(r.Book)
+	r.Volume = cbc.NormalizeString(r.Volume)
+	r.Sheet = cbc.NormalizeString(r.Sheet)
+	r.Section = cbc.NormalizeString(r.Section)
+	r.Page = cbc.NormalizeString(r.Page)
+	r.Entry = cbc.NormalizeString(r.Entry)
+	r.Other = cbc.NormalizeString(r.Other)
 }

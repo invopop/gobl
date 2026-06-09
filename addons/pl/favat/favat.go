@@ -5,7 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -39,6 +39,13 @@ func init() {
 		taxComboRules(),
 		payAdvanceRules(),
 	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V3)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddonV3() *tax.AddonDef {
@@ -52,21 +59,7 @@ func newAddonV3() *tax.AddonDef {
 		},
 		Extensions:  extensionKeys,
 		Scenarios:   scenarios,
-		Normalizer:  normalize,
 		Corrections: corrections,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Record:
-		normalizePayRecord(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }
 

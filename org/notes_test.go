@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -17,14 +18,14 @@ func TestNoteNormalize(t *testing.T) {
 	t.Run("accepts nil", func(t *testing.T) {
 		var n *org.Note
 		assert.NotPanics(t, func() {
-			n.Normalize()
+			norm.Normalize(n)
 		})
 	})
 
 	t.Run("accepts empty", func(t *testing.T) {
 		n := &org.Note{}
 		assert.NotPanics(t, func() {
-			n.Normalize()
+			norm.Normalize(n)
 		})
 	})
 
@@ -36,7 +37,7 @@ func TestNoteNormalize(t *testing.T) {
 				"untidid-text-subject": "AAI",
 			}),
 		}
-		n.Normalize()
+		norm.Normalize(n)
 		assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
 	})
 
@@ -48,7 +49,7 @@ func TestNoteNormalize(t *testing.T) {
 				"missing": "",
 			}),
 		}
-		n.Normalize()
+		norm.Normalize(n)
 		assert.Equal(t, "FOO", n.Code.String())
 		assert.True(t, n.Ext.IsZero())
 	})

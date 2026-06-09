@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -23,7 +24,7 @@ func TestOrderingNormalize(t *testing.T) {
 			},
 		},
 	}
-	o.Normalize(nil)
+	norm.Normalize(o)
 	assert.Equal(t, "Foo", o.Code.String())
 	assert.Equal(t, "Bar", o.Projects[0].Code.String())
 	assert.True(t, o.Projects[0].Ext.IsZero())

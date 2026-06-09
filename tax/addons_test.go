@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -38,7 +39,7 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	t.Run("test addon normalization", func(t *testing.T) {
 		ts.Addons.List = tax.AddonList{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
-		_ = tax.ExtractNormalizers(ts)
+		norm.Normalize(ts)
 		assert.Equal(t, tax.AddonList{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
 	})
 }
@@ -53,6 +54,59 @@ func TestAddonForKey(t *testing.T) {
 		a := tax.AddonForKey("mx-cfdi-v4")
 		require.NotNil(t, a)
 		assert.NoError(t, rules.Validate(a))
+	})
+}
+
+func TestSetAddons(t *testing.T) {
+	var as tax.Addons
+	as.SetAddons("mx-cfdi-v4", "es-verifactu-v1")
+	assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "es-verifactu-v1"}, as.GetAddons())
+
+	// SetAddons replaces the existing list wholesale.
+	as.SetAddons("pt-saft-v1")
+	assert.Equal(t, []cbc.Key{"pt-saft-v1"}, as.GetAddons())
+}
+
+func TestAddAddons(t *testing.T) {
+	t.Run("appends to an empty list", func(t *testing.T) {
+		var as tax.Addons
+		as.AddAddons("mx-cfdi-v4")
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, as.GetAddons())
+	})
+
+	t.Run("appends to an existing list", func(t *testing.T) {
+		as := tax.WithAddons("mx-cfdi-v4")
+		as.AddAddons("es-verifactu-v1")
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "es-verifactu-v1"}, as.GetAddons())
+	})
+
+	t.Run("skips empty keys", func(t *testing.T) {
+		var as tax.Addons
+		as.AddAddons("", "mx-cfdi-v4", "")
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, as.GetAddons())
+	})
+
+	t.Run("skips keys already present", func(t *testing.T) {
+		as := tax.WithAddons("mx-cfdi-v4")
+		as.AddAddons("mx-cfdi-v4")
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, as.GetAddons())
+	})
+
+	t.Run("de-duplicates within a single call", func(t *testing.T) {
+		var as tax.Addons
+		as.AddAddons("mx-cfdi-v4", "es-verifactu-v1", "mx-cfdi-v4")
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "es-verifactu-v1"}, as.GetAddons())
+	})
+
+	t.Run("no keys is a no-op", func(t *testing.T) {
+		as := tax.WithAddons("mx-cfdi-v4")
+		as.AddAddons()
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, as.GetAddons())
+	})
+
+	t.Run("nil receiver is safe", func(t *testing.T) {
+		var as *tax.Addons
+		assert.NotPanics(t, func() { as.AddAddons("mx-cfdi-v4") })
 	})
 }
 

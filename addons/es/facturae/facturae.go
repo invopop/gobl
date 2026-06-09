@@ -2,7 +2,6 @@
 package facturae
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/rules"
@@ -37,15 +36,7 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Spain FacturaE",
 		},
 		Extensions:  extensions,
-		Normalizer:  normalize,
 		Scenarios:   scenarios,
 		Corrections: invoiceCorrectionDefinitions,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
 	}
 }

@@ -6,12 +6,19 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Canada.
+const CountryCode = "CA"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // Tax categories specific for Canada.
@@ -23,7 +30,7 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "CA",
+		Country:   CountryCode,
 		Currency:  currency.CAD,
 		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{
@@ -49,8 +56,7 @@ func New() *tax.RegimeDef {
 				and debit notes for invoice corrections.
 			`),
 		},
-		TimeZone:   "America/Toronto", // Toronto
-		Normalizer: Normalize,
+		TimeZone: "America/Toronto", // Toronto
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -61,13 +67,5 @@ func New() *tax.RegimeDef {
 			},
 		},
 		Categories: taxCategories,
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }
