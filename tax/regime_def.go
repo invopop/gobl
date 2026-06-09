@@ -88,19 +88,6 @@ type RegimeDef struct {
 
 	// List of tax categories.
 	Categories []*CategoryDef `json:"categories" jsonschema:"title=Categories"`
-
-	// Normalizer is used to perform regime specific normalizations on data,
-	// that might need to take place such as with tax codes and removing white-space.
-	Normalizer Normalizer `json:"-"`
-}
-
-// Normalizers returns the normalizers for this regime, if any,
-// handling any potential for nil pointers.
-func (r *RegimeDef) Normalizers() Normalizers {
-	if r == nil || r.Normalizer == nil {
-		return nil
-	}
-	return Normalizers{r.Normalizer}
 }
 
 // Code provides a unique code for this tax regime based on the country.
@@ -131,17 +118,6 @@ func (r *RegimeDef) GetRoundingRule() cbc.Key {
 		return r.CalculatorRoundingRule
 	}
 	return RoundingRulePrecise
-}
-
-// NormalizeObject performs any regime specific normalizations on the provided
-// object.
-func (r *RegimeDef) NormalizeObject(obj interface{}) {
-	if r == nil {
-		return
-	}
-	if r.Normalizer != nil {
-		r.Normalizer(obj)
-	}
 }
 
 // CurrencyDef provides the currency definition object for the region.

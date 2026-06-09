@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -16,19 +17,17 @@ import (
 )
 
 func TestLineNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-	require.NotNil(t, addon)
 
 	t.Run("nil line", func(t *testing.T) {
 		assert.NotPanics(t, func() {
 			var line *bill.Line
-			addon.Normalizer(line)
+			norm.Normalize(line, tax.AddonContext(saft.V1))
 		})
 	})
 
 	t.Run("line with no taxes", func(t *testing.T) {
 		line := new(bill.Line)
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		assert.Nil(t, line.Notes)
 	})
 
@@ -36,7 +35,7 @@ func TestLineNormalization(t *testing.T) {
 		line := &bill.Line{
 			Taxes: tax.Set{nil},
 		}
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		assert.Nil(t, line.Notes)
 	})
 
@@ -51,7 +50,7 @@ func TestLineNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		assert.Nil(t, line.Notes)
 	})
 
@@ -67,7 +66,7 @@ func TestLineNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		require.Len(t, line.Notes, 1)
 
 		note := line.Notes[0]
@@ -95,7 +94,7 @@ func TestLineNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		require.Len(t, line.Notes, 2)
 
 		// The existing note is preserved
@@ -129,7 +128,7 @@ func TestLineNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		require.Len(t, line.Notes, 1) // Should not add duplicate
 
 		note := line.Notes[0]
@@ -149,7 +148,7 @@ func TestLineNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(saft.V1))
 		assert.Nil(t, line.Notes) // Should not add note for invalid code
 	})
 }

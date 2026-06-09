@@ -30,22 +30,6 @@ type Name struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize will try to normalize the name data.
-func (n *Name) Normalize() {
-	if n == nil {
-		return
-	}
-
-	uuid.Normalize(&n.UUID)
-	n.Alias = cbc.NormalizeString(n.Alias)
-	n.Prefix = cbc.NormalizeString(n.Prefix)
-	n.Given = cbc.NormalizeString(n.Given)
-	n.Middle = cbc.NormalizeString(n.Middle)
-	n.Surname = cbc.NormalizeString(n.Surname)
-	n.Surname2 = cbc.NormalizeString(n.Surname2)
-	n.Suffix = cbc.NormalizeString(n.Suffix)
-}
-
 func nameRules() *rules.Set {
 	return rules.For(new(Name),
 		rules.When(is.Expr(`Surname == ""`),
@@ -59,4 +43,15 @@ func nameRules() *rules.Set {
 			),
 		),
 	)
+}
+
+func normalizeName(n *Name) {
+	uuid.Normalize(&n.UUID)
+	n.Alias = cbc.NormalizeString(n.Alias)
+	n.Prefix = cbc.NormalizeString(n.Prefix)
+	n.Given = cbc.NormalizeString(n.Given)
+	n.Middle = cbc.NormalizeString(n.Middle)
+	n.Surname = cbc.NormalizeString(n.Surname)
+	n.Surname2 = cbc.NormalizeString(n.Surname2)
+	n.Suffix = cbc.NormalizeString(n.Suffix)
 }

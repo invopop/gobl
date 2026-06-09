@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/ar/arca"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/regimes/ar"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -13,12 +14,11 @@ import (
 )
 
 func TestNormalizeTaxCombo(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
 
 	t.Run("nil tax combo does not panic", func(t *testing.T) {
 		var tc *tax.Combo
 		assert.NotPanics(t, func() {
-			ad.Normalizer(tc)
+			norm.Normalize(tc, tax.AddonContext(arca.V4))
 		})
 	})
 
@@ -27,7 +27,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyZero,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Equal(t, "3", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
@@ -36,7 +36,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateReduced,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Equal(t, "4", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
@@ -45,7 +45,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
@@ -54,7 +54,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     ar.RateIncreased,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", tc.Ext.Get(arca.ExtKeyVATRate).String())
 	})
 
@@ -63,7 +63,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateSpecial,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Empty(t, tc.Ext.Get(arca.ExtKeyVATRate))
 	})
 
@@ -75,7 +75,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 				"custom-key": "custom-value",
 			}),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
 		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
 		assert.Equal(t, "custom-value", tc.Ext.Get("custom-key").String())
 	})

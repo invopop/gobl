@@ -4,21 +4,24 @@ package pl
 import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Poland.
+const CountryCode = "PL"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("pl", rules.GOBL.Add("PL"),
+	rules.Register("pl", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
 	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
-
-// CountryCode is the tax country code for Poland.
-const CountryCode l10n.TaxCountryCode = "PL"
 
 // New instantiates a new Polish regime.
 func New() *tax.RegimeDef {
@@ -50,15 +53,6 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone:   "Europe/Warsaw",
-		Normalizer: Normalize,
 		Categories: taxCategories, // tax_categories.go
-	}
-}
-
-// Normalize will perform any regime specific normalizations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }

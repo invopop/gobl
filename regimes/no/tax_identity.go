@@ -30,9 +30,6 @@ func taxIdentityRules() *rules.Set {
 // removes the "MVA" suffix common in Norwegian VAT numbers
 // (e.g. "NO 923 456 783 MVA").
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID == nil {
-		return
-	}
 	tax.NormalizeIdentity(tID)
 	tID.Code = cbc.Code(strings.TrimSuffix(string(tID.Code), "MVA"))
 }

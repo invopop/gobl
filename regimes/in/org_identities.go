@@ -30,9 +30,6 @@ var (
 )
 
 func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil {
-		return
-	}
 	switch id.Type {
 	case IdentityTypePAN:
 		id.Code = cbc.NormalizeAlphanumericalCode(id.Code)

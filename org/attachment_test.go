@@ -3,6 +3,7 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			URL:         "  https://example.com/doc.pdf  ",
 			MIME:        "  application/pdf  ",
 		}
-		a.Normalize()
+		norm.Normalize(a)
 
 		assert.Equal(t, "ABC", a.Code.String())
 		assert.Equal(t, "test.txt", a.Name)
@@ -30,7 +31,7 @@ func TestAttachmentNormalize(t *testing.T) {
 	t.Run("nil receiver no panic", func(t *testing.T) {
 		var a *org.Attachment
 		assert.NotPanics(t, func() {
-			a.Normalize()
+			norm.Normalize(a)
 		})
 	})
 
@@ -41,7 +42,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			Description: "   ",
 			MIME:        "   ",
 		}
-		a.Normalize()
+		norm.Normalize(a)
 		assert.Equal(t, "name", a.Name)
 		assert.Equal(t, "", a.URL)
 		assert.Equal(t, "", a.Description)

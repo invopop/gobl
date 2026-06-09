@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/schema"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
@@ -46,26 +45,6 @@ type Address struct {
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
-// Normalize will perform basic normalization of the address's data.
-func (a *Address) Normalize(normalizers tax.Normalizers) {
-	if a == nil {
-		return
-	}
-	uuid.Normalize(&a.UUID)
-	a.PostOfficeBox = cbc.NormalizeString(a.PostOfficeBox)
-	a.Number = cbc.NormalizeString(a.Number)
-	a.Floor = cbc.NormalizeString(a.Floor)
-	a.Block = cbc.NormalizeString(a.Block)
-	a.Door = cbc.NormalizeString(a.Door)
-	a.Street = cbc.NormalizeString(a.Street)
-	a.StreetExtra = cbc.NormalizeString(a.StreetExtra)
-	a.Locality = cbc.NormalizeString(a.Locality)
-	a.Region = cbc.NormalizeString(a.Region)
-	a.State = cbc.NormalizeAlphanumericalCode(a.State)
-	a.Code = cbc.NormalizeCode(a.Code)
-	normalizers.Each(a)
 }
 
 // JSONSchemaExtend adds extra details to the Address schema.
@@ -126,4 +105,18 @@ func (a *Address) numberFirst() bool {
 	default:
 		return false
 	}
+}
+
+func normalizeAddress(a *Address) {
+	uuid.Normalize(&a.UUID)
+	a.PostOfficeBox = cbc.NormalizeString(a.PostOfficeBox)
+	a.Number = cbc.NormalizeString(a.Number)
+	a.Floor = cbc.NormalizeString(a.Floor)
+	a.Block = cbc.NormalizeString(a.Block)
+	a.Door = cbc.NormalizeString(a.Door)
+	a.Street = cbc.NormalizeString(a.Street)
+	a.StreetExtra = cbc.NormalizeString(a.StreetExtra)
+	a.Locality = cbc.NormalizeString(a.Locality)
+	a.Region = cbc.NormalizeString(a.Region)
+	a.State = cbc.NormalizeAlphanumericalCode(a.State)
 }

@@ -48,7 +48,7 @@ func orgIdentityRules() *rules.Set {
 
 // normalizeOrgIdentity strips non-numeric characters from the organization number.
 func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil || id.Type != IdentityTypeOrgNr {
+	if id.Type != IdentityTypeOrgNr {
 		return
 	}
 	id.Code = cbc.NormalizeNumericalCode(id.Code)

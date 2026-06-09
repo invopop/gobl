@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -16,12 +17,11 @@ func TestPaymentMeansExtensions(t *testing.T) {
 }
 
 func TestNormalizePayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(cfdi.V4)
 
 	t.Run("nil", func(t *testing.T) {
 		var instr *pay.Instructions
 		assert.NotPanics(t, func() {
-			ad.Normalizer(instr)
+			norm.Normalize(instr, tax.AddonContext(cfdi.V4))
 		})
 	})
 
@@ -29,18 +29,17 @@ func TestNormalizePayInstructions(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyOnline.With(cfdi.MeansKeyWallet),
 		}
-		ad.Normalizer(instr)
+		norm.Normalize(instr, tax.AddonContext(cfdi.V4))
 		assert.Equal(t, "05", instr.Ext.Get(cfdi.ExtKeyPaymentMeans).String())
 	})
 }
 
 func TestNormalizePayAdvance(t *testing.T) {
-	ad := tax.AddonForKey(cfdi.V4)
 
 	t.Run("nil", func(t *testing.T) {
 		var adv *pay.Record
 		assert.NotPanics(t, func() {
-			ad.Normalizer(adv)
+			norm.Normalize(adv, tax.AddonContext(cfdi.V4))
 		})
 	})
 
@@ -48,7 +47,7 @@ func TestNormalizePayAdvance(t *testing.T) {
 		adv := &pay.Record{
 			Key: pay.MeansKeyOnline.With(cfdi.MeansKeyWallet),
 		}
-		ad.Normalizer(adv)
+		norm.Normalize(adv, tax.AddonContext(cfdi.V4))
 		assert.Equal(t, "05", adv.Ext.Get(cfdi.ExtKeyPaymentMeans).String())
 	})
 }

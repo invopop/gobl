@@ -7,20 +7,27 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 // CountryCode is the tax country code for Norway.
-const CountryCode l10n.TaxCountryCode = "NO"
+const CountryCode = "NO"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("no", rules.GOBL.Add("NO"),
+	rules.Register("no", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
 		orgIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeOrgIdentity),
 	)
 }
 
@@ -57,16 +64,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Normalizer: Normalize,
-	}
-}
-
-// Normalize performs any regime-specific normalizations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
 	}
 }

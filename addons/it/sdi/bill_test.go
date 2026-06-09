@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -138,18 +139,17 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func TestInvoiceNormalization(t *testing.T) {
-	ad := tax.AddonForKey(sdi.V1)
 
 	t.Run("supplier fiscal regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		assert.Equal(t, "RF01", inv.Supplier.Ext.Get(sdi.ExtKeyFiscalRegime).String())
 	})
 
 	t.Run("strip +39 from italian supplier telephone", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		require.Len(t, inv.Supplier.Telephones, 1)
 		assert.Equal(t, "333123456", inv.Supplier.Telephones[0].Number)
 	})
@@ -158,7 +158,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID.Country = "FR"
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		require.Len(t, inv.Supplier.Telephones, 1)
 		assert.Equal(t, "+39333123456", inv.Supplier.Telephones[0].Number)
 	})
@@ -166,14 +166,14 @@ func TestInvoiceNormalization(t *testing.T) {
 	t.Run("no telephones nothing happens", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = nil
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		assert.Nil(t, inv.Supplier.Telephones)
 	})
 
 	t.Run("italian supplier telephone without +39 prefix not normalized", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Telephones = []*org.Telephone{{Number: "333123456"}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		require.Len(t, inv.Supplier.Telephones, 1)
 		assert.Equal(t, "333123456", inv.Supplier.Telephones[0].Number)
 	})
@@ -215,10 +215,9 @@ func TestSupplierValidation(t *testing.T) {
 	t.Run("missing supplier", func(t *testing.T) {
 		// Verify normalizer doesn't panic with nil supplier
 		inv := testInvoiceStandard(t)
-		ad := tax.AddonForKey(sdi.V1)
 		inv.Supplier = nil
 		assert.NotPanics(t, func() {
-			ad.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(sdi.V1))
 		})
 	})
 

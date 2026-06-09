@@ -86,12 +86,7 @@ func (t *Tax) HasExt(key cbc.Key) bool {
 	return t.Ext.Has(key)
 }
 
-// Normalize performs normalization on the tax and embedded objects using the
-// provided list of normalizers.
-func (t *Tax) Normalize(normalizers tax.Normalizers) {
-	if t == nil {
-		return
-	}
+func normalizeBillTax(t *Tax) {
 	// migration for old rounding rules
 	switch t.Rounding {
 	case "sum-then-round":
@@ -99,9 +94,6 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	case "round-then-sum":
 		t.Rounding = tax.RoundingRuleCurrency
 	}
-	t.Ext = t.Ext.Clean()
-	tax.Normalize(normalizers, t.Notes)
-	normalizers.Each(t)
 }
 
 func taxRules() *rules.Set {

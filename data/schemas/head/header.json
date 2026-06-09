@@ -49,6 +49,14 @@
           "type": "string",
           "title": "Notes",
           "description": "Any information that may be relevant to other humans about this envelope"
+        },
+        "ignore": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Ignore",
+          "description": "Ignore lists fully-qualified validation fault codes to suppress when\nvalidating this envelope, e.g. \"GOBL-EU-EN16931-ORG-ITEM-01\". Intended\nfor format-conversion cases where a specific, known fault is acceptable.\nCovered by the envelope signature when sealed. NOTE: any code may be\nlisted, including structural envelope/header codes — use deliberately."
         }
       },
       "type": "object",

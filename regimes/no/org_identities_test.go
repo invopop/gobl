@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/no"
 	"github.com/invopop/gobl/rules"
@@ -27,20 +28,14 @@ func TestNormalizeOrgIdentity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Type: no.IdentityTypeOrgNr, Code: tt.input}
-			no.Normalize(id)
+			norm.Normalize(id, tax.RegimeContext(no.CountryCode))
 			assert.Equal(t, tt.expected, id.Code)
 		})
 	}
 
-	t.Run("nil identity", func(t *testing.T) {
-		assert.NotPanics(t, func() {
-			no.Normalize((*org.Identity)(nil))
-		})
-	})
-
 	t.Run("unknown type ignored", func(t *testing.T) {
 		id := &org.Identity{Type: "OTHER", Code: "123 456"}
-		no.Normalize(id)
+		norm.Normalize(id, tax.RegimeContext(no.CountryCode))
 		assert.Equal(t, cbc.Code("123 456"), id.Code)
 	})
 }
