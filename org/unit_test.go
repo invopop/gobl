@@ -84,14 +84,14 @@ func TestNewUnitsUNECE(t *testing.T) {
 		{org.UnitWeek, "WEE"},
 		{org.UnitYear, "ANN"},
 		{org.UnitDecilitre, "DLT"},
-		{org.UnitKilolitre, cbc.CodeEmpty},
+		{org.UnitKilolitre, "K6"},
 		{org.UnitCentigram, "CGM"},
 		{org.UnitLinearMetre, "LM"},
 		{org.UnitLinearFoot, "LF"},
 		{org.UnitFlatFee, cbc.CodeEmpty},
-		{org.UnitBlock, cbc.CodeEmpty},
-		{org.UnitPacket, "PA"},
-		{org.UnitBundle, "BE"},
+		{org.UnitBlock, "XOK"},
+		{org.UnitPacket, "XPA"},
+		{org.UnitBundle, "XBE"},
 	}
 
 	for _, tt := range tests {

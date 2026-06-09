@@ -169,7 +169,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitCentilitre, "Centilitres", "", "CLT"},
 	{UnitDecilitre, "Decilitres", "", "DLT"},
 	{UnitLitre, "Litres", "", "LTR"},
-	{UnitKilolitre, "Kilolitres", "", ""},
+	{UnitKilolitre, "Kilolitres", "", "K6"},
 	{UnitWatt, "Watts", "", "WTT"},
 	{UnitKilowatt, "Kilowatts", "", "KWT"},
 	{UnitKilowattHour, "Kilowatt Hours", "", "KWH"},
@@ -220,10 +220,10 @@ var UnitDefinitions = []DefUnit{
 	{UnitSixPack, "Six Packs", "", ""},    // non-standard (src: ES)
 	{UnitCanister, "Canisters", "", "XCI"},
 	{UnitPackage, "Packages", "Standard packaging unit.", "XPK"},
-	{UnitPacket, "Packets", "", "PA"},
+	{UnitPacket, "Packets", "", "XPA"},
 	{UnitBunch, "Bunches", "", "XBH"},
-	{UnitBundle, "Bundles", "", "BE"},
-	{UnitBlock, "Blocks", "", ""},
+	{UnitBundle, "Bundles", "", "XBE"},
+	{UnitBlock, "Blocks", "", "XOK"},
 	{UnitTetraBrik, "Tetra-Briks", "", ""}, // non-standard (src: ES)
 	{UnitPallet, "Pallets", "", "XPX"},
 	{UnitReel, "Reels", "", "XRL"},

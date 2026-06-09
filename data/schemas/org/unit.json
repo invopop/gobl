@@ -10,6 +10,10 @@
           "title": "Milligrams"
         },
         {
+          "const": "cg",
+          "title": "Centigrams"
+        },
+        {
           "const": "g",
           "title": "Metric grams"
         },
@@ -39,6 +43,11 @@
           "title": "Metres"
         },
         {
+          "const": "lm",
+          "title": "Linear metres",
+          "description": "A unit of length defining the number of metres of a linear item."
+        },
+        {
           "const": "km",
           "title": "Kilometers"
         },
@@ -49,6 +58,11 @@
         {
           "const": "ft",
           "title": "Feet"
+        },
+        {
+          "const": "lft",
+          "title": "Linear feet",
+          "description": "A unit of length defining the number of feet of a linear item."
         },
         {
           "const": "mm2",
@@ -101,8 +115,16 @@
           "title": "Centilitres"
         },
         {
+          "const": "dl",
+          "title": "Decilitres"
+        },
+        {
           "const": "l",
           "title": "Litres"
+        },
+        {
+          "const": "kl",
+          "title": "Kilolitres"
         },
         {
           "const": "w",
@@ -122,9 +144,19 @@
           "description": "A unit of quantity expressed as a rate for usage of a facility or service."
         },
         {
+          "const": "yr",
+          "title": "Years",
+          "description": "A unit of time equal to twelve months."
+        },
+        {
           "const": "mon",
           "title": "Months",
           "description": "Unit of time equal to 1/12 of a year of 365,25 days."
+        },
+        {
+          "const": "wk",
+          "title": "Weeks",
+          "description": "A unit of time equal to seven days."
         },
         {
           "const": "day",
@@ -218,6 +250,11 @@
           "description": "A single generic unit of a service or product."
         },
         {
+          "const": "ff",
+          "title": "Flat Fee",
+          "description": "A fixed one-time charge."
+        },
+        {
           "const": "bag",
           "title": "Bags"
         },
@@ -301,8 +338,20 @@
           "description": "Standard packaging unit."
         },
         {
+          "const": "pkt",
+          "title": "Packets"
+        },
+        {
           "const": "bunch",
           "title": "Bunches"
+        },
+        {
+          "const": "bdl",
+          "title": "Bundles"
+        },
+        {
+          "const": "blk",
+          "title": "Blocks"
         },
         {
           "const": "tetrabrik",

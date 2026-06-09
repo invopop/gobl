@@ -457,7 +457,7 @@
         {
           "id": "GOBL-ORG-UNIT-01",
           "desc": "unit must be a valid value or UN/ECE code",
-          "tests": "matches ^[A-Z0-9]{2,3}$, or one of [mg, g, kg, t, mm, cm, dm, m, km, in, ft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, l, w, kw, kwh, rate, mon, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, bunch, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
+          "tests": "matches ^[A-Z0-9]{2,3}$, or one of [mg, cg, g, kg, t, mm, cm, dm, m, lm, km, in, ft, lft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, dl, l, kl, w, kw, kwh, rate, yr, mon, wk, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, ff, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, pkt, bunch, bdl, blk, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
         }
       ]
     },
