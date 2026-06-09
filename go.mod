@@ -14,6 +14,7 @@ require (
 	github.com/invopop/yaml v0.3.1
 	github.com/magefile/mage v1.15.0
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/net v0.29.0
 	golang.org/x/text v0.34.0
 )
 

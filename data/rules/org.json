@@ -152,6 +152,22 @@
       ]
     },
     {
+      "id": "GOBL-ORG-ENDPOINT",
+      "object": "org.Endpoint",
+      "subsets": [
+        {
+          "field": "uri",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ENDPOINT-01",
+              "desc": "endpoint uri is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-IDENTITY",
       "object": "org.Identity",
       "assert": [

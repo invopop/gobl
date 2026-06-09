@@ -56,6 +56,7 @@ func init() {
 		norm.For(normalizeOrgItem),
 		norm.For(normalizeOrgIdentity),
 		norm.For(normalizeOrgInbox),
+		norm.For(normalizeOrgParty),
 	)
 }
 

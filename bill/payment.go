@@ -317,6 +317,33 @@ func (pmt *Payment) calculate() error {
 	return nil
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this payment document. A `request` (supplier asks the
+// customer to pay) and `receipt` (supplier confirms funds received)
+// flow from supplier to customer; an `advice` (customer notifies the
+// supplier that payment has been made) flows the other way.
+func (pmt *Payment) FromEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Customer.FirstEndpoint()
+	}
+	return pmt.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this payment document. Inverse of FromEndpoint.
+func (pmt *Payment) ToEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Supplier.FirstEndpoint()
+	}
+	return pmt.Customer.FirstEndpoint()
+}
+
 // UnmarshalJSON migrates documents that use the legacy singular `method`
 // field (a [pay.Instructions]) into the [Payment.Methods] slice.
 func (pmt *Payment) UnmarshalJSON(data []byte) error {
