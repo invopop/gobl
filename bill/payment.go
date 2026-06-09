@@ -3,11 +3,13 @@ package bill
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -72,6 +74,22 @@ var PaymentTypes = []*cbc.Definition{
 
 var isValidPaymentType = cbc.InKeyDefs(PaymentTypes)
 
+// PaymentTypeIn returns a test that passes when the Payment's Type is
+// one of the provided values. Intended as a guard inside rules.When
+// when an addon needs per-type rule branches.
+func PaymentTypeIn(types ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("payment type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
+		func(obj any) bool {
+			pmt, ok := obj.(*Payment)
+			if !ok || pmt == nil {
+				return false
+			}
+			return pmt.Type.In(types...)
+		},
+	)
+}
+
 // A Payment is used to link an invoice or invoices with a payment transaction.
 type Payment struct {
 	tax.Regime
@@ -114,16 +132,16 @@ type Payment struct {
 	// Legal entity that receives the payment if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 
+	// Ordering allows for additional information about the ordering process including references
+	// to other documents and alternative parties involved in the order-to-delivery process.
+	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
+
 	// List of documents that are being paid for.
 	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
 	// Methods describes how the payment was settled. At least one method is
 	// required; multiple may be present when the payment was split across
 	// means (for example, partly card + partly cash).
 	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
-
-	// Ordering allows for additional information about the ordering process including references
-	// to other documents and alternative parties involved in the order-to-delivery process.
-	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
 	// Total amount to be paid in this payment, either positive or negative according to the
 	// line types and totals. Calculated automatically.
@@ -144,6 +162,12 @@ type Payment struct {
 // or not.
 func (pmt *Payment) CanSign() bool {
 	return !pmt.Code.IsEmpty()
+}
+
+func normalizePayment(pmt *Payment) {
+	if pmt.Type == cbc.KeyEmpty {
+		pmt.Type = PaymentTypeReceipt
+	}
 }
 
 func paymentRules() *rules.Set {
@@ -220,40 +244,8 @@ func (pmt *Payment) Calculate() error {
 	if pmt.Regime.IsEmpty() {
 		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
 	}
-	pmt.Normalize(pmt.normalizers())
+	norm.Normalize(pmt)
 	return pmt.calculate()
-}
-
-// Normalize is run as part of the Calculate method to ensure that the invoice
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
-	if pmt.Type == cbc.KeyEmpty {
-		pmt.Type = PaymentTypeReceipt
-	}
-	pmt.Series = cbc.NormalizeCode(pmt.Series)
-	pmt.Code = cbc.NormalizeCode(pmt.Code)
-
-	tax.Normalize(normalizers, pmt.Methods)
-	tax.Normalize(normalizers, pmt.Supplier)
-	tax.Normalize(normalizers, pmt.Customer)
-	tax.Normalize(normalizers, pmt.Preceding)
-	tax.Normalize(normalizers, pmt.Lines)
-	tax.Normalize(normalizers, pmt.Ordering)
-	tax.Normalize(normalizers, pmt.Notes)
-
-	normalizers.Each(pmt)
-}
-
-func (pmt *Payment) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := pmt.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range pmt.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 func (pmt *Payment) calculate() error {

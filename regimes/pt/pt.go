@@ -6,23 +6,31 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Portugal.
+const CountryCode = "PT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("pt", rules.GOBL.Add("PT"),
+	rules.Register("pt", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxComboRules(),
 		taxIdentityRules(),
 	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(migrateInvoiceRates), // *bill.Invoice
+		norm.For(normalizeTaxCombo),   // *tax.Combo
+	)
 }
-
-// CountryCode is the tax country code for Portugal.
-const CountryCode l10n.TaxCountryCode = "PT"
 
 // Custom keys used typically in meta information
 const (
@@ -76,7 +84,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
-		Normalizer: Normalize,
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
@@ -90,17 +97,5 @@ func New() *tax.RegimeDef {
 			},
 		},
 		Categories: taxCategories,
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		migrateInvoiceRates(obj)
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

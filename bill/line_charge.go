@@ -38,14 +38,6 @@ type LineCharge struct {
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize performs normalization on the charge and embedded objects using the
-// provided list of normalizers.
-func (lc *LineCharge) Normalize(normalizers tax.Normalizers) {
-	lc.Code = cbc.NormalizeCode(lc.Code)
-	lc.Ext = lc.Ext.Clean()
-	normalizers.Each(lc)
-}
-
 func lineChargeRules() *rules.Set {
 	return rules.For(new(LineCharge),
 		rules.When(is.Expr("Base != nil"),

@@ -66,7 +66,3 @@ func billInvoiceRules() *rules.Set {
 		),
 	)
 }
-
-func normalizeInvoice(_ *bill.Invoice) {
-	// todo
-}

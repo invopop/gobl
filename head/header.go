@@ -33,6 +33,22 @@ type Header struct {
 
 	// Any information that may be relevant to other humans about this envelope
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Ignore lists fully-qualified validation fault codes to suppress when
+	// validating this envelope, e.g. "GOBL-EU-EN16931-ORG-ITEM-01". Intended
+	// for format-conversion cases where a specific, known fault is acceptable.
+	// Covered by the envelope signature when sealed. NOTE: any code may be
+	// listed, including structural envelope/header codes — use deliberately.
+	Ignore []rules.Code `json:"ignore,omitempty" jsonschema:"title=Ignore"`
+}
+
+// RulesContext injects this header's Ignore codes into the validation context
+// so that matching faults are dropped from the result.
+func (h *Header) RulesContext() rules.WithContext {
+	if h == nil || len(h.Ignore) == 0 {
+		return func(*rules.Context) {}
+	}
+	return rules.WithIgnore(h.Ignore...)
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.

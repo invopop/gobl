@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -15,18 +16,17 @@ import (
 )
 
 func TestOrgNoteNormalize(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("accepts nil", func(t *testing.T) {
 		var n *org.Note
 		assert.NotPanics(t, func() {
-			ad.Normalizer(n)
+			norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		})
 	})
 
 	t.Run("accepts empty", func(t *testing.T) {
 		n := &org.Note{}
 		assert.NotPanics(t, func() {
-			ad.Normalizer(n)
+			norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		})
 	})
 
@@ -36,24 +36,23 @@ func TestOrgNoteNormalize(t *testing.T) {
 			Text: "This is a general note test",
 		}
 		assert.NotPanics(t, func() {
-			ad.Normalizer(n)
+			norm.Normalize(n, tax.AddonContext(en16931.V2017))
 		})
 		assert.Equal(t, "AAI", n.Ext.Get(untdid.ExtKeyTextSubject).String())
 	})
 }
 
 func TestOrgItemNormalize(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("accepts nil", func(t *testing.T) {
 		var item *org.Item
 		assert.NotPanics(t, func() {
-			ad.Normalizer(item)
+			norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		})
 	})
 
 	t.Run("sets default", func(t *testing.T) {
 		item := &org.Item{}
-		ad.Normalizer(item)
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitOne, item.Unit)
 	})
 
@@ -61,23 +60,22 @@ func TestOrgItemNormalize(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
 		}
-		ad.Normalizer(item)
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitHour, item.Unit)
 	})
 }
 
 func TestOrgIdentityNormalize(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("accepts nil", func(t *testing.T) {
 		var id *org.Identity
 		assert.NotPanics(t, func() {
-			ad.Normalizer(id)
+			norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		})
 	})
 	t.Run("accepts empty", func(t *testing.T) {
 		id := &org.Identity{}
 		assert.NotPanics(t, func() {
-			ad.Normalizer(id)
+			norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		})
 	})
 	t.Run("normalizes key", func(t *testing.T) {
@@ -85,7 +83,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 			Key:  "gln",
 			Code: "1234567890123",
 		}
-		ad.Normalizer(id)
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "gln", id.Key.String())
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
@@ -98,7 +96,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 				iso.ExtKeySchemeID: "9999",
 			}),
 		}
-		ad.Normalizer(id)
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "gln", id.Key.String())
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
@@ -108,7 +106,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 			Type: "SIREN",
 			Code: "1234567890123",
 		}
-		ad.Normalizer(id)
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "SIREN", id.Type.String())
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0002", id.Ext.Get(iso.ExtKeySchemeID).String())
@@ -121,7 +119,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 				iso.ExtKeySchemeID: "9999",
 			}),
 		}
-		ad.Normalizer(id)
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "SIREN", id.Type.String())
 		assert.Equal(t, "1234567890123", id.Code.String())
 		assert.Equal(t, "0002", id.Ext.Get(iso.ExtKeySchemeID).String())
@@ -129,25 +127,24 @@ func TestOrgIdentityNormalize(t *testing.T) {
 }
 
 func TestOrgInboxNormalize(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 
 	t.Run("accepts nil", func(t *testing.T) {
 		var i *org.Inbox
 		assert.NotPanics(t, func() {
-			ad.Normalizer(i)
+			norm.Normalize(i, tax.AddonContext(en16931.V2017))
 		})
 	})
 	t.Run("accepts empty", func(t *testing.T) {
 		i := &org.Inbox{}
 		assert.NotPanics(t, func() {
-			ad.Normalizer(i)
+			norm.Normalize(i, tax.AddonContext(en16931.V2017))
 		})
 	})
 	t.Run("normalizes scheme and code", func(t *testing.T) {
 		i := &org.Inbox{
 			Code: "0004:BAR",
 		}
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "0004", i.Scheme.String())
 		assert.Equal(t, "BAR", i.Code.String())
 	})

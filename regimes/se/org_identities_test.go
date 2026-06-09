@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/se"
 	"github.com/invopop/gobl/rules"
@@ -51,7 +52,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			id := &org.Identity{Type: tt.typeCode, Code: tt.input}
-			se.Normalize(id)
+			norm.Normalize(id, tax.RegimeContext("SE"))
 			assert.Equal(t, tt.expected, id.Code)
 		})
 	}

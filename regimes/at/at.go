@@ -6,20 +6,27 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Austria.
+const CountryCode = "AT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("at", rules.GOBL.Add("AT"), taxIdentityRules())
+	rules.Register("at", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "AT",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -44,8 +51,7 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.erechnung.gv.at/erb",
 			},
 		},
-		TimeZone:   "Europe/Vienna",
-		Normalizer: Normalize,
+		TimeZone: "Europe/Vienna",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
@@ -58,13 +64,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }

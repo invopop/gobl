@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "450f5a8b5af4bbe6a24317341c5b0264993315e1280ff9ad17f0653bd9737fde"
+			"val": "be4ee6903e80675fb357a3855c6e029fa308bd1d9f68e476f6f6c1d6e61ad9bb"
 		}
 	},
 	"doc": {
@@ -26,7 +26,7 @@
 		"lines": [
 			{
 				"index": 1,
-				"key": "shutdown",
+				"key": "other",
 				"description": "System was shutdown"
 			}
 		]

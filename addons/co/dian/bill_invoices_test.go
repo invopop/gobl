@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -230,12 +231,11 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 }
 
 func TestNormalizeInvoice(t *testing.T) {
-	addon := tax.AddonForKey(dian.V2)
 
 	t.Run("handles nil invoice", func(t *testing.T) {
 		var inv *bill.Invoice
 		assert.NotPanics(t, func() {
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(dian.V2))
 		})
 		assert.Nil(t, inv)
 	})
@@ -245,7 +245,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		// Remove existing tax responsibility
 		inv.Supplier.Ext = inv.Supplier.Ext.Delete(dian.ExtKeyFiscalResponsibility)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Supplier.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -255,7 +255,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		// Remove existing tax responsibility
 		inv.Customer.Ext = inv.Customer.Ext.Delete(dian.ExtKeyFiscalResponsibility)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Customer.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -265,7 +265,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		// Set a specific tax responsibility
 		inv.Supplier.Ext = inv.Supplier.Ext.Set(dian.ExtKeyFiscalResponsibility, "O-13")
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Equal(t, cbc.Code("O-13"), inv.Supplier.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -275,7 +275,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		// Set a specific tax responsibility
 		inv.Customer.Ext = inv.Customer.Ext.Set(dian.ExtKeyFiscalResponsibility, "O-47")
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Equal(t, cbc.Code("O-47"), inv.Customer.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -285,7 +285,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Supplier.TaxID.Country = "ES"
 		inv.Supplier.Ext = inv.Supplier.Ext.Delete(dian.ExtKeyFiscalResponsibility)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Empty(t, inv.Supplier.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -295,7 +295,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Customer.TaxID.Country = "ES"
 		inv.Customer.Ext = inv.Customer.Ext.Delete(dian.ExtKeyFiscalResponsibility)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Empty(t, inv.Customer.Ext.Get(dian.ExtKeyFiscalResponsibility))
 	})
@@ -305,7 +305,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Supplier = nil
 
 		assert.NotPanics(t, func() {
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(dian.V2))
 		})
 	})
 
@@ -314,7 +314,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Customer = nil
 
 		assert.NotPanics(t, func() {
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(dian.V2))
 		})
 	})
 
@@ -323,7 +323,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv.Supplier.Ext = tax.Extensions{}
 		inv.Customer.Ext = tax.Extensions{}
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(dian.V2))
 
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Supplier.Ext.Get(dian.ExtKeyFiscalResponsibility))
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Customer.Ext.Get(dian.ExtKeyFiscalResponsibility))

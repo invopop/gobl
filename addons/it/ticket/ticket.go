@@ -3,10 +3,9 @@
 package ticket
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -42,6 +41,12 @@ func init() {
 		billInvoiceRules(),
 		taxComboRules(),
 	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeOrgItem),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 // This validation follows the rules of the Italian Agenzia delle Entrate
@@ -66,18 +71,6 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
-		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

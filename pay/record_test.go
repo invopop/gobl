@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -24,13 +25,13 @@ func TestRecordNormalize(t *testing.T) {
 			"random": "",
 		}),
 	}
-	a.Normalize(nil)
+	norm.Normalize(a)
 	assert.Empty(t, a.UUID)
 	assert.True(t, a.Ext.IsZero())
 
 	a = nil
 	assert.NotPanics(t, func() {
-		a.Normalize(nil)
+		norm.Normalize(a)
 	})
 
 }
