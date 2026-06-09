@@ -206,9 +206,6 @@ func CleanSubLines(sls []*SubLine) []*SubLine {
 }
 
 func normalizeLine(l *Line) {
-	if l == nil {
-		return
-	}
 	normalizeLineItemPrice(l)
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
@@ -217,9 +214,6 @@ func normalizeLine(l *Line) {
 }
 
 func normalizeSubLine(sl *SubLine) {
-	if sl == nil {
-		return
-	}
 	normalizeSubLineItemPrice(sl)
 	sl.Discounts = CleanLineDiscounts(sl.Discounts)
 	sl.Charges = CleanLineCharges(sl.Charges)

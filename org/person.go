@@ -43,9 +43,6 @@ func personRules() *rules.Set {
 }
 
 func normalizePerson(p *Person) {
-	if p == nil {
-		return
-	}
 	uuid.Normalize(&p.UUID)
 	p.Label = cbc.NormalizeString(p.Label)
 	p.Role = cbc.NormalizeString(p.Role)

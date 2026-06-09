@@ -247,9 +247,6 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 }
 
 func normalizeIdentity(i *Identity) {
-	if i == nil {
-		return
-	}
 	uuid.Normalize(&i.UUID)
 	i.Label = cbc.NormalizeString(i.Label)
 	i.Description = cbc.NormalizeString(i.Description)

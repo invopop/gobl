@@ -44,9 +44,6 @@ type Combo struct {
 // adjustments are applied separately by their registered normalizers, and the
 // extension map is cleaned by the global tax.Extensions normalizer.
 func normalizeCombo(c *Combo) {
-	if c == nil {
-		return
-	}
 
 	switch c.Category {
 	case CategoryVAT:

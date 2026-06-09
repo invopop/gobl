@@ -87,9 +87,6 @@ func AddInbox(in []*Inbox, i *Inbox) []*Inbox {
 }
 
 func normalizeInbox(i *Inbox) {
-	if i == nil {
-		return
-	}
 	uuid.Normalize(&i.UUID)
 	code := i.Code.String()
 	if is.EmailFormat.Check(code) {

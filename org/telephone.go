@@ -27,9 +27,6 @@ func telephoneRules() *rules.Set {
 }
 
 func normalizeTelephone(t *Telephone) {
-	if t == nil {
-		return
-	}
 	uuid.Normalize(&t.UUID)
 	t.Label = cbc.NormalizeString(t.Label)
 	t.Number = strings.TrimSpace(t.Number)

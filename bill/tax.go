@@ -87,9 +87,6 @@ func (t *Tax) HasExt(key cbc.Key) bool {
 }
 
 func normalizeBillTax(t *Tax) {
-	if t == nil {
-		return
-	}
 	// migration for old rounding rules
 	switch t.Rounding {
 	case "sum-then-round":

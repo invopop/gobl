@@ -105,9 +105,6 @@ type Charge struct {
 }
 
 func normalizeCharge(m *Charge) {
-	if m == nil {
-		return
-	}
 	m.Taxes = tax.CleanSet(m.Taxes)
 }
 

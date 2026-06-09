@@ -42,9 +42,6 @@ func registrationRules() *rules.Set {
 }
 
 func normalizeRegistration(r *Registration) {
-	if r == nil {
-		return
-	}
 	uuid.Normalize(&r.UUID)
 	r.Label = cbc.NormalizeString(r.Label)
 	r.Office = cbc.NormalizeString(r.Office)

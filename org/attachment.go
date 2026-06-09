@@ -75,9 +75,6 @@ func attachmentRules() *rules.Set {
 }
 
 func normalizeAttachment(a *Attachment) {
-	if a == nil {
-		return
-	}
 	uuid.Normalize(&a.UUID)
 	a.Name = cbc.NormalizeString(a.Name)
 	a.Description = cbc.NormalizeString(a.Description)

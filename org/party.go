@@ -64,9 +64,6 @@ func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
 }
 
 func normalizeParty(p *Party) {
-	if p == nil {
-		return
-	}
 	uuid.Normalize(&p.UUID)
 	p.Label = cbc.NormalizeString(p.Label)
 	p.Name = cbc.NormalizeString(p.Name)

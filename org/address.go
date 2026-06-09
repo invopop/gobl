@@ -108,9 +108,6 @@ func (a *Address) numberFirst() bool {
 }
 
 func normalizeAddress(a *Address) {
-	if a == nil {
-		return
-	}
 	uuid.Normalize(&a.UUID)
 	a.PostOfficeBox = cbc.NormalizeString(a.PostOfficeBox)
 	a.Number = cbc.NormalizeString(a.Number)

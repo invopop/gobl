@@ -310,9 +310,6 @@ func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 func normalizeNote(n *Note) {
-	if n == nil {
-		return
-	}
 	uuid.Normalize(&n.UUID)
 	n.Text = cbc.NormalizeString(n.Text)
 }

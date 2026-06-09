@@ -28,9 +28,6 @@ func emailRules() *rules.Set {
 }
 
 func normalizeEmail(e *Email) {
-	if e == nil {
-		return
-	}
 	uuid.Normalize(&e.UUID)
 	e.Label = cbc.NormalizeString(e.Label)
 	e.Address = cbc.NormalizeString(e.Address)

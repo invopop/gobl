@@ -46,9 +46,6 @@ func nameRules() *rules.Set {
 }
 
 func normalizeName(n *Name) {
-	if n == nil {
-		return
-	}
 	uuid.Normalize(&n.UUID)
 	n.Alias = cbc.NormalizeString(n.Alias)
 	n.Prefix = cbc.NormalizeString(n.Prefix)

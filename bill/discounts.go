@@ -121,9 +121,6 @@ type Discount struct {
 }
 
 func normalizeDiscount(m *Discount) {
-	if m == nil {
-		return
-	}
 	m.Taxes = tax.CleanSet(m.Taxes)
 }
 

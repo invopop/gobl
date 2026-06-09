@@ -27,9 +27,6 @@ func websiteRules() *rules.Set {
 }
 
 func normalizeWebsite(w *Website) {
-	if w == nil {
-		return
-	}
 	uuid.Normalize(&w.UUID)
 	w.Label = cbc.NormalizeString(w.Label)
 	w.Title = cbc.NormalizeString(w.Title)

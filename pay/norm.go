@@ -18,25 +18,16 @@ func init() {
 }
 
 func normalizeRecord(r *Record) {
-	if r == nil {
-		return
-	}
 	uuid.Normalize(&r.UUID)
 	r.Ref = cbc.NormalizeString(r.Ref)
 	r.Description = cbc.NormalizeString(r.Description)
 }
 
 func normalizeInstructions(i *Instructions) {
-	if i == nil {
-		return
-	}
 	i.Detail = cbc.NormalizeString(i.Detail)
 	i.Notes = cbc.NormalizeString(i.Notes)
 }
 
 func normalizeTerms(t *Terms) {
-	if t == nil {
-		return
-	}
 	t.Notes = cbc.NormalizeString(t.Notes)
 }

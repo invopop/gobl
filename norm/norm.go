@@ -39,7 +39,9 @@ type Set struct {
 // the function signature, so each normalizer targets exactly one type and no
 // type switch is required.
 //
-// The function receives a non-nil pointer to the value being normalized:
+// The function is always called with a non-nil pointer to the value being
+// normalized: the engine skips nil pointers, nil interfaces, and nil map
+// values while traversing, so normalizers do not need their own nil checks.
 //
 //	norm.For(func(inv *bill.Invoice) {
 //	    if inv.Type == cbc.KeyEmpty {
