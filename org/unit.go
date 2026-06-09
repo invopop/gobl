@@ -86,7 +86,6 @@ const (
 	UnitBaseBox          Unit = `basebox`
 	UnitBulkPack         Unit = `pk`
 	UnitOne              Unit = `one`
-	UnitFlatFee          Unit = `ff`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -196,7 +195,6 @@ var UnitDefinitions = []DefUnit{
 	{UnitBaseBox, "Base Boxes", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
 	{UnitBulkPack, "Bulk Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
 	{UnitOne, "One", "A single generic unit of a service or product.", "C62"},
-	{UnitFlatFee, "Flat Fee", "A fixed one-time charge.", ""},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21

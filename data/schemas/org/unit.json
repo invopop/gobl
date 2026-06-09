@@ -250,11 +250,6 @@
           "description": "A single generic unit of a service or product."
         },
         {
-          "const": "ff",
-          "title": "Flat Fee",
-          "description": "A fixed one-time charge."
-        },
-        {
           "const": "bag",
           "title": "Bags"
         },
