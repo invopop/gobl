@@ -45,7 +45,7 @@
         {
           "const": "lm",
           "title": "Linear metres",
-          "description": "A unit of length defining the number of metres of a linear item."
+          "description": "The running length in metres of a uniform-width product (e.g. carpet, fabric, cable), billed per metre regardless of width."
         },
         {
           "const": "km",
@@ -62,7 +62,7 @@
         {
           "const": "lft",
           "title": "Linear feet",
-          "description": "A unit of length defining the number of feet of a linear item."
+          "description": "The running length in feet of a uniform-width product (e.g. lumber, trim, cable), billed per foot regardless of width."
         },
         {
           "const": "mm2",
