@@ -191,3 +191,42 @@ func TestOrderJSONSchemaExtend(t *testing.T) {
 	})
 
 }
+
+func TestOrderFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	t.Run("purchase: customer→supplier", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypePurchase, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("sale: supplier→customer", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypeSale, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("quote: supplier→customer", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypeQuote, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("nil order is a no-op", func(t *testing.T) {
+		var ord *bill.Order
+		assert.Nil(t, ord.FromEndpoint())
+		assert.Nil(t, ord.ToEndpoint())
+	})
+}

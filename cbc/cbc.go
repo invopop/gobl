@@ -16,6 +16,7 @@ func init() {
 		Key(""),
 		Meta{},
 		Source{},
+		URI(""),
 	)
 	rules.Register(
 		"cbc",
@@ -25,5 +26,6 @@ func init() {
 		keyRules(),
 		definitionRules(),
 		sourceRules(),
+		uriRules(),
 	)
 }

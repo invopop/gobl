@@ -1450,6 +1450,62 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	return i
 }
 
+func TestInvoiceFromToEndpoint(t *testing.T) {
+	t.Run("supplier→customer by default", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+		require.NotNil(t, inv.FromEndpoint())
+		require.NotNil(t, inv.ToEndpoint())
+		assert.Equal(t, "gobl:supplier.example", inv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", inv.ToEndpoint().URI.String())
+	})
+
+	t.Run("self-billed inverts the direction", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+		inv.Tags.List = []cbc.Key{tax.TagSelfBilled}
+		assert.Equal(t, "gobl:customer.example", inv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", inv.ToEndpoint().URI.String())
+	})
+
+	t.Run("missing party returns nil", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+		}
+		assert.NotNil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint(), "no customer means no destination endpoint")
+	})
+
+	t.Run("party without endpoints returns nil", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{Name: "S"},
+			Customer: &org.Party{Name: "C"},
+		}
+		assert.Nil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint())
+	})
+
+	t.Run("nil invoice is a no-op", func(t *testing.T) {
+		var inv *bill.Invoice
+		assert.Nil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint())
+	})
+}
+
 func TestInvoiceJSONSchemaExtend(t *testing.T) {
 	eg := `{
 		"properties": {
