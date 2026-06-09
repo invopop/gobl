@@ -667,7 +667,7 @@ var extensions = []*cbc.Definition{
 								"cat": "VAT",
 								"key": "exempt",
 								"ext": {
-									"gr-mydata-exemption": "3"
+									"gr-mydata-exemption": "7"
 								}
 							}
 						],

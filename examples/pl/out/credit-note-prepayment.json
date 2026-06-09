@@ -1,0 +1,129 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c557c24fcc9a78d2a283f4ad8ff6a86a3578c4244313e7c1d032173bb4a0b7d5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v3"
+		],
+		"$tags": [
+			"partial"
+		],
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c9c",
+		"type": "credit-note",
+		"series": "KOR-ZAL",
+		"code": "001",
+		"issue_date": "2026-01-20",
+		"currency": "PLN",
+		"preceding": [
+			{
+				"type": "standard",
+				"issue_date": "2026-01-20",
+				"series": "ZAL",
+				"code": "001",
+				"reason": "Advance payment cancelled",
+				"stamps": [
+					{
+						"prv": "favat-ksef-number",
+						"val": "1234567890-20260120-XYZ98765-AB"
+					}
+				],
+				"ext": {
+					"pl-favat-effective-date": "2"
+				}
+			}
+		],
+		"tax": {
+			"ext": {
+				"pl-favat-invoice-type": "KOR_ZAL"
+			}
+		},
+		"supplier": {
+			"name": "Testowa Firma Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Główna 1",
+					"locality": "Warsaw",
+					"code": "00-001",
+					"country": "PL"
+				}
+			]
+		},
+		"customer": {
+			"name": "Klient Testowy Sp. z o.o.",
+			"tax_id": {
+				"country": "PL",
+				"code": "9876543210"
+			},
+			"addresses": [
+				{
+					"street": "ul. Testowa 10",
+					"locality": "Kraków",
+					"code": "30-001",
+					"country": "PL"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Advance Payment Refund",
+					"price": "5000.00"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pl-favat-tax-category": "1"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pl-favat-tax-category": "1"
+								},
+								"base": "5000.00",
+								"percent": "23.0%",
+								"amount": "1150.00"
+							}
+						],
+						"amount": "1150.00"
+					}
+				],
+				"sum": "1150.00"
+			},
+			"tax": "1150.00",
+			"total_with_tax": "6150.00",
+			"payable": "6150.00"
+		}
+	}
+}

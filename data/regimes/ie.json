@@ -4,6 +4,9 @@
     "en": "Ireland",
     "ga": "Éire"
   },
+  "description": {
+    "en": "Ireland's tax system is administered by the Revenue Commissioners (Na\nCoimisinéirí Ioncaim). As an EU member state, Ireland follows the EU VAT\nDirective with locally adapted rates.\n\nVAT applies at standard, reduced, second reduced, livestock, and zero rates.\nZero-rated supplies include food, children's clothing, oral medicines, and\nexports.\n\nBusinesses are identified by their VAT registration number in the format IE\nfollowed by 7 digits and 1-2 letters.\n\nIreland supports credit notes for invoice corrections. E-invoicing via\nPEPPOL is supported for B2G transactions."
+  },
   "time_zone": "Europe/Dublin",
   "country": "IE",
   "currency": "EUR",
@@ -16,9 +19,12 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "cat": "VAT",
+            "key": "reverse-charge",
             "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
           }
         }

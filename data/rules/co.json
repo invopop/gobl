@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-CO",
+  "package": "co",
+  "subsets": [
+    {
+      "id": "GOBL-CO-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [CO]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CO-TAX-IDENTITY-01",
+                      "desc": "invalid Colombian tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

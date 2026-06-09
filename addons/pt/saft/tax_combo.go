@@ -1,13 +1,15 @@
 package saft
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-var taxRateMap = tax.Extensions{
+var taxRateMap = map[cbc.Key]cbc.Code{
 	tax.RateReduced:      TaxRateReduced,
 	tax.RateIntermediate: TaxRateIntermediate,
 	tax.RateGeneral:      TaxRateNormal,
@@ -116,25 +118,48 @@ func prepareTaxComboRate(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(val any) error {
-	c, ok := val.(*tax.Combo)
-	if !ok {
-		return nil
-	}
-	switch c.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(c, validateVATExt(&c.Ext))
-	}
-	return nil
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(is.Func("is VAT", taxComboIsVAT),
+			rules.Field("ext",
+				rules.Assert("01", "region and tax rate are required",
+					tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
+				),
+				rules.Assert("02", "exemption is required when tax rate is exempt",
+					is.Func("exempt requires exemption", vatExtExemptRequiresExemption),
+				),
+			),
+		),
+	)
 }
 
-func validateVATExt(ext *tax.Extensions) *validation.FieldRules {
-	return validation.Field(ext,
-		tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
-		validation.When(
-			(*ext)[ExtKeyTaxRate] == TaxRateExempt,
-			tax.ExtensionsRequire(ExtKeyExemption),
+func rateTotalRules() *rules.Set {
+	return rules.For(new(tax.RateTotal),
+		rules.Field("ext",
+			rules.Assert("01", "region and tax rate are required",
+				tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
+			),
+			rules.Assert("02", "exemption is required when tax rate is exempt",
+				is.Func("exempt requires exemption", vatExtExemptRequiresExemption),
+			),
 		),
-		validation.Skip,
 	)
+}
+
+// taxComboIsVAT checks if the combo is a VAT category.
+func taxComboIsVAT(val any) bool {
+	c, ok := val.(*tax.Combo)
+	return ok && c != nil && c.Category == tax.CategoryVAT
+}
+
+// vatExtExemptRequiresExemption checks that when tax rate is exempt, the exemption is present.
+func vatExtExemptRequiresExemption(val any) bool {
+	ext, ok := tax.ExtensionsFromValue(val)
+	if !ok || ext.IsZero() {
+		return true
+	}
+	if ext.Get(ExtKeyTaxRate) != TaxRateExempt {
+		return true
+	}
+	return tax.ExtensionsRequire(ExtKeyExemption).Check(ext)
 }

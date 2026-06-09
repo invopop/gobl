@@ -33,12 +33,12 @@ customer:
   name: UNIVERSIDAD ROBOTICA ESPAÑOLA
   tax_id:
     country: MX
-    zone: "65000"
     code: URE180429TM6
   ext:
     mx-cfdi-fiscal-regime: "624"
     mx-cfdi-use: "G01"
-
+  addresses:
+    - code: "65000"
 lines:
   - quantity: "2"
     item:

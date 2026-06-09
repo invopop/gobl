@@ -38,4 +38,8 @@ func TestUnionMember(t *testing.T) {
 	assert.True(t, u.HasMemberOn(d1b, l10n.GB))
 	d2 := cal.MakeDate(2020, 2, 1) // sad times
 	assert.False(t, u.HasMemberOn(d2, l10n.GB))
+
+	// empty code should not match members with empty AltCode
+	assert.False(t, u.HasMember(l10n.Code("")))
+	assert.False(t, u.HasMemberOn(d1a, l10n.Code("")))
 }

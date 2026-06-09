@@ -1,15 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cbc/code",
-  "$ref": "#/$defs/Code",
+  "$ref": "#/$defs/cbc.Code",
   "$defs": {
-    "Code": {
+    "cbc.Code": {
       "type": "string",
       "maxLength": 64,
       "minLength": 1,
-      "pattern": "^[A-Za-z0-9]+([\\.\\-\\:/,_ ]?[A-Za-z0-9]+)*$",
+      "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f]([^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
       "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
+      "description": "Text identifier with a limit of 64 characters, no control characters, and\nno leading or trailing whitespace."
     }
   }
 }

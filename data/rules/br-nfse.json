@@ -1,0 +1,241 @@
+{
+  "id": "GOBL-BR-NFSE",
+  "package": "br-nfse",
+  "guard": "context: addon in [br-nfse-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-BR-NFSE-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "assert": [
+        {
+          "id": "GOBL-BR-NFSE-BILL-INVOICE-17",
+          "desc": "invoice must be in BRL or provide exchange rate for conversion",
+          "tests": "can convert to [BRL]"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "series",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-BILL-INVOICE-01",
+              "desc": "series is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "code",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-BILL-INVOICE-02",
+              "desc": "code must be a positive integer",
+              "tests": "matches ^[1-9][0-9]*$"
+            }
+          ]
+        },
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-BILL-INVOICE-03",
+              "desc": "supplier is required",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "tax_id",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFSE-BILL-INVOICE-04",
+                  "desc": "supplier tax ID is required",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFSE-BILL-INVOICE-05",
+                      "desc": "supplier tax ID code is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFSE-BILL-INVOICE-06",
+                  "desc": "supplier name is required",
+                  "tests": "present"
+                }
+              ]
+            },
+            {
+              "field": "addresses",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFSE-BILL-INVOICE-07",
+                  "desc": "supplier must have at least one address",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "each": true,
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFSE-BILL-INVOICE-08",
+                      "desc": "supplier address must not be empty",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "street",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFSE-BILL-INVOICE-09",
+                          "desc": "supplier address requires a street",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "num",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFSE-BILL-INVOICE-10",
+                          "desc": "supplier address requires a number",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "locality",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFSE-BILL-INVOICE-11",
+                          "desc": "supplier address requires a locality",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "state",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFSE-BILL-INVOICE-12",
+                          "desc": "supplier address requires a state",
+                          "tests": "present"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFSE-BILL-INVOICE-13",
+                          "desc": "supplier address requires a postal code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFSE-BILL-INVOICE-14",
+                  "desc": "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions",
+                  "tests": "ext require [br-ibge-municipality, br-nfse-simples, br-nfse-fiscal-incentive]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "charges",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-BILL-INVOICE-15",
+              "desc": "charges are not supported by NFS-e",
+              "tests": "empty"
+            }
+          ]
+        },
+        {
+          "field": "discounts",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-BILL-INVOICE-16",
+              "desc": "discounts are not supported by NFS-e",
+              "tests": "empty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFSE-BILL-LINE",
+      "object": "bill.Line",
+      "assert": [
+        {
+          "id": "GOBL-BR-NFSE-BILL-LINE-01",
+          "desc": "line taxes must include the ISS category",
+          "tests": "line has tax category ISS"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFSE-ORG-ITEM",
+      "object": "org.Item",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-BR-NFSE-ORG-ITEM-01",
+              "desc": "item requires 'br-nfse-service' extension",
+              "tests": "ext require [br-nfse-service]"
+            },
+            {
+              "id": "GOBL-BR-NFSE-ORG-ITEM-02",
+              "desc": "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
+              "tests": "ext require all or none of [br-nfse-operation, br-nfse-tax-status, br-nfse-tax-class]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFSE-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "ISS category",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFSE-TAX-COMBO-01",
+                  "desc": "ISS tax combo requires 'br-nfse-iss-liability' extension",
+                  "tests": "ext require [br-nfse-iss-liability]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

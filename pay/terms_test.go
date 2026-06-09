@@ -6,8 +6,10 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -17,20 +19,20 @@ import (
 func TestTermsValidation(t *testing.T) {
 	tm := new(pay.Terms)
 	tm.Key = cbc.Key("foo")
-	err := tm.Validate()
+	err := rules.Validate(tm)
 	assert.Error(t, err, "expected validation error")
 
 	tm.Key = cbc.Key("due_date")
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.Error(t, err, "expected validation error")
-	assert.Contains(t, err.Error(), "key: must be a valid value")
+	assert.Contains(t, err.Error(), "key must be valid")
 
 	tm.Key = pay.TermKeyAdvanced
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.NoError(t, err)
 
 	tm.Key = ""
-	err = tm.Validate()
+	err = rules.Validate(tm)
 	assert.NoError(t, err)
 
 	t.Run("with due dates and missing amount", func(t *testing.T) {
@@ -41,8 +43,8 @@ func TestTermsValidation(t *testing.T) {
 				Date: cal.NewDate(2021, 11, 10),
 			},
 		}
-		err := tm.Validate()
-		assert.ErrorContains(t, err, "due_dates: (0: (amount: must not be zero.).)")
+		err := rules.Validate(tm)
+		assert.ErrorContains(t, err, "amount must not be zero")
 	})
 }
 
@@ -63,32 +65,32 @@ func TestTermsNormalize(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		pt := &pay.Terms{
 			Key: pay.TermKeyUndefined,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
-			},
+			}),
 		}
-		pt.Normalize()
-		assert.Empty(t, pt.Ext)
+		norm.Normalize(pt)
+		assert.True(t, pt.Ext.IsZero())
 		assert.Equal(t, "undefined", pt.Key.String())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var pt *pay.Terms
 		assert.NotPanics(t, func() {
-			pt.Normalize()
+			norm.Normalize(pt)
 		})
 	})
 	t.Run("detail to notes", func(t *testing.T) {
 		pt := &pay.Terms{
 			Notes: "These are the terms details.",
 		}
-		pt.Normalize()
+		norm.Normalize(pt)
 		assert.Equal(t, "These are the terms details.", pt.Notes)
 	})
 	t.Run("keep notes", func(t *testing.T) {
 		pt := &pay.Terms{
 			Notes: "Existing notes.",
 		}
-		pt.Normalize()
+		norm.Normalize(pt)
 		assert.Equal(t, "Existing notes.", pt.Notes)
 	})
 }

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/unit",
-  "$ref": "#/$defs/Unit",
+  "$ref": "#/$defs/org.Unit",
   "$defs": {
-    "Unit": {
+    "org.Unit": {
       "oneOf": [
         {
           "const": "mg",

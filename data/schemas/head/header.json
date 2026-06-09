@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/head/header",
-  "$ref": "#/$defs/Header",
+  "$ref": "#/$defs/head.Header",
   "$defs": {
-    "Header": {
+    "head.Header": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -49,6 +49,24 @@
           "type": "string",
           "title": "Notes",
           "description": "Any information that may be relevant to other humans about this envelope"
+        },
+        "from": {
+          "$ref": "https://gobl.org/draft-0/cbc/uri",
+          "title": "From",
+          "description": "From is the URI-form transport address of the envelope's issuer,\ne.g. \"gobl:samlown.example.com\" or\n\"iso6523-actorid-upis::9920:b123123123\"."
+        },
+        "to": {
+          "$ref": "https://gobl.org/draft-0/cbc/uri",
+          "title": "To",
+          "description": "To is the URI-form transport address of the envelope's intended\nreceiver."
+        },
+        "ignore": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Ignore",
+          "description": "Ignore lists fully-qualified validation fault codes to suppress when\nvalidating this envelope, e.g. \"GOBL-EU-EN16931-ORG-ITEM-01\". Intended\nfor format-conversion cases where a specific, known fault is acceptable.\nCovered by the envelope signature when sealed. NOTE: any code may be\nlisted, including structural envelope/header codes — use deliberately."
         }
       },
       "type": "object",

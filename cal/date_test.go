@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -35,79 +35,60 @@ func TestDateJSONParsing(t *testing.T) {
 		assert.Equal(t, d.Month, time.May)
 		assert.Equal(t, d.Day, 26)
 	})
+
+	t.Run("empty date", func(t *testing.T) {
+		d := cal.Date{}
+		err := json.Unmarshal([]byte(`""`), &d)
+		assert.NoError(t, err)
+		assert.True(t, d.IsZero())
+	})
 }
 
 func TestDateValidation(t *testing.T) {
 	t.Run("basics", func(t *testing.T) {
 		d := cal.MakeDate(2021, time.May, 26)
-		err := validation.Validate(d)
-		assert.NoError(t, err)
+		assert.NoError(t, rules.Validate(d))
 
 		d = cal.MakeDate(2021, 0, 1)
-		err = d.Validate()
-		assert.Error(t, err)
-		err = validation.Validate(d)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid date")
+		assert.Error(t, rules.Validate(d))
 
 		d = cal.MakeDate(2021, 1, 0)
-		err = validation.Validate(d)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid date")
+		assert.Error(t, rules.Validate(d))
 
 		// Pointer
 		dp := cal.NewDate(2021, 1, 0)
-		assert.Error(t, dp.Validate())
-		assert.Error(t, validation.Validate(dp))
+		assert.Error(t, rules.Validate(dp))
 
 		dp = nil
-		assert.NoError(t, validation.Validate(dp))
+		assert.NoError(t, rules.Validate(dp))
 	})
 
 	t.Run("date not zero", func(t *testing.T) {
 		d := cal.MakeDate(2021, time.May, 26)
-		err := validation.Validate(d, cal.DateNotZero())
-		assert.NoError(t, err)
+		assert.True(t, cal.DateNotZero().Check(d))
 
 		d = cal.Date{}
-		err = validation.Validate(d, cal.DateNotZero())
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "required")
+		assert.False(t, cal.DateNotZero().Check(d))
 
 		dp := new(cal.Date)
-		err = validation.Validate(dp, cal.DateNotZero())
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "required")
+		assert.False(t, cal.DateNotZero().Check(dp))
 
 		dp = nil
-		err = validation.Validate(dp, cal.DateNotZero())
-		assert.NoError(t, err)
+		assert.True(t, cal.DateNotZero().Check(dp))
 	})
 
 	t.Run("date after", func(t *testing.T) {
 		d := cal.MakeDate(2023, time.March, 25)
-		err := validation.Validate(d, cal.DateAfter(cal.MakeDate(2023, time.March, 24)))
-		assert.NoError(t, err)
-
-		err = validation.Validate(d, cal.DateAfter(cal.MakeDate(2023, time.March, 25)))
-		assert.NoError(t, err)
-
-		err = validation.Validate(d, cal.DateAfter(cal.MakeDate(2023, time.March, 26)))
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "too early")
+		assert.True(t, cal.DateAfter(cal.MakeDate(2023, time.March, 24)).Check(d))
+		assert.True(t, cal.DateAfter(cal.MakeDate(2023, time.March, 25)).Check(d))
+		assert.False(t, cal.DateAfter(cal.MakeDate(2023, time.March, 26)).Check(d))
 	})
 
 	t.Run("date before", func(t *testing.T) {
 		d := cal.MakeDate(2023, time.March, 25)
-		err := validation.Validate(d, cal.DateBefore(cal.MakeDate(2023, time.March, 26)))
-		assert.NoError(t, err)
-
-		err = validation.Validate(d, cal.DateBefore(cal.MakeDate(2023, time.March, 25)))
-		assert.NoError(t, err)
-
-		err = validation.Validate(d, cal.DateBefore(cal.MakeDate(2023, time.March, 24)))
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "too late")
+		assert.True(t, cal.DateBefore(cal.MakeDate(2023, time.March, 26)).Check(d))
+		assert.True(t, cal.DateBefore(cal.MakeDate(2023, time.March, 25)).Check(d))
+		assert.False(t, cal.DateBefore(cal.MakeDate(2023, time.March, 24)).Check(d))
 	})
 }
 

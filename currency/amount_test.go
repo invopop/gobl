@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,12 +15,12 @@ func TestAmountValidation(t *testing.T) {
 			Currency: currency.USD,
 			Value:    num.MakeAmount(100, 2),
 		}
-		assert.NoError(t, a.Validate())
+		assert.Nil(t, rules.Validate(&a))
 	})
 	t.Run("missing currency", func(t *testing.T) {
 		a := currency.Amount{
 			Value: num.MakeAmount(100, 2),
 		}
-		assert.ErrorContains(t, a.Validate(), "currency: cannot be blank")
+		assert.NotNil(t, rules.Validate(&a))
 	})
 }

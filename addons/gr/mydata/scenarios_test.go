@@ -112,7 +112,7 @@ func TestInvoiceTypeScenarios(t *testing.T) {
 			require.NoError(t, i.Calculate())
 			require.NotNil(t, i.Tax)
 			require.NotNil(t, i.Tax.Ext)
-			assert.Equal(t, tt.out, i.Tax.Ext[mydata.ExtKeyInvoiceType].String())
+			assert.Equal(t, tt.out, i.Tax.Ext.Get(mydata.ExtKeyInvoiceType).String())
 		})
 	}
 }

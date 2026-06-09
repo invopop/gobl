@@ -5,8 +5,22 @@
     "pt": "Brasil"
   },
   "description": {
-    "en": "Tax identification in Brazil is provided either through a CNPJ for businesses or a CPF for individuals. Both types are valid for the issuance of NFS-e (electronic service invoices)."
+    "en": "Brazil uses Notas Fiscais Eletrônicas (electronic fiscal notes) such as NFSe,\nNFe, and NFCe for reporting tax information to municipal, state, and federal\nauthorities. The tax system is administered by the Receita Federal (Federal\nRevenue Service).\n\nTax identification is provided through a CNPJ (Cadastro Nacional da Pessoa\nJurídica) for businesses, consisting of 14 digits, or a CPF (Cadastro de Pessoas\nFísicas) for individuals, consisting of 11 digits. Both types are valid for the\nissuance of NFS-e (electronic service invoices).\n\nBrazilian addresses have three subdivisions relevant for tax purposes: bairro\n(neighbourhood), município (municipality), and estado (state). Municipality codes\nfollow the IBGE coding system.\n\nService notes (NFSe) let service providers document and report taxes such as\nISS (Imposto Sobre Serviços) related to the services they provide. Municipal\ngovernments regulate them. Special tax regimes include Simples Nacional for\nsimplified taxation of micro and small enterprises, and MEI (Micro-Empreendedor\nIndividual) for individual micro-entrepreneurs."
   },
+  "sources": [
+    {
+      "title": {
+        "en": "NFS-e Technical Documentation (ABRASF)"
+      },
+      "url": "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e"
+    },
+    {
+      "title": {
+        "en": "IBGE Municipality Codes"
+      },
+      "url": "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+    }
+  ],
   "time_zone": "America/Sao_Paulo",
   "country": "BR",
   "currency": "BRL",

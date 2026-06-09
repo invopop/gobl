@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/discount",
-  "$ref": "#/$defs/Discount",
+  "$ref": "#/$defs/bill.Discount",
   "$defs": {
-    "Discount": {
+    "bill.Discount": {
       "properties": {
         "uuid": {
           "type": "string",

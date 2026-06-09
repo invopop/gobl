@@ -5,8 +5,9 @@ import (
 	"slices"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // CUIT (Clave Única de Identificación Tributaria) and CUIL (Clave Única de Identificación Laboral)
@@ -43,19 +44,27 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 }
 
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("AR"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Argentine tax identity code",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
-		return nil
+		return false
 	}
-	val := code.String()
+	return validateTaxCode(code.String()) == nil
+}
 
+func validateTaxCode(val string) error {
 	// CUIT/CUIL must be exactly 11 digits
 	if len(val) != 11 {
 		return errors.New("must have 11 digits")

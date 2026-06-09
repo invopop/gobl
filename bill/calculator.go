@@ -1,7 +1,7 @@
 package bill
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // billable defines the methods required to be able to perform calculations and
@@ -23,14 +22,17 @@ type billable interface {
 	HasTags(tags ...cbc.Key) bool
 	GetTags() []cbc.Key
 
+	// Public methods
+	GetCurrency() currency.Code
+	GetExchangeRates() []*currency.ExchangeRate
+
+	// private methods
 	getIssueDate() cal.Date
 	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
 	getCustomer() *org.Party
-	getCurrency() currency.Code
-	getExchangeRates() []*currency.ExchangeRate
 	getLines() []*Line
 	getDiscounts() []*Discount
 	getCharges() []*Charge
@@ -38,6 +40,7 @@ type billable interface {
 	getTotals() *Totals
 	getComplements() []*schema.Object
 
+	// private setters
 	setIssueDate(cal.Date)
 	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
@@ -49,13 +52,13 @@ func calculate(doc billable) error {
 	date := calculateIssueDateAndTime(r, doc)
 
 	// Convert empty or invalid currency to the regime's currency
-	if doc.getCurrency() == currency.CodeEmpty || doc.getCurrency().Def() == nil {
+	if doc.GetCurrency() == currency.CodeEmpty || doc.GetCurrency().Def() == nil {
 		if r == nil {
-			return validation.Errors{"currency": errors.New("missing")}
+			return fmt.Errorf("currency: missing or invalid")
 		}
 		doc.setCurrency(r.Currency)
 	}
-	cur := doc.getCurrency()
+	cur := doc.GetCurrency()
 
 	if doc.HasTags(tax.TagBypass) {
 		// Stop all further calculations
@@ -92,15 +95,15 @@ func calculate(doc billable) error {
 
 	// Complements
 	if err := calculateComplements(doc.getComplements()); err != nil {
-		return validation.Errors{"complements": err}
+		return fmt.Errorf("complements: %w", err)
 	}
 
 	// Preceding
 	calculateOrgDocumentRefs(doc.getPreceding(), cur, rr)
 
 	// Lines
-	if err := calculateLines(doc.getLines(), cur, doc.getExchangeRates(), rr); err != nil {
-		return validation.Errors{"lines": err}
+	if err := calculateLines(doc.getLines(), cur, doc.GetExchangeRates(), rr); err != nil {
+		return fmt.Errorf("lines: %w", err)
 	}
 	t.Sum = calculateLineSum(doc.getLines(), cur)
 	t.Total = t.Sum
@@ -130,7 +133,7 @@ func calculate(doc billable) error {
 	// Now figure out the tax totals
 	t.Taxes = new(tax.Total)
 	tc := &tax.TotalCalculator{
-		Currency: doc.getCurrency(),
+		Currency: doc.GetCurrency(),
 		Rounding: rr,
 		Country:  r.GetCountry(),
 		Date:     *date,

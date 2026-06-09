@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -62,15 +63,15 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 }
 
 func TestInvoiceDocumentScenarios(t *testing.T) {
-	i := testInvoiceStandard(t)
-	require.NoError(t, i.Calculate())
-	require.NoError(t, i.Validate())
+	inv := testInvoiceStandard(t)
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, rules.Validate(inv))
 
-	i = testInvoiceStandard(t)
-	i.SetTags(tax.TagSimplified)
-	i.Customer = nil
-	require.NoError(t, i.Calculate())
-	assert.Len(t, i.Notes, 1)
-	assert.Equal(t, i.Notes[0].Src, tax.TagSimplified)
-	assert.Equal(t, i.Notes[0].Text, "Simplified Tax Invoice")
+	inv = testInvoiceStandard(t)
+	inv.SetTags(tax.TagSimplified)
+	inv.Customer = nil
+	require.NoError(t, inv.Calculate())
+	require.NotNil(t, inv.Tax)
+	assert.Len(t, inv.Tax.Notes, 1)
+	assert.Equal(t, "Simplified Tax Invoice", inv.Tax.Notes[0].Text)
 }

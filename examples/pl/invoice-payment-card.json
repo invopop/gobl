@@ -1,0 +1,70 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3d0d",
+  "type": "standard",
+  "series": "PAY",
+  "code": "001",
+  "issue_date": "2026-01-20",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Sklep Testowy",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Handlowa 5",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Klient Indywidualny",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Klienta 10",
+        "locality": "Warsaw",
+        "code": "00-015",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Electronics - Laptop",
+        "price": "3500.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "instructions": {
+      "key": "card",
+      "detail": "Payment by card"
+    }
+  },
+  "notes": [
+    {
+      "key": "general",
+      "text": "Payment received by card at point of sale."
+    }
+  ]
+}

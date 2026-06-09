@@ -6,25 +6,52 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Switzerland.
+const CountryCode = "CH"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("ch", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
+	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "CH",
+		Country:   CountryCode,
 		Currency:  currency.CHF,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Switzerland",
 		},
-		TimeZone:   "Europe/Zurich",
-		Validator:  Validate,
-		Normalizer: Normalize,
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Switzerland's tax system is administered by the Federal Tax Administration
+				(Eidgenössische Steuerverwaltung, ESTV). Although not an EU member, Switzerland
+				operates its own VAT system (Mehrwertsteuer, MWST).
+
+				VAT applies at standard, reduced, and special rates. The reduced rate covers
+				everyday goods such as food, non-alcoholic beverages, books, newspapers, and
+				medicines, while a special rate applies to accommodation services.
+
+				Businesses with annual taxable revenues exceeding CHF 100,000 must register
+				for VAT. Tax identification uses the UID (Unternehmens-Identifikationsnummer)
+				in the format CHE-XXX.XXX.XXX followed by "MWST" for VAT purposes.
+
+				Switzerland supports credit notes for invoice corrections. E-invoicing is not
+				mandatory but is increasingly used, particularly in business-to-government (B2G)
+				transactions.
+			`),
+		},
+		TimeZone: "Europe/Zurich",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
@@ -37,22 +64,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

@@ -1,64 +1,13 @@
 package choruspro
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
-
-// validateInvoice ensures that the invoice meets Chorus Pro requirements
-func validateInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceCustomer),
-		),
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateInvoiceTax),
-		),
-		validation.Field(&inv.Totals,
-			validation.When(
-				// A2 can only exist if invoice has been paid
-				inv.Tax != nil && inv.Tax.Ext.Get(ExtKeyFramework) == ExtFrameworkCodePaid,
-				validation.By(validateInvoicePaid),
-			)),
-	)
-}
-
-func validateInvoiceCustomer(value interface{}) error {
-	customer, ok := value.(*org.Party)
-	if !ok || customer == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(customer,
-		validation.Field(&customer.Ext,
-			tax.ExtensionsHasCodes(ExtKeyScheme, "1"),
-			validation.Skip,
-		),
-		validation.Field(&customer.Identities,
-			validation.Required,
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceTax(value interface{}) error {
-	t, ok := value.(*bill.Tax)
-	if !ok || t == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Ext,
-			validation.Required,
-			tax.ExtensionsRequire(ExtKeyFramework),
-		),
-	)
-}
 
 // normalizeInvoice applies Chorus Pro specific normalization rules
 func normalizeInvoice(inv *bill.Invoice) {
@@ -70,8 +19,8 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = &bill.Tax{}
 	}
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = make(tax.Extensions)
+	if inv.Tax.Ext.IsZero() {
+		inv.Tax.Ext = tax.MakeExtensions()
 	}
 
 	// Set default framework type if not specified. This breaks away from the
@@ -79,9 +28,9 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// complexity of trying to apply scenarios.
 	if !inv.Tax.Ext.Has(ExtKeyFramework) {
 		inv.Tax.Ext = inv.Tax.Ext.Merge(
-			tax.Extensions{
+			tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyFramework: ExtFrameworkCodeSupplier,
-			},
+			}),
 		)
 	}
 
@@ -95,13 +44,53 @@ func normalizeBillLine(line *bill.Line) {
 	line.Quantity = line.Quantity.RescaleDown(4)
 }
 
-func validateInvoicePaid(value interface{}) error {
-	totals, ok := value.(*bill.Totals)
-	if !ok {
-		return nil
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.Assert("07", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
+		// Customer validation (only when customer exists)
+		rules.Field("customer",
+			rules.Field("ext",
+				// Always be set to '1' as this can only be used for B2G operations.
+				rules.Assert("01", "customer scheme extension must be '1'",
+					tax.ExtensionsHasCodes(ExtKeyScheme, "1"),
+				),
+			),
+			rules.Field("identities",
+				// Further assertions are made in the org.Party rules
+				rules.Assert("02", "customer identities are required", is.Present),
+			),
+		),
+		// Tax validation
+		rules.Field("tax",
+			rules.Assert("03", "tax object is required with extensions", is.Present),
+			rules.Field("ext",
+				rules.Assert("04", "tax extensions are required", is.Present),
+				rules.Assert("05", "framework extension is required",
+					tax.ExtensionsRequire(ExtKeyFramework),
+				),
+			),
+		),
+		// Totals validation for paid framework
+		rules.When(
+			is.Func("framework is paid", invoiceFrameworkIsPaid),
+			rules.Field("totals",
+				rules.Assert("06", "must be paid in full for framework 'A2'",
+					is.Func("paid", invoiceTotalsPaid),
+				),
+			),
+		),
+	)
+}
+
+func invoiceFrameworkIsPaid(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	return ok && inv != nil && inv.Tax != nil && inv.Tax.Ext.Get(ExtKeyFramework) == ExtFrameworkCodePaid
+}
+
+func invoiceTotalsPaid(val any) bool {
+	totals, ok := val.(*bill.Totals)
+	if !ok || totals == nil {
+		return false
 	}
-	if !totals.Paid() {
-		return fmt.Errorf("must be paid in full for framework '%s'", ExtFrameworkCodePaid)
-	}
-	return nil
+	return totals.Paid()
 }

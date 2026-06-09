@@ -26,7 +26,11 @@ jobs:
         run: go mod download
 
       - name: Test
-        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+        # -coverpkg=./... credits coverage across package boundaries, so code
+        # exercised through integration tests (e.g. the golden-example suite
+        # driving normalization and validation) is counted for the packages
+        # that own it, not only by each package's own unit tests.
+        run: go test -race -coverprofile=coverage.out -covermode=atomic -coverpkg=./... ./...
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5.1.2

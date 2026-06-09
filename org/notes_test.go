@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,14 +18,14 @@ func TestNoteNormalize(t *testing.T) {
 	t.Run("accepts nil", func(t *testing.T) {
 		var n *org.Note
 		assert.NotPanics(t, func() {
-			n.Normalize()
+			norm.Normalize(n)
 		})
 	})
 
 	t.Run("accepts empty", func(t *testing.T) {
 		n := &org.Note{}
 		assert.NotPanics(t, func() {
-			n.Normalize()
+			norm.Normalize(n)
 		})
 	})
 
@@ -32,11 +33,11 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "This is a general note test",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"untidid-text-subject": "AAI",
-			},
+			}),
 		}
-		n.Normalize()
+		norm.Normalize(n)
 		assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
 	})
 
@@ -44,13 +45,13 @@ func TestNoteNormalize(t *testing.T) {
 		n := &org.Note{
 			Code: " FOO ",
 			Text: "This is a general note test",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"missing": "",
-			},
+			}),
 		}
-		n.Normalize()
+		norm.Normalize(n)
 		assert.Equal(t, "FOO", n.Code.String())
-		assert.Empty(t, n.Ext)
+		assert.True(t, n.Ext.IsZero())
 	})
 }
 
@@ -58,55 +59,17 @@ func TestNotesValidation(t *testing.T) {
 	n := new(org.Note)
 	n.Text = "This is a general note test"
 
-	err := n.Validate()
+	err := rules.Validate(n)
 	assert.NoError(t, err) // empty key ok
 
 	n.Key = org.NoteKeyGeneral
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.NoError(t, err)
 
 	n.Key = cbc.Key("fooo")
-	err = n.Validate()
+	err = rules.Validate(n)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "key: must be a valid value")
-}
-
-func TestNoteFromScenario(t *testing.T) {
-	n := org.NoteFromScenario(&tax.ScenarioNote{
-		Key:  org.NoteKeyGeneral,
-		Code: "note1",
-		Src:  "src1",
-		Text: "This is a note1",
-		Ext: tax.Extensions{
-			"untidid-text-subject": "AAI",
-		},
-	})
-	assert.Equal(t, org.NoteKeyGeneral, n.Key)
-	assert.Equal(t, "note1", n.Code.String())
-	assert.Equal(t, "src1", n.Src.String())
-	assert.Equal(t, "This is a note1", n.Text)
-	assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
-
-	assert.NotPanics(t, func() {
-		org.NoteFromScenario(nil)
-	})
-}
-
-func TestNotesValidationHasKey(t *testing.T) {
-	ns := []*org.Note{
-		{
-			Key:  org.NoteKeyGeneral,
-			Text: "This is a general note test",
-		},
-	}
-	err := validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.NoError(t, err)
-
-	err = validation.Validate(ns, org.ValidateNotesHasKey(org.NoteKeyLegal))
-	assert.ErrorContains(t, err, "with key 'legal' missin")
-
-	err = validation.Validate(cbc.Key("foo"), org.ValidateNotesHasKey(org.NoteKeyGeneral))
-	assert.Nil(t, err, "should ignore invalid type")
+	assert.Contains(t, err.Error(), "note key must be a valid value")
 }
 
 func TestNoteSameAs(t *testing.T) {

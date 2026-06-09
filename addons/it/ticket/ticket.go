@@ -3,17 +3,23 @@
 package ticket
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 // Key to identify the AdE ticket addon
 const (
+	// Key identifies the AdE ticket addon family. Individual versions append
+	// a suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "it-ticket"
+
 	// V1 for AdE format
-	V1 cbc.Key = "it-ticket-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -28,6 +34,19 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("IT-TICKET"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeOrgItem),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 // This validation follows the rules of the Italian Agenzia delle Entrate
@@ -52,29 +71,6 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
-		Validator:   validate,
-		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }

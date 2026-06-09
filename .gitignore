@@ -18,4 +18,5 @@
 # Output from example testing
 *.out.json
 
+/tmp
 /gobl

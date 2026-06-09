@@ -4,6 +4,9 @@
     "en": "Portugal",
     "pt": "Portugal"
   },
+  "description": {
+    "en": "Portugal's tax system is administered by the Autoridade Tributária e Aduaneira\n(AT). As an EU member state, Portugal follows the EU VAT Directive with\nlocally adapted rates that vary by region.\n\nIVA (Imposto sobre o Valor Acrescentado) applies at standard, intermediate,\nand reduced rates on the mainland. The autonomous regions of Açores and\nMadeira apply their own reduced rates.\n\nBusinesses are identified by their NIF (Número de Identificação Fiscal), a\n9-digit number. The Portuguese VAT number uses the format PT followed by the\nNIF.\n\nPortugal requires all invoicing software to be certified by the AT and\ninvoices must include a unique document identifier (ATCUD) and a hash chain\nlinking sequential documents. The SAF-T (Standard Audit File for Tax Purposes)\nformat is used for tax reporting. Both credit notes and debit notes are\nsupported for invoice corrections."
+  },
   "time_zone": "Europe/Lisbon",
   "country": "PT",
   "currency": "EUR",

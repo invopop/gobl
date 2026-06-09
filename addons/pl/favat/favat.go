@@ -5,64 +5,62 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 // Polish FA_VAT versions.
 const (
-	V2 cbc.Key = "pl-favat-v2"
-	V3 cbc.Key = "pl-favat-v3"
+	// Key identifies the FA_VAT addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "pl-favat"
+
+	// V3 for FA_VAT version 3 (FA(3)).
+	V3 cbc.Key = Key + "-v3"
 )
 
 // KSeF official codes to include.
 const (
-	StampID   cbc.Key = "favat-id"
-	StampHash cbc.Key = "favat-hash"
-	StampQR   cbc.Key = "favat-qr"
+	StampKSeFNumber          cbc.Key = "favat-ksef-number"
+	StampKSeFAcquisitionDate cbc.Key = "favat-ksef-acquisition-date"
+	StampQR                  cbc.Key = "favat-qr"
 )
 
 func init() {
-	tax.RegisterAddonDef(newAddonV2())
-	// V3 coming soon...
+	tax.RegisterAddonDef(newAddonV3())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("PL-FAVAT"),
+		is.InContext(tax.AddonIn(V3)),
+		billInvoiceRules(),
+		taxComboRules(),
+		payAdvanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V3)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
-func newAddonV2() *tax.AddonDef {
+func newAddonV3() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key: V2,
+		Key: V3,
 		Name: i18n.String{
-			i18n.EN: "Polish KSeF FA_VAT v2.x",
+			i18n.EN: "Polish KSeF FA_VAT FA(3)",
 		},
 		Tags: []*tax.TagSet{
-			invoiceTags, // scenarios.go
+			invoiceTags,
 		},
 		Extensions:  extensionKeys,
-		Scenarios:   scenarios, // scenarios.go
-		Normalizer:  normalize,
-		Validator:   validate,
+		Scenarios:   scenarios,
 		Corrections: corrections,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	}
-	return nil
 }
 
 var corrections = tax.CorrectionSet{
@@ -71,12 +69,8 @@ var corrections = tax.CorrectionSet{
 		Types: []cbc.Key{
 			bill.InvoiceTypeCreditNote,
 		},
-		ReasonRequired: true,
 		Stamps: []cbc.Key{
-			StampID,
-		},
-		Extensions: []cbc.Key{
-			ExtKeyEffectiveDate,
+			StampKSeFNumber,
 		},
 	},
 }

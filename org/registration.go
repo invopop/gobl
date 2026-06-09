@@ -1,14 +1,12 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Registration is used in countries that require additional information to be associated
@@ -30,11 +28,20 @@ type Registration struct {
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 }
 
-// Normalize ensures the registration is in a canonical format.
-func (r *Registration) Normalize() {
-	if r == nil {
-		return
-	}
+func registrationRules() *rules.Set {
+	return rules.For(new(Registration),
+		rules.Field("currency",
+			rules.AssertIfPresent("01", "registration currency must be a valid ISO 4217 code",
+				is.FuncError("is valid currency", func(val any) error {
+					c, _ := val.(currency.Code)
+					return c.Validate()
+				}),
+			),
+		),
+	)
+}
+
+func normalizeRegistration(r *Registration) {
 	uuid.Normalize(&r.UUID)
 	r.Label = cbc.NormalizeString(r.Label)
 	r.Office = cbc.NormalizeString(r.Office)
@@ -45,26 +52,4 @@ func (r *Registration) Normalize() {
 	r.Page = cbc.NormalizeString(r.Page)
 	r.Entry = cbc.NormalizeString(r.Entry)
 	r.Other = cbc.NormalizeString(r.Other)
-}
-
-// Validate ensures the registration looks valid.
-func (r *Registration) Validate() error {
-	return r.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the registration looks valid inside the provided context.
-func (r *Registration) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, r,
-		validation.Field(&r.UUID),
-		validation.Field(&r.Label),
-		validation.Field(&r.Capital),
-		validation.Field(&r.Currency),
-		validation.Field(&r.Office),
-		validation.Field(&r.Book),
-		validation.Field(&r.Volume),
-		validation.Field(&r.Sheet),
-		validation.Field(&r.Section),
-		validation.Field(&r.Page),
-		validation.Field(&r.Entry),
-	)
 }

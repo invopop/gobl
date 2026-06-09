@@ -3,15 +3,13 @@ package nfse
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/regimes/br"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
-func validateLine(line *bill.Line) error {
-	if line == nil {
-		return nil
-	}
-	return validation.Validate(line,
-		bill.RequireLineTaxCategory(br.TaxCategoryISS),
-		validation.Skip,
+func billLineRules() *rules.Set {
+	return rules.For(new(bill.Line),
+		rules.Assert("01", "line taxes must include the ISS category",
+			bill.RequireLineTaxCategory(br.TaxCategoryISS),
+		),
 	)
 }

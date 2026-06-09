@@ -4,7 +4,6 @@ package in
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -14,18 +13,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Reverse Charges
 		{
 			Tags: []cbc.Key{tax.TagReverseCharge},
-			Note: &tax.ScenarioNote{
-				Key:  org.NoteKeyLegal,
-				Src:  tax.TagReverseCharge,
+			Note: &tax.Note{
+				Key:  tax.KeyReverseCharge,
 				Text: "Reverse Charge",
 			},
 		},
 		// Simplified Tax Invoice
 		{
 			Tags: []cbc.Key{tax.TagSimplified},
-			Note: &tax.ScenarioNote{
-				Key:  org.NoteKeyLegal,
-				Src:  tax.TagSimplified,
+			Note: &tax.Note{
+				Key:  tax.TagSimplified,
 				Text: "Simplified Tax Invoice",
 			},
 		},

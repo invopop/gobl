@@ -7,15 +7,22 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
 
 // Key to identify the CFDI addon.
 const (
-	V4 cbc.Key = "mx-cfdi-v4"
+	// Key identifies the CFDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "mx-cfdi"
+
+	// V4 for CFDI version 4
+	V4 cbc.Key = Key + "-v4"
 )
 
 // Official CFDI codes to include in stamps.
@@ -36,6 +43,26 @@ func init() {
 	schema.Register(schema.GOBL.Add("regimes/mx"),
 		FuelAccountBalance{},
 		FoodVouchers{},
+	)
+
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("MX-CFDI"),
+		is.InContext(tax.AddonIn(V4)),
+		billInvoiceRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+		payTermsRules(),
+		foodVouchersRules(),
+		fuelAccountBalanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeParty),
+		norm.For(normalizeItem),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
 	)
 }
 
@@ -63,37 +90,6 @@ func newAddon() *tax.AddonDef {
 				},
 			},
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-		Validator:  validate,
+		Scenarios: scenarios,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *org.Item:
-		normalizeItem(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
-	}
-	return nil
 }

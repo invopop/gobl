@@ -1,0 +1,94 @@
+{
+  "id": "GOBL-FR",
+  "package": "fr",
+  "subsets": [
+    {
+      "id": "GOBL-FR-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [FR]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-FR-BILL-INVOICE-01",
+                  "desc": "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
+                  "tests": "has tax ID code or SIREN/SIRET identity"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-FR-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [FR]",
+          "subsets": [
+            {
+              "guard": "has a type in [SIREN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-ORG-IDENTITY-01",
+                      "desc": "identity code for type SIREN must be valid",
+                      "tests": "matches ^\\d{9}$"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "has a type in [SIRET]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-ORG-IDENTITY-02",
+                      "desc": "identity code for type SIRET must be valid",
+                      "tests": "matches ^\\d{14}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-FR-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [FR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-FR-TAX-IDENTITY-01",
+                      "desc": "invalid French VAT identity code format or checksum",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

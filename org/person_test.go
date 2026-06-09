@@ -3,7 +3,9 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +13,7 @@ func TestPersonNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var p *org.Person
 		assert.NotPanics(t, func() {
-			p.Normalize(nil)
+			norm.Normalize(p)
 		})
 	})
 	t.Run("complete", func(t *testing.T) {
@@ -33,7 +35,7 @@ func TestPersonNormalize(t *testing.T) {
 				},
 			},
 		}
-		p.Normalize(nil)
+		norm.Normalize(p)
 		assert.Equal(t, "Attn", p.Label)
 		assert.Equal(t, "John", p.Name.Given)
 		assert.Equal(t, "Doe", p.Name.Surname)
@@ -63,6 +65,6 @@ func TestPersonValidation(t *testing.T) {
 				},
 			},
 		}
-		assert.NoError(t, p.Validate())
+		assert.NoError(t, rules.Validate(p))
 	})
 }

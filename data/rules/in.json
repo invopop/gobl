@@ -1,0 +1,94 @@
+{
+  "id": "GOBL-IN",
+  "package": "in",
+  "subsets": [
+    {
+      "id": "GOBL-IN-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [IN]",
+          "subsets": [
+            {
+              "guard": "type in [PAN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-IN-ORG-IDENTITY-01",
+                      "desc": "identity code must be a valid PAN format",
+                      "tests": "matches ^[A-Z]{5}[0-9]{4}[A-Z]$"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "type in [HSN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-IN-ORG-IDENTITY-02",
+                      "desc": "identity code must be a valid HSN format",
+                      "tests": "matches ^(?:\\d{4}|\\d{6}|\\d{8})$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-IN-ORG-ITEM",
+      "object": "org.Item",
+      "subsets": [
+        {
+          "guard": "context: regime in [IN]",
+          "subsets": [
+            {
+              "field": "identities",
+              "assert": [
+                {
+                  "id": "GOBL-IN-ORG-ITEM-01",
+                  "desc": "all items must have an HSN identity code",
+                  "tests": "has a type in [HSN]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-IN-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [IN]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IN-TAX-IDENTITY-01",
+                      "desc": "invalid Indian tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

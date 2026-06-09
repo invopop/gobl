@@ -5,6 +5,9 @@ issue_date: "2023-07-10"
 issue_time: "12:00:00"
 series: "TEST"
 code: "00001"
+tax:
+  ext:
+    mx-cfdi-issue-place: "01160"
 supplier:
   name: "KARLA FUENTE NOLASCO"
   ext:
@@ -12,7 +15,6 @@ supplier:
   tax_id:
     country: "MX"
     code: "FUNK671228PH6"
-    zone: "01160"
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
   ext:
@@ -21,7 +23,8 @@ customer:
   tax_id:
     country: "MX"
     code: "K&A010301I16"
-    zone: "86991"
+  addresses:
+    - code: "86991"
 lines:
   - quantity: "1"
     item:

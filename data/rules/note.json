@@ -1,0 +1,22 @@
+{
+  "id": "GOBL-NOTE",
+  "package": "note",
+  "subsets": [
+    {
+      "id": "GOBL-NOTE-MESSAGE",
+      "object": "note.Message",
+      "subsets": [
+        {
+          "field": "content",
+          "assert": [
+            {
+              "id": "GOBL-NOTE-MESSAGE-01",
+              "desc": "message content is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

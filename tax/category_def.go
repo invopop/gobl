@@ -1,11 +1,10 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // CategoryDef contains the definition of a general type of tax inside a region.
@@ -48,38 +47,34 @@ type CategoryDef struct {
 	// Map defines a set of regime specific code mappings.
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
 
-	// List of sources for the information contained in this category.
+	// List of sources for the information contained in this category and most importantly,
+	// an official source where the tax rates can be reviewed and updated in the future.
 	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
 	// Extension key-value pairs that will be copied to the tax combo if this
 	// category is used.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// ValidateWithContext ensures the Category's contents are correct.
-func (c *CategoryDef) ValidateWithContext(ctx context.Context) error {
-	r := RegimeDefFromContext(ctx)
-	err := validation.ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Code, validation.Required),
-		validation.Field(&c.Name, validation.Required),
-		validation.Field(&c.Title, validation.Required),
-		validation.Field(&c.Description),
-		validation.Field(&c.Sources),
-		validation.Field(&c.Keys),
-		validation.Field(&c.Rates),
-		validation.Field(&c.Extensions,
-			validation.Each(cbc.InKeyDefs(r.Extensions)),
+func categoryDefRules() *rules.Set {
+	return rules.For(new(CategoryDef),
+		rules.Field("code",
+			rules.Assert("01", "category def code is required", is.Present),
 		),
-		validation.Field(&c.Map),
-		validation.Field(&c.Retained, validation.When(c.Informative,
-			validation.In(false).Error("cannot be true when informative is true"),
-		)),
+		rules.Field("name",
+			rules.Assert("02", "category def name is required", is.Present),
+		),
+		rules.Field("title",
+			rules.Assert("03", "category def title is required", is.Present),
+		),
+		rules.Assert("04", "category def cannot be retained and informative",
+			is.Expr("!Retained || !Informative"),
+		),
 	)
-	return err
 }
 
 // KeyDef provides the key definition for the category, if it exists.

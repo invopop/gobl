@@ -5,7 +5,10 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -16,12 +19,12 @@ func TestLineChargeNormalize(t *testing.T) {
 	l := &bill.LineCharge{
 		Code:    " FOO--BAR ",
 		Percent: num.NewPercentage(200, 3),
-		Ext:     tax.Extensions{},
+		Ext:     tax.ExtensionsOf(cbc.CodeMap{}),
 	}
-	l.Normalize(nil)
+	norm.Normalize(l)
 	assert.Equal(t, "20.0%", l.Percent.String())
-	assert.Equal(t, "FOO-BAR", l.Code.String())
-	assert.Nil(t, l.Ext)
+	assert.Equal(t, "FOO--BAR", l.Code.String())
+	assert.True(t, l.Ext.IsZero())
 }
 
 func TestLineChargeValidation(t *testing.T) {
@@ -31,11 +34,11 @@ func TestLineChargeValidation(t *testing.T) {
 			Code:   "BAR",
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := l.Validate()
+		err := rules.Validate(l)
 		assert.NoError(t, err)
 
 		l.Amount = num.MakeAmount(0, 2)
-		err = l.Validate()
+		err = rules.Validate(l)
 		assert.NoError(t, err)
 	})
 	t.Run("with base", func(t *testing.T) {
@@ -43,8 +46,8 @@ func TestLineChargeValidation(t *testing.T) {
 			Code: "IEPS",
 			Base: num.NewAmount(3000, 2),
 		}
-		err := l.Validate()
-		assert.ErrorContains(t, err, "percent: cannot be blank")
+		err := rules.Validate(l)
+		assert.ErrorContains(t, err, "percent is required when base is set")
 	})
 	t.Run("valid with base", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -53,7 +56,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Percent: num.NewPercentage(4, 3),
 			Amount:  num.MakeAmount(120, 2),
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 	t.Run("valid with rate and quantity", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -63,7 +66,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Rate:     num.NewAmount(2, 0), // 1 per gram
 			Amount:   num.MakeAmount(200, 2),
 		}
-		assert.NoError(t, l.Validate())
+		assert.NoError(t, rules.Validate(l))
 	})
 	t.Run("missing rate with quantity", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -71,7 +74,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Quantity: num.NewAmount(100, 0), // e.g. grams
 			Amount:   num.MakeAmount(200, 2),
 		}
-		assert.ErrorContains(t, l.Validate(), "rate: cannot be blank with quantity")
+		assert.ErrorContains(t, rules.Validate(l), "rate is required when quantity is set")
 	})
 	t.Run("missing rate with quantity", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -79,7 +82,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Unit:   "l",
 			Amount: num.MakeAmount(200, 2),
 		}
-		assert.ErrorContains(t, l.Validate(), "unit: must be blank without quantity")
+		assert.ErrorContains(t, rules.Validate(l), "unit must be blank without quantity")
 	})
 
 	t.Run("quantity with base", func(t *testing.T) {
@@ -90,7 +93,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Quantity: num.NewAmount(100, 0), // e.g. grams
 			Amount:   num.MakeAmount(200, 2),
 		}
-		assert.ErrorContains(t, l.Validate(), "quantity: must be blank with base or percent")
+		assert.ErrorContains(t, rules.Validate(l), "quantity must be blank with base or percent")
 	})
 	t.Run("rate with base", func(t *testing.T) {
 		l := &bill.LineCharge{
@@ -100,7 +103,7 @@ func TestLineChargeValidation(t *testing.T) {
 			Rate:    num.NewAmount(1, 0),
 			Amount:  num.MakeAmount(200, 2),
 		}
-		assert.ErrorContains(t, l.Validate(), "rate: must be blank with base or percent")
+		assert.ErrorContains(t, rules.Validate(l), "rate must be blank with base or percent")
 	})
 }
 

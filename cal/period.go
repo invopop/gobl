@@ -1,6 +1,9 @@
 package cal
 
-import "github.com/invopop/validation"
+import (
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+)
 
 // Period represents two dates with a start and finish.
 type Period struct {
@@ -12,10 +15,30 @@ type Period struct {
 	End Date `json:"end" jsonschema:"title=End"`
 }
 
-// Validate checks to ensure the period looks correct.
-func (p *Period) Validate() error {
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Start, DateNotZero(), DateBefore(p.End)),
-		validation.Field(&p.End, DateNotZero(), DateAfter(p.Start)),
+func periodRules() *rules.Set {
+	return rules.For(new(Period),
+		rules.Field("start",
+			rules.Assert("01", "start date cannot be zero",
+				DateNotZero(),
+			),
+		),
+		rules.Field("end",
+			rules.Assert("02", "end date cannot be zero",
+				DateNotZero(),
+			),
+		),
+		rules.Object(
+			rules.Assert("10", "end date must be on or after start date",
+				is.Func("end not before start", periodEndNotBeforeStart),
+			),
+		),
 	)
+}
+
+func periodEndNotBeforeStart(val any) bool {
+	p, ok := val.(*Period)
+	if !ok || p == nil || p.Start.IsZero() || p.End.IsZero() {
+		return true
+	}
+	return p.End.DaysSince(p.Start.Date) >= 0
 }

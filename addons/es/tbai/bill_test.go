@@ -5,8 +5,11 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -15,10 +18,9 @@ import (
 
 func TestInvoiceNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		ad := tax.AddonForKey(tbai.V1)
 		var inv *bill.Invoice
 		assert.NotPanics(t, func() {
-			ad.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(tbai.V1))
 		})
 	})
 
@@ -36,7 +38,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Vizcaya",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "BI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+		assert.Equal(t, tbai.ExtValueRegionBI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Gipuzkoa", func(t *testing.T) {
@@ -46,7 +48,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Gipuzkoa",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "SS", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+		assert.Equal(t, tbai.ExtValueRegionSS, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Álava (accent)", func(t *testing.T) {
@@ -56,7 +58,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Álava",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "VI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+		assert.Equal(t, tbai.ExtValueRegionVI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
@@ -66,7 +68,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Araba",
 		})
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "VI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+		assert.Equal(t, tbai.ExtValueRegionVI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
 	})
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
@@ -85,12 +87,12 @@ func TestInvoiceNormalization(t *testing.T) {
 			Region: "Araba",
 		})
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
-				tbai.ExtKeyRegion: "BI", // not Alaba
-			},
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				tbai.ExtKeyRegion: tbai.ExtValueRegionBI, // not Alaba
+			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "BI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+		assert.Equal(t, tbai.ExtValueRegionBI, inv.Tax.Ext.Get(tbai.ExtKeyRegion))
 	})
 }
 
@@ -98,29 +100,61 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with services", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(tbai.ExtKeyProduct, "services")
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("missing customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer is required for non-simplified invoices")
 	})
 
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer tax ID is required")
+	})
+
+	t.Run("simplified invoice without customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("simplified invoice with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("simplified invoice with customer tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("with exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0].Ext = nil
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -128,13 +162,13 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Series = ""
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("without notes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
-		assertValidationError(t, inv, "notes: with key 'general' missing")
+		assertValidationError(t, inv, "with key 'general' missing")
 	})
 
 	t.Run("correction", func(t *testing.T) {
@@ -145,42 +179,113 @@ func TestInvoiceValidation(t *testing.T) {
 			bill.WithExtension(tbai.ExtKeyCorrection, "R4"),
 		))
 		assert.Len(t, inv.Preceding, 1)
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("BI individual missing activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-ES-TBAI-BILL-INVOICE-10")
+		assert.ErrorContains(t, err, "es-tbai-bi-activity")
+	})
+
+	t.Run("BI individual with valid activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			tbai.ExtKeyBIActivity: "722300",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("BI persona jurídica without activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "B64847106"}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("VI individual without activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tax.Ext = inv.Tax.Ext.Set(tbai.ExtKeyRegion, tbai.ExtValueRegionVI)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("SS individual without activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tax.Ext = inv.Tax.Ext.Set(tbai.ExtKeyRegion, tbai.ExtValueRegionSS)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("BI individual with non-numeric activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			tbai.ExtKeyBIActivity: "abc",
+		})
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "es-tbai-bi-activity")
+	})
+
+	t.Run("BI individual with too-long activity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{Country: "ES", Code: "12345678Z"}
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			tbai.ExtKeyBIActivity: "12345678",
+		})
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "es-tbai-bi-activity")
+	})
+
+	t.Run("No tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tax = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "tax is required")
 	})
 }
 
 func TestBillLineNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		ad := tax.AddonForKey(tbai.V1)
 		var line *bill.Line
 		assert.NotPanics(t, func() {
-			ad.Normalizer(line)
+			norm.Normalize(line, tax.AddonContext(tbai.V1))
 		})
 	})
 	t.Run("with standard invoice, set default", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "services", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+		assert.Equal(t, "services", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
 	})
 	t.Run("with standard invoice, set override for goods", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyGoods
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "goods", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+		assert.Equal(t, "goods", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
 	})
 	t.Run("with standard invoice, set override for resale", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Key = org.ItemKeyGoods
-		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "resale"
+		inv.Lines[0].Taxes[0].Ext = inv.Lines[0].Taxes[0].Ext.Set(tbai.ExtKeyProduct, "resale")
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "resale", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+		assert.Equal(t, "resale", inv.Lines[0].Taxes[0].Ext.Get(tbai.ExtKeyProduct).String())
 	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
+	err := rules.Validate(inv)
 	require.ErrorContains(t, err, expected)
 }
 
@@ -191,9 +296,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Series: "ABC",
 		Code:   "123",
 		Tax: &bill.Tax{
-			Ext: tax.Extensions{
-				tbai.ExtKeyRegion: "BI",
-			},
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				tbai.ExtKeyRegion: tbai.ExtValueRegionBI,
+			}),
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -221,9 +326,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					{
 						Category: "VAT",
 						Key:      "exempt",
-						Ext: tax.Extensions{
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
 							tbai.ExtKeyExempt: "E1",
-						},
+						}),
 					},
 				},
 			},

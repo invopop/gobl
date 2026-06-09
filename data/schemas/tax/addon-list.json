@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/addon-list",
-  "$ref": "#/$defs/AddonList",
+  "$ref": "#/$defs/tax.AddonList",
   "$defs": {
-    "AddonList": {
+    "tax.AddonList": {
       "items": {
         "$ref": "https://gobl.org/draft-0/cbc/key",
         "oneOf": [
@@ -56,6 +56,22 @@
             "title": "Chorus Pro"
           },
           {
+            "const": "fr-ctc-flow10-v1",
+            "title": "France CTC Flow 10 (E-Reporting)"
+          },
+          {
+            "const": "fr-ctc-flow2-v1",
+            "title": "France CTC Flow 2 (B2B Clearance)"
+          },
+          {
+            "const": "fr-ctc-flow6-v1",
+            "title": "France CTC Flow 6 (Cycle de Vie)"
+          },
+          {
+            "const": "fr-ctc-v1",
+            "title": "France CTC (auto-dispatch)"
+          },
+          {
             "const": "fr-facturx-v1",
             "title": "French Factur-X v1"
           },
@@ -76,8 +92,8 @@
             "title": "Mexican SAT CFDI v4.X"
           },
           {
-            "const": "pl-favat-v2",
-            "title": "Polish KSeF FA_VAT v2.x"
+            "const": "pl-favat-v3",
+            "title": "Polish KSeF FA_VAT FA(3)"
           },
           {
             "const": "pt-saft-v1",

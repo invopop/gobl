@@ -1,7 +1,6 @@
 package bill_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 	"time"
@@ -12,11 +11,11 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -62,6 +61,13 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	i.Currency = currency.CLP
+	i.ExchangeRates = []*currency.ExchangeRate{
+		{
+			From:   currency.EUR,
+			To:     currency.CLP,
+			Amount: num.MakeAmount(100629, 2),
+		},
+	}
 	require.NoError(t, i.Calculate())
 	assert.Equal(t, currency.CLP, i.Currency, "should honor currency")
 	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
@@ -124,9 +130,10 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 	}
 	inv := baseInvoice(t, lines...)
 	inv.Currency = currency.USD
-	require.NoError(t, inv.Calculate())
 
-	assert.ErrorContains(t, inv.Validate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
+	// Calculate no longer enforces the regime's currency; that is now handled
+	// by addon-level rules via currency.CanConvertTo.
+	assert.NoError(t, inv.Calculate())
 
 	inv.ExchangeRates = []*currency.ExchangeRate{
 		{
@@ -135,7 +142,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 			Amount: num.MakeAmount(875967, 6),
 		},
 	}
-	assert.NoError(t, inv.Validate())
+	assert.NoError(t, inv.Calculate())
 }
 
 func TestInvoiceAutoSetIssueDate(t *testing.T) {
@@ -555,7 +562,7 @@ func TestRemoveIncludedTax7(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	i.Payment = &bill.PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Amount: num.MakeAmount(29000, 2),
 			},
@@ -993,7 +1000,7 @@ func TestInvoiceCalculate(t *testing.T) {
 			},
 		},
 		Payment: &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Test Advance",
 					Percent:     num.NewPercentage(30, 2), // 30%
@@ -1061,7 +1068,7 @@ func TestCalculateInverted(t *testing.T) {
 			},
 		},
 		Payment: &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Test Advance",
 					Amount:      num.MakeAmount(25000, 2),
@@ -1077,6 +1084,108 @@ func TestCalculateInverted(t *testing.T) {
 	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
 	assert.Equal(t, i.Totals.Due.String(), "-700.00")
+}
+
+func TestInvertWithBypassTag(t *testing.T) {
+	i := &bill.Invoice{}
+	i.SetTags(tax.TagBypass)
+
+	err := i.Invert()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "bypass")
+}
+
+func TestInvertWithTopLevelChargesAndDiscounts(t *testing.T) {
+	// Exercises the top-level Charges and Discounts inversion paths
+	// in Invoice.Invert which the other tests don't cover.
+	inv := baseInvoiceWithLines(t)
+	inv.Discounts = []*bill.Discount{
+		{
+			Reason: "Top-level discount",
+			Amount: num.MakeAmount(10000, 2),
+		},
+	}
+	inv.Charges = []*bill.Charge{
+		{
+			Reason: "Top-level charge",
+			Amount: num.MakeAmount(5000, 2),
+		},
+	}
+
+	require.NoError(t, inv.Calculate())
+	sumBefore := inv.Totals.Sum.String()
+	require.NoError(t, inv.Invert())
+
+	assert.Equal(t, "-"+sumBefore, inv.Totals.Sum.String(),
+		"totals sum should be inverted")
+	assert.Equal(t, "-100.00", inv.Discounts[0].Amount.String())
+	assert.Equal(t, "-50.00", inv.Charges[0].Amount.String())
+}
+
+func TestInvoiceEmpty(t *testing.T) {
+	t.Run("clears lines, charges, discounts, totals", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Discounts = []*bill.Discount{
+			{Reason: "Test Discount", Amount: num.MakeAmount(1000, 2)},
+		}
+		inv.Charges = []*bill.Charge{
+			{Reason: "Test Charge", Amount: num.MakeAmount(500, 2)},
+		}
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{Description: "Advance", Amount: num.MakeAmount(250, 2)},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals)
+
+		inv.Empty()
+
+		assert.Empty(t, inv.Lines)
+		assert.NotNil(t, inv.Lines, "should be empty slice, not nil")
+		assert.Empty(t, inv.Charges)
+		assert.Empty(t, inv.Discounts)
+		assert.Nil(t, inv.Totals)
+		assert.Empty(t, inv.Payment.Advances)
+	})
+
+	t.Run("safe with nil payment", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Payment = nil
+		assert.NotPanics(t, func() {
+			inv.Empty()
+		})
+		assert.Empty(t, inv.Lines)
+	})
+}
+
+func TestInvoiceUnmarshalJSON(t *testing.T) {
+	t.Run("type mismatch returns error", func(t *testing.T) {
+		// Malformed outer JSON fails in encoding/json before reaching the
+		// method, but a well-formed object with a mistyped field propagates
+		// through UnmarshalJSON's inner alias unmarshal.
+		inv := new(bill.Invoice)
+		err := json.Unmarshal([]byte(`{"code": 42}`), inv)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot unmarshal number")
+	})
+
+	t.Run("populates regime from supplier", func(t *testing.T) {
+		// The migration path in UnmarshalJSON sets the regime from the
+		// supplier's tax identity when the raw JSON omits it.
+		raw := `{
+			"type": "standard",
+			"code": "ABC",
+			"issue_date": "2025-01-01",
+			"supplier": {
+				"name": "Supplier",
+				"tax_id": {"country": "ES", "code": "B98602642"}
+			}
+		}`
+		inv := new(bill.Invoice)
+		require.NoError(t, json.Unmarshal([]byte(raw), inv))
+		assert.Equal(t, "ES", inv.Regime.Country.String())
+	})
 }
 
 func TestInvoiceForUnknownRegime(t *testing.T) {
@@ -1104,7 +1213,28 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
 	inv.Currency = currency.USD
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
+}
+
+func TestInvoiceCanSign(t *testing.T) {
+	t.Run("can sign with code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Code = "123TEST"
+		require.NoError(t, inv.Calculate())
+		assert.True(t, inv.CanSign())
+	})
+
+	t.Run("cannot sign without code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.False(t, inv.CanSign())
+	})
+
+	t.Run("cannot sign with nil invoice", func(t *testing.T) {
+		var inv *bill.Invoice
+		assert.False(t, inv.CanSign())
+	})
 }
 
 func TestNormalization(t *testing.T) {
@@ -1120,12 +1250,8 @@ func TestValidation(t *testing.T) {
 	t.Run("basic validation", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Code = ""
-		ctx := context.Background()
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.ValidateWithContext(ctx))
-		ctx = internal.SignedContext(ctx)
-		err := inv.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "code: required to sign invoice")
+		assert.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("supplier name", func(t *testing.T) {
@@ -1133,21 +1259,20 @@ func TestValidation(t *testing.T) {
 		inv.Supplier.Name = ""
 		inv.Customer = nil // simplified
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.).")
-		assert.NotContains(t, err.Error(), "customer")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier name is required")
 	})
 
 	t.Run("simplified", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 		assert.NotNil(t, inv.Customer)
 
 		inv.SetTags(tax.TagSimplified)
 
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.NoError(t, rules.Validate(inv))
 		assert.NotNil(t, inv.Customer) // just ignore simplified tag
 	})
 
@@ -1159,12 +1284,12 @@ func TestValidation(t *testing.T) {
 		}
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name required when tax ID is set")
 
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		err = inv.Validate()
+		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1180,7 +1305,7 @@ func TestValidation(t *testing.T) {
 			Address: "foo@example.com",
 		})
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1188,23 +1313,41 @@ func TestValidation(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer name required when tax ID is set")
 	})
 
 	t.Run("missing lines", func(t *testing.T) {
 		inv := baseInvoice(t)
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "lines: cannot be empty without discounts or charges; totals: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "lines are required without discounts or charges")
+		assert.ErrorContains(t, err, "totals are required")
 	})
 
 	t.Run("missing line item prices", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Lines[0].Item.Price = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "lines: (0: (item: (price: cannot be blank.).).)")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "item price is required")
+	})
+
+	t.Run("tax point without value date", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Tax.Point = tax.PointDelivery
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("tax point with value date rejected", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		vd := cal.MakeDate(2022, 6, 20)
+		inv.ValueDate = &vd
+		inv.Tax.Point = tax.PointDelivery
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "value date cannot be set when tax point is set")
 	})
 
 	t.Run("missing lines with charge", func(t *testing.T) {
@@ -1216,7 +1359,7 @@ func TestValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -1231,31 +1374,18 @@ func TestValidation(t *testing.T) {
 		m.Complements = append(m.Complements, nil)
 		m.Attachments = append(m.Attachments, nil)
 		require.NoError(t, m.Calculate())
-		err := m.Validate()
-		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
-		assert.ErrorContains(t, err, "preceding: (0: is required.)")
-		assert.ErrorContains(t, err, "lines: (1: is required.)")
-		assert.ErrorContains(t, err, "discounts: (0: is required.)")
-		assert.ErrorContains(t, err, "charges: (0: is required.)")
-		assert.ErrorContains(t, err, "notes: (0: is required.)")
-		assert.ErrorContains(t, err, "complements: (0: is required.)")
-		assert.ErrorContains(t, err, "attachments: (0: is required.)")
+		assert.NoError(t, rules.Validate(m))
 	})
 }
 
 func TestInvoiceTagsValidation(t *testing.T) {
-	ctx := context.Background()
 	inv := baseInvoiceWithLines(t)
 	inv.SetTags("reverse-charge")
-
 	assert.NoError(t, inv.Calculate())
-	err := inv.ValidateWithContext(ctx)
-	require.NoError(t, err)
 
 	inv.SetTags("invalid-tag")
-	assert.NoError(t, inv.Calculate())
-	err = inv.ValidateWithContext(ctx)
-	assert.ErrorContains(t, err, "$tags: (0: 'invalid-tag' undefined.).")
+	err := inv.Calculate()
+	assert.ErrorContains(t, err, "'invalid-tag' undefined")
 }
 
 func TestInvoiceBypassTag(t *testing.T) {
@@ -1318,6 +1448,62 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Lines: lines,
 	}
 	return i
+}
+
+func TestInvoiceFromToEndpoint(t *testing.T) {
+	t.Run("supplier→customer by default", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+		require.NotNil(t, inv.FromEndpoint())
+		require.NotNil(t, inv.ToEndpoint())
+		assert.Equal(t, "gobl:supplier.example", inv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", inv.ToEndpoint().URI.String())
+	})
+
+	t.Run("self-billed inverts the direction", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+		inv.Tags.List = []cbc.Key{tax.TagSelfBilled}
+		assert.Equal(t, "gobl:customer.example", inv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", inv.ToEndpoint().URI.String())
+	})
+
+	t.Run("missing party returns nil", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+		}
+		assert.NotNil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint(), "no customer means no destination endpoint")
+	})
+
+	t.Run("party without endpoints returns nil", func(t *testing.T) {
+		inv := &bill.Invoice{
+			Supplier: &org.Party{Name: "S"},
+			Customer: &org.Party{Name: "C"},
+		}
+		assert.Nil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint())
+	})
+
+	t.Run("nil invoice is a no-op", func(t *testing.T) {
+		var inv *bill.Invoice
+		assert.Nil(t, inv.FromEndpoint())
+		assert.Nil(t, inv.ToEndpoint())
+	})
 }
 
 func TestInvoiceJSONSchemaExtend(t *testing.T) {

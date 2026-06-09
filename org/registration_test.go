@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +24,7 @@ func TestRegistrationNormalize_TrimsFieldsAndSetsUUID(t *testing.T) {
 	}
 
 	assert.NotPanics(t, func() {
-		r.Normalize()
+		norm.Normalize(r)
 	})
 
 	assert.Equal(t, "My Label", r.Label)
@@ -39,7 +41,7 @@ func TestRegistrationNormalize_TrimsFieldsAndSetsUUID(t *testing.T) {
 func TestRegistrationNormalize_OnNilReceiverDoesNotPanic(t *testing.T) {
 	var r *org.Registration
 	assert.NotPanics(t, func() {
-		r.Normalize()
+		norm.Normalize(r)
 	})
 }
 
@@ -49,16 +51,14 @@ func TestRegistrationValidate_ValidData(t *testing.T) {
 		Office:   "  Main Office  ",
 		Currency: currency.EUR,
 	}
-	r.Normalize()
+	norm.Normalize(r)
 
-	err := r.Validate()
-	assert.NoError(t, err)
+	assert.NoError(t, rules.Validate(r))
 }
 
 func TestRegistrationValidate_InvalidCurrency(t *testing.T) {
 	r := &org.Registration{
 		Currency: currency.Code("ZZZ"),
 	}
-	err := r.Validate()
-	assert.Error(t, err)
+	assert.Error(t, rules.Validate(r))
 }

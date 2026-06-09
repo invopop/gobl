@@ -6,17 +6,22 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/dk"
+	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Map of GOBL Note keys to the corresponding UNTDID 4451 code.
 var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyGoods:          "AAA",
 	org.NoteKeyPayment:        "PMT",
-	org.NoteKeyLegal:          "ABY",
+	org.NoteKeyPaymentMethod:  "PMD",
+	org.NoteKeyPaymentTerm:    "AAB",
+	org.NoteKeyGeneral:        "AAI", // General information
+	org.NoteKeyLegal:          "ABL", // Government information
 	org.NoteKeyDangerousGoods: "AAC",
 	org.NoteKeyAck:            "AAE",
 	org.NoteKeyRate:           "AAF",
@@ -25,7 +30,6 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyCustomer:       "CUR",
 	org.NoteKeyGlossary:       "ACZ",
 	org.NoteKeyCustoms:        "CUS",
-	org.NoteKeyGeneral:        "AAI",
 	org.NoteKeyHandling:       "HAN",
 	org.NoteKeyPackaging:      "PKG",
 	org.NoteKeyLoading:        "LOI",
@@ -48,6 +52,14 @@ var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGTIN: "0160",
 }
 
+// Map of GOBL Identity types (codes) to the corresponding ISO/IEC 6523 code.
+// This is used for regime-specific identity types that use Type instead of Key.
+var orgIdentityTypeSchemeMap = map[cbc.Code]cbc.Code{
+	fr.IdentityTypeSIREN: "0002", // French SIREN (legal identifier)
+	fr.IdentityTypeSIRET: "0009", // French SIRET (private identifier)
+	dk.IdentityTypeCVR:   "0184", // Danish CVR-nummer
+}
+
 var (
 	orgInboxRegexpSchemeCode = regexp.MustCompile(`(\d{4}):.*`)
 )
@@ -56,13 +68,11 @@ func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
 	}
-	if n.Key == cbc.KeyEmpty {
-		return
-	}
+
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
-		n.Ext = n.Ext.Merge(tax.Extensions{
+		n.Ext = n.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyTextSubject: code,
-		})
+		}))
 	}
 }
 
@@ -76,14 +86,27 @@ func normalizeOrgItem(item *org.Item) {
 }
 
 func normalizeOrgIdentity(i *org.Identity) {
-	if i == nil || i.Key == cbc.KeyEmpty {
+	if i == nil {
 		return
 	}
 
-	if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
-		i.Ext = i.Ext.Merge(tax.Extensions{
-			iso.ExtKeySchemeID: scheme,
-		})
+	// Check for key-based identity mapping first
+	if i.Key != cbc.KeyEmpty {
+		if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
+				iso.ExtKeySchemeID: scheme,
+			}))
+			return
+		}
+	}
+
+	// Check for type-based identity mapping (used by some regimes like France)
+	if i.Type != cbc.CodeEmpty {
+		if scheme, ok := orgIdentityTypeSchemeMap[i.Type]; ok {
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
+				iso.ExtKeySchemeID: scheme,
+			}))
+		}
 	}
 }
 
@@ -97,61 +120,100 @@ func normalizeOrgInbox(i *org.Inbox) {
 	}
 }
 
-func validateOrgItem(item *org.Item) error {
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Unit,
-			validation.Required.Error("cannot be blank (BR-23)"),
-			validation.Skip,
-		),
-		validation.Field(&item.Price,
-			// Must not be negative (BR-27)
-			num.ZeroOrPositive,
-			validation.Skip,
+// normalizeOrgParty migrates a peppol-keyed inbox into an
+// `iso6523-actorid-upis::<scheme>:<code>` endpoint so callers can
+// adopt the new endpoints model without touching their existing
+// party data. The source inbox is left in place — many operators
+// still consume it — so this is purely additive. If the party
+// already carries an `iso6523-actorid-upis` endpoint, no copy is
+// made.
+func normalizeOrgParty(p *org.Party) {
+	if p == nil {
+		return
+	}
+	normalizeOrgPartyEndpoints(p)
+}
+
+// peppolEndpointScheme is the URI scheme used for Peppol participant
+// identifier endpoints (CEN/Peppol SMP and AS4 spec).
+const peppolEndpointScheme = "iso6523-actorid-upis"
+
+func normalizeOrgPartyEndpoints(p *org.Party) {
+	if p.Endpoint(peppolEndpointScheme) != nil {
+		// No peppol endpoint, return
+		return
+	}
+	for _, in := range p.Inboxes {
+		if in == nil || in.Key != org.InboxKeyPeppol {
+			continue
+		}
+		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
+			continue
+		}
+		uri := cbc.URI(peppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
+		p.Endpoints = append(p.Endpoints, &org.Endpoint{
+			Label: in.Label,
+			URI:   uri,
+		})
+		return
+	}
+}
+
+func orgItemRules() *rules.Set {
+	return rules.For(new(org.Item),
+		rules.Field("unit",
+			// BR-23: unit of measure is required
+			rules.Assert("01", "unit is required (BR-23)", is.Present),
 		),
 	)
 }
 
-func validateOrgAttachment(a *org.Attachment) error {
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Code,
-			validation.Required,
-			validation.Skip,
+func orgAttachmentRules() *rules.Set {
+	return rules.For(new(org.Attachment),
+		rules.Field("code",
+			rules.Assert("01", "code is required", is.Present),
 		),
 	)
 }
 
-func validateOrgParty(p *org.Party) error {
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Inboxes,
-			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
-			validation.Skip,
-		),
-	)
-}
-
-func validateOrgInbox(i *org.Inbox) error {
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Scheme,
-			validation.When(i.Code != cbc.CodeEmpty,
-				validation.Required.Error("cannot be blank with code (BR-62, BR-63)"),
+func orgPartyRules() *rules.Set {
+	return rules.For(new(org.Party),
+		rules.Field("inboxes",
+			rules.Assert("01", "cannot have more than one inbox (BT-34, BT-49)",
+				is.Length(0, 1),
 			),
-			validation.Skip,
-		),
-		validation.Field(&i.Code,
-			validation.When(i.Scheme != cbc.CodeEmpty,
-				validation.Required.Error("cannot be blank with scheme"),
-			),
-			validation.Skip,
 		),
 	)
 }
 
-func validateOrgAddress(a *org.Address) error {
-	return validation.ValidateStruct(a,
-		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
-		validation.Field(&a.Country,
-			validation.Required,
-			validation.Skip,
+func orgInboxRules() *rules.Set {
+	return rules.For(new(org.Inbox),
+		// BR-62, BR-63: scheme required when code is present
+		rules.Assert("01", "scheme cannot be blank when code is set (BR-62, BR-63)",
+			is.Func("scheme required with code", orgInboxSchemeRequiredWithCode),
+		),
+		// code required when scheme is present
+		rules.Assert("02", "code cannot be blank when scheme is set",
+			is.Func("code required with scheme", orgInboxCodeRequiredWithScheme),
+		),
+	)
+}
+
+func orgInboxSchemeRequiredWithCode(val any) bool {
+	i, ok := val.(*org.Inbox)
+	return !ok || i == nil || i.Code == cbc.CodeEmpty || i.Scheme != cbc.CodeEmpty
+}
+
+func orgInboxCodeRequiredWithScheme(val any) bool {
+	i, ok := val.(*org.Inbox)
+	return !ok || i == nil || i.Scheme == cbc.CodeEmpty || i.Code != cbc.CodeEmpty
+}
+
+func orgAddressRules() *rules.Set {
+	return rules.For(new(org.Address),
+		rules.Field("country",
+			// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
+			rules.Assert("01", "country is required (BR-9, BR-11, BR-20, BR-57)", is.Present),
 		),
 	)
 }

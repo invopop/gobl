@@ -1,0 +1,99 @@
+package dk_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTaxIdentityRules(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		err  string
+	}{
+		{name: "valid 1", code: "13585628"},
+		{name: "valid 2", code: "88146328"},
+		{name: "valid 3", code: "25063864"},
+		{
+			name: "empty code",
+			code: "",
+			err:  "",
+		},
+		{
+			name: "too short",
+			code: "1234567",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too long",
+			code: "123456789",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "contains letters",
+			code: "1234567A",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad checksum",
+			code: "13585627",
+			err:  "IDENTITY-01",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "DK", Code: tt.code}
+			err := rules.Validate(tID)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
+			}
+		})
+	}
+}
+
+func TestNormalizeTaxIdentity(t *testing.T) {
+	tests := []struct {
+		name     string
+		code     cbc.Code
+		expected cbc.Code
+	}{
+		{
+			name:     "with DK prefix",
+			code:     "DK13585628",
+			expected: "13585628",
+		},
+		{
+			name:     "with spaces",
+			code:     "13 58 56 28",
+			expected: "13585628",
+		},
+		{
+			name:     "already normalized",
+			code:     "13585628",
+			expected: "13585628",
+		},
+		{
+			name:     "empty",
+			code:     "",
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "DK", Code: tt.code}
+			norm.Normalize(tID)
+			assert.Equal(t, tt.expected, tID.Code)
+		})
+	}
+}

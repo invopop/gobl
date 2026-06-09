@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/scenario",
+  "$ref": "#/$defs/tax.Scenario",
+  "$defs": {
+    "tax.Scenario": {
+      "properties": {
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the scenario for further information."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description of the scenario for documentation purposes."
+        },
+        "type": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Type",
+          "description": "Type of document, if present."
+        },
+        "tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Array of tags that have been applied to the document."
+        },
+        "cat": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/code"
+          },
+          "type": "array",
+          "title": "Tax Categories",
+          "description": "Categories is an optional list of tax category codes that acts as a filter.\nWhen set, at least one of the specified categories must be present in the\ndocument's line taxes for the scenario to match."
+        },
+        "ext_key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Extension Key",
+          "description": "Extension key that must be present in the document."
+        },
+        "ext_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Extension Code",
+          "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
+        },
+        "note": {
+          "$ref": "https://gobl.org/draft-0/tax/note",
+          "title": "Note",
+          "description": "A note to be added to the document if the scenario is applied."
+        },
+        "codes": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Codes",
+          "description": "Codes is used to define additional codes for regime specific\nsituations."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext represents a set of tax extensions that should be applied to\nthe document in the appropriate \"tax\" context."
+        }
+      },
+      "type": "object",
+      "description": "Scenario is used to describe a tax scenario of a document based on the combination of document type and tag used."
+    }
+  }
+}

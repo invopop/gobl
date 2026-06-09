@@ -1,12 +1,10 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 )
 
 // Name represents what a human is called. This is a complex subject, see this
@@ -32,12 +30,22 @@ type Name struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize will try to normalize the name data.
-func (n *Name) Normalize() {
-	if n == nil {
-		return
-	}
+func nameRules() *rules.Set {
+	return rules.For(new(Name),
+		rules.When(is.Expr(`Surname == ""`),
+			rules.Field("given",
+				rules.Assert("01", "given name is required when surname is absent", is.Present),
+			),
+		),
+		rules.When(is.Expr(`Given == ""`),
+			rules.Field("surname",
+				rules.Assert("02", "surname is required when given name is absent", is.Present),
+			),
+		),
+	)
+}
 
+func normalizeName(n *Name) {
 	uuid.Normalize(&n.UUID)
 	n.Alias = cbc.NormalizeString(n.Alias)
 	n.Prefix = cbc.NormalizeString(n.Prefix)
@@ -46,27 +54,4 @@ func (n *Name) Normalize() {
 	n.Surname = cbc.NormalizeString(n.Surname)
 	n.Surname2 = cbc.NormalizeString(n.Surname2)
 	n.Suffix = cbc.NormalizeString(n.Suffix)
-}
-
-// Validate ensures the name looks valid.
-func (n *Name) Validate() error {
-	return n.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the name looks valid inside the provided context.
-func (n *Name) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, n,
-		validation.Field(&n.UUID),
-		validation.Field(&n.Given,
-			validation.When(n.Surname == "",
-				validation.Required,
-			),
-		),
-		validation.Field(&n.Surname,
-			validation.When(n.Given == "",
-				validation.Required,
-			),
-		),
-		validation.Field(&n.Meta),
-	)
 }

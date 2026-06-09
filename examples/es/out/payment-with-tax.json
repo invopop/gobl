@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6cfde8996e951f8e9b5efdda21b2a5d68240374dd0bb648ff6f1fc9ff1f4e3da"
+			"val": "7aad0c41787fec3123e2db4c99a6689276a308f91df986964ac9743d4a1b8191"
 		}
 	},
 	"doc": {
@@ -12,9 +12,6 @@
 		"$regime": "ES",
 		"uuid": "0194ad4c-3462-7695-a40c-66a30ccc1405",
 		"type": "receipt",
-		"method": {
-			"key": "credit-transfer"
-		},
 		"series": "RCT",
 		"code": "0001",
 		"issue_date": "2025-01-28",
@@ -74,6 +71,12 @@
 						"sum": "342.30"
 					}
 				},
+				"amount": "1972.30"
+			}
+		],
+		"methods": [
+			{
+				"key": "credit-transfer",
 				"amount": "1972.30"
 			}
 		],

@@ -1,14 +1,11 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // An Attachment provides a structure to be used to attach documents
@@ -53,44 +50,34 @@ type Attachment struct {
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type"`
 }
 
-// Normalize will try to clean the attachment information.
-func (a *Attachment) Normalize() {
-	if a == nil {
-		return
-	}
+func attachmentRules() *rules.Set {
+	return rules.For(new(Attachment),
+		rules.Field("url",
+			rules.Assert("01", "attachment URL must be valid",
+				is.Present,
+				is.URL,
+			),
+		),
+		rules.Field("mime",
+			rules.AssertIfPresent("02", "attachment MIME type must be of an expected types defined in EN16931-1:2017",
+				// MIME types as defined by EN 16931-1:2017 to be used as attachments.
+				is.In(
+					"application/pdf",
+					"image/jpeg",
+					"image/png",
+					"text/csv",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"application/vnd.oasis.opendocument.spreadsheet",
+				),
+			),
+		),
+	)
+}
+
+func normalizeAttachment(a *Attachment) {
 	uuid.Normalize(&a.UUID)
-	a.Code = cbc.NormalizeCode(a.Code)
 	a.Name = cbc.NormalizeString(a.Name)
 	a.Description = cbc.NormalizeString(a.Description)
 	a.URL = cbc.NormalizeString(a.URL)
 	a.MIME = cbc.NormalizeString(a.MIME)
-}
-
-// Validate checks that the attachment looks okay.
-func (a *Attachment) Validate() error {
-	return a.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks that the attachment looks okay within
-// the provided context.
-func (a *Attachment) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, a,
-		validation.Field(&a.Key),
-		validation.Field(&a.Code),
-		validation.Field(&a.Name),
-		validation.Field(&a.Description),
-		validation.Field(&a.URL, is.URL, validation.Required),
-		validation.Field(&a.Digest),
-		validation.Field(&a.MIME,
-			// MIME types as defined by EN 16931-1:2017 to be used as attachments.
-			validation.In(
-				"application/pdf",
-				"image/jpeg",
-				"image/png",
-				"text/csv",
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-				"application/vnd.oasis.opendocument.spreadsheet",
-			),
-		),
-	)
 }

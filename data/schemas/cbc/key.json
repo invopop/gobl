@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cbc/key",
-  "$ref": "#/$defs/Key",
+  "$ref": "#/$defs/cbc.Key",
   "$defs": {
-    "Key": {
+    "cbc.Key": {
       "type": "string",
       "maxLength": 64,
       "minLength": 1,

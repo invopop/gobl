@@ -1,10 +1,13 @@
 package cfdi
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -20,7 +23,6 @@ const (
 	MeansKeyRemission       cbc.Key = "remission"
 	MeansKeyExpiration      cbc.Key = "expiration"
 	MeansKeySatisfyCreditor cbc.Key = "satisfy-creditor"
-	MeansKeyDebit           cbc.Key = "debit"
 	MeansKeyServices        cbc.Key = "services"
 	MeansKeyAdvance         cbc.Key = "advance"
 	MeansKeyIntermediary    cbc.Key = "intermediary"
@@ -29,10 +31,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by CFDI.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansKeyMap
+	return tax.ExtensionsOf(paymentMeansKeyMap)
 }
 
-var paymentMeansKeyMap = tax.Extensions{
+var paymentMeansKeyMap = cbc.CodeMap{
 	pay.MeansKeyCash:                                "01",
 	pay.MeansKeyCheque:                              "02",
 	pay.MeansKeyCreditTransfer:                      "03",
@@ -50,7 +52,8 @@ var paymentMeansKeyMap = tax.Extensions{
 	pay.MeansKeyOther.With(MeansKeyRemission):       "25",
 	pay.MeansKeyOther.With(MeansKeyExpiration):      "26",
 	pay.MeansKeyOther.With(MeansKeySatisfyCreditor): "27",
-	pay.MeansKeyOther.With(MeansKeyDebit):           "28",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):        "28",
+	pay.MeansKeyOther.With(pay.MeansKeyDebit):       "28", // deprecated
 	pay.MeansKeyOther.With(MeansKeyServices):        "29",
 	pay.MeansKeyOther.With(MeansKeyAdvance):         "30",
 	pay.MeansKeyOther.With(MeansKeyIntermediary):    "31",
@@ -60,50 +63,50 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[instr.Key]; code != "" {
-		instr.Ext = instr.Ext.Merge(tax.Extensions{
+	if code := paymentMeansKeyMap.Lookup(instr.Key); code != "" {
+		instr.Ext = instr.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
-	if code := paymentMeansKeyMap[adv.Key]; code != "" {
-		adv.Ext = adv.Ext.Merge(tax.Extensions{
+	if code := paymentMeansKeyMap.Lookup(adv.Key); code != "" {
+		adv.Ext = adv.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyPaymentMeans: code,
-		})
+		}))
 	}
 }
 
-func validatePayAdvance(a *pay.Advance) error {
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+func payInstructionsRules() *rules.Set {
+	return rules.For(new(pay.Instructions),
+		rules.Field("ext",
+			rules.Assert("01",
+				fmt.Sprintf("payment instructions require '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayInstructions(i *pay.Instructions) error {
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+func payAdvanceRules() *rules.Set {
+	return rules.For(new(pay.Record),
+		rules.Field("ext",
+			rules.Assert("01",
+				fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayTerms(terms *pay.Terms) error {
-	if terms == nil {
-		return nil
-	}
-	return validation.ValidateStruct(terms,
-		validation.Field(&terms.Notes,
-			validation.Length(0, 1000),
-			validation.Skip,
+func payTermsRules() *rules.Set {
+	return rules.For(new(pay.Terms),
+		rules.Field("notes",
+			rules.Assert("01", "notes length must be no more than 1000", is.Length(0, 1000)),
 		),
 	)
 }

@@ -8,28 +8,29 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 
 	t.Run("valid", func(t *testing.T) {
 		m := &pay.Instructions{
 			Key: pay.MeansKeyCreditTransfer,
 		}
-		ad.Normalizer(m)
-		assert.Equal(t, "30", m.Ext[untdid.ExtKeyPaymentMeans].String())
+		norm.Normalize(m, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "30", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var m *pay.Instructions
 		assert.NotPanics(t, func() {
-			ad.Normalizer(m)
+			norm.Normalize(m, tax.AddonContext(en16931.V2017))
 		})
 	})
 
@@ -49,15 +50,13 @@ func TestPayInstructions(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "30", inv.Payment.Instructions.Ext[untdid.ExtKeyPaymentMeans].String())
-		err := inv.Validate()
+		assert.Equal(t, "30", inv.Payment.Instructions.Ext.Get(untdid.ExtKeyPaymentMeans).String())
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 }
 
 func TestPayTerms(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
-
 	t.Run("valid", func(t *testing.T) {
 		p := &pay.Terms{
 			DueDates: []*pay.DueDate{
@@ -67,7 +66,7 @@ func TestPayTerms(t *testing.T) {
 				},
 			},
 		}
-		err := ad.Validator(p)
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
@@ -75,7 +74,7 @@ func TestPayTerms(t *testing.T) {
 		p := &pay.Terms{
 			DueDates: []*pay.DueDate{},
 		}
-		err := ad.Validator(p)
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
 	})
 
@@ -83,7 +82,7 @@ func TestPayTerms(t *testing.T) {
 		p := &pay.Terms{
 			Notes: "",
 		}
-		err := ad.Validator(p)
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
 	})
 }

@@ -6,79 +6,89 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-func validateOrder(ord *bill.Order) error {
-	dt := orderDocType(ord)
-
-	return validation.ValidateStruct(ord,
-		validation.Field(&ord.Tax,
-			validation.By(validateOrderTax),
-			validation.Skip,
+func billOrderRules() *rules.Set {
+	return rules.For(new(bill.Order),
+		rules.Assert("01",
+			fmt.Sprintf("tax requires '%s' extension", ExtKeyWorkType),
+			is.Func("has work type", orderHasWorkType),
 		),
-		validation.Field(&ord.Series,
-			validateSeriesFormat(dt),
-			validation.Skip,
+		rules.Assert("02", "work type must not be an invoice work type",
+			is.FuncError("order work type valid", orderWorkTypeValid),
 		),
-		validation.Field(&ord.Code,
-			validateCodeFormat(ord.Series, dt),
-			validation.Skip,
+		rules.Assert("03", "series format must be valid",
+			is.FuncError("series format", orderSeriesFormatValid),
 		),
-		validation.Field(&ord.ValueDate,
-			validation.Required,
-			validation.Skip,
+		rules.Assert("04", "code format must be valid",
+			is.FuncError("code format", orderCodeFormatValid),
 		),
-		validation.Field(&ord.Lines,
-			validation.Each(
-				bill.RequireLineTaxCategory(tax.CategoryVAT),
-				validation.Skip,
+		rules.Field("value_date",
+			rules.Assert("05", "cannot be blank", is.Present),
+		),
+		rules.Field("lines",
+			rules.Each(
+				rules.Assert("06", "line taxes must include VAT category",
+					bill.RequireLineTaxCategory(tax.CategoryVAT),
+				),
 			),
-			validation.Skip,
 		),
 	)
+}
+
+func orderHasWorkType(val any) bool {
+	ord, ok := val.(*bill.Order)
+	if !ok || ord == nil {
+		return true
+	}
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
+		return false
+	}
+	return tax.ExtensionsRequire(ExtKeyWorkType).Check(ord.Tax.Ext)
+}
+
+func orderWorkTypeValid(val any) error {
+	ord, ok := val.(*bill.Order)
+	if !ok || ord == nil {
+		return nil
+	}
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
+		return nil
+	}
+	if ord.Tax.Ext.Has(ExtKeyWorkType) {
+		wt := ord.Tax.Ext.Get(ExtKeyWorkType)
+		if slices.Contains(invoiceWorkTypes, wt) {
+			return fmt.Errorf("value '%s' invalid", wt)
+		}
+	}
+	return nil
+}
+
+func orderSeriesFormatValid(val any) error {
+	ord, ok := val.(*bill.Order)
+	if !ok || ord == nil {
+		return nil
+	}
+	return validateSeriesFormat(orderDocType(ord)).Validate(ord.Series)
+}
+
+func orderCodeFormatValid(val any) error {
+	ord, ok := val.(*bill.Order)
+	if !ok || ord == nil {
+		return nil
+	}
+	dt := orderDocType(ord)
+	return validateCodeFormat(ord.Series, dt).Validate(ord.Code)
 }
 
 func orderDocType(ord *bill.Order) cbc.Code {
-	if ord.Tax == nil || ord.Tax.Ext == nil {
+	if ord.Tax == nil || ord.Tax.Ext.IsZero() {
 		return cbc.CodeEmpty
 	}
-	return ord.Tax.Ext[ExtKeyWorkType]
-}
-
-func validateOrderTax(val any) error {
-	t, _ := val.(*bill.Tax)
-	if t == nil {
-		t = new(bill.Tax)
-	}
-
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Ext,
-			validation.By(validateOrderTaxExt),
-			validation.Skip,
-		),
-	)
-}
-
-func validateOrderTaxExt(val any) error {
-	ext, _ := val.(tax.Extensions)
-	if ext == nil {
-		ext = make(tax.Extensions)
-	}
-
-	if wt, ok := ext[ExtKeyWorkType]; ok {
-		if slices.Contains(invoiceWorkTypes, wt) {
-			return validation.Errors{
-				ExtKeyWorkType.String(): fmt.Errorf("value '%s' invalid", wt),
-			}
-		}
-	}
-
-	return validation.Validate(val,
-		tax.ExtensionsRequire(ExtKeyWorkType),
-		validation.Skip,
-	)
+	return ord.Tax.Ext.Get(ExtKeyWorkType)
 }
 
 func normalizeOrder(ord *bill.Order) {
@@ -95,17 +105,17 @@ func normalizeOrderTax(ord *bill.Order) {
 		ord.Tax = new(bill.Tax)
 	}
 
-	if ord.Tax.Ext == nil {
-		ord.Tax.Ext = make(tax.Extensions)
+	if ord.Tax.Ext.IsZero() {
+		ord.Tax.Ext = tax.MakeExtensions()
 	}
 
 	if !ord.Tax.Ext.Has(ExtKeyWorkType) {
 		// Map order types to work types
 		switch ord.Type {
 		case bill.OrderTypePurchase:
-			ord.Tax.Ext[ExtKeyWorkType] = WorkTypePurchaseOrder
+			ord.Tax.Ext = ord.Tax.Ext.Set(ExtKeyWorkType, WorkTypePurchaseOrder)
 		case bill.OrderTypeQuote:
-			ord.Tax.Ext[ExtKeyWorkType] = WorkTypeBudgets
+			ord.Tax.Ext = ord.Tax.Ext.Set(ExtKeyWorkType, WorkTypeBudgets)
 		}
 	}
 }

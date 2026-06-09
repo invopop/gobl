@@ -3,17 +3,19 @@ package nfe
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/regimes/br"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 )
 
-func validateLine(line *bill.Line) error {
-	if line == nil {
-		return nil
-	}
-	return validation.Validate(line,
-		bill.RequireLineTaxCategory(br.TaxCategoryICMS),
-		bill.RequireLineTaxCategory(br.TaxCategoryPIS),
-		bill.RequireLineTaxCategory(br.TaxCategoryCOFINS),
-		validation.Skip,
+func billLineRules() *rules.Set {
+	return rules.For(new(bill.Line),
+		rules.Assert("01", "line taxes must include the ICMS category",
+			bill.RequireLineTaxCategory(br.TaxCategoryICMS),
+		),
+		rules.Assert("02", "line taxes must include the PIS category",
+			bill.RequireLineTaxCategory(br.TaxCategoryPIS),
+		),
+		rules.Assert("03", "line taxes must include the COFINS category",
+			bill.RequireLineTaxCategory(br.TaxCategoryCOFINS),
+		),
 	)
 }

@@ -6,17 +6,38 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
+	// Key identifies the NFS-e addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "br-nfse"
+
 	// V1 identifies the NFS-e addon version
-	V1 cbc.Key = "br-nfse-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("BR-NFSE"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		billLineRules(),
+		orgItemRules(),
+		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(func(inv *bill.Invoice) { normalizeSupplier(inv.Supplier) }),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -27,30 +48,5 @@ func newAddon() *tax.AddonDef {
 		},
 		Extensions: extensions,
 		Identities: identities,
-		Validator:  validate,
-		Normalizer: normalize,
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *bill.Line:
-		return validateLine(obj)
-	case *org.Item:
-		return validateItem(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeSupplier(obj.Supplier)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

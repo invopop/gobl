@@ -58,6 +58,9 @@ func (ud *UnionDef) HasMember(c Code) bool {
 // HasMemberOn checks if the given country code is a member of the union
 // at a specific point in time.
 func (ud *UnionDef) HasMemberOn(date cal.Date, c Code) bool {
+	if c == "" {
+		return false
+	}
 	for _, m := range ud.Members {
 		if m.Code == c || m.AltCode == c {
 			if m.On(date) {
