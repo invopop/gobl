@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `org`: new units in the unit system with their UN/ECE Rec. 20/21 codes — `wk` (week, `WEE`), `yr` (year, `ANN`), `dl` (decilitre, `DLT`), `kl` (kilolitre, `K6`), `cg` (centigram, `CGM`), `lm` (linear metre, `LM`), `lft` (linear foot, `LF`), `pkt` (packet, `XPA`), `bdl` (bundle, `XBE`), and `blk` (block, `XOK`).
 - `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
 - `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
 - `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
