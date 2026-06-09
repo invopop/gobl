@@ -11,9 +11,10 @@ func init() {
 	norm.Register(
 		// Global cleanup applied to every cbc.Code and tax.Extensions wherever
 		// they appear in a document, so individual normalizers don't need to
-		// trim codes or clean extensions by hand. NormalizeCode only trims
-		// whitespace, so it is safe to apply before a normalizer that inspects
-		// a raw code (e.g. org.Inbox).
+		// clean codes or extensions by hand. NormalizeCode is non-destructive
+		// (Unicode NFC, control-character removal and whitespace trimming), so
+		// it preserves a code's meaningful content and is safe to apply before a
+		// normalizer that inspects a raw code (e.g. org.Inbox).
 		norm.For(func(c *cbc.Code) { *c = cbc.NormalizeCode(*c) }),
 		norm.For(func(e *Extensions) { *e = e.Clean() }),
 		norm.For(normalizeCombo),

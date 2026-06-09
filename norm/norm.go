@@ -48,6 +48,12 @@ type Set struct {
 //	        inv.Type = bill.InvoiceTypeStandard
 //	    }
 //	})
+//
+// The document is walked once, depth-first and post-order (children before the
+// node itself). A normalizer that creates a previously-nil sub-object or
+// appends new elements is responsible for normalizing them itself — those new
+// nodes are not revisited by the engine in the same pass, so type-bound and
+// global normalizers will not run on them automatically.
 func For[T any](fn func(*T)) *Set {
 	return &Set{
 		objType: reflect.TypeOf((*T)(nil)).Elem(),
