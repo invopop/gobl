@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
@@ -559,7 +560,7 @@ func TestStatusLineNormalize(t *testing.T) {
 	t.Run("nil status line", func(t *testing.T) {
 		var sl *bill.StatusLine
 		assert.NotPanics(t, func() {
-			sl.Normalize(nil)
+			norm.Normalize(sl)
 		})
 	})
 }
@@ -568,7 +569,7 @@ func TestReasonNormalize(t *testing.T) {
 	t.Run("nil reason", func(t *testing.T) {
 		var r *bill.Reason
 		assert.NotPanics(t, func() {
-			r.Normalize(nil)
+			norm.Normalize(r)
 		})
 	})
 
@@ -580,7 +581,7 @@ func TestReasonNormalize(t *testing.T) {
 			},
 		}
 		assert.NotPanics(t, func() {
-			r.Normalize(nil)
+			norm.Normalize(r)
 		})
 		assert.Equal(t, cbc.Code("ERR-001"), r.Faults[0].Code)
 	})
@@ -590,14 +591,14 @@ func TestActionNormalize(t *testing.T) {
 	t.Run("nil action", func(t *testing.T) {
 		var a *bill.Action
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			norm.Normalize(a)
 		})
 	})
 
 	t.Run("non-nil action", func(t *testing.T) {
 		a := &bill.Action{Key: bill.ActionKeyReissue}
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			norm.Normalize(a)
 		})
 	})
 }
@@ -606,14 +607,14 @@ func TestFaultNormalize(t *testing.T) {
 	t.Run("nil fault", func(t *testing.T) {
 		var f *bill.Fault
 		assert.NotPanics(t, func() {
-			f.Normalize(nil)
+			norm.Normalize(f)
 		})
 	})
 
 	t.Run("normalizes code", func(t *testing.T) {
 		f := &bill.Fault{Code: "  ERR--001  "}
-		f.Normalize(nil)
-		assert.Equal(t, cbc.Code("ERR-001"), f.Code)
+		norm.Normalize(f)
+		assert.Equal(t, cbc.Code("ERR--001"), f.Code)
 	})
 }
 

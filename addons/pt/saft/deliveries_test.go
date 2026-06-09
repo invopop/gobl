@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -84,14 +85,11 @@ func TestDeliveryValidation(t *testing.T) {
 }
 
 func TestDeliveryNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-	require.NotNil(t, addon)
-
 	t.Run("note type", func(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeNote,
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
 		assert.Equal(t, saft.MovementTypeDeliveryNote, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
@@ -101,7 +99,7 @@ func TestDeliveryNormalization(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeWaybill,
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
 		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
@@ -116,7 +114,7 @@ func TestDeliveryNormalization(t *testing.T) {
 				}),
 			},
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		assert.Equal(t, saft.MovementTypeFixedAssets, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 }

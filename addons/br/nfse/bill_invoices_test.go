@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -242,7 +243,6 @@ func TestSuppliersValidation(t *testing.T) {
 }
 
 func TestSuppliersNormalization(t *testing.T) {
-	addon := tax.AddonForKey(nfse.V1)
 
 	tests := []struct {
 		name     string
@@ -271,7 +271,7 @@ func TestSuppliersNormalization(t *testing.T) {
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
 			inv := &bill.Invoice{Supplier: ts.supplier}
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(nfse.V1))
 			if ts.supplier == nil {
 				assert.Nil(t, inv.Supplier)
 			} else {

@@ -6,20 +6,28 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Italy.
+const CountryCode = "IT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules(), orgIdentityRules())
+	rules.Register("it", rules.GOBL.Add(CountryCode), taxIdentityRules(), orgIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeIdentity),
+		norm.For(normalizeParty),
+		norm.For(normalizeTaxCombo),
+	)
 }
-
-// CountryCode is the tax country code for Italy.
-const CountryCode l10n.TaxCountryCode = "IT"
 
 // New instantiates a new Italian regime.
 func New() *tax.RegimeDef {
@@ -72,8 +80,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Rome",
 		Identities: identityKeyDefinitions, // identities.go
 		Scenarios:  scenarios,              // scenarios.go
-		Normalizer: Normalize,
-		Categories: categories, // categories.go
+		Categories: categories,             // categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -83,19 +90,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Normalize will perform any regime specific calculations.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	case *org.Identity:
-		normalizeIdentity(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -108,6 +109,12 @@ type Invoice struct {
 // or not.
 func (inv *Invoice) CanSign() bool {
 	return inv != nil && !inv.Code.IsEmpty()
+}
+
+func normalizeInvoice(inv *Invoice) {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
 }
 
 func invoiceRules() *rules.Set {
@@ -259,11 +266,6 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
-// maxAddonResolutionPasses caps the iteration in Calculate that picks
-// up addons appended by meta-addon normalizers during normalization.
-// In practice one extra pass is enough; the cap is a safety net.
-const maxAddonResolutionPasses = 4
-
 // Calculate performs all the normalizations and calculations required for the invoice
 // totals and taxes. If the original invoice only includes partial calculations, this
 // will figure out what's missing.
@@ -273,22 +275,7 @@ func (inv *Invoice) Calculate() error {
 		inv.SetRegime(partyTaxCountry(inv.Supplier))
 	}
 
-	// Track which addon normalizers have already been applied so the
-	// follow-up passes only run normalizers for newly-added addons.
-	seen := make(map[cbc.Key]bool)
-	for _, def := range inv.AddonDefs() {
-		if def != nil {
-			seen[def.Key] = true
-		}
-	}
-	inv.Normalize(tax.ExtractNormalizers(inv))
-	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
-		newNorms := tax.ExtractNormalizersForNew(inv, seen)
-		if len(newNorms) == 0 {
-			break
-		}
-		inv.Normalize(newNorms)
-	}
+	norm.Normalize(inv)
 
 	for _, tag := range inv.Tags.List {
 		if !tag.In(inv.supportedTags()...) {
@@ -305,32 +292,6 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	return nil
-}
-
-// Normalize is run as part of the Calculate method to ensure that the invoice
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
-	if inv.Type == cbc.KeyEmpty {
-		inv.Type = InvoiceTypeStandard
-	}
-	inv.Series = cbc.NormalizeCode(inv.Series)
-	inv.Code = cbc.NormalizeCode(inv.Code)
-
-	tax.Normalize(normalizers, inv.Tax)
-	tax.Normalize(normalizers, inv.Supplier)
-	tax.Normalize(normalizers, inv.Customer)
-	tax.Normalize(normalizers, inv.Preceding)
-	tax.Normalize(normalizers, inv.Lines)
-	tax.Normalize(normalizers, inv.Discounts)
-	tax.Normalize(normalizers, inv.Charges)
-	tax.Normalize(normalizers, inv.Ordering)
-	tax.Normalize(normalizers, inv.Payment)
-	tax.Normalize(normalizers, inv.Delivery)
-	tax.Normalize(normalizers, inv.Notes)
-	tax.Normalize(normalizers, inv.Attachments)
-
-	normalizers.Each(inv)
 }
 
 func (inv *Invoice) supportedTags() []cbc.Key {

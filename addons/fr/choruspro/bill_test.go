@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -227,13 +228,11 @@ func TestNormalizeInvoice(t *testing.T) {
 		assert.Equal(t, cbc.Code("A3"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
-	addon := tax.AddonForKey(choruspro.V1)
-
 	t.Run("with nil tax", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = nil
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(choruspro.V1))
 
 		assert.NotNil(t, inv.Tax)
 		assert.NotNil(t, inv.Tax.Ext)
@@ -242,20 +241,19 @@ func TestNormalizeInvoice(t *testing.T) {
 
 	t.Run("with nil invoice", func(t *testing.T) {
 		var inv *bill.Invoice
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(choruspro.V1))
 		assert.Nil(t, inv)
 	})
 }
 
 func TestNormalizeBillLines(t *testing.T) {
-	addon := tax.AddonForKey(choruspro.V1)
 	t.Run("Remove decimal places", func(t *testing.T) {
 
 		line := &bill.Line{
 			Quantity: num.MakeAmount(1000000, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "1.0000", line.Quantity.String())
 	})
@@ -265,7 +263,7 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.MakeAmount(1530000, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "1.5300", line.Quantity.String())
 	})
@@ -275,7 +273,7 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.MakeAmount(13342423, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "13.3424", line.Quantity.String())
 	})
@@ -285,14 +283,14 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.Amount{},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "0", line.Quantity.String())
 	})
 
 	t.Run("with nil line", func(t *testing.T) {
 		var line *bill.Line
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 		assert.Nil(t, line)
 	})
 }

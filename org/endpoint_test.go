@@ -3,6 +3,7 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -30,14 +31,14 @@ func TestEndpointValidation(t *testing.T) {
 
 func TestEndpointNormalize(t *testing.T) {
 	e := &org.Endpoint{Label: "  spaced  ", URI: "gobl:acme.example.com"}
-	e.Normalize()
+	norm.Normalize(e)
 	assert.Equal(t, "spaced", e.Label)
 }
 
 func TestEndpointNormalizeNil(t *testing.T) {
-	// nil receiver must not panic.
+	// nil pointer must not panic.
 	var e *org.Endpoint
-	assert.NotPanics(t, func() { e.Normalize() })
+	assert.NotPanics(t, func() { norm.Normalize(e) })
 }
 
 func TestPartyFirstEndpoint(t *testing.T) {

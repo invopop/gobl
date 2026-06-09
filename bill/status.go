@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -567,51 +568,8 @@ func (st *Status) Calculate() error {
 	if st.Regime.IsEmpty() {
 		st.SetRegime(partyTaxCountry(st.Supplier))
 	}
-	// Track which addon normalizers have already been applied so the
-	// follow-up passes only run normalizers for newly-added addons.
-	seen := make(map[cbc.Key]bool)
-	for _, def := range st.AddonDefs() {
-		if def != nil {
-			seen[def.Key] = true
-		}
-	}
-	st.Normalize(st.normalizers())
-	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
-		newNorms := tax.ExtractNormalizersForNew(st, seen)
-		if len(newNorms) == 0 {
-			break
-		}
-		st.Normalize(newNorms)
-	}
+	norm.Normalize(st)
 	return st.calculate()
-}
-
-// Normalize is run as part of the Calculate method to ensure that the status
-// is in a consistent state. This will leverage any add-ons alongside the tax
-// regime.
-func (st *Status) Normalize(normalizers tax.Normalizers) {
-	st.Series = cbc.NormalizeCode(st.Series)
-	st.Code = cbc.NormalizeCode(st.Code)
-	st.Ext = st.Ext.Clean()
-
-	tax.Normalize(normalizers, st.Supplier)
-	tax.Normalize(normalizers, st.Customer)
-	tax.Normalize(normalizers, st.Ordering)
-	tax.Normalize(normalizers, st.Lines)
-	tax.Normalize(normalizers, st.Notes)
-
-	normalizers.Each(st)
-}
-
-func (st *Status) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := st.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range st.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 func (st *Status) calculate() error {
@@ -666,46 +624,6 @@ func (st *Status) ToEndpoint() *org.Endpoint {
 		return st.Customer.FirstEndpoint()
 	}
 	return nil
-}
-
-// Normalize normalizes the status line's sub-objects.
-func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
-	if sl == nil {
-		return
-	}
-	sl.Ext = sl.Ext.Clean()
-	tax.Normalize(normalizers, sl.Doc)
-	tax.Normalize(normalizers, sl.Reasons)
-	tax.Normalize(normalizers, sl.Actions)
-	normalizers.Each(sl)
-}
-
-// Normalize normalizes the reason's sub-objects.
-func (r *Reason) Normalize(normalizers tax.Normalizers) {
-	if r == nil {
-		return
-	}
-	r.Ext = r.Ext.Clean()
-	tax.Normalize(normalizers, r.Faults)
-	normalizers.Each(r)
-}
-
-// Normalize runs any registered normalizers on the action.
-func (a *Action) Normalize(normalizers tax.Normalizers) {
-	if a == nil {
-		return
-	}
-	a.Ext = a.Ext.Clean()
-	normalizers.Each(a)
-}
-
-// Normalize normalizes the fault's code and runs any registered normalizers.
-func (f *Fault) Normalize(normalizers tax.Normalizers) {
-	if f == nil {
-		return
-	}
-	f.Code = cbc.NormalizeCode(f.Code)
-	normalizers.Each(f)
 }
 
 // JSONSchemaExtend extends the schema with additional property details

@@ -20,11 +20,7 @@ type Endpoint struct {
 	URI cbc.URI `json:"uri" jsonschema:"title=URI"`
 }
 
-// Normalize will try to clean the endpoint's data.
-func (e *Endpoint) Normalize() {
-	if e == nil {
-		return
-	}
+func normalizeEndpoint(e *Endpoint) {
 	uuid.Normalize(&e.UUID)
 	e.Label = cbc.NormalizeString(e.Label)
 }

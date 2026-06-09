@@ -6,6 +6,7 @@ import (
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -19,12 +20,11 @@ func TestPaymentMeans(t *testing.T) {
 }
 
 func TestPayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(mydata.V1)
 	t.Run("valid cash", func(t *testing.T) {
 		i := &pay.Instructions{
 			Key: pay.MeansKeyCash,
 		}
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.False(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.NoError(t, err)
@@ -34,7 +34,7 @@ func TestPayInstructions(t *testing.T) {
 		i := &pay.Instructions{
 			Key: cbc.Key("foo"),
 		}
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.True(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.ErrorContains(t, err, "payment instructions require 'gr-mydata-payment-means' extension")
@@ -42,19 +42,18 @@ func TestPayInstructions(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var i *pay.Instructions
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.NoError(t, rules.Validate(i, withAddonContext()))
 	})
 }
 
 func TestPayAdvance(t *testing.T) {
-	ad := tax.AddonForKey(mydata.V1)
 	t.Run("valid cash", func(t *testing.T) {
 		i := &pay.Record{
 			Key:         pay.MeansKeyCash,
 			Description: "Cash advance",
 		}
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.False(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.NoError(t, err)
@@ -65,7 +64,7 @@ func TestPayAdvance(t *testing.T) {
 			Key:         cbc.Key("foo"),
 			Description: "Bad advance",
 		}
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.True(t, i.Ext.IsZero())
 		err := rules.Validate(i, withAddonContext())
 		assert.ErrorContains(t, err, "payment advance requires 'gr-mydata-payment-means' extension")
@@ -73,7 +72,7 @@ func TestPayAdvance(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var i *pay.Record
-		ad.Normalizer(i)
+		norm.Normalize(i, tax.AddonContext(mydata.V1))
 		assert.NoError(t, rules.Validate(i, withAddonContext()))
 	})
 }

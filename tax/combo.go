@@ -39,11 +39,11 @@ type Combo struct {
 	informative bool `json:"-"`
 }
 
-// Normalize tries to normalize the data inside the tax combo.
-func (c *Combo) Normalize(normalizers Normalizers) {
-	if c == nil {
-		return
-	}
+// normalizeCombo applies the intrinsic normalization of a tax combo: it maps
+// legacy VAT rate keys onto the current key/rate model. Regime and addon
+// adjustments are applied separately by their registered normalizers, and the
+// extension map is cleaned by the global tax.Extensions normalizer.
+func normalizeCombo(c *Combo) {
 
 	switch c.Category {
 	case CategoryVAT:
@@ -92,9 +92,6 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			}
 		}
 	}
-
-	c.Ext = c.Ext.Clean()
-	normalizers.Each(c)
 }
 
 func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
