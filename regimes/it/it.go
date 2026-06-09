@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -14,21 +13,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Italy.
+const CountryCode = "IT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("it", rules.GOBL.Add("IT"), taxIdentityRules(), orgIdentityRules())
+	rules.Register("it", rules.GOBL.Add(CountryCode), taxIdentityRules(), orgIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("IT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("IT")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
 		norm.For(normalizeIdentity),
 		norm.For(normalizeParty),
 		norm.For(normalizeTaxCombo),
 	)
 }
-
-// CountryCode is the tax country code for Italy.
-const CountryCode l10n.TaxCountryCode = "IT"
 
 // New instantiates a new Italian regime.
 func New() *tax.RegimeDef {

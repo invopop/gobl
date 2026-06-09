@@ -11,10 +11,13 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Canada.
+const CountryCode = "CA"
+
 func init() {
 	tax.RegisterRegimeDef(New())
 	norm.Register(
-		norm.When(tax.IdentityIn("CA"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }
 
@@ -27,7 +30,7 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "CA",
+		Country:   CountryCode,
 		Currency:  currency.CAD,
 		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{

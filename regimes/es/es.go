@@ -18,7 +18,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register(
 		"es",
-		rules.GOBL.Add("ES"),
+		rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxIdentityRules(),
 	)

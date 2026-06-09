@@ -33,7 +33,7 @@ func init() {
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("FR"), norm.For(normalizeTaxIdentity)),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 

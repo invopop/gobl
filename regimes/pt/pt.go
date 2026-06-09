@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -14,24 +13,24 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Portugal.
+const CountryCode = "PT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("pt", rules.GOBL.Add("PT"),
+	rules.Register("pt", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxComboRules(),
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("PT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("PT")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
 		norm.For(migrateInvoiceRates), // *bill.Invoice
 		norm.For(normalizeTaxCombo),   // *tax.Combo
 	)
 }
-
-// CountryCode is the tax country code for Portugal.
-const CountryCode l10n.TaxCountryCode = "PT"
 
 // Custom keys used typically in meta information
 const (

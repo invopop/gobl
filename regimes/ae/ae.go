@@ -12,11 +12,14 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for United Arab Emirates.
+const CountryCode = "AE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ae", rules.GOBL.Add("AE"), taxIdentityRules())
+	rules.Register("ae", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("AE"),
+		norm.When(tax.IdentityIn(CountryCode),
 			norm.For(func(id *tax.Identity) {
 				tax.NormalizeIdentity(id)
 			})),
@@ -26,7 +29,7 @@ func init() {
 // New provides the tax region definition for AE.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "AE",
+		Country:   CountryCode,
 		Currency:  currency.AED,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

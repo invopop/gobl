@@ -12,18 +12,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Belgium.
+const CountryCode = "BE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("be", rules.GOBL.Add("BE"), taxIdentityRules(), billInvoiceRules())
+	rules.Register("be", rules.GOBL.Add(CountryCode), taxIdentityRules(), billInvoiceRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("BE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "BE",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

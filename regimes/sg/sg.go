@@ -24,9 +24,9 @@ func init() {
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("SG"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("SG")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
 		norm.For(normalizeIdentity), // *org.Identity
 	)
 }

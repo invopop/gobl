@@ -23,7 +23,7 @@ func init() {
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("DK"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }
 

@@ -12,18 +12,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Austria.
+const CountryCode = "AT"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("at", rules.GOBL.Add("AT"), taxIdentityRules())
+	rules.Register("at", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("AT"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "AT",
+		Country:   CountryCode,
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

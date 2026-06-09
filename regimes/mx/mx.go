@@ -12,15 +12,18 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Mexico.
+const CountryCode = "MX"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
+	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("MX"),
+		norm.When(tax.IdentityIn(CountryCode),
 			norm.For(normalizeTaxIdentity),
 		),
 	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("MX")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
 		norm.For(normalizeInvoice), // *bill.Invoice
 	)
 }

@@ -12,18 +12,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Switzerland.
+const CountryCode = "CH"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ch", rules.GOBL.Add("CH"), taxIdentityRules())
+	rules.Register("ch", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("CH"), norm.For(normalizeTaxIdentity)),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "CH",
+		Country:   CountryCode,
 		Currency:  currency.CHF,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{

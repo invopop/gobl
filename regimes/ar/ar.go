@@ -11,21 +11,24 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Argentina.
+const CountryCode = "AR"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ar", rules.GOBL.Add("AR"),
+	rules.Register("ar", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("AR"), norm.For(normalizeTaxIdentity)),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // New provides the tax region definition for Argentina
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "AR",
+		Country:  CountryCode,
 		Currency: currency.ARS,
 		Name: i18n.String{
 			i18n.EN: "Argentina",

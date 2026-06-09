@@ -15,15 +15,15 @@ import (
 )
 
 // CountryCode is the tax country code for Sweden.
-const CountryCode l10n.TaxCountryCode = "SE"
+const CountryCode = "SE"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("se", rules.GOBL.Add("SE"), taxIdentityRules(), billInvoiceRules(), orgIdentityRules())
+	rules.Register("se", rules.GOBL.Add(CountryCode), taxIdentityRules(), billInvoiceRules(), orgIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("SE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
 	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("SE")),
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
 		norm.For(normalizeOrgIdentity), // *org.Identity
 	)
 }

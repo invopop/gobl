@@ -11,18 +11,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Colombia.
+const CountryCode = "CO"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("co", rules.GOBL.Add("CO"), taxIdentityRules())
+	rules.Register("co", rules.GOBL.Add(CountryCode), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("CO"), norm.For(normalizeTaxIdentity)),
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "CO",
+		Country:  CountryCode,
 		Currency: "COP",
 		Name: i18n.String{
 			i18n.EN: "Colombia",
