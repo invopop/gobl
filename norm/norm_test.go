@@ -1,6 +1,7 @@
 package norm
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -272,4 +273,35 @@ func TestNormalizeWalksNilMembers(t *testing.T) {
 	c := &wContainer{} // nil map, nil interface, nil pointer, zero array
 	assert.NotPanics(t, func() { Normalize(c) })
 	assert.True(t, c.guarded, "node normalizer still runs with nil members")
+}
+
+// --- defensive engine branches ---
+
+func TestEngineDefensiveBranches(t *testing.T) {
+	rc := &rules.Context{}
+
+	t.Run("apply ignores non-addressable values", func(t *testing.T) {
+		assert.NotPanics(t, func() { apply(rc, reflect.ValueOf(42)) })
+	})
+
+	t.Run("non-struct pointer root is a no-op", func(t *testing.T) {
+		n := 0
+		assert.NotPanics(t, func() { Normalize(&n) })
+	})
+
+	t.Run("sameKeys compares content, not just length", func(t *testing.T) {
+		assert.True(t, sameKeys(
+			map[rules.ContextKey]bool{"a": true},
+			map[rules.ContextKey]bool{"a": true}))
+		assert.False(t, sameKeys(
+			map[rules.ContextKey]bool{"a": true},
+			map[rules.ContextKey]bool{"b": true}))
+		assert.False(t, sameKeys(
+			map[rules.ContextKey]bool{"a": true},
+			map[rules.ContextKey]bool{"a": true, "b": true}))
+	})
+
+	t.Run("registering a nil set is ignored", func(t *testing.T) {
+		assert.NotPanics(t, func() { Register((*Set)(nil)) })
+	})
 }
