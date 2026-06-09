@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -163,6 +164,12 @@ func (pmt *Payment) CanSign() bool {
 	return !pmt.Code.IsEmpty()
 }
 
+func normalizePayment(pmt *Payment) {
+	if pmt.Type == cbc.KeyEmpty {
+		pmt.Type = PaymentTypeReceipt
+	}
+}
+
 func paymentRules() *rules.Set {
 	return rules.For(new(Payment),
 		rules.Field("type",
@@ -237,55 +244,8 @@ func (pmt *Payment) Calculate() error {
 	if pmt.Regime.IsEmpty() {
 		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
 	}
-	// Track which addon normalizers have already been applied so the
-	// follow-up passes only run normalizers for newly-added addons.
-	seen := make(map[cbc.Key]bool)
-	for _, def := range pmt.AddonDefs() {
-		if def != nil {
-			seen[def.Key] = true
-		}
-	}
-	pmt.Normalize(pmt.normalizers())
-	for pass := 0; pass < maxAddonResolutionPasses; pass++ {
-		newNorms := tax.ExtractNormalizersForNew(pmt, seen)
-		if len(newNorms) == 0 {
-			break
-		}
-		pmt.Normalize(newNorms)
-	}
+	norm.Normalize(pmt)
 	return pmt.calculate()
-}
-
-// Normalize is run as part of the Calculate method to ensure that the invoice
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
-	if pmt.Type == cbc.KeyEmpty {
-		pmt.Type = PaymentTypeReceipt
-	}
-	pmt.Series = cbc.NormalizeCode(pmt.Series)
-	pmt.Code = cbc.NormalizeCode(pmt.Code)
-
-	tax.Normalize(normalizers, pmt.Methods)
-	tax.Normalize(normalizers, pmt.Supplier)
-	tax.Normalize(normalizers, pmt.Customer)
-	tax.Normalize(normalizers, pmt.Preceding)
-	tax.Normalize(normalizers, pmt.Lines)
-	tax.Normalize(normalizers, pmt.Ordering)
-	tax.Normalize(normalizers, pmt.Notes)
-
-	normalizers.Each(pmt)
-}
-
-func (pmt *Payment) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := pmt.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range pmt.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 func (pmt *Payment) calculate() error {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -89,7 +90,7 @@ func TestIdentityNormalize(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		var id *org.Identity
 		assert.NotPanics(t, func() {
-			id.Normalize()
+			norm.Normalize(id)
 		})
 	})
 	t.Run("missing extensions", func(t *testing.T) {
@@ -98,7 +99,7 @@ func TestIdentityNormalize(t *testing.T) {
 			Code: "BAR",
 			Ext:  tax.ExtensionsOf(cbc.CodeMap{}),
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "FOO", id.Type.String())
 		assert.True(t, id.Ext.IsZero())
 	})
@@ -109,7 +110,7 @@ func TestIdentityNormalize(t *testing.T) {
 				iso.ExtKeySchemeID: "0004",
 			}),
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "BAR", id.Code.String())
 		assert.Equal(t, "0004", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})

@@ -70,19 +70,6 @@ type Identity struct {
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize will try to clean the identity's data.
-func (i *Identity) Normalize() {
-	if i == nil {
-		return
-	}
-	uuid.Normalize(&i.UUID)
-	i.Label = cbc.NormalizeString(i.Label)
-	i.Type = cbc.NormalizeCode(i.Type)
-	i.Code = cbc.NormalizeCode(i.Code)
-	i.Description = cbc.NormalizeString(i.Description)
-	i.Ext = i.Ext.Clean()
-}
-
 func identityRules() *rules.Set {
 	return rules.For(new(Identity),
 		rules.Field("code",
@@ -257,4 +244,10 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 			},
 		}
 	}
+}
+
+func normalizeIdentity(i *Identity) {
+	uuid.Normalize(&i.UUID)
+	i.Label = cbc.NormalizeString(i.Label)
+	i.Description = cbc.NormalizeString(i.Description)
 }

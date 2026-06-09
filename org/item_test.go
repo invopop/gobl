@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
@@ -19,7 +20,7 @@ func TestItemNormalization(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var i *org.Item
 		assert.NotPanics(t, func() {
-			i.Normalize(nil)
+			norm.Normalize(i)
 		})
 	})
 	t.Run("extensions", func(t *testing.T) {
@@ -30,7 +31,7 @@ func TestItemNormalization(t *testing.T) {
 				"test": "",
 			}),
 		}
-		i.Normalize(nil)
+		norm.Normalize(i)
 		assert.Equal(t, "test item", i.Name)
 		assert.Equal(t, num.NewAmount(100, 2), i.Price)
 		assert.True(t, i.Ext.IsZero())
@@ -40,7 +41,7 @@ func TestItemNormalization(t *testing.T) {
 			Name: "test item",
 			Ref:  "  test-ref  ",
 		}
-		i.Normalize(nil)
+		norm.Normalize(i)
 		assert.Equal(t, "test-ref", i.Ref.String())
 	})
 }

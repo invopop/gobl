@@ -28,14 +28,6 @@ type LineDiscount struct {
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize performs normalization on the discount and embedded objects using the
-// provided list of normalizers.
-func (ld *LineDiscount) Normalize(normalizers tax.Normalizers) {
-	ld.Code = cbc.NormalizeCode(ld.Code)
-	ld.Ext = ld.Ext.Clean()
-	normalizers.Each(ld)
-}
-
 func lineDiscountRules() *rules.Set {
 	return rules.For(new(LineDiscount),
 		rules.When(is.Expr("Base != nil"),

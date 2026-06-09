@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/in"
 	"github.com/invopop/gobl/rules"
@@ -31,7 +32,7 @@ func TestOrgIdentityNormalize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Type: in.IdentityTypePAN, Code: tt.input}
-			in.Normalize(id)
+			norm.Normalize(id, tax.RegimeContext("IN"))
 			assert.Equal(t, tt.expected, id.Code)
 		})
 	}

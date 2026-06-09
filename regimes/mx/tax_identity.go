@@ -73,9 +73,6 @@ func isValidTaxIdentityCode(value any) bool {
 
 // normalizeTaxIdentity ensures the tax code is good for mexico
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID == nil {
-		return
-	}
 	tID.Code = normalizeTaxCode(tID.Code)
 }
 

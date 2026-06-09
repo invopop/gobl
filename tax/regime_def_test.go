@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -91,15 +90,6 @@ func TestRegimeGetRoundingRule(t *testing.T) {
 	})
 }
 
-func TestRegimeDefNormalizeObject(t *testing.T) {
-	t.Run("nil regime", func(t *testing.T) {
-		var r *tax.RegimeDef
-		assert.NotPanics(t, func() {
-			r.NormalizeObject(&org.Note{})
-		})
-	})
-}
-
 func TestRegimeDefCategoryDef(t *testing.T) {
 	t.Run("nil regime for known category", func(t *testing.T) {
 		var r *tax.RegimeDef
@@ -111,27 +101,5 @@ func TestRegimeDefCategoryDef(t *testing.T) {
 		var r *tax.RegimeDef
 		cd := r.CategoryDef(cbc.Code("UNKNOWN"))
 		assert.Nil(t, cd)
-	})
-}
-
-func TestRegimeDefNormalizers(t *testing.T) {
-	t.Run("nil regime", func(t *testing.T) {
-		var r *tax.RegimeDef
-		assert.Nil(t, r.Normalizers())
-	})
-
-	t.Run("with normalizer", func(t *testing.T) {
-		r := &tax.RegimeDef{
-			Normalizer: func(_ any) {
-				// nothing here
-			},
-		}
-		assert.NotNil(t, r.Normalizers())
-		assert.Len(t, r.Normalizers(), 1)
-	})
-
-	t.Run("without normalizer", func(t *testing.T) {
-		r := &tax.RegimeDef{}
-		assert.Nil(t, r.Normalizers())
 	})
 }

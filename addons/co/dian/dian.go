@@ -2,9 +2,9 @@
 package dian
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -34,6 +34,10 @@ func init() {
 		rules.GOBL.Add("CO-DIAN"),
 		is.InContext(tax.AddonIn(V2)),
 		billInvoiceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V2)),
+		norm.For(normalizeInvoice),
 	)
 }
 
@@ -214,14 +218,6 @@ func newAddon() *tax.AddonDef {
 		},
 		Extensions:  extensions,
 		Identities:  identities,
-		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
 	}
 }

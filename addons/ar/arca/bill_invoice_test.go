@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -21,7 +22,6 @@ import (
 const testItemServiceName = "Service Item"
 
 func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
 
 	t.Run("customer without tax ID sets final consumer", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
@@ -35,14 +35,14 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 				}),
 			},
 		}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "5", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
 	t.Run("customer with AR tax ID sets registered VAT responsible", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Customer.Ext = tax.Extensions{}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -53,7 +53,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 			Code:    "123456789",
 		}
 		inv.Customer.Ext = tax.Extensions{}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "9", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -62,7 +62,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "6", // Monotributo Responsible - valid for AR tax ID
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -72,7 +72,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "9",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Should be corrected to default "1" (Responsable Inscripto)
 		assert.Equal(t, "1", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
@@ -83,7 +83,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "5",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Should be corrected to default "1" (Responsable Inscripto)
 		assert.Equal(t, "1", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
@@ -94,7 +94,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "4",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "4", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -108,7 +108,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Should be corrected to default "9" (Foreign Customer)
 		assert.Equal(t, "9", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
@@ -128,7 +128,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "7",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "7", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -142,7 +142,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "8",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "8", inv.Customer.Ext.Get(arca.ExtKeyVATStatus).String())
 	})
 
@@ -150,7 +150,7 @@ func TestInvoiceCustomerVATStatusNormalization(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Customer = nil
 		assert.NotPanics(t, func() {
-			ad.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(arca.V4))
 		})
 	})
 }
@@ -254,13 +254,12 @@ func TestInvoiceConceptNormalization(t *testing.T) {
 }
 
 func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
 
 	t.Run("nil tax is initialized", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax = nil
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		require.NotNil(t, inv.Tax)
 		// With AR customer (VAT status 1 after normalization), should get type A doc type
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
@@ -275,7 +274,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt (would normally trigger type B)
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Should keep the existing doc type and not change it
 		assert.Equal(t, "51", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
@@ -287,7 +286,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Would normally trigger type A
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Proforma is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
 	})
@@ -299,7 +298,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Would normally trigger type A
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Corrective is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
 	})
@@ -311,7 +310,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Would normally trigger type A
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Other is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
 	})
@@ -323,7 +322,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "5", // Final Consumer - would normally trigger type B
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Proforma is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
 	})
@@ -333,22 +332,24 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeProforma
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Proforma is not supported, so no doc type should be set
 		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
 	})
 
-	t.Run("empty invoice type does not set doc type", func(t *testing.T) {
+	t.Run("empty invoice type is defaulted to standard then sets doc type", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
-		// Empty type is not "standard"
+		// An empty type is normalized to "standard" by the core bill
+		// normalizer before the addon runs, so the doc type is resolved
+		// from the standard type and the registered customer VAT status.
 		inv.Type = ""
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
-		// Empty type is not supported, so no doc type should be set
-		assert.Empty(t, inv.Tax.GetExt(arca.ExtKeyDocType))
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
+		assert.Equal(t, bill.InvoiceTypeStandard, inv.Type)
+		assert.Equal(t, "1", inv.Tax.GetExt(arca.ExtKeyDocType).String())
 	})
 
 	t.Run("customer with nil ext gets normalized then doc type set", func(t *testing.T) {
@@ -356,7 +357,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Customer.Ext = tax.Extensions{} // nil ext, customer exists with AR tax ID
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Customer normalization runs first and sets VAT status to "1" (AR tax ID)
 		// Then doc type normalization sets type A
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
@@ -371,7 +372,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Empty string is treated as not set, should get doc type
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
@@ -383,7 +384,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Registered Company - type A
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -394,7 +395,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "3", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -405,7 +406,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "2", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -416,7 +417,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt Law 19640 - valid for AR, triggers type B
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -427,7 +428,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt Law 19640 - valid for AR, triggers type B
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "8", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -438,7 +439,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt Law 19640 - valid for AR, triggers type B
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "7", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -447,7 +448,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "11", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -456,7 +457,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "13", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -465,7 +466,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "12", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -474,7 +475,7 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Type = bill.InvoiceTypeStandard
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Customer = nil
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 
@@ -486,14 +487,13 @@ func TestNormalizeBillInvoiceTaxDocType(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Would normally trigger type A
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Tag takes precedence, should get type C
 		assert.Equal(t, "11", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
 }
 
 func TestInvoiceDocTypeNormalization(t *testing.T) {
-	ad := tax.AddonForKey(arca.V4)
 
 	t.Run("monotax tag sets type C invoice", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
@@ -502,7 +502,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Even with type A VAT status, tag takes precedence
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "11", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice C
 	})
 
@@ -511,7 +511,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "13", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Credit Note C
 	})
 
@@ -520,7 +520,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Tags = tax.Tags{List: []cbc.Key{arca.TagMonotax}}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "12", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Debit Note C
 	})
 
@@ -530,7 +530,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1", // Registered Company
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice A
 	})
 
@@ -540,7 +540,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "6", // Monotributo Responsible
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice A
 	})
 
@@ -550,7 +550,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "13", // Social Monotributista
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice A
 	})
 
@@ -560,7 +560,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "16", // Promoted Independent Worker Monotributista
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice A
 	})
 
@@ -570,7 +570,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt Law 19640
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice B
 	})
 
@@ -580,7 +580,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "15", // VAT Not Applicable
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice B
 	})
 
@@ -599,7 +599,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "5", // Final Consumer
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice B
 	})
 
@@ -613,7 +613,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "9", // Foreign Customer
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice B
 	})
 
@@ -624,7 +624,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "3", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Credit Note A
 	})
 
@@ -635,7 +635,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "1",
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "2", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Debit Note A
 	})
 
@@ -646,7 +646,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt Law 19640
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "8", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Credit Note B
 	})
 
@@ -657,7 +657,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "15", // VAT Not Applicable
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "7", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Debit Note B
 	})
 
@@ -669,7 +669,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			arca.ExtKeyVATStatus: "10", // VAT Exempt (would normally trigger type B)
 		})
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Should keep the existing doc type and not change it
 		assert.Equal(t, "51", inv.Tax.Ext.Get(arca.ExtKeyDocType).String())
 	})
@@ -678,7 +678,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Customer = nil
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		assert.Equal(t, "6", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice B
 	})
 
@@ -686,7 +686,7 @@ func TestInvoiceDocTypeNormalization(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Tax.Ext = tax.Extensions{}
 		inv.Customer.Ext = tax.Extensions{}
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(arca.V4))
 		// Customer has AR tax ID, so it will be normalized to VAT status "1" (Registered Company)
 		// which triggers type A doc type
 		assert.Equal(t, "1", inv.Tax.Ext.Get(arca.ExtKeyDocType).String()) // Invoice A

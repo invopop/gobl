@@ -84,14 +84,68 @@ func TestNormalizeCode(t *testing.T) {
 			want: cbc.Code("foo-bar1"),
 		},
 		{
-			name: "invalid chars",
+			name: "invalid chars left untouched (lenient default)",
 			code: cbc.Code("f$oo-bar1!"),
-			want: cbc.Code("foo-bar1"),
+			want: cbc.Code("f$oo-bar1!"),
 		},
 		{
 			name: "multiple spaces",
 			code: cbc.Code("foo bar dome"),
 			want: cbc.Code("foo bar dome"),
+		},
+		{
+			name: "internal symbols left untouched (lenient default)",
+			code: cbc.Code("foo- bar-$dome"),
+			want: cbc.Code("foo- bar-$dome"),
+		},
+		{
+			name: "internal repeats left untouched (lenient default)",
+			code: cbc.Code("FOO  BAR--DOME"),
+			want: cbc.Code("FOO  BAR--DOME"),
+		},
+		{
+			name: "colons",
+			code: cbc.Code("0088:1234567891234"), // peppol example
+			want: cbc.Code("0088:1234567891234"),
+		},
+		{
+			name: "commas",
+			code: cbc.Code("FL-C 64-3,5"),
+			want: cbc.Code("FL-C 64-3,5"),
+		},
+		{
+			name: "control characters removed",
+			code: cbc.Code("foo\t\x00bar\n"),
+			want: cbc.Code("foobar"),
+		},
+		{
+			name: "NFC composes combining marks",
+			code: cbc.Code("cafe\u0301"), // "e" + combining acute accent (decomposed)
+			want: cbc.Code("caf\u00e9"),  // single composed "e-acute"
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+		})
+	}
+}
+
+func TestNormalizeStrictCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "whitespace",
+			code: cbc.Code(" foo-bar1  "),
+			want: cbc.Code("foo-bar1"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("foo-bar1"),
 		},
 		{
 			name: "multiple symbols 1",
@@ -105,18 +159,13 @@ func TestNormalizeCode(t *testing.T) {
 		},
 		{
 			name: "colons",
-			code: cbc.Code("0088:1234567891234"), // peppol example
+			code: cbc.Code("0088:1234567891234"),
 			want: cbc.Code("0088:1234567891234"),
-		},
-		{
-			name: "commas",
-			code: cbc.Code("FL-C 64-3,5"),
-			want: cbc.Code("FL-C 64-3,5"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+			assert.Equal(t, tt.want, cbc.NormalizeStrictCode(tt.code))
 		})
 	}
 }
@@ -354,43 +403,47 @@ func TestCode_Rules(t *testing.T) {
 			code: cbc.Code("123456789012345678901234567890AB"),
 		},
 		{
-			name:     "dot at start",
-			code:     cbc.Code(".B123"),
+			name: "dot at start",
+			code: cbc.Code(".B123"),
+		},
+		{
+			name: "dot at end",
+			code: cbc.Code("B123."),
+		},
+		{
+			name: "dash at start",
+			code: cbc.Code("-B123"),
+		},
+		{
+			name: "dash at end",
+			code: cbc.Code("B123-"),
+		},
+		{
+			name: "multiple symbols",
+			code: cbc.Code("AB/.CD"),
+		},
+		{
+			name: "multi-dash",
+			code: cbc.Code("AB--CD"),
+		},
+		{
+			name:     "leading space",
+			code:     cbc.Code(" B123"),
 			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
-			name:     "dot at end",
-			code:     cbc.Code("B123."),
+			name:     "trailing space",
+			code:     cbc.Code("B123 "),
 			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
-			name:     "dash at start",
-			code:     cbc.Code("-B123"),
-			wantCode: "GOBL-CBC-CODE-02",
-		},
-		{
-			name:     "dash at end",
-			code:     cbc.Code("B123-"),
-			wantCode: "GOBL-CBC-CODE-02",
-		},
-		{
-			name:     "multiple symbols",
-			code:     cbc.Code("AB/.CD"),
-			wantCode: "GOBL-CBC-CODE-02",
-		},
-		{
-			name:     "character return",
+			name:     "newline in middle",
 			code:     cbc.Code("AB\nCD"),
 			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
-			name:     "character return",
+			name:     "only newline",
 			code:     cbc.Code("\n"),
-			wantCode: "GOBL-CBC-CODE-02",
-		},
-		{
-			name:     "multi-dash",
-			code:     cbc.Code("AB--CD"),
 			wantCode: "GOBL-CBC-CODE-02",
 		},
 		{
@@ -468,44 +521,48 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code("123456789012345678901234567890AB"),
 		},
 		{
-			name:    "dot at start",
-			code:    cbc.Code(".B123"),
-			wantErr: "codes must only contain",
+			name: "dot at start",
+			code: cbc.Code(".B123"),
 		},
 		{
-			name:    "dot at end",
-			code:    cbc.Code("B123."),
-			wantErr: "codes must only contain",
+			name: "dot at end",
+			code: cbc.Code("B123."),
 		},
 		{
-			name:    "dash at start",
-			code:    cbc.Code("-B123"),
-			wantErr: "codes must only contain",
+			name: "dash at start",
+			code: cbc.Code("-B123"),
 		},
 		{
-			name:    "dash at end",
-			code:    cbc.Code("B123-"),
-			wantErr: "codes must only contain",
+			name: "dash at end",
+			code: cbc.Code("B123-"),
 		},
 		{
-			name:    "multiple symbols",
-			code:    cbc.Code("AB/.CD"),
-			wantErr: "codes must only contain",
+			name: "multiple symbols",
+			code: cbc.Code("AB/.CD"),
 		},
 		{
-			name:    "character return",
+			name: "multi-dash",
+			code: cbc.Code("AB--CD"),
+		},
+		{
+			name:    "leading space",
+			code:    cbc.Code(" B123"),
+			wantErr: "leading or trailing whitespace",
+		},
+		{
+			name:    "trailing space",
+			code:    cbc.Code("B123 "),
+			wantErr: "leading or trailing whitespace",
+		},
+		{
+			name:    "newline in middle",
 			code:    cbc.Code("AB\nCD"),
-			wantErr: "codes must only contain",
+			wantErr: "leading or trailing whitespace",
 		},
 		{
-			name:    "character return",
+			name:    "only newline",
 			code:    cbc.Code("\n"),
-			wantErr: "codes must only contain",
-		},
-		{
-			name:    "multi-dash",
-			code:    cbc.Code("AB--CD"),
-			wantErr: "codes must only contain",
+			wantErr: "leading or trailing whitespace",
 		},
 		{
 			name:    "too long",

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +13,6 @@ import (
 )
 
 func TestItemIdentityNormalization(t *testing.T) {
-	addon := tax.AddonForKey(cfdi.V4)
 	tests := []struct {
 		Code     cbc.Code
 		Expected cbc.Code
@@ -32,7 +32,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 	}
 	for _, ts := range tests {
 		item := &org.Item{Ext: tax.ExtensionsOf(cbc.CodeMap{cfdi.ExtKeyProdServ: ts.Code})}
-		addon.Normalizer(item)
+		norm.Normalize(item, tax.AddonContext(cfdi.V4))
 		assert.Equal(t, ts.Expected, item.Ext.Get(cfdi.ExtKeyProdServ))
 	}
 

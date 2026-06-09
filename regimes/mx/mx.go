@@ -2,18 +2,30 @@
 package mx
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Mexico.
+const CountryCode = "MX"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
+	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode),
+			norm.For(normalizeTaxIdentity),
+		),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeInvoice), // *bill.Invoice
+	)
 }
 
 // Official SAT codes to include in stamps.
@@ -84,18 +96,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
-		Normalizer:  Normalize,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
-	}
-}
-
-// Normalize performs regime specific calculations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

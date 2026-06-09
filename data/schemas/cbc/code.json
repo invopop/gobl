@@ -7,9 +7,9 @@
       "type": "string",
       "maxLength": 64,
       "minLength": 1,
-      "pattern": "^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?[A-ZÑa-z0-9]+)*$",
+      "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f]([^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
       "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
+      "description": "Text identifier with a limit of 64 characters, no control characters, and\nno leading or trailing whitespace."
     }
   }
 }
