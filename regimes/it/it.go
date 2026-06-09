@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -92,19 +91,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Normalize will perform any regime specific calculations.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	case *org.Identity:
-		normalizeIdentity(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
 	}
 }

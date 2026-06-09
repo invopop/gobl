@@ -99,15 +99,3 @@ func New() *tax.RegimeDef {
 		Categories: taxCategories,
 	}
 }
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		migrateInvoiceRates(obj)
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	}
-}

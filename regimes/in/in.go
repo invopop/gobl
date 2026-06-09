@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/norm"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -87,15 +86,5 @@ func New() *tax.RegimeDef {
 			},
 		},
 		Categories: taxCategories,
-	}
-}
-
-// Normalize attempts to clean up the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
 	}
 }

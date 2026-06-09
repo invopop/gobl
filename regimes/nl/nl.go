@@ -75,11 +75,3 @@ func New() *tax.RegimeDef {
 	}
 
 }
-
-// Normalize performs region specific calculations on the document.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	}
-}

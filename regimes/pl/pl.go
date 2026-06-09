@@ -57,11 +57,3 @@ func New() *tax.RegimeDef {
 		Categories: taxCategories, // tax_categories.go
 	}
 }
-
-// Normalize will perform any regime specific normalizations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	}
-}

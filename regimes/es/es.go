@@ -116,11 +116,3 @@ func New() *tax.RegimeDef {
 		Corrections: correctionDefinitions(),
 	}
 }
-
-// Normalize will perform any regime specific normalizations on the data.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
-	}
-}

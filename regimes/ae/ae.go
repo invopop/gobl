@@ -16,7 +16,10 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("ae", rules.GOBL.Add("AE"), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("AE"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+		norm.When(tax.IdentityIn("AE"),
+			norm.For(func(id *tax.Identity) {
+				tax.NormalizeIdentity(id)
+			})),
 	)
 }
 
@@ -66,13 +69,5 @@ func New() *tax.RegimeDef {
 			},
 		},
 		Categories: taxCategories,
-	}
-}
-
-// Normalize attempts to clean up the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }

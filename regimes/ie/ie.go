@@ -54,11 +54,3 @@ func New() *tax.RegimeDef {
 		},
 	}
 }
-
-// Normalize will perform any regime specific calculations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	}
-}

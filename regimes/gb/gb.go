@@ -21,7 +21,9 @@ func init() {
 		taxIdentityRules(),
 	)
 	norm.Register(
-		norm.When(tax.IdentityIn("GB"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id, altCountryCodes...) })),
+		// XI (Northern Ireland) and XU also resolve to this regime (see
+		// AltCountryCodes), so normalize identities under any of them.
+		norm.When(tax.IdentityIn("GB", "XI", "XU"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id, altCountryCodes...) })),
 	)
 }
 
@@ -79,13 +81,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj, altCountryCodes...)
 	}
 }

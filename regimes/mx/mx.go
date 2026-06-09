@@ -2,7 +2,6 @@
 package mx
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
@@ -17,7 +16,9 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("mx", rules.GOBL.Add("MX"), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("MX"), norm.For(normalizeTaxIdentity)),
+		norm.When(tax.IdentityIn("MX"),
+			norm.For(normalizeTaxIdentity),
+		),
 	)
 	norm.RegisterWithGuard(is.InContext(tax.RegimeIn("MX")),
 		norm.For(normalizeInvoice), // *bill.Invoice
@@ -94,15 +95,5 @@ func New() *tax.RegimeDef {
 		TimeZone:    "America/Mexico_City",
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
-	}
-}
-
-// Normalize performs regime specific calculations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

@@ -16,7 +16,9 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("gr", rules.GOBL.Add("GR"), taxIdentityRules())
 	norm.Register(
-		norm.When(tax.IdentityIn("EL"), norm.For(normalizeTaxIdentity)),
+		// "GR" is the ISO code; "EL" is the tax code Greece uses. Both resolve
+		// to this regime (see AltCountryCodes), so normalize either.
+		norm.When(tax.IdentityIn("EL", "GR"), norm.For(normalizeTaxIdentity)),
 	)
 }
 
@@ -78,13 +80,5 @@ func New() *tax.RegimeDef {
 		Scenarios:              scenarios,
 		Corrections:            corrections,
 		Categories:             taxCategories,
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }
