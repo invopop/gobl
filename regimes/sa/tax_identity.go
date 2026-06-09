@@ -11,16 +11,15 @@ import (
 // vatIDRegexp matches a Saudi VAT Identification Number: 15 digits starting and ending with 3.
 var vatIDRegexp = regexp.MustCompile(`^3[0-9]{13}3$`)
 
+// normalizeTaxIdentity strips whitespace, separators and country prefix from a
+// Saudi VAT Identification Number.
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID.Code == "" {
-		return
-	}
 	tax.NormalizeIdentity(tID)
 }
 
 func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
-		rules.When(tax.IdentityIn(countryCode),
+		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
 				rules.Assert("01", "VAT number must be 15 digits starting/ending with 3",
 					is.MatchesRegexp(vatIDRegexp)),

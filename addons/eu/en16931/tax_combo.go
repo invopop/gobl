@@ -111,11 +111,9 @@ func taxComboRules() *rules.Set {
 		),
 		// BR-S-10, BR-Z-10: standard, zero-rated, IGIC, and IPSI shall NOT have a VATEX code
 		rules.When(is.Func("is non-exempt", taxComboIsNonExempt),
-			rules.When(is.FuncContext("addon is not ZATCA", addonIsNotZATCA),
-				rules.Field("ext",
-					rules.Assert("07", "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
-						tax.ExtensionsExclude(cef.ExtKeyVATEX),
-					),
+			rules.Field("ext",
+				rules.Assert("07", "VATEX extension must not be set for standard, zero, IGIC, or IPSI categories (BR-S-10, BR-Z-10)",
+					tax.ExtensionsExclude(cef.ExtKeyVATEX),
 				),
 			),
 		),
@@ -150,13 +148,4 @@ func taxComboIsExempt(val any) bool {
 func taxComboIsNonExempt(val any) bool {
 	tc, ok := val.(*tax.Combo)
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)
-}
-
-// addonIsNotZATCA returns true when the SA ZATCA addon is absent from the
-// validation context. It is used as a negative guard so that BR-S-10/BR-Z-10
-// remains the default and is only skipped for the ZATCA exception.
-func addonIsNotZATCA(ctx rules.Context, _ any) bool {
-	return !ctx.Each(func(v any) bool {
-		return tax.AddonIn("sa-zatca-v1").Check(v)
-	})
 }

@@ -16,7 +16,7 @@ var (
 func orgIdentityRules() *rules.Set {
 	return rules.For(new(org.Identity),
 		rules.When(
-			is.InContext(tax.RegimeIn(countryCode)),
+			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("code",
 				rules.Assert("01", "SA identity code must be valid",
 					is.MatchesRegexp(identitiesRegexp),

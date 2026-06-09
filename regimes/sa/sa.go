@@ -5,25 +5,30 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
-const countryCode = "SA"
+// CountryCode is the tax country code for Saudi Arabia.
+const CountryCode = "SA"
 
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("sa", rules.GOBL.Add(countryCode),
+	rules.Register("sa", rules.GOBL.Add(CountryCode),
 		orgIdentityRules(),
 		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // New provides the tax regime definition for Saudi Arabia.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   countryCode,
+		Country:   CountryCode,
 		Currency:  currency.SAR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -51,15 +56,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "Asia/Riyadh",
-		Normalizer: Normalize,
 		Categories: taxCategories(),
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	_ "github.com/invopop/gobl/regimes/sa"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -78,27 +79,26 @@ func TestTaxIdentityRules(t *testing.T) {
 }
 
 func TestTaxIdentityNormalization(t *testing.T) {
+	t.Run("nil identity is safe", func(t *testing.T) {
+		var tID *tax.Identity
+		assert.NotPanics(t, func() { norm.Normalize(tID) })
+	})
+
 	t.Run("normalizes identity", func(t *testing.T) {
 		tID := &tax.Identity{Country: "SA", Code: "312345678912343"}
-		rd := tax.RegimeDefFor("SA")
-		assert.NotNil(t, rd)
-		rd.NormalizeObject(tID)
+		norm.Normalize(tID)
 		assert.Equal(t, cbc.Code("312345678912343"), tID.Code)
 	})
 
 	t.Run("empty code is left untouched", func(t *testing.T) {
 		tID := &tax.Identity{Country: "SA", Code: ""}
-		rd := tax.RegimeDefFor("SA")
-		assert.NotNil(t, rd)
-		rd.NormalizeObject(tID)
+		norm.Normalize(tID)
 		assert.Equal(t, cbc.Code(""), tID.Code)
 	})
 
 	t.Run("strips whitespace and country prefix", func(t *testing.T) {
 		tID := &tax.Identity{Country: "SA", Code: " SA 3123-4567 8912343 "}
-		rd := tax.RegimeDefFor("SA")
-		assert.NotNil(t, rd)
-		rd.NormalizeObject(tID)
+		norm.Normalize(tID)
 		assert.Equal(t, cbc.Code("312345678912343"), tID.Code)
 	})
 }
