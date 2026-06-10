@@ -27,11 +27,6 @@ const (
 	DeliveryTypeOther   cbc.Key = "other"
 )
 
-// Delivery document tags.
-const (
-	TagReturn cbc.Key = "return"
-)
-
 // DeliveryTypes provides the list of supported delivery documents in GOBL.
 var DeliveryTypes = []*cbc.Definition{
 	{
@@ -100,25 +95,6 @@ var DeliveryTypes = []*cbc.Definition{
 }
 
 var isValidDeliveryType = cbc.InKeyDefs(DeliveryTypes)
-
-var defaultDeliveryTags = &tax.TagSet{
-	Schema: ShortSchemaDelivery,
-	List: []*cbc.Definition{
-		{
-			Key: TagReturn,
-			Name: i18n.String{
-				i18n.EN: "Return",
-			},
-			Desc: i18n.String{
-				i18n.EN: here.Doc(`
-					Indicates that the delivery document represents a return of goods to the supplier.
-					Use this tag in combination with a supported delivery type to indicate a return
-					rather than a forward delivery.
-				`),
-			},
-		},
-	},
-}
 
 // Delivery document used to describe the delivery of goods or potentially also services.
 type Delivery struct {
@@ -264,7 +240,9 @@ func (dlv *Delivery) Calculate() error {
 }
 
 func (dlv *Delivery) supportedTags() []cbc.Key {
-	ts := defaultDeliveryTags
+	// Deliveries have no default tags of their own; supported tags are
+	// contributed by the active regime and addons.
+	var ts *tax.TagSet
 	if r := dlv.RegimeDef(); r != nil {
 		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaDelivery))
 	}
@@ -394,7 +372,7 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	dlv.Tags.JSONSchemaExtendWithDefs(js, defaultDeliveryTags.List)
+	dlv.Tags.JSONSchemaExtendWithDefs(js, nil)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

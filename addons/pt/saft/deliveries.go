@@ -5,10 +5,38 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
+
+// Delivery document tags.
+const (
+	// TagReturn indicates that a delivery document represents a return of goods to
+	// the supplier (Guia de Devolução).
+	TagReturn cbc.Key = "return"
+)
+
+var deliveryTags = &tax.TagSet{
+	Schema: bill.ShortSchemaDelivery,
+	List: []*cbc.Definition{
+		{
+			Key: TagReturn,
+			Name: i18n.String{
+				i18n.EN: "Return",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that the delivery document represents a return of goods to the supplier.
+					Use this tag in combination with a supported delivery type to indicate a return
+					rather than a forward delivery.
+				`),
+			},
+		},
+	},
+}
 
 func billDeliveryRules() *rules.Set {
 	return rules.For(new(bill.Delivery),
@@ -93,7 +121,7 @@ func normalizeDelivery(dlv *bill.Delivery) {
 
 	if !dlv.Tax.Ext.Has(ExtKeyMovementType) {
 		// Map delivery types and tags to movement types.
-		if dlv.HasTags(bill.TagReturn) {
+		if dlv.HasTags(TagReturn) {
 			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeReturn)
 		} else {
 			switch dlv.Type {

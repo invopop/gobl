@@ -40,10 +40,10 @@ func TestDeliveryCalculate(t *testing.T) {
 
 	t.Run("return tag", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
-		dlv.SetTags(bill.TagReturn)
+		dlv.SetTags(saft.TagReturn)
 		dlv.SetAddons(saft.V1)
 		require.NoError(t, dlv.Calculate())
-		assert.True(t, dlv.HasTags(bill.TagReturn))
+		assert.True(t, dlv.HasTags(saft.TagReturn))
 	})
 }
 
@@ -128,7 +128,8 @@ func TestDeliveryConvertInto(t *testing.T) {
 func TestDeliveryTagsValidation(t *testing.T) {
 	t.Run("valid tag", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
-		dlv.SetTags(bill.TagReturn)
+		dlv.SetAddons(saft.V1)
+		dlv.SetTags(saft.TagReturn)
 		assert.NoError(t, dlv.Calculate())
 	})
 
@@ -243,6 +244,7 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 		require.True(t, ok)
 		require.NotNil(t, prop.Items)
 		require.NotEmpty(t, prop.Items.AnyOf)
-		assert.Equal(t, bill.TagReturn.String(), prop.Items.AnyOf[0].Const)
+		// Deliveries have no default tags; only the catch-all "Any" entry is present.
+		assert.Equal(t, "Any", prop.Items.AnyOf[0].Title)
 	})
 }

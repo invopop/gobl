@@ -918,6 +918,22 @@
       ]
     }
   ],
+  "tags": [
+    {
+      "schema": "bill/delivery",
+      "list": [
+        {
+          "key": "return",
+          "name": {
+            "en": "Return"
+          },
+          "desc": {
+            "en": "Indicates that the delivery document represents a return of goods to the supplier.\nUse this tag in combination with a supported delivery type to indicate a return\nrather than a forward delivery."
+          }
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

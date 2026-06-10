@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `Addons.AddAddons` helper for declaring addons programmatically before calculation; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
 - `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
 - `bill`: Added `DeliveryTypeOther` (`other`) delivery type for deliveries that don't fit standard categories.
-- `bill`: Added `TagReturn` (`return`) delivery tag to indicate a return of goods to the supplier, to be used in combination with a regular delivery type.
+- `pt-saft-v1`: Added `TagReturn` (`return`) delivery tag to indicate a return of goods to the supplier, to be used in combination with a regular delivery type.
 - `pt-saft-v1`: Added `MovementTypeReturn` (`GD` — Guia de Devolução) extension value, automatically set when the delivery carries the `return` tag.
 - `pt-saft-v1`: Added rules for delivery `preceding` references.
 - `regimes/pt`: Added `StampProviderATDocCode` (`at-doc-code`) stamp provider key for the AT document code.

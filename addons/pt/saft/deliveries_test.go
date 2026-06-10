@@ -177,7 +177,7 @@ func TestDeliveryNormalization(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeNote,
 		}
-		dlv.SetTags(bill.TagReturn)
+		dlv.SetTags(saft.TagReturn)
 		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
