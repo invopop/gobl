@@ -119,7 +119,7 @@ func paymentLineAmountWithinLimit(val any) bool {
 	if pl.Advances != nil {
 		mx = mx.Subtract(*pl.Advances)
 	}
-	if !mx.IsPositive() {
+	if mx.IsNegative() {
 		return true
 	}
 	return pl.Amount.Compare(mx) <= 0

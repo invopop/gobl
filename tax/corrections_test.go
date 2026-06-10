@@ -79,6 +79,45 @@ func TestCorrectionDefinitionMerge(t *testing.T) {
 		assert.Equal(t, cd, cd.Merge(other))
 	})
 
+	t.Run("deduplicates types", func(t *testing.T) {
+		cd1 := &tax.CorrectionDefinition{
+			Schema: bill.ShortSchemaInvoice,
+			Types:  []cbc.Key{"t1", "t2"},
+		}
+		cd2 := &tax.CorrectionDefinition{
+			Schema: bill.ShortSchemaInvoice,
+			Types:  []cbc.Key{"t1", "t2"},
+		}
+		merged := cd1.Merge(cd2)
+		assert.Equal(t, []cbc.Key{"t1", "t2"}, merged.Types)
+	})
+
+	t.Run("deduplicates extensions", func(t *testing.T) {
+		cd1 := &tax.CorrectionDefinition{
+			Schema:     bill.ShortSchemaInvoice,
+			Extensions: []cbc.Key{"e1", "e2"},
+		}
+		cd2 := &tax.CorrectionDefinition{
+			Schema:     bill.ShortSchemaInvoice,
+			Extensions: []cbc.Key{"e1"},
+		}
+		merged := cd1.Merge(cd2)
+		assert.Equal(t, []cbc.Key{"e1", "e2"}, merged.Extensions)
+	})
+
+	t.Run("deduplicates stamps", func(t *testing.T) {
+		cd1 := &tax.CorrectionDefinition{
+			Schema: bill.ShortSchemaInvoice,
+			Stamps: []cbc.Key{"s1", "s2"},
+		}
+		cd2 := &tax.CorrectionDefinition{
+			Schema: bill.ShortSchemaInvoice,
+			Stamps: []cbc.Key{"s2", "s3"},
+		}
+		merged := cd1.Merge(cd2)
+		assert.Equal(t, []cbc.Key{"s1", "s2", "s3"}, merged.Stamps)
+	})
+
 	t.Run("does not mutate inputs", func(t *testing.T) {
 		cd := &tax.CorrectionDefinition{
 			Schema:     bill.ShortSchemaInvoice,

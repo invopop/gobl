@@ -409,6 +409,31 @@
               ]
             }
           ]
+        },
+        {
+          "guard": "invoice is NFe",
+          "subsets": [
+            {
+              "field": "lines",
+              "subsets": [
+                {
+                  "each": true,
+                  "subsets": [
+                    {
+                      "field": "ext",
+                      "assert": [
+                        {
+                          "id": "GOBL-BR-NFE-BILL-INVOICE-35",
+                          "desc": "NF-e lines require 'br-nfe-cfop' extension",
+                          "tests": "ext require [br-nfe-cfop]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
