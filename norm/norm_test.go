@@ -52,6 +52,35 @@ func TestNormalizeMutation(t *testing.T) {
 	assert.Equal(t, "Z", r.Sub.Val, "pointer field is dereferenced and mutated")
 }
 
+func TestNormalizePrunesNilSliceElements(t *testing.T) {
+	t.Run("drops nil pointer elements and normalizes the rest", func(t *testing.T) {
+		r := &mRoot{Items: []*mItem{nil, {Code: "a"}, nil, {Code: "b"}, nil}}
+		Normalize(r)
+		assert.Len(t, r.Items, 2)
+		assert.Equal(t, "A", r.Items[0].Code)
+		assert.Equal(t, "B", r.Items[1].Code)
+	})
+
+	t.Run("all-nil slice becomes empty", func(t *testing.T) {
+		r := &mRoot{Items: []*mItem{nil, nil}}
+		Normalize(r)
+		assert.Empty(t, r.Items)
+	})
+
+	t.Run("slice without nils is left untouched", func(t *testing.T) {
+		items := []*mItem{{Code: "a"}, {Code: "b"}}
+		r := &mRoot{Items: items}
+		Normalize(r)
+		assert.Equal(t, items, r.Items, "no reallocation when there is nothing to prune")
+	})
+
+	t.Run("value-element slices are unaffected", func(t *testing.T) {
+		r := &mRoot{Vals: []mSub{{Val: "x"}, {Val: "y"}}}
+		Normalize(r)
+		assert.Len(t, r.Vals, 2)
+	})
+}
+
 func TestNormalizeNilSafe(t *testing.T) {
 	assert.NotPanics(t, func() { Normalize(nil) })
 	assert.NotPanics(t, func() { Normalize((*mRoot)(nil)) })

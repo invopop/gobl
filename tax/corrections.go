@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
@@ -95,10 +94,10 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	}
 	return &CorrectionDefinition{
 		Schema:         cd.Schema,
-		Types:          slices.Concat(cd.Types, other.Types),
-		Extensions:     slices.Concat(cd.Extensions, other.Extensions),
+		Types:          cbc.AppendUniqueKeys(cd.Types, other.Types...),
+		Extensions:     cbc.AppendUniqueKeys(cd.Extensions, other.Extensions...),
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
-		Stamps:         slices.Concat(cd.Stamps, other.Stamps),
+		Stamps:         cbc.AppendUniqueKeys(cd.Stamps, other.Stamps...),
 		CopyTax:        cd.CopyTax || other.CopyTax,
 		Normalizer:     norm,
 	}

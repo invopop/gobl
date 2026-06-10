@@ -533,13 +533,12 @@ func TestInvoiceTotalsValidation(t *testing.T) {
 }
 
 func TestCorrectionDefinitions(t *testing.T) {
-	t.Run("correction definitions exist for credit and debit notes", func(t *testing.T) {
+	t.Run("addon requires a reason but does not duplicate regime types", func(t *testing.T) {
 		addon := tax.AddonForKey(saft.V1)
 		require.NotNil(t, addon.Corrections)
 		def := addon.Corrections.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, def)
-		assert.True(t, def.HasType(bill.InvoiceTypeCreditNote))
-		assert.True(t, def.HasType(bill.InvoiceTypeDebitNote))
+		assert.Empty(t, def.Types, "types are declared by the PT regime, not the addon")
 		assert.True(t, def.ReasonRequired)
 	})
 }

@@ -137,6 +137,41 @@ func TestNormalizeParty(t *testing.T) {
 
 		assert.Empty(t, party.Identities)
 	})
+
+	t.Run("handles nil identity elements in identities array", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				nil,
+				{
+					Type: fr.IdentityTypeSIRET,
+					Code: "12345678901234",
+				},
+				nil,
+			},
+		}
+
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
+
+		// Should find the SIRET identity and add scheme extension despite nil elements
+		assert.False(t, party.Ext.IsZero())
+		assert.Equal(t, cbc.Code("1"), party.Ext.Get(choruspro.ExtKeyScheme))
+	})
+
+	t.Run("handles all nil identity elements in identities array", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				nil,
+				nil,
+			},
+		}
+
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
+
+		// Should not panic and should not add any extension
+		assert.True(t, party.Ext.IsZero())
+	})
 }
 
 func withAddonContext() rules.WithContext {

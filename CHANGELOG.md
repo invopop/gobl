@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `org`: new units in the unit system with their UN/ECE Rec. 20/21 codes — `wk` (week, `WEE`), `yr` (year, `ANN`), `dl` (decilitre, `DLT`), `kl` (kilolitre, `K6`), `cg` (centigram, `CGM`), `lm` (linear metre, `LM`), `lft` (linear foot, `LF`), `pkt` (packet, `XPA`), `bdl` (bundle, `XBE`), and `blk` (block, `XOK`).
 - `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
 - `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
 - `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
@@ -43,6 +44,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `org`: `Endpoint` model (`uuid` + `label` + `cbc.URI`) and `Party.Endpoints`, the going-forward way to carry addresses; `Party.Endpoint(scheme)` looks one up by URI scheme. `org.Inbox` is retained for formats that still need it (e.g. Italy's SDI/FatturaPA).
 - `addons/eu/en16931`: migration helper — when a party carries a `peppol`-keyed `org.Inbox`, the normalizer additively copies it into an `iso6523-actorid-upis::<scheme>:<code>` `org.Endpoint`. The source inbox is left in place for back-compat with consumers that still read it; an existing `iso6523-actorid-upis` endpoint blocks the copy (no duplicates).
 - `gobl.EndpointResolver` interface + `Envelope.Calculate()` integration: documents that implement `FromEndpoint() *org.Endpoint` / `ToEndpoint() *org.Endpoint` now have their first-endpoint URIs auto-copied into `Head.From` / `Head.To` whenever those header fields are empty. Operator-set From/To values are preserved. `bill.Invoice`, `bill.Payment`, `bill.Status`, `bill.Order`, and `bill.Delivery` all implement the interface with direction picked by document type: invoices flow Supplier→Customer (Customer→Supplier when `$tags: [self-billed]`); payment requests/receipts flow Supplier→Customer while advices invert; order purchases flow Customer→Supplier while sales and quotes invert; delivery despatch flows from Despatcher (or Supplier) to Receiver (or Customer) while receipts invert; status responses flow Customer→Supplier, updates Supplier→Customer, and `system` is left ambiguous (nil). Also adds `org.Party.FirstEndpoint()` as the routing-priority helper.
+- `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
+- `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
+- `no`: added the Norwegian (NO) tax regime.
+
+### Fixed
+
+- `norm`: normalization now prunes `nil` pointer/interface entries from every slice in the document graph (e.g. a JSON `null` in an `identities`, `preceding`, or status `lines` array). This removes a class of panics in regime/addon normalizers and validators that iterated such slices, and means downstream consumers never see `nil` array elements. Slices with no `nil`s are left untouched (no reallocation).
+- `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
+- `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
 
 ## [v0.403.0] - 2026-05-13
 

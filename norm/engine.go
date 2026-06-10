@@ -101,7 +101,14 @@ func walk(rc *rules.Context, v reflect.Value) {
 			}
 			walk(rc, v.Field(i))
 		}
-	case reflect.Slice, reflect.Array:
+	case reflect.Slice:
+		if v.CanSet() {
+			pruneNilElements(v)
+		}
+		for i := range v.Len() {
+			walk(rc, v.Index(i))
+		}
+	case reflect.Array:
 		for i := range v.Len() {
 			walk(rc, v.Index(i))
 		}
@@ -118,6 +125,37 @@ func walk(rc *rules.Context, v reflect.Value) {
 		}
 	}
 	apply(rc, v)
+}
+
+// pruneNilElements drops nil pointer/interface entries from a settable slice,
+// writing the compacted slice back in place. A JSON null in an array (e.g.
+// "identities": [null, {...}]) unmarshals to a nil element; removing it here,
+// once, during the single walk keeps every downstream normalizer, validator and
+// consumer free of nil-pointer hazards without per-type guards. Slices with no
+// nils (the common case) are left untouched, so no allocation occurs.
+func pruneNilElements(v reflect.Value) {
+	if k := v.Type().Elem().Kind(); k != reflect.Pointer && k != reflect.Interface {
+		return
+	}
+	n := v.Len()
+	firstNil := -1
+	for i := range n {
+		if v.Index(i).IsNil() {
+			firstNil = i
+			break
+		}
+	}
+	if firstNil < 0 {
+		return
+	}
+	out := reflect.MakeSlice(v.Type(), firstNil, n)
+	reflect.Copy(out, v.Slice(0, firstNil))
+	for i := firstNil + 1; i < n; i++ {
+		if e := v.Index(i); !e.IsNil() {
+			out = reflect.Append(out, e)
+		}
+	}
+	v.Set(out)
 }
 
 // apply runs the normalizers registered for v's type whose guards all pass.

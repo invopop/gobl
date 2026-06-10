@@ -427,6 +427,29 @@ func TestCustomerValidation(t *testing.T) {
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "customer address requires a postal code")
 	})
+
+	t.Run("NF-e lines require CFOP extension", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Lines[0].Ext = tax.Extensions{}
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, fmt.Sprintf("NF-e lines require '%s' extension", nfe.ExtKeyCFOP))
+
+		inv.Lines[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
+			nfe.ExtKeyCFOP: "5102",
+		})
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("NFC-e lines do not require CFOP extension", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyModel, nfe.ModelNFCe)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
+		inv.Customer = nil
+		inv.Lines[0].Ext = tax.Extensions{}
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
 }
 
 func TestInvoiceCurrencyValidation(t *testing.T) {
@@ -537,6 +560,9 @@ func validInvoice() *bill.Invoice {
 						Percent:  num.NewPercentage(760, 4),
 					},
 				},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					nfe.ExtKeyCFOP: "5102",
+				}),
 			},
 		},
 		Payment: &bill.PaymentDetails{
@@ -626,6 +652,9 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 						Percent:  num.NewPercentage(760, 4),
 					},
 				},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					nfe.ExtKeyCFOP: "5102",
+				}),
 			},
 		},
 		Payment: &bill.PaymentDetails{
