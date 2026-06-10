@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: AD
+type: standard
+series: "2024"
+code: "0001"
+issue_date: "2024-01-01"
+currency: EUR
+supplier:
+  name: "Empresa Andorrana"
+  tax_id:
+    country: AD
+    code: L123456A
+  address:
+    street: "Av. Meritxell, 1"
+    locality: "Andorra la Vella"
+    country: AD
+customer:
+  name: "Client Particular"
+  tax_id:
+    country: AD
+    code: F121212B
+  address:
+    street: "Carrer Major, 10"
+    locality: "Escaldes-Engordany"
+    country: AD
+lines:
+  - quantity: 1
+    item:
+      name: "Producte Estàndard"
+      price: 100.00
+    taxes:
+      - cat: VAT
+        rate: general
+  - quantity: 2
+    item:
+      name: "Llibre (Tipus Reduït)"
+      price: 20.00
+    taxes:
+      - cat: VAT
+        rate: reduced
