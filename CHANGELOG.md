@@ -47,6 +47,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
 
+### Fixed
+
+- `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
+- `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
+
 ## [v0.403.0] - 2026-05-13
 
 ### Changed
