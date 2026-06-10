@@ -599,8 +599,9 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Flag that maps to the ~FacturaSimplificada~ field in TicketBAI
-				documents. Set automatically by GOBL during normalization based
-				on the ~simplified~ tag: ~S~ when the tag is present, ~N~ otherwise.
+				documents. Set automatically to ~S~ by GOBL during normalization
+				when the ~simplified~ tag is present. When absent, the invoice is
+				treated as ~N~ (not simplified).
 			`),
 		},
 		Values: []*cbc.Definition{

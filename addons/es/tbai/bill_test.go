@@ -88,7 +88,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		})
 		inv.Tax = &bill.Tax{
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				ExtKeyRegion: ExtValueRegionBI, // not Alaba
+				ExtKeyRegion: ExtValueRegionBI, // kept despite the Araba address
 			}),
 		}
 		require.NoError(t, inv.Calculate())
@@ -642,6 +642,19 @@ func TestNormalizeInvoicePartyIdentityEmptyIdentities(t *testing.T) {
 
 func TestNormalizeInvoiceNil(t *testing.T) {
 	assert.NotPanics(t, func() { normalizeInvoice(nil) })
+}
+
+func TestNormalizeInvoiceSimplifiedNilTax(t *testing.T) {
+	inv := &bill.Invoice{}
+	inv.SetTags(tax.TagSimplified)
+	normalizeInvoiceSimplified(inv)
+	require.NotNil(t, inv.Tax)
+	assert.Equal(t, ExtValueSimplifiedYes, inv.Tax.Ext.Get(ExtKeySimplified))
+}
+
+func TestInvoiceNotSimplifiedWrongType(t *testing.T) {
+	assert.False(t, invoiceNotSimplified("not an invoice"))
+	assert.False(t, invoiceNotSimplified(nil))
 }
 
 func TestIsBizkaiaIndividualWrongType(t *testing.T) {

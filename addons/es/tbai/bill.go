@@ -32,10 +32,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
-// normalizeInvoiceSimplified sets es-tbai-simplified = ~S~ on the invoice's
-// tax extensions when the generic ~simplified~ tag is present, so downstream
-// conversion can route on the extension rather than the tag. The default
-// (no tag) is left unset and treated as ~N~ by consumers.
 func normalizeInvoiceSimplified(inv *bill.Invoice) {
 	if !inv.HasTags(tax.TagSimplified) {
 		return
@@ -48,8 +44,6 @@ func normalizeInvoiceSimplified(inv *bill.Invoice) {
 	tx.Ext = tx.Ext.Set(ExtKeySimplified, ExtValueSimplifiedYes)
 }
 
-// normalizeInvoicePartyIdentity maps the customer's first identity key onto the
-// es-tbai-identity-type extension when no Spanish NIF is present.
 func normalizeInvoicePartyIdentity(cus *org.Party) {
 	if cus == nil {
 		return
@@ -143,16 +137,9 @@ func billInvoiceRules() *rules.Set {
 		),
 		// Customer
 		// Code 03: customer required for non-simplified invoices
-		// Code 08: customer must have tax_id or an identity carrying the
-		//          es-tbai-identity-type extension (the L7 IDType code).
+		// Code 08: customer must have a tax ID or an identity-type identity
 		rules.When(
-			is.Func("non-simplified", func(val any) bool {
-				inv, ok := val.(*bill.Invoice)
-				if !ok || inv == nil {
-					return false
-				}
-				return inv.Tax == nil || !inv.Tax.Ext.Get(ExtKeySimplified).In(ExtValueSimplifiedYes)
-			}),
+			is.Func("non-simplified", invoiceNotSimplified),
 			rules.Field("customer",
 				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
 				rules.Assert("08", "customer must have a tax_id or an identity with ext 'es-tbai-identity-type'",
@@ -240,7 +227,15 @@ func isBizkaiaIndividual(val any) bool {
 func customerHasTaxIDOrIdentity(val any) bool {
 	p, ok := val.(*org.Party)
 	if !ok || p == nil {
-		return true // nil customer handled by the presence check above
+		return true
 	}
 	return p.TaxID != nil || org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) != nil
+}
+
+func invoiceNotSimplified(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return false
+	}
+	return inv.Tax == nil || !inv.Tax.Ext.Get(ExtKeySimplified).In(ExtValueSimplifiedYes)
 }

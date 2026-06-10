@@ -137,8 +137,6 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	})
 
 	t.Run("foreign EU country overrides pre-set OT with IE", func(t *testing.T) {
-		// The foreign-country branch uses an unconditional Set, so OT/VT
-		// are not preserved here (unlike the KeyOutsideScope branch).
 		tc := &tax.Combo{
 			Country:  "FR",
 			Category: tax.CategoryVAT,
