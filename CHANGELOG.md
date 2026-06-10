@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `gobl.EndpointResolver` interface + `Envelope.Calculate()` integration: documents that implement `FromEndpoint() *org.Endpoint` / `ToEndpoint() *org.Endpoint` now have their first-endpoint URIs auto-copied into `Head.From` / `Head.To` whenever those header fields are empty. Operator-set From/To values are preserved. `bill.Invoice`, `bill.Payment`, `bill.Status`, `bill.Order`, and `bill.Delivery` all implement the interface with direction picked by document type: invoices flow Supplier→Customer (Customer→Supplier when `$tags: [self-billed]`); payment requests/receipts flow Supplier→Customer while advices invert; order purchases flow Customer→Supplier while sales and quotes invert; delivery despatch flows from Despatcher (or Supplier) to Receiver (or Customer) while receipts invert; status responses flow Customer→Supplier, updates Supplier→Customer, and `system` is left ambiguous (nil). Also adds `org.Party.FirstEndpoint()` as the routing-priority helper.
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
+- `no`: added the Norwegian (NO) tax regime.
 
 ### Fixed
 
