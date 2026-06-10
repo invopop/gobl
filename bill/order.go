@@ -301,6 +301,33 @@ func (ord *Order) setTotals(t *Totals) {
 	ord.Totals = t
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this order document. A `purchase` order (customer asks the
+// supplier for goods or services) flows from customer to supplier; a
+// `sale` order (supplier confirms a sale) and a `quote` (supplier
+// proposes a price) flow the other way.
+func (ord *Order) FromEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Customer.FirstEndpoint()
+	}
+	return ord.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this order document. Inverse of FromEndpoint.
+func (ord *Order) ToEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Supplier.FirstEndpoint()
+	}
+	return ord.Customer.FirstEndpoint()
+}
+
 /** ---- **/
 
 // JSONSchemaExtend extends the schema with additional property details

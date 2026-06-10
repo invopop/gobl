@@ -16,6 +16,7 @@ func init() {
 		norm.For(normalizeAddress),
 		norm.For(normalizeDocumentRef),
 		norm.For(normalizeEmail),
+		norm.For(normalizeEndpoint),
 		norm.For(normalizeIdentity),
 		norm.For(normalizeInbox),
 		norm.For(normalizeName),

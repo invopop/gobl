@@ -735,3 +735,42 @@ func TestActionJSONSchemaExtend(t *testing.T) {
 	assert.Equal(t, bill.ActionKeys[0].Name.String(), prop.OneOf[0].Title)
 	assert.Equal(t, bill.ActionKeys[0].Desc.String(), prop.OneOf[0].Description)
 }
+
+func TestStatusFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	t.Run("response: customer→supplier", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeResponse, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", st.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", st.ToEndpoint().URI.String())
+	})
+
+	t.Run("update: supplier→customer", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeUpdate, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", st.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", st.ToEndpoint().URI.String())
+	})
+
+	t.Run("system: ambiguous, returns nil", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeSystem, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Nil(t, st.FromEndpoint())
+		assert.Nil(t, st.ToEndpoint())
+	})
+
+	t.Run("nil status is a no-op", func(t *testing.T) {
+		var st *bill.Status
+		assert.Nil(t, st.FromEndpoint())
+		assert.Nil(t, st.ToEndpoint())
+	})
+}

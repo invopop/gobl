@@ -219,7 +219,7 @@ func InCodes(codes ...Code) rules.Test {
 
 func codeMapRules() *rules.Set {
 	return rules.For(CodeMap{},
-		rules.Assert("01", "all code map keys must be valid",
+		rules.AssertIfPresent("01", "all code map keys must be valid",
 			is.Func("valid keys", codeMapKeysValid),
 		),
 	)
@@ -228,7 +228,7 @@ func codeMapRules() *rules.Set {
 func codeMapKeysValid(v any) bool {
 	m, ok := v.(CodeMap)
 	if !ok {
-		return true
+		return false
 	}
 	for k := range m {
 		if rules.Validate(k) != nil {

@@ -19,11 +19,7 @@ import (
 
 var corrections = tax.CorrectionSet{
 	{
-		Schema: bill.ShortSchemaInvoice,
-		Types: []cbc.Key{
-			bill.InvoiceTypeCreditNote,
-			bill.InvoiceTypeDebitNote,
-		},
+		Schema:         bill.ShortSchemaInvoice,
 		ReasonRequired: true,
 	},
 }

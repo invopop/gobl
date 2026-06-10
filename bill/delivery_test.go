@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -246,5 +247,71 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 		require.NotEmpty(t, prop.Items.AnyOf)
 		// Deliveries have no default tags; only the catch-all "Any" entry is present.
 		assert.Equal(t, "Any", prop.Items.AnyOf[0].Title)
+	})
+}
+
+func TestDeliveryFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+	mkDespatcher := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:despatcher.example"}}}
+	}
+	mkReceiver := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:receiver.example"}}}
+	}
+
+	despatchTypes := []cbc.Key{
+		bill.DeliveryTypeAdvice, bill.DeliveryTypeNote, bill.DeliveryTypeWaybill,
+	}
+	for _, typ := range despatchTypes {
+		t.Run(string(typ)+": supplier→customer (no despatcher/receiver)", func(t *testing.T) {
+			dlv := &bill.Delivery{
+				Type: typ, Supplier: mkSupplier(), Customer: mkCustomer(),
+			}
+			assert.Equal(t, "gobl:supplier.example", dlv.FromEndpoint().URI.String())
+			assert.Equal(t, "gobl:customer.example", dlv.ToEndpoint().URI.String())
+		})
+	}
+
+	t.Run("receipt: customer→supplier", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type: bill.DeliveryTypeReceipt, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("despatcher and receiver win over supplier/customer", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type:       bill.DeliveryTypeAdvice,
+			Supplier:   mkSupplier(),
+			Customer:   mkCustomer(),
+			Despatcher: mkDespatcher(),
+			Receiver:   mkReceiver(),
+		}
+		assert.Equal(t, "gobl:despatcher.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:receiver.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("receipt prefers receiver→despatcher", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type:       bill.DeliveryTypeReceipt,
+			Supplier:   mkSupplier(),
+			Customer:   mkCustomer(),
+			Despatcher: mkDespatcher(),
+			Receiver:   mkReceiver(),
+		}
+		assert.Equal(t, "gobl:receiver.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:despatcher.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("nil delivery is a no-op", func(t *testing.T) {
+		var dlv *bill.Delivery
+		assert.Nil(t, dlv.FromEndpoint())
+		assert.Nil(t, dlv.ToEndpoint())
 	})
 }
