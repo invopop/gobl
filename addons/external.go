@@ -58,4 +58,12 @@ func init() {
 		},
 		Module: frCTCModule,
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "sa-zatca-v1",
+		Name: i18n.String{
+			i18n.EN: "Saudi Arabia ZATCA",
+			i18n.AR: "هيئة الزكاة والضريبة والجمارك",
+		},
+		Module: "github.com/invopop/gobl.sa.zatca",
+	})
 }

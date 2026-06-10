@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "f2635db1f90b859ea305abbda460dbe210b248c9abf06f37f81e69557a3d6f6b"
 		}
 	},
 	"doc": {
@@ -15,9 +15,9 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "OSS",
+		"code": "0011",
+		"issue_date": "2024-08-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -47,80 +47,72 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Boutique Lyon SARL",
 			"tax_id": {
-				"country": "NL"
+				"country": "FR",
+				"code": "39356000000"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "30",
 				"item": {
-					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h"
+					"key": "goods",
+					"name": "Souvenir set",
+					"price": "20.00"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "600.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
+						"country": "FR",
 						"key": "standard",
-						"rate": "general",
-						"percent": "21.0%",
+						"percent": "20%",
 						"ext": {
 							"es-tbai-exemption": "IE",
-							"es-tbai-product": "services",
+							"es-tbai-product": "goods",
 							"es-tbai-regime": "01"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "600.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "600.00",
+			"total": "600.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
+								"country": "FR",
 								"key": "standard",
 								"ext": {
 									"es-tbai-exemption": "IE",
-									"es-tbai-product": "services",
+									"es-tbai-product": "goods",
 									"es-tbai-regime": "01"
 								},
-								"base": "1620.00",
-								"percent": "21.0%",
-								"amount": "340.20"
+								"base": "600.00",
+								"percent": "20%",
+								"amount": "120.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "120.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "120.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "120.00",
+			"total_with_tax": "720.00",
+			"payable": "720.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "OSS sale to French consumer with French VAT applied."
 			}
 		]
 	}

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "01e778615ea21625cd43121e82c4719652d5f0ee1c3ec4ba8e43a3523c3612fa"
 		}
 	},
 	"doc": {
@@ -15,9 +15,9 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "RC",
+		"code": "0001",
+		"issue_date": "2024-04-08",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -47,80 +47,69 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Beispiel GmbH",
 			"tax_id": {
-				"country": "NL"
+				"country": "DE",
+				"code": "111111125"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "40",
 				"item": {
 					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
+					"name": "Consultancy services",
+					"price": "150.00",
 					"unit": "h"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "6000.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
-						"key": "standard",
-						"rate": "general",
-						"percent": "21.0%",
+						"key": "reverse-charge",
 						"ext": {
-							"es-tbai-exemption": "IE",
+							"es-tbai-exemption": "S2",
 							"es-tbai-product": "services",
 							"es-tbai-regime": "01"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "6000.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "6000.00",
+			"total": "6000.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
-								"key": "standard",
+								"key": "reverse-charge",
 								"ext": {
-									"es-tbai-exemption": "IE",
+									"es-tbai-exemption": "S2",
 									"es-tbai-product": "services",
 									"es-tbai-regime": "01"
 								},
-								"base": "1620.00",
-								"percent": "21.0%",
-								"amount": "340.20"
+								"base": "6000.00",
+								"amount": "0.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "0.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "0.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "0.00",
+			"total_with_tax": "6000.00",
+			"payable": "6000.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "Reverse charge - Article 196 of EU Directive 2006/112/EC."
 			}
 		]
 	}

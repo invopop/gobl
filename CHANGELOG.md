@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `org`: new units in the unit system with their UN/ECE Rec. 20/21 codes — `wk` (week, `WEE`), `yr` (year, `ANN`), `dl` (decilitre, `DLT`), `kl` (kilolitre, `K6`), `cg` (centigram, `CGM`), `lm` (linear metre, `LM`), `lft` (linear foot, `LF`), `pkt` (packet, `XPA`), `bdl` (bundle, `XBE`), and `blk` (block, `XOK`).
+- `org`: `org.DefUnit` gains a `Symbol` field holding the case-sensitive unit symbol used alongside quantities (e.g. `kg`, `m³`, `kW`). Only measurement units with a conventional symbol carry one; consumers should fall back to `Name` when empty.
 - `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
 - `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
 - `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
@@ -34,6 +35,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `norm`: new package providing registered, reflective normalization (the normalization counterpart to `rules`) — `norm.For`, `Register`/`RegisterWithGuard`, and a single-pass mutation-aware engine that applies the matching normalizers across the document graph.
 - `tax`: `Addons.AddAddons` helper for declaring addons programmatically before calculation; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
 - `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
+- `regimes/sa`: new tax regime for the Kingdom of Saudi Arabia (KSA), administered by the Zakat, Tax and Customs Authority (ZATCA). Covers the VAT category, SAR currency, `Asia/Riyadh` time zone, VAT tax-identity normalization/validation, and commercial-registration org-identity validation. Normalization is registered through the new `norm` package.
+- `tax`: added `sa-zatca-v1` to the approved external-addon registry — the ZATCA e-invoicing addon is implemented in the standalone [`github.com/invopop/gobl.sa.zatca`](https://github.com/invopop/gobl.sa.zatca) module and must be imported to be loaded at `Validate`/`Calculate` time.
+- `data/catalogues/cef`: added the Saudi Arabia VAT exemption codes (`VATEX-SA-*`) used by ZATCA tax invoices.
 - `net`: new package for GOBL Net remote verification using FQDN-based addresses (e.g., `billing.invopop.com`). `Address` type with deterministic per-key URL derivation, `Client` with `FetchPublicKey` / `VerifyEnvelope`, `Authorities` registry, `JWKSPath` and `Address.JWKSURL()` constants.
 - `net.Client.VerifyAuthority(ctx, env)`: checks that the envelope carries at least one cryptographically valid signature from an address in the client's `Authorities` list. Returns `ErrUnknownAuthority` when no candidate is from a known authority and `ErrVerifyFailed` when a candidate's signature fails the crypto check. Recommended use: `/who` consumers MAY require this by default and relax to self-signed for bootstrap discovery.
 - `head.SigningPayload.Scope` (`cbc.Key`) + `head.WithScope(scope)` signing option + `head.ScopeRegistered` / `head.ScopeVerified` constants: lets a signer (typically a KYC Authority countersigning a `/who` response) declare the level of confidence asserted. Scope is part of the signed payload — cryptographically bound to whoever stamped it; the field is `omitempty` so existing signatures with no scope remain valid.
@@ -52,12 +56,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pt-saft-v1`: Added `MovementTypeReturn` (`GD` — Guia de Devolução) extension value, automatically set when the delivery carries the `return` tag.
 - `pt-saft-v1`: Added rules for delivery `preceding` references.
 - `regimes/pt`: Added `StampProviderATDocCode` (`at-doc-code`) stamp provider key for the AT document code.
+- `es-tbai-v1`: added `es-tbai-regime` extension for `ClaveRegimenIvaOpTrascendencia`.
+- `es-tbai-v1`: added `es-tbai-identity-type` extension for the L7 `IDType` code.
 
 ### Fixed
 
+- `num`: `Amount` arithmetic (`Add`, `Subtract`, `Multiply`, `Divide`, `Rescale`, `Compare`) now uses `math/big` internally, fixing silent `int64` overflows that produced large negative results when handling values with many significant digits. Results that cannot be held at the requested exponent drop decimal places to fit, and division by zero returns zero.
 - `norm`: normalization now prunes `nil` pointer/interface entries from every slice in the document graph (e.g. a JSON `null` in an `identities`, `preceding`, or status `lines` array). This removes a class of panics in regime/addon normalizers and validators that iterated such slices, and means downstream consumers never see `nil` array elements. Slices with no `nil`s are left untouched (no reallocation).
 - `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
 - `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
+- `de`: corrected historical VAT rates (post-COVID restoration dates, pre-1998 standard rate, reduced rate history) and replaced the OECD source with official German government sources.
 
 ## [v0.403.0] - 2026-05-13
 
