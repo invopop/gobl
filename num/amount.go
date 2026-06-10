@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -131,14 +132,16 @@ func AmountFromHumanString(_ string) (Amount, error) {
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{a.value + a2.value, a.exp}
+	sum := new(big.Int).Add(big.NewInt(a.value), bigRescale(a2.value, a2.exp, a.exp))
+	value, exp := fitBigToInt64(sum, a.exp)
+	return Amount{value, exp}
 }
 
 // Subtract takes away the amount provided from the base.
 func (a Amount) Subtract(b Amount) Amount {
-	b = b.Rescale(a.exp)
-	return Amount{a.value - b.value, a.exp}
+	diff := new(big.Int).Sub(big.NewInt(a.value), bigRescale(b.value, b.exp, a.exp))
+	value, exp := fitBigToInt64(diff, a.exp)
+	return Amount{value, exp}
 }
 
 // Sub will subtract the provided amount from the base amount.
@@ -147,24 +150,29 @@ func (a Amount) Sub(b Amount) Amount {
 	return a.Subtract(b)
 }
 
-// Multiply the amount by the provided amount.
+// Multiply the amount by the provided amount. Calculations are performed
+// with big.Int internally to avoid int64 overflow; if the result cannot be
+// held at the current exponent, decimal places are dropped to fit.
 func (a Amount) Multiply(a2 Amount) Amount {
-	v := (float64(a.value) * float64(a2.value)) / float64(intPow(10, a2.exp))
-	return Amount{
-		value: int64(math.Round(v)),
-		exp:   a.exp,
+	product := new(big.Int).Mul(big.NewInt(a.value), big.NewInt(a2.value))
+	if a2.exp > 0 {
+		product = roundedDiv(product, bigPow10(a2.exp))
 	}
+	value, exp := fitBigToInt64(product, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
-// Divide the amount by the provided amount. Floating points are used for the actual division
-// and then round again to get an int. This prevents rounding errors, but if you want true division
-// with a base and a remainder, use the Split method.
+// Divide the amount by the provided amount, rounding the result. For true
+// division with a base and a remainder, use the Split method. Dividing by
+// zero returns a zero amount.
 func (a Amount) Divide(a2 Amount) Amount {
-	v := float64(a.value*intPow(10, a2.exp)) / float64(a2.value)
-	return Amount{
-		value: int64(math.Round(v)),
-		exp:   a.exp,
+	if a2.value == 0 {
+		return Amount{value: 0, exp: a.exp}
 	}
+	num := new(big.Int).Mul(big.NewInt(a.value), bigPow10(a2.exp))
+	q := roundedDiv(num, big.NewInt(a2.value))
+	value, exp := fitBigToInt64(q, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
 // Split divides the amount by x, like Divide, but also provides an
@@ -184,14 +192,10 @@ func (a Amount) Split(x int) (Amount, Amount) {
 //	 0 if a == b
 //	 1 if a > b
 func (a Amount) Compare(b Amount) int {
-	a, b = rescaleAmountPair(a, b)
-	if a.value < b.value {
-		return -1
-	}
-	if a.value > b.value {
-		return 1
-	}
-	return 0
+	exp := max(a.exp, b.exp)
+	av := bigRescale(a.value, a.exp, exp)
+	bv := bigRescale(b.value, b.exp, exp)
+	return av.Cmp(bv)
 }
 
 // Equals returns true if the two amounts represent the same value,
@@ -207,14 +211,15 @@ func (a Amount) Rescale(exp uint32) Amount {
 	if a.exp > exp {
 		// need to divide
 		e := a.exp - exp
-		v := float64(a.value) / float64(intPow(10, e))
-		return Amount{int64(math.Round(v)), exp}
+		v := roundedDiv(big.NewInt(a.value), bigPow10(e))
+		return Amount{v.Int64(), exp}
 	}
 	if a.exp < exp {
-		// need to multiply
+		// need to multiply, capping the exponent if int64 would overflow
 		e := exp - a.exp
-		v := a.value * intPow(10, e)
-		return Amount{v, exp}
+		v := new(big.Int).Mul(big.NewInt(a.value), bigPow10(e))
+		value, exp := fitBigToInt64(v, exp)
+		return Amount{value, exp}
 	}
 	return a
 }
@@ -398,15 +403,6 @@ func unquote(value []byte) []byte {
 	return value
 }
 
-func rescaleAmountPair(a, a2 Amount) (Amount, Amount) {
-	// Take the largest exp
-	exp := a.exp
-	if a2.exp > exp {
-		exp = a2.exp
-	}
-	return a.Rescale(exp), a2.Rescale(exp)
-}
-
 func intPow(base int, exp uint32) int64 { // nolint:unparam
 	out := int64(1)
 	for exp != 0 {
@@ -414,6 +410,79 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 		exp--
 	}
 	return out
+}
+
+var (
+	bigOne = big.NewInt(1)
+	bigTen = big.NewInt(10)
+)
+
+// bigPow10 returns 10^exp as a big.Int.
+func bigPow10(exp uint32) *big.Int {
+	return new(big.Int).Exp(bigTen, big.NewInt(int64(exp)), nil)
+}
+
+// bigRescale returns v, currently at the `from` exponent, rescaled to the
+// `to` exponent, rounding when reducing.
+func bigRescale(v int64, from, to uint32) *big.Int {
+	b := big.NewInt(v)
+	if from < to {
+		return b.Mul(b, bigPow10(to-from))
+	}
+	if from > to {
+		return roundedDiv(b, bigPow10(from-to))
+	}
+	return b
+}
+
+// roundedDiv divides num by den rounding half away from zero. The
+// denominator must not be zero.
+func roundedDiv(num, den *big.Int) *big.Int {
+	n, d := num, den
+	if d.Sign() < 0 {
+		n = new(big.Int).Neg(n)
+		d = new(big.Int).Neg(d)
+	}
+	q := new(big.Int)
+	r := new(big.Int)
+	q.QuoRem(n, d, r) // r has the same sign as n
+	twiceRem := new(big.Int).Abs(r)
+	twiceRem.Lsh(twiceRem, 1)
+	if twiceRem.Cmp(d) >= 0 {
+		if n.Sign() < 0 {
+			q.Sub(q, bigOne)
+		} else {
+			q.Add(q, bigOne)
+		}
+	}
+	return q
+}
+
+// fitBigToInt64 returns v as an int64 with the exponent it can be stored at.
+// If v does not fit, decimal digits are dropped with rounding, lowering the
+// exponent accordingly. Values whose integer part exceeds int64 saturate at
+// the boundary instead of wrapping.
+func fitBigToInt64(v *big.Int, exp uint32) (int64, uint32) {
+	if v.IsInt64() {
+		return v.Int64(), exp
+	}
+	drop := uint32(0)
+	probe := new(big.Int).Set(v)
+	for !probe.IsInt64() && drop < exp {
+		probe.Quo(probe, bigTen)
+		drop++
+	}
+	if drop > 0 {
+		v = roundedDiv(v, bigPow10(drop))
+		exp -= drop
+	}
+	if !v.IsInt64() {
+		if v.Sign() < 0 {
+			return math.MinInt64, exp
+		}
+		return math.MaxInt64, exp
+	}
+	return v.Int64(), exp
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

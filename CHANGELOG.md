@@ -50,6 +50,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+- `num`: `Amount` arithmetic (`Add`, `Subtract`, `Multiply`, `Divide`, `Rescale`, `Compare`) now uses `math/big` internally, fixing silent `int64` overflows that produced large negative results when handling values with many significant digits. Results that cannot be held at the requested exponent drop decimal places to fit, and division by zero returns zero.
 - `norm`: normalization now prunes `nil` pointer/interface entries from every slice in the document graph (e.g. a JSON `null` in an `identities`, `preceding`, or status `lines` array). This removes a class of panics in regime/addon normalizers and validators that iterated such slices, and means downstream consumers never see `nil` array elements. Slices with no `nil`s are left untouched (no reallocation).
 - `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
 - `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
