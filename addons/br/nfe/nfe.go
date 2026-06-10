@@ -21,6 +21,18 @@ const (
 	V4 cbc.Key = Key + "-v4"
 )
 
+// SEFAZ (Secretaria da Fazenda) official codes to include in stamps.
+const (
+	// StampProviderSEFAZKey contains the unique identifier (chave de acesso) of a
+	// NF-e or NFC-e. It consists of 44 digits, deterministically calculated from the
+	// document's own fields, and is used to track the invoice in the SEFAZ system.
+	StampProviderSEFAZKey cbc.Key = "sefaz-key"
+	// StampProviderSEFAZAuth contains the authorization number (número do protocolo)
+	// of a NF-e. It consists of 15 digits and is assigned by SEFAZ when the NF-e is
+	// authorized.
+	StampProviderSEFAZAuth cbc.Key = "sefaz-auth"
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(

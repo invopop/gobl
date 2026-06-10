@@ -15,12 +15,6 @@ import (
 // CountryCode is the ISO 3166-2 code for Brazil.
 const CountryCode = "BR"
 
-// Stamp provider keys
-const (
-	StampProviderSEFAZKey  cbc.Key = "sefaz-key"  // NF-e unique identifier (chave de acesso)
-	StampProviderSEFAZAuth cbc.Key = "sefaz-auth" // NF-e authorization number (número do protocolo)
-)
-
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("br", rules.GOBL.Add(CountryCode),
