@@ -314,7 +314,7 @@
           "assert": [
             {
               "id": "GOBL-PT-SAFT-BILL-DELIVERY-06",
-              "desc": "cannot be blank",
+              "desc": "despatch date is required",
               "tests": "present"
             }
           ]
@@ -324,7 +324,7 @@
           "assert": [
             {
               "id": "GOBL-PT-SAFT-BILL-DELIVERY-07",
-              "desc": "the length must be no more than 1",
+              "desc": "preceding must have at most one entry",
               "tests": "length between 0 and 1"
             }
           ],
@@ -337,7 +337,7 @@
                   "assert": [
                     {
                       "id": "GOBL-PT-SAFT-BILL-DELIVERY-08",
-                      "desc": "cannot be blank",
+                      "desc": "preceding series is required",
                       "tests": "present"
                     }
                   ]
@@ -347,7 +347,7 @@
                   "assert": [
                     {
                       "id": "GOBL-PT-SAFT-BILL-DELIVERY-09",
-                      "desc": "cannot be blank",
+                      "desc": "preceding code is required",
                       "tests": "present"
                     }
                   ]

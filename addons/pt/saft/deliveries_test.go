@@ -35,7 +35,7 @@ func TestDeliveryValidation(t *testing.T) {
 	t.Run("missing despatch date", func(t *testing.T) {
 		dlv := validDelivery()
 		dlv.DespatchDate = nil
-		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "despatch date is required")
 	})
 
 	t.Run("invalid series format", func(t *testing.T) {
@@ -120,7 +120,7 @@ func TestDeliveryValidation(t *testing.T) {
 				IssueDate: cal.NewDate(2023, 1, 1),
 			},
 		}
-		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding series is required")
 	})
 
 	t.Run("missing code", func(t *testing.T) {
@@ -131,7 +131,7 @@ func TestDeliveryValidation(t *testing.T) {
 				IssueDate: cal.NewDate(2023, 1, 1),
 			},
 		}
-		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding code is required")
 	})
 
 	t.Run("several preceding documents", func(t *testing.T) {
@@ -148,7 +148,7 @@ func TestDeliveryValidation(t *testing.T) {
 				IssueDate: cal.NewDate(2023, 1, 1),
 			},
 		}
-		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "the length must be no more than 1")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding must have at most one entry")
 	})
 }
 
