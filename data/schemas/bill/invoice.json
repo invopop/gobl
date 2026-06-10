@@ -52,10 +52,6 @@
                 "title": "Factoring"
               },
               {
-                "const": "export",
-                "title": "Export"
-              },
-              {
                 "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
                 "title": "Any"
               }

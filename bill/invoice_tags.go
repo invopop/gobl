@@ -127,17 +127,6 @@ var defaultInvoiceTags = &tax.TagSet{
 				`),
 			},
 		},
-		{
-			Key: tax.TagExport,
-			Name: i18n.String{
-				i18n.EN: "Export",
-			},
-			Desc: i18n.String{
-				i18n.EN: here.Doc(`
-					Indicates that the invoice refers to an export of goods.
-				`),
-			},
-		},
 	},
 }
 
