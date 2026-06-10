@@ -81,6 +81,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 
+### Fixed
+
+- `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
+
 ## [v0.402.0] - 2026-04-30
 
 ### Changed
