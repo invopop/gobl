@@ -317,6 +317,7 @@ var extensions = []*cbc.Definition{
 
 				| Combo Context              | Regime Code |
 				|----------------------------|-------------|
+				| Category ~IGIC~            | ~08~        |
 				| Key ~export~               | ~02~        |
 				| Has surcharge              | ~51~        |
 				| Otherwise                  | ~01~        |

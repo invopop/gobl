@@ -219,7 +219,7 @@
         "es": "Clave de Régimen de IVA TicketBAI"
       },
       "desc": {
-        "en": "Identifies the VAT regime or operation classification applied to the\ntransaction. Maps to the `ClaveRegimenIvaOpTrascendencia` field, with\nvalues taken from the TicketBAI XSD.\n\nThe regime code is normally assigned per tax combo. If no regime code\nis provided, GOBL will try to assign a code from the following contexts:\n\n| Combo Context              | Regime Code |\n|----------------------------|-------------|\n| Key `export`               | `02`        |\n| Has surcharge              | `51`        |\n| Otherwise                  | `01`        |"
+        "en": "Identifies the VAT regime or operation classification applied to the\ntransaction. Maps to the `ClaveRegimenIvaOpTrascendencia` field, with\nvalues taken from the TicketBAI XSD.\n\nThe regime code is normally assigned per tax combo. If no regime code\nis provided, GOBL will try to assign a code from the following contexts:\n\n| Combo Context              | Regime Code |\n|----------------------------|-------------|\n| Category `IGIC`            | `08`        |\n| Key `export`               | `02`        |\n| Has surcharge              | `51`        |\n| Otherwise                  | `01`        |"
       },
       "values": [
         {

@@ -65,6 +65,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		// This is precisely the case covered by exemption code IE.
 		tc.Ext = tc.Ext.
 			Set(ExtKeyExempt, "IE")
+		// Default to regime 08 (operations subject to IPSI/IGIC) unless a
+		// regime code has already been set.
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "08")
 	}
 }
 

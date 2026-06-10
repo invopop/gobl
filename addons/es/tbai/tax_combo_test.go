@@ -98,13 +98,26 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "OT", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
-	t.Run("outside scope IGIC combo yields IE", func(t *testing.T) {
+	t.Run("outside scope IGIC combo yields IE and regime 08", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: es.TaxCategoryIGIC,
 			Key:      tax.KeyOutsideScope,
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "IE", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, cbc.Code("08"), tc.Ext.Get(ExtKeyRegime))
+	})
+
+	t.Run("IGIC combo preserves explicit regime", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				ExtKeyRegime: "01",
+			}),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "IE", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, cbc.Code("01"), tc.Ext.Get(ExtKeyRegime))
 	})
 
 	t.Run("reverse charge", func(t *testing.T) {
