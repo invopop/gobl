@@ -166,3 +166,116 @@ func TestJSONSignatures(t *testing.T) {
 		t.Errorf("expected marshaled struct to include signature")
 	}
 }
+
+func TestNewSignatureInvalidKey(t *testing.T) {
+	// Invalid private key (no JWK) -> NewSignature short-circuits with
+	// ErrKeyInvalid.
+	_, err := dsig.NewSignature(&dsig.PrivateKey{}, struct{}{})
+	require.Error(t, err)
+	assert.ErrorIs(t, err, dsig.ErrKeyInvalid)
+}
+
+func TestNewSignatureUnmarshalablePayload(t *testing.T) {
+	// A function value cannot be JSON-marshaled, exercising the
+	// json.Marshal error branch in NewSignature.
+	priv := dsig.NewES256Key()
+	_, err := dsig.NewSignature(priv, func() {})
+	require.Error(t, err)
+}
+
+func TestParseSignatureInvalid(t *testing.T) {
+	_, err := dsig.ParseSignature("not.a.jws")
+	require.Error(t, err)
+}
+
+func TestSignatureAccessorsEmpty(t *testing.T) {
+	s := new(dsig.Signature)
+	assert.Equal(t, "", s.KeyID())
+	assert.Equal(t, "", s.JKU())
+	assert.Equal(t, "", s.String())
+	assert.Nil(t, s.JSONWebSignature())
+}
+
+func TestSignatureUnmarshalEmptyString(t *testing.T) {
+	s := new(dsig.Signature)
+	require.NoError(t, json.Unmarshal([]byte(`""`), s))
+	assert.Nil(t, s.JSONWebSignature())
+}
+
+func TestSignatureUnmarshalInvalidJSON(t *testing.T) {
+	s := new(dsig.Signature)
+	err := json.Unmarshal([]byte(`not-a-string`), s)
+	require.Error(t, err)
+}
+
+func TestSignatureUnmarshalBadCompact(t *testing.T) {
+	s := new(dsig.Signature)
+	err := json.Unmarshal([]byte(`"not.a.jws"`), s)
+	require.Error(t, err)
+}
+
+func TestSignatureJSONSchema(t *testing.T) {
+	js := dsig.Signature{}.JSONSchema()
+	require.NotNil(t, js)
+	assert.Equal(t, "string", js.Type)
+}
+
+func TestSignatureVerifyPayloadUnmarshalFail(t *testing.T) {
+	// Sign a string payload, then try to verify into a struct that
+	// can't accept it (target is an int).
+	priv := dsig.NewES256Key()
+	pub := new(dsig.PublicKey)
+	raw, err := json.Marshal(priv.Public())
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(raw, pub))
+	sig, err := dsig.NewSignature(priv, "hello")
+	require.NoError(t, err)
+	var target int
+	err = sig.VerifyPayload(pub, &target)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "dsig verify")
+}
+
+func TestSignatureUnsafePayloadUnmarshalFail(t *testing.T) {
+	priv := dsig.NewES256Key()
+	sig, err := dsig.NewSignature(priv, "hello")
+	require.NoError(t, err)
+	var target int
+	err = sig.UnsafePayload(&target)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "unsafe payload")
+}
+
+func TestSignatureVerifyWrongKey(t *testing.T) {
+	// Verify against a key that didn't sign the payload — exercises
+	// the ErrKeyMismatch return in Verify.
+	signer := dsig.NewES256Key()
+	other := dsig.NewES256Key()
+
+	sig, err := dsig.NewSignature(signer, "hello")
+	require.NoError(t, err)
+
+	_, err = sig.Verify(other.Public())
+	require.Error(t, err)
+	assert.ErrorIs(t, err, dsig.ErrKeyMismatch)
+}
+
+func TestSignatureVerifyPayloadWrongKey(t *testing.T) {
+	signer := dsig.NewES256Key()
+	other := dsig.NewES256Key()
+
+	sig, err := dsig.NewSignature(signer, "hello")
+	require.NoError(t, err)
+
+	var target string
+	err = sig.VerifyPayload(other.Public(), &target)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, dsig.ErrKeyMismatch)
+}
+
+func TestSignatureKeyID(t *testing.T) {
+	priv := dsig.NewES256Key()
+	sig, err := dsig.NewSignature(priv, "hello")
+	require.NoError(t, err)
+	assert.Equal(t, priv.ID(), sig.KeyID())
+}

@@ -136,16 +136,6 @@ func dueDateRules() *rules.Set {
 	)
 }
 
-// Normalize will try to normalize the payment terms.
-func (t *Terms) Normalize() {
-	if t == nil {
-		return
-	}
-
-	t.Notes = cbc.NormalizeString(t.Notes)
-	t.Ext = t.Ext.Clean()
-}
-
 // UNTDID4279 returns the UNTDID 4279 code associated with the terms key.
 func (t *Terms) UNTDID4279() cbc.Code {
 	for _, v := range TermKeyDefinitions {

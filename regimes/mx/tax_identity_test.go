@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -12,7 +13,6 @@ import (
 )
 
 func TestTaxIdentityNormalization(t *testing.T) {
-	r := mx.New()
 	tests := []struct {
 		Code     cbc.Code
 		Expected cbc.Code
@@ -48,7 +48,7 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "MX", Code: ts.Code}
-		r.NormalizeObject(tID)
+		norm.Normalize(tID)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -57,12 +58,11 @@ func TestOrderValidation(t *testing.T) {
 }
 
 func TestOrderNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
 
 	t.Run("nil order", func(t *testing.T) {
 		assert.NotPanics(t, func() {
 			var inv *bill.Order
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(saft.V1))
 		})
 	})
 
@@ -70,7 +70,7 @@ func TestOrderNormalization(t *testing.T) {
 		ord := &bill.Order{
 			Type: bill.OrderTypePurchase,
 		}
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		require.NotNil(t, ord.Tax)
 		require.NotNil(t, ord.Tax.Ext)
 		assert.Equal(t, saft.WorkTypePurchaseOrder, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
@@ -80,7 +80,7 @@ func TestOrderNormalization(t *testing.T) {
 		ord := &bill.Order{
 			Type: bill.OrderTypeQuote,
 		}
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		require.NotNil(t, ord.Tax)
 		require.NotNil(t, ord.Tax.Ext)
 		assert.Equal(t, saft.WorkTypeBudgets, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
@@ -95,14 +95,14 @@ func TestOrderNormalization(t *testing.T) {
 				}),
 			},
 		}
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		assert.Equal(t, saft.WorkTypeOther, ord.Tax.Ext.Get(saft.ExtKeyWorkType))
 	})
 
 	t.Run("sets default value date from issue date", func(t *testing.T) {
 		ord := validOrder()
 		ord.ValueDate = nil
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		assert.Equal(t, &ord.IssueDate, ord.ValueDate)
 	})
 
@@ -110,14 +110,14 @@ func TestOrderNormalization(t *testing.T) {
 		ord := validOrder()
 		ord.OperationDate = cal.NewDate(2024, 12, 2)
 		ord.ValueDate = nil
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		assert.Equal(t, ord.OperationDate, ord.ValueDate)
 	})
 
 	t.Run("keeps existing value date", func(t *testing.T) {
 		ord := validOrder()
 		ord.ValueDate = cal.NewDate(2024, 12, 2)
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 		assert.Equal(t, cal.NewDate(2024, 12, 2), ord.ValueDate)
 	})
 
@@ -126,7 +126,7 @@ func TestOrderNormalization(t *testing.T) {
 		ord.IssueDate = cal.Date{}
 		ord.ValueDate = nil
 
-		addon.Normalizer(ord)
+		norm.Normalize(ord, tax.AddonContext(saft.V1))
 
 		loc, err := time.LoadLocation("Europe/Lisbon")
 		require.NoError(t, err)

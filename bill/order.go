@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -156,6 +157,12 @@ func (ord *Order) CanSign() bool {
 	return !ord.Code.IsEmpty()
 }
 
+func normalizeOrder(ord *Order) {
+	if ord.Type == cbc.KeyEmpty {
+		ord.Type = OrderTypePurchase
+	}
+}
+
 func orderRules() *rules.Set {
 	return rules.For(new(Order),
 		rules.Field("type",
@@ -185,46 +192,8 @@ func (ord *Order) Calculate() error {
 	if ord.Regime.IsEmpty() {
 		ord.SetRegime(partyTaxCountry(ord.Supplier))
 	}
-	ord.Normalize(ord.normalizers())
+	norm.Normalize(ord)
 	return calculate(ord)
-}
-
-// Normalize is run as part of the Calculate method to ensure that the order
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (ord *Order) Normalize(normalizers tax.Normalizers) {
-	if ord.Type == cbc.KeyEmpty {
-		ord.Type = OrderTypePurchase
-	}
-	ord.Series = cbc.NormalizeCode(ord.Series)
-	ord.Code = cbc.NormalizeCode(ord.Code)
-
-	tax.Normalize(normalizers, ord.Tax)
-	tax.Normalize(normalizers, ord.Supplier)
-	tax.Normalize(normalizers, ord.Customer)
-	tax.Normalize(normalizers, ord.Buyer)
-	tax.Normalize(normalizers, ord.Seller)
-	tax.Normalize(normalizers, ord.Preceding)
-	tax.Normalize(normalizers, ord.Lines)
-	tax.Normalize(normalizers, ord.Discounts)
-	tax.Normalize(normalizers, ord.Charges)
-	tax.Normalize(normalizers, ord.Payment)
-	tax.Normalize(normalizers, ord.Delivery)
-	tax.Normalize(normalizers, ord.Notes)
-	tax.Normalize(normalizers, ord.Attachments)
-
-	normalizers.Each(ord)
-}
-
-func (ord *Order) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := ord.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range ord.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 // ConvertInto will use the defined exchange rates in the order to convert all the prices
@@ -330,6 +299,33 @@ func (ord *Order) setCurrency(c currency.Code) {
 }
 func (ord *Order) setTotals(t *Totals) {
 	ord.Totals = t
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this order document. A `purchase` order (customer asks the
+// supplier for goods or services) flows from customer to supplier; a
+// `sale` order (supplier confirms a sale) and a `quote` (supplier
+// proposes a price) flow the other way.
+func (ord *Order) FromEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Customer.FirstEndpoint()
+	}
+	return ord.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this order document. Inverse of FromEndpoint.
+func (ord *Order) ToEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Supplier.FirstEndpoint()
+	}
+	return ord.Customer.FirstEndpoint()
 }
 
 /** ---- **/

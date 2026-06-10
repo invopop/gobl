@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/rules"
@@ -12,14 +13,12 @@ import (
 )
 
 func TestIdentityNormalization(t *testing.T) {
-	r := tax.RegimeDefFor("IT")
-
 	t.Run("normalize codice fiscale", func(t *testing.T) {
 		p1 := &org.Identity{
 			Key:  it.IdentityKeyFiscalCode,
 			Code: "RSS.mra-74D22-A00 . 1Q",
 		}
-		r.NormalizeObject(p1)
+		norm.Normalize(p1, tax.RegimeContext("IT"))
 		assert.Equal(t, "RSSMRA74D22A001Q", p1.Code.String())
 	})
 }

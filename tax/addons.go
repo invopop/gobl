@@ -59,9 +59,6 @@ type AddonDef struct {
 	// documents can be sent.
 	Inboxes []*cbc.Definition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 
-	// Normalizer performs the normalization rules for the add-on.
-	Normalizer func(doc any) `json:"-"`
-
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
 	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
@@ -75,6 +72,30 @@ func WithAddons(addons ...cbc.Key) Addons {
 // SetAddons is a helper method to set the list of addons
 func (as *Addons) SetAddons(addons ...cbc.Key) {
 	as.List = addons
+}
+
+// AddAddons appends the given keys to the addon list, skipping any that are
+// empty or already present. Use it to declare addons programmatically before
+// calculating a document; addons cannot be added during normalization.
+func (as *Addons) AddAddons(keys ...cbc.Key) {
+	if as == nil {
+		return
+	}
+	for _, key := range keys {
+		if key == "" {
+			continue
+		}
+		found := false
+		for _, k := range as.List {
+			if k == key {
+				found = true
+				break
+			}
+		}
+		if !found {
+			as.List = append(as.List, key)
+		}
+	}
 }
 
 // GetAddons provides the list of addon keys in use.
@@ -94,15 +115,33 @@ func (as Addons) AddonDefs() []*AddonDef {
 	return list
 }
 
-// normalizeAddons ensures that the list of addons is normalized and is normally
-// performed internally when preparing the list of normalizers to use.
-func (as *Addons) normalizeAddons() {
+// PrepareNormalization expands the addon list to include the dependencies
+// (Requires) of every declared addon, transitively, dropping any keys that are
+// not registered. The norm engine calls this once before normalizing so that
+// the required addons' normalizers are applied in a single pass.
+func (as *Addons) PrepareNormalization() {
+	if as == nil {
+		return
+	}
+	seen := make(map[cbc.Key]bool, len(as.List))
 	list := make([]cbc.Key, 0, len(as.List))
-	for _, ak := range as.List {
-		if ad := AddonForKey(ak); ad != nil {
-			list = cbc.AppendUniqueKeys(list, ad.Requires...)
-			list = cbc.AppendUniqueKeys(list, ad.Key)
+	var add func(k cbc.Key)
+	add = func(k cbc.Key) {
+		if seen[k] {
+			return
 		}
+		seen[k] = true
+		ad := AddonForKey(k)
+		if ad == nil {
+			return // unregistered keys are dropped (validation reports them)
+		}
+		for _, r := range ad.Requires {
+			add(r)
+		}
+		list = append(list, ad.Key)
+	}
+	for _, ak := range as.List {
+		add(ak)
 	}
 	as.List = list
 }
@@ -265,13 +304,37 @@ func addonDefRules() *rules.Set {
 	)
 }
 
-// JSONSchemaExtend will add the addon options to the JSON list.
+// JSONSchemaExtend will add the addon options to the JSON list. The enum is
+// the union of the runtime-registered addons and the curated list of approved
+// external addons (see ApprovedAddons), so a key whose implementation lives in
+// a separate module is still a recognised `$addons` value. A registered
+// definition takes precedence over an approved stub of the same key. Note that
+// being listed here does not relax the runtime "$addons must be registered"
+// check — the module must still be imported for validation to succeed.
 func (AddonList) JSONSchemaExtend(js *jsonschema.Schema) {
-	js.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
-	for i, ao := range AllAddonDefs() {
+	titles := make(map[cbc.Key]string)
+	keys := make([]cbc.Key, 0)
+	add := func(k cbc.Key, title string) {
+		if _, ok := titles[k]; !ok {
+			keys = append(keys, k)
+		}
+		titles[k] = title
+	}
+	for _, ao := range AllAddonDefs() {
+		add(ao.Key, ao.Name.String())
+	}
+	for _, ea := range ApprovedAddons() {
+		if _, ok := titles[ea.Key]; ok {
+			continue // a registered definition wins over an approved stub
+		}
+		add(ea.Key, ea.Name.String())
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i].String() < keys[j].String() })
+	js.Items.OneOf = make([]*jsonschema.Schema, len(keys))
+	for i, k := range keys {
 		js.Items.OneOf[i] = &jsonschema.Schema{
-			Const: ao.Key.String(),
-			Title: ao.Name.String(),
+			Const: k.String(),
+			Title: titles[k],
 		}
 	}
 }

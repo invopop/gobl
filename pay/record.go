@@ -58,26 +58,6 @@ func recordRules() *rules.Set {
 	)
 }
 
-// Normalize will try to normalize the record's data, threading the supplied
-// addon/regime normalizers through to the means-specific nested structs (Card,
-// CreditTransfer, DirectDebit, Online) so addons can extend or transform them.
-func (r *Record) Normalize(normalizers tax.Normalizers) {
-	if r == nil {
-		return
-	}
-	uuid.Normalize(&r.UUID)
-	r.Ref = cbc.NormalizeString(r.Ref)
-	r.Description = cbc.NormalizeString(r.Description)
-	r.Ext = r.Ext.Clean()
-
-	tax.Normalize(normalizers, r.Card)
-	tax.Normalize(normalizers, r.CreditTransfer)
-	tax.Normalize(normalizers, r.DirectDebit)
-	tax.Normalize(normalizers, r.Online)
-
-	normalizers.Each(r)
-}
-
 // CalculateFrom will update the amount using the rate of the provided
 // total, if defined.
 func (r *Record) CalculateFrom(payable num.Amount) {

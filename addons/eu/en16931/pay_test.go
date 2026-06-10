@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -17,20 +18,19 @@ import (
 )
 
 func TestPayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 
 	t.Run("valid", func(t *testing.T) {
 		m := &pay.Instructions{
 			Key: pay.MeansKeyCreditTransfer,
 		}
-		ad.Normalizer(m)
+		norm.Normalize(m, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, "30", m.Ext.Get(untdid.ExtKeyPaymentMeans).String())
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var m *pay.Instructions
 		assert.NotPanics(t, func() {
-			ad.Normalizer(m)
+			norm.Normalize(m, tax.AddonContext(en16931.V2017))
 		})
 	})
 

@@ -5,23 +5,30 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Argentina.
+const CountryCode = "AR"
+
 func init() {
 	tax.RegisterRegimeDef(New())
-	rules.Register("ar", rules.GOBL.Add("AR"),
+	rules.Register("ar", rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // New provides the tax region definition for Argentina
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "AR",
+		Country:  CountryCode,
 		Currency: currency.ARS,
 		Name: i18n.String{
 			i18n.EN: "Argentina",
@@ -76,16 +83,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Argentina/Buenos_Aires",
-		Normalizer:  Normalize,
 		Categories:  taxCategories(),
 		Corrections: correctionDefinitions(),
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

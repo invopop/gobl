@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
@@ -32,7 +33,7 @@ func testStatusMinimal(t *testing.T) *bill.Status {
 			},
 		},
 		Lines: []*bill.StatusLine{
-			{Key: bill.StatusEventAccepted},
+			{Key: bill.StatusLineAccepted},
 		},
 	}
 }
@@ -47,18 +48,12 @@ func testStatusFull(t *testing.T) *bill.Status {
 			Code:    "54387763P",
 		},
 	}
-	st.Issuer = &org.Party{
-		Name: "Test Issuer",
-	}
-	st.Recipient = &org.Party{
-		Name: "Test Recipient",
-	}
 	st.Ordering = &bill.Ordering{
 		Code: "PO-123",
 	}
 	st.Lines = []*bill.StatusLine{
 		{
-			Key: bill.StatusEventAccepted,
+			Key: bill.StatusLineAccepted,
 			Doc: &org.DocumentRef{
 				Series:    "F1",
 				Code:      "0001",
@@ -79,7 +74,7 @@ func testStatusFull(t *testing.T) *bill.Status {
 			},
 		},
 		{
-			Key: bill.StatusEventRejected,
+			Key: bill.StatusLineRejected,
 			Doc: &org.DocumentRef{
 				Series: "F1",
 				Code:   "0002",
@@ -88,7 +83,7 @@ func testStatusFull(t *testing.T) *bill.Status {
 				{
 					Key:         bill.ReasonKeyReferences,
 					Description: "Missing PO reference",
-					Conditions: []*bill.Condition{
+					Faults: []*bill.Fault{
 						{
 							Code:    "ERR-001",
 							Paths:   []string{"ordering.code"},
@@ -174,13 +169,16 @@ func TestStatusCalculate(t *testing.T) {
 	t.Run("line indexing with nil entries", func(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
-			{Key: bill.StatusEventIssued},
+			{Key: bill.StatusLineIssued},
 			nil,
-			{Key: bill.StatusEventAccepted},
+			{Key: bill.StatusLineAccepted},
 		}
 		require.NoError(t, st.Calculate())
+		// The nil entry is pruned during normalization, so the remaining
+		// lines are contiguously indexed without a gap.
+		require.Len(t, st.Lines, 2)
 		assert.Equal(t, 1, st.Lines[0].Index)
-		assert.Equal(t, 3, st.Lines[2].Index)
+		assert.Equal(t, 2, st.Lines[1].Index)
 	})
 
 	t.Run("full status", func(t *testing.T) {
@@ -321,7 +319,7 @@ func TestStatusLineValidate(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
-			{Key: bill.StatusEventAccepted},
+			{Key: bill.StatusLineAccepted},
 		}
 		require.NoError(t, st.Calculate())
 		require.NoError(t, rules.Validate(st))
@@ -337,7 +335,7 @@ func TestStatusLineValidate(t *testing.T) {
 		assert.ErrorContains(t, err, "status line key is required")
 	})
 
-	t.Run("custom key allowed", func(t *testing.T) {
+	t.Run("custom key rejected", func(t *testing.T) {
 		// Status line keys are open-ended: the schema permits "Other"
 		// values matching the cbc.Key pattern, so custom keys validate.
 		st := testStatusMinimal(t)
@@ -345,19 +343,20 @@ func TestStatusLineValidate(t *testing.T) {
 			{Key: "custom-event"},
 		}
 		require.NoError(t, st.Calculate())
-		require.NoError(t, rules.Validate(st))
+		err := rules.Validate(st)
+		assert.ErrorContains(t, err, "status line key is not valid")
 	})
 
 	t.Run("all event keys valid", func(t *testing.T) {
 		events := []cbc.Key{
-			bill.StatusEventIssued,
-			bill.StatusEventAcknowledged,
-			bill.StatusEventProcessing,
-			bill.StatusEventQuerying,
-			bill.StatusEventRejected,
-			bill.StatusEventAccepted,
-			bill.StatusEventPaid,
-			bill.StatusEventError,
+			bill.StatusLineIssued,
+			bill.StatusLineAcknowledged,
+			bill.StatusLineProcessing,
+			bill.StatusLineQuerying,
+			bill.StatusLineRejected,
+			bill.StatusLineAccepted,
+			bill.StatusLinePaid,
+			bill.StatusLineError,
 		}
 		for _, ev := range events {
 			st := testStatusMinimal(t)
@@ -375,7 +374,7 @@ func TestReasonValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Reasons: []*bill.Reason{
 					{Key: bill.ReasonKeyReferences},
 				},
@@ -389,7 +388,7 @@ func TestReasonValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Reasons: []*bill.Reason{
 					{Key: ""},
 				},
@@ -404,7 +403,7 @@ func TestReasonValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Reasons: []*bill.Reason{
 					{Key: "bogus"},
 				},
@@ -436,7 +435,7 @@ func TestReasonValidate(t *testing.T) {
 			st := testStatusMinimal(t)
 			st.Lines = []*bill.StatusLine{
 				{
-					Key:     bill.StatusEventRejected,
+					Key:     bill.StatusLineRejected,
 					Reasons: []*bill.Reason{{Key: rk}},
 				},
 			}
@@ -451,7 +450,7 @@ func TestActionValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Actions: []*bill.Action{
 					{Key: bill.ActionKeyReissue},
 				},
@@ -465,7 +464,7 @@ func TestActionValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Actions: []*bill.Action{
 					{Key: ""},
 				},
@@ -480,7 +479,7 @@ func TestActionValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Actions: []*bill.Action{
 					{Key: "bogus"},
 				},
@@ -505,7 +504,7 @@ func TestActionValidate(t *testing.T) {
 			st := testStatusMinimal(t)
 			st.Lines = []*bill.StatusLine{
 				{
-					Key:     bill.StatusEventRejected,
+					Key:     bill.StatusLineRejected,
 					Actions: []*bill.Action{{Key: ak}},
 				},
 			}
@@ -515,16 +514,16 @@ func TestActionValidate(t *testing.T) {
 	})
 }
 
-func TestConditionValidate(t *testing.T) {
+func TestFaultValidate(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Reasons: []*bill.Reason{
 					{
 						Key: bill.ReasonKeyReferences,
-						Conditions: []*bill.Condition{
+						Faults: []*bill.Fault{
 							{
 								Code:    "ERR-001",
 								Paths:   []string{"ordering.code"},
@@ -543,11 +542,11 @@ func TestConditionValidate(t *testing.T) {
 		st := testStatusMinimal(t)
 		st.Lines = []*bill.StatusLine{
 			{
-				Key: bill.StatusEventRejected,
+				Key: bill.StatusLineRejected,
 				Reasons: []*bill.Reason{
 					{
 						Key: bill.ReasonKeyReferences,
-						Conditions: []*bill.Condition{
+						Faults: []*bill.Fault{
 							{Code: ""},
 						},
 					},
@@ -556,7 +555,7 @@ func TestConditionValidate(t *testing.T) {
 		}
 		require.NoError(t, st.Calculate())
 		err := rules.Validate(st)
-		assert.ErrorContains(t, err, "condition code is required")
+		assert.ErrorContains(t, err, "fault code is required")
 	})
 }
 
@@ -564,7 +563,7 @@ func TestStatusLineNormalize(t *testing.T) {
 	t.Run("nil status line", func(t *testing.T) {
 		var sl *bill.StatusLine
 		assert.NotPanics(t, func() {
-			sl.Normalize(nil)
+			norm.Normalize(sl)
 		})
 	})
 }
@@ -573,21 +572,21 @@ func TestReasonNormalize(t *testing.T) {
 	t.Run("nil reason", func(t *testing.T) {
 		var r *bill.Reason
 		assert.NotPanics(t, func() {
-			r.Normalize(nil)
+			norm.Normalize(r)
 		})
 	})
 
 	t.Run("normalizes conditions", func(t *testing.T) {
 		r := &bill.Reason{
 			Key: bill.ReasonKeyReferences,
-			Conditions: []*bill.Condition{
+			Faults: []*bill.Fault{
 				{Code: "ERR-001"},
 			},
 		}
 		assert.NotPanics(t, func() {
-			r.Normalize(nil)
+			norm.Normalize(r)
 		})
-		assert.Equal(t, cbc.Code("ERR-001"), r.Conditions[0].Code)
+		assert.Equal(t, cbc.Code("ERR-001"), r.Faults[0].Code)
 	})
 }
 
@@ -595,30 +594,30 @@ func TestActionNormalize(t *testing.T) {
 	t.Run("nil action", func(t *testing.T) {
 		var a *bill.Action
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			norm.Normalize(a)
 		})
 	})
 
 	t.Run("non-nil action", func(t *testing.T) {
 		a := &bill.Action{Key: bill.ActionKeyReissue}
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			norm.Normalize(a)
 		})
 	})
 }
 
-func TestConditionNormalize(t *testing.T) {
-	t.Run("nil condition", func(t *testing.T) {
-		var c *bill.Condition
+func TestFaultNormalize(t *testing.T) {
+	t.Run("nil fault", func(t *testing.T) {
+		var f *bill.Fault
 		assert.NotPanics(t, func() {
-			c.Normalize(nil)
+			norm.Normalize(f)
 		})
 	})
 
 	t.Run("normalizes code", func(t *testing.T) {
-		c := &bill.Condition{Code: "  ERR--001  "}
-		c.Normalize(nil)
-		assert.Equal(t, cbc.Code("ERR-001"), c.Code)
+		f := &bill.Fault{Code: "  ERR--001  "}
+		norm.Normalize(f)
+		assert.Equal(t, cbc.Code("ERR--001"), f.Code)
 	})
 }
 
@@ -627,8 +626,8 @@ func TestStatusDefinitions(t *testing.T) {
 		assert.Len(t, bill.StatusTypes, 3)
 	})
 
-	t.Run("status events count", func(t *testing.T) {
-		assert.Len(t, bill.StatusEvents, 8)
+	t.Run("status line keys count", func(t *testing.T) {
+		assert.Len(t, bill.StatusLineKeys, 9)
 	})
 
 	t.Run("reason keys count", func(t *testing.T) {
@@ -704,13 +703,12 @@ func TestStatusLineJSONSchemaExtend(t *testing.T) {
 
 	prop, ok := js.Properties.Get("key")
 	require.True(t, ok)
-	// Status line keys allow an open-ended "Other" fallback entry in
-	// addition to the defined events, so AnyOf has one extra element.
-	require.Len(t, prop.AnyOf, len(bill.StatusEvents)+1)
-	assert.Equal(t, bill.StatusEvents[0].Key.String(), prop.AnyOf[0].Const)
-	assert.Equal(t, bill.StatusEvents[0].Name.String(), prop.AnyOf[0].Title)
-	assert.Equal(t, bill.StatusEvents[0].Desc.String(), prop.AnyOf[0].Description)
-	assert.Equal(t, "Other", prop.AnyOf[len(bill.StatusEvents)].Title)
+	// Status line keys are a closed set — only the predefined keys are
+	// permitted, enumerated via OneOf with no open-ended fallback.
+	require.Len(t, prop.OneOf, len(bill.StatusLineKeys))
+	assert.Equal(t, bill.StatusLineKeys[0].Key.String(), prop.OneOf[0].Const)
+	assert.Equal(t, bill.StatusLineKeys[0].Name.String(), prop.OneOf[0].Title)
+	assert.Equal(t, bill.StatusLineKeys[0].Desc.String(), prop.OneOf[0].Description)
 }
 
 func TestReasonJSONSchemaExtend(t *testing.T) {
@@ -739,4 +737,43 @@ func TestActionJSONSchemaExtend(t *testing.T) {
 	assert.Equal(t, bill.ActionKeys[0].Key.String(), prop.OneOf[0].Const)
 	assert.Equal(t, bill.ActionKeys[0].Name.String(), prop.OneOf[0].Title)
 	assert.Equal(t, bill.ActionKeys[0].Desc.String(), prop.OneOf[0].Description)
+}
+
+func TestStatusFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	t.Run("response: customer→supplier", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeResponse, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", st.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", st.ToEndpoint().URI.String())
+	})
+
+	t.Run("update: supplier→customer", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeUpdate, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", st.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", st.ToEndpoint().URI.String())
+	})
+
+	t.Run("system: ambiguous, returns nil", func(t *testing.T) {
+		st := &bill.Status{
+			Type: bill.StatusTypeSystem, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Nil(t, st.FromEndpoint())
+		assert.Nil(t, st.ToEndpoint())
+	})
+
+	t.Run("nil status is a no-op", func(t *testing.T) {
+		var st *bill.Status
+		assert.Nil(t, st.FromEndpoint())
+		assert.Nil(t, st.ToEndpoint())
+	})
 }
