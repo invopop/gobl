@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `no`: Norwegian tax regime with VAT categories, mod-11 organisasjonsnummer validation, reverse-charge scenario injection, simplified invoice support, and credit/debit note correction support.
+
 ### Changed
 
 - **breaking**: the GOBL CLI (`cmd/gobl`), the HTTP API handler (`pkg/api`), the MCP server, the operations engine (`internal/ops`), and the WebAssembly build (`wasm/`) have **moved out of core** into [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev), which composes this library with the full addon set. Core is now a pure document library (schemas, tax/document model, addons, data). Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`. The `github.com/invopop/gobl/cmd/gobl` and `github.com/invopop/gobl/pkg/api` import paths are gone (`internal/ops`/`internal/mcp` were internal, so no external breakage there).
