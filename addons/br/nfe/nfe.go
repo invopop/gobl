@@ -46,6 +46,7 @@ func init() {
 	)
 	norm.RegisterWithGuard(
 		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeInvoiceIssueDateAndTime),
 		norm.For(normalizePayInstructions),
 		norm.For(normalizePayRecord),
 	)

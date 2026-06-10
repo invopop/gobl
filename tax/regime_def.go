@@ -5,6 +5,12 @@ import (
 	"strings"
 	"time"
 
+	// Embed the IANA time zone database so that regime time zones resolve
+	// even on runtimes without OS tzdata (e.g. scratch or slim containers),
+	// where TimeLocation would otherwise silently fall back to UTC. The OS
+	// database still takes precedence when available.
+	_ "time/tzdata"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"

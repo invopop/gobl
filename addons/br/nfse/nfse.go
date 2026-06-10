@@ -35,6 +35,7 @@ func init() {
 	)
 	norm.RegisterWithGuard(
 		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoiceIssueDateAndTime),
 		norm.For(func(inv *bill.Invoice) { normalizeSupplier(inv.Supplier) }),
 		norm.For(normalizeTaxCombo),
 	)

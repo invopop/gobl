@@ -2,9 +2,11 @@ package nfse_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/norm"
@@ -13,6 +15,7 @@ import (
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func withAddonContext() rules.WithContext {
@@ -239,6 +242,63 @@ func TestSuppliersValidation(t *testing.T) {
 		if assert.Error(t, err) {
 			assert.NotContains(t, err.Error(), "supplier requires 'br-ibge-municipality', 'br-nfse-simples', and 'br-nfse-fiscal-incentive' extensions")
 		}
+	})
+}
+
+func TestInvoiceIssueDateAndTimeNormalization(t *testing.T) {
+	// These tests can fail very rarely if run on the exact transition of a second
+	tz, err := time.LoadLocation("America/Sao_Paulo")
+	require.NoError(t, err)
+
+	newInvoice := func() *bill.Invoice {
+		return &bill.Invoice{
+			Regime: tax.WithRegime("BR"),
+			Series: "SAMPLE",
+		}
+	}
+
+	t.Run("fills date and time when neither is set", func(t *testing.T) {
+		inv := newInvoice()
+		tn := time.Now().In(tz)
+		norm.Normalize(inv, tax.AddonContext(nfse.V1))
+		require.NotNil(t, inv.IssueTime)
+		assert.Equal(t, tn.Format("2006-01-02"), inv.IssueDate.String())
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("fills date and time when time is present but zero", func(t *testing.T) {
+		inv := newInvoice()
+		inv.IssueTime = new(cal.Time)
+		tn := time.Now().In(tz)
+		norm.Normalize(inv, tax.AddonContext(nfse.V1))
+		assert.Equal(t, tn.Format("2006-01-02"), inv.IssueDate.String())
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("fills time when date is today", func(t *testing.T) {
+		inv := newInvoice()
+		inv.IssueDate = cal.TodayIn(tz)
+		tn := time.Now().In(tz)
+		norm.Normalize(inv, tax.AddonContext(nfse.V1))
+		require.NotNil(t, inv.IssueTime)
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("leaves backdated invoices untouched", func(t *testing.T) {
+		inv := newInvoice()
+		inv.IssueDate = cal.MakeDate(2024, time.January, 15)
+		norm.Normalize(inv, tax.AddonContext(nfse.V1))
+		assert.Equal(t, "2024-01-15", inv.IssueDate.String())
+		assert.Nil(t, inv.IssueTime)
+	})
+
+	t.Run("respects explicit issue time", func(t *testing.T) {
+		inv := newInvoice()
+		inv.IssueDate = cal.MakeDate(2024, time.January, 15)
+		inv.IssueTime = cal.NewTime(12, 34, 10)
+		norm.Normalize(inv, tax.AddonContext(nfse.V1))
+		assert.Equal(t, "2024-01-15", inv.IssueDate.String())
+		assert.Equal(t, "12:34:10", inv.IssueTime.String())
 	})
 }
 

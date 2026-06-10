@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
@@ -22,6 +23,26 @@ var (
 	// CodeRegexp is the regular expression used to validate the invoice code
 	CodeRegexp = regexp.MustCompile(`^[1-9][0-9]*$`)
 )
+
+// normalizeInvoiceIssueDateAndTime fills the issue date and time with the
+// current date and time in the regime's time zone when the time hasn't been
+// set. Tax authorities expect the emission timestamp to be close to the
+// moment of transmission and reject documents whose time is in the future,
+// as happens when the time is stamped from a UTC clock. Documents
+// explicitly dated on another day are left untouched, as backdated issue
+// dates may be legitimate for NFS-e.
+func normalizeInvoiceIssueDateAndTime(inv *bill.Invoice) {
+	if inv.IssueTime != nil && !inv.IssueTime.IsZero() {
+		return
+	}
+	dn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
+	if !inv.IssueDate.IsZero() && inv.IssueDate != dn.Date() {
+		return
+	}
+	tn := dn.Time()
+	inv.IssueDate = dn.Date()
+	inv.IssueTime = &tn
+}
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),

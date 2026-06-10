@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -17,6 +18,26 @@ import (
 const (
 	seriesPattern = `^(?:0|[1-9]{1}[0-9]{0,2})$` // extracted from the NFe XSD to validate the series
 )
+
+// normalizeInvoiceIssueDateAndTime fills the issue date and time with the
+// current date and time in the regime's time zone when the time hasn't been
+// set. SEFAZ expects the emission timestamp to be close to the moment of
+// transmission and rejects documents whose time is in the future, as happens
+// when the time is stamped from a UTC clock. Documents explicitly dated on
+// another day are left untouched, as backdated issue dates may be
+// legitimate for NF-e.
+func normalizeInvoiceIssueDateAndTime(inv *bill.Invoice) {
+	if inv.IssueTime != nil && !inv.IssueTime.IsZero() {
+		return
+	}
+	dn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
+	if !inv.IssueDate.IsZero() && inv.IssueDate != dn.Date() {
+		return
+	}
+	tn := dn.Time()
+	inv.IssueDate = dn.Date()
+	inv.IssueTime = &tn
+}
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
