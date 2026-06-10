@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -551,4 +552,43 @@ func TestPaymentLegacyMethodMigration(t *testing.T) {
 	assert.Equal(t, "Wire transfer from BBVA", pmt.Methods[0].Description)
 	require.NotNil(t, pmt.Methods[0].CreditTransfer)
 	assert.Equal(t, "ES1234567890123456789012", pmt.Methods[0].CreditTransfer.IBAN)
+}
+
+func TestPaymentFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	tests := []struct {
+		name     string
+		typ      cbc.Key
+		wantFrom string
+		wantTo   string
+	}{
+		{"request", bill.PaymentTypeRequest, "gobl:supplier.example", "gobl:customer.example"},
+		{"receipt", bill.PaymentTypeReceipt, "gobl:supplier.example", "gobl:customer.example"},
+		{"advice", bill.PaymentTypeAdvice, "gobl:customer.example", "gobl:supplier.example"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pmt := &bill.Payment{
+				Type:     tt.typ,
+				Supplier: mkSupplier(),
+				Customer: mkCustomer(),
+			}
+			require.NotNil(t, pmt.FromEndpoint())
+			require.NotNil(t, pmt.ToEndpoint())
+			assert.Equal(t, tt.wantFrom, pmt.FromEndpoint().URI.String())
+			assert.Equal(t, tt.wantTo, pmt.ToEndpoint().URI.String())
+		})
+	}
+
+	t.Run("nil payment is a no-op", func(t *testing.T) {
+		var pmt *bill.Payment
+		assert.Nil(t, pmt.FromEndpoint())
+		assert.Nil(t, pmt.ToEndpoint())
+	})
 }

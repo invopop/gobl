@@ -27,6 +27,8 @@ type Party struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Details of physical people who represent the party.
 	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
+	// Endpoints to which electronic documents may be sent, identified by URI.
+	Endpoints []*Endpoint `json:"endpoints,omitempty" jsonschema:"title=Endpoints"`
 	// Digital inboxes used for forwarding electronic versions of documents
 	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 	// Regular post addresses for where information should be sent if needed.
@@ -51,6 +53,32 @@ type Party struct {
 // party's own embedded tax regime, if any.
 func (p *Party) Calculate() error {
 	norm.Normalize(p)
+	return nil
+}
+
+// Endpoint returns the party's first endpoint whose URI uses the given
+// scheme, or nil if none is present.
+func (p *Party) Endpoint(scheme string) *Endpoint {
+	for _, e := range p.Endpoints {
+		if e != nil && e.URI.Scheme() == scheme {
+			return e
+		}
+	}
+	return nil
+}
+
+// FirstEndpoint returns the party's first endpoint, or nil if the
+// party is nil or has none. Endpoint order is operator-controlled —
+// the first entry is treated as the preferred routing address.
+func (p *Party) FirstEndpoint() *Endpoint {
+	if p == nil {
+		return nil
+	}
+	for _, e := range p.Endpoints {
+		if e != nil {
+			return e
+		}
+	}
 	return nil
 }
 

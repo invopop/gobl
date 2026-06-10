@@ -10,6 +10,7 @@ import (
 const (
 	// InboxKeyPeppol is the key used to identify a Peppol inbox and apply
 	// normalization rules for participant IDs.
+	// Deprecated: please now use the Endpoint object instead of inboxes for peppol.
 	InboxKeyPeppol cbc.Key = "peppol"
 )
 

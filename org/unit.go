@@ -33,6 +33,7 @@ const (
 
 	// Measurement units
 	UnitMilligram        Unit = `mg`
+	UnitCentigram        Unit = `cg`
 	UnitGram             Unit = `g`
 	UnitKilogram         Unit = `kg`
 	UnitMetricTon        Unit = `t`
@@ -40,9 +41,11 @@ const (
 	UnitCentimetre       Unit = `cm`
 	UnitDecimetre        Unit = `dm`
 	UnitMetre            Unit = `m`
+	UnitLinearMetre      Unit = `lm`
 	UnitKilometre        Unit = `km`
 	UnitInch             Unit = `in`
 	UnitFoot             Unit = `ft`
+	UnitLinearFoot       Unit = `lft`
 	UnitSquareMilimetre  Unit = `mm2`
 	UnitSquareCentimetre Unit = `cm2`
 	UnitSquareDecimetre  Unit = `dm2`
@@ -55,11 +58,15 @@ const (
 	UnitCubicMetre       Unit = `m3`
 	UnitMillilitre       Unit = "ml"
 	UnitCentilitre       Unit = `cl`
+	UnitDecilitre        Unit = `dl`
 	UnitLitre            Unit = `l`
+	UnitKilolitre        Unit = `kl`
 	UnitWatt             Unit = `w`
 	UnitKilowatt         Unit = `kw`
 	UnitKilowattHour     Unit = `kwh`
+	UnitYear             Unit = `yr`
 	UnitMonth            Unit = `mon`
+	UnitWeek             Unit = `wk`
 	UnitDay              Unit = `day`
 	UnitSecond           Unit = `s`
 	UnitHour             Unit = `h`
@@ -102,7 +109,10 @@ const (
 	UnitSixPack   Unit = `6pack` // non-standard (src: ES)
 	UnitCanister  Unit = `canister`
 	UnitPackage   Unit = `pkg`
+	UnitPacket    Unit = `pkt`
 	UnitBunch     Unit = `bunch`
+	UnitBundle    Unit = `bdl`
+	UnitBlock     Unit = `blk`
 	UnitTetraBrik Unit = `tetrabrik` // non-standard (src: ES)
 	UnitPallet    Unit = `pallet`
 	UnitReel      Unit = `reel`
@@ -131,6 +141,7 @@ var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
 	{UnitMilligram, "Milligrams", "", "MGM"},
+	{UnitCentigram, "Centigrams", "", "CGM"},
 	{UnitGram, "Metric grams", "", "GRM"},
 	{UnitKilogram, "Metric kilograms", "", "KGM"},
 	{UnitMetricTon, "Metric tons", "", "TNE"},
@@ -138,9 +149,11 @@ var UnitDefinitions = []DefUnit{
 	{UnitCentimetre, "Centimetres", "", "CMT"},
 	{UnitDecimetre, "Decimetres", "A unit of length equal to one-tenth of a metre.", "DMT"},
 	{UnitMetre, "Metres", "", "MTR"},
+	{UnitLinearMetre, "Linear metres", "The running length in metres of a uniform-width product (e.g. carpet, fabric, cable), billed per metre regardless of width.", "LM"},
 	{UnitKilometre, "Kilometers", "", "KMT"},
 	{UnitInch, "Inches", "", "INH"},
 	{UnitFoot, "Feet", "", "FOT"},
+	{UnitLinearFoot, "Linear feet", "The running length in feet of a uniform-width product (e.g. lumber, trim, cable), billed per foot regardless of width.", "LF"},
 	{UnitSquareMilimetre, "Square millimetres", "", "MMK"},
 	{UnitSquareCentimetre, "Square centimetres", "", "CMK"},
 	{UnitSquareDecimetre, "Square decimetres", "", "DMK"},
@@ -153,12 +166,16 @@ var UnitDefinitions = []DefUnit{
 	{UnitCubicMetre, "Cubic metres", "", "MTQ"},
 	{UnitMillilitre, "Millilitres", "", "MLT"},
 	{UnitCentilitre, "Centilitres", "", "CLT"},
+	{UnitDecilitre, "Decilitres", "", "DLT"},
 	{UnitLitre, "Litres", "", "LTR"},
+	{UnitKilolitre, "Kilolitres", "", "K6"},
 	{UnitWatt, "Watts", "", "WTT"},
 	{UnitKilowatt, "Kilowatts", "", "KWT"},
 	{UnitKilowattHour, "Kilowatt Hours", "", "KWH"},
 	{UnitRate, "Rate", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
+	{UnitYear, "Years", "A unit of time equal to twelve months.", "ANN"},
 	{UnitMonth, "Months", "Unit of time equal to 1/12 of a year of 365,25 days.", "MON"},
+	{UnitWeek, "Weeks", "A unit of time equal to seven days.", "WEE"},
 	{UnitDay, "Days", "", "DAY"},
 	{UnitSecond, "Seconds", "", "SEC"},
 	{UnitHour, "Hours", "", "HUR"},
@@ -201,7 +218,10 @@ var UnitDefinitions = []DefUnit{
 	{UnitSixPack, "Six Packs", "", ""},    // non-standard (src: ES)
 	{UnitCanister, "Canisters", "", "XCI"},
 	{UnitPackage, "Packages", "Standard packaging unit.", "XPK"},
+	{UnitPacket, "Packets", "", "XPA"},
 	{UnitBunch, "Bunches", "", "XBH"},
+	{UnitBundle, "Bundles", "", "XBE"},
+	{UnitBlock, "Blocks", "", "XOK"},
 	{UnitTetraBrik, "Tetra-Briks", "", ""}, // non-standard (src: ES)
 	{UnitPallet, "Pallets", "", "XPX"},
 	{UnitReel, "Reels", "", "XRL"},
