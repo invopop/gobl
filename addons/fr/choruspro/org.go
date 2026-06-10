@@ -41,9 +41,6 @@ func normalizeOrgParty(party *org.Party) {
 
 	// If FR or no tax ID we search for a SIRET identity and set the scheme to 1
 	for _, identity := range party.Identities {
-		if identity == nil {
-			continue
-		}
 		if identity.Type == fr.IdentityTypeSIRET {
 			if party.Ext.IsZero() {
 				party.Ext = tax.MakeExtensions()

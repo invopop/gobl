@@ -101,10 +101,6 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 		return
 	}
 	id := cus.Identities[0]
-	if id == nil {
-		// skip nil identities
-		return
-	}
 	var code cbc.Code
 	switch id.Key {
 	case org.IdentityKeyPassport:

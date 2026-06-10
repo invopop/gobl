@@ -71,9 +71,10 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		// Should not panic and should not normalize the second identity
-		// since only the first identity is processed (which is nil)
-		assert.Empty(t, inv.Customer.Identities[1].Ext)
+		// The nil entry is pruned during normalization, so the valid
+		// identity is promoted to position 0 and normalized as usual.
+		require.Len(t, inv.Customer.Identities, 1)
+		assert.Equal(t, sii.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext.Get(sii.ExtKeyIdentityType))
 	})
 
 	t.Run("passport identity normalization", func(t *testing.T) {
@@ -279,8 +280,12 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
+		// The nil entry is pruned during normalization, leaving no real
+		// preceding document, so the corrective requirement still applies.
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, rules.Validate(inv))
+		assert.Empty(t, inv.Preceding)
+		assert.ErrorContains(t, rules.Validate(inv),
+			"preceding documents are required for corrective invoices")
 	})
 
 	t.Run("credit note needs no preceding", func(t *testing.T) {

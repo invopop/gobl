@@ -13,9 +13,6 @@ func normalizeParty(p *org.Party) {
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)
 	for _, v := range p.Identities {
-		if v == nil {
-			continue
-		}
 		if v.Key.In(migratedExtensionKeys...) {
 			if p.Ext.IsZero() {
 				p.Ext = tax.MakeExtensions()
