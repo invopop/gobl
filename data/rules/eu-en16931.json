@@ -6,13 +6,6 @@
     {
       "id": "GOBL-EU-EN16931-BILL-INVOICE",
       "object": "bill.Invoice",
-      "assert": [
-        {
-          "id": "GOBL-EU-EN16931-BILL-INVOICE-08",
-          "desc": "exempt tax categories require either a VATEX code or an exemption note",
-          "tests": "exemption notes"
-        }
-      ],
       "subsets": [
         {
           "field": "tax",
@@ -33,6 +26,16 @@
                   "tests": "ext require [untdid-document-type]"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "guard": "addon is not OIOUBL",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-BILL-INVOICE-08",
+              "desc": "exempt tax categories require either a VATEX code or an exemption note",
+              "tests": "exemption notes"
             }
           ]
         },
@@ -77,25 +80,30 @@
           ]
         },
         {
-          "guard": "is due standard invoice",
+          "guard": "addon is not OIOUBL",
           "subsets": [
             {
-              "field": "payment",
-              "assert": [
-                {
-                  "id": "GOBL-EU-EN16931-BILL-INVOICE-06",
-                  "desc": "payment details are required when amount is due (BR-CO-25)",
-                  "tests": "present"
-                }
-              ],
+              "guard": "is due standard invoice",
               "subsets": [
                 {
-                  "field": "terms",
+                  "field": "payment",
                   "assert": [
                     {
-                      "id": "GOBL-EU-EN16931-BILL-INVOICE-07",
-                      "desc": "payment terms are required when amount is due (BR-CO-25)",
+                      "id": "GOBL-EU-EN16931-BILL-INVOICE-06",
+                      "desc": "payment details are required when amount is due (BR-CO-25)",
                       "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "terms",
+                      "assert": [
+                        {
+                          "id": "GOBL-EU-EN16931-BILL-INVOICE-07",
+                          "desc": "payment terms are required when amount is due (BR-CO-25)",
+                          "tests": "present"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -346,12 +354,17 @@
           "guard": "is exempt",
           "subsets": [
             {
-              "field": "ext",
-              "assert": [
+              "guard": "addon is not OIOUBL",
+              "subsets": [
                 {
-                  "id": "GOBL-EU-EN16931-TAX-COMBO-06",
-                  "desc": "VATEX extension is required for exempt tax (BR-E-10)",
-                  "tests": "ext require [cef-vatex]"
+                  "field": "ext",
+                  "assert": [
+                    {
+                      "id": "GOBL-EU-EN16931-TAX-COMBO-06",
+                      "desc": "VATEX extension is required for exempt tax (BR-E-10)",
+                      "tests": "ext require [cef-vatex]"
+                    }
+                  ]
                 }
               ]
             }

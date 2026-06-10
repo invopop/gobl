@@ -29,3 +29,16 @@ func TestApprovedFRCTCAddons(t *testing.T) {
 		assert.Nil(t, tax.AddonForKey(key), "%s should not be registered in core", key)
 	}
 }
+
+func TestApprovedDKOIOUBLAddon(t *testing.T) {
+	byKey := make(map[cbc.Key]*tax.ExternalAddon)
+	for _, ea := range tax.ApprovedAddons() {
+		byKey[ea.Key] = ea
+	}
+
+	ea, ok := byKey["dk-oioubl-v2-1"]
+	require.True(t, ok, "expected dk-oioubl-v2-1 on the approved list")
+	assert.Equal(t, "github.com/invopop/gobl.dk.oioubl", ea.Module)
+	assert.NotEmpty(t, ea.Name.String())
+	assert.Nil(t, tax.AddonForKey("dk-oioubl-v2-1"), "dk-oioubl-v2-1 should not be registered in core")
+}
