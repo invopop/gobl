@@ -1,0 +1,48 @@
+{
+  "id": "GOBL-SA",
+  "package": "sa",
+  "subsets": [
+    {
+      "id": "GOBL-SA-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SA]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-SA-ORG-IDENTITY-01",
+                  "desc": "invoice identity type must be alphanumerical",
+                  "tests": "matches ^[a-zA-Z0-9]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SA-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [SA]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-SA-TAX-IDENTITY-01",
+                  "desc": "invoice tax id code must be 15 digits long, and start and end with 3",
+                  "tests": "matches ^3[0-9]{13}3$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
