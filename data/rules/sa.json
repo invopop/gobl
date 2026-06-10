@@ -35,7 +35,7 @@
               "assert": [
                 {
                   "id": "GOBL-SA-TAX-IDENTITY-01",
-                  "desc": "VAT number must be 15 digits starting/ending with 3",
+                  "desc": "tax identity code for SA must be 15 digits long, and start and end with 3",
                   "tests": "matches ^3[0-9]{13}3$"
                 }
               ]

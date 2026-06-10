@@ -21,7 +21,7 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.Assert("01", "VAT number must be 15 digits starting/ending with 3",
+				rules.Assert("01", "tax identity code for SA must be 15 digits long, and start and end with 3",
 					is.MatchesRegexp(vatIDRegexp)),
 			),
 		),
