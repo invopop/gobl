@@ -132,14 +132,16 @@ func AmountFromHumanString(_ string) (Amount, error) {
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{a.value + a2.value, a.exp}
+	sum := new(big.Int).Add(big.NewInt(a.value), bigRescale(a2.value, a2.exp, a.exp))
+	value, exp := fitBigToInt64(sum, a.exp)
+	return Amount{value, exp}
 }
 
 // Subtract takes away the amount provided from the base.
 func (a Amount) Subtract(b Amount) Amount {
-	b = b.Rescale(a.exp)
-	return Amount{a.value - b.value, a.exp}
+	diff := new(big.Int).Sub(big.NewInt(a.value), bigRescale(b.value, b.exp, a.exp))
+	value, exp := fitBigToInt64(diff, a.exp)
+	return Amount{value, exp}
 }
 
 // Sub will subtract the provided amount from the base amount.
@@ -190,14 +192,10 @@ func (a Amount) Split(x int) (Amount, Amount) {
 //	 0 if a == b
 //	 1 if a > b
 func (a Amount) Compare(b Amount) int {
-	a, b = rescaleAmountPair(a, b)
-	if a.value < b.value {
-		return -1
-	}
-	if a.value > b.value {
-		return 1
-	}
-	return 0
+	exp := max(a.exp, b.exp)
+	av := bigRescale(a.value, a.exp, exp)
+	bv := bigRescale(b.value, b.exp, exp)
+	return av.Cmp(bv)
 }
 
 // Equals returns true if the two amounts represent the same value,
@@ -405,15 +403,6 @@ func unquote(value []byte) []byte {
 	return value
 }
 
-func rescaleAmountPair(a, a2 Amount) (Amount, Amount) {
-	// Take the largest exp
-	exp := a.exp
-	if a2.exp > exp {
-		exp = a2.exp
-	}
-	return a.Rescale(exp), a2.Rescale(exp)
-}
-
 func intPow(base int, exp uint32) int64 { // nolint:unparam
 	out := int64(1)
 	for exp != 0 {
@@ -431,6 +420,19 @@ var (
 // bigPow10 returns 10^exp as a big.Int.
 func bigPow10(exp uint32) *big.Int {
 	return new(big.Int).Exp(bigTen, big.NewInt(int64(exp)), nil)
+}
+
+// bigRescale returns v, currently at the `from` exponent, rescaled to the
+// `to` exponent, rounding when reducing.
+func bigRescale(v int64, from, to uint32) *big.Int {
+	b := big.NewInt(v)
+	if from < to {
+		return b.Mul(b, bigPow10(to-from))
+	}
+	if from > to {
+		return roundedDiv(b, bigPow10(from-to))
+	}
+	return b
 }
 
 // roundedDiv divides num by den rounding half away from zero. The

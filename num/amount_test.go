@@ -31,6 +31,23 @@ func TestAmountAdd(t *testing.T) {
 	}
 }
 
+func TestAmountAddOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("999999999999999999")
+	require.NoError(t, err)
+	acc := num.AmountZero
+	for range 10 {
+		acc = acc.Add(a)
+	}
+	assert.Equal(t, int64(math.MaxInt64), acc.Value(), "saturates instead of wrapping")
+
+	// Mixed exponents near the limit
+	p, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	r := p.Add(a)
+	assert.Equal(t, "1000000000000000002", r.String())
+}
+
 func TestAmountSubtract(t *testing.T) {
 	// Use table driven tests to test multiple scenarios
 	tests := []struct {
@@ -83,6 +100,13 @@ func TestAmountCompare(t *testing.T) {
 	assert.Equal(t, 0, a.Compare(a))
 	assert.Equal(t, -1, a.Compare(b))
 	assert.Equal(t, 1, b.Compare(a))
+
+	// Mixed exponents near the int64 limit (issue #844)
+	a = num.MakeAmount(999999999999999999, 0)
+	b = num.MakeAmount(30888382687927107, 16) // 3.0888382687927107
+	assert.Equal(t, 1, a.Compare(b))
+	assert.Equal(t, -1, b.Compare(a))
+	assert.Equal(t, 0, a.Compare(a))
 }
 
 func TestAmountNewFromString(t *testing.T) {
