@@ -5,7 +5,7 @@
     "en": "Kingdom of Saudi Arabia"
   },
   "description": {
-    "en": "Saudi Arabia's tax system is administered by the Zakat, Tax and\nCustoms Authority (ZATCA).\n\nBusinesses must register for VAT if annual taxable supplies exceed\nSAR 375,000, with voluntary registration available above SAR 187,500.\nRegistered businesses receive a VAT Identification Number which must\nappear on all tax invoices.\n\nSimplified tax invoices may be used for B2C transactions. Both credit\nnotes and debit notes are supported for invoice corrections."
+    "en": "Saudi Arabia's tax system is administered by the Zakat, Tax and\nCustoms Authority (ZATCA).\n\nB2C invoices follow the reporting flow while B2B invoices follow \nthe clearance flow. Both credit notes and debit notes are supported\nfor invoice corrections and follow the same flow as the invoices \nthey correct."
   },
   "sources": [
     {

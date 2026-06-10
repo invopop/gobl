@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `norm`: new package providing registered, reflective normalization (the normalization counterpart to `rules`) — `norm.For`, `Register`/`RegisterWithGuard`, and a single-pass mutation-aware engine that applies the matching normalizers across the document graph.
 - `tax`: `Addons.AddAddons` helper for declaring addons programmatically before calculation; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
 - `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
+- `regimes/sa`: new tax regime for the Kingdom of Saudi Arabia (KSA), administered by the Zakat, Tax and Customs Authority (ZATCA). Covers the VAT category, SAR currency, `Asia/Riyadh` time zone, VAT tax-identity normalization/validation, and commercial-registration org-identity validation. Normalization is registered through the new `norm` package.
+- `tax`: added `sa-zatca-v1` to the approved external-addon registry — the ZATCA e-invoicing addon is implemented in the standalone [`github.com/invopop/gobl.sa.zatca`](https://github.com/invopop/gobl.sa.zatca) module and must be imported to be loaded at `Validate`/`Calculate` time.
+- `bill`: added the existing `export` tag constant (`tax.TagExport`) to the default invoice tag set, so it is offered as a standard invoice tag indicating that the invoice refers to an export of goods.
+- `data/catalogues/cef`: added the Saudi Arabia VAT exemption codes (`VATEX-SA-*`) used by ZATCA tax invoices.
 
 ## [v0.403.0] - 2026-05-13
 
