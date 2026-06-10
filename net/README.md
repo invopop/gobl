@@ -290,8 +290,9 @@ intent/routing in any scheme; they are never used for verification.
 
 ### 5.2 Envelope Signing
 
-`Envelope.Sign(key, iss, aud)` (→ `head.Header.Sign`) signs the document
-identity plus the signer's `iss` and optional `aud`. Both may be empty
+`Envelope.Sign(key, opts...)` (→ `head.Header.Sign`) signs the document
+identity plus the signer's `iss` and optional `aud`, set with the
+`head.WithIssuer` and `head.WithAudience` options. Both may be omitted
 for a plain, non-GOBL-Net signature.
 
 ### 5.3 Authority countersignatures and scope
@@ -311,7 +312,9 @@ level of confidence the Authority is asserting:
 Scope is set with the `head.WithScope` signing option:
 
 ```go
-env.Sign(authorityKey, authorityAddr.URI(), subjectAddr.URI(),
+env.Sign(authorityKey,
+    head.WithIssuer(authorityAddr.URI()),
+    head.WithAudience(subjectAddr.URI()),
     head.WithScope(head.ScopeVerified))
 ```
 

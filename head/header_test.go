@@ -231,7 +231,7 @@ func TestHeaderSignNoJKU(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, cbc.URI("gobl:acme.example"), cbc.URI(""))
+	sig, err := h.Sign(priv, head.WithIssuer("gobl:acme.example"))
 	if err != nil {
 		t.Fatalf("Sign: %v", err)
 	}
@@ -250,7 +250,7 @@ func TestHeaderVerifyEnforcesValidityWindow(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(priv)
 	if err != nil {
 		t.Fatalf("Sign: %v", err)
 	}
@@ -281,7 +281,7 @@ func TestHeaderVerifyNoKeys(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(priv)
 	require.NoError(t, err)
 
 	// No keys: signature is decoded with UnsafePayload and matched
@@ -304,7 +304,7 @@ func TestHeaderVerifyKeyMismatch(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(signer, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(signer)
 	require.NoError(t, err)
 
 	// Verifying against a key that didn't sign it: no key matches.
@@ -319,8 +319,8 @@ func TestSignedPayload(t *testing.T) {
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
 	sig, err := h.Sign(priv,
-		cbc.URI("gobl:alice.example"),
-		cbc.URI("gobl:bob.example"))
+		head.WithIssuer("gobl:alice.example"),
+		head.WithAudience("gobl:bob.example"))
 	require.NoError(t, err)
 
 	p, err := head.SignedPayload(sig)
@@ -339,8 +339,8 @@ func TestHeaderSignWithScope(t *testing.T) {
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
 	sig, err := h.Sign(priv,
-		cbc.URI("gobl:authority.example"),
-		cbc.URI("gobl:subject.example"),
+		head.WithIssuer("gobl:authority.example"),
+		head.WithAudience("gobl:subject.example"),
 		head.WithScope(head.ScopeVerified))
 	require.NoError(t, err)
 
@@ -385,7 +385,7 @@ func TestHeaderMatchPayloadBothDigestNil(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = nil
 
-	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(priv)
 	require.NoError(t, err)
 
 	assert.NoError(t, h.Verify(sig, priv.Public()))
@@ -397,7 +397,7 @@ func TestHeaderMatchPayloadDigestEqualsFail(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(priv)
 	require.NoError(t, err)
 
 	// Mutate the digest value after signing; Digest.Equals now reports a
@@ -418,7 +418,7 @@ func TestHeaderMatchPayloadDigestNil(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, cbc.URI(""), cbc.URI(""))
+	sig, err := h.Sign(priv)
 	require.NoError(t, err)
 
 	stripped := *h

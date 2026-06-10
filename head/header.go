@@ -203,8 +203,24 @@ const (
 type SignOption func(*signOptions)
 
 type signOptions struct {
+	iss    cbc.URI
+	aud    cbc.URI
 	scope  cbc.Key
 	signer []dsig.SignerOption
+}
+
+// WithIssuer sets the signer's verifiable GOBL Net address (a gobl: URI)
+// as the `iss` claim of the signed payload. Generic JWT verifiers resolve
+// the public keys by fetching `<iss>/.well-known/jwks.json` from the
+// HTTPS iss URL.
+func WithIssuer(iss cbc.URI) SignOption {
+	return func(o *signOptions) { o.iss = iss }
+}
+
+// WithAudience sets the GOBL Net audience the signature is bound to as
+// the `aud` claim of the signed payload.
+func WithAudience(aud cbc.URI) SignOption {
+	return func(o *signOptions) { o.aud = aud }
 }
 
 // WithScope sets the signer's confidence-level assertion in the
@@ -234,20 +250,20 @@ func (h *Header) payload(iss, aud cbc.URI, iat int64, scope cbc.Key) *SigningPay
 }
 
 // Sign creates a JWS signature over the header's document identity
-// (UUID + Digest) together with the signer's GOBL Net identity (iss),
-// the optional audience (aud) it is bound to, the current UTC time
-// as a JWT-standard `iat` claim (Unix seconds), and any optional
-// scope assertion configured via head.WithScope. Generic JWT
-// verifiers resolve the public keys by fetching
-// `<iss>/.well-known/jwks.json` from the HTTPS iss URL — no `jku`
-// header is needed.
-func (h *Header) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...SignOption) (*dsig.Signature, error) {
+// (UUID + Digest) together with the current UTC time as a
+// JWT-standard `iat` claim (Unix seconds), and any optional claims
+// configured via options: the signer's GOBL Net identity
+// (head.WithIssuer), the audience it is bound to (head.WithAudience),
+// and a scope assertion (head.WithScope). Generic JWT verifiers
+// resolve the public keys by fetching `<iss>/.well-known/jwks.json`
+// from the HTTPS iss URL — no `jku` header is needed.
+func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature, error) {
 	so := new(signOptions)
 	for _, opt := range opts {
 		opt(so)
 	}
 	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(iss, aud, iat, so.scope), so.signer...)
+	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.scope), so.signer...)
 }
 
 // Verify checks that the signature covers this header's document

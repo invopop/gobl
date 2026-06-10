@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +26,7 @@ func buildTestEnvelope(t *testing.T, key *dsig.PrivateKey, iss, aud cbc.URI) *go
 
 	env, err := gobl.Envelop(msg)
 	require.NoError(t, err)
-	require.NoError(t, env.Sign(key, iss, aud))
+	require.NoError(t, env.Sign(key, head.WithIssuer(iss), head.WithAudience(aud)))
 
 	// Round-trip through JSON to simulate realistic usage.
 	data, err := json.Marshal(env)
