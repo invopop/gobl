@@ -129,22 +129,14 @@ type DefUnit struct {
 	Unit Unit `json:"unit" jsonschema:"title=Unit"`
 	// Name of the Unit
 	Name string `json:"name" jsonschema:"title=Name"`
-	// Short is a human-readable abbreviation or symbol for the unit (e.g. "m³").
-	// When empty, Name should be used instead.
-	Short string `json:"short,omitempty" jsonschema:"title=Short"`
+	// Symbol is the case-sensitive symbol used alongside quantities of the unit
+	// (e.g. "kg", "m³", "kW"). Empty when the unit has no conventional symbol,
+	// in which case Name should be used instead.
+	Symbol string `json:"symbol,omitempty" jsonschema:"title=Symbol"`
 	// Description of the unit
 	Description string `json:"description" jsonschema:"title=Description"`
 	// Standard UN/ECE code
 	UNECE cbc.Code `json:"unece" jsonschema:"title=UN/ECE Unit Code"`
-}
-
-// DisplayShort provides the short display name for the unit, falling back
-// to Name when no specific short form is defined.
-func (d DefUnit) DisplayShort() string {
-	if d.Short != "" {
-		return d.Short
-	}
-	return d.Name
 }
 
 // UnitDefinitions describes each of the unit constants.
@@ -156,7 +148,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitCentigram, "Centigrams", "cg", "", "CGM"},
 	{UnitGram, "Metric grams", "g", "", "GRM"},
 	{UnitKilogram, "Metric kilograms", "kg", "", "KGM"},
-	{UnitMetricTon, "Metric tons", "Tons", "", "TNE"},
+	{UnitMetricTon, "Metric tons", "t", "", "TNE"},
 	{UnitMillimetre, "Millimetres", "mm", "", "MMT"},
 	{UnitCentimetre, "Centimetres", "cm", "", "CMT"},
 	{UnitDecimetre, "Decimetres", "dm", "A unit of length equal to one-tenth of a metre.", "DMT"},
@@ -181,7 +173,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitDecilitre, "Decilitres", "dl", "", "DLT"},
 	{UnitLitre, "Litres", "l", "", "LTR"},
 	{UnitKilolitre, "Kilolitres", "kl", "", "K6"},
-	{UnitWatt, "Watts", "", "", "WTT"},
+	{UnitWatt, "Watts", "W", "", "WTT"},
 	{UnitKilowatt, "Kilowatts", "kW", "", "KWT"},
 	{UnitKilowattHour, "Kilowatt Hours", "kWh", "", "KWH"},
 	{UnitRate, "Rate", "", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
@@ -197,7 +189,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitPair, "Pairs", "", "A unit of count defining the number of pairs (pair: item described by two's).", "PR"},
 	{UnitDozen, "Dozens", "", "A unit of count defining the number of units in multiples of 12.", "DZN"},
 	{UnitAssortment, "Assortments", "", "A unit of count defining the number of assortments (assortment: a collection of items or components of a single product packaged together).", "AS"},
-	{UnitService, "Service Units", "Services", "A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).", "E48"},
+	{UnitService, "Service Units", "", "A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).", "E48"},
 	{UnitJob, "Jobs", "", "A unit of count defining the number of jobs.", "E51"},
 	{UnitActivity, "Activities", "", "A unit of count defining the number of activities (activity: a unit of work or action).", "ACT"},
 	{UnitTrip, "Trips", "", "A unit of count defining the number of trips (trip: a journey to a place and back again).", "E54"},
@@ -205,7 +197,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitOutfit, "Outfits", "", "A unit of count defining the number of outfits (outfit: a complete set of equipment / materials / objects used for a specific purpose).", "11"},
 	{UnitKit, "Kits", "", "A unit of count defining the number of kits (kit: tub, barrel or pail).", "KT"},
 	{UnitBaseBox, "Base Boxes", "", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
-	{UnitBulkPack, "Bulk Packs", "Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
+	{UnitBulkPack, "Bulk Packs", "", "A unit of count defining the number of items per bulk pack.", "AB"},
 	{UnitOne, "One", "", "A single generic unit of a service or product.", "C62"},
 
 	// Recommendations Nº 21
@@ -224,17 +216,17 @@ var UnitDefinitions = []DefUnit{
 	{UnitCylinder, "Cylinders", "", "", "XCY"},
 	{UnitBarrel, "Barrels", "", "", "XBA"},
 	{UnitJerrican, "Jerricans", "", "Jerrican, cylindrical", "XJY"},
-	{UnitCarboy, "Carboys", "", "", "XCO"},        // non-protected
-	{UnitDemijohn, "Demijohns", "", "", "XDJ"},    // non-protected
-	{UnitBottle, "Bottles", "", "", "XBO"},        // non-protected, cylindrical
-	{UnitSixPack, "Six Packs", "6 packs", "", ""}, // non-standard (src: ES)
+	{UnitCarboy, "Carboys", "", "", "XCO"},     // non-protected
+	{UnitDemijohn, "Demijohns", "", "", "XDJ"}, // non-protected
+	{UnitBottle, "Bottles", "", "", "XBO"},     // non-protected, cylindrical
+	{UnitSixPack, "Six Packs", "", "", ""},     // non-standard (src: ES)
 	{UnitCanister, "Canisters", "", "", "XCI"},
 	{UnitPackage, "Packages", "", "Standard packaging unit.", "XPK"},
 	{UnitPacket, "Packets", "", "", "XPA"},
 	{UnitBunch, "Bunches", "", "", "XBH"},
 	{UnitBundle, "Bundles", "", "", "XBE"},
 	{UnitBlock, "Blocks", "", "", "XOK"},
-	{UnitTetraBrik, "Tetra-Briks", "Tetrabriks", "", ""}, // non-standard (src: ES)
+	{UnitTetraBrik, "Tetra-Briks", "", "", ""}, // non-standard (src: ES)
 	{UnitPallet, "Pallets", "", "", "XPX"},
 	{UnitReel, "Reels", "", "", "XRL"},
 	{UnitSack, "Sacks", "", "", "XSA"},

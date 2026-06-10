@@ -45,14 +45,6 @@ func TestUnitUNECE(t *testing.T) {
 	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
 }
 
-func TestDefUnitDisplayShort(t *testing.T) {
-	d := org.DefUnit{Name: "Cubic metres", Short: "m³"}
-	assert.Equal(t, "m³", d.DisplayShort(), "should return Short when set")
-
-	d = org.DefUnit{Name: "Boxes"}
-	assert.Equal(t, "Boxes", d.DisplayShort(), "should fall back to Name when Short is empty")
-}
-
 func TestUnitJSONSchema(t *testing.T) {
 	u := org.Unit("h")
 	schema := u.JSONSchema()
