@@ -47,6 +47,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
 - `no`: added the Norwegian (NO) tax regime.
+- `dk-oioubl-v2-1`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate.
+- `addons/eu/en16931`: rules that OIOUBL 2.1 deliberately relaxes are now skipped when the `dk-oioubl-v2-1` addon is present: the exemption-reason requirements (BR-E-10 and the exemption-note check — OIOUBL has no exempt tax category) and the BR-CO-25 payment details/terms requirements (OIOUBL's payment rules are all conditional on a means being present).
 
 ### Fixed
 
