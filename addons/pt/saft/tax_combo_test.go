@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/rules"
@@ -15,14 +16,13 @@ import (
 )
 
 func TestTaxComboNormalize(t *testing.T) {
-	ad := tax.AddonForKey(saft.V1)
 	// most tests here done in TestInvoice
 	t.Run("standard", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 	})
 
@@ -35,7 +35,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M01",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Empty(t, combo.Ext.Get(saft.ExtKeyExemption))
 	})
@@ -45,7 +45,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M40", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
@@ -55,7 +55,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M99", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
@@ -64,7 +64,7 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyIntraCommunity,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M16", combo.Ext.Get(saft.ExtKeyExemption).String())
 	})
@@ -74,14 +74,14 @@ func TestTaxComboNormalize(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateSuperReduced,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.True(t, combo.Ext.IsZero())
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		assert.NotPanics(t, func() {
 			var c *tax.Combo
-			ad.Normalizer(c)
+			norm.Normalize(c, tax.AddonContext(saft.V1))
 		})
 	})
 
@@ -89,7 +89,7 @@ func TestTaxComboNormalize(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.True(t, combo.Ext.IsZero())
 	})
 
@@ -101,7 +101,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyTaxRate: "NOR",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 	})
 
@@ -114,7 +114,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyTaxRate: "NOR",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "OUT", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.False(t, combo.Ext.Has(saft.ExtKeyExemption))
 	})
@@ -126,7 +126,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M30",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M30", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyReverseCharge, combo.Key)
@@ -139,7 +139,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M05",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M05", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyExport, combo.Key)
@@ -152,7 +152,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M16",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M16", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyIntraCommunity, combo.Key)
@@ -165,7 +165,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M99",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M99", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
@@ -178,7 +178,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M01",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M01", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyExempt, combo.Key)
@@ -191,7 +191,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M44",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M44", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
@@ -204,7 +204,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M45",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M45", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
@@ -217,7 +217,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyExemption: "M46",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "ISE", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M46", combo.Ext.Get(saft.ExtKeyExemption).String())
 		assert.Equal(t, tax.KeyOutsideScope, combo.Key)
@@ -230,7 +230,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyTaxRate: "INT",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "INT", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, tax.RateIntermediate, combo.Rate)
 	})
@@ -243,7 +243,7 @@ func TestTaxComboNormalize(t *testing.T) {
 				saft.ExtKeyTaxRate: "INT",
 			}),
 		}
-		ad.Normalizer(combo)
+		norm.Normalize(combo, tax.AddonContext(saft.V1))
 		assert.Equal(t, "NOR", combo.Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, tax.RateGeneral, combo.Rate)
 	})

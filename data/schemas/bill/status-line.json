@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/status-line",
+  "$ref": "#/$defs/bill.StatusLine",
+  "$defs": {
+    "bill.StatusLine": {
+      "properties": {
+        "index": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Position of the row inside the message, determined automatically."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "issued",
+              "title": "Issued",
+              "description": "Document has been submitted pending review by the recipient."
+            },
+            {
+              "const": "acknowledged",
+              "title": "Acknowledged",
+              "description": "Received a readable invoice message that can be understood and submitted for processing by the Buyer."
+            },
+            {
+              "const": "processing",
+              "title": "In Process",
+              "description": "Indicates that the referenced message or transaction is being processed."
+            },
+            {
+              "const": "querying",
+              "title": "Under Query",
+              "description": "Buyer will not proceed to accept the Invoice without receiving additional information from the Seller."
+            },
+            {
+              "const": "rejected",
+              "title": "Rejected",
+              "description": "Buyer will not process the referenced Invoice any further. Buyer is rejecting this invoice but not necessarily the commercial transaction. Although it can be used also for rejection for commercial reasons (invoice not corresponding to delivery)."
+            },
+            {
+              "const": "accepted",
+              "title": "Accepted / Approved",
+              "description": "Buyer has given a final approval of the invoice and the next step is payment."
+            },
+            {
+              "const": "paid",
+              "title": "Paid",
+              "description": "Buyer has initiated payment, or the supplier has acknowledged receipt of payment."
+            },
+            {
+              "const": "error",
+              "title": "Error",
+              "description": "There is a technical issue with the document that has caused it to be rejected."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Status to be determined by other codes or details listed in the line."
+            }
+          ],
+          "title": "Key",
+          "description": "Status Key indicates the situation of the document"
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "When this row should be considered effective"
+        },
+        "doc": {
+          "$ref": "https://gobl.org/draft-0/org/document-ref",
+          "title": "Document",
+          "description": "Document reference or details about the document that needs to be looked\nat."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description includes a human readable description that explains the\nreason for the current status, if necessary."
+        },
+        "reasons": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/reason"
+          },
+          "type": "array",
+          "title": "Reasons",
+          "description": "Reasons define an array of reason objects that help the recipient\ndetermine why the status was provided."
+        },
+        "actions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/action"
+          },
+          "type": "array",
+          "title": "Actions",
+          "description": "Actions contains an array of actions that should be carried out by the\nrecipient of the message. These are suggestions."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for local or format focussed data"
+        },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/object"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Complements contain regime/addon specific payload data."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional data specific for the source system."
+        }
+      },
+      "type": "object",
+      "required": [
+        "index",
+        "key"
+      ],
+      "description": "StatusLine represents a single row inside a message, that describes the situation of another business document."
+    }
+  }
+}

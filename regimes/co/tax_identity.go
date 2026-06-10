@@ -43,9 +43,6 @@ func isValidTaxIdentityCode(value any) bool {
 // normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code and also make sure the default type is set.
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID == nil {
-		return
-	}
 	tax.NormalizeIdentity(tID)
 }
 

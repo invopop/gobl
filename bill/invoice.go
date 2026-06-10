@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -108,6 +109,12 @@ type Invoice struct {
 // or not.
 func (inv *Invoice) CanSign() bool {
 	return inv != nil && !inv.Code.IsEmpty()
+}
+
+func normalizeInvoice(inv *Invoice) {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
 }
 
 func invoiceRules() *rules.Set {
@@ -268,7 +275,7 @@ func (inv *Invoice) Calculate() error {
 		inv.SetRegime(partyTaxCountry(inv.Supplier))
 	}
 
-	inv.Normalize(tax.ExtractNormalizers(inv))
+	norm.Normalize(inv)
 
 	for _, tag := range inv.Tags.List {
 		if !tag.In(inv.supportedTags()...) {
@@ -285,32 +292,6 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	return nil
-}
-
-// Normalize is run as part of the Calculate method to ensure that the invoice
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
-	if inv.Type == cbc.KeyEmpty {
-		inv.Type = InvoiceTypeStandard
-	}
-	inv.Series = cbc.NormalizeCode(inv.Series)
-	inv.Code = cbc.NormalizeCode(inv.Code)
-
-	tax.Normalize(normalizers, inv.Tax)
-	tax.Normalize(normalizers, inv.Supplier)
-	tax.Normalize(normalizers, inv.Customer)
-	tax.Normalize(normalizers, inv.Preceding)
-	tax.Normalize(normalizers, inv.Lines)
-	tax.Normalize(normalizers, inv.Discounts)
-	tax.Normalize(normalizers, inv.Charges)
-	tax.Normalize(normalizers, inv.Ordering)
-	tax.Normalize(normalizers, inv.Payment)
-	tax.Normalize(normalizers, inv.Delivery)
-	tax.Normalize(normalizers, inv.Notes)
-	tax.Normalize(normalizers, inv.Attachments)
-
-	normalizers.Each(inv)
 }
 
 func (inv *Invoice) supportedTags() []cbc.Key {
@@ -397,6 +378,33 @@ func (inv *Invoice) setCurrency(c currency.Code) {
 }
 func (inv *Invoice) setTotals(t *Totals) {
 	inv.Totals = t
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this invoice. By default that's the supplier; when the
+// invoice is tagged `self-billed` the customer issues the invoice on
+// behalf of the supplier, so the direction inverts.
+func (inv *Invoice) FromEndpoint() *org.Endpoint {
+	if inv == nil {
+		return nil
+	}
+	if inv.HasTags(tax.TagSelfBilled) {
+		return inv.Customer.FirstEndpoint()
+	}
+	return inv.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this invoice. Inverse of FromEndpoint — see notes there
+// on the self-billed flip.
+func (inv *Invoice) ToEndpoint() *org.Endpoint {
+	if inv == nil {
+		return nil
+	}
+	if inv.HasTags(tax.TagSelfBilled) {
+		return inv.Supplier.FirstEndpoint()
+	}
+	return inv.Customer.FirstEndpoint()
 }
 
 /** ---- **/

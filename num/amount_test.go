@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/invopop/gobl/num"
@@ -28,6 +29,23 @@ func TestAmountAdd(t *testing.T) {
 			assert.Equal(t, test.e.String(), r.String())
 		})
 	}
+}
+
+func TestAmountAddOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("999999999999999999")
+	require.NoError(t, err)
+	acc := num.AmountZero
+	for range 10 {
+		acc = acc.Add(a)
+	}
+	assert.Equal(t, int64(math.MaxInt64), acc.Value(), "saturates instead of wrapping")
+
+	// Mixed exponents near the limit
+	p, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	r := p.Add(a)
+	assert.Equal(t, "1000000000000000002", r.String())
 }
 
 func TestAmountSubtract(t *testing.T) {
@@ -82,6 +100,13 @@ func TestAmountCompare(t *testing.T) {
 	assert.Equal(t, 0, a.Compare(a))
 	assert.Equal(t, -1, a.Compare(b))
 	assert.Equal(t, 1, b.Compare(a))
+
+	// Mixed exponents near the int64 limit (issue #844)
+	a = num.MakeAmount(999999999999999999, 0)
+	b = num.MakeAmount(30888382687927107, 16) // 3.0888382687927107
+	assert.Equal(t, 1, a.Compare(b))
+	assert.Equal(t, -1, b.Compare(a))
+	assert.Equal(t, 0, a.Compare(a))
 }
 
 func TestAmountNewFromString(t *testing.T) {
@@ -225,6 +250,23 @@ func TestMultiply(t *testing.T) {
 	}
 }
 
+func TestMultiplyOverflow(t *testing.T) {
+	// Issue #844
+	price, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	qty := num.MakeAmount(439, 0)
+	r := price.Multiply(qty)
+	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
+	assert.Equal(t, "1356.00", r.RescaleDown(2).String())
+	assert.Equal(t, uint32(15), r.Exp(), "exponent reduced to fit int64")
+
+	// Integer parts that exceed int64 saturate at the boundary.
+	pos := num.MakeAmount(10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
+	assert.Equal(t, int64(math.MaxInt64), pos.Value())
+	neg := num.MakeAmount(-10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
+	assert.Equal(t, int64(math.MinInt64), neg.Value())
+}
+
 func TestDivide(t *testing.T) {
 	tests := []struct {
 		a, b, e num.Amount
@@ -235,6 +277,9 @@ func TestDivide(t *testing.T) {
 		{num.MakeAmount(1000, 2), num.MakeAmount(11, 0), num.MakeAmount(91, 2)},
 		{num.MakeAmount(1000, 0), num.MakeAmount(16, 0), num.MakeAmount(63, 0)},
 		{num.MakeAmount(1000, 0), num.MakeAmount(14, 0), num.MakeAmount(71, 0)},
+		{num.MakeAmount(1000, 2), num.MakeAmount(-4, 0), num.MakeAmount(-250, 2)},
+		{num.MakeAmount(-1000, 2), num.MakeAmount(-4, 0), num.MakeAmount(250, 2)},
+		{num.MakeAmount(-1000, 0), num.MakeAmount(16, 0), num.MakeAmount(-63, 0)},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v / %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
@@ -243,6 +288,17 @@ func TestDivide(t *testing.T) {
 			assert.Equal(t, test.e.String(), r.String())
 		})
 	}
+}
+
+func TestDivideOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("1.00000000000000000")
+	require.NoError(t, err)
+	b := num.MakeAmount(50, 2) // 0.50
+	assert.Equal(t, "2.00000000000000000", a.Divide(b).String())
+
+	// Division by zero
+	assert.Equal(t, "0.00", num.MakeAmount(100, 2).Divide(num.AmountZero).String())
 }
 
 func TestSplit(t *testing.T) {
@@ -313,6 +369,16 @@ func TestAmountRescale(t *testing.T) {
 	a = num.MakeAmount(12345678, 4)
 	r = a.Rescale(2)
 	assert.Equal(t, "1234.57", r.String(), "rounded number")
+}
+
+func TestAmountRescaleOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("999999999.999999999")
+	require.NoError(t, err)
+	r := a.Rescale(10)
+	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
+	assert.True(t, r.Equals(a), "numeric value preserved")
+	assert.Equal(t, uint32(9), r.Exp(), "exponent capped at what int64 allows")
 }
 
 func TestAmountRemove(t *testing.T) {

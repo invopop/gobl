@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -49,10 +50,10 @@ func TestPaymentDetailsNormalize(t *testing.T) {
 			}),
 		},
 	}
-	p.Normalize(nil)
+	norm.Normalize(p)
 	assert.True(t, p.Instructions.Ext.IsZero())
 	assert.NotPanics(t, func() {
-		p.Normalize(nil)
+		norm.Normalize(p)
 	})
 }
 

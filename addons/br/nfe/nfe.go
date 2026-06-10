@@ -5,7 +5,7 @@ package nfe
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -21,6 +21,18 @@ const (
 	V4 cbc.Key = Key + "-v4"
 )
 
+// SEFAZ (Secretaria da Fazenda) official codes to include in stamps.
+const (
+	// StampProviderSEFAZKey contains the unique identifier (chave de acesso) of a
+	// NF-e or NFC-e. It consists of 44 digits, deterministically calculated from the
+	// document's own fields, and is used to track the invoice in the SEFAZ system.
+	StampProviderSEFAZKey cbc.Key = "sefaz-key"
+	// StampProviderSEFAZAuth contains the authorization number (número do protocolo)
+	// of a NF-e. It consists of 15 digits and is assigned by SEFAZ when the NF-e is
+	// authorized.
+	StampProviderSEFAZAuth cbc.Key = "sefaz-auth"
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
@@ -32,6 +44,11 @@ func init() {
 		payInstructionsRules(),
 		payAdvanceRules(),
 	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -40,18 +57,8 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Brazil NF-e 4.00",
 		},
-		Normalizer: normalize,
 		Extensions: extensions,
 		Scenarios:  scenarios,
 		Identities: identities,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Record:
-		normalizePayRecord(obj)
 	}
 }

@@ -2,10 +2,12 @@ package bill
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -22,16 +24,17 @@ const (
 	StatusTypeSystem   cbc.Key = "system"
 )
 
-// Status event keys representing the specific status being reported.
+// Status Line keys representing the specific status being reported.
 const (
-	StatusEventIssued       cbc.Key = "issued"
-	StatusEventAcknowledged cbc.Key = "acknowledged"
-	StatusEventProcessing   cbc.Key = "processing"
-	StatusEventQuerying     cbc.Key = "querying"
-	StatusEventRejected     cbc.Key = "rejected"
-	StatusEventAccepted     cbc.Key = "accepted"
-	StatusEventPaid         cbc.Key = "paid"
-	StatusEventError        cbc.Key = "error"
+	StatusLineIssued       cbc.Key = "issued"
+	StatusLineAcknowledged cbc.Key = "acknowledged"
+	StatusLineProcessing   cbc.Key = "processing"
+	StatusLineQuerying     cbc.Key = "querying"
+	StatusLineRejected     cbc.Key = "rejected"
+	StatusLineAccepted     cbc.Key = "accepted"
+	StatusLinePaid         cbc.Key = "paid" // only if a bill.Payment cannot be used
+	StatusLineError        cbc.Key = "error"
+	StatusLineOther        cbc.Key = "other"
 )
 
 // Reason keys as used to represent the reason for a specific status line key.
@@ -81,7 +84,7 @@ var StatusTypes = []*cbc.Definition{
 			i18n.EN: "Update",
 		},
 		Desc: i18n.String{
-			i18n.EN: "Issued by the supplier (or issuer) that may be shared with the customer, but more likely with a fifth-corner, like a government agency.",
+			i18n.EN: "Issued by the supplier or seller that will be shared with either the customer, a fifth-corner entity such as a government agency, or both.",
 		},
 	},
 	{
@@ -90,15 +93,15 @@ var StatusTypes = []*cbc.Definition{
 			i18n.EN: "System",
 		},
 		Desc: i18n.String{
-			i18n.EN: "A system event that is not directly related to a specific document, but needs to be recorded for compliance purposes.",
+			i18n.EN: "A system event that is not directly related to a specific document but needs to be recorded for compliance purposes.",
 		},
 	},
 }
 
-// StatusEvents describes the different status events that can be reported.
-var StatusEvents = []*cbc.Definition{
+// StatusLineKeys describes the different status line keys that can be reported.
+var StatusLineKeys = []*cbc.Definition{
 	{
-		Key: StatusEventIssued,
+		Key: StatusLineIssued,
 		Name: i18n.String{
 			i18n.EN: "Issued",
 		},
@@ -107,7 +110,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventAcknowledged,
+		Key: StatusLineAcknowledged,
 		Name: i18n.String{
 			i18n.EN: "Acknowledged",
 		},
@@ -116,7 +119,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventProcessing,
+		Key: StatusLineProcessing,
 		Name: i18n.String{
 			i18n.EN: "In Process",
 		},
@@ -125,7 +128,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventQuerying,
+		Key: StatusLineQuerying,
 		Name: i18n.String{
 			i18n.EN: "Under Query",
 		},
@@ -134,7 +137,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventRejected,
+		Key: StatusLineRejected,
 		Name: i18n.String{
 			i18n.EN: "Rejected",
 		},
@@ -143,7 +146,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventAccepted,
+		Key: StatusLineAccepted,
 		Name: i18n.String{
 			i18n.EN: "Accepted / Approved",
 		},
@@ -152,7 +155,7 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventPaid,
+		Key: StatusLinePaid,
 		Name: i18n.String{
 			i18n.EN: "Paid",
 		},
@@ -161,12 +164,21 @@ var StatusEvents = []*cbc.Definition{
 		},
 	},
 	{
-		Key: StatusEventError,
+		Key: StatusLineError,
 		Name: i18n.String{
 			i18n.EN: "Error",
 		},
 		Desc: i18n.String{
 			i18n.EN: "There is a technical issue with the document that has caused it to be rejected.",
+		},
+	},
+	{
+		Key: StatusLineOther,
+		Name: i18n.String{
+			i18n.EN: "Other",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Status to be determined by other codes or details listed in the line.",
 		},
 	},
 }
@@ -369,12 +381,49 @@ var ActionKeys = []*cbc.Definition{
 }
 
 var isValidStatusType = cbc.InKeyDefs(StatusTypes)
+var isValidStatusLineKey = cbc.InKeyDefs(StatusLineKeys)
 var isValidReasonKey = cbc.InKeyDefs(ReasonKeys)
 var isValidActionKey = cbc.InKeyDefs(ActionKeys)
+
+// StatusTypeIn returns a test that passes when the Status's Type is
+// one of the provided values. Intended as a guard inside rules.When
+// when an addon needs per-type rule branches.
+func StatusTypeIn(types ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("status type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
+		func(obj any) bool {
+			st, ok := obj.(*Status)
+			if !ok || st == nil {
+				return false
+			}
+			return st.Type.In(types...)
+		},
+	)
+}
+
+// StatusLineKeyIn returns a test that passes when the StatusLine's
+// Key is one of the provided values. Intended as a guard inside
+// rules.When inside a rules.Each over Status.Lines.
+func StatusLineKeyIn(keys ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("status line key in [%s]", strings.Join(cbc.KeyStrings(keys), ", ")),
+		func(obj any) bool {
+			line, ok := obj.(*StatusLine)
+			if !ok || line == nil {
+				return false
+			}
+			return line.Key.In(keys...)
+		},
+	)
+}
 
 // Status represents a system or business event that needs to be recorded
 // for compliance purposes. It is intentionally minimal for now; additional
 // fields will be added as more use cases are supported.
+//
+// Much of the status model is based on the Peppol "InvoiceResponse" model,
+// and extended potentially with use for reference to other models such as
+// bill.Order or bill.Delivery.
 type Status struct {
 	tax.Regime    `json:",inline"`
 	tax.Addons    `json:",inline"`
@@ -399,29 +448,17 @@ type Status struct {
 	// Ext provides additional structured data specific to the regime or addon.
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
-	// Ordering provides links to related documents and details that may have occurred
-	// before this status was created.
-	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
-
 	// Supplier represents the entity supplying the goods or services in the
-	// original transaction and may not be the issuer of the document.
+	// original transaction.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
 
 	// Customer is optional and describes the recipient of the original
-	// services. In the case of a local or system event, this will be empty.
+	// services.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
-	// Issuer represents an intermediary acting on behalf of either the supplier
-	// or customer in order to provide a status update, this is useful
-	// specifically if only the third party is registered on a network.
-	// (Optional).
-	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
-
-	// Recipient represents another intermediary responsible for receiving the
-	// event when the supplier or customer do not have networking capabilities.
-	// May also be a tax agency in a five corner model.
-	// (Optional).
-	Recipient *org.Party `json:"recipient,omitempty" jsonschema:"title=Recipient"`
+	// Ordering provides links to related documents and additional details about
+	// which parties may be involved in the transaction.
+	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
 	// Lines contain the main payload of the message used to describe individual
 	// documents which have a status.
@@ -481,9 +518,9 @@ type Reason struct {
 	// original document was not processed.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// Condition provides additional details with codes about what has gone
-	// wrong with the incoming document.
-	Conditions []*Condition `json:"conditions,omitempty" jsonschema:"title=Conditions"`
+	// Faults provides more specific details about what cause the document
+	// to be rejected.
+	Faults []*Fault `json:"faults,omitempty" jsonschema:"title=Faults"`
 
 	// Extensions for local or format focussed data
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
@@ -495,26 +532,28 @@ type Action struct {
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	// Description includes human readable details about what steps should be
-	// take next.
+	// taken next.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
 	// Extensions for local or format focussed data
 	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Condition provides a more formal structure for describing with a specific
+// Fault provides a more formal structure for describing with a specific
 // code what has been unacceptable about the source document, including
 // potentially references to the fields causing issues.
-type Condition struct {
-	// Code is generated by the system that raised the condition.
+type Fault struct {
+	// Code or business term provided by the system that raised the condition. These
+	// should be searchable in order to help users or systems understand what went
+	// wrong with the document.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+
+	// Message contains human readable details about the specific condition.
+	Message string `json:"message,omitempty" jsonschema:"title=Message"`
 
 	// Paths contains an array of JSON paths that maps the GOBL specific error
 	// to a field inside the envelope that the condition is applied to.
 	Paths []string `json:"paths,omitempty" jsonschema:"title=Paths"`
-
-	// Message contains human readable details about the specific condition.
-	Message string `json:"message,omitempty" jsonschema:"title=Message"`
 }
 
 // CanSign returns a boolean indicating whether the status is ready to be signed
@@ -529,38 +568,8 @@ func (st *Status) Calculate() error {
 	if st.Regime.IsEmpty() {
 		st.SetRegime(partyTaxCountry(st.Supplier))
 	}
-	st.Normalize(st.normalizers())
+	norm.Normalize(st)
 	return st.calculate()
-}
-
-// Normalize is run as part of the Calculate method to ensure that the status
-// is in a consistent state. This will leverage any add-ons alongside the tax
-// regime.
-func (st *Status) Normalize(normalizers tax.Normalizers) {
-	st.Series = cbc.NormalizeCode(st.Series)
-	st.Code = cbc.NormalizeCode(st.Code)
-	st.Ext = st.Ext.Clean()
-
-	tax.Normalize(normalizers, st.Supplier)
-	tax.Normalize(normalizers, st.Customer)
-	tax.Normalize(normalizers, st.Issuer)
-	tax.Normalize(normalizers, st.Recipient)
-	tax.Normalize(normalizers, st.Ordering)
-	tax.Normalize(normalizers, st.Lines)
-	tax.Normalize(normalizers, st.Notes)
-
-	normalizers.Each(st)
-}
-
-func (st *Status) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := st.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range st.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 func (st *Status) calculate() error {
@@ -584,44 +593,37 @@ func (st *Status) calculate() error {
 	return nil
 }
 
-// Normalize normalizes the status line's sub-objects.
-func (sl *StatusLine) Normalize(normalizers tax.Normalizers) {
-	if sl == nil {
-		return
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this status document. A `response` flows from the customer
+// back to the supplier; an `update` flows the other way. A `system`
+// status (third-party / clearance system) has no inherent direction
+// so this returns nil.
+func (st *Status) FromEndpoint() *org.Endpoint {
+	if st == nil {
+		return nil
 	}
-	sl.Ext = sl.Ext.Clean()
-	tax.Normalize(normalizers, sl.Doc)
-	tax.Normalize(normalizers, sl.Reasons)
-	tax.Normalize(normalizers, sl.Actions)
-	normalizers.Each(sl)
+	switch st.Type {
+	case StatusTypeResponse:
+		return st.Customer.FirstEndpoint()
+	case StatusTypeUpdate:
+		return st.Supplier.FirstEndpoint()
+	}
+	return nil
 }
 
-// Normalize normalizes the reason's sub-objects.
-func (r *Reason) Normalize(normalizers tax.Normalizers) {
-	if r == nil {
-		return
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this status document. See FromEndpoint for direction.
+func (st *Status) ToEndpoint() *org.Endpoint {
+	if st == nil {
+		return nil
 	}
-	r.Ext = r.Ext.Clean()
-	tax.Normalize(normalizers, r.Conditions)
-	normalizers.Each(r)
-}
-
-// Normalize runs any registered normalizers on the action.
-func (a *Action) Normalize(normalizers tax.Normalizers) {
-	if a == nil {
-		return
+	switch st.Type {
+	case StatusTypeResponse:
+		return st.Supplier.FirstEndpoint()
+	case StatusTypeUpdate:
+		return st.Customer.FirstEndpoint()
 	}
-	a.Ext = a.Ext.Clean()
-	normalizers.Each(a)
-}
-
-// Normalize normalizes the condition's code and runs any registered normalizers.
-func (c *Condition) Normalize(normalizers tax.Normalizers) {
-	if c == nil {
-		return
-	}
-	c.Code = cbc.NormalizeCode(c.Code)
-	normalizers.Each(c)
+	return nil
 }
 
 // JSONSchemaExtend extends the schema with additional property details
@@ -650,18 +652,16 @@ func (Status) JSONSchemaExtend(js *jsonschema.Schema) {
 func (StatusLine) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	if its, ok := props.Get("key"); ok {
-		its.AnyOf = make([]*jsonschema.Schema, len(StatusEvents))
-		for i, kd := range StatusEvents {
-			its.AnyOf[i] = &jsonschema.Schema{
+		// Status line keys are a closed set: only the predefined keys are
+		// permitted, so enumerate them with OneOf (no open-ended fallback).
+		its.OneOf = make([]*jsonschema.Schema, len(StatusLineKeys))
+		for i, kd := range StatusLineKeys {
+			its.OneOf[i] = &jsonschema.Schema{
 				Const:       kd.Key.String(),
 				Title:       kd.Name.String(),
 				Description: kd.Desc.String(),
 			}
 		}
-		its.AnyOf = append(its.AnyOf, &jsonschema.Schema{
-			Title:   "Other",
-			Pattern: cbc.KeyPattern,
-		})
 	}
 }
 
@@ -698,14 +698,22 @@ func (Action) JSONSchemaExtend(js *jsonschema.Schema) {
 func statusRules() *rules.Set {
 	return rules.For(new(Status),
 		rules.Field("type",
-			rules.Assert("01", "status type is required", is.Present),
-			rules.Assert("02", "status type is not valid", isValidStatusType),
+			rules.Assert("01", "status type is required",
+				is.Present,
+			),
+			rules.Assert("02", "status type is not valid",
+				isValidStatusType,
+			),
 		),
 		rules.Field("supplier",
-			rules.Assert("03", "status supplier is required", is.Present),
+			rules.Assert("03", "status supplier is required",
+				is.Present,
+			),
 		),
 		rules.Field("lines",
-			rules.Assert("04", "status must have at least one line", is.Present),
+			rules.Assert("04", "status must have at least one line",
+				is.Present,
+			),
 		),
 	)
 }
@@ -713,7 +721,12 @@ func statusRules() *rules.Set {
 func statusLineRules() *rules.Set {
 	return rules.For(new(StatusLine),
 		rules.Field("key",
-			rules.Assert("01", "status line key is required", is.Present),
+			rules.Assert("01", "status line key is required",
+				is.Present,
+			),
+			rules.Assert("02", "status line key is not valid",
+				isValidStatusLineKey,
+			),
 		),
 	)
 }
@@ -721,8 +734,12 @@ func statusLineRules() *rules.Set {
 func reasonRules() *rules.Set {
 	return rules.For(new(Reason),
 		rules.Field("key",
-			rules.Assert("01", "reason key is required", is.Present),
-			rules.Assert("02", "reason key is not valid", isValidReasonKey),
+			rules.Assert("01", "reason key is required",
+				is.Present,
+			),
+			rules.Assert("02", "reason key is not valid",
+				isValidReasonKey,
+			),
 		),
 	)
 }
@@ -730,16 +747,22 @@ func reasonRules() *rules.Set {
 func actionRules() *rules.Set {
 	return rules.For(new(Action),
 		rules.Field("key",
-			rules.Assert("01", "action key is required", is.Present),
-			rules.Assert("02", "action key is not valid", isValidActionKey),
+			rules.Assert("01", "action key is required",
+				is.Present,
+			),
+			rules.Assert("02", "action key is not valid",
+				isValidActionKey,
+			),
 		),
 	)
 }
 
-func conditionRules() *rules.Set {
-	return rules.For(new(Condition),
+func faultRules() *rules.Set {
+	return rules.For(new(Fault),
 		rules.Field("code",
-			rules.Assert("01", "condition code is required", is.Present),
+			rules.Assert("01", "fault code is required",
+				is.Present,
+			),
 		),
 	)
 }

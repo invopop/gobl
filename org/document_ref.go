@@ -57,23 +57,6 @@ type DocumentRef struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize attempts to clean and normalize the DocumentRef.
-func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
-	if dr == nil {
-		return
-	}
-	uuid.Normalize(&dr.UUID)
-	dr.Series = cbc.NormalizeCode(dr.Series)
-	dr.Code = cbc.NormalizeCode(dr.Code)
-	dr.Reason = cbc.NormalizeString(dr.Reason)
-	dr.URL = cbc.NormalizeString(dr.URL)
-	dr.Ext = dr.Ext.Clean()
-
-	tax.Normalize(normalizers, dr.Identities)
-	tax.Normalize(normalizers, dr.Tax)
-	normalizers.Each(dr)
-}
-
 // Calculate will ensure the tax total is recalculated according to the
 // rounding rule and currency precision provided. Users of this should first
 // check the optional currency property of the document ref to see if that
@@ -100,4 +83,10 @@ func documentRefRules() *rules.Set {
 			rules.AssertIfPresent("03", "document reference URL must be valid", is.URL),
 		),
 	)
+}
+
+func normalizeDocumentRef(dr *DocumentRef) {
+	uuid.Normalize(&dr.UUID)
+	dr.Reason = cbc.NormalizeString(dr.Reason)
+	dr.URL = cbc.NormalizeString(dr.URL)
 }

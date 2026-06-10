@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -67,7 +68,7 @@ func TestInboxNormalize(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		var id *org.Inbox
 		assert.NotPanics(t, func() {
-			id.Normalize()
+			norm.Normalize(id)
 		})
 	})
 	t.Run("with scheme", func(t *testing.T) {
@@ -75,7 +76,7 @@ func TestInboxNormalize(t *testing.T) {
 			Scheme: " 0004 ",
 			Code:   " BAR ",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "BAR", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
 	})
@@ -84,7 +85,7 @@ func TestInboxNormalize(t *testing.T) {
 			Scheme: "DK:CVR",
 			Code:   "DK12345678",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "DK:CVR", id.Scheme.String())
 		assert.Equal(t, "DK12345678", id.Code.String())
 	})
@@ -92,7 +93,7 @@ func TestInboxNormalize(t *testing.T) {
 		id := &org.Inbox{
 			Code: "dev@invopop.com",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Empty(t, id.Code.String())
 		assert.Empty(t, id.URL)
 		assert.Equal(t, "dev@invopop.com", id.Email)
@@ -101,7 +102,7 @@ func TestInboxNormalize(t *testing.T) {
 		id := &org.Inbox{
 			Code: "https://inbox.example.com",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Empty(t, id.Code.String())
 		assert.Empty(t, id.Email)
 		assert.Equal(t, "https://inbox.example.com", id.URL)
@@ -111,7 +112,7 @@ func TestInboxNormalize(t *testing.T) {
 			Key:  org.InboxKeyPeppol,
 			Code: "0004:1234567890",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "1234567890", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
 		assert.Equal(t, org.InboxKeyPeppol, id.Key)
@@ -120,7 +121,7 @@ func TestInboxNormalize(t *testing.T) {
 		id := &org.Inbox{
 			Code: "0004:1234567890",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "0004:1234567890", id.Code.String())
 	})
 }

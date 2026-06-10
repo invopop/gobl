@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -70,7 +71,7 @@ func TestNoteNormalize(t *testing.T) {
 	t.Run("nil note", func(t *testing.T) {
 		var n *tax.Note
 		assert.NotPanics(t, func() {
-			n.Normalize(nil)
+			norm.Normalize(n)
 		})
 	})
 
@@ -84,7 +85,7 @@ func TestNoteNormalize(t *testing.T) {
 				"empty-key":           "",
 			}),
 		}
-		n.Normalize(nil)
+		norm.Normalize(n)
 		assert.Equal(t, "E", n.Ext.Get("untdid-tax-category").String())
 		assert.False(t, n.Ext.Has("empty-key"))
 	})

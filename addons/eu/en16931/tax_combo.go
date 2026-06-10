@@ -41,7 +41,10 @@ var vatKeyMap = tax.ExtensionsOf(cbc.CodeMap{
 	tax.KeyOutsideScope:   TaxCategoryOutsideScope,
 })
 
-func normalizeTaxCombo(tc *tax.Combo) {
+// NormalizeTaxCombo ensures that the tax combo object is correctly assigned
+// an extension for the tax category code based on its category and key. This method
+// is public so that it can be used outside of the addon context.
+func NormalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
 	case tax.CategoryVAT:
 		if tc.Key.IsEmpty() {

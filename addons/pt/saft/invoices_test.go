@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -298,13 +299,11 @@ func TestSourceRefFormatValidation(t *testing.T) {
 }
 
 func TestInvoiceNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
 	t.Run("normalize invoice with nil tax", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = nil
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		require.NotNil(t, inv.Tax)
 		require.NotNil(t, inv.Tax.Ext)
@@ -315,7 +314,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{}
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		require.NotNil(t, inv.Tax.Ext)
 		assert.Equal(t, saft.SourceBillingProduced, inv.Tax.Ext.Get(saft.ExtKeySource))
@@ -325,7 +324,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax.Ext = inv.Tax.Ext.Delete(saft.ExtKeySource)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		assert.Equal(t, saft.SourceBillingProduced, inv.Tax.Ext.Get(saft.ExtKeySource))
 	})
@@ -334,7 +333,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax.Ext = inv.Tax.Ext.Set(saft.ExtKeySource, saft.SourceBillingIntegrated)
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		assert.Equal(t, saft.SourceBillingIntegrated, inv.Tax.Ext.Get(saft.ExtKeySource))
 	})
@@ -342,14 +341,14 @@ func TestInvoiceNormalization(t *testing.T) {
 	t.Run("nil invoice", func(t *testing.T) {
 		assert.NotPanics(t, func() {
 			var inv *bill.Invoice
-			addon.Normalizer(inv)
+			norm.Normalize(inv, tax.AddonContext(saft.V1))
 		})
 	})
 
 	t.Run("sets default value date from issue date", func(t *testing.T) {
 		inv := validInvoice()
 		inv.ValueDate = nil
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 		assert.Equal(t, &inv.IssueDate, inv.ValueDate)
 	})
 
@@ -357,14 +356,14 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.OperationDate = cal.NewDate(2022, 12, 30)
 		inv.ValueDate = nil
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 		assert.Equal(t, inv.OperationDate, inv.ValueDate)
 	})
 
 	t.Run("keeps existing value date", func(t *testing.T) {
 		inv := validInvoice()
 		inv.ValueDate = cal.NewDate(2022, 12, 30)
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 		assert.Equal(t, cal.NewDate(2022, 12, 30), inv.ValueDate)
 	})
 
@@ -373,7 +372,7 @@ func TestInvoiceNormalization(t *testing.T) {
 		inv.IssueDate = cal.Date{}
 		inv.ValueDate = nil
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		loc, err := time.LoadLocation("Europe/Lisbon")
 		require.NoError(t, err)
@@ -386,7 +385,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
 		}
-		inv.Normalize(tax.ExtractNormalizers(inv))
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 		assert.Equal(t, tax.KeyReverseCharge, inv.Lines[0].Taxes[0].Key)
 		assert.Equal(t, "ISE", inv.Lines[0].Taxes[0].Ext.Get(saft.ExtKeyTaxRate).String())
 		assert.Equal(t, "M40", inv.Lines[0].Taxes[0].Ext.Get(saft.ExtKeyExemption).String())
@@ -436,8 +435,6 @@ func TestInvoicePaymentValidation(t *testing.T) {
 }
 
 func TestInvoicePaymentNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
 	t.Run("set default advance date", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Payment = &bill.PaymentDetails{
@@ -448,7 +445,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		assert.Equal(t, &inv.IssueDate, inv.Payment.Advances[0].Date)
 	})
@@ -464,7 +461,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		loc, err := time.LoadLocation("Europe/Lisbon")
 		require.NoError(t, err)
@@ -477,7 +474,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		inv := validInvoice()
 		inv.Payment = nil
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(saft.V1))
 
 		assert.Nil(t, inv.Payment)
 	})
@@ -536,13 +533,12 @@ func TestInvoiceTotalsValidation(t *testing.T) {
 }
 
 func TestCorrectionDefinitions(t *testing.T) {
-	t.Run("correction definitions exist for credit and debit notes", func(t *testing.T) {
+	t.Run("addon requires a reason but does not duplicate regime types", func(t *testing.T) {
 		addon := tax.AddonForKey(saft.V1)
 		require.NotNil(t, addon.Corrections)
 		def := addon.Corrections.Def(bill.ShortSchemaInvoice)
 		require.NotNil(t, def)
-		assert.True(t, def.HasType(bill.InvoiceTypeCreditNote))
-		assert.True(t, def.HasType(bill.InvoiceTypeDebitNote))
+		assert.Empty(t, def.Types, "types are declared by the PT regime, not the addon")
 		assert.True(t, def.ReasonRequired)
 	})
 }

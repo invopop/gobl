@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/tax"
 )
 
 // PaymentDetails contains details as to how the invoice should be paid.
@@ -17,18 +16,6 @@ type PaymentDetails struct {
 	Advances []*pay.Record `json:"advances,omitempty" jsonschema:"title=Advances"`
 	// Details on how payment should be made.
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
-}
-
-// Normalize will try to normalize the payment's data.
-func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
-	if p == nil {
-		return
-	}
-	tax.Normalize(normalizers, p.Payee)
-	tax.Normalize(normalizers, p.Terms)
-	tax.Normalize(normalizers, p.Advances)
-	tax.Normalize(normalizers, p.Instructions)
-	normalizers.Each(p)
 }
 
 // ResetAdvances clears the advances list.

@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
@@ -68,28 +69,28 @@ func TestTermsNormalize(t *testing.T) {
 				"random": "",
 			}),
 		}
-		pt.Normalize()
+		norm.Normalize(pt)
 		assert.True(t, pt.Ext.IsZero())
 		assert.Equal(t, "undefined", pt.Key.String())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var pt *pay.Terms
 		assert.NotPanics(t, func() {
-			pt.Normalize()
+			norm.Normalize(pt)
 		})
 	})
 	t.Run("detail to notes", func(t *testing.T) {
 		pt := &pay.Terms{
 			Notes: "These are the terms details.",
 		}
-		pt.Normalize()
+		norm.Normalize(pt)
 		assert.Equal(t, "These are the terms details.", pt.Notes)
 	})
 	t.Run("keep notes", func(t *testing.T) {
 		pt := &pay.Terms{
 			Notes: "Existing notes.",
 		}
-		pt.Normalize()
+		norm.Normalize(pt)
 		assert.Equal(t, "Existing notes.", pt.Notes)
 	})
 }

@@ -65,7 +65,7 @@ func TestTaxIdentity(t *testing.T) {
 			Code:    "X3157928M",
 			Scheme:  "Fo--o",
 		}
-		assert.ErrorContains(t, rules.Validate(tID), "GOBL-CBC-CODE-02")
+		assert.ErrorContains(t, rules.Validate(tID), "GOBL-TAX-IDENTITY-03")
 	})
 
 	t.Run("in EU", func(t *testing.T) {

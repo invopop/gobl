@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/regimes/ie"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -17,7 +18,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		Country: regime.Country,
 		Code:    "36.28-739L",
 	}
-	regime.NormalizeObject(tID)
+	norm.Normalize(tID)
 	// Normalization removes separator characters like dots and dashes from the tax identity code,
 	// as implemented by tax.NormalizeIdentity().
 	assert.Equal(t, "3628739L", tID.Code.String())

@@ -3,6 +3,7 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ func TestEmailNormalize_TrimsFields(t *testing.T) {
 		Label:   "  Work  ",
 		Address: "  john.doe@example.com  ",
 	}
-	e.Normalize()
+	norm.Normalize(e)
 
 	assert.Equal(t, "Work", e.Label)
 	assert.Equal(t, "john.doe@example.com", e.Address)
@@ -22,7 +23,7 @@ func TestEmailNormalize_TrimsFields(t *testing.T) {
 func TestEmailNormalize_NilReceiver(t *testing.T) {
 	assert.NotPanics(t, func() {
 		var e *org.Email
-		e.Normalize()
+		norm.Normalize(e)
 	})
 }
 
@@ -31,7 +32,7 @@ func TestEmailRules(t *testing.T) {
 		e := &org.Email{
 			Address: "  jane.doe@example.com  ",
 		}
-		e.Normalize()
+		norm.Normalize(e)
 		assert.NoError(t, rules.Validate(e))
 	})
 
@@ -59,7 +60,7 @@ func TestEmailRules(t *testing.T) {
 		e := &org.Email{
 			Address: "   ",
 		}
-		e.Normalize()
+		norm.Normalize(e)
 		assert.Error(t, rules.Validate(e))
 	})
 

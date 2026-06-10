@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -51,14 +52,14 @@ func TestTaxNormalize(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "sum-then-round",
 		}
-		tx.Normalize(tax.Normalizers{})
+		norm.Normalize(tx)
 		assert.Equal(t, "precise", tx.Rounding.String())
 	})
 	t.Run("switch rounding, round-then-sum", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "round-then-sum",
 		}
-		tx.Normalize(tax.Normalizers{})
+		norm.Normalize(tx)
 		assert.Equal(t, "currency", tx.Rounding.String())
 	})
 }

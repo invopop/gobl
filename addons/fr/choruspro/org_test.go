@@ -5,17 +5,15 @@ import (
 
 	"github.com/invopop/gobl/addons/fr/choruspro"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestNormalizeParty(t *testing.T) {
-	addon := tax.AddonForKey(choruspro.V1)
-	require.NotNil(t, addon)
 
 	t.Run("normalizes SIRET identity with scheme 1", func(t *testing.T) {
 		party := &org.Party{
@@ -29,7 +27,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		assert.NotNil(t, party.Ext)
 		assert.Equal(t, cbc.Code("1"), party.Ext.Get(choruspro.ExtKeyScheme))
@@ -49,7 +47,7 @@ func TestNormalizeParty(t *testing.T) {
 			}),
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, cbc.Code("1"), party.Ext.Get(choruspro.ExtKeyScheme))
 	})
@@ -70,7 +68,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		// First SIRET should be normalized
 		assert.NotNil(t, party.Ext)
@@ -89,7 +87,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 		assert.True(t, party.Ext.IsZero())
 	})
 
@@ -102,7 +100,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 		assert.Equal(t, cbc.Code("2"), party.Ext.Get(choruspro.ExtKeyScheme))
 	})
 
@@ -114,7 +112,7 @@ func TestNormalizeParty(t *testing.T) {
 				Code:    "123456789",
 			},
 		}
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 		assert.Equal(t, cbc.Code("3"), party.Ext.Get(choruspro.ExtKeyScheme))
 	})
 
@@ -124,7 +122,7 @@ func TestNormalizeParty(t *testing.T) {
 			Identities: nil,
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		assert.Nil(t, party.Identities)
 	})
@@ -135,9 +133,44 @@ func TestNormalizeParty(t *testing.T) {
 			Identities: []*org.Identity{},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		assert.Empty(t, party.Identities)
+	})
+
+	t.Run("handles nil identity elements in identities array", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				nil,
+				{
+					Type: fr.IdentityTypeSIRET,
+					Code: "12345678901234",
+				},
+				nil,
+			},
+		}
+
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
+
+		// Should find the SIRET identity and add scheme extension despite nil elements
+		assert.False(t, party.Ext.IsZero())
+		assert.Equal(t, cbc.Code("1"), party.Ext.Get(choruspro.ExtKeyScheme))
+	})
+
+	t.Run("handles all nil identity elements in identities array", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			Identities: []*org.Identity{
+				nil,
+				nil,
+			},
+		}
+
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
+
+		// Should not panic and should not add any extension
+		assert.True(t, party.Ext.IsZero())
 	})
 }
 
