@@ -1,0 +1,134 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ed4173954975a415330a436aa48305ba9f21c690a69999434c6f5dd3b81fd58a"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "F001-00000123",
+		"issue_date": "2025-01-15",
+		"currency": "CLP",
+		"supplier": {
+			"name": "Empresa Ejemplo SpA",
+			"tax_id": {
+				"country": "CL",
+				"code": "713254975"
+			},
+			"addresses": [
+				{
+					"street": "Av. Libertador Bernardo O'Higgins 1234",
+					"locality": "Santiago",
+					"region": "Región Metropolitana",
+					"code": "8320000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@empresaejemplo.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Comercial Ltda.",
+			"tax_id": {
+				"country": "CL",
+				"code": "77668208K"
+			},
+			"addresses": [
+				{
+					"street": "Av. Providencia 2500",
+					"locality": "Providencia",
+					"region": "Región Metropolitana",
+					"code": "7500000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@clientecomercial.cl"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Servicios de consultoría",
+					"price": "50000"
+				},
+				"sum": "500000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%"
+					}
+				],
+				"total": "500000"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Desarrollo de software",
+					"price": "100000"
+				},
+				"sum": "500000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%"
+					}
+				],
+				"total": "500000"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-02-15",
+						"amount": "1190000",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1000000",
+			"total": "1000000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000000",
+								"percent": "19%",
+								"amount": "190000"
+							}
+						],
+						"amount": "190000"
+					}
+				],
+				"sum": "190000"
+			},
+			"tax": "190000",
+			"total_with_tax": "1190000",
+			"payable": "1190000"
+		}
+	}
+}
