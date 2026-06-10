@@ -31,16 +31,16 @@ func TestOrgIdentityCodeFormat(t *testing.T) {
 
 	t.Run("code with hyphen is invalid", func(t *testing.T) {
 		err := validate("ABC-123")
-		assert.ErrorContains(t, err, "identity code must be valid")
+		assert.ErrorContains(t, err, "invoice identity type must be alphanumerical")
 	})
 
 	t.Run("code with special characters is invalid", func(t *testing.T) {
 		err := validate("ABC@123")
-		assert.ErrorContains(t, err, "identity code must be valid")
+		assert.ErrorContains(t, err, "invoice identity type must be alphanumerical")
 	})
 
 	t.Run("code with spaces is invalid", func(t *testing.T) {
 		err := validate("ABC 123")
-		assert.ErrorContains(t, err, "identity code must be valid")
+		assert.ErrorContains(t, err, "invoice identity type must be alphanumerical")
 	})
 }

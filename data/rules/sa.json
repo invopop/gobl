@@ -14,7 +14,7 @@
               "assert": [
                 {
                   "id": "GOBL-SA-ORG-IDENTITY-01",
-                  "desc": "SA identity code must be valid",
+                  "desc": "invoice identity type must be alphanumerical",
                   "tests": "matches ^[a-zA-Z0-9]*$"
                 }
               ]
@@ -35,7 +35,7 @@
               "assert": [
                 {
                   "id": "GOBL-SA-TAX-IDENTITY-01",
-                  "desc": "tax identity code for SA must be 15 digits long, and start and end with 3",
+                  "desc": "invoice tax id code must be 15 digits long, and start and end with 3",
                   "tests": "matches ^3[0-9]{13}3$"
                 }
               ]

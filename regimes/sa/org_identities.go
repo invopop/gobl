@@ -18,7 +18,7 @@ func orgIdentityRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("code",
-				rules.Assert("01", "SA identity code must be valid",
+				rules.Assert("01", "invoice identity type must be alphanumerical",
 					is.MatchesRegexp(identitiesRegexp),
 				),
 			),
