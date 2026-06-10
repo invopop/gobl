@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/c14n"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
@@ -223,14 +222,13 @@ func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
-// iss is the signer's verifiable GOBL Net address (a gobl: URI) and aud is
-// the optional GOBL Net audience the signature is bound to; either may be
-// empty.
-func (e *Envelope) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...head.SignOption) error {
+// The signer's GOBL Net address and the audience the signature is bound to
+// may be set with head.WithIssuer and head.WithAudience.
+func (e *Envelope) Sign(key *dsig.PrivateKey, opts ...head.SignOption) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
 	}
-	sig, err := e.Head.Sign(key, iss, aud, opts...)
+	sig, err := e.Head.Sign(key, opts...)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
