@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/scenario-set",
+  "$ref": "#/$defs/tax.ScenarioSet",
+  "$defs": {
+    "tax.ScenarioSet": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Partial or complete schema URL for the document type"
+        },
+        "list": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/scenario"
+          },
+          "type": "array",
+          "title": "List",
+          "description": "List of scenarios for the schema"
+        }
+      },
+      "type": "object",
+      "required": [
+        "schema",
+        "list"
+      ],
+      "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
+    }
+  }
+}

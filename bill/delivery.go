@@ -1,21 +1,21 @@
 package bill
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Delivery document types.
@@ -173,95 +173,34 @@ type Tracking struct {
 	Website *org.Website `json:"website,omitempty" jsonschema:"title=Website"`
 }
 
-// Validate the delivery document
-func (dlv *Delivery) Validate() error {
-	return dlv.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the delivery is ready to be signed
+// or not.
+func (dlv *Delivery) CanSign() bool {
+	return !dlv.Code.IsEmpty()
 }
 
-// ValidateWithContext ensures that the fields contained in the Delivery look correct.
-func (dlv *Delivery) ValidateWithContext(ctx context.Context) error {
-	ctx = dlv.validationContext(ctx)
-	r := dlv.RegimeDef()
-	return tax.ValidateStructWithContext(ctx, dlv,
-		validation.Field(&dlv.Regime),
-		validation.Field(&dlv.Addons),
-		validation.Field(&dlv.Tags),
-		validation.Field(&dlv.UUID),
-		validation.Field(&dlv.Type,
-			validation.Required,
-			isValidDeliveryType,
-		),
-		validation.Field(&dlv.Series),
-		validation.Field(&dlv.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign delivery"),
-			),
-		),
-		validation.Field(&dlv.IssueDate,
-			validation.Required,
-			cal.DateNotZero(),
-		),
-		validation.Field(&dlv.ValueDate),
-		validation.Field(&dlv.Currency,
-			currency.CanConvertInto(dlv.ExchangeRates, r.GetCurrency()),
-		),
-		validation.Field(&dlv.ExchangeRates,
-			validation.Each(validation.NotNil),
-		),
+func normalizeDelivery(dlv *Delivery) {
+	if dlv.Type == cbc.KeyEmpty {
+		dlv.Type = DeliveryTypeAdvice
+	}
+}
 
-		validation.Field(&dlv.Ordering),
-		validation.Field(&dlv.Preceding,
-			validation.Each(validation.NotNil),
+func deliveryRules() *rules.Set {
+	return rules.For(new(Delivery),
+		rules.Field("type",
+			rules.Assert("01", "type is required", is.Present),
+			rules.Assert("02", "type is not valid", isValidDeliveryType),
 		),
-
-		validation.Field(&dlv.Tracking),
-		validation.Field(&dlv.DespatchDate),
-		validation.Field(&dlv.ReceiveDate),
-
-		validation.Field(&dlv.Tax),
-
-		validation.Field(&dlv.Supplier, validation.Required),
-		validation.Field(&dlv.Customer),
-		validation.Field(&dlv.Despatcher),
-		validation.Field(&dlv.Receiver),
-		validation.Field(&dlv.Courier),
-
-		validation.Field(&dlv.Lines,
-			validation.Required,
-			validation.Each(validation.NotNil),
+		rules.Field("issue_date",
+			rules.Assert("03", "issue date is required", is.Present),
 		),
-		validation.Field(&dlv.Discounts,
-			validation.Each(validation.NotNil),
+		rules.Field("supplier",
+			rules.Assert("04", "supplier is required", is.Present),
 		),
-		validation.Field(&dlv.Charges,
-			validation.Each(validation.NotNil),
-		),
-
-		validation.Field(&dlv.Totals),
-		validation.Field(&dlv.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&dlv.Meta),
-		validation.Field(&dlv.Attachments,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Assert("05", "lines are required", is.Present),
 		),
 	)
-}
-
-// validationContext builds a context with all the validators that the delivery might
-// need for execution.
-func (dlv *Delivery) validationContext(ctx context.Context) context.Context {
-	if r := dlv.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	for _, a := range dlv.AddonDefs() {
-		ctx = a.WithContext(ctx)
-	}
-	return ctx
 }
 
 // Calculate performs all the normalizations and calculations required for the delivery
@@ -272,43 +211,8 @@ func (dlv *Delivery) Calculate() error {
 	if dlv.Regime.IsEmpty() {
 		dlv.SetRegime(partyTaxCountry(dlv.Supplier))
 	}
-	dlv.Normalize(dlv.normalizers())
+	norm.Normalize(dlv)
 	return calculate(dlv)
-}
-
-// Normalize is run as part of the Calculate method to ensure that the delivery
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
-	if dlv.Type == cbc.KeyEmpty {
-		dlv.Type = DeliveryTypeAdvice
-	}
-	dlv.Series = cbc.NormalizeCode(dlv.Series)
-	dlv.Code = cbc.NormalizeCode(dlv.Code)
-
-	tax.Normalize(normalizers, dlv.Tax)
-	tax.Normalize(normalizers, dlv.Supplier)
-	tax.Normalize(normalizers, dlv.Customer)
-	tax.Normalize(normalizers, dlv.Despatcher)
-	tax.Normalize(normalizers, dlv.Receiver)
-	tax.Normalize(normalizers, dlv.Preceding)
-	tax.Normalize(normalizers, dlv.Lines)
-	tax.Normalize(normalizers, dlv.Discounts)
-	tax.Normalize(normalizers, dlv.Charges)
-	tax.Normalize(normalizers, dlv.Notes)
-	normalizers.Each(dlv)
-}
-
-// normalizers returns the normalizers for the delivery.
-func (dlv *Delivery) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := dlv.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range dlv.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 // ConvertInto will use the defined exchange rates in the delivery to convert all the prices
@@ -355,6 +259,16 @@ func (dlv *Delivery) ConvertInto(cur currency.Code) (*Delivery, error) {
 
 /** Calculation Interface Methods **/
 
+// GetCurrency provides the documents current currency code.
+func (dlv *Delivery) GetCurrency() currency.Code {
+	return dlv.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (dlv *Delivery) GetExchangeRates() []*currency.ExchangeRate {
+	return dlv.ExchangeRates
+}
+
 func (dlv *Delivery) getIssueDate() cal.Date {
 	return dlv.IssueDate
 }
@@ -372,12 +286,6 @@ func (dlv *Delivery) getPreceding() []*org.DocumentRef {
 }
 func (dlv *Delivery) getCustomer() *org.Party {
 	return dlv.Customer
-}
-func (dlv *Delivery) getCurrency() currency.Code {
-	return dlv.Currency
-}
-func (dlv *Delivery) getExchangeRates() []*currency.ExchangeRate {
-	return dlv.ExchangeRates
 }
 func (dlv *Delivery) getLines() []*Line {
 	return dlv.Lines
@@ -409,6 +317,52 @@ func (dlv *Delivery) setCurrency(c currency.Code) {
 }
 func (dlv *Delivery) setTotals(t *Totals) {
 	dlv.Totals = t
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this delivery document. Despatch documents
+// (advice / note / waybill) flow from the despatcher (or supplier
+// when no explicit despatcher is set) to the receiver (or customer).
+// A `receipt` flows the other way — from the party that received the
+// goods back to the despatcher.
+func (dlv *Delivery) FromEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryReceiverEndpoint(dlv)
+	}
+	return deliveryDespatcherEndpoint(dlv)
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this delivery document. Inverse of FromEndpoint.
+func (dlv *Delivery) ToEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryDespatcherEndpoint(dlv)
+	}
+	return deliveryReceiverEndpoint(dlv)
+}
+
+// deliveryDespatcherEndpoint prefers the explicit Despatcher party,
+// falling back to the Supplier when no despatcher is set.
+func deliveryDespatcherEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Despatcher.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Supplier.FirstEndpoint()
+}
+
+// deliveryReceiverEndpoint prefers the explicit Receiver party,
+// falling back to the Customer when no receiver is set.
+func deliveryReceiverEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Receiver.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Customer.FirstEndpoint()
 }
 
 /** ---- **/

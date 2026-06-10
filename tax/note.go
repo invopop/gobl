@@ -1,10 +1,9 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Note represents a tax-related note, typically used for exemption reasons
@@ -19,7 +18,7 @@ type Note struct {
 	// Text contains the exemption reason or explanation.
 	Text string `json:"text" jsonschema:"title=Text"`
 	// Extensions for additional structured data.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // SameAs returns true if the two notes refer to the same tax situation,
@@ -31,24 +30,10 @@ func (n *Note) SameAs(n2 *Note) bool {
 	return n.Category == n2.Category && n.Key == n2.Key
 }
 
-// Normalize cleans up the note's extensions.
-func (n *Note) Normalize(normalizers Normalizers) {
-	if n == nil {
-		return
-	}
-	n.Ext = CleanExtensions(n.Ext)
-	normalizers.Each(n)
-}
-
-// ValidateWithContext ensures the note is valid.
-func (n *Note) ValidateWithContext(ctx context.Context) error {
-	rd := RegimeDefFromContext(ctx)
-	return ValidateStructWithContext(ctx, n,
-		validation.Field(&n.Category,
-			rd.InCategories(),
+func noteRules() *rules.Set {
+	return rules.For(new(Note),
+		rules.Field("text",
+			rules.Assert("01", "tax note text is required", is.Present),
 		),
-		validation.Field(&n.Key),
-		validation.Field(&n.Text, validation.Required),
-		validation.Field(&n.Ext),
 	)
 }

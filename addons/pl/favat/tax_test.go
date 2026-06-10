@@ -5,13 +5,14 @@ import (
 
 	"github.com/invopop/gobl/addons/pl/favat"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNormalizeTaxCombo(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	tests := []struct {
 		name     string
@@ -82,14 +83,13 @@ func TestNormalizeTaxCombo(t *testing.T) {
 				Rate:    tt.rate,
 				Percent: num.NewPercentage(23, 0),
 			}
-			ad.Normalizer(tc)
+			norm.Normalize(tc, tax.AddonContext(favat.V3))
 			assert.Equal(t, tt.expected, tc.Ext.Get(favat.ExtKeyTaxCategory).String())
 		})
 	}
 }
 
 func TestNormalizeTaxComboForeignCountry(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("foreign country sets outside scope", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -98,7 +98,7 @@ func TestNormalizeTaxComboForeignCountry(t *testing.T) {
 			Rate:    tax.RateGeneral,
 			Percent: num.NewPercentage(19, 0),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(favat.V3))
 		assert.Equal(t, "8", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
 	})
 
@@ -109,7 +109,7 @@ func TestNormalizeTaxComboForeignCountry(t *testing.T) {
 			Rate:    tax.RateGeneral,
 			Percent: num.NewPercentage(23, 0),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
 	})
 
@@ -118,13 +118,12 @@ func TestNormalizeTaxComboForeignCountry(t *testing.T) {
 			Key:     tax.KeyExempt,
 			Percent: num.NewPercentage(0, 0),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(favat.V3))
 		assert.Equal(t, "7", tc.Ext.Get(favat.ExtKeyTaxCategory).String())
 	})
 }
 
 func TestValidateTaxCombo(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("valid tax combo with category", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -132,8 +131,8 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:    tax.RateGeneral,
 			Percent: num.NewPercentage(23, 0),
 		}
-		ad.Normalizer(tc)
-		err := ad.Validator(tc)
+		norm.Normalize(tc, tax.AddonContext(favat.V3))
+		err := rules.Validate(tc, withAddonContext())
 		assert.NoError(t, err)
 	})
 
@@ -143,7 +142,13 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:    tax.RateGeneral,
 			Percent: num.NewPercentage(23, 0),
 		}
-		err := ad.Validator(tc)
-		assert.ErrorContains(t, err, "ext: (pl-favat-tax-category: required.)")
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "tax combo requires 'pl-favat-tax-category' extension")
 	})
+}
+
+func withAddonContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		rc.Set(rules.ContextKey(favat.V3), tax.AddonForKey(favat.V3))
+	}
 }

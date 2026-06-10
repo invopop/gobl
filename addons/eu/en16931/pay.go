@@ -2,14 +2,17 @@ package en16931
 
 import (
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-var paymentMeansMap = tax.Extensions{
+var paymentMeansMap = cbc.CodeMap{
 	pay.MeansKeyAny:                                   "1",
 	pay.MeansKeyCard:                                  "48",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "55",
 	pay.MeansKeyCreditTransfer:                        "30",
 	pay.MeansKeyDebitTransfer:                         "31",
 	pay.MeansKeyCash:                                  "10",
@@ -27,38 +30,32 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if val, ok := paymentMeansMap[instr.Key]; ok {
+	if val := paymentMeansMap.Lookup(instr.Key); val != "" {
 		instr.Ext = instr.Ext.Merge(
-			tax.Extensions{untdid.ExtKeyPaymentMeans: val},
+			tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: val}),
 		)
 	}
 }
 
-func validatePayInstructions(instr *pay.Instructions) error {
-	return validation.ValidateStruct(instr,
-		validation.Field(&instr.Ext,
-			// BR-49
-			tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
-			validation.Skip,
+func payInstructionsRules() *rules.Set {
+	return rules.For(new(pay.Instructions),
+		rules.Field("ext",
+			rules.Assert("01", "payment means extension is required (BR-49)",
+				tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayTerms(terms *pay.Terms) error {
-	return validation.ValidateStruct(terms,
-		validation.Field(&terms.Notes,
-			validation.When(
-				len(terms.DueDates) == 0,
-				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
-			),
-			validation.Skip,
-		),
-		validation.Field(&terms.DueDates,
-			validation.When(
-				terms.Notes == "",
-				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
-			),
-			validation.Skip,
+func payTermsRules() *rules.Set {
+	return rules.For(new(pay.Terms),
+		rules.Assert("01", "either due_dates or notes must be provided (BR-CO-25)",
+			is.Func("has due dates or notes", payTermsHasDueDatesOrNotes),
 		),
 	)
+}
+
+func payTermsHasDueDatesOrNotes(val any) bool {
+	t, ok := val.(*pay.Terms)
+	return !ok || t == nil || len(t.DueDates) > 0 || t.Notes != ""
 }

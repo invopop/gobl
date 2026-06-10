@@ -1,18 +1,16 @@
 package org
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // DocumentRef is used to describe an existing document or a specific part of it's contents.
@@ -54,26 +52,9 @@ type DocumentRef struct {
 	// calculate the remaining amount due and taxes.
 	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`
 	// Extensions for additional codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Meta contains additional information about the document.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
-// Normalize attempts to clean and normalize the DocumentRef.
-func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
-	if dr == nil {
-		return
-	}
-	uuid.Normalize(&dr.UUID)
-	dr.Series = cbc.NormalizeCode(dr.Series)
-	dr.Code = cbc.NormalizeCode(dr.Code)
-	dr.Reason = cbc.NormalizeString(dr.Reason)
-	dr.URL = cbc.NormalizeString(dr.URL)
-	dr.Ext = tax.CleanExtensions(dr.Ext)
-
-	tax.Normalize(normalizers, dr.Identities)
-	tax.Normalize(normalizers, dr.Tax)
-	normalizers.Each(dr)
 }
 
 // Calculate will ensure the tax total is recalculated according to the
@@ -88,30 +69,24 @@ func (dr *DocumentRef) Calculate(cur currency.Code, rr cbc.Key) {
 	dr.Tax.Round(cur.Def().Zero())
 }
 
-// Validate ensures the Document looks correct.
-func (dr *DocumentRef) Validate() error {
-	return dr.ValidateWithContext(context.Background())
+func documentRefRules() *rules.Set {
+	return rules.For(new(DocumentRef),
+		rules.Field("code",
+			rules.Assert("01", "document reference code is required", is.Present),
+		),
+		rules.Field("issue_date",
+			rules.AssertIfPresent("02", "document reference issue date must not be zero",
+				cal.DateNotZero(),
+			),
+		),
+		rules.Field("url",
+			rules.AssertIfPresent("03", "document reference URL must be valid", is.URL),
+		),
+	)
 }
 
-// ValidateWithContext ensures the Document looks correct within the provided context.
-func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, dr,
-		validation.Field(&dr.UUID),
-		validation.Field(&dr.Schema),
-		validation.Field(&dr.Type),
-		validation.Field(&dr.IssueDate, cal.DateNotZero()),
-		validation.Field(&dr.Series),
-		validation.Field(&dr.Code,
-			validation.Match(cbc.CodePatternRegexp),
-			validation.Required,
-		),
-		validation.Field(&dr.Currency),
-		validation.Field(&dr.URL, is.URL),
-		validation.Field(&dr.Stamps),
-		validation.Field(&dr.Period),
-		validation.Field(&dr.Tax),
-		validation.Field(&dr.Payable),
-		validation.Field(&dr.Ext),
-		validation.Field(&dr.Meta),
-	)
+func normalizeDocumentRef(dr *DocumentRef) {
+	uuid.Normalize(&dr.UUID)
+	dr.Reason = cbc.NormalizeString(dr.Reason)
+	dr.URL = cbc.NormalizeString(dr.URL)
 }

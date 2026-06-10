@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/delivery-details",
-  "$ref": "#/$defs/DeliveryDetails",
+  "$ref": "#/$defs/bill.DeliveryDetails",
   "$defs": {
-    "DeliveryDetails": {
+    "bill.DeliveryDetails": {
       "properties": {
         "receiver": {
           "$ref": "https://gobl.org/draft-0/org/party",

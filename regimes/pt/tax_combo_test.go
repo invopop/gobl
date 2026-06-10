@@ -5,7 +5,10 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,9 +23,10 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "valid combo",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Percent:  num.NewPercentage(210, 3),
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 		},
 		{
@@ -33,38 +37,43 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "missing extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "empty extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{},
+				Percent:  num.NewPercentage(210, 3),
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{}),
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "missing extension",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Percent:  num.NewPercentage(210, 3),
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
-			err: "ext: (pt-region: required.)",
+			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
 		{
 			name: "other category",
 			tc: &tax.Combo{
 				Category: tax.CategoryGST,
+				Percent:  num.NewPercentage(210, 3),
 			},
+			err: "[GOBL-TAX-COMBO-01]", // general combo error
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := pt.Validate(tt.tc)
+			err := rules.Validate(tt.tc, tax.RegimeContext(l10n.PT.Tax()))
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -84,9 +93,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "extension present",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 			out: "PT-AC",
 		},
@@ -98,7 +107,7 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "empty extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{},
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{}),
 			},
 			out: "PT",
 		},
@@ -106,9 +115,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "missing extension",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			out: "PT",
 		},
@@ -125,9 +134,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Country:  l10n.ES.Tax(),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT",
-				},
+				}),
 			},
 			out: "ES",
 		},
@@ -149,9 +158,9 @@ func TestTaxComboNormalization(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pt.Normalize(tt.tc)
+			norm.Normalize(tt.tc, tax.RegimeContext("PT"))
 			if tt.tc != nil {
-				assert.Equal(t, tt.out, tt.tc.Ext[pt.ExtKeyRegion])
+				assert.Equal(t, tt.out, tt.tc.Ext.Get(pt.ExtKeyRegion))
 			}
 		})
 	}

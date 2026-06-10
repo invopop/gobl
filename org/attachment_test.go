@@ -3,7 +3,9 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +19,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			URL:         "  https://example.com/doc.pdf  ",
 			MIME:        "  application/pdf  ",
 		}
-		a.Normalize()
+		norm.Normalize(a)
 
 		assert.Equal(t, "ABC", a.Code.String())
 		assert.Equal(t, "test.txt", a.Name)
@@ -29,7 +31,7 @@ func TestAttachmentNormalize(t *testing.T) {
 	t.Run("nil receiver no panic", func(t *testing.T) {
 		var a *org.Attachment
 		assert.NotPanics(t, func() {
-			a.Normalize()
+			norm.Normalize(a)
 		})
 	})
 
@@ -40,7 +42,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			Description: "   ",
 			MIME:        "   ",
 		}
-		a.Normalize()
+		norm.Normalize(a)
 		assert.Equal(t, "name", a.Name)
 		assert.Equal(t, "", a.URL)
 		assert.Equal(t, "", a.Description)
@@ -56,14 +58,14 @@ func TestAttachmentValidation(t *testing.T) {
 			Name: "test.txt",
 			URL:  "https://example.com/test.txt",
 		}
-		err := a.Validate()
+		err := rules.Validate(a)
 		assert.NoError(t, err)
 	})
 	t.Run("minimum fields", func(t *testing.T) {
 		a := &org.Attachment{
 			URL: "https://example.com/test.txt",
 		}
-		err := a.Validate()
+		err := rules.Validate(a)
 		assert.NoError(t, err)
 	})
 	t.Run("missing URL", func(t *testing.T) {
@@ -72,7 +74,7 @@ func TestAttachmentValidation(t *testing.T) {
 			Code: "ABC",
 			Name: "test.txt",
 		}
-		err := a.Validate()
-		assert.ErrorContains(t, err, "url: cannot be blank")
+		err := rules.Validate(a)
+		assert.ErrorContains(t, err, "[GOBL-ORG-ATTACHMENT-01] ($.url) attachment URL must be valid")
 	})
 }

@@ -4,11 +4,11 @@ import (
 	"github.com/Masterminds/semver/v3"
 )
 
-// Version defines the semver for this version of GOBL.
+// Version defines the semver for this version of GOBL
 type Version string
 
-// VERSION is the current version of the GOBL library.
-const VERSION Version = "v0.308.0"
+// VERSION is the current version of the GOBL library
+const VERSION Version = "v0.403.0"
 
 // Semver parses and returns semver
 func (v Version) Semver() *semver.Version {

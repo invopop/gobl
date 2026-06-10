@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -84,14 +84,68 @@ func TestNormalizeCode(t *testing.T) {
 			want: cbc.Code("foo-bar1"),
 		},
 		{
-			name: "invalid chars",
+			name: "invalid chars left untouched (lenient default)",
 			code: cbc.Code("f$oo-bar1!"),
-			want: cbc.Code("foo-bar1"),
+			want: cbc.Code("f$oo-bar1!"),
 		},
 		{
 			name: "multiple spaces",
 			code: cbc.Code("foo bar dome"),
 			want: cbc.Code("foo bar dome"),
+		},
+		{
+			name: "internal symbols left untouched (lenient default)",
+			code: cbc.Code("foo- bar-$dome"),
+			want: cbc.Code("foo- bar-$dome"),
+		},
+		{
+			name: "internal repeats left untouched (lenient default)",
+			code: cbc.Code("FOO  BAR--DOME"),
+			want: cbc.Code("FOO  BAR--DOME"),
+		},
+		{
+			name: "colons",
+			code: cbc.Code("0088:1234567891234"), // peppol example
+			want: cbc.Code("0088:1234567891234"),
+		},
+		{
+			name: "commas",
+			code: cbc.Code("FL-C 64-3,5"),
+			want: cbc.Code("FL-C 64-3,5"),
+		},
+		{
+			name: "control characters removed",
+			code: cbc.Code("foo\t\x00bar\n"),
+			want: cbc.Code("foobar"),
+		},
+		{
+			name: "NFC composes combining marks",
+			code: cbc.Code("cafe\u0301"), // "e" + combining acute accent (decomposed)
+			want: cbc.Code("caf\u00e9"),  // single composed "e-acute"
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+		})
+	}
+}
+
+func TestNormalizeStrictCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "whitespace",
+			code: cbc.Code(" foo-bar1  "),
+			want: cbc.Code("foo-bar1"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("foo-bar1"),
 		},
 		{
 			name: "multiple symbols 1",
@@ -105,18 +159,62 @@ func TestNormalizeCode(t *testing.T) {
 		},
 		{
 			name: "colons",
-			code: cbc.Code("0088:1234567891234"), // peppol example
+			code: cbc.Code("0088:1234567891234"),
 			want: cbc.Code("0088:1234567891234"),
-		},
-		{
-			name: "commas",
-			code: cbc.Code("FL-C 64-3,5"),
-			want: cbc.Code("FL-C 64-3,5"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+			assert.Equal(t, tt.want, cbc.NormalizeStrictCode(tt.code))
+		})
+	}
+}
+
+func TestNormalizeUpperCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "uppercase",
+			code: cbc.Code("FOO"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "lowercase",
+			code: cbc.Code("foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "with colon",
+			code: cbc.Code("DK:CVR"),
+			want: cbc.Code("DK:CVR"),
+		},
+		{
+			name: "lowercase with colon",
+			code: cbc.Code("dk:cvr"),
+			want: cbc.Code("DK:CVR"),
+		},
+		{
+			name: "with spaces",
+			code: cbc.Code(" foo "),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "peppol scheme",
+			code: cbc.Code("0088:1234567891234"),
+			want: cbc.Code("0088:1234567891234"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeUpperCode(tt.code))
 		})
 	}
 }
@@ -249,6 +347,125 @@ func TestNormalizeNumericalCode(t *testing.T) {
 	}
 }
 
+func TestCode_Rules(t *testing.T) {
+	tests := []struct {
+		name        string
+		code        cbc.Code
+		wantCode    rules.Code
+		wantMessage string
+	}{
+		{
+			name: "valid 1",
+			code: cbc.Code("ABC123"),
+		},
+		{
+			name: "valid 2",
+			code: cbc.Code("12345678901234567890ABCD"),
+		},
+		{
+			name: "valid with lower",
+			code: cbc.Code("ABC abc/123"),
+		},
+		{
+			name: "valid with dot",
+			code: cbc.Code("B3.12"),
+		},
+		{
+			name: "valid with dash",
+			code: cbc.Code("B3-12"),
+		},
+		{
+			name: "valid with multiple dots",
+			code: cbc.Code("B3.1.2"),
+		},
+		{
+			name: "valid with multiple dashes",
+			code: cbc.Code("B3-1-2"),
+		},
+		{
+			name: "valid with slash",
+			code: cbc.Code("B3/12"),
+		},
+		{
+			name: "valid with space",
+			code: cbc.Code("FR 12/BX"),
+		},
+		{
+			name: "valid with colon",
+			code: cbc.Code("FR:12/BX"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+		},
+		{
+			name: "almost too long",
+			code: cbc.Code("123456789012345678901234567890AB"),
+		},
+		{
+			name: "dot at start",
+			code: cbc.Code(".B123"),
+		},
+		{
+			name: "dot at end",
+			code: cbc.Code("B123."),
+		},
+		{
+			name: "dash at start",
+			code: cbc.Code("-B123"),
+		},
+		{
+			name: "dash at end",
+			code: cbc.Code("B123-"),
+		},
+		{
+			name: "multiple symbols",
+			code: cbc.Code("AB/.CD"),
+		},
+		{
+			name: "multi-dash",
+			code: cbc.Code("AB--CD"),
+		},
+		{
+			name:     "leading space",
+			code:     cbc.Code(" B123"),
+			wantCode: "GOBL-CBC-CODE-02",
+		},
+		{
+			name:     "trailing space",
+			code:     cbc.Code("B123 "),
+			wantCode: "GOBL-CBC-CODE-02",
+		},
+		{
+			name:     "newline in middle",
+			code:     cbc.Code("AB\nCD"),
+			wantCode: "GOBL-CBC-CODE-02",
+		},
+		{
+			name:     "only newline",
+			code:     cbc.Code("\n"),
+			wantCode: "GOBL-CBC-CODE-02",
+		},
+		{
+			name:     "too long",
+			code:     cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
+			wantCode: "GOBL-CBC-CODE-01",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			faults := rules.Validate(tt.code)
+			if tt.wantCode == "" {
+				assert.NoError(t, faults)
+			} else {
+				require.NotNil(t, faults)
+				assert.Equal(t, 1, faults.Len())
+				assert.Equal(t, tt.wantCode, faults.First().Code())
+			}
+		})
+	}
+}
+
 func TestCode_Validate(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -304,49 +521,53 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code("123456789012345678901234567890AB"),
 		},
 		{
-			name:    "dot at start",
-			code:    cbc.Code(".B123"),
-			wantErr: "valid format",
+			name: "dot at start",
+			code: cbc.Code(".B123"),
 		},
 		{
-			name:    "dot at end",
-			code:    cbc.Code("B123."),
-			wantErr: "valid format",
+			name: "dot at end",
+			code: cbc.Code("B123."),
 		},
 		{
-			name:    "dash at start",
-			code:    cbc.Code("-B123"),
-			wantErr: "valid format",
+			name: "dash at start",
+			code: cbc.Code("-B123"),
 		},
 		{
-			name:    "dash at end",
-			code:    cbc.Code("B123-"),
-			wantErr: "valid format",
+			name: "dash at end",
+			code: cbc.Code("B123-"),
 		},
 		{
-			name:    "multiple symbols",
-			code:    cbc.Code("AB/.CD"),
-			wantErr: "valid format",
+			name: "multiple symbols",
+			code: cbc.Code("AB/.CD"),
 		},
 		{
-			name:    "character return",
+			name: "multi-dash",
+			code: cbc.Code("AB--CD"),
+		},
+		{
+			name:    "leading space",
+			code:    cbc.Code(" B123"),
+			wantErr: "leading or trailing whitespace",
+		},
+		{
+			name:    "trailing space",
+			code:    cbc.Code("B123 "),
+			wantErr: "leading or trailing whitespace",
+		},
+		{
+			name:    "newline in middle",
 			code:    cbc.Code("AB\nCD"),
-			wantErr: "valid format",
+			wantErr: "leading or trailing whitespace",
 		},
 		{
-			name:    "character return",
+			name:    "only newline",
 			code:    cbc.Code("\n"),
-			wantErr: "valid format",
-		},
-		{
-			name:    "multi-dash",
-			code:    cbc.Code("AB--CD"),
-			wantErr: "valid format",
+			wantErr: "leading or trailing whitespace",
 		},
 		{
 			name:    "too long",
 			code:    cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
-			wantErr: "length must be between",
+			wantErr: "codes must be no longer than",
 		},
 	}
 	for _, tt := range tests {
@@ -390,11 +611,11 @@ func TestCodeMap(t *testing.T) {
 	})
 
 	t.Run("validation", func(t *testing.T) {
-		assert.NoError(t, cm.Validate())
+		assert.NoError(t, rules.Validate(cm))
 		cm2 := cbc.CodeMap{
 			"Invalid": cbc.Code("01"),
 		}
-		assert.ErrorContains(t, cm2.Validate(), "Invalid: must be in a valid format")
+		assert.ErrorContains(t, rules.Validate(cm2), "[GOBL-CBC-CODEMAP-01] all code map keys must be valid")
 	})
 }
 
@@ -435,11 +656,69 @@ func TestCodeMapHas(t *testing.T) {
 		"foo": cbc.Code("01"),
 		"bar": cbc.Code("02"),
 	}
-	err := validation.Validate(cm, cbc.CodeMapHas("foo", "bar"))
-	assert.NoError(t, err)
-	assert.ErrorContains(t, validation.Validate(cm, cbc.CodeMapHas("foo", "dom")), "dom: required.")
-	err = validation.Validate(nil, cbc.CodeMapHas("foo"))
-	assert.NoError(t, err)
+	rule := cbc.CodeMapHas("foo", "bar")
+	assert.True(t, rule.Check(cm))
+	assert.False(t, cbc.CodeMapHas("foo", "dom").Check(cm))
+
+	cm = nil
+	assert.False(t, cbc.CodeMapHas("foo").Check(cm))
+
+	// String renders the required keys for the rules engine's failure message.
+	assert.Contains(t, rule.String(), "foo")
+	assert.Contains(t, rule.String(), "bar")
+
+	// Check rejects non-CodeMap values.
+	assert.False(t, rule.Check("not a code map"))
+}
+
+func TestInCodes(t *testing.T) {
+	tester := cbc.InCodes("AA", "BB")
+
+	assert.True(t, tester.Check(cbc.Code("AA")))
+	assert.False(t, tester.Check(cbc.Code("ZZ")))
+
+	// Non-Code input is rejected.
+	assert.False(t, tester.Check("AA"))
+
+	// String renders the candidate codes for error messages.
+	assert.Contains(t, tester.String(), "AA")
+	assert.Contains(t, tester.String(), "BB")
+}
+
+func TestCodeMapLookup(t *testing.T) {
+	m := cbc.CodeMap{
+		"card":          "04",
+		"card+debit":    "28",
+		"online+wallet": "05",
+		"online":        "06",
+	}
+
+	t.Run("exact match", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("04"), m.Lookup("card"))
+		assert.Equal(t, cbc.Code("28"), m.Lookup("card+debit"))
+	})
+
+	t.Run("fallback to base key", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("04"), m.Lookup("card+credit"))
+	})
+
+	t.Run("fallback through subkeys", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("06"), m.Lookup("online+foo+bar"))
+	})
+
+	t.Run("more specific entry wins", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("05"), m.Lookup("online+wallet"))
+	})
+
+	t.Run("no match returns empty", func(t *testing.T) {
+		assert.Equal(t, cbc.CodeEmpty, m.Lookup("cash"))
+		assert.Equal(t, cbc.CodeEmpty, m.Lookup(""))
+	})
+
+	t.Run("nil map", func(t *testing.T) {
+		var nm cbc.CodeMap
+		assert.Equal(t, cbc.CodeEmpty, nm.Lookup("card"))
+	})
 }
 
 func TestCodeJSONSchema(t *testing.T) {

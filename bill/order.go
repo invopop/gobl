@@ -1,21 +1,21 @@
 package bill
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of the order types supported.
@@ -151,85 +151,37 @@ type Order struct {
 	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
-// Validate runs the validation rules for the order without the context.
-func (ord *Order) Validate() error {
-	return ord.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the order is ready to be signed
+// or not.
+func (ord *Order) CanSign() bool {
+	return !ord.Code.IsEmpty()
 }
 
-// ValidateWithContext ensures that the fields contained in the Order look correct.
-func (ord *Order) ValidateWithContext(ctx context.Context) error {
-	ctx = ord.validationContext(ctx)
-	r := ord.RegimeDef()
-	return tax.ValidateStructWithContext(ctx, ord,
-		validation.Field(&ord.Regime),
-		validation.Field(&ord.Addons),
-		validation.Field(&ord.UUID),
-		validation.Field(&ord.Type,
-			validation.Required,
-			isValidOrderType,
+func normalizeOrder(ord *Order) {
+	if ord.Type == cbc.KeyEmpty {
+		ord.Type = OrderTypePurchase
+	}
+}
+
+func orderRules() *rules.Set {
+	return rules.For(new(Order),
+		rules.Field("type",
+			rules.Assert("01", "type is required", is.Present),
+			rules.Assert("02", "type is not valid", isValidOrderType),
 		),
-		validation.Field(&ord.Series),
-		validation.Field(&ord.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign order"),
-			),
+		rules.Field("issue_date",
+			rules.Assert("03", "issue date is required", is.Present),
 		),
-		validation.Field(&ord.IssueDate,
-			validation.Required,
-			cal.DateNotZero(),
+		rules.Field("currency",
+			rules.Assert("04", "currency is required", is.Present),
 		),
-		validation.Field(&ord.Currency,
-			validation.Required,
-			currency.CanConvertInto(ord.ExchangeRates, r.GetCurrency()),
+		rules.Field("supplier",
+			rules.Assert("05", "supplier is required", is.Present),
 		),
-		validation.Field(&ord.ExchangeRates,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Contracts),
-		validation.Field(&ord.Preceding,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Supplier, validation.Required),
-		validation.Field(&ord.Customer),
-		validation.Field(&ord.Buyer),
-		validation.Field(&ord.Seller),
-		validation.Field(&ord.Lines,
-			validation.Required,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Discounts,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Charges,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Payment),
-		validation.Field(&ord.Delivery),
-		validation.Field(&ord.Totals),
-		validation.Field(&ord.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&ord.Meta),
-		validation.Field(&ord.Attachments,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Assert("06", "lines are required", is.Present),
 		),
 	)
-}
-
-// validationContext builds a context with all the validators that the order might
-// need for execution.
-func (ord *Order) validationContext(ctx context.Context) context.Context {
-	if r := ord.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
-	}
-	for _, a := range ord.AddonDefs() {
-		ctx = a.WithContext(ctx)
-	}
-	return ctx
 }
 
 // Calculate performs all the normalizations and calculations required for the order
@@ -240,46 +192,8 @@ func (ord *Order) Calculate() error {
 	if ord.Regime.IsEmpty() {
 		ord.SetRegime(partyTaxCountry(ord.Supplier))
 	}
-	ord.Normalize(ord.normalizers())
+	norm.Normalize(ord)
 	return calculate(ord)
-}
-
-// Normalize is run as part of the Calculate method to ensure that the order
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (ord *Order) Normalize(normalizers tax.Normalizers) {
-	if ord.Type == cbc.KeyEmpty {
-		ord.Type = OrderTypePurchase
-	}
-	ord.Series = cbc.NormalizeCode(ord.Series)
-	ord.Code = cbc.NormalizeCode(ord.Code)
-
-	tax.Normalize(normalizers, ord.Tax)
-	tax.Normalize(normalizers, ord.Supplier)
-	tax.Normalize(normalizers, ord.Customer)
-	tax.Normalize(normalizers, ord.Buyer)
-	tax.Normalize(normalizers, ord.Seller)
-	tax.Normalize(normalizers, ord.Preceding)
-	tax.Normalize(normalizers, ord.Lines)
-	tax.Normalize(normalizers, ord.Discounts)
-	tax.Normalize(normalizers, ord.Charges)
-	tax.Normalize(normalizers, ord.Payment)
-	tax.Normalize(normalizers, ord.Delivery)
-	tax.Normalize(normalizers, ord.Notes)
-	tax.Normalize(normalizers, ord.Attachments)
-
-	normalizers.Each(ord)
-}
-
-func (ord *Order) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := ord.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range ord.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 // ConvertInto will use the defined exchange rates in the order to convert all the prices
@@ -327,6 +241,16 @@ func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
 
 /** Calculation Interface Methods **/
 
+// GetCurrency provides the documents current currency code.
+func (ord *Order) GetCurrency() currency.Code {
+	return ord.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
+	return ord.ExchangeRates
+}
+
 func (ord *Order) getIssueDate() cal.Date {
 	return ord.IssueDate
 }
@@ -344,12 +268,6 @@ func (ord *Order) getPreceding() []*org.DocumentRef {
 }
 func (ord *Order) getCustomer() *org.Party {
 	return ord.Customer
-}
-func (ord *Order) getCurrency() currency.Code {
-	return ord.Currency
-}
-func (ord *Order) getExchangeRates() []*currency.ExchangeRate {
-	return ord.ExchangeRates
 }
 func (ord *Order) getLines() []*Line {
 	return ord.Lines
@@ -381,6 +299,33 @@ func (ord *Order) setCurrency(c currency.Code) {
 }
 func (ord *Order) setTotals(t *Totals) {
 	ord.Totals = t
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this order document. A `purchase` order (customer asks the
+// supplier for goods or services) flows from customer to supplier; a
+// `sale` order (supplier confirms a sale) and a `quote` (supplier
+// proposes a price) flow the other way.
+func (ord *Order) FromEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Customer.FirstEndpoint()
+	}
+	return ord.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this order document. Inverse of FromEndpoint.
+func (ord *Order) ToEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Supplier.FirstEndpoint()
+	}
+	return ord.Customer.FirstEndpoint()
 }
 
 /** ---- **/

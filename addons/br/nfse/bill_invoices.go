@@ -1,13 +1,16 @@
 package nfse
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -20,77 +23,63 @@ var (
 	CodeRegexp = regexp.MustCompile(`^[1-9][0-9]*$`)
 )
 
-func validateInvoice(inv *bill.Invoice) error {
-	if inv == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Series, validation.Required),
-		validation.Field(&inv.Code, validation.Match(CodeRegexp)),
-		validation.Field(&inv.Supplier,
-			validation.By(validateSupplier),
-			validation.Skip,
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.Assert("17", "invoice must be in BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
+		rules.Field("series",
+			rules.Assert("01", "series is required", is.Present),
 		),
-		validation.Field(&inv.Charges,
-			validation.Empty.Error("not supported by nfse"),
-			validation.Skip,
+		rules.Field("code",
+			rules.Assert("02", "code must be a positive integer", is.Matches(`^[1-9][0-9]*$`)),
 		),
-		validation.Field(&inv.Discounts,
-			validation.Empty.Error("not supported by nfse"),
-			validation.Skip,
-		),
-	)
-}
-
-func validateSupplier(value interface{}) error {
-	obj, _ := value.(*org.Party)
-	if obj == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-		validation.Field(&obj.Identities,
-			org.RequireIdentityKey(IdentityKeyMunicipalReg),
-			validation.Skip,
-		),
-		validation.Field(&obj.Name, validation.Required),
-		validation.Field(&obj.Addresses,
-			validation.Required,
-			validation.Each(
-				validation.Required,
-				validation.By(validateSupplierAddress),
+		rules.Field("supplier",
+			rules.Assert("03", "supplier is required", is.Present),
+			rules.Field("tax_id",
+				rules.Assert("04", "supplier tax ID is required", is.Present),
+				rules.Field("code",
+					rules.Assert("05", "supplier tax ID code is required", is.Present),
+				),
 			),
-			validation.Skip,
-		),
-		validation.Field(&obj.Ext,
-			tax.ExtensionsRequire(
-				br.ExtKeyMunicipality,
-				ExtKeySimples,
-				ExtKeyFiscalIncentive,
+			rules.Field("name",
+				rules.Assert("06", "supplier name is required", is.Present),
 			),
-			validation.Skip,
+			rules.Field("addresses",
+				rules.Assert("07", "supplier must have at least one address", is.Present),
+				rules.Each(
+					rules.Assert("08", "supplier address must not be empty", is.Present),
+					rules.Field("street",
+						rules.Assert("09", "supplier address requires a street", is.Present),
+					),
+					rules.Field("num",
+						rules.Assert("10", "supplier address requires a number", is.Present),
+					),
+					rules.Field("locality",
+						rules.Assert("11", "supplier address requires a locality", is.Present),
+					),
+					rules.Field("state",
+						rules.Assert("12", "supplier address requires a state", is.Present),
+					),
+					rules.Field("code",
+						rules.Assert("13", "supplier address requires a postal code", is.Present),
+					),
+				),
+			),
+			rules.Field("ext",
+				rules.Assert("14", fmt.Sprintf("supplier requires '%s', '%s', and '%s' extensions", br.ExtKeyMunicipality, ExtKeySimples, ExtKeyFiscalIncentive),
+					tax.ExtensionsRequire(
+						br.ExtKeyMunicipality,
+						ExtKeySimples,
+						ExtKeyFiscalIncentive,
+					),
+				),
+			),
 		),
-	)
-}
-
-func validateSupplierAddress(value interface{}) error {
-	obj, _ := value.(*org.Address)
-	if obj == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Street, validation.Required),
-		validation.Field(&obj.Number, validation.Required),
-		validation.Field(&obj.Locality, validation.Required),
-		validation.Field(&obj.State, validation.Required),
-		validation.Field(&obj.Code, validation.Required),
+		rules.Field("charges",
+			rules.Assert("15", "charges are not supported by NFS-e", is.Empty),
+		),
+		rules.Field("discounts",
+			rules.Assert("16", "discounts are not supported by NFS-e", is.Empty),
+		),
 	)
 }
 
@@ -100,9 +89,9 @@ func normalizeSupplier(sup *org.Party) {
 	}
 
 	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
-		if sup.Ext == nil {
-			sup.Ext = make(tax.Extensions)
+		if sup.Ext.IsZero() {
+			sup.Ext = tax.MakeExtensions()
 		}
-		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+		sup.Ext = sup.Ext.Set(ExtKeyFiscalIncentive, FiscalIncentiveDefault)
 	}
 }

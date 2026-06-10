@@ -1,8 +1,12 @@
 package tbai
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -40,6 +44,26 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				Set(ExtKeyExempt, "E5")
 		}
 	}
+}
+
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(
+			is.Func("exempt vat/igic", taxComboIsExemptVATorIGIC),
+			rules.Field("ext",
+				rules.Assert("01", fmt.Sprintf("extension '%s' is required for exempt tax combos", ExtKeyExempt),
+					tax.ExtensionsRequire(ExtKeyExempt),
+				),
+			),
+		),
+	)
+}
+
+func taxComboIsExemptVATorIGIC(val any) bool {
+	tc, ok := val.(*tax.Combo)
+	return ok && tc != nil &&
+		tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) &&
+		tc.Key == tax.KeyExempt
 }
 
 // prepareTaxComboKey tries to reverse map existing extension keys into the

@@ -1,11 +1,11 @@
 package bill
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,7 @@ func TestChargeValidation(t *testing.T) {
 		c := &Charge{
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := c.ValidateWithContext(context.Background())
+		err := rules.Validate(c)
 		require.Nil(t, err)
 	})
 	t.Run("base with percent", func(t *testing.T) {
@@ -24,9 +24,9 @@ func TestChargeValidation(t *testing.T) {
 			Base:   num.NewAmount(1000, 2),
 			Amount: num.MakeAmount(100, 2),
 		}
-		err := c.ValidateWithContext(context.Background())
+		err := rules.Validate(c)
 		require.NotNil(t, err)
-		assert.Contains(t, err.Error(), "percent: cannot be blank")
+		assert.ErrorContains(t, err, "percent is required when base is set")
 	})
 }
 

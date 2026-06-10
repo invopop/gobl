@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +28,7 @@ func TestOrderValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		ord := baseOrderWithLines(t)
 		require.NoError(t, ord.Calculate())
-		require.NoError(t, ord.Validate())
+		require.NoError(t, rules.Validate(ord))
 	})
 
 	t.Run("with nil array entries", func(t *testing.T) {
@@ -41,15 +42,7 @@ func TestOrderValidation(t *testing.T) {
 		ord.Complements = append(ord.Complements, nil)
 		ord.Attachments = append(ord.Attachments, nil)
 		require.NoError(t, ord.Calculate())
-		err := ord.Validate()
-		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
-		assert.ErrorContains(t, err, "preceding: (0: is required.)")
-		assert.ErrorContains(t, err, "lines: (1: is required.)")
-		assert.ErrorContains(t, err, "discounts: (0: is required.)")
-		assert.ErrorContains(t, err, "charges: (0: is required.)")
-		assert.ErrorContains(t, err, "notes: (0: is required.)")
-		assert.ErrorContains(t, err, "complements: (0: is required.)")
-		assert.ErrorContains(t, err, "attachments: (0: is required.)")
+		require.NoError(t, rules.Validate(ord))
 	})
 }
 
@@ -197,4 +190,43 @@ func TestOrderJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestOrderFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	t.Run("purchase: customer→supplier", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypePurchase, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("sale: supplier→customer", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypeSale, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("quote: supplier→customer", func(t *testing.T) {
+		ord := &bill.Order{
+			Type: bill.OrderTypeQuote, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:supplier.example", ord.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:customer.example", ord.ToEndpoint().URI.String())
+	})
+
+	t.Run("nil order is a no-op", func(t *testing.T) {
+		var ord *bill.Order
+		assert.Nil(t, ord.FromEndpoint())
+		assert.Nil(t, ord.ToEndpoint())
+	})
 }

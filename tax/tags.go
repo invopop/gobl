@@ -1,12 +1,9 @@
 package tax
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Tags defines the structure to use for allowing an object to be assigned tags
@@ -131,30 +128,33 @@ type tagValidation struct {
 	keys []cbc.Key
 }
 
-// TagsIn provides a validation rule that will ensure the object's tags are contained
-// inside the list.
-func TagsIn(tags ...cbc.Key) validation.Rule {
+// TagsIn provides a rules.Test that will ensure the object's tags are all
+// contained inside the provided list.
+func TagsIn(tags ...cbc.Key) rules.Test {
 	return &tagValidation{keys: tags}
 }
 
-// Validate performs the tag validation process.
-func (tv *tagValidation) Validate(val interface{}) error {
+// Check implements the rules.Test interface.
+func (tv *tagValidation) Check(val any) bool {
 	list, ok := val.([]cbc.Key)
 	if !ok {
 		ts, ok := val.(Tags)
 		if !ok {
-			return nil
+			return true
 		}
 		list = ts.List
 	}
-	for i, k := range list {
+	for _, k := range list {
 		if !k.In(tv.keys...) {
-			return validation.Errors{
-				strconv.Itoa(i): fmt.Errorf("'%s' undefined", k),
-			}
+			return false
 		}
 	}
-	return nil
+	return true
+}
+
+// String implements the rules.Test interface.
+func (tv *tagValidation) String() string {
+	return "tags in valid set"
 }
 
 // JSONSchemaExtendWithDefs will add the provided set of tags to the JSON schema

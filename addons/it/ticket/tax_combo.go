@@ -2,11 +2,13 @@ package ticket
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Percentages required by AdE
@@ -81,31 +83,34 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(val any) error {
-	c, ok := val.(*tax.Combo)
-	if !ok || c == nil {
-		return nil
-	}
-	switch c.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				validation.When(
-					c.Percent == nil,
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.When(is.Func("VAT without percent", taxComboIsVATWithoutPercent),
+			rules.Field("ext",
+				rules.Assert("01",
+					fmt.Sprintf("exempt VAT combo requires '%s' extension", ExtKeyExempt),
 					tax.ExtensionsRequire(ExtKeyExempt),
 				),
-				validation.Skip,
 			),
-			validation.Field(&c.Percent,
-				validation.By(
-					validatePercentage,
+		),
+		rules.When(is.Func("is VAT", taxComboIsVAT),
+			rules.Field("percent",
+				rules.Assert("02", "must be a valid value",
+					is.FuncError("valid percentage", validatePercentage),
 				),
-				validation.Skip,
 			),
-		)
-	default:
-		return nil
-	}
+		),
+	)
+}
+
+func taxComboIsVAT(val any) bool {
+	c, ok := val.(*tax.Combo)
+	return ok && c != nil && c.Category == tax.CategoryVAT
+}
+
+func taxComboIsVATWithoutPercent(val any) bool {
+	c, ok := val.(*tax.Combo)
+	return ok && c != nil && c.Category == tax.CategoryVAT && c.Percent == nil
 }
 
 func validatePercentage(val any) error {

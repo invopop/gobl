@@ -2,16 +2,30 @@
 package mx
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Mexico.
+const CountryCode = "MX"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode),
+			norm.For(normalizeTaxIdentity),
+		),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeInvoice), // *bill.Invoice
+	)
 }
 
 // Official SAT codes to include in stamps.
@@ -27,9 +41,9 @@ const (
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago’s codes
-	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion’s codes
-	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto’s codes
+	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago's codes
+	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion's codes
+	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto's codes
 )
 
 // New provides the tax region definition
@@ -82,28 +96,7 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:    "America/Mexico_City",
-		Validator:   Validate,
-		Normalizer:  Normalize,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
 	}
-}
-
-// Normalize performs regime specific calculations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *tax.Identity:
-		NormalizeTaxIdentity(obj)
-	}
-}
-
-// Validate validates a document against the tax regime.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return ValidateTaxIdentity(obj)
-	}
-	return nil
 }

@@ -1,0 +1,52 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "NO"
+uuid: "b5d2e3f4-6a7b-8c9d-0e1f-2a3b4c5d6e7f"
+currency: NOK
+series: "2025"
+code: "0005"
+issue_date: "2025-06-28"
+
+supplier:
+  name: Reisebyrå AS
+  tax_id:
+    country: "NO"
+    code: "923456783"
+  addresses:
+    - street: Eksempelveien 1
+      locality: Oslo
+      code: "0150"
+      country: "NO"
+
+customer:
+  name: Mottaker AS
+  tax_id:
+    country: "NO"
+    code: "987654325"
+  addresses:
+    - street: Kundeveien 42
+      locality: Bergen
+      code: "5003"
+      country: "NO"
+
+lines:
+  - quantity: "10"
+    item:
+      name: Konsulenttjenester
+      price: "1500.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "20"
+    item:
+      name: Fersk laks
+      price: "250.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: "4"
+    item:
+      name: Hotellovernatting
+      price: "1200.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced

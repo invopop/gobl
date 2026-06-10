@@ -1,10 +1,10 @@
 package l10n
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Code is used for short identifiers like country or state codes.
@@ -22,7 +22,10 @@ const CodeEmpty Code = ""
 
 // Validate ensures the code is formatted correctly.
 func (c Code) Validate() error {
-	return validation.Match(codeFormat).Validate(string(c))
+	if !codeFormat.MatchString(string(c)) {
+		return fmt.Errorf("must be in a valid format")
+	}
+	return nil
 }
 
 // In returns true if the code is contained inside the provided set

@@ -2,14 +2,12 @@ package bill
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -23,7 +21,7 @@ func calculateLines(lines []*Line, cur currency.Code, rates []*currency.Exchange
 		}
 		l.Index = i + 1
 		if err := calculateLine(l, cur, rates, rr); err != nil {
-			return validation.Errors{strconv.Itoa(i): err}
+			return fmt.Errorf("%d: %w", i, err)
 		}
 	}
 	return nil
@@ -54,9 +52,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 		for i, sl := range l.Substituted {
 			sl.Index = i + 1
 			if err := calculateSubLine(sl, cur, rates, rr); err != nil {
-				return validation.Errors{
-					"substituted": validation.Errors{strconv.Itoa(i): err},
-				}
+				return fmt.Errorf("substituted: %d: %w", i, err)
 			}
 		}
 	}
@@ -69,9 +65,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 		for i, sl := range l.Breakdown {
 			sl.Index = i + 1
 			if err := calculateSubLine(sl, cur, rates, rr); err != nil {
-				return validation.Errors{
-					"breakdown": validation.Errors{strconv.Itoa(i): err},
-				}
+				return fmt.Errorf("breakdown: %d: %w", i, err)
 			}
 			if sl.Total != nil {
 				hasPrice = true
@@ -96,9 +90,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 	// Perform currency manipulation to ensure item's price is
 	// in the document's currency.
 	if err := calculateLineItemPrice(l.Item, cur, rates); err != nil {
-		return validation.Errors{
-			"item": err,
-		}
+		return fmt.Errorf("item: %w", err)
 	}
 	// Increase price accuracy for calculations
 	exp := zero.Exp()

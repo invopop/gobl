@@ -1,16 +1,15 @@
 package bill
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Charge keys for identifying the type of charge being applied.
@@ -100,41 +99,22 @@ type Charge struct {
 	// List of taxes to apply to the charge
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Extension codes that apply to the charge
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize performs normalization on the line and embedded objects using the
-// provided list of normalizers.
-func (m *Charge) Normalize(normalizers tax.Normalizers) {
-	if m == nil {
-		return
-	}
-	m.Code = cbc.NormalizeCode(m.Code)
+func normalizeCharge(m *Charge) {
 	m.Taxes = tax.CleanSet(m.Taxes)
-	m.Ext = tax.CleanExtensions(m.Ext)
-	tax.Normalize(normalizers, m.Taxes)
-	normalizers.Each(m)
 }
 
-// ValidateWithContext checks the charge's fields.
-func (m *Charge) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, m,
-		validation.Field(&m.UUID),
-		validation.Field(&m.Key),
-		validation.Field(&m.Code),
-		validation.Field(&m.Base),
-		validation.Field(&m.Percent,
-			validation.When(
-				m.Base != nil,
-				validation.Required,
+func chargeRules() *rules.Set {
+	return rules.For(new(Charge),
+		rules.When(is.Expr("Base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", is.Present),
 			),
 		),
-		validation.Field(&m.Amount),
-		validation.Field(&m.Taxes),
-		validation.Field(&m.Ext),
-		validation.Field(&m.Meta),
 	)
 }
 

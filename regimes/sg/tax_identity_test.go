@@ -4,34 +4,35 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/sg"
+	_ "github.com/invopop/gobl/regimes/sg"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
-		err  bool
+		err  string
 	}{
-		{name: "company GST", code: "M91234567X", err: false},
-		{name: "sole proprietorship GST", code: "MR2345678A", err: false},
-		{name: "overseas vendor GST", code: "MB2345678A", err: false},
-		{name: "overseas vendor GST 2", code: "MX2345678A", err: false},
-		{name: "invalid GST short", code: "M91234567", err: true},
-		{name: "invalid GST long", code: "M91234567XA", err: true},
-		{name: "invalid GST no M", code: "912345678X", err: true},
-		{name: "invalid GST no end letter", code: "M912345678", err: true},
+		{name: "company GST", code: "M91234567X"},
+		{name: "sole proprietorship GST", code: "MR2345678A"},
+		{name: "overseas vendor GST", code: "MB2345678A"},
+		{name: "overseas vendor GST 2", code: "MX2345678A"},
+		{name: "invalid GST short", code: "M91234567", err: "IDENTITY-01"},
+		{name: "invalid GST long", code: "M91234567XA", err: "IDENTITY-01"},
+		{name: "invalid GST no M", code: "912345678X", err: "IDENTITY-01"},
+		{name: "invalid GST no end letter", code: "M912345678", err: "IDENTITY-01"},
 		// UEN identities also
-		{name: "UEN (ROC)", code: "199912345A", err: false},
-		{name: "UEN (ROB)", code: "12345678A", err: false},
-		{name: "UEN (Others)", code: "T12AB1234A", err: false},
-		{name: "NIRC/FIN", code: "S1234567A", err: true},
-		{name: "Invalid short", code: "1234567A", err: true},
-		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
-		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
-		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
+		{name: "UEN (ROC)", code: "199912345A"},
+		{name: "UEN (ROB)", code: "12345678A"},
+		{name: "UEN (Others)", code: "T12AB1234A"},
+		{name: "NIRC/FIN", code: "S1234567A", err: "IDENTITY-01"},
+		{name: "Invalid short", code: "1234567A", err: "IDENTITY-01"},
+		{name: "Invalid UEN (ROC)", code: "2199123456", err: "IDENTITY-01"},
+		{name: "Invalid UEN (ROB)", code: "1234567A", err: "IDENTITY-01"},
+		{name: "Invalid UEN (Others)", code: "T12A1234A", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {
@@ -40,18 +41,20 @@ func TestValidateIdentity(t *testing.T) {
 				Country: "SG",
 				Code:    tt.code,
 			}
-			err := sg.Validate(id)
-			if tt.err {
-				assert.Error(t, err)
-			} else {
+			err := rules.Validate(id)
+			if tt.err == "" {
 				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
 			}
 		})
 	}
 
 	t.Run("nil", func(t *testing.T) {
 		var id *tax.Identity
-		err := sg.Validate(id)
+		err := rules.Validate(id)
 		assert.NoError(t, err)
 	})
 }

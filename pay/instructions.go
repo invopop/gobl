@@ -1,15 +1,14 @@
 package pay
 
 import (
-	"context"
 	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // Instructions determine how the payment has or should be made. A
@@ -33,9 +32,18 @@ type Instructions struct {
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Extension key-pairs values defined by a tax regime.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Non-structured additional data that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+func instructionsRules() *rules.Set {
+	return rules.For(new(Instructions),
+		rules.Field("key",
+			rules.Assert("01", "key is required", is.Present),
+			rules.AssertIfPresent("02", "key must be valid", HasValidMeansKey),
+		),
+	)
 }
 
 // Card contains simplified card holder data as a reference for the customer.
@@ -85,23 +93,11 @@ type Online struct {
 	URL string `json:"url" jsonschema:"title=URL"`
 }
 
-// Normalize will try to normalize the instructions.
-func (i *Instructions) Normalize() {
-	if i == nil {
-		return
-	}
-	i.Ref = cbc.NormalizeCode(i.Ref)
-	i.Detail = cbc.NormalizeString(i.Detail)
-	i.Notes = cbc.NormalizeString(i.Notes)
-	i.Ext = tax.CleanExtensions(i.Ext)
-}
-
-// Validate ensures the Online method details look correct.
-func (u *Online) Validate() error {
-	return validation.ValidateStruct(u,
-		validation.Field(&u.Key),
-		validation.Field(&u.Label),
-		validation.Field(&u.URL, validation.Required, is.URL),
+func onlineRules() *rules.Set {
+	return rules.For(new(Online),
+		rules.Field("url",
+			rules.Assert("01", "URL is required and must be valid", is.Present, is.URL),
+		),
 	)
 }
 
@@ -126,23 +122,6 @@ func (u *Online) UnmarshalJSON(data []byte) error {
 		u.URL = aux.Address
 	}
 	return nil
-}
-
-// Validate ensures the fields provided in the instructions are valid.
-func (i *Instructions) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the fields provided in the instructions are valid.
-func (i *Instructions) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
-		validation.Field(&i.Ref),
-		validation.Field(&i.CreditTransfer),
-		validation.Field(&i.DirectDebit),
-		validation.Field(&i.Online),
-		validation.Field(&i.Ext),
-	)
 }
 
 // JSONSchemaExtend extends the JSONSchema for the Instructions type.

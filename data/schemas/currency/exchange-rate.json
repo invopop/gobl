@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/currency/exchange-rate",
-  "$ref": "#/$defs/ExchangeRate",
+  "$ref": "#/$defs/currency.ExchangeRate",
   "$defs": {
-    "ExchangeRate": {
+    "currency.ExchangeRate": {
       "properties": {
         "from": {
           "$ref": "https://gobl.org/draft-0/currency/code",

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/tax",
-  "$ref": "#/$defs/Tax",
+  "$ref": "#/$defs/bill.Tax",
   "$defs": {
-    "Tax": {
+    "bill.Tax": {
       "properties": {
         "prices_include": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

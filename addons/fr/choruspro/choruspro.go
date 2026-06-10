@@ -3,21 +3,40 @@ package choruspro
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
+	// Key identifies the Chorus Pro addon family. Individual versions append
+	// a suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "fr-choruspro"
+
 	// V1 is the key for the Chorus Pro standard
-	V1 cbc.Key = "fr-choruspro-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("FR-CHORUSPRO"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		orgPartyRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeBillLine),
+		norm.For(normalizeOrgParty),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -58,28 +77,5 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions: extensions,
-		Validator:  validate,
-		Normalizer: normalize,
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	}
-	return nil
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *bill.Line:
-		normalizeBillLine(obj)
-	case *org.Party:
-		normalizeOrgParty(obj)
 	}
 }

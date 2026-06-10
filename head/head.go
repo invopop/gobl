@@ -2,12 +2,22 @@
 // headers.
 package head
 
-import "github.com/invopop/gobl/schema"
+import (
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+)
 
 func init() {
 	schema.Register(schema.GOBL.Add("head"),
 		Header{},
 		Stamp{},
 		Link{},
+	)
+	rules.Register(
+		"head",
+		rules.GOBL.Add("HEAD"),
+		headerRules(),
+		stampRules(),
+		linkRules(),
 	)
 }

@@ -6,19 +6,36 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for India.
+const CountryCode = "IN"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("in",
+		rules.GOBL.Add(CountryCode),
+		orgIdentityRules(),
+		orgItemRules(),
+		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeOrgIdentity),
+	)
 }
 
 // New provides the tax region definition for India.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "IN",
+		Country:   CountryCode,
 		Currency:  currency.INR,
 		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{
@@ -67,31 +84,6 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
-		Normalizer: Normalize,
 		Categories: taxCategories,
-	}
-}
-
-// Validate function assesses the document type to determine if validation is required.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateOrgIdentity(obj)
-	case *org.Item:
-		return validateOrgItem(obj)
-	}
-	return nil
-}
-
-// Normalize attempts to clean up the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
 	}
 }

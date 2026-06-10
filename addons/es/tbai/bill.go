@@ -1,14 +1,17 @@
 package tbai
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
@@ -32,8 +35,8 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	if tx == nil {
 		tx = &bill.Tax{}
 	}
-	if tx.Ext == nil {
-		tx.Ext = make(tax.Extensions)
+	if tx.Ext.IsZero() {
+		tx.Ext = tax.MakeExtensions()
 	}
 	if tx.Ext.Has(ExtKeyRegion) {
 		return
@@ -46,15 +49,15 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 	// to use them to set the region code automatically.
 	switch strings.ToLower(addr.Region) {
 	case "alava", "álava", "araba", "vi":
-		tx.Ext[ExtKeyRegion] = "VI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionVI)
 	case "bizkaia", "vizcaya", "bi":
-		tx.Ext[ExtKeyRegion] = "BI"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionBI)
 	case "gipuzkoa", "guipuzcoa", "guipúzcoa", "ss":
-		tx.Ext[ExtKeyRegion] = "SS"
+		tx.Ext = tx.Ext.Set(ExtKeyRegion, ExtValueRegionSS)
 	default:
 		return
 	}
-	if len(tx.Ext) > 0 {
+	if tx.Ext.Len() > 0 {
 		inv.Tax = tx
 	}
 }
@@ -75,120 +78,107 @@ func normalizeBillLine(line *bill.Line) {
 	}
 }
 
-func validateInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateInvoiceTax),
-			validation.Skip,
-		),
-		validation.Field(&inv.Customer,
-			validation.When(
-				!inv.HasTags(tax.TagSimplified),
-				validation.Required,
-				validation.By(validateInvoiceCustomer),
+func billInvoiceRules() *rules.Set {
+	return rules.For(new(bill.Invoice),
+		rules.Assert("09", "invoice must be in EUR or provide exchange rate for conversion", currency.CanConvertTo(currency.EUR)),
+		// Tax
+		// Code 01: tax required
+		// Code 02: region required in tax ext
+		rules.Field("tax",
+			rules.Assert("01", "tax is required", is.Present),
+			rules.Field("ext",
+				rules.Assert("02", fmt.Sprintf("extension '%s' is required", ExtKeyRegion),
+					tax.ExtensionsRequire(ExtKeyRegion),
+				),
 			),
-			validation.Skip,
 		),
-		validation.Field(&inv.Preceding,
-			validation.When(
-				inv.Type.In(es.InvoiceCorrectionTypes...),
-				validation.Required,
+		// Customer
+		// Code 03: customer required for non-simplified invoices
+		rules.When(
+			is.Func("non-simplified", func(val any) bool {
+				inv, ok := val.(*bill.Invoice)
+				return ok && inv != nil && !inv.HasTags(tax.TagSimplified)
+			}),
+			rules.Field("customer",
+				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
+				rules.Field("tax_id",
+					rules.Assert("08", "customer tax ID is required", is.Present),
+				),
 			),
-			validation.Each(
-				validation.By(validateInvoicePreceding),
-			),
-			validation.Skip,
 		),
-		validation.Field(&inv.Lines,
-			validation.Each(
-				validation.By(validateInvoiceLine),
-				validation.Skip,
+		// Preceding
+		// Code 04: preceding required for correction types
+		rules.When(
+			bill.InvoiceTypeIn(es.InvoiceCorrectionTypes...),
+			rules.Field("preceding",
+				rules.Assert("04", fmt.Sprintf("preceding documents are required for %s invoices",
+					strings.Join(cbc.KeyStrings(es.InvoiceCorrectionTypes), ", ")),
+					is.Present,
+				),
 			),
-			validation.Skip,
 		),
-		validation.Field(&inv.Notes,
-			org.ValidateNotesHasKey(org.NoteKeyGeneral),
-			validation.Skip,
+		// Code 05: each preceding issue_date required
+		// Code 06: each preceding ext correction required
+		rules.Field("preceding",
+			rules.Each(
+				rules.Field("issue_date",
+					rules.Assert("05", "preceding issue date is required", is.Present),
+				),
+				rules.Field("ext",
+					rules.Assert("06", fmt.Sprintf("preceding ext '%s' is required", ExtKeyCorrection),
+						tax.ExtensionsRequire(ExtKeyCorrection),
+					),
+				),
+			),
+		),
+		// Notes
+		// Code 07: must have a general note
+		rules.Field("notes",
+			rules.Assert("07", "with key 'general' missing",
+				is.Func("has general note", notesHasGeneralKey),
+			),
+		),
+		// Supplier
+		// Code 10: activity ext required for Bizkaia individuals (Modelo 140 LROE)
+		// Code 11: activity ext, when present, must be a valid epígrafe code
+		rules.When(
+			is.Func("Bizkaia individual", isBizkaiaIndividual),
+			rules.Field("supplier",
+				rules.Field("ext",
+					rules.Assert("10", fmt.Sprintf("extension '%s' is required for Bizkaia individuals", ExtKeyBIActivity),
+						tax.ExtensionsRequire(ExtKeyBIActivity),
+					),
+				),
+			),
+		),
+		rules.Field("supplier",
+			rules.Field("ext",
+				rules.Assert("11", fmt.Sprintf("extension '%s' must be a valid Bizkaia activity code (epígrafe)", ExtKeyBIActivity),
+					tax.ExtensionHasValidCode(ExtKeyBIActivity),
+				),
+			),
 		),
 	)
 }
 
-func validateInvoiceTax(val any) error {
-	obj, ok := val.(*bill.Tax)
-	if obj == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Ext,
-			tax.ExtensionsRequire(ExtKeyRegion),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceCustomer(val any) error {
-	obj, _ := val.(*org.Party)
-	if obj == nil {
-		return nil
-	}
-	// Customers must have a tax ID to at least set the country,
-	// and Spanish ones should also have an ID. There are more complex
-	// rules for exports.
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
-			validation.Required,
-			validation.When(
-				obj.TaxID != nil && obj.TaxID.Country.In("ES"),
-				tax.RequireIdentityCode,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoicePreceding(val any) error {
-	p, ok := val.(*org.DocumentRef)
+func notesHasGeneralKey(val any) bool {
+	notes, ok := val.([]*org.Note)
 	if !ok {
-		return nil
+		return false
 	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.IssueDate, validation.Required),
-		validation.Field(&p.Ext,
-			tax.ExtensionsRequire(ExtKeyCorrection),
-			validation.Skip,
-		),
-	)
+	for _, n := range notes {
+		if n.Key.In(org.NoteKeyGeneral) {
+			return true
+		}
+	}
+	return false
 }
 
-func validateInvoiceLine(value any) error {
-	obj, _ := value.(*bill.Line)
-	if obj == nil {
-		return nil
+func isBizkaiaIndividual(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Tax == nil || inv.Supplier == nil {
+		return false
 	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Taxes,
-			validation.Each(
-				validation.By(validateInvoiceLineTax),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceLineTax(value any) error {
-	obj, ok := value.(*tax.Combo)
-	if obj == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Ext,
-			validation.When(
-				obj.Key == tax.KeyExempt,
-				tax.ExtensionsRequire(ExtKeyExempt),
-			),
-			validation.Skip,
-		),
-	)
+	return inv.Tax.Ext.Get(ExtKeyRegion) == ExtValueRegionBI &&
+		es.TaxIdentityKey(inv.Supplier.TaxID) != es.TaxIdentityOrg
 }

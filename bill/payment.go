@@ -1,23 +1,25 @@
 package bill
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of the payment types supported.
@@ -72,6 +74,22 @@ var PaymentTypes = []*cbc.Definition{
 
 var isValidPaymentType = cbc.InKeyDefs(PaymentTypes)
 
+// PaymentTypeIn returns a test that passes when the Payment's Type is
+// one of the provided values. Intended as a guard inside rules.When
+// when an addon needs per-type rule branches.
+func PaymentTypeIn(types ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("payment type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
+		func(obj any) bool {
+			pmt, ok := obj.(*Payment)
+			if !ok || pmt == nil {
+				return false
+			}
+			return pmt.Type.In(types...)
+		},
+	)
+}
+
 // A Payment is used to link an invoice or invoices with a payment transaction.
 type Payment struct {
 	tax.Regime
@@ -81,8 +99,7 @@ type Payment struct {
 
 	// Type of payment document being issued.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Details on how the payment was made based on the original instructions.
-	Method *pay.Instructions `json:"method,omitempty" jsonschema:"title=Method"`
+
 	// Series is used to identify groups of payments by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
@@ -103,7 +120,7 @@ type Payment struct {
 	// Exchange rates to be used when converting the payment's monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 	// Extensions for additional codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Key information regarding previous versions of this document.
 	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
@@ -115,12 +132,16 @@ type Payment struct {
 	// Legal entity that receives the payment if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 
-	// List of documents that are being paid for.
-	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
-
 	// Ordering allows for additional information about the ordering process including references
 	// to other documents and alternative parties involved in the order-to-delivery process.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
+
+	// List of documents that are being paid for.
+	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
+	// Methods describes how the payment was settled. At least one method is
+	// required; multiple may be present when the payment was split across
+	// means (for example, partly card + partly cash).
+	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
 
 	// Total amount to be paid in this payment, either positive or negative according to the
 	// line types and totals. Calculated automatically.
@@ -137,75 +158,82 @@ type Payment struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate runs the validation rules for the payment without the context.
-func (pmt *Payment) Validate() error {
-	return pmt.ValidateWithContext(context.Background())
+// CanSign returns a boolean indicating whether the payment is ready to be signed
+// or not.
+func (pmt *Payment) CanSign() bool {
+	return !pmt.Code.IsEmpty()
 }
 
-// ValidateWithContext ensures that the fields contained in the Payment look correct.
-func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
-	ctx = pmt.validationContext(ctx)
-	r := pmt.RegimeDef()
-	return tax.ValidateStructWithContext(ctx, pmt,
-		validation.Field(&pmt.Regime),
-		validation.Field(&pmt.Addons),
-		validation.Field(&pmt.UUID),
-		validation.Field(&pmt.Type,
-			validation.Required,
-			isValidPaymentType,
+func normalizePayment(pmt *Payment) {
+	if pmt.Type == cbc.KeyEmpty {
+		pmt.Type = PaymentTypeReceipt
+	}
+}
+
+func paymentRules() *rules.Set {
+	return rules.For(new(Payment),
+		rules.Field("type",
+			rules.Assert("01", "payment type is required", is.Present),
+			rules.Assert("02", "payment type is not valid", isValidPaymentType),
 		),
-		validation.Field(&pmt.Method, validation.Required),
-		validation.Field(&pmt.Series),
-		validation.Field(&pmt.Code,
-			validation.When(
-				internal.IsSigned(ctx),
-				validation.Required.Error("required to sign payment"),
+		rules.Field("methods",
+			rules.Assert("03", "at least one payment method is required", is.Present),
+			rules.Each(
+				rules.Field("key",
+					rules.Assert("09", "payment method key is required", is.Present),
+				),
 			),
 		),
-		validation.Field(&pmt.IssueDate,
-			validation.Required,
-			cal.DateNotZero(),
+		rules.Field("issue_date",
+			rules.Assert("04", "payment issue date is required", is.Present),
 		),
-		validation.Field(&pmt.Currency,
-			validation.Required,
-			currency.CanConvertInto(pmt.ExchangeRates, r.GetCurrency()),
+		rules.Field("currency",
+			rules.Assert("05", "payment currency is required", is.Present),
 		),
-		validation.Field(&pmt.ExchangeRates,
-			validation.Each(validation.NotNil),
+		rules.Field("supplier",
+			rules.Assert("06", "payment supplier is required", is.Present),
 		),
-		validation.Field(&pmt.Ext),
-		validation.Field(&pmt.Preceding,
-			validation.Each(validation.NotNil),
+		rules.Field("lines",
+			rules.Assert("07", "payment lines are required", is.Present),
 		),
-		validation.Field(&pmt.Supplier, validation.Required),
-		validation.Field(&pmt.Customer),
-		validation.Field(&pmt.Payee),
-		validation.Field(&pmt.Lines,
-			validation.Required,
-			validation.Each(validation.NotNil),
+		rules.Assert("08", "methods sum must match total",
+			is.FuncError("methods sum", paymentMethodsSumMatchesTotal),
 		),
-		validation.Field(&pmt.Ordering),
-		validation.Field(&pmt.Total), // Totals may be zero or negative
-		validation.Field(&pmt.Notes,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&pmt.Complements,
-			validation.Each(validation.NotNil),
-		),
-		validation.Field(&pmt.Meta),
 	)
 }
 
-// validationContext builds a context with all the validators that the payment might
-// need for execution.
-func (pmt *Payment) validationContext(ctx context.Context) context.Context {
-	if r := pmt.RegimeDef(); r != nil {
-		ctx = r.WithContext(ctx)
+// paymentMethodsSumMatchesTotal verifies that the amounts on a payment's
+// Methods, after conversion to the document currency via ExchangeRates,
+// add up to the document Total. Methods without an explicit Currency are
+// assumed to be in the document Currency.
+func paymentMethodsSumMatchesTotal(val any) error {
+	pmt, ok := val.(*Payment)
+	if !ok || pmt == nil || len(pmt.Methods) == 0 {
+		return nil
 	}
-	for _, a := range pmt.AddonDefs() {
-		ctx = a.WithContext(ctx)
+	exp := pmt.Total.Exp()
+	if def := pmt.Currency.Def(); def != nil {
+		exp = def.Zero().Exp()
 	}
-	return ctx
+	sum := num.MakeAmount(0, exp)
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		from := m.Currency
+		if from == currency.CodeEmpty {
+			from = pmt.Currency
+		}
+		converted := currency.Convert(pmt.ExchangeRates, from, pmt.Currency, m.Amount)
+		if converted == nil {
+			return fmt.Errorf("missing exchange rate from %s to %s", from, pmt.Currency)
+		}
+		sum = sum.Add(*converted)
+	}
+	if sum.Compare(pmt.Total) != 0 {
+		return fmt.Errorf("sum %s does not match total %s", sum.String(), pmt.Total.String())
+	}
+	return nil
 }
 
 // Calculate performs all the normalizations and calculations required for the invoice
@@ -216,40 +244,8 @@ func (pmt *Payment) Calculate() error {
 	if pmt.Regime.IsEmpty() {
 		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
 	}
-	pmt.Normalize(pmt.normalizers())
+	norm.Normalize(pmt)
 	return pmt.calculate()
-}
-
-// Normalize is run as part of the Calculate method to ensure that the invoice
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
-	if pmt.Type == cbc.KeyEmpty {
-		pmt.Type = PaymentTypeReceipt
-	}
-	pmt.Series = cbc.NormalizeCode(pmt.Series)
-	pmt.Code = cbc.NormalizeCode(pmt.Code)
-
-	tax.Normalize(normalizers, pmt.Method)
-	tax.Normalize(normalizers, pmt.Supplier)
-	tax.Normalize(normalizers, pmt.Customer)
-	tax.Normalize(normalizers, pmt.Preceding)
-	tax.Normalize(normalizers, pmt.Lines)
-	tax.Normalize(normalizers, pmt.Ordering)
-	tax.Normalize(normalizers, pmt.Notes)
-
-	normalizers.Each(pmt)
-}
-
-func (pmt *Payment) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := pmt.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range pmt.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
 }
 
 func (pmt *Payment) calculate() error {
@@ -273,9 +269,7 @@ func (pmt *Payment) calculate() error {
 		pmt.Currency = r.Currency
 	}
 	if pmt.Currency == currency.CodeEmpty {
-		return validation.Errors{
-			"currency": fmt.Errorf("required, unable to determine"),
-		}
+		return fmt.Errorf("currency: required, unable to determine")
 	}
 
 	var total *num.Amount
@@ -286,11 +280,7 @@ func (pmt *Payment) calculate() error {
 		l.Index = i + 1
 
 		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
-			return validation.Errors{
-				"lines": validation.Errors{
-					fmt.Sprintf("%d", l.Index): err,
-				},
-			}
+			return fmt.Errorf("lines: %d: %w", l.Index, err)
 		}
 
 		// Add the totals
@@ -307,6 +297,82 @@ func (pmt *Payment) calculate() error {
 	}
 	if total != nil {
 		pmt.Total = *total
+	}
+
+	// Apply percent-based amounts and auto-fill the single-method case from
+	// the document Total when no Amount or Currency was provided.
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		m.CalculateFrom(pmt.Total)
+	}
+	if len(pmt.Methods) == 1 {
+		m := pmt.Methods[0]
+		if m != nil && m.Amount.IsZero() && m.Currency == currency.CodeEmpty {
+			m.Amount = pmt.Total
+		}
+	}
+
+	return nil
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this payment document. A `request` (supplier asks the
+// customer to pay) and `receipt` (supplier confirms funds received)
+// flow from supplier to customer; an `advice` (customer notifies the
+// supplier that payment has been made) flows the other way.
+func (pmt *Payment) FromEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Customer.FirstEndpoint()
+	}
+	return pmt.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this payment document. Inverse of FromEndpoint.
+func (pmt *Payment) ToEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Supplier.FirstEndpoint()
+	}
+	return pmt.Customer.FirstEndpoint()
+}
+
+// UnmarshalJSON migrates documents that use the legacy singular `method`
+// field (a [pay.Instructions]) into the [Payment.Methods] slice.
+func (pmt *Payment) UnmarshalJSON(data []byte) error {
+	type Alias Payment
+	aux := struct {
+		Method *pay.Instructions `json:"method,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(pmt),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Method != nil && len(pmt.Methods) == 0 {
+		var ct *pay.CreditTransfer
+		if len(aux.Method.CreditTransfer) > 0 {
+			ct = aux.Method.CreditTransfer[0]
+		}
+		pmt.Methods = []*pay.Record{{
+			Key:            aux.Method.Key,
+			Ref:            string(aux.Method.Ref),
+			Description:    aux.Method.Detail,
+			Card:           aux.Method.Card,
+			CreditTransfer: ct,
+			DirectDebit:    aux.Method.DirectDebit,
+			Online:         aux.Method.Online,
+			Ext:            aux.Method.Ext,
+			Meta:           aux.Method.Meta,
+		}}
 	}
 	return nil
 }

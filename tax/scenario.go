@@ -1,11 +1,10 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // ScenarioSet is a collection of tax scenarios for a given schema that can be used to
@@ -80,7 +79,7 @@ type Scenario struct {
 
 	// Ext represents a set of tax extensions that should be applied to
 	// the document in the appropriate "tax" context.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // ScenarioSummary is the result after running through a set of
@@ -100,6 +99,17 @@ func NewScenarioSet(schema string) *ScenarioSet {
 	}
 }
 
+func scenarioSetRules() *rules.Set {
+	return rules.For(new(ScenarioSet),
+		rules.Field("schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+		rules.Field("list",
+			rules.Assert("02", "at least one scenario is required", is.Present),
+		),
+	)
+}
+
 // Merge appends the scenarios from the other set to the current set.
 func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 	for _, os := range other {
@@ -110,21 +120,12 @@ func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 	}
 }
 
-// ValidateWithContext checks the scenario set for errors.
-func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, ss,
-		validation.Field(&ss.Schema, validation.Required),
-		validation.Field(&ss.List, validation.Required),
-	)
-	return err
-}
-
 // ExtensionKeys extracts all the possible extension keys that could be applied to a
 // document.
 func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
 	keys := make([]cbc.Key, 0)
 	for _, row := range ss.List {
-		for k := range row.Ext {
+		for _, k := range row.Ext.Keys() {
 			if !k.In(keys...) {
 				keys = append(keys, k)
 			}
@@ -150,7 +151,7 @@ func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*Note, 0),
 		Codes: make(cbc.CodeMap),
-		Ext:   make(Extensions),
+		Ext:   MakeExtensions(),
 	}
 	for _, s := range ss.List {
 		if s.match(doc) {
@@ -160,9 +161,7 @@ func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
 			}
-			for k, v := range s.Ext {
-				summary.Ext[k] = v
-			}
+			summary.Ext = summary.Ext.Merge(s.Ext)
 		}
 	}
 	return summary
@@ -204,10 +203,10 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 		// and reject if none found. We intentionally don't try
 		// to combine extensions from the document.
 		for _, ext := range doc.GetExtensions() {
-			v, ok := ext[s.ExtKey]
-			if !ok {
+			if !ext.Has(s.ExtKey) {
 				continue // try next extension
 			}
+			v := ext.Get(s.ExtKey)
 			if s.ExtCode != "" {
 				if v == s.ExtCode {
 					return true
@@ -254,18 +253,4 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 		return true
 	}
 	return false
-}
-
-// ValidateWithContext checks the scenario for errors, using the regime in the context
-// to validate the list of tags.
-func (s *Scenario) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, s,
-		validation.Field(&s.Types),
-		validation.Field(&s.Tags), // consider validating tags in context
-		validation.Field(&s.Name),
-		validation.Field(&s.Note),
-		validation.Field(&s.Codes),
-		validation.Field(&s.Ext),
-	)
-	return err
 }

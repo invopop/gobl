@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/currency/code",
-  "$ref": "#/$defs/Code",
+  "$ref": "#/$defs/currency.Code",
   "$defs": {
-    "Code": {
+    "currency.Code": {
       "oneOf": [
         {
           "const": "USD",

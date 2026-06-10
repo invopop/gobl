@@ -6,19 +6,30 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the ISO 3166-2 code for Brazil.
+const CountryCode = "BR"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("br", rules.GOBL.Add(CountryCode),
+		orgPartyRules(),
+		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
 }
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "BR",
+		Country:  CountryCode,
 		Currency: currency.BRL,
 		Name: i18n.String{
 			i18n.EN: "Brazil",
@@ -58,8 +69,6 @@ func New() *tax.RegimeDef {
 			},
 		},
 		TimeZone:   "America/Sao_Paulo",
-		Validator:  Validate,
-		Normalizer: Normalize,
 		Extensions: extensions,
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
@@ -70,26 +79,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *org.Party:
-		return validateParty(obj)
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }

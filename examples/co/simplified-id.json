@@ -12,11 +12,11 @@
   "supplier": {
     "tax_id": {
       "country": "CO",
-      "code": "9014514812",
-      "zone": "11001"
+      "code": "9014514812"
     },
     "name": "EXAMPLE SUPPLIER S.A.S.",
     "ext": {
+      "co-dian-municipality": "11001",
       "co-dian-fiscal-responsibility": "O-23"
     }
   },

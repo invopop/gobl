@@ -6,18 +6,30 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for United Arab Emirates.
+const CountryCode = "AE"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("ae", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode),
+			norm.For(func(id *tax.Identity) {
+				tax.NormalizeIdentity(id)
+			})),
+	)
 }
 
 // New provides the tax region definition for AE.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   "AE",
+		Country:   CountryCode,
 		Currency:  currency.AED,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
@@ -59,28 +71,6 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
-		Normalizer: Normalize,
 		Categories: taxCategories,
-	}
-}
-
-// Validate function assesses the document type to determine if validation is required.
-// Note that, under the AE tax regime, validation of the supplier's tax ID is not
-// necessary if the business does not meet the mandatory registration threshold.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
-}
-
-// Normalize attempts to clean up the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-
 	}
 }

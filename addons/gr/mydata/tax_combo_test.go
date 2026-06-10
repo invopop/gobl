@@ -5,13 +5,14 @@ import (
 
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestValidateTaxCombo(t *testing.T) {
-	ad := tax.AddonForKey(mydata.V1)
 
 	t.Run("vat category presence", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -20,10 +21,10 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(4, 2),
 		}
-		err := ad.Validator(tc)
-		assert.ErrorContains(t, err, "ext: (gr-mydata-vat-rate: required.)")
-		ad.Normalizer(tc)
-		assert.NoError(t, ad.Validator(tc))
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "VAT combo requires 'gr-mydata-vat-rate' extension")
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 
 	t.Run("exemption presence", func(t *testing.T) {
@@ -31,14 +32,14 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 		}
-		ad.Normalizer(tc)
-		err := ad.Validator(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
+		err := rules.Validate(tc, withAddonContext())
 		assert.NoError(t, err)
 	})
 
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
-		assert.NoError(t, ad.Validator(tc))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 
 	t.Run("non-vat category", func(t *testing.T) {
@@ -46,7 +47,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Category: "FOO",
 			Percent:  num.NewPercentage(4, 2),
 		}
-		assert.NoError(t, ad.Validator(tc))
+		assert.NoError(t, rules.Validate(tc, withAddonContext()))
 	})
 }
 
@@ -55,7 +56,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Nil(t, tc)
 	})
 
@@ -66,7 +67,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(4, 2),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "4%", tc.Percent.String())
 		assert.Equal(t, "standard", tc.Key.String())
 		assert.Equal(t, "general", tc.Rate.String())
@@ -80,7 +81,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateReduced,
 			Percent:  num.NewPercentage(4, 2),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "4%", tc.Percent.String())
 		assert.Equal(t, "standard", tc.Key.String())
 		assert.Equal(t, "reduced", tc.Rate.String())
@@ -93,9 +94,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Rate:     tax.RateReduced,
 			Percent:  num.NewPercentage(4, 2),
-			Ext:      tax.Extensions{mydata.ExtKeyExemption: "3"},
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{mydata.ExtKeyExemption: "3"}),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "4%", tc.Percent.String())
 		assert.Equal(t, "standard", tc.Key.String())
 		assert.Equal(t, "reduced", tc.Rate.String())
@@ -108,7 +109,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "7", tc.Ext.Get(mydata.ExtKeyExemption).String())
 		assert.Equal(t, "exempt", tc.Key.String())
 	})
@@ -119,9 +120,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		for _, code := range codes {
 			tc := &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{mydata.ExtKeyExemption: code},
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{mydata.ExtKeyExemption: code}),
 			}
-			ad.Normalizer(tc)
+			norm.Normalize(tc, tax.AddonContext(mydata.V1))
 			assert.Equal(t, code, tc.Ext.Get(mydata.ExtKeyExemption))
 			assert.Equal(t, cbc.Code("7"), tc.Ext.Get(mydata.ExtKeyVATRate))
 			switch code {
@@ -148,7 +149,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "30", tc.Ext.Get(mydata.ExtKeyExemption).String())
 		assert.Equal(t, "7", tc.Ext.Get(mydata.ExtKeyVATRate).String())
 		assert.Equal(t, "outside-scope", tc.Key.String())
@@ -160,7 +161,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateGeneral,
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(mydata.V1))
 		assert.Equal(t, "29", tc.Ext.Get(mydata.ExtKeyExemption).String())
 		assert.Equal(t, "7", tc.Ext.Get(mydata.ExtKeyVATRate).String())
 		assert.Equal(t, "outside-scope", tc.Key.String())

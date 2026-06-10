@@ -4,7 +4,10 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,28 +18,28 @@ func TestOrderingNormalize(t *testing.T) {
 		Projects: []*org.DocumentRef{
 			{
 				Code: " Bar ",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"missing": "",
-				},
+				}),
 			},
 		},
 	}
-	o.Normalize(nil)
+	norm.Normalize(o)
 	assert.Equal(t, "Foo", o.Code.String())
 	assert.Equal(t, "Bar", o.Projects[0].Code.String())
-	assert.Empty(t, o.Projects[0].Ext)
+	assert.True(t, o.Projects[0].Ext.IsZero())
 }
 
 func TestOrderingValidate(t *testing.T) {
 	o := &bill.Ordering{
 		Code: "123",
 	}
-	err := o.Validate()
+	err := rules.Validate(o)
 	assert.NoError(t, err)
 
 	o.Projects = []*org.DocumentRef{
 		{},
 	}
-	err = o.Validate()
-	assert.ErrorContains(t, err, "projects: (0: (code: cannot be blank.).)")
+	err = rules.Validate(o)
+	assert.ErrorContains(t, err, "GOBL-ORG-DOCUMENTREF-01")
 }

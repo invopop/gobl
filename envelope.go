@@ -2,17 +2,17 @@ package gobl
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
-	"errors"
 	"strconv"
-
-	"github.com/invopop/validation"
+	"strings"
 
 	"github.com/invopop/gobl/c14n"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -36,6 +36,19 @@ type Envelope struct {
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
 
+// EndpointResolver is an optional interface that envelope-embedded
+// documents may implement to declare which party endpoints the
+// envelope should be routed from and to. When implemented, the
+// envelope's calculation step copies the URIs from the nominated
+// endpoints into Head.From / Head.To — but only when those fields
+// are not already populated by the caller. A nil return from
+// FromEndpoint / ToEndpoint leaves the corresponding header field
+// empty.
+type EndpointResolver interface {
+	FromEndpoint() *org.Endpoint
+	ToEndpoint() *org.Endpoint
+}
+
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
 // `new(Envelope)` call directly.
@@ -51,7 +64,7 @@ func NewEnvelope() *Envelope {
 // Envelop is a convenience method that will build a new envelope and insert
 // the contents document provided in a single swoop. The resulting envelope
 // will still need to be signed afterwards.
-func Envelop(doc interface{}) (*Envelope, error) {
+func Envelop(doc any) (*Envelope, error) {
 	e := NewEnvelope()
 	if err := e.Insert(doc); err != nil {
 		return nil, err
@@ -59,9 +72,117 @@ func Envelop(doc interface{}) (*Envelope, error) {
 	return e, nil
 }
 
-// Validate ensures that the envelope contains everything it should to be considered valid GoBL.
+func envelopeRules() *rules.Set {
+	return rules.For(new(Envelope),
+		rules.Field("$schema",
+			rules.Assert("01", "envelope schema is required", is.Present),
+		),
+		rules.Field("head",
+			rules.Assert("02", "envelope header is required", is.Present),
+		),
+		rules.Field("doc",
+			rules.Assert("03", "envelope doc is required", is.Present),
+			rules.AssertIfPresent("04", "envelope doc must have a known schema",
+				is.Func("doc has payload", docHasPayload),
+			),
+		),
+		rules.Assert("11", "envelope digest does not match document contents",
+			is.Func("valid digest", validDigest),
+		),
+		rules.When(is.Func("not signed", notSigned),
+			rules.Assert("12", "envelope header cannot have stamps when not signed",
+				is.Func("no stamps", hasNoStamps),
+			),
+		),
+		rules.When(is.Func("has signatures", hasSignatures),
+			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
+				isDocumentReadyToSign,
+			),
+		),
+	)
+}
+
+func docHasPayload(val any) bool {
+	obj, ok := val.(*schema.Object)
+	return ok && obj.HasPayload()
+}
+
+func notSigned(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) == 0
+}
+
+func hasSignatures(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) > 0
+}
+
+func hasNoStamps(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return true
+	}
+	return e.Head == nil || len(e.Head.Stamps) == 0
+}
+
+type documentCanSign interface {
+	CanSign() bool
+}
+
+// isDocumentReadyToSign is used to determine if the embedded document is reporting itself as ready to
+// sign. This is used by the signing rules to ensure that documents have all the
+// necessary information.
+var isDocumentReadyToSign rules.Test = is.Func(
+	"ready to sign",
+	func(val any) bool {
+		e, ok := val.(*Envelope)
+		if !ok || e == nil || e.Document == nil {
+			return false // cannot sign
+		}
+		obj, ok := e.Document.Instance().(documentCanSign)
+		if ok {
+			return obj.CanSign()
+		}
+		// assume all other documents are ready
+		return true
+	})
+
+func validDigest(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok || e.Head == nil {
+		return false
+	}
+	d1 := e.Head.Digest
+	d2, err := e.Digest()
+	if err != nil {
+		return false
+	}
+	return d1.Equals(d2) == nil
+}
+
+// Validate ensures that the envelope contains everything it should to be considered valid GOBL.
 func (e *Envelope) Validate() error {
-	return e.ValidateWithContext(context.Background())
+	return wrapError(rules.Validate(e))
+}
+
+// RulesContext injects validation directives carried on the envelope header
+// (currently Header.Ignore) into the validation context. rules.Validate calls
+// it automatically on the root object. We bridge through the envelope here
+// rather than have collectContext discover Header.RulesContext directly, since
+// the header is a pointer field and the field scan only resolves ContextAdders
+// on value (embedded) fields.
+func (e *Envelope) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		if e != nil && e.Head != nil {
+			e.Head.RulesContext()(rc)
+		}
+	}
 }
 
 // Verify checks the envelope's signatures to ensure the headers they contain
@@ -70,19 +191,17 @@ func (e *Envelope) Validate() error {
 // one of them. If no keys are provided, only the contents will be checked.
 func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 	if len(e.Signatures) == 0 {
-		return errors.New("no signatures to verify")
+		return ErrSignature.WithReason("no signatures to verify")
 	}
 
-	ve := make(validation.Errors)
+	var msgs []string
 	for i, s := range e.Signatures {
 		if err := e.verifySignature(s, keys...); err != nil {
-			ve[strconv.Itoa(i)] = err
+			msgs = append(msgs, "sigs["+strconv.Itoa(i)+"]: "+err.Error())
 		}
 	}
-	if len(ve) > 0 {
-		return ErrValidation.WithCause(validation.Errors{
-			"signatures": ve,
-		})
+	if len(msgs) > 0 {
+		return ErrSignature.WithReason("%s", strings.Join(msgs, "; "))
 	}
 
 	return nil
@@ -98,73 +217,26 @@ func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 }
 
 func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
-	if len(keys) == 0 {
-		// no keys provided, only check the contents
-		h := new(head.Header)
-		if err := sig.UnsafePayload(h); err != nil {
-			return errors.New("invalid signature payload")
-		}
-		if !e.Head.Contains(h) {
-			return errors.New("header mismatch")
-		}
-		return nil
-	}
-	for _, k := range keys {
-		h := new(head.Header)
-		if err := sig.VerifyPayload(k, h); err != nil {
-			continue
-		}
-		if e.Head.Contains(h) {
-			return nil
-		}
-		return errors.New("header mismatch")
-	}
-	return errors.New("no key match found")
-}
-
-// ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
-func (e *Envelope) ValidateWithContext(ctx context.Context) error {
-	if len(e.Signatures) > 0 {
-		ctx = internal.SignedContext(ctx)
-	}
-	err := validation.ValidateStructWithContext(ctx, e,
-		validation.Field(&e.Schema, validation.Required),
-		validation.Field(&e.Head, validation.Required),
-		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures),
-	)
-	if err != nil {
-		return wrapError(err)
-	}
-	return wrapError(e.verifyDigest())
-}
-
-func (e *Envelope) verifyDigest() error {
-	d1 := e.Head.Digest
-	d2, err := e.Digest()
-	if err != nil {
-		return err
-	}
-	if err := d1.Equals(d2); err != nil {
-		return ErrDigest.WithCause(err)
-	}
-	return nil
+	return e.Head.Verify(sig, keys...)
 }
 
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
-func (e *Envelope) Sign(key *dsig.PrivateKey) error {
+// iss is the signer's verifiable GOBL Net address (a gobl: URI) and aud is
+// the optional GOBL Net audience the signature is bound to; either may be
+// empty.
+func (e *Envelope) Sign(key *dsig.PrivateKey, iss, aud cbc.URI, opts ...head.SignOption) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
 	}
-	sig, err := key.Sign(e.Head)
+	sig, err := e.Head.Sign(key, iss, aud, opts...)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
 	if err := e.Validate(); err != nil {
-		// invalid envlopes cannot be signed
+		// invalid envelopes cannot be signed
 		e.Signatures = nil
 		return err
 	}
@@ -239,6 +311,7 @@ func (e *Envelope) calculate() error {
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.V7()
 	}
+	e.normalizeRouting()
 	var err error
 	e.Head.Digest, err = e.Digest()
 	if err != nil {
@@ -246,6 +319,30 @@ func (e *Envelope) calculate() error {
 	}
 
 	return nil
+}
+
+// normalizeRouting populates Head.From / Head.To from the embedded
+// document when (a) the document implements EndpointResolver and (b)
+// the relevant header field is empty. Operator-set From / To values
+// are preserved; missing endpoints are quietly skipped.
+func (e *Envelope) normalizeRouting() {
+	if e.Head == nil || e.Document == nil {
+		return
+	}
+	r, ok := e.Document.Instance().(EndpointResolver)
+	if !ok {
+		return
+	}
+	if e.Head.From == "" {
+		if ep := r.FromEndpoint(); ep != nil {
+			e.Head.From = ep.URI
+		}
+	}
+	if e.Head.To == "" {
+		if ep := r.ToEndpoint(); ep != nil {
+			e.Head.To = ep.URI
+		}
+	}
 }
 
 // Digest calculates a digital digest using the canonical JSON of the document.

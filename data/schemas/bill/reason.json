@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/reason",
+  "$ref": "#/$defs/bill.Reason",
+  "$defs": {
+    "bill.Reason": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "none",
+              "title": "No Issue",
+              "description": "Receiver of the documents sends the message just to update the status and there are no problems with document processing."
+            },
+            {
+              "const": "references",
+              "title": "References Incorrect",
+              "description": "Received document did not contain references as required by the receiver for correctly routing the document for approval or processing."
+            },
+            {
+              "const": "legal",
+              "title": "Legal information incorrect",
+              "description": "Information in the received document is not according to legal requirements."
+            },
+            {
+              "const": "unknown-receiver",
+              "title": "Receiver unknown",
+              "description": "The party to which the document is addressed is not known."
+            },
+            {
+              "const": "quality",
+              "title": "Item quality issue",
+              "description": "Unacceptable or incorrect quality."
+            },
+            {
+              "const": "delivery",
+              "title": "Delivery issues",
+              "description": "Delivery proposed or provided is not acceptable."
+            },
+            {
+              "const": "prices",
+              "title": "Prices incorrect",
+              "description": "Prices not according to previous expectation."
+            },
+            {
+              "const": "quantity",
+              "title": "Quantity incorrect",
+              "description": "Quantity not according to previous expectation."
+            },
+            {
+              "const": "items",
+              "title": "Items incorrect",
+              "description": "Items not according to previous expectation."
+            },
+            {
+              "const": "payment-terms",
+              "title": "Payment terms incorrect",
+              "description": "Payment terms not according to previous expectation."
+            },
+            {
+              "const": "not-recognized",
+              "title": "Not recognized",
+              "description": "Commercial transaction not recognized."
+            },
+            {
+              "const": "finance-terms",
+              "title": "Finance incorrect",
+              "description": "Finance terms not according to previous expectation."
+            },
+            {
+              "const": "partial",
+              "title": "Partially paid",
+              "description": "Payment is partially but not fully paid."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Reason for status is not defined by code."
+            }
+          ],
+          "title": "Key",
+          "description": "Key helps identify the reason."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description contains a simple text that describes the reason why the\noriginal document was not processed."
+        },
+        "faults": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/fault"
+          },
+          "type": "array",
+          "title": "Faults",
+          "description": "Faults provides more specific details about what cause the document\nto be rejected."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for local or format focussed data"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "description": "Reason helps the recipient of a message determine why they are receiving it."
+    }
+  }
+}

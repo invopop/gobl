@@ -1,11 +1,13 @@
 package bill_test
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -15,33 +17,33 @@ import (
 func TestTaxValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		tx := &bill.Tax{}
-		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(tx))
 	})
 	t.Run("with rounding", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "precise",
 		}
-		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(tx))
 	})
 	t.Run("with invalid rounding", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "currency-foo",
 		}
-		err := tx.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "rounding: must be a valid value")
+		err := rules.Validate(tx)
+		assert.ErrorContains(t, err, "rounding model is not valid")
 	})
 	t.Run("with tax point", func(t *testing.T) {
 		tx := &bill.Tax{
 			Point: "delivery",
 		}
-		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(tx))
 	})
 	t.Run("with invalid tax point", func(t *testing.T) {
 		tx := &bill.Tax{
 			Point: "invalid",
 		}
-		err := tx.ValidateWithContext(context.Background())
-		assert.ErrorContains(t, err, "point: must be a valid value")
+		err := rules.Validate(tx)
+		assert.ErrorContains(t, err, "tax point is not valid")
 	})
 }
 
@@ -50,14 +52,14 @@ func TestTaxNormalize(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "sum-then-round",
 		}
-		tx.Normalize(tax.Normalizers{})
+		norm.Normalize(tx)
 		assert.Equal(t, "precise", tx.Rounding.String())
 	})
 	t.Run("switch rounding, round-then-sum", func(t *testing.T) {
 		tx := &bill.Tax{
 			Rounding: "round-then-sum",
 		}
-		tx.Normalize(tax.Normalizers{})
+		norm.Normalize(tx)
 		assert.Equal(t, "currency", tx.Rounding.String())
 	})
 }
@@ -175,39 +177,39 @@ func TestInvoiceTaxTagsMigration(t *testing.T) {
 func TestTaxMergeExtensions(t *testing.T) {
 	t.Run("nil tax", func(t *testing.T) {
 		var tx *bill.Tax
-		ext := tax.Extensions{
+		ext := tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "standard",
-		}
+		})
 		tx = tx.MergeExtensions(ext)
-		assert.Equal(t, "standard", tx.Ext["vat-cat"].String())
+		assert.Equal(t, "standard", tx.Ext.Get("vat-cat").String())
 	})
-	t.Run("nil extensions", func(t *testing.T) {
+	t.Run("zero extensions", func(t *testing.T) {
 		tx := &bill.Tax{}
-		tx = tx.MergeExtensions(nil)
-		assert.Nil(t, tx.Ext)
+		tx = tx.MergeExtensions(tax.Extensions{})
+		assert.True(t, tx.Ext.IsZero())
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat": "standard",
-			},
+			}),
 		}
-		tx = tx.MergeExtensions(tax.Extensions{
+		tx = tx.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "reduced",
-		})
-		assert.Equal(t, "reduced", tx.Ext["vat-cat"].String())
+		}))
+		assert.Equal(t, "reduced", tx.Ext.Get("vat-cat").String())
 	})
 	t.Run("new extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-test": "bar",
-			},
+			}),
 		}
-		tx = tx.MergeExtensions(tax.Extensions{
+		tx = tx.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			"vat-cat": "reduced",
-		})
-		assert.Equal(t, "reduced", tx.Ext["vat-cat"].String())
-		assert.Equal(t, "bar", tx.Ext["vat-test"].String())
+		}))
+		assert.Equal(t, "reduced", tx.Ext.Get("vat-cat").String())
+		assert.Equal(t, "bar", tx.Ext.Get("vat-test").String())
 	})
 }
 
@@ -282,10 +284,10 @@ func TestTaxGetExt(t *testing.T) {
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat":  "standard",
 				"vat-rate": "21.0%",
-			},
+			}),
 		}
 		assert.Equal(t, "standard", tx.GetExt("vat-cat").String())
 		assert.Equal(t, "21.0%", tx.GetExt("vat-rate").String())
@@ -305,10 +307,10 @@ func TestTaxHasExt(t *testing.T) {
 	})
 	t.Run("with extensions", func(t *testing.T) {
 		tx := &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"vat-cat":  "standard",
 				"vat-rate": "21.0%",
-			},
+			}),
 		}
 		assert.True(t, tx.HasExt("vat-cat"))
 		assert.True(t, tx.HasExt("vat-rate"))

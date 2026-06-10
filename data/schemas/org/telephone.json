@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/telephone",
-  "$ref": "#/$defs/Telephone",
+  "$ref": "#/$defs/org.Telephone",
   "$defs": {
-    "Telephone": {
+    "org.Telephone": {
       "properties": {
         "uuid": {
           "type": "string",

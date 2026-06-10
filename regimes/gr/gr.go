@@ -6,12 +6,26 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for Greece.
+const CountryCode = "EL"
+
+// CountryISOCode is the ISO country code for Greece.
+const CountryISOCode = "GR"
+
 func init() {
 	tax.RegisterRegimeDef(New())
+	rules.Register("gr", rules.GOBL.Add(CountryISOCode), taxIdentityRules())
+	norm.Register(
+		// "GR" is the ISO code; "EL" is the tax code Greece uses. Both resolve
+		// to this regime (see AltCountryCodes), so normalize either.
+		norm.When(tax.IdentityIn(CountryCode, CountryISOCode), norm.For(normalizeTaxIdentity)),
+	)
 }
 
 // Official IAPR codes to include in stamps.
@@ -26,9 +40,9 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country: "EL",
+		Country: CountryCode,
 		AltCountryCodes: []l10n.Code{
-			"GR", // regular ISO code
+			CountryISOCode,
 		},
 		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
@@ -71,25 +85,6 @@ func New() *tax.RegimeDef {
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Scenarios:              scenarios,
 		Corrections:            corrections,
-		Validator:              Validate,
-		Normalizer:             Normalize,
 		Categories:             taxCategories,
-	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		return validateTaxIdentity(obj)
-	}
-	return nil
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

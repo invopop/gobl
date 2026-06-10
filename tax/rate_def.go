@@ -1,14 +1,14 @@
 package tax
 
 import (
-	"context"
 	"errors"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // RateDef defines a single rate inside a category
@@ -44,7 +44,7 @@ type RateValueDef struct {
 	// Only apply this rate if one of the tags is present in the invoice.
 	// Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Ext map of keys that can be used to filter to determine if the rate applies.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Percent rate that should be applied
@@ -55,25 +55,24 @@ type RateValueDef struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// ValidateWithContext checks that our tax definition is valid. This is only really
-// meant to be used when testing new regional tax definitions.
-func (r *RateDef) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, r,
-		validation.Field(&r.Rate, validation.Required),
-		validation.Field(&r.Keys),
-		validation.Field(&r.Name, validation.Required),
-		validation.Field(&r.Values,
-			validation.By(checkRateValuesOrder),
+func rateDefRules() *rules.Set {
+	return rules.For(new(RateDef),
+		rules.Field("rate",
+			rules.Assert("01", "rate is required", is.Present),
 		),
-		validation.Field(&r.Meta),
-	)
-	return err
-}
-
-// Validate ensures the tax rate contains all the required fields.
-func (rv *RateValueDef) Validate() error {
-	return validation.ValidateStruct(rv,
-		validation.Field(&rv.Percent, validation.Required),
+		rules.Field("name",
+			rules.Assert("02", "name is required", is.Present),
+		),
+		rules.Field("values",
+			rules.Assert("03", "rate values must be in descending chronological order",
+				is.FuncError("date order", checkRateValuesOrder),
+			),
+			rules.Each(
+				rules.Field("percent",
+					rules.Assert("04", "rate value percent is required", is.Present),
+				),
+			),
+		),
 	)
 }
 
@@ -97,7 +96,7 @@ func (r *RateDef) HasKey(key cbc.Key) bool {
 // Value determines the tax rate value for the provided date and zone, if applicable.
 func (r *RateDef) Value(date cal.Date, ext Extensions) *RateValueDef {
 	for _, rv := range r.Values {
-		if len(rv.Ext) > 0 {
+		if rv.Ext.Len() > 0 {
 			if !ext.Contains(rv.Ext) {
 				continue
 			}
@@ -109,7 +108,7 @@ func (r *RateDef) Value(date cal.Date, ext Extensions) *RateValueDef {
 	return nil
 }
 
-func checkRateValuesOrder(list interface{}) error {
+func checkRateValuesOrder(list any) error {
 	values, ok := list.([]*RateValueDef)
 	if !ok {
 		return errors.New("must be a tax rate value array")
@@ -118,7 +117,7 @@ func checkRateValuesOrder(list interface{}) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
-		if len(v.Ext) > 0 {
+		if v.Ext.Len() > 0 {
 			// TODO: check extensions order also
 			// Not too important at the moment.
 			continue

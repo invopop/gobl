@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -14,7 +15,7 @@ func TestOrderReplicate(t *testing.T) {
 	ord.ValueDate = cal.NewDate(2022, 6, 1)
 	ord.OperationDate = cal.NewDate(2022, 6, 5)
 	require.NoError(t, ord.Calculate())
-	require.NoError(t, ord.Validate())
+	require.NoError(t, rules.Validate(ord))
 
 	assert.Equal(t, "2022-06-13", ord.IssueDate.String())
 	assert.Equal(t, "12:00:00", ord.IssueTime.String())

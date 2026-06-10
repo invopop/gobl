@@ -6,34 +6,202 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- **breaking**: the GOBL CLI (`cmd/gobl`), the HTTP API handler (`pkg/api`), the MCP server, the operations engine (`internal/ops`), and the WebAssembly build (`wasm/`) have **moved out of core** into [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev), which composes this library with the full addon set. Core is now a pure document library (schemas, tax/document model, addons, data). Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`. The `github.com/invopop/gobl/cmd/gobl` and `github.com/invopop/gobl/pkg/api` import paths are gone (`internal/ops`/`internal/mcp` were internal, so no external breakage there).
+- `addons/fr/ctc`: **breaking**: the French CTC addon has been **removed from core** and is now published as a standalone, opt-in module, [`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc), carrying the full Flow 2 / Flow 6 / Flow 10 extensions, normalizers, and validation rules. Projects that handle French CTC documents must add a blank import of the addon (`_ "github.com/invopop/gobl.fr.ctc/addon"`); the `$addons` keys (`fr-ctc-v1`, `fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`) still require the addon to be loaded at `Validate`/`Calculate` time, so a document declaring one without the module imported fails with `add-on must be registered`.
+- `head`: signing payload is now `{uuid, dig, iss, aud, iat}` — each signature carries the signer's verifiable GOBL Net identity (`iss`), an optional bound audience (`aud`), and a JWT-standard `iat` claim (Unix seconds, per RFC 7519 §2). `iss`/`aud` are `gobl:<fqdn>` `cbc.URI` values. `head.SigningPayload.IssuedAt` (`int64`) replaces the previous `TS *cal.Timestamp` field; the JSON tag is `iat`. `head.SignedPayload(sig)` continues to extract the payload. Header `from`/`to` remain unsigned intent/routing fields.
+- `head`: `Header.Sign`/`Envelope.Sign` now take `(key, iss, aud cbc.URI, opts ...head.SignOption)` — the option type changed from `dsig.SignerOption` to a new `head.SignOption` that wraps both a scope assertion and forwarded `dsig.SignerOption`s. Existing default callers (`env.Sign(key, "", "")`) are unchanged. `Contains` is deprecated in favour of `Verify`.
+- `net`: the default `HTTPFetcher` now refuses to dial any host whose resolved IP is loopback, private (RFC 1918 / RFC 6598), link-local, multicast, or unspecified. This blocks SSRF attempts via a malicious `iss` URI that resolves to an internal service (cloud metadata, container localhost, intranet hosts). No public escape hatch — in-process test fixtures should inject their own `Fetcher` via `WithFetcher`.
+- `dsig`: `PublicKey.Allows(t time.Time)` replaces the previous `Allows(*cal.Timestamp)` signature. A zero-value `t` (signature without an `iat`) skips the window check.
+- `dsig`: **breaking** — `dsig.PublicKey` now carries optional `ValidFrom` / `ValidUntil` (`*cal.Timestamp`) fields that serialise as the RFC 7517 §4 extension members `valid_from` / `valid_until`; standard JOSE consumers ignore them. `head.Header.Verify` automatically calls `Allows` after the JWS verification, so every signed-envelope verification now enforces the key's validity window regardless of caller.
+- `dsig`: **removed** `WithGN` / `Signature.GN()` / the `gn` JWS header — the signer's address now lives in the signed `iss`. `dsig` signs generic payloads again (`WithJKU` retained).
+- `dsig`: key IDs are now generated as UUIDv7 (time-ordered) instead of UUIDv4. Kid lexical order is now chronological.
+- `net`: per-key public key lookup at `/.well-known/gobl/keys/<kid>` (no bulk `/keys` endpoint). `Client.FetchKey(ctx, addr, kid)` (and the convenience `FetchPublicKey`) fetches a single JWK directly. `Address.KeyURL(kid)` and `net.KeyPath(kid)` build the path; `JWKSPath` / `Address.JWKSURL()` name the bulk JWK Set surface served by `gobl.dev`'s `net serve` for jwt.io-style tooling.
+- `net`: `ParseAddress` now normalises Internationalised Domain Names (IDN) via `golang.org/x/net/idna` (IDNA2008 Lookup profile). U-Labels are accepted and converted to their ASCII A-Label / Punycode form; addresses on the wire are always A-Labels. `München.DE` and `xn--mnchen-3ya.de` parse to the same Address. Invalid IDN labels (e.g. leading-hyphen labels) MUST be rejected with `ErrAddressInvalid`.
+- `net`: `Client.VerifyEnvelope(ctx, env, expectedAud)` reads `iss` from the signed payload, fetches that issuer's published key from the per-key endpoint, verifies, optionally checks `aud`, enforces the key's validity window against the signed `iat`, and returns the issuer address.
+- `net`/`dsig`: **breaking** — `net.PublishedKey`, `net.KeySet`, `net.NewKeySet`, `net.ErrKeyNotFound`, `net.ErrKeySetInvalid` and the formerly-introduced `dsig.KeySet` / `dsig.ErrKeyNotFound` are all removed. Verifiers consume per-kid lookups via `net.Client.FetchKey` (returns `*dsig.PublicKey`); there is no in-memory "set of keys" abstraction.
+- **breaking**: normalization moved to the new `norm` package — normalizers are registered against a type (with optional guards) instead of declared as `Normalize` methods and recursed by hand. Removed `tax.Normalizers`/`tax.Normalize`/`tax.ExtractNormalizers`, the `Normalizer` field on `tax.AddonDef` and `tax.RegimeDef`, and the per-type `Normalize(tax.Normalizers)` methods. Adding addons during normalization is no longer supported — declare all required `$addons` up front (addon `Requires` are still expanded automatically).
+- `cbc.Code`: **breaking**: default normalization is now lenient — Unicode NFC, control-character removal, and whitespace trimming only; validation rejects just control characters and leading/trailing whitespace. The previous strict canonical cleaning and format check remain available via `NormalizeStrictCode` and the `cbc.StrictCode` validator.
+
+### Added
+
+- `org`: new units in the unit system with their UN/ECE Rec. 20/21 codes — `wk` (week, `WEE`), `yr` (year, `ANN`), `dl` (decilitre, `DLT`), `kl` (kilolitre, `K6`), `cg` (centigram, `CGM`), `lm` (linear metre, `LM`), `lft` (linear foot, `LF`), `pkt` (packet, `XPA`), `bdl` (bundle, `XBE`), and `blk` (block, `XOK`).
+- `tax`: an **approved external-addon registry** (`tax.ExternalAddon`, `tax.RegisterApprovedAddon`, `tax.ApprovedAddons`). Approved keys — curated in the `addons` package (`addons/external.go`) and reviewed by pull request — are recognised as valid `$addons` values in the JSON Schema even when their implementation lives in a separate module. This is recognition/governance only and does **not** relax the strict runtime requirement that the addon be loaded. The first entries are the French CTC keys, now implemented by `github.com/invopop/gobl.fr.ctc`.
+- `bill`: document lifecycle support — `bill.Status` (with `bill.StatusLine`, `bill.Reason`, `bill.Action`) and `bill.Payment` advice/receipt types — for modelling clearance and life-cycle messages. New schemas: `bill/status`, `bill/status-line`, `bill/reason`, `bill/action`, `bill/fault`.
+- `envelope` / `head`: envelope-level fault ignoring — a header may list fully-qualified rule fault codes to drop during validation, used when converting between document formats.
+- `rules`: `is.OneOf` and `is.AnyOf` testers (the latter renamed from `is.Or`), plus `rules.Ignore` / by-code fault dropping in the rules engine.
+- `norm`: new package providing registered, reflective normalization (the normalization counterpart to `rules`) — `norm.For`, `Register`/`RegisterWithGuard`, and a single-pass mutation-aware engine that applies the matching normalizers across the document graph.
+- `tax`: `Addons.AddAddons` helper for declaring addons programmatically before calculation; `en16931.NormalizeTaxCombo` made public for reuse outside the addon.
+- `pkg/examples`: reusable helpers — `Run` (a one-call golden-test entry point) plus `Convert`, `Sources`, `GoldenPath`, `IsEnvelope`, and `TestUUID` — so external addon and converter modules can ship example documents tested with the same calculate → validate → golden-compare conventions as core. Core's own example suite now uses them.
+- `net`: new package for GOBL Net remote verification using FQDN-based addresses (e.g., `billing.invopop.com`). `Address` type with deterministic per-key URL derivation, `Client` with `FetchPublicKey` / `VerifyEnvelope`, `Authorities` registry, `JWKSPath` and `Address.JWKSURL()` constants.
+- `net.Client.VerifyAuthority(ctx, env)`: checks that the envelope carries at least one cryptographically valid signature from an address in the client's `Authorities` list. Returns `ErrUnknownAuthority` when no candidate is from a known authority and `ErrVerifyFailed` when a candidate's signature fails the crypto check. Recommended use: `/who` consumers MAY require this by default and relax to self-signed for bootstrap discovery.
+- `head.SigningPayload.Scope` (`cbc.Key`) + `head.WithScope(scope)` signing option + `head.ScopeRegistered` / `head.ScopeVerified` constants: lets a signer (typically a KYC Authority countersigning a `/who` response) declare the level of confidence asserted. Scope is part of the signed payload — cryptographically bound to whoever stamped it; the field is `omitempty` so existing signatures with no scope remain valid.
+- `dsig`: `NewPublicKey` constructor from `jose.JSONWebKey`.
+- `head`: `Sign` and `Verify` methods on `Header`, signing only the immutable payload (UUID + Digest + iss/aud/iat).
+- `cbc`: new `URI` scalar type (a generic `scheme:opaque` URI with `Scheme()`/`Opaque()`/`Host()`/`Path()` accessors and a `format: uri` JSON Schema).
+- `head`: `from`/`to` header fields (`cbc.URI`) identifying an envelope's issuer and receiver (e.g. `gobl:samlown.example.com`, `iso6523-actorid-upis::9920:x3157928m`, `mailto:billing@example.com`). Unsigned header metadata; scheme interpretation is left to consumers.
+- `org`: `Endpoint` model (`uuid` + `label` + `cbc.URI`) and `Party.Endpoints`, the going-forward way to carry addresses; `Party.Endpoint(scheme)` looks one up by URI scheme. `org.Inbox` is retained for formats that still need it (e.g. Italy's SDI/FatturaPA).
+- `addons/eu/en16931`: migration helper — when a party carries a `peppol`-keyed `org.Inbox`, the normalizer additively copies it into an `iso6523-actorid-upis::<scheme>:<code>` `org.Endpoint`. The source inbox is left in place for back-compat with consumers that still read it; an existing `iso6523-actorid-upis` endpoint blocks the copy (no duplicates).
+- `gobl.EndpointResolver` interface + `Envelope.Calculate()` integration: documents that implement `FromEndpoint() *org.Endpoint` / `ToEndpoint() *org.Endpoint` now have their first-endpoint URIs auto-copied into `Head.From` / `Head.To` whenever those header fields are empty. Operator-set From/To values are preserved. `bill.Invoice`, `bill.Payment`, `bill.Status`, `bill.Order`, and `bill.Delivery` all implement the interface with direction picked by document type: invoices flow Supplier→Customer (Customer→Supplier when `$tags: [self-billed]`); payment requests/receipts flow Supplier→Customer while advices invert; order purchases flow Customer→Supplier while sales and quotes invert; delivery despatch flows from Despatcher (or Supplier) to Receiver (or Customer) while receipts invert; status responses flow Customer→Supplier, updates Supplier→Customer, and `system` is left ambiguous (nil). Also adds `org.Party.FirstEndpoint()` as the routing-priority helper.
+- `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
+- `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
+- `no`: added the Norwegian (NO) tax regime.
+
+### Fixed
+
+- `norm`: normalization now prunes `nil` pointer/interface entries from every slice in the document graph (e.g. a JSON `null` in an `identities`, `preceding`, or status `lines` array). This removes a class of panics in regime/addon normalizers and validators that iterated such slices, and means downstream consumers never see `nil` array elements. Slices with no `nil`s are left untouched (no reallocation).
+- `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
+- `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
+- `de`: corrected historical VAT rates (post-COVID restoration dates, pre-1998 standard rate, reduced rate history) and replaced the OECD source with official German government sources.
+
+## [v0.403.0] - 2026-05-13
+
+### Changed
+
+- `pay`: **breaking**: `pay.Advance` renamed to `pay.Record` — a Record is a single payment event (means + amount + currency + optional date/percent/extensions) and is the shape used both for advances on invoices and for payment methods on payment documents. The previous names (`pay.Advance` and the transitional `pay.Method`) are **removed** with no aliases; consumers must update to `pay.Record`. The schema URL is now `https://gobl.org/draft-0/pay/record` (the previous `pay/advance` schema is gone). The `description` field is no longer required by validation (it was a poor fit for payment-document methods); contexts that need it should enforce it themselves. The `pay.Record.Grant` boolean field has been **removed** — FacturaE consumers should set the new `es-facturae-subsidy` extension (`"S"`) on the record's `ext` map instead.
+- `bill`: **breaking**: `bill.Payment.Method` (`*pay.Instructions`) replaced by `bill.Payment.Methods` (`[]*pay.Record`) so a single payment document can record multiple methods with their own amounts and currencies (required for Portugal's SAF-T, among others). Documents that use the old singular `method` JSON field are migrated transparently via `UnmarshalJSON` into a single-element `methods` array. When exactly one method is present and its `amount` is zero, `Calculate()` auto-fills it from the document `Total`. Validation now also enforces that the sum of method amounts (converted to the document currency via `ExchangeRates` where needed) equals the document `Total` — partial payments must have method amounts that line up with the line totals being paid.
+- `tax`: **breaking**: removed the `tax.ExtMap` type alias introduced in v0.402.0. `tax.Extensions` now wraps `cbc.CodeMap` directly, and `tax.ExtensionsOf` accepts a `cbc.CodeMap`. Callers should replace `tax.ExtMap{...}` with `cbc.CodeMap{...}`.
+
+### Added
+
+- `tax`: Added `CorrectionNormalize` callback type and `Normalize` field on `CorrectionDefinition` for addon-specific correction logic.
+- `bill`: Added `CorrectionOptionsValue()` accessor on `Invoice` for use by correction normalizers.
+- `cbc.CodeMap`: added `Lookup` method that returns the code matching a given key, falling back hierarchically to less specific keys.
+- `pay`: added `MeansKeyCredit` and `MeansKeyDebit` qualifiers, enabling the `card+credit` and `card+debit` payment means. Adapted all addons mapping payment means to extensions to use the two new qualified means.
+- `es-tbai-v1`: added `es-tbai-bi-activity` extension for the Bizkaia activity code (epígrafe) required for individual suppliers.
+- `pt-saft-v1`: added rule to check that advance payment amounts on invoices are no less than 0 as required by the SAF-T spec.
+- `regimes/es`: added `IRNR` (Impuesto sobre la Renta de no Residentes) tax category for non-resident income tax withholdings. Rates depend on the type of income and recipient, so they are supplied per invoice rather than predefined.
+- `pay`: `pay.Record` gains `DirectDebit` and `Online` fields so it can fully describe any payment means recorded on a payment document. Its `Normalize` method now accepts `tax.Normalizers` and threads them through to the means-specific nested structs (`Card`, `CreditTransfer`, `DirectDebit`, `Online`) so addons can extend or transform those directly.
+- `addons/es/facturae`: new `es-facturae-subsidy` extension (values `S`/`N`, matching the Spanish convention used by `es/sii` and `es/verifactu`) for flagging advance payments that come from a public grant or subsidy. Replaces the removed `pay.Record.Grant` boolean.
+- `ar-arca-v4`: Type T tourism invoice support (WSCT) with new extension keys `ar-arca-tourism-type` and `ar-arca-tourism-item`.
+
+### Fixed
+
+- `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
+- `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+- `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+
+### Fixed
+
+- `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
+
+## [v0.402.0] - 2026-04-30
+
+### Changed
+
+- `addons/pl/favat`: Moved supplier tax ID code requirement from the PL regime to the pl-favat addon.
+- `bill`: removed the default exchange-rate / regime-currency conversion check; addons now enforce currency convertibility where required.
+- `addons`: **breaking**: rule fault codes no longer include the addon version segment. `GOBL-AR-ARCA-V4-BILL-INVOICE-24` is now `GOBL-AR-ARCA-BILL-INVOICE-24`. Generated rule files in `data/rules/` are likewise unversioned (`ar-arca.json`, not `ar-arca-v4.json`). Each addon package now exposes a `Key` constant for the unversioned family; version constants such as `V4` are derived from it. Assertion IDs are now guaranteed stable across versions of an addon family — preserved rules keep their numeric IDs on version bumps, and an ID must never be reassigned to a different rule. Consumers pinning fault-code strings should drop the version segment.
+- `tax`: **breaking**: `tax.Extensions` is now an immutable struct wrapping an unexported map, replacing the previous `map[cbc.Key]cbc.Code` type alias. JSON output is now deterministic — keys are emitted in alphabetical order. All mutation methods (`Set`, `SetIfEmpty`, `SetOneOf`, `Delete`, `Merge`, `Clean`) clone the underlying map and return a new instance, so callers must assign the result (`x.Ext = x.Ext.Set(...)`); the old "Set on nil gets silently lost" footgun no longer exists. New helpers: `tax.MakeExtensions()`, `tax.ExtensionsOf(tax.ExtMap{...})`, `tax.ExtMap` alias for `map[cbc.Key]cbc.Code`, plus `Clone`, `Keys`, `All` (iter.Seq2), `IsZero`, and `Len` methods. Struct-field tags changed from `json:"ext,omitempty"` to `json:"ext,omitzero"` (requires Go 1.24). Validation guards that previously type-asserted `value.(tax.Extensions)` should use `tax.ExtensionsFromValue(val)`, which also accepts the `*tax.Extensions` the rules framework now produces for struct-typed fields. The `tax.CleanExtensions(em)` free function has been removed; use `em.Clean()`.
+- `cbc`: `cbc.Meta` JSON output is now deterministic — keys are emitted in alphabetical order via a custom `MarshalJSON`. Type definition is unchanged (still `map[cbc.Key]string`), so indexing, `len`, `range`, and `make` continue to work as before.
+
+### Added
+
+- `currency`: new `CanConvertTo` test that will ensure a document has or can convert to the provided currency.
+- `addons/es/verifactu`: Country is now required on customer identities when the identity type is not NIF-VAT (02).
+- `cbc`: `Meta.Keys()`, `Meta.Values()`, and `Meta.All()` (iter.Seq2) for ordered iteration over meta entries.
+
+### Fixed
+
+- `rules`: Anonymous embedded struct fields are now also checked from the parent.
+
+## [v0.401.0] - 2026-04-17
+
+### Changed
+
+- `addons/pl/favat`: Customer tax ID no longer required for FA(3) invoices. Polish NIP code still validated when a customer tax ID is present.
+- `schema`: `Object` model will now handle anonymous or undefined schemas and simply pass through the data. This is useful for complementary schema implementations that are very domain specific and cannot easily be included inside GOBL.
+- `pkg/api`: HTTP API handler promoted from `internal/api` to a public package so external projects can embed and compose it. `NewHandler` now accepts functional options (`WithMCP`, `WithFavicon`, `WithRoutes`) and exports helpers (`WithETag`, `WriteJSON`, `WriteError`, `WriteRawJSON`, `VersionPrefix`) for custom route handlers.
+- `internal/ops`: Renamed from `internal/cli` to better reflect its role as the operational layer shared by the API, CLI, MCP server, and WASM. `internal/iotools` merged in as an unexported helper.
+
+### Added
+
+- `bill`: Status model added for dealing with special billing events.
+- `cal`: `Timestamp` model for dealing with precise times.
+- `.github/workflows/release.yaml`: `repository_dispatch` step notifying [gobl.dev](https://github.com/invopop/gobl.dev) when a new GOBL version is tagged.
+
+### Removed
+
+- `internal/api`: Built-in web editor UI and its assets; the editor now lives in the [gobl.dev](https://github.com/invopop/gobl.dev) repository, which consumes `pkg/api` directly.
+- `fly.toml`, `.github/workflows/deploy-api.yaml`: API deployment is now handled by the gobl.dev repository. The `Dockerfile` is retained for general-purpose GOBL CLI container builds.
+
+## [v0.400.0] - 2026-04-15
+
+Final release of the rules based changes.
+
+## [v0.400.0-rc2] - 2026-04-14
+
+### Added
+
+- `rules`: `NewSet` function for standalone use of rule sets with namespaced error codes, without requiring global registration.
+- `rules`: `Set.Validate` now accepts optional `WithContext` values for context-aware guards.
+
+### Changed
+
+- `rules`: `Set.Name` field replaced with `Set.Package` (set by `Register`) and `Set.Object` (set by `For`).
+- `rules`: `Register` and `RegisterWithGuard` first parameter renamed from `name` to `pkg` for clarity.
+- `rules`: Input sets are now cloned internally by `Register`, `RegisterWithGuard`, and `NewSet`, so the same `For` output can be safely reused.
+
+## [v0.400.0-rc1] - 2026-04-13
+
+Major GOBL release: migrating from the old validation methods to the new "rules" package. This is a very significant change and solves one of the most frequently requested features in GOBL, the ability to know what validations and checks will be performed on the data before they are applied. Now every validation is assigned a specific unique reference code that allows them to be easily identified. The rules package is designed to be useable in any project, not just GOBL, so we're hoping to see in broader use through all the systems that depend on GOBL as an alternative to other validation packages.
+
+In addition, the "serve" CLI command has been improved to offer a self-hosted version of the GOBL Builder and API that includes support to use as an MCP (model context protocol) server.
+
+### Added
+
+- `rules`: new package to help define validation rules and execute them on top of any object.
+- `cmd/gobl`: MCP server support via `gobl mcp` CLI command using stdio transport.
+- `internal/api`: New framework-free HTTP API package replacing the previous Echo-based serve handler, with versioned route prefix (e.g. `/v0/build`).
+- `internal/api`: Built-in web editor UI served at the root path.
+- `internal/api`: OpenAPI spec served at `/v0/openapi.json`.
+- `internal/api`: MCP over Streamable HTTP endpoint at `/v0/mcp`.
+- `internal/api`: New endpoints for regime, addon, and schema lookups (`GET /v0/regimes`, `/v0/addons`, `/v0/schemas`).
+- `internal/api`: ETag-based caching for static reference data, CORS, and request timing middleware.
+- `schema`: `BundleSchema` function to produce self-contained JSON Schema documents with all transitive dependencies inlined.
+
+### Removed
+
+- `mx`/`co`: Tax Identity Zone migration removed.
+- `cmd/gobl`: Removed Echo framework dependency from the serve command.
+- `cli`: No longer provides HTTP error codes, only keys are used now.
+
+### Changed
+
+- `cmd/gobl`: `serve` command now uses the new `internal/api` handler instead of inline Echo routes.
+- `tax`: `Extensions.Values()` now returns codes in deterministic sorted order.
+- `schema`: JSON Schemas updated to include package names in models, i.e. `bill.Invoice` vs `Invoice`.
+
+## [v0.309.0] - 2026-04-01
+
 ### Added
 
 - `bill`: `Point` field on `Tax` to define the tax point date (issue, delivery, payment).
 - `eu-en16935-v2017`: Exemption reason notes (BT-120)
-- `tax`: Add note to tax
+- `bill`: `Tax` now includes specific Note field (`tax.Note`).
 - `eu-en16931-v2017`: BR-32 validation requiring taxes on document-level discounts.
 - `pl-favat-v3`: Tax combos with a non-Polish country are normalized as outside scope (category 8).
 - `br-nfse-v1`: NBS extension for service classification codes.
 
 ### Removed
 
-- `pl-favat-v3`: Preceding no longer required when it is a credit note
+- `pl-favat-v3`: Preceding no longer required when it is a credit note.
 
 ### Changed
 
-- `tax`: Update scenarios to use tax.Note instead of ScenarioNote
+- `tax`: Update scenarios to use `tax.Note` instead of `ScenarioNote`.
 - `bill`: `Invoice.Invert()` returns an error if the invoice has the `bypass` tag.
 - `num`: `AmountFromString` now limits precision to 18 significant digits.
-- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema
-- `es-tbai-v1`: Customer validation now only required for non-simplified invoices
+- `tax`: Added `$defs` and `$refs` to the `tax.RegimeCode` JSON schema.
+- `es-tbai-v1`: Customer validation now only required for non-simplified invoices.
 
 ### Fixed
 
-- `de`: Corrected historical VAT rates
-- `tax`: Fixed `Since` date comparison to be inclusive
-- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`
-- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`
-- `gr`: Corrected key for the reduced island tax rate
+- `tax`: Fixed `Since` date comparison to be inclusive.
+- `gr-mydata-v1`: Corrected exemption codes 3 and 4 mapping to `outside-scope`.
+- `gr-mydata-v1`: Fixed panic on `other` type invoices without `bill.Tax`.
+- `gr`: Corrected key for the reduced island tax rate.
 - `bill`: Payment Line tax always calculated.
 
 ## [v0.308.0] - 2026-02-17
@@ -61,7 +229,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: Invoice, Order, Payment, and Delivery now normalize Notes fields
 - `bill`: Invoice and Order now normalize Attachments fields
-
 
 ## [v0.307.0] - 2026-01-27
 

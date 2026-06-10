@@ -6,8 +6,9 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pkg/luhn"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 const (
@@ -19,26 +20,30 @@ const (
 	taxCodeCheckDigit = "01"
 )
 
-// validateTaxIdentity performs validation specific to Swedish tax IDs.
-// Assumes the code has already been normalized.
-func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("SE"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Swedish VAT identity code",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
 		),
 	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxCode(code) == nil
 }
 
 // validateTaxCode validates the tax code for Swedish tax identities.
 // Assumes the code has already been normalized, is made of 12 numeric characters,
 // retaining the checksum at the end, plus 2 control digits "01".
-func validateTaxCode(value any) error {
-	// No need for nil check, as the identity type is validated before this function is called
-	code, _ := value.(cbc.Code)
-	if code == "" {
-		return nil
-	}
-
+func validateTaxCode(code cbc.Code) error {
 	// Normalised Swedish tax IDs must have a specific length.
 	if len(code) != taxCodeLength {
 		return errors.New("invalid length")

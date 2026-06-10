@@ -13,6 +13,7 @@ import (
 	_ "github.com/invopop/gobl/num"
 	_ "github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
+	"github.com/invopop/gobl/rules"
 
 	"github.com/invopop/gobl/schema"
 )
@@ -22,9 +23,15 @@ import (
 //go:generate go run ./addons/generate.go
 //go:generate go run ./catalogues/generate.go
 //go:generate go run ./currency/generate.go
+//go:generate go run ./rules/generate.go
 
 func init() {
 	schema.Register(schema.GOBL,
 		Envelope{},
+	)
+	rules.Register(
+		"gobl",
+		rules.GOBL,
+		envelopeRules(),
 	)
 }

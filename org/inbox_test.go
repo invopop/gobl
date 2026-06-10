@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -66,7 +68,7 @@ func TestInboxNormalize(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		var id *org.Inbox
 		assert.NotPanics(t, func() {
-			id.Normalize()
+			norm.Normalize(id)
 		})
 	})
 	t.Run("with scheme", func(t *testing.T) {
@@ -74,15 +76,24 @@ func TestInboxNormalize(t *testing.T) {
 			Scheme: " 0004 ",
 			Code:   " BAR ",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "BAR", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
+	})
+	t.Run("with colon in scheme", func(t *testing.T) {
+		id := &org.Inbox{
+			Scheme: "DK:CVR",
+			Code:   "DK12345678",
+		}
+		norm.Normalize(id)
+		assert.Equal(t, "DK:CVR", id.Scheme.String())
+		assert.Equal(t, "DK12345678", id.Code.String())
 	})
 	t.Run("with email in code", func(t *testing.T) {
 		id := &org.Inbox{
 			Code: "dev@invopop.com",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Empty(t, id.Code.String())
 		assert.Empty(t, id.URL)
 		assert.Equal(t, "dev@invopop.com", id.Email)
@@ -91,7 +102,7 @@ func TestInboxNormalize(t *testing.T) {
 		id := &org.Inbox{
 			Code: "https://inbox.example.com",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Empty(t, id.Code.String())
 		assert.Empty(t, id.Email)
 		assert.Equal(t, "https://inbox.example.com", id.URL)
@@ -101,7 +112,7 @@ func TestInboxNormalize(t *testing.T) {
 			Key:  org.InboxKeyPeppol,
 			Code: "0004:1234567890",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "1234567890", id.Code.String())
 		assert.Equal(t, "0004", id.Scheme.String())
 		assert.Equal(t, org.InboxKeyPeppol, id.Key)
@@ -110,7 +121,7 @@ func TestInboxNormalize(t *testing.T) {
 		id := &org.Inbox{
 			Code: "0004:1234567890",
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "0004:1234567890", id.Code.String())
 	})
 }
@@ -121,7 +132,7 @@ func TestInboxValidate(t *testing.T) {
 			Scheme: "0004",
 			Code:   "BAR",
 		}
-		err := id.Validate()
+		err := rules.Validate(id)
 		assert.NoError(t, err)
 	})
 	t.Run("with both key", func(t *testing.T) {
@@ -129,67 +140,67 @@ func TestInboxValidate(t *testing.T) {
 			Key:  "fiscal-code",
 			Code: "1234567890",
 		}
-		err := id.Validate()
+		err := rules.Validate(id)
 		assert.NoError(t, err)
 	})
 	t.Run("missing code", func(t *testing.T) {
 		id := &org.Inbox{
 			Key: "fiscal-code",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "code: cannot be blank without url or email")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox requires a code, url, or email")
 	})
 	t.Run("with URL", func(t *testing.T) {
 		id := &org.Inbox{
 			URL: "https://inbox.example.com",
 		}
-		err := id.Validate()
+		err := rules.Validate(id)
 		assert.NoError(t, err)
 	})
 	t.Run("with invalid URL", func(t *testing.T) {
 		id := &org.Inbox{
 			URL: "https:/inbox",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "url: must be a valid URL")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox url must be valid")
 	})
 	t.Run("with code and URL", func(t *testing.T) {
 		id := &org.Inbox{
 			Code: "FOOO",
 			URL:  "https://inbox.example.com",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "url: must be blank with code or email")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox url must be blank when code or email is provided")
 	})
 	t.Run("with code and email", func(t *testing.T) {
 		id := &org.Inbox{
 			Code:  "FOOO",
 			Email: "dev@invopop.com",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "email: must be blank with code or url")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox email must be blank when code or url is provided")
 	})
 	t.Run("with email and url", func(t *testing.T) {
 		id := &org.Inbox{
 			Email: "dev@invopop.com",
 			URL:   "https://inbox.example.com",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "email: must be blank with code or url; url: must be blank with code or email")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox url must be blank when code or email is provided")
 	})
 	t.Run("with email", func(t *testing.T) {
 		id := &org.Inbox{
 			Email: "dev@invopop.com",
 		}
-		err := id.Validate()
+		err := rules.Validate(id)
 		assert.NoError(t, err)
 	})
 	t.Run("with invalid email", func(t *testing.T) {
 		id := &org.Inbox{
 			Email: "dev@invopop",
 		}
-		err := id.Validate()
-		assert.ErrorContains(t, err, "email: must be a valid email address")
+		err := rules.Validate(id)
+		assert.ErrorContains(t, err, "inbox email must be valid")
 	})
 
 }

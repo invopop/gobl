@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/terms",
-  "$ref": "#/$defs/Terms",
+  "$ref": "#/$defs/pay.Terms",
   "$defs": {
-    "DueDate": {
+    "pay.DueDate": {
       "properties": {
         "date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -38,7 +38,7 @@
       ],
       "description": "DueDate contains an amount that should be paid by the given date."
     },
-    "Terms": {
+    "pay.Terms": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -99,7 +99,7 @@
         },
         "due_dates": {
           "items": {
-            "$ref": "#/$defs/DueDate"
+            "$ref": "#/$defs/pay.DueDate"
           },
           "type": "array",
           "title": "Due Dates",

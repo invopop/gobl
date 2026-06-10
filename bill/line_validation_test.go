@@ -6,23 +6,18 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLineRequireTaxValidation(t *testing.T) {
-	err := validation.Validate(nil, bill.RequireLineTaxCategory("VAT"), validation.Skip)
-	assert.NoError(t, err)
+	r := bill.RequireLineTaxCategory("VAT")
+	assert.True(t, r.Check(nil))
 
 	l := &bill.Line{}
-	err = validation.Validate(l, bill.RequireLineTaxCategory(""), validation.Skip)
-	assert.NoError(t, err)
+	r2 := bill.RequireLineTaxCategory("")
+	assert.True(t, r2.Check(l))
 
-	err = validation.Validate(l,
-		bill.RequireLineTaxCategory("VAT"),
-		validation.Skip,
-	)
-	assert.ErrorContains(t, err, "taxes: missing category VAT.")
+	assert.False(t, r.Check(l))
 
 	l = &bill.Line{
 		Taxes: tax.Set{
@@ -32,15 +27,8 @@ func TestLineRequireTaxValidation(t *testing.T) {
 			},
 		},
 	}
-	err = validation.Validate(l,
-		bill.RequireLineTaxCategory("VAT"),
-		validation.Skip,
-	)
-	assert.NoError(t, err)
+	assert.True(t, r.Check(l))
 
-	err = validation.Validate(l,
-		bill.RequireLineTaxCategory("IRPEF"),
-		validation.Skip,
-	)
-	assert.ErrorContains(t, err, "taxes: missing category IRPEF.")
+	r3 := bill.RequireLineTaxCategory("IRPEF")
+	assert.False(t, r3.Check(l))
 }

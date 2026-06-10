@@ -6,9 +6,11 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -27,14 +29,14 @@ func TestDeliveryValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
 		require.NoError(t, dlv.Calculate())
-		require.NoError(t, dlv.Validate())
+		require.NoError(t, rules.Validate(dlv))
 	})
 
 	t.Run("with addons", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
 		dlv.Addons = tax.WithAddons("eu-en16931-v2017") // just for testing
 		require.NoError(t, dlv.Calculate())
-		require.NoError(t, dlv.Validate())
+		require.NoError(t, rules.Validate(dlv))
 	})
 }
 
@@ -192,4 +194,70 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestDeliveryFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+	mkDespatcher := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:despatcher.example"}}}
+	}
+	mkReceiver := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:receiver.example"}}}
+	}
+
+	despatchTypes := []cbc.Key{
+		bill.DeliveryTypeAdvice, bill.DeliveryTypeNote, bill.DeliveryTypeWaybill,
+	}
+	for _, typ := range despatchTypes {
+		t.Run(string(typ)+": supplier→customer (no despatcher/receiver)", func(t *testing.T) {
+			dlv := &bill.Delivery{
+				Type: typ, Supplier: mkSupplier(), Customer: mkCustomer(),
+			}
+			assert.Equal(t, "gobl:supplier.example", dlv.FromEndpoint().URI.String())
+			assert.Equal(t, "gobl:customer.example", dlv.ToEndpoint().URI.String())
+		})
+	}
+
+	t.Run("receipt: customer→supplier", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type: bill.DeliveryTypeReceipt, Supplier: mkSupplier(), Customer: mkCustomer(),
+		}
+		assert.Equal(t, "gobl:customer.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:supplier.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("despatcher and receiver win over supplier/customer", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type:       bill.DeliveryTypeAdvice,
+			Supplier:   mkSupplier(),
+			Customer:   mkCustomer(),
+			Despatcher: mkDespatcher(),
+			Receiver:   mkReceiver(),
+		}
+		assert.Equal(t, "gobl:despatcher.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:receiver.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("receipt prefers receiver→despatcher", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type:       bill.DeliveryTypeReceipt,
+			Supplier:   mkSupplier(),
+			Customer:   mkCustomer(),
+			Despatcher: mkDespatcher(),
+			Receiver:   mkReceiver(),
+		}
+		assert.Equal(t, "gobl:receiver.example", dlv.FromEndpoint().URI.String())
+		assert.Equal(t, "gobl:despatcher.example", dlv.ToEndpoint().URI.String())
+	})
+
+	t.Run("nil delivery is a no-op", func(t *testing.T) {
+		var dlv *bill.Delivery
+		assert.Nil(t, dlv.FromEndpoint())
+		assert.Nil(t, dlv.ToEndpoint())
+	})
 }
