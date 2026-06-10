@@ -3,7 +3,9 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +13,7 @@ func TestAddressNormalize(t *testing.T) {
 	t.Run("nil address", func(t *testing.T) {
 		var a *org.Address
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			norm.Normalize(a)
 		})
 	})
 
@@ -29,7 +31,7 @@ func TestAddressNormalize(t *testing.T) {
 			State:         "  MAD  ",
 			Code:          " HG12 2AB ",
 		}
-		a.Normalize(nil)
+		norm.Normalize(a)
 
 		assert.Equal(t, "20", a.PostOfficeBox)
 		assert.Equal(t, "12", a.Number)
@@ -56,7 +58,7 @@ func TestAddressValidation(t *testing.T) {
 			Code:     "HG12 2AB",
 			Country:  "GB",
 		}
-		assert.NoError(t, a.Validate())
+		assert.NoError(t, rules.Validate(a))
 	})
 
 	t.Run("invalid UUID", func(t *testing.T) {
@@ -70,7 +72,7 @@ func TestAddressValidation(t *testing.T) {
 			Country:  "GB",
 		}
 		a.UUID = "invalid"
-		assert.ErrorContains(t, a.Validate(), "uuid: invalid UUID length: 7")
+		assert.ErrorContains(t, rules.Validate(a), "GOBL-UUID-UUID-01")
 	})
 }
 

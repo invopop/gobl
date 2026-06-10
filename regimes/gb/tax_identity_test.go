@@ -3,13 +3,14 @@ package gb_test
 import (
 	"testing"
 
+	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/gb"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -26,39 +27,39 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "zeros",
 			code: "000000000",
-			err:  "zeros",
+			err:  "IDENTITY-02",
 		},
 		{
 			name: "bad mid length",
 			code: "12345678910",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too long",
 			code: "1234567890123",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "too short",
 			code: "123456",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "not normalized",
 			code: "12.449.965-4",
-			err:  "invalid format",
+			err:  "IDENTITY-01",
 		},
 		{
 			name: "bad checksum",
 			code: "999999991",
-			err:  "checksum mismatch",
+			err:  "IDENTITY-03",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "GB", Code: tt.code}
-			err := gb.Validate(tID)
+			err := rules.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

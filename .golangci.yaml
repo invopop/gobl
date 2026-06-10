@@ -6,7 +6,7 @@ output:
 linters:
   enable:
     - errname
-    - goconst
+    # - goconst # Disabled due to "composite literal elements" check
     - gocyclo
     - nakedret
     - revive
@@ -21,10 +21,15 @@ linters:
         - -QF1008
   exclusions:
     generated: lax
+    rules:
+      - linters: [revive]
+        text: "var-naming: avoid meaningless package names"
+        path: pkg/api/
     paths:
       - third_party$
       - builtin$
       - examples$
+      - node_modules
 formatters:
   enable:
     - gofmt

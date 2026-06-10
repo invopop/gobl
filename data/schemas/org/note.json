@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/note",
-  "$ref": "#/$defs/Note",
+  "$ref": "#/$defs/org.Note",
   "$defs": {
-    "Note": {
+    "org.Note": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -23,6 +23,16 @@
               "const": "payment",
               "title": "Payment",
               "description": "Terms of Payment"
+            },
+            {
+              "const": "payment-method",
+              "title": "Payment Method",
+              "description": "Payment method or remittance information"
+            },
+            {
+              "const": "payment-term",
+              "title": "Payment Term",
+              "description": "Payment term details"
             },
             {
               "const": "legal",

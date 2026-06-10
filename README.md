@@ -3,9 +3,9 @@
 <img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg#gh-light-mode-only" width="181" height="219" alt="GOBL Logo">
 <img src="https://github.com/invopop/gobl/blob/main/gobl_logo_white_rgb.svg#gh-dark-mode-only" width="181" height="219" alt="GOBL Logo">
 
-Go Business Language. Core library, schemas, and CLI.
+Go Business Language. Core library and schemas.
 
-Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021-2025 [Invopop S.L.](https://invopop.com).
+Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021-2026 [Invopop S.L.](https://invopop.com).
 
 [![Lint](https://github.com/invopop/gobl/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/lint.yaml)
 [![Test Go](https://github.com/invopop/gobl/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/test.yaml)
@@ -151,89 +151,15 @@ if err := env.Insert(inv); err != nil {
 }
 ```
 
-## CLI
+## CLI, HTTP API, MCP, and wasm
 
-This repo contains a `gobl` CLI tool which can be used to manipulate GOBL documents from the command line or shell scripts.
-
-Build with:
-
-```sh
-mage -v build
-```
-
-Install with:
+The `gobl` CLI, the HTTP API handler, the MCP server, and the WebAssembly build now
+live in [`gobl.dev`](https://github.com/invopop/gobl.dev), which composes this library
+with the full addon set. Install the CLI with:
 
 ```sh
-mage -v install
+go install github.com/invopop/gobl.dev/cmd/gobl@latest
 ```
-
-### Build
-
-Build expects a partial GOBL Envelope or Document, in either YAML or JSON as input. It'll automatically run the Calculate and Validate methods and output JSON data as either an envelope or document, according to the input source.
-
-Example uses:
-
-```sh
-# Calculate and validate a YAML invoice
-gobl build ./examples/es/invoice-es-es.yaml
-
-# Output using indented formatting
-gobl build -i ./examples/es/party.yaml
-
-# Set the supplier from an external file
-gobl build -i ./examples/es/invoice-es-es.yaml \
-    --set-file customer=./examples/es/party.yaml
-
-# Set arbitrary values from the command line. Inputs are parsed as YAML.
-gobl build -i ./examples/es/invoice-es-es.yaml \
-    --set meta.bar="a long string" \
-    --set series="TESTING"
-
-# Set the top-level object:
-gobl build -i ./examples/es/invoice-es-es.yaml \
-    --set-file .=./examples/es/invoice-es-es.env.yaml
-
-# Insert a document into an envelope
-gobl build -i --envelop ./examples/es/invoice-es-es.yaml
-```
-
-### Correct
-
-The GOBL CLI makes it easy to use the library and tax regime specific functionality that create a corrective document that reverts or amends a previous document. This is most useful for invoices and issuing refunds for example.
-
-```sh
-# Correct an invoice with a credit note (this will error for ES invoice!)
-gobl correct -i ./examples/es/invoice-es-es.yaml --credit
-
-# Specify tax regime specific details
-gobl correct -i -d '{"credit":true,"changes":["line"],"method":"complete"}' \
-    ./examples/es/invoice-es-es.yaml
-```
-
-### Sign
-
-GOBL encourages users to sign data embedded into envelopes using digital signatures. To get started, you'll need to have a JSON Web Key. Use the following commands to generate one:
-
-```sh
-# Generate a JSON Web Key and store in ~/.gobl/id_es256.jwk
-gobl keygen
-
-# Generate and output a JWK into a new file
-gobl keygen ./examples/key.jwk
-```
-
-Use the key to sign documents:
-
-```sh
-# Add a signature to the envelope using our personal key
-gobl sign -i ./examples/es/invoice-es-es.env.yaml
-
-# Add a signature using a specific key
-gobl sign -i --key ./examples/key.jwk ./examples/es/invoice-es-es.env.yaml
-```
-
-It is only possible to sign non-draft envelopes, so the CLI will automatically remove this flag during the signing process. This implies that the document must be completely valid before signing.
-
 ## Development
 
 GOBL uses the `go generate` command to automatically generate JSON schemas, definitions, and some Go code output. After any changes, be sure to run:

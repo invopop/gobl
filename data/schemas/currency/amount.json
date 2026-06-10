@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/currency/amount",
-  "$ref": "#/$defs/Amount",
+  "$ref": "#/$defs/currency.Amount",
   "$defs": {
-    "Amount": {
+    "currency.Amount": {
       "properties": {
         "label": {
           "type": "string",

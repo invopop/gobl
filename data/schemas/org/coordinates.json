@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/coordinates",
-  "$ref": "#/$defs/Coordinates",
+  "$ref": "#/$defs/org.Coordinates",
   "$defs": {
-    "Coordinates": {
+    "org.Coordinates": {
       "properties": {
         "lat": {
           "type": "number",

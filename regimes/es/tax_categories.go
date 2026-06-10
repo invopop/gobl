@@ -375,5 +375,45 @@ func taxCategories() []*tax.CategoryDef {
 				},
 			},
 		},
+
+		//
+		// IRNR
+		//
+		{
+			Code:     TaxCategoryIRNR,
+			Retained: true,
+			Name: i18n.String{
+				i18n.EN: "IRNR",
+				i18n.ES: "IRNR",
+				i18n.GL: "IRNR",
+				i18n.EU: "IRNR",
+				i18n.CA: "IRNR",
+			},
+			Title: i18n.String{
+				i18n.EN: "Non-residents income tax",
+				i18n.ES: "Impuesto sobre la renta de no residentes",
+				i18n.GL: "Imposto sobre a renda de non residentes",
+				i18n.EU: "Ez egoiliarren errentaren gaineko zerga",
+				i18n.CA: "Impost sobre la renda de no residents",
+			},
+			Description: &i18n.String{
+				i18n.EN: here.Doc(`
+					Personal or corporate income tax levied on income obtained in Spanish
+					territory by individuals and entities that are not resident in Spain.
+					Regulated by Real Decreto Legislativo 5/2004 (TRLIRNR).
+
+					This category covers income obtained without a permanent establishment
+					(sin establecimiento permanente), where the Spanish payer is generally
+					obliged to withhold the tax at source on each payment. Income obtained
+					through a permanent establishment is taxed under the rules of the
+					Corporate Income Tax (Impuesto sobre Sociedades) and is out of scope
+					at the invoice level.
+
+					Applicable rates depend on the type of income and on whether the
+					recipient is resident in another EU/EEA Member State with an effective
+					exchange of tax information, in which case reduced rates apply.
+				`),
+			},
+		},
 	}
 }

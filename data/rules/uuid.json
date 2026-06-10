@@ -1,0 +1,22 @@
+{
+  "id": "GOBL-UUID",
+  "package": "uuid",
+  "subsets": [
+    {
+      "id": "GOBL-UUID-UUID",
+      "object": "uuid.UUID",
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-UUID-UUID-01",
+              "desc": "invalid UUID",
+              "tests": "is valid UUID"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

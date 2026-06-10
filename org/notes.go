@@ -1,14 +1,13 @@
 package org
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of supported note keys based on the
@@ -20,6 +19,10 @@ const (
 	NoteKeyGoods cbc.Key = "goods"
 	// Terms of Payment
 	NoteKeyPayment cbc.Key = "payment"
+	// Payment method or remittance information
+	NoteKeyPaymentMethod cbc.Key = "payment-method"
+	// Payment term details
+	NoteKeyPaymentTerm cbc.Key = "payment-term"
 	// Legal or regulatory information
 	NoteKeyLegal cbc.Key = "legal"
 	// Dangerous goods additional information
@@ -82,6 +85,16 @@ var NoteKeyDefinitions = []cbc.Definition{
 		Key:  NoteKeyPayment,
 		Name: i18n.NewString("Payment"),
 		Desc: i18n.NewString("Terms of Payment"),
+	},
+	{
+		Key:  NoteKeyPaymentMethod,
+		Name: i18n.NewString("Payment Method"),
+		Desc: i18n.NewString("Payment method or remittance information"),
+	},
+	{
+		Key:  NoteKeyPaymentTerm,
+		Name: i18n.NewString("Payment Term"),
+		Desc: i18n.NewString("Payment term details"),
 	},
 	{
 		Key:  NoteKeyLegal,
@@ -220,50 +233,24 @@ type Note struct {
 	// Additional information about the note
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 	// Extension data
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize will perform basic normalization on the Note.
-func (n *Note) Normalize() {
-	if n == nil {
-		return
-	}
-	uuid.Normalize(&n.UUID)
-	n.Code = cbc.NormalizeCode(n.Code)
-	n.Text = cbc.NormalizeString(n.Text)
-	n.Ext = tax.CleanExtensions(n.Ext)
-}
-
-// Validate checks that the note looks okay.
-func (n *Note) Validate() error {
-	return validation.ValidateStruct(n,
-		validation.Field(&n.Key, isValidNoteKey),
-		validation.Field(&n.Code),
-		validation.Field(&n.Text, validation.Required),
-		validation.Field(&n.Src),
-		validation.Field(&n.Meta),
-		validation.Field(&n.Ext),
+func noteRules() *rules.Set {
+	return rules.For(new(Note),
+		rules.Field("text",
+			rules.Assert("01", "note text is required", is.Present),
+		),
+		rules.Field("key",
+			rules.AssertIfPresent("02", "note key must be a valid value",
+				is.In(validNoteKeyValues()...),
+			),
+		),
 	)
 }
 
-// NoteFromScenario creates a new Note from a ScenarioNote.
-func NoteFromScenario(sn *tax.ScenarioNote) *Note {
-	if sn == nil {
-		return nil
-	}
-	return &Note{
-		Key:  sn.Key,
-		Code: sn.Code,
-		Src:  sn.Src,
-		Text: sn.Text,
-		Ext:  sn.Ext,
-	}
-}
-
-var isValidNoteKey = validation.In(validNoteKeys()...)
-
-func validNoteKeys() []interface{} {
-	ks := make([]interface{}, len(NoteKeyDefinitions))
+func validNoteKeyValues() []any {
+	ks := make([]any, len(NoteKeyDefinitions))
 	for i, v := range NoteKeyDefinitions {
 		ks[i] = v.Key
 	}
@@ -309,29 +296,6 @@ func (n *Note) Equals(n2 *Note) bool {
 		n.Meta.Equals(n2.Meta)
 }
 
-type validateNotes struct {
-	key cbc.Key
-}
-
-// ValidateNotesHasKey returns a validation rule that check that at least one
-// of the notes has the provided key.
-func ValidateNotesHasKey(key cbc.Key) validation.Rule {
-	return &validateNotes{key: key}
-}
-
-func (v *validateNotes) Validate(value any) error {
-	notes, ok := value.([]*Note)
-	if !ok {
-		return nil
-	}
-	for _, n := range notes {
-		if n.Key.In(v.key) {
-			return nil // match found, this is good
-		}
-	}
-	return fmt.Errorf("with key '%s' missing", v.key.String())
-}
-
 // JSONSchemaExtend adds the list of definitions for the notes.
 func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 	ks, _ := schema.Properties.Get("key")
@@ -343,4 +307,9 @@ func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 			Description: v.Desc.String(),
 		}
 	}
+}
+
+func normalizeNote(n *Note) {
+	uuid.Normalize(&n.UUID)
+	n.Text = cbc.NormalizeString(n.Text)
 }

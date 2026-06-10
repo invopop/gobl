@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -14,7 +15,7 @@ func TestInvoiceReplicate(t *testing.T) {
 	inv.ValueDate = cal.NewDate(2022, 6, 1)
 	inv.OperationDate = cal.NewDate(2022, 6, 5)
 	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, rules.Validate(inv))
 
 	assert.Equal(t, "2022-06-13", inv.IssueDate.String())
 	assert.Equal(t, "12:00:00", inv.IssueTime.String())

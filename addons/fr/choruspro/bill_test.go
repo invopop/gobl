@@ -6,10 +6,13 @@ import (
 	"github.com/invopop/gobl/addons/fr/choruspro"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/fr"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -76,30 +79,28 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestValidateInvoice(t *testing.T) {
-	addon := tax.AddonForKey(choruspro.V1)
-
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
+		require.NoError(t, rules.Validate(inv))
 	})
 
 	t.Run("missing customer", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		inv.Customer = nil
-		err := addon.Validator(inv)
+		err := rules.Validate(inv)
 		assert.NoError(t, err) // Customer validation only runs if customer exists
 	})
 
 	t.Run("customer with SIRET with wrong scheme", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			choruspro.ExtKeyScheme: "2",
-		}
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "invalid value")
+		})
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer scheme extension must be '1'")
 	})
 
 	t.Run("customer with SIRET with correct scheme", func(t *testing.T) {
@@ -111,10 +112,10 @@ func TestValidateInvoice(t *testing.T) {
 				Code: "12345678901234",
 			},
 		}
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			choruspro.ExtKeyScheme: "1",
-		}
-		err := addon.Validator(inv)
+		})
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 	})
 
@@ -122,19 +123,19 @@ func TestValidateInvoice(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		inv.Customer.Identities = nil
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "identities: cannot be blank")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer identities are required")
 	})
 
 	t.Run("missing framework extension", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, inv.Calculate())
 		// Remove framework extension
-		if inv.Tax != nil && inv.Tax.Ext != nil {
-			delete(inv.Tax.Ext, choruspro.ExtKeyFramework)
+		if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
+			inv.Tax.Ext = inv.Tax.Ext.Delete(choruspro.ExtKeyFramework)
 		}
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "required")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "framework extension is required")
 	})
 
 	t.Run("framework A2 with unpaid invoice", func(t *testing.T) {
@@ -145,35 +146,61 @@ func TestValidateInvoice(t *testing.T) {
 		if inv.Tax == nil {
 			inv.Tax = &bill.Tax{}
 		}
-		if inv.Tax.Ext == nil {
-			inv.Tax.Ext = make(tax.Extensions)
+		if inv.Tax.Ext.IsZero() {
+			inv.Tax.Ext = tax.MakeExtensions()
 		}
-		inv.Tax.Ext[choruspro.ExtKeyFramework] = "A2"
+		inv.Tax.Ext = inv.Tax.Ext.Set(choruspro.ExtKeyFramework, "A2")
 
-		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "totals: must be paid in full for framework 'A2'.")
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "must be paid in full for framework 'A2'")
 	})
 
 	t.Run("framework A2 with paid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyFramework: "A2",
-			},
+			}),
 		}
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
-					Percent: num.NewPercentage(100, 2),
+					Description: "Paid in advance",
+					Percent:     num.NewPercentage(100, 2),
 				},
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		err := addon.Validator(inv)
+		err := rules.Validate(inv)
 		assert.NoError(t, err)
 		assert.Equal(t, cbc.Code("A2"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
+}
+
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-EUR currency without exchange rates", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-FR-CHORUSPRO-BILL-INVOICE-07] invoice must be in EUR or provide exchange rate for conversion")
+	})
+
+	t.Run("non-EUR currency with exchange rates", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "EUR",
+				Amount: num.MakeAmount(875967, 6),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
 }
 
 func TestNormalizeInvoice(t *testing.T) {
@@ -191,9 +218,9 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("preserves existing framework", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				choruspro.ExtKeyFramework: "A3",
-			},
+			}),
 		}
 
 		require.NoError(t, inv.Calculate())
@@ -201,13 +228,11 @@ func TestNormalizeInvoice(t *testing.T) {
 		assert.Equal(t, cbc.Code("A3"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
-	addon := tax.AddonForKey(choruspro.V1)
-
 	t.Run("with nil tax", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = nil
 
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(choruspro.V1))
 
 		assert.NotNil(t, inv.Tax)
 		assert.NotNil(t, inv.Tax.Ext)
@@ -216,20 +241,19 @@ func TestNormalizeInvoice(t *testing.T) {
 
 	t.Run("with nil invoice", func(t *testing.T) {
 		var inv *bill.Invoice
-		addon.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(choruspro.V1))
 		assert.Nil(t, inv)
 	})
 }
 
 func TestNormalizeBillLines(t *testing.T) {
-	addon := tax.AddonForKey(choruspro.V1)
 	t.Run("Remove decimal places", func(t *testing.T) {
 
 		line := &bill.Line{
 			Quantity: num.MakeAmount(1000000, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "1.0000", line.Quantity.String())
 	})
@@ -239,7 +263,7 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.MakeAmount(1530000, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "1.5300", line.Quantity.String())
 	})
@@ -249,7 +273,7 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.MakeAmount(13342423, 6),
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "13.3424", line.Quantity.String())
 	})
@@ -259,14 +283,14 @@ func TestNormalizeBillLines(t *testing.T) {
 			Quantity: num.Amount{},
 		}
 
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 
 		assert.Equal(t, "0", line.Quantity.String())
 	})
 
 	t.Run("with nil line", func(t *testing.T) {
 		var line *bill.Line
-		addon.Normalizer(line)
+		norm.Normalize(line, tax.AddonContext(choruspro.V1))
 		assert.Nil(t, line)
 	})
 }

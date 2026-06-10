@@ -9,8 +9,9 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Tax Identity keys that may be determined from the code.
@@ -67,7 +68,10 @@ func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 	if tID == nil || tID.Code == "" || tID.Country != l10n.ES.Tax() {
 		return cbc.KeyEmpty
 	}
-	code := tID.Code.String()
+	return taxIdentityKey(tID.Code.String())
+}
+
+func taxIdentityKey(code string) cbc.Key {
 	switch {
 	case taxCodeOrgRegexp.MatchString(code):
 		return TaxIdentityOrg
@@ -82,34 +86,36 @@ func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 	}
 }
 
-// validateTaxIdentity looks at the provided identity's code,
-// determines the type, and performs the calculations
-// required to determine if it is valid.
-// These methods assume the code has already been normalized
-// and thus only contains upper-case letters and numbers with
-// no white space.
-func validateTaxIdentity(tID *tax.Identity) error {
-	if tID == nil || tID.Code == cbc.CodeEmpty {
-		return nil // nothing to validate
-	}
-	if err := validateTaxIdentityCode(tID); err != nil {
-		return validation.Errors{
-			"code": err,
-		}
-	}
-	return nil
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("ES"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid Spanish VAT identity code format or checksum",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
+	)
 }
 
-func validateTaxIdentityCode(tID *tax.Identity) error {
-	switch TaxIdentityKey(tID) {
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateTaxIdentityCode(code) == nil
+}
+
+func validateTaxIdentityCode(code cbc.Code) error {
+	switch taxIdentityKey(code.String()) {
 	case TaxIdentityNational:
-		return verifyNationalCode(tID.Code)
+		return verifyNationalCode(code)
 	case TaxIdentityForeigner:
-		return verifyForeignCode(tID.Code)
+		return verifyForeignCode(code)
 	case TaxIdentityOrg:
-		return verifyOrgCode(tID.Code)
+		return verifyOrgCode(code)
 	case TaxIdentityOther:
-		return verifyOtherCode(tID.Code)
+		return verifyOtherCode(code)
 	default:
 		return errTaxIdentityCodeInvalidFormat
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,40 +17,40 @@ import (
 func TestInvalidComplement(t *testing.T) {
 	fab := new(cfdi.FuelAccountBalance)
 
-	err := fab.Validate()
+	err := rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "account_number: cannot be blank")
-	assert.Contains(t, err.Error(), "lines: cannot be blank")
+	assert.Contains(t, err.Error(), "account number is required")
+	assert.Contains(t, err.Error(), "lines are required")
 }
 
 func TestFuelAccountInvalidLine(t *testing.T) {
 	fab := &cfdi.FuelAccountBalance{Lines: []*cfdi.FuelAccountLine{{}}}
 
-	err := fab.Validate()
+	err := rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "e_wallet_id: cannot be blank")
-	assert.Contains(t, err.Error(), "purchase_date_time: required")
-	assert.Contains(t, err.Error(), "vendor_tax_code: cannot be blank")
-	assert.Contains(t, err.Error(), "service_station_code: cannot be blank")
-	assert.Contains(t, err.Error(), "quantity: must be greater than 0")
-	assert.Contains(t, err.Error(), "item: cannot be blank")
-	assert.Contains(t, err.Error(), "purchase_code: cannot be blank")
-	assert.Contains(t, err.Error(), "taxes: cannot be blank")
+	assert.Contains(t, err.Error(), "line e-wallet ID is required")
+	assert.Contains(t, err.Error(), "line purchase date and time is required")
+	assert.Contains(t, err.Error(), "line vendor tax code is required")
+	assert.Contains(t, err.Error(), "line service station code is required")
+	assert.Contains(t, err.Error(), "line quantity must be greater than 0")
+	assert.Contains(t, err.Error(), "line item is required")
+	assert.Contains(t, err.Error(), "line purchase code is required")
+	assert.Contains(t, err.Error(), "line taxes are required")
 
 	fab.Lines[0].VendorTaxCode = "1234"
 	fab.Lines[0].Quantity = num.MakeAmount(1, 0)
 	fab.Lines[0].Item = &cfdi.FuelAccountItem{Price: num.MakeAmount(1, 0)}
 
-	err = fab.Validate()
+	err = rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "vendor_tax_code: invalid tax identity code")
-	assert.Contains(t, err.Error(), "total: must be quantity x unit_price")
+	assert.Contains(t, err.Error(), "line vendor tax identity code is invalid")
+	assert.Contains(t, err.Error(), "line total must be quantity x unit_price")
 
 	fab.Lines[0].VendorTaxCode = "K&A010301I16" // with symbols
-	err = fab.Validate()
+	err = rules.Validate(fab, withAddonContext())
 	assert.NotContains(t, err.Error(), "vendor_tax_code")
 }
 
@@ -58,12 +59,12 @@ func TestInvalidItem(t *testing.T) {
 		{Item: &cfdi.FuelAccountItem{}}},
 	}
 
-	err := fab.Validate()
+	err := rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "type: cannot be blank")
-	assert.Contains(t, err.Error(), "name: cannot be blank")
-	assert.Contains(t, err.Error(), "price: must be greater than 0")
+	assert.Contains(t, err.Error(), "line item type is required")
+	assert.Contains(t, err.Error(), "line item name is required")
+	assert.Contains(t, err.Error(), "line item price must be greater than 0")
 }
 
 func TestInvalidTax(t *testing.T) {
@@ -71,19 +72,19 @@ func TestInvalidTax(t *testing.T) {
 		{Taxes: []*cfdi.FuelAccountTax{{}}}},
 	}
 
-	err := fab.Validate()
+	err := rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "cat: cannot be blank")
-	assert.Contains(t, err.Error(), "rate: cannot be blank")
-	assert.Contains(t, err.Error(), "amount: must be greater than 0")
+	assert.Contains(t, err.Error(), "tax category is required")
+	assert.Contains(t, err.Error(), "tax rate is required when percent is not set")
+	assert.Contains(t, err.Error(), "tax amount must be greater than 0")
 
 	fab.Lines[0].Taxes[0].Category = "IRPF"
 
-	err = fab.Validate()
+	err = rules.Validate(fab, withAddonContext())
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "cat: must be a valid value")
+	assert.Contains(t, err.Error(), "tax category must be a valid value")
 }
 
 func TestCalculate(t *testing.T) {
@@ -230,16 +231,11 @@ func TestCalculate(t *testing.T) {
 	})
 
 	t.Run("example 4", func(t *testing.T) {
-		// reverse calculate the item price based on the expected total and
-		// price per litre on the day.
-
 		total := 12.35
 		price := 23.774
 		ieps := 0.5451
 		vat := 0.16
 
-		// quantity = total_with_taxes / precio_litro_with_tax
-		// item_price = ((total_with_taxes / quantity) - ieps_rate) / (1 + vat_rate)
 		q := math.Round((total/price)*1000) / 1000
 		ip := ((total / q) - ieps) / (1 + vat)
 
@@ -305,15 +301,10 @@ func TestCalculate(t *testing.T) {
 		`
 		assert.JSONEq(t, exp, string(data))
 
-		// Loosing precision means that this calculation does not
-		// work.
 		assert.NotEqual(t, total, fab.Total.Float64())
 	})
 
 	t.Run("example 5", func(t *testing.T) {
-		// reverse calculate the item price based on the expected total and
-		// price per litre on the day.
-
 		total := 3832.93
 		price := 23.774
 		ieps := 5.451
@@ -326,8 +317,7 @@ func TestCalculate(t *testing.T) {
 			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.AmountFromFloat64(q, 3),
-					// This case needs 5 decimal places to work due to large quantity:
-					Item: &cfdi.FuelAccountItem{Price: num.AmountFromFloat64(ip, 5)},
+					Item:     &cfdi.FuelAccountItem{Price: num.AmountFromFloat64(ip, 5)},
 					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,

@@ -3,22 +3,61 @@
 package en16931
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
+	// Key identifies the EN16931 addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "eu-en16931"
+
 	// V2017 is the key for the EN16931-1:2017 specification.
-	V2017 cbc.Key = "eu-en16931-v2017"
+	V2017 cbc.Key = Key + "-v2017"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("EU-EN16931"),
+		is.InContext(tax.AddonIn(V2017)),
+		billInvoiceRules(),
+		billDiscountRules(),
+		billLineDiscountRules(),
+		billChargeRules(),
+		billLineChargeRules(),
+		payInstructionsRules(),
+		payTermsRules(),
+		orgItemRules(),
+		orgAttachmentRules(),
+		orgPartyRules(),
+		orgInboxRules(),
+		orgAddressRules(),
+		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V2017)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(NormalizeTaxCombo),
+		norm.For(normalizeBillDiscount),
+		norm.For(normalizeBillLineDiscount),
+		norm.For(normalizeBillCharge),
+		norm.For(normalizeBillLineCharge),
+		norm.For(normalizeTaxNote),
+		norm.For(normalizeOrgNote),
+		norm.For(normalizeOrgItem),
+		norm.For(normalizeOrgIdentity),
+		norm.For(normalizeOrgInbox),
+		norm.For(normalizeOrgParty),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -57,67 +96,21 @@ func newAddon() *tax.AddonDef {
 
 				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
 				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
+
+				## Exemption Notes
+
+				Exempt tax categories (E, AE, K, G, O) require either a CEF VATEX code
+				(` + "`cef-vatex`" + `) on the tax combo, or an exemption note in ` + "`tax.notes`" + `.
+
+				Exemption notes use the ` + "`tax.Note`" + ` struct with ` + "`cat`" + `, ` + "`key`" + `, and ` + "`text`" + ` fields.
+				During normalization, the note's ` + "`key`" + ` is mapped to the corresponding
+				` + "`untdid-tax-category`" + ` extension (e.g. ` + "`exempt`" + ` → ` + "`E`" + `,
+				` + "`reverse-charge`" + ` → ` + "`AE`" + `).
+
+				Each exempt tax category without a VATEX code must have at least one
+				exemption note covering it.
 			`),
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-		Validator:  validate,
+		Scenarios: scenarios,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	case *bill.Discount:
-		normalizeBillDiscount(obj)
-	case *bill.LineDiscount:
-		normalizeBillLineDiscount(obj)
-	case *bill.Charge:
-		normalizeBillCharge(obj)
-	case *bill.LineCharge:
-		normalizeBillLineCharge(obj)
-	case *org.Note:
-		normalizeOrgNote(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
-	case *org.Inbox:
-		normalizeOrgInbox(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Line:
-		return validateBillLine(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Discount:
-		return validateBillDiscount(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	case *org.Item:
-		return validateOrgItem(obj)
-	case *org.Attachment:
-		return validateOrgAttachment(obj)
-	case *org.Party:
-		return validateOrgParty(obj)
-	case *org.Inbox:
-		return validateOrgInbox(obj)
-	case *org.Address:
-		return validateOrgAddress(obj)
-	}
-	return nil
 }

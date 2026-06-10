@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-AE",
+  "package": "ae",
+  "subsets": [
+    {
+      "id": "GOBL-AE-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [AE]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-AE-TAX-IDENTITY-01",
+                      "desc": "invalid UAE tax identity code",
+                      "tests": "matches ^\\d{15}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

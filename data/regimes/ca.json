@@ -3,6 +3,9 @@
   "name": {
     "en": "Canada"
   },
+  "description": {
+    "en": "Canada's tax system is administered by the Canada Revenue Agency\n(CRA). The country uses a multi-layered sales tax system consisting\nof the federal Goods and Services Tax (GST) and various provincial\ntaxes.\n\nThe Harmonized Sales Tax (HST) combines GST and provincial sales\ntax in participating provinces. Non-participating provinces levy a\nseparate Provincial Sales Tax (PST) at varying rates. Zero-rated\nsupplies include basic groceries, agricultural products, and\nexports. Exempt supplies include certain financial services,\neducational services, and healthcare services.\n\nBusinesses with annual taxable revenues exceeding CAD 30,000 must\nregister for GST/HST. Tax identification is through the Business\nNumber (BN) assigned by the CRA. Canada supports both credit notes\nand debit notes for invoice corrections."
+  },
   "time_zone": "America/Toronto",
   "country": "CA",
   "currency": "CAD",

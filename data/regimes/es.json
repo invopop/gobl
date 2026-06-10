@@ -4,6 +4,17 @@
     "en": "Spain",
     "es": "España"
   },
+  "description": {
+    "en": "Spain's tax system is administered by the Agencia Tributaria (AEAT). As an\nEU member state, Spain follows the EU VAT Directive with locally adapted rates.\n\nIVA (Impuesto sobre el Valor Añadido) applies at general, reduced, and\nsuper-reduced rates. The Canary Islands use IGIC (Impuesto General Indirecto\nCanario) instead of IVA, while Ceuta and Melilla use IPSI (Impuesto sobre la\nProducción, los Servicios y la Importación).\n\nBusinesses are identified by their NIF (Número de Identificación Fiscal) or\nCIF for companies. IRPF (Impuesto sobre la Renta de las Personas Físicas)\nretention taxes apply to freelancer invoices at varying rates.\n\nAccording to Real Decreto 1619/2012, only rectified (rectificativa) invoices\nare recognized in Spanish law. GOBL maps corrective invoices to \"rectificación\nmodelo íntegro\" (complete replacement) and credit notes to \"rectificación por\ndiferencias\" (correction by differences, with quantities inverted during\nconversion). The FacturaE format is used for B2G e-invoicing, with TicketBAI\nrequired in the Basque Country, VeriFactu being rolled out nationally, and the\nSII (Suministro Inmediato de Información) system providing near-real-time\nreporting of invoicing data to the AEAT."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Real Decreto 1619/2012 - Invoicing Regulation"
+      },
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696"
+    }
+  ],
   "time_zone": "Europe/Madrid",
   "country": "ES",
   "currency": "EUR",
@@ -109,9 +120,25 @@
           "tags": [
             "reverse-charge"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "reverse-charge",
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversión del sujeto pasivo."
+          }
+        },
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "reverse-charge",
             "text": "Reverse Charge / Inversión del sujeto pasivo."
           }
         },
@@ -119,9 +146,12 @@
           "tags": [
             "simplified-scheme"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "simplified-scheme",
+            "cat": "VAT",
+            "key": "simplified-scheme",
             "text": "Factura expedida por contribuyente en régimen simplificado."
           }
         },
@@ -130,8 +160,7 @@
             "self-billed"
           ],
           "note": {
-            "key": "legal",
-            "src": "self-billed",
+            "key": "self-billed",
             "text": "Facturación por el destinatario."
           }
         },
@@ -139,9 +168,25 @@
           "tags": [
             "travel-agency"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "travel-agency",
+            "cat": "VAT",
+            "key": "travel-agency",
+            "text": "Régimen especial de las agencias de viajes."
+          }
+        },
+        {
+          "tags": [
+            "travel-agency"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "travel-agency",
             "text": "Régimen especial de las agencias de viajes."
           }
         },
@@ -149,9 +194,25 @@
           "tags": [
             "second-hand-goods"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "second-hand-goods",
+            "cat": "VAT",
+            "key": "second-hand-goods",
+            "text": "Régimen especial de los bienes usados."
+          }
+        },
+        {
+          "tags": [
+            "second-hand-goods"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "second-hand-goods",
             "text": "Régimen especial de los bienes usados."
           }
         },
@@ -159,9 +220,25 @@
           "tags": [
             "art"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "art",
+            "cat": "VAT",
+            "key": "art",
+            "text": "Régimen especial de los objetos de arte."
+          }
+        },
+        {
+          "tags": [
+            "art"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "art",
             "text": "Régimen especial de los objetos de arte."
           }
         },
@@ -169,9 +246,25 @@
           "tags": [
             "antiques"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "antiques",
+            "cat": "VAT",
+            "key": "antiques",
+            "text": "Régimen especial de las antigüedades y objetos de colección."
+          }
+        },
+        {
+          "tags": [
+            "antiques"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "antiques",
             "text": "Régimen especial de las antigüedades y objetos de colección."
           }
         },
@@ -179,9 +272,25 @@
           "tags": [
             "cash-basis"
           ],
+          "cat": [
+            "VAT"
+          ],
           "note": {
-            "key": "legal",
-            "src": "cash-basis",
+            "cat": "VAT",
+            "key": "cash-basis",
+            "text": "Régimen especial del criterio de caja."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "cash-basis",
             "text": "Régimen especial del criterio de caja."
           }
         }
@@ -641,6 +750,27 @@
           ]
         }
       ]
+    },
+    {
+      "code": "IRNR",
+      "name": {
+        "ca": "IRNR",
+        "en": "IRNR",
+        "es": "IRNR",
+        "eu": "IRNR",
+        "gl": "IRNR"
+      },
+      "title": {
+        "ca": "Impost sobre la renda de no residents",
+        "en": "Non-residents income tax",
+        "es": "Impuesto sobre la renta de no residentes",
+        "eu": "Ez egoiliarren errentaren gaineko zerga",
+        "gl": "Imposto sobre a renda de non residentes"
+      },
+      "desc": {
+        "en": "Personal or corporate income tax levied on income obtained in Spanish\nterritory by individuals and entities that are not resident in Spain.\nRegulated by Real Decreto Legislativo 5/2004 (TRLIRNR).\n\nThis category covers income obtained without a permanent establishment\n(sin establecimiento permanente), where the Spanish payer is generally\nobliged to withhold the tax at source on each payment. Income obtained\nthrough a permanent establishment is taxed under the rules of the\nCorporate Income Tax (Impuesto sobre Sociedades) and is out of scope\nat the invoice level.\n\nApplicable rates depend on the type of income and on whether the\nrecipient is resident in another EU/EEA Member State with an effective\nexchange of tax information, in which case reduced rates apply."
+      },
+      "retained": true
     }
   ]
 }

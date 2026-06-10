@@ -1,13 +1,16 @@
 package cbc
 
 import (
-	"errors"
+	"fmt"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
+	"golang.org/x/text/unicode/norm"
 )
 
 const (
@@ -18,14 +21,18 @@ const (
 // Code represents a string used to uniquely identify the data we're looking
 // at. We use "code" instead of "id", to re-enforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
-// Codes are standardized so that when validated they must contain between
-// 1 and 64 inclusive english alphabet letters or numbers with optional
-// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
-// colons (`:`), commas (`,`), or spaces (` `) to separate blocks.
-// Each block must only be separated by a single symbol.
 //
-// The objective is to have a code that is easy to read and understand, while
-// still being unique and easy to validate.
+// By default codes are treated leniently so that values coming from other
+// systems and formats can be preserved as-is: normalization applies Unicode NFC,
+// removes control and other non-printable characters, and trims surrounding
+// whitespace (see NormalizeCode), while validation only requires that the code
+// be no longer than 64 characters and contain no control characters or leading
+// or trailing whitespace.
+//
+// Fields that need a stricter, canonical format (letters, numbers, and single
+// `.`, `-`, `:`, `/`, `,`, `_`, `&`, or space separators between blocks) can opt
+// in using NormalizeStrictCode for normalization and the StrictCode test for
+// validation.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -34,16 +41,24 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodeSeparators           = `\.\-\:/,_ `
-	CodePattern              = `^[A-Za-z0-9]+([` + CodeSeparators + `]?[A-Za-z0-9]+)*$`
+	CodeSeparators           = `.\-:/,_& ` // only escape dash for JS compatibility
+	CodeDigits               = `A-ZÑa-z0-9`
+	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 64
+
+	// CodePatternLenient is the default code validation pattern. It rejects
+	// leading or trailing whitespace and any control character (C0, DEL, and
+	// C1), leaving the contents otherwise unconstrained. Use CodePattern (via
+	// StrictCode) for the stricter canonical format.
+	CodePatternLenient       = `^[^\s\x00-\x1f\x7f-\x9f]([^\x00-\x1f\x7f-\x9f]*[^\s\x00-\x1f\x7f-\x9f])?$`
+	CodePatternLenientRegexp = regexp.MustCompile(CodePatternLenient)
 )
 
 var (
-	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9` + CodeSeparators + `]+`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^` + CodeDigits + `]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^` + CodeDigits + CodeSeparators + `]+`)
 	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
 	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
@@ -51,40 +66,77 @@ var (
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
-// NormalizeCode attempts to clean and normalize the provided code so that
-// it matches what we'd expect instead of raising validation errors.
+// NormalizeCode applies the default, lenient normalization to a code: it
+// applies Unicode NFC normalization (so canonically-equivalent codes compare
+// equal), removes any control or non-printable characters, and trims leading
+// and trailing whitespace, but otherwise leaves the contents untouched. This is
+// the normalization applied automatically to every cbc.Code in a document. Use
+// NormalizeStrictCode for the stricter cleaning required by machine-readable
+// identifiers.
 func NormalizeCode(c Code) Code {
-	code := c.String()
-	code = strings.TrimSpace(code)
+	s := norm.NFC.String(c.String())
+	s = strings.Map(func(r rune) rune {
+		if !unicode.IsPrint(r) {
+			return -1 // drop control and other non-printable characters
+		}
+		return r
+	}, s)
+	return Code(strings.TrimSpace(s))
+}
+
+// NormalizeStrictCode cleans the code into its canonical strict form: leading
+// and trailing whitespace is trimmed, repeated separators are collapsed, and
+// any character outside the permitted set is removed.
+func NormalizeStrictCode(c Code) Code {
+	code := strings.TrimSpace(c.String())
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
-// NormalizeAlphanumericalCode cleans and normalizes the code,
-// ensuring all letters are uppercase while also removing
-// non-alphanumerical characters.
+// NormalizeUpperCode cleans and normalizes the code to its strict form, ensuring
+// all letters are uppercase while preserving valid separators.
+func NormalizeUpperCode(c Code) Code {
+	return Code(strings.ToUpper(NormalizeStrictCode(c).String()))
+}
+
+// NormalizeAlphanumericalCode cleans and normalizes the code to its strict form,
+// ensuring all letters are uppercase while also removing non-alphanumerical
+// characters.
 func NormalizeAlphanumericalCode(c Code) Code {
-	code := NormalizeCode(c).String()
-	code = strings.ToUpper(code)
+	code := strings.ToUpper(NormalizeStrictCode(c).String())
 	code = codeNonAlphanumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
-// NormalizeNumericalCode cleans and normalizes the code, while also
-// removing non-numerical characters.
+// NormalizeNumericalCode cleans and normalizes the code to its strict form, while
+// also removing non-numerical characters.
 func NormalizeNumericalCode(c Code) Code {
-	code := NormalizeCode(c).String()
+	code := NormalizeStrictCode(c).String()
 	code = codeNonNumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
+// StrictCode is a validation test that ensures a code matches the strict
+// canonical pattern (letters, numbers, and single separators). Use it on the
+// fields of machine-readable identifiers that require the stricter format; the
+// default code validation only rejects leading or trailing whitespace.
+var StrictCode = is.MatchesRegexp(CodePatternRegexp)
+
+func codeRules() *rules.Set {
+	return rules.For(Code(""),
+		rules.Assert("01", fmt.Sprintf("codes must be no longer than %d characters", CodeMaxLength),
+			is.Length(0, int(CodeMaxLength)),
+		),
+		rules.Assert("02", "codes must not contain control characters or leading or trailing whitespace",
+			is.Matches(CodePatternLenient),
+		),
+	)
+}
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
-	return validation.Validate(string(c),
-		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(CodePatternRegexp),
-	)
+	return rules.Validate(c)
 }
 
 // IsEmpty returns true if no code is specified.
@@ -141,30 +193,49 @@ func (c Code) JoinWith(separator Code, c2 Code) Code {
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:      "string",
-		Pattern:   CodePattern,
+		Pattern:   CodePatternLenient,
 		Title:     "Code",
 		MinLength: &CodeMinLength,
 		MaxLength: &CodeMaxLength,
 		Description: here.Doc(`
-			Alphanumerical text identifier with upper-case letters and limits on using
-			special characters or whitespace to separate blocks.
+			Text identifier with a limit of 64 characters, no control characters, and
+			no leading or trailing whitespace.
 		`),
 	}
 }
 
-// Validate ensures the code maps data looks correct.
-func (cs CodeMap) Validate() error {
-	err := make(validation.Errors)
-	// values are already tested
-	for k := range cs {
-		if e := k.Validate(); e != nil {
-			err[k.String()] = e
+// InCodes provides a rules test that checks if a code's value is one of the provided codes.
+func InCodes(codes ...Code) rules.Test {
+	return is.Func("code in ["+strings.Join(CodeStrings(codes), ", ")+"]",
+		func(value any) bool {
+			c, ok := value.(Code)
+			if !ok {
+				return false
+			}
+			return c.In(codes...)
+		},
+	)
+}
+
+func codeMapRules() *rules.Set {
+	return rules.For(CodeMap{},
+		rules.AssertIfPresent("01", "all code map keys must be valid",
+			is.Func("valid keys", codeMapKeysValid),
+		),
+	)
+}
+
+func codeMapKeysValid(v any) bool {
+	m, ok := v.(CodeMap)
+	if !ok {
+		return false
+	}
+	for k := range m {
+		if rules.Validate(k) != nil {
+			return false
 		}
 	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
+	return true
 }
 
 // Has returns true if the code map has values for all the provided keys.
@@ -175,6 +246,20 @@ func (cs CodeMap) Has(keys ...Key) bool {
 		}
 	}
 	return true
+}
+
+// Lookup returns the code matching the provided key, falling back to less
+// specific keys by progressively popping the last subkey.
+func (cs CodeMap) Lookup(k Key) Code {
+	for {
+		if c, ok := cs[k]; ok {
+			return c
+		}
+		if k.IsEmpty() {
+			return CodeEmpty
+		}
+		k = k.Pop()
+	}
 }
 
 // Equals returns true if the code map has the same keys and values as the provided
@@ -197,32 +282,31 @@ func (cs CodeMap) Equals(other CodeMap) bool {
 
 // CodeMapHas returns a validation rule that ensures the code set contains
 // the provided keys.
-func CodeMapHas(keys ...Key) validation.Rule {
-	return validateCodeMap{keys: keys}
+func CodeMapHas(keys ...Key) rules.Test {
+	return codeMapTest{keys: keys}
 }
 
-type validateCodeMap struct {
+type codeMapTest struct {
 	keys []Key
 }
 
-func (v validateCodeMap) Validate(value interface{}) error {
+// String returns a string representation of the rule.
+func (r codeMapTest) String() string {
+	return fmt.Sprintf("have keys [%s]", strings.Join(KeyStrings(r.keys), ", "))
+}
+
+// Check returns true if the code map has all the required keys.
+func (r codeMapTest) Check(value any) bool {
 	cs, ok := value.(CodeMap)
 	if !ok {
-		return nil
+		return false
 	}
-	var err validation.Errors
-	for _, k := range v.keys {
+	for _, k := range r.keys {
 		if _, ok := cs[k]; !ok {
-			if err == nil {
-				err = make(validation.Errors)
-			}
-			err[k.String()] = errors.New("required")
+			return false
 		}
 	}
-	if len(err) > 0 {
-		return err
-	}
-	return nil
+	return true
 }
 
 // JSONSchemaExtend ensures the pattern property is set correctly.

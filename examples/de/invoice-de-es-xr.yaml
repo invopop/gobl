@@ -9,6 +9,10 @@ code: "001"
 tax:
   tags:
     - reverse-charge
+  notes:
+    - cat: VAT
+      key: reverse-charge
+      text: "Reverse charge applies according to EU VAT Directive."
 supplier:
   tax_id:
     country: "DE"
@@ -63,7 +67,7 @@ lines:
         reason: "Special discount"
     taxes:
       - cat: VAT
-        rate: exempt+reverse-charge
+        key: reverse-charge
 
 payment:
   instructions:

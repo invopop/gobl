@@ -1,11 +1,10 @@
 package org
 
 import (
-	"context"
 	"regexp"
 
-	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // RegexpPatternW3W is a regular expression that matches a what3words address.
@@ -26,17 +25,25 @@ type Coordinates struct {
 	Geohash string `json:"geohash,omitempty" jsonschema:"title=Geohash"`
 }
 
-// Validate checks that coordinates look okay.
-func (c *Coordinates) Validate() error {
-	return c.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext checks that coordinates look okay in the given context.
-func (c *Coordinates) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Latitude, validation.Min(-90.0), validation.Max(90.0)),
-		validation.Field(&c.Longitude, validation.Min(-180.0), validation.Max(180.0)),
-		validation.Field(&c.W3W, validation.Match(regexpW3W)),
+func coordinatesRules() *rules.Set {
+	return rules.For(new(Coordinates),
+		rules.Field("lat",
+			rules.AssertIfPresent("01", "coordinate lattude must be between -90.0 and 90.0",
+				is.Min(-90.0),
+				is.Max(90.0),
+			),
+		),
+		rules.Field("lon",
+			rules.AssertIfPresent("02", "coordinate longitude must be between -180.0 and 180.0",
+				is.Min(-180.0),
+				is.Max(180.0),
+			),
+		),
+		rules.Field("w3w",
+			rules.AssertIfPresent("03", "what3words coordinate must be valid",
+				is.MatchesRegexp(regexpW3W),
+			),
+		),
 	)
 }
 

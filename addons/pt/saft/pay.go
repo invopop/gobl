@@ -9,20 +9,21 @@ import (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by SAF-T PT.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansMap
+	return tax.ExtensionsOf(paymentMeansMap)
 }
 
-var paymentMeansMap = tax.Extensions{
-	pay.MeansKeyCard:           "CC",
-	pay.MeansKeyCreditTransfer: "TB",
-	pay.MeansKeyDebitTransfer:  "TB",
-	pay.MeansKeyCash:           "NU",
-	pay.MeansKeyPromissoryNote: "LC",
-	pay.MeansKeyNetting:        "CS",
-	pay.MeansKeyCheque:         "CH",
-	pay.MeansKeyDirectDebit:    "TB",
-	pay.MeansKeyOnline:         "DE",
-	pay.MeansKeyOther:          "OU",
+var paymentMeansMap = cbc.CodeMap{
+	pay.MeansKeyCard:                         "CC",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit): "CD",
+	pay.MeansKeyCreditTransfer:               "TB",
+	pay.MeansKeyDebitTransfer:                "TB",
+	pay.MeansKeyCash:                         "NU",
+	pay.MeansKeyPromissoryNote:               "LC",
+	pay.MeansKeyNetting:                      "CS",
+	pay.MeansKeyCheque:                       "CH",
+	pay.MeansKeyDirectDebit:                  "TB",
+	pay.MeansKeyOnline:                       "DE",
+	pay.MeansKeyOther:                        "OU",
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
@@ -32,7 +33,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	instr.Ext = mergePaymentMeans(instr.Key, instr.Ext)
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
+func normalizePayRecord(adv *pay.Record) {
 	if adv == nil {
 		return
 	}
@@ -40,12 +41,12 @@ func normalizePayAdvance(adv *pay.Advance) {
 }
 
 func mergePaymentMeans(key cbc.Key, ext tax.Extensions) tax.Extensions {
-	if key == pay.MeansKeyOther && ext[ExtKeyPaymentMeans] != "" {
+	if key == pay.MeansKeyOther && ext.Get(ExtKeyPaymentMeans) != "" {
 		return ext // `other` won't override the extension if already set
 	}
-	if extVal, ok := paymentMeansMap[key]; ok {
+	if extVal := paymentMeansMap.Lookup(key); extVal != "" {
 		return ext.Merge(
-			tax.Extensions{ExtKeyPaymentMeans: extVal},
+			tax.ExtensionsOf(cbc.CodeMap{ExtKeyPaymentMeans: extVal}),
 		)
 	}
 	return ext

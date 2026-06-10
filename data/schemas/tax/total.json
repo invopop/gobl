@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/total",
-  "$ref": "#/$defs/Total",
+  "$ref": "#/$defs/tax.Total",
   "$defs": {
-    "CategoryTotal": {
+    "tax.CategoryTotal": {
       "properties": {
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -19,7 +19,7 @@
         },
         "rates": {
           "items": {
-            "$ref": "#/$defs/RateTotal"
+            "$ref": "#/$defs/tax.RateTotal"
           },
           "type": "array",
           "title": "Rates"
@@ -41,7 +41,7 @@
       ],
       "description": "CategoryTotal groups together all rates inside a given category."
     },
-    "RateTotal": {
+    "tax.RateTotal": {
       "properties": {
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
@@ -69,7 +69,7 @@
           "description": "Percentage of the rate. Will be nil when taxes are **exempt**."
         },
         "surcharge": {
-          "$ref": "#/$defs/RateTotalSurcharge",
+          "$ref": "#/$defs/tax.RateTotalSurcharge",
           "title": "Surcharge",
           "description": "Surcharge applied to the rate."
         },
@@ -86,7 +86,7 @@
       ],
       "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and rate."
     },
-    "RateTotalSurcharge": {
+    "tax.RateTotalSurcharge": {
       "properties": {
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
@@ -104,11 +104,11 @@
       ],
       "description": "RateTotalSurcharge reflects the sum surcharges inside the rate."
     },
-    "Total": {
+    "tax.Total": {
       "properties": {
         "categories": {
           "items": {
-            "$ref": "#/$defs/CategoryTotal"
+            "$ref": "#/$defs/tax.CategoryTotal"
           },
           "type": "array",
           "title": "Categories",

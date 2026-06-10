@@ -5,7 +5,10 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -16,12 +19,12 @@ func TestLineDiscountNormalize(t *testing.T) {
 	l := &bill.LineDiscount{
 		Code:    " FOO--BAR ",
 		Percent: num.NewPercentage(200, 3),
-		Ext:     tax.Extensions{},
+		Ext:     tax.ExtensionsOf(cbc.CodeMap{}),
 	}
-	l.Normalize(nil)
+	norm.Normalize(l)
 	assert.Equal(t, "20.0%", l.Percent.String())
-	assert.Equal(t, "FOO-BAR", l.Code.String())
-	assert.Nil(t, l.Ext)
+	assert.Equal(t, "FOO--BAR", l.Code.String())
+	assert.True(t, l.Ext.IsZero())
 }
 
 func TestLineDiscountValidation(t *testing.T) {
@@ -30,11 +33,11 @@ func TestLineDiscountValidation(t *testing.T) {
 		Code:   "BAR",
 		Amount: num.MakeAmount(100, 2),
 	}
-	err := l.Validate()
+	err := rules.Validate(l)
 	assert.NoError(t, err)
 
 	l.Amount = num.MakeAmount(0, 2)
-	err = l.Validate()
+	err = rules.Validate(l)
 	assert.NoError(t, err)
 }
 

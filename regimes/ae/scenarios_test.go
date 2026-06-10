@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -87,15 +88,16 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 func TestInvoiceScenarios(t *testing.T) {
 	i := testInvoiceReverseCharge(t)
 	require.NoError(t, i.Calculate())
-	require.NoError(t, i.Validate())
-	assert.Len(t, i.Notes, 1)
-	assert.Equal(t, i.Notes[0].Src, tax.TagReverseCharge)
-	assert.Equal(t, i.Notes[0].Text, "Reverse Charge")
+	require.NoError(t, rules.Validate(i))
+	require.NotNil(t, i.Tax)
+	assert.Len(t, i.Tax.Notes, 1)
+	assert.Equal(t, tax.KeyReverseCharge, i.Tax.Notes[0].Key)
+	assert.Equal(t, "Reverse Charge", i.Tax.Notes[0].Text)
 
 	i = testInvoiceSimplified(t)
 	require.NoError(t, i.Calculate())
-	require.NoError(t, i.Validate())
-	assert.Len(t, i.Notes, 1)
-	assert.Equal(t, i.Notes[0].Src, tax.TagSimplified)
-	assert.Equal(t, i.Notes[0].Text, "Simplified Tax Invoice")
+	require.NoError(t, rules.Validate(i))
+	require.NotNil(t, i.Tax)
+	assert.Len(t, i.Tax.Notes, 1)
+	assert.Equal(t, "Simplified Tax Invoice", i.Tax.Notes[0].Text)
 }

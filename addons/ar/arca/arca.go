@@ -2,15 +2,22 @@
 package arca
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
+	// Key identifies the ARCA addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "ar-arca"
+
 	// V4 for ARCA version 4
-	V4 cbc.Key = "ar-arca-v4"
+	V4 cbc.Key = Key + "-v4"
 )
 
 // ARCA Official Codes to include in stamps
@@ -25,6 +32,19 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("AR-ARCA"),
+		is.InContext(tax.AddonIn(V4)),
+		billInvoiceRules(),
+		billChargeRules(),
+		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -49,28 +69,5 @@ func newAddon() *tax.AddonDef {
 			invoiceTags,
 		},
 		Corrections: invoiceCorrectionDefinitions,
-		Normalizer:  normalize,
-		Validator:   validate,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }

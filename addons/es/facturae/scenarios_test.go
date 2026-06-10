@@ -15,21 +15,22 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.Addons.List = []cbc.Key{} // reset
 		require.NoError(t, i.Calculate())
-		assert.Empty(t, i.Tax.Ext[facturae.ExtKeyDocType])
+		assert.Empty(t, i.Tax.Ext.Get(facturae.ExtKeyDocType))
 	})
 
 	t.Run("with addon", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		require.NoError(t, i.Calculate())
 		assert.Len(t, i.Notes, 0)
-		assert.Equal(t, i.Tax.Ext[facturae.ExtKeyDocType].String(), "FC")
+		assert.Equal(t, i.Tax.Ext.Get(facturae.ExtKeyDocType).String(), "FC")
 	})
 
 	t.Run("self-billed", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSelfBilled)
 		require.NoError(t, i.Calculate())
-		assert.Len(t, i.Notes, 1)
-		assert.Equal(t, i.Tax.Ext[facturae.ExtKeyDocType].String(), "AF")
+		require.NotNil(t, i.Tax)
+		assert.Len(t, i.Tax.Notes, 1)
+		assert.Equal(t, i.Tax.Ext.Get(facturae.ExtKeyDocType).String(), "AF")
 	})
 }

@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,18 +18,18 @@ func TestInstructionsNormalize(t *testing.T) {
 		Key:    "online",
 		Ref:    " fooo ",
 		Detail: " Some random payment\t",
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			"random": "",
-		},
+		}),
 	}
-	i.Normalize()
-	assert.Empty(t, i.Ext)
+	norm.Normalize(i)
+	assert.True(t, i.Ext.IsZero())
 	assert.Equal(t, "fooo", i.Ref.String())
 	assert.Equal(t, "Some random payment", i.Detail)
 
 	i = nil
 	assert.NotPanics(t, func() {
-		i.Normalize()
+		norm.Normalize(i)
 	})
 }
 
@@ -40,7 +43,7 @@ func TestOnline(t *testing.T) {
 			},
 		},
 	}
-	require.NoError(t, instr.Validate())
+	require.NoError(t, rules.Validate(instr))
 	assert.Equal(t, "Test", instr.Online[0].Label)
 	assert.Equal(t, "https://example.com", instr.Online[0].URL)
 

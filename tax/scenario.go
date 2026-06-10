@@ -1,11 +1,10 @@
 package tax
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // ScenarioSet is a collection of tax scenarios for a given schema that can be used to
@@ -26,6 +25,9 @@ type ScenarioDocument interface {
 	GetTags() []cbc.Key
 	// GetExtensions an array of extensions that used in the document.
 	GetExtensions() []Extensions
+	// GetTaxCategories returns a list of tax categories used in the document's lines,
+	// charges, and discounts.
+	GetTaxCategories() []cbc.Code
 }
 
 // Scenario is used to describe a tax scenario of a document based on the combination
@@ -49,6 +51,11 @@ type Scenario struct {
 	// Array of tags that have been applied to the document.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
+	// Categories is an optional list of tax category codes that acts as a filter.
+	// When set, at least one of the specified categories must be present in the
+	// document's line taxes for the scenario to match.
+	Categories []cbc.Code `json:"cat,omitempty" jsonschema:"title=Tax Categories"`
+
 	// Extension key that must be present in the document.
 	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`
 
@@ -64,7 +71,7 @@ type Scenario struct {
 	/* Outputs */
 
 	// A note to be added to the document if the scenario is applied.
-	Note *ScenarioNote `json:"note,omitempty" jsonschema:"title=Note"`
+	Note *Note `json:"note,omitempty" jsonschema:"title=Note"`
 
 	// Codes is used to define additional codes for regime specific
 	// situations.
@@ -72,29 +79,14 @@ type Scenario struct {
 
 	// Ext represents a set of tax extensions that should be applied to
 	// the document in the appropriate "tax" context.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
-}
-
-// ScenarioNote represents the structure of the note that needs to be added to the document.
-// This is a copy of the regular org.Note to avoid import cycle issues.
-type ScenarioNote struct {
-	// Key specifying subject of the text
-	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Code used for additional data that may be required to identify the note.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
-	// Source of this note, especially useful when auto-generated.
-	Src cbc.Key `json:"src,omitempty" jsonschema:"title=Source"`
-	// The contents of the note
-	Text string `json:"text" jsonschema:"title=Text"`
-	// Extension data
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // ScenarioSummary is the result after running through a set of
 // scenarios and determining which combinations of Notes, Codes, Meta,
 // and extensions are viable.
 type ScenarioSummary struct {
-	Notes []*ScenarioNote
+	Notes []*Note
 	Codes cbc.CodeMap
 	Ext   Extensions
 }
@@ -107,6 +99,17 @@ func NewScenarioSet(schema string) *ScenarioSet {
 	}
 }
 
+func scenarioSetRules() *rules.Set {
+	return rules.For(new(ScenarioSet),
+		rules.Field("schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+		rules.Field("list",
+			rules.Assert("02", "at least one scenario is required", is.Present),
+		),
+	)
+}
+
 // Merge appends the scenarios from the other set to the current set.
 func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 	for _, os := range other {
@@ -117,21 +120,12 @@ func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
 	}
 }
 
-// ValidateWithContext checks the scenario set for errors.
-func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, ss,
-		validation.Field(&ss.Schema, validation.Required),
-		validation.Field(&ss.List, validation.Required),
-	)
-	return err
-}
-
 // ExtensionKeys extracts all the possible extension keys that could be applied to a
 // document.
 func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
 	keys := make([]cbc.Key, 0)
 	for _, row := range ss.List {
-		for k := range row.Ext {
+		for _, k := range row.Ext.Keys() {
 			if !k.In(keys...) {
 				keys = append(keys, k)
 			}
@@ -141,8 +135,8 @@ func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
 }
 
 // Notes extracts all the possible notes that could be applied to a document.
-func (ss *ScenarioSet) Notes() []*ScenarioNote {
-	notes := make([]*ScenarioNote, 0)
+func (ss *ScenarioSet) Notes() []*Note {
+	notes := make([]*Note, 0)
 	for _, row := range ss.List {
 		if row.Note != nil {
 			notes = append(notes, row.Note)
@@ -155,29 +149,27 @@ func (ss *ScenarioSet) Notes() []*ScenarioNote {
 // supplied document.
 func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	summary := &ScenarioSummary{
-		Notes: make([]*ScenarioNote, 0),
+		Notes: make([]*Note, 0),
 		Codes: make(cbc.CodeMap),
-		Ext:   make(Extensions),
+		Ext:   MakeExtensions(),
 	}
 	for _, s := range ss.List {
 		if s.match(doc) {
 			if s.Note != nil {
-				summary.addNote(s.Note.withCode(s.ExtCode))
+				summary.addNote(s.Note)
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
 			}
-			for k, v := range s.Ext {
-				summary.Ext[k] = v
-			}
+			summary.Ext = summary.Ext.Merge(s.Ext)
 		}
 	}
 	return summary
 }
 
-func (ss *ScenarioSummary) addNote(note *ScenarioNote) {
+func (ss *ScenarioSummary) addNote(note *Note) {
 	for i, n := range ss.Notes {
-		if n.sameAs(note) {
+		if n.SameAs(note) {
 			// replace
 			ss.Notes[i] = note
 			return
@@ -201,15 +193,20 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 			return false
 		}
 	}
+	if len(s.Categories) > 0 {
+		if !s.hasCategories(doc.GetTaxCategories()) {
+			return false
+		}
+	}
 	if s.ExtKey != cbc.KeyEmpty {
 		// For extensions we need to find a complete match
 		// and reject if none found. We intentionally don't try
 		// to combine extensions from the document.
 		for _, ext := range doc.GetExtensions() {
-			v, ok := ext[s.ExtKey]
-			if !ok {
+			if !ext.Has(s.ExtKey) {
 				continue // try next extension
 			}
+			v := ext.Get(s.ExtKey)
 			if s.ExtCode != "" {
 				if v == s.ExtCode {
 					return true
@@ -233,6 +230,17 @@ func (s *Scenario) hasType(docType cbc.Key) bool {
 	return docType.In(s.Types...)
 }
 
+// hasCategories returns true if at least one of the scenario's categories
+// is present in the document's categories.
+func (s *Scenario) hasCategories(docCats []cbc.Code) bool {
+	for _, c := range s.Categories {
+		if c.In(docCats...) {
+			return true
+		}
+	}
+	return false
+}
+
 // hasTags returns true if the the provided document tags is a subset of the
 // scenarios tags.
 func (s *Scenario) hasTags(docTags []cbc.Key) bool {
@@ -245,30 +253,4 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 		return true
 	}
 	return false
-}
-
-// ValidateWithContext checks the scenario for errors, using the regime in the context
-// to validate the list of tags.
-func (s *Scenario) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, s,
-		validation.Field(&s.Types),
-		validation.Field(&s.Tags), // consider validating tags in context
-		validation.Field(&s.Name),
-		validation.Field(&s.Note),
-		validation.Field(&s.Codes),
-		validation.Field(&s.Ext),
-	)
-	return err
-}
-
-func (n *ScenarioNote) withCode(code cbc.Code) *ScenarioNote {
-	nw := *n // copy
-	nw.Code = code
-	return &nw
-}
-
-func (n *ScenarioNote) sameAs(n2 *ScenarioNote) bool {
-	return n.Key == n2.Key &&
-		n.Code == n2.Code &&
-		n.Src == n2.Src
 }

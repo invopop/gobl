@@ -1,16 +1,16 @@
 package org
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Common identity keys that may be used to identify something, like an item, document,
@@ -67,95 +67,121 @@ type Identity struct {
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Ext provides a way to add additional information to the identity.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// Normalize will try to clean the identity's data.
-func (i *Identity) Normalize() {
-	if i == nil {
-		return
-	}
-	uuid.Normalize(&i.UUID)
-	i.Label = cbc.NormalizeString(i.Label)
-	i.Type = cbc.NormalizeCode(i.Type)
-	i.Code = cbc.NormalizeCode(i.Code)
-	i.Description = cbc.NormalizeString(i.Description)
-	i.Ext = tax.CleanExtensions(i.Ext)
-}
-
-// Validate ensures the identity looks valid.
-func (i *Identity) Validate() error {
-	return i.ValidateWithContext(context.Background())
-}
-
-// ValidateWithContext ensures the identity looks valid inside the provided context.
-func (i *Identity) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.Label),
-		validation.Field(&i.Scope,
-			validation.In(
-				IdentityScopeTax,
-				IdentityScopeLegal,
+func identityRules() *rules.Set {
+	return rules.For(new(Identity),
+		rules.Field("code",
+			rules.Assert("01", "identity code must be provided", is.Present),
+		),
+		rules.Field("scope",
+			rules.AssertIfPresent("02", "identity scope when provided must be either 'tax' or 'legal'",
+				is.In(IdentityScopeTax, IdentityScopeLegal),
 			),
 		),
-		validation.Field(&i.Country),
-		validation.Field(&i.Key),
-		validation.Field(&i.Type,
-			validation.When(i.Key != "",
-				validation.Empty.Error("must be empty when key is set"),
-			),
+		rules.Assert("03", "identity must have either a key or type defined, but not both",
+			identityHasKeyOrTypeNotBoth(),
 		),
-		validation.Field(&i.Code,
-			validation.Required,
-		),
-		validation.Field(&i.Ext),
 	)
 }
 
-// RequireIdentityType provides a validation rule that will determine if at least one
-// of the identities defined includes one with the defined type.
-func RequireIdentityType(typ ...cbc.Code) validation.Rule {
-	return validateIdentitySet{typs: typ}
-}
-
-// RequireIdentityKey provides a validation rule that will determine if at least one
-// of the identities defined includes one with one of the defined keys.
-func RequireIdentityKey(key ...cbc.Key) validation.Rule {
-	return validateIdentitySet{keys: key}
-}
-
-type validateIdentitySet struct {
-	typs []cbc.Code
-	keys []cbc.Key
-}
-
-func (v validateIdentitySet) Validate(value interface{}) error {
-	ids, ok := value.([]*Identity)
-	if !ok {
-		return nil
-	}
-	for _, row := range ids {
-		if v.matches(row) {
-			return nil
+func identityHasKeyOrTypeNotBoth() rules.Test {
+	return is.Func("key and type must not be used together", func(value any) bool {
+		id, _ := value.(*Identity)
+		if id == nil {
+			return false
 		}
-	}
-	return fmt.Errorf("missing %s", v)
+		return id.Key == "" || id.Type == ""
+	})
 }
 
-func (v validateIdentitySet) matches(row *Identity) bool {
-	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
-		(len(v.keys) == 0 || row.Key.In(v.keys...))
+// IdentityTypeIn provides a test that will determine if the identity defined has a type with one of the defined codes.
+func IdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("type in [%s]", strings.Join(cbc.CodeStrings(typ), ", ")),
+		typs: typ,
+	}
 }
 
-func (v validateIdentitySet) String() string {
-	var parts []string
-	if len(v.typs) != 0 {
-		parts = append(parts, fmt.Sprintf("type '%s'", strings.Join(cbc.CodeStrings(v.typs), "', '")))
+// IdentityKeyIn provides a test that will determine if the identity defined has a key with one of the defined keys.
+func IdentityKeyIn(key ...cbc.Key) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("key in [%s]", strings.Join(cbc.KeyStrings(key), ", ")),
+		keys: key,
 	}
-	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), "', '")))
+}
+
+// IdentitiesTypeIn provides a test that will determine if at least one
+// of the identities defined includes one with the defined type.
+func IdentitiesTypeIn(typ ...cbc.Code) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("has a type in [%s]", strings.Join(cbc.CodeStrings(typ), ", ")),
+		typs: typ,
 	}
-	return strings.Join(parts, ", ")
+}
+
+// IdentitiesExtensionIn provides a test that will determine if at least one
+// of the identities defined includes an extension with the defined key and one
+// of the suggested values.
+func IdentitiesExtensionIn(key cbc.Key, value ...cbc.Code) rules.Test {
+	return identitiesTest{
+		desc:   fmt.Sprintf("has a ext [%s] in [%s]", key, strings.Join(cbc.CodeStrings(value), ", ")),
+		ext:    key,
+		values: value,
+	}
+}
+
+// IdentitiesKeyIn provides a test that will determine if at least one
+// of the identities defined includes one with one of the defined keys.
+func IdentitiesKeyIn(key ...cbc.Key) rules.Test {
+	return identitiesTest{
+		desc: fmt.Sprintf("has a key in [%s]", strings.Join(cbc.KeyStrings(key), ", ")),
+		keys: key,
+	}
+}
+
+type identitiesTest struct {
+	desc   string
+	typs   []cbc.Code
+	keys   []cbc.Key
+	ext    cbc.Key
+	values []cbc.Code
+}
+
+// Check will determine if the provided identities array complies with the criteria.
+func (v identitiesTest) Check(value any) bool {
+	switch obj := value.(type) {
+	case *Identity:
+		return v.matches(obj)
+	case []*Identity:
+		for _, row := range obj {
+			if v.matches(row) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+// String provides a description of the test being performed.
+func (v identitiesTest) String() string {
+	return v.desc
+}
+
+func (v identitiesTest) matches(row *Identity) bool {
+	if len(v.typs) > 0 {
+		return row.Type.In(v.typs...)
+	}
+	if len(v.keys) > 0 {
+		return row.Key.In(v.keys...)
+	}
+	if !v.ext.IsEmpty() {
+		return row.Ext.Get(v.ext).In(v.values...)
+	}
+	return false
 }
 
 // IdentityForType helps return the identity with a matching type code.
@@ -221,4 +247,10 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 			},
 		}
 	}
+}
+
+func normalizeIdentity(i *Identity) {
+	uuid.Normalize(&i.UUID)
+	i.Label = cbc.NormalizeString(i.Label)
+	i.Description = cbc.NormalizeString(i.Description)
 }

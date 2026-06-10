@@ -1,10 +1,13 @@
 package mydata
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -15,10 +18,10 @@ const (
 // PaymentMeansExtensions returns the mapping of payment means to their
 // extension values used by myDATA.
 func PaymentMeansExtensions() tax.Extensions {
-	return paymentMeansMap
+	return tax.ExtensionsOf(paymentMeansMap)
 }
 
-var paymentMeansMap = tax.Extensions{
+var paymentMeansMap = cbc.CodeMap{
 	pay.MeansKeyCreditTransfer:                       "1",
 	pay.MeansKeyCreditTransfer.With(MeansKeyForeign): "2",
 	pay.MeansKeyCash:                                 "3",
@@ -32,58 +35,52 @@ func normalizePayInstructions(i *pay.Instructions) {
 	if i == nil {
 		return
 	}
-	extVal := paymentMeansMap[i.Key]
+	extVal := paymentMeansMap.Lookup(i.Key)
 	if extVal != "" {
-		if i.Ext == nil {
-			i.Ext = make(tax.Extensions)
+		if i.Ext.IsZero() {
+			i.Ext = tax.MakeExtensions()
 		}
-		i.Ext[ExtKeyPaymentMeans] = extVal
+		i.Ext = i.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 
-func normalizePayAdvance(a *pay.Advance) {
+func normalizePayRecord(a *pay.Record) {
 	if a == nil {
 		return
 	}
-	extVal := paymentMeansMap[a.Key]
+	extVal := paymentMeansMap.Lookup(a.Key)
 	if extVal != "" {
-		if a.Ext == nil {
-			a.Ext = make(tax.Extensions)
+		if a.Ext.IsZero() {
+			a.Ext = tax.MakeExtensions()
 		}
-		a.Ext[ExtKeyPaymentMeans] = extVal
+		a.Ext = a.Ext.Set(ExtKeyPaymentMeans, extVal)
 	}
 }
 
-func validatePayInstructions(value any) error {
-	i, ok := value.(*pay.Instructions)
-	if !ok || i == nil {
-		return nil
-	}
-	return validation.ValidateStruct(i,
-		validation.Field(&i.Key,
-			validation.Required,
-			validation.Skip,
+func payInstructionsRules() *rules.Set {
+	return rules.For(new(pay.Instructions),
+		rules.Field("key",
+			rules.Assert("01", "payment instructions key is required", is.Present),
 		),
-		validation.Field(&i.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+		rules.Field("ext",
+			rules.Assert("02",
+				fmt.Sprintf("payment instructions require '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }
 
-func validatePayAdvance(value any) error {
-	a, ok := value.(*pay.Advance)
-	if !ok || a == nil {
-		return nil
-	}
-	return validation.ValidateStruct(a,
-		validation.Field(&a.Key,
-			validation.Required,
-			validation.Skip,
+func payAdvanceRules() *rules.Set {
+	return rules.For(new(pay.Record),
+		rules.Field("key",
+			rules.Assert("01", "payment advance key is required", is.Present),
 		),
-		validation.Field(&a.Ext,
-			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
+		rules.Field("ext",
+			rules.Assert("02",
+				fmt.Sprintf("payment advance requires '%s' extension", ExtKeyPaymentMeans),
+				tax.ExtensionsRequire(ExtKeyPaymentMeans),
+			),
 		),
 	)
 }

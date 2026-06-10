@@ -64,7 +64,7 @@ func TestInvoiceTypeScenarios(t *testing.T) {
 			require.NoError(t, i.Calculate())
 			require.NotNil(t, i.Tax)
 			require.NotNil(t, i.Tax.Ext)
-			assert.Equal(t, tt.out, i.Tax.Ext[nfe.ExtKeyModel])
+			assert.Equal(t, tt.out, i.Tax.Ext.Get(nfe.ExtKeyModel))
 		})
 	}
 }

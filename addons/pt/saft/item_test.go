@@ -5,7 +5,9 @@ import (
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,10 +21,11 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
+				Name: "Test Item",
 				Unit: "kg",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyProductType: "P",
-				},
+				}),
 			},
 		},
 		{
@@ -32,35 +35,34 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "missing extensions",
 			item: &org.Item{},
-			err:  "ext: (pt-saft-product-type: required.)",
+			err:  "product type is required",
 		},
 		{
 			name: "empty extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{}),
 			},
-			err: "ext: (pt-saft-product-type: required.)",
+			err: "product type is required",
 		},
 		{
 			name: "missing extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
-			err: "ext: (pt-saft-product-type: required.)",
+			err: "product type is required",
 		},
 		{
 			name: "missing unit",
 			item: &org.Item{},
-			err:  "unit: cannot be blank.",
+			err:  "cannot be blank",
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.item)
+			err := rules.Validate(ts.item, withAddonContext())
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -79,9 +81,9 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		{
 			name: "extension present",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					saft.ExtKeyProductType: "P",
-				},
+				}),
 			},
 			out: "P",
 		},
@@ -92,16 +94,16 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		{
 			name: "empty extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{}),
 			},
 			out: "S",
 		},
 		{
 			name: "missing extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			out: "S",
 		},
@@ -121,12 +123,11 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			addon.Normalizer(tt.item)
+			norm.Normalize(tt.item, tax.AddonContext(saft.V1))
 			if tt.item != nil {
-				assert.Equal(t, tt.out, tt.item.Ext[saft.ExtKeyProductType])
+				assert.Equal(t, tt.out, tt.item.Ext.Get(saft.ExtKeyProductType))
 			}
 		})
 	}
@@ -156,10 +157,9 @@ func TestItemUnitNormalization(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(saft.V1)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			addon.Normalizer(ts.item)
+			norm.Normalize(ts.item, tax.AddonContext(saft.V1))
 			if ts.out != "" {
 				assert.Equal(t, ts.out, ts.item.Unit)
 			}

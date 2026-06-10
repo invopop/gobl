@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/item",
-  "$ref": "#/$defs/Item",
+  "$ref": "#/$defs/org.Item",
   "$defs": {
-    "Item": {
+    "org.Item": {
       "properties": {
         "uuid": {
           "type": "string",

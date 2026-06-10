@@ -3,10 +3,11 @@ package xrechnung
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -20,12 +21,23 @@ import (
 // BR-DE-28 - handled by gobl validation of email address. BT-43
 
 const (
+	// Key identifies the XRechnung addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "de-xrechnung"
+
 	// V3 is the key for the XRechnung version 3.x
-	V3 cbc.Key = "de-xrechnung-v3"
+	V3 cbc.Key = Key + "-v3"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("DE-XRECHNUNG"),
+		is.InContext(tax.AddonIn(V3)),
+		billInvoiceRules(),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -47,14 +59,5 @@ func newAddon() *tax.AddonDef {
 				For more information on XRechnung, visit [www.xrechnung.de](https://www.xrechnung.de/).
 			`),
 		},
-		Validator: validate,
 	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }

@@ -1,11 +1,13 @@
 package bill
 
 import (
-	"context"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,14 +15,14 @@ import (
 func TestPaymentDetailsValidation(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := &PaymentDetails{}
-		assert.NoError(t, p.ValidateWithContext(context.Background()))
+		assert.NoError(t, rules.Validate(p))
 	})
 }
 
 func TestPaymentDetailsResetAdvances(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		p := &PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid in advance",
 					Amount:      num.MakeAmount(10, 0),
@@ -43,15 +45,15 @@ func TestPaymentDetailsNormalize(t *testing.T) {
 		Instructions: &pay.Instructions{
 			Key:    "online",
 			Detail: "Some random payment",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"random": "",
-			},
+			}),
 		},
 	}
-	p.Normalize(nil)
-	assert.Empty(t, p.Instructions.Ext)
+	norm.Normalize(p)
+	assert.True(t, p.Instructions.Ext.IsZero())
 	assert.NotPanics(t, func() {
-		p.Normalize(nil)
+		norm.Normalize(p)
 	})
 }
 
@@ -59,7 +61,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	zero := num.MakeAmount(0, 2)
 	total := num.MakeAmount(20000, 2)
 	p := &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Percent:     num.NewPercentage(10, 2),
@@ -70,7 +72,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	assert.Equal(t, "20.00", p.Advances[0].Amount.String())
 
 	p = &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Amount:      num.MakeAmount(10, 0),
@@ -84,7 +86,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	assert.Equal(t, "10.00", ta.String())
 
 	p = &PaymentDetails{
-		Advances: []*pay.Advance{
+		Advances: []*pay.Record{
 			{
 				Description: "Paid in advance",
 				Amount:      num.MakeAmount(10, 0),
@@ -108,7 +110,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		total := num.MakeAmount(20845, 3)
 		p := &PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Paid in advance",
 					Percent:     num.NewPercentage(100, 2),
@@ -119,5 +121,18 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		a := p.totalAdvance(zero)
 		assert.Equal(t, "20.85", p.Advances[0].Amount.String())
 		assert.Equal(t, "20.85", a.String())
+	})
+
+	t.Run("with nil advances", func(t *testing.T) {
+		p := &PaymentDetails{
+			Advances: []*pay.Record{
+				nil,
+			},
+		}
+		assert.NotPanics(t, func() {
+			p.calculateAdvances(zero, total)
+			a := p.totalAdvance(zero)
+			assert.Equal(t, "0.00", a.String())
+		})
 	})
 }

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/num/amount",
-  "$ref": "#/$defs/Amount",
+  "$ref": "#/$defs/num.Amount",
   "$defs": {
-    "Amount": {
+    "num.Amount": {
       "type": "string",
       "pattern": "^\\-?[0-9]+(\\.[0-9]+)?$",
       "title": "Amount",

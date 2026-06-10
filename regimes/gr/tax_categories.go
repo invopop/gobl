@@ -95,7 +95,7 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
-				Rate: tax.RateGeneral.With(TaxRateIsland),
+				Rate: tax.RateReduced.With(TaxRateIsland),
 				Name: i18n.String{
 					i18n.EN: "Reduced rate (Island)",
 					i18n.EL: "Μειωμένος συντελεστής (Νησί)",

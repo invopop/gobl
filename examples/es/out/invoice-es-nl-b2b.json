@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "dc58e7836caa41d3034b652c99ca4eb11ce7931ec8db5eaec1f20895a7cc035e"
+			"val": "5dfa6d68801a03f73f9d9d6c1a73a8643147d62afa2d686b9af78e5ff39075e5"
 		}
 	},
 	"doc": {
@@ -18,7 +18,15 @@
 		"code": "SAMPLE-X-002",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {},
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge",
+					"text": "Reverse Charge / Inversión del sujeto pasivo."
+				}
+			]
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
@@ -105,13 +113,6 @@
 			"tax": "0.00",
 			"total_with_tax": "575.00",
 			"payable": "575.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "reverse-charge",
-				"text": "Reverse Charge / Inversión del sujeto pasivo."
-			}
-		]
+		}
 	}
 }

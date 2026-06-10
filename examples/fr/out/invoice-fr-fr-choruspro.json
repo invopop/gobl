@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b37ea2fa078f1676fb48638d32331698e4f719f703740c0f246dd51d8f146803"
+			"val": "4a6d55ab86c25fc4a78569314eb94f12d305961746e38d22ef38fedf9a93e400"
 		}
 	},
 	"doc": {
@@ -35,7 +35,10 @@
 			"identities": [
 				{
 					"type": "SIRET",
-					"code": "73282932012345"
+					"code": "73282932012345",
+					"ext": {
+						"iso-scheme-id": "0009"
+					}
 				}
 			],
 			"addresses": [
@@ -66,7 +69,10 @@
 			"identities": [
 				{
 					"type": "SIRET",
-					"code": "35600000012345"
+					"code": "35600000012345",
+					"ext": {
+						"iso-scheme-id": "0009"
+					}
 				}
 			],
 			"addresses": [

@@ -3,8 +3,8 @@ package cbc
 import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // Source is used to identify a specific source of data. Typically this is used
@@ -23,11 +23,13 @@ type Source struct {
 	At *cal.DateTime `json:"at,omitempty" jsonschema:"title=At"`
 }
 
-// Validate ensures that the source object looks valid.
-func (src *Source) Validate() error {
-	return validation.ValidateStruct(src,
-		validation.Field(&src.Title),
-		validation.Field(&src.URL, validation.Required, is.URL),
-		validation.Field(&src.ContentType),
+func sourceRules() *rules.Set {
+	return rules.For(new(Source),
+		rules.Field("url",
+			rules.Assert("01", "url is required and must be a URL",
+				is.Present,
+				is.URL,
+			),
+		),
 	)
 }

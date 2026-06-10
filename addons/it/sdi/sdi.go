@@ -3,17 +3,24 @@
 package sdi
 
 import (
-	"github.com/invopop/gobl/bill"
+	"errors"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
-	// V1 for SDI's FatturaPA verions 1.x
-	V1 cbc.Key = "it-sdi-v1"
+	// Key identifies the SDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "it-sdi"
+
+	// V1 for SDI's FatturaPA versions 1.x
+	V1 cbc.Key = Key + "-v1"
 
 	// KeyFundContribution is the key for the Fund Contribution charge
 	KeyFundContribution cbc.Key = "fund-contribution"
@@ -21,6 +28,25 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("IT-SDI"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		billChargeRules(),
+		orgAddressRules(),
+		taxComboRules(),
+		payInstructionsRules(),
+		payAdvanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeAddress),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -33,40 +59,22 @@ func newAddon() *tax.AddonDef {
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
-		Inboxes:    inboxes,
-		Normalizer: normalize,
-		Scenarios:  scenarios,
-		Validator:  validate,
+		Inboxes:   inboxes,
+		Scenarios: scenarios,
 	}
 }
 
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	case *org.Address:
-		normalizeAddress(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	}
-}
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
 
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *bill.Charge:
-		return validateBillCharge(obj)
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
 	}
 	return nil
 }

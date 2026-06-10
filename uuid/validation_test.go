@@ -4,27 +4,18 @@ import (
 	"testing"
 	"time"
 
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
-
-type uuidTestStruct struct {
-	UUID *uuid.UUID
-}
-
-func (ut *uuidTestStruct) Validate() error {
-	return validation.ValidateStruct(ut,
-		validation.Field(&ut.UUID, uuid.IsV1),
-	)
-}
 
 func TestUUIDValidation(t *testing.T) {
 	base := uuid.UUID("03907310-8daa-11eb-8dcd-0242ac130003")
 	tests := []struct {
 		name string
 		uuid any
-		rule validation.Rule
+		rule uuid.VersionTest
 		err  string
 	}{
 		{
@@ -196,7 +187,7 @@ func TestUUIDValidation(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validation.Validate(tt.uuid, tt.rule)
+			err := tt.rule.Validate(tt.uuid)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -207,26 +198,92 @@ func TestUUIDValidation(t *testing.T) {
 
 	// Timestamp within tests
 	id := uuid.V1()
-	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	assert.NoError(t, uuid.Within(1*time.Second).Validate(id))
 	time.Sleep(12 * time.Millisecond)
-	err := validation.Validate(id, uuid.Within(10*time.Millisecond))
+	err := uuid.Within(10 * time.Millisecond).Validate(id)
 	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
 
 	id = uuid.V6()
-	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	assert.NoError(t, uuid.Within(1*time.Second).Validate(id))
 	time.Sleep(20 * time.Millisecond)
-	err = validation.Validate(id, uuid.Within(10*time.Millisecond))
+	err = uuid.Within(10 * time.Millisecond).Validate(id)
 	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
 
 	id = uuid.V7()
-	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	assert.NoError(t, uuid.Within(1*time.Second).Validate(id))
 	time.Sleep(12 * time.Millisecond)
-	err = validation.Validate(id, uuid.Within(10*time.Millisecond))
+	err = uuid.Within(10 * time.Millisecond).Validate(id)
 	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
+}
 
-	sample := new(uuidTestStruct)
-	sample.UUID = uuid.NewV1()
-	err = sample.Validate()
-	assert.NoError(t, err)
+type uuidRulesDoc struct {
+	ID uuid.UUID `json:"id"`
+}
 
+func TestUUIDRules(t *testing.T) {
+	t.Run("valid passes", func(t *testing.T) {
+		faults := rules.Validate(uuid.V4())
+		assert.NoError(t, faults)
+	})
+
+	t.Run("empty passes (AssertIfPresent)", func(t *testing.T) {
+		faults := rules.Validate(uuid.UUID(""))
+		assert.NoError(t, faults)
+	})
+
+	t.Run("invalid UUID produces fault", func(t *testing.T) {
+		faults := rules.Validate(uuid.UUID("not-a-uuid"))
+		require.NotNil(t, faults)
+		assert.Equal(t, rules.Code("GOBL-UUID-UUID-01"), faults.First().Code())
+		assert.Equal(t, "invalid UUID", faults.First().Message())
+	})
+
+	t.Run("struct field invalid UUID produces fault at path", func(t *testing.T) {
+		doc := &uuidRulesDoc{ID: uuid.UUID("not-a-uuid")}
+		faults := rules.Validate(doc)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasPath("$.id"))
+		assert.Equal(t, rules.Code("GOBL-UUID-UUID-01"), faults.First().Code())
+	})
+
+	t.Run("struct field valid UUID passes", func(t *testing.T) {
+		doc := &uuidRulesDoc{ID: uuid.V4()}
+		faults := rules.Validate(doc)
+		assert.NoError(t, faults)
+	})
+
+	t.Run("struct field empty UUID passes", func(t *testing.T) {
+		doc := &uuidRulesDoc{ID: uuid.UUID("")}
+		faults := rules.Validate(doc)
+		assert.NoError(t, faults)
+	})
+}
+
+func TestVersionTestCheck(t *testing.T) {
+	tests := []struct {
+		name string
+		rule rules.Test
+		uuid uuid.UUID
+		want bool
+	}{
+		{"Valid accepts v4", uuid.Valid, uuid.V4(), true},
+		{"Valid accepts v7", uuid.Valid, uuid.V7(), true},
+		{"Valid rejects bad format", uuid.Valid, uuid.UUID("bad"), false},
+		{"Valid ignores empty", uuid.Valid, uuid.UUID(""), true},
+		{"IsV4 accepts v4", uuid.IsV4, uuid.V4(), true},
+		{"IsV4 rejects v7", uuid.IsV4, uuid.V7(), false},
+		{"IsV7 accepts v7", uuid.IsV7, uuid.V7(), true},
+		{"IsV1 accepts v1", uuid.IsV1, uuid.V1(), true},
+		{"HasTimestamp accepts v7", uuid.HasTimestamp, uuid.V7(), true},
+		{"HasTimestamp rejects v4", uuid.HasTimestamp, uuid.V4(), false},
+		{"Timeless accepts v4", uuid.Timeless, uuid.V4(), true},
+		{"Timeless rejects v7", uuid.Timeless, uuid.V7(), false},
+		{"IsNotZero rejects zero", uuid.IsNotZero, uuid.Zero, false},
+		{"IsNotZero accepts v4", uuid.IsNotZero, uuid.V4(), true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.rule.Check(tt.uuid))
+		})
+	}
 }

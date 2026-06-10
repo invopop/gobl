@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/cal/period",
-  "$ref": "#/$defs/Period",
+  "$ref": "#/$defs/cal.Period",
   "$defs": {
-    "Period": {
+    "cal.Period": {
       "properties": {
         "label": {
           "type": "string",

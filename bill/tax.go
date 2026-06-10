@@ -1,13 +1,12 @@
 package bill
 
 import (
-	"context"
 	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Tax defines a summary of the taxes which may be applied to an invoice.
@@ -24,9 +23,17 @@ type Tax struct {
 	// the rounding model used.
 	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
+	// Point is a code that identifies the event which triggers the tax liability,
+	// such as invoice issuance, delivery of goods, or receipt of payment.
+	Point cbc.Key `json:"point,omitempty" jsonschema:"title=Point"`
+
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+
+	// Notes contains tax-related notes, typically used for exemption reasons
+	// or other tax-specific explanations associated with particular tax categories.
+	Notes []*tax.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
@@ -35,10 +42,23 @@ type Tax struct {
 	tags []cbc.Key
 }
 
+// MergeNotes adds a tax note to the tax object, automatically handling nil data,
+// and returning a new updated instance.
+func (t *Tax) MergeNotes(notes ...*tax.Note) *Tax {
+	if len(notes) == 0 {
+		return t
+	}
+	if t == nil {
+		t = new(Tax)
+	}
+	t.Notes = append(t.Notes, notes...)
+	return t
+}
+
 // MergeExtensions makes it easier to add extensions to the tax object
 // by automatically handling nil data, and replying a new updated instance.
 func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {
-	if len(ext) == 0 {
+	if ext.IsZero() {
 		return t
 	}
 	if t == nil {
@@ -66,12 +86,7 @@ func (t *Tax) HasExt(key cbc.Key) bool {
 	return t.Ext.Has(key)
 }
 
-// Normalize performs normalization on the tax and embedded objects using the
-// provided list of normalizers.
-func (t *Tax) Normalize(normalizers tax.Normalizers) {
-	if t == nil {
-		return
-	}
+func normalizeBillTax(t *Tax) {
 	// migration for old rounding rules
 	switch t.Rounding {
 	case "sum-then-round":
@@ -79,19 +94,20 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	case "round-then-sum":
 		t.Rounding = tax.RoundingRuleCurrency
 	}
-	t.Ext = tax.CleanExtensions(t.Ext)
-	normalizers.Each(t)
 }
 
-// ValidateWithContext ensures the tax details look valid.
-func (t *Tax) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithContext(ctx, t,
-		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Rounding,
-			cbc.InKeyDefs(tax.RoundingRules),
+func taxRules() *rules.Set {
+	return rules.For(new(Tax),
+		rules.Field("rounding",
+			rules.AssertIfPresent("01", "rounding model is not valid",
+				cbc.InKeyDefs(tax.RoundingRules),
+			),
 		),
-		validation.Field(&t.Ext),
-		validation.Field(&t.Meta),
+		rules.Field("point",
+			rules.AssertIfPresent("02", "tax point is not valid",
+				cbc.InKeyDefs(tax.PointDefs),
+			),
+		),
 	)
 }
 
@@ -120,6 +136,16 @@ func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
 				Const:       r.Key.String(),
 				Title:       r.Name.String(),
 				Description: r.Desc.String(),
+			}
+		}
+	}
+	if p, ok := schema.Properties.Get("point"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.PointDefs))
+		for i, w := range tax.PointDefs {
+			p.OneOf[i] = &jsonschema.Schema{
+				Const:       w.Key.String(),
+				Title:       w.Name.String(),
+				Description: w.Desc.String(),
 			}
 		}
 	}

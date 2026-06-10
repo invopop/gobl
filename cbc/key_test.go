@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/validation"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,7 +30,7 @@ func TestKey(t *testing.T) {
 	}
 	for _, check := range checks {
 		t.Run(check.key.String(), func(t *testing.T) {
-			err := check.key.Validate()
+			err := rules.Validate(check.key)
 			if check.err {
 				assert.Error(t, err)
 			} else {
@@ -108,16 +108,33 @@ func TestAppendUniqueKeys(t *testing.T) {
 }
 
 func TestHasValidKeyIn(t *testing.T) {
-	k := cbc.Key("standard")
-	err := validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs"))
+	rule := cbc.HasValidKeyIn("pro", "reduced+eqs", "standard")
+
+	k := cbc.Key("fooo")
+	err := rule.Validate(k)
 	assert.ErrorContains(t, err, "must be or start with a valid ke")
 
-	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	k = cbc.Key("standard")
+	err = rule.Validate(k)
 	assert.NoError(t, err)
 
 	k = cbc.KeyEmpty
-	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	err = rule.Validate(k)
 	assert.NoError(t, err)
+}
+
+func TestHasKeyRuleStringCheck(t *testing.T) {
+	rule := cbc.HasValidKeyIn("pro", "standard")
+
+	// String renders the elements for use in rules engine error messages.
+	assert.Contains(t, rule.String(), "pro")
+	assert.Contains(t, rule.String(), "standard")
+
+	// Check is the predicate used by the rules engine's is.Func dispatch.
+	assert.True(t, rule.Check(cbc.Key("standard+late")))
+	assert.False(t, rule.Check(cbc.Key("other")))
+	assert.False(t, rule.Check(cbc.KeyEmpty))
+	assert.False(t, rule.Check("not-a-key"))
 }
 
 func TestKeyJSONSchema(t *testing.T) {

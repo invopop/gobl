@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/line",
-  "$ref": "#/$defs/Line",
+  "$ref": "#/$defs/bill.Line",
   "$defs": {
-    "Line": {
+    "bill.Line": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -49,7 +49,7 @@
         },
         "breakdown": {
           "items": {
-            "$ref": "#/$defs/SubLine"
+            "$ref": "#/$defs/bill.SubLine"
           },
           "type": "array",
           "title": "Breakdown",
@@ -63,7 +63,7 @@
         },
         "discounts": {
           "items": {
-            "$ref": "#/$defs/LineDiscount"
+            "$ref": "#/$defs/bill.LineDiscount"
           },
           "type": "array",
           "title": "Discounts",
@@ -71,7 +71,7 @@
         },
         "charges": {
           "items": {
-            "$ref": "#/$defs/LineCharge"
+            "$ref": "#/$defs/bill.LineCharge"
           },
           "type": "array",
           "title": "Charges",
@@ -90,7 +90,7 @@
         },
         "substituted": {
           "items": {
-            "$ref": "#/$defs/SubLine"
+            "$ref": "#/$defs/bill.SubLine"
           },
           "type": "array",
           "title": "Substituted",
@@ -123,7 +123,7 @@
       ],
       "description": "Line is a single row in an invoice."
     },
-    "LineCharge": {
+    "bill.LineCharge": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -233,7 +233,7 @@
       ],
       "description": "LineCharge represents an amount added to the line, and will be applied before taxes."
     },
-    "LineDiscount": {
+    "bill.LineDiscount": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -340,7 +340,7 @@
       ],
       "description": "LineDiscount represents an amount deducted from the line, and will be applied before taxes."
     },
-    "SubLine": {
+    "bill.SubLine": {
       "properties": {
         "uuid": {
           "type": "string",
@@ -392,7 +392,7 @@
         },
         "discounts": {
           "items": {
-            "$ref": "#/$defs/LineDiscount"
+            "$ref": "#/$defs/bill.LineDiscount"
           },
           "type": "array",
           "title": "Discounts",
@@ -400,7 +400,7 @@
         },
         "charges": {
           "items": {
-            "$ref": "#/$defs/LineCharge"
+            "$ref": "#/$defs/bill.LineCharge"
           },
           "type": "array",
           "title": "Charges",

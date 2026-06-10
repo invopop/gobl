@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/inbox",
-  "$ref": "#/$defs/Inbox",
+  "$ref": "#/$defs/org.Inbox",
   "$defs": {
-    "Inbox": {
+    "org.Inbox": {
       "properties": {
         "uuid": {
           "type": "string",

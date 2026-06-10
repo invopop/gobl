@@ -5,13 +5,21 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
+	// Key identifies the Verifactu addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "es-verifactu"
+
 	// V1 for Verifactu versions 1.x
-	V1 cbc.Key = "es-verifactu-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -22,6 +30,18 @@ const (
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
+	rules.RegisterWithGuard(
+		Key.String(),
+		rules.GOBL.Add("ES-VERIFACTU"),
+		is.InContext(tax.AddonIn(V1)),
+		billInvoiceRules(),
+		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizeTaxCombo),
+	)
 }
 
 func newAddon() *tax.AddonDef {
@@ -56,30 +76,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
-		Validator:   validate,
 		Scenarios:   scenarios,
-		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	}
-}
-
-func validate(doc any) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
-	case *bill.Line:
-		return validateBillLine(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	}
-	return nil
 }

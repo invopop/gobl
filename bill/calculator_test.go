@@ -64,7 +64,7 @@ func TestCalculate(t *testing.T) {
 				Price:    num.NewAmount(942, 2),
 			},
 		})
-		require.ErrorContains(t, inv.Calculate(), "lines: (0: (item: no exchange rate found from 'USD' to 'EUR'.).)")
+		require.ErrorContains(t, inv.Calculate(), "lines: 0: item: no exchange rate found from 'USD' to 'EUR'")
 	})
 	t.Run("with preceding docs and taxes", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
@@ -142,7 +142,7 @@ func TestCalculate(t *testing.T) {
 		})
 		inv.Tax.PricesInclude = ""
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Amount: num.MakeAmount(9001, 2),
 				},
@@ -165,7 +165,7 @@ func TestCalculate(t *testing.T) {
 		})
 		inv.Tax.PricesInclude = ""
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Amount: num.MakeAmount(900050, 4),
 				},
@@ -200,7 +200,7 @@ func TestCalculate(t *testing.T) {
 			},
 		})
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Half paid",
 					Percent:     num.NewPercentage(50, 2),

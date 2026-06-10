@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/br/nfse"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,20 +20,22 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test Service",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyService: "12345678",
-				},
+				}),
 			},
 		},
 		{
 			name: "valid item with all IBS/CBS extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test Service",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyOperation: "030101",
 					nfse.ExtKeyTaxStatus: "000",
 					nfse.ExtKeyTaxClass:  "000001",
-				},
+				}),
 			},
 		},
 		{
@@ -40,61 +44,67 @@ func TestItemValidation(t *testing.T) {
 		},
 		{
 			name: "missing extensions",
-			item: &org.Item{},
-			err:  "ext: (br-nfse-service: required.)",
+			item: &org.Item{
+				Name: "Test",
+			},
+			err: "item requires 'br-nfse-service' extension",
 		},
 		{
 			name: "empty extensions",
 			item: &org.Item{
-				Ext: tax.Extensions{},
+				Name: "Test",
+				Ext:  tax.ExtensionsOf(cbc.CodeMap{}),
 			},
-			err: "ext: (br-nfse-service: required.)",
+			err: "item requires 'br-nfse-service' extension",
 		},
 		{
 			name: "missing extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
-			err: "ext: (br-nfse-service: required.).",
+			err: "item requires 'br-nfse-service' extension",
 		},
 		{
 			name: "only operation extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyOperation: "030101",
-				},
+				}),
 			},
-			err: "ext: (br-nfse-tax-class: required; br-nfse-tax-status: required.)",
+			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
 		{
 			name: "only tax status extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyService:   "12345678",
 					nfse.ExtKeyTaxStatus: "000",
-				},
+				}),
 			},
-			err: "ext: (br-nfse-operation: required; br-nfse-tax-class: required.)",
+			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
 		{
 			name: "only tax class extension",
 			item: &org.Item{
-				Ext: tax.Extensions{
+				Name: "Test",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyService:  "12345678",
 					nfse.ExtKeyTaxClass: "000001",
-				},
+				}),
 			},
-			err: "ext: (br-nfse-operation: required; br-nfse-tax-status: required.)",
+			err: "item extensions 'br-nfse-operation', 'br-nfse-tax-status', and 'br-nfse-tax-class' must all be present or all absent",
 		},
 	}
 
-	addon := tax.AddonForKey(nfse.V1)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validator(ts.item)
+			err := rules.Validate(ts.item, withAddonContext())
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {

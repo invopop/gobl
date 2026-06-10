@@ -15,16 +15,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyModel: ModelNFe,
-			},
+			}),
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote},
 			Tags:  []cbc.Key{tax.TagSimplified},
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				ExtKeyModel: ModelNFCe,
-			},
+			}),
 		},
 	},
 }

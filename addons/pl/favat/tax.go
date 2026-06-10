@@ -1,11 +1,19 @@
 package favat
 
 import (
+	"fmt"
+
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
+	if tc.Country != "" && tc.Country != l10n.PL.Tax() {
+		tc.Ext = tc.Ext.Set(ExtKeyTaxCategory, "8")
+		return
+	}
+
 	switch tc.Key {
 	case tax.KeyStandard:
 		switch tc.Rate {
@@ -31,10 +39,13 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 }
 
-func validateTaxCombo(tc *tax.Combo) error {
-	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Ext,
-			tax.ExtensionsRequire(ExtKeyTaxCategory),
+func taxComboRules() *rules.Set {
+	return rules.For(new(tax.Combo),
+		rules.Field("ext",
+			rules.Assert("01",
+				fmt.Sprintf("tax combo requires '%s' extension", ExtKeyTaxCategory),
+				tax.ExtensionsRequire(ExtKeyTaxCategory),
+			),
 		),
 	)
 }

@@ -6,28 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
-
-func TestEmailValidation(t *testing.T) {
-	valid := org.Email{
-		Address: "foobar@invopop.example.com",
-	}
-	assert.NoError(t, valid.Validate())
-
-	invalid := org.Email{
-		Address: "foobar",
-	}
-	assert.EqualError(t, invalid.Validate(), "addr: must be a valid email address.")
-}
 
 func TestPartyNormalize(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var p *org.Party
 		assert.NotPanics(t, func() {
-			p.Normalize(nil)
+			norm.Normalize(p)
 		})
 	})
 	t.Run("for known regime", func(t *testing.T) {
@@ -38,7 +28,7 @@ func TestPartyNormalize(t *testing.T) {
 				Code:    "423 429 12.G",
 			},
 		}
-		party.Normalize(nil)
+		norm.Normalize(&party)
 		assert.Empty(t, party.GetRegime())
 		assert.Equal(t, "ES", party.TaxID.Country.String())
 		assert.Equal(t, "ES42342912G", party.TaxID.String())
@@ -66,7 +56,7 @@ func TestPartyNormalize(t *testing.T) {
 				Code:    "423 429 12.G",
 			},
 		}
-		party.Normalize(nil) // unknown entry should not cause problem
+		norm.Normalize(&party) // unknown entry should not cause problem
 		assert.Equal(t, "42342912G", party.TaxID.Code.String())
 	})
 
@@ -95,14 +85,11 @@ func TestPartyNormalize(t *testing.T) {
 				},
 			},
 		}
-		party.Normalize(nil)
+		norm.Normalize(&party)
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
 	})
 
 	t.Run("for regime without normalizer", func(t *testing.T) {
-		rd := tax.RegimeDefFor("US")
-		require.Nil(t, rd.Normalizer) // Ensure the regime has no normalizer
-
 		party := org.Party{
 			Regime: tax.WithRegime("US"),
 			Name:   "Invopop",
@@ -117,8 +104,8 @@ func TestPartyAddressNill(t *testing.T) {
 	party := org.Party{
 		Addresses: []*org.Address{nil},
 	}
-	party.Normalize(nil)
-	assert.NoError(t, party.Validate())
+	norm.Normalize(&party)
+	assert.NoError(t, rules.Validate(&party))
 }
 
 func TestPartyValidation(t *testing.T) {
@@ -134,7 +121,7 @@ func TestPartyValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, party.Calculate())
-		assert.NoError(t, party.Validate())
+		assert.NoError(t, rules.Validate(&party))
 		assert.Equal(t, "DE", party.GetRegime().String())
 	})
 	t.Run("with regime and bad code", func(t *testing.T) {
@@ -149,7 +136,7 @@ func TestPartyValidation(t *testing.T) {
 			},
 		}
 		require.NoError(t, party.Calculate())
-		err := party.Validate()
-		assert.ErrorContains(t, err, "identities: (0: (code: must be in a valid format.).).")
+		err := rules.Validate(&party)
+		assert.ErrorContains(t, err, "German tax number code must be in valid format")
 	})
 }

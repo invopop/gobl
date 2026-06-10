@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/l10n/code",
-  "$ref": "#/$defs/Code",
+  "$ref": "#/$defs/l10n.Code",
   "$defs": {
-    "Code": {
+    "l10n.Code": {
       "type": "string",
       "pattern": "^[A-Z0-9]+$",
       "title": "Code",

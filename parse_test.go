@@ -52,15 +52,15 @@ func TestParse(t *testing.T) {
 	t.Run("unknown schema", func(t *testing.T) {
 		_, err := gobl.Parse([]byte(`{"$schema": "https://gobl.org/draft-0/unknown"}`))
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, gobl.ErrUnmarshal)
-		assert.ErrorContains(t, err, "unmarshal: json: Unmarshal(nil)")
+		assert.ErrorIs(t, err, gobl.ErrInput)
+		assert.ErrorContains(t, err, "input: json: Unmarshal(nil)")
 	})
 
 	t.Run("invalid JSON", func(t *testing.T) {
 		_, err := gobl.Parse([]byte(`{"$schema": "https://gobl.org/draft-0/note/message", "title": "Test Message"`))
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, gobl.ErrUnmarshal)
-		assert.ErrorContains(t, err, "unmarshal: unexpected end of JSON input")
+		assert.ErrorIs(t, err, gobl.ErrInput)
+		assert.ErrorContains(t, err, "input: unexpected end of JSON input")
 	})
 
 	t.Run("empty schema", func(t *testing.T) {

@@ -22,41 +22,41 @@ var scenarios = []*tax.ScenarioSet{
 				Types: []cbc.Key{
 					bill.InvoiceTypeStandard,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "380",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "381",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeDebitNote,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "383",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeCorrective,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "384",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeProforma,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "325",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
@@ -65,9 +65,9 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagPartial,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "326",
-				},
+				}),
 			},
 			{
 				Types: []cbc.Key{
@@ -76,9 +76,9 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "389",
-				},
+				}),
 			},
 			// https://docs.peppol.eu/poacc/self-billing/3.0/
 			{
@@ -88,9 +88,42 @@ var scenarios = []*tax.ScenarioSet{
 				Tags: []cbc.Key{
 					tax.TagSelfBilled,
 				},
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					untdid.ExtKeyDocumentType: "261",
+				}),
+			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
 				},
+				Tags: []cbc.Key{
+					tax.TagPrepayment,
+				},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyDocumentType: "386",
+				}),
+			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeStandard,
+				},
+				Tags: []cbc.Key{
+					tax.TagFactoring,
+				},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyDocumentType: "393",
+				}),
+			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				Tags: []cbc.Key{
+					tax.TagFactoring,
+				},
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					untdid.ExtKeyDocumentType: "396",
+				}),
 			},
 		},
 	},

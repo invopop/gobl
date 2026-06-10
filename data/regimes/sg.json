@@ -4,8 +4,16 @@
     "en": "Singapore"
   },
   "description": {
-    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals.\n2. Importation of goods that are specifically given GST reliefs5 under the GST Act.\n3. Importation of goods into Zero-GST/Licensed warehouses administered by Singapore Customs.\n4. Importation of goods by GST-registered businesses that are under Major Exporter Scheme or other approved schemes."
+    "en": "Singapore's tax system includes a Goods and Services Tax (GST) administered\nby the Inland Revenue Authority of Singapore (IRAS). Zero-rated supplies apply\nto international services and exports. Exempt supplies include financial\nservices, sale and lease of residential properties, digital payment tokens,\nand investment precious metals.\n\nBusinesses are identified by their Unique Entity Number (UEN). GST-registered\nsuppliers must display their GST Registration Number on all tax invoices,\nwhich in most cases is the same as the UEN.\n\nThree invoicing methods are supported: tax invoices (standard, requiring full\nsupplier and customer details), simplified tax invoices (for transactions\nup to 1000 SGD inclusive of GST), and receipts (for non-GST-registered\ncustomers). Credit notes are supported for correcting invoices; debit notes\nin Singapore are used for requesting payment on non-GST transactions, not\nfor invoice corrections."
   },
+  "sources": [
+    {
+      "title": {
+        "en": "IRAS - GST General Guide for Businesses"
+      },
+      "url": "https://www.iras.gov.sg/media/docs/default-source/e-tax/etaxguide_gst_gst-general-guide-for-businesses(1).pdf"
+    }
+  ],
   "time_zone": "Asia/Singapore",
   "country": "SG",
   "currency": "SGD",

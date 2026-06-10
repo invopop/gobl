@@ -17,6 +17,33 @@
       "pattern": "^\\d{2}[\\s\\.\\-\\/]?\\d{2}[\\s\\.\\-\\/]?\\d[\\s\\.\\-\\/]?\\d{2}$"
     },
     {
+      "key": "br-nfse-nbs",
+      "name": {
+        "en": "NBS code",
+        "pt": "Código NBS"
+      },
+      "desc": {
+        "en": "The NBS (Nomenclatura Brasileira de Serviços, Intangíveis e outras Operações que\nproduzam Variações no Patrimônio) code for a service. NBS is the Brazilian\nclassification system for services and intangibles, established by Decreto No.\n7.708/2012 and maintained by the MDIC (Ministério do Desenvolvimento, Indústria,\nComércio e Serviços).\n\nOfficial list of codes from the MDIC:\n\n* https://www.gov.br/mdic/pt-br/assuntos/sdic/comercio-e-servicos/nbs-nomenclatura-brasileira-de-servicos"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Decree No. 7.708/2012 - Institution of the NBS and NEBS",
+            "pt": "Decreto Nº 7.708/2012 - Instituição da NBS e NEBS"
+          },
+          "url": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/decreto/d7708.htm"
+        },
+        {
+          "title": {
+            "en": "NBS - Brazilian Nomenclature of Services (MDIC)",
+            "pt": "NBS - Nomenclatura Brasileira de Serviços (MDIC)"
+          },
+          "url": "https://www.gov.br/mdic/pt-br/assuntos/sdic/comercio-e-servicos/nbs-nomenclatura-brasileira-de-servicos"
+        }
+      ],
+      "pattern": "^\\d[\\.\\s]?\\d{4}[\\.\\s]?\\d{2}[\\.\\s]?\\d{2}$"
+    },
+    {
       "key": "br-nfse-fiscal-incentive",
       "name": {
         "en": "Fiscal Incentive",

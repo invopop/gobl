@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,14 +30,14 @@ func TestCoordinates(t *testing.T) {
 			c: &org.Coordinates{
 				W3W: "speak.duck",
 			},
-			err: "w3w: must be in a valid format.",
+			err: "[GOBL-ORG-COORDINATES-03] ($.w3w) what3words coordinate must be valid",
 		},
 		{
 			name: "invalid w3w",
 			c: &org.Coordinates{
 				W3W: "speak.duck.green.green",
 			},
-			err: "w3w: must be in a valid format.",
+			err: "[GOBL-ORG-COORDINATES-03]",
 		},
 		{
 			name: "valid coords",
@@ -51,7 +52,7 @@ func TestCoordinates(t *testing.T) {
 				Latitude:  newFloat64(140.416775),
 				Longitude: newFloat64(-3.703790),
 			},
-			err: "lat: must be no greater than 90",
+			err: "[GOBL-ORG-COORDINATES-01]",
 		},
 		{
 			name: "invalid longitude",
@@ -59,17 +60,15 @@ func TestCoordinates(t *testing.T) {
 				Latitude:  newFloat64(40.416775),
 				Longitude: newFloat64(-300.703790),
 			},
-			err: "lon: must be no less than -180",
+			err: "[GOBL-ORG-COORDINATES-02]",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.c.Validate()
+			err := rules.Validate(tt.c)
 			if tt.err != "" {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.err)
-				}
+				assert.ErrorContains(t, err, tt.err)
 			} else {
 				assert.NoError(t, err)
 			}

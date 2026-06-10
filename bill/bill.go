@@ -2,6 +2,7 @@
 package bill
 
 import (
+	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -13,15 +14,42 @@ func init() {
 		Invoice{},
 		Order{},
 		Payment{},
+		Status{},
 		// Sub-schemas - used by primaries
+		Action{},
 		Charge{},
+		DeliveryDetails{},
 		Discount{},
+		Fault{},
 		Line{},
 		Ordering{},
 		PaymentDetails{},
-		DeliveryDetails{},
+		Reason{},
+		StatusLine{},
 		Tax{},
 		Totals{},
+	)
+	rules.Register(
+		"bill",
+		rules.GOBL.Add("BILL"),
+		invoiceRules(),
+		deliveryRules(),
+		orderRules(),
+		paymentRules(),
+		lineRules(),
+		subLineRules(),
+		lineDiscountRules(),
+		lineChargeRules(),
+		discountRules(),
+		chargeRules(),
+		paymentLineRules(),
+		taxRules(),
+		totalsRules(),
+		statusRules(),
+		statusLineRules(),
+		reasonRules(),
+		actionRules(),
+		faultRules(),
 	)
 }
 
@@ -31,4 +59,5 @@ const (
 	ShortSchemaDelivery = "bill/delivery"
 	ShortSchemaInvoice  = "bill/invoice"
 	ShortSchemaPayment  = "bill/payment"
+	ShortSchemaStatus   = "bill/status"
 )
