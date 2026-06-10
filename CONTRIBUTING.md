@@ -37,8 +37,9 @@ Regimes and addons self-register via `init()` functions:
 
 ### Normalization and Validation
 
-Normalization uses a `switch obj := doc.(type)` pattern to dispatch to type-specific handlers.
-See the `Normalize` function in any existing regime for an example.
+Normalization uses the `norm` package. Regimes register typed normalizers with
+`norm.Register(...)` in their `init()` function, guarding them with `norm.When(...)` where
+needed. See existing regime registrations for examples.
 
 Validation uses the `rules` package. Regimes define rule sets with `rules.Register(...)` in
 their `init()` function. See existing regime rule definitions for examples.

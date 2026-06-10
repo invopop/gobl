@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -18,6 +19,9 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("fi", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(tID *tax.Identity) { tax.NormalizeIdentity(tID) })),
 	)
 }
 
@@ -77,14 +81,5 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Helsinki",
 		Categories: taxCategories,
 		Scenarios:  []*tax.ScenarioSet{bill.InvoiceScenarios()},
-		Normalizer: Normalize,
-	}
-}
-
-// Normalize will perform any regime specific normalization.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
 	}
 }
