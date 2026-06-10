@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "fb4d23f1bd9f1e171e2e2dd209776e778e29ff8085fc9b13a14db2bbf804deaa"
 		}
 	},
 	"doc": {
@@ -15,9 +15,9 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "EQS",
+		"code": "0007",
+		"issue_date": "2024-06-04",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -25,7 +25,7 @@
 			}
 		},
 		"supplier": {
-			"name": "Provide One S.L.",
+			"name": "Mayorista Bilbaíno S.L.",
 			"tax_id": {
 				"country": "ES",
 				"code": "B98602642"
@@ -47,80 +47,75 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Comercio Minorista",
 			"tax_id": {
-				"country": "NL"
+				"country": "ES",
+				"code": "54387763P"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "100",
 				"item": {
-					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h"
+					"key": "goods",
+					"name": "Wholesale mug pack",
+					"price": "5.00"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "500.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
 						"key": "standard",
-						"rate": "general",
+						"rate": "general+eqs",
 						"percent": "21.0%",
+						"surcharge": "5.2%",
 						"ext": {
-							"es-tbai-exemption": "IE",
-							"es-tbai-product": "services",
-							"es-tbai-regime": "01"
+							"es-tbai-product": "goods",
+							"es-tbai-regime": "51"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "500.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "500.00",
+			"total": "500.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
 								"key": "standard",
 								"ext": {
-									"es-tbai-exemption": "IE",
-									"es-tbai-product": "services",
-									"es-tbai-regime": "01"
+									"es-tbai-product": "goods",
+									"es-tbai-regime": "51"
 								},
-								"base": "1620.00",
+								"base": "500.00",
 								"percent": "21.0%",
-								"amount": "340.20"
+								"surcharge": {
+									"percent": "5.2%",
+									"amount": "26.00"
+								},
+								"amount": "105.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "105.00",
+						"surcharge": "26.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "131.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "131.00",
+			"total_with_tax": "631.00",
+			"payable": "631.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "Sale to retailer under the equivalence surcharge regime."
 			}
 		]
 	}

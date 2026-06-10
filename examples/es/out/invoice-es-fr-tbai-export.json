@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "8db245dbd20e9d75afd94bd696882558c834863be654706ba94af8f693e4cb7c"
 		}
 	},
 	"doc": {
@@ -15,9 +15,9 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "EXPORT",
+		"code": "0010",
+		"issue_date": "2024-03-12",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -47,80 +47,68 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Client Atelier SAS",
 			"tax_id": {
-				"country": "NL"
+				"country": "FR",
+				"code": "39356000000"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "5",
 				"item": {
-					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h"
+					"key": "goods",
+					"name": "Crafted leather goods",
+					"price": "120.00"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "600.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
-						"key": "standard",
-						"rate": "general",
-						"percent": "21.0%",
+						"key": "export",
 						"ext": {
-							"es-tbai-exemption": "IE",
-							"es-tbai-product": "services",
-							"es-tbai-regime": "01"
+							"es-tbai-exemption": "E2",
+							"es-tbai-product": "goods",
+							"es-tbai-regime": "02"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "600.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "600.00",
+			"total": "600.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
-								"key": "standard",
+								"key": "export",
 								"ext": {
-									"es-tbai-exemption": "IE",
-									"es-tbai-product": "services",
-									"es-tbai-regime": "01"
+									"es-tbai-exemption": "E2",
+									"es-tbai-product": "goods",
+									"es-tbai-regime": "02"
 								},
-								"base": "1620.00",
-								"percent": "21.0%",
-								"amount": "340.20"
+								"base": "600.00",
+								"amount": "0.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "0.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "0.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "0.00",
+			"total_with_tax": "600.00",
+			"payable": "600.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "Goods exported to France."
 			}
 		]
 	}

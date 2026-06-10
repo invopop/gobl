@@ -47,6 +47,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
 - `no`: added the Norwegian (NO) tax regime.
+- `es-tbai-v1`: added `es-tbai-regime` extension for `ClaveRegimenIvaOpTrascendencia`.
+- `es-tbai-v1`: added `es-tbai-identity-type` extension for the L7 `IDType` code.
 
 ### Fixed
 
