@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/rules"
@@ -14,7 +15,6 @@ import (
 )
 
 func TestTaxComboNormalization(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("standard VAT rate", func(t *testing.T) {
 		p := num.MakePercentage(19, 2)
 		c := &tax.Combo{
@@ -22,8 +22,8 @@ func TestTaxComboNormalization(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Percent:  &p,
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "S", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 
@@ -33,16 +33,16 @@ func TestTaxComboNormalization(t *testing.T) {
 			Key:      cbc.Key("unknown"),
 			Percent:  num.NewPercentage(19, 2),
 		}
-		ad.Normalizer(c)
-		assert.Empty(t, c.Ext)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.True(t, c.Ext.IsZero())
 	})
 	t.Run("IGIC", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: es.TaxCategoryIGIC,
 			Percent:  num.NewPercentage(7, 2),
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "L", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "L", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Equal(t, "7%", c.Percent.String())
 	})
 
@@ -51,8 +51,8 @@ func TestTaxComboNormalization(t *testing.T) {
 			Category: es.TaxCategoryIPSI,
 			Percent:  num.NewPercentage(7, 2),
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "M", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "M", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Equal(t, "7%", c.Percent.String())
 	})
 	t.Run("exempt", func(t *testing.T) {
@@ -60,16 +60,16 @@ func TestTaxComboNormalization(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "E", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 	t.Run("missing rate, without percent", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		// this will raise validation error later
-		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "S", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
 	t.Run("missing rate, with percent", func(t *testing.T) {
@@ -77,8 +77,8 @@ func TestTaxComboNormalization(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(19, 3),
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "S", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
 	t.Run("missing rate, with zero percent", func(t *testing.T) {
@@ -87,8 +87,8 @@ func TestTaxComboNormalization(t *testing.T) {
 			Key:      tax.KeyZero,
 			Percent:  num.NewPercentage(0, 3),
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "Z", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "Z", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
 	t.Run("sales tax", func(t *testing.T) {
@@ -96,24 +96,23 @@ func TestTaxComboNormalization(t *testing.T) {
 			Category: tax.CategoryGST,
 			Percent:  num.NewPercentage(19, 2),
 		}
-		ad.Normalizer(c)
-		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, "O", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 }
 
 func TestTaxComboValidation(t *testing.T) {
-	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("standard VAT rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(19, 2),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "S", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Equal(t, "19%", c.Percent.String())
 	})
 
@@ -121,11 +120,11 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
-			},
+			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
 	})
 
@@ -135,7 +134,7 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "VATEX extension is required for exempt tax")
 	})
@@ -145,10 +144,10 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyReverseCharge,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "AE", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "AE", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Nil(t, c.Percent)
 	})
 
@@ -157,10 +156,10 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyIntraCommunity,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "K", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "K", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Nil(t, c.Percent)
 	})
 
@@ -169,10 +168,10 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExport,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "G", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Nil(t, c.Percent)
 	})
 	t.Run("outside-scope", func(t *testing.T) {
@@ -180,10 +179,10 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "O", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 		assert.Nil(t, c.Percent)
 	})
 
@@ -191,25 +190,25 @@ func TestTaxComboValidation(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(7, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				untdid.ExtKeyTaxCategory: en16931.TaxCategoryIGIC,
-			},
+			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
-		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "S", c.Ext.Get(untdid.ExtKeyTaxCategory).String())
 	})
 
 	t.Run("zero with vatex code", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyZero,
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
-			},
+			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "VATEX extension must not be set")
 	})
@@ -219,11 +218,11 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(19, 2),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"cef-vatex": "VATEX-EU-132",
-			},
+			}),
 		}
-		ad.Normalizer(c)
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "VATEX extension must not be set")
 	})
@@ -239,8 +238,8 @@ func TestTaxComboValidation(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(19, 2),
 		}
-		ad.Normalizer(c)
-		c.Ext = nil // override
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		c.Ext = tax.Extensions{} // override
 		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "tax category extension is required")
 	})

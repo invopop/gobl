@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -35,29 +34,16 @@ type Person struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize will try to normalize the person's data.
-func (p *Person) Normalize(normalizers tax.Normalizers) {
-	if p == nil {
-		return
-	}
-
-	uuid.Normalize(&p.UUID)
-	p.Label = cbc.NormalizeString(p.Label)
-	p.Role = cbc.NormalizeString(p.Role)
-
-	tax.Normalize(normalizers, p.Name)
-	tax.Normalize(normalizers, p.Identities)
-	tax.Normalize(normalizers, p.Addresses)
-	tax.Normalize(normalizers, p.Emails)
-	tax.Normalize(normalizers, p.Telephones)
-	tax.Normalize(normalizers, p.Avatars)
-	normalizers.Each(p)
-}
-
 func personRules() *rules.Set {
 	return rules.For(new(Person),
 		rules.Field("name",
 			rules.Assert("01", "person name is required", is.Present),
 		),
 	)
+}
+
+func normalizePerson(p *Person) {
+	uuid.Normalize(&p.UUID)
+	p.Label = cbc.NormalizeString(p.Label)
+	p.Role = cbc.NormalizeString(p.Role)
 }

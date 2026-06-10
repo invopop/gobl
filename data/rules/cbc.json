@@ -13,19 +13,24 @@
         },
         {
           "id": "GOBL-CBC-CODE-02",
-          "desc": "codes must only contain letters, numbers, and optionally separated by .-:/,_\u0026 or space",
-          "tests": "matches ^[A-ZÑa-z0-9]+([.\\-:/,_\u0026 ]?[A-ZÑa-z0-9]+)*$"
+          "desc": "codes must not contain control characters or leading or trailing whitespace",
+          "tests": "matches ^[^\\s\\x00-\\x1f\\x7f-\\x9f]([^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$"
         }
       ]
     },
     {
       "id": "GOBL-CBC-CODEMAP",
       "object": "cbc.CodeMap",
-      "assert": [
+      "subsets": [
         {
-          "id": "GOBL-CBC-CODEMAP-01",
-          "desc": "all code map keys must be valid",
-          "tests": "valid keys"
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-CBC-CODEMAP-01",
+              "desc": "all code map keys must be valid",
+              "tests": "valid keys"
+            }
+          ]
         }
       ]
     },
@@ -94,6 +99,29 @@
               "id": "GOBL-CBC-SOURCE-01",
               "desc": "url is required and must be a URL",
               "tests": "present, url"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CBC-URI",
+      "object": "cbc.URI",
+      "assert": [
+        {
+          "id": "GOBL-CBC-URI-01",
+          "desc": "uri must be no longer than 2048 characters",
+          "tests": "length between 0 and 2048"
+        }
+      ],
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-CBC-URI-02",
+              "desc": "uri must be a valid absolute URI with a scheme",
+              "tests": "valid uri"
             }
           ]
         }

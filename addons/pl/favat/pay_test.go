@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/pl/favat"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -14,70 +15,67 @@ import (
 )
 
 func TestNormalizePayInstructions(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("nil", func(t *testing.T) {
 		var instr *pay.Instructions
 		assert.NotPanics(t, func() {
-			ad.Normalizer(instr)
+			norm.Normalize(instr, tax.AddonContext(favat.V3))
 		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
 		instr := &pay.Instructions{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
-		ad.Normalizer(instr)
+		norm.Normalize(instr, tax.AddonContext(favat.V3))
 		assert.Equal(t, "5", instr.Ext.Get(favat.ExtKeyPaymentMeans).String())
 	})
 }
 
 func TestNormalizePayAdvance(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("nil", func(t *testing.T) {
-		var adv *pay.Advance
+		var adv *pay.Record
 		assert.NotPanics(t, func() {
-			ad.Normalizer(adv)
+			norm.Normalize(adv, tax.AddonContext(favat.V3))
 		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
-		adv := &pay.Advance{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+		adv := &pay.Record{
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
-		ad.Normalizer(adv)
+		norm.Normalize(adv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "5", adv.Ext.Get(favat.ExtKeyPaymentMeans).String())
 	})
 }
 
 func TestValidatePay(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("advance nil", func(t *testing.T) {
-		var adv *pay.Advance
+		var adv *pay.Record
 		assert.NotPanics(t, func() {
 			assert.NoError(t, rules.Validate(adv, withAddonContext()))
 		})
 	})
 
 	t.Run("advance valid with date", func(t *testing.T) {
-		adv := &pay.Advance{
-			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+		adv := &pay.Record{
+			Key:         pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			Date:        cal.NewDate(2022, 12, 27),
 			Description: "Advance payment",
 		}
-		ad.Normalizer(adv)
+		norm.Normalize(adv, tax.AddonContext(favat.V3))
 		err := rules.Validate(adv, withAddonContext())
 		assert.NoError(t, err)
 	})
 
 	t.Run("advance missing date", func(t *testing.T) {
-		adv := &pay.Advance{
-			Key:         pay.MeansKeyOther.With(favat.MeansKeyCredit),
+		adv := &pay.Record{
+			Key:         pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			Description: "Advance payment",
 		}
-		ad.Normalizer(adv)
+		norm.Normalize(adv, tax.AddonContext(favat.V3))
 		err := rules.Validate(adv, withAddonContext())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "advance payment date is required")
@@ -92,16 +90,15 @@ func TestValidatePay(t *testing.T) {
 
 	t.Run("instructions valid", func(t *testing.T) {
 		instr := &pay.Instructions{
-			Key: pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			Key: pay.MeansKeyOther.With(pay.MeansKeyCredit),
 		}
-		ad.Normalizer(instr)
+		norm.Normalize(instr, tax.AddonContext(favat.V3))
 		err := rules.Validate(instr, withAddonContext())
 		assert.NoError(t, err)
 	})
 }
 
 func TestPaymentMeansMapping(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	tests := []struct {
 		name     string
@@ -130,7 +127,7 @@ func TestPaymentMeansMapping(t *testing.T) {
 		},
 		{
 			name:     "credit",
-			key:      pay.MeansKeyOther.With(favat.MeansKeyCredit),
+			key:      pay.MeansKeyOther.With(pay.MeansKeyCredit),
 			expected: "5",
 		},
 		{
@@ -150,36 +147,35 @@ func TestPaymentMeansMapping(t *testing.T) {
 			instr := &pay.Instructions{
 				Key: tt.key,
 			}
-			ad.Normalizer(instr)
+			norm.Normalize(instr, tax.AddonContext(favat.V3))
 			assert.Equal(t, tt.expected, instr.Ext.Get(favat.ExtKeyPaymentMeans).String())
 		})
 
 		t.Run(tt.name+" advance", func(t *testing.T) {
-			adv := &pay.Advance{
+			adv := &pay.Record{
 				Key: tt.key,
 			}
-			ad.Normalizer(adv)
+			norm.Normalize(adv, tax.AddonContext(favat.V3))
 			assert.Equal(t, tt.expected, adv.Ext.Get(favat.ExtKeyPaymentMeans).String())
 		})
 	}
 }
 
 func TestPaymentMeansNoMatch(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
 
 	t.Run("instructions with unknown key", func(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: "unknown-payment-means",
 		}
-		ad.Normalizer(instr)
+		norm.Normalize(instr, tax.AddonContext(favat.V3))
 		assert.Equal(t, "", instr.Ext.Get(favat.ExtKeyPaymentMeans).String())
 	})
 
 	t.Run("advance with unknown key", func(t *testing.T) {
-		adv := &pay.Advance{
+		adv := &pay.Record{
 			Key: "unknown-payment-means",
 		}
-		ad.Normalizer(adv)
+		norm.Normalize(adv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "", adv.Ext.Get(favat.ExtKeyPaymentMeans).String())
 	})
 }

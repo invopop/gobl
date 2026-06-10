@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -19,13 +20,13 @@ func TestTaxComboNormalization(t *testing.T) {
 		inv.Lines[0].Taxes[0] = &tax.Combo{
 			Category: "VAT",
 			Percent:  nil, // exempt
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"it-sdi-nature": "N1",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyExempt].String())
-		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-nature")
+		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext.Get(sdi.ExtKeyExempt).String())
+		assert.False(t, inv.Lines[0].Taxes[0].Ext.Has("it-sdi-nature"))
 	})
 
 	t.Run("replace retained tax extenion", func(t *testing.T) {
@@ -33,13 +34,13 @@ func TestTaxComboNormalization(t *testing.T) {
 		inv.Lines[0].Taxes[0] = &tax.Combo{
 			Category: "IRPEF",
 			Percent:  num.NewPercentage(8, 3),
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"it-sdi-retained-tax": "A",
-			},
+			}),
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyRetained].String())
-		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-retained-tax")
+		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext.Get(sdi.ExtKeyRetained).String())
+		assert.False(t, inv.Lines[0].Taxes[0].Ext.Has("it-sdi-retained-tax"))
 	})
 
 }

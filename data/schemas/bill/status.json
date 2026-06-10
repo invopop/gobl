@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/status",
+  "$ref": "#/$defs/bill.Status",
+  "$defs": {
+    "bill.Status": {
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/tax/regime-code",
+          "title": "Tax Regime",
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
+        },
+        "$addons": {
+          "$ref": "https://gobl.org/draft-0/tax/addon-list",
+          "title": "Addons",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "response",
+              "title": "Response",
+              "description": "A response to a document that has been submitted, often used in a two way communication between a customer and supplier."
+            },
+            {
+              "const": "update",
+              "title": "Update",
+              "description": "Issued by the supplier or seller that will be shared with either the customer, a fifth-corner entity such as a government agency, or both."
+            },
+            {
+              "const": "system",
+              "title": "System",
+              "description": "A system event that is not directly related to a specific document but needs to be recorded for compliance purposes."
+            }
+          ],
+          "title": "Type",
+          "description": "Type of status being reported (e.g. \"system\" for internal events)."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "IssueDate is the date when the status is to be considered effective."
+        },
+        "issue_time": {
+          "$ref": "https://gobl.org/draft-0/cal/time",
+          "title": "Issue Time",
+          "description": "IssueTime is used when extra precision is required to determine when exactly\nthe status was issued."
+        },
+        "series": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Series",
+          "description": "Series is an optional code to group related status events together."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code provides a way to identify the specific status event being reported."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext provides additional structured data specific to the regime or addon."
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier",
+          "description": "Supplier represents the entity supplying the goods or services in the\noriginal transaction."
+        },
+        "customer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Customer",
+          "description": "Customer is optional and describes the recipient of the original\nservices."
+        },
+        "ordering": {
+          "$ref": "https://gobl.org/draft-0/bill/ordering",
+          "title": "Ordering",
+          "description": "Ordering provides links to related documents and additional details about\nwhich parties may be involved in the transaction."
+        },
+        "lines": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/bill/status-line"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "Lines contain the main payload of the message used to describe individual\ndocuments which have a status."
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Notes for additional details about the event."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains unstructured data useful for internal tools."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "issue_date",
+        "code",
+        "supplier",
+        "lines"
+      ],
+      "description": "Status represents a system or business event that needs to be recorded for compliance purposes.",
+      "recommended": [
+        "$regime",
+        "series",
+        "lines"
+      ]
+    }
+  }
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -28,9 +29,9 @@ func creditNote() *bill.Invoice {
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyEffectiveDate: "1",
-				},
+				}),
 			},
 		},
 		Supplier: &org.Party{
@@ -126,7 +127,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = rules.Validate(inv)
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Preceding[0].Ext[favat.ExtKeyEffectiveDate], cbc.Code("1"))
+	assert.Equal(t, inv.Preceding[0].Ext.Get(favat.ExtKeyEffectiveDate), cbc.Code("1"))
 }
 
 func TestBasicStandardInvoiceValidation(t *testing.T) {
@@ -137,12 +138,37 @@ func TestBasicStandardInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	t.Run("non-PLN currency without exchange rates", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Currency = "USD"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-BILL-INVOICE-15] invoice must be in PLN or provide exchange rate for conversion")
+	})
+
+	t.Run("non-PLN currency with exchange rates", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Currency = "USD"
+		inv.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   "USD",
+				To:     "PLN",
+				Amount: num.MakeAmount(400, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+}
+
 func TestExemptStandardInvoiceValidation(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
-		},
+		}),
 	}
 	inv.Notes = []*org.Note{
 		{
@@ -163,9 +189,9 @@ func TestExemptStandardInvoiceValidationFailsWithoutNote(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
 		// valid exemption set but no matching note
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
-		},
+		}),
 	}
 
 	err := inv.Calculate()
@@ -178,9 +204,9 @@ func TestExemptStandardInvoiceValidationFailsWithoutNote(t *testing.T) {
 func TestExemptStandardInvoiceValidationFailsWithTooManyNotes(t *testing.T) {
 	inv := standardInvoice()
 	inv.Tax = &bill.Tax{
-		Ext: tax.Extensions{
+		Ext: tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyExemption: "A",
-		},
+		}),
 	}
 	inv.Notes = []*org.Note{
 		{
@@ -217,6 +243,22 @@ func TestSupplierValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
 		assert.NoError(t, err)
+	})
+
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-BILL-INVOICE-16]")
+	})
+
+	t.Run("missing supplier tax ID code", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Supplier.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "[GOBL-PL-FAVAT-BILL-INVOICE-17]")
 	})
 
 	t.Run("missing supplier name", func(t *testing.T) {
@@ -286,15 +328,15 @@ func TestSupplierValidation(t *testing.T) {
 func TestCustomerJSTValidation(t *testing.T) {
 	t.Run("valid JST customer with LGU recipient identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -304,9 +346,9 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer without required identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
-		}
+		})
 		// No identities provided
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
@@ -316,15 +358,15 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer with identity missing code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -335,15 +377,15 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("JST customer with wrong role identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1", // Customer is a Subordinate Local Government Unit
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "SOME-ID",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // Wrong role (GV member instead of LGU)
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -353,9 +395,9 @@ func TestCustomerJSTValidation(t *testing.T) {
 
 	t.Run("non-JST customer does not require identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "2", // Customer is NOT a Subordinate Local Government Unit
-		}
+		})
 		// No identities needed
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
@@ -367,15 +409,15 @@ func TestCustomerJSTValidation(t *testing.T) {
 func TestCustomerGroupVATValidation(t *testing.T) {
 	t.Run("valid GroupVAT customer with GV member identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "GV-67890",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -385,9 +427,9 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer without required identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
-		}
+		})
 		// No identities provided
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
@@ -397,15 +439,15 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer with identity missing code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -416,15 +458,15 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("GroupVAT customer with wrong role identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1", // Customer is a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "SOME-ID",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Wrong role (LGU instead of GV member)
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -434,9 +476,9 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 
 	t.Run("non-GroupVAT customer does not require identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "2", // Customer is NOT a Group VAT member
-		}
+		})
 		// No identities needed
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
@@ -448,22 +490,22 @@ func TestCustomerGroupVATValidation(t *testing.T) {
 func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 	t.Run("customer with both JST and GroupVAT needs both identities", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Local Government Unit (LGU) - recipient
-				},
+				}),
 			},
 			{
 				Code: "GV-67890",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // GV member - recipient
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -473,16 +515,16 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 
 	t.Run("customer with both JST and GroupVAT missing JST identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "GV-67890",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10", // Only GV member identity
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -492,16 +534,16 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 
 	t.Run("customer with both JST and GroupVAT missing GroupVAT identity", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST:      "1", // Customer is a Subordinate Local Government Unit
 			favat.ExtKeyGroupVAT: "1", // Customer is also a Group VAT member
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "JST-12345",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "8", // Only LGU identity
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -512,7 +554,7 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 	t.Run("customer without JST and GroupVAT does not require identities", func(t *testing.T) {
 		inv := standardInvoice()
 		// No JST or GroupVAT extensions set
-		inv.Customer.Ext = nil
+		inv.Customer.Ext = tax.Extensions{}
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
@@ -521,13 +563,11 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 }
 
 func TestNormalizeInvoice(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
-
 	t.Run("self-billed invoice sets extension", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagSelfBilled)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 	})
 
@@ -535,7 +575,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagReverseCharge)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})
 
@@ -543,7 +583,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagSelfBilled, tax.TagReverseCharge)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})
@@ -551,7 +591,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("regular invoice does not set extensions", func(t *testing.T) {
 		inv := standardInvoice()
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 		assert.Equal(t, "", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})
@@ -587,12 +627,38 @@ func TestSimplifiedInvoiceCustomerValidation(t *testing.T) {
 }
 
 func TestCustomerTaxIDValidation(t *testing.T) {
-	t.Run("customer without tax ID", func(t *testing.T) {
+	t.Run("customer without tax ID is valid", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer tax ID is required")
+		assert.NoError(t, err)
+	})
+
+	t.Run("Polish customer with tax ID code is valid", func(t *testing.T) {
+		inv := standardInvoice()
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Polish customer with empty tax ID code is invalid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Customer.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer Polish tax ID code is required")
+	})
+
+	t.Run("non-Polish customer with empty tax ID code is valid", func(t *testing.T) {
+		inv := standardInvoice()
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "DE",
+			Code:    "",
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.NoError(t, err)
 	})
 }
 
@@ -627,15 +693,15 @@ func TestNilValidation(t *testing.T) {
 func TestValidationEdgeCases(t *testing.T) {
 	t.Run("customer with identity having different role", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyJST: "1",
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "TEST-123",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "5", // Different role
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -645,15 +711,15 @@ func TestValidationEdgeCases(t *testing.T) {
 
 	t.Run("customer with identity matching role but no code", func(t *testing.T) {
 		inv := standardInvoice()
-		inv.Customer.Ext = tax.Extensions{
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			favat.ExtKeyGroupVAT: "1",
-		}
+		})
 		inv.Customer.Identities = []*org.Identity{
 			{
 				Code: "", // Empty code
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					favat.ExtKeyThirdPartyRole: "10",
-				},
+				}),
 			},
 		}
 		require.NoError(t, inv.Calculate())

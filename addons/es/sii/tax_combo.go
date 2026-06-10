@@ -132,6 +132,6 @@ func taxComboHasPercent(val any) bool {
 }
 
 func taxComboExtHasOutsideScope(val any) bool {
-	ext, ok := val.(tax.Extensions)
+	ext, ok := tax.ExtensionsFromValue(val)
 	return ok && ext.Has(ExtKeyOutsideScope)
 }

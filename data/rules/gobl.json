@@ -41,6 +41,18 @@
               "desc": "envelope doc is required",
               "tests": "present"
             }
+          ],
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ENVELOPE-04",
+                  "desc": "envelope doc must have a known schema",
+                  "tests": "doc has payload"
+                }
+              ]
+            }
           ]
         },
         {

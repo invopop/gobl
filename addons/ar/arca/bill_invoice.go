@@ -8,6 +8,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -24,14 +25,9 @@ const (
 
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	{
-		Schema: bill.ShortSchemaInvoice,
-		Types: []cbc.Key{
-			bill.InvoiceTypeCreditNote,
-			bill.InvoiceTypeDebitNote,
-		},
-		Extensions: []cbc.Key{
-			ExtKeyDocType,
-		},
+		Schema:     bill.ShortSchemaInvoice,
+		Extensions: []cbc.Key{ExtKeyDocType},
+		Normalizer: new(billCorrectionNormalizer),
 	},
 }
 
@@ -50,6 +46,42 @@ var invoiceTags = &tax.TagSet{
 			},
 		},
 	},
+}
+
+type billCorrectionNormalizer struct{}
+
+// normalizeInvoiceCorrection is the CorrectionNormalize callback for ARCA.
+// It copies the invoice's original tax extensions to the preceding document
+// reference, then routes the user-provided doc-type to the invoice itself.
+func (*billCorrectionNormalizer) Normalize(doc any) {
+	in, ok := doc.(*bill.CorrectionNormalize)
+	if !ok || in == nil {
+		return
+	}
+	inv := in.Invoice
+	if inv == nil || len(inv.Preceding) == 0 {
+		return
+	}
+	ref := inv.Preceding[0]
+
+	// Remove user-provided doc-type from preceding since it routes to the invoice.
+	ref.Ext = ref.Ext.Delete(ExtKeyDocType)
+
+	// Copy the invoice's original tax extensions to preceding so that
+	// the original doc-type, concept, etc. are preserved.
+	if inv.Tax != nil && !inv.Tax.Ext.IsZero() {
+		ref.Ext = inv.Tax.Ext.Merge(ref.Ext)
+	}
+
+	// Route doc-type from correction options to the invoice.
+	if in.Opts != nil {
+		if docType := in.Opts.Ext.Get(ExtKeyDocType); docType != "" {
+			if inv.Tax == nil {
+				inv.Tax = new(bill.Tax)
+			}
+			inv.Tax.Ext = inv.Tax.Ext.Set(ExtKeyDocType, docType)
+		}
+	}
 }
 
 func normalizeBillInvoice(inv *bill.Invoice) {
@@ -109,9 +141,9 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 	// Check for monotax tag (Type C)
 	if inv.Tags.HasTags(TagMonotax) {
 		docType = getDocTypeForCategory("C", inv.Type)
-	} else if inv.Customer != nil && inv.Customer.Ext != nil {
+	} else if inv.Customer != nil && !inv.Customer.Ext.IsZero() {
 		// Check customer VAT status
-		vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+		vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 		if vatStatus.In(vatStatusesTypeA...) {
 			// Type A for VAT status 1 (Registered VAT Company), 6 (Monotributo Responsible), 13 (Social Monotributista), 16 (Promoted Independent Worker Monotributista)
 			docType = getDocTypeForCategory("A", inv.Type)
@@ -126,9 +158,9 @@ func normalizeBillInvoiceTaxDocType(inv *bill.Invoice) {
 
 	// Set the doc type extension
 	if docType != "" {
-		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 			ExtKeyDocType: docType,
-		})
+		}))
 	}
 }
 
@@ -192,13 +224,14 @@ func normalizeBillInvoiceTaxConcept(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
 	}
-	inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+	inv.Tax = inv.Tax.MergeExtensions(tax.ExtensionsOf(cbc.CodeMap{
 		ExtKeyConcept: code,
-	})
+	}))
 }
 
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
+		rules.Assert("24", "invoice must be in ARS or provide exchange rate for conversion", currency.CanConvertTo(currency.ARS)),
 		rules.Field("series",
 			rules.Assert("01", "series is required", is.Present),
 			rules.Assert("02", "series must be a valid number between 1 and 99998",
@@ -259,30 +292,33 @@ func billInvoiceRules() *rules.Set {
 			fmt.Sprintf("document type B cannot have customer VAT status %v", vatStatusesTypeA),
 			is.Func("doc type B vat status", invoiceDocTypeBVATStatus),
 		),
-		// Services require ordering and payment
-		rules.When(is.Func("concept is services", invoiceConceptIsServices),
-			rules.Field("ordering",
-				rules.Assert("15", "ordering is required for services", is.Present),
-				rules.Field("period",
-					rules.Assert("16", "ordering period is required for services", is.Present),
+		// Concept-based payment/ordering rules apply to class A, B, and C invoices.
+		rules.When(is.Func("doc type is A, B, or C", invoiceDocTypeIsABC),
+			// Services require ordering and payment
+			rules.When(is.Func("concept is services", invoiceConceptIsServices),
+				rules.Field("ordering",
+					rules.Assert("15", "ordering is required for services", is.Present),
+					rules.Field("period",
+						rules.Assert("16", "ordering period is required for services", is.Present),
+					),
 				),
-			),
-			rules.Field("payment",
-				rules.Assert("17", "payment is required for services", is.Present),
-				rules.Field("terms",
-					rules.Assert("18", "payment terms are required for services", is.Present),
-					rules.Field("due_dates",
-						rules.Assert("19", "payment due dates are required for services", is.Present),
+				rules.Field("payment",
+					rules.Assert("17", "payment is required for services", is.Present),
+					rules.Field("terms",
+						rules.Assert("18", "payment terms are required for services", is.Present),
+						rules.Field("due_dates",
+							rules.Assert("19", "payment due dates are required for services", is.Present),
+						),
 					),
 				),
 			),
-		),
-		// Products must not have payment due dates
-		rules.When(is.Func("concept is goods", invoiceConceptIsGoods),
-			rules.Field("payment",
-				rules.Field("terms",
-					rules.Field("due_dates",
-						rules.Assert("20", "payment due dates must not be set for goods", is.Empty),
+			// Products must not have payment due dates
+			rules.When(is.Func("concept is goods", invoiceConceptIsGoods),
+				rules.Field("payment",
+					rules.Field("terms",
+						rules.Field("due_dates",
+							rules.Assert("20", "payment due dates must not be set for goods", is.Empty),
+						),
 					),
 				),
 			),
@@ -312,6 +348,63 @@ func billInvoiceRules() *rules.Set {
 						rules.Assert("23",
 							"type C invoices (simplified tax scheme) must not have taxes on lines",
 							is.Empty,
+						),
+					),
+				),
+			),
+		),
+		// Type T invoices require the tourism relation extension
+		rules.When(is.Func("doc type is T", invoiceDocTypeIsT),
+			rules.Field("tax",
+				rules.Field("ext",
+					rules.Assert("25",
+						fmt.Sprintf("tourism invoice requires '%s' extension", ExtKeyTourismType),
+						tax.ExtensionsRequire(ExtKeyTourismType),
+					),
+				),
+			),
+			rules.Field("customer",
+				rules.Field("addresses",
+					rules.Assert("27", "tourism invoice customer requires an address", is.Present),
+				),
+			),
+			rules.Field("lines",
+				rules.Each(
+					rules.Field("taxes",
+						rules.Assert("29", "tourism invoice line requires taxes", is.Present),
+						rules.Each(
+							rules.Field("ext",
+								rules.Assert("26",
+									fmt.Sprintf("tourism invoice line requires '%s' extension", ExtKeyTourismItem),
+									tax.ExtensionsRequire(ExtKeyTourismItem),
+								),
+								rules.Assert("28",
+									fmt.Sprintf("tourism invoice line VAT rate must be '5' (21%%) via '%s'", ExtKeyVATRate),
+									tax.ExtensionsHasCodes(ExtKeyVATRate, "5"),
+								),
+							),
+						),
+					),
+				),
+			),
+			rules.Field("discounts",
+				rules.Each(
+					rules.Field("ext",
+						rules.Assert("30",
+							fmt.Sprintf("tourism invoice discount requires '%s' extension", ExtKeyTourismItem),
+							tax.ExtensionsRequire(ExtKeyTourismItem),
+						),
+					),
+				),
+			),
+			rules.Field("payment",
+				rules.Field("advances",
+					rules.Each(
+						rules.Field("ext",
+							rules.Assert("31",
+								fmt.Sprintf("tourism invoice advance requires '%s' extension", ExtKeyTourismItem),
+								tax.ExtensionsRequire(ExtKeyTourismItem),
+							),
 						),
 					),
 				),
@@ -418,7 +511,7 @@ func invoiceDocType49VATStatus(val any) bool {
 	if docType != TypeUsedGoodsPurchaseInvoice {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}
@@ -434,7 +527,7 @@ func invoiceDocTypeAVATStatus(val any) bool {
 	if !docType.In(DocTypesA...) {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}
@@ -450,7 +543,7 @@ func invoiceDocTypeBVATStatus(val any) bool {
 	if !docType.In(DocTypesB...) {
 		return true
 	}
-	vatStatus := inv.Customer.Ext[ExtKeyVATStatus]
+	vatStatus := inv.Customer.Ext.Get(ExtKeyVATStatus)
 	if vatStatus == "" {
 		return true
 	}
@@ -482,4 +575,17 @@ func invoiceDocTypeIsC(val any) bool {
 	}
 	docType := inv.Tax.GetExt(ExtKeyDocType)
 	return docType.In(DocTypesC...)
+}
+
+func invoiceDocTypeIsT(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil {
+		return false
+	}
+	docType := inv.Tax.GetExt(ExtKeyDocType)
+	return docType.In(DocTypesT...)
+}
+
+func invoiceDocTypeIsABC(val any) bool {
+	return !invoiceDocTypeIsT(val)
 }

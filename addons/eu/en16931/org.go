@@ -70,9 +70,9 @@ func normalizeOrgNote(n *org.Note) {
 	}
 
 	if code, ok := orgNoteTextSubjectMap[n.Key]; ok {
-		n.Ext = n.Ext.Merge(tax.Extensions{
+		n.Ext = n.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 			untdid.ExtKeyTextSubject: code,
-		})
+		}))
 	}
 }
 
@@ -93,9 +93,9 @@ func normalizeOrgIdentity(i *org.Identity) {
 	// Check for key-based identity mapping first
 	if i.Key != cbc.KeyEmpty {
 		if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
-			i.Ext = i.Ext.Merge(tax.Extensions{
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: scheme,
-			})
+			}))
 			return
 		}
 	}
@@ -103,9 +103,9 @@ func normalizeOrgIdentity(i *org.Identity) {
 	// Check for type-based identity mapping (used by some regimes like France)
 	if i.Type != cbc.CodeEmpty {
 		if scheme, ok := orgIdentityTypeSchemeMap[i.Type]; ok {
-			i.Ext = i.Ext.Merge(tax.Extensions{
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: scheme,
-			})
+			}))
 		}
 	}
 }
@@ -117,6 +117,45 @@ func normalizeOrgInbox(i *org.Inbox) {
 	if orgInboxRegexpSchemeCode.MatchString(i.Code.String()) {
 		i.Scheme = cbc.Code(i.Code.String()[0:4])
 		i.Code = cbc.Code(i.Code.String()[5:])
+	}
+}
+
+// normalizeOrgParty migrates a peppol-keyed inbox into an
+// `iso6523-actorid-upis::<scheme>:<code>` endpoint so callers can
+// adopt the new endpoints model without touching their existing
+// party data. The source inbox is left in place — many operators
+// still consume it — so this is purely additive. If the party
+// already carries an `iso6523-actorid-upis` endpoint, no copy is
+// made.
+func normalizeOrgParty(p *org.Party) {
+	if p == nil {
+		return
+	}
+	normalizeOrgPartyEndpoints(p)
+}
+
+// peppolEndpointScheme is the URI scheme used for Peppol participant
+// identifier endpoints (CEN/Peppol SMP and AS4 spec).
+const peppolEndpointScheme = "iso6523-actorid-upis"
+
+func normalizeOrgPartyEndpoints(p *org.Party) {
+	if p.Endpoint(peppolEndpointScheme) != nil {
+		// No peppol endpoint, return
+		return
+	}
+	for _, in := range p.Inboxes {
+		if in == nil || in.Key != org.InboxKeyPeppol {
+			continue
+		}
+		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
+			continue
+		}
+		uri := cbc.URI(peppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
+		p.Endpoints = append(p.Endpoints, &org.Endpoint{
+			Label: in.Label,
+			URI:   uri,
+		})
+		return
 	}
 }
 

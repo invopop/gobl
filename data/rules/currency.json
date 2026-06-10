@@ -3,6 +3,22 @@
   "package": "currency",
   "subsets": [
     {
+      "id": "GOBL-CURRENCY-CODE",
+      "object": "currency.Code",
+      "subsets": [
+        {
+          "guard": "present",
+          "assert": [
+            {
+              "id": "GOBL-CURRENCY-CODE-01",
+              "desc": "currency code must be defined in GOBL",
+              "tests": "valid currency code"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-CURRENCY-AMOUNT",
       "object": "currency.Amount",
       "subsets": [

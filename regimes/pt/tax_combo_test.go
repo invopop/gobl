@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/rules"
@@ -23,9 +24,9 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 		},
 		{
@@ -45,7 +46,7 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext:      tax.Extensions{},
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{}),
 			},
 			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
@@ -54,9 +55,9 @@ func TestTaxComboValidation(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Percent:  num.NewPercentage(210, 3),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			err: "[GOBL-PT-TAX-COMBO-01]",
 		},
@@ -92,9 +93,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "extension present",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT-AC",
-				},
+				}),
 			},
 			out: "PT-AC",
 		},
@@ -106,7 +107,7 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "empty extensions",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{},
+				Ext:      tax.ExtensionsOf(cbc.CodeMap{}),
 			},
 			out: "PT",
 		},
@@ -114,9 +115,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "missing extension",
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					"random": "12345678",
-				},
+				}),
 			},
 			out: "PT",
 		},
@@ -133,9 +134,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			tc: &tax.Combo{
 				Category: tax.CategoryVAT,
 				Country:  l10n.ES.Tax(),
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					pt.ExtKeyRegion: "PT",
-				},
+				}),
 			},
 			out: "ES",
 		},
@@ -157,9 +158,9 @@ func TestTaxComboNormalization(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pt.Normalize(tt.tc)
+			norm.Normalize(tt.tc, tax.RegimeContext("PT"))
 			if tt.tc != nil {
-				assert.Equal(t, tt.out, tt.tc.Ext[pt.ExtKeyRegion])
+				assert.Equal(t, tt.out, tt.tc.Ext.Get(pt.ExtKeyRegion))
 			}
 		})
 	}

@@ -31,7 +31,7 @@ var exemptTaxCategories = []cbc.Code{
 }
 
 // VAT key mapping from GOBL tax keys to UNTDID 5305 codes.
-var vatKeyMap = tax.Extensions{
+var vatKeyMap = tax.ExtensionsOf(cbc.CodeMap{
 	tax.KeyStandard:       TaxCategoryStandard,
 	tax.KeyZero:           TaxCategoryZero,
 	tax.KeyExempt:         TaxCategoryExempt,
@@ -39,9 +39,12 @@ var vatKeyMap = tax.Extensions{
 	tax.KeyIntraCommunity: TaxCategoryIntraCommunity,
 	tax.KeyExport:         TaxCategoryExport,
 	tax.KeyOutsideScope:   TaxCategoryOutsideScope,
-}
+})
 
-func normalizeTaxCombo(tc *tax.Combo) {
+// NormalizeTaxCombo ensures that the tax combo object is correctly assigned
+// an extension for the tax category code based on its category and key. This method
+// is public so that it can be used outside of the addon context.
+func NormalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
 	case tax.CategoryVAT:
 		if tc.Key.IsEmpty() {

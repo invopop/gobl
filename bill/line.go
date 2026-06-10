@@ -60,7 +60,7 @@ type Line struct {
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Extension codes that apply to the line
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 // SubLine provides a simplified line that can be embedded inside other lines
@@ -176,44 +176,6 @@ func subLineItemHasPrice(val any) bool {
 	return false
 }
 
-// Normalize performs normalization on the line and embedded objects using the
-// provided list of normalizers.
-func (l *Line) Normalize(normalizers tax.Normalizers) {
-	if l == nil {
-		return
-	}
-	normalizeLineItemPrice(l)
-	l.Taxes = tax.CleanSet(l.Taxes)
-	l.Discounts = CleanLineDiscounts(l.Discounts)
-	l.Charges = CleanLineCharges(l.Charges)
-	l.Breakdown = CleanSubLines(l.Breakdown)
-	tax.Normalize(normalizers, l.Identifier)
-	tax.Normalize(normalizers, l.Taxes)
-	tax.Normalize(normalizers, l.Item)
-	tax.Normalize(normalizers, l.Breakdown)
-	tax.Normalize(normalizers, l.Discounts)
-	tax.Normalize(normalizers, l.Charges)
-	tax.Normalize(normalizers, l.Substituted)
-	tax.Normalize(normalizers, l.Seller)
-	normalizers.Each(l)
-}
-
-// Normalize performs normalization on the subline and embedded objects using the
-// provided list of normalizers.
-func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
-	if sl == nil {
-		return
-	}
-	normalizeSubLineItemPrice(sl)
-	sl.Discounts = CleanLineDiscounts(sl.Discounts)
-	sl.Charges = CleanLineCharges(sl.Charges)
-	tax.Normalize(normalizers, sl.Identifier)
-	tax.Normalize(normalizers, sl.Item)
-	tax.Normalize(normalizers, sl.Discounts)
-	tax.Normalize(normalizers, sl.Charges)
-	normalizers.Each(sl)
-}
-
 // IsEmpty returns true if the sub-line is empty.
 func (sl *SubLine) IsEmpty() bool {
 	return sl == nil ||
@@ -241,6 +203,20 @@ func CleanSubLines(sls []*SubLine) []*SubLine {
 		}
 	}
 	return cleaned
+}
+
+func normalizeLine(l *Line) {
+	normalizeLineItemPrice(l)
+	l.Taxes = tax.CleanSet(l.Taxes)
+	l.Discounts = CleanLineDiscounts(l.Discounts)
+	l.Charges = CleanLineCharges(l.Charges)
+	l.Breakdown = CleanSubLines(l.Breakdown)
+}
+
+func normalizeSubLine(sl *SubLine) {
+	normalizeSubLineItemPrice(sl)
+	sl.Discounts = CleanLineDiscounts(sl.Discounts)
+	sl.Charges = CleanLineCharges(sl.Charges)
 }
 
 func normalizeLineItemPrice(l *Line) {

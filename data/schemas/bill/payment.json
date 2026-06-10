@@ -52,11 +52,6 @@
           "description": "Type of payment document being issued.",
           "calculated": true
         },
-        "method": {
-          "$ref": "https://gobl.org/draft-0/pay/instructions",
-          "title": "Method",
-          "description": "Details on how the payment was made based on the original instructions."
-        },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
@@ -126,6 +121,11 @@
           "title": "Payee",
           "description": "Legal entity that receives the payment if not the supplier."
         },
+        "ordering": {
+          "$ref": "https://gobl.org/draft-0/bill/ordering",
+          "title": "Ordering",
+          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
+        },
         "lines": {
           "items": {
             "$ref": "#/$defs/bill.PaymentLine"
@@ -134,10 +134,13 @@
           "title": "Lines",
           "description": "List of documents that are being paid for."
         },
-        "ordering": {
-          "$ref": "https://gobl.org/draft-0/bill/ordering",
-          "title": "Ordering",
-          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
+        "methods": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/pay/record"
+          },
+          "type": "array",
+          "title": "Methods",
+          "description": "Methods describes how the payment was settled. At least one method is\nrequired; multiple may be present when the payment was split across\nmeans (for example, partly card + partly cash)."
         },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -173,6 +176,7 @@
         "currency",
         "supplier",
         "lines",
+        "methods",
         "total"
       ],
       "description": "A Payment is used to link an invoice or invoices with a payment transaction.",

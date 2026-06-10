@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -17,15 +18,21 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register(
 		"es",
-		rules.GOBL.Add("ES"),
+		rules.GOBL.Add(CountryCode),
 		billInvoiceRules(),
 		taxIdentityRules(),
+	)
+	// Tax identities are normalized by their own country's regime, so the
+	// guard matches the identity's country rather than the document context.
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
 	)
 }
 
 // Local tax category definitions which are not considered standard.
 const (
 	TaxCategoryIRPF cbc.Code = "IRPF"
+	TaxCategoryIRNR cbc.Code = "IRNR"
 	TaxCategoryIGIC cbc.Code = "IGIC"
 	TaxCategoryIPSI cbc.Code = "IPSI"
 )
@@ -103,18 +110,9 @@ func New() *tax.RegimeDef {
 		},
 		Identities: identityDefinitions(),
 		Categories: taxCategories(),
-		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios(),
 		},
 		Corrections: correctionDefinitions(),
-	}
-}
-
-// Normalize will perform any regime specific normalizations on the data.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
 	}
 }

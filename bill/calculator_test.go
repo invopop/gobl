@@ -142,7 +142,7 @@ func TestCalculate(t *testing.T) {
 		})
 		inv.Tax.PricesInclude = ""
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Amount: num.MakeAmount(9001, 2),
 				},
@@ -165,7 +165,7 @@ func TestCalculate(t *testing.T) {
 		})
 		inv.Tax.PricesInclude = ""
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Amount: num.MakeAmount(900050, 4),
 				},
@@ -200,7 +200,7 @@ func TestCalculate(t *testing.T) {
 			},
 		})
 		inv.Payment = &bill.PaymentDetails{
-			Advances: []*pay.Advance{
+			Advances: []*pay.Record{
 				{
 					Description: "Half paid",
 					Percent:     num.NewPercentage(50, 2),

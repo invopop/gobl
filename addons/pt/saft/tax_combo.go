@@ -1,6 +1,7 @@
 package saft
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/rules"
@@ -8,7 +9,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxRateMap = tax.Extensions{
+var taxRateMap = map[cbc.Key]cbc.Code{
 	tax.RateReduced:      TaxRateReduced,
 	tax.RateIntermediate: TaxRateIntermediate,
 	tax.RateGeneral:      TaxRateNormal,
@@ -153,11 +154,11 @@ func taxComboIsVAT(val any) bool {
 
 // vatExtExemptRequiresExemption checks that when tax rate is exempt, the exemption is present.
 func vatExtExemptRequiresExemption(val any) bool {
-	ext, ok := val.(tax.Extensions)
-	if !ok || ext == nil {
+	ext, ok := tax.ExtensionsFromValue(val)
+	if !ok || ext.IsZero() {
 		return true
 	}
-	if ext[ExtKeyTaxRate] != TaxRateExempt {
+	if ext.Get(ExtKeyTaxRate) != TaxRateExempt {
 		return true
 	}
 	return tax.ExtensionsRequire(ExtKeyExemption).Check(ext)

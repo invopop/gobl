@@ -128,5 +128,5 @@ func lineTaxExemptionCode(line *bill.Line) cbc.Code {
 		return ""
 	}
 
-	return vat.Ext[ExtKeyExemption]
+	return vat.Ext.Get(ExtKeyExemption)
 }

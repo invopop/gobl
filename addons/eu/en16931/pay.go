@@ -2,15 +2,17 @@ package en16931
 
 import (
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
-var paymentMeansMap = tax.Extensions{
+var paymentMeansMap = cbc.CodeMap{
 	pay.MeansKeyAny:                                   "1",
 	pay.MeansKeyCard:                                  "48",
+	pay.MeansKeyCard.With(pay.MeansKeyDebit):          "55",
 	pay.MeansKeyCreditTransfer:                        "30",
 	pay.MeansKeyDebitTransfer:                         "31",
 	pay.MeansKeyCash:                                  "10",
@@ -28,9 +30,9 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	if val, ok := paymentMeansMap[instr.Key]; ok {
+	if val := paymentMeansMap.Lookup(instr.Key); val != "" {
 		instr.Ext = instr.Ext.Merge(
-			tax.Extensions{untdid.ExtKeyPaymentMeans: val},
+			tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyPaymentMeans: val}),
 		)
 	}
 }

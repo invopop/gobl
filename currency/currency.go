@@ -23,8 +23,15 @@ func init() {
 	rules.Register(
 		"currency",
 		rules.GOBL.Add("CURRENCY"),
+		codeRules(),
 		amountRules(),
 		exchangeRateRules(),
+	)
+}
+
+func codeRules() *rules.Set {
+	return rules.For(Code(""),
+		rules.AssertIfPresent("01", "currency code must be defined in GOBL", IsCodeDefined),
 	)
 }
 

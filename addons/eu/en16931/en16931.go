@@ -3,11 +3,9 @@
 package en16931
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -15,15 +13,20 @@ import (
 )
 
 const (
+	// Key identifies the EN16931 addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "eu-en16931"
+
 	// V2017 is the key for the EN16931-1:2017 specification.
-	V2017 cbc.Key = "eu-en16931-v2017"
+	V2017 cbc.Key = Key + "-v2017"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V2017.String(),
-		rules.GOBL.Add("EU-EN16931-V2017"),
+		Key.String(),
+		rules.GOBL.Add("EU-EN16931"),
 		is.InContext(tax.AddonIn(V2017)),
 		billInvoiceRules(),
 		billDiscountRules(),
@@ -38,6 +41,22 @@ func init() {
 		orgInboxRules(),
 		orgAddressRules(),
 		taxComboRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V2017)),
+		norm.For(normalizeBillInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(NormalizeTaxCombo),
+		norm.For(normalizeBillDiscount),
+		norm.For(normalizeBillLineDiscount),
+		norm.For(normalizeBillCharge),
+		norm.For(normalizeBillLineCharge),
+		norm.For(normalizeTaxNote),
+		norm.For(normalizeOrgNote),
+		norm.For(normalizeOrgItem),
+		norm.For(normalizeOrgIdentity),
+		norm.For(normalizeOrgInbox),
+		norm.For(normalizeOrgParty),
 	)
 }
 
@@ -92,36 +111,6 @@ func newAddon() *tax.AddonDef {
 				exemption note covering it.
 			`),
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeBillInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	case *bill.Discount:
-		normalizeBillDiscount(obj)
-	case *bill.LineDiscount:
-		normalizeBillLineDiscount(obj)
-	case *bill.Charge:
-		normalizeBillCharge(obj)
-	case *bill.LineCharge:
-		normalizeBillLineCharge(obj)
-	case *tax.Note:
-		normalizeTaxNote(obj)
-	case *org.Note:
-		normalizeOrgNote(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
-	case *org.Identity:
-		normalizeOrgIdentity(obj)
-	case *org.Inbox:
-		normalizeOrgInbox(obj)
+		Scenarios: scenarios,
 	}
 }

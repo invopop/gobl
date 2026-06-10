@@ -233,18 +233,7 @@ type Note struct {
 	// Additional information about the note
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 	// Extension data
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
-}
-
-// Normalize will perform basic normalization on the Note.
-func (n *Note) Normalize() {
-	if n == nil {
-		return
-	}
-	uuid.Normalize(&n.UUID)
-	n.Code = cbc.NormalizeCode(n.Code)
-	n.Text = cbc.NormalizeString(n.Text)
-	n.Ext = tax.CleanExtensions(n.Ext)
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func noteRules() *rules.Set {
@@ -318,4 +307,9 @@ func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 			Description: v.Desc.String(),
 		}
 	}
+}
+
+func normalizeNote(n *Note) {
+	uuid.Normalize(&n.UUID)
+	n.Text = cbc.NormalizeString(n.Text)
 }

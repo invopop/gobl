@@ -21,9 +21,6 @@ var (
 // normalizeTaxIdentity requires additional steps for Greece as the language code
 // is used in the tax code.
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID == nil {
-		return
-	}
 	// also allow for usage of "GR" which may be used in the tax code
 	// by accident.
 	tax.NormalizeIdentity(tID, l10n.GR)

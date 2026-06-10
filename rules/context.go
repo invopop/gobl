@@ -1,6 +1,9 @@
 package rules
 
-import "reflect"
+import (
+	"reflect"
+	"slices"
+)
 
 // ContextKey is the key type for Context entries.
 type ContextKey string
@@ -16,6 +19,19 @@ type contextEntry struct {
 // retrieve them.
 type Context struct {
 	entries []contextEntry
+	ignores []Code
+}
+
+// addIgnores records fault codes to be suppressed from the validation result.
+// Called as the walk visits an active set carrying rules.Ignore entries.
+func (c *Context) addIgnores(codes ...Code) {
+	c.ignores = append(c.ignores, codes...)
+}
+
+// isIgnored reports whether the given fault code has been marked for
+// suppression by an active set during this validation session.
+func (c *Context) isIgnored(code Code) bool {
+	return slices.Contains(c.ignores, code)
 }
 
 // Set appends a key-value pair to the validation context, preserving insertion order.
@@ -101,7 +117,7 @@ func (c Context) Each(fn func(value any) bool) bool {
 func collectContext(rc *Context, obj any) {
 	// Scan exported struct fields for embedded ContextAdders.
 	rv := reflect.ValueOf(obj)
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
 			return
 		}
@@ -112,7 +128,7 @@ func collectContext(rc *Context, obj any) {
 		ca.RulesContext()(rc)
 	}
 
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		rv = rv.Elem()
 	}
 	if rv.Kind() != reflect.Struct {
@@ -137,7 +153,7 @@ func collectContext(rc *Context, obj any) {
 		// If the field wraps an embedded payload (e.g. schema.Object),
 		// collect context from the inner value as well. Use fv.Interface()
 		// directly since fieldObj may be double-pointer for pointer fields.
-		if fv.Kind() != reflect.Ptr || !fv.IsNil() {
+		if fv.Kind() != reflect.Pointer || !fv.IsNil() {
 			if emb, ok := fv.Interface().(Embeddable); ok {
 				if inner := emb.Embedded(); inner != nil {
 					collectContext(rc, inner)

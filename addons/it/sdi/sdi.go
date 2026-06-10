@@ -5,19 +5,22 @@ package sdi
 import (
 	"errors"
 
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
-	// V1 for SDI's FatturaPA verions 1.x
-	V1 cbc.Key = "it-sdi-v1"
+	// Key identifies the SDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "it-sdi"
+
+	// V1 for SDI's FatturaPA versions 1.x
+	V1 cbc.Key = Key + "-v1"
 
 	// KeyFundContribution is the key for the Fund Contribution charge
 	KeyFundContribution cbc.Key = "fund-contribution"
@@ -26,8 +29,8 @@ const (
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("IT-SDI-V1"),
+		Key.String(),
+		rules.GOBL.Add("IT-SDI"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billChargeRules(),
@@ -35,6 +38,14 @@ func init() {
 		taxComboRules(),
 		payInstructionsRules(),
 		payAdvanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeAddress),
+		norm.For(normalizeTaxCombo),
 	)
 }
 
@@ -48,24 +59,8 @@ func newAddon() *tax.AddonDef {
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
-		Inboxes:    inboxes,
-		Normalizer: normalize,
-		Scenarios:  scenarios,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	case *org.Address:
-		normalizeAddress(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
+		Inboxes:   inboxes,
+		Scenarios: scenarios,
 	}
 }
 

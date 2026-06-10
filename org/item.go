@@ -54,24 +54,9 @@ type Item struct {
 	// Country code of where this item was from originally.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional meta information that may be useful
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
-// Normalize performs any required normalizations on the Item.
-func (i *Item) Normalize(normalizers tax.Normalizers) {
-	if i == nil {
-		return
-	}
-	i.Name = cbc.NormalizeString(i.Name)
-	i.Description = cbc.NormalizeString(i.Description)
-	i.Ref = cbc.NormalizeCode(i.Ref)
-	i.Ext = tax.CleanExtensions(i.Ext)
-
-	tax.Normalize(normalizers, i.Identities)
-	tax.Normalize(normalizers, i.Images)
-	normalizers.Each(i)
 }
 
 func itemRules() *rules.Set {
@@ -104,4 +89,9 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 			},
 		}
 	}
+}
+
+func normalizeItem(i *Item) {
+	i.Name = cbc.NormalizeString(i.Name)
+	i.Description = cbc.NormalizeString(i.Description)
 }

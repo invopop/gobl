@@ -2,11 +2,9 @@
 package saft
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -14,15 +12,20 @@ import (
 )
 
 const (
+	// Key identifies the SAF-T (PT) addon family. Individual versions append
+	// a suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "pt-saft"
+
 	// V1 for SAF-T (PT) versions 1.x
-	V1 cbc.Key = "pt-saft-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("PT-SAFT-V1"),
+		Key.String(),
+		rules.GOBL.Add("PT-SAFT"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billPaymentRules(),
@@ -34,6 +37,18 @@ func init() {
 		orgNoteRules(),
 		billLineRules(),
 		billPaymentLineRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizeTaxCombo),
+		norm.For(normalizeItem),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizePayment),
+		norm.For(normalizeOrder),
+		norm.For(normalizeDelivery),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeLine),
 	)
 }
 
@@ -75,31 +90,7 @@ func newAddon() *tax.AddonDef {
 			},
 		},
 		Extensions:  extensions,
-		Normalizer:  normalize,
 		Scenarios:   scenarios,
 		Corrections: corrections,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	case *org.Item:
-		normalizeItem(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	case *bill.Payment:
-		normalizePayment(obj)
-	case *bill.Order:
-		normalizeOrder(obj)
-	case *bill.Delivery:
-		normalizeDelivery(obj)
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *bill.Line:
-		normalizeLine(obj)
 	}
 }

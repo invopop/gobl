@@ -1,9 +1,14 @@
 package currency
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 )
 
 // ExchangeRate contains data on the rate to be used when converting amounts from
@@ -49,15 +54,48 @@ func (er *ExchangeRate) Convert(amount num.Amount) num.Amount {
 	return a.Rescale(z.Exp()) // ensure scale always matches destination currency
 }
 
+type exchangeableObject interface {
+	GetCurrency() Code
+	GetExchangeRates() []*ExchangeRate
+}
+
+// CanConvertTo provides a special rule test that can be used to ensure that the object
+// being tested has enough details to be able to convert from its base currency into
+// at least one of the provided codes. Panics if called with no target currencies.
+func CanConvertTo(to ...Code) rules.Test {
+	if len(to) == 0 {
+		panic("currency.CanConvertTo requires at least one target currency")
+	}
+	codes := make([]string, len(to))
+	for i, c := range to {
+		codes[i] = c.String()
+	}
+	return is.Func(fmt.Sprintf("can convert to [%s]", strings.Join(codes, ", ")), func(val any) bool {
+		o, ok := val.(exchangeableObject)
+		if !ok {
+			return false
+		}
+		if o.GetCurrency().In(to...) {
+			return true
+		}
+		if MatchExchangeRate(o.GetExchangeRates(), o.GetCurrency(), to...) != nil {
+			return true
+		}
+		return false
+	})
+}
+
 // MatchExchangeRate will attempt to find the matching exchange rate that
 // will convert from one currency into another. Will return nil if no
-// match is found or the currencies are the same.
-func MatchExchangeRate(rates []*ExchangeRate, from, to Code) *ExchangeRate {
-	if from == to {
+// match is found or the "from" currency is itself one of the target
+// currencies. When multiple target currencies are provided, the first
+// rate in rates whose destination matches any of them is returned.
+func MatchExchangeRate(rates []*ExchangeRate, from Code, to ...Code) *ExchangeRate {
+	if from.In(to...) {
 		return nil
 	}
 	for _, rate := range rates {
-		if rate.From == from && rate.To == to {
+		if rate.From == from && rate.To.In(to...) {
 			return rate
 		}
 	}

@@ -115,22 +115,13 @@ type Discount struct {
 	// List of taxes to apply to the discount
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Extension codes that apply to the discount
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Normalize performs normalization on the line and embedded objects using the
-// provided list of normalizers.
-func (m *Discount) Normalize(normalizers tax.Normalizers) {
-	if m == nil {
-		return
-	}
-	m.Code = cbc.NormalizeCode(m.Code)
+func normalizeDiscount(m *Discount) {
 	m.Taxes = tax.CleanSet(m.Taxes)
-	m.Ext = tax.CleanExtensions(m.Ext)
-	normalizers.Each(m)
-	tax.Normalize(normalizers, m.Taxes)
 }
 
 func discountRules() *rules.Set {

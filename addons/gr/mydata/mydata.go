@@ -3,10 +3,9 @@
 package mydata
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -14,21 +13,33 @@ import (
 )
 
 const (
+	// Key identifies the MyData addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "gr-mydata"
+
 	// V1 for Greece MyData XML v1.x
-	V1 cbc.Key = "gr-mydata-v1"
+	V1 cbc.Key = Key + "-v1"
 )
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
 	rules.RegisterWithGuard(
-		V1.String(),
-		rules.GOBL.Add("GR-MYDATA-V1"),
+		Key.String(),
+		rules.GOBL.Add("GR-MYDATA"),
 		is.InContext(tax.AddonIn(V1)),
 		billInvoiceRules(),
 		billChargeRules(),
 		taxComboRules(),
 		payInstructionsRules(),
 		payAdvanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V1)),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
+		norm.For(normalizeTaxCombo),
+		norm.For(normalizeBillCharge),
 	)
 }
 
@@ -61,20 +72,6 @@ func newAddon() *tax.AddonDef {
 		Tags: []*tax.TagSet{
 			invoiceTags,
 		},
-		Normalizer: normalize,
-		Scenarios:  scenarios,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
-	case *tax.Combo:
-		normalizeTaxCombo(obj)
-	case *bill.Charge:
-		normalizeBillCharge(obj)
+		Scenarios: scenarios,
 	}
 }

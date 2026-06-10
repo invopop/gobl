@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +16,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
 		assert.NotPanics(t, func() {
-			ad.Normalizer(tc)
+			norm.Normalize(tc, tax.AddonContext(sdi.V1))
 		})
 	})
 
@@ -26,7 +27,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(21, 3),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(sdi.V1))
 		assert.Equal(t, cbc.Code("N7"), tc.Ext.Get(sdi.ExtKeyExempt))
 	})
 
@@ -37,7 +38,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(20, 3),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(sdi.V1))
 		assert.Equal(t, cbc.Code("N2.1"), tc.Ext.Get(sdi.ExtKeyExempt))
 	})
 
@@ -49,9 +50,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			t.Run("with code "+code.String(), func(t *testing.T) {
 				tc := &tax.Combo{
 					Category: tax.CategoryVAT,
-					Ext:      tax.Extensions{sdi.ExtKeyExempt: code},
+					Ext:      tax.ExtensionsOf(cbc.CodeMap{sdi.ExtKeyExempt: code}),
 				}
-				ad.Normalizer(tc)
+				norm.Normalize(tc, tax.AddonContext(sdi.V1))
 				assert.Equal(t, code, tc.Ext.Get(sdi.ExtKeyExempt), "extension should be set correctly")
 				assert.NotEmpty(t, tc.Key, "key should be set based on extension")
 				if tc.Key == tax.KeyZero {
@@ -66,9 +67,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyExempt,
-			Ext:      tax.Extensions{sdi.ExtKeyExempt: "N3.2"},
+			Ext:      tax.ExtensionsOf(cbc.CodeMap{sdi.ExtKeyExempt: "N3.2"}),
 		}
-		ad.Normalizer(tc)
+		norm.Normalize(tc, tax.AddonContext(sdi.V1))
 		assert.Equal(t, "N3.2", tc.Ext.Get(sdi.ExtKeyExempt).String())
 		assert.Equal(t, tax.KeyIntraCommunity, tc.Key)
 	})

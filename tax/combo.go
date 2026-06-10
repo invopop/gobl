@@ -31,7 +31,7 @@ type Combo struct {
 	// Some countries require an additional surcharge (may be determined if key present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
@@ -39,11 +39,11 @@ type Combo struct {
 	informative bool `json:"-"`
 }
 
-// Normalize tries to normalize the data inside the tax combo.
-func (c *Combo) Normalize(normalizers Normalizers) {
-	if c == nil {
-		return
-	}
+// normalizeCombo applies the intrinsic normalization of a tax combo: it maps
+// legacy VAT rate keys onto the current key/rate model. Regime and addon
+// adjustments are applied separately by their registered normalizers, and the
+// extension map is cleaned by the global tax.Extensions normalizer.
+func normalizeCombo(c *Combo) {
 
 	switch c.Category {
 	case CategoryVAT:
@@ -92,9 +92,6 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			}
 		}
 	}
-
-	c.Ext = CleanExtensions(c.Ext)
-	normalizers.Each(c)
 }
 
 func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
@@ -298,7 +295,7 @@ func comboExtensionsValid(val any) bool {
 	if !ok {
 		return true
 	}
-	for k := range combo.Ext {
+	for _, k := range combo.Ext.Keys() {
 		if ExtensionForKey(k) == nil {
 			return false
 		}

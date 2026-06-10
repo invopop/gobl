@@ -7,8 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
@@ -17,7 +16,13 @@ import (
 
 // Key to identify the CFDI addon.
 const (
-	V4 cbc.Key = "mx-cfdi-v4"
+	// Key identifies the CFDI addon family. Individual versions append a
+	// suffix; the family key is used as the fault-code namespace so that
+	// rules that carry across versions keep stable codes.
+	Key cbc.Key = "mx-cfdi"
+
+	// V4 for CFDI version 4
+	V4 cbc.Key = Key + "-v4"
 )
 
 // Official CFDI codes to include in stamps.
@@ -41,8 +46,8 @@ func init() {
 	)
 
 	rules.RegisterWithGuard(
-		V4.String(),
-		rules.GOBL.Add("MX-CFDI-V4"),
+		Key.String(),
+		rules.GOBL.Add("MX-CFDI"),
 		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		payInstructionsRules(),
@@ -50,6 +55,14 @@ func init() {
 		payTermsRules(),
 		foodVouchersRules(),
 		fuelAccountBalanceRules(),
+	)
+	norm.RegisterWithGuard(
+		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeInvoice),
+		norm.For(normalizeParty),
+		norm.For(normalizeItem),
+		norm.For(normalizePayInstructions),
+		norm.For(normalizePayRecord),
 	)
 }
 
@@ -77,22 +90,6 @@ func newAddon() *tax.AddonDef {
 				},
 			},
 		},
-		Scenarios:  scenarios,
-		Normalizer: normalize,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	case *org.Party:
-		normalizeParty(obj)
-	case *org.Item:
-		normalizeItem(obj)
-	case *pay.Instructions:
-		normalizePayInstructions(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
+		Scenarios: scenarios,
 	}
 }

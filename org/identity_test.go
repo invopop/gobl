@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -89,29 +90,29 @@ func TestIdentityNormalize(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		var id *org.Identity
 		assert.NotPanics(t, func() {
-			id.Normalize()
+			norm.Normalize(id)
 		})
 	})
 	t.Run("missing extensions", func(t *testing.T) {
 		id := &org.Identity{
 			Type: cbc.Code("FOO"),
 			Code: "BAR",
-			Ext:  tax.Extensions{},
+			Ext:  tax.ExtensionsOf(cbc.CodeMap{}),
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "FOO", id.Type.String())
-		assert.Nil(t, id.Ext)
+		assert.True(t, id.Ext.IsZero())
 	})
 	t.Run("with extension", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0004",
-			},
+			}),
 		}
-		id.Normalize()
+		norm.Normalize(id)
 		assert.Equal(t, "BAR", id.Code.String())
-		assert.Equal(t, "0004", id.Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0004", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 }
 
@@ -119,9 +120,9 @@ func TestIdentityRules(t *testing.T) {
 	t.Run("with basics", func(t *testing.T) {
 		id := &org.Identity{
 			Code: "BAR",
-			Ext: tax.Extensions{
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: "0004",
-			},
+			}),
 		}
 		assert.NoError(t, rules.Validate(id))
 	})
@@ -245,6 +246,39 @@ func TestIdentityTests(t *testing.T) {
 		assert.False(t, org.IdentitiesTypeIn("FOO").Check("not-an-identity"))
 		assert.False(t, org.IdentitiesTypeIn("FOO").Check(nil))
 	})
+
+	t.Run("IdentitiesExtensionIn matches", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0002"})},
+			{Code: "456"},
+		}
+		assert.True(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn no match on value", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0009"})},
+		}
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn no match on key", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"other": "0002"})},
+		}
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn multiple values", func(t *testing.T) {
+		extIdents := []*org.Identity{
+			{Code: "123", Ext: tax.ExtensionsOf(cbc.CodeMap{"scheme": "0009"})},
+		}
+		assert.True(t, org.IdentitiesExtensionIn("scheme", "0002", "0009").Check(extIdents))
+	})
+	t.Run("IdentitiesExtensionIn string", func(t *testing.T) {
+		assert.Equal(t, "has a ext [scheme] in [0002, 0009]",
+			org.IdentitiesExtensionIn("scheme", "0002", "0009").String())
+	})
+	t.Run("IdentitiesExtensionIn non-identity type", func(t *testing.T) {
+		assert.False(t, org.IdentitiesExtensionIn("scheme", "0002").Check("nope"))
+	})
 }
 
 func TestIdentityForType(t *testing.T) {
@@ -287,18 +321,18 @@ func TestIdentityForExtKey(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		idents := []*org.Identity{
 			{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("foo"): "bar",
-				},
+				}),
 			},
 			{
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("baz"): "qux",
-				},
+				}),
 			},
 		}
 		id := org.IdentityForExtKey(idents, "baz")
-		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
 	t.Run("nil extensions", func(t *testing.T) {
@@ -308,13 +342,27 @@ func TestIdentityForExtKey(t *testing.T) {
 			},
 			{
 				Code: "5678",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("baz"): "qux",
-				},
+				}),
 			},
 		}
 		id := org.IdentityForExtKey(idents, "baz")
-		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
+		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
+	})
+	t.Run("nil identity in array", func(t *testing.T) {
+		idents := []*org.Identity{
+			nil,
+			{
+				Code: "5678",
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
+					cbc.Key("baz"): "qux",
+				}),
+			},
+		}
+		id := org.IdentityForExtKey(idents, "baz")
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -21,9 +22,9 @@ func TestTaxComboValidation(t *testing.T) {
 			name: "valid ISS tax combo",
 			tc: &tax.Combo{
 				Category: br.TaxCategoryISS,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyISSLiability: "1",
-				},
+				}),
 			},
 		},
 		{
@@ -55,7 +56,6 @@ func TestTaxComboValidation(t *testing.T) {
 }
 
 func TestTaxComboNormalization(t *testing.T) {
-	addon := tax.AddonForKey(nfse.V1)
 
 	tests := []struct {
 		name string
@@ -77,9 +77,9 @@ func TestTaxComboNormalization(t *testing.T) {
 			name: "does not override ISS liability",
 			tc: &tax.Combo{
 				Category: br.TaxCategoryISS,
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					nfse.ExtKeyISSLiability: "2",
-				},
+				}),
 			},
 			out: "2",
 		},
@@ -92,12 +92,12 @@ func TestTaxComboNormalization(t *testing.T) {
 	}
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			addon.Normalizer(ts.tc)
+			norm.Normalize(ts.tc, tax.AddonContext(nfse.V1))
 			if ts.tc == nil {
 				assert.Nil(t, ts.tc)
 			} else {
 				assert.NotNil(t, ts.tc)
-				assert.Equal(t, ts.out, ts.tc.Ext[nfse.ExtKeyISSLiability])
+				assert.Equal(t, ts.out, ts.tc.Ext.Get(nfse.ExtKeyISSLiability))
 			}
 		})
 	}

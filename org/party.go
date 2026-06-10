@@ -2,6 +2,7 @@ package org
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -26,6 +27,8 @@ type Party struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Details of physical people who represent the party.
 	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
+	// Endpoints to which electronic documents may be sent, identified by URI.
+	Endpoints []*Endpoint `json:"endpoints,omitempty" jsonschema:"title=Endpoints"`
 	// Digital inboxes used for forwarding electronic versions of documents
 	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 	// Regular post addresses for where information should be sent if needed.
@@ -41,48 +44,42 @@ type Party struct {
 	// Images that can be used to identify the party visually.
 	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Calculate will perform basic normalization of the party's data without
-// using any tax regime or addon.
+// Calculate will perform basic normalization of the party's data using the
+// party's own embedded tax regime, if any.
 func (p *Party) Calculate() error {
-	p.Normalize(p.normalizers())
+	norm.Normalize(p)
 	return nil
 }
 
-func (p *Party) normalizers() tax.Normalizers {
-	return p.RegimeDef().Normalizers()
+// Endpoint returns the party's first endpoint whose URI uses the given
+// scheme, or nil if none is present.
+func (p *Party) Endpoint(scheme string) *Endpoint {
+	for _, e := range p.Endpoints {
+		if e != nil && e.URI.Scheme() == scheme {
+			return e
+		}
+	}
+	return nil
 }
 
-// Normalize will try to normalize the party's data.
-func (p *Party) Normalize(normalizers tax.Normalizers) {
+// FirstEndpoint returns the party's first endpoint, or nil if the
+// party is nil or has none. Endpoint order is operator-controlled —
+// the first entry is treated as the preferred routing address.
+func (p *Party) FirstEndpoint() *Endpoint {
 	if p == nil {
-		return
+		return nil
 	}
-
-	uuid.Normalize(&p.UUID)
-	p.Label = cbc.NormalizeString(p.Label)
-	p.Name = cbc.NormalizeString(p.Name)
-	p.Alias = cbc.NormalizeString(p.Alias)
-
-	p.Ext = tax.CleanExtensions(p.Ext)
-
-	if p.TaxID != nil {
-		// tax ids are noramlized only by their own tax regime, if any
-		p.TaxID.Normalize()
+	for _, e := range p.Endpoints {
+		if e != nil {
+			return e
+		}
 	}
-
-	tax.Normalize(normalizers, p.People)
-	tax.Normalize(normalizers, p.Identities)
-	tax.Normalize(normalizers, p.Inboxes)
-	tax.Normalize(normalizers, p.Addresses)
-	tax.Normalize(normalizers, p.Telephones)
-	tax.Normalize(normalizers, p.Emails)
-
-	normalizers.Each(p)
+	return nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.
@@ -92,4 +89,11 @@ func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
 			"name", "tax_id",
 		},
 	}
+}
+
+func normalizeParty(p *Party) {
+	uuid.Normalize(&p.UUID)
+	p.Label = cbc.NormalizeString(p.Label)
+	p.Name = cbc.NormalizeString(p.Name)
+	p.Alias = cbc.NormalizeString(p.Alias)
 }

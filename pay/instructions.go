@@ -32,7 +32,7 @@ type Instructions struct {
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Extension key-pairs values defined by a tax regime.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Non-structured additional data that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -99,17 +99,6 @@ func onlineRules() *rules.Set {
 			rules.Assert("01", "URL is required and must be valid", is.Present, is.URL),
 		),
 	)
-}
-
-// Normalize will try to normalize the instructions.
-func (i *Instructions) Normalize() {
-	if i == nil {
-		return
-	}
-	i.Ref = cbc.NormalizeCode(i.Ref)
-	i.Detail = cbc.NormalizeString(i.Detail)
-	i.Notes = cbc.NormalizeString(i.Notes)
-	i.Ext = tax.CleanExtensions(i.Ext)
 }
 
 // UnmarshalJSON is used to handle the migration of the Online's

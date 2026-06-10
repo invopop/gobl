@@ -35,13 +35,21 @@ type CorrectionOptions struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Extensions for region specific requirements that may be added in the preceding
 	// or at the document level, according to the local rules.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// CopyTax when true will copy the tax totals from the previous document to the
 	// preceding document data.
 	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
+}
+
+// CorrectionNormalize is the structure passed to the correction normalizer to allow
+// regime specific logic to route extensions between the document and the preceding
+// reference alongside the correction options.
+type CorrectionNormalize struct {
+	Opts    *CorrectionOptions
+	Invoice *Invoice
 }
 
 // WithOptions takes an already completed CorrectionOptions instance and
@@ -95,10 +103,7 @@ func WithReason(reason string) schema.Option {
 func WithExtension(key cbc.Key, code cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		if opts.Ext == nil {
-			opts.Ext = make(tax.Extensions)
-		}
-		opts.Ext[key] = code
+		opts.Ext = opts.Ext.Set(key, code)
 	}
 }
 
@@ -283,7 +288,9 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return errors.New("cannot correct an invoice without a code")
 	}
 
-	// Copy and prepare the basic fields
+	cd := inv.correctionDef()
+
+	// Copy and prepare the basic fields.
 	pre := &org.DocumentRef{
 		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
@@ -296,6 +303,16 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	if o.CopyTax && inv.Totals != nil {
 		pre.Tax = inv.Totals.Taxes.Clone()
 	}
+
+	// Validate before mutating the invoice so failure leaves it untouched.
+	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
+		return err
+	}
+
+	// Mutate the invoice. Preceding must be set before the normalizer runs
+	// so callbacks can access it via inv.Preceding[0].
+	inv.Preceding = []*org.DocumentRef{pre}
+
 	inv.UUID = ""
 	inv.Type = o.Type
 	if o.Series != "" {
@@ -308,13 +325,14 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
-	cd := inv.correctionDef()
-	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
-		return err
+	// Let the correction normalizer handle extension routing if defined.
+	if cd != nil && cd.Normalizer != nil {
+		cn := &CorrectionNormalize{
+			Opts:    o,
+			Invoice: inv,
+		}
+		cd.Normalizer.Normalize(cn)
 	}
-
-	// Replace all previous preceding data
-	inv.Preceding = []*org.DocumentRef{pre}
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially

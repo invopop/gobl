@@ -10,6 +10,7 @@ import (
 const (
 	// InboxKeyPeppol is the key used to identify a Peppol inbox and apply
 	// normalization rules for participant IDs.
+	// Deprecated: please now use the Endpoint object instead of inboxes for peppol.
 	InboxKeyPeppol cbc.Key = "peppol"
 )
 
@@ -37,37 +38,6 @@ type Inbox struct {
 	URL string `json:"url,omitempty" jsonschema:"title=URL"`
 	// Email address for the inbox. Mutually exclusive with Code and URL.
 	Email string `json:"email,omitempty" jsonschema:"title=Email"`
-}
-
-// Normalize will try to clean the inbox's data.
-func (i *Inbox) Normalize() {
-	if i == nil {
-		return
-	}
-	uuid.Normalize(&i.UUID)
-	code := i.Code.String()
-	if is.EmailFormat.Check(code) {
-		i.Email = code
-		i.Code = ""
-	} else if is.URL.Check(code) {
-		i.URL = code
-		i.Code = ""
-	}
-	i.Label = cbc.NormalizeString(i.Label)
-	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
-	i.Code = cbc.NormalizeCode(i.Code)
-
-	// Custom normalizations
-	switch i.Key {
-	case InboxKeyPeppol:
-		if i.Scheme == "" {
-			if len(i.Code) >= 5 && i.Code[4] == ':' {
-				numbers := i.Code[:4]
-				i.Scheme = numbers
-				i.Code = i.Code[5:]
-			}
-		}
-	}
 }
 
 func inboxRules() *rules.Set {
@@ -115,4 +85,31 @@ func AddInbox(in []*Inbox, i *Inbox) []*Inbox {
 		}
 	}
 	return append(in, i)
+}
+
+func normalizeInbox(i *Inbox) {
+	uuid.Normalize(&i.UUID)
+	code := i.Code.String()
+	if is.EmailFormat.Check(code) {
+		i.Email = code
+		i.Code = ""
+	} else if is.URL.Check(code) {
+		i.URL = code
+		i.Code = ""
+	}
+	i.Label = cbc.NormalizeString(i.Label)
+	i.Scheme = cbc.NormalizeUpperCode(i.Scheme)
+	i.Code = cbc.NormalizeStrictCode(i.Code)
+
+	// Custom normalizations
+	switch i.Key {
+	case InboxKeyPeppol:
+		if i.Scheme == "" {
+			if len(i.Code) >= 5 && i.Code[4] == ':' {
+				numbers := i.Code[:4]
+				i.Scheme = numbers
+				i.Code = i.Code[5:]
+			}
+		}
+	}
 }

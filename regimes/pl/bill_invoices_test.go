@@ -52,13 +52,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("missing supplier tax ID code", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Supplier.TaxID.Code = ""
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, rules.Validate(inv), "[GOBL-PL-BILL-INVOICE-01]")
-	})
-
 	t.Run("invalid supplier tax ID code", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = "1234567890"

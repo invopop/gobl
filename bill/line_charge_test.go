@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
@@ -17,12 +19,12 @@ func TestLineChargeNormalize(t *testing.T) {
 	l := &bill.LineCharge{
 		Code:    " FOO--BAR ",
 		Percent: num.NewPercentage(200, 3),
-		Ext:     tax.Extensions{},
+		Ext:     tax.ExtensionsOf(cbc.CodeMap{}),
 	}
-	l.Normalize(nil)
+	norm.Normalize(l)
 	assert.Equal(t, "20.0%", l.Percent.String())
-	assert.Equal(t, "FOO-BAR", l.Code.String())
-	assert.Nil(t, l.Ext)
+	assert.Equal(t, "FOO--BAR", l.Code.String())
+	assert.True(t, l.Ext.IsZero())
 }
 
 func TestLineChargeValidation(t *testing.T) {
