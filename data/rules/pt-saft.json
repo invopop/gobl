@@ -267,17 +267,17 @@
       "assert": [
         {
           "id": "GOBL-PT-SAFT-BILL-DELIVERY-01",
-          "desc": "tax requires 'pt-saft-movement-type' extension",
+          "desc": "delivery tax requires 'pt-saft-movement-type' extension",
           "tests": "has movement type"
         },
         {
           "id": "GOBL-PT-SAFT-BILL-DELIVERY-02",
-          "desc": "series format must be valid",
+          "desc": "delivery series format must be valid",
           "tests": "series format"
         },
         {
           "id": "GOBL-PT-SAFT-BILL-DELIVERY-03",
-          "desc": "code format must be valid",
+          "desc": "delivery code format must be valid",
           "tests": "code format"
         }
       ],
@@ -290,7 +290,7 @@
               "assert": [
                 {
                   "id": "GOBL-PT-SAFT-BILL-DELIVERY-04",
-                  "desc": "supplier tax ID is required",
+                  "desc": "delivery supplier tax ID is required",
                   "tests": "present"
                 }
               ],
@@ -300,7 +300,7 @@
                   "assert": [
                     {
                       "id": "GOBL-PT-SAFT-BILL-DELIVERY-05",
-                      "desc": "supplier tax ID code is required",
+                      "desc": "delivery supplier tax ID code is required",
                       "tests": "present"
                     }
                   ]
@@ -314,7 +314,7 @@
           "assert": [
             {
               "id": "GOBL-PT-SAFT-BILL-DELIVERY-06",
-              "desc": "despatch date is required",
+              "desc": "delivery despatch date is required",
               "tests": "present"
             }
           ]
@@ -324,7 +324,7 @@
           "assert": [
             {
               "id": "GOBL-PT-SAFT-BILL-DELIVERY-07",
-              "desc": "preceding must have at most one entry",
+              "desc": "delivery preceding must have at most one entry",
               "tests": "length between 0 and 1"
             }
           ],
@@ -337,7 +337,7 @@
                   "assert": [
                     {
                       "id": "GOBL-PT-SAFT-BILL-DELIVERY-08",
-                      "desc": "preceding series is required",
+                      "desc": "delivery preceding series is required",
                       "tests": "present"
                     }
                   ]
@@ -347,7 +347,7 @@
                   "assert": [
                     {
                       "id": "GOBL-PT-SAFT-BILL-DELIVERY-09",
-                      "desc": "preceding code is required",
+                      "desc": "delivery preceding code is required",
                       "tests": "present"
                     }
                   ]
