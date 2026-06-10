@@ -3,9 +3,11 @@ package nfe_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
@@ -478,6 +480,58 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 }
 
 // validInvoice creates a raw invoice suitable for scenario tests that call Calculate() themselves.
+func TestInvoiceIssueDateAndTimeNormalization(t *testing.T) {
+	// These tests can fail very rarely if run on the exact transition of a second
+	tz, err := time.LoadLocation("America/Sao_Paulo")
+	require.NoError(t, err)
+
+	t.Run("fills date and time when neither is set", func(t *testing.T) {
+		inv := validInvoice()
+		require.True(t, inv.IssueDate.IsZero())
+		require.Nil(t, inv.IssueTime)
+		tn := time.Now().In(tz)
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.IssueTime)
+		assert.Equal(t, tn.Format("2006-01-02"), inv.IssueDate.String())
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("fills date and time when time is present but zero", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueTime = new(cal.Time)
+		tn := time.Now().In(tz)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tn.Format("2006-01-02"), inv.IssueDate.String())
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("fills time when date is today", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.TodayIn(tz)
+		tn := time.Now().In(tz)
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.IssueTime)
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+
+	t.Run("leaves backdated invoices untouched", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.MakeDate(2024, time.January, 15)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "2024-01-15", inv.IssueDate.String())
+		assert.Nil(t, inv.IssueTime)
+	})
+
+	t.Run("respects explicit issue time", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.MakeDate(2024, time.January, 15)
+		inv.IssueTime = cal.NewTime(12, 34, 10)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "2024-01-15", inv.IssueDate.String())
+		assert.Equal(t, "12:34:10", inv.IssueTime.String())
+	})
+}
+
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Addons:   tax.WithAddons(nfe.V4),
