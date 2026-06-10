@@ -411,7 +411,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("without notes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
-		assertValidationError(t, inv, "with key 'general' missing")
+		assertValidationError(t, inv, "invoice must have a note with key 'general'")
 	})
 
 	t.Run("correction", func(t *testing.T) {

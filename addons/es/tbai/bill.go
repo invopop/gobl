@@ -128,9 +128,9 @@ func billInvoiceRules() *rules.Set {
 		// Code 01: tax required
 		// Code 02: region required in tax ext
 		rules.Field("tax",
-			rules.Assert("01", "tax is required", is.Present),
+			rules.Assert("01", "invoice tax is required", is.Present),
 			rules.Field("ext",
-				rules.Assert("02", fmt.Sprintf("extension '%s' is required", ExtKeyRegion),
+				rules.Assert("02", fmt.Sprintf("invoice tax extension '%s' is required", ExtKeyRegion),
 					tax.ExtensionsRequire(ExtKeyRegion),
 				),
 			),
@@ -141,8 +141,8 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.Func("non-simplified", invoiceNotSimplified),
 			rules.Field("customer",
-				rules.Assert("03", "customer is required for non-simplified invoices", is.Present),
-				rules.Assert("08", "customer must have a tax_id or an identity with ext 'es-tbai-identity-type'",
+				rules.Assert("03", "invoice customer is required for non-simplified invoices", is.Present),
+				rules.Assert("08", "invoice customer must have a tax_id or an identity with ext 'es-tbai-identity-type'",
 					is.Func("has tax_id or identity-type identity", customerHasTaxIDOrIdentity),
 				),
 			),
@@ -152,7 +152,7 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			bill.InvoiceTypeIn(es.InvoiceCorrectionTypes...),
 			rules.Field("preceding",
-				rules.Assert("04", fmt.Sprintf("preceding documents are required for %s invoices",
+				rules.Assert("04", fmt.Sprintf("invoice preceding documents are required for %s invoices",
 					strings.Join(cbc.KeyStrings(es.InvoiceCorrectionTypes), ", ")),
 					is.Present,
 				),
@@ -163,10 +163,10 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("preceding",
 			rules.Each(
 				rules.Field("issue_date",
-					rules.Assert("05", "preceding issue date is required", is.Present),
+					rules.Assert("05", "invoice preceding issue date is required", is.Present),
 				),
 				rules.Field("ext",
-					rules.Assert("06", fmt.Sprintf("preceding ext '%s' is required", ExtKeyCorrection),
+					rules.Assert("06", fmt.Sprintf("invoice preceding ext '%s' is required", ExtKeyCorrection),
 						tax.ExtensionsRequire(ExtKeyCorrection),
 					),
 				),
@@ -175,7 +175,7 @@ func billInvoiceRules() *rules.Set {
 		// Notes
 		// Code 07: must have a general note
 		rules.Field("notes",
-			rules.Assert("07", "with key 'general' missing",
+			rules.Assert("07", "invoice must have a note with key 'general'",
 				is.Func("has general note", notesHasGeneralKey),
 			),
 		),
@@ -186,7 +186,7 @@ func billInvoiceRules() *rules.Set {
 			is.Func("Bizkaia individual", isBizkaiaIndividual),
 			rules.Field("supplier",
 				rules.Field("ext",
-					rules.Assert("10", fmt.Sprintf("extension '%s' is required for Bizkaia individuals", ExtKeyBIActivity),
+					rules.Assert("10", fmt.Sprintf("invoice supplier extension '%s' is required for Bizkaia individuals", ExtKeyBIActivity),
 						tax.ExtensionsRequire(ExtKeyBIActivity),
 					),
 				),
@@ -194,7 +194,7 @@ func billInvoiceRules() *rules.Set {
 		),
 		rules.Field("supplier",
 			rules.Field("ext",
-				rules.Assert("11", fmt.Sprintf("extension '%s' must be a valid Bizkaia activity code (epígrafe)", ExtKeyBIActivity),
+				rules.Assert("11", fmt.Sprintf("invoice supplier extension '%s' must be a valid Bizkaia activity code (epígrafe)", ExtKeyBIActivity),
 					tax.ExtensionHasValidCode(ExtKeyBIActivity),
 				),
 			),

@@ -44,6 +44,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Ext = tc.Ext.
 				Set(ExtKeyExempt, "S2")
 		case tax.KeyOutsideScope:
+			// Default to RL ("not subject pursuant to localization rules"), as
+			// localization rules are likely the most common reason for an
+			// operation to fall outside the scope of the tax.
 			tc.Ext = tc.Ext.
 				SetOneOf(ExtKeyExempt, "RL", "IE", "OT", "VT")
 		case tax.KeyExempt:
@@ -57,6 +60,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				Set(ExtKeyExempt, "E5")
 		}
 	case es.TaxCategoryIGIC:
+		// IGIC operations are not subject to VAT in the TAI (the Spanish VAT
+		// territory) due to localization rules, but the IGIC tax is passed on.
+		// This is precisely the case covered by exemption code IE.
 		tc.Ext = tc.Ext.
 			Set(ExtKeyExempt, "IE")
 	}
