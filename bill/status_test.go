@@ -174,8 +174,11 @@ func TestStatusCalculate(t *testing.T) {
 			{Key: bill.StatusLineAccepted},
 		}
 		require.NoError(t, st.Calculate())
+		// The nil entry is pruned during normalization, so the remaining
+		// lines are contiguously indexed without a gap.
+		require.Len(t, st.Lines, 2)
 		assert.Equal(t, 1, st.Lines[0].Index)
-		assert.Equal(t, 3, st.Lines[2].Index)
+		assert.Equal(t, 2, st.Lines[1].Index)
 	})
 
 	t.Run("full status", func(t *testing.T) {

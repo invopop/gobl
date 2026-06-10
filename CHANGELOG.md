@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `gobl.EndpointResolver` interface + `Envelope.Calculate()` integration: documents that implement `FromEndpoint() *org.Endpoint` / `ToEndpoint() *org.Endpoint` now have their first-endpoint URIs auto-copied into `Head.From` / `Head.To` whenever those header fields are empty. Operator-set From/To values are preserved. `bill.Invoice`, `bill.Payment`, `bill.Status`, `bill.Order`, and `bill.Delivery` all implement the interface with direction picked by document type: invoices flow Supplier→Customer (Customer→Supplier when `$tags: [self-billed]`); payment requests/receipts flow Supplier→Customer while advices invert; order purchases flow Customer→Supplier while sales and quotes invert; delivery despatch flows from Despatcher (or Supplier) to Receiver (or Customer) while receipts invert; status responses flow Customer→Supplier, updates Supplier→Customer, and `system` is left ambiguous (nil). Also adds `org.Party.FirstEndpoint()` as the routing-priority helper.
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
+- `no`: added the Norwegian (NO) tax regime.
 - `bill`: Added `DeliveryTypeOther` (`other`) delivery type for deliveries that don't fit standard categories.
 - `pt-saft-v1`: Added `TagReturn` (`return`) delivery tag to indicate a return of goods to the supplier, to be used in combination with a regular delivery type.
 - `pt-saft-v1`: Added `MovementTypeReturn` (`GD` — Guia de Devolução) extension value, automatically set when the delivery carries the `return` tag.
@@ -54,6 +55,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+- `norm`: normalization now prunes `nil` pointer/interface entries from every slice in the document graph (e.g. a JSON `null` in an `identities`, `preceding`, or status `lines` array). This removes a class of panics in regime/addon normalizers and validators that iterated such slices, and means downstream consumers never see `nil` array elements. Slices with no `nil`s are left untouched (no reallocation).
 - `tax`: `CorrectionDefinition.Merge` now deduplicates merged types, extensions, and stamps, preventing duplicate entries when both a regime and an addon declare the same keys.
 - `pt-saft-v1`: Removed correction definition types already defined in the PT regime.
 
@@ -83,6 +85,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
 - `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+
+### Fixed
+
+- `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
 
 ## [v0.402.0] - 2026-04-30
 
