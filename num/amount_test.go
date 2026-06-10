@@ -227,21 +227,16 @@ func TestMultiply(t *testing.T) {
 }
 
 func TestMultiplyOverflow(t *testing.T) {
-	// Reproducer from issue #844: a price with 16 decimal places multiplied by
-	// a large quantity used to silently overflow int64 and produce a large
-	// negative line sum (~-922.34).
+	// Issue #844
 	price, err := num.AmountFromString("3.0888382687927107")
 	require.NoError(t, err)
 	qty := num.MakeAmount(439, 0)
 	r := price.Multiply(qty)
 	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
 	assert.Equal(t, "1356.00", r.RescaleDown(2).String())
-	// The exact product can't be held at 16 decimals within int64, so the
-	// fractional precision is reduced just enough to fit.
 	assert.Equal(t, uint32(15), r.Exp(), "exponent reduced to fit int64")
 
-	// A product whose integer part alone exceeds int64 saturates at the
-	// boundary rather than wrapping, preserving the sign.
+	// Integer parts that exceed int64 saturate at the boundary.
 	pos := num.MakeAmount(10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
 	assert.Equal(t, int64(math.MaxInt64), pos.Value())
 	neg := num.MakeAmount(-10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
@@ -272,15 +267,13 @@ func TestDivide(t *testing.T) {
 }
 
 func TestDivideOverflow(t *testing.T) {
-	// Reproducer from issue #844 (comment): the intermediate
-	// `a.value * 10^a2.exp` overflowed int64 before the division, producing a
-	// large negative result.
+	// Issue #844
 	a, err := num.AmountFromString("1.00000000000000000")
 	require.NoError(t, err)
 	b := num.MakeAmount(50, 2) // 0.50
 	assert.Equal(t, "2.00000000000000000", a.Divide(b).String())
 
-	// Dividing by zero returns a zero amount rather than panicking.
+	// Division by zero
 	assert.Equal(t, "0.00", num.MakeAmount(100, 2).Divide(num.AmountZero).String())
 }
 
@@ -355,14 +348,11 @@ func TestAmountRescale(t *testing.T) {
 }
 
 func TestAmountRescaleOverflow(t *testing.T) {
-	// Reproducer from issue #844 (comment): upscaling a value near the digit
-	// limit overflowed int64 and wrapped to a negative number.
+	// Issue #844
 	a, err := num.AmountFromString("999999999.999999999")
 	require.NoError(t, err)
 	r := a.Rescale(10)
 	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
-	// The value can't be represented at exp 10 within int64, so Rescale caps
-	// the scale at the highest exponent that fits while preserving the amount.
 	assert.True(t, r.Equals(a), "numeric value preserved")
 	assert.Equal(t, uint32(9), r.Exp(), "exponent capped at what int64 allows")
 }
