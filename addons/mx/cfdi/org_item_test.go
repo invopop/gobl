@@ -75,7 +75,7 @@ func TestItemNilIdentityHandling(t *testing.T) {
 
 	t.Run("item with mixed nil and valid identities", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Item.Ext = nil
+		inv.Lines[0].Item.Ext = tax.Extensions{}
 		inv.Lines[0].Item.Identities = []*org.Identity{
 			nil,
 			{
@@ -90,7 +90,7 @@ func TestItemNilIdentityHandling(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		// Should not panic and should migrate valid identities
-		assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+		assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext.Get(cfdi.ExtKeyProdServ))
 		assert.Len(t, inv.Lines[0].Item.Identities, 1)
 		assert.Equal(t, "5678", inv.Lines[0].Item.Identities[0].Code.String())
 	})

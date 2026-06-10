@@ -151,10 +151,10 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		// Should find the SIRET identity and add scheme extension despite nil elements
-		assert.NotNil(t, party.Ext)
+		assert.False(t, party.Ext.IsZero())
 		assert.Equal(t, cbc.Code("1"), party.Ext.Get(choruspro.ExtKeyScheme))
 	})
 
@@ -167,10 +167,10 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		}
 
-		addon.Normalizer(party)
+		norm.Normalize(party, tax.AddonContext(choruspro.V1))
 
 		// Should not panic and should not add any extension
-		assert.Nil(t, party.Ext)
+		assert.True(t, party.Ext.IsZero())
 	})
 }
 

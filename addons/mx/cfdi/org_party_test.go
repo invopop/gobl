@@ -52,26 +52,24 @@ func TestNormalizePartyWithNilIdentities(t *testing.T) {
 			},
 		}
 
-		addon := tax.AddonForKey(cfdi.V4)
-		addon.Normalizer(customer)
+		norm.Normalize(customer, tax.AddonContext(cfdi.V4))
 
 		// Should not panic with nil identities
 		assert.Len(t, customer.Identities, 0)
-		assert.Len(t, customer.Ext, 1)
-		assert.Equal(t, "608", customer.Ext[cfdi.ExtKeyFiscalRegime].String())
+		assert.Equal(t, 1, customer.Ext.Len())
+		assert.Equal(t, "608", customer.Ext.Get(cfdi.ExtKeyFiscalRegime).String())
 	})
 
 	t.Run("party with only nil identities", func(t *testing.T) {
 		customer := &org.Party{
-			Name: "Test Customer",
+			Name:       "Test Customer",
 			Identities: []*org.Identity{nil, nil},
 		}
 
-		addon := tax.AddonForKey(cfdi.V4)
-		addon.Normalizer(customer)
+		norm.Normalize(customer, tax.AddonContext(cfdi.V4))
 
 		// Should not panic with only nil identities
 		assert.Len(t, customer.Identities, 0)
-		assert.Nil(t, customer.Ext)
+		assert.True(t, customer.Ext.IsZero())
 	})
 }

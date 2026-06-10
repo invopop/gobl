@@ -356,13 +356,13 @@ func TestIdentityForExtKey(t *testing.T) {
 			nil,
 			{
 				Code: "5678",
-				Ext: tax.Extensions{
+				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					cbc.Key("baz"): "qux",
-				},
+				}),
 			},
 		}
 		id := org.IdentityForExtKey(idents, "baz")
-		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Equal(t, "qux", id.Ext.Get("baz").String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
 }
