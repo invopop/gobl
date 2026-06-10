@@ -51,6 +51,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `br-nfe-v4`: NF-e (non-NFC-e) invoice lines now require the `br-nfe-cfop` extension (CFOP fiscal operation code).
 - `regimes/br`: Added `StampProviderSEFAZKey` (`sefaz-key`) and `StampProviderSEFAZAuth` (`sefaz-auth`) constants for storing the NF-e access key and authorization protocol number in envelope stamps.
 - `no`: added the Norwegian (NO) tax regime.
+- `bill`: Added `DeliveryTypeOther` (`other`) delivery type for deliveries that don't fit standard categories.
+- `pt-saft-v1`: Added `TagReturn` (`return`) delivery tag to indicate a return of goods to the supplier, to be used in combination with a regular delivery type.
+- `pt-saft-v1`: Added `MovementTypeReturn` (`GD` — Guia de Devolução) extension value, automatically set when the delivery carries the `return` tag.
+- `pt-saft-v1`: Added rules for delivery `preceding` references.
+- `regimes/pt`: Added `StampProviderATDocCode` (`at-doc-code`) stamp provider key for the AT document code.
 - `es-tbai-v1`: added `es-tbai-regime` extension for `ClaveRegimenIvaOpTrascendencia`.
 - `es-tbai-v1`: added `es-tbai-identity-type` extension for the L7 `IDType` code.
 

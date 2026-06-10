@@ -17,7 +17,13 @@
         },
         "$tags": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
+            "$ref": "https://gobl.org/draft-0/cbc/key",
+            "anyOf": [
+              {
+                "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+                "title": "Any"
+              }
+            ]
           },
           "type": "array",
           "title": "Tags",
@@ -51,6 +57,11 @@
               "const": "receipt",
               "title": "Delivery Receipt",
               "description": "A delivery receipt is a document that is signed by the person who receives\ngoods to confirm that they have been received."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Any other type of delivery that does not fit into the standard categories and implies\nthat any scenarios defined in tax regimes or addons will not be applied.\n\nThis is useful for being able to create deliveries with custom types in extensions,\nbut is not recommended for general use."
             }
           ],
           "title": "Type",
