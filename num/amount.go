@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -147,24 +148,36 @@ func (a Amount) Sub(b Amount) Amount {
 	return a.Subtract(b)
 }
 
-// Multiply the amount by the provided amount.
+// Multiply the amount by the provided amount. The calculation is performed
+// using big.Int arithmetic so that neither the intermediate product nor the
+// rescaling can overflow int64 or lose precision the way float64 would. See
+// fitBigToInt64 for how out-of-range results are handled.
 func (a Amount) Multiply(a2 Amount) Amount {
-	v := (float64(a.value) * float64(a2.value)) / float64(intPow(10, a2.exp))
-	return Amount{
-		value: int64(math.Round(v)),
-		exp:   a.exp,
+	// product = a.value * a2.value, scaled down by a2.exp so the result keeps
+	// a's exponent.
+	product := new(big.Int).Mul(big.NewInt(a.value), big.NewInt(a2.value))
+	if a2.exp > 0 {
+		product = roundedDiv(product, bigPow10(a2.exp))
 	}
+	value, exp := fitBigToInt64(product, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
-// Divide the amount by the provided amount. Floating points are used for the actual division
-// and then round again to get an int. This prevents rounding errors, but if you want true division
-// with a base and a remainder, use the Split method.
+// Divide the amount by the provided amount. As with Multiply, big.Int
+// arithmetic is used to avoid the int64 overflow and float64 precision loss
+// that plain division would suffer. If you want true division with a base and
+// a remainder, use the Split method instead. Dividing by zero returns a zero
+// amount rather than panicking.
 func (a Amount) Divide(a2 Amount) Amount {
-	v := float64(a.value*intPow(10, a2.exp)) / float64(a2.value)
-	return Amount{
-		value: int64(math.Round(v)),
-		exp:   a.exp,
+	if a2.value == 0 {
+		return Amount{value: 0, exp: a.exp}
 	}
+	// num = a.value * 10^a2.exp, divided by a2.value, so the result keeps a's
+	// exponent.
+	num := new(big.Int).Mul(big.NewInt(a.value), bigPow10(a2.exp))
+	q := roundedDiv(num, big.NewInt(a2.value))
+	value, exp := fitBigToInt64(q, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
 // Split divides the amount by x, like Divide, but also provides an
@@ -207,14 +220,17 @@ func (a Amount) Rescale(exp uint32) Amount {
 	if a.exp > exp {
 		// need to divide
 		e := a.exp - exp
-		v := float64(a.value) / float64(intPow(10, e))
-		return Amount{int64(math.Round(v)), exp}
+		v := roundedDiv(big.NewInt(a.value), bigPow10(e))
+		return Amount{v.Int64(), exp}
 	}
 	if a.exp < exp {
-		// need to multiply
+		// need to multiply. The product can exceed int64 for values near the
+		// digit limit, so fall back to big.Int and let fitBigToInt64 cap the
+		// scale at the highest exponent that fits rather than overflowing.
 		e := exp - a.exp
-		v := a.value * intPow(10, e)
-		return Amount{v, exp}
+		v := new(big.Int).Mul(big.NewInt(a.value), bigPow10(e))
+		value, exp := fitBigToInt64(v, exp)
+		return Amount{value, exp}
 	}
 	return a
 }
@@ -414,6 +430,76 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 		exp--
 	}
 	return out
+}
+
+var (
+	bigOne = big.NewInt(1)
+	bigTen = big.NewInt(10)
+)
+
+// bigPow10 returns 10^exp as a big.Int.
+func bigPow10(exp uint32) *big.Int {
+	return new(big.Int).Exp(bigTen, big.NewInt(int64(exp)), nil)
+}
+
+// roundedDiv divides num by den rounding the result to the nearest integer,
+// with ties rounded away from zero (matching math.Round). The denominator is
+// assumed to be non-zero.
+func roundedDiv(num, den *big.Int) *big.Int {
+	// Work with a positive denominator to keep the rounding logic simple; the
+	// sign of the result is carried entirely by the numerator.
+	n, d := num, den
+	if d.Sign() < 0 {
+		n = new(big.Int).Neg(n)
+		d = new(big.Int).Neg(d)
+	}
+	q := new(big.Int)
+	r := new(big.Int)
+	q.QuoRem(n, d, r) // r has the same sign as n
+	// Round when twice the remainder reaches the divisor.
+	twiceRem := new(big.Int).Abs(r)
+	twiceRem.Lsh(twiceRem, 1)
+	if twiceRem.Cmp(d) >= 0 {
+		if n.Sign() < 0 {
+			q.Sub(q, bigOne)
+		} else {
+			q.Add(q, bigOne)
+		}
+	}
+	return q
+}
+
+// fitBigToInt64 returns v as an int64 paired with the exponent it should be
+// stored at. If v already fits, it is returned unchanged at the requested
+// exponent. Otherwise the least-significant decimal digits are dropped (with
+// rounding) and the exponent lowered one place per digit, preserving the
+// integer magnitude at the cost of decimal precision — the trade-off that
+// suits the "human manageable domain" Amount targets. If the integer part
+// alone still exceeds int64 once the exponent reaches zero, the value
+// saturates at the int64 boundary so a genuinely out-of-range result never
+// silently wraps to the wrong sign.
+func fitBigToInt64(v *big.Int, exp uint32) (int64, uint32) {
+	if v.IsInt64() {
+		return v.Int64(), exp
+	}
+	// Count how many decimal digits must be dropped to fit, bounded by exp.
+	drop := uint32(0)
+	probe := new(big.Int).Set(v)
+	for !probe.IsInt64() && drop < exp {
+		probe.Quo(probe, bigTen)
+		drop++
+	}
+	if drop > 0 {
+		v = roundedDiv(v, bigPow10(drop))
+		exp -= drop
+	}
+	if !v.IsInt64() {
+		if v.Sign() < 0 {
+			return math.MinInt64, exp
+		}
+		return math.MaxInt64, exp
+	}
+	return v.Int64(), exp
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.
