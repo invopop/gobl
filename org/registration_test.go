@@ -12,15 +12,17 @@ import (
 
 func TestRegistrationNormalize_TrimsFieldsAndSetsUUID(t *testing.T) {
 	r := &org.Registration{
-		Label:   "  My Label  ",
-		Office:  "\tOffice Name  ",
-		Book:    "  Book ",
-		Volume:  "  Volume  ",
-		Sheet:   "  Sheet  ",
-		Section: "  Section  ",
-		Page:    "  Page  ",
-		Entry:   "  Entry  ",
-		Other:   "  Other  ",
+		Label:            "  My Label  ",
+		Office:           "\tOffice Name  ",
+		Book:             "  Book ",
+		Volume:           "  Volume  ",
+		Sheet:            "  Sheet  ",
+		Section:          "  Section  ",
+		Page:             "  Page  ",
+		Entry:            "  Entry  ",
+		Other:            "  Other  ",
+		LiquidationState: "  LS  ",
+		SoleShareholder:  "\tSU  ",
 	}
 
 	assert.NotPanics(t, func() {
@@ -36,6 +38,8 @@ func TestRegistrationNormalize_TrimsFieldsAndSetsUUID(t *testing.T) {
 	assert.Equal(t, "Page", r.Page)
 	assert.Equal(t, "Entry", r.Entry)
 	assert.Equal(t, "Other", r.Other)
+	assert.Equal(t, "LS", r.LiquidationState)
+	assert.Equal(t, "SU", r.SoleShareholder)
 }
 
 func TestRegistrationNormalize_OnNilReceiverDoesNotPanic(t *testing.T) {

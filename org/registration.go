@@ -26,6 +26,16 @@ type Registration struct {
 	Page     string        `json:"page,omitempty" jsonschema:"title=Page"`
 	Entry    string        `json:"entry,omitempty" jsonschema:"title=Entry"`
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
+	// LiquidationState indicates whether the company is in liquidation. Used by
+	// Italian FatturaPA as <StatoLiquidazione> with values "LS" (in liquidation)
+	// or "LN" (not in liquidation). See the IscrizioneREA block in the FatturaPA
+	// schema: https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/
+	LiquidationState string `json:"liquidation_state,omitempty" jsonschema:"title=Liquidation State"`
+	// SoleShareholder indicates the company's shareholder configuration. Used by
+	// Italian FatturaPA as <SocioUnico> with values "SU" (sole shareholder) or
+	// "SM" (multiple shareholders). See the IscrizioneREA block in the FatturaPA
+	// schema: https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/
+	SoleShareholder string `json:"sole_shareholder,omitempty" jsonschema:"title=Sole Shareholder"`
 }
 
 func registrationRules() *rules.Set {
@@ -52,4 +62,6 @@ func normalizeRegistration(r *Registration) {
 	r.Page = cbc.NormalizeString(r.Page)
 	r.Entry = cbc.NormalizeString(r.Entry)
 	r.Other = cbc.NormalizeString(r.Other)
+	r.LiquidationState = cbc.NormalizeString(r.LiquidationState)
+	r.SoleShareholder = cbc.NormalizeString(r.SoleShareholder)
 }

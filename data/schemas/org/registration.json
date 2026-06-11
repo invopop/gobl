@@ -57,6 +57,16 @@
         "other": {
           "type": "string",
           "title": "Other"
+        },
+        "liquidation_state": {
+          "type": "string",
+          "title": "Liquidation State",
+          "description": "LiquidationState indicates whether the company is in liquidation. Used by\nItalian FatturaPA as \u003cStatoLiquidazione\u003e with values \"LS\" (in liquidation)\nor \"LN\" (not in liquidation). See the IscrizioneREA block in the FatturaPA\nschema: https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/"
+        },
+        "sole_shareholder": {
+          "type": "string",
+          "title": "Sole Shareholder",
+          "description": "SoleShareholder indicates the company's shareholder configuration. Used by\nItalian FatturaPA as \u003cSocioUnico\u003e with values \"SU\" (sole shareholder) or\n\"SM\" (multiple shareholders). See the IscrizioneREA block in the FatturaPA\nschema: https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/"
         }
       },
       "type": "object",

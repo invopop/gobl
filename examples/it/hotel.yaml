@@ -18,6 +18,8 @@ supplier:
     currency: EUR
     entry: "123456"
     office: RM
+    liquidation_state: LN
+    sole_shareholder: SM
   addresses:
     - num: "102"
       street: Via California
