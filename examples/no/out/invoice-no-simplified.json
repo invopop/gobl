@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "68a205e6cff7a6e62f55fd8ef6f8df207d635cf1aac91447329ad9a8e988b4bb"
+			"val": "a90506df6a69a7a44f126b96bda08f2928d8ce0a2c9575d831c438109b23db0e"
 		}
 	},
 	"doc": {
@@ -24,7 +24,7 @@
 			"name": "Eksempel AS",
 			"tax_id": {
 				"country": "NO",
-				"code": "923456783"
+				"code": "923456783MVA"
 			}
 		},
 		"lines": [
