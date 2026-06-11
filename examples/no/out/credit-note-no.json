@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f9d189b2ce526b6a830848eb0e279984da47c6228889547fd8ab6f25612f435"
+			"val": "e0082e013c5c9d60a8e6698cd6ebebf69760d41134a81432ccc3375c6653c03b"
 		}
 	},
 	"doc": {
@@ -26,7 +26,7 @@
 			"name": "Eksempel AS",
 			"tax_id": {
 				"country": "NO",
-				"code": "923456783"
+				"code": "923456783MVA"
 			},
 			"addresses": [
 				{
@@ -41,7 +41,7 @@
 			"name": "Mottaker AS",
 			"tax_id": {
 				"country": "NO",
-				"code": "987654325"
+				"code": "987654325MVA"
 			},
 			"addresses": [
 				{

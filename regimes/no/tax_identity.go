@@ -18,8 +18,8 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "invalid organisasjonsnummer",
-					is.Func("valid mod-11 org number", isValidOrgNumber),
+				rules.AssertIfPresent("01", "invalid Norwegian VAT number",
+					is.Func("valid MVA-suffixed mod-11 org number", isValidVATCode),
 				),
 			),
 		),
@@ -27,11 +27,25 @@ func taxIdentityRules() *rules.Set {
 }
 
 // normalizeTaxIdentity performs standard tax identity normalization, and then
-// removes the "MVA" suffix common in Norwegian VAT numbers
-// (e.g. "NO 923 456 783 MVA").
+// ensures the "MVA" suffix that Norwegian VAT numbers carry (e.g.
+// "NO 923 456 783 MVA"): a VAT identity given as a bare organisation number
+// gains the suffix, so the serialized form is always NO<orgnr>MVA as the
+// EHF and Peppol national rules require.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
-	tID.Code = cbc.Code(strings.TrimSuffix(string(tID.Code), "MVA"))
+	if tID.Code != "" && !strings.HasSuffix(string(tID.Code), "MVA") {
+		tID.Code += "MVA"
+	}
+}
+
+// isValidVATCode reports whether the value is a valid Norwegian VAT number
+// code: a mod-11 organisation number followed by the "MVA" suffix.
+func isValidVATCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || !strings.HasSuffix(string(code), "MVA") {
+		return false
+	}
+	return isValidOrgNumber(cbc.Code(strings.TrimSuffix(string(code), "MVA")))
 }
 
 // isValidOrgNumber reports whether the value is a valid Norwegian
