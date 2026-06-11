@@ -25,6 +25,8 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		{name: "spaces only", input: "923 456 783", expected: "923456783MVA"},
 		{name: "with dashes", input: "923-456-783", expected: "923456783MVA"},
 		{name: "prefix only", input: "NO923456783", expected: "923456783MVA"},
+		{name: "unrecognised code also gains the suffix", input: "ABC123", expected: "ABC123MVA"},
+		{name: "already double-suffixed left as typed", input: "923456783MVAMVA", expected: "923456783MVAMVA"},
 		{name: "empty code", input: "", expected: ""},
 	}
 
@@ -49,6 +51,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "valid code not starting with 8 or 9", code: "123456785MVA", valid: true},
 		{name: "empty code", code: "", valid: true},
 		{name: "missing MVA suffix", code: "923456783"},
+		{name: "double suffix", code: "923456783MVAMVA"},
 		{name: "too short", code: "92345678MVA"},
 		{name: "too long", code: "9234567830MVA"},
 		{name: "non-numeric", code: "92345678AMVA"},
