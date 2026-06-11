@@ -49,8 +49,12 @@ func payInstructionsRules() *rules.Set {
 
 func payTermsRules() *rules.Set {
 	return rules.For(new(pay.Terms),
-		rules.Assert("01", "either due_dates or notes must be provided (BR-CO-25)",
-			is.Func("has due dates or notes", payTermsHasDueDatesOrNotes),
+		// Skipped for OIOUBL, which allows bare payment terms — its official
+		// samples carry terms with only an ID and amount.
+		rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
+			rules.Assert("01", "either due_dates or notes must be provided (BR-CO-25)",
+				is.Func("has due dates or notes", payTermsHasDueDatesOrNotes),
+			),
 		),
 	)
 }

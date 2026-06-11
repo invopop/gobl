@@ -188,11 +188,16 @@
     {
       "id": "GOBL-EU-EN16931-PAY-TERMS",
       "object": "pay.Terms",
-      "assert": [
+      "subsets": [
         {
-          "id": "GOBL-EU-EN16931-PAY-TERMS-01",
-          "desc": "either due_dates or notes must be provided (BR-CO-25)",
-          "tests": "has due dates or notes"
+          "guard": "addon is not OIOUBL",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-PAY-TERMS-01",
+              "desc": "either due_dates or notes must be provided (BR-CO-25)",
+              "tests": "has due dates or notes"
+            }
+          ]
         }
       ]
     },

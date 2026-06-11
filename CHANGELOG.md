@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `dk-oioubl-v2-1`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate.
-- `addons/eu/en16931`: rules that OIOUBL 2.1 deliberately relaxes are now skipped when the `dk-oioubl-v2-1` addon is present: the exemption-reason requirements (BR-E-10 and the exemption-note check — OIOUBL has no exempt tax category) and the BR-CO-25 payment details/terms requirements (OIOUBL's payment rules are all conditional on a means being present).
+- `addons/eu/en16931`: rules that OIOUBL 2.1 deliberately relaxes are now skipped when the `dk-oioubl-v2-1` addon is present: the exemption-reason requirements (BR-E-10 and the exemption-note check — OIOUBL has no exempt tax category), the BR-CO-25 payment details/terms requirements (OIOUBL's payment rules are all conditional on a means being present), and the payment-terms shape requirement (OIOUBL allows bare terms carrying only an ID and amount, as its official samples do).
 
 ## [v0.500.0] - 2026-06-10
 
