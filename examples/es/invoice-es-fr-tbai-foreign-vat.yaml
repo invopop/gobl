@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-08-30"
+series: "OSS"
+code: "0011"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "San Frantzisko"
+      locality: "Bilbo"
+      region: "Bizkaia"
+      code: "48003"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "39356000000"
+  name: "Boutique Lyon SARL"
+
+# A combo with country: FR signals that French VAT is being passed on. The
+# tax-combo normalizer's foreign-country branch resolves the exemption code
+# from EU membership: FR is in the EU, so the code lands on IE.
+lines:
+  - quantity: 30
+    item:
+      key: "goods"
+      name: "Souvenir set"
+      price: "20.00"
+    taxes:
+      - cat: VAT
+        country: "FR"
+        percent: "20%"
+
+notes:
+  - key: "general"
+    text: "OSS sale to French consumer with French VAT applied."

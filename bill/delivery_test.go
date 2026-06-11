@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -22,6 +23,28 @@ func TestDeliveryCalculate(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
 		require.NoError(t, dlv.Calculate())
 		assert.Nil(t, dlv.Totals)
+	})
+
+	t.Run("default type", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.Type = ""
+		require.NoError(t, dlv.Calculate())
+		assert.Equal(t, bill.DeliveryTypeAdvice, dlv.Type)
+	})
+
+	t.Run("other type", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.Type = bill.DeliveryTypeOther
+		require.NoError(t, dlv.Calculate())
+		assert.Equal(t, bill.DeliveryTypeOther, dlv.Type)
+	})
+
+	t.Run("return tag", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.SetTags(saft.TagReturn)
+		dlv.SetAddons(saft.V1)
+		require.NoError(t, dlv.Calculate())
+		assert.True(t, dlv.HasTags(saft.TagReturn))
 	})
 }
 
@@ -103,6 +126,22 @@ func TestDeliveryConvertInto(t *testing.T) {
 	})
 }
 
+func TestDeliveryTagsValidation(t *testing.T) {
+	t.Run("valid tag", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.SetAddons(saft.V1)
+		dlv.SetTags(saft.TagReturn)
+		assert.NoError(t, dlv.Calculate())
+	})
+
+	t.Run("invalid tag", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.SetTags("invalid-tag")
+		err := dlv.Calculate()
+		assert.ErrorContains(t, err, "'invalid-tag' undefined")
+	})
+}
+
 func baseDelivery(t *testing.T, lines ...*bill.Line) *bill.Delivery {
 	t.Helper()
 	dlv := &bill.Delivery{
@@ -164,6 +203,13 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
 				}
 			},
+			"$tags": {
+				"items": {
+					"$ref": "https://gobl.org/draft-0/cbc/key"
+				},
+				"type": "array",
+				"title": "Tags"
+			},
 			"uuid": {
 				"type": "string",
 				"format": "uuid",
@@ -184,7 +230,7 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 	dlv := bill.Delivery{}
 	dlv.JSONSchemaExtend(js)
 
-	assert.Equal(t, js.Properties.Len(), 4) // from this example
+	assert.Equal(t, js.Properties.Len(), 5) // from this example
 
 	t.Run("types", func(t *testing.T) {
 		prop, ok := js.Properties.Get("type")
@@ -194,6 +240,14 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+	t.Run("tags", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$tags")
+		require.True(t, ok)
+		require.NotNil(t, prop.Items)
+		require.NotEmpty(t, prop.Items.AnyOf)
+		// Deliveries have no default tags; only the catch-all "Any" entry is present.
+		assert.Equal(t, "Any", prop.Items.AnyOf[0].Title)
+	})
 }
 
 func TestDeliveryFromToEndpoint(t *testing.T) {

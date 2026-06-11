@@ -45,7 +45,7 @@ func TestUnitUNECE(t *testing.T) {
 	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
 }
 
-func TestUnitJSONSChema(t *testing.T) {
+func TestUnitJSONSchema(t *testing.T) {
 	u := org.Unit("h")
 	schema := u.JSONSchema()
 	assert.Equal(t, schema.Title, "Unit")

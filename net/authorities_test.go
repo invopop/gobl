@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -83,10 +82,10 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		// Subject's self-signature (not an authority) + authority countersignature.
-		require.NoError(t, env.Sign(subjKey, subjectAddr.URI(), ""))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
 		require.NoError(t, env.Sign(authKey,
-			authorityAddr.URI(),
-			subjectAddr.URI(),
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithAudience(subjectAddr.URI()),
 			head.WithScope(head.ScopeVerified)))
 
 		c := NewClient(
@@ -103,7 +102,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, subjectAddr.URI(), ""))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
@@ -131,7 +130,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, authorityAddr.URI(), ""))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
 
 		c := NewClient() // empty authorities
 		err = c.VerifyAuthority(ctx, env)
@@ -147,7 +146,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, authorityAddr.URI(), ""))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
 
 		other := dsig.NewES256Key()
 		c := NewClient(
@@ -169,7 +168,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, cbc.URI("mailto:a@b"), ""))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer("mailto:a@b")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
 		err = c.VerifyAuthority(ctx, env)

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "69c209a4303724b9278fa17b8add117be09d46b368c4157c37a0aab75ec62fe7"
 		}
 	},
 	"doc": {
@@ -15,28 +15,28 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "SIMPL",
+		"code": "0042",
+		"issue_date": "2024-05-21",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"es-tbai-region": "BI"
+				"es-tbai-region": "SS"
 			}
 		},
 		"supplier": {
-			"name": "Provide One S.L.",
+			"name": "Talleres del Norte S.L.",
 			"tax_id": {
 				"country": "ES",
 				"code": "B98602642"
 			},
 			"addresses": [
 				{
-					"num": "42",
-					"street": "San Frantzisko",
-					"locality": "Bilbo",
-					"region": "Bizkaia",
-					"code": "48003",
+					"num": "8",
+					"street": "Calle Mayor",
+					"locality": "Donostia",
+					"region": "Gipuzkoa",
+					"code": "20003",
 					"country": "ES"
 				}
 			],
@@ -47,80 +47,69 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Cliente Particular",
 			"tax_id": {
-				"country": "NL"
+				"country": "ES",
+				"code": "54387763P"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "1",
 				"item": {
 					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h"
+					"name": "Mechanic shop module",
+					"price": "300.00"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "300.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
 						"key": "standard",
 						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
-							"es-tbai-exemption": "IE",
 							"es-tbai-product": "services",
-							"es-tbai-regime": "01"
+							"es-tbai-regime": "52"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "300.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "300.00",
+			"total": "300.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
 								"key": "standard",
 								"ext": {
-									"es-tbai-exemption": "IE",
 									"es-tbai-product": "services",
-									"es-tbai-regime": "01"
+									"es-tbai-regime": "52"
 								},
-								"base": "1620.00",
+								"base": "300.00",
 								"percent": "21.0%",
-								"amount": "340.20"
+								"amount": "63.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "63.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "63.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "63.00",
+			"total_with_tax": "363.00",
+			"payable": "363.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "Operation under the simplified VAT regime (módulos)."
 			}
 		]
 	}

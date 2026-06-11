@@ -165,7 +165,7 @@
             {
               "id": "GOBL-BILL-DELIVERY-02",
               "desc": "type is not valid",
-              "tests": "one of [advice, note, waybill, receipt]"
+              "tests": "one of [advice, note, waybill, receipt, other]"
             }
           ]
         },

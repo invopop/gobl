@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
+			"val": "496f1edcc6fb51cfac1361640e251053bae0a2b3484198ee9564200aabd5d8d1"
 		}
 	},
 	"doc": {
@@ -15,9 +15,9 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
-		"code": "0002",
-		"issue_date": "2023-12-18",
+		"series": "PASS",
+		"code": "0003",
+		"issue_date": "2024-07-19",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -47,80 +47,74 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
-			"tax_id": {
-				"country": "NL"
-			}
+			"name": "Jane Doe",
+			"identities": [
+				{
+					"country": "GB",
+					"key": "passport",
+					"code": "543210987",
+					"ext": {
+						"es-tbai-identity-type": "03"
+					}
+				}
+			]
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "2",
 				"item": {
 					"key": "services",
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h"
+					"name": "Guided tour booking fee",
+					"price": "75.00"
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "150.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
-						"key": "standard",
-						"rate": "general",
-						"percent": "21.0%",
+						"key": "outside-scope",
 						"ext": {
-							"es-tbai-exemption": "IE",
+							"es-tbai-exemption": "RL",
 							"es-tbai-product": "services",
 							"es-tbai-regime": "01"
 						}
 					}
 				],
-				"total": "1620.00"
+				"total": "150.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "150.00",
+			"total": "150.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"country": "NL",
-								"key": "standard",
+								"key": "outside-scope",
 								"ext": {
-									"es-tbai-exemption": "IE",
+									"es-tbai-exemption": "RL",
 									"es-tbai-product": "services",
 									"es-tbai-regime": "01"
 								},
-								"base": "1620.00",
-								"percent": "21.0%",
-								"amount": "340.20"
+								"base": "150.00",
+								"amount": "0.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "0.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "0.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "0.00",
+			"total_with_tax": "150.00",
+			"payable": "150.00"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
+				"text": "Tourist booking identified by passport."
 			}
 		]
 	}

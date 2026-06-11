@@ -12,15 +12,28 @@ import (
 
 func normalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
-	case tax.CategoryVAT, es.TaxCategoryIGIC:
+	case tax.CategoryVAT:
 		if tc.Country != "" && tc.Country != l10n.ES.Tax() {
-			// Assume this is a not subject to VAT
-			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExempt, "RL", "IE")
+			if l10n.Union(l10n.EU).HasMember(tc.Country.Code()) {
+				tc.Ext = tc.Ext.
+					Set(ExtKeyExempt, "IE")
+			} else {
+				tc.Ext = tc.Ext.
+					Set(ExtKeyExempt, "RL")
+			}
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
 			return
 		}
 
 		prepareTaxComboKey(tc)
+
+		if tc.Key == tax.KeyExport {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "02")
+		}
+		if tc.Surcharge != nil || tc.Rate.Has(es.TaxRateEquivalence) {
+			tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "51")
+		}
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "01")
 
 		// Deterministically set the exemption code.
 		switch tc.Key {
@@ -31,8 +44,11 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Ext = tc.Ext.
 				Set(ExtKeyExempt, "S2")
 		case tax.KeyOutsideScope:
+			// Default to RL ("not subject pursuant to localization rules"), as
+			// localization rules are likely the most common reason for an
+			// operation to fall outside the scope of the tax.
 			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExempt, "OT", "RL", "VT", "IE")
+				SetOneOf(ExtKeyExempt, "RL", "IE", "OT", "VT")
 		case tax.KeyExempt:
 			tc.Ext = tc.Ext.
 				SetOneOf(ExtKeyExempt, "E1", "E6")
@@ -43,6 +59,15 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Ext = tc.Ext.
 				Set(ExtKeyExempt, "E5")
 		}
+	case es.TaxCategoryIGIC:
+		// IGIC operations are not subject to VAT in the TAI (the Spanish VAT
+		// territory) due to localization rules, but the IGIC tax is passed on.
+		// This is precisely the case covered by exemption code IE.
+		tc.Ext = tc.Ext.
+			Set(ExtKeyExempt, "IE")
+		// Default to regime 08 (operations subject to IPSI/IGIC) unless a
+		// regime code has already been set.
+		tc.Ext = tc.Ext.SetIfEmpty(ExtKeyRegime, "08")
 	}
 }
 
@@ -80,9 +105,6 @@ func prepareTaxComboKey(tc *tax.Combo) {
 		tc.Key = tax.KeyExport
 	case "E5":
 		tc.Key = tax.KeyIntraCommunity
-	case "S1":
-		tc.Key = tax.KeyStandard
-		tc.Ext = tc.Ext.Delete(ExtKeyExempt)
 	case "S2":
 		tc.Key = tax.KeyReverseCharge
 	case "OT", "RL", "VT", "IE":
