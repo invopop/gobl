@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "23d27fc3273a9b31b0f3f4b54483159db3a133c9411cd8224f4935f8bdb18fd5"
+			"val": "f0f92fed423723e581b1553f5a9232ff37f51c8e082711a16ecfdcfaba12757d"
 		}
 	},
 	"doc": {
@@ -46,7 +46,9 @@
 				"capital": "50000.00",
 				"currency": "EUR",
 				"office": "RM",
-				"entry": "123456"
+				"entry": "123456",
+				"liquidation_state": "LN",
+				"sole_shareholder": "SM"
 			},
 			"ext": {
 				"it-sdi-fiscal-regime": "RF01"
