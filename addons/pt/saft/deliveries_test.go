@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -34,7 +35,7 @@ func TestDeliveryValidation(t *testing.T) {
 	t.Run("missing despatch date", func(t *testing.T) {
 		dlv := validDelivery()
 		dlv.DespatchDate = nil
-		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "cannot be blank")
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "despatch date is required")
 	})
 
 	t.Run("invalid series format", func(t *testing.T) {
@@ -81,17 +82,82 @@ func TestDeliveryValidation(t *testing.T) {
 
 		// dlv.Supplier = nil is caught by core GOBL rules (supplier is required)
 	})
+
+	t.Run("waybill without customer", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Type = bill.DeliveryTypeWaybill
+		dlv.Series = "GT SERIES-A"
+		dlv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			saft.ExtKeyMovementType: saft.MovementTypeWaybill,
+		})
+		dlv.Customer = nil
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("nil preceding", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = nil
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("valid preceding", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		require.NoError(t, rules.Validate(dlv, withAddonContext()))
+	})
+
+	t.Run("missing series", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding series is required")
+	})
+
+	t.Run("missing code", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding code is required")
+	})
+
+	t.Run("several preceding documents", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "GR SERIES-A",
+				Code:      "1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+			{
+				Series:    "GR SERIES-A",
+				Code:      "2",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, rules.Validate(dlv, withAddonContext()), "preceding must have at most one entry")
+	})
 }
 
 func TestDeliveryNormalization(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-	require.NotNil(t, addon)
-
 	t.Run("note type", func(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeNote,
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
 		assert.Equal(t, saft.MovementTypeDeliveryNote, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
@@ -101,10 +167,21 @@ func TestDeliveryNormalization(t *testing.T) {
 		dlv := &bill.Delivery{
 			Type: bill.DeliveryTypeWaybill,
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		require.NotNil(t, dlv.Tax)
 		require.NotNil(t, dlv.Tax.Ext)
 		assert.Equal(t, saft.MovementTypeWaybill, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
+	})
+
+	t.Run("return tag", func(t *testing.T) {
+		dlv := &bill.Delivery{
+			Type: bill.DeliveryTypeNote,
+		}
+		dlv.SetTags(saft.TagReturn)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
+		require.NotNil(t, dlv.Tax)
+		require.NotNil(t, dlv.Tax.Ext)
+		assert.Equal(t, saft.MovementTypeReturn, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 
 	t.Run("respect existing value", func(t *testing.T) {
@@ -116,7 +193,7 @@ func TestDeliveryNormalization(t *testing.T) {
 				}),
 			},
 		}
-		addon.Normalizer(dlv)
+		norm.Normalize(dlv, tax.AddonContext(saft.V1))
 		assert.Equal(t, saft.MovementTypeFixedAssets, dlv.Tax.Ext.Get(saft.ExtKeyMovementType))
 	})
 }

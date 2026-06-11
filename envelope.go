@@ -3,13 +3,13 @@ package gobl
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"strconv"
 	"strings"
 
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
@@ -34,6 +34,19 @@ type Envelope struct {
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
+
+// EndpointResolver is an optional interface that envelope-embedded
+// documents may implement to declare which party endpoints the
+// envelope should be routed from and to. When implemented, the
+// envelope's calculation step copies the URIs from the nominated
+// endpoints into Head.From / Head.To — but only when those fields
+// are not already populated by the caller. A nil return from
+// FromEndpoint / ToEndpoint leaves the corresponding header field
+// empty.
+type EndpointResolver interface {
+	FromEndpoint() *org.Endpoint
+	ToEndpoint() *org.Endpoint
+}
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
@@ -157,6 +170,20 @@ func (e *Envelope) Validate() error {
 	return wrapError(rules.Validate(e))
 }
 
+// RulesContext injects validation directives carried on the envelope header
+// (currently Header.Ignore) into the validation context. rules.Validate calls
+// it automatically on the root object. We bridge through the envelope here
+// rather than have collectContext discover Header.RulesContext directly, since
+// the header is a pointer field and the field scan only resolves ContextAdders
+// on value (embedded) fields.
+func (e *Envelope) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		if e != nil && e.Head != nil {
+			e.Head.RulesContext()(rc)
+		}
+	}
+}
+
 // Verify checks the envelope's signatures to ensure the headers they contain
 // still matches with the current headers. If a list of public keys are provided,
 // they will be used to ensure that the signatures we're signed by at least
@@ -189,38 +216,19 @@ func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 }
 
 func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
-	if len(keys) == 0 {
-		// no keys provided, only check the contents
-		h := new(head.Header)
-		if err := sig.UnsafePayload(h); err != nil {
-			return errors.New("invalid signature payload")
-		}
-		if !e.Head.Contains(h) {
-			return errors.New("header mismatch")
-		}
-		return nil
-	}
-	for _, k := range keys {
-		h := new(head.Header)
-		if err := sig.VerifyPayload(k, h); err != nil {
-			continue
-		}
-		if e.Head.Contains(h) {
-			return nil
-		}
-		return errors.New("header mismatch")
-	}
-	return errors.New("no key match found")
+	return e.Head.Verify(sig, keys...)
 }
 
 // Sign uses the private key to sign the envelope headers. Additional validation
 // rules may be applied to signed documents, so the document will be signed,
 // then validated, and if the validation fails, the signature will be removed.
-func (e *Envelope) Sign(key *dsig.PrivateKey) error {
+// The signer's GOBL Net address and the audience the signature is bound to
+// may be set with head.WithIssuer and head.WithAudience.
+func (e *Envelope) Sign(key *dsig.PrivateKey, opts ...head.SignOption) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
 	}
-	sig, err := key.Sign(e.Head)
+	sig, err := e.Head.Sign(key, opts...)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
@@ -301,6 +309,7 @@ func (e *Envelope) calculate() error {
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.V7()
 	}
+	e.normalizeRouting()
 	var err error
 	e.Head.Digest, err = e.Digest()
 	if err != nil {
@@ -308,6 +317,30 @@ func (e *Envelope) calculate() error {
 	}
 
 	return nil
+}
+
+// normalizeRouting populates Head.From / Head.To from the embedded
+// document when (a) the document implements EndpointResolver and (b)
+// the relevant header field is empty. Operator-set From / To values
+// are preserved; missing endpoints are quietly skipped.
+func (e *Envelope) normalizeRouting() {
+	if e.Head == nil || e.Document == nil {
+		return
+	}
+	r, ok := e.Document.Instance().(EndpointResolver)
+	if !ok {
+		return
+	}
+	if e.Head.From == "" {
+		if ep := r.FromEndpoint(); ep != nil {
+			e.Head.From = ep.URI
+		}
+	}
+	if e.Head.To == "" {
+		if ep := r.ToEndpoint(); ep != nil {
+			e.Head.To = ep.URI
+		}
+	}
 }
 
 // Digest calculates a digital digest using the canonical JSON of the document.

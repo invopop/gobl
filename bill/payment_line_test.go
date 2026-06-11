@@ -383,4 +383,15 @@ func TestPaymentLineValidation(t *testing.T) {
 		err := rules.Validate(pl)
 		assert.ErrorContains(t, err, "amount must not exceed payable less advances")
 	})
+
+	t.Run("amount with fully advanced payable", func(t *testing.T) {
+		pl := &PaymentLine{
+			Index:    1,
+			Payable:  num.NewAmount(2300, 2),
+			Advances: num.NewAmount(2300, 2),
+			Amount:   num.MakeAmount(12000, 2),
+		}
+		err := rules.Validate(pl)
+		assert.ErrorContains(t, err, "amount must not exceed payable less advances")
+	})
 }

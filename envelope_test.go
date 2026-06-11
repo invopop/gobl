@@ -19,6 +19,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
@@ -212,6 +213,38 @@ func TestEnvelopeCompleteErrors(t *testing.T) {
 	})
 }
 
+func TestEnvelopeHeaderIgnore(t *testing.T) {
+	// An empty note fails with a single content-required fault.
+	code := rules.Validate(&note.Message{}).First().Code()
+	require.Equal(t, rules.Code("GOBL-NOTE-MESSAGE-01"), code)
+
+	build := func() *gobl.Envelope {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(&note.Message{}))
+		return e
+	}
+
+	t.Run("baseline fails without ignore", func(t *testing.T) {
+		err := build().Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
+
+	t.Run("header ignore suppresses the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{code}
+		assert.NoError(t, e.Validate())
+	})
+
+	t.Run("unrelated ignore leaves the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{"GOBL-SOMETHING-ELSE-01"}
+		err := e.Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
+}
+
 func TestEnvelopeValidate(t *testing.T) {
 	key := dsig.NewES256Key()
 	tests := []struct {
@@ -339,6 +372,20 @@ func TestEnvelopeSign(t *testing.T) {
 		assert.NoError(t, err)
 		env.Unsign()
 		assert.False(t, env.Signed())
+	})
+
+	t.Run("from/to are outside the signed payload", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		env.Head.From = cbc.URI("gobl:samlown.example.com")
+		env.Head.To = cbc.URI("iso6523-actorid-upis::9920:x3157928m")
+		require.NoError(t, env.Sign(testKey))
+		require.NoError(t, env.Verify(testKey.Public()))
+
+		// Mutating the routing addresses after signing must NOT break
+		// verification, proving they are not part of the signed payload.
+		env.Head.To = cbc.URI("mailto:someone@example.com")
+		assert.NoError(t, env.Verify(testKey.Public()))
 	})
 
 	t.Run("checks for header", func(t *testing.T) {
@@ -541,7 +588,7 @@ func TestEnvelopeVerify(t *testing.T) {
 		assert.NoError(t, err)
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
+		assert.ErrorContains(t, err, "no key match found")
 	})
 
 	t.Run("changes", func(t *testing.T) {
@@ -552,15 +599,15 @@ func TestEnvelopeVerify(t *testing.T) {
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
 		err = env.Verify()
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
+		assert.ErrorContains(t, err, "signature payload mismatch")
 		err = env.Verify(testKey.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "sigs[0]: header mismatch")
+		assert.ErrorContains(t, err, "signature payload mismatch")
 
 		rk := dsig.NewES256Key()
 		err = env.Verify(rk.Public())
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "sigs[0]: no key match found")
+		assert.ErrorContains(t, err, "no key match found")
 	})
 }
 
@@ -613,4 +660,56 @@ func testNoteExample() *note.Message {
 	m.Content = testMessageContent
 	m.UUID = uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002")
 	return m
+}
+
+func TestEnvelopeCalculateSetsFromTo(t *testing.T) {
+	mkInvoice := func() *bill.Invoice {
+		// Minimal invoice with parties carrying endpoints; we only need
+		// Calculate() to succeed enough to call normalizeRouting.
+		return &bill.Invoice{
+			Currency: "EUR",
+			Supplier: &org.Party{
+				Name:      "Supplier",
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Name:      "Customer",
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+	}
+
+	t.Run("populates empty From/To from the document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("preserves operator-set From", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		env.Head = head.NewHeader()
+		env.Head.From = "gobl:override.example"
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:override.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("note.Message does not implement EndpointResolver", func(t *testing.T) {
+		// A document without From/To resolution leaves the header empty
+		// and Calculate still succeeds.
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "hi"}))
+		assert.Empty(t, string(env.Head.From))
+		assert.Empty(t, string(env.Head.To))
+	})
+
+	t.Run("self-billed invoice flips routing during Calculate", func(t *testing.T) {
+		inv := mkInvoice()
+		inv.Tags.List = []cbc.Key{"self-billed"}
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(inv))
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.To)
+	})
 }

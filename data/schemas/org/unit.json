@@ -10,6 +10,10 @@
           "title": "Milligrams"
         },
         {
+          "const": "cg",
+          "title": "Centigrams"
+        },
+        {
           "const": "g",
           "title": "Metric grams"
         },
@@ -23,7 +27,7 @@
         },
         {
           "const": "mm",
-          "title": "Milimetres"
+          "title": "Millimetres"
         },
         {
           "const": "cm",
@@ -39,8 +43,13 @@
           "title": "Metres"
         },
         {
+          "const": "lm",
+          "title": "Linear metres",
+          "description": "The running length in metres of a uniform-width product (e.g. carpet, fabric, cable), billed per metre regardless of width."
+        },
+        {
           "const": "km",
-          "title": "Kilometers"
+          "title": "Kilometres"
         },
         {
           "const": "in",
@@ -49,6 +58,11 @@
         {
           "const": "ft",
           "title": "Feet"
+        },
+        {
+          "const": "lft",
+          "title": "Linear feet",
+          "description": "The running length in feet of a uniform-width product (e.g. lumber, trim, cable), billed per foot regardless of width."
         },
         {
           "const": "mm2",
@@ -101,8 +115,16 @@
           "title": "Centilitres"
         },
         {
+          "const": "dl",
+          "title": "Decilitres"
+        },
+        {
           "const": "l",
           "title": "Litres"
+        },
+        {
+          "const": "kl",
+          "title": "Kilolitres"
         },
         {
           "const": "w",
@@ -122,9 +144,19 @@
           "description": "A unit of quantity expressed as a rate for usage of a facility or service."
         },
         {
+          "const": "yr",
+          "title": "Years",
+          "description": "A unit of time equal to twelve months."
+        },
+        {
           "const": "mon",
           "title": "Months",
           "description": "Unit of time equal to 1/12 of a year of 365,25 days."
+        },
+        {
+          "const": "wk",
+          "title": "Weeks",
+          "description": "A unit of time equal to seven days."
         },
         {
           "const": "day",
@@ -150,7 +182,7 @@
         {
           "const": "item",
           "title": "Items",
-          "description": " A unit of count defining the number of items regarded as separate units."
+          "description": "A unit of count defining the number of items regarded as separate units."
         },
         {
           "const": "pair",
@@ -281,7 +313,7 @@
         },
         {
           "const": "demijohn",
-          "title": "Demijohn"
+          "title": "Demijohns"
         },
         {
           "const": "bottle",
@@ -301,8 +333,20 @@
           "description": "Standard packaging unit."
         },
         {
+          "const": "pkt",
+          "title": "Packets"
+        },
+        {
           "const": "bunch",
           "title": "Bunches"
+        },
+        {
+          "const": "bdl",
+          "title": "Bundles"
+        },
+        {
+          "const": "blk",
+          "title": "Blocks"
         },
         {
           "const": "tetrabrik",

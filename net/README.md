@@ -1,0 +1,607 @@
+# GOBL Net
+
+> ⚠️ **EXPERIMENTAL** — GOBL Net is under active development. The package
+> API and the wire protocol may change without notice and are not yet
+> covered by any stability guarantee.
+
+**Status:** Draft. This document is the wire-protocol specification for
+GOBL Net and describes the current state of the
+`github.com/invopop/gobl/net` package and related supporting code in
+`dsig`. CLI commands (`gobl init`, `gobl net who/send/serve`, `gobl sign
+--domain …`, `gobl verify --remote`) and the reference server live in
+[`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net) —
+that README covers on-disk layout, ACME, structured logging, and the
+operational stances. The protocol is pre-1.0 and subject to change.
+
+## Abstract
+
+GOBL Net is a decentralized identity and discovery protocol for signed GOBL
+documents. It binds a document signature to a fully qualified domain name
+(FQDN), and defines a small set of well-known HTTPS endpoints at that domain:
+
+- `/.well-known/gobl/keys/<kid>` — a single public JWK looked up by key
+  ID, used to verify signatures.
+- `/.well-known/gobl/who` — a signed GOBL Envelope carrying an
+  `org.Party` document, endorsing the holder's identity.
+- `/.well-known/gobl/inbox` — a write endpoint that accepts signed
+  envelopes addressed to the holder.
+
+Trust in an identity is anchored to the TLS certificate for the
+Address's FQDN: a signature's verifiable origin lives in its signed
+`iss`, the verifier fetches the corresponding public key from
+`https://<iss>/.well-known/gobl/keys/<kid>`, and the HTTPS connection
+proves the response really came from that FQDN. KYC vendors
+("Authorities") are an optional endorsement layer on top of that
+anchor — a participant MAY carry a vendor's countersignature, and
+verifiers MAY treat that countersignature as additional evidence;
+neither side is required to.
+
+The protocol layers on top of standards already in use by GOBL:
+
+- **RFC 7515** — JSON Web Signature, for envelope signing.
+- **RFC 7517** — JSON Web Key Set, for key discovery.
+- **RFC 3986** — URI syntax, for discovery transport.
+
+GOBL Net does not define new cryptographic primitives. It defines (a) how a
+GOBL signature identifies its origin, (b) how to discover the verifying
+keys, (c) how to retrieve an endorsed identity for an address, and (d) how
+to deliver a signed envelope to its recipient.
+
+## 1. Conventions
+
+The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", and "MAY" in this
+document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
+
+## 2. Terminology
+
+- **Address** — An FQDN identifying a GOBL Net participant, e.g.
+  `billing.invopop.com`. Represented in code as `net.Address`.
+- **Published key** — A `dsig.PublicKey` (an RFC 7517 JWK plus the
+  optional `valid_from` / `valid_until` extension members) served at
+  `/.well-known/gobl/keys/<kid>`.
+- **Party Envelope** — A signed GOBL Envelope whose document is an
+  `org.Party`, exchanged at the who endpoint.
+- **iss / aud** — Fields in a signature's *signed payload* carrying the
+  verifiable GOBL Net origin (`iss`) and the address the signature is
+  bound to (`aud`), both as `gobl:` `cbc.URI` values. These are the
+  authoritative, tamper-proof identities.
+- **header from / to** — Optional unsigned `cbc.URI` fields on the
+  envelope header expressing *intent/routing* in any scheme
+  (`iso6523-actorid-upis:`, `mailto:`, `gobl:`…). Useful for interop
+  with other formats; not used for verification.
+- **allow-list** — Optional `<domain>/allow.json` (array of addresses)
+  restricting which callers a domain accepts on `/who` and `/inbox`.
+
+## 3. Addressing
+
+### 3.1 Address Format
+
+A GOBL Net Address is an FQDN. It MUST NOT contain a scheme, port, path,
+query, or fragment.
+
+Parsing is performed by `net.ParseAddress` and applies the following
+normalizations and constraints:
+
+1. Surrounding whitespace is trimmed.
+2. A trailing dot, if present, is stripped.
+3. The input is normalised to its ASCII (A-Label / Punycode) form via
+   `golang.org/x/net/idna` Lookup profile (IDNA2008). This converts
+   any U-Labels to A-Labels and lowercases ASCII labels in one step;
+   invalid IDN labels MUST be rejected with `ErrAddressInvalid`.
+4. The result MUST satisfy `is.DNSName` (RFC 1035 label syntax).
+5. The result MUST contain at least one dot (i.e. at least two labels).
+
+Inputs that contain a scheme, port, or path MUST be rejected with
+`ErrAddressInvalid`. An empty input MUST be rejected with `ErrAddressEmpty`.
+
+**Canonical form.** Addresses on the wire — in `iss`, `aud`,
+well-known URLs, allow-lists, and identity files — MUST be ASCII
+A-Labels. Implementations are free to accept U-Label input from
+humans (e.g. CLI flags) but MUST normalise to A-Label before
+signing, fetching, or comparing.
+
+**Examples.** Accepted (after normalization):
+
+| Input                       | Parsed Address           |
+|-----------------------------|--------------------------|
+| `billing.invopop.com`       | `billing.invopop.com`    |
+| `sub.domain.example.org`    | `sub.domain.example.org` |
+| `Billing.Invopop.COM`       | `billing.invopop.com`    |
+| `billing.invopop.com.`      | `billing.invopop.com`    |
+| `  billing.invopop.com  `   | `billing.invopop.com`    |
+| `München.DE`                | `xn--mnchen-3ya.de`      |
+| `xn--mnchen-3ya.de`         | `xn--mnchen-3ya.de`      |
+
+Rejected:
+
+| Input                  | Error                |
+|------------------------|----------------------|
+| `` (empty)             | `ErrAddressEmpty`    |
+| `localhost`            | `ErrAddressInvalid` (single label) |
+| `http://example.com`   | `ErrAddressInvalid` (scheme) |
+| `example.com/path`     | `ErrAddressInvalid` (path)   |
+| `example.com:8080`     | `ErrAddressInvalid` (port)   |
+| `not valid!.com`       | `ErrAddressInvalid` (illegal characters) |
+| `-bad.com`             | `ErrAddressInvalid` (invalid IDN label) |
+
+### 3.2 Well-Known Paths
+
+The following constants are defined in `net/address.go`:
+
+| Constant         | Value                                |
+|------------------|--------------------------------------|
+| `WellKnownPath`  | `/.well-known/gobl`                  |
+| `KeysPath`       | `/.well-known/gobl/keys` (prefix)    |
+| `KeyPath(kid)`   | `/.well-known/gobl/keys/<kid>`       |
+| `WhoPath`        | `/.well-known/gobl/who`              |
+| `InboxPath`      | `/.well-known/gobl/inbox`            |
+| `JWKSPath`       | `/.well-known/jwks.json`             |
+
+For an Address `A`, the canonical URI and URLs are
+
+```
+gobl:<A>                                   ← Address.URI()  (iss / aud value)
+https://<A>/.well-known/gobl/keys/<kid>    ← KeyURL(kid)
+https://<A>/.well-known/gobl/who           ← WhoURL()
+https://<A>/.well-known/gobl/inbox         ← InboxURL()
+https://<A>/.well-known/jwks.json          ← JWKSURL()
+```
+
+The protocol exposes two key-discovery surfaces:
+
+1. **Per-kid** at `/.well-known/gobl/keys/<kid>` — single-JWK lookups,
+   used by `Client.FetchKey` during verification. Scales as keys
+   rotate; an absent or retired kid returns `404`.
+2. **Bulk JWKS** at `/.well-known/jwks.json` — standard RFC 7517 JWK
+   Set. GOBL Net signatures do **not** carry a `jku` header, so this
+   endpoint is for tooling that fetches a JWK Set by convention
+   (e.g. derived from the signer's domain) rather than from a JWS
+   header reference.
+
+The scheme MUST be `https`. HTTP is not a permitted alternative for
+production deployments; client tooling MAY offer an opt-in for plain
+HTTP solely for local development.
+
+Responses are always JSON, so file extensions are omitted from the paths.
+
+### 3.3 Topic Derivation
+
+`Address.Topic()` returns the address with its labels reversed and joined
+by dots: `billing.invopop.com` becomes `com.invopop.billing`. The topic
+form is provided for use by notification fan-out implementations; it is
+not consumed by any code in this package.
+
+## 4. Keys
+
+Each domain publishes one or more public keys, each individually
+addressable by its `kid` at `/.well-known/gobl/keys/<kid>`. The response
+body is a single RFC 7517 JSON Web Key, optionally augmented with a
+GOBL Net validity window:
+
+```
+{
+  "kty": "EC", "crv": "P-256", "kid": "…", "x": "…", "y": "…",
+  "valid_from":  "2026-01-01T00:00:00.000Z",
+  "valid_until": "2027-01-01T00:00:00.000Z"
+}
+```
+
+`valid_from` and `valid_until` are *additional JWK members* in the sense
+of RFC 7517 §4 — implementations that do not recognise them MUST ignore
+them, so the response remains a conformant JWK for any standard JOSE
+consumer.
+
+When set, the validity window bounds the signing time that each
+signature may carry in its signed payload (`iat`). A verifier rejects
+a signature whose `iat` falls outside `[valid_from, valid_until]`.
+The checks degrade gracefully: an absent bound on the key, or an
+absent `iat` on the signature, simply skips that half of the
+comparison.
+
+`valid_from` is stamped automatically when a key is generated.
+`valid_until` is left empty and is meant to be set when the operator
+rotates the key out — either at retirement, or in advance of a
+planned rotation. A retired key remains published so that historical
+envelopes signed within its window still verify; only signatures with
+an `iat` past `valid_until` are rejected.
+
+Verifiers MUST treat unknown kids as `404 Not Found`; this is how a
+domain expresses that a key has been removed entirely (as distinct from
+"retired but still serving historical verification"). The per-kid path
+is the only one GOBL's own `Client.FetchKey` uses.
+
+### 4a. Bulk JWKS endpoint (jwt.io interop)
+
+In addition to the per-kid endpoint, the server publishes a standard
+RFC 7517 JWK Set at `/.well-known/jwks.json`. This is provided as a
+convenience for operators inspecting their keys via `curl` and for
+third-party JOSE tooling that prefers to fetch a full key set by URL
+rather than per-kid. GOBL Net's own verifier
+(`Client.FetchKey` → per-kid endpoint) does not use it.
+
+Response shape:
+
+```json
+{
+  "keys": [
+    { "kty": "EC", "kid": "<newest UUIDv7>", "valid_from": "…", … },
+    { "kty": "EC", "kid": "<older  UUIDv7>", "valid_until": "…", … }
+  ]
+}
+```
+
+Keys are returned **newest first**, ordered by `valid_from`
+descending; entries without a `valid_from` sort last. Since key IDs
+are UUIDv7 (time-ordered), kid descending is the deterministic
+tie-breaker.
+
+The JOSE header on each signature carries `alg` and `kid` only. The
+signed payload's `iss` value names the issuing GOBL Net address; a
+verifier resolves that to the per-kid URL via `Client.FetchKey`.
+
+The key type and the validity-window enforcement live in the `dsig`
+package: a published key is a `dsig.PublicKey`. `head.Header.Verify`
+calls `dsig.PublicKey.Allows` automatically, so every signed-envelope
+verifier — whether through GOBL Net or a direct `Envelope.Verify` call
+— enforces the window.
+
+A conforming server MUST serve each published key verbatim at
+`/.well-known/gobl/keys/<kid>` and the bulk set at
+`/.well-known/jwks.json`. The reference implementation in
+`gobl.dev`'s `gobl net serve` stores one file per `kid` on disk and
+maps 1:1 to a future row-per-`kid` database — but the on-disk layout
+is an implementation detail of that server, not part of this
+protocol.
+
+Endorsement of a participant happens at the identity layer (see §6) and
+does *not* live inside the key material itself.
+
+## 5. Signatures
+
+### 5.1 Signed identities: `iss` / `aud` / `iat`
+
+Each signature signs a payload of `{uuid, dig, iss, aud, iat}`:
+
+- `uuid` + `dig` identify the document (immutable after signing).
+- `iss` is the signer's verifiable GOBL Net address as a `gobl:` URI
+  (e.g. `gobl:billing.invopop.com`). The verifier reads it to
+  discover *which* per-key endpoint to fetch.
+- `aud` is the GOBL Net address the signature is bound to. It is
+  optional at the protocol layer (e.g. a self-signed identity
+  document, or an envelope archived for later inspection, may omit
+  it), but **inboxes MUST require it** (§8.3): an envelope POSTed
+  to a `/inbox` MUST carry `aud == <inbox-owner>`, otherwise the
+  request is rejected. Binding the audience inside the signature
+  prevents the same valid invoice from being replayed against
+  multiple inboxes.
+- `iat` is the signing time as a JWT-standard NumericDate (Unix
+  seconds, per RFC 7519 §2). It is set automatically by `Sign`;
+  verifiers read it for the per-key validity window check but no
+  freshness policy is enforced by default — receivers may apply their
+  own max-age window when relevant.
+
+Because `iss`/`aud`/`iat` are inside the signed payload, the origin,
+audience, and signing time are all tamper-proof. Multiple parties may
+countersign the same document (shared `uuid`+`dig`) each with their own
+`iss`/`aud`/`iat`.
+
+The header `from`/`to` (`cbc.URI`) are a *separate*, unsigned layer for
+intent/routing in any scheme; they are never used for verification.
+
+### 5.2 Envelope Signing
+
+`Envelope.Sign(key, opts...)` (→ `head.Header.Sign`) signs the document
+identity plus the signer's `iss` and optional `aud`, set with the
+`head.WithIssuer` and `head.WithAudience` options. Both may be omitted
+for a plain, non-GOBL-Net signature.
+
+### 5.3 Authority countersignatures and scope
+
+A `/who` response (and any envelope an Authority chooses to endorse)
+MAY carry one or more countersignatures from addresses in the
+verifier's `Authorities` list (§6.3). An Authority countersignature
+SHOULD include a `scope` claim in its signed payload declaring the
+level of confidence the Authority is asserting:
+
+| Scope (`cbc.Key`) | Meaning                                                                                        |
+|-------------------|------------------------------------------------------------------------------------------------|
+| (omitted)         | No assertion beyond the cryptographic facts of the signature itself.                           |
+| `registered`      | The Authority has confirmed the subject controls the named GOBL Net address (FQDN ownership).  |
+| `verified`        | The Authority has performed full identity verification (e.g. KYC) in addition to registration. |
+
+Scope is set with the `head.WithScope` signing option:
+
+```go
+env.Sign(authorityKey,
+    head.WithIssuer(authorityAddr.URI()),
+    head.WithAudience(subjectAddr.URI()),
+    head.WithScope(head.ScopeVerified))
+```
+
+Verifiers MAY require a minimum scope per use case (`registered`
+suffices for `/who` discovery; `verified` may be required before
+acting on inbox deliveries from new counterparties). Operators MAY
+define additional scope keys; `registered` and `verified` are the
+baseline values the protocol recognises.
+
+### 5.4 X.509 evidence (optional, long-term storage)
+
+JWS allows an `x5c` header carrying an X.509 certificate chain (RFC
+7515 §4.1.6). GOBL Net does **not** use `x5c` for signature
+verification — the trust anchor is the signed `iss` resolved through
+the per-key endpoint, secured by the issuer's TLS certificate (see
+§11.1). But signers MAY stamp `x5c` on a signature as additional,
+self-contained evidence for archival and long-term verification: a
+recipient who keeps the envelope for many years, long after the
+issuer's `/.well-known/gobl/keys/<kid>` may have stopped responding,
+can still verify the signature against the embedded chain and walk
+that chain to a CA they trust at audit time.
+
+Treat `x5c` as supplementary evidence, not as a replacement for §11.1:
+the chain proves that *some* CA-attested entity signed the document,
+but does not bind the signature to a GOBL Net Address. Verifiers MAY
+consult `x5c` for archival proofs, but for live verification of an
+inbox or `/who` exchange the signed `iss` + Web PKI MUST be the
+authoritative chain.
+
+The library does not stamp `x5c` automatically. Operators with an
+archival need can add it via a future `dsig.WithX5C` option or by
+constructing the JWS with the underlying go-jose options directly.
+
+## 6. Verification
+
+### 6.1 Envelope Verification Flow
+
+`Client.VerifyEnvelope(ctx, env, expectedAud)` returns the verified
+issuer address:
+
+1. The envelope MUST be signed; otherwise `ErrVerifyFailed`.
+2. The first signature's signed payload is read; `iss` MUST be a `gobl:`
+   URI (else `ErrVerifyFailed`).
+3. `FetchKey(ctx, iss-host, kid)` fetches the issuer's published key
+   from `/.well-known/gobl/keys/<kid>` (including its optional
+   `valid_from` / `valid_until`).
+4. The envelope is verified against that public key.
+5. If `expectedAud` is non-empty, the signed `aud` MUST equal it.
+6. If the key declares a validity window, the signed `iat` MUST fall
+   within `[valid_from, valid_until]` (each bound optional).
+7. The verified issuer address is returned.
+
+### 6.2 Identity exchange (`/who`)
+
+`/who` is an authenticated, mutual exchange (see §8.2). The caller POSTs
+a signed envelope (`iss=gobl:caller`, `aud=gobl:target`, document = the
+caller's `org.Party`); the target verifies it, applies its allow-list,
+and responds with its own party envelope signed `iss=gobl:target`,
+`aud=gobl:caller`. A conforming client performs the exchange and
+verifies the response is signed by the target and bound to the
+caller.
+
+### 6.3 Trusted Authorities
+
+The package-level slice `net.Authorities` holds GOBL Net addresses
+treated as trusted KYC vendors. The default list is empty;
+`net.RegisterAuthority` or the `WithAuthorities` client option add to
+it.
+
+`Client.VerifyAuthority(ctx, env)` returns nil iff the envelope
+carries at least one signature whose signed `iss` is in the client's
+authorities AND that signature cryptographically verifies against
+the authority's published key. It returns `ErrUnknownAuthority` when
+no candidate signature is from a known authority (or none has been
+registered) and `ErrVerifyFailed` when a candidate fails its crypto
+check.
+
+The protocol does **not** mandate when callers must invoke
+`VerifyAuthority`. The recommended policy: `/who` consumers SHOULD
+require an authority countersignature by default and only relax it
+for explicitly self-signed lookups (bootstrap, internal discovery).
+The trust anchor in §11.1 — TLS-bound `iss` — does not depend on
+authorities; authorities are an additional, opt-in policy layer on
+top.
+
+## 7. Discovery Transport
+
+### 7.1 HTTP Client Defaults
+
+The default `HTTPFetcher` enforces:
+
+| Parameter             | Value              |
+|-----------------------|--------------------|
+| Request timeout       | 10 seconds         |
+| Dial timeout          | 5 seconds          |
+| Maximum response size | 1 MiB              |
+| Required `Accept`     | `application/json` |
+| Required scheme       | `https`            |
+| Required status       | `200 OK`           |
+
+Responses larger than 1 MiB are truncated. Any non-200 response causes
+`ErrFetchFailed`.
+
+**SSRF defense.** The fetcher's transport refuses to dial any host
+whose resolved IP is loopback, private (RFC 1918 / RFC 6598),
+link-local, multicast, or unspecified. A signed `iss` URI is
+attacker-controlled, so the FQDN it names could resolve to an
+internal service (e.g. AWS metadata at `169.254.169.254`, a
+container's localhost, a corporate intranet) — refusing those at
+dial time prevents the verifier from being used as an SSRF gadget.
+There is no public escape hatch; in-process test fixtures (e.g.
+`httptest`) should inject their own `Fetcher` via
+`net.WithFetcher`.
+
+### 7.2 Pluggable Fetcher
+
+The `Fetcher` interface (`Fetch(ctx, url) ([]byte, error)`) allows
+substituting the HTTP transport, e.g. for testing, in-process resolution,
+or alternative transports. Use `net.WithFetcher(f)` when constructing a
+`Client`.
+
+## 8. Server-Side Endpoints
+
+### 8.1 `GET /.well-known/gobl/keys/<kid>`
+
+Open. Returns a single RFC 7517 JSON Web Key as `application/json` —
+the file `<domain>/keys/<kid>.json`, optionally carrying GOBL Net's
+`valid_from` / `valid_until` extension members (see §4). Unknown kid
+returns `404 Not Found`. No bulk endpoint is exposed.
+
+### 8.2 `POST /.well-known/gobl/who`
+
+Authenticated party exchange. The caller POSTs a signed envelope
+(`iss=gobl:caller`, `aud=gobl:self`, document = the caller's
+`org.Party`). The server verifies the signature against the caller's
+published key (fetched from the caller's per-kid endpoint), requires
+`aud == self`, and applies the allow-list to `iss`. It responds `200`
+with its own party envelope signed
+`iss=gobl:self`, `aud=gobl:caller`.
+
+| Status            | Cause                                              |
+|-------------------|----------------------------------------------------|
+| `200 OK`          | Verified; returns the signed party envelope.       |
+| `400 Bad Request` | Body did not decode as an envelope.                |
+| `401 Unauthorized`| Signature/issuer/audience verification failed.     |
+| `403 Forbidden`   | Caller (`iss`) not on the domain's allow-list.     |
+
+### 8.3 `POST /.well-known/gobl/inbox`
+
+Accepts a signed GOBL Envelope. The signer (`iss`) is verified against
+its published key (fetched from `<iss>/.well-known/gobl/keys/<kid>`);
+the signed `aud` MUST be present and MUST equal this inbox's
+Address — envelopes signed without an audience, or bound to a
+different audience, MUST be rejected. The allow-list (if present) is
+applied to `iss`. Status codes:
+
+| Status                       | Cause                                                |
+|------------------------------|------------------------------------------------------|
+| `202 Accepted`               | Envelope parsed, validated, signature verified, persisted. |
+| `400 Bad Request`            | Body could not be read or did not decode as JSON.    |
+| `401 Unauthorized`           | Envelope signature did not verify, or `aud` missing / not equal to this inbox. |
+| `403 Forbidden`              | Caller (`iss`) not on the domain's allow-list.       |
+| `422 Unprocessable Entity`   | Envelope failed structural validation.               |
+| `500 Internal Server Error`  | Persistence failed.                                  |
+
+The request body size is capped at 1 MiB. The protocol does not
+mandate where or how an accepted envelope is persisted — that is an
+implementation decision for the operator running the inbox (a
+filesystem directory, an object store, a database row, a message
+queue, an in-process handler, …). A 202 simply MUST mean the
+envelope is durable enough that the server is willing to confirm
+receipt. The reference server in
+[`gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net) writes
+each accepted envelope to `<config>/<domain>/inbox/<envelope-uuid>.json`;
+that layout is one valid choice, not a protocol requirement.
+
+In this release the server does not return a signed receipt on 202;
+the response body is empty.
+
+## 9. Reference Implementation
+
+GOBL Net's reference client lives in this package (`net.Client`,
+`net.Address`, `net.Authorities`). The reference server and the
+operator-facing CLI (`gobl init`, `gobl net who/send/serve`,
+`gobl sign --domain …`, `gobl verify --remote`) live in
+[`gobl.dev`](https://github.com/invopop/gobl.dev/#gobl-net), which also
+documents the server's on-disk layout, ACME setup, multi-tenant
+routing, structured logging, and Docker deployment.
+
+The protocol is transport-defined; any conforming implementation can
+serve the well-known endpoints from §8 over HTTPS.
+
+## 10. Errors
+
+The package exports the following sentinel errors:
+
+| Error                  | Cause                                                            |
+|------------------------|------------------------------------------------------------------|
+| `ErrAddressEmpty`      | Empty input to `ParseAddress`.                                   |
+| `ErrAddressInvalid`    | Input is not a valid FQDN per §3.1.                              |
+| `ErrFetchFailed`       | Well-known resource fetch failed (network, non-200, malformed).  |
+| `ErrVerifyFailed`      | Envelope verification failed (no signature, non-`gobl:` `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window). |
+| `ErrUnknownAuthority`  | An endorser on a `/who` envelope is not in `Authorities` (only raised by callers that opt into authority enforcement). |
+| `ErrPartyMissing`      | A `/who` response did not contain an `org.Party` document.       |
+| `ErrInboxRejected`     | A receiving inbox did not return 202.                            |
+
+All callers using `errors.Is` against these sentinels MUST continue to
+work after wrapping with `fmt.Errorf("%w: ...", err)`.
+
+## 11. Security Considerations
+
+### 11.1 Trust Model
+
+A signature's verifiable origin is the signed `iss` URI. Verification
+fetches the public key from
+`https://<iss-fqdn>/.well-known/gobl/keys/<kid>`, and the HTTPS
+connection's certificate proves the response really came from that
+FQDN. The trust anchor is therefore the Web PKI binding of the
+Address to the entity that controls its TLS certificate.
+
+A forged `iss` pointing to an attacker-controlled host can only
+produce a signature that verifies against an attacker-controlled key
+served from that host — distinguishable from the expected identity
+at the application layer. Callers that already know the expected
+Address SHOULD pass it as `expectedAud` to `Client.VerifyEnvelope`,
+or compare the returned issuer Address against an allow-list before
+acting on the document.
+
+### 11.2 TLS
+
+All well-known endpoints are served over HTTPS in production. Verifiers
+rely on the host's TLS certificate to establish that the served content
+originates from the named Address. Operators MUST ensure that TLS
+certificate issuance is properly controlled for any Address they intend
+to use as an identity.
+
+### 11.3 Authority Trust
+
+`Authorities` is an opt-in allowlist of FQDNs (see §6.3). For
+verifiers that *do* enforce it, the threat is symmetrical to §11.1
+but multiplied: an attacker who gains the ability to issue a TLS
+certificate for any address in `Authorities` can serve a forged
+`/who` for any participant whose envelopes the verifier accepts on
+the strength of that authority's countersignature. Where this hook
+is used, the KYC vendor list MUST be kept short and reviewed
+regularly.
+
+### 11.4 Inbox Authentication
+
+The inbox endpoint verifies the sender's signature before persisting an
+envelope, but does *not* require the sender to be a known
+KYC-endorsed participant. Operators that need to restrict inbox
+acceptance to known correspondents MUST apply additional filtering —
+typically a per-domain `allow.json` (see §2) gating `iss`, or an
+application-level `/who` exchange against the sender's address before
+acting on the document.
+
+### 11.5 Response Size
+
+The 1 MiB cap on Key, Who, and inbox bodies limits memory amplification
+from hostile or misconfigured peers.
+
+### 11.6 SSRF / non-public dial targets
+
+A signed `iss` URI is supplied by the signer, so a verifier that
+blindly fetches `https://<iss-fqdn>/.well-known/...` could be
+tricked into hitting an internal address controlled by the attacker
+(loopback, cloud metadata at `169.254.169.254`, an RFC 1918 host on
+the verifier's network). The default `HTTPFetcher` defends against
+this by resolving the host at dial time and refusing any loopback,
+private, link-local, multicast, or unspecified address (see §7.1).
+Operators that swap in a custom `Fetcher` SHOULD apply equivalent
+checks.
+
+### 11.7 Address Canonicalization
+
+`ParseAddress` lowercases and strips trailing dots before validation, so
+two visually distinct strings such as `Example.COM.` and `example.com`
+normalize to the same Address. Callers MUST use `ParseAddress` (directly
+or via `Address.Validate`) before comparing addresses for equality.
+
+## 12. References
+
+- RFC 2119 — Key words for use in RFCs to Indicate Requirement Levels
+- RFC 7515 — JSON Web Signature (JWS)
+- RFC 7517 — JSON Web Key (JWK)
+- RFC 7518 — JSON Web Algorithms (JWA)
+- RFC 8174 — Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words
+- `github.com/invopop/gobl/dsig` — Signature, key, and digest primitives
+- `github.com/invopop/gobl/org` — `org.Party` schema

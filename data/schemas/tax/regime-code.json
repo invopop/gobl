@@ -82,12 +82,20 @@
           "title": "The Netherlands"
         },
         {
+          "const": "NO",
+          "title": "Norway"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },
         {
           "const": "PT",
           "title": "Portugal"
+        },
+        {
+          "const": "SA",
+          "title": "Kingdom of Saudi Arabia"
         },
         {
           "const": "SE",

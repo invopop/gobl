@@ -1,0 +1,116 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "01e778615ea21625cd43121e82c4719652d5f0ee1c3ec4ba8e43a3523c3612fa"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "RC",
+		"code": "0001",
+		"issue_date": "2024-04-08",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Beispiel GmbH",
+			"tax_id": {
+				"country": "DE",
+				"code": "111111125"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"key": "services",
+					"name": "Consultancy services",
+					"price": "150.00",
+					"unit": "h"
+				},
+				"sum": "6000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge",
+						"ext": {
+							"es-tbai-exemption": "S2",
+							"es-tbai-product": "services",
+							"es-tbai-regime": "01"
+						}
+					}
+				],
+				"total": "6000.00"
+			}
+		],
+		"totals": {
+			"sum": "6000.00",
+			"total": "6000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"ext": {
+									"es-tbai-exemption": "S2",
+									"es-tbai-product": "services",
+									"es-tbai-regime": "01"
+								},
+								"base": "6000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "6000.00",
+			"payable": "6000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Reverse charge - Article 196 of EU Directive 2006/112/EC."
+			}
+		]
+	}
+}

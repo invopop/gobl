@@ -121,6 +121,11 @@
           "title": "Payee",
           "description": "Legal entity that receives the payment if not the supplier."
         },
+        "ordering": {
+          "$ref": "https://gobl.org/draft-0/bill/ordering",
+          "title": "Ordering",
+          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
+        },
         "lines": {
           "items": {
             "$ref": "#/$defs/bill.PaymentLine"
@@ -136,11 +141,6 @@
           "type": "array",
           "title": "Methods",
           "description": "Methods describes how the payment was settled. At least one method is\nrequired; multiple may be present when the payment was split across\nmeans (for example, partly card + partly cash)."
-        },
-        "ordering": {
-          "$ref": "https://gobl.org/draft-0/bill/ordering",
-          "title": "Ordering",
-          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
         },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",

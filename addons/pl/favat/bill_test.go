@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
@@ -562,13 +563,11 @@ func TestCustomerJSTAndGroupVATCombined(t *testing.T) {
 }
 
 func TestNormalizeInvoice(t *testing.T) {
-	ad := tax.AddonForKey(favat.V3)
-
 	t.Run("self-billed invoice sets extension", func(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagSelfBilled)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 	})
 
@@ -576,7 +575,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagReverseCharge)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})
 
@@ -584,7 +583,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		inv := standardInvoice()
 		inv.SetTags(tax.TagSelfBilled, tax.TagReverseCharge)
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 		assert.Equal(t, "1", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})
@@ -592,7 +591,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("regular invoice does not set extensions", func(t *testing.T) {
 		inv := standardInvoice()
 		require.NoError(t, inv.Calculate())
-		ad.Normalizer(inv)
+		norm.Normalize(inv, tax.AddonContext(favat.V3))
 		assert.Equal(t, "", inv.Tax.Ext.Get(favat.ExtKeySelfBilling).String())
 		assert.Equal(t, "", inv.Tax.Ext.Get(favat.ExtKeyReverseCharge).String())
 	})

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "54f3189b6fe1ef451b19c00e10c7cac5ceb447d9580c40c6232e0ffcdd78e571"
+			"val": "bdf875edda41758dd76b755c3118185a98279602c5835c30fa6e9ebea8abf7b0"
 		}
 	},
 	"doc": {
@@ -58,16 +58,7 @@
 				"reasons": [
 					{
 						"key": "references",
-						"description": "Missing purchase order number",
-						"conditions": [
-							{
-								"code": "ERR-REF-001",
-								"paths": [
-									"$.ordering.code"
-								],
-								"message": "Purchase order reference is required"
-							}
-						]
+						"description": "Missing purchase order number"
 					}
 				],
 				"actions": [

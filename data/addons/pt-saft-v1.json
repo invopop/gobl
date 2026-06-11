@@ -873,7 +873,7 @@
         "pt": "Tipo de documento"
       },
       "desc": {
-        "en": "SAF-T's `MovementType` (Tipo de documento de movimentação de mercadorias) specifies the type of\na delivery document. In GOBL,this type can be set using the `pt-saft-movement-type` extension.\nIf not provided explicitly, GOBL will set the extension for you based on the type of your delivery\ndocument.\n\nThe table below shows how this mapping is done:\n\n| Code | Name                | GOBL Type     |\n| ---- | ------------------- | ------------- |\n| `GR` | Delivery note       | `note`        |\n| `GT` | Waybill             | `waybill`     |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/delivery\",\n\t// ...\n\t\"type\": \"note\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-movement-type\": \"GR\"\n\t},\n\t// ...\n```"
+        "en": "SAF-T's `MovementType` (Tipo de documento de movimentação de mercadorias) specifies the type of\na delivery document. In GOBL, this type can be set using the `pt-saft-movement-type` extension.\nIf not provided explicitly, GOBL will set the extension for you based on the type and tags of\nyour delivery document.\n\nThe table below shows how this mapping is done:\n\n| Code | Name                                    | GOBL Type | GOBL Tag |\n| ---- | --------------------------------------- | --------- | -------- |\n| `GR` | Guia de Remessa (Delivery note)         | `note`    |          |\n| `GT` | Guia de Transporte (Transport guide)    | `waybill` |          |\n| `GD` | Guia de Devolução (Return note)         | `note`    | `return` |\n| `GA` | Guia de Movimentação de Ativos Próprios | (*)       |          |\n| `GC` | Guia de Consignação                     | (*)       |          |\n\n(*) or codes not mapped from a GOBL type or tag; use `other` as the delivery type and explicitly set the\nextension.\n\nFor example, to indicate a return delivery (GD):\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/delivery\",\n\t\"$tags\": [\"return\"],\n\t\"type\": \"note\",\n\t// The `pt-saft-movement-type` extension is set automatically to \"GD\"\n\t// ...\n}\n```\n\nFor example, to set a movement type with no GOBL equivalent (e.g. GA):\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/delivery\",\n\t// ...\n\t\"type\": \"other\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-movement-type\": \"GA\"\n\t\t}\n\t},\n\t// ...\n}\n```"
       },
       "values": [
         {
@@ -913,6 +913,22 @@
           "name": {
             "en": "Returns slip or note",
             "pt": "Guia ou nota de devolução"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/delivery",
+      "list": [
+        {
+          "key": "return",
+          "name": {
+            "en": "Return"
+          },
+          "desc": {
+            "en": "Indicates that the delivery document represents a return of goods to the supplier.\nUse this tag in combination with a supported delivery type to indicate a return\nrather than a forward delivery."
           }
         }
       ]
@@ -979,10 +995,6 @@
   "corrections": [
     {
       "schema": "bill/invoice",
-      "types": [
-        "credit-note",
-        "debit-note"
-      ],
       "reason_required": true
     }
   ]

@@ -30,15 +30,6 @@ func (n *Note) SameAs(n2 *Note) bool {
 	return n.Category == n2.Category && n.Key == n2.Key
 }
 
-// Normalize cleans up the note's extensions.
-func (n *Note) Normalize(normalizers Normalizers) {
-	if n == nil {
-		return
-	}
-	n.Ext = n.Ext.Clean()
-	normalizers.Each(n)
-}
-
 func noteRules() *rules.Set {
 	return rules.For(new(Note),
 		rules.Field("text",

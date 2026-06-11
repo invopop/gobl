@@ -18,9 +18,6 @@ var (
 )
 
 func normalizeTaxIdentity(tID *tax.Identity) {
-	if tID == nil {
-		return
-	}
 	tax.NormalizeIdentity(tID, l10n.IN)
 	tID.Code = cbc.Code(strings.ToUpper(tID.Code.String()))
 	tID.Country = "IN"

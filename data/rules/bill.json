@@ -165,7 +165,7 @@
             {
               "id": "GOBL-BILL-DELIVERY-02",
               "desc": "type is not valid",
-              "tests": "one of [advice, note, waybill, receipt]"
+              "tests": "one of [advice, note, waybill, receipt, other]"
             }
           ]
         },
@@ -778,6 +778,11 @@
               "id": "GOBL-BILL-STATUSLINE-01",
               "desc": "status line key is required",
               "tests": "present"
+            },
+            {
+              "id": "GOBL-BILL-STATUSLINE-02",
+              "desc": "status line key is not valid",
+              "tests": "one of [issued, acknowledged, processing, querying, rejected, accepted, paid, error, other]"
             }
           ]
         }
@@ -826,15 +831,15 @@
       ]
     },
     {
-      "id": "GOBL-BILL-CONDITION",
-      "object": "bill.Condition",
+      "id": "GOBL-BILL-FAULT",
+      "object": "bill.Fault",
       "subsets": [
         {
           "field": "code",
           "assert": [
             {
-              "id": "GOBL-BILL-CONDITION-01",
-              "desc": "condition code is required",
+              "id": "GOBL-BILL-FAULT-01",
+              "desc": "fault code is required",
               "tests": "present"
             }
           ]

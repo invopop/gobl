@@ -7,17 +7,26 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 )
 
+// CountryCode is the tax country code for the United Kingdom.
+const CountryCode = "GB"
+
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register(
 		"gb",
-		rules.GOBL.Add("GB"),
+		rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
+	)
+	norm.Register(
+		// XI (Northern Ireland) and XU also resolve to this regime (see
+		// AltCountryCodes), so normalize identities under any of them.
+		norm.When(tax.IdentityIn(CountryCode, "XI", "XU"), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id, altCountryCodes...) })),
 	)
 }
 
@@ -62,8 +71,7 @@ func New() *tax.RegimeDef {
 				corrections.
 			`),
 		},
-		TimeZone:   "Europe/London",
-		Normalizer: Normalize,
+		TimeZone: "Europe/London",
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
@@ -76,13 +84,5 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-	}
-}
-
-// Normalize will attempt to clean the object passed to it.
-func Normalize(doc interface{}) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj, altCountryCodes...)
 	}
 }

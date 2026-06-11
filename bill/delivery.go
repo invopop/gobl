@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -23,6 +24,7 @@ const (
 	DeliveryTypeNote    cbc.Key = "note"
 	DeliveryTypeWaybill cbc.Key = "waybill"
 	DeliveryTypeReceipt cbc.Key = "receipt"
+	DeliveryTypeOther   cbc.Key = "other"
 )
 
 // DeliveryTypes provides the list of supported delivery documents in GOBL.
@@ -75,6 +77,21 @@ var DeliveryTypes = []*cbc.Definition{
 			`),
 		},
 	},
+	{
+		Key: DeliveryTypeOther,
+		Name: i18n.String{
+			i18n.EN: "Other",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Any other type of delivery that does not fit into the standard categories and implies
+				that any scenarios defined in tax regimes or addons will not be applied.
+
+				This is useful for being able to create deliveries with custom types in extensions,
+				but is not recommended for general use.
+			`),
+		},
+	},
 }
 
 var isValidDeliveryType = cbc.InKeyDefs(DeliveryTypes)
@@ -87,7 +104,7 @@ type Delivery struct {
 	uuid.Identify
 
 	// Type of delivery document.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt,other"`
 	// Series is used to identify groups of deliveries by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
@@ -178,6 +195,12 @@ func (dlv *Delivery) CanSign() bool {
 	return !dlv.Code.IsEmpty()
 }
 
+func normalizeDelivery(dlv *Delivery) {
+	if dlv.Type == cbc.KeyEmpty {
+		dlv.Type = DeliveryTypeAdvice
+	}
+}
+
 func deliveryRules() *rules.Set {
 	return rules.For(new(Delivery),
 		rules.Field("type",
@@ -204,43 +227,29 @@ func (dlv *Delivery) Calculate() error {
 	if dlv.Regime.IsEmpty() {
 		dlv.SetRegime(partyTaxCountry(dlv.Supplier))
 	}
-	dlv.Normalize(dlv.normalizers())
+	norm.Normalize(dlv)
+
+	supportedTags := dlv.supportedTags()
+	for _, tag := range dlv.Tags.List {
+		if !tag.In(supportedTags...) {
+			return fmt.Errorf("$tags: '%s' undefined", tag)
+		}
+	}
+
 	return calculate(dlv)
 }
 
-// Normalize is run as part of the Calculate method to ensure that the delivery
-// is in a consistent state before calculations are performed. This will leverage
-// any add-ons alongside the tax regime.
-func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
-	if dlv.Type == cbc.KeyEmpty {
-		dlv.Type = DeliveryTypeAdvice
-	}
-	dlv.Series = cbc.NormalizeCode(dlv.Series)
-	dlv.Code = cbc.NormalizeCode(dlv.Code)
-
-	tax.Normalize(normalizers, dlv.Tax)
-	tax.Normalize(normalizers, dlv.Supplier)
-	tax.Normalize(normalizers, dlv.Customer)
-	tax.Normalize(normalizers, dlv.Despatcher)
-	tax.Normalize(normalizers, dlv.Receiver)
-	tax.Normalize(normalizers, dlv.Preceding)
-	tax.Normalize(normalizers, dlv.Lines)
-	tax.Normalize(normalizers, dlv.Discounts)
-	tax.Normalize(normalizers, dlv.Charges)
-	tax.Normalize(normalizers, dlv.Notes)
-	normalizers.Each(dlv)
-}
-
-// normalizers returns the normalizers for the delivery.
-func (dlv *Delivery) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
+func (dlv *Delivery) supportedTags() []cbc.Key {
+	// Deliveries have no default tags of their own; supported tags are
+	// contributed by the active regime and addons.
+	var ts *tax.TagSet
 	if r := dlv.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
+		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaDelivery))
 	}
 	for _, a := range dlv.AddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
+		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaDelivery))
 	}
-	return normalizers
+	return ts.Keys()
 }
 
 // ConvertInto will use the defined exchange rates in the delivery to convert all the prices
@@ -347,6 +356,52 @@ func (dlv *Delivery) setTotals(t *Totals) {
 	dlv.Totals = t
 }
 
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this delivery document. Despatch documents
+// (advice / note / waybill) flow from the despatcher (or supplier
+// when no explicit despatcher is set) to the receiver (or customer).
+// A `receipt` flows the other way — from the party that received the
+// goods back to the despatcher.
+func (dlv *Delivery) FromEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryReceiverEndpoint(dlv)
+	}
+	return deliveryDespatcherEndpoint(dlv)
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this delivery document. Inverse of FromEndpoint.
+func (dlv *Delivery) ToEndpoint() *org.Endpoint {
+	if dlv == nil {
+		return nil
+	}
+	if dlv.Type == DeliveryTypeReceipt {
+		return deliveryDespatcherEndpoint(dlv)
+	}
+	return deliveryReceiverEndpoint(dlv)
+}
+
+// deliveryDespatcherEndpoint prefers the explicit Despatcher party,
+// falling back to the Supplier when no despatcher is set.
+func deliveryDespatcherEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Despatcher.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Supplier.FirstEndpoint()
+}
+
+// deliveryReceiverEndpoint prefers the explicit Receiver party,
+// falling back to the Customer when no receiver is set.
+func deliveryReceiverEndpoint(dlv *Delivery) *org.Endpoint {
+	if ep := dlv.Receiver.FirstEndpoint(); ep != nil {
+		return ep
+	}
+	return dlv.Customer.FirstEndpoint()
+}
+
 /** ---- **/
 
 // JSONSchemaExtend extends the schema with additional property details
@@ -363,6 +418,7 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
+	dlv.Tags.JSONSchemaExtendWithDefs(js, nil)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

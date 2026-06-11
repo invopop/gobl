@@ -2,6 +2,7 @@ package bill
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -109,8 +110,6 @@ func (inv *Invoice) prepareScenarios() error {
 		return nil
 	}
 
-	normalizers := tax.ExtractNormalizers(inv)
-
 	for _, sn := range ss.Notes {
 		// make sure we don't already have the same note
 		found := false
@@ -124,8 +123,9 @@ func (inv *Invoice) prepareScenarios() error {
 		}
 		if !found {
 			// Normalize the note so addons can enrich it (e.g. en16931
-			// adds UNTDID tax category extensions).
-			sn.Normalize(normalizers)
+			// adds UNTDID tax category extensions). The note is normalized
+			// with the invoice's regime and addon context.
+			norm.Normalize(sn, inv.Regime.RulesContext(), inv.Addons.RulesContext())
 			inv.Tax = inv.Tax.MergeNotes(sn)
 		}
 	}

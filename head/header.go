@@ -1,11 +1,23 @@
 package head
 
 import (
+	"errors"
+	"time"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/uuid"
+)
+
+var (
+	// ErrSignaturePayload is returned when a signature's payload cannot be parsed.
+	ErrSignaturePayload = errors.New("head: invalid signature payload")
+	// ErrSignatureMismatch is returned when a signature's payload does not match the header.
+	ErrSignatureMismatch = errors.New("head: signature payload mismatch")
+	// ErrSignatureKeyMismatch is returned when no provided key matches the signature.
+	ErrSignatureKeyMismatch = errors.New("head: no key match found")
 )
 
 // Header defines the metadata of the body. The header is used as the payload
@@ -33,6 +45,31 @@ type Header struct {
 
 	// Any information that may be relevant to other humans about this envelope
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// From is the URI-form transport address of the envelope's issuer,
+	// e.g. "gobl:samlown.example.com" or
+	// "iso6523-actorid-upis::9920:b123123123".
+	From cbc.URI `json:"from,omitempty" jsonschema:"title=From"`
+
+	// To is the URI-form transport address of the envelope's intended
+	// receiver.
+	To cbc.URI `json:"to,omitempty" jsonschema:"title=To"`
+
+	// Ignore lists fully-qualified validation fault codes to suppress when
+	// validating this envelope, e.g. "GOBL-EU-EN16931-ORG-ITEM-01". Intended
+	// for format-conversion cases where a specific, known fault is acceptable.
+	// Covered by the envelope signature when sealed. NOTE: any code may be
+	// listed, including structural envelope/header codes — use deliberately.
+	Ignore []rules.Code `json:"ignore,omitempty" jsonschema:"title=Ignore"`
+}
+
+// RulesContext injects this header's Ignore codes into the validation context
+// so that matching faults are dropped from the result.
+func (h *Header) RulesContext() rules.WithContext {
+	if h == nil || len(h.Ignore) == 0 {
+		return func(*rules.Context) {}
+	}
+	return rules.WithIgnore(h.Ignore...)
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.
@@ -127,9 +164,173 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 	return LinkByCategoryAndKey(h.Links, category, key)
 }
 
+// SigningPayload defines the fields locked by a signature. UUID and
+// Digest identify the document; Iss and Aud are the verifiable origin
+// and audience of *this* signature (as `gobl:` URIs); IssuedAt is the
+// time the signature was produced as a JWT-standard NumericDate (Unix
+// seconds, per RFC 7519 §2). Scope (optional, set via head.WithScope)
+// is the signer's assertion about the level of confidence in the
+// document — e.g. `head.ScopeRegistered` for an address-only check,
+// `head.ScopeVerified` for a KYC-verified countersignature. Header
+// stamps, links, tags, meta, notes and the (unsigned, intent-level)
+// From/To fields can still be modified after signing.
+type SigningPayload struct {
+	UUID     uuid.UUID    `json:"uuid"`
+	Digest   *dsig.Digest `json:"dig"`
+	Iss      cbc.URI      `json:"iss,omitempty"`
+	Aud      cbc.URI      `json:"aud,omitempty"`
+	IssuedAt int64        `json:"iat,omitempty"`
+	Scope    cbc.Key      `json:"scope,omitempty"`
+}
+
+// Known scope values that an Authority can assert when
+// countersigning a /who response (or any envelope it endorses).
+// Operators MAY define additional scope keys; these are the
+// baseline values the protocol recognises.
+const (
+	// ScopeRegistered asserts that the signer has confirmed the
+	// subject controls the named GOBL Net address (e.g. via a
+	// challenge-response over the address's published key). No
+	// identity check beyond ownership of the FQDN.
+	ScopeRegistered cbc.Key = "registered"
+	// ScopeVerified asserts that the signer has performed full
+	// identity verification of the subject (e.g. KYC) in addition
+	// to the address ownership check.
+	ScopeVerified cbc.Key = "verified"
+)
+
+// SignOption configures a call to Header.Sign / Envelope.Sign.
+type SignOption func(*signOptions)
+
+type signOptions struct {
+	iss    cbc.URI
+	aud    cbc.URI
+	scope  cbc.Key
+	signer []dsig.SignerOption
+}
+
+// WithIssuer sets the signer's verifiable GOBL Net address (a gobl: URI)
+// as the `iss` claim of the signed payload. Generic JWT verifiers resolve
+// the public keys by fetching `<iss>/.well-known/jwks.json` from the
+// HTTPS iss URL.
+func WithIssuer(iss cbc.URI) SignOption {
+	return func(o *signOptions) { o.iss = iss }
+}
+
+// WithAudience sets the GOBL Net audience the signature is bound to as
+// the `aud` claim of the signed payload.
+func WithAudience(aud cbc.URI) SignOption {
+	return func(o *signOptions) { o.aud = aud }
+}
+
+// WithScope sets the signer's confidence-level assertion in the
+// signed payload, e.g. head.ScopeRegistered or head.ScopeVerified.
+// Default (no option) leaves Scope empty — the signer makes no
+// assertion beyond the cryptographic facts the signature already
+// proves.
+func WithScope(scope cbc.Key) SignOption {
+	return func(o *signOptions) { o.scope = scope }
+}
+
+// WithSignerOption forwards a low-level dsig.SignerOption (e.g.
+// dsig.WithJKU) through to the underlying JWS signer.
+func WithSignerOption(opts ...dsig.SignerOption) SignOption {
+	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
+}
+
+func (h *Header) payload(iss, aud cbc.URI, iat int64, scope cbc.Key) *SigningPayload {
+	return &SigningPayload{
+		UUID:     h.UUID,
+		Digest:   h.Digest,
+		Iss:      iss,
+		Aud:      aud,
+		IssuedAt: iat,
+		Scope:    scope,
+	}
+}
+
+// Sign creates a JWS signature over the header's document identity
+// (UUID + Digest) together with the current UTC time as a
+// JWT-standard `iat` claim (Unix seconds), and any optional claims
+// configured via options: the signer's GOBL Net identity
+// (head.WithIssuer), the audience it is bound to (head.WithAudience),
+// and a scope assertion (head.WithScope). Generic JWT verifiers
+// resolve the public keys by fetching `<iss>/.well-known/jwks.json`
+// from the HTTPS iss URL — no `jku` header is needed.
+func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature, error) {
+	so := new(signOptions)
+	for _, opt := range opts {
+		opt(so)
+	}
+	iat := time.Now().UTC().Unix()
+	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.scope), so.signer...)
+}
+
+// Verify checks that the signature covers this header's document
+// identity (UUID + Digest). If public keys are provided, the signature
+// must also be cryptographically valid against at least one of them,
+// and when that key declares a validity window the signed `ts` MUST
+// fall within it. The signed iss/aud are part of the statement and are
+// not validated here — read them with SignedPayload.
+func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	if len(keys) == 0 {
+		p := new(SigningPayload)
+		if err := sig.UnsafePayload(p); err != nil {
+			return ErrSignaturePayload
+		}
+		return h.matchPayload(p)
+	}
+	for _, k := range keys {
+		p := new(SigningPayload)
+		if err := sig.VerifyPayload(k, p); err != nil {
+			continue
+		}
+		if err := h.matchPayload(p); err != nil {
+			return err
+		}
+		var iat time.Time
+		if p.IssuedAt > 0 {
+			iat = time.Unix(p.IssuedAt, 0).UTC()
+		}
+		if err := k.Allows(iat); err != nil {
+			return err
+		}
+		return nil
+	}
+	return ErrSignatureKeyMismatch
+}
+
+// SignedPayload extracts the (unverified) signed payload from a
+// signature, used to read iss before fetching the signer's keys.
+func SignedPayload(sig *dsig.Signature) (*SigningPayload, error) {
+	p := new(SigningPayload)
+	if err := sig.UnsafePayload(p); err != nil {
+		return nil, ErrSignaturePayload
+	}
+	return p, nil
+}
+
+func (h *Header) matchPayload(actual *SigningPayload) error {
+	if h.UUID.String() != actual.UUID.String() {
+		return ErrSignatureMismatch
+	}
+	if h.Digest == nil || actual.Digest == nil {
+		if h.Digest != actual.Digest {
+			return ErrSignatureMismatch
+		}
+		return nil
+	}
+	if err := h.Digest.Equals(actual.Digest); err != nil {
+		return ErrSignatureMismatch
+	}
+	return nil
+}
+
 // Contains compares the provided header to ensure that all the fields
 // and properties are contained within the base header. Only a subset of
 // the most important fields are compared.
+//
+// Deprecated: Use Verify with a signature instead.
 func (h *Header) Contains(h2 *Header) bool {
 	if h.UUID.String() != h2.UUID.String() {
 		return false

@@ -74,9 +74,6 @@ var identityTypeDefinitions = []*cbc.Definition{
 //
 // If too many or too few numbers are present, it does nothing.
 func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil {
-		return
-	}
 	switch id.Type {
 	case IdentityTypeOrgNr:
 		// Organization numbers should be numeric only, with no separators

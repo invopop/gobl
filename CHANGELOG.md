@@ -7,6 +7,54 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 
 - `regimes/ad`: Andorra (AD) tax regime with IGI (Impost General Indirecte) support, NRT identity validation and normalisation.
+## [v0.500.0] - 2026-06-10
+
+GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.
+
+Normalization has been rebuilt around the new `norm` package — the counterpart to `rules` — replacing the previous per-type `Normalize` methods with registered normalizers. Addons can now also live in their own modules: approved external addon keys are recognised by core while the implementation is maintained separately, starting with the French CTC ([gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc)) and Saudi Arabia ZATCA ([gobl.sa.zatca](https://github.com/invopop/gobl.sa.zatca)) addons.
+
+### Changed
+
+- **breaking**: the GOBL CLI (`cmd/gobl`), HTTP API handler (`pkg/api`), MCP server, and WASM build have moved to [`github.com/invopop/gobl.dev`](https://github.com/invopop/gobl.dev). Install the CLI with `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.
+- **breaking**: normalization moved to the new `norm` package — normalizers are registered against a type (with optional guards) instead of declared as `Normalize` methods. Removed `tax.Normalizers`/`tax.Normalize`, the `Normalizer` field on `tax.AddonDef` and `tax.RegimeDef`, and the per-type `Normalize` methods. Addons can no longer be added during normalization — declare all required `$addons` up front.
+- `addons/fr/ctc`: **breaking**: the French CTC addon moved to the standalone [`github.com/invopop/gobl.fr.ctc`](https://github.com/invopop/gobl.fr.ctc) module. Add a blank import of `gobl.fr.ctc/addon` to keep using the `fr-ctc-*` addon keys.
+- `head`: signing payload is now `{uuid, dig, iss, aud, iat}` — each signature carries the signer's GOBL Net identity (`iss`), an optional audience (`aud`), and an issued-at claim (`iat`). `iss` and `aud` are set with the `head.WithIssuer` and `head.WithAudience` signing options; `Contains` is deprecated in favour of `Verify`.
+- `dsig`: **breaking**: `PublicKey` gains optional `valid_from`/`valid_until` validity-window fields, enforced automatically by `head.Header.Verify`; `Allows` now takes a `time.Time`. Removed `WithGN`/`Signature.GN()` and the `gn` JWS header. Key IDs are now time-ordered UUIDv7.
+- `net`: **breaking**: public keys are fetched individually from `/.well-known/gobl/keys/<kid>` via `Client.FetchKey`; the `KeySet`/`PublishedKey` types and bulk `/keys` endpoint are removed.
+- `net`: the default `HTTPFetcher` refuses to dial loopback, private, link-local, multicast, or unspecified addresses; tests should inject their own `Fetcher` via `WithFetcher`.
+- `net`: `ParseAddress` normalizes internationalized domain names (IDN) to their ASCII/Punycode form and rejects invalid labels.
+- `cbc.Code`: **breaking**: default normalization and validation are now lenient — Unicode NFC, control-character removal, and whitespace trimming only. The previous strict behavior remains available via `NormalizeStrictCode` and the `cbc.StrictCode` validator.
+
+### Added
+
+- `norm`: new package providing registered, reflective normalization — `norm.For`, `Register`/`RegisterWithGuard`, and a single-pass engine that applies matching normalizers across the document graph.
+- `tax`: approved external-addon registry (`tax.RegisterApprovedAddon`, `tax.ApprovedAddons`) — addon keys implemented in separate modules are recognised as valid `$addons` values in the JSON Schema, though the implementing module must still be imported for `Calculate`/`Validate`. First entries: the French CTC keys and `sa-zatca-v1`.
+- `pkg/examples`: reusable golden-test helpers (`Run`, `Convert`, `Sources`, etc.) so external addon and converter modules can test example documents with the same conventions as core.
+- `net`: new package for GOBL Net remote verification using FQDN-based addresses, with `Address`, `Client.FetchPublicKey`/`VerifyEnvelope`/`VerifyAuthority`, and an `Authorities` registry.
+- `head`: `Sign`/`Verify` methods on `Header`, a `Scope` signing payload field with `head.WithScope` option, unsigned `from`/`to` routing fields, and envelope-level fault ignoring for dropping rule fault codes during validation.
+- `cbc`: new `URI` scalar type (generic `scheme:opaque` URI).
+- `org`: `Endpoint` model and `Party.Endpoints` as the going-forward way to carry routing addresses; `org.Inbox` is retained for formats that still need it. The `eu/en16931` addon copies `peppol` inboxes into equivalent endpoints.
+- `gobl.EndpointResolver`: documents implementing `FromEndpoint`/`ToEndpoint` have header `from`/`to` filled automatically during `Calculate()`; implemented by all `bill` document types with direction based on document type and tags.
+- `bill`: document lifecycle support — new `bill.Status` model and `bill.Payment` advice/receipt types for clearance and lifecycle messages.
+- `org`: new units with UN/ECE codes (`wk`, `yr`, `dl`, `kl`, `cg`, `lm`, `lft`, `pkt`, `bdl`, `blk`) and a `Symbol` field on unit definitions.
+- `rules`: `is.OneOf` and `is.AnyOf` testers, plus `rules.Ignore` for by-code fault dropping.
+- `tax`: `Addons.AddAddons` helper; `en16931.NormalizeTaxCombo` made public.
+- `regimes/sa`: new tax regime for Saudi Arabia (ZATCA), including VAT identity validation and commercial-registration identities. The `sa-zatca-v1` e-invoicing addon lives in [`github.com/invopop/gobl.sa.zatca`](https://github.com/invopop/gobl.sa.zatca).
+- `regimes/no`: new tax regime for Norway.
+- `data/catalogues/cef`: Saudi Arabia VAT exemption codes (`VATEX-SA-*`).
+- `bill`: added `other` delivery type for deliveries that don't fit standard categories.
+- `pt-saft-v1`: delivery returns support — new `return` delivery tag, used alongside a regular delivery type, which sets the `GD` (Guia de Devolução) movement type extension; plus rules for delivery `preceding` references.
+- `regimes/pt`: added `at-doc-code` stamp provider key for the AT document code.
+- `br-nfe-v4`: NF-e invoice lines now require the `br-nfe-cfop` extension; new `sefaz-key`/`sefaz-auth` stamp constants in the BR regime.
+- `es-tbai-v1`: added `es-tbai-regime` and `es-tbai-identity-type` extensions.
+
+### Fixed
+
+- `num`: `Amount` arithmetic now uses `math/big` internally, fixing silent `int64` overflows with values that have many significant digits.
+- `norm`: normalization prunes `nil` entries from slices in the document graph, preventing panics in normalizers and validators that iterate them.
+- `tax`: `CorrectionDefinition.Merge` deduplicates merged types, extensions, and stamps.
+- `pt-saft-v1`: removed correction definition types already defined in the PT regime.
+- `de`: corrected historical VAT rates and replaced the OECD source with official German government sources.
 
 ## [v0.403.0] - 2026-05-13
 
@@ -34,6 +82,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `ar-arca-v4`: Correction flow now uses `CorrectionNormalize` to properly route doc-type to the invoice and copy original extensions to preceding.
 - `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
+
+### Fixed
+
+- `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
 
 ## [v0.402.0] - 2026-04-30
 

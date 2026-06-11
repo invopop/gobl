@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/sg"
 	"github.com/invopop/gobl/rules"
@@ -12,14 +13,12 @@ import (
 )
 
 func TestIdentityNormalization(t *testing.T) {
-	r := tax.RegimeDefFor("SG")
-
 	t.Run("normalize GST number", func(t *testing.T) {
 		id := &org.Identity{
 			Type: sg.IdentityTypeUEN,
 			Code: "SG.M91234 56 .7X",
 		}
-		r.NormalizeObject(id)
+		norm.Normalize(id, tax.RegimeContext("SG"))
 		assert.Equal(t, "M91234567X", id.Code.String())
 	})
 }
