@@ -1,0 +1,216 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Andorra"
+  },
+  "description": {
+    "en": "Andorra's tax system is administered by the Departament de Tributs i de\nFronteres under the Ministeri de Finances. Despite a customs union with\nthe European Union, Andorra is not part of the EU VAT area and operates\nits own indirect tax regime.\n\nThe Impost General Indirecte (IGI), introduced on 1 January 2013 by\nLlei 11/2012, replaced the previous sales tax system. IGI applies at\nfive rates: a super-reduced rate (0%) for healthcare, education, gold\ninvestment and certain non-profit services; a reduced rate (1%) for\nfood, books and magazines; a special rate (2.5%) for public transport\nand cultural services; the general rate (4.5%); and an increased rate\n(9.5%) for banking and financial services. The 4.5% general rate is\nthe lowest standard indirect-tax rate in Europe.\n\nAll taxpayers (resident or non-resident, natural or legal) are\nidentified by a Número de Registre Tributari (NRT). The NRT consists\nof one letter indicating taxpayer type (F for resident individuals,\nE for non-resident individuals, A for joint-stock companies, L for\nlimited liability companies, and others for further entity types),\nfollowed by six digits and a check letter. The check-letter algorithm\nis not publicly published by the tax authority, so validation here is\nformat-only; semantic verification requires the official portal.\n\nAndorra uses the euro as its official currency under a monetary\nagreement with the European Union, although it does not mint coins\nas a full eurozone member would."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Llei 11/2012, del 21 de juny, de l'impost general indirecte"
+      },
+      "url": "https://www.consellgeneral.ad/ca/arxiu/arxiu-de-lleis-i-textos-aprovats-en-legislatures-anteriors/vi-legislatura-2011-2015/copy_of_lleis-aprovades/decret-legislatiu-del-23-07-2014-de-publicacio-del-text-refos-de-la-llei-11-2012-del-21-de-juny-de-l2019impost-general-indirecte/at_download/PDF"
+    }
+  ],
+  "time_zone": "Europe/Andorra",
+  "country": "AD",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "NRT",
+      "name": {
+        "ca": "Número de Registre Tributari (NRT)",
+        "en": "Tax Register Number (NRT)",
+        "es": "Número de Registro Tributario (NRT)"
+      },
+      "desc": {
+        "en": "The Número de Registre Tributari (NRT) is the sole tax identifier\nissued to all taxpayers in Andorra — resident and non-resident,\nindividuals and legal entities — by the Departament de Tributs i\nde Fronteres.\n\nThe first letter encodes the taxpayer category: F for resident\nindividuals, E for non-resident individuals, A for joint-stock\ncompanies (SA), L for limited liability companies (SL), and other\nletters for cooperatives, foundations, public bodies and\nspecial-purpose entities.\n\nThe NRT is used for all tax declarations including IGI, corporate\ntax, and customs. Entities below the €40,000 annual IGI threshold\nhold an NRT but are not required to register for IGI."
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ca": "IGI",
+        "en": "IGI",
+        "es": "IGI"
+      },
+      "title": {
+        "ca": "Impost General Indirecte",
+        "en": "Indirect General Tax",
+        "es": "Impuesto General Indirecto"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus de gravamen general",
+            "en": "General rate",
+            "es": "Tipo de gravamen general"
+          },
+          "desc": {
+            "en": "Standard IGI rate applied to most goods and services. At 4.5% it is the lowest standard indirect tax rate in Europe."
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "4.5%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "ca": "Tipus de gravamen superreduït",
+            "en": "Super-reduced rate",
+            "es": "Tipo de gravamen superreducido"
+          },
+          "desc": {
+            "en": "Zero-rated IGI applied to healthcare by public or para-public entities, education at all levels, social assistance services, residential property rentals, CASS-reimbursable medications, and sports services provided by non-profit organisations."
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus de gravamen reduït",
+            "en": "Reduced rate",
+            "es": "Tipo de gravamen reducido"
+          },
+          "desc": {
+            "en": "Reduced IGI rate applied to food and beverages for human or animal consumption (excluding alcohol), water, and books, newspapers and magazines not consisting exclusively of advertising."
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "1%"
+            }
+          ]
+        },
+        {
+          "rate": "special",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus de gravamen especial",
+            "en": "Special rate",
+            "es": "Tipo de gravamen especial"
+          },
+          "desc": {
+            "en": "Special IGI rate applied to passenger transport, cultural and artistic services not provided by public or non-profit entities, and antiques, collectibles and works of art."
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "2.5%"
+            }
+          ]
+        },
+        {
+          "rate": "other",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus de gravamen incrementat",
+            "en": "Increased rate",
+            "es": "Tipo de gravamen incrementado"
+          },
+          "desc": {
+            "en": "Increased IGI rate applied to banking and financial services."
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "9.5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Departament de Tributs i de Fronteres - IGI"
+          },
+          "url": "https://www.e-tramits.ad/tramits/impostos/igi"
+        }
+      ]
+    }
+  ]
+}

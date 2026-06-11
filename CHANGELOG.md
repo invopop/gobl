@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+- `regimes/ad`: Andorra (AD) tax regime with IGI (Impost General Indirecte) support, NRT identity validation and normalisation.
 ## [v0.500.0] - 2026-06-10
 
 GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.
