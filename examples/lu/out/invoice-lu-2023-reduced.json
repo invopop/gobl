@@ -1,0 +1,124 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "10806af504448415db3f39f856027d65ca06a62d5bada30713eea87246b58a48"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "LU",
+		"uuid": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+		"type": "standard",
+		"series": "2023",
+		"code": "0015",
+		"issue_date": "2023-06-15",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Acme Luxembourg S.A.",
+			"tax_id": {
+				"country": "LU",
+				"code": "26375245"
+			},
+			"identities": [
+				{
+					"type": "RCS",
+					"code": "B263475"
+				}
+			],
+			"addresses": [
+				{
+					"street": "14 Rue Erasme",
+					"locality": "Luxembourg",
+					"code": "1468",
+					"country": "LU"
+				}
+			]
+		},
+		"customer": {
+			"name": "Entreprise Martin S.à r.l.",
+			"tax_id": {
+				"country": "LU",
+				"code": "12345613"
+			},
+			"addresses": [
+				{
+					"street": "5 Boulevard Royal",
+					"locality": "Luxembourg",
+					"code": "2449",
+					"country": "LU"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Legal advisory services",
+					"price": "4000.00"
+				},
+				"sum": "20000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "16.0%"
+					}
+				],
+				"total": "20000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Still water (1L)",
+					"price": "1.80"
+				},
+				"sum": "90.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "7.0%"
+					}
+				],
+				"total": "90.00"
+			}
+		],
+		"totals": {
+			"sum": "20090.00",
+			"total": "20090.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "20000.00",
+								"percent": "16.0%",
+								"amount": "3200.00"
+							},
+							{
+								"key": "standard",
+								"base": "90.00",
+								"percent": "7.0%",
+								"amount": "6.30"
+							}
+						],
+						"amount": "3206.30"
+					}
+				],
+				"sum": "3206.30"
+			},
+			"tax": "3206.30",
+			"total_with_tax": "23296.30",
+			"payable": "23296.30"
+		}
+	}
+}
