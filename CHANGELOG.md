@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
+- `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternativaly to a tax ID.
+- `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
+
+### Changed
+
+- `addons/br/nfe`: Customer address `state` presence validation and the `br-ibge-municipality` extension are now applied to Brazilian parties only.
+
 ## [v0.500.0] - 2026-06-10
 
 GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.
