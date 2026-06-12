@@ -104,3 +104,45 @@ func TestItemJSONSchema(t *testing.T) {
 	assert.Equal(t, org.ItemKeyServices, prop.AnyOf[1].Const)
 	assert.Equal(t, "Services", prop.AnyOf[1].Title)
 }
+
+func TestItemBaseQuantity(t *testing.T) {
+	t.Run("positive", func(t *testing.T) {
+		i := &org.Item{
+			Name:         "test item",
+			Price:        num.NewAmount(123, 2),
+			BaseQuantity: num.NewAmount(100, 0),
+		}
+		assert.NoError(t, rules.Validate(i))
+	})
+	t.Run("zero", func(t *testing.T) {
+		i := &org.Item{
+			Name:         "test item",
+			Price:        num.NewAmount(123, 2),
+			BaseQuantity: num.NewAmount(0, 0),
+		}
+		assert.ErrorContains(t, rules.Validate(i), "item base quantity must be positive")
+	})
+	t.Run("negative", func(t *testing.T) {
+		i := &org.Item{
+			Name:         "test item",
+			Price:        num.NewAmount(123, 2),
+			BaseQuantity: num.NewAmount(-100, 0),
+		}
+		assert.ErrorContains(t, rules.Validate(i), "item base quantity must be positive")
+	})
+}
+
+func TestItemAttributesNormalization(t *testing.T) {
+	i := &org.Item{
+		Name: "test item",
+		Attributes: []*org.Attribute{
+			nil,
+			{},
+			{Name: " Colour ", Value: " Black "},
+		},
+	}
+	norm.Normalize(i)
+	require.Len(t, i.Attributes, 1)
+	assert.Equal(t, "Colour", i.Attributes[0].Name)
+	assert.Equal(t, "Black", i.Attributes[0].Value)
+}

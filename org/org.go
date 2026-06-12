@@ -9,6 +9,7 @@ import (
 func init() {
 	schema.Register(schema.GOBL.Add("org"),
 		Address{},
+		Attribute{},
 		Coordinates{},
 		DocumentRef{},
 		Email{},
@@ -31,6 +32,7 @@ func init() {
 		"org",
 		rules.GOBL.Add("ORG"),
 		attachmentRules(),
+		attributeRules(),
 		coordinatesRules(),
 		documentRefRules(),
 		emailRules(),

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/attribute",
+  "$ref": "#/$defs/org.Attribute",
+  "$defs": {
+    "org.Attribute": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the attribute or property."
+        },
+        "value": {
+          "type": "string",
+          "title": "Value",
+          "description": "Value of the attribute or property."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
+      "description": "Attribute describes a named feature or property of the parent object, such as the colour or size of an item."
+    }
+  }
+}

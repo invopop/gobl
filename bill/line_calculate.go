@@ -2,6 +2,7 @@ package bill
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -101,6 +102,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
+	sum = applyItemBaseQuantity(sum, l.Item)
 	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(l.Discounts, sum, total, cur, rr)
@@ -142,6 +144,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
+	sum = applyItemBaseQuantity(sum, sl.Item)
 	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(sl.Discounts, sum, total, cur, rr)
@@ -198,6 +201,19 @@ func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount
 		total = total.Add(c.Amount)
 	}
 	return total
+}
+
+// applyItemBaseQuantity divides the sum by the item's base quantity, used
+// when the item's price refers to a number of units other than one. The sum
+// is upscaled to cover the decimal places the division may introduce so
+// that precision is maintained until rounding is applied.
+func applyItemBaseQuantity(sum num.Amount, item *org.Item) num.Amount {
+	bq := item.BaseQuantity
+	if bq == nil || bq.IsZero() {
+		return sum
+	}
+	extra := uint32(len(strconv.FormatInt(bq.Rescale(0).Value(), 10)))
+	return sum.Upscale(extra).Divide(*bq)
 }
 
 // calculateItemPrice will attempt to perform any currency conversion process on

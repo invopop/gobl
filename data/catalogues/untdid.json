@@ -9605,6 +9605,16 @@
       ]
     },
     {
+      "key": "untdid-item-type-version",
+      "name": {
+        "en": "UNTDID 7143 Item Type Version"
+      },
+      "desc": {
+        "en": "Version of the classification scheme referenced by the `untdid-item-type` extension, as defined by the scheme maintainer. For example, \"2008\" for CPV 2008 or \"19.05.01\" for an UNSPSC release."
+      },
+      "pattern": "^.{1,32}$"
+    },
+    {
       "key": "untdid-charge",
       "name": {
         "en": "UNTDID 7161 Charge"

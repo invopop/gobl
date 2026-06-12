@@ -34,6 +34,8 @@ const (
 	IdentityKeyGTIN      cbc.Key = "gtin"      // GS1 Global Trade Item Number
 	IdentityKeyEAN       cbc.Key = "ean"       // European Article Number
 	IdentityKeyUPC       cbc.Key = "upc"       // UPC (Universal Product Code)
+	IdentityKeyCPV       cbc.Key = "cpv"       // EU Common Procurement Vocabulary
+	IdentityKeyUNSPSC    cbc.Key = "unspsc"    // United Nations Standard Products and Services Code
 	IdentityKeyIMEI      cbc.Key = "imei"      // International Mobile Equipment Identity
 	IdentityKeyDUNS      cbc.Key = "duns"      // Dun & Bradstreet D-U-N-S Number
 	IdentityKeyNCM       cbc.Key = "ncm"       // Mercosur Common Nomenclature
@@ -42,8 +44,15 @@ const (
 
 // Identity scopes that may be used to further classify an identity's intended use.
 const (
-	IdentityScopeTax   cbc.Key = "tax"
+	IdentityScopeTax cbc.Key = "tax"
+	// IdentityScopeLegal is used for identities issued by an official
+	// registry, such as a company registration number for parties or a
+	// registered identification scheme like the GS1 GTIN for items.
 	IdentityScopeLegal cbc.Key = "legal"
+	// IdentityScopeClass indicates that the code groups the parent object
+	// into a category of a classification scheme, such as UNSPSC, CPV, or
+	// HS codes for items, as opposed to uniquely identifying it.
+	IdentityScopeClass cbc.Key = "class"
 )
 
 // Identity is used to define a code for a specific context. Identities can be used for
@@ -76,8 +85,8 @@ func identityRules() *rules.Set {
 			rules.Assert("01", "identity code must be provided", is.Present),
 		),
 		rules.Field("scope",
-			rules.AssertIfPresent("02", "identity scope when provided must be either 'tax' or 'legal'",
-				is.In(IdentityScopeTax, IdentityScopeLegal),
+			rules.AssertIfPresent("02", "identity scope when provided must be one of 'tax', 'legal', or 'class'",
+				is.In(IdentityScopeTax, IdentityScopeLegal, IdentityScopeClass),
 			),
 		),
 		rules.Assert("03", "identity must have either a key or type defined, but not both",
@@ -244,6 +253,10 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 			{
 				Const: IdentityScopeLegal,
 				Title: "Legal",
+			},
+			{
+				Const: IdentityScopeClass,
+				Title: "Classification",
 			},
 		}
 	}

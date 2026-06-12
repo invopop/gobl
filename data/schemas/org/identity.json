@@ -26,6 +26,10 @@
             {
               "const": "legal",
               "title": "Legal"
+            },
+            {
+              "const": "class",
+              "title": "Classification"
             }
           ],
           "title": "Scope",

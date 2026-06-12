@@ -390,3 +390,169 @@ func TestOrgInboxValidate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+
+func TestOrgIdentityScopeNormalize(t *testing.T) {
+	t.Run("gtin key implies legal scope", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  org.IdentityKeyGTIN,
+			Code: "9501101530003",
+		}
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.IdentityScopeLegal, id.Scope)
+		assert.Equal(t, "0160", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("ean and upc keys are gtin aliases", func(t *testing.T) {
+		for _, key := range []cbc.Key{org.IdentityKeyEAN, org.IdentityKeyUPC} {
+			id := &org.Identity{
+				Key:  key,
+				Code: "5012345678900",
+			}
+			norm.Normalize(id, tax.AddonContext(en16931.V2017))
+			assert.Equal(t, org.IdentityScopeLegal, id.Scope)
+			assert.Equal(t, "0160", id.Ext.Get(iso.ExtKeySchemeID).String())
+		}
+	})
+	t.Run("classification keys imply classification scope", func(t *testing.T) {
+		tests := map[cbc.Key]string{
+			org.IdentityKeyHSN:    "HS",
+			org.IdentityKeyCPV:    "STI",
+			org.IdentityKeyUNSPSC: "TST",
+		}
+		for key, scheme := range tests {
+			id := &org.Identity{
+				Key:  key,
+				Code: "03222200",
+			}
+			norm.Normalize(id, tax.AddonContext(en16931.V2017))
+			assert.Equal(t, org.IdentityScopeClass, id.Scope, key.String())
+			assert.Equal(t, scheme, id.Ext.Get(untdid.ExtKeyItemType).String(), key.String())
+		}
+	})
+	t.Run("existing item type extension implies scope", func(t *testing.T) {
+		id := &org.Identity{
+			Code: "09348023",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyItemType: "TST",
+			}),
+		}
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.IdentityScopeClass, id.Scope)
+	})
+	t.Run("does not override existing scope", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: org.IdentityScopeTax,
+			Code:  "09348023",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyItemType: "TST",
+			}),
+		}
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.IdentityScopeTax, id.Scope)
+	})
+	t.Run("gln key keeps scope empty", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  org.IdentityKeyGLN,
+			Code: "1234567890123",
+		}
+		norm.Normalize(id, tax.AddonContext(en16931.V2017))
+		assert.Empty(t, id.Scope)
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+}
+
+func TestOrgIdentityScopeValidate(t *testing.T) {
+	t.Run("classification scope requires item type extension", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: org.IdentityScopeClass,
+			Code:  "09348023",
+		}
+		err := rules.Validate(id, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "untdid-item-type")
+	})
+	t.Run("classification scope with extension is valid", func(t *testing.T) {
+		id := &org.Identity{
+			Scope: org.IdentityScopeClass,
+			Code:  "09348023",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyItemType: "TST",
+			}),
+		}
+		assert.NoError(t, rules.Validate(id, tax.AddonContext(en16931.V2017)))
+	})
+	t.Run("legal scope alone has no identity-level requirements", func(t *testing.T) {
+		// Party identities also use the legal scope without a scheme; the
+		// iso-scheme-id binding is enforced at the item level instead.
+		id := &org.Identity{
+			Scope: org.IdentityScopeLegal,
+			Code:  "9501101530003",
+		}
+		assert.NoError(t, rules.Validate(id, tax.AddonContext(en16931.V2017)))
+	})
+	t.Run("no scope has no extension requirements", func(t *testing.T) {
+		id := &org.Identity{
+			Code: "INTERNAL-123",
+		}
+		assert.NoError(t, rules.Validate(id, tax.AddonContext(en16931.V2017)))
+	})
+}
+
+func TestOrgItemLegalIdentities(t *testing.T) {
+	t.Run("max one legal identity", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test",
+			Unit: org.UnitOne,
+			Identities: []*org.Identity{
+				{
+					Scope: org.IdentityScopeLegal,
+					Code:  "9501101530003",
+					Ext:   tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0160"}),
+				},
+				{
+					Scope: org.IdentityScopeLegal,
+					Code:  "5012345678900",
+					Ext:   tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0160"}),
+				},
+			},
+		}
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "cannot have more than one identity with the 'legal' scope")
+	})
+	t.Run("legal identity without scheme fails", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test",
+			Unit: org.UnitOne,
+			Identities: []*org.Identity{
+				{
+					Scope: org.IdentityScopeLegal,
+					Code:  "9501101530003",
+				},
+			},
+		}
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "legal identities require the 'iso-scheme-id' extension")
+	})
+	t.Run("one legal identity with classifications", func(t *testing.T) {
+		item := &org.Item{
+			Name: "Test",
+			Unit: org.UnitOne,
+			Identities: []*org.Identity{
+				{
+					Scope: org.IdentityScopeLegal,
+					Code:  "9501101530003",
+					Ext:   tax.ExtensionsOf(cbc.CodeMap{iso.ExtKeySchemeID: "0160"}),
+				},
+				{
+					Scope: org.IdentityScopeClass,
+					Code:  "09348023",
+					Ext:   tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyItemType: "TST"}),
+				},
+				{
+					Scope: org.IdentityScopeClass,
+					Code:  "86776",
+					Ext:   tax.ExtensionsOf(cbc.CodeMap{untdid.ExtKeyItemType: "STI"}),
+				},
+			},
+		}
+		assert.NoError(t, rules.Validate(item, tax.AddonContext(en16931.V2017)))
+	})
+}
