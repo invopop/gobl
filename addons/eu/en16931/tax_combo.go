@@ -72,6 +72,12 @@ func taxComboRules() *rules.Set {
 			rules.Assert("01", "tax category extension is required",
 				tax.ExtensionsRequire(untdid.ExtKeyTaxCategory),
 			),
+			// BR-CL-22: the catalogue only enforces the VATEX code shape;
+			// the EN16931 list is asserted here so that country profiles
+			// can suppress this rule and assert their own extended lists.
+			rules.Assert("08", "VATEX code must belong to the CEF VATEX code list (BR-CL-22)",
+				tax.ExtensionsHasCodes(cef.ExtKeyVATEX, vatexCodes...),
+			),
 		),
 		rules.When(is.Func("is VAT", taxComboIsVAT),
 			rules.Field("ext",
