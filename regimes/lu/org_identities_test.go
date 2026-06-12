@@ -56,17 +56,18 @@ func TestValidateOrgIdentity(t *testing.T) {
 		code  cbc.Code
 		valid bool
 	}{
-		{name: "B register", code: "B263475", valid: true},
-		{name: "F register", code: "F12345", valid: true},
-		{name: "G register", code: "G45678", valid: true},
-		{name: "H register", code: "H1234", valid: true},
+		{name: "section A (sole trader)", code: "A12345", valid: true},
+		{name: "section B (commercial company)", code: "B263475", valid: true},
+		{name: "section C (GIE)", code: "C123", valid: true},
+		{name: "section E (civil company)", code: "E4567", valid: true},
 		{name: "single digit", code: "B1", valid: true},
 		// invalid cases
-		{name: "wrong letter", code: "A263475"},
+		{name: "two letters", code: "AB12345"},
 		{name: "lowercase", code: "b263475"},
 		{name: "no digits", code: "B"},
 		{name: "too many digits", code: "B1234567"},
 		{name: "digits only", code: "263475"},
+		{name: "letter at end", code: "263475B"},
 		{name: "empty code", code: ""},
 	}
 

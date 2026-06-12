@@ -50,9 +50,10 @@ func New() *tax.RegimeDef {
 
 				Luxembourg has four non-zero VAT rates: a standard rate, an intermediate
 				("parking") rate, a reduced rate, and a super-reduced rate. A temporary
-				one-percentage-point reduction was applied across all rates throughout 2023
-				as a cost-of-living measure, before the rates were restored to their
-				pre-2023 levels on 1 January 2024.
+				one-percentage-point reduction applied to the standard, intermediate, and
+				reduced rates throughout 2023 as a cost-of-living measure (Law of 26
+				October 2022), before the rates were restored to their pre-2023 levels
+				on 1 January 2024.
 
 				Businesses are identified by their TVA number (LU followed by 8 digits,
 				where the last two digits are a mod-89 check code) and optionally by their
