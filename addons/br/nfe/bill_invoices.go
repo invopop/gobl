@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
@@ -47,6 +48,9 @@ func billInvoiceRules() *rules.Set {
 					rules.Field("code",
 						rules.Assert("08", "invoice supplier address requires a postal code", is.Present),
 					),
+					rules.Field("country",
+						rules.Assert("37", "invoice supplier address requires a country", is.Present),
+					),
 				),
 			),
 			rules.When(
@@ -76,8 +80,13 @@ func billInvoiceRules() *rules.Set {
 		),
 		// Customer: general party validation when present
 		rules.Field("customer",
+			rules.When(
+				is.Func("no tax ID", hasNoTaxID),
+				rules.Assert("36", "invoice customer must have a tax ID or a foreign country identity",
+					is.Func("has foreign country identity", hasForeignCountryIdentity),
+				),
+			),
 			rules.Field("tax_id",
-				rules.Assert("14", "invoice customer tax ID is required", is.Present),
 				rules.Field("code",
 					rules.Assert("15", "invoice customer tax ID code is required", is.Present),
 				),
@@ -94,19 +103,29 @@ func billInvoiceRules() *rules.Set {
 					rules.Field("locality",
 						rules.Assert("19", "invoice customer address requires a locality", is.Present),
 					),
-					rules.Field("state",
-						rules.Assert("20", "invoice customer address requires a state", is.Present),
-					),
 					rules.Field("code",
 						rules.Assert("21", "invoice customer address requires a postal code", is.Present),
+					),
+					rules.Field("country",
+						rules.Assert("38", "invoice customer address requires a country", is.Present),
 					),
 				),
 			),
 			rules.When(
-				is.Func("has addresses", partyHasAddresses),
-				rules.Field("ext",
-					rules.Assert("22", fmt.Sprintf("invoice customer requires '%s' extension when addresses are present", br.ExtKeyMunicipality),
-						tax.ExtensionsRequire(br.ExtKeyMunicipality),
+				is.Func("is Brazilian", partyIsBrazilian),
+				rules.Field("addresses",
+					rules.Each(
+						rules.Field("state",
+							rules.Assert("20", "invoice customer address requires a state", is.Present),
+						),
+					),
+				),
+				rules.When(
+					is.Func("has addresses", partyHasAddresses),
+					rules.Field("ext",
+						rules.Assert("22", fmt.Sprintf("invoice customer requires '%s' extension when addresses are present", br.ExtKeyMunicipality),
+							tax.ExtensionsRequire(br.ExtKeyMunicipality),
+						),
 					),
 				),
 			),
@@ -185,13 +204,6 @@ func billInvoiceRules() *rules.Set {
 	)
 }
 
-// partyHasAddresses checks if a party has addresses (used in When conditions
-// on both supplier and customer).
-func partyHasAddresses(val any) bool {
-	p, ok := val.(*org.Party)
-	return ok && p != nil && len(p.Addresses) > 0
-}
-
 // invoiceIsNFe checks if the invoice's tax model is NF-e.
 func invoiceIsNFe(val any) bool {
 	inv, ok := val.(*bill.Invoice)
@@ -250,4 +262,32 @@ func amountZeroOrPositive(val any) bool {
 
 func isNFe(t *bill.Tax) bool {
 	return t != nil && t.Ext.Get(ExtKeyModel) == ModelNFe
+}
+
+func partyHasAddresses(val any) bool {
+	p, ok := val.(*org.Party)
+	return ok && p != nil && len(p.Addresses) > 0
+}
+
+func partyIsBrazilian(val any) bool {
+	p, ok := val.(*org.Party)
+	return ok && p != nil && p.TaxID != nil && p.TaxID.Country == l10n.BR.Tax()
+}
+
+func hasNoTaxID(val any) bool {
+	p, ok := val.(*org.Party)
+	return ok && p != nil && p.TaxID == nil
+}
+
+func hasForeignCountryIdentity(val any) bool {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return false
+	}
+	for _, id := range p.Identities {
+		if id != nil && !id.Country.Empty() && id.Country != l10n.BR.ISO() {
+			return true
+		}
+	}
+	return false
 }
