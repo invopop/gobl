@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `org`: new `Attribute` model with `Item.Attributes` for named item features such as colour or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data.
+- `org`: `Item.BaseQuantity` — the number of units the item's price refers to (e.g. a price per 100 units, EN 16931 BT-149). Line sums are calculated as `price × quantity ÷ base_quantity`. The unit is always the line's quantity unit.
+- `org`: new identity scope `class`, and the `legal` scope extended to items. A `legal` item identity is issued under a registered identification scheme (e.g. GS1 GTIN, EN 16931 BT-157); a `class` identity groups the item into a category scheme such as UNSPSC, CPV, or HS (BT-158). The scope declares what the identity is; addons bind and enforce the extensions each scope requires.
+- `org`: new identity keys `cpv` and `unspsc`.
+- `bill`: `Line.BuyerRef` and `SubLine.BuyerRef` — the reference code assigned by the buyer to identify the item or service supplied on the line (EN 16931 BT-156). The buyer's code is customer–item relationship data, so it lives on the line rather than on the item.
+- `data/catalogues/untdid`: new `untdid-item-type-version` extension to carry the version of the scheme referenced by `untdid-item-type` (BT-158-2).
+- `eu-en16931`: identity normalizations — `gtin`/`ean`/`upc` keys imply the `legal` scope with ISO 6523 scheme `0160`; `hsn`/`cpv`/`unspsc` keys imply the `class` scope with the matching UNTDID 7143 code; identities already carrying `untdid-item-type` gain the `class` scope.
+- `eu-en16931`: identity rules — `class` identities require the `untdid-item-type` extension (BT-158/BR-CL-13); items allow at most one `legal` identity (BT-157) and item `legal` identities require `iso-scheme-id` (BR-64). The scheme requirement is enforced at the item level since party identities also use the `legal` scope without one.
+
 ## [v0.500.0] - 2026-06-10
 
 GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.

@@ -166,7 +166,7 @@ func TestIdentityRules(t *testing.T) {
 		faults := rules.Validate(id)
 		require.Error(t, faults)
 		assert.True(t, faults.HasCode("GOBL-ORG-IDENTITY-02"))
-		assert.Contains(t, faults.Error(), "identity scope when provided must be either 'tax' or 'legal'")
+		assert.Contains(t, faults.Error(), "identity scope when provided must be one of 'tax', 'legal', or 'class'")
 	})
 	t.Run("with no scope", func(t *testing.T) {
 		id := &org.Identity{
@@ -384,9 +384,11 @@ func TestIdentityJSONSchema(t *testing.T) {
 
 	prop, ok := js.Properties.Get("scope")
 	assert.True(t, ok)
-	assert.Len(t, prop.OneOf, 2)
+	assert.Len(t, prop.OneOf, 3)
 	assert.Equal(t, org.IdentityScopeTax, prop.OneOf[0].Const)
 	assert.Equal(t, "Tax", prop.OneOf[0].Title)
 	assert.Equal(t, org.IdentityScopeLegal, prop.OneOf[1].Const)
 	assert.Equal(t, "Legal", prop.OneOf[1].Title)
+	assert.Equal(t, org.IdentityScopeClass, prop.OneOf[2].Const)
+	assert.Equal(t, "Classification", prop.OneOf[2].Title)
 }

@@ -38,6 +38,9 @@ type Item struct {
 	Name string `json:"name" jsonschema:"title=Name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Attributes describe named features or properties of the item, such as
+	// colour or size.
+	Attributes []*Attribute `json:"attributes,omitempty" jsonschema:"title=Attributes"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Images associated with the item.
@@ -49,6 +52,10 @@ type Item struct {
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
+	// Number of units the price refers to, e.g. a price per 100 units.
+	// Assumed to be 1 when left empty. The same unit of measure as the
+	// parent line's quantity applies.
+	BaseQuantity *num.Amount `json:"base_quantity,omitempty" jsonschema:"title=Base Quantity"`
 	// Unit of measure.
 	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Country code of where this item was from originally.
@@ -66,6 +73,9 @@ func itemRules() *rules.Set {
 		),
 		rules.Field("price",
 			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
+		),
+		rules.Field("base_quantity",
+			rules.AssertIfPresent("03", "item base quantity must be positive", num.Positive),
 		),
 	)
 }
@@ -94,4 +104,5 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 func normalizeItem(i *Item) {
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
+	i.Attributes = CleanAttributes(i.Attributes)
 }

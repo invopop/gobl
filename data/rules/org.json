@@ -34,6 +34,32 @@
       ]
     },
     {
+      "id": "GOBL-ORG-ATTRIBUTE",
+      "object": "org.Attribute",
+      "subsets": [
+        {
+          "field": "name",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-01",
+              "desc": "attribute name is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "value",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-02",
+              "desc": "attribute value is required",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-COORDINATES",
       "object": "org.Coordinates",
       "subsets": [
@@ -196,8 +222,8 @@
               "assert": [
                 {
                   "id": "GOBL-ORG-IDENTITY-02",
-                  "desc": "identity scope when provided must be either 'tax' or 'legal'",
-                  "tests": "one of [tax, legal]"
+                  "desc": "identity scope when provided must be one of 'tax', 'legal', or 'class'",
+                  "tests": "one of [tax, legal, class]"
                 }
               ]
             }
@@ -322,6 +348,21 @@
                 {
                   "id": "GOBL-ORG-ITEM-02",
                   "desc": "item price must be zero or positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "base_quantity",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-03",
+                  "desc": "item base quantity must be positive",
                   "tests": "min 0"
                 }
               ]

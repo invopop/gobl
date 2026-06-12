@@ -48,8 +48,26 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 
 // Map of GOBL Identity keys to the corresponding ISO/IEC 6523 code.
 var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
-	org.IdentityKeyGLN:  "0088",
+	org.IdentityKeyGLN: "0088",
+}
+
+// Map of GOBL Identity keys for registered item identification schemes to
+// the corresponding ISO/IEC 6523 code. Identities with these keys are
+// given the `legal` scope (BT-157). EAN and UPC codes are GTINs under
+// the GS1 system, so they share the GTIN scheme code.
+var orgIdentityLegalSchemeMap = map[cbc.Key]cbc.Code{
 	org.IdentityKeyGTIN: "0160",
+	org.IdentityKeyEAN:  "0160",
+	org.IdentityKeyUPC:  "0160",
+}
+
+// Map of GOBL Identity keys for item classification schemes to the
+// corresponding UNTDID 7143 item type code. Identities with these keys are
+// given the `class` scope (BT-158).
+var orgIdentityItemTypeMap = map[cbc.Key]cbc.Code{
+	org.IdentityKeyHSN:    "HS",  // Harmonised system
+	org.IdentityKeyCPV:    "STI", // CPV (Common Procurement Vocabulary)
+	org.IdentityKeyUNSPSC: "TST", // UNSPSC
 }
 
 // Map of GOBL Identity types (codes) to the corresponding ISO/IEC 6523 code.
@@ -92,6 +110,22 @@ func normalizeOrgIdentity(i *org.Identity) {
 
 	// Check for key-based identity mapping first
 	if i.Key != cbc.KeyEmpty {
+		// Item classification schemes (BT-158)
+		if scheme, ok := orgIdentityItemTypeMap[i.Key]; ok {
+			i.Scope = org.IdentityScopeClass
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
+				untdid.ExtKeyItemType: scheme,
+			}))
+			return
+		}
+		// Registered item identification schemes (BT-157)
+		if scheme, ok := orgIdentityLegalSchemeMap[i.Key]; ok {
+			i.Scope = org.IdentityScopeLegal
+			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
+				iso.ExtKeySchemeID: scheme,
+			}))
+			return
+		}
 		if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
 			i.Ext = i.Ext.Merge(tax.ExtensionsOf(cbc.CodeMap{
 				iso.ExtKeySchemeID: scheme,
@@ -107,6 +141,12 @@ func normalizeOrgIdentity(i *org.Identity) {
 				iso.ExtKeySchemeID: scheme,
 			}))
 		}
+	}
+
+	// Identities already carrying the classification binding get the scope
+	// so that pre-existing documents converge on the canonical form.
+	if i.Scope == cbc.KeyEmpty && i.Ext.Has(untdid.ExtKeyItemType) {
+		i.Scope = org.IdentityScopeClass
 	}
 }
 
@@ -165,7 +205,73 @@ func orgItemRules() *rules.Set {
 			// BR-23: unit of measure is required
 			rules.Assert("01", "unit is required (BR-23)", is.Present),
 		),
+		rules.Field("identities",
+			// BT-157 may only appear once per item
+			rules.Assert("02", "cannot have more than one identity with the 'legal' scope (BT-157)",
+				is.Func("max one legal-scoped identity", itemHasMaxOneLegalIdentity),
+			),
+			// The `legal` scope is also used by party identities, where no
+			// scheme is required, so the binding is enforced here at the
+			// item level rather than on the identity itself.
+			rules.Assert("03", "legal identities require the 'iso-scheme-id' extension (BR-64)",
+				is.Func("legal-scoped identities have iso-scheme-id", itemLegalIdentitiesHaveScheme),
+			),
+		),
 	)
+}
+
+func itemHasMaxOneLegalIdentity(val any) bool {
+	ids, ok := val.([]*org.Identity)
+	if !ok {
+		return true
+	}
+	count := 0
+	for _, id := range ids {
+		if id != nil && id.Scope == org.IdentityScopeLegal {
+			count++
+		}
+	}
+	return count <= 1
+}
+
+func itemLegalIdentitiesHaveScheme(val any) bool {
+	ids, ok := val.([]*org.Identity)
+	if !ok {
+		return true
+	}
+	for _, id := range ids {
+		if id != nil && id.Scope == org.IdentityScopeLegal && !id.Ext.Has(iso.ExtKeySchemeID) {
+			return false
+		}
+	}
+	return true
+}
+
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		// The scope declares what the identity is; the extension provides the
+		// binding the scope requires in EN 16931 outputs.
+		rules.When(identityScopeIs(org.IdentityScopeClass),
+			rules.Field("ext",
+				rules.Assert("01",
+					"classification identities require the 'untdid-item-type' extension (BT-158)",
+					tax.ExtensionsRequire(untdid.ExtKeyItemType),
+				),
+			),
+		),
+	)
+}
+
+func identityScopeIs(scope cbc.Key) rules.Test {
+	return is.Func("identity scope is '"+scope.String()+"'", func(val any) bool {
+		switch v := val.(type) {
+		case *org.Identity:
+			return v != nil && v.Scope == scope
+		case org.Identity:
+			return v.Scope == scope
+		}
+		return false
+	})
 }
 
 func orgAttachmentRules() *rules.Set {

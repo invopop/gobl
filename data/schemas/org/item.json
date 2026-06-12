@@ -48,6 +48,14 @@
           "title": "Identities",
           "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer."
         },
+        "attributes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/attribute"
+          },
+          "type": "array",
+          "title": "Attributes",
+          "description": "Attributes describe named features or properties of the item, such as\ncolour or size."
+        },
         "description": {
           "type": "string",
           "title": "Description",
@@ -78,6 +86,11 @@
           "type": "array",
           "title": "Alternative Prices",
           "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
+        },
+        "base_quantity": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base Quantity",
+          "description": "Number of units the price refers to, e.g. a price per 100 units.\nAssumed to be 1 when left empty. The same unit of measure as the\nparent line's quantity applies."
         },
         "unit": {
           "$ref": "https://gobl.org/draft-0/org/unit",
