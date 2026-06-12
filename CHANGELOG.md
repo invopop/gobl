@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/lu`: new tax regime for Luxembourg, with full VAT rate history (including the temporary 2023 rate reduction), mod-89 TVA number validation, and RCS company-registry identities.
+
 ## [v0.500.0] - 2026-06-10
 
 GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.

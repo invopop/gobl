@@ -1,0 +1,263 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Luxembourg",
+    "fr": "Luxembourg",
+    "lb": "Lëtzebuerg"
+  },
+  "description": {
+    "en": "Luxembourg applies VAT (Taxe sur la Valeur Ajoutée, TVA) administered by\nthe Administration de l'Enregistrement, des Domaines et de la TVA (AED).\nAs an EU member state, Luxembourg follows the EU VAT Directive 2006/112/EC.\n\nLuxembourg has four non-zero VAT rates: a standard rate, an intermediate\n(\"parking\") rate, a reduced rate, and a super-reduced rate. A temporary\none-percentage-point reduction applied to the standard, intermediate, and\nreduced rates throughout 2023 as a cost-of-living measure (Law of 26\nOctober 2022), before the rates were restored to their pre-2023 levels\non 1 January 2024.\n\nBusinesses are identified by their TVA number (LU followed by 8 digits,\nwhere the last two digits are a mod-89 check code) and optionally by their\ncompany registration number (RCS number) from the Registre de Commerce et\ndes Sociétés.",
+    "fr": "Le Luxembourg applique la TVA (Taxe sur la Valeur Ajoutée) administrée par\nl'Administration de l'Enregistrement, des Domaines et de la TVA (AED).\nEn tant qu'État membre de l'UE, le Luxembourg suit la Directive TVA\n2006/112/CE."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "AED – VAT rates",
+        "fr": "AED – Taux de TVA"
+      },
+      "url": "https://www.aed.public.lu/en/tva/taux-tva.html"
+    }
+  ],
+  "time_zone": "Europe/Luxembourg",
+  "country": "LU",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "RCS",
+      "name": {
+        "en": "RCS Number",
+        "fr": "Numéro RCS",
+        "lb": "RCS-Nummer"
+      },
+      "desc": {
+        "en": "Luxembourg company registration number assigned by the Luxembourg Business Registers (LBR).",
+        "fr": "Numéro d'immatriculation au Registre de Commerce et des Sociétés attribué par le Registre luxembourgeois des entreprises."
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "fr": "TVA",
+        "lb": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "fr": "Taxe sur la Valeur Ajoutée",
+        "lb": "Taxe sur la Valeur Ajoutée"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "fr": "Taux normal",
+            "lb": "Normalsaz"
+          },
+          "desc": {
+            "en": "General rate applicable to most goods and services.",
+            "fr": "Taux applicable à la plupart des biens et services."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "17.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "17.0%"
+            },
+            {
+              "since": "1992-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Intermediate Rate",
+            "fr": "Taux intermédiaire",
+            "lb": "Taux intermédiaire"
+          },
+          "desc": {
+            "en": "Applies to wine, certain fuels, printed advertising material, and similar goods (EU parking rate).",
+            "fr": "Applicable aux vins, certains combustibles, imprimés publicitaires et biens similaires (taux parking UE)."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "13.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "1992-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "fr": "Taux réduit",
+            "lb": "Reduzéierter Saz"
+          },
+          "desc": {
+            "en": "Applies to food, non-alcoholic beverages, pharmaceuticals, books, newspapers, water, and passenger transport.",
+            "fr": "Applicable aux denrées alimentaires, boissons non alcoolisées, médicaments, livres, journaux, eau et transport de personnes."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "7.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "1992-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-reduced Rate",
+            "fr": "Taux super-réduit",
+            "lb": "Super-reduzéierter Saz"
+          },
+          "desc": {
+            "en": "Applies to certain pharmaceutical products, footwear and clothing for children, social housing, natural gas, and electricity.",
+            "fr": "Applicable à certains médicaments, chaussures et vêtements pour enfants, logements sociaux, gaz naturel et électricité."
+          },
+          "values": [
+            {
+              "since": "1992-01-01",
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "AED – VAT rates",
+            "fr": "AED – Taux de TVA"
+          },
+          "url": "https://www.aed.public.lu/en/tva/taux-tva.html"
+        },
+        {
+          "title": {
+            "en": "Law of 26 October 2022 – Temporary rate reduction",
+            "fr": "Loi du 26 octobre 2022 – Réduction temporaire des taux"
+          },
+          "url": "https://legilux.public.lu/eli/etat/leg/loi/2022/10/26/a534/jo"
+        },
+        {
+          "title": {
+            "en": "Law of 19 December 2014 – Rate increase to current levels",
+            "fr": "Loi du 19 décembre 2014 – Augmentation des taux"
+          },
+          "url": "https://www.legilux.public.lu/eli/etat/leg/loi/2014/12/19/n1/jo"
+        },
+        {
+          "title": {
+            "en": "European Commission – VAT rates"
+          },
+          "url": "https://taxation-customs.ec.europa.eu/taxation/vat/eu-vat-rules/vat-rates_en"
+        }
+      ]
+    }
+  ]
+}

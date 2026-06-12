@@ -1,0 +1,79 @@
+{
+  "id": "GOBL-LU",
+  "package": "lu",
+  "subsets": [
+    {
+      "id": "GOBL-LU-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [LU]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-01",
+                      "desc": "invalid Luxembourg TVA number",
+                      "tests": "valid mod-89 TVA code"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LU-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [LU]",
+          "subsets": [
+            {
+              "guard": "type in [RCS]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-ORG-IDENTITY-01",
+                      "desc": "invalid RCS number",
+                      "tests": "valid RCS format"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LU-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [LU]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-LU-BILL-INVOICE-01",
+                  "desc": "invoice LU supplier must have a TVA tax ID code or an RCS identity",
+                  "tests": "has TVA tax ID code, or has RCS identity"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
