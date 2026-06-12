@@ -31,7 +31,7 @@ const (
 	IdentityTypeRCS cbc.Code = "RCS"
 )
 
-// rcsRegexp validates a normalised RCS number: section letter + 1–6 digits.
+// rcsRegexp validates a normalized RCS number: section letter + 1–6 digits.
 var rcsRegexp = regexp.MustCompile(`^[A-Z]\d{1,6}$`)
 
 var identityTypeDefinitions = []*cbc.Definition{

@@ -37,7 +37,7 @@ func TestNormalizeOrgIdentity(t *testing.T) {
 		})
 	}
 
-	t.Run("unknown type not normalised", func(t *testing.T) {
+	t.Run("unknown type not normalized", func(t *testing.T) {
 		id := &org.Identity{Type: "OTHER", Code: "b 123"}
 		norm.Normalize(id, tax.RegimeContext(lu.CountryCode))
 		assert.Equal(t, cbc.Code("b 123"), id.Code)
