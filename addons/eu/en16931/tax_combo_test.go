@@ -139,6 +139,38 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "VATEX extension is required for exempt tax")
 	})
 
+	t.Run("country-extension vatex code fails the EN16931 list", func(t *testing.T) {
+		// The cef-vatex catalogue only enforces the code shape, so this
+		// French CGI code passes the extension layer (it is NOT in the
+		// official CEF list, unlike VATEX-FR-FRANCHISE/CNWVAT which the
+		// EU list adopted); the EN16931 BR-CL-22 list rule rejects it.
+		// Country profiles extend the list by suppressing this rule and
+		// asserting their own.
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-FR-CGI261-1",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "VATEX code must belong to the CEF VATEX code list")
+	})
+
+	t.Run("malformed vatex code fails the catalogue pattern", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "EXEMPT-132",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.Error(t, err)
+	})
+
 	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
