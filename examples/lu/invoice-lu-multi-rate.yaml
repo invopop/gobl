@@ -1,0 +1,57 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "LU"
+uuid: "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"
+currency: EUR
+series: "2024"
+code: "0002"
+issue_date: "2024-09-20"
+
+supplier:
+  name: Acme Luxembourg S.A.
+  tax_id:
+    country: "LU"
+    # 263752 mod 89 = 45
+    code: "26375245"
+  identities:
+    - type: RCS
+      code: "B263475"
+  addresses:
+    - street: 14 Rue Erasme
+      locality: Luxembourg
+      code: "1468"
+      country: "LU"
+
+customer:
+  name: Entreprise Martin S.à r.l.
+  tax_id:
+    country: "LU"
+    # 123456 mod 89 = 13
+    code: "12345613"
+  addresses:
+    - street: 5 Boulevard Royal
+      locality: Luxembourg
+      code: "2449"
+      country: "LU"
+
+lines:
+  - quantity: "8"
+    item:
+      name: IT infrastructure services
+      price: "3000.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "200"
+    item:
+      name: Mineral water (5L)
+      price: "2.50"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: "1"
+    item:
+      name: Children's clothing (set)
+      price: "45.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced

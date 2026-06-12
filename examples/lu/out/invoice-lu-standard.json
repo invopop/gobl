@@ -1,0 +1,118 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c3f49ec67d7001d33ae7906154a418c49185daa2d534c36aaff6bc85f29816b6"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "LU",
+		"uuid": "3c4e1f2a-9b7d-4e5c-8a1b-6f0e2d3c4b5a",
+		"type": "standard",
+		"series": "2024",
+		"code": "0001",
+		"issue_date": "2024-06-15",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Acme Luxembourg S.A.",
+			"tax_id": {
+				"country": "LU",
+				"code": "26375245"
+			},
+			"identities": [
+				{
+					"type": "RCS",
+					"code": "B263475"
+				}
+			],
+			"addresses": [
+				{
+					"street": "14 Rue Erasme",
+					"locality": "Luxembourg",
+					"code": "1468",
+					"country": "LU"
+				}
+			]
+		},
+		"customer": {
+			"name": "GlobalTech Solutions NV",
+			"tax_id": {
+				"country": "BE",
+				"code": "0413172884"
+			},
+			"addresses": [
+				{
+					"street": "Keizersgracht 123",
+					"locality": "Brussels",
+					"code": "1000",
+					"country": "BE"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Software consulting services",
+					"price": "2500.00"
+				},
+				"sum": "25000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "17.0%"
+					}
+				],
+				"total": "25000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Project management",
+					"price": "1800.00"
+				},
+				"sum": "9000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "17.0%"
+					}
+				],
+				"total": "9000.00"
+			}
+		],
+		"totals": {
+			"sum": "34000.00",
+			"total": "34000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "34000.00",
+								"percent": "17.0%",
+								"amount": "5780.00"
+							}
+						],
+						"amount": "5780.00"
+					}
+				],
+				"sum": "5780.00"
+			},
+			"tax": "5780.00",
+			"total_with_tax": "39780.00",
+			"payable": "39780.00"
+		}
+	}
+}
