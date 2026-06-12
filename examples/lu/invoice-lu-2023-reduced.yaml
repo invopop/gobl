@@ -5,8 +5,8 @@ currency: EUR
 series: "2023"
 code: "0015"
 # Dated within 2023: GOBL applies the temporary reduced rates in effect that year
-# (standard 16%, intermediate 13%, reduced 7%, super-reduced 3%) per the
-# Law of 30 November 2022 (Mémorial A No. 559 of 1 December 2022).
+# (standard 16%, intermediate 13%, reduced 7%; the super-reduced 3% rate was
+# unaffected) per the Law of 26 October 2022 (Mémorial A No. 534).
 issue_date: "2023-06-15"
 
 supplier:

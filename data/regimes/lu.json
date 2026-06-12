@@ -6,7 +6,7 @@
     "lb": "Lëtzebuerg"
   },
   "description": {
-    "en": "Luxembourg applies VAT (Taxe sur la Valeur Ajoutée, TVA) administered by\nthe Administration de l'Enregistrement, des Domaines et de la TVA (AED).\nAs an EU member state, Luxembourg follows the EU VAT Directive 2006/112/EC.\n\nLuxembourg has four non-zero VAT rates: a standard rate, an intermediate\n(\"parking\") rate, a reduced rate, and a super-reduced rate. A temporary\none-percentage-point reduction was applied across all rates throughout 2023\nas a cost-of-living measure, before the rates were restored to their\npre-2023 levels on 1 January 2024.\n\nBusinesses are identified by their TVA number (LU followed by 8 digits,\nwhere the last two digits are a mod-89 check code) and optionally by their\ncompany registration number (RCS number) from the Registre de Commerce et\ndes Sociétés.",
+    "en": "Luxembourg applies VAT (Taxe sur la Valeur Ajoutée, TVA) administered by\nthe Administration de l'Enregistrement, des Domaines et de la TVA (AED).\nAs an EU member state, Luxembourg follows the EU VAT Directive 2006/112/EC.\n\nLuxembourg has four non-zero VAT rates: a standard rate, an intermediate\n(\"parking\") rate, a reduced rate, and a super-reduced rate. A temporary\none-percentage-point reduction applied to the standard, intermediate, and\nreduced rates throughout 2023 as a cost-of-living measure (Law of 26\nOctober 2022), before the rates were restored to their pre-2023 levels\non 1 January 2024.\n\nBusinesses are identified by their TVA number (LU followed by 8 digits,\nwhere the last two digits are a mod-89 check code) and optionally by their\ncompany registration number (RCS number) from the Registre de Commerce et\ndes Sociétés.",
     "fr": "Le Luxembourg applique la TVA (Taxe sur la Valeur Ajoutée) administrée par\nl'Administration de l'Enregistrement, des Domaines et de la TVA (AED).\nEn tant qu'État membre de l'UE, le Luxembourg suit la Directive TVA\n2006/112/CE."
   },
   "sources": [
@@ -223,7 +223,7 @@
           },
           "values": [
             {
-              "since": "2015-01-01",
+              "since": "1992-01-01",
               "percent": "3.0%"
             }
           ]
@@ -239,10 +239,10 @@
         },
         {
           "title": {
-            "en": "Law of 30 November 2022 – Temporary rate reduction",
-            "fr": "Loi du 30 novembre 2022 – Réduction temporaire des taux"
+            "en": "Law of 26 October 2022 – Temporary rate reduction",
+            "fr": "Loi du 26 octobre 2022 – Réduction temporaire des taux"
           },
-          "url": "https://www.legilux.public.lu/eli/etat/leg/loi/2022/11/30/a559/jo"
+          "url": "https://legilux.public.lu/eli/etat/leg/loi/2022/10/26/a534/jo"
         },
         {
           "title": {

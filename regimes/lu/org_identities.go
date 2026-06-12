@@ -14,17 +14,25 @@ import (
 const (
 	// IdentityTypeRCS represents a Luxembourg Registre de Commerce et des Sociétés
 	// (RCS) number, assigned by the Luxembourg Business Registers (LBR) to
-	// businesses registered in Luxembourg.
+	// entities registered in Luxembourg.
 	//
-	// Format: one letter (B, F, G, or H) followed by up to six digits.
-	// Examples: B263475, F12345, G45678
+	// Format: a section letter followed by up to six digits. The letter
+	// identifies the RCS section, e.g. A for sole traders (commerçants
+	// personnes physiques), B for commercial companies (sociétés
+	// commerciales), C for economic interest groupings (GIE), or E for
+	// civil companies (sociétés civiles).
+	// Examples: A12345, B263475, E4567
+	//
+	// Any single uppercase letter is accepted as the section indicator:
+	// the published list of sections has grown over time, so restricting
+	// it would risk rejecting valid registrations.
 	//
 	// Source: https://www.lbr.lu
 	IdentityTypeRCS cbc.Code = "RCS"
 )
 
-// rcsRegexp validates a normalised RCS number: register letter + 1–6 digits.
-var rcsRegexp = regexp.MustCompile(`^[BFGH]\d{1,6}$`)
+// rcsRegexp validates a normalised RCS number: section letter + 1–6 digits.
+var rcsRegexp = regexp.MustCompile(`^[A-Z]\d{1,6}$`)
 
 var identityTypeDefinitions = []*cbc.Definition{
 	{

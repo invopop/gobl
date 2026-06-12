@@ -11,9 +11,11 @@ import (
 // taxCategories defines Luxembourg's VAT rates with full rate history.
 //
 // Luxembourg applies a standard, intermediate ("parking"), reduced, and
-// super-reduced rate.  In 2023 all four rates were temporarily reduced by
-// one percentage point (cost-of-living measure; Law of 30 Nov 2022) and
-// restored to their pre-2023 values on 1 January 2024.
+// super-reduced rate. In 2023 the standard, intermediate, and reduced rates
+// were temporarily lowered by one percentage point as a cost-of-living
+// measure (Law of 26 October 2022, Mémorial A No. 534) and restored to
+// their pre-2023 values on 1 January 2024. The super-reduced rate was not
+// affected by the reduction.
 var taxCategories = []*tax.CategoryDef{
 	{
 		Code: tax.CategoryVAT,
@@ -43,9 +45,9 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.FR: "Taux applicable à la plupart des biens et services.",
 				},
 				Values: []*tax.RateValueDef{
-					// Restored after temporary 2023 reduction (Law of 19 Dec 2023).
+					// Restored after the temporary 2023 reduction expired.
 					{Since: cal.NewDate(2024, 1, 1), Percent: num.MakePercentage(170, 3)},
-					// Temporary 1 pp reduction throughout 2023 (Law of 30 Nov 2022).
+					// Temporary 1 pp reduction throughout 2023 (Law of 26 Oct 2022).
 					{Since: cal.NewDate(2023, 1, 1), Percent: num.MakePercentage(160, 3)},
 					// Increased from 15% to 17% (Law of 19 Dec 2014, effective 2015).
 					{Since: cal.NewDate(2015, 1, 1), Percent: num.MakePercentage(170, 3)},
@@ -103,9 +105,12 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.EN: "Applies to certain pharmaceutical products, footwear and clothing for children, social housing, natural gas, and electricity.",
 					i18n.FR: "Applicable à certains médicaments, chaussures et vêtements pour enfants, logements sociaux, gaz naturel et électricité.",
 				},
-				// The super-reduced rate was not changed during the 2023 reduction.
+				// The 3% rate predates the other entries and was not changed
+				// by either the 2015 increase or the 2023 temporary reduction,
+				// so a single value anchored at the regime's history baseline
+				// is sufficient.
 				Values: []*tax.RateValueDef{
-					{Since: cal.NewDate(2015, 1, 1), Percent: num.MakePercentage(30, 3)},
+					{Since: cal.NewDate(1992, 1, 1), Percent: num.MakePercentage(30, 3)},
 				},
 			},
 		},
@@ -119,10 +124,10 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "Law of 30 November 2022 – Temporary rate reduction",
-					i18n.FR: "Loi du 30 novembre 2022 – Réduction temporaire des taux",
+					i18n.EN: "Law of 26 October 2022 – Temporary rate reduction",
+					i18n.FR: "Loi du 26 octobre 2022 – Réduction temporaire des taux",
 				},
-				URL: "https://www.legilux.public.lu/eli/etat/leg/loi/2022/11/30/a559/jo",
+				URL: "https://legilux.public.lu/eli/etat/leg/loi/2022/10/26/a534/jo",
 			},
 			{
 				Title: i18n.String{
