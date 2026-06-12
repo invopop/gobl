@@ -66,8 +66,8 @@
               "assert": [
                 {
                   "id": "GOBL-LU-BILL-INVOICE-01",
-                  "desc": "invoice LU supplier must have either a TVA tax ID code or an identity of type 'RCS'",
-                  "tests": "has TVA code or RCS identity"
+                  "desc": "invoice LU supplier must have a TVA tax ID code or an RCS identity",
+                  "tests": "has TVA tax ID code, or has RCS identity"
                 }
               ]
             }
