@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
+- `org`: `Registration` object includes `ext` for addon-specific registration details.
 
 ### Fixed
 
