@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `regimes/lu`: new tax regime for Luxembourg, with full VAT rate history (including the temporary 2023 rate reduction), mod-89 TVA number validation, and RCS company-registry identities.
+- `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
+- `org`: `Registration` object includes `ext` for addon-specific registration details.
+
+### Fixed
+
+- `regimes/no`: Norwegian VAT identities now keep — and gain, when given as a bare organisation number — the `MVA` suffix, so serialized VAT numbers take the `NO<orgnr>MVA` form that the EHF and Peppol national rules (NO-R-001) require. Validation expects the suffixed form; organisation-number identities are unchanged.
 
 ## [v0.500.0] - 2026-06-10
 
