@@ -1,8 +1,6 @@
 package no
 
 import (
-	"strings"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -33,7 +31,7 @@ func taxIdentityRules() *rules.Set {
 // EHF and Peppol national rules require.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
-	if tID.Code != "" && !strings.HasSuffix(string(tID.Code), "MVA") {
+	if tID.Code != "" && !tID.Code.HasSuffix("MVA") {
 		tID.Code += "MVA"
 	}
 }
@@ -42,10 +40,10 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 // code: a mod-11 organisation number followed by the "MVA" suffix.
 func isValidVATCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok || !strings.HasSuffix(string(code), "MVA") {
+	if !ok || !code.HasSuffix("MVA") {
 		return false
 	}
-	return isValidOrgNumber(cbc.Code(strings.TrimSuffix(string(code), "MVA")))
+	return isValidOrgNumber(code.TrimSuffix("MVA"))
 }
 
 // isValidOrgNumber reports whether the value is a valid Norwegian
