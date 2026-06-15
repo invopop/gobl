@@ -128,17 +128,6 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
 	})
 
-	t.Run("exempt without vatex", func(t *testing.T) {
-		// VATEX extension is now required at the combo level for exempt tax
-		c := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Key:      tax.KeyExempt,
-		}
-		norm.Normalize(c, tax.AddonContext(en16931.V2017))
-		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "VATEX extension is required for exempt tax")
-	})
-
 	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,

@@ -101,14 +101,6 @@ func taxComboRules() *rules.Set {
 				),
 			),
 		),
-		rules.When(is.Func("is exempt", taxComboIsExempt),
-			rules.Field("ext",
-				// BR-E-10: VATEX extension required for exempt tax
-				rules.Assert("06", "VATEX extension is required for exempt tax (BR-E-10)",
-					tax.ExtensionsRequire(cef.ExtKeyVATEX),
-				),
-			),
-		),
 		// BR-S-10, BR-Z-10: standard, zero-rated, IGIC, and IPSI shall NOT have a VATEX code
 		rules.When(is.Func("is non-exempt", taxComboIsNonExempt),
 			rules.Field("ext",
