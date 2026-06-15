@@ -132,11 +132,6 @@ func taxComboIsOutsideScope(val any) bool {
 	return ok && tc != nil && !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI)
 }
 
-func taxComboIsExempt(val any) bool {
-	tc, ok := val.(*tax.Combo)
-	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory) == TaxCategoryExempt
-}
-
 func taxComboIsNonExempt(val any) bool {
 	tc, ok := val.(*tax.Combo)
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)

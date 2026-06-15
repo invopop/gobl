@@ -128,6 +128,18 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
 	})
 
+	t.Run("exempt without vatex", func(t *testing.T) {
+		// BR-E-10 is no longer enforced at the combo level (the invoice-level
+		// exemption-note rule covers the remaining requirement), so an exempt
+		// combo without a VATEX extension must validate.
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
+	})
+
 	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
