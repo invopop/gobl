@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
+
 ### Fixed
 
 - `regimes/no`: Norwegian VAT identities now keep — and gain, when given as a bare organisation number — the `MVA` suffix, so serialized VAT numbers take the `NO<orgnr>MVA` form that the EHF and Peppol national rules (NO-R-001) require. Validation expects the suffixed form; organisation-number identities are unchanged.
