@@ -17,8 +17,8 @@
                   "assert": [
                     {
                       "id": "GOBL-NO-TAX-IDENTITY-01",
-                      "desc": "invalid organisasjonsnummer",
-                      "tests": "valid mod-11 org number"
+                      "desc": "invalid Norwegian VAT number",
+                      "tests": "valid MVA-suffixed mod-11 org number"
                     }
                   ]
                 }
