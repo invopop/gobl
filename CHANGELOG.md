@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
-- `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternativaly to a tax ID.
+- `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
 - `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
 
 ### Changed
