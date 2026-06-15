@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `org`: `Registration` object includes `ext` for addon specific registration details.
+- `org`: `Registration` object includes `ext` for addon-specific registration details.
 
 ## [v0.500.0] - 2026-06-10
 

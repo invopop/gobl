@@ -28,7 +28,7 @@ type Registration struct {
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 
 	// Ext holds any additional information that may be required by specific tax authorities.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func registrationRules() *rules.Set {
