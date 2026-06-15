@@ -7,6 +7,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+const vatIDSuffix cbc.Code = "MVA"
+
 // taxCodeWeights are the mod-11 multipliers for Norwegian organisasjonsnummer
 // validation, as specified by Brønnøysundregistrene.
 // See: https://www.brreg.no/en/about-us-2/our-registers/about-the-central-coordinating-register-for-legal-entities-ccr/about-the-organisation-number/
@@ -31,8 +33,8 @@ func taxIdentityRules() *rules.Set {
 // EHF and Peppol national rules require.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
-	if tID.Code != "" && !tID.Code.HasSuffix("MVA") {
-		tID.Code += "MVA"
+	if tID.Code != "" && !tID.Code.HasSuffix(vatIDSuffix) {
+		tID.Code += vatIDSuffix
 	}
 }
 
@@ -40,10 +42,10 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 // code: a mod-11 organisation number followed by the "MVA" suffix.
 func isValidVATCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok || !code.HasSuffix("MVA") {
+	if !ok || !code.HasSuffix(vatIDSuffix) {
 		return false
 	}
-	return isValidOrgNumber(code.TrimSuffix("MVA"))
+	return isValidOrgNumber(code.TrimSuffix(vatIDSuffix))
 }
 
 // isValidOrgNumber reports whether the value is a valid Norwegian
