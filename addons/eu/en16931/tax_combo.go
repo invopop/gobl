@@ -102,12 +102,10 @@ func taxComboRules() *rules.Set {
 			),
 		),
 		rules.When(is.Func("is exempt", taxComboIsExempt),
-			rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
-				rules.Field("ext",
-					// BR-E-10: VATEX extension required for exempt tax
-					rules.Assert("06", "VATEX extension is required for exempt tax (BR-E-10)",
-						tax.ExtensionsRequire(cef.ExtKeyVATEX),
-					),
+			rules.Field("ext",
+				// BR-E-10: VATEX extension required for exempt tax
+				rules.Assert("06", "VATEX extension is required for exempt tax (BR-E-10)",
+					tax.ExtensionsRequire(cef.ExtKeyVATEX),
 				),
 			),
 		),
@@ -150,17 +148,4 @@ func taxComboIsExempt(val any) bool {
 func taxComboIsNonExempt(val any) bool {
 	tc, ok := val.(*tax.Combo)
 	return ok && tc != nil && tc.Ext.Get(untdid.ExtKeyTaxCategory).In(TaxCategoryStandard, TaxCategoryZero, TaxCategoryIGIC, TaxCategoryIPSI)
-}
-
-// addonIsNotOIOUBL returns true when the DK OIOUBL addon is absent from the
-// validation context. OIOUBL 2.1 has no exempt tax category — exempt and
-// reverse-charge are reported as ZeroRated/ReverseCharge, neither of which
-// requires an exemption reason — so the EN 16931 reason requirements (BR-E-10
-// and the exemption-note check) are skipped when targeting OIOUBL. The addon
-// key is referenced by literal string because the addon lives in the external
-// gobl.dk.oioubl module, which core cannot import.
-func addonIsNotOIOUBL(ctx rules.Context, _ any) bool {
-	return !ctx.Each(func(v any) bool {
-		return tax.AddonIn("dk-oioubl-v2-1").Check(v)
-	})
 }

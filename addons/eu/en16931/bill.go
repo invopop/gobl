@@ -115,17 +115,14 @@ func billInvoiceRules() *rules.Set {
 			),
 		),
 		// Exemption notes: BR-*-10 requires either VATEX code or exemption note.
-		// Skipped for OIOUBL, which has no exempt category and requires no reason.
-		rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
-			rules.Assert("08", "exempt tax categories require either a VATEX code or an exemption note",
-				is.Func("exemption notes", func(val any) bool {
-					inv, ok := val.(*bill.Invoice)
-					if !ok || inv == nil {
-						return true
-					}
-					return validateExemptionNotesCheck(inv)
-				}),
-			),
+		rules.Assert("08", "exempt tax categories require either a VATEX code or an exemption note",
+			is.Func("exemption notes", func(val any) bool {
+				inv, ok := val.(*bill.Invoice)
+				if !ok || inv == nil {
+					return true
+				}
+				return validateExemptionNotesCheck(inv)
+			}),
 		),
 		// Lines: BR-16 requires at least one line
 		rules.Field("lines",
@@ -144,15 +141,11 @@ func billInvoiceRules() *rules.Set {
 			),
 		),
 		// Payment: BR-CO-25 requires payment details when amount is due.
-		// Skipped for OIOUBL, which mandates neither payment means nor terms
-		// (its payment rules are all conditional on a means being present).
-		rules.When(is.FuncContext("addon is not OIOUBL", addonIsNotOIOUBL),
-			rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
-				rules.Field("payment",
-					rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),
-					rules.Field("terms",
-						rules.Assert("07", "payment terms are required when amount is due (BR-CO-25)", is.Present),
-					),
+		rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
+			rules.Field("payment",
+				rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),
+				rules.Field("terms",
+					rules.Assert("07", "payment terms are required when amount is due (BR-CO-25)", is.Present),
 				),
 			),
 		),
