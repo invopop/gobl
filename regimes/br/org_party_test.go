@@ -4,12 +4,80 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestNormalizeParty(t *testing.T) {
+	ctx := tax.RegimeContext(br.CountryCode)
+
+	t.Run("nil", func(t *testing.T) {
+		var p *org.Party
+		assert.NotPanics(t, func() {
+			norm.Normalize(p, ctx)
+		})
+	})
+
+	t.Run("infers country from the tax ID", func(t *testing.T) {
+		p := &org.Party{
+			TaxID:     &tax.Identity{Country: "BR", Code: "55263640000186"},
+			Addresses: []*org.Address{{Street: "Av Paulista", Number: "1578"}},
+		}
+		norm.Normalize(p, ctx)
+		assert.Equal(t, l10n.BR.ISO(), p.Addresses[0].Country)
+	})
+
+	t.Run("infers country from the first identity when there is no tax ID", func(t *testing.T) {
+		p := &org.Party{
+			Identities: []*org.Identity{
+				{Key: org.IdentityKeyForeign, Country: "US", Code: "US-FOREIGN-123"},
+			},
+			Addresses: []*org.Address{{Street: "Main St", Number: "1"}},
+		}
+		norm.Normalize(p, ctx)
+		assert.Equal(t, l10n.US.ISO(), p.Addresses[0].Country)
+	})
+
+	t.Run("resolves tax country codes that differ from the ISO code", func(t *testing.T) {
+		p := &org.Party{
+			TaxID:     &tax.Identity{Country: "EL", Code: "123456789"}, // Greece uses EL for tax, GR for ISO
+			Addresses: []*org.Address{{Street: "Odos Test", Number: "5"}},
+		}
+		norm.Normalize(p, ctx)
+		assert.Equal(t, l10n.GR.ISO(), p.Addresses[0].Country)
+	})
+
+	t.Run("does not override an existing country", func(t *testing.T) {
+		p := &org.Party{
+			TaxID:     &tax.Identity{Country: "BR", Code: "55263640000186"},
+			Addresses: []*org.Address{{Country: "US", Street: "Main St", Number: "1"}},
+		}
+		norm.Normalize(p, ctx)
+		assert.Equal(t, l10n.US.ISO(), p.Addresses[0].Country)
+	})
+
+	t.Run("no-op when addresses slice is empty", func(t *testing.T) {
+		p := &org.Party{
+			TaxID:     &tax.Identity{Country: "BR", Code: "55263640000186"},
+			Addresses: []*org.Address{},
+		}
+		norm.Normalize(p, ctx)
+		assert.Empty(t, p.Addresses)
+	})
+
+	t.Run("no-op when country cannot be derived", func(t *testing.T) {
+		p := &org.Party{
+			Addresses: []*org.Address{{Street: "Unknown St", Number: "1"}},
+		}
+		norm.Normalize(p, ctx)
+		assert.Empty(t, p.Addresses[0].Country)
+	})
+}
 
 func TestValidateAddresses(t *testing.T) {
 	tests := []struct {

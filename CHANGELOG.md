@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
 - `org`: `Registration` object includes `ext` for addon-specific registration details.
+- `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
+- `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
+- `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
+
+### Changed
+
+- `addons/br/nfe`: Customer address `state` presence validation and the `br-ibge-municipality` extension are now applied to Brazilian parties only.
 - `it-sdi`: `it-sdi-liquidation-state` and `it-sdi-shareholder-state` registration extensions for the FatturaPA `IscrizioneREA` block (`StatoLiquidazione` and `SocioUnico`).
 
 ### Fixed

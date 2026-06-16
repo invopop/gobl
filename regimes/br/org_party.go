@@ -11,6 +11,55 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// normalizeParty fills in the country of a party's addresses when missing,
+// inferring it from the party's tax ID or first identity that declares a country.
+func normalizeParty(p *org.Party) {
+	if p == nil || len(p.Addresses) == 0 {
+		return
+	}
+	country := partyCountry(p)
+	if country.Empty() {
+		return
+	}
+	for _, addr := range p.Addresses {
+		if addr != nil && addr.Country.Empty() {
+			addr.Country = country
+		}
+	}
+}
+
+// partyCountry derives a party's country from its tax ID or, failing that, from
+// the first identity that declares a country.
+func partyCountry(p *org.Party) l10n.ISOCountryCode {
+	if p == nil {
+		return ""
+	}
+	if p.TaxID != nil && !p.TaxID.Country.Empty() {
+		return taxCountryToISO(p.TaxID.Country)
+	}
+	for _, id := range p.Identities {
+		if id != nil && !id.Country.Empty() {
+			return id.Country
+		}
+	}
+	return ""
+}
+
+// taxCountryToISO converts a tax country code into its ISO country code.
+func taxCountryToISO(c l10n.TaxCountryCode) l10n.ISOCountryCode {
+	if iso := c.Code().ISO(); iso.Validate() == nil {
+		return iso
+	}
+	// The tax code is not a valid ISO country code, try the alternative code in the
+	// country definition (e.g. Greece uses EL for tax, GR for ISO).
+	if def := l10n.Countries().Code(c.Code()); def != nil && !def.AltCode.Empty() {
+		if iso := def.AltCode.ISO(); iso.Validate() == nil {
+			return iso
+		}
+	}
+	return ""
+}
+
 var (
 	// Official state acronyms as per IBGE in Brazil
 	validStates = []cbc.Code{
