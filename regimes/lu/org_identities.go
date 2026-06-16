@@ -57,7 +57,7 @@ func orgIdentityRules() *rules.Set {
 				org.IdentityTypeIn(IdentityTypeRCS),
 				rules.Field("code",
 					rules.Assert("01", "invalid RCS number",
-						is.Func("valid RCS format", isValidRCSCode),
+						is.MatchesRegexp(rcsRegexp),
 					),
 				),
 			),
@@ -72,12 +72,4 @@ func normalizeOrgIdentity(id *org.Identity) {
 		return
 	}
 	id.Code = cbc.NormalizeAlphanumericalCode(id.Code)
-}
-
-func isValidRCSCode(value any) bool {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return false
-	}
-	return rcsRegexp.MatchString(code.String())
 }

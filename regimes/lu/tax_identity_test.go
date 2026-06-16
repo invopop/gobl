@@ -39,9 +39,10 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 func TestValidateTaxIdentity(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		name  string
-		code  cbc.Code
-		valid bool
+		name      string
+		code      cbc.Code
+		valid     bool
+		errorCode string
 	}{
 		// 263752 mod 89 = 45  →  valid
 		{name: "valid code", code: "26375245", valid: true},
@@ -50,13 +51,13 @@ func TestValidateTaxIdentity(t *testing.T) {
 		// empty code is allowed (TVA registration is not mandatory for all businesses)
 		{name: "empty code", code: "", valid: true},
 		// wrong check digits
-		{name: "bad checksum", code: "26375200"},
-		{name: "bad checksum 2", code: "12345699"},
+		{name: "bad checksum", code: "26375200", errorCode: "IDENTITY-03"},
+		{name: "bad checksum 2", code: "12345699", errorCode: "IDENTITY-03"},
 		// wrong length
-		{name: "too short", code: "2637524"},
-		{name: "too long", code: "263752450"},
+		{name: "too short", code: "2637524", errorCode: "IDENTITY-01"},
+		{name: "too long", code: "263752450", errorCode: "IDENTITY-01"},
 		// non-numeric
-		{name: "contains letter", code: "2637524A"},
+		{name: "contains letter", code: "2637524A", errorCode: "IDENTITY-02"},
 	}
 
 	for _, tt := range tests {
@@ -66,7 +67,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 			if tt.valid {
 				assert.NoError(t, err)
 			} else if assert.Error(t, err) {
-				assert.Contains(t, err.Error(), "IDENTITY-01")
+				assert.Contains(t, err.Error(), tt.errorCode)
 			}
 		})
 	}
