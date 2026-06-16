@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
 - `org`: `Registration` object includes `ext` for addon-specific registration details.
+- `it-sdi`: `it-sdi-liquidation-state` and `it-sdi-shareholder-state` registration extensions for the FatturaPA `IscrizioneREA` block (`StatoLiquidazione` and `SocioUnico`).
 
 ### Fixed
 
