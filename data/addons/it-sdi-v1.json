@@ -1083,6 +1083,58 @@
           }
         }
       ]
+    },
+    {
+      "key": "it-sdi-liquidation-state",
+      "name": {
+        "en": "Liquidation State",
+        "it": "Stato di Liquidazione"
+      },
+      "desc": {
+        "en": "Indicates whether the company is in liquidation, used in the\nIscrizioneREA block of a FatturaPA document as the\nStatoLiquidazione field."
+      },
+      "values": [
+        {
+          "code": "LS",
+          "name": {
+            "en": "In liquidation",
+            "it": "In liquidazione"
+          }
+        },
+        {
+          "code": "LN",
+          "name": {
+            "en": "Not in liquidation",
+            "it": "Non in liquidazione"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-sdi-shareholder-state",
+      "name": {
+        "en": "Shareholder State",
+        "it": "Stato di Socio"
+      },
+      "desc": {
+        "en": "Indicates the company's shareholder configuration, used in the\nIscrizioneREA block of a FatturaPA document as the SocioUnico\nfield."
+      },
+      "values": [
+        {
+          "code": "SU",
+          "name": {
+            "en": "Sole shareholder",
+            "it": "Socio unico"
+          }
+        },
+        {
+          "code": "SM",
+          "name": {
+            "en": "Multiple shareholders",
+            "it": "Più soci"
+          }
+        }
+      ]
     }
   ],
   "tags": [
