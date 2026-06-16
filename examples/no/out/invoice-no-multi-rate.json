@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c8e62e8385dcc752dd76836a8b93fb03e713737541c886cf1e1b946bcbfa420a"
+			"val": "7014cb292d5c8a09d179dfb1fd9123a752c4140b87956486e57957d48610d15b"
 		}
 	},
 	"doc": {
@@ -20,7 +20,7 @@
 			"name": "Reisebyrå AS",
 			"tax_id": {
 				"country": "NO",
-				"code": "923456783"
+				"code": "923456783MVA"
 			},
 			"addresses": [
 				{
@@ -35,7 +35,7 @@
 			"name": "Mottaker AS",
 			"tax_id": {
 				"country": "NO",
-				"code": "987654325"
+				"code": "987654325MVA"
 			},
 			"addresses": [
 				{
