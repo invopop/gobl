@@ -46,7 +46,8 @@
       }
     ],
     "ext": {
-      "br-ibge-municipality": "3304557"
+      "br-ibge-municipality": "3304557",
+      "br-nfe-regime": "1"
     }
   },
   "lines": [
@@ -60,15 +61,24 @@
       "taxes": [
         {
           "cat": "ICMS",
-          "percent": "4.0%"
+          "percent": "0%",
+          "ext": {
+            "br-nfe-icms-csosn": "102"
+          }
         },
         {
           "cat": "PIS",
-          "percent": "1.65%"
+          "percent": "0%",
+          "ext": {
+            "br-nfe-pis-cst": "49"
+          }
         },
         {
           "cat": "COFINS",
-          "percent": "7.60%"
+          "percent": "0%",
+          "ext": {
+            "br-nfe-cofins-cst": "49"
+          }
         }
       ]
     }

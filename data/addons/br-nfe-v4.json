@@ -316,7 +316,7 @@
         "pt": "Código de Regime Tributário"
       },
       "desc": {
-        "en": "Indicates the tax regime that a party is subject to."
+        "en": "Indicates the tax regime that a party is subject to. Defaults to `3`\n(normal regime) during normalization when not provided."
       },
       "sources": [
         {
@@ -325,6 +325,14 @@
             "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
           },
           "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        },
+        {
+          "title": {
+            "en": "NF-e/NFC-e Technical Note 2024.001 - CRT=4 MEI",
+            "pt": "Nota Técnica NF-e/NFC-e 2024.001 - CRT=4 MEI"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=kIiniiSkpKc=",
           "content_type": "application/pdf"
         }
       ],
@@ -348,6 +356,13 @@
           "name": {
             "en": "Normal",
             "pt": "Normal"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "MEI - Individual Micro-entrepreneur",
+            "pt": "MEI - Microempreendedor Individual"
           }
         }
       ]
@@ -412,6 +427,816 @@
           "name": {
             "en": "Micro-enterprise or Small Business (ME EPP)",
             "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-icms-cst",
+      "name": {
+        "en": "ICMS Tax Status Code (CST)",
+        "pt": "Código de Situação Tributária do ICMS (CST)"
+      },
+      "desc": {
+        "en": "ICMS tax status code (CST) for the line item, used by issuers under the normal\nregime (`br-nfe-regime` `3`). Simples Nacional issuers must use the CSOSN code\n(`br-nfe-icms-csosn`) instead. Defaults to `00` (taxed in full) during\nnormalization when not provided."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "00",
+          "name": {
+            "en": "Taxed in full",
+            "pt": "Tributada integralmente"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Monophasic taxation (fuels)",
+            "pt": "Tributação monofásica própria sobre combustíveis"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Taxed with ICMS charged by tax substitution",
+            "pt": "Tributada e com cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Fuel operation with ICMS retention",
+            "pt": "Operação com combustível e retenção do ICMS"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "en": "Taxed with tax base reduction",
+            "pt": "Com redução da base de cálculo"
+          }
+        },
+        {
+          "code": "30",
+          "name": {
+            "en": "Exempt/non-taxed with ICMS charged by tax substitution",
+            "pt": "Isenta/não tributada e com cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "40",
+          "name": {
+            "en": "Exempt",
+            "pt": "Isenta"
+          }
+        },
+        {
+          "code": "41",
+          "name": {
+            "en": "Non-taxed",
+            "pt": "Não tributada"
+          }
+        },
+        {
+          "code": "50",
+          "name": {
+            "en": "Suspended",
+            "pt": "Com suspensão"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Deferred",
+            "pt": "Com diferimento"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Fuel operation with deferral",
+            "pt": "Operação com combustível e diferimento"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "ICMS charged previously by tax substitution",
+            "pt": "ICMS cobrado anteriormente por substituição tributária"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Fuel operation with ICMS withheld",
+            "pt": "Operação com combustível e ICMS retido anteriormente"
+          }
+        },
+        {
+          "code": "70",
+          "name": {
+            "en": "Taxed with base reduction and ICMS charged by tax substitution",
+            "pt": "Com redução da base de cálculo e cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "Others",
+            "pt": "Outras"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-icms-csosn",
+      "name": {
+        "en": "ICMS Simples Nacional Status Code (CSOSN)",
+        "pt": "Código de Situação da Operação no Simples Nacional (CSOSN)"
+      },
+      "desc": {
+        "en": "ICMS status code (CSOSN) for the line item, used by issuers under the Simples\nNacional regime (`br-nfe-regime` `1`, `2` or `4`). Normal-regime issuers must\nuse the CST code (`br-nfe-icms-cst`) instead."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "101",
+          "name": {
+            "en": "Taxed under Simples Nacional with credit permission",
+            "pt": "Tributada pelo Simples Nacional com permissão de crédito"
+          }
+        },
+        {
+          "code": "102",
+          "name": {
+            "en": "Taxed under Simples Nacional without credit permission",
+            "pt": "Tributada pelo Simples Nacional sem permissão de crédito"
+          }
+        },
+        {
+          "code": "103",
+          "name": {
+            "en": "ICMS exemption under Simples Nacional for gross revenue range",
+            "pt": "Isenção do ICMS no Simples Nacional para faixa de receita bruta"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "Taxed under Simples Nacional with credit permission and ICMS by tax substitution",
+            "pt": "Tributada pelo Simples Nacional com permissão de crédito e com cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "Taxed under Simples Nacional without credit permission and ICMS by tax substitution",
+            "pt": "Tributada pelo Simples Nacional sem permissão de crédito e com cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "ICMS exemption under Simples Nacional for revenue range and ICMS by tax substitution",
+            "pt": "Isenção do ICMS no Simples Nacional para faixa de receita bruta e com cobrança do ICMS por substituição tributária"
+          }
+        },
+        {
+          "code": "300",
+          "name": {
+            "en": "Immune",
+            "pt": "Imune"
+          }
+        },
+        {
+          "code": "400",
+          "name": {
+            "en": "Non-taxed under Simples Nacional",
+            "pt": "Não tributada pelo Simples Nacional"
+          }
+        },
+        {
+          "code": "500",
+          "name": {
+            "en": "ICMS charged previously by tax substitution or anticipation",
+            "pt": "ICMS cobrado anteriormente por substituição tributária ou por antecipação"
+          }
+        },
+        {
+          "code": "900",
+          "name": {
+            "en": "Others",
+            "pt": "Outros"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-icms-origin",
+      "name": {
+        "en": "ICMS Goods Origin",
+        "pt": "Origem da Mercadoria (ICMS)"
+      },
+      "desc": {
+        "en": "Origin of the goods for ICMS purposes. Defaults to `0` (national) during\nnormalization when not provided."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "0",
+          "name": {
+            "en": "National (except codes 3, 4, 5 and 8)",
+            "pt": "Nacional, exceto as indicadas nos códigos 3, 4, 5 e 8"
+          }
+        },
+        {
+          "code": "1",
+          "name": {
+            "en": "Foreign, direct import (except code 6)",
+            "pt": "Estrangeira - Importação direta, exceto a indicada no código 6"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Foreign, acquired in the domestic market (except code 7)",
+            "pt": "Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "National, import content above 40% and up to 70%",
+            "pt": "Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "National, produced under the basic productive processes",
+            "pt": "Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "National, import content up to 40%",
+            "pt": "Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Foreign, direct import, no domestic equivalent (CAMEX list / natural gas)",
+            "pt": "Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX e gás natural"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Foreign, acquired domestically, no domestic equivalent (CAMEX list / natural gas)",
+            "pt": "Estrangeira - Adquirida no mercado interno, sem similar nacional, constante lista CAMEX e gás natural"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "National, import content above 70%",
+            "pt": "Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-pis-cst",
+      "name": {
+        "en": "PIS Tax Status Code (CST)",
+        "pt": "Código de Situação Tributária do PIS (CST)"
+      },
+      "desc": {
+        "en": "PIS tax status code for the line item. Simples Nacional issuers typically use\n`49` or `99`, as PIS is settled within the unified DAS collection. Defaults to\n`01` (standard-rate taxable operation) during normalization when not provided."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Taxable operation, standard rate",
+            "pt": "Operação Tributável com Alíquota Básica"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Taxable operation, differentiated rate",
+            "pt": "Operação Tributável com Alíquota Diferenciada"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Taxable operation, rate per unit of measure",
+            "pt": "Operação Tributável com Alíquota por Unidade de Medida de Produto"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Taxable monophasic operation, zero-rate resale",
+            "pt": "Operação Tributável Monofásica - Revenda a Alíquota Zero"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Taxable operation by tax substitution",
+            "pt": "Operação Tributável por Substituição Tributária"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Taxable operation, zero rate",
+            "pt": "Operação Tributável a Alíquota Zero"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Operation exempt from the contribution",
+            "pt": "Operação Isenta da Contribuição"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Operation without incidence of the contribution",
+            "pt": "Operação Sem Incidência da Contribuição"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "Operation with suspension of the contribution",
+            "pt": "Operação com Suspensão da Contribuição"
+          }
+        },
+        {
+          "code": "49",
+          "name": {
+            "en": "Other outbound operations",
+            "pt": "Outras Operações de Saída"
+          }
+        },
+        {
+          "code": "50",
+          "name": {
+            "en": "Credit operation, exclusively taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Credit operation, exclusively non-taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "52",
+          "name": {
+            "en": "Credit operation, exclusively export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita de Exportação"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Credit operation, taxed and non-taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno"
+          }
+        },
+        {
+          "code": "54",
+          "name": {
+            "en": "Credit operation, taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "55",
+          "name": {
+            "en": "Credit operation, non-taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "56",
+          "name": {
+            "en": "Credit operation, taxed/non-taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "Presumed credit, exclusively taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Presumed credit, exclusively non-taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "62",
+          "name": {
+            "en": "Presumed credit, exclusively export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação"
+          }
+        },
+        {
+          "code": "63",
+          "name": {
+            "en": "Presumed credit, taxed and non-taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno"
+          }
+        },
+        {
+          "code": "64",
+          "name": {
+            "en": "Presumed credit, taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "65",
+          "name": {
+            "en": "Presumed credit, non-taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "66",
+          "name": {
+            "en": "Presumed credit, taxed/non-taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "67",
+          "name": {
+            "en": "Presumed credit, other operations",
+            "pt": "Crédito Presumido - Outras Operações"
+          }
+        },
+        {
+          "code": "70",
+          "name": {
+            "en": "Acquisition operation without credit right",
+            "pt": "Operação de Aquisição sem Direito a Crédito"
+          }
+        },
+        {
+          "code": "71",
+          "name": {
+            "en": "Acquisition operation with exemption",
+            "pt": "Operação de Aquisição com Isenção"
+          }
+        },
+        {
+          "code": "72",
+          "name": {
+            "en": "Acquisition operation with suspension",
+            "pt": "Operação de Aquisição com Suspensão"
+          }
+        },
+        {
+          "code": "73",
+          "name": {
+            "en": "Acquisition operation at zero rate",
+            "pt": "Operação de Aquisição a Alíquota Zero"
+          }
+        },
+        {
+          "code": "74",
+          "name": {
+            "en": "Acquisition operation without incidence of the contribution",
+            "pt": "Operação de Aquisição sem Incidência da Contribuição"
+          }
+        },
+        {
+          "code": "75",
+          "name": {
+            "en": "Acquisition operation by tax substitution",
+            "pt": "Operação de Aquisição por Substituição Tributária"
+          }
+        },
+        {
+          "code": "98",
+          "name": {
+            "en": "Other inbound operations",
+            "pt": "Outras Operações de Entrada"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Other operations",
+            "pt": "Outras Operações"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-cofins-cst",
+      "name": {
+        "en": "COFINS Tax Status Code (CST)",
+        "pt": "Código de Situação Tributária do COFINS (CST)"
+      },
+      "desc": {
+        "en": "COFINS tax status code for the line item. Simples Nacional issuers typically\nuse `49` or `99`, as COFINS is settled within the unified DAS collection.\nDefaults to `01` (standard-rate taxable operation) during normalization when\nnot provided."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Taxable operation, standard rate",
+            "pt": "Operação Tributável com Alíquota Básica"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Taxable operation, differentiated rate",
+            "pt": "Operação Tributável com Alíquota Diferenciada"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Taxable operation, rate per unit of measure",
+            "pt": "Operação Tributável com Alíquota por Unidade de Medida de Produto"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Taxable monophasic operation, zero-rate resale",
+            "pt": "Operação Tributável Monofásica - Revenda a Alíquota Zero"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Taxable operation by tax substitution",
+            "pt": "Operação Tributável por Substituição Tributária"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Taxable operation, zero rate",
+            "pt": "Operação Tributável a Alíquota Zero"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Operation exempt from the contribution",
+            "pt": "Operação Isenta da Contribuição"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Operation without incidence of the contribution",
+            "pt": "Operação Sem Incidência da Contribuição"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "Operation with suspension of the contribution",
+            "pt": "Operação com Suspensão da Contribuição"
+          }
+        },
+        {
+          "code": "49",
+          "name": {
+            "en": "Other outbound operations",
+            "pt": "Outras Operações de Saída"
+          }
+        },
+        {
+          "code": "50",
+          "name": {
+            "en": "Credit operation, exclusively taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Credit operation, exclusively non-taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "52",
+          "name": {
+            "en": "Credit operation, exclusively export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada Exclusivamente a Receita de Exportação"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Credit operation, taxed and non-taxed domestic revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno"
+          }
+        },
+        {
+          "code": "54",
+          "name": {
+            "en": "Credit operation, taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "55",
+          "name": {
+            "en": "Credit operation, non-taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "56",
+          "name": {
+            "en": "Credit operation, taxed/non-taxed domestic and export revenue",
+            "pt": "Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "Presumed credit, exclusively taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Presumed credit, exclusively non-taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno"
+          }
+        },
+        {
+          "code": "62",
+          "name": {
+            "en": "Presumed credit, exclusively export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação"
+          }
+        },
+        {
+          "code": "63",
+          "name": {
+            "en": "Presumed credit, taxed and non-taxed domestic revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno"
+          }
+        },
+        {
+          "code": "64",
+          "name": {
+            "en": "Presumed credit, taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "65",
+          "name": {
+            "en": "Presumed credit, non-taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "66",
+          "name": {
+            "en": "Presumed credit, taxed/non-taxed domestic and export revenue",
+            "pt": "Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação"
+          }
+        },
+        {
+          "code": "67",
+          "name": {
+            "en": "Presumed credit, other operations",
+            "pt": "Crédito Presumido - Outras Operações"
+          }
+        },
+        {
+          "code": "70",
+          "name": {
+            "en": "Acquisition operation without credit right",
+            "pt": "Operação de Aquisição sem Direito a Crédito"
+          }
+        },
+        {
+          "code": "71",
+          "name": {
+            "en": "Acquisition operation with exemption",
+            "pt": "Operação de Aquisição com Isenção"
+          }
+        },
+        {
+          "code": "72",
+          "name": {
+            "en": "Acquisition operation with suspension",
+            "pt": "Operação de Aquisição com Suspensão"
+          }
+        },
+        {
+          "code": "73",
+          "name": {
+            "en": "Acquisition operation at zero rate",
+            "pt": "Operação de Aquisição a Alíquota Zero"
+          }
+        },
+        {
+          "code": "74",
+          "name": {
+            "en": "Acquisition operation without incidence of the contribution",
+            "pt": "Operação de Aquisição sem Incidência da Contribuição"
+          }
+        },
+        {
+          "code": "75",
+          "name": {
+            "en": "Acquisition operation by tax substitution",
+            "pt": "Operação de Aquisição por Substituição Tributária"
+          }
+        },
+        {
+          "code": "98",
+          "name": {
+            "en": "Other inbound operations",
+            "pt": "Outras Operações de Entrada"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Other operations",
+            "pt": "Outras Operações"
           }
         }
       ]

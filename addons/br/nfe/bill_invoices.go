@@ -19,6 +19,14 @@ const (
 	seriesPattern = `^(?:0|[1-9]{1}[0-9]{0,2})$` // extracted from the NFe XSD to validate the series
 )
 
+// normalizeInvoice applies NF-e invoice-level defaults.
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil || inv.Supplier == nil {
+		return
+	}
+	inv.Supplier.Ext = inv.Supplier.Ext.SetIfEmpty(ExtKeyRegime, "3") // Normal regime
+}
+
 func billInvoiceRules() *rules.Set {
 	return rules.For(new(bill.Invoice),
 		rules.Assert("34", "invoice currency must be BRL or provide exchange rate for conversion", currency.CanConvertTo(currency.BRL)),
@@ -59,6 +67,11 @@ func billInvoiceRules() *rules.Set {
 					rules.Assert("09", fmt.Sprintf("invoice supplier requires '%s' extension when addresses are present", br.ExtKeyMunicipality),
 						tax.ExtensionsRequire(br.ExtKeyMunicipality),
 					),
+				),
+			),
+			rules.Field("ext",
+				rules.Assert("39", fmt.Sprintf("invoice supplier requires '%s' extension", ExtKeyRegime),
+					tax.ExtensionsRequire(ExtKeyRegime),
 				),
 			),
 			rules.Field("name",

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3db53cd52c0153ed77336d0eb38a189d87c7b9f4079a6ec75328a6fe73a30823"
+			"val": "4e5b569a3bd5d140735ee46a2d2f5b5d7f760e1d3aa519325a3a71f2aa7bc2db"
 		}
 	},
 	"doc": {
@@ -58,7 +58,8 @@
 				}
 			],
 			"ext": {
-				"br-ibge-municipality": "3304557"
+				"br-ibge-municipality": "3304557",
+				"br-nfe-regime": "1"
 			}
 		},
 		"lines": [
@@ -73,15 +74,25 @@
 				"taxes": [
 					{
 						"cat": "ICMS",
-						"percent": "4.0%"
+						"percent": "0%",
+						"ext": {
+							"br-nfe-icms-csosn": "102",
+							"br-nfe-icms-origin": "0"
+						}
 					},
 					{
 						"cat": "PIS",
-						"percent": "1.65%"
+						"percent": "0%",
+						"ext": {
+							"br-nfe-pis-cst": "49"
+						}
 					},
 					{
 						"cat": "COFINS",
-						"percent": "7.60%"
+						"percent": "0%",
+						"ext": {
+							"br-nfe-cofins-cst": "49"
+						}
 					}
 				],
 				"total": "20.00"
@@ -105,36 +116,46 @@
 						"informative": true,
 						"rates": [
 							{
+								"ext": {
+									"br-nfe-icms-csosn": "102",
+									"br-nfe-icms-origin": "0"
+								},
 								"base": "20.00",
-								"percent": "4.0%",
-								"amount": "0.80"
+								"percent": "0%",
+								"amount": "0.00"
 							}
 						],
-						"amount": "0.80"
+						"amount": "0.00"
 					},
 					{
 						"code": "PIS",
 						"informative": true,
 						"rates": [
 							{
+								"ext": {
+									"br-nfe-pis-cst": "49"
+								},
 								"base": "20.00",
-								"percent": "1.65%",
-								"amount": "0.33"
+								"percent": "0%",
+								"amount": "0.00"
 							}
 						],
-						"amount": "0.33"
+						"amount": "0.00"
 					},
 					{
 						"code": "COFINS",
 						"informative": true,
 						"rates": [
 							{
+								"ext": {
+									"br-nfe-cofins-cst": "49"
+								},
 								"base": "20.00",
-								"percent": "7.60%",
-								"amount": "1.52"
+								"percent": "0%",
+								"amount": "0.00"
 							}
 						],
-						"amount": "1.52"
+						"amount": "0.00"
 					}
 				],
 				"sum": "0.00"

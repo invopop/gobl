@@ -208,6 +208,7 @@ func TestSupplierValidation(t *testing.T) {
 		inv.Supplier.Addresses = []*org.Address{nil}
 		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3304557",
+			nfe.ExtKeyRegime:       "3",
 		})
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "supplier address must not be empty")
@@ -251,6 +252,7 @@ func TestSupplierValidation(t *testing.T) {
 
 		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
 			"br-ibge-municipality": "3304557",
+			nfe.ExtKeyRegime:       "3",
 		})
 		err = rules.Validate(inv)
 		assert.NoError(t, err)

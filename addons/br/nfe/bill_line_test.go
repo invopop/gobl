@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/br"
@@ -33,12 +34,18 @@ func TestLineValidation(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: br.TaxCategoryICMS,
+						Ext: tax.ExtensionsOf(cbc.CodeMap{
+							nfe.ExtKeyICMSCST:    "00",
+							nfe.ExtKeyICMSOrigin: "0",
+						}),
 					},
 					{
 						Category: br.TaxCategoryPIS,
+						Ext:      tax.ExtensionsOf(cbc.CodeMap{nfe.ExtKeyPISCST: "01"}),
 					},
 					{
 						Category: br.TaxCategoryCOFINS,
+						Ext:      tax.ExtensionsOf(cbc.CodeMap{nfe.ExtKeyCOFINSCST: "01"}),
 					},
 				},
 			},

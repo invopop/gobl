@@ -12,10 +12,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
 - `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
 - `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
+- `addons/br/nfe`: Tax status code (CST) extensions for ICMS (`br-nfe-icms-cst` / `br-nfe-icms-csosn`), PIS (`br-nfe-pis-cst`) and COFINS (`br-nfe-cofins-cst`), with defaults applied during normalization.
+- `addons/br/nfe/`: ICMS goods origin extension (`br-nfe-icms-origin`) with default applied during normalization.
 
 ### Changed
 
 - `addons/br/nfe`: Customer address `state` presence validation and the `br-ibge-municipality` extension are now applied to Brazilian parties only.
+- `addons/br/nfe`: The invoice supplier now requires the `br-nfe-regime` extension which now supports value `4` (MEI – Individual Micro-entrepreneur) and defaults to `3` (normal regime) during normalization.
 
 ## [v0.500.0] - 2026-06-10
 

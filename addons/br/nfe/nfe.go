@@ -41,13 +41,16 @@ func init() {
 		is.InContext(tax.AddonIn(V4)),
 		billInvoiceRules(),
 		billLineRules(),
+		taxComboRules(),
 		payInstructionsRules(),
 		payAdvanceRules(),
 	)
 	norm.RegisterWithGuard(
 		is.InContext(tax.AddonIn(V4)),
+		norm.For(normalizeInvoice),
 		norm.For(normalizePayInstructions),
 		norm.For(normalizePayRecord),
+		norm.For(normalizeTaxCombo),
 	)
 }
 

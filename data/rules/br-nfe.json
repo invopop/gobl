@@ -137,6 +137,16 @@
               ]
             },
             {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-BILL-INVOICE-39",
+                  "desc": "invoice supplier requires 'br-nfe-regime' extension",
+                  "tests": "ext require [br-nfe-regime]"
+                }
+              ]
+            },
+            {
               "field": "name",
               "assert": [
                 {
@@ -493,6 +503,62 @@
           "id": "GOBL-BR-NFE-BILL-LINE-03",
           "desc": "line taxes must include the COFINS category",
           "tests": "line has tax category COFINS"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-BR-NFE-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "guard": "ICMS category",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-TAX-COMBO-01",
+                  "desc": "ICMS tax combo requires 'br-nfe-icms-cst' or 'br-nfe-icms-csosn' extension",
+                  "tests": "ext require [br-nfe-icms-cst], or ext require [br-nfe-icms-csosn]"
+                },
+                {
+                  "id": "GOBL-BR-NFE-TAX-COMBO-02",
+                  "desc": "ICMS tax combo requires 'br-nfe-icms-origin' extension",
+                  "tests": "ext require [br-nfe-icms-origin]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "PIS category",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-TAX-COMBO-03",
+                  "desc": "PIS tax combo requires 'br-nfe-pis-cst' extension",
+                  "tests": "ext require [br-nfe-pis-cst]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guard": "COFINS category",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-BR-NFE-TAX-COMBO-04",
+                  "desc": "COFINS tax combo requires 'br-nfe-cofins-cst' extension",
+                  "tests": "ext require [br-nfe-cofins-cst]"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
