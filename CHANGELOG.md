@@ -8,17 +8,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `addons/br/nfe`: Tax status code (CST) extensions for ICMS (`br-nfe-icms-cst` / `br-nfe-icms-csosn`), PIS (`br-nfe-pis-cst`) and COFINS (`br-nfe-cofins-cst`), with defaults applied during normalization.
+- `addons/br/nfe`: ICMS goods origin extension (`br-nfe-icms-origin`) with default applied during normalization.
+
+### Changed
+
+- `addons/br/nfe`: The invoice supplier now requires the `br-nfe-regime` extension which now supports value `4` (MEI – Individual Micro-entrepreneur) and defaults to `3` (normal regime) during normalization.
+
+## [v0.501.0] - 2026-06-16
+
+### Added
+
+- `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
 - `org`: `Registration` object includes `ext` for addon-specific registration details.
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
 - `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
 - `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
-- `addons/br/nfe`: Tax status code (CST) extensions for ICMS (`br-nfe-icms-cst` / `br-nfe-icms-csosn`), PIS (`br-nfe-pis-cst`) and COFINS (`br-nfe-cofins-cst`), with defaults applied during normalization.
-- `addons/br/nfe/`: ICMS goods origin extension (`br-nfe-icms-origin`) with default applied during normalization.
 
 ### Changed
 
 - `addons/br/nfe`: Customer address `state` presence validation and the `br-ibge-municipality` extension are now applied to Brazilian parties only.
-- `addons/br/nfe`: The invoice supplier now requires the `br-nfe-regime` extension which now supports value `4` (MEI – Individual Micro-entrepreneur) and defaults to `3` (normal regime) during normalization.
+- `it-sdi`: `it-sdi-liquidation-state` and `it-sdi-shareholder-state` registration extensions for the FatturaPA `IscrizioneREA` block (`StatoLiquidazione` and `SocioUnico`).
+
+### Fixed
+
+- `regimes/no`: Norwegian VAT identities now keep — and gain, when given as a bare organisation number — the `MVA` suffix, so serialized VAT numbers take the `NO<orgnr>MVA` form that the EHF and Peppol national rules (NO-R-001) require. Validation expects the suffixed form; organisation-number identities are unchanged.
+
+### Removed
+
+- `addons/eu-en16935-v2017`: Exemption reason rule (BR-E-10) validation has been removed as it is was incorrectly enforcing a VATEX code.
 
 ## [v0.500.0] - 2026-06-10
 
