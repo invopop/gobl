@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `regimes/no`: Norwegian VAT identities now keep — and gain, when given as a bare organisation number — the `MVA` suffix, so serialized VAT numbers take the `NO<orgnr>MVA` form that the EHF and Peppol national rules (NO-R-001) require. Validation expects the suffixed form; organisation-number identities are unchanged.
 
+### Removed
+
+- `addons/eu-en16935-v2017`: Exemption reason rule (BR-E-10) validation has been removed as it is was incorrectly enforcing a VATEX code.
+
 ## [v0.500.0] - 2026-06-10
 
 GOBL is now a pure document library. The CLI, HTTP API, MCP server, and WASM build have moved to the [gobl.dev](https://github.com/invopop/gobl.dev) project, which composes this library with the complete set of addons. Install the CLI from its new home: `go install github.com/invopop/gobl.dev/cmd/gobl@latest`.
