@@ -16,11 +16,13 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(l10n.LU.Tax())),
 			rules.Field("supplier",
-				rules.Assert("01",
-					"invoice LU supplier must have a TVA tax ID code or an RCS identity",
-					is.AnyOf(
-						is.Func("has TVA tax ID code", hasTaxIDCode),
-						is.Func("has RCS identity", hasRCSIdentity),
+				rules.When(
+					is.Func("supplier has no TVA tax ID code", supplierHasNoTVACode),
+					rules.Field("identities",
+						rules.Assert("01",
+							"invoice LU supplier without TVA tax ID code must have an RCS identity",
+							org.IdentityTypeIn(IdentityTypeRCS),
+						),
 					),
 				),
 			),
@@ -28,15 +30,7 @@ func billInvoiceRules() *rules.Set {
 	)
 }
 
-func hasTaxIDCode(value any) bool {
+func supplierHasNoTVACode(value any) bool {
 	party, _ := value.(*org.Party)
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasRCSIdentity(value any) bool {
-	party, _ := value.(*org.Party)
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-	return org.IdentityForType(party.Identities, IdentityTypeRCS) != nil
+	return party == nil || party.TaxID == nil || party.TaxID.Code == ""
 }

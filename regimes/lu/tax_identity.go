@@ -1,7 +1,6 @@
 package lu
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
@@ -14,8 +13,14 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "invalid Luxembourg TVA number",
-					is.Func("valid mod-89 TVA code", isValidTVACode),
+				rules.AssertIfPresent("01", "Luxembourg TVA number must be exactly 8 digits",
+					is.Length(8, 8),
+				),
+				rules.AssertIfPresent("02", "Luxembourg TVA number must contain only digits",
+					is.Digit,
+				),
+				rules.AssertIfPresent("03", "invalid Luxembourg TVA number: mod-89 checksum mismatch",
+					is.Func("valid mod-89 checksum", tvaChecksumValid),
 				),
 			),
 		),
@@ -28,32 +33,23 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 }
 
-// isValidTVACode reports whether the value is a valid Luxembourg TVA number:
-// exactly 8 digits where the last two digits equal the first six digits mod 89.
+// tvaChecksumValid reports whether the last two digits of a Luxembourg TVA
+// number equal the first six digits mod 89.
 //
 // Source: https://www.aed.public.lu/en/tva/numero-tva.html
-func isValidTVACode(value any) bool {
+func tvaChecksumValid(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok {
-		return false
+		return true
 	}
-	return validateTVACode(code) == nil
-}
-
-func validateTVACode(code cbc.Code) error {
 	val := code.String()
 	if len(val) != 8 {
-		return errors.New("must be exactly 8 digits")
+		return true // length rule handles this
 	}
-	for _, r := range val {
-		if r < '0' || r > '9' {
-			return errors.New("must contain only digits")
-		}
+	base, err1 := strconv.Atoi(val[:6])
+	check, err2 := strconv.Atoi(val[6:])
+	if err1 != nil || err2 != nil {
+		return true // digit rule handles this
 	}
-	base, _ := strconv.Atoi(val[:6])
-	check, _ := strconv.Atoi(val[6:])
-	if base%89 != check {
-		return errors.New("checksum mismatch")
-	}
-	return nil
+	return base%89 == check
 }

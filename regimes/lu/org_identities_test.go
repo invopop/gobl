@@ -52,23 +52,25 @@ func TestValidateOrgIdentity(t *testing.T) {
 	}
 
 	tests := []struct {
-		name  string
-		code  cbc.Code
-		valid bool
+		name     string
+		code     cbc.Code
+		valid    bool
+		errorMsg string
 	}{
 		{name: "section A (sole trader)", code: "A12345", valid: true},
 		{name: "section B (commercial company)", code: "B263475", valid: true},
 		{name: "section C (GIE)", code: "C123", valid: true},
 		{name: "section E (civil company)", code: "E4567", valid: true},
 		{name: "single digit", code: "B1", valid: true},
-		// invalid cases
-		{name: "two letters", code: "AB12345"},
-		{name: "lowercase", code: "b263475"},
-		{name: "no digits", code: "B"},
-		{name: "too many digits", code: "B1234567"},
-		{name: "digits only", code: "263475"},
-		{name: "letter at end", code: "263475B"},
-		{name: "empty code", code: ""},
+		// invalid format
+		{name: "two letters", code: "AB12345", errorMsg: "invalid RCS number"},
+		{name: "lowercase", code: "b263475", errorMsg: "invalid RCS number"},
+		{name: "no digits", code: "B", errorMsg: "invalid RCS number"},
+		{name: "too many digits", code: "B1234567", errorMsg: "invalid RCS number"},
+		{name: "digits only", code: "263475", errorMsg: "invalid RCS number"},
+		{name: "letter at end", code: "263475B", errorMsg: "invalid RCS number"},
+		// empty code is caught by the core identity rule
+		{name: "empty code", code: "", errorMsg: "identity code must be provided"},
 	}
 
 	for _, tt := range tests {
@@ -78,7 +80,7 @@ func TestValidateOrgIdentity(t *testing.T) {
 			if tt.valid {
 				assert.NoError(t, err)
 			} else if assert.Error(t, err) {
-				assert.Contains(t, err.Error(), "invalid RCS number")
+				assert.Contains(t, err.Error(), tt.errorMsg)
 			}
 		})
 	}
