@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bd5431998239813564d14cc27ee4c4511800578a98e86d6c67a3bce4edf00b89"
+			"val": "558ba58097ced216aae846ffe6a03f385c22a6a245eee9e01739f39cfe541ca0"
 		}
 	},
 	"doc": {
@@ -13,68 +13,99 @@
 		"$addons": [
 			"br-nfe-v4"
 		],
-		"$tags": [
-			"simplified"
-		],
-		"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+		"uuid": "01937e1a-5b2c-7d3e-8f40-1a2b3c4d5e6f",
 		"type": "standard",
-		"series": "123",
-		"code": "1",
-		"issue_date": "2024-11-15",
+		"series": "1",
+		"code": "1024",
+		"issue_date": "2024-11-20",
 		"currency": "BRL",
 		"tax": {
 			"ext": {
-				"br-nfe-model": "65",
+				"br-nfe-model": "55",
 				"br-nfe-presence": "1"
 			}
 		},
 		"supplier": {
-			"name": "Drogaria Vida Saudável Ltda.",
+			"name": "Eletro Components Indústria Ltda.",
 			"tax_id": {
 				"country": "BR",
-				"code": "55263640000186"
+				"code": "18069577000115"
 			},
 			"identities": [
 				{
 					"key": "br-nfe-state-reg",
-					"code": "35503304557308"
+					"code": "110042490114"
 				}
 			],
 			"addresses": [
 				{
-					"num": "200",
-					"street": "Rua Primeiro de Março",
-					"street_extra": "Torre A",
-					"locality": "Centro",
-					"region": "Rio de Janeiro",
-					"state": "RJ",
-					"code": "20010-000",
+					"num": "1500",
+					"street": "Avenida Engenheiro Luís Carlos Berrini",
+					"locality": "Cidade Monções",
+					"region": "São Paulo",
+					"state": "SP",
+					"code": "04571-000",
 					"country": "BR"
 				}
 			],
 			"emails": [
 				{
-					"addr": "saudemais@example.com"
+					"addr": "fiscal@eletrocomponents.com.br"
 				}
 			],
 			"ext": {
-				"br-ibge-municipality": "3304557",
+				"br-ibge-municipality": "3550308",
 				"br-nfe-regime": "3"
+			}
+		},
+		"customer": {
+			"name": "Instaladora Predial Campinas Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "05700736000196"
+			},
+			"identities": [
+				{
+					"key": "br-nfe-state-reg",
+					"code": "244889012117"
+				}
+			],
+			"addresses": [
+				{
+					"num": "300",
+					"street": "Rua Barão de Jaguara",
+					"locality": "Centro",
+					"region": "São Paulo",
+					"state": "SP",
+					"code": "13015-000",
+					"country": "BR"
+				}
+			],
+			"ext": {
+				"br-ibge-municipality": "3509502"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "2",
+				"quantity": "20",
 				"item": {
-					"name": "Caixa de Máscaras Cirúrgicas",
-					"price": "10.00"
+					"ref": "DJ-60A",
+					"name": "Disjuntor Tripolar 60A",
+					"identities": [
+						{
+							"key": "ncm",
+							"code": "8536.20.00"
+						}
+					],
+					"price": "85.00",
+					"unit": "piece"
 				},
-				"sum": "20.00",
+				"sum": "1700.00",
 				"taxes": [
 					{
 						"cat": "ICMS",
-						"percent": "4.0%",
+						"percent": "18.0%",
 						"ext": {
 							"br-nfe-icms-cst": "00",
 							"br-nfe-icms-origin": "0"
@@ -95,20 +126,23 @@
 						}
 					}
 				],
-				"total": "20.00"
+				"total": "1700.00",
+				"ext": {
+					"br-nfe-cfop": "5102"
+				}
 			}
 		],
 		"payment": {
 			"instructions": {
-				"key": "card",
+				"key": "credit-transfer",
 				"ext": {
-					"br-nfe-payment-means": "03"
+					"br-nfe-payment-means": "18"
 				}
 			}
 		},
 		"totals": {
-			"sum": "20.00",
-			"total": "20.00",
+			"sum": "1700.00",
+			"total": "1700.00",
 			"taxes": {
 				"categories": [
 					{
@@ -120,12 +154,12 @@
 									"br-nfe-icms-cst": "00",
 									"br-nfe-icms-origin": "0"
 								},
-								"base": "20.00",
-								"percent": "4.0%",
-								"amount": "0.80"
+								"base": "1700.00",
+								"percent": "18.0%",
+								"amount": "306.00"
 							}
 						],
-						"amount": "0.80"
+						"amount": "306.00"
 					},
 					{
 						"code": "PIS",
@@ -135,12 +169,12 @@
 								"ext": {
 									"br-nfe-pis-cst": "01"
 								},
-								"base": "20.00",
+								"base": "1700.00",
 								"percent": "1.65%",
-								"amount": "0.33"
+								"amount": "28.05"
 							}
 						],
-						"amount": "0.33"
+						"amount": "28.05"
 					},
 					{
 						"code": "COFINS",
@@ -150,19 +184,19 @@
 								"ext": {
 									"br-nfe-cofins-cst": "01"
 								},
-								"base": "20.00",
+								"base": "1700.00",
 								"percent": "7.60%",
-								"amount": "1.52"
+								"amount": "129.20"
 							}
 						],
-						"amount": "1.52"
+						"amount": "129.20"
 					}
 				],
 				"sum": "0.00"
 			},
 			"tax": "0.00",
-			"total_with_tax": "20.00",
-			"payable": "20.00"
+			"total_with_tax": "1700.00",
+			"payable": "1700.00"
 		},
 		"notes": [
 			{

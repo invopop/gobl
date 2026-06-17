@@ -1,0 +1,131 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": [
+    "br-nfe-v4"
+  ],
+  "uuid": "01937e2b-6c3d-7e4f-9a50-2b3c4d5e6f70",
+  "tax": {
+    "ext": {
+      "br-nfe-presence": "1"
+    }
+  },
+  "series": "1",
+  "code": "2048",
+  "issue_date": "2024-11-20",
+  "currency": "BRL",
+  "supplier": {
+    "name": "Marcenaria Arte & Design ME",
+    "tax_id": {
+      "country": "BR",
+      "code": "12345678000195"
+    },
+    "identities": [
+      {
+        "key": "br-nfe-state-reg",
+        "code": "0623458900"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "85",
+        "street": "Rua dos Artesãos",
+        "locality": "Savassi",
+        "region": "Minas Gerais",
+        "state": "MG",
+        "code": "30140-071",
+        "country": "BR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "contato@artedesign.com.br"
+      }
+    ],
+    "ext": {
+      "br-ibge-municipality": "3106200",
+      "br-nfe-regime": "1"
+    }
+  },
+  "customer": {
+    "name": "Comércio de Móveis Paulista Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "55263640000186"
+    },
+    "identities": [
+      {
+        "key": "br-nfe-state-reg",
+        "code": "112233445566"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "742",
+        "street": "Avenida Paulista",
+        "locality": "Bela Vista",
+        "region": "São Paulo",
+        "state": "SP",
+        "code": "01310-100",
+        "country": "BR"
+      }
+    ],
+    "ext": {
+      "br-ibge-municipality": "3550308"
+    }
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "5",
+      "item": {
+        "ref": "MES-CARV",
+        "name": "Mesa de Jantar em Madeira Maciça",
+        "identities": [
+          {
+            "key": "ncm",
+            "code": "9403.60.00"
+          }
+        ],
+        "price": "900.00",
+        "unit": "piece"
+      },
+      "taxes": [
+        {
+          "cat": "ICMS",
+          "percent": "2.56%",
+          "ext": {
+            "br-nfe-icms-csosn": "101"
+          }
+        },
+        {
+          "cat": "PIS",
+          "percent": "0%",
+          "ext": {
+            "br-nfe-pis-cst": "49"
+          }
+        },
+        {
+          "cat": "COFINS",
+          "percent": "0%",
+          "ext": {
+            "br-nfe-cofins-cst": "49"
+          }
+        }
+      ],
+      "ext": {
+        "br-nfe-cfop": "6102"
+      }
+    }
+  ],
+  "payment": {
+    "instructions": {
+      "key": "credit-transfer"
+    }
+  },
+  "notes": [
+    {
+      "key": "reason",
+      "text": "Venda de mercadoria"
+    }
+  ]
+}

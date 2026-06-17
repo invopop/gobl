@@ -1,0 +1,121 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": [
+    "br-nfe-v4"
+  ],
+  "uuid": "01937e1a-5b2c-7d3e-8f40-1a2b3c4d5e6f",
+  "tax": {
+    "ext": {
+      "br-nfe-presence": "1"
+    }
+  },
+  "series": "1",
+  "code": "1024",
+  "issue_date": "2024-11-20",
+  "currency": "BRL",
+  "supplier": {
+    "name": "Eletro Components Indústria Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "18069577000115"
+    },
+    "identities": [
+      {
+        "key": "br-nfe-state-reg",
+        "code": "110042490114"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "1500",
+        "street": "Avenida Engenheiro Luís Carlos Berrini",
+        "locality": "Cidade Monções",
+        "region": "São Paulo",
+        "state": "SP",
+        "code": "04571-000",
+        "country": "BR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "fiscal@eletrocomponents.com.br"
+      }
+    ],
+    "ext": {
+      "br-ibge-municipality": "3550308"
+    }
+  },
+  "customer": {
+    "name": "Instaladora Predial Campinas Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "05700736000196"
+    },
+    "identities": [
+      {
+        "key": "br-nfe-state-reg",
+        "code": "244889012117"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "300",
+        "street": "Rua Barão de Jaguara",
+        "locality": "Centro",
+        "region": "São Paulo",
+        "state": "SP",
+        "code": "13015-000",
+        "country": "BR"
+      }
+    ],
+    "ext": {
+      "br-ibge-municipality": "3509502"
+    }
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "20",
+      "item": {
+        "ref": "DJ-60A",
+        "name": "Disjuntor Tripolar 60A",
+        "identities": [
+          {
+            "key": "ncm",
+            "code": "8536.20.00"
+          }
+        ],
+        "price": "85.00",
+        "unit": "piece"
+      },
+      "taxes": [
+        {
+          "cat": "ICMS",
+          "percent": "18.0%"
+        },
+        {
+          "cat": "PIS",
+          "percent": "1.65%"
+        },
+        {
+          "cat": "COFINS",
+          "percent": "7.60%"
+        }
+      ],
+      "ext": {
+        "br-nfe-cfop": "5102"
+      }
+    }
+  ],
+  "payment": {
+    "instructions": {
+      "key": "credit-transfer"
+    }
+  },
+  "notes": [
+    {
+      "key": "reason",
+      "text": "Venda de mercadoria"
+    }
+  ]
+}
