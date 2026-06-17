@@ -72,7 +72,7 @@ func New() *tax.RegimeDef {
 		Normalizer: Normalize,
 		Identities: identityDefs,
 		Scenarios: []*tax.ScenarioSet{
-			bill.InvoiceScenarios(),
+			invoiceScenarios,
 		},
 		Categories: taxCategories(),
 		Corrections: []*tax.CorrectionDefinition{

@@ -37,13 +37,9 @@
           "tags": [
             "reverse-charge"
           ],
-          "cat": [
-            "VAT"
-          ],
           "note": {
-            "cat": "VAT",
             "key": "reverse-charge",
-            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+            "text": "Reverse charge: Recipient to account for GST to Inland Revenue."
           }
         }
       ]
@@ -79,6 +75,13 @@
           "name": {
             "en": "Zero"
           }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
         },
         {
           "key": "exempt",

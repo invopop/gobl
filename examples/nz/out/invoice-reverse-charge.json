@@ -1,0 +1,103 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "088f7c03c263b942cc841156477a38ac19538f2af5ddae7e819e782f5fd160aa"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "7f3a2b1c-8d4e-5f6a-9b0c-1d2e3f4a5b6c",
+		"type": "standard",
+		"series": "INV",
+		"code": "002",
+		"issue_date": "2024-07-31",
+		"currency": "NZD",
+		"tax": {
+			"notes": [
+				{
+					"key": "reverse-charge",
+					"text": "Reverse charge: Recipient to account for GST to Inland Revenue."
+				}
+			]
+		},
+		"supplier": {
+			"name": "Kiwi Software Ltd.",
+			"tax_id": {
+				"country": "NZ",
+				"code": "123456785"
+			},
+			"addresses": [
+				{
+					"street": "12 Lambton Quay",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sydney Enterprises Pty Ltd.",
+			"tax_id": {
+				"country": "AU",
+				"code": "12345678901"
+			},
+			"addresses": [
+				{
+					"street": "100 George Street",
+					"locality": "Sydney",
+					"code": "2000",
+					"country": "AU"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"name": "Software consultancy services",
+					"price": "200.00",
+					"unit": "h"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "1000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1000.00",
+			"payable": "1000.00"
+		}
+	}
+}
