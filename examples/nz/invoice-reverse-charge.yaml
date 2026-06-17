@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "7f3a2b1c-8d4e-5f6a-9b0c-1d2e3f4a5b6c"
+issue_date: "2024-07-31"
+series: "INV"
+code: "002"
+tax:
+  tags:
+    - reverse-charge
+
+supplier:
+  tax_id:
+    country: "NZ"
+    code: "123456785"
+  name: "Kiwi Software Ltd."
+  addresses:
+    - street: "12 Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: "NZ"
+
+customer:
+  tax_id:
+    country: "AU"
+    code: "12345678901"
+  name: "Sydney Enterprises Pty Ltd."
+  addresses:
+    - street: "100 George Street"
+      locality: "Sydney"
+      code: "2000"
+      country: "AU"
+
+lines:
+  - quantity: 5
+    item:
+      name: "Software consultancy services"
+      price: "200.00"
+      unit: "h"
+    taxes:
+      - cat: GST
+        key: reverse-charge

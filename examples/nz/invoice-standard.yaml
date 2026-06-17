@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3e8a1f2b-4c5d-6e7f-8a9b-0c1d2e3f4a5b"
+issue_date: "2024-07-31"
+series: "INV"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "NZ"
+    code: "123456785"
+  name: "Kiwi Software Ltd."
+  addresses:
+    - street: "12 Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: "NZ"
+
+customer:
+  tax_id:
+    country: "NZ"
+    code: "12345674"
+  name: "Auckland Enterprises Ltd."
+  addresses:
+    - street: "45 Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: "NZ"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Software development services"
+      price: "150.00"
+      unit: "h"
+    taxes:
+      - cat: GST
+        rate: general
+
+  - quantity: 1
+    item:
+      name: "Exported software licence"
+      price: "500.00"
+    taxes:
+      - cat: GST
+        rate: zero

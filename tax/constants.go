@@ -119,6 +119,11 @@ var globalCategories = []*CategoryDef{
 				Name: i18n.NewString("Zero"),
 			},
 			{
+				Key:       KeyReverseCharge,
+				Name:      i18n.NewString("Reverse charge"),
+				NoPercent: true,
+			},
+			{
 				Key:       KeyExempt,
 				Name:      i18n.NewString("Exempt"),
 				NoPercent: true,

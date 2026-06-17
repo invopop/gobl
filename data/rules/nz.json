@@ -1,0 +1,83 @@
+{
+  "id": "GOBL-NZ",
+  "package": "nz",
+  "subsets": [
+    {
+      "id": "GOBL-NZ-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [NZ]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-NZ-TAX-IDENTITY-01",
+                      "desc": "invalid NZ IRD number format",
+                      "tests": "matches ^\\d{8,9}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-NZ-TAX-IDENTITY-02",
+                      "desc": "IRD number out of valid range",
+                      "tests": "range"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-NZ-TAX-IDENTITY-03",
+                      "desc": "IRD number checksum mismatch",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-NZ-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [NZ]",
+          "subsets": [
+            {
+              "guard": "type in [NZBN]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-NZ-ORG-IDENTITY-01",
+                      "desc": "NZBN must be 13 digits",
+                      "tests": "matches ^\\d{13}$"
+                    },
+                    {
+                      "id": "GOBL-NZ-ORG-IDENTITY-02",
+                      "desc": "NZBN check digit mismatch",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
