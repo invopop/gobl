@@ -26,7 +26,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{name: "too short", code: "1234567", err: "IDENTITY-01"},
 		{name: "too long", code: "1234567890", err: "IDENTITY-01"},
 		{name: "non-numeric characters", code: "1234abc89", err: "IDENTITY-01"},
-		{name: "letters in code", code: "1234abc89", err: "IDENTITY-01"},
+		{name: "special characters", code: "1234+6789", err: "IDENTITY-01"},
 
 		// Range failures
 		{name: "below minimum", code: "09999999", err: "IDENTITY-02"},
