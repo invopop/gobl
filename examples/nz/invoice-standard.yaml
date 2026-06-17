@@ -42,4 +42,4 @@ lines:
       price: "500.00"
     taxes:
       - cat: GST
-        key: zero
+        rate: zero

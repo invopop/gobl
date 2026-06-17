@@ -80,6 +80,22 @@ func taxCategories() []*tax.CategoryDef {
 						},
 					},
 				},
+				{
+					Keys: []cbc.Key{tax.KeyStandard},
+					Rate: tax.RateZero,
+					Name: i18n.String{
+						i18n.EN: "Zero Rate",
+					},
+					Description: i18n.String{
+						i18n.EN: "Zero-rated supplies including exported goods, international transport, and certain land transactions between GST-registered parties.",
+					},
+					Values: []*tax.RateValueDef{
+						{
+							Since:   cal.NewDate(1986, 10, 1),
+							Percent: num.MakePercentage(0, 2),
+						},
+					},
+				},
 			},
 		},
 	}

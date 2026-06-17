@@ -147,6 +147,24 @@
               "percent": "6%"
             }
           ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Zero-rated supplies including exported goods, international transport, and certain land transactions between GST-registered parties."
+          },
+          "values": [
+            {
+              "since": "1986-10-01",
+              "percent": "0%"
+            }
+          ]
         }
       ],
       "sources": [
