@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `pkg/examples`: normalize path separators before skip-list matching so example discovery works correctly on Windows.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
