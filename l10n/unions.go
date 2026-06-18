@@ -192,14 +192,15 @@ var unions = UnionDefs{
 			{Code: IS, Since: sepaLaunch},
 			{Code: LI, Since: sepaLaunch},
 			{Code: NO, Since: sepaLaunch},
-			// Non-EEA founding members (EPC: resolved March 2006 - December 2013).
+			// Switzerland has been in since the 2008 launch; Monaco joined in
+			// March 2009 and San Marino on 1 February 2014 (EPC).
 			{Code: CH, Since: sepaLaunch},
-			{Code: MC, Since: sepaLaunch},
-			{Code: SM, Since: sepaLaunch},
+			{Code: MC, Since: cal.MakeDate(2009, 3, 1)},
+			{Code: SM, Since: cal.MakeDate(2014, 2, 1)},
 			// United Kingdom: in since launch; post-Brexit it remains in scope
 			// (EPC effective date 1 February 2020).
 			{Code: GB, Since: sepaLaunch},
-			{Code: GI, Since: sepaLaunch}, // Gibraltar
+			{Code: GI, Since: sepaLaunch}, // Gibraltar: UK territory, no separate EPC date
 			// British Crown Dependencies, from 1 May 2016.
 			{Code: JE, Since: cal.MakeDate(2016, 5, 1)},
 			{Code: GG, Since: cal.MakeDate(2016, 5, 1)},

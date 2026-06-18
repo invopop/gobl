@@ -47,6 +47,10 @@ func TestSEPAUnion(t *testing.T) {
 	assert.True(t, u.HasMemberOn(cal.MakeDate(2016, 5, 1), l10n.JE))
 	assert.False(t, u.HasMemberOn(cal.MakeDate(2019, 2, 28), l10n.AD))
 	assert.True(t, u.HasMemberOn(cal.MakeDate(2019, 3, 1), l10n.AD))
+	assert.False(t, u.HasMemberOn(cal.MakeDate(2009, 2, 28), l10n.MC))
+	assert.True(t, u.HasMemberOn(cal.MakeDate(2009, 3, 1), l10n.MC))
+	assert.False(t, u.HasMemberOn(cal.MakeDate(2014, 1, 31), l10n.SM))
+	assert.True(t, u.HasMemberOn(cal.MakeDate(2014, 2, 1), l10n.SM))
 	assert.False(t, u.HasMemberOn(cal.MakeDate(2025, 10, 4), l10n.AL))
 	assert.True(t, u.HasMemberOn(cal.MakeDate(2025, 10, 5), l10n.AL))
 	// Croatia was not in SEPA at the 2008 launch (joined the EU in 2013).
