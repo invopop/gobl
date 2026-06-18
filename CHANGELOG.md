@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `co-dian-v2`: added `co-dian-item-identification` and `co-dian-regime` extensions.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
