@@ -189,6 +189,26 @@ func (c Code) JoinWith(separator Code, c2 Code) Code {
 	return c + separator + c2
 }
 
+// HasPrefix reports whether the code starts with prefix.
+func (c Code) HasPrefix(prefix Code) bool {
+	return strings.HasPrefix(string(c), string(prefix))
+}
+
+// HasSuffix reports whether the code ends with suffix.
+func (c Code) HasSuffix(suffix Code) bool {
+	return strings.HasSuffix(string(c), string(suffix))
+}
+
+// TrimPrefix returns the code with the leading prefix removed.
+func (c Code) TrimPrefix(prefix Code) Code {
+	return Code(strings.TrimPrefix(string(c), string(prefix)))
+}
+
+// TrimSuffix returns the code with the trailing suffix removed.
+func (c Code) TrimSuffix(suffix Code) Code {
+	return Code(strings.TrimSuffix(string(c), string(suffix)))
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{

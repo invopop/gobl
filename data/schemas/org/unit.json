@@ -27,7 +27,7 @@
         },
         {
           "const": "mm",
-          "title": "Milimetres"
+          "title": "Millimetres"
         },
         {
           "const": "cm",
@@ -49,7 +49,7 @@
         },
         {
           "const": "km",
-          "title": "Kilometers"
+          "title": "Kilometres"
         },
         {
           "const": "in",
@@ -182,7 +182,7 @@
         {
           "const": "item",
           "title": "Items",
-          "description": " A unit of count defining the number of items regarded as separate units."
+          "description": "A unit of count defining the number of items regarded as separate units."
         },
         {
           "const": "pair",
@@ -313,7 +313,7 @@
         },
         {
           "const": "demijohn",
-          "title": "Demijohn"
+          "title": "Demijohns"
         },
         {
           "const": "bottle",

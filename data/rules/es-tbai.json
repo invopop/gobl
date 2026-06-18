@@ -19,7 +19,7 @@
           "assert": [
             {
               "id": "GOBL-ES-TBAI-BILL-INVOICE-01",
-              "desc": "tax is required",
+              "desc": "invoice tax is required",
               "tests": "present"
             }
           ],
@@ -29,7 +29,7 @@
               "assert": [
                 {
                   "id": "GOBL-ES-TBAI-BILL-INVOICE-02",
-                  "desc": "extension 'es-tbai-region' is required",
+                  "desc": "invoice tax extension 'es-tbai-region' is required",
                   "tests": "ext require [es-tbai-region]"
                 }
               ]
@@ -44,20 +44,13 @@
               "assert": [
                 {
                   "id": "GOBL-ES-TBAI-BILL-INVOICE-03",
-                  "desc": "customer is required for non-simplified invoices",
+                  "desc": "invoice customer is required for non-simplified invoices",
                   "tests": "present"
-                }
-              ],
-              "subsets": [
+                },
                 {
-                  "field": "tax_id",
-                  "assert": [
-                    {
-                      "id": "GOBL-ES-TBAI-BILL-INVOICE-08",
-                      "desc": "customer tax ID is required",
-                      "tests": "present"
-                    }
-                  ]
+                  "id": "GOBL-ES-TBAI-BILL-INVOICE-08",
+                  "desc": "invoice customer must have a tax_id or an identity with ext 'es-tbai-identity-type'",
+                  "tests": "has tax_id or identity-type identity"
                 }
               ]
             }
@@ -71,7 +64,7 @@
               "assert": [
                 {
                   "id": "GOBL-ES-TBAI-BILL-INVOICE-04",
-                  "desc": "preceding documents are required for credit-note, corrective, debit-note invoices",
+                  "desc": "invoice preceding documents are required for credit-note, corrective, debit-note invoices",
                   "tests": "present"
                 }
               ]
@@ -89,7 +82,7 @@
                   "assert": [
                     {
                       "id": "GOBL-ES-TBAI-BILL-INVOICE-05",
-                      "desc": "preceding issue date is required",
+                      "desc": "invoice preceding issue date is required",
                       "tests": "present"
                     }
                   ]
@@ -99,7 +92,7 @@
                   "assert": [
                     {
                       "id": "GOBL-ES-TBAI-BILL-INVOICE-06",
-                      "desc": "preceding ext 'es-tbai-correction' is required",
+                      "desc": "invoice preceding ext 'es-tbai-correction' is required",
                       "tests": "ext require [es-tbai-correction]"
                     }
                   ]
@@ -113,7 +106,7 @@
           "assert": [
             {
               "id": "GOBL-ES-TBAI-BILL-INVOICE-07",
-              "desc": "with key 'general' missing",
+              "desc": "invoice must have a note with key 'general'",
               "tests": "has general note"
             }
           ]
@@ -129,7 +122,7 @@
                   "assert": [
                     {
                       "id": "GOBL-ES-TBAI-BILL-INVOICE-10",
-                      "desc": "extension 'es-tbai-bi-activity' is required for Bizkaia individuals",
+                      "desc": "invoice supplier extension 'es-tbai-bi-activity' is required for Bizkaia individuals",
                       "tests": "ext require [es-tbai-bi-activity]"
                     }
                   ]
@@ -146,7 +139,7 @@
               "assert": [
                 {
                   "id": "GOBL-ES-TBAI-BILL-INVOICE-11",
-                  "desc": "extension 'es-tbai-bi-activity' must be a valid Bizkaia activity code (epígrafe)",
+                  "desc": "invoice supplier extension 'es-tbai-bi-activity' must be a valid Bizkaia activity code (epígrafe)",
                   "tests": "ext 'es-tbai-bi-activity' matches pattern '^\\d{1,7}$'"
                 }
               ]

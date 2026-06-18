@@ -89,6 +89,9 @@ func newAddon() *tax.AddonDef {
 				ContentType: "application/pdf",
 			},
 		},
+		Tags: []*tax.TagSet{
+			deliveryTags,
+		},
 		Extensions:  extensions,
 		Scenarios:   scenarios,
 		Corrections: corrections,

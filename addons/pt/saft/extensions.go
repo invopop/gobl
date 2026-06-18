@@ -1357,29 +1357,50 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				SAF-T's ~MovementType~ (Tipo de documento de movimentação de mercadorias) specifies the type of
-				a delivery document. In GOBL,this type can be set using the ~pt-saft-movement-type~ extension.
-				If not provided explicitly, GOBL will set the extension for you based on the type of your delivery
-				document.
+				a delivery document. In GOBL, this type can be set using the ~pt-saft-movement-type~ extension.
+				If not provided explicitly, GOBL will set the extension for you based on the type and tags of
+				your delivery document.
 
 				The table below shows how this mapping is done:
 
-				| Code | Name                | GOBL Type     |
-				| ---- | ------------------- | ------------- |
-				| ~GR~ | Delivery note       | ~note~        |
-				| ~GT~ | Waybill             | ~waybill~     |
+				| Code | Name                                    | GOBL Type | GOBL Tag |
+				| ---- | --------------------------------------- | --------- | -------- |
+				| ~GR~ | Guia de Remessa (Delivery note)         | ~note~    |          |
+				| ~GT~ | Guia de Transporte (Transport guide)    | ~waybill~ |          |
+				| ~GD~ | Guia de Devolução (Return note)         | ~note~    | ~return~ |
+				| ~GA~ | Guia de Movimentação de Ativos Próprios | (*)       |          |
+				| ~GC~ | Guia de Consignação                     | (*)       |          |
 
-				Example:
+				(*) or codes not mapped from a GOBL type or tag; use ~other~ as the delivery type and explicitly set the
+				extension.
+
+				For example, to indicate a return delivery (GD):
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/delivery",
+					"$tags": ["return"],
+					"type": "note",
+					// The ~pt-saft-movement-type~ extension is set automatically to "GD"
+					// ...
+				}
+				~~~
+
+				For example, to set a movement type with no GOBL equivalent (e.g. GA):
 
 				~~~js
 				{
 					"$schema": "https://gobl.org/draft-0/bill/delivery",
 					// ...
-					"type": "note",
+					"type": "other",
 					// ...
-					"ext": {
-						"pt-saft-movement-type": "GR"
+					"tax": {
+						"ext": {
+							"pt-saft-movement-type": "GA"
+						}
 					},
 					// ...
+				}
 				~~~
 			`),
 		},

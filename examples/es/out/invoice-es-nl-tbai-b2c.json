@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fa6b5fa84e7f7cdd4718bcf35e838d1bc775ca53bcfd22dbb869d579027331d4"
+			"val": "6d3a24ec5d7d64aa812d77b30aa841e6fa1bb5d1f250bbb0b99cd0020f5f539a"
 		}
 	},
 	"doc": {
@@ -12,9 +12,6 @@
 		"$regime": "ES",
 		"$addons": [
 			"es-tbai-v1"
-		],
-		"$tags": [
-			"customer-rates"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -81,7 +78,9 @@
 						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
-							"es-tbai-product": "services"
+							"es-tbai-exemption": "IE",
+							"es-tbai-product": "services",
+							"es-tbai-regime": "01"
 						}
 					}
 				],
@@ -100,7 +99,9 @@
 								"country": "NL",
 								"key": "standard",
 								"ext": {
-									"es-tbai-product": "services"
+									"es-tbai-exemption": "IE",
+									"es-tbai-product": "services",
+									"es-tbai-regime": "01"
 								},
 								"base": "1620.00",
 								"percent": "21.0%",
@@ -119,7 +120,7 @@
 		"notes": [
 			{
 				"key": "general",
-				"text": "Just an invoice"
+				"text": "OSS sale to Dutch consumer with Dutch VAT applied."
 			}
 		]
 	}

@@ -1,6 +1,6 @@
 module github.com/invopop/gobl
 
-go 1.24.0
+go 1.25.0
 
 require (
 	cloud.google.com/go v0.116.0
@@ -14,8 +14,8 @@ require (
 	github.com/invopop/yaml v0.3.1
 	github.com/magefile/mage v1.15.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/net v0.29.0
-	golang.org/x/text v0.34.0
+	golang.org/x/net v0.56.0
+	golang.org/x/text v0.38.0
 )
 
 require (

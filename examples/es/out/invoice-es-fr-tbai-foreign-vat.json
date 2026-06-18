@@ -1,0 +1,119 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f2635db1f90b859ea305abbda460dbe210b248c9abf06f37f81e69557a3d6f6b"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "OSS",
+		"code": "0011",
+		"issue_date": "2024-08-30",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Boutique Lyon SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "30",
+				"item": {
+					"key": "goods",
+					"name": "Souvenir set",
+					"price": "20.00"
+				},
+				"sum": "600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"country": "FR",
+						"key": "standard",
+						"percent": "20%",
+						"ext": {
+							"es-tbai-exemption": "IE",
+							"es-tbai-product": "goods",
+							"es-tbai-regime": "01"
+						}
+					}
+				],
+				"total": "600.00"
+			}
+		],
+		"totals": {
+			"sum": "600.00",
+			"total": "600.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"country": "FR",
+								"key": "standard",
+								"ext": {
+									"es-tbai-exemption": "IE",
+									"es-tbai-product": "goods",
+									"es-tbai-regime": "01"
+								},
+								"base": "600.00",
+								"percent": "20%",
+								"amount": "120.00"
+							}
+						],
+						"amount": "120.00"
+					}
+				],
+				"sum": "120.00"
+			},
+			"tax": "120.00",
+			"total_with_tax": "720.00",
+			"payable": "720.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "OSS sale to French consumer with French VAT applied."
+			}
+		]
+	}
+}

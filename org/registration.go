@@ -5,7 +5,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -26,16 +26,16 @@ type Registration struct {
 	Page     string        `json:"page,omitempty" jsonschema:"title=Page"`
 	Entry    string        `json:"entry,omitempty" jsonschema:"title=Entry"`
 	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
+
+	// Ext holds any additional information that may be required by specific tax authorities.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func registrationRules() *rules.Set {
 	return rules.For(new(Registration),
 		rules.Field("currency",
 			rules.AssertIfPresent("01", "registration currency must be a valid ISO 4217 code",
-				is.FuncError("is valid currency", func(val any) error {
-					c, _ := val.(currency.Code)
-					return c.Validate()
-				}),
+				currency.IsCodeDefined,
 			),
 		),
 	)

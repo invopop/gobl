@@ -1,0 +1,42 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-03-12"
+series: "EXPORT"
+code: "0010"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "San Frantzisko"
+      locality: "Bilbo"
+      region: "Bizkaia"
+      code: "48003"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "39356000000"
+  name: "Client Atelier SAS"
+
+lines:
+  - quantity: 5
+    item:
+      key: "goods"
+      name: "Crafted leather goods"
+      price: "120.00"
+    taxes:
+      - cat: VAT
+        key: export
+
+notes:
+  - key: "general"
+    text: "Goods exported to France."

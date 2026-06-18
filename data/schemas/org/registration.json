@@ -57,6 +57,11 @@
         "other": {
           "type": "string",
           "title": "Other"
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext holds any additional information that may be required by specific tax authorities."
         }
       },
       "type": "object",

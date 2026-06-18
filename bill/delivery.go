@@ -24,6 +24,7 @@ const (
 	DeliveryTypeNote    cbc.Key = "note"
 	DeliveryTypeWaybill cbc.Key = "waybill"
 	DeliveryTypeReceipt cbc.Key = "receipt"
+	DeliveryTypeOther   cbc.Key = "other"
 )
 
 // DeliveryTypes provides the list of supported delivery documents in GOBL.
@@ -76,6 +77,21 @@ var DeliveryTypes = []*cbc.Definition{
 			`),
 		},
 	},
+	{
+		Key: DeliveryTypeOther,
+		Name: i18n.String{
+			i18n.EN: "Other",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Any other type of delivery that does not fit into the standard categories and implies
+				that any scenarios defined in tax regimes or addons will not be applied.
+
+				This is useful for being able to create deliveries with custom types in extensions,
+				but is not recommended for general use.
+			`),
+		},
+	},
 }
 
 var isValidDeliveryType = cbc.InKeyDefs(DeliveryTypes)
@@ -88,7 +104,7 @@ type Delivery struct {
 	uuid.Identify
 
 	// Type of delivery document.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt,other"`
 	// Series is used to identify groups of deliveries by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
@@ -212,7 +228,28 @@ func (dlv *Delivery) Calculate() error {
 		dlv.SetRegime(partyTaxCountry(dlv.Supplier))
 	}
 	norm.Normalize(dlv)
+
+	supportedTags := dlv.supportedTags()
+	for _, tag := range dlv.Tags.List {
+		if !tag.In(supportedTags...) {
+			return fmt.Errorf("$tags: '%s' undefined", tag)
+		}
+	}
+
 	return calculate(dlv)
+}
+
+func (dlv *Delivery) supportedTags() []cbc.Key {
+	// Deliveries have no default tags of their own; supported tags are
+	// contributed by the active regime and addons.
+	var ts *tax.TagSet
+	if r := dlv.RegimeDef(); r != nil {
+		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaDelivery))
+	}
+	for _, a := range dlv.AddonDefs() {
+		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaDelivery))
+	}
+	return ts.Keys()
 }
 
 // ConvertInto will use the defined exchange rates in the delivery to convert all the prices
@@ -381,6 +418,7 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
+	dlv.Tags.JSONSchemaExtendWithDefs(js, nil)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

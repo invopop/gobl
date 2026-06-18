@@ -5,33 +5,72 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
+// Delivery document tags.
+const (
+	// TagReturn indicates that a delivery document represents a return of goods to
+	// the supplier (Guia de Devolução).
+	TagReturn cbc.Key = "return"
+)
+
+var deliveryTags = &tax.TagSet{
+	Schema: bill.ShortSchemaDelivery,
+	List: []*cbc.Definition{
+		{
+			Key: TagReturn,
+			Name: i18n.String{
+				i18n.EN: "Return",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that the delivery document represents a return of goods to the supplier.
+					Use this tag in combination with a supported delivery type to indicate a return
+					rather than a forward delivery.
+				`),
+			},
+		},
+	},
+}
+
 func billDeliveryRules() *rules.Set {
 	return rules.For(new(bill.Delivery),
 		rules.Assert("01",
-			fmt.Sprintf("tax requires '%s' extension", ExtKeyMovementType),
+			fmt.Sprintf("delivery tax requires '%s' extension", ExtKeyMovementType),
 			is.Func("has movement type", deliveryHasMovementType),
 		),
-		rules.Assert("02", "series format must be valid",
+		rules.Assert("02", "delivery series format must be valid",
 			is.FuncError("series format", deliverySeriesFormatValid),
 		),
-		rules.Assert("03", "code format must be valid",
+		rules.Assert("03", "delivery code format must be valid",
 			is.FuncError("code format", deliveryCodeFormatValid),
 		),
 		rules.Field("supplier",
 			rules.Field("tax_id",
-				rules.Assert("04", "supplier tax ID is required", is.Present),
+				rules.Assert("04", "delivery supplier tax ID is required", is.Present),
 				rules.Field("code",
-					rules.Assert("05", "supplier tax ID code is required", is.Present),
+					rules.Assert("05", "delivery supplier tax ID code is required", is.Present),
 				),
 			),
 		),
 		rules.Field("despatch_date",
-			rules.Assert("06", "cannot be blank", is.Present),
+			rules.Assert("06", "delivery despatch date is required", is.Present),
+		),
+		rules.Field("preceding",
+			rules.Assert("07", "delivery preceding must have at most one entry", is.Length(0, 1)),
+			rules.Each(
+				rules.Field("series",
+					rules.Assert("08", "delivery preceding series is required", is.Present),
+				),
+				rules.Field("code",
+					rules.Assert("09", "delivery preceding code is required", is.Present),
+				),
+			),
 		),
 	)
 }
@@ -81,12 +120,16 @@ func normalizeDelivery(dlv *bill.Delivery) {
 	}
 
 	if !dlv.Tax.Ext.Has(ExtKeyMovementType) {
-		// Map delivery types to movement types
-		switch dlv.Type {
-		case bill.DeliveryTypeNote:
-			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
-		case bill.DeliveryTypeWaybill:
-			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
+		// Map delivery types and tags to movement types.
+		if dlv.HasTags(TagReturn) {
+			dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeReturn)
+		} else {
+			switch dlv.Type {
+			case bill.DeliveryTypeNote:
+				dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeDeliveryNote)
+			case bill.DeliveryTypeWaybill:
+				dlv.Tax.Ext = dlv.Tax.Ext.Set(ExtKeyMovementType, MovementTypeWaybill)
+			}
 		}
 	}
 }
