@@ -11,8 +11,30 @@ import (
 func TestUnions(t *testing.T) {
 	u := l10n.Unions().Code(l10n.EU)
 	assert.Equal(t, l10n.EU, u.Code)
-	assert.Equal(t, l10n.Unions().Len(), 1)
+	assert.Equal(t, l10n.Unions().Len(), 2)
 	assert.Nil(t, l10n.Unions().Code(l10n.Code("X")))
+}
+
+func TestSEPAUnion(t *testing.T) {
+	u := l10n.Union(l10n.SEPA)
+	assert.NotNil(t, u)
+	assert.Equal(t, "Single Euro Payments Area", u.Name)
+
+	// EU member states are in SEPA.
+	assert.True(t, u.HasMember(l10n.ES))
+	assert.True(t, u.HasMember(l10n.DE))
+	// Greece resolves via both its ISO and tax country code.
+	assert.True(t, u.HasMember(l10n.GR))
+	assert.True(t, u.HasMember(l10n.EL))
+	// Non-EU SEPA participants are members too — the case the EU union misses.
+	assert.True(t, u.HasMember(l10n.NO))
+	assert.True(t, u.HasMember(l10n.CH))
+	assert.True(t, u.HasMember(l10n.GB))
+	assert.True(t, u.HasMember(l10n.SM))
+	// Non-SEPA countries are not members.
+	assert.False(t, u.HasMember(l10n.US))
+	assert.False(t, u.HasMember(l10n.CO))
+	assert.False(t, u.HasMember(l10n.Code("")))
 }
 
 func TestUnion(t *testing.T) {
