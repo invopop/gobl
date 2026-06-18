@@ -196,6 +196,72 @@
           }
         }
       ]
+    },
+    {
+      "key": "co-dian-item-identification",
+      "name": {
+        "en": "Item Identification Standard",
+        "es": "Estándar de identificación de producto"
+      },
+      "desc": {
+        "en": "Identifies the product-coding standard used for an invoice line's item code,\nmapped to the UBL's `StandardItemIdentification/ID@schemeID`.\n\nFor example:\n\n```js\n\"item\": {\n\t\"name\": \"Producto\",\n\t\"ref\": \"7702004003489\",\n\t\"ext\": { \"co-dian-item-identification\": \"010\" }\n}\n```"
+      },
+      "values": [
+        {
+          "code": "001",
+          "name": {
+            "en": "UNSPSC",
+            "es": "UNSPSC"
+          }
+        },
+        {
+          "code": "010",
+          "name": {
+            "en": "GTIN",
+            "es": "GTIN"
+          }
+        },
+        {
+          "code": "020",
+          "name": {
+            "en": "Customs tariff",
+            "es": "Partida arancelaria"
+          }
+        },
+        {
+          "code": "999",
+          "name": {
+            "en": "Taxpayer's own standard",
+            "es": "Estándar de adopción del contribuyente"
+          }
+        }
+      ]
+    },
+    {
+      "key": "co-dian-regime",
+      "name": {
+        "en": "VAT Regime",
+        "es": "Régimen de IVA"
+      },
+      "desc": {
+        "en": "Indicates whether the party is responsible for VAT (IVA) according to the DIAN."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "VAT responsible",
+            "es": "Responsable de IVA"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Not VAT responsible",
+            "es": "No Responsable de IVA"
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,
