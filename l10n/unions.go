@@ -8,13 +8,12 @@ const (
 	SEPA Code = "SEPA"
 )
 
-// sepaSince is the SEPA scheme inception date (launch of the SEPA Credit
-// Transfer scheme). Per-country onboarding happened on later, varying dates,
-// but those are not tracked here: membership is used to answer "is this country
-// in SEPA?" for current documents, so a single founding date is sufficient.
-// Refine individual members with their accession date if historical precision
-// is ever required.
-var sepaSince = cal.MakeDate(2008, 1, 28)
+// sepaLaunch is the date the SEPA Credit Transfer scheme went live. The EPC
+// (see SEPA union below) does not publish individual entry dates for the
+// founding cohort — only that the early non-EEA members were resolved "between
+// March 2006 and December 2013" — so this launch date is used as their Since.
+// Members added later carry their documented effective date instead.
+var sepaLaunch = cal.MakeDate(2008, 1, 28)
 
 // Unions provides of list of significant political and economic
 // unions that countries may be members of.
@@ -150,52 +149,72 @@ var unions = UnionDefs{
 		},
 	},
 	{
+		// SEPA geographical scope per the EPC "List of SEPA Scheme Countries"
+		// (EPC409-09, v8.0, 24 December 2025). Dates are the documented entry
+		// dates where the EPC gives them; the founding cohort uses the scheme
+		// launch (see sepaLaunch) as the EPC does not date them individually.
+		// EU sub-territories (Åland, Azores, Canary Islands, the French overseas
+		// departments/collectivities, etc.) are covered by their parent country
+		// code and are not listed separately.
 		Code: SEPA,
 		Name: "Single Euro Payments Area",
 		Members: []*UnionMember{
-			// EU member states
-			{Code: AT, Since: sepaSince},
-			{Code: BE, Since: sepaSince},
-			{Code: BG, Since: sepaSince},
-			{Code: HR, Since: sepaSince},
-			{Code: CY, Since: sepaSince},
-			{Code: CZ, Since: sepaSince},
-			{Code: DK, Since: sepaSince},
-			{Code: EE, Since: sepaSince},
-			{Code: FI, Since: sepaSince},
-			{Code: FR, Since: sepaSince},
-			{Code: DE, Since: sepaSince},
-			{Code: GR, AltCode: EL, Since: sepaSince}, // tax code EL, ISO GR
-			{Code: HU, Since: sepaSince},
-			{Code: IE, Since: sepaSince},
-			{Code: IT, Since: sepaSince},
-			{Code: LV, Since: sepaSince},
-			{Code: LT, Since: sepaSince},
-			{Code: LU, Since: sepaSince},
-			{Code: MT, Since: sepaSince},
-			{Code: NL, Since: sepaSince},
-			{Code: PL, Since: sepaSince},
-			{Code: PT, Since: sepaSince},
-			{Code: RO, Since: sepaSince},
-			{Code: SK, Since: sepaSince},
-			{Code: SI, Since: sepaSince},
-			{Code: ES, Since: sepaSince},
-			{Code: SE, Since: sepaSince},
-			// Non-EU SEPA participants: EEA, plus other states and
-			// territories that have joined the SEPA schemes.
-			{Code: IS, Since: sepaSince},
-			{Code: LI, Since: sepaSince},
-			{Code: NO, Since: sepaSince},
-			{Code: CH, Since: sepaSince},
-			{Code: GB, Since: sepaSince},
-			{Code: MC, Since: sepaSince},
-			{Code: SM, Since: sepaSince},
-			{Code: AD, Since: sepaSince},
-			{Code: VA, Since: sepaSince},
-			{Code: JE, Since: sepaSince},
-			{Code: GG, Since: sepaSince},
-			{Code: IM, Since: sepaSince},
-			{Code: GI, Since: sepaSince},
+			// EU member states (in at, or via EU accession; founding cohort
+			// uses the SEPA launch date).
+			{Code: AT, Since: sepaLaunch},
+			{Code: BE, Since: sepaLaunch},
+			{Code: BG, Since: sepaLaunch},
+			{Code: HR, Since: cal.MakeDate(2013, 7, 1)}, // EU accession; not in SEPA at 2008 launch
+			{Code: CY, Since: sepaLaunch},
+			{Code: CZ, Since: sepaLaunch},
+			{Code: DK, Since: sepaLaunch},
+			{Code: EE, Since: sepaLaunch},
+			{Code: FI, Since: sepaLaunch},
+			{Code: FR, Since: sepaLaunch},
+			{Code: DE, Since: sepaLaunch},
+			{Code: GR, AltCode: EL, Since: sepaLaunch}, // tax code EL, ISO GR
+			{Code: HU, Since: sepaLaunch},
+			{Code: IE, Since: sepaLaunch},
+			{Code: IT, Since: sepaLaunch},
+			{Code: LV, Since: sepaLaunch},
+			{Code: LT, Since: sepaLaunch},
+			{Code: LU, Since: sepaLaunch},
+			{Code: MT, Since: sepaLaunch},
+			{Code: NL, Since: sepaLaunch},
+			{Code: PL, Since: sepaLaunch},
+			{Code: PT, Since: sepaLaunch},
+			{Code: RO, Since: sepaLaunch},
+			{Code: SK, Since: sepaLaunch},
+			{Code: SI, Since: sepaLaunch},
+			{Code: ES, Since: sepaLaunch},
+			{Code: SE, Since: sepaLaunch},
+			// EEA, non-EU.
+			{Code: IS, Since: sepaLaunch},
+			{Code: LI, Since: sepaLaunch},
+			{Code: NO, Since: sepaLaunch},
+			// Non-EEA founding members (EPC: resolved March 2006 - December 2013).
+			{Code: CH, Since: sepaLaunch},
+			{Code: MC, Since: sepaLaunch},
+			{Code: SM, Since: sepaLaunch},
+			// United Kingdom: in since launch; post-Brexit it remains in scope
+			// (EPC effective date 1 February 2020).
+			{Code: GB, Since: sepaLaunch},
+			{Code: GI, Since: sepaLaunch}, // Gibraltar
+			// British Crown Dependencies, from 1 May 2016.
+			{Code: JE, Since: cal.MakeDate(2016, 5, 1)},
+			{Code: GG, Since: cal.MakeDate(2016, 5, 1)},
+			{Code: IM, Since: cal.MakeDate(2016, 5, 1)},
+			// Andorra and Vatican City, from 1 March 2019.
+			{Code: AD, Since: cal.MakeDate(2019, 3, 1)},
+			{Code: VA, Since: cal.MakeDate(2019, 3, 1)},
+			// Albania, Montenegro, North Macedonia and Moldova, operational
+			// from 5 October 2025.
+			{Code: AL, Since: cal.MakeDate(2025, 10, 5)},
+			{Code: ME, Since: cal.MakeDate(2025, 10, 5)},
+			{Code: MK, Since: cal.MakeDate(2025, 10, 5)},
+			{Code: MD, Since: cal.MakeDate(2025, 10, 5)},
+			// Serbia, operational from May 2026.
+			{Code: RS, Since: cal.MakeDate(2026, 5, 1)},
 		},
 	},
 }
