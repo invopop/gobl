@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/ee`: new Estonian (EE) tax regime with VAT rates (standard, reduced, super-reduced, zero), historical standard-rate changes, and KMKR VAT identity validation.
 - `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
 - `org`: `Registration` object includes `ext` for addon-specific registration details.
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
