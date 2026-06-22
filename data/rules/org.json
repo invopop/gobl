@@ -426,7 +426,7 @@
                 {
                   "id": "GOBL-ORG-REGISTRATION-01",
                   "desc": "registration currency must be a valid ISO 4217 code",
-                  "tests": "is valid currency"
+                  "tests": "valid currency code"
                 }
               ]
             }

@@ -42,6 +42,29 @@ func TestCodeJoin(t *testing.T) {
 	})
 }
 
+func TestCodePrefixSuffix(t *testing.T) {
+	c := cbc.Code("NO923456783MVA")
+
+	t.Run("HasPrefix", func(t *testing.T) {
+		assert.True(t, c.HasPrefix("NO"))
+		assert.False(t, c.HasPrefix("SE"))
+	})
+	t.Run("HasSuffix", func(t *testing.T) {
+		assert.True(t, c.HasSuffix("MVA"))
+		assert.False(t, c.HasSuffix("VAT"))
+	})
+	t.Run("TrimPrefix", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("923456783MVA"), c.TrimPrefix("NO"))
+		// unchanged when the prefix is absent
+		assert.Equal(t, c, c.TrimPrefix("SE"))
+	})
+	t.Run("TrimSuffix", func(t *testing.T) {
+		assert.Equal(t, cbc.Code("NO923456783"), c.TrimSuffix("MVA"))
+		// unchanged when the suffix is absent
+		assert.Equal(t, c, c.TrimSuffix("VAT"))
+	})
+}
+
 func TestNormalizeCode(t *testing.T) {
 	tests := []struct {
 		name string

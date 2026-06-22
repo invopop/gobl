@@ -8,8 +8,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `dk-oioubl-v2-1`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate.
-- `addons/eu/en16931`: rules that OIOUBL 2.1 deliberately relaxes are now skipped when the `dk-oioubl-v2-1` addon is present: the exemption-reason requirements (BR-E-10 and the exemption-note check — OIOUBL has no exempt tax category), the BR-CO-25 payment details/terms requirements (OIOUBL's payment rules are all conditional on a means being present), and the payment-terms shape requirement (OIOUBL allows bare terms carrying only an ID and amount, as its official samples do).
+- `dk-oioubl-v2-1`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate. The EN 16931 rules that OIOUBL deliberately relaxes are handled inside that addon via `rules.Ignore`, keeping `addons/eu/en16931` free of OIOUBL-specific coupling.
+
+## [v0.501.0] - 2026-06-16
+
+### Added
+
+- `cbc.Code`: `HasPrefix`, `HasSuffix`, `TrimPrefix`, and `TrimSuffix` helpers.
+- `org`: `Registration` object includes `ext` for addon-specific registration details.
+- `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
+- `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
+- `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
+
+### Changed
+
+- `addons/br/nfe`: Customer address `state` presence validation and the `br-ibge-municipality` extension are now applied to Brazilian parties only.
+- `it-sdi`: `it-sdi-liquidation-state` and `it-sdi-shareholder-state` registration extensions for the FatturaPA `IscrizioneREA` block (`StatoLiquidazione` and `SocioUnico`).
+
+### Fixed
+
+- `regimes/no`: Norwegian VAT identities now keep — and gain, when given as a bare organisation number — the `MVA` suffix, so serialized VAT numbers take the `NO<orgnr>MVA` form that the EHF and Peppol national rules (NO-R-001) require. Validation expects the suffixed form; organisation-number identities are unchanged.
+
+### Removed
+
+- `addons/eu-en16935-v2017`: Exemption reason rule (BR-E-10) validation has been removed as it is was incorrectly enforcing a VATEX code.
 
 ## [v0.500.0] - 2026-06-10
 

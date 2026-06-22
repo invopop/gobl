@@ -114,7 +114,7 @@ func billInvoiceRules() *rules.Set {
 				),
 			),
 		),
-		// Exemption notes: BR-*-10 requires either VATEX code or exemption note.
+		// Exemption notes: BR-*-10 requires either VATEX code or exemption note
 		rules.Assert("08", "exempt tax categories require either a VATEX code or an exemption note",
 			is.Func("exemption notes", func(val any) bool {
 				inv, ok := val.(*bill.Invoice)
@@ -140,7 +140,7 @@ func billInvoiceRules() *rules.Set {
 				rules.Assert("05", "customer addresses are required (BR-10)", is.Present),
 			),
 		),
-		// Payment: BR-CO-25 requires payment details when amount is due.
+		// Payment: BR-CO-25 requires payment details when amount is due
 		rules.When(is.Func("is due standard invoice", isDueStandardInvoice),
 			rules.Field("payment",
 				rules.Assert("06", "payment details are required when amount is due (BR-CO-25)", is.Present),

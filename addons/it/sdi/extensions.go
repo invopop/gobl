@@ -17,6 +17,9 @@ const (
 	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
 	ExtKeyVATLiability cbc.Key = "it-sdi-vat-liability"
 	ExtKeyFundType     cbc.Key = "it-sdi-fund-type"
+
+	ExtKeyLiquidationState cbc.Key = "it-sdi-liquidation-state"
+	ExtKeyShareholderState cbc.Key = "it-sdi-shareholder-state"
 )
 
 var extensions = []*cbc.Definition{
@@ -1055,6 +1058,66 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "National Social Security Institute (INPS)",
 					i18n.IT: "Istituto nazionale della previdenza sociale (INPS)",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyLiquidationState,
+		Name: i18n.String{
+			i18n.EN: "Liquidation State",
+			i18n.IT: "Stato di Liquidazione",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates whether the company is in liquidation, used in the
+				IscrizioneREA block of a FatturaPA document as the
+				StatoLiquidazione field.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "LS",
+				Name: i18n.String{
+					i18n.EN: "In liquidation",
+					i18n.IT: "In liquidazione",
+				},
+			},
+			{
+				Code: "LN",
+				Name: i18n.String{
+					i18n.EN: "Not in liquidation",
+					i18n.IT: "Non in liquidazione",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyShareholderState,
+		Name: i18n.String{
+			i18n.EN: "Shareholder State",
+			i18n.IT: "Stato di Socio",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the company's shareholder configuration, used in the
+				IscrizioneREA block of a FatturaPA document as the SocioUnico
+				field.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "SU",
+				Name: i18n.String{
+					i18n.EN: "Sole shareholder",
+					i18n.IT: "Socio unico",
+				},
+			},
+			{
+				Code: "SM",
+				Name: i18n.String{
+					i18n.EN: "Multiple shareholders",
+					i18n.IT: "Più soci",
 				},
 			},
 		},
