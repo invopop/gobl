@@ -343,21 +343,6 @@
           ]
         },
         {
-          "guard": "is exempt",
-          "subsets": [
-            {
-              "field": "ext",
-              "assert": [
-                {
-                  "id": "GOBL-EU-EN16931-TAX-COMBO-06",
-                  "desc": "VATEX extension is required for exempt tax (BR-E-10)",
-                  "tests": "ext require [cef-vatex]"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "guard": "is non-exempt",
           "subsets": [
             {

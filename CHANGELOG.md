@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/br`: **breaking**: the Brazil NF-e/NFC-e (`br-nfe-v4`) and NFS-e (`br-nfse-v1`) addons moved to the standalone [`github.com/invopop/gobl.br`](https://github.com/invopop/gobl.br) module. Add a blank import of `gobl.br/addon` to keep using the `br-nfe-*` / `br-nfse-*` addon keys.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
