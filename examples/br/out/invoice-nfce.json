@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4e5b569a3bd5d140735ee46a2d2f5b5d7f760e1d3aa519325a3a71f2aa7bc2db"
+			"val": "2ca5611e4b11b0335a6db79a6cba7187bc8367756fa80577888f50891cced9e5"
 		}
 	},
 	"doc": {
@@ -25,7 +25,9 @@
 		"tax": {
 			"ext": {
 				"br-nfe-model": "65",
-				"br-nfe-presence": "1"
+				"br-nfe-operation-type": "1",
+				"br-nfe-presence": "1",
+				"br-nfe-purpose": "1"
 			}
 		},
 		"supplier": {

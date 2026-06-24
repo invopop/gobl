@@ -1240,6 +1240,249 @@
           }
         }
       ]
+    },
+    {
+      "key": "br-nfe-purpose",
+      "name": {
+        "en": "Purpose Code",
+        "pt": "Código de Finalidade"
+      },
+      "desc": {
+        "en": "Code that identifies the purpose of the fiscal document (CEFAZ field `finNFe`,\nB25). Standard invoices are set to `1` (normal) via a tax scenario."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        },
+        {
+          "title": {
+            "en": "NF-e/NFC-e Technical Note 2025.002 - RTC",
+            "pt": "Nota Técnica NF-e/NFC-e 2025.002 - RTC"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Normal",
+            "pt": "Normal"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Complementary",
+            "pt": "Complementar"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Adjustment",
+            "pt": "Ajuste"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Goods Return",
+            "pt": "Devolução/Retorno de mercadoria"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Credit Note",
+            "pt": "Nota de Crédito"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Debit Note",
+            "pt": "Nota de Débito"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-operation-type",
+      "name": {
+        "en": "Operation Type Code",
+        "pt": "Código do Tipo de Operação"
+      },
+      "desc": {
+        "en": "Code that identifies the type of operation, indicating whether it is inbound\nor outbound (CEFAZ field `tpNF`, B11). Standard invoices are set to `1`\n(outbound) via a tax scenario."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "0",
+          "name": {
+            "en": "Inbound",
+            "pt": "Entrada"
+          }
+        },
+        {
+          "code": "1",
+          "name": {
+            "en": "Outbound",
+            "pt": "Saída"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-credit-note-type",
+      "name": {
+        "en": "Credit Note Type Code",
+        "pt": "Código do Tipo de Nota de Crédito"
+      },
+      "desc": {
+        "en": "Code that identifies the type of credit note (CEFAZ field `tpNFCredito`,\nB25.2) according to the RTM (applies to IBS/CBS only)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "NF-e/NFC-e Technical Note 2025.002 - RTC",
+            "pt": "Nota Técnica NF-e/NFC-e 2025.002 - RTC"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Penalty and interest",
+            "pt": "Multa e juros"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Appropriation of presumed IBS credit in the ZFM",
+            "pt": "Apropriação de crédito presumido de IBS na ZFM"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Return",
+            "pt": "Retorno"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Reduction of values",
+            "pt": "Redução de valores"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Credit transfer on succession",
+            "pt": "Transferência de crédito na sucessão"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-debit-note-type",
+      "name": {
+        "en": "Debit Note Type Code",
+        "pt": "Código do Tipo de Nota de Débito"
+      },
+      "desc": {
+        "en": "Code that identifies the type of debit note (CEFAZ field `tpNFDebito`, B25.1)\naccording to the RTM (applies to IBS/CBS only)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "NF-e/NFC-e Technical Note 2025.002 - RTC",
+            "pt": "Nota Técnica NF-e/NFC-e 2025.002 - RTC"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Transfer of credits from Cooperatives",
+            "pt": "Transferência de créditos de Cooperativas"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Credit annulment",
+            "pt": "Anulação de crédito"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Debits not processed in the regular assessment",
+            "pt": "Débitos não processados na apuração regular"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Penalty and interest",
+            "pt": "Multa e juros"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Credit transfer on succession",
+            "pt": "Transferência de crédito na sucessão"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Advance payment",
+            "pt": "Pagamento antecipado"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Inventory loss",
+            "pt": "Perda em estoque"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Exit from Simples Nacional",
+            "pt": "Desenquadramento do Simples Nacional"
+          }
+        }
+      ]
     }
   ],
   "scenarios": [
@@ -1267,6 +1510,15 @@
           ],
           "ext": {
             "br-nfe-model": "65"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "br-nfe-operation-type": "1",
+            "br-nfe-purpose": "1"
           }
         }
       ]
@@ -1302,5 +1554,16 @@
       }
     }
   ],
-  "corrections": null
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ],
+      "stamps": [
+        "sefaz-key"
+      ]
+    }
+  ]
 }

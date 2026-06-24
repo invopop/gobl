@@ -27,11 +27,13 @@ func TestInvoicesValidation(t *testing.T) {
 
 		inv.Tax = &bill.Tax{}
 		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, "tax requires 'br-nfe-model' and 'br-nfe-presence' extensions")
+		assert.ErrorContains(t, err, "tax requires 'br-nfe-model', 'br-nfe-presence', 'br-nfe-purpose' and 'br-nfe-operation-type' extensions")
 
 		inv.Tax.Ext = tax.ExtensionsOf(cbc.CodeMap{
-			nfe.ExtKeyModel:    nfe.ModelNFe,
-			nfe.ExtKeyPresence: nfe.PresenceDelivery,
+			nfe.ExtKeyModel:         nfe.ModelNFe,
+			nfe.ExtKeyPresence:      nfe.PresenceDelivery,
+			nfe.ExtKeyPurpose:       nfe.PurposeNormal,
+			nfe.ExtKeyOperationType: nfe.OperationOutbound,
 		})
 		err = rules.Validate(inv)
 		assert.ErrorContains(t, err, "NF-e invoices do not support '4' for 'br-nfe-presence'")
@@ -135,6 +137,28 @@ func TestInvoicesValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "NFC-e invoices require in-person or delivery for 'br-nfe-presence'")
 
 		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPresence, nfe.PresenceInPerson)
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("validates credit note type when purpose is credit note", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPurpose, nfe.PurposeCreditNote)
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "credit note invoices require 'br-nfe-credit-note-type' extension")
+
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyCreditNoteType, "01")
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("validates debit note type when purpose is debit note", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyPurpose, nfe.PurposeDebitNote)
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "debit note invoices require 'br-nfe-debit-note-type' extension")
+
+		inv.Tax.Ext = inv.Tax.Ext.Set(nfe.ExtKeyDebitNoteType, "01")
 		err = rules.Validate(inv)
 		assert.NoError(t, err)
 	})

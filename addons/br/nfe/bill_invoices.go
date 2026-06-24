@@ -152,19 +152,31 @@ func billInvoiceRules() *rules.Set {
 		rules.Field("tax",
 			rules.Assert("25", "invoice tax is required", is.Present),
 			rules.Field("ext",
-				rules.Assert("26", fmt.Sprintf("invoice tax requires '%s' and '%s' extensions", ExtKeyModel, ExtKeyPresence),
-					tax.ExtensionsRequire(ExtKeyModel, ExtKeyPresence),
+				rules.Assert("26", fmt.Sprintf("invoice tax requires '%s', '%s', '%s' and '%s' extensions", ExtKeyModel, ExtKeyPresence, ExtKeyPurpose, ExtKeyOperationType),
+					tax.ExtensionsRequire(ExtKeyModel, ExtKeyPresence, ExtKeyPurpose, ExtKeyOperationType),
 				),
 				rules.When(
-					is.Func("NFe model", taxExtIsNFe),
+					is.Func("NFe model", modelIsNFe),
 					rules.Assert("27", fmt.Sprintf("NF-e invoices do not support '%s' for '%s'", PresenceDelivery, ExtKeyPresence),
 						tax.ExtensionsExcludeCodes(ExtKeyPresence, PresenceDelivery),
 					),
 				),
 				rules.When(
-					is.Func("NFCe model", taxExtIsNFCe),
+					is.Func("NFCe model", modelIsNFCe),
 					rules.Assert("28", fmt.Sprintf("NFC-e invoices require in-person or delivery for '%s'", ExtKeyPresence),
 						tax.ExtensionsHasCodes(ExtKeyPresence, PresenceInPerson, PresenceDelivery),
+					),
+				),
+				rules.When(
+					is.Func("credit note purpose", purposeIsCreditNote),
+					rules.Assert("40", fmt.Sprintf("credit note invoices require '%s' extension", ExtKeyCreditNoteType),
+						tax.ExtensionsRequire(ExtKeyCreditNoteType),
+					),
+				),
+				rules.When(
+					is.Func("debit note purpose", purposeIsDebitNote),
+					rules.Assert("41", fmt.Sprintf("debit note invoices require '%s' extension", ExtKeyDebitNoteType),
+						tax.ExtensionsRequire(ExtKeyDebitNoteType),
 					),
 				),
 			),
@@ -220,19 +232,31 @@ func billInvoiceRules() *rules.Set {
 // invoiceIsNFe checks if the invoice's tax model is NF-e.
 func invoiceIsNFe(val any) bool {
 	inv, ok := val.(*bill.Invoice)
-	return ok && inv != nil && isNFe(inv.Tax)
+	return ok && inv != nil && inv.Tax != nil && modelIsNFe(inv.Tax.Ext)
 }
 
-// taxExtIsNFe checks if the tax extensions indicate NF-e model.
-func taxExtIsNFe(val any) bool {
+// modelIsNFe checks if the tax extensions indicate NF-e model.
+func modelIsNFe(val any) bool {
 	ext, ok := tax.ExtensionsFromValue(val)
 	return ok && ext.Get(ExtKeyModel) == ModelNFe
 }
 
-// taxExtIsNFCe checks if the tax extensions indicate NFC-e model.
-func taxExtIsNFCe(val any) bool {
+// modelIsNFCe checks if the tax extensions indicate NFC-e model.
+func modelIsNFCe(val any) bool {
 	ext, ok := tax.ExtensionsFromValue(val)
 	return ok && ext.Get(ExtKeyModel) == ModelNFCe
+}
+
+// purposeIsCreditNote checks if the tax extensions indicate a credit note purpose.
+func purposeIsCreditNote(val any) bool {
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyPurpose) == PurposeCreditNote
+}
+
+// purposeIsDebitNote checks if the tax extensions indicate a debit note purpose.
+func purposeIsDebitNote(val any) bool {
+	ext, ok := tax.ExtensionsFromValue(val)
+	return ok && ext.Get(ExtKeyPurpose) == PurposeDebitNote
 }
 
 // isReasonNote checks if a note has the reason key.
@@ -271,10 +295,6 @@ func amountZeroOrPositive(val any) bool {
 		return true
 	}
 	return !amt.IsNegative()
-}
-
-func isNFe(t *bill.Tax) bool {
-	return t != nil && t.Ext.Get(ExtKeyModel) == ModelNFe
 }
 
 func partyHasAddresses(val any) bool {

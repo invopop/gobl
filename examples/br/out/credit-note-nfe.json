@@ -1,0 +1,205 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c5089da2d694f5697be69bc6c119ab2f9454a484530cc9aa6724b83dff560ee8"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "BR",
+		"$addons": [
+			"br-nfe-v4"
+		],
+		"uuid": "0193305c-a7be-730d-b552-2093f0df3a1c",
+		"type": "credit-note",
+		"series": "1",
+		"code": "55",
+		"issue_date": "2024-11-20",
+		"currency": "BRL",
+		"preceding": [
+			{
+				"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+				"type": "standard",
+				"issue_date": "2024-11-15",
+				"series": "1",
+				"code": "1",
+				"stamps": [
+					{
+						"prv": "sefaz-key",
+						"val": "35241155263640000186550010000000011000000017"
+					}
+				]
+			}
+		],
+		"tax": {
+			"ext": {
+				"br-nfe-credit-note-type": "04",
+				"br-nfe-model": "55",
+				"br-nfe-operation-type": "1",
+				"br-nfe-presence": "1",
+				"br-nfe-purpose": "5"
+			}
+		},
+		"supplier": {
+			"name": "Indústria Brasileira de Componentes Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "55263640000186"
+			},
+			"identities": [
+				{
+					"key": "br-nfe-state-reg",
+					"code": "35503304557308"
+				}
+			],
+			"addresses": [
+				{
+					"num": "1578",
+					"street": "Avenida Paulista",
+					"locality": "São Paulo",
+					"state": "SP",
+					"code": "01310-200",
+					"country": "BR"
+				}
+			],
+			"ext": {
+				"br-ibge-municipality": "3550308",
+				"br-nfe-regime": "3"
+			}
+		},
+		"customer": {
+			"name": "Comércio Varejista de Eletrônicos Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "05700736000196"
+			},
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Rua das Flores",
+					"locality": "São Paulo",
+					"state": "SP",
+					"code": "01310-000",
+					"country": "BR"
+				}
+			],
+			"ext": {
+				"br-ibge-municipality": "3550308"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Componente Eletrônico XYZ",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "ICMS",
+						"percent": "18%",
+						"ext": {
+							"br-nfe-icms-cst": "00",
+							"br-nfe-icms-origin": "0"
+						}
+					},
+					{
+						"cat": "PIS",
+						"percent": "1.65%",
+						"ext": {
+							"br-nfe-pis-cst": "01"
+						}
+					},
+					{
+						"cat": "COFINS",
+						"percent": "7.6%",
+						"ext": {
+							"br-nfe-cofins-cst": "01"
+						}
+					}
+				],
+				"total": "100.00",
+				"ext": {
+					"br-nfe-cfop": "5102"
+				}
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "cash",
+				"ext": {
+					"br-nfe-payment-means": "01"
+				}
+			}
+		},
+		"totals": {
+			"sum": "100.00",
+			"total": "100.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "ICMS",
+						"informative": true,
+						"rates": [
+							{
+								"ext": {
+									"br-nfe-icms-cst": "00",
+									"br-nfe-icms-origin": "0"
+								},
+								"base": "100.00",
+								"percent": "18%",
+								"amount": "18.00"
+							}
+						],
+						"amount": "18.00"
+					},
+					{
+						"code": "PIS",
+						"informative": true,
+						"rates": [
+							{
+								"ext": {
+									"br-nfe-pis-cst": "01"
+								},
+								"base": "100.00",
+								"percent": "1.65%",
+								"amount": "1.65"
+							}
+						],
+						"amount": "1.65"
+					},
+					{
+						"code": "COFINS",
+						"informative": true,
+						"rates": [
+							{
+								"ext": {
+									"br-nfe-cofins-cst": "01"
+								},
+								"base": "100.00",
+								"percent": "7.6%",
+								"amount": "7.60"
+							}
+						],
+						"amount": "7.60"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "100.00",
+			"payable": "100.00"
+		},
+		"notes": [
+			{
+				"key": "reason",
+				"text": "Redução de valor referente à nota fiscal de venda"
+			}
+		]
+	}
+}

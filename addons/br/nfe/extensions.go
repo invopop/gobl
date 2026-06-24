@@ -20,6 +20,10 @@ const (
 	ExtKeyICMSOrigin      = "br-nfe-icms-origin"
 	ExtKeyPISCST          = "br-nfe-pis-cst"
 	ExtKeyCOFINSCST       = "br-nfe-cofins-cst"
+	ExtKeyPurpose         = "br-nfe-purpose"
+	ExtKeyOperationType   = "br-nfe-operation-type"
+	ExtKeyCreditNoteType  = "br-nfe-credit-note-type"
+	ExtKeyDebitNoteType   = "br-nfe-debit-note-type"
 )
 
 // Model Codes
@@ -37,6 +41,22 @@ const (
 	PresenceDelivery      cbc.Code = "4"
 	PresenceOffsite       cbc.Code = "5"
 	PresenceOther         cbc.Code = "9"
+)
+
+// Purpose Codes
+const (
+	PurposeNormal        cbc.Code = "1"
+	PurposeComplementary cbc.Code = "2"
+	PurposeAdjustment    cbc.Code = "3"
+	PurposeGoodsReturn   cbc.Code = "4"
+	PurposeCreditNote    cbc.Code = "5"
+	PurposeDebitNote     cbc.Code = "6"
+)
+
+// Operation Type Codes
+const (
+	OperationInbound  cbc.Code = "0"
+	OperationOutbound cbc.Code = "1"
 )
 
 var extensions = []*cbc.Definition{
@@ -1328,6 +1348,262 @@ var extensions = []*cbc.Definition{
 					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
 				},
 				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeyPurpose,
+		Name: i18n.String{
+			i18n.EN: "Purpose Code",
+			i18n.PT: "Código de Finalidade",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code that identifies the purpose of the fiscal document (CEFAZ field ~finNFe~,
+				B25). Standard invoices are set to ~1~ (normal) via a tax scenario.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: PurposeNormal,
+				Name: i18n.String{
+					i18n.EN: "Normal",
+					i18n.PT: "Normal",
+				},
+			},
+			{
+				Code: PurposeComplementary,
+				Name: i18n.String{
+					i18n.EN: "Complementary",
+					i18n.PT: "Complementar",
+				},
+			},
+			{
+				Code: PurposeAdjustment,
+				Name: i18n.String{
+					i18n.EN: "Adjustment",
+					i18n.PT: "Ajuste",
+				},
+			},
+			{
+				Code: PurposeGoodsReturn,
+				Name: i18n.String{
+					i18n.EN: "Goods Return",
+					i18n.PT: "Devolução/Retorno de mercadoria",
+				},
+			},
+			{
+				Code: PurposeCreditNote,
+				Name: i18n.String{
+					i18n.EN: "Credit Note",
+					i18n.PT: "Nota de Crédito",
+				},
+			},
+			{
+				Code: PurposeDebitNote,
+				Name: i18n.String{
+					i18n.EN: "Debit Note",
+					i18n.PT: "Nota de Débito",
+				},
+			},
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "NF-e/NFC-e Technical Note 2025.002 - RTC",
+					i18n.PT: "Nota Técnica NF-e/NFC-e 2025.002 - RTC",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeyOperationType,
+		Name: i18n.String{
+			i18n.EN: "Operation Type Code",
+			i18n.PT: "Código do Tipo de Operação",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code that identifies the type of operation, indicating whether it is inbound
+				or outbound (CEFAZ field ~tpNF~, B11). Standard invoices are set to ~1~
+				(outbound) via a tax scenario.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: OperationInbound,
+				Name: i18n.String{
+					i18n.EN: "Inbound",
+					i18n.PT: "Entrada",
+				},
+			},
+			{
+				Code: OperationOutbound,
+				Name: i18n.String{
+					i18n.EN: "Outbound",
+					i18n.PT: "Saída",
+				},
+			},
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeyCreditNoteType,
+		Name: i18n.String{
+			i18n.EN: "Credit Note Type Code",
+			i18n.PT: "Código do Tipo de Nota de Crédito",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code that identifies the type of credit note (CEFAZ field ~tpNFCredito~,
+				B25.2) according to the RTM (applies to IBS/CBS only).
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "Penalty and interest",
+					i18n.PT: "Multa e juros",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "Appropriation of presumed IBS credit in the ZFM",
+					i18n.PT: "Apropriação de crédito presumido de IBS na ZFM",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Return",
+					i18n.PT: "Retorno",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Reduction of values",
+					i18n.PT: "Redução de valores",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Credit transfer on succession",
+					i18n.PT: "Transferência de crédito na sucessão",
+				},
+			},
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NF-e/NFC-e Technical Note 2025.002 - RTC",
+					i18n.PT: "Nota Técnica NF-e/NFC-e 2025.002 - RTC",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeyDebitNoteType,
+		Name: i18n.String{
+			i18n.EN: "Debit Note Type Code",
+			i18n.PT: "Código do Tipo de Nota de Débito",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code that identifies the type of debit note (CEFAZ field ~tpNFDebito~, B25.1)
+				according to the RTM (applies to IBS/CBS only).
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "Transfer of credits from Cooperatives",
+					i18n.PT: "Transferência de créditos de Cooperativas",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "Credit annulment",
+					i18n.PT: "Anulação de crédito",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Debits not processed in the regular assessment",
+					i18n.PT: "Débitos não processados na apuração regular",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Penalty and interest",
+					i18n.PT: "Multa e juros",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Credit transfer on succession",
+					i18n.PT: "Transferência de crédito na sucessão",
+				},
+			},
+			{
+				Code: "06",
+				Name: i18n.String{
+					i18n.EN: "Advance payment",
+					i18n.PT: "Pagamento antecipado",
+				},
+			},
+			{
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "Inventory loss",
+					i18n.PT: "Perda em estoque",
+				},
+			},
+			{
+				Code: "08",
+				Name: i18n.String{
+					i18n.EN: "Exit from Simples Nacional",
+					i18n.PT: "Desenquadramento do Simples Nacional",
+				},
+			},
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NF-e/NFC-e Technical Note 2025.002 - RTC",
+					i18n.PT: "Nota Técnica NF-e/NFC-e 2025.002 - RTC",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=pD4YrecPV6s=",
 				ContentType: "application/pdf",
 			},
 		},

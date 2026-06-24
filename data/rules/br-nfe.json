@@ -362,8 +362,8 @@
               "assert": [
                 {
                   "id": "GOBL-BR-NFE-BILL-INVOICE-26",
-                  "desc": "invoice tax requires 'br-nfe-model' and 'br-nfe-presence' extensions",
-                  "tests": "ext require [br-nfe-model, br-nfe-presence]"
+                  "desc": "invoice tax requires 'br-nfe-model', 'br-nfe-presence', 'br-nfe-purpose' and 'br-nfe-operation-type' extensions",
+                  "tests": "ext require [br-nfe-model, br-nfe-presence, br-nfe-purpose, br-nfe-operation-type]"
                 }
               ],
               "subsets": [
@@ -384,6 +384,26 @@
                       "id": "GOBL-BR-NFE-BILL-INVOICE-28",
                       "desc": "NFC-e invoices require in-person or delivery for 'br-nfe-presence'",
                       "tests": "ext 'br-nfe-presence' in [1, 4]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "credit note purpose",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-BILL-INVOICE-40",
+                      "desc": "credit note invoices require 'br-nfe-credit-note-type' extension",
+                      "tests": "ext require [br-nfe-credit-note-type]"
+                    }
+                  ]
+                },
+                {
+                  "guard": "debit note purpose",
+                  "assert": [
+                    {
+                      "id": "GOBL-BR-NFE-BILL-INVOICE-41",
+                      "desc": "debit note invoices require 'br-nfe-debit-note-type' extension",
+                      "tests": "ext require [br-nfe-debit-note-type]"
                     }
                   ]
                 }

@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `addons/br/nfe`: Tax status code (CST) extensions for ICMS (`br-nfe-icms-cst` / `br-nfe-icms-csosn`), PIS (`br-nfe-pis-cst`) and COFINS (`br-nfe-cofins-cst`), with defaults applied during normalization.
 - `addons/br/nfe`: ICMS goods origin extension (`br-nfe-icms-origin`) with default applied during normalization.
+- `addons/br/nfe`: Support for NF-e/NFC-e corrective documents: credit notes and debit notes can be issued via corrections, which require a `sefaz-key` stamp referencing the corrected document. Related extensions: Document purpose (`br-nfe-purpose`), operation type (`br-nfe-operation-type`), credit note type (`br-nfe-credit-note-type`) and debit note type (`br-nfe-debit-note-type`). Basic scenario added for the non-corrective invoice case, corrective invoices will require setting the appropriate extension explicitly.
 
 ### Changed
 

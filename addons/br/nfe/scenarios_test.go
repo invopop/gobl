@@ -13,46 +13,52 @@ import (
 
 func TestInvoiceTypeScenarios(t *testing.T) {
 	tests := []struct {
-		name    string
-		invType cbc.Key
-		tags    []cbc.Key
-		out     cbc.Code
+		name      string
+		invType   cbc.Key
+		tags      []cbc.Key
+		model     cbc.Code
+		purpose   cbc.Code
+		operation cbc.Code
 	}{
 		{
-			name:    "Standard Invoice (NFe)",
-			invType: bill.InvoiceTypeStandard,
-			tags:    []cbc.Key{},
-			out:     nfe.ModelNFe,
+			name:      "Standard Invoice (NFe)",
+			invType:   bill.InvoiceTypeStandard,
+			tags:      []cbc.Key{},
+			model:     nfe.ModelNFe,
+			purpose:   nfe.PurposeNormal,
+			operation: nfe.OperationOutbound,
 		},
 		{
 			name:    "Credit Note (NFe)",
 			invType: bill.InvoiceTypeCreditNote,
 			tags:    []cbc.Key{},
-			out:     nfe.ModelNFe,
+			model:   nfe.ModelNFe,
 		},
 		{
 			name:    "Debit Note (NFe)",
 			invType: bill.InvoiceTypeDebitNote,
 			tags:    []cbc.Key{},
-			out:     nfe.ModelNFe,
+			model:   nfe.ModelNFe,
 		},
 		{
-			name:    "Simplified Invoice (NFCe)",
-			invType: bill.InvoiceTypeStandard,
-			tags:    []cbc.Key{tax.TagSimplified},
-			out:     nfe.ModelNFCe,
+			name:      "Simplified Invoice (NFCe)",
+			invType:   bill.InvoiceTypeStandard,
+			tags:      []cbc.Key{tax.TagSimplified},
+			model:     nfe.ModelNFCe,
+			purpose:   nfe.PurposeNormal,
+			operation: nfe.OperationOutbound,
 		},
 		{
 			name:    "Simplified Credit Note (NFCe)",
 			invType: bill.InvoiceTypeCreditNote,
 			tags:    []cbc.Key{tax.TagSimplified},
-			out:     nfe.ModelNFCe,
+			model:   nfe.ModelNFCe,
 		},
 		{
 			name:    "Simplified Debit Note (NFCe)",
 			invType: bill.InvoiceTypeDebitNote,
 			tags:    []cbc.Key{tax.TagSimplified},
-			out:     nfe.ModelNFCe,
+			model:   nfe.ModelNFCe,
 		},
 	}
 
@@ -64,7 +70,9 @@ func TestInvoiceTypeScenarios(t *testing.T) {
 			require.NoError(t, i.Calculate())
 			require.NotNil(t, i.Tax)
 			require.NotNil(t, i.Tax.Ext)
-			assert.Equal(t, tt.out, i.Tax.Ext.Get(nfe.ExtKeyModel))
+			assert.Equal(t, tt.model, i.Tax.Ext.Get(nfe.ExtKeyModel))
+			assert.Equal(t, tt.purpose, i.Tax.Ext.Get(nfe.ExtKeyPurpose))
+			assert.Equal(t, tt.operation, i.Tax.Ext.Get(nfe.ExtKeyOperationType))
 		})
 	}
 }

@@ -60,8 +60,9 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Brazil NF-e 4.00",
 		},
-		Extensions: extensions,
-		Scenarios:  scenarios,
-		Identities: identities,
+		Extensions:  extensions,
+		Scenarios:   scenarios,
+		Identities:  identities,
+		Corrections: corrections,
 	}
 }
