@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/invopop/gobl/addons/es/tbai"
-	"github.com/invopop/gobl/addons/it/sdi"
-	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -19,6 +16,15 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+)
+
+// The totals calculator groups rates by extension regardless of which
+// regime or addon owns the key, so these tests use local placeholder keys
+// rather than depending on addon packages.
+const (
+	extKeyExempt   cbc.Key = "exempt"
+	extKeyTaxRate  cbc.Key = "tax-rate"
+	extKeyRetained cbc.Key = "retained"
 )
 
 func TestTotalBySumCalculate(t *testing.T) {
@@ -279,7 +285,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Key:      tax.KeyExempt,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								tbai.ExtKeyExempt: "E1",
+								extKeyExempt: "E1",
 							}),
 						},
 					},
@@ -296,7 +302,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.KeyExempt,
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									tbai.ExtKeyExempt: "E1",
+									extKeyExempt: "E1",
 								}),
 								Base:    num.MakeAmount(10000, 2),
 								Percent: nil,
@@ -410,8 +416,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Key:      tax.KeyStandard,
 							Rate:     tax.RateGeneral,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								pt.ExtKeyRegion:    "PT-AC",
-								saft.ExtKeyTaxRate: "NOR",
+								pt.ExtKeyRegion: "PT-AC",
+								extKeyTaxRate:   "NOR",
 							}),
 						},
 					},
@@ -431,8 +437,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									pt.ExtKeyRegion:    "PT-AC",
-									saft.ExtKeyTaxRate: "NOR",
+									pt.ExtKeyRegion: "PT-AC",
+									extKeyTaxRate:   "NOR",
 								}),
 							},
 						},
@@ -1070,7 +1076,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Key:      tax.KeyExempt,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								tbai.ExtKeyExempt: "E1",
+								extKeyExempt: "E1",
 							}),
 						},
 					},
@@ -1086,7 +1092,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.KeyExempt,
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									tbai.ExtKeyExempt: "E1",
+									extKeyExempt: "E1",
 								}),
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
@@ -1106,7 +1112,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								tbai.ExtKeyExempt: "E1",
+								extKeyExempt: "E1",
 							}),
 						},
 					},
@@ -1117,7 +1123,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								tbai.ExtKeyExempt: "E1",
+								extKeyExempt: "E1",
 							}),
 						},
 					},
@@ -1133,7 +1139,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.KeyStandard,
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									tbai.ExtKeyExempt: "E1",
+									extKeyExempt: "E1",
 								}),
 								Base:   num.MakeAmount(12000, 2),
 								Amount: num.MakeAmount(0, 2),
@@ -1163,7 +1169,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Key:      tax.KeyExempt,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								tbai.ExtKeyExempt: "E2",
+								extKeyExempt: "E2",
 							}),
 						},
 					},
@@ -1185,7 +1191,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.KeyExempt,
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									tbai.ExtKeyExempt: "E2",
+									extKeyExempt: "E2",
 								}),
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
@@ -1211,7 +1217,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								sdi.ExtKeyRetained: "A",
+								extKeyRetained: "A",
 							}),
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1227,7 +1233,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								sdi.ExtKeyRetained: "J", // truffles!
+								extKeyRetained: "J", // truffles!
 							}),
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1255,7 +1261,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									sdi.ExtKeyRetained: "A",
+									extKeyRetained: "A",
 								}),
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
@@ -1263,7 +1269,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									sdi.ExtKeyRetained: "J",
+									extKeyRetained: "J",
 								}),
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
