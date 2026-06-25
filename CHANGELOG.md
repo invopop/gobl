@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import of `gobl.it.sdi/addon` to keep using the `it-sdi-v1` addon key.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added

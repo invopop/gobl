@@ -66,4 +66,11 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.sa.zatca",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "it-sdi-v1",
+		Name: i18n.String{
+			i18n.EN: "Italy SDI FatturaPA v1.x",
+		},
+		Module: "github.com/invopop/gobl.it.sdi/addon",
+	})
 }
