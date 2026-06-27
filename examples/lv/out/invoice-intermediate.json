@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9a2bbb65412e5f499cb7366ad16be25b645bde530dc9889785f832c6b4710de5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "LV",
+		"uuid": "11111111-2222-3333-4444-555555555555",
+		"type": "standard",
+		"series": "LV2025",
+		"code": "003",
+		"issue_date": "2025-06-15",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Latvian Supermarket SIA",
+			"tax_id": {
+				"country": "LV",
+				"code": "40003032065"
+			},
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Brīvības iela",
+					"locality": "Rīga",
+					"code": "1010",
+					"country": "LV"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.lv"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Rātslaukuma iela",
+					"locality": "Rīga",
+					"code": "1050",
+					"country": "LV"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Food products",
+					"price": "15.00"
+				},
+				"sum": "30.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "12.0%"
+					}
+				],
+				"total": "30.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Medicines",
+					"price": "25.00"
+				},
+				"sum": "25.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "12.0%"
+					}
+				],
+				"total": "25.00"
+			}
+		],
+		"totals": {
+			"sum": "55.00",
+			"total": "55.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "55.00",
+								"percent": "12.0%",
+								"amount": "6.60"
+							}
+						],
+						"amount": "6.60"
+					}
+				],
+				"sum": "6.60"
+			},
+			"tax": "6.60",
+			"total_with_tax": "61.60",
+			"payable": "61.60"
+		}
+	}
+}

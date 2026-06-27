@@ -1,0 +1,65 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "LV",
+  "uuid": "12345678-1234-1234-1234-123456789012",
+  "type": "standard",
+  "series": "LV2025",
+  "code": "001",
+  "issue_date": "2025-06-15",
+  "currency": "EUR",
+  "supplier": {
+    "name": "Latvian Services SIA",
+    "tax_id": {
+      "country": "LV",
+      "code": "40003032065"
+    },
+    "addresses": [
+      {
+        "num": "1",
+        "street": "Brīvības iela",
+        "locality": "Rīga",
+        "code": "1010",
+        "country": "LV"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "billing@example.lv"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Sample Customer Ltd",
+    "tax_id": {
+      "country": "LV",
+      "code": "52000000000"
+    },
+    "addresses": [
+      {
+        "num": "5",
+        "street": "Lāčplēša iela",
+        "locality": "Liepāja",
+        "code": "LV-3400",
+        "country": "LV"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "10",
+      "item": {
+        "name": "Consulting services",
+        "price": "100.00",
+        "unit": "h"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "standard",
+          "percent": "21.0%"
+        }
+      ]
+    }
+  ]
+}
