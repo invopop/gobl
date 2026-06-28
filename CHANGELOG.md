@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/lv`: new tax regime for Latvia (LV), including VAT standard (21%), intermediate (12%), and reduced (5%) rates with comprehensive tax identity validation for legal entities (MOD-11 checksum) and individuals (date validation).
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
