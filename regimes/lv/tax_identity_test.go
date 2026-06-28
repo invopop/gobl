@@ -93,7 +93,14 @@ func TestTaxIdentityRules(t *testing.T) {
 		{name: "too short", input: "LV1234567890", expected: "IDENTITY-01"},
 		{name: "not enough digits", input: "LV123456789", expected: "IDENTITY-01"},
 		{name: "letters in code", input: "LVAAAAAAAAAA", expected: "IDENTITY-01"},
-
+		// Letters interleaved in the code sequence
+		{name: "letters interleaved - letter in middle (business)", input: "LV4000A032065", expected: "IDENTITY-01"},
+		{name: "letters interleaved - multiple letters (business)", input: "LV4AB0C0D2065", expected: "IDENTITY-01"},
+		{name: "letters interleaved - letter in middle (natural persona)", input: "LV3200A032065", expected: "IDENTITY-01"},
+		// Valid format but wrong country prefix - not an LV tax identity
+		{name: "wrong country - ES prefix", input: "ES12345678901", expected: "IDENTITY-01"},
+		{name: "wrong country - DE prefix", input: "DE123456789", expected: "IDENTITY-01"},
+		{name: "wrong country - FR prefix", input: "FR12345678901", expected: "IDENTITY-01"},
 		// Empty code is valid (not required)
 		{name: "empty code", input: "", expected: ""},
 	}

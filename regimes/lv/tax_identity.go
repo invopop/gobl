@@ -71,7 +71,7 @@ func validateTaxCode(value any) error {
 		val = val[2:]
 	}
 
-	// Get first digit
+	// Get first two digits
 	firstDigit, err := strconv.Atoi(string(val[0]))
 	if err != nil {
 		return errors.New("invalid first digit")
@@ -80,7 +80,7 @@ func validateTaxCode(value any) error {
 	// Personal codes (first digit 0-3) - no checksum validation needed
 	// These follow the format similar to personas kods without the hyphen
 	if firstDigit >= 0 && firstDigit <= 3 {
-		return validatePersonalCode(val, firstDigit)
+		return validatePersonalCode(val)
 	}
 
 	// Legal entities (first digit 4-9) - validate Mod-11 checksum
@@ -92,27 +92,22 @@ func validateTaxCode(value any) error {
 }
 
 // validatePersonalCode validates personal codes (starting with 0-3)
-// Format for 0-2 prefix (legacy, up to 30 June 2017): DDMMYYCXXXX
-// where C is century digit: 0=18xx, 1=19xx, 2=20xx
-func validatePersonalCode(val string, firstDigit int) error {
-	// For prefix 3X (new format from 1 July 2017)
+func validatePersonalCode(val string) error {
+
+	firstDigits, err := strconv.Atoi(val[0:2])
+	if err != nil {
+		return errors.New("invalid first two digits")
+	}
+
+	// For modern personal codes, prefix 3X (new format from 1 July 2017)
 	// The second digit is random between 2-9, digits 3-11 are random 0-9
-	if firstDigit == 3 {
-		// Check that second digit is between 2-9
-		secondDigit := int(val[1] - '0')
-		if secondDigit < 2 || secondDigit > 9 {
-			return errors.New("invalid personal code format for modern individuals - second digit must be 2-9")
-		}
+	if firstDigits >= 32 && firstDigits <= 39 {
 		return nil
 	}
 
-	// For legacy personal codes (0-2 prefix), validate date components
+	// For legacy personal codes, validate date components
 	// Format: DDMMYYCXXXX where digits 1-2 are day, 3-4 are month, 5-6 are year,
 	// digit 7 is century (0=18xx, 1=19xx, 2=20xx)
-	if len(val) < 7 {
-		return errors.New("invalid personal code length")
-	}
-
 	day, err1 := strconv.Atoi(val[0:2])
 	month, err2 := strconv.Atoi(val[2:4])
 	year, err3 := strconv.Atoi(val[4:6])

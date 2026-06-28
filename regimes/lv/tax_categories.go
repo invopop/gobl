@@ -52,7 +52,7 @@ var taxCategories = []*tax.CategoryDef{
 				Rate: tax.RateGeneral,
 				Name: i18n.String{
 					i18n.EN: "General Rate",
-					i18n.LV: "Nodokļa Standartlikmi",
+					i18n.LV: "Nodokļa Standartlikme",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -61,8 +61,8 @@ var taxCategories = []*tax.CategoryDef{
 					},
 				},
 			},
-			//STANDARD TAX RATE - HIGHEST REDUCED RATE
-			//Applied to essencial goods and services (medicines, food suplies, etc).
+			// STANDARD TAX RATE - HIGHEST REDUCED RATE
+			//Applied to essential goods and services (medicines, food supplies, etc).
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
 				Rate: tax.RateIntermediate,
@@ -77,8 +77,8 @@ var taxCategories = []*tax.CategoryDef{
 					},
 				},
 			},
-			//STANDARD TAX RATE - LOWEST REDUCED RATE
-			//Applied to book suplies, press and media publications and related anexes.
+			// STANDARD TAX RATE - LOWEST REDUCED RATE
+			//Applied to book supplies, press and media publications and related annexes.
 			{
 				Keys: []cbc.Key{tax.KeyStandard},
 				Rate: tax.RateReduced,
