@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/kr`: New tax regime for South Korea (VAT) with Business Registration Number (사업자등록번호) check-digit validation.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added

@@ -1,0 +1,118 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "South Korea",
+    "ko": "대한민국"
+  },
+  "description": {
+    "en": "South Korea applies VAT (부가가치세), administered by the National Tax\nService (국세청), on most goods and services, with zero-rating for exports\nand certain internationally supplied services.\n\nBusinesses are identified by their Business Registration Number\n(사업자등록번호), a 10-digit number with a check digit. It is the identifier\nrequired on Korean tax invoices (세금계산서)."
+  },
+  "time_zone": "Asia/Seoul",
+  "country": "KR",
+  "currency": "KRW",
+  "tax_scheme": "VAT",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ko": "부가세"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ko": "부가가치세"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ko": "기본세율"
+          },
+          "values": [
+            {
+              "since": "1977-07-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Value-Added Tax Act, Article 30 (tax rate)"
+          },
+          "url": "https://elaw.klri.re.kr/eng_service/lawView.do?hseq=53110\u0026lang=ENG"
+        },
+        {
+          "title": {
+            "en": "National Tax Service (NTS)",
+            "ko": "국세청"
+          },
+          "url": "https://www.nts.go.kr/english/"
+        }
+      ]
+    }
+  ]
+}

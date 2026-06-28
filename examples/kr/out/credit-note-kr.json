@@ -1,0 +1,104 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "226bc67f3cd5412f3075d9d2cb21ae0c61803d31ae233b2978bb0c70684485a1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "KR",
+		"uuid": "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4d",
+		"type": "credit-note",
+		"series": "2025",
+		"code": "0003",
+		"issue_date": "2025-07-01",
+		"currency": "KRW",
+		"preceding": [
+			{
+				"issue_date": "2025-06-25",
+				"code": "2025/0001"
+			}
+		],
+		"supplier": {
+			"name": "예시 주식회사",
+			"tax_id": {
+				"country": "KR",
+				"code": "1208147521"
+			},
+			"addresses": [
+				{
+					"num": "29",
+					"street": "테헤란로",
+					"locality": "강남구",
+					"region": "서울특별시",
+					"code": "06234",
+					"country": "KR"
+				}
+			]
+		},
+		"customer": {
+			"name": "고객 주식회사",
+			"tax_id": {
+				"country": "KR",
+				"code": "2208162517"
+			},
+			"addresses": [
+				{
+					"num": "100",
+					"street": "세종대로",
+					"locality": "중구",
+					"region": "서울특별시",
+					"code": "04524",
+					"country": "KR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "컨설팅 서비스",
+					"price": "150000"
+				},
+				"sum": "300000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10.0%"
+					}
+				],
+				"total": "300000"
+			}
+		],
+		"totals": {
+			"sum": "300000",
+			"total": "300000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "300000",
+								"percent": "10.0%",
+								"amount": "30000"
+							}
+						],
+						"amount": "30000"
+					}
+				],
+				"sum": "30000"
+			},
+			"tax": "30000",
+			"total_with_tax": "330000",
+			"payable": "330000"
+		}
+	}
+}
