@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"

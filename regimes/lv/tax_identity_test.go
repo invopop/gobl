@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	_ "github.com/invopop/gobl/regimes/lv"
 	"github.com/invopop/gobl/norm"
+	_ "github.com/invopop/gobl/regimes/lv"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
