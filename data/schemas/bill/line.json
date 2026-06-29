@@ -22,6 +22,11 @@
           "title": "Quantity",
           "description": "Number of items"
         },
+        "unit": {
+          "$ref": "https://gobl.org/draft-0/org/unit",
+          "title": "Unit",
+          "description": "Unit of measure for the invoiced quantity (EN 16931 BT-130). When left\nempty it is inferred from the item's unit; set it explicitly when the\ninvoiced unit differs from the item's price base quantity unit (BT-150)."
+        },
         "identifier": {
           "$ref": "https://gobl.org/draft-0/org/identity",
           "title": "Identifier",
@@ -358,6 +363,11 @@
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Quantity",
           "description": "Number of items"
+        },
+        "unit": {
+          "$ref": "https://gobl.org/draft-0/org/unit",
+          "title": "Unit",
+          "description": "Unit of measure for the invoiced quantity (EN 16931 BT-130). When left\nempty it is inferred from the item's unit; set it explicitly when the\ninvoiced unit differs from the item's price base quantity unit (BT-150)."
         },
         "identifier": {
           "$ref": "https://gobl.org/draft-0/org/identity",

@@ -327,6 +327,21 @@
               ]
             }
           ]
+        },
+        {
+          "field": "base_quantity",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-ITEM-03",
+                  "desc": "item base quantity must be positive",
+                  "tests": "min 0"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

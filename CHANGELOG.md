@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `org`: `Item.BaseQuantity` — the number of units the item's price refers to (e.g. a price per 100 units, EN 16931 BT-149). Line sums are calculated as `price × quantity ÷ base_quantity`.
+- `bill`: `Line.Unit` and `SubLine.Unit` — the unit of measure for the invoiced quantity (EN 16931 BT-130), distinct from the item's price base quantity unit (`Item.Unit`, BT-150). A line-only unit seeds `Item.Unit`, but an item-only unit leaves the line unit empty, so existing documents are unchanged; core EN 16931 permits them to differ (only the PEPPOL layer requires them equal).
 
 ## [v0.501.0] - 2026-06-16
 
