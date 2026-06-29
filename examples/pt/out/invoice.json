@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ada2479aa4c8a6d039f53ece0adc6c0e34b99126ff143bf8fe5d94b589b3e96c"
+			"val": "77a53841c4526ce00c81322272735d2e6d84b0954c7a70a1a0fb74059b8c3e8e"
 		}
 	},
 	"doc": {
@@ -72,10 +72,36 @@
 		],
 		"payment": {
 			"payee": {
-				"name": "Banco Recebedor, S.A."
+				"name": "Banco Recebedor, S.A.",
+				"identities": [
+					{
+						"label": "NIF",
+						"code": "503504030"
+					}
+				],
+				"addresses": [
+					{
+						"street": "Avenida da Liberdade",
+						"locality": "Lisboa",
+						"code": "1250-096"
+					}
+				]
 			},
 			"payer": {
-				"name": "Empresa-Mãe, Lda."
+				"name": "Empresa-Mãe, Lda.",
+				"identities": [
+					{
+						"label": "NIF",
+						"code": "501442600"
+					}
+				],
+				"addresses": [
+					{
+						"street": "Rua de Santa Catarina",
+						"locality": "Porto",
+						"code": "4000-447"
+					}
+				]
 			},
 			"advances": [
 				{
