@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `tax`: `Identity` now includes `ext` for addon- or format-specific information, mirroring `org.Identity`.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
