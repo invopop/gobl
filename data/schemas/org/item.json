@@ -48,6 +48,14 @@
           "title": "Identities",
           "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer."
         },
+        "attributes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/attribute"
+          },
+          "type": "array",
+          "title": "Attributes",
+          "description": "Attributes describe named features or properties of the item, such as\ncolour or size."
+        },
         "description": {
           "type": "string",
           "title": "Description",

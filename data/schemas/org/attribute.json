@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/attribute",
+  "$ref": "#/$defs/org.Attribute",
+  "$defs": {
+    "org.Attribute": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "label for internal use, not included in output documents."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key that identifies the attribute or property."
+        },
+        "value": {
+          "type": "string",
+          "title": "Value",
+          "description": "Value of the attribute or property."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "value"
+      ],
+      "description": "Attribute describes a named feature or property of the parent object, such as the colour or size of an item."
+    }
+  }
+}
