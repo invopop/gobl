@@ -41,6 +41,11 @@ type Identity struct {
 	// Deprecated: Tax Identities should only be used for VAT or similar codes
 	// for companies. Use the identities array for other types of identification.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
+
+	// Ext provides a way to add additional information to the tax identity,
+	// typically required by a specific addon or electronic format (for example a
+	// UBL or CII scheme identifier).
+	Ext Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 var (
