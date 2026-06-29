@@ -40,10 +40,30 @@ const (
 	IdentityKeyOther     cbc.Key = "other"
 )
 
-// Identity scopes that may be used to further classify an identity's intended use.
+// Identity scopes that may be used to further classify an identity's intended
+// use. A scope describes what kind of code this is and who issued it; how a
+// particular tax regime or addon treats, maps, or constrains it is defined by
+// that addon, not here.
 const (
-	IdentityScopeTax   cbc.Key = "tax"
+	// IdentityScopeTax is for a code issued by a tax authority that identifies
+	// the parent for tax purposes, such as a VAT or tax registration number.
+	IdentityScopeTax cbc.Key = "tax"
+	// IdentityScopeLegal is for a code issued under an official, recognised
+	// registration scheme — for example a company registration number for a
+	// party, or a standard product identifier such as the GS1 GTIN for an item.
+	// Use it when the code originates from a registry rather than from a trading
+	// party.
 	IdentityScopeLegal cbc.Key = "legal"
+	// IdentityScopeClass is for a code that groups the parent into a category of
+	// a classification scheme (such as UNSPSC, CPV, or HS for items) rather than
+	// uniquely identifying it.
+	IdentityScopeClass cbc.Key = "class"
+	// IdentityScopeSeller is for a code the seller (supplier) assigns to identify
+	// the item, such as their own SKU or article number.
+	IdentityScopeSeller cbc.Key = "seller"
+	// IdentityScopeBuyer is for a code the buyer (customer) assigns to identify
+	// the item, such as the buyer's own catalogue or article number.
+	IdentityScopeBuyer cbc.Key = "buyer"
 )
 
 // Identity is used to define a code for a specific context. Identities can be used for
@@ -76,8 +96,8 @@ func identityRules() *rules.Set {
 			rules.Assert("01", "identity code must be provided", is.Present),
 		),
 		rules.Field("scope",
-			rules.AssertIfPresent("02", "identity scope when provided must be either 'tax' or 'legal'",
-				is.In(IdentityScopeTax, IdentityScopeLegal),
+			rules.AssertIfPresent("02", "identity scope when provided must be one of 'tax', 'legal', 'class', 'seller', or 'buyer'",
+				is.In(IdentityScopeTax, IdentityScopeLegal, IdentityScopeClass, IdentityScopeSeller, IdentityScopeBuyer),
 			),
 		),
 		rules.Assert("03", "identity must have either a key or type defined, but not both",
@@ -244,6 +264,18 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 			{
 				Const: IdentityScopeLegal,
 				Title: "Legal",
+			},
+			{
+				Const: IdentityScopeClass,
+				Title: "Classification",
+			},
+			{
+				Const: IdentityScopeSeller,
+				Title: "Seller",
+			},
+			{
+				Const: IdentityScopeBuyer,
+				Title: "Buyer",
 			},
 		}
 	}

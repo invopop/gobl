@@ -26,6 +26,18 @@
             {
               "const": "legal",
               "title": "Legal"
+            },
+            {
+              "const": "class",
+              "title": "Classification"
+            },
+            {
+              "const": "seller",
+              "title": "Seller"
+            },
+            {
+              "const": "buyer",
+              "title": "Buyer"
             }
           ],
           "title": "Scope",

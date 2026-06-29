@@ -165,7 +165,73 @@ func orgItemRules() *rules.Set {
 			// BR-23: unit of measure is required
 			rules.Assert("01", "unit is required (BR-23)", is.Present),
 		),
+		rules.Field("identities",
+			// BT-157 may only appear once per item
+			rules.Assert("02", "cannot have more than one identity with the 'legal' scope (BT-157)",
+				is.Func("max one legal-scoped identity", itemHasMaxOneLegalIdentity),
+			),
+			// The `legal` scope is also used by party identities, where no
+			// scheme is required, so the binding is enforced here at the
+			// item level rather than on the identity itself.
+			rules.Assert("03", "legal identities require the 'iso-scheme-id' extension (BR-64)",
+				is.Func("legal-scoped identities have iso-scheme-id", itemLegalIdentitiesHaveScheme),
+			),
+		),
 	)
+}
+
+func itemHasMaxOneLegalIdentity(val any) bool {
+	ids, ok := val.([]*org.Identity)
+	if !ok {
+		return true
+	}
+	count := 0
+	for _, id := range ids {
+		if id != nil && id.Scope == org.IdentityScopeLegal {
+			count++
+		}
+	}
+	return count <= 1
+}
+
+func itemLegalIdentitiesHaveScheme(val any) bool {
+	ids, ok := val.([]*org.Identity)
+	if !ok {
+		return true
+	}
+	for _, id := range ids {
+		if id != nil && id.Scope == org.IdentityScopeLegal && !id.Ext.Has(iso.ExtKeySchemeID) {
+			return false
+		}
+	}
+	return true
+}
+
+func orgIdentityRules() *rules.Set {
+	return rules.For(new(org.Identity),
+		// The scope declares what the identity is; the extension provides the
+		// binding the scope requires in EN 16931 outputs.
+		rules.When(identityScopeIs(org.IdentityScopeClass),
+			rules.Field("ext",
+				rules.Assert("01",
+					"classification identities require the 'untdid-item-type' extension (BT-158)",
+					tax.ExtensionsRequire(untdid.ExtKeyItemType),
+				),
+			),
+		),
+	)
+}
+
+func identityScopeIs(scope cbc.Key) rules.Test {
+	return is.Func("identity scope is '"+scope.String()+"'", func(val any) bool {
+		switch v := val.(type) {
+		case *org.Identity:
+			return v != nil && v.Scope == scope
+		case org.Identity:
+			return v.Scope == scope
+		}
+		return false
+	})
 }
 
 func orgAttachmentRules() *rules.Set {

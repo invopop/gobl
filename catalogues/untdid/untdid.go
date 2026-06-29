@@ -35,6 +35,10 @@ const (
 	// ExtKeyItemType is used to identify the UNTDID 7143 item type code.
 	ExtKeyItemType cbc.Key = "untdid-item-type"
 
+	// ExtKeyItemTypeVersion is used to identify the version of the scheme
+	// referenced by the `untdid-item-type` extension, when relevant.
+	ExtKeyItemTypeVersion cbc.Key = "untdid-item-type-version"
+
 	// ExtKeyCharge is used to identify the UNTDID 7161 charge codes.
 	ExtKeyCharge cbc.Key = "untdid-charge"
 )
