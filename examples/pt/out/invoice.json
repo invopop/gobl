@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "58ef11abfc1cfb0374c7a352156d7e5e4d542d32ea2f064032bc17b779dc15a5"
+			"val": "ada2479aa4c8a6d039f53ece0adc6c0e34b99126ff143bf8fe5d94b589b3e96c"
 		}
 	},
 	"doc": {
@@ -71,6 +71,12 @@
 			}
 		],
 		"payment": {
+			"payee": {
+				"name": "Banco Recebedor, S.A."
+			},
+			"payer": {
+				"name": "Empresa-Mãe, Lda."
+			},
 			"advances": [
 				{
 					"date": "2023-01-30",

@@ -27,6 +27,10 @@ lines:
       - cat: VAT
         rate: standard
 payment:
+  payee:
+    name: Banco Recebedor, S.A.
+  payer:
+    name: Empresa-Mãe, Lda.
   advances:
     - amount: 100.00
       desc: "Adiantamento"
