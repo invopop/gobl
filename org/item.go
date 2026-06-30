@@ -49,7 +49,12 @@ type Item struct {
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
-	// Unit of measure.
+	// Number of units the price refers to, e.g. a price per 100 units
+	// (EN 16931 BT-149). Assumed to be 1 when left empty. The base quantity is
+	// expressed in the item's unit of measure (BT-150).
+	BaseQuantity *num.Amount `json:"base_quantity,omitempty" jsonschema:"title=Base Quantity"`
+	// Unit of measure the item's price refers to (EN 16931 BT-150). The line's
+	// invoiced quantity may use a different unit (BT-130).
 	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Country code of where this item was from originally.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
@@ -66,6 +71,9 @@ func itemRules() *rules.Set {
 		),
 		rules.Field("price",
 			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
+		),
+		rules.Field("base_quantity",
+			rules.AssertIfPresent("03", "item base quantity must be positive", num.Positive),
 		),
 	)
 }

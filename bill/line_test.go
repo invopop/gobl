@@ -497,3 +497,38 @@ func TestLineGetTotal(t *testing.T) {
 		assert.Equal(t, "0", line.GetTotal().String())
 	})
 }
+
+func TestLineUnitNormalization(t *testing.T) {
+	t.Run("item-only unit leaves the line unit empty (no digest churn)", func(t *testing.T) {
+		// Existing documents set the unit on the item; the line unit stays
+		// empty so their serialized output is unchanged. Converters fall back
+		// to Item.Unit for BT-130.
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Item", Unit: org.UnitKilogram},
+		}
+		norm.Normalize(line)
+		assert.Equal(t, org.UnitEmpty, line.Unit)
+		assert.Equal(t, org.UnitKilogram, line.Item.Unit)
+	})
+	t.Run("a line-only unit seeds the item unit (BT-150 from BT-130)", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Unit:     org.UnitKilogram,
+			Item:     &org.Item{Name: "Item"},
+		}
+		norm.Normalize(line)
+		assert.Equal(t, org.UnitKilogram, line.Unit)
+		assert.Equal(t, org.UnitKilogram, line.Item.Unit)
+	})
+	t.Run("explicit divergent units are preserved (BT-130 != BT-150)", func(t *testing.T) {
+		line := &Line{
+			Quantity: num.MakeAmount(1, 0),
+			Unit:     org.UnitMetricTon,
+			Item:     &org.Item{Name: "Item", Unit: org.UnitKilogram},
+		}
+		norm.Normalize(line)
+		assert.Equal(t, org.UnitMetricTon, line.Unit)
+		assert.Equal(t, org.UnitKilogram, line.Item.Unit)
+	})
+}

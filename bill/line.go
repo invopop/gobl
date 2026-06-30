@@ -18,6 +18,10 @@ type Line struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Number of items
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
+	// Unit of measure for the invoiced quantity (EN 16931 BT-130). When left
+	// empty it is inferred from the item's unit; set it explicitly when the
+	// invoiced unit differs from the item's price base quantity unit (BT-150).
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Single identifier provided by the supplier for an object on which the
 	// line item is based and is not considered a universal identity. Examples
 	// include a subscription number, telephone number, meter point, etc.
@@ -71,6 +75,10 @@ type SubLine struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Number of items
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
+	// Unit of measure for the invoiced quantity (EN 16931 BT-130). When left
+	// empty it is inferred from the item's unit; set it explicitly when the
+	// invoiced unit differs from the item's price base quantity unit (BT-150).
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Single identifier provided by the supplier for an object on which the
 	// line item is based and is not considered a universal identity. Examples
 	// include a subscription number, telephone number, meter point, etc.
@@ -181,6 +189,7 @@ func (sl *SubLine) IsEmpty() bool {
 	return sl == nil ||
 		(sl.UUID.IsZero() &&
 			sl.Quantity.IsZero() &&
+			sl.Unit == org.UnitEmpty &&
 			sl.Identifier == nil &&
 			sl.Period == nil &&
 			sl.Order.IsEmpty() &&
@@ -207,6 +216,7 @@ func CleanSubLines(sls []*SubLine) []*SubLine {
 
 func normalizeLine(l *Line) {
 	normalizeLineItemPrice(l)
+	l.Unit = normalizeLineUnit(l.Unit, l.Item)
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
@@ -215,8 +225,27 @@ func normalizeLine(l *Line) {
 
 func normalizeSubLine(sl *SubLine) {
 	normalizeSubLineItemPrice(sl)
+	sl.Unit = normalizeLineUnit(sl.Unit, sl.Item)
 	sl.Discounts = CleanLineDiscounts(sl.Discounts)
 	sl.Charges = CleanLineCharges(sl.Charges)
+}
+
+// normalizeLineUnit seeds the item's price base quantity unit (BT-150,
+// org.Item.Unit) from the line's invoiced quantity unit (BT-130) when the item
+// has none, so a line that only sets the new unit still carries a base quantity
+// unit. The reverse is intentionally NOT done: an item-only unit leaves the
+// line unit empty, keeping existing documents (and their digests) unchanged.
+// Converters read BT-130 from Line.Unit, falling back to Item.Unit when empty.
+// Core EN 16931 permits BT-130 and BT-150 to differ (only the PEPPOL layer
+// requires them equal), so explicitly divergent units are preserved.
+func normalizeLineUnit(unit org.Unit, item *org.Item) org.Unit {
+	if item == nil {
+		return unit
+	}
+	if unit != org.UnitEmpty && item.Unit == org.UnitEmpty {
+		item.Unit = unit
+	}
+	return unit
 }
 
 func normalizeLineItemPrice(l *Line) {
