@@ -114,6 +114,25 @@
           "url": "https://skat.dk/erhverv/moms"
         }
       ]
+    },
+    {
+      "code": "EXCISE",
+      "name": {
+        "da": "Punktafgift",
+        "en": "Excise Duty"
+      },
+      "title": {
+        "da": "Punktafgift",
+        "en": "Danish Excise Duty"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Danish Tax Agency - Excise duties"
+          },
+          "url": "https://skat.dk/erhverv/punktafgifter"
+        }
+      ]
     }
   ]
 }
