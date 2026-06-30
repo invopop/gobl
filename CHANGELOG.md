@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/au`: New tax regime for Australia — GST and ABN tax identity validation (weighted modulus-89 checksum).
+- `regimes/nz`: New tax regime for New Zealand — GST, IRD number validation (weighted modulus-11 checksum), and te reo Māori (`mi`) translations.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
 
 ## [v0.501.0] - 2026-06-16

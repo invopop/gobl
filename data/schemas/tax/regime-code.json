@@ -18,6 +18,10 @@
           "title": "Austria"
         },
         {
+          "const": "AU",
+          "title": "Australia"
+        },
+        {
           "const": "BE",
           "title": "Belgium"
         },
@@ -84,6 +88,10 @@
         {
           "const": "NO",
           "title": "Norway"
+        },
+        {
+          "const": "NZ",
+          "title": "New Zealand"
         },
         {
           "const": "PL",
