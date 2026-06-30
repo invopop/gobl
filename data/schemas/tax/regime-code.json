@@ -74,6 +74,10 @@
           "title": "Italy"
         },
         {
+          "const": "KR",
+          "title": "South Korea"
+        },
+        {
           "const": "MX",
           "title": "Mexico"
         },

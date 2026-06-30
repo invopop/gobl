@@ -1,0 +1,116 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5a1cb2adc607be6bfaa2fe80fe887084289bbb1572ab7025dcfb950be7500910"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "KR",
+		"uuid": "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4b",
+		"type": "standard",
+		"series": "2025",
+		"code": "0001",
+		"issue_date": "2025-06-25",
+		"currency": "KRW",
+		"supplier": {
+			"name": "예시 주식회사",
+			"tax_id": {
+				"country": "KR",
+				"code": "1208147521"
+			},
+			"addresses": [
+				{
+					"num": "29",
+					"street": "테헤란로",
+					"locality": "강남구",
+					"region": "서울특별시",
+					"code": "06234",
+					"country": "KR"
+				}
+			]
+		},
+		"customer": {
+			"name": "고객 주식회사",
+			"tax_id": {
+				"country": "KR",
+				"code": "2208162517"
+			},
+			"addresses": [
+				{
+					"num": "100",
+					"street": "세종대로",
+					"locality": "중구",
+					"region": "서울특별시",
+					"code": "04524",
+					"country": "KR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "컨설팅 서비스",
+					"price": "150000"
+				},
+				"sum": "1500000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10.0%"
+					}
+				],
+				"total": "1500000"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "소프트웨어 라이선스",
+					"price": "500000"
+				},
+				"sum": "1000000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10.0%"
+					}
+				],
+				"total": "1000000"
+			}
+		],
+		"totals": {
+			"sum": "2500000",
+			"total": "2500000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2500000",
+								"percent": "10.0%",
+								"amount": "250000"
+							}
+						],
+						"amount": "250000"
+					}
+				],
+				"sum": "250000"
+			},
+			"tax": "250000",
+			"total_with_tax": "2750000",
+			"payable": "2750000"
+		}
+	}
+}

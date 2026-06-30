@@ -1,0 +1,92 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d30259cd22fa9670034ddc051cc0f8c0b6c9bd4f342aada4081a4033879fa639"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "KR",
+		"uuid": "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4c",
+		"type": "standard",
+		"series": "2025",
+		"code": "0002",
+		"issue_date": "2025-06-25",
+		"currency": "KRW",
+		"supplier": {
+			"name": "예시 주식회사",
+			"tax_id": {
+				"country": "KR",
+				"code": "1208147521"
+			},
+			"addresses": [
+				{
+					"num": "29",
+					"street": "테헤란로",
+					"locality": "강남구",
+					"region": "서울특별시",
+					"code": "06234",
+					"country": "KR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Overseas Buyer Ltd.",
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Marina Boulevard",
+					"locality": "Singapore",
+					"code": "018989",
+					"country": "SG"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "100",
+				"item": {
+					"name": "수출용 전자부품",
+					"price": "20000"
+				},
+				"sum": "2000000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "2000000"
+			}
+		],
+		"totals": {
+			"sum": "2000000",
+			"total": "2000000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"base": "2000000",
+								"percent": "0%",
+								"amount": "0"
+							}
+						],
+						"amount": "0"
+					}
+				],
+				"sum": "0"
+			},
+			"tax": "0",
+			"total_with_tax": "2000000",
+			"payable": "2000000"
+		}
+	}
+}

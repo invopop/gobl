@@ -1,0 +1,49 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "KR"
+uuid: "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4b"
+currency: KRW
+series: "2025"
+code: "0001"
+issue_date: "2025-06-25"
+
+supplier:
+  name: 예시 주식회사
+  tax_id:
+    country: "KR"
+    code: "1208147521"
+  addresses:
+    - num: "29"
+      street: 테헤란로
+      locality: 강남구
+      region: 서울특별시
+      code: "06234"
+      country: "KR"
+
+customer:
+  name: 고객 주식회사
+  tax_id:
+    country: "KR"
+    code: "2208162517"
+  addresses:
+    - num: "100"
+      street: 세종대로
+      locality: 중구
+      region: 서울특별시
+      code: "04524"
+      country: "KR"
+
+lines:
+  - quantity: "10"
+    item:
+      name: 컨설팅 서비스
+      price: "150000"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "2"
+    item:
+      name: 소프트웨어 라이선스
+      price: "500000"
+    taxes:
+      - cat: VAT
+        rate: standard

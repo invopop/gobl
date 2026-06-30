@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-KR",
+  "package": "kr",
+  "subsets": [
+    {
+      "id": "GOBL-KR-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [KR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-KR-TAX-IDENTITY-01",
+                      "desc": "invalid Korean business registration number",
+                      "tests": "valid BRN check digit"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

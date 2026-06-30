@@ -1,0 +1,48 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "KR"
+uuid: "8a4e1c9d-2b3f-4d6e-a7c8-9f0e1d2b3c4d"
+type: credit-note
+currency: KRW
+series: "2025"
+code: "0003"
+issue_date: "2025-07-01"
+
+# Korean revised tax invoices (수정세금계산서) reference the original invoice.
+preceding:
+  - code: "2025/0001"
+    issue_date: "2025-06-25"
+
+supplier:
+  name: 예시 주식회사
+  tax_id:
+    country: "KR"
+    code: "1208147521"
+  addresses:
+    - num: "29"
+      street: 테헤란로
+      locality: 강남구
+      region: 서울특별시
+      code: "06234"
+      country: "KR"
+
+customer:
+  name: 고객 주식회사
+  tax_id:
+    country: "KR"
+    code: "2208162517"
+  addresses:
+    - num: "100"
+      street: 세종대로
+      locality: 중구
+      region: 서울특별시
+      code: "04524"
+      country: "KR"
+
+lines:
+  - quantity: "2"
+    item:
+      name: 컨설팅 서비스
+      price: "150000"
+    taxes:
+      - cat: VAT
+        rate: standard
