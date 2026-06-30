@@ -71,6 +71,21 @@ func TestTaxIdentityRules(t *testing.T) {
 		{name: "invalid legacy - Feb 29 non-leap 1900", input: "LV29020012345", expected: "IDENTITY-01"},
 		{name: "invalid legacy - Feb 29 non-leap 2014", input: "LV29021421234", expected: "IDENTITY-01"},
 
+		// Invalid legacy personal codes - century digit validation
+		// Century digit must be 0, 1, or 2 (18xx, 19xx, 20xx respectively)
+		{name: "invalid legacy - century digit 3", input: "LV01011431234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 4", input: "LV01011441234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 5", input: "LV01011451234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 6", input: "LV01011461234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 7", input: "LV01011471234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 8", input: "LV01011481234", expected: "IDENTITY-01"},
+		{name: "invalid legacy - century digit 9", input: "LV01011491234", expected: "IDENTITY-01"},
+
+		// Invalid checksum for legal entities
+		// For Mod-11 checksum: checkDigit = 3 - remainder, if remainder = 4, checkDigit = 10 (invalid)
+		// "40000000021" gives sum = 48, 48 % 11 = 4, checkDigit = 10 (invalid)
+		{name: "invalid checksum - results in digit 10", input: "LV40000000021", expected: "IDENTITY-01"},
+
 		// Modern personal codes (starting with 3X, post-1 July 2017)
 		{name: "valid modern personal code 32X", input: "LV32123456789", expected: ""},
 		{name: "valid modern personal code 33X", input: "LV33000000000", expected: ""},

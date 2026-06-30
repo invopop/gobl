@@ -72,10 +72,7 @@ func validateTaxCode(value any) error {
 	}
 
 	// Get first two digits
-	firstDigit, err := strconv.Atoi(string(val[0]))
-	if err != nil {
-		return errors.New("invalid first digit")
-	}
+	firstDigit, _ := strconv.Atoi(string(val[0]))
 
 	// Personal codes (first digit 0-3) - no checksum validation needed
 	// These follow the format similar to personas kods without the hyphen
@@ -84,11 +81,7 @@ func validateTaxCode(value any) error {
 	}
 
 	// Legal entities (first digit 4-9) - validate Mod-11 checksum
-	if firstDigit >= 4 && firstDigit <= 9 {
-		return validateMod11Checksum(val)
-	}
-
-	return errors.New("invalid first digit")
+	return validateMod11Checksum(val)
 }
 
 // validatePersonalCode validates personal codes (starting with 0-3)
@@ -108,14 +101,10 @@ func validatePersonalCode(val string) error {
 	// For legacy personal codes, validate date components
 	// Format: DDMMYYCXXXX where digits 1-2 are day, 3-4 are month, 5-6 are year,
 	// digit 7 is century (0=18xx, 1=19xx, 2=20xx)
-	day, err1 := strconv.Atoi(val[0:2])
-	month, err2 := strconv.Atoi(val[2:4])
-	year, err3 := strconv.Atoi(val[4:6])
-	century, err4 := strconv.Atoi(string(val[6]))
-
-	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-		return errors.New("invalid personal code digits")
-	}
+	day, _ := strconv.Atoi(val[0:2])
+	month, _ := strconv.Atoi(val[2:4])
+	year, _ := strconv.Atoi(val[4:6])
+	century, _ := strconv.Atoi(val[6:7])
 
 	// Determine full year from century digit
 	// Century digit: 0 = 18th century (1800-1899), 1 = 19th century (1900-1999), 2 = 21st century (2000-2099)

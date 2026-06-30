@@ -1,3 +1,4 @@
+// Package lv provides the tax region definition for Latvia.
 package lv
 
 import (
