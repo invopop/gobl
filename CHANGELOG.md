@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
+
 ### Changed
 
 - `addons/pt/saft`: **breaking**: the Portuguese SAF-T addon moved to the standalone [`github.com/invopop/gobl.pt.saft`](https://github.com/invopop/gobl.pt.saft) module. Add a blank import of `gobl.pt.saft/addon` to keep using the `pt-saft-v1` addon key.
