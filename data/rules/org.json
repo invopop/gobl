@@ -196,8 +196,8 @@
               "assert": [
                 {
                   "id": "GOBL-ORG-IDENTITY-02",
-                  "desc": "identity scope when provided must be either 'tax' or 'legal'",
-                  "tests": "one of [tax, legal]"
+                  "desc": "identity scope when provided must be one of 'tax', 'legal', 'class', 'seller', or 'buyer'",
+                  "tests": "one of [tax, legal, class, seller, buyer]"
                 }
               ]
             }

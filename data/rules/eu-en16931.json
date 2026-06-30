@@ -201,6 +201,42 @@
               "tests": "present"
             }
           ]
+        },
+        {
+          "field": "identities",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-ORG-ITEM-02",
+              "desc": "cannot have more than one identity with the 'legal' scope (BT-157)",
+              "tests": "max one legal-scoped identity"
+            },
+            {
+              "id": "GOBL-EU-EN16931-ORG-ITEM-03",
+              "desc": "legal identities require the 'iso-scheme-id' extension (BR-64)",
+              "tests": "legal-scoped identities have iso-scheme-id"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "identity scope is 'class'",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-ORG-IDENTITY-01",
+                  "desc": "classification identities require the 'untdid-item-type' extension (BT-158)",
+                  "tests": "ext require [untdid-item-type]"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -337,21 +373,6 @@
                   "id": "GOBL-EU-EN16931-TAX-COMBO-05",
                   "desc": "must use outside scope category code",
                   "tests": "ext 'untdid-tax-category' in [O]"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "guard": "is exempt",
-          "subsets": [
-            {
-              "field": "ext",
-              "assert": [
-                {
-                  "id": "GOBL-EU-EN16931-TAX-COMBO-06",
-                  "desc": "VATEX extension is required for exempt tax (BR-E-10)",
-                  "tests": "ext require [cef-vatex]"
                 }
               ]
             }

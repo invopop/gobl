@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `org`: new identity scopes `class`, `seller`, and `buyer`, and the `legal` scope extended to items. Each scope declares who issued the code and what it identifies: `legal` for a registered scheme such as the GS1 GTIN (EN 16931 BT-157); `class` for a classification scheme such as UNSPSC, CPV, or HS (BT-158); `seller` for the seller's own article number (BT-155); `buyer` for the buyer's own catalogue code (BT-156). Addons bind and enforce the extensions each scope requires.
+- `data/catalogues/untdid`: new `untdid-item-type-version` extension to carry the version of the scheme referenced by `untdid-item-type` (BT-158-2).
+- `eu-en16931`: identity rules — `class` identities require the `untdid-item-type` extension (BT-158); items allow at most one `legal` identity (BT-157) and item `legal` identities require `iso-scheme-id` (BR-64). The scheme requirement is enforced at the item level since party identities also use the `legal` scope without one.
+
+### Fixed
+
+- `eu-en16931`: regenerated the rules data to drop the stale `GOBL-EU-EN16931-TAX-COMBO-06` (BR-E-10) assertion whose Go rule was already removed in v0.501.0.
 
 ## [v0.501.0] - 2026-06-16
 

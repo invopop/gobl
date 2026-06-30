@@ -36,6 +36,7 @@ func init() {
 		payInstructionsRules(),
 		payTermsRules(),
 		orgItemRules(),
+		orgIdentityRules(),
 		orgAttachmentRules(),
 		orgPartyRules(),
 		orgInboxRules(),
