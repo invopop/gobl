@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-NZ",
+  "package": "nz",
+  "subsets": [
+    {
+      "id": "GOBL-NZ-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [NZ]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-NZ-TAX-IDENTITY-01",
+                  "desc": "invoice tax id code must be a valid IRD number",
+                  "tests": "matches ^[0-9]{8,9}$"
+                },
+                {
+                  "id": "GOBL-NZ-TAX-IDENTITY-02",
+                  "desc": "invoice tax id code checksum must be valid",
+                  "tests": "valid"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

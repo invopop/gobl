@@ -1,0 +1,94 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "New Zealand",
+    "mi": "Aotearoa"
+  },
+  "description": {
+    "en": "New Zealand's Goods and Services Tax (GST) is a broad-based tax of 15%\napplied to most goods and services supplied in New Zealand. It is\nadministered by Inland Revenue (IRD).\n\nBusinesses are identified by their IRD number, an 8 or 9 digit\nidentifier whose validity is confirmed with a weighted modulus-11 check."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Inland Revenue - GST",
+        "mi": "Te Tari Taake - GST"
+      },
+      "url": "https://www.ird.govt.nz/gst"
+    }
+  ],
+  "time_zone": "Pacific/Auckland",
+  "country": "NZ",
+  "currency": "NZD",
+  "tax_scheme": "GST",
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST",
+        "mi": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax",
+        "mi": "Tāke mō ngā Rawa me ngā Ratonga"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "mi": "Pāpātanga Paerewa"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless they are zero-rated or exempt.",
+            "mi": "Ka pā ki te nuinga o ngā rawa me ngā ratonga ki te kore rātou e tāke-kore, e tāke-whakawātea rānei."
+          },
+          "values": [
+            {
+              "since": "2010-10-01",
+              "percent": "15.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Inland Revenue - GST rate"
+          },
+          "url": "https://www.ird.govt.nz/gst"
+        }
+      ]
+    }
+  ]
+}

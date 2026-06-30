@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-AU",
+  "package": "au",
+  "subsets": [
+    {
+      "id": "GOBL-AU-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [AU]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-AU-TAX-IDENTITY-01",
+                  "desc": "invoice tax id code must be a valid 11-digit ABN",
+                  "tests": "matches ^[0-9]{11}$"
+                },
+                {
+                  "id": "GOBL-AU-TAX-IDENTITY-02",
+                  "desc": "invoice tax id code checksum must be valid",
+                  "tests": "valid"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Australia"
+  },
+  "description": {
+    "en": "Australia's Goods and Services Tax (GST) is a broad-based tax of 10%\napplied to most goods, services and other items sold or consumed in\nAustralia. It is administered by the Australian Taxation Office (ATO).\n\nBusinesses are identified by their Australian Business Number (ABN), an\n11-digit identifier whose validity is confirmed with a weighted\nmodulus-89 check."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "ATO - GST"
+      },
+      "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+    }
+  ],
+  "time_zone": "Australia/Sydney",
+  "country": "AU",
+  "currency": "AUD",
+  "tax_scheme": "GST",
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless they are GST-free or input-taxed."
+          },
+          "values": [
+            {
+              "since": "2000-07-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "ATO - GST"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+        }
+      ]
+    }
+  ]
+}
