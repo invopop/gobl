@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `addons/mx`: **breaking**: the Mexico CFDI (`mx-cfdi-v4`) addon — including the fuel account balance and food voucher complements — moved to the standalone [`github.com/invopop/gobl.mx.cfdi`](https://github.com/invopop/gobl.mx.cfdi) module. Add a blank import of `gobl.mx.cfdi/addon` to keep using the `mx-cfdi-*` addon keys.
+
 ## [v0.501.0] - 2026-06-16
 
 ### Added
