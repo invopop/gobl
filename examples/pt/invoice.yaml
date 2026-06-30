@@ -27,24 +27,6 @@ lines:
       - cat: VAT
         rate: standard
 payment:
-  payee:
-    name: Banco Recebedor, S.A.
-    identities:
-      - label: "NIF"
-        code: "503504030"
-    addresses:
-      - street: Avenida da Liberdade
-        code: 1250-096
-        locality: Lisboa
-  payer:
-    name: Empresa-Mãe, Lda.
-    identities:
-      - label: "NIF"
-        code: "501442600"
-    addresses:
-      - street: Rua de Santa Catarina
-        code: 4000-447
-        locality: Porto
   advances:
     - amount: 100.00
       desc: "Adiantamento"
