@@ -1,0 +1,75 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "LV",
+  "uuid": "11111111-2222-3333-4444-555555555555",
+  "type": "standard",
+  "series": "LV2025",
+  "code": "003",
+  "issue_date": "2025-06-15",
+  "currency": "EUR",
+  "supplier": {
+    "name": "Latvian Supermarket SIA",
+    "tax_id": {
+      "country": "LV",
+      "code": "40003032065"
+    },
+    "addresses": [
+      {
+        "num": "1",
+        "street": "Brīvības iela",
+        "locality": "Rīga",
+        "code": "1010",
+        "country": "LV"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "billing@example.lv"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Sample Consumer",
+    "addresses": [
+      {
+        "num": "10",
+        "street": "Rātslaukuma iela",
+        "locality": "Rīga",
+        "code": "1050",
+        "country": "LV"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "2",
+      "item": {
+        "name": "Food products",
+        "price": "15.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "intermediate",
+          "percent": "12.0%"
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "quantity": "1",
+      "item": {
+        "name": "Medicines",
+        "price": "25.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "intermediate",
+          "percent": "12.0%"
+        }
+      ]
+    }
+  ]
+}

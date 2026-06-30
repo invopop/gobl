@@ -1,0 +1,174 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Latvia",
+    "lv": "Latvija"
+  },
+  "description": {
+    "en": "Latvia's tax system is administered by the State Revenue Service\n(Valsts ieņēmumu dienests, VID). As an EU member state, Latvia\nfollows the EU VAT Directive with standard, reduced, and\nsuper-reduced rates.\n\nVAT (Pievienotās vertības nodoklis, PVN) applies to most goods and services. Businesses are\nidentified by their VAT registration number, which follows the format of the country code\n\"LV\" followed by 11 digits."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "State Revenue Service - VAT overview"
+      },
+      "url": "https://www.vid.gov.lv/en/value-added-tax"
+    }
+  ],
+  "time_zone": "Europe/Riga",
+  "country": "LV",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "lv": "PVN"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "lv": "Pievienotās Vertības Nodoklis"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "lv": "Nodokļa Standartlikmi"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "21.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "First Reduced Rate",
+            "lv": "Pirmā samazinātā likme"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Second Reduced Rate",
+            "lv": "Otrā samazinātā likme"
+          },
+          "values": [
+            {
+              "since": "2018-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "State Revenue Service - VAT overview"
+          },
+          "url": "https://www.fm.gov.lv/lv/tax-rates"
+        },
+        {
+          "title": {
+            "en": "Value Added Tax Law"
+          },
+          "url": "https://likumi.lv/ta/en/en/id/253451-value-added-tax-law"
+        },
+        {
+          "title": {
+            "en": "EU Council Directive on the common system of value added tax"
+          },
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32006L0112"
+        }
+      ]
+    }
+  ]
+}
