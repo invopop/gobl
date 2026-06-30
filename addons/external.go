@@ -68,7 +68,7 @@ func init() {
 	})
 
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
-		Key: "dk-oioubl-v2-1",
+		Key: "dk-oioubl-v2",
 		Name: i18n.String{
 			i18n.EN: "Danish OIOUBL 2.1",
 			i18n.DA: "Dansk OIOUBL 2.1",
