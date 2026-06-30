@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `regimes/lv`: new tax regime for Latvia (LV), including VAT standard (21%), intermediate (12%), and reduced (5%) rates with comprehensive tax identity validation for legal entities (MOD-11 checksum) and individuals (date validation).
+- `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
 
 ## [v0.501.0] - 2026-06-16
 
