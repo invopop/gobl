@@ -9,7 +9,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `dk-oioubl-v2-1`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate. The EN 16931 rules that OIOUBL deliberately relaxes are handled inside that addon via `rules.Ignore`, keeping `addons/eu/en16931` free of OIOUBL-specific coupling.
-- `regimes/dk`: add `EXCISE` (punktafgift) as a tax category for Danish excise duties.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
 
 ## [v0.501.0] - 2026-06-16
