@@ -1,0 +1,185 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Iceland",
+    "is": "Ísland"
+  },
+  "description": {
+    "en": "Iceland's tax system is administered by the Directorate of Internal\nRevenue (Skatturinn). Although Iceland is not an EU member state, it is\npart of the European Economic Area (EEA) and operates a value added tax\nbroadly aligned with European practice.\n\nVSK (Virðisaukaskattur) applies at a standard and a reduced rate. \nExports are zero-rated. Health, education, public transport, real \nestate leasing, sports and financial services are exempt under Article \n12 of the VAT Act.\n\nBusinesses and individuals alike are identified by their kennitala, a\n10-digit national identification number issued by Registers Iceland\n(Þjóðskrá Íslands). The same number serves as the VAT identifier; for\ninternational use it is prefixed with \"IS\". The kennitala encodes a date\n(birth date for individuals, registration date for companies) followed by \ntwo random digits, a MOD-11 checksum digit, and a final century indicator.\n\nE-invoicing is mandatory for all B2G transactions since 2020 under\nRegulation 44/2019, using the Peppol BIS Billing 3.0 format together with\nthe national CIUS TS-236. The Peppol Authority is Fjársýsla ríkisins\n(FJS). B2B and B2C e-invoicing is voluntary but widely adopted."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Registers Iceland - ID numbers (kennitala)"
+      },
+      "url": "https://www.skra.is/english/people/my-registration/id-numbers/"
+    },
+    {
+      "title": {
+        "en": "Skatturinn - Value Added Tax (VSK)"
+      },
+      "url": "https://www.skatturinn.is/english/companies/value-added-tax/"
+    },
+    {
+      "title": {
+        "en": "European Commission - eInvoicing in Iceland"
+      },
+      "url": "https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/eInvoicing+in+Iceland"
+    },
+    {
+      "title": {
+        "en": "Ecosio - E-invoicing in Iceland"
+      },
+      "url": "https://ecosio.com/en/compliance/iceland/e-invoicing/"
+    }
+  ],
+  "time_zone": "Atlantic/Reykjavik",
+  "country": "IS",
+  "currency": "ISK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "KT",
+      "name": {
+        "en": "Kennitala",
+        "is": "Kennitala"
+      },
+      "desc": {
+        "en": "Icelandic national identification number for persons and companies.",
+        "is": "Íslensk kennitala fyrir einstaklinga og fyrirtæki."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "is": "VSK"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "is": "Virðisaukaskattur"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "is": "Almennt skatthlutfall"
+          },
+          "values": [
+            {
+              "since": "2015-01-01",
+              "percent": "24.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "is": "Lægra skatthlutfall"
+          },
+          "values": [
+            {
+              "since": "2015-01-01",
+              "percent": "11.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Skatturinn - Value Added Tax (VSK)"
+          },
+          "url": "https://www.skatturinn.is/english/companies/value-added-tax/",
+          "at": "2026-06-30T00:00:00"
+        },
+        {
+          "title": {
+            "en": "KPMG - Icelandic Tax Facts 2025"
+          },
+          "url": "https://assets.kpmg.com/content/dam/kpmg/is/pdf/2025/01/Icelandic-Tax-Facts-2025.pdf",
+          "at": "2026-06-30T00:00:00"
+        }
+      ]
+    }
+  ]
+}
