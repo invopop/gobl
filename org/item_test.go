@@ -104,3 +104,18 @@ func TestItemJSONSchema(t *testing.T) {
 	assert.Equal(t, org.ItemKeyServices, prop.AnyOf[1].Const)
 	assert.Equal(t, "Services", prop.AnyOf[1].Title)
 }
+
+func TestItemAttributesNormalization(t *testing.T) {
+	i := &org.Item{
+		Name: "test item",
+		Attributes: []*org.Attribute{
+			nil,
+			{},
+			{Label: " Colour ", Value: " Black "},
+		},
+	}
+	norm.Normalize(i)
+	require.Len(t, i.Attributes, 1)
+	assert.Equal(t, "Colour", i.Attributes[0].Label)
+	assert.Equal(t, "Black", i.Attributes[0].Value)
+}
