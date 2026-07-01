@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/is`: New tax regime for Iceland (VSK/VAT with 24% standard and 11% reduced rates, kennitala tax ID and organization identity validation with MOD-11 checksum, and an example invoice).
 
 ## [v0.501.0] - 2026-06-16
 
@@ -19,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `regimes/br`: Party address country is now inferred automatically from tax ID or identities.
 - `addons/br/nfe`: Allow foreign customers to provide an identity (e.g. a passport) alternatively to a tax ID.
 - `addons/br/nfe`: Supplier and customer addresses now require the `country` field, as mandated by the NF-e spec.
-- `regimes/is`: New tax regime for Iceland (VSK/VAT with 24% standard and 11% reduced rates, kennitala tax ID and organization identity validation with MOD-11 checksum, and an example invoice).
+
 
 ### Changed
 
