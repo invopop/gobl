@@ -23,6 +23,5 @@ import (
 	_ "github.com/invopop/gobl/addons/gr/mydata"
 	_ "github.com/invopop/gobl/addons/it/sdi"
 	_ "github.com/invopop/gobl/addons/it/ticket"
-	_ "github.com/invopop/gobl/addons/mx/cfdi"
 	_ "github.com/invopop/gobl/addons/pl/favat"
 )

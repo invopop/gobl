@@ -87,4 +87,11 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.br.nfse",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "mx-cfdi-v4",
+		Name: i18n.String{
+			i18n.EN: "Mexican SAT CFDI v4.X",
+		},
+		Module: "github.com/invopop/gobl.mx.cfdi",
+	})
 }

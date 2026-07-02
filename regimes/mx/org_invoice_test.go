@@ -3,7 +3,6 @@ package mx_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -21,7 +20,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get("mx-cfdi-issue-place"))
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("migrate issue place from supplier ext when no tax ext", func(t *testing.T) {
@@ -30,7 +29,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("22000"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
+		assert.Equal(t, cbc.Code("22000"), inv.Tax.Ext.Get("mx-cfdi-issue-place"))
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("does not migrate issue place from address when already present", func(t *testing.T) {
@@ -45,7 +44,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext.Get("mx-cfdi-issue-place"))
 	})
 	t.Run("migrate issue place from supplier address code", func(t *testing.T) {
 		inv := baseInvoice()
@@ -60,7 +59,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, cbc.Code("12345"), inv.Tax.Ext.Get(cfdi.ExtKeyIssuePlace))
+		assert.Equal(t, cbc.Code("12345"), inv.Tax.Ext.Get("mx-cfdi-issue-place"))
 	})
 	t.Run("migrate customer post code from ext", func(t *testing.T) {
 		inv := baseInvoice()
@@ -90,14 +89,14 @@ func baseInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Tax: &bill.Tax{
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
-				cfdi.ExtKeyIssuePlace: "21000",
+				"mx-cfdi-issue-place": "21000",
 			}),
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "22000",
-				cfdi.ExtKeyFiscalRegime: "601",
+				"mx-cfdi-fiscal-regime": "601",
 			}),
 			TaxID: &tax.Identity{
 				Country: "MX",
@@ -108,8 +107,8 @@ func baseInvoice() *bill.Invoice {
 			Name: "Test Customer",
 			Ext: tax.ExtensionsOf(cbc.CodeMap{
 				"mx-cfdi-post-code":     "65000",
-				cfdi.ExtKeyFiscalRegime: "608",
-				cfdi.ExtKeyUse:          "G01",
+				"mx-cfdi-fiscal-regime": "608",
+				"mx-cfdi-use":           "G01",
 			}),
 			TaxID: &tax.Identity{
 				Country: "MX",
@@ -124,7 +123,7 @@ func baseInvoice() *bill.Invoice {
 					Price: num.NewAmount(10000, 2),
 					Unit:  org.UnitPackage,
 					Ext: tax.ExtensionsOf(cbc.CodeMap{
-						cfdi.ExtKeyProdServ: "01010101",
+						"mx-cfdi-prod-serv": "01010101",
 					}),
 				},
 				Taxes: tax.Set{
