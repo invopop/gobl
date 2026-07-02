@@ -32,10 +32,6 @@
             "title": "German ZUGFeRD 2.X"
           },
           {
-            "const": "dk-oioubl-v2",
-            "title": "Danish OIOUBL 2.1"
-          },
-          {
             "const": "es-facturae-v3",
             "title": "Spain FacturaE"
           },
