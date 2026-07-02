@@ -41,8 +41,10 @@ func taxIdentityRules() *rules.Set {
 			rules.Field("code",
 				rules.AssertIfPresent("01", "tax id code must be a 10-digit Kennitala",
 					isrules.MatchesRegexp(kennitalaRegexp)),
-				rules.AssertIfPresent("02", "tax id code Kennitala checksum is invalid",
-					isrules.Func("valid", isValidKennitalaCode)),
+				rules.When(isrules.MatchesRegexp(kennitalaRegexp),
+					rules.Assert("02", "tax id code Kennitala checksum is invalid",
+						isrules.Func("valid", isValidKennitalaCode)),
+				),
 			),
 		),
 	)
