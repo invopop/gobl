@@ -30,6 +30,45 @@ func TestApprovedFRCTCAddons(t *testing.T) {
 	}
 }
 
+func TestApprovedPTSAFTAddon(t *testing.T) {
+	byKey := make(map[cbc.Key]*tax.ExternalAddon)
+	for _, ea := range tax.ApprovedAddons() {
+		byKey[ea.Key] = ea
+	}
+
+	ea, ok := byKey["pt-saft-v1"]
+	require.True(t, ok, "expected pt-saft-v1 on the approved list")
+	assert.Equal(t, "github.com/invopop/gobl.pt.saft", ea.Module, "pt-saft-v1 module")
+	assert.NotEmpty(t, ea.Name.String(), "pt-saft-v1 should carry a name")
+
+	// The implementation is external, so the key is not runtime-registered
+	// in core — recognition only, not a runtime bypass.
+	assert.Nil(t, tax.AddonForKey("pt-saft-v1"), "pt-saft-v1 should not be registered in core")
+}
+
+func TestApprovedBRAddons(t *testing.T) {
+	byKey := make(map[cbc.Key]*tax.ExternalAddon)
+	for _, ea := range tax.ApprovedAddons() {
+		byKey[ea.Key] = ea
+	}
+
+	// Each Brazil addon ships in its own module.
+	modules := map[cbc.Key]string{
+		"br-nfe-v4":  "github.com/invopop/gobl.br.nfe",
+		"br-nfse-v1": "github.com/invopop/gobl.br.nfse",
+	}
+	for key, module := range modules {
+		ea, ok := byKey[key]
+		require.Truef(t, ok, "expected %s on the approved list", key)
+		assert.Equal(t, module, ea.Module, "%s module", key)
+		assert.NotEmpty(t, ea.Name.String(), "%s should carry a name", key)
+
+		// The implementation is external, so the key is not runtime-registered
+		// in core — recognition only, not a runtime bypass.
+		assert.Nil(t, tax.AddonForKey(key), "%s should not be registered in core", key)
+	}
+}
+
 func TestApprovedMXCFDIAddons(t *testing.T) {
 	byKey := make(map[cbc.Key]*tax.ExternalAddon)
 	for _, ea := range tax.ApprovedAddons() {
