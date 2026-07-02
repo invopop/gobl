@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.502.0] - 2026-07-02
+
 ### Fixed
 
 - `pkg/examples`: normalize path separators before skip-list matching so example discovery works correctly on Windows.
@@ -22,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `addons/pt/saft`: **breaking**: the Portuguese SAF-T addon moved to the standalone [`github.com/invopop/gobl.pt.saft`](https://github.com/invopop/gobl.pt.saft) module. Add a blank import of `gobl.pt.saft/addon` to keep using the `pt-saft-v1` addon key.
 - `addons/br`: **breaking**: the Brazil NF-e/NFC-e (`br-nfe-v4`) and NFS-e (`br-nfse-v1`) addons moved to their own standalone modules, [`github.com/invopop/gobl.br.nfe`](https://github.com/invopop/gobl.br.nfe) and [`github.com/invopop/gobl.br.nfse`](https://github.com/invopop/gobl.br.nfse) respectively. Add a blank import of `gobl.br.nfe/addon` and/or `gobl.br.nfse/addon` to keep using the `br-nfe-*` / `br-nfse-*` addon keys.
 - `addons/mx`: **breaking**: the Mexico CFDI (`mx-cfdi-v4`) addon — including the fuel account balance and food voucher complements — moved to the standalone [`github.com/invopop/gobl.mx.cfdi`](https://github.com/invopop/gobl.mx.cfdi) module. Add a blank import of `gobl.mx.cfdi/addon` to keep using the `mx-cfdi-*` addon keys.
+
+### Removed
+
+- `addons`: `fr-ctc-v1` generic addon removed, no longer used by [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc).
 
 ## [v0.501.0] - 2026-06-16
 

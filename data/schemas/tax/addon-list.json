@@ -72,10 +72,6 @@
             "title": "France CTC Flow 6 (Cycle de Vie)"
           },
           {
-            "const": "fr-ctc-v1",
-            "title": "France CTC (auto-dispatch)"
-          },
-          {
             "const": "fr-facturx-v1",
             "title": "French Factur-X v1"
           },
