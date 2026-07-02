@@ -25,15 +25,6 @@ import (
 // the module must still be imported for Validate/Calculate to succeed.
 func init() {
 	const frCTCModule = "github.com/invopop/gobl.fr.ctc"
-
-	tax.RegisterApprovedAddon(&tax.ExternalAddon{
-		Key: "fr-ctc-v1",
-		Name: i18n.String{
-			i18n.EN: "France CTC (auto-dispatch)",
-			i18n.FR: "France CTC (aiguillage automatique)",
-		},
-		Module: frCTCModule,
-	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "fr-ctc-flow2-v1",
 		Name: i18n.String{
@@ -74,6 +65,7 @@ func init() {
 			i18n.DA: "Dansk OIOUBL 2.1",
 		},
 		Module: "github.com/invopop/gobl.dk.oioubl",
+	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "pt-saft-v1",
 		Name: i18n.String{

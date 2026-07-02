@@ -25,7 +25,6 @@ func TestApprovedAddons(t *testing.T) {
 		{
 			name: "FR CTC",
 			modules: map[cbc.Key]string{
-				"fr-ctc-v1":        "github.com/invopop/gobl.fr.ctc",
 				"fr-ctc-flow2-v1":  "github.com/invopop/gobl.fr.ctc",
 				"fr-ctc-flow6-v1":  "github.com/invopop/gobl.fr.ctc",
 				"fr-ctc-flow10-v1": "github.com/invopop/gobl.fr.ctc",
