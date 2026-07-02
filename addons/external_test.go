@@ -66,16 +66,3 @@ func TestApprovedAddons(t *testing.T) {
 		})
 	}
 }
-
-func TestApprovedDKOIOUBLAddon(t *testing.T) {
-	byKey := make(map[cbc.Key]*tax.ExternalAddon)
-	for _, ea := range tax.ApprovedAddons() {
-		byKey[ea.Key] = ea
-	}
-
-	ea, ok := byKey["dk-oioubl-v2"]
-	require.True(t, ok, "expected dk-oioubl-v2 on the approved list")
-	assert.Equal(t, "github.com/invopop/gobl.dk.oioubl", ea.Module)
-	assert.NotEmpty(t, ea.Name.String())
-	assert.Nil(t, tax.AddonForKey("dk-oioubl-v2"), "dk-oioubl-v2 should not be registered in core")
-}

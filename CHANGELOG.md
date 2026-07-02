@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.502.1] - 2026-07-02
+
+### Removed
+
+- `dk-oioubl-v2`: removed from the approved external addons list. The [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) module is not yet ready for release; it was approved prematurely in v0.502.0. It will be re-added once the module ships a stable release.
+
 ## [v0.502.0] - 2026-07-02
 
 ### Fixed
