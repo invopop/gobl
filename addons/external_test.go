@@ -36,10 +36,15 @@ func TestApprovedBRAddons(t *testing.T) {
 		byKey[ea.Key] = ea
 	}
 
-	for _, key := range []cbc.Key{"br-nfe-v4", "br-nfse-v1"} {
+	// Each Brazil addon ships in its own module.
+	modules := map[cbc.Key]string{
+		"br-nfe-v4":  "github.com/invopop/gobl.br.nfe",
+		"br-nfse-v1": "github.com/invopop/gobl.br.nfse",
+	}
+	for key, module := range modules {
 		ea, ok := byKey[key]
 		require.Truef(t, ok, "expected %s on the approved list", key)
-		assert.Equal(t, "github.com/invopop/gobl.br", ea.Module, "%s module", key)
+		assert.Equal(t, module, ea.Module, "%s module", key)
 		assert.NotEmpty(t, ea.Name.String(), "%s should carry a name", key)
 
 		// The implementation is external, so the key is not runtime-registered
