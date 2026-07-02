@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
+
 ### Changed
 
+- `addons/pt/saft`: **breaking**: the Portuguese SAF-T addon moved to the standalone [`github.com/invopop/gobl.pt.saft`](https://github.com/invopop/gobl.pt.saft) module. Add a blank import of `gobl.pt.saft/addon` to keep using the `pt-saft-v1` addon key.
 - `addons/br`: **breaking**: the Brazil NF-e/NFC-e (`br-nfe-v4`) and NFS-e (`br-nfse-v1`) addons moved to their own standalone modules, [`github.com/invopop/gobl.br.nfe`](https://github.com/invopop/gobl.br.nfe) and [`github.com/invopop/gobl.br.nfse`](https://github.com/invopop/gobl.br.nfse) respectively. Add a blank import of `gobl.br.nfe/addon` and/or `gobl.br.nfse/addon` to keep using the `br-nfe-*` / `br-nfse-*` addon keys.
 
 ## [v0.501.0] - 2026-06-16

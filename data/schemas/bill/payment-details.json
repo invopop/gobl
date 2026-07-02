@@ -10,6 +10,11 @@
           "title": "Payee",
           "description": "The party responsible for receiving payment of the invoice, if not the supplier."
         },
+        "payer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Payer",
+          "description": "The party responsible for making payment of the invoice, if not the customer."
+        },
         "terms": {
           "$ref": "https://gobl.org/draft-0/pay/terms",
           "title": "Terms",
