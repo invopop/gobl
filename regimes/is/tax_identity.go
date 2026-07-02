@@ -70,6 +70,10 @@ func validKennitala(s string) bool {
 			return false
 		}
 	}
+	// The final digit is a century marker and is restricted to 8 (1800s), 9 (1900s) or 0 (2000s).
+	if s[9] != '0' && s[9] != '8' && s[9] != '9' {
+		return false
+	}
 	sum := 0
 	for i, w := range kennitalaWeights {
 		d := int(s[i] - '0')
