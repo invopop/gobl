@@ -100,7 +100,7 @@ func Sources(root string, skip ...string) ([]string, error) {
 		switch filepath.Ext(path) {
 		case ".yaml", ".json":
 			for _, s := range all {
-				if strings.Contains(path, s) {
+				if strings.Contains(filepath.ToSlash(path), s) {
 					return nil
 				}
 			}
