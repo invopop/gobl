@@ -57,6 +57,32 @@ lines:
           cef-vatex: "VATEX-EU-79-C"
 
 payment:
+  payee:
+    name: "Affacturage Express SA"
+    identities:
+      - label: "SIREN"
+        code: "732829320"
+    emails:
+      - addr: "recouvrement@affacturage.example"
+    addresses:
+      - num: "8"
+        street: "Avenue des Champs-Élysées"
+        locality: "Paris"
+        code: "75008"
+        country: "FR"
+  payer:
+    name: "Groupe Parent SARL"
+    identities:
+      - label: "SIREN"
+        code: "552081317"
+    emails:
+      - addr: "comptabilite@groupe-parent.example"
+    addresses:
+      - num: "12"
+        street: "Rue de la République"
+        locality: "Lyon"
+        code: "69002"
+        country: "FR"
   instructions:
     key: "card"
   terms:

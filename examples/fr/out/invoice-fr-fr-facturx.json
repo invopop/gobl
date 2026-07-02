@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "dcaddae71e23cb5e1d4b7f63425fd25e7ade4455e5116aa11cfe78c162d40546"
+			"val": "1a5539d5cb3af435b30f28a6499c864caaf721590cc4e220459b7f3297111b87"
 		}
 	},
 	"doc": {
@@ -120,6 +120,52 @@
 			}
 		],
 		"payment": {
+			"payee": {
+				"name": "Affacturage Express SA",
+				"identities": [
+					{
+						"label": "SIREN",
+						"code": "732829320"
+					}
+				],
+				"addresses": [
+					{
+						"num": "8",
+						"street": "Avenue des Champs-Élysées",
+						"locality": "Paris",
+						"code": "75008",
+						"country": "FR"
+					}
+				],
+				"emails": [
+					{
+						"addr": "recouvrement@affacturage.example"
+					}
+				]
+			},
+			"payer": {
+				"name": "Groupe Parent SARL",
+				"identities": [
+					{
+						"label": "SIREN",
+						"code": "552081317"
+					}
+				],
+				"addresses": [
+					{
+						"num": "12",
+						"street": "Rue de la République",
+						"locality": "Lyon",
+						"code": "69002",
+						"country": "FR"
+					}
+				],
+				"emails": [
+					{
+						"addr": "comptabilite@groupe-parent.example"
+					}
+				]
+			},
 			"terms": {
 				"notes": "Please pay within 10 days"
 			},
