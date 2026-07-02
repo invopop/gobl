@@ -12,20 +12,58 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestApprovedFRCTCAddons(t *testing.T) {
+func TestApprovedAddons(t *testing.T) {
 	byKey := make(map[cbc.Key]*tax.ExternalAddon)
 	for _, ea := range tax.ApprovedAddons() {
 		byKey[ea.Key] = ea
 	}
 
-	for _, key := range []cbc.Key{"fr-ctc-v1", "fr-ctc-flow2-v1", "fr-ctc-flow6-v1", "fr-ctc-flow10-v1"} {
-		ea, ok := byKey[key]
-		require.Truef(t, ok, "expected %s on the approved list", key)
-		assert.Equal(t, "github.com/invopop/gobl.fr.ctc", ea.Module, "%s module", key)
-		assert.NotEmpty(t, ea.Name.String(), "%s should carry a name", key)
+	groups := []struct {
+		name    string
+		modules map[cbc.Key]string
+	}{
+		{
+			name: "FR CTC",
+			modules: map[cbc.Key]string{
+				"fr-ctc-v1":        "github.com/invopop/gobl.fr.ctc",
+				"fr-ctc-flow2-v1":  "github.com/invopop/gobl.fr.ctc",
+				"fr-ctc-flow6-v1":  "github.com/invopop/gobl.fr.ctc",
+				"fr-ctc-flow10-v1": "github.com/invopop/gobl.fr.ctc",
+			},
+		},
+		{
+			name: "PT SAF-T",
+			modules: map[cbc.Key]string{
+				"pt-saft-v1": "github.com/invopop/gobl.pt.saft",
+			},
+		},
+		{
+			name: "BR",
+			modules: map[cbc.Key]string{
+				"br-nfe-v4":  "github.com/invopop/gobl.br.nfe",
+				"br-nfse-v1": "github.com/invopop/gobl.br.nfse",
+			},
+		},
+		{
+			name: "MX CFDI",
+			modules: map[cbc.Key]string{
+				"mx-cfdi-v4": "github.com/invopop/gobl.mx.cfdi",
+			},
+		},
+	}
 
-		// The implementation is external, so the key is not runtime-registered
-		// in core — recognition only, not a runtime bypass.
-		assert.Nil(t, tax.AddonForKey(key), "%s should not be registered in core", key)
+	for _, group := range groups {
+		t.Run(group.name, func(t *testing.T) {
+			for key, module := range group.modules {
+				ea, ok := byKey[key]
+				require.Truef(t, ok, "expected %s on the approved list", key)
+				assert.Equal(t, module, ea.Module, "%s module", key)
+				assert.NotEmpty(t, ea.Name.String(), "%s should carry a name", key)
+
+				// The implementation is external, so the key is not runtime-registered
+				// in core — recognition only, not a runtime bypass.
+				assert.Nil(t, tax.AddonForKey(key), "%s should not be registered in core", key)
+			}
+		})
 	}
 }
