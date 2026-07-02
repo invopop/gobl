@@ -1,0 +1,112 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "41309bc50643436dcc41104a70a8604368df2f247c42652c4670ff3c33690ced"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IS",
+		"uuid": "5e7a3c9d-8b2f-4a6e-b1d4-2c5f8a3e6b9c",
+		"type": "standard",
+		"series": "2026",
+		"code": "0002",
+		"issue_date": "2026-05-20",
+		"currency": "ISK",
+		"supplier": {
+			"name": "Bókaútgáfa Snorra ehf.",
+			"tax_id": {
+				"country": "IS",
+				"code": "1201743399"
+			},
+			"addresses": [
+				{
+					"street": "Skólavörðustígur 12",
+					"locality": "Reykjavík",
+					"code": "101",
+					"country": "IS"
+				}
+			]
+		},
+		"customer": {
+			"name": "Bókasafn Hafnarfjarðar",
+			"tax_id": {
+				"country": "IS",
+				"code": "1503854239"
+			},
+			"addresses": [
+				{
+					"street": "Strandgata 1",
+					"locality": "Hafnarfjörður",
+					"code": "220",
+					"country": "IS"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"name": "Íslenskar samtímabókmenntir (kilja)",
+					"price": "4990"
+				},
+				"sum": "199600",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "11.0%"
+					}
+				],
+				"total": "199600"
+			},
+			{
+				"i": 2,
+				"quantity": "10",
+				"item": {
+					"name": "Ljóðasafn 2025",
+					"price": "6490"
+				},
+				"sum": "64900",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "11.0%"
+					}
+				],
+				"total": "64900"
+			}
+		],
+		"totals": {
+			"sum": "264500",
+			"total": "264500",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "264500",
+								"percent": "11.0%",
+								"amount": "29095"
+							}
+						],
+						"amount": "29095"
+					}
+				],
+				"sum": "29095"
+			},
+			"tax": "29095",
+			"total_with_tax": "293595",
+			"payable": "293595"
+		}
+	}
+}

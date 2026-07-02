@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/is`: New tax regime for Iceland — VAT (virðisaukaskattur / VSK) at standard 24% and reduced 11% rates with historical values, and Kennitala tax-identity validation using the weighted modulus-11 algorithm.
 - `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
 
 ### Changed
