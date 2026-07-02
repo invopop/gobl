@@ -29,3 +29,19 @@ func TestApprovedFRCTCAddons(t *testing.T) {
 		assert.Nil(t, tax.AddonForKey(key), "%s should not be registered in core", key)
 	}
 }
+
+func TestApprovedPTSAFTAddon(t *testing.T) {
+	byKey := make(map[cbc.Key]*tax.ExternalAddon)
+	for _, ea := range tax.ApprovedAddons() {
+		byKey[ea.Key] = ea
+	}
+
+	ea, ok := byKey["pt-saft-v1"]
+	require.True(t, ok, "expected pt-saft-v1 on the approved list")
+	assert.Equal(t, "github.com/invopop/gobl.pt.saft", ea.Module, "pt-saft-v1 module")
+	assert.NotEmpty(t, ea.Name.String(), "pt-saft-v1 should carry a name")
+
+	// The implementation is external, so the key is not runtime-registered
+	// in core — recognition only, not a runtime bypass.
+	assert.Nil(t, tax.AddonForKey("pt-saft-v1"), "pt-saft-v1 should not be registered in core")
+}
