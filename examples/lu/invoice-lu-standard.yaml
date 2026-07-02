@@ -1,0 +1,49 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "LU"
+uuid: "3c4e1f2a-9b7d-4e5c-8a1b-6f0e2d3c4b5a"
+currency: EUR
+series: "2024"
+code: "0001"
+issue_date: "2024-06-15"
+
+supplier:
+  name: Acme Luxembourg S.A.
+  tax_id:
+    country: "LU"
+    # 263752 mod 89 = 45
+    code: "26375245"
+  identities:
+    - type: RCS
+      code: "B263475"
+  addresses:
+    - street: 14 Rue Erasme
+      locality: Luxembourg
+      code: "1468"
+      country: "LU"
+
+customer:
+  name: GlobalTech Solutions NV
+  tax_id:
+    country: "BE"
+    code: "0413172884"
+  addresses:
+    - street: Keizersgracht 123
+      locality: Brussels
+      code: "1000"
+      country: "BE"
+
+lines:
+  - quantity: "10"
+    item:
+      name: Software consulting services
+      price: "2500.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "5"
+    item:
+      name: Project management
+      price: "1800.00"
+    taxes:
+      - cat: VAT
+        rate: standard

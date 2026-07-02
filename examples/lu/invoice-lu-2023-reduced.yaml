@@ -1,0 +1,53 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "LU"
+uuid: "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+currency: EUR
+series: "2023"
+code: "0015"
+# Dated within 2023: GOBL applies the temporary reduced rates in effect that year
+# (standard 16%, intermediate 13%, reduced 7%; the super-reduced 3% rate was
+# unaffected) per the Law of 26 October 2022 (Mémorial A No. 534).
+issue_date: "2023-06-15"
+
+supplier:
+  name: Acme Luxembourg S.A.
+  tax_id:
+    country: "LU"
+    # 263752 mod 89 = 45
+    code: "26375245"
+  identities:
+    - type: RCS
+      code: "B263475"
+  addresses:
+    - street: 14 Rue Erasme
+      locality: Luxembourg
+      code: "1468"
+      country: "LU"
+
+customer:
+  name: Entreprise Martin S.à r.l.
+  tax_id:
+    country: "LU"
+    # 123456 mod 89 = 13
+    code: "12345613"
+  addresses:
+    - street: 5 Boulevard Royal
+      locality: Luxembourg
+      code: "2449"
+      country: "LU"
+
+lines:
+  - quantity: "5"
+    item:
+      name: Legal advisory services
+      price: "4000.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "50"
+    item:
+      name: Still water (1L)
+      price: "1.80"
+    taxes:
+      - cat: VAT
+        rate: reduced

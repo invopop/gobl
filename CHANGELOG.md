@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/lu`: new tax regime for Luxembourg, with full VAT rate history (including the temporary 2023 rate reduction), mod-89 TVA number validation, and RCS company-registry identities.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
 
 ## [v0.501.0] - 2026-06-16
