@@ -45,18 +45,18 @@ func TestInvoicesValidation(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Notes = nil
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "a note with key 'reason' is required to describe the nature of the operation (natOp)")
+		assert.ErrorContains(t, err, "invoice requires a note with key 'reason' to describe the nature of the operation (natOp)")
 
 		inv.Notes = []*org.Note{nil}
 		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, "a note with key 'reason' is required to describe the nature of the operation (natOp)")
+		assert.ErrorContains(t, err, "invoice requires a note with key 'reason' to describe the nature of the operation (natOp)")
 
 		inv.Notes[0] = &org.Note{
 			Key:  org.NoteKeyGeneral,
 			Text: "General note",
 		}
 		err = rules.Validate(inv)
-		assert.ErrorContains(t, err, "a note with key 'reason' is required to describe the nature of the operation (natOp)")
+		assert.ErrorContains(t, err, "invoice requires a note with key 'reason' to describe the nature of the operation (natOp)")
 
 		inv.Notes[0].Key = org.NoteKeyReason
 		inv.Notes[0].Text = "1234567890123456789012345678901234567890123456789012345678901" // 61 chars
@@ -214,6 +214,7 @@ func TestSupplierValidation(t *testing.T) {
 
 		inv.Supplier.Addresses = []*org.Address{
 			{
+				Country:  "BR",
 				Street:   "Rua Test",
 				Number:   "100",
 				Locality: "São Paulo",
@@ -307,6 +308,7 @@ func TestCustomerValidation(t *testing.T) {
 			},
 			Addresses: []*org.Address{
 				{
+					Country:  "BR",
 					Street:   "Rua das Flores",
 					Number:   "123",
 					Locality: "São Paulo",
@@ -343,6 +345,7 @@ func TestCustomerValidation(t *testing.T) {
 
 		inv.Customer.Addresses = []*org.Address{
 			{
+				Country:  "BR",
 				Street:   "Rua das Flores",
 				Number:   "123",
 				Locality: "São Paulo",
@@ -367,8 +370,21 @@ func TestCustomerValidation(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Customer.TaxID = nil
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "customer tax ID is required")
+		assert.ErrorContains(t, err, "invoice customer must have a tax ID or a foreign country identity")
 
+		// A valid foreign identity allows TaxID to be nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:     org.IdentityKeyForeign,
+				Country: "US",
+				Code:    "US-FOREIGN-123",
+			},
+		}
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+		inv.Customer.Identities = nil
+
+		// TaxID present but no code still fails rule 15
 		inv.Customer.TaxID = &tax.Identity{
 			Country: "BR",
 		}
@@ -432,7 +448,7 @@ func TestCustomerValidation(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Lines[0].Ext = tax.Extensions{}
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, fmt.Sprintf("NF-e lines require '%s' extension", nfe.ExtKeyCFOP))
+		assert.ErrorContains(t, err, fmt.Sprintf("NF-e invoice lines require '%s' extension", nfe.ExtKeyCFOP))
 
 		inv.Lines[0].Ext = tax.ExtensionsOf(cbc.CodeMap{
 			nfe.ExtKeyCFOP: "5102",
@@ -452,13 +468,37 @@ func TestCustomerValidation(t *testing.T) {
 	})
 }
 
+func TestAddressCountryValidation(t *testing.T) {
+	t.Run("supplier address requires a country", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Supplier.Addresses[0].Country = ""
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "supplier address requires a country")
+
+		inv.Supplier.Addresses[0].Country = "BR"
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("customer address requires a country", func(t *testing.T) {
+		inv := validCalculatedInvoice(t)
+		inv.Customer.Addresses[0].Country = ""
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "customer address requires a country")
+
+		inv.Customer.Addresses[0].Country = "BR"
+		err = rules.Validate(inv)
+		assert.NoError(t, err)
+	})
+}
+
 func TestInvoiceCurrencyValidation(t *testing.T) {
 	t.Run("non-BRL currency without exchange rates", func(t *testing.T) {
 		inv := validCalculatedInvoice(t)
 		inv.Currency = "USD"
 		require.NoError(t, inv.Calculate())
 		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-BR-NFE-BILL-INVOICE-34] invoice must be in BRL or provide exchange rate for conversion")
+		assert.ErrorContains(t, err, "[GOBL-BR-NFE-BILL-INVOICE-34] invoice currency must be BRL or provide exchange rate for conversion")
 	})
 
 	t.Run("non-BRL currency with exchange rates", func(t *testing.T) {
@@ -516,6 +556,7 @@ func validInvoice() *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
+					Country:  "BR",
 					Street:   "Rua das Flores",
 					Number:   "123",
 					Locality: "São Paulo",
@@ -614,6 +655,7 @@ func validCalculatedInvoice(t *testing.T) *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
+					Country:  "BR",
 					Street:   "Rua das Flores",
 					Number:   "123",
 					Locality: "São Paulo",
