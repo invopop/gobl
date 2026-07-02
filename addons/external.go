@@ -66,7 +66,7 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.sa.zatca",
 	})
-  tax.RegisterApprovedAddon(&tax.ExternalAddon{
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "pt-saft-v1",
 		Name: i18n.String{
 			i18n.EN: "Portugal SAF-T",
@@ -86,5 +86,5 @@ func init() {
 			i18n.EN: "Brazil NFS-e 1.X",
 		},
 		Module: "github.com/invopop/gobl.br.nfse",
-  })
+	})
 }
