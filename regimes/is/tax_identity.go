@@ -65,6 +65,11 @@ func validKennitala(s string) bool {
 	if len(s) != 10 {
 		return false
 	}
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
 	sum := 0
 	for i, w := range kennitalaWeights {
 		d := int(s[i] - '0')
