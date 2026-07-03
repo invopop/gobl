@@ -41,23 +41,26 @@ func taxIdentityRules() *rules.Set {
 			rules.Field("code",
 				rules.AssertIfPresent("01", "tax id code must be a 10-digit Kennitala",
 					isrules.MatchesRegexp(kennitalaRegexp)),
-				rules.When(isrules.MatchesRegexp(kennitalaRegexp),
-					rules.Assert("02", "tax id code Kennitala checksum is invalid",
-						isrules.Func("valid", isValidKennitalaCode)),
-				),
+				rules.AssertIfPresent("02", "tax id code Kennitala checksum is invalid",
+					isrules.Func("valid", isValidKennitalaCode)),
 			),
 		),
 	)
 }
 
 // isValidKennitalaCode reports whether value is a Kennitala with a valid mod-11
-// check digit. Unexpected types return false rather than silently passing.
+// check digit. Format-invalid inputs return true so only rule "01" reports them
+// (no double-fault). Unexpected types return false rather than silently passing.
 func isValidKennitalaCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok {
 		return false
 	}
-	return validKennitala(code.String())
+	s := code.String()
+	if !kennitalaRegexp.MatchString(s) {
+		return true
+	}
+	return validKennitala(s)
 }
 
 // validKennitala applies the Icelandic mod-11 check-digit algorithm. The
