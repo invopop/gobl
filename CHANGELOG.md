@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `cl`: added the Chilean (CL) tax regime with IVA tax category and RUT tax identity validation.
+
 ## [v0.502.2] - 2026-07-06
 
 ### Changed
