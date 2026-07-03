@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `si`: added the Slovenian (SI) tax regime.
+
 ## [v0.502.1] - 2026-07-02
 
 ### Removed

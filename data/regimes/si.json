@@ -1,0 +1,203 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Slovenia",
+    "sl": "Slovenija"
+  },
+  "description": {
+    "en": "Slovenia's tax system is administered by the Financial Administration\nof the Republic of Slovenia (FURS). As an EU member state, Slovenia\nfollows the EU VAT Directive with locally adapted rates.\n\nVAT (davek na dodano vrednost, DDV) applies at a standard rate with a\nreduced rate for specific goods and services such as food, medicines,\npassenger transport and accommodation, and a special reduced rate for\nbooks, newspapers and periodicals in force since 1 January 2020. The\nstandard rate rose from 20% to 22% on 1 July 2013.\n\nTaxpayers are identified by an eight-digit tax number (davčna\nštevilka) whose last digit is a modulo-11 check digit. The VAT\nidentification number is the same number prefixed with the SI\ncountry code (e.g. SI12345678).\n\nSlovenia supports credit notes for invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "FURS - Entry into the tax register and tax number"
+      },
+      "url": "https://www.fu.gov.si/en/taxes_and_other_duties/work_with_us/entry_into_the_tax_register_and_tax_number"
+    },
+    {
+      "title": {
+        "en": "SPOT - Invoicing"
+      },
+      "url": "https://spot.gov.si/en/info/accountancy/invoicing"
+    }
+  ],
+  "time_zone": "Europe/Ljubljana",
+  "country": "SI",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "MATICNA",
+      "name": {
+        "en": "Registration Number",
+        "sl": "Matična številka"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Uredba o vodenju in vzdrževanju Poslovnega registra Slovenije"
+          },
+          "url": "https://pisrs.si/Pis.web/pregledPredpisa?id=URED7599"
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "sl": "DDV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "sl": "Davek na dodano vrednost"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "sl": "Splošna stopnja"
+          },
+          "values": [
+            {
+              "since": "2013-07-01",
+              "percent": "22.0%"
+            },
+            {
+              "since": "2002-01-01",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "sl": "Nižja stopnja"
+          },
+          "values": [
+            {
+              "percent": "9.5%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Special Reduced Rate for Publications",
+            "sl": "Posebna nižja stopnja"
+          },
+          "values": [
+            {
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Financial Administration of the Republic of Slovenia (FURS) - VAT"
+          },
+          "url": "https://www.fu.gov.si/en/taxes_and_other_duties/areas_of_work/value_added_tax_vat",
+          "at": "2026-07-03T00:00:00"
+        },
+        {
+          "title": {
+            "en": "European Commission - VAT rates applied in the Member States of the European Union"
+          },
+          "url": "https://taxation-customs.ec.europa.eu/system/files/2021-06/vat_rates_en.pdf",
+          "at": "2026-07-03T00:00:00"
+        }
+      ]
+    }
+  ]
+}
