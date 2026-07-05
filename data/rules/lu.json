@@ -17,8 +17,28 @@
                   "assert": [
                     {
                       "id": "GOBL-LU-TAX-IDENTITY-01",
-                      "desc": "invalid Luxembourg TVA number",
-                      "tests": "valid mod-89 TVA code"
+                      "desc": "Luxembourg TVA number must be exactly 8 digits",
+                      "tests": "length between 8 and 8"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-02",
+                      "desc": "Luxembourg TVA number must contain only digits",
+                      "tests": "digit"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-03",
+                      "desc": "invalid Luxembourg TVA number: mod-89 checksum mismatch",
+                      "tests": "valid mod-89 checksum"
                     }
                   ]
                 }
@@ -44,7 +64,7 @@
                     {
                       "id": "GOBL-LU-ORG-IDENTITY-01",
                       "desc": "invalid RCS number",
-                      "tests": "valid RCS format"
+                      "tests": "matches ^[A-Z]\\d{1,6}$"
                     }
                   ]
                 }
@@ -63,11 +83,21 @@
           "subsets": [
             {
               "field": "supplier",
-              "assert": [
+              "subsets": [
                 {
-                  "id": "GOBL-LU-BILL-INVOICE-01",
-                  "desc": "invoice LU supplier must have a TVA tax ID code or an RCS identity",
-                  "tests": "has TVA tax ID code, or has RCS identity"
+                  "guard": "supplier has no TVA tax ID code",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-LU-BILL-INVOICE-01",
+                          "desc": "invoice LU supplier without TVA tax ID code must have an RCS identity",
+                          "tests": "type in [RCS]"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
