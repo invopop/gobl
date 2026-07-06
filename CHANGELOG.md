@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.502.2] - 2026-07-06
+
 ### Changed
 
 - `cbc.Code`: maximum length increased from 64 to 128 characters.
