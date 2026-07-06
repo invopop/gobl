@@ -10,11 +10,6 @@ import (
 const (
 	// kennitalaLength is the number of digits in a normalized kennitala (DDMMYY-RRCV).
 	kennitalaLength = 10
-	// kennitalaWeightedDigits is the count of leading digits (positions 1–8) that
-	// feed into the MOD-11 check-digit calculation.
-	kennitalaWeightedDigits = 8
-	// kennitalaCheckDigitIndex is the 0-based index of the check digit (position 9).
-	kennitalaCheckDigitIndex = 8
 	// kennitalaModulus is the modulus of the MOD-11 check-digit algorithm.
 	kennitalaModulus = 11
 	// kennitalaNoCheckDigitRemainder is the (S mod 11) remainder for which the check
@@ -22,21 +17,19 @@ const (
 	// never issues such numbers and they must be rejected.
 	kennitalaNoCheckDigitRemainder = 1
 
-	// A company kennitala encodes its day-of-month offset by 40, so the day field is
-	// 41–71 and the first digit is 4–7. A natural person's day is 01–31 (first digit
-	// 0–3); temporary "kerfiskennitala" numbers use a first digit of 8 or 9.
-	companyFirstDigitMin   = 4
-	companyFirstDigitMax   = 7
-	personFirstDigitMin    = 0
-	personFirstDigitMax    = 3
-	temporaryFirstDigitMin = 8
-	temporaryFirstDigitMax = 9
+	// companyFirstDigitMin and companyFirstDigitMax bound the first digit of a company
+	// kennitala, whose day-of-month is offset by 40 (day field 41–71, first digit 4–7).
+	// Natural persons fall below this range (first digit 0–3) and temporary
+	// "kerfiskennitala" numbers above it (first digit 8–9).
+	companyFirstDigitMin = 4
+	companyFirstDigitMax = 7
 )
 
-// kennitalaWeights are the multipliers applied to digits 1–8 when computing the
-// MOD-11 check digit. It is a var, not a const, because Go constants cannot hold
-// composite types such as arrays.
-var kennitalaWeights = [kennitalaWeightedDigits]int{3, 2, 7, 6, 5, 4, 3, 2}
+// kennitalaWeights are the multipliers applied to the leading digits when computing
+// the MOD-11 check digit; its length also defines how many digits are weighted and
+// the index of the check digit that follows them. It is a var, not a const, because
+// Go constants cannot hold composite types such as arrays.
+var kennitalaWeights = [...]int{3, 2, 7, 6, 5, 4, 3, 2}
 
 // ValidKennitala reports whether code is a structurally valid kennitala: exactly
 // ten digits whose ninth digit matches the MOD-11 check digit computed from the
@@ -49,7 +42,7 @@ func ValidKennitala(code cbc.Code) bool {
 		return false
 	}
 	sum := 0
-	for i := 0; i < kennitalaWeightedDigits; i++ {
+	for i := 0; i < len(kennitalaWeights); i++ {
 		sum += int(s[i]-'0') * kennitalaWeights[i]
 	}
 	remainder := sum % kennitalaModulus
@@ -57,7 +50,7 @@ func ValidKennitala(code cbc.Code) bool {
 		return false
 	}
 	check := (kennitalaModulus - remainder) % kennitalaModulus
-	return int(s[kennitalaCheckDigitIndex]-'0') == check
+	return int(s[len(kennitalaWeights)]-'0') == check
 }
 
 // Company reports whether code's first digit (4–7) identifies a company
@@ -67,16 +60,16 @@ func Company(code cbc.Code) bool {
 	return ok && d >= companyFirstDigitMin && d <= companyFirstDigitMax
 }
 
-// Person reports whether code's first digit (0–3) identifies a natural
-// person. It does not validate the checksum.
+// Person reports whether code's first digit (0–3, i.e. below the company range)
+// identifies a natural person. It does not validate the checksum.
 func Person(code cbc.Code) bool {
 	d, ok := firstDigit(code)
-	return ok && d >= personFirstDigitMin && d <= personFirstDigitMax
+	return ok && d < companyFirstDigitMin
 }
 
 func isTemporaryKennitala(code cbc.Code) bool {
 	d, ok := firstDigit(code)
-	return ok && d >= temporaryFirstDigitMin && d <= temporaryFirstDigitMax
+	return ok && d > companyFirstDigitMax
 }
 
 func firstDigit(code cbc.Code) (int, bool) {

@@ -61,10 +61,11 @@ var taxCategories = []*tax.CategoryDef{
 			},
 			{
 				Title: i18n.String{
-					i18n.EN: "KPMG - Icelandic Tax Facts 2025",
+					i18n.EN: "Act No. 50/1988 on Value Added Tax (Alþingi)",
+					i18n.IS: "Lög nr. 50/1988 um virðisaukaskatt (Alþingi)",
 				},
-				URL: "https://assets.kpmg.com/content/dam/kpmg/is/pdf/2025/01/Icelandic-Tax-Facts-2025.pdf",
-				At:  cal.NewDateTime(2026, 6, 30, 0, 0, 0),
+				URL: "https://www.althingi.is/lagas/nuna/1988050.html",
+				At:  cal.NewDateTime(2026, 7, 1, 0, 0, 0),
 			},
 		},
 	},

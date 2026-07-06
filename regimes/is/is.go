@@ -76,10 +76,6 @@ func New() *tax.RegimeDef {
 				Title: i18n.NewString("European Commission - eInvoicing in Iceland"),
 				URL:   "https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/eInvoicing+in+Iceland",
 			},
-			{
-				Title: i18n.NewString("Ecosio - E-invoicing in Iceland"),
-				URL:   "https://ecosio.com/en/compliance/iceland/e-invoicing/",
-			},
 		},
 		TimeZone:   "Atlantic/Reykjavik",
 		Identities: identityTypeDefinitions,
