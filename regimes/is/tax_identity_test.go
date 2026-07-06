@@ -83,4 +83,14 @@ func TestKennitalaChecksum(t *testing.T) {
 	// Temporary kennitala (first digit 8) is neither person nor company form.
 	assert.False(t, is.Company("8101850150"))
 	assert.False(t, is.Person("8101850150"))
+
+	// Non-canonical input (wrong length) is rejected before the checksum runs.
+	assert.False(t, is.ValidKennitala("123"))
+
+	// Checksum with S mod 11 == 1 → check digit would be 10 (impossible): rejected.
+	assert.False(t, is.ValidKennitala("6012031200"))
+
+	// firstDigit guard: empty and non-numeric first char are not classified.
+	assert.False(t, is.Company(""))
+	assert.False(t, is.Person("X902862349"))
 }
