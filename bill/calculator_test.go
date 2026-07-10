@@ -390,4 +390,42 @@ func TestCalculatePricesIncludeCurrencyRounding(t *testing.T) {
 		assert.Equal(t, "3.35", vat.Amount.String())
 		assert.Equal(t, "15.95", irpf.Base.String())
 	})
+
+	t.Run("multiple lines with retained taxes", func(t *testing.T) {
+		lines := make([]*bill.Line, 12)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Professional services",
+					Price: num.NewAmount(12500, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     tax.RateGeneral,
+					},
+					{
+						Category: es.TaxCategoryIRPF,
+						Rate:     "pro",
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
+		require.NoError(t, inv.Calculate())
+
+		assert.Equal(t, "1500.00", inv.Totals.Sum.String())
+		assert.Equal(t, "260.33", inv.Totals.TaxIncluded.String())
+		assert.Equal(t, "1239.67", inv.Totals.Total.String())
+		assert.Equal(t, "1500.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "185.95", inv.Totals.RetainedTax.String())
+		assert.Equal(t, "1314.05", inv.Totals.Payable.String())
+		vat := inv.Totals.Taxes.Categories[0].Rates[0]
+		irpf := inv.Totals.Taxes.Categories[1].Rates[0]
+		assert.Equal(t, "1239.67", vat.Base.String())
+		assert.Equal(t, "260.33", vat.Amount.String())
+		assert.Equal(t, "1239.67", irpf.Base.String())
+	})
 }
