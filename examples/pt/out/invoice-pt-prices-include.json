@@ -1,0 +1,356 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "78e1906209627351ff48694fef48bb9ab3b4df4f27c6d33edd303b61e283c6f0"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"uuid": "0198f2f1-7f30-7d33-9a63-8a12f4a1c001",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "023",
+		"issue_date": "2026-07-09",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"rounding": "currency"
+		},
+		"supplier": {
+			"name": "Hotel Azul Lda.",
+			"tax_id": {
+				"country": "PT",
+				"code": "599999993"
+			},
+			"addresses": [
+				{
+					"street": "Rua das Flores",
+					"locality": "Lisboa",
+					"code": "3830-000",
+					"country": "PT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Guest",
+			"tax_id": {
+				"country": "PT",
+				"code": "999999990"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 5,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 6,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 7,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 8,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 9,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 10,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 11,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 12,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2026-07-09",
+						"amount": "1500.00"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1500.00",
+			"tax_included": "84.91",
+			"total": "1415.09",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pt-region": "PT"
+								},
+								"base": "1415.09",
+								"percent": "6.0%",
+								"amount": "84.91"
+							}
+						],
+						"amount": "84.91"
+					}
+				],
+				"sum": "84.91"
+			},
+			"tax": "84.91",
+			"total_with_tax": "1500.00",
+			"payable": "1500.00"
+		}
+	}
+}
