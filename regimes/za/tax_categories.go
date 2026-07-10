@@ -50,9 +50,12 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						// VAT introduced 30 September 1991 at 10%.
-						Since:   cal.NewDate(1991, 9, 30),
-						Percent: num.MakePercentage(10, 2),
+						// Increased 1 April 2018 under the Rates and Monetary
+						// Amounts and Amendment of Revenue Laws Act 21 of 2018.
+						// A further increase to 15.5%/16% was announced for
+						// 2025/2026 but withdrawn before taking effect.
+						Since:   cal.NewDate(2018, 4, 1),
+						Percent: num.MakePercentage(15, 2),
 					},
 					{
 						// Increased 7 April 1993.
@@ -60,12 +63,9 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(14, 2),
 					},
 					{
-						// Increased 1 April 2018 under the Rates and Monetary
-						// Amounts and Amendment of Revenue Laws Act 21 of 2018.
-						// A further increase to 15.5%/16% was announced for
-						// 2025/2026 but withdrawn before taking effect.
-						Since:   cal.NewDate(2018, 4, 1),
-						Percent: num.MakePercentage(15, 2),
+						// VAT introduced 30 September 1991 at 10%.
+						Since:   cal.NewDate(1991, 9, 30),
+						Percent: num.MakePercentage(10, 2),
 					},
 				},
 			},
