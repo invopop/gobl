@@ -28,7 +28,9 @@ type TaxableLine interface {
 	GetTotal() num.Amount
 }
 
-// Calculate the totals
+// Calculate the totals according to the rounding rule, either using the
+// currency's precision for every step, or maintaining precision until
+// the final sums.
 func (tc *TotalCalculator) Calculate(t *Total) error {
 	tc.zero = tc.Currency.Def().Zero()
 
@@ -38,68 +40,39 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 
 	// get simplified list of lines
 	taxLines := mapTaxLines(tc.Lines)
-	if err := tc.prepareLines(taxLines); err != nil {
+	if err := tc.prepareCombos(taxLines); err != nil {
 		return err
 	}
 
-	// Remove included taxes
-	if err := tc.removeIncludedTaxes(taxLines); err != nil {
-		return err
+	if tc.Rounding == RoundingRuleCurrency {
+		return tc.calculateCurrencyTotals(t, taxLines)
 	}
-
-	tc.calculateBaseRateTotals(taxLines, t)
-	t.Calculate(tc.Currency, tc.Rounding)
-
-	return nil
+	return tc.calculatePreciseTotals(t, taxLines)
 }
 
-func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
-	// First, prepare all tax combos using the country and date
+// prepareCombos ensures the tax combos of every line have been calculated
+// using the country and date.
+func (tc *TotalCalculator) prepareCombos(taxLines []*taxLine) error {
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
 			if err := combo.calculate(tc.Country, tc.Date); err != nil {
 				return err
 			}
-			// always add 2 decimal places for all tax calculations
-			tl.total = tl.total.RescaleUp(tc.zero.Exp() + 2)
 		}
 	}
 	return nil
 }
 
-func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
-	// If prices include a tax, perform a pre-loop to update all the line prices with
-	// the price minus the defined tax.
-	if tc.Includes.IsEmpty() {
-		return nil
+// checkIncludedCombo ensures the combo's category can be used for
+// taxes included in prices.
+func (tc *TotalCalculator) checkIncludedCombo(c *Combo) error {
+	if c.retained {
+		return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 	}
-	for _, tl := range taxLines {
-		if c := tl.taxes.Get(tc.Includes); c != nil {
-			if c.retained {
-				return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
-			}
-			if c.informative {
-				return ErrInvalidPricesInclude.WithMessage("cannot include informative category '%s'", tc.Includes.String())
-			}
-			if c.Percent == nil {
-				// no taxes, skip
-				continue
-			}
-			tl.total = tl.total.Remove(*c.Percent)
-		}
+	if c.informative {
+		return ErrInvalidPricesInclude.WithMessage("cannot include informative category '%s'", tc.Includes.String())
 	}
 	return nil
-}
-
-func (tc *TotalCalculator) calculateBaseRateTotals(taxLines []*taxLine, t *Total) {
-	// Go through each line and add the total to the base of each tax
-	for _, tl := range taxLines {
-		for _, c := range tl.taxes {
-			rt := t.rateTotalFor(c, tc.zero)
-			rt.Base = matchRoundingPrecision(tc.Rounding, rt.Base, tl.total)
-			rt.Base = rt.Base.Add(tl.total)
-		}
-	}
 }
 
 // taxLine is used to replace

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "455d5b988d78e57a6dcf01ad115d797eb34e3e1126374ea4fdd9e8ace6d2e181"
+			"val": "bd732f16f7f31bb9a6ceaf38353a56479d7390012cd7e8d85feec7cfedb45669"
 		}
 	},
 	"doc": {
@@ -23,6 +23,7 @@
 		"issue_date": "2024-08-20",
 		"currency": "EUR",
 		"tax": {
+			"prices_include": "VAT",
 			"ext": {
 				"gr-mydata-invoice-type": "11.3"
 			}
@@ -78,7 +79,7 @@
 					"key": "card",
 					"description": "Prepaid amount",
 					"percent": "100%",
-					"amount": "10.47",
+					"amount": "8.44",
 					"ext": {
 						"gr-mydata-payment-means": "7"
 					}
@@ -93,7 +94,8 @@
 		},
 		"totals": {
 			"sum": "8.44",
-			"total": "8.44",
+			"tax_included": "1.63",
+			"total": "6.81",
 			"taxes": {
 				"categories": [
 					{
@@ -104,20 +106,20 @@
 								"ext": {
 									"gr-mydata-vat-rate": "1"
 								},
-								"base": "8.44",
+								"base": "6.81",
 								"percent": "24%",
-								"amount": "2.03"
+								"amount": "1.63"
 							}
 						],
-						"amount": "2.03"
+						"amount": "1.63"
 					}
 				],
-				"sum": "2.03"
+				"sum": "1.63"
 			},
-			"tax": "2.03",
-			"total_with_tax": "10.47",
-			"payable": "10.47",
-			"advance": "10.47",
+			"tax": "1.63",
+			"total_with_tax": "8.44",
+			"payable": "8.44",
+			"advance": "8.44",
 			"due": "0.00"
 		}
 	}

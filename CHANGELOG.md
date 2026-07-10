@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
+
 ## [v0.502.2] - 2026-07-06
 
 ### Changed

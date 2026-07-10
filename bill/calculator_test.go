@@ -319,3 +319,75 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "8.26", inv.Totals.Charge.String())
 	})
 }
+
+func TestCalculatePricesIncludeCurrencyRounding(t *testing.T) {
+	t.Run("multiple lines", func(t *testing.T) {
+		lines := make([]*bill.Line, 12)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Room rate",
+					Price: num.NewAmount(12500, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Percent:  num.NewPercentage(6, 2),
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
+		require.NoError(t, inv.Calculate())
+
+		assert.Equal(t, "1500.00", inv.Totals.Sum.String())
+		assert.Equal(t, "84.91", inv.Totals.TaxIncluded.String())
+		assert.Equal(t, "1415.09", inv.Totals.Total.String())
+		assert.Equal(t, "84.91", inv.Totals.Tax.String())
+		assert.Equal(t, "1500.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "1500.00", inv.Totals.Payable.String())
+		rt := inv.Totals.Taxes.Categories[0].Rates[0]
+		assert.Equal(t, "1415.09", rt.Base.String())
+		assert.Equal(t, "84.91", rt.Amount.String())
+	})
+
+	t.Run("with retained taxes", func(t *testing.T) {
+		lines := make([]*bill.Line, 10)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Service",
+					Price: num.NewAmount(193, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     tax.RateGeneral,
+					},
+					{
+						Category: es.TaxCategoryIRPF,
+						Rate:     "pro",
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
+		require.NoError(t, inv.Calculate())
+
+		assert.Equal(t, "19.30", inv.Totals.Sum.String())
+		assert.Equal(t, "3.35", inv.Totals.TaxIncluded.String())
+		assert.Equal(t, "15.95", inv.Totals.Total.String())
+		assert.Equal(t, "19.30", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "2.39", inv.Totals.RetainedTax.String())
+		assert.Equal(t, "16.91", inv.Totals.Payable.String())
+		vat := inv.Totals.Taxes.Categories[0].Rates[0]
+		irpf := inv.Totals.Taxes.Categories[1].Rates[0]
+		assert.Equal(t, "15.95", vat.Base.String())
+		assert.Equal(t, "3.35", vat.Amount.String())
+		assert.Equal(t, "15.95", irpf.Base.String())
+	})
+}
