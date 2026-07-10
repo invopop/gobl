@@ -1,0 +1,26 @@
+package za_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/za"
+	"github.com/invopop/gobl/rules"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestNew(t *testing.T) {
+	regime := za.New()
+	require.NotNil(t, regime)
+	assert.Equal(t, l10n.ZA, regime.Country.Code())
+	assert.Equal(t, "South Africa", regime.Name.String())
+	assert.NotNil(t, regime.Categories)
+	assert.Len(t, regime.Categories, 1)
+	assert.Equal(t, "VAT", regime.Categories[0].Code.String())
+}
+
+func TestValidate(t *testing.T) {
+	regime := za.New()
+	assert.NoError(t, rules.Validate(regime))
+}
