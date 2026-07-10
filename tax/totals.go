@@ -357,6 +357,7 @@ func (t *Total) Calculate(cur currency.Code, rr cbc.Key) {
 func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
 	// Now go through each category to apply the percentage and calculate the final sums
 	t.Sum = zero
+	t.Retained = nil
 	for _, ct := range t.Categories {
 		t.calculateBaseCategoryTotal(ct, zero, rr)
 

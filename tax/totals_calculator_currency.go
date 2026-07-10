@@ -4,6 +4,11 @@ package tax
 // precision, rounding each line's amounts before adding them to the sums,
 // so that the results can always be recalculated from the data presented.
 func (tc *TotalCalculator) calculateCurrencyTotals(t *Total, taxLines []*taxLine) error {
+	// round all the line totals to the currency's precision
+	for _, tl := range taxLines {
+		tl.total = tl.total.Rescale(tc.zero.Exp())
+	}
+
 	if err := tc.extractIncludedTaxes(t, taxLines); err != nil {
 		return err
 	}
@@ -46,9 +51,11 @@ func (tc *TotalCalculator) extractIncludedTaxes(t *Total, taxLines []*taxLine) e
 			continue
 		}
 		// use the rate total to accumulate the running sums of the
-		// tax-inclusive totals and their taxes
+		// tax-inclusive totals and their taxes, with four extra decimal
+		// places of precision to avoid double-rounding errors close to
+		// the currency's rounding boundaries
 		rt := t.rateTotalFor(c, tc.zero)
-		rt.Base = rt.Base.MatchPrecision(tl.total).Add(tl.total)
+		rt.Base = rt.Base.Add(tl.total)
 		tax := c.Percent.From(rt.Base.Upscale(4)).Rescale(tc.zero.Exp())
 		tl.total = tl.total.Subtract(tax.Subtract(rt.Amount))
 		rt.Amount = tax
@@ -67,6 +74,7 @@ func (tc *TotalCalculator) extractIncludedTaxes(t *Total, taxLines []*taxLine) e
 // any tax amounts already extracted from tax-inclusive totals.
 func (tc *TotalCalculator) calculateFinalSums(t *Total) {
 	t.Sum = tc.zero
+	t.Retained = nil
 	for _, ct := range t.Categories {
 		ct.Amount = tc.zero
 		for _, rt := range ct.Rates {

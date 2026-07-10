@@ -37,6 +37,7 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	// reset
 	t.Categories = make([]*CategoryTotal, 0)
 	t.Sum = tc.zero
+	t.Retained = nil
 
 	// get simplified list of lines
 	taxLines := mapTaxLines(tc.Lines)
