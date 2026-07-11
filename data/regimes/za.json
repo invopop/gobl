@@ -1,0 +1,208 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "South Africa"
+  },
+  "description": {
+    "en": "South Africa's tax system is administered by the South African\nRevenue Service (SARS) under the Value-Added Tax Act No. 89 of 1991.\n\nVAT is levied at a standard rate of 15%, in effect since 1 April 2018\n(previously 14% since 1993). A 2025 budget proposal to raise the rate\nfurther to 15.5% and then 16% was withdrawn before taking effect, and\nthe rate has remained at 15%.\n\nZero-rated supplies (0%, with input VAT still recoverable) include\nbasic foodstuffs, fuel, exports, international transport, and\nservices consumed outside South Africa. Exempt supplies (no VAT\ncharged, no input VAT recovery) include financial services,\nresidential rental, non-international passenger transport, and\neducation. The VAT Act treats these very differently, and this\nregime preserves the distinction rather than collapsing both into a\nsingle \"0%\" concept.\n\nVendors must register for VAT once taxable supplies exceed the\ncompulsory threshold (ZAR 2.3 million over 12 months, since 1 April\n2026; ZAR 1 million previously) and may register voluntarily above a\nlower threshold (ZAR 120,000, since 1 April 2026; ZAR 50,000\npreviously). Businesses below these thresholds may trade without a\nVAT number, so one is not always present.\n\nBusinesses are identified for VAT purposes by a 10-digit VAT\nregistration number that always starts with the digit 4 (e.g.\n4480152117). Unlike most countries covered by GOBL, SARS does not\npublish a check digit algorithm for this number, so only its format\ncan be validated here. Authoritative verification requires a live\nlookup against SARS's VAT Vendor Search service, which is outside\nthe scope of this library.\n\nRegistered companies must additionally display their CIPC company\nregistration number (format YYYY/NNNNNN/XX) on invoices and other\nbusiness correspondence, per section 32(4) of the Companies Act 71\nof 2008.\n\nBoth credit and debit notes are supported for invoice corrections,\nper section 21 of the VAT Act.\n\nAs of mid-2026, e-invoicing is not yet mandatory in South Africa.\nThe Tax Administration Laws Amendment Act (published April 2026)\nestablishes a legal framework for a phased mandate expected to\ncomplete by 2028, but the technical format has not yet been\nfinalized, so no e-invoicing addon is implemented here."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SARS - Value-Added Tax"
+      },
+      "url": "https://www.sars.gov.za/types-of-tax/value-added-tax/"
+    },
+    {
+      "title": {
+        "en": "Value-Added Tax Act No. 89 of 1991"
+      },
+      "url": "https://www.gov.za/sites/default/files/gcis_document/201505/act-89-1991s.pdf"
+    },
+    {
+      "title": {
+        "en": "SARS - VAT rate increase from 1 April 2018"
+      },
+      "url": "https://www.sars.gov.za/wp-content/uploads/Docs/VAT/NON-BDE-Rate-change-letter-final-.pdf"
+    },
+    {
+      "title": {
+        "en": "Zero-rated and exempt supplies (Parliamentary Monitoring Group)"
+      },
+      "url": "https://static.pmg.org.za/docs/Zero-rated%20and%20exempt%20supplies.pdf"
+    },
+    {
+      "title": {
+        "en": "SARS - Tax Invoices"
+      },
+      "url": "https://www.sars.gov.za/businesses-and-employers/government/tax-invoices/"
+    },
+    {
+      "title": {
+        "en": "Companies Act 71 of 2008, Section 32"
+      },
+      "url": "https://marxgore.co.za/wp-content/uploads/2020/01/Section-32-Use-of-company-name-and-registration-number.pdf"
+    }
+  ],
+  "time_zone": "Africa/Johannesburg",
+  "country": "ZA",
+  "currency": "ZAR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "CIPC",
+      "name": {
+        "en": "CIPC Registration Number"
+      },
+      "desc": {
+        "en": "South African company registration number issued by the Companies and Intellectual Property Commission (CIPC), format YYYY/NNNNNN/XX."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate"
+          },
+          "values": [
+            {
+              "since": "2018-04-01",
+              "percent": "15%"
+            },
+            {
+              "since": "1993-04-07",
+              "percent": "14%"
+            },
+            {
+              "since": "1991-09-30",
+              "percent": "10%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Applies to exports, international transport, basic foodstuffs (e.g. brown bread, maize meal, rice, vegetables, milk, eggs), and fuel (petrol, diesel, illuminating paraffin). Input VAT remains recoverable, unlike exempt supplies."
+          },
+          "values": [
+            {
+              "since": "1991-09-30",
+              "percent": "0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "SARS - Value-Added Tax"
+          },
+          "url": "https://www.sars.gov.za/types-of-tax/value-added-tax/"
+        },
+        {
+          "title": {
+            "en": "Zero-rated and exempt supplies (Parliamentary Monitoring Group)"
+          },
+          "url": "https://static.pmg.org.za/docs/Zero-rated%20and%20exempt%20supplies.pdf"
+        }
+      ]
+    }
+  ]
+}
