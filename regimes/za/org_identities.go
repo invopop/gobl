@@ -21,9 +21,14 @@ import (
 // Reference: https://marxgore.co.za/wp-content/uploads/2020/01/Section-32-Use-of-company-name-and-registration-number.pdf
 const IdentityTypeCIPC cbc.Code = "CIPC"
 
-// cipcRegexp matches CIPC company registration numbers in the format
-// YYYY/NNNNNN/XX, e.g. 2020/123456/07 (the suffix identifies the type of
-// company, 07 for a private company). The number is sequential plus a type
+// cipcRegexp matches CIPC registration numbers in the format YYYY/NNNNNN/XX,
+// e.g. 2020/123456/07. The two-digit suffix identifies the entity type: 06
+// public company, 07 private company, 08 non-profit company, 21
+// incorporation, 30 state-owned - and 23 for Close Corporations, a legal
+// form that could not be newly registered after 1 May 2011 but under the
+// Close Corporations Act 69 of 1984 remains valid for entities formed
+// before then, and is still bound by the same registration-number
+// disclosure duty as companies. The number is sequential plus a type
 // suffix; like the VAT number, CIPC does not publish a check digit
 // algorithm for it.
 var cipcRegexp = regexp.MustCompile(`^\d{4}/\d{6}/\d{2}$`)

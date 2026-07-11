@@ -23,6 +23,7 @@ func TestCIPCIdentityValidation(t *testing.T) {
 	}{
 		{name: "valid private company", code: "2020/123456/07"},
 		{name: "valid public company", code: "1998/654321/06"},
+		{name: "valid close corporation", code: "2005/123456/23"},
 		{name: "too short year", code: "202/123456/07", err: "[GOBL-ZA-ORG-IDENTITY-01]"},
 		{name: "too short sequence", code: "2020/12345/07", err: "[GOBL-ZA-ORG-IDENTITY-01]"},
 		{name: "missing suffix", code: "2020/123456", err: "[GOBL-ZA-ORG-IDENTITY-01]"},

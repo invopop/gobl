@@ -80,7 +80,9 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Since:   cal.NewDate(1991, 9, 30),
+						// Has been 0% since VAT's introduction; no history to
+						// track, so no Since date is needed here (unlike the
+						// general rate above).
 						Percent: num.MakePercentage(0, 2),
 					},
 				},
