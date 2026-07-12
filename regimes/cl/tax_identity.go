@@ -1,8 +1,6 @@
 package cl
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
@@ -13,8 +11,23 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "invalid Chilean RUT tax identity code",
-					is.Func("valid", isValidTaxIdentityCode),
+				rules.AssertIfPresent("01", "invalid Chilean RUT tax identity code length",
+					is.Func("valid length", isValidTaxIdentityLength),
+				),
+				rules.When(is.Func("valid length", isValidTaxIdentityLength),
+					rules.AssertIfPresent("02", "Chilean RUT tax identity code body must be numeric",
+						is.Func("valid body", isValidTaxIdentityBody),
+					),
+					rules.When(is.Func("valid body", isValidTaxIdentityBody),
+						rules.AssertIfPresent("03", "invalid Chilean RUT tax identity check digit",
+							is.Func("valid check digit", isValidTaxIdentityCheckDigit),
+						),
+						rules.When(is.Func("valid check digit", isValidTaxIdentityCheckDigit),
+							rules.AssertIfPresent("04", "invalid Chilean RUT tax identity checksum",
+								is.Func("valid checksum", isValidTaxIdentityChecksum),
+							),
+						),
+					),
 				),
 			),
 		),
@@ -25,39 +38,56 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 }
 
-func isValidTaxIdentityCode(value any) bool {
+func isValidTaxIdentityLength(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return false
 	}
-	return validateTaxCode(code) == nil
+	return isValidTaxCodeLength(code)
 }
 
-func validateTaxCode(code cbc.Code) error {
-	if code == "" {
-		return nil
+func isValidTaxIdentityBody(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" || !isValidTaxCodeLength(code) {
+		return false
 	}
 
 	s := code.String()
-	if len(s) < 8 || len(s) > 9 {
-		return errors.New("invalid length")
-	}
-
 	body := s[:len(s)-1]
-	check := s[len(s)-1]
 	for _, c := range body {
 		if c < '0' || c > '9' {
-			return errors.New("body contains invalid characters")
+			return false
 		}
 	}
-	if !isValidCheckDigit(check) {
-		return errors.New("invalid check digit")
-	}
-	if expectedRUTCheckDigit(body) != check {
-		return errors.New("checksum mismatch")
+
+	return true
+}
+
+func isValidTaxIdentityCheckDigit(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" || !isValidTaxCodeLength(code) || !isValidTaxIdentityBody(value) {
+		return false
 	}
 
-	return nil
+	s := code.String()
+	return isValidCheckDigit(s[len(s)-1])
+}
+
+func isValidTaxIdentityChecksum(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" || !isValidTaxCodeLength(code) || !isValidTaxIdentityBody(value) || !isValidTaxIdentityCheckDigit(value) {
+		return false
+	}
+
+	s := code.String()
+	body := s[:len(s)-1]
+	check := s[len(s)-1]
+	return expectedRUTCheckDigit(body) == check
+}
+
+func isValidTaxCodeLength(code cbc.Code) bool {
+	s := code.String()
+	return len(s) >= 8 && len(s) <= 9
 }
 
 func isValidCheckDigit(c byte) bool {

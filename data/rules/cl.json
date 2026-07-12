@@ -17,8 +17,53 @@
                   "assert": [
                     {
                       "id": "GOBL-CL-TAX-IDENTITY-01",
-                      "desc": "invalid Chilean RUT tax identity code",
-                      "tests": "valid"
+                      "desc": "invalid Chilean RUT tax identity code length",
+                      "tests": "valid length"
+                    }
+                  ]
+                },
+                {
+                  "guard": "valid length",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-CL-TAX-IDENTITY-02",
+                          "desc": "Chilean RUT tax identity code body must be numeric",
+                          "tests": "valid body"
+                        }
+                      ]
+                    },
+                    {
+                      "guard": "valid body",
+                      "subsets": [
+                        {
+                          "guard": "present",
+                          "assert": [
+                            {
+                              "id": "GOBL-CL-TAX-IDENTITY-03",
+                              "desc": "invalid Chilean RUT tax identity check digit",
+                              "tests": "valid check digit"
+                            }
+                          ]
+                        },
+                        {
+                          "guard": "valid check digit",
+                          "subsets": [
+                            {
+                              "guard": "present",
+                              "assert": [
+                                {
+                                  "id": "GOBL-CL-TAX-IDENTITY-04",
+                                  "desc": "invalid Chilean RUT tax identity checksum",
+                                  "tests": "valid checksum"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }

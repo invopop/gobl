@@ -63,21 +63,26 @@ func TestTaxIdentityRules(t *testing.T) {
 		{
 			name: "invalid checksum",
 			code: "125319093",
-			err:  "IDENTITY-01",
+			err:  "IDENTITY-04",
 		},
 		{
 			name: "invalid check digit character",
 			code: "12531909X",
-			err:  "IDENTITY-01",
+			err:  "IDENTITY-03",
 		},
 		{
 			name: "invalid body characters",
 			code: "12A319092",
+			err:  "IDENTITY-02",
+		},
+		{
+			name: "too short",
+			code: "1234567",
 			err:  "IDENTITY-01",
 		},
 		{
-			name: "invalid length",
-			code: "1234567",
+			name: "too long",
+			code: "1234567890",
 			err:  "IDENTITY-01",
 		},
 		{
