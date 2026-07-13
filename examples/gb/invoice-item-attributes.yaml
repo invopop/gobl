@@ -36,8 +36,8 @@ lines:
       unit: "item"
       # Named features of the item (EN 16931 BG-32).
       attributes:
-        - key: "colour"
-          label: "Colour"
+        - key: "color"
+          label: "Color"
           text: "Black"
         - key: "size"
           label: "Size"

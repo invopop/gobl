@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c2c7ee4b5d75dbe152dcaf0bee91db662aac5d2501dd2b471493b36f930b3ea3"
+			"val": "fd97da90e9000db729278b4e8a5d4f437ffbdb6ebcbd4934cd468234e1bc8363"
 		}
 	},
 	"doc": {
@@ -56,8 +56,8 @@
 					"name": "Cotton T-Shirt",
 					"attributes": [
 						{
-							"label": "Colour",
-							"key": "colour",
+							"label": "Color",
+							"key": "color",
 							"text": "Black"
 						},
 						{

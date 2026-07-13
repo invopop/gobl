@@ -15,8 +15,8 @@ import (
 // to other formats; any other valid key agreed upon between supplier and
 // customer may also be used.
 const (
-	// Physical properties
-	AttributeKeyColour   cbc.Key = "colour"
+	// Physical properties of the item itself, excluding packaging
+	AttributeKeyColor    cbc.Key = "color"
 	AttributeKeySize     cbc.Key = "size"
 	AttributeKeyMaterial cbc.Key = "material"
 	AttributeKeyLength   cbc.Key = "length"
@@ -25,6 +25,13 @@ const (
 	AttributeKeyDiameter cbc.Key = "diameter"
 	AttributeKeyWeight   cbc.Key = "weight"
 	AttributeKeyVolume   cbc.Key = "volume"
+
+	// Dimensions of a single packaged unit of the item as shipped
+	AttributeKeyPackagingLength cbc.Key = "packaging+length"
+	AttributeKeyPackagingWidth  cbc.Key = "packaging+width"
+	AttributeKeyPackagingHeight cbc.Key = "packaging+height"
+	AttributeKeyPackagingVolume cbc.Key = "packaging+volume"
+	AttributeKeyPackagingWeight cbc.Key = "packaging+weight"
 
 	// Dates
 	AttributeKeyProduction cbc.Key = "production"
@@ -48,9 +55,9 @@ const (
 // AttributeKeyDefinitions describes each of the standard attribute keys.
 var AttributeKeyDefinitions = []*cbc.Definition{
 	{
-		Key:  AttributeKeyColour,
-		Name: i18n.NewString("Colour"),
-		Desc: i18n.NewString("Colour of the item, either as a name or a code such as RAL or Pantone."),
+		Key:  AttributeKeyColor,
+		Name: i18n.NewString("Color"),
+		Desc: i18n.NewString("Color of the item, either as a name or a code such as RAL or Pantone."),
 	},
 	{
 		Key:  AttributeKeySize,
@@ -65,32 +72,57 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  AttributeKeyLength,
 		Name: i18n.NewString("Length"),
-		Desc: i18n.NewString("Length of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Length of the item itself, excluding packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyWidth,
 		Name: i18n.NewString("Width"),
-		Desc: i18n.NewString("Width of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Width of the item itself, excluding packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyHeight,
 		Name: i18n.NewString("Height"),
-		Desc: i18n.NewString("Height of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Height of the item itself, excluding packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyDiameter,
 		Name: i18n.NewString("Diameter"),
-		Desc: i18n.NewString("Diameter of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Diameter of the item itself, excluding packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyWeight,
 		Name: i18n.NewString("Weight"),
-		Desc: i18n.NewString("Weight of a single unit of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Weight of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyVolume,
 		Name: i18n.NewString("Volume"),
-		Desc: i18n.NewString("Volume of a single unit of the item, usually as an amount with a unit of measure."),
+		Desc: i18n.NewString("Volume of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."),
+	},
+	{
+		Key:  AttributeKeyPackagingLength,
+		Name: i18n.NewString("Packaging Length"),
+		Desc: i18n.NewString("Length of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
+	},
+	{
+		Key:  AttributeKeyPackagingWidth,
+		Name: i18n.NewString("Packaging Width"),
+		Desc: i18n.NewString("Width of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
+	},
+	{
+		Key:  AttributeKeyPackagingHeight,
+		Name: i18n.NewString("Packaging Height"),
+		Desc: i18n.NewString("Height of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
+	},
+	{
+		Key:  AttributeKeyPackagingVolume,
+		Name: i18n.NewString("Packaging Volume"),
+		Desc: i18n.NewString("Volume of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
+	},
+	{
+		Key:  AttributeKeyPackagingWeight,
+		Name: i18n.NewString("Packaging Weight"),
+		Desc: i18n.NewString("Gross weight of a single packaged unit of the item, including packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyProduction,
@@ -150,7 +182,7 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 }
 
 // Attribute describes a named feature or property of the parent object,
-// such as the colour or size of an item. Attributes are identified by
+// such as the color or size of an item. Attributes are identified by
 // either a key or a type, and hold exactly one of the text, code, amount,
 // or date value fields.
 type Attribute struct {

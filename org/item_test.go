@@ -109,8 +109,8 @@ func TestItemAttributesValidation(t *testing.T) {
 	i := &org.Item{
 		Name: "test item",
 		Attributes: []*org.Attribute{
-			{Key: "colour", Text: "Black"},
-			{Key: "colour", Text: "White"},
+			{Key: "color", Text: "Black"},
+			{Key: "color", Text: "White"},
 		},
 	}
 	assert.ErrorContains(t, rules.Validate(i), "item attributes must not contain duplicate keys")
@@ -122,11 +122,11 @@ func TestItemAttributesNormalization(t *testing.T) {
 		Attributes: []*org.Attribute{
 			nil,
 			{},
-			{Key: "colour", Label: " Colour ", Text: " Black "},
+			{Key: "color", Label: " Color ", Text: " Black "},
 		},
 	}
 	norm.Normalize(i)
 	require.Len(t, i.Attributes, 1)
-	assert.Equal(t, "Colour", i.Attributes[0].Label)
+	assert.Equal(t, "Color", i.Attributes[0].Label)
 	assert.Equal(t, "Black", i.Attributes[0].Text)
 }

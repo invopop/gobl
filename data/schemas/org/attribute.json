@@ -14,9 +14,9 @@
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "anyOf": [
             {
-              "const": "colour",
-              "title": "Colour",
-              "description": "Colour of the item, either as a name or a code such as RAL or Pantone."
+              "const": "color",
+              "title": "Color",
+              "description": "Color of the item, either as a name or a code such as RAL or Pantone."
             },
             {
               "const": "size",
@@ -31,32 +31,57 @@
             {
               "const": "length",
               "title": "Length",
-              "description": "Length of the item, usually as an amount with a unit of measure."
+              "description": "Length of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "width",
               "title": "Width",
-              "description": "Width of the item, usually as an amount with a unit of measure."
+              "description": "Width of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "height",
               "title": "Height",
-              "description": "Height of the item, usually as an amount with a unit of measure."
+              "description": "Height of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "diameter",
               "title": "Diameter",
-              "description": "Diameter of the item, usually as an amount with a unit of measure."
+              "description": "Diameter of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "weight",
               "title": "Weight",
-              "description": "Weight of a single unit of the item, usually as an amount with a unit of measure."
+              "description": "Weight of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "volume",
               "title": "Volume",
-              "description": "Volume of a single unit of the item, usually as an amount with a unit of measure."
+              "description": "Volume of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "packaging+length",
+              "title": "Packaging Length",
+              "description": "Length of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "packaging+width",
+              "title": "Packaging Width",
+              "description": "Width of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "packaging+height",
+              "title": "Packaging Height",
+              "description": "Height of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "packaging+volume",
+              "title": "Packaging Volume",
+              "description": "Volume of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "packaging+weight",
+              "title": "Packaging Weight",
+              "description": "Gross weight of a single packaged unit of the item, including packaging, usually as an amount with a unit of measure."
             },
             {
               "const": "production",
@@ -153,7 +178,7 @@
         }
       },
       "type": "object",
-      "description": "Attribute describes a named feature or property of the parent object, such as the colour or size of an item."
+      "description": "Attribute describes a named feature or property of the parent object, such as the color or size of an item."
     }
   }
 }

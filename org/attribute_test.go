@@ -18,15 +18,15 @@ import (
 func TestAttributeValidation(t *testing.T) {
 	t.Run("valid with text", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:   org.AttributeKeyColour,
-			Label: "Colour",
+			Key:   org.AttributeKeyColor,
+			Label: "Color",
 			Text:  "Black",
 		}
 		assert.NoError(t, rules.Validate(a))
 	})
 	t.Run("valid with code", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:  org.AttributeKeyColour,
+			Key:  org.AttributeKeyColor,
 			Code: "RAL 5015",
 		}
 		assert.NoError(t, rules.Validate(a))
@@ -68,7 +68,7 @@ func TestAttributeValidation(t *testing.T) {
 	})
 	t.Run("both key and type", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:  org.AttributeKeyColour,
+			Key:  org.AttributeKeyColor,
 			Type: "X01",
 			Text: "Black",
 		}
@@ -76,7 +76,7 @@ func TestAttributeValidation(t *testing.T) {
 	})
 	t.Run("missing value", func(t *testing.T) {
 		a := &org.Attribute{
-			Key: org.AttributeKeyColour,
+			Key: org.AttributeKeyColor,
 		}
 		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
 	})
@@ -90,7 +90,7 @@ func TestAttributeValidation(t *testing.T) {
 	})
 	t.Run("text and code", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:  org.AttributeKeyColour,
+			Key:  org.AttributeKeyColor,
 			Text: "Black",
 			Code: "RAL 9005",
 		}
@@ -115,11 +115,11 @@ func TestAttributeNormalization(t *testing.T) {
 	})
 	t.Run("trims strings", func(t *testing.T) {
 		a := &org.Attribute{
-			Label: "  Colour  ",
+			Label: "  Color  ",
 			Text:  " Black ",
 		}
 		norm.Normalize(a)
-		assert.Equal(t, "Colour", a.Label)
+		assert.Equal(t, "Color", a.Label)
 		assert.Equal(t, "Black", a.Text)
 	})
 }
@@ -129,7 +129,7 @@ func TestCleanAttributes(t *testing.T) {
 		attrs := []*org.Attribute{
 			nil,
 			{},
-			{Key: "colour", Text: "Black"},
+			{Key: "color", Text: "Black"},
 		}
 		out := org.CleanAttributes(attrs)
 		require.Len(t, out, 1)
@@ -151,14 +151,14 @@ func TestAttributesHaveUniqueKeys(t *testing.T) {
 	test := org.AttributesHaveUniqueKeys()
 	t.Run("unique keys", func(t *testing.T) {
 		assert.True(t, test.Check([]*org.Attribute{
-			{Key: org.AttributeKeyColour, Text: "Black"},
+			{Key: org.AttributeKeyColor, Text: "Black"},
 			{Key: org.AttributeKeySize, Text: "L"},
 		}))
 	})
 	t.Run("duplicate keys", func(t *testing.T) {
 		assert.False(t, test.Check([]*org.Attribute{
-			{Key: org.AttributeKeyColour, Text: "Black"},
-			{Key: org.AttributeKeyColour, Text: "White"},
+			{Key: org.AttributeKeyColor, Text: "Black"},
+			{Key: org.AttributeKeyColor, Text: "White"},
 		}))
 	})
 	t.Run("ignores nil entries and missing keys", func(t *testing.T) {
@@ -166,7 +166,7 @@ func TestAttributesHaveUniqueKeys(t *testing.T) {
 			nil,
 			{Type: "X01", Text: "Black"},
 			{Type: "X01", Text: "White"},
-			{Key: org.AttributeKeyColour, Text: "Black"},
+			{Key: org.AttributeKeyColor, Text: "Black"},
 		}))
 	})
 	t.Run("empty list", func(t *testing.T) {
@@ -196,8 +196,8 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 	prop, ok := js.Properties.Get("key")
 	require.True(t, ok)
 	require.Len(t, prop.AnyOf, len(org.AttributeKeyDefinitions)+1)
-	assert.Equal(t, org.AttributeKeyColour, prop.AnyOf[0].Const)
-	assert.Equal(t, "Colour", prop.AnyOf[0].Title)
+	assert.Equal(t, org.AttributeKeyColor, prop.AnyOf[0].Const)
+	assert.Equal(t, "Color", prop.AnyOf[0].Title)
 	last := prop.AnyOf[len(prop.AnyOf)-1]
 	assert.Equal(t, "Other", last.Title)
 	assert.NotEmpty(t, last.Pattern)

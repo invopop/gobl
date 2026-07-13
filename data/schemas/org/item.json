@@ -54,7 +54,7 @@
           },
           "type": "array",
           "title": "Attributes",
-          "description": "Attributes describe named features or properties of the item, such as\ncolour or size."
+          "description": "Attributes describe named features or properties of the item, such as\ncolor or size."
         },
         "description": {
           "type": "string",
