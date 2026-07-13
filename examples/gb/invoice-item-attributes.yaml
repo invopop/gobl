@@ -41,7 +41,7 @@ lines:
           text: "Black"
         - key: "size"
           label: "Size"
-          text: "L"
+          code: "L"
         - key: "weight"
           amount: "0.2"
           unit: "kg"
