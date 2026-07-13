@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "26e98c28269ca63c9aea11ead9ea7e8ac145462d46715abacc24d7fc41c641a9"
+			"val": "c2c7ee4b5d75dbe152dcaf0bee91db662aac5d2501dd2b471493b36f930b3ea3"
 		}
 	},
 	"doc": {
@@ -56,14 +56,23 @@
 					"name": "Cotton T-Shirt",
 					"attributes": [
 						{
-							"key": "colour",
 							"label": "Colour",
-							"value": "Black"
+							"key": "colour",
+							"text": "Black"
 						},
 						{
-							"key": "size",
 							"label": "Size",
-							"value": "L"
+							"key": "size",
+							"text": "L"
+						},
+						{
+							"key": "weight",
+							"amount": "0.2",
+							"unit": "kg"
+						},
+						{
+							"key": "material",
+							"text": "100% Cotton"
 						}
 					],
 					"price": "12.00",

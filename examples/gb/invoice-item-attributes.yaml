@@ -38,10 +38,15 @@ lines:
       attributes:
         - key: "colour"
           label: "Colour"
-          value: "Black"
+          text: "Black"
         - key: "size"
           label: "Size"
-          value: "L"
+          text: "L"
+        - key: "weight"
+          amount: "0.2"
+          unit: "kg"
+        - key: "material"
+          text: "100% Cotton"
     taxes:
       - cat: VAT
         rate: "standard"

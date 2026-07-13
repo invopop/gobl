@@ -64,6 +64,8 @@ const (
 	UnitWatt             Unit = `w`
 	UnitKilowatt         Unit = `kw`
 	UnitKilowattHour     Unit = `kwh`
+	UnitKilojoule        Unit = `kj`
+	UnitKilocalorie      Unit = `kcal`
 	UnitYear             Unit = `yr`
 	UnitMonth            Unit = `mon`
 	UnitWeek             Unit = `wk`
@@ -176,6 +178,8 @@ var UnitDefinitions = []DefUnit{
 	{UnitWatt, "Watts", "W", "", "WTT"},
 	{UnitKilowatt, "Kilowatts", "kW", "", "KWT"},
 	{UnitKilowattHour, "Kilowatt Hours", "kWh", "", "KWH"},
+	{UnitKilojoule, "Kilojoules", "kJ", "", "KJO"},
+	{UnitKilocalorie, "Kilocalories", "kcal", "", "E14"},
 	{UnitRate, "Rate", "", "A unit of quantity expressed as a rate for usage of a facility or service.", "A9"},
 	{UnitYear, "Years", "", "A unit of time equal to twelve months.", "ANN"},
 	{UnitMonth, "Months", "", "Unit of time equal to 1/12 of a year of 365,25 days.", "MON"},

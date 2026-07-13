@@ -1,41 +1,108 @@
 package org_test
 
 import (
+	"encoding/json"
 	"testing"
+	"time"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAttributeValidation(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
+	t.Run("valid with text", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:   "colour",
+			Key:   org.AttributeKeyColour,
 			Label: "Colour",
-			Value: "Black",
+			Text:  "Black",
 		}
 		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("valid without label", func(t *testing.T) {
+	t.Run("valid with code", func(t *testing.T) {
 		a := &org.Attribute{
-			Key:   "colour",
-			Value: "Black",
+			Key:  org.AttributeKeyColour,
+			Code: "RAL 5015",
 		}
 		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("missing key", func(t *testing.T) {
+	t.Run("valid with amount and unit", func(t *testing.T) {
 		a := &org.Attribute{
-			Value: "Black",
+			Key:    org.AttributeKeyWeight,
+			Amount: num.NewAmount(200, 0),
+			Unit:   org.UnitGram,
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute key is required")
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("valid with amount and no unit", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:    "thread-count",
+			Amount: num.NewAmount(300, 0),
+		}
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("valid with date", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:  org.AttributeKeyExpiry,
+			Date: cal.NewDate(2026, time.December, 31),
+		}
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("valid with type instead of key", func(t *testing.T) {
+		a := &org.Attribute{
+			Type: "X01",
+			Text: "Black",
+		}
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("missing key and type", func(t *testing.T) {
+		a := &org.Attribute{
+			Text: "Black",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have either a key or a type, but not both")
+	})
+	t.Run("both key and type", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:  org.AttributeKeyColour,
+			Type: "X01",
+			Text: "Black",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have either a key or a type, but not both")
 	})
 	t.Run("missing value", func(t *testing.T) {
 		a := &org.Attribute{
-			Key: "colour",
+			Key: org.AttributeKeyColour,
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute value is required")
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+	})
+	t.Run("multiple values", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Text:   "200g",
+			Amount: num.NewAmount(200, 0),
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+	})
+	t.Run("text and code", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:  org.AttributeKeyColour,
+			Text: "Black",
+			Code: "RAL 9005",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+	})
+	t.Run("unit without amount", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:  org.AttributeKeyWeight,
+			Text: "200",
+			Unit: org.UnitGram,
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute unit may only be used alongside an amount")
 	})
 }
 
@@ -49,11 +116,11 @@ func TestAttributeNormalization(t *testing.T) {
 	t.Run("trims strings", func(t *testing.T) {
 		a := &org.Attribute{
 			Label: "  Colour  ",
-			Value: " Black ",
+			Text:  " Black ",
 		}
 		norm.Normalize(a)
 		assert.Equal(t, "Colour", a.Label)
-		assert.Equal(t, "Black", a.Value)
+		assert.Equal(t, "Black", a.Text)
 	})
 }
 
@@ -62,14 +129,76 @@ func TestCleanAttributes(t *testing.T) {
 		attrs := []*org.Attribute{
 			nil,
 			{},
-			{Label: "Colour", Value: "Black"},
+			{Key: "colour", Text: "Black"},
 		}
 		out := org.CleanAttributes(attrs)
-		assert.Len(t, out, 1)
-		assert.Equal(t, "Colour", out[0].Label)
+		require.Len(t, out, 1)
+		assert.Equal(t, "Black", out[0].Text)
+	})
+	t.Run("keeps partially filled entries", func(t *testing.T) {
+		attrs := []*org.Attribute{
+			{Unit: org.UnitGram},
+		}
+		assert.Len(t, org.CleanAttributes(attrs), 1)
 	})
 	t.Run("returns nil when none remain", func(t *testing.T) {
 		assert.Nil(t, org.CleanAttributes([]*org.Attribute{nil, {}}))
 		assert.Nil(t, org.CleanAttributes(nil))
 	})
+}
+
+func TestAttributesHaveUniqueKeys(t *testing.T) {
+	test := org.AttributesHaveUniqueKeys()
+	t.Run("unique keys", func(t *testing.T) {
+		assert.True(t, test.Check([]*org.Attribute{
+			{Key: org.AttributeKeyColour, Text: "Black"},
+			{Key: org.AttributeKeySize, Text: "L"},
+		}))
+	})
+	t.Run("duplicate keys", func(t *testing.T) {
+		assert.False(t, test.Check([]*org.Attribute{
+			{Key: org.AttributeKeyColour, Text: "Black"},
+			{Key: org.AttributeKeyColour, Text: "White"},
+		}))
+	})
+	t.Run("ignores nil entries and missing keys", func(t *testing.T) {
+		assert.True(t, test.Check([]*org.Attribute{
+			nil,
+			{Type: "X01", Text: "Black"},
+			{Type: "X01", Text: "White"},
+			{Key: org.AttributeKeyColour, Text: "Black"},
+		}))
+	})
+	t.Run("empty list", func(t *testing.T) {
+		assert.True(t, test.Check([]*org.Attribute{}))
+		assert.True(t, test.Check([]*org.Attribute(nil)))
+	})
+	t.Run("unexpected type", func(t *testing.T) {
+		assert.False(t, test.Check("not a list"))
+	})
+}
+
+func TestAttributeJSONSchemaExtend(t *testing.T) {
+	base := `
+		{
+			"properties": {
+				"key": {
+					"$ref": "https://gobl.org/draft-0/cbc/key",
+					"title": "Key"
+				}
+			}
+		}
+	`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(base), js))
+	org.Attribute{}.JSONSchemaExtend(js)
+
+	prop, ok := js.Properties.Get("key")
+	require.True(t, ok)
+	require.Len(t, prop.AnyOf, len(org.AttributeKeyDefinitions)+1)
+	assert.Equal(t, org.AttributeKeyColour, prop.AnyOf[0].Const)
+	assert.Equal(t, "Colour", prop.AnyOf[0].Title)
+	last := prop.AnyOf[len(prop.AnyOf)-1]
+	assert.Equal(t, "Other", last.Title)
+	assert.NotEmpty(t, last.Pattern)
 }

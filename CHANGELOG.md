@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
-- `org`: new `Attribute` model with `Item.Attributes` for named item features such as colour or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data.
+- `org`: new `Attribute` model with `Item.Attributes` for named item features such as colour or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
+- `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
 
 ## [v0.501.0] - 2026-06-16
 

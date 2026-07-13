@@ -70,6 +70,11 @@ func itemRules() *rules.Set {
 		rules.Field("price",
 			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
 		),
+		rules.Field("attributes",
+			rules.Assert("03", "item attributes must not contain duplicate keys",
+				AttributesHaveUniqueKeys(),
+			),
+		),
 	)
 }
 

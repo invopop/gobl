@@ -139,6 +139,14 @@
           "title": "Kilowatt Hours"
         },
         {
+          "const": "kj",
+          "title": "Kilojoules"
+        },
+        {
+          "const": "kcal",
+          "title": "Kilocalories"
+        },
+        {
           "const": "rate",
           "title": "Rate",
           "description": "A unit of quantity expressed as a rate for usage of a facility or service."

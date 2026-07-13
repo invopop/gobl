@@ -105,17 +105,28 @@ func TestItemJSONSchema(t *testing.T) {
 	assert.Equal(t, "Services", prop.AnyOf[1].Title)
 }
 
+func TestItemAttributesValidation(t *testing.T) {
+	i := &org.Item{
+		Name: "test item",
+		Attributes: []*org.Attribute{
+			{Key: "colour", Text: "Black"},
+			{Key: "colour", Text: "White"},
+		},
+	}
+	assert.ErrorContains(t, rules.Validate(i), "item attributes must not contain duplicate keys")
+}
+
 func TestItemAttributesNormalization(t *testing.T) {
 	i := &org.Item{
 		Name: "test item",
 		Attributes: []*org.Attribute{
 			nil,
 			{},
-			{Label: " Colour ", Value: " Black "},
+			{Key: "colour", Label: " Colour ", Text: " Black "},
 		},
 	}
 	norm.Normalize(i)
 	require.Len(t, i.Attributes, 1)
 	assert.Equal(t, "Colour", i.Attributes[0].Label)
-	assert.Equal(t, "Black", i.Attributes[0].Value)
+	assert.Equal(t, "Black", i.Attributes[0].Text)
 }
