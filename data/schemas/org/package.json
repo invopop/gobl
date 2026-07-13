@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/package",
+  "$ref": "#/$defs/org.Package",
+  "$defs": {
+    "org.Package": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label for the package for presentation in output documents."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "anyOf": [
+            {
+              "const": "bag",
+              "title": "Bag"
+            },
+            {
+              "const": "bale",
+              "title": "Bale"
+            },
+            {
+              "const": "barrel",
+              "title": "Barrel"
+            },
+            {
+              "const": "bin",
+              "title": "Bin"
+            },
+            {
+              "const": "box",
+              "title": "Box"
+            },
+            {
+              "const": "bundle",
+              "title": "Bundle"
+            },
+            {
+              "const": "can",
+              "title": "Can"
+            },
+            {
+              "const": "carton",
+              "title": "Carton"
+            },
+            {
+              "const": "case",
+              "title": "Case"
+            },
+            {
+              "const": "crate",
+              "title": "Crate"
+            },
+            {
+              "const": "drum",
+              "title": "Drum"
+            },
+            {
+              "const": "envelope",
+              "title": "Envelope"
+            },
+            {
+              "const": "pallet",
+              "title": "Pallet"
+            },
+            {
+              "const": "reel",
+              "title": "Reel"
+            },
+            {
+              "const": "roll",
+              "title": "Roll"
+            },
+            {
+              "const": "sack",
+              "title": "Sack"
+            },
+            {
+              "const": "tray",
+              "title": "Tray"
+            },
+            {
+              "const": "tub",
+              "title": "Tub"
+            },
+            {
+              "const": "tube",
+              "title": "Tube"
+            },
+            {
+              "const": "unpacked",
+              "title": "Unpacked",
+              "description": "Unpacked or unpackaged goods."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Other"
+            }
+          ],
+          "title": "Key",
+          "description": "Key for the type of package, based on the list pre-defined by GOBL\nwith mappings to UN/ECE Recommendation 21 codes."
+        },
+        "count": {
+          "type": "integer",
+          "title": "Count",
+          "description": "Count of packages of this same type, when more than one."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities used to identify the individual package, such as a\nGS1 Serial Shipping Container Code (SSCC)."
+        },
+        "attributes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/attribute"
+          },
+          "type": "array",
+          "title": "Attributes",
+          "description": "Attributes describe features of the package, such as its dimensions\nand gross weight."
+        }
+      },
+      "type": "object",
+      "description": "Package describes a physical package or container used to pack and ship an item, based on the UBL \"Package\" class."
+    }
+  }
+}

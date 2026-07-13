@@ -34,6 +34,9 @@ type Line struct {
 	// Breakdown of the line item for more detailed information. The sum of all lines
 	// will be used for the item price.
 	Breakdown []*SubLine `json:"breakdown,omitempty" jsonschema:"title=Breakdown"`
+	// Packages describe the physical packages or containers used to pack and
+	// ship the line's items, most useful in delivery documents.
+	Packages []*org.Package `json:"packages,omitempty" jsonschema:"title=Packages"`
 	// Result of quantity multiplied by the item's price (calculated)
 	Sum *num.Amount `json:"sum,omitempty" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
 	// Discounts applied to this line
@@ -211,6 +214,7 @@ func normalizeLine(l *Line) {
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
 	l.Breakdown = CleanSubLines(l.Breakdown)
+	l.Packages = org.CleanPackages(l.Packages)
 }
 
 func normalizeSubLine(sl *SubLine) {

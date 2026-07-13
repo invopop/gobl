@@ -436,6 +436,47 @@
       ]
     },
     {
+      "id": "GOBL-ORG-PACKAGE",
+      "object": "org.Package",
+      "subsets": [
+        {
+          "field": "key",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-ORG-PACKAGE-01",
+                  "desc": "package key must be or extend one of the pre-defined keys",
+                  "tests": "be or starts with one of [bag, bale, barrel, bin, box, bundle, can, carton, case, crate, drum, envelope, pallet, reel, roll, sack, tray, tub, tube, unpacked]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "count",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PACKAGE-02",
+              "desc": "package count must be zero or positive",
+              "tests": "at least 0"
+            }
+          ]
+        },
+        {
+          "field": "attributes",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PACKAGE-03",
+              "desc": "package attributes must not contain duplicate keys",
+              "tests": "attribute keys must be unique"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-PERSON",
       "object": "org.Person",
       "subsets": [

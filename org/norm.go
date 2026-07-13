@@ -26,5 +26,6 @@ func init() {
 		norm.For(normalizeWebsite),
 		norm.For(normalizeAttachment),
 		norm.For(normalizeAttribute),
+		norm.For(normalizePackage),
 	)
 }

@@ -55,6 +55,14 @@
           "title": "Breakdown",
           "description": "Breakdown of the line item for more detailed information. The sum of all lines\nwill be used for the item price."
         },
+        "packages": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/package"
+          },
+          "type": "array",
+          "title": "Packages",
+          "description": "Packages describe the physical packages or containers used to pack and\nship the line's items, most useful in delivery documents."
+        },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Sum",
