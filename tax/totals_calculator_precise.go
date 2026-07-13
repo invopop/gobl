@@ -1,5 +1,9 @@
 package tax
 
+import (
+	"github.com/invopop/gobl/num"
+)
+
 // calculatePreciseTotals accumulates the rate bases with at least two extra
 // decimal places of precision above the currency's own, providing the most
 // accurate results possible when rounding the final sums.
@@ -22,7 +26,7 @@ func (tc *TotalCalculator) calculatePreciseTotals(t *Total, taxLines []*taxLine)
 		}
 	}
 
-	t.Calculate(tc.Currency, RoundingRulePrecise)
+	t.calculatePreciseFinalSums(tc.zero)
 	return nil
 }
 
@@ -45,4 +49,58 @@ func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
 		}
 	}
 	return nil
+}
+
+// calculatePreciseFinalSums provides the final category and document sums
+// from the accumulated bases, maintaining their precision until the totals
+// are rounded to the currency later.
+func (t *Total) calculatePreciseFinalSums(zero num.Amount) {
+	t.Sum = zero
+	t.Retained = nil
+	for _, ct := range t.Categories {
+		ct.Amount = zero
+		ct.Surcharge = nil
+		for _, rt := range ct.Rates {
+			if rt.Percent == nil {
+				rt.Amount = zero
+				continue // exempt, nothing else to do
+			}
+			rt.Amount = rt.Percent.Of(rt.Base)
+			ct.Amount = ct.Amount.MatchPrecision(rt.Amount)
+			ct.Amount = ct.Amount.Add(rt.Amount)
+			if rt.Surcharge != nil {
+				rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base)
+				s := zero
+				if ct.Surcharge != nil {
+					s = *ct.Surcharge
+				}
+				s = s.MatchPrecision(rt.Surcharge.Amount)
+				s = s.Add(rt.Surcharge.Amount)
+				ct.Surcharge = &s
+			}
+		}
+
+		if ct.Informative {
+			// Informative taxes don't affect Sum or Retained
+			continue
+		}
+		if ct.Retained {
+			r := zero
+			if t.Retained != nil {
+				r = *t.Retained
+			}
+			r = r.MatchPrecision(ct.Amount)
+			r = r.Add(ct.Amount)
+			if ct.Surcharge != nil {
+				r = r.Add(*ct.Surcharge)
+			}
+			t.Retained = &r
+		} else {
+			t.Sum = t.Sum.MatchPrecision(ct.Amount)
+			t.Sum = t.Sum.Add(ct.Amount)
+			if ct.Surcharge != nil {
+				t.Sum = t.Sum.Add(*ct.Surcharge)
+			}
+		}
+	}
 }

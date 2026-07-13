@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `tax`: totals now reset the retained tax sum before recalculating, so repeated calculations over the same totals no longer accumulate stale retained amounts.
+- `tax`: totals now reset the retained tax and category surcharge sums before recalculating, so repeated calculations over the same totals no longer accumulate stale amounts.
 
 ## [v0.502.2] - 2026-07-06
 

@@ -1,5 +1,10 @@
 package tax
 
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+)
+
 // calculateCurrencyTotals performs all calculations using the currency's
 // precision, rounding each line's amounts before adding them to the sums,
 // so that the results can always be recalculated from the data presented.
@@ -26,7 +31,7 @@ func (tc *TotalCalculator) calculateCurrencyTotals(t *Total, taxLines []*taxLine
 		}
 	}
 
-	tc.calculateFinalSums(t)
+	t.calculateCurrencyFinalSums(tc.zero, tc.Includes)
 	return nil
 }
 
@@ -70,25 +75,28 @@ func (tc *TotalCalculator) extractIncludedTaxes(t *Total, taxLines []*taxLine) e
 	return nil
 }
 
-// calculateFinalSums provides the final category and document sums, keeping
-// any tax amounts already extracted from tax-inclusive totals.
-func (tc *TotalCalculator) calculateFinalSums(t *Total) {
-	t.Sum = tc.zero
+// calculateCurrencyFinalSums provides the final category and document sums
+// from the accumulated bases at the currency's precision, keeping any tax
+// amounts already extracted from the tax-inclusive totals of the included
+// category.
+func (t *Total) calculateCurrencyFinalSums(zero num.Amount, includes cbc.Code) {
+	t.Sum = zero
 	t.Retained = nil
 	for _, ct := range t.Categories {
-		ct.Amount = tc.zero
+		ct.Amount = zero
+		ct.Surcharge = nil
 		for _, rt := range ct.Rates {
 			if rt.Percent == nil {
-				rt.Amount = tc.zero
+				rt.Amount = zero
 				continue // exempt, nothing else to do
 			}
-			if ct.Code != tc.Includes {
+			if ct.Code != includes {
 				rt.Amount = rt.Percent.Of(rt.Base)
 			}
 			ct.Amount = ct.Amount.Add(rt.Amount)
 			if rt.Surcharge != nil {
 				rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base)
-				s := tc.zero
+				s := zero
 				if ct.Surcharge != nil {
 					s = *ct.Surcharge
 				}
@@ -106,7 +114,7 @@ func (tc *TotalCalculator) calculateFinalSums(t *Total) {
 			a = a.Add(*ct.Surcharge)
 		}
 		if ct.Retained {
-			r := tc.zero
+			r := zero
 			if t.Retained != nil {
 				r = *t.Retained
 			}

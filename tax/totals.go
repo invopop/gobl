@@ -344,81 +344,22 @@ func (t *Total) Exchange(rate *currency.ExchangeRate, rr cbc.Key) {
 	t.Calculate(rate.To, rr)
 }
 
-// Calculate will go through all the categories and rates to calculate the final
-// sum of the taxes. The rounding rule will be applied to the final sums.
+// Calculate will go through all the categories and rates to recalculate the
+// final tax amounts and sums from the accumulated bases according to the
+// rounding rule. When source lines are available, use the TotalCalculator
+// instead; recalculations from the bases alone cannot take into account any
+// taxes included in prices.
 func (t *Total) Calculate(cur currency.Code, rr cbc.Key) {
 	if t == nil {
 		return
 	}
 	zero := cur.Def().Zero()
-	t.calculateFinalSum(zero, rr)
-}
-
-func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
-	// Now go through each category to apply the percentage and calculate the final sums
-	t.Sum = zero
-	t.Retained = nil
-	for _, ct := range t.Categories {
-		t.calculateBaseCategoryTotal(ct, zero, rr)
-
-		if ct.Informative {
-			// Informative taxes don't affect Sum or Retained
-			continue
-		}
-		if ct.Retained {
-			if t.Retained == nil {
-				t.Retained = &zero
-			}
-			tr := *t.Retained
-			tr = matchRoundingPrecision(rr, tr, ct.Amount)
-			tr = tr.Add(ct.Amount)
-			if ct.Surcharge != nil {
-				tr = tr.Add(*ct.Surcharge)
-			}
-			t.Retained = &tr
-		} else {
-			t.Sum = matchRoundingPrecision(rr, t.Sum, ct.Amount)
-			t.Sum = t.Sum.Add(ct.Amount)
-			if ct.Surcharge != nil {
-				t.Sum = t.Sum.Add(*ct.Surcharge)
-			}
-		}
-	}
-}
-
-func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, rr cbc.Key) {
-	ct.Amount = zero
-	for _, rt := range ct.Rates {
-		if rt.Percent == nil {
-			rt.Amount = zero
-			continue // exempt, nothing else to do
-		}
-		base := rt.Base
-		rt.Amount = rt.Percent.Of(rt.Base)
-		ct.Amount = matchRoundingPrecision(rr, ct.Amount, rt.Amount)
-		ct.Amount = ct.Amount.Add(rt.Amount)
-		if rt.Surcharge != nil {
-			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(base)
-			if ct.Surcharge == nil {
-				ct.Surcharge = &zero
-			}
-			a := rt.Surcharge.Amount
-			x := *ct.Surcharge
-			x = matchRoundingPrecision(rr, x, a)
-			x = x.Add(a)
-			ct.Surcharge = &x
-		}
-	}
-}
-
-// matchPrecision will decide what precision to maintain on the amount based on
-// the rounding rule.
-func matchRoundingPrecision(rr cbc.Key, a, b num.Amount) num.Amount {
 	switch rr {
 	case RoundingRuleCurrency:
-		return a // maintain original precision
+		t.calculateCurrencyFinalSums(zero, cbc.CodeEmpty)
+	default:
+		t.calculatePreciseFinalSums(zero)
 	}
-	return a.MatchPrecision(b)
 }
 
 // Round will go through all the values generated and round them to the currency's
