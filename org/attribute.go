@@ -26,13 +26,6 @@ const (
 	AttributeKeyWeight   cbc.Key = "weight"
 	AttributeKeyVolume   cbc.Key = "volume"
 
-	// Dimensions of a single packaged unit of the item as shipped
-	AttributeKeyPackagingLength cbc.Key = "packaging+length"
-	AttributeKeyPackagingWidth  cbc.Key = "packaging+width"
-	AttributeKeyPackagingHeight cbc.Key = "packaging+height"
-	AttributeKeyPackagingVolume cbc.Key = "packaging+volume"
-	AttributeKeyPackagingWeight cbc.Key = "packaging+weight"
-
 	// Dates
 	AttributeKeyProduction cbc.Key = "production"
 	AttributeKeyExpiry     cbc.Key = "expiry"
@@ -98,31 +91,6 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 		Key:  AttributeKeyVolume,
 		Name: i18n.NewString("Volume"),
 		Desc: i18n.NewString("Volume of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."),
-	},
-	{
-		Key:  AttributeKeyPackagingLength,
-		Name: i18n.NewString("Packaging Length"),
-		Desc: i18n.NewString("Length of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
-	},
-	{
-		Key:  AttributeKeyPackagingWidth,
-		Name: i18n.NewString("Packaging Width"),
-		Desc: i18n.NewString("Width of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
-	},
-	{
-		Key:  AttributeKeyPackagingHeight,
-		Name: i18n.NewString("Packaging Height"),
-		Desc: i18n.NewString("Height of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
-	},
-	{
-		Key:  AttributeKeyPackagingVolume,
-		Name: i18n.NewString("Packaging Volume"),
-		Desc: i18n.NewString("Volume of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."),
-	},
-	{
-		Key:  AttributeKeyPackagingWeight,
-		Name: i18n.NewString("Packaging Weight"),
-		Desc: i18n.NewString("Gross weight of a single packaged unit of the item, including packaging, usually as an amount with a unit of measure."),
 	},
 	{
 		Key:  AttributeKeyProduction,

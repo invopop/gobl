@@ -59,31 +59,6 @@
               "description": "Volume of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."
             },
             {
-              "const": "packaging+length",
-              "title": "Packaging Length",
-              "description": "Length of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
-            },
-            {
-              "const": "packaging+width",
-              "title": "Packaging Width",
-              "description": "Width of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
-            },
-            {
-              "const": "packaging+height",
-              "title": "Packaging Height",
-              "description": "Height of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
-            },
-            {
-              "const": "packaging+volume",
-              "title": "Packaging Volume",
-              "description": "Volume of a single packaged unit of the item as shipped, usually as an amount with a unit of measure."
-            },
-            {
-              "const": "packaging+weight",
-              "title": "Packaging Weight",
-              "description": "Gross weight of a single packaged unit of the item, including packaging, usually as an amount with a unit of measure."
-            },
-            {
               "const": "production",
               "title": "Production Date",
               "description": "Date the item was produced or manufactured."
