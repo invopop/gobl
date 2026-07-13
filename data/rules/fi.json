@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-FI",
+  "package": "fi",
+  "subsets": [
+    {
+      "id": "GOBL-FI-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [FI]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-FI-TAX-IDENTITY-01",
+                      "desc": "invalid Finnish Y-tunnus tax identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

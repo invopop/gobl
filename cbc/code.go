@@ -26,7 +26,7 @@ const (
 // systems and formats can be preserved as-is: normalization applies Unicode NFC,
 // removes control and other non-printable characters, and trims surrounding
 // whitespace (see NormalizeCode), while validation only requires that the code
-// be no longer than 64 characters and contain no control characters or leading
+// be no longer than 128 characters and contain no control characters or leading
 // or trailing whitespace.
 //
 // Fields that need a stricter, canonical format (letters, numbers, and single
@@ -46,7 +46,7 @@ var (
 	CodePattern              = `^[` + CodeDigits + `]+([` + CodeSeparators + `]?[` + CodeDigits + `]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
-	CodeMaxLength     uint64 = 64
+	CodeMaxLength     uint64 = 128
 
 	// CodePatternLenient is the default code validation pattern. It rejects
 	// leading or trailing whitespace and any control character (C0, DEL, and
@@ -218,7 +218,7 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		MinLength: &CodeMinLength,
 		MaxLength: &CodeMaxLength,
 		Description: here.Doc(`
-			Text identifier with a limit of 64 characters, no control characters, and
+			Text identifier with a limit of 128 characters, no control characters, and
 			no leading or trailing whitespace.
 		`),
 	}

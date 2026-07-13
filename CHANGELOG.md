@@ -8,9 +8,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
 - `org`: new `Attribute` model with `Item.Attributes` for named item features such as colour or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
 - `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
+
+## [v0.502.2] - 2026-07-06
+
+### Changed
+
+- `cbc.Code`: maximum length increased from 64 to 128 characters.
+
+## [v0.502.1] - 2026-07-02
+
+### Removed
+
+- `dk-oioubl-v2`: removed from the approved external addons list. The [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) module is not yet ready for release; it was approved prematurely in v0.502.0. It will be re-added once the module ships a stable release.
+
+## [v0.502.0] - 2026-07-02
+
+### Fixed
+
+- `pkg/examples`: normalize path separators before skip-list matching so example discovery works correctly on Windows.
+
+### Added
+
+- `fi`: added the Finnish (FI) tax regime.
+- `dk-oioubl-v2`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate. The EN 16931 rules that OIOUBL deliberately relaxes are handled inside that addon via `rules.Ignore`, keeping `addons/eu/en16931` free of OIOUBL-specific coupling.
+- `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
+
+### Changed
+
+- `addons/pt/saft`: **breaking**: the Portuguese SAF-T addon moved to the standalone [`github.com/invopop/gobl.pt.saft`](https://github.com/invopop/gobl.pt.saft) module. Add a blank import of `gobl.pt.saft/addon` to keep using the `pt-saft-v1` addon key.
+- `addons/br`: **breaking**: the Brazil NF-e/NFC-e (`br-nfe-v4`) and NFS-e (`br-nfse-v1`) addons moved to their own standalone modules, [`github.com/invopop/gobl.br.nfe`](https://github.com/invopop/gobl.br.nfe) and [`github.com/invopop/gobl.br.nfse`](https://github.com/invopop/gobl.br.nfse) respectively. Add a blank import of `gobl.br.nfe/addon` and/or `gobl.br.nfse/addon` to keep using the `br-nfe-*` / `br-nfse-*` addon keys.
+- `addons/mx`: **breaking**: the Mexico CFDI (`mx-cfdi-v4`) addon — including the fuel account balance and food voucher complements — moved to the standalone [`github.com/invopop/gobl.mx.cfdi`](https://github.com/invopop/gobl.mx.cfdi) module. Add a blank import of `gobl.mx.cfdi/addon` to keep using the `mx-cfdi-*` addon keys.
+
+### Removed
+
+- `addons`: `fr-ctc-v1` generic addon removed, no longer used by [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc).
 
 ## [v0.501.0] - 2026-06-16
 

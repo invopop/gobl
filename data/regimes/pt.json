@@ -1726,6 +1726,38 @@
           }
         }
       ]
+    },
+    {
+      "code": "IRS",
+      "name": {
+        "en": "IRS",
+        "pt": "IRS"
+      },
+      "title": {
+        "en": "Personal income tax",
+        "pt": "Imposto sobre o Rendimento das Pessoas Singulares"
+      },
+      "desc": {
+        "en": "Personal income tax withheld at source from payments made to individuals\nand self-employed workers. The Portuguese payer retains the tax on each\npayment and remits it to the AT on behalf of the recipient.",
+        "pt": "Imposto sobre o rendimento retido na fonte sobre pagamentos efetuados a\npessoas singulares e trabalhadores independentes. O pagador português retém\no imposto em cada pagamento e entrega-o à AT por conta do titular do\nrendimento."
+      },
+      "retained": true
+    },
+    {
+      "code": "IRC",
+      "name": {
+        "en": "IRC",
+        "pt": "IRC"
+      },
+      "title": {
+        "en": "Corporate income tax",
+        "pt": "Imposto sobre o Rendimento das Pessoas Coletivas"
+      },
+      "desc": {
+        "en": "Corporate income tax withheld at source from payments made to legal\npersons. The Portuguese payer retains the tax on each payment and remits it\nto the AT on behalf of the recipient.",
+        "pt": "Imposto sobre o rendimento retido na fonte sobre pagamentos efetuados a\npessoas coletivas. O pagador português retém o imposto em cada pagamento e\nentrega-o à AT por conta do titular do rendimento."
+      },
+      "retained": true
     }
   ]
 }

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/it/sdi"
-	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -125,7 +124,11 @@ func TestInvoiceGetExtensions(t *testing.T) {
 	})
 	t.Run("missing lines", func(t *testing.T) {
 		inv := baseInvoice(t)
-		inv.Addons = tax.WithAddons(saft.V1)
+		inv.Addons = tax.WithAddons(sdi.V1)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "IT",
+			Code:    "12345678903",
+		}
 		require.NoError(t, inv.Calculate())
 		ext := inv.GetExtensions()
 		assert.Len(t, ext, 1)

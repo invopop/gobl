@@ -6,7 +6,6 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/addons/it/sdi"
-	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -411,7 +410,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Rate:     tax.RateGeneral,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
 								pt.ExtKeyRegion:    "PT-AC",
-								saft.ExtKeyTaxRate: "NOR",
+								"pt-saft-tax-rate": "NOR",
 							}),
 						},
 					},
@@ -432,7 +431,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(1600, 2),
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
 									pt.ExtKeyRegion:    "PT-AC",
-									saft.ExtKeyTaxRate: "NOR",
+									"pt-saft-tax-rate": "NOR",
 								}),
 							},
 						},
