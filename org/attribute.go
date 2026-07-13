@@ -154,7 +154,8 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 // either a key or a type, and hold exactly one of the text, code, amount,
 // or date value fields.
 type Attribute struct {
-	// Label for the attribute for internal use, not included in output documents.
+	// Label for the attribute, used for presentation in converted outputs
+	// such as PDFs.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 
 	// Identifier fields; either key or type must be provided, but not both.
