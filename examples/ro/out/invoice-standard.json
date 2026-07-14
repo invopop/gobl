@@ -1,0 +1,137 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f4503e02939330bf6d62a897a9bbcf686c9682f44796a9973899c7b1865275a9"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "RO",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c4e",
+		"type": "standard",
+		"series": "FACT",
+		"code": "0001",
+		"issue_date": "2026-02-10",
+		"currency": "RON",
+		"supplier": {
+			"name": "Furnizor Exemplu S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "16281620"
+			},
+			"addresses": [
+				{
+					"street": "Strada Exemplu 10",
+					"locality": "București",
+					"code": "010101",
+					"country": "RO"
+				}
+			],
+			"emails": [
+				{
+					"addr": "contact@furnizor-exemplu.ro"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Exemplu S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "19"
+			},
+			"addresses": [
+				{
+					"street": "Strada Client 5",
+					"locality": "Cluj-Napoca",
+					"code": "400001",
+					"country": "RO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Servicii de consultanță",
+					"price": "250.00",
+					"unit": "h"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "2500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Cărți tehnice",
+					"price": "80.00",
+					"unit": "unit"
+				},
+				"sum": "400.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "11.0%"
+					}
+				],
+				"total": "400.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer",
+				"detail": "Plată prin transfer bancar",
+				"credit_transfer": [
+					{
+						"iban": "RO49AAAA1B31007593840000",
+						"name": "Furnizor Exemplu S.R.L."
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "2900.00",
+			"total": "2900.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2500.00",
+								"percent": "21.0%",
+								"amount": "525.00"
+							},
+							{
+								"key": "standard",
+								"base": "400.00",
+								"percent": "11.0%",
+								"amount": "44.00"
+							}
+						],
+						"amount": "569.00"
+					}
+				],
+				"sum": "569.00"
+			},
+			"tax": "569.00",
+			"total_with_tax": "3469.00",
+			"payable": "3469.00"
+		}
+	}
+}
