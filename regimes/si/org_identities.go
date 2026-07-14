@@ -13,13 +13,13 @@ const (
 	// IdentityTypeMaticna represents the Slovenian registration number
 	// (matična številka) assigned by AJPES to every entity entered in
 	// the Slovenian Business Register (e.g. "5043611000").
-	IdentityTypeMaticna cbc.Code = "MATICNA"
+	IdentityTypeMaticna cbc.Code = "MŠ"
 )
 
-// registrationNumberLen is the length of a registration number: six
-// digits, a modulo-11 check digit, and a three-digit suffix identifying
-// the business unit ("000" for the head office).
-const registrationNumberLen = 10
+// registrationNumberPattern matches a registration number (matična
+// številka): six base digits, a modulo-11 check digit, and a three-digit
+// suffix identifying the business unit ("000" for the head office).
+const registrationNumberPattern = `^\d{10}$`
 
 // registrationNumberMultipliers are the weights applied to the first six
 // digits of the registration number to calculate the check digit.
@@ -38,8 +38,11 @@ var identityDefinitions = []*cbc.Definition{
 		},
 		Sources: []*cbc.Source{
 			{
-				Title: i18n.NewString("Uredba o vodenju in vzdrževanju Poslovnega registra Slovenije"),
-				URL:   "https://pisrs.si/Pis.web/pregledPredpisa?id=URED7599",
+				Title: i18n.String{
+					i18n.EN: "Decree on the keeping and maintenance of the Slovenian Business Register",
+					i18n.SL: "Uredba o vodenju in vzdrževanju Poslovnega registra Slovenije",
+				},
+				URL: "https://pisrs.si/Pis.web/pregledPredpisa?id=URED7599",
 			},
 		},
 	},
@@ -52,8 +55,14 @@ func orgIdentityRules() *rules.Set {
 			rules.When(
 				org.IdentityTypeIn(IdentityTypeMaticna),
 				rules.Field("code",
-					rules.Assert("01", "identity code for type MATICNA must be valid",
-						is.Func("valid", isValidRegistrationNumber),
+					rules.Assert("01", "Slovenian registration number is required",
+						is.Present,
+					),
+					rules.AssertIfPresent("02", "invalid Slovenian registration number format",
+						is.Matches(registrationNumberPattern),
+					),
+					rules.AssertIfPresent("03", "invalid Slovenian registration number check digit",
+						is.StringFunc("checksum", registrationNumberChecksumValid),
 					),
 				),
 			),
@@ -61,19 +70,14 @@ func orgIdentityRules() *rules.Set {
 	)
 }
 
-// isValidRegistrationNumber expects a registration number in its full
-// ten-digit form and validates the modulo-11 check digit that follows
-// the six base digits. The business unit suffix carries no checksum of
-// its own.
-func isValidRegistrationNumber(value any) bool {
-	code, ok := value.(cbc.Code)
-	if !ok || len(code) != registrationNumberLen {
+// registrationNumberChecksumValid reports whether the registration number's
+// seventh digit is a valid modulo-11 check digit of the first six. The
+// three-digit business-unit suffix carries no checksum of its own and is
+// only validated for being numeric by the format rule. It guards its length
+// so it is safe to call before the format rule has run.
+func registrationNumberChecksumValid(code string) bool {
+	if len(code) < 7 {
 		return false
 	}
-	for i := 7; i < registrationNumberLen; i++ {
-		if code[i] < '0' || code[i] > '9' {
-			return false
-		}
-	}
-	return validateMod11(code[:7], registrationNumberMultipliers) == nil
+	return validMod11(code[:7], registrationNumberMultipliers)
 }

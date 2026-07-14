@@ -91,14 +91,14 @@ func TestTaxIdentityRules(t *testing.T) {
 		{
 			name: "checksum mismatch",
 			code: "12345678",
-			err:  "IDENTITY-01",
+			err:  "IDENTITY-02",
 		},
 		{
 			// The weighted sum leaves a remainder of 0, which is never
 			// assigned: no valid tax number produces it.
 			name: "remainder zero",
 			code: "10000100",
-			err:  "IDENTITY-01",
+			err:  "IDENTITY-02",
 		},
 	}
 

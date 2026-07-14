@@ -45,7 +45,7 @@ func TestValidateOrgIdentity(t *testing.T) {
 				Type: si.IdentityTypeMaticna,
 				Code: "5043611",
 			},
-			err: "ORG-IDENTITY-01",
+			err: "ORG-IDENTITY-02",
 		},
 		{
 			name: "non numeric suffix",
@@ -53,7 +53,7 @@ func TestValidateOrgIdentity(t *testing.T) {
 				Type: si.IdentityTypeMaticna,
 				Code: "1234579A00",
 			},
-			err: "ORG-IDENTITY-01",
+			err: "ORG-IDENTITY-02",
 		},
 		{
 			name: "checksum mismatch",
@@ -61,7 +61,7 @@ func TestValidateOrgIdentity(t *testing.T) {
 				Type: si.IdentityTypeMaticna,
 				Code: "1234571000",
 			},
-			err: "ORG-IDENTITY-01",
+			err: "ORG-IDENTITY-03",
 		},
 		{
 			// The weighted sum leaves a remainder of 0, which is never
@@ -71,7 +71,7 @@ func TestValidateOrgIdentity(t *testing.T) {
 				Type: si.IdentityTypeMaticna,
 				Code: "1234567000",
 			},
-			err: "ORG-IDENTITY-01",
+			err: "ORG-IDENTITY-03",
 		},
 		{
 			name: "empty code",

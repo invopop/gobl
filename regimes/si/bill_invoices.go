@@ -2,7 +2,6 @@ package si
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -17,15 +16,13 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(CountryCode)),
 			rules.Field("supplier",
-				rules.Assert("01", "invoice SI supplier must have a tax ID code",
-					is.Func("has tax ID code", hasSupplierTaxIDCode),
+				rules.Field("tax_id",
+					rules.Assert("01", "invoice SI supplier must have a tax ID", is.Present),
+					rules.Field("code",
+						rules.Assert("02", "invoice SI supplier tax ID must have a code", is.Present),
+					),
 				),
 			),
 		),
 	)
-}
-
-func hasSupplierTaxIDCode(value any) bool {
-	party, _ := value.(*org.Party)
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }

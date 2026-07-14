@@ -11,11 +11,28 @@
           "subsets": [
             {
               "field": "supplier",
-              "assert": [
+              "subsets": [
                 {
-                  "id": "GOBL-SI-BILL-INVOICE-01",
-                  "desc": "invoice SI supplier must have a tax ID code",
-                  "tests": "has tax ID code"
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-BILL-INVOICE-01",
+                      "desc": "invoice SI supplier must have a tax ID",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-BILL-INVOICE-02",
+                          "desc": "invoice SI supplier tax ID must have a code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -31,15 +48,37 @@
           "guard": "context: regime in [SI]",
           "subsets": [
             {
-              "guard": "type in [MATICNA]",
+              "guard": "type in [MŠ]",
               "subsets": [
                 {
                   "field": "code",
                   "assert": [
                     {
                       "id": "GOBL-SI-ORG-IDENTITY-01",
-                      "desc": "identity code for type MATICNA must be valid",
-                      "tests": "valid"
+                      "desc": "Slovenian registration number is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-ORG-IDENTITY-02",
+                          "desc": "invalid Slovenian registration number format",
+                          "tests": "matches ^\\d{10}$"
+                        }
+                      ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-ORG-IDENTITY-03",
+                          "desc": "invalid Slovenian registration number check digit",
+                          "tests": "checksum"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -64,8 +103,18 @@
                   "assert": [
                     {
                       "id": "GOBL-SI-TAX-IDENTITY-01",
-                      "desc": "invalid Slovenian VAT identity code",
-                      "tests": "valid"
+                      "desc": "invalid Slovenian VAT identity format",
+                      "tests": "matches ^[1-9]\\d{7}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-TAX-IDENTITY-02",
+                      "desc": "invalid Slovenian VAT identity check digit",
+                      "tests": "checksum"
                     }
                   ]
                 }
