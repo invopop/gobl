@@ -233,6 +233,21 @@
               "tests": "length between 0 and 1"
             }
           ]
+        },
+        {
+          "field": "identities",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-ORG-PARTY-02",
+              "desc": "only one identity may have the legal scope (BT-30, BT-47)",
+              "tests": "single legal-scope identity"
+            },
+            {
+              "id": "GOBL-EU-EN16931-ORG-PARTY-03",
+              "desc": "only one identity may have the tax scope (BT-31, BT-48)",
+              "tests": "single tax-scope identity"
+            }
+          ]
         }
       ]
     },
