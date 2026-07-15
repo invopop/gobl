@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -688,4 +689,64 @@ func TestTotalCalculate(t *testing.T) {
 		assert.Equal(t, "5.00", tt.Category("ISS").Rates[0].Amount.String())
 		assert.Equal(t, "3.00", tt.Category("ISS").Rates[1].Amount.String())
 	})
+}
+
+func TestTotalCalculateRepeated(t *testing.T) {
+	build := func() *tax.Total {
+		return &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(21, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: *num.NewPercentage(52, 3),
+							},
+						},
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(10, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: *num.NewPercentage(14, 3),
+							},
+						},
+					},
+				},
+				{
+					Code:     "IRPF",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(15, 2),
+						},
+					},
+				},
+				{
+					Code:     "RET",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(2, 2),
+						},
+					},
+				},
+			},
+		}
+	}
+	for _, rr := range []cbc.Key{tax.RoundingRulePrecise, tax.RoundingRuleCurrency} {
+		t.Run(rr.String(), func(t *testing.T) {
+			tot := build()
+			tot.Calculate(currency.EUR, rr)
+			tot.Calculate(currency.EUR, rr)
+			assert.Equal(t, "21.00", tot.Categories[0].Rates[0].Amount.String())
+			assert.Equal(t, "6.60", tot.Categories[0].Surcharge.String())
+			assert.Equal(t, "37.60", tot.Sum.String())
+			require.NotNil(t, tot.Retained)
+			assert.Equal(t, "17.00", tot.Retained.String())
+		})
+	}
 }

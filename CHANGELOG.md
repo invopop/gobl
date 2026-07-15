@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `org`: new `Attribute` model with `Item.Attributes` for named item features such as color or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties of the item, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
 - `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
 
+### Changed
+
+- `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
+
+### Fixed
+
+- `tax`: totals now reset the retained tax and category surcharge sums before recalculating, so repeated calculations over the same totals no longer accumulate stale amounts.
+
 ## [v0.502.2] - 2026-07-06
 
 ### Changed

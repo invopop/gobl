@@ -1,0 +1,253 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "afa55df368118e28e7acbc6eeb840c13d99f88bc2f671d660ffa08791ff86543"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"uuid": "0198f2f1-7f30-7d33-9a63-8a12f4a1c003",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "024",
+		"issue_date": "2026-07-09",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"rounding": "currency"
+		},
+		"supplier": {
+			"name": "Hotel Azul Lda.",
+			"tax_id": {
+				"country": "PT",
+				"code": "599999993"
+			},
+			"addresses": [
+				{
+					"street": "Rua das Flores",
+					"locality": "Lisboa",
+					"code": "3830-000",
+					"country": "PT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Guest",
+			"tax_id": {
+				"country": "PT",
+				"code": "999999990"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Room rate",
+					"price": "125.00",
+					"unit": "one"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Breakfast",
+					"price": "12.50",
+					"unit": "one"
+				},
+				"sum": "12.50",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "13.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "12.50"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Breakfast",
+					"price": "12.50",
+					"unit": "one"
+				},
+				"sum": "12.50",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "13.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "12.50"
+			},
+			{
+				"i": 5,
+				"quantity": "1",
+				"item": {
+					"name": "Dinner menu",
+					"price": "35.80",
+					"unit": "one"
+				},
+				"sum": "35.80",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "intermediate",
+						"percent": "13.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "35.80"
+			},
+			{
+				"i": 6,
+				"quantity": "1",
+				"item": {
+					"name": "Minibar drinks",
+					"price": "7.95",
+					"unit": "one"
+				},
+				"sum": "7.95",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "7.95"
+			},
+			{
+				"i": 7,
+				"quantity": "1",
+				"item": {
+					"name": "Spa access",
+					"price": "45.00",
+					"unit": "one"
+				},
+				"sum": "45.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "23.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
+					}
+				],
+				"total": "45.00"
+			}
+		],
+		"totals": {
+			"sum": "363.75",
+			"tax_included": "31.04",
+			"total": "332.71",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pt-region": "PT"
+								},
+								"base": "235.85",
+								"percent": "6.0%",
+								"amount": "14.15"
+							},
+							{
+								"key": "standard",
+								"ext": {
+									"pt-region": "PT"
+								},
+								"base": "53.81",
+								"percent": "13.0%",
+								"amount": "6.99"
+							},
+							{
+								"key": "standard",
+								"ext": {
+									"pt-region": "PT"
+								},
+								"base": "43.05",
+								"percent": "23.0%",
+								"amount": "9.90"
+							}
+						],
+						"amount": "31.04"
+					}
+				],
+				"sum": "31.04"
+			},
+			"tax": "31.04",
+			"total_with_tax": "363.75",
+			"payable": "363.75"
+		}
+	}
+}
