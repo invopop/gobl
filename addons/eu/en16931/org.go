@@ -206,18 +206,12 @@ func orgIdentitiesScopeCount(identities []*org.Identity, scope cbc.Key) int {
 
 func orgIdentitiesSingleLegalScope(val any) bool {
 	identities, ok := val.([]*org.Identity)
-	if !ok {
-		return true
-	}
-	return orgIdentitiesScopeCount(identities, org.IdentityScopeLegal) <= 1
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeLegal) <= 1
 }
 
 func orgIdentitiesSingleTaxScope(val any) bool {
 	identities, ok := val.([]*org.Identity)
-	if !ok {
-		return true
-	}
-	return orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
 }
 
 func orgInboxRules() *rules.Set {
