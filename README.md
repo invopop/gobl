@@ -43,12 +43,13 @@ The complexity around invoicing, particularly electronic invoicing, can quickly 
 - [Issues](https://github.com/invopop/gobl/issues) if you have a specific problem with GOBL related to code or usage.
 - [Discussions](https://github.com/invopop/gobl/discussions) for open discussions about the future of GOBL, complications with a specific country, or any open-ended issues.
 - [Pull Requests](https://github.com/invopop/gobl/pulls) are very welcome, especially if you'd like to see a new local country or features.
-- [Slack](https://join.slack.com/t/goblschema/shared_invite/zt-20qu1s0cm-AUE8oYbGly681EsYdDiqxw) for real-time chat about something specific or urgent. We always encourage you to use one of the other options, which are indexed and searchable, but if you'd like to bring something to attention quickly, this is a great resource.
+- [Invopop Community GOBL channel](https://community.invopop.com/c/gobl) for questions, announcements, and conversations with other GOBL users and the team.
 
 ## Companion Projects
 
 GOBL makes it easy to create business documents, like invoices, but check out some of the companion projects that help create, use, and convert into other formats:
 
+- [GOBL.dev](https://github.com/invopop/gobl.dev) - composes this core library with the complete set of addons, and provides the `gobl` CLI, HTTP API, MCP server, and WebAssembly builds.
 - [Builder](https://github.com/invopop/gobl.builder) - Available to try at [build.gobl.org](https://build.gobl.org), this tool makes it easy to build, test, and discover the features of GOBL using the [wasm](https://webassembly.org/) binary in the browser.
 - [Generator](https://github.com/invopop/gobl.generator) - Ruby project to convert GOBL JSON Schema into libraries for other languages or documentation.
 - [Docs](https://github.com/invopop/gobl.docs) - Content of the official GOBL Documentation Site [docs.gobl.org](https://docs.gobl.org).
@@ -58,7 +59,7 @@ Conversion to local and international formats:
 
 - [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable versions of GOBL documents ready to be converted to PDF.
 - [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
-- [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
+- [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.mx.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to FA_VAT / KSeF (Poland)](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
 - [GOBL to TicketBAI (Spain/Euskadi)](https://github.com/invopop/gobl.ticketbai) - convert into [TicketBAI](https://www.batuz.eus/fitxategiak/batuz/ticketbai/ticketBaiV1-2.xsd) documents, required in the Euskadi (northern region of Spain)
@@ -66,6 +67,19 @@ Conversion to local and international formats:
 - [GOBL UBL](https://github.com/invopop/gobl.ubl) - convert to and from the OASIS Universal Business Language, including support for local and global profiles such as for Peppol and XRechnung (Germany)
 - [GOBL CII](https://github.com/invopop/gobl.cii) - convert to and from the Cross Industry Invoice (CII) XML format, including regional variants including Factur-X (France), ZUGFeRD and XRechnung (Germany).
 - [GOBL to Stripe](https://github.com/invopop/gobl.stripe) - support for creating GOBL invoices from stripe API data.
+
+## Addons
+
+Addons adapt GOBL documents to a specific format or regulatory regime, adding the extensions, normalization, and validation rules identified by a versioned key under `$addons` (e.g. `es-facturae-v3`). Most addons are bundled with this library in the [addons directory](https://github.com/invopop/gobl/tree/main/addons), but some live in their own Go modules and must be imported separately:
+
+- [gobl.br.nfe](https://github.com/invopop/gobl.br.nfe) - Brazil NF-e (`br-nfe-v4`)
+- [gobl.br.nfse](https://github.com/invopop/gobl.br.nfse) - Brazil NFS-e (`br-nfse-v1`)
+- [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc) - France CTC flows (`fr-ctc-flow2-v1`, `fr-ctc-flow6-v1`, `fr-ctc-flow10-v1`)
+- [gobl.mx.cfdi](https://github.com/invopop/gobl.mx.cfdi) - Mexican SAT CFDI (`mx-cfdi-v4`)
+- [gobl.pt.saft](https://github.com/invopop/gobl.pt.saft) - Portugal SAF-T (`pt-saft-v1`)
+- [gobl.sa.zatca](https://github.com/invopop/gobl.sa.zatca) - Saudi Arabia ZATCA (`sa-zatca-v1`)
+
+The [GOBL.dev](https://github.com/invopop/gobl.dev) project bundles all of the approved external addons alongside this library, so its CLI and API support the full set out of the box. See the [addons README](https://github.com/invopop/gobl/blob/main/addons/README.md) for how external addons are registered and approved.
 
 ## Usage
 
@@ -160,6 +174,7 @@ with the full addon set. Install the CLI with:
 ```sh
 go install github.com/invopop/gobl.dev/cmd/gobl@latest
 ```
+
 ## Development
 
 GOBL uses the `go generate` command to automatically generate JSON schemas, definitions, and some Go code output. After any changes, be sure to run:
