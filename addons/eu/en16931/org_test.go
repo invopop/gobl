@@ -356,6 +356,50 @@ func TestOrgPartyValidate(t *testing.T) {
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "cannot have more than one inbox (BT-34, BT-49)")
 	})
+
+	t.Run("single legal-scope identity", func(t *testing.T) {
+		p := &org.Party{
+			Identities: []*org.Identity{
+				{Code: "123", Scope: org.IdentityScopeLegal},
+				{Code: "456", Scope: org.IdentityScopeTax},
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("multiple legal-scope identities", func(t *testing.T) {
+		p := &org.Party{
+			Identities: []*org.Identity{
+				{Code: "123", Scope: org.IdentityScopeLegal},
+				{Code: "456", Scope: org.IdentityScopeLegal},
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "only one identity may have the legal scope (BT-30, BT-47)")
+	})
+
+	t.Run("single tax-scope identity", func(t *testing.T) {
+		p := &org.Party{
+			Identities: []*org.Identity{
+				{Code: "123", Scope: org.IdentityScopeTax},
+				{Code: "456", Scope: org.IdentityScopeLegal},
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("multiple tax-scope identities", func(t *testing.T) {
+		p := &org.Party{
+			Identities: []*org.Identity{
+				{Code: "123", Scope: org.IdentityScopeTax},
+				{Code: "456", Scope: org.IdentityScopeTax},
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "only one identity may have the tax scope (BT-31, BT-48)")
+	})
 }
 
 func TestOrgInboxValidate(t *testing.T) {
