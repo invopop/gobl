@@ -184,8 +184,6 @@ func orgPartyRules() *rules.Set {
 			),
 		),
 		rules.Field("identities",
-			// BT-30, BT-47: a party has at most one legal registration
-			// identifier, so only one identity may hold the legal scope.
 			rules.Assert("02", "only one identity may have the legal scope (BT-30, BT-47)",
 				is.Func("single legal-scope identity", orgIdentitiesSingleLegalScope),
 			),
