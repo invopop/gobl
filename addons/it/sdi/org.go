@@ -46,7 +46,7 @@ func orgAttributeRules() *rules.Set {
 	return rules.For(new(org.Attribute),
 		rules.Field("type",
 			rules.Assert("01", "attribute type cannot be longer than 10 characters (TipoDato)",
-				is.RuneLength(0, 10),
+				is.Length(0, 10),
 			),
 		),
 	)

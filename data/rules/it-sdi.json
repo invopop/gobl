@@ -441,7 +441,7 @@
             {
               "id": "GOBL-IT-SDI-ORG-ATTRIBUTE-01",
               "desc": "attribute type cannot be longer than 10 characters (TipoDato)",
-              "tests": "rune length between 0 and 10"
+              "tests": "length between 0 and 10"
             }
           ]
         }
