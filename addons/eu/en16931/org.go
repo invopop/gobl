@@ -183,7 +183,35 @@ func orgPartyRules() *rules.Set {
 				is.Length(0, 1),
 			),
 		),
+		rules.Field("identities",
+			rules.Assert("02", "only one identity may have the legal scope (BT-30, BT-47)",
+				is.Func("single legal-scope identity", orgIdentitiesSingleLegalScope),
+			),
+			rules.Assert("03", "only one identity may have the tax scope (BT-31, BT-48)",
+				is.Func("single tax-scope identity", orgIdentitiesSingleTaxScope),
+			),
+		),
 	)
+}
+
+func orgIdentitiesScopeCount(identities []*org.Identity, scope cbc.Key) int {
+	n := 0
+	for _, id := range identities {
+		if id != nil && id.Scope.Has(scope) {
+			n++
+		}
+	}
+	return n
+}
+
+func orgIdentitiesSingleLegalScope(val any) bool {
+	identities, ok := val.([]*org.Identity)
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeLegal) <= 1
+}
+
+func orgIdentitiesSingleTaxScope(val any) bool {
+	identities, ok := val.([]*org.Identity)
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
 }
 
 func orgInboxRules() *rules.Set {
