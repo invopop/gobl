@@ -1370,3 +1370,324 @@ func TestTotalBySumCalculate(t *testing.T) {
 	}
 
 }
+
+func TestTotalCalculatorCurrencyRoundingIncludedTaxes(t *testing.T) {
+	date := cal.MakeDate(2026, 7, 9)
+	zero := currency.EUR.Def().Zero()
+	calculate := func(t *testing.T, country l10n.TaxCountryCode, lines ...tax.TaxableLine) *tax.Total {
+		t.Helper()
+		tc := &tax.TotalCalculator{
+			Country:  country,
+			Currency: currency.EUR,
+			Rounding: tax.RoundingRuleCurrency,
+			Date:     date,
+			Lines:    lines,
+			Includes: tax.CategoryVAT,
+		}
+		tot := new(tax.Total)
+		require.NoError(t, tc.Calculate(tot))
+		tot.Round(zero)
+		return tot
+	}
+
+	t.Run("single rate over multiple lines", func(t *testing.T) {
+		// 12 lines of 125.00 with 6% VAT included
+		lines := make([]tax.TaxableLine, 12)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateReduced}},
+				amount: num.MakeAmount(12500, 2),
+			}
+		}
+		tot := calculate(t, "PT", lines...)
+		rt := tot.Categories[0].Rates[0]
+		assert.Equal(t, "1415.09", rt.Base.String())
+		assert.Equal(t, "84.91", rt.Amount.String())
+		assert.Equal(t, "84.91", tot.Sum.String())
+		// the base and amount add up to the original tax-inclusive sum
+		assert.Equal(t, "1500.00", rt.Base.Add(rt.Amount).String())
+	})
+
+	t.Run("lines with individual rounding errors", func(t *testing.T) {
+		// each line's price of 1.93 with 21% VAT included has a base of
+		// 1.5950 that individually rounds up to 1.60
+		lines := make([]tax.TaxableLine, 10)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+				amount: num.MakeAmount(193, 2),
+			}
+		}
+		tot := calculate(t, "ES", lines...)
+		rt := tot.Categories[0].Rates[0]
+		assert.Equal(t, "15.95", rt.Base.String())
+		assert.Equal(t, "3.35", rt.Amount.String())
+		assert.Equal(t, "19.30", rt.Base.Add(rt.Amount).String())
+	})
+
+	t.Run("with retained taxes", func(t *testing.T) {
+		lines := make([]tax.TaxableLine, 10)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes: tax.Set{
+					{Category: tax.CategoryVAT, Rate: tax.RateGeneral},
+					{Category: es.TaxCategoryIRPF, Rate: "pro"},
+				},
+				amount: num.MakeAmount(193, 2),
+			}
+		}
+		tot := calculate(t, "ES", lines...)
+		vat := tot.Categories[0].Rates[0]
+		irpf := tot.Categories[1].Rates[0]
+		// the retained tax base matches the VAT base exactly
+		assert.Equal(t, "15.95", vat.Base.String())
+		assert.Equal(t, "15.95", irpf.Base.String())
+		assert.Equal(t, "2.39", irpf.Amount.String())
+		assert.Equal(t, "3.35", tot.Sum.String())
+		assert.Equal(t, "2.39", tot.Retained.String())
+	})
+
+	t.Run("retained tax over multiple rate groups", func(t *testing.T) {
+		mk := func(cents int64, rate cbc.Key) tax.TaxableLine {
+			return &taxableLine{
+				taxes: tax.Set{
+					{Category: tax.CategoryVAT, Rate: rate},
+					{Category: es.TaxCategoryIRPF, Rate: "pro"},
+				},
+				amount: num.MakeAmount(cents, 2),
+			}
+		}
+		tot := calculate(t, "ES",
+			mk(193, tax.RateGeneral),
+			mk(314, tax.RateGeneral),
+			mk(677, tax.RateGeneral),
+			mk(187, tax.RateReduced),
+			mk(407, tax.RateReduced),
+			mk(297, tax.RateReduced),
+		)
+		general := tot.Categories[0].Rates[0]
+		reduced := tot.Categories[0].Rates[1]
+		irpf := tot.Categories[1].Rates[0]
+		// each rate group's base and amount add up to its tax-inclusive sum,
+		// with the amount maintained from the group total even when it
+		// differs from a recalculation over the rounded base
+		assert.Equal(t, "9.79", general.Base.String())
+		assert.Equal(t, "2.05", general.Amount.String())
+		assert.Equal(t, "8.10", reduced.Base.String())
+		assert.Equal(t, "0.81", reduced.Amount.String())
+		// the retained base spans both groups without rounding drift
+		assert.Equal(t, "17.89", irpf.Base.String())
+		assert.Equal(t, "2.68", irpf.Amount.String())
+	})
+
+	t.Run("with exempt lines", func(t *testing.T) {
+		tot := calculate(t, "ES",
+			&taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+				amount: num.MakeAmount(193, 2),
+			},
+			&taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Key: tax.KeyExempt}},
+				amount: num.MakeAmount(1000, 2),
+			},
+		)
+		general := tot.Categories[0].Rates[0]
+		exempt := tot.Categories[0].Rates[1]
+		assert.Equal(t, "1.60", general.Base.String())
+		assert.Equal(t, "0.33", general.Amount.String())
+		assert.Equal(t, "10.00", exempt.Base.String())
+		assert.Equal(t, "0.00", exempt.Amount.String())
+	})
+}
+
+func TestTotalCalculatorCurrencyRounding(t *testing.T) {
+	date := cal.MakeDate(2026, 7, 9)
+	zero := currency.EUR.Def().Zero()
+	calculate := func(t *testing.T, country l10n.TaxCountryCode, includes cbc.Code, lines ...tax.TaxableLine) (*tax.Total, error) {
+		t.Helper()
+		tc := &tax.TotalCalculator{
+			Country:  country,
+			Currency: currency.EUR,
+			Rounding: tax.RoundingRuleCurrency,
+			Date:     date,
+			Lines:    lines,
+			Includes: includes,
+		}
+		tot := new(tax.Total)
+		err := tc.Calculate(tot)
+		tot.Round(zero)
+		return tot, err
+	}
+
+	t.Run("with surcharges", func(t *testing.T) {
+		lines := make([]tax.TaxableLine, 2)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes: tax.Set{{
+					Category:  tax.CategoryVAT,
+					Percent:   num.NewPercentage(21, 2),
+					Surcharge: num.NewPercentage(52, 3),
+				}},
+				amount: num.MakeAmount(10000, 2),
+			}
+		}
+		lines = append(lines, &taxableLine{
+			taxes: tax.Set{{
+				Category:  tax.CategoryVAT,
+				Percent:   num.NewPercentage(10, 2),
+				Surcharge: num.NewPercentage(14, 3),
+			}},
+			amount: num.MakeAmount(10000, 2),
+		})
+		tot, err := calculate(t, "ES", "", lines...)
+		require.NoError(t, err)
+		ct := tot.Categories[0]
+		rt := ct.Rates[0]
+		assert.Equal(t, "200.00", rt.Base.String())
+		assert.Equal(t, "42.00", rt.Amount.String())
+		assert.Equal(t, "10.40", rt.Surcharge.Amount.String())
+		assert.Equal(t, "11.80", ct.Surcharge.String())
+		assert.Equal(t, "63.80", tot.Sum.String())
+	})
+
+	t.Run("included taxes with surcharges", func(t *testing.T) {
+		lines := make([]tax.TaxableLine, 2)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes: tax.Set{{
+					Category:  tax.CategoryVAT,
+					Percent:   num.NewPercentage(21, 2),
+					Surcharge: num.NewPercentage(52, 3),
+				}},
+				amount: num.MakeAmount(12100, 2),
+			}
+		}
+		tot, err := calculate(t, "ES", tax.CategoryVAT, lines...)
+		require.NoError(t, err)
+		rt := tot.Categories[0].Rates[0]
+		assert.Equal(t, "200.00", rt.Base.String())
+		assert.Equal(t, "42.00", rt.Amount.String())
+		assert.Equal(t, "10.40", rt.Surcharge.Amount.String())
+		assert.Equal(t, "52.40", tot.Sum.String())
+	})
+
+	t.Run("with informative categories", func(t *testing.T) {
+		tot, err := calculate(t, "BR", "",
+			&taxableLine{
+				taxes: tax.Set{{
+					Category: br.TaxCategoryISS,
+					Percent:  num.NewPercentage(5, 2),
+				}},
+				amount: num.MakeAmount(20000, 2),
+			},
+		)
+		require.NoError(t, err)
+		ct := tot.Categories[0]
+		assert.True(t, ct.Informative)
+		assert.Equal(t, "10.00", ct.Amount.String())
+		assert.Equal(t, "0.00", tot.Sum.String())
+		assert.Nil(t, tot.Retained)
+	})
+
+	t.Run("with multiple retained categories", func(t *testing.T) {
+		tot, err := calculate(t, "BR", "",
+			&taxableLine{
+				taxes: tax.Set{
+					{
+						Category: br.TaxCategoryPISRet,
+						Percent:  num.NewPercentage(65, 4),
+					},
+					{
+						Category: br.TaxCategoryCOFINSRet,
+						Percent:  num.NewPercentage(3, 2),
+					},
+				},
+				amount: num.MakeAmount(100000, 2),
+			},
+		)
+		require.NoError(t, err)
+		require.NotNil(t, tot.Retained)
+		assert.Equal(t, "36.50", tot.Retained.String())
+		assert.Equal(t, "0.00", tot.Sum.String())
+	})
+
+	t.Run("error including retained category", func(t *testing.T) {
+		_, err := calculate(t, "ES", "IRPF",
+			&taxableLine{
+				taxes:  tax.Set{{Category: "IRPF", Percent: num.NewPercentage(15, 2)}},
+				amount: num.MakeAmount(10000, 2),
+			},
+		)
+		require.ErrorContains(t, err, "cannot include retained category 'IRPF'")
+	})
+
+	t.Run("error including informative category", func(t *testing.T) {
+		_, err := calculate(t, "BR", br.TaxCategoryISS,
+			&taxableLine{
+				taxes: tax.Set{{
+					Category: br.TaxCategoryISS,
+					Percent:  num.NewPercentage(5, 2),
+				}},
+				amount: num.MakeAmount(10000, 2),
+			},
+		)
+		require.ErrorContains(t, err, "cannot include informative category 'ISS'")
+	})
+
+	t.Run("lines without the included category", func(t *testing.T) {
+		tot, err := calculate(t, "ES", tax.CategoryVAT,
+			&taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+				amount: num.MakeAmount(193, 2),
+			},
+			&taxableLine{
+				taxes:  tax.Set{{Category: es.TaxCategoryIRPF, Percent: num.NewPercentage(15, 2)}},
+				amount: num.MakeAmount(1000, 2),
+			},
+		)
+		require.NoError(t, err)
+		vat := tot.Categories[0].Rates[0]
+		irpf := tot.Categories[1].Rates[0]
+		assert.Equal(t, "1.60", vat.Base.String())
+		assert.Equal(t, "0.33", vat.Amount.String())
+		assert.Equal(t, "10.00", irpf.Base.String())
+		assert.Equal(t, "1.50", irpf.Amount.String())
+	})
+
+	t.Run("line totals with extra precision", func(t *testing.T) {
+		tot, err := calculate(t, "ES", "",
+			&taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateGeneral}},
+				amount: num.MakeAmount(1000049, 4), // 100.0049
+			},
+		)
+		require.NoError(t, err)
+		rt := tot.Categories[0].Rates[0]
+		assert.Equal(t, "100.00", rt.Base.String())
+		assert.Equal(t, "21.00", rt.Amount.String())
+	})
+
+	t.Run("repeated calculations", func(t *testing.T) {
+		tc := &tax.TotalCalculator{
+			Country:  "ES",
+			Currency: currency.EUR,
+			Rounding: tax.RoundingRuleCurrency,
+			Date:     date,
+			Lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{Category: tax.CategoryVAT, Rate: tax.RateGeneral},
+						{Category: es.TaxCategoryIRPF, Rate: "pro"},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+		}
+		tot := new(tax.Total)
+		require.NoError(t, tc.Calculate(tot))
+		require.NoError(t, tc.Calculate(tot))
+		require.NotNil(t, tot.Retained)
+		assert.Equal(t, "15.00", tot.Retained.String())
+		assert.Equal(t, "21.00", tot.Sum.String())
+	})
+}
