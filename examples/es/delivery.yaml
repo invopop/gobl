@@ -34,3 +34,10 @@ lines:
     item:
       name: "Promo Mugs"
       price: "12.50"
+    packages:
+      - key: "box"
+        count: 2
+        attributes:
+          - key: "weight"
+            amount: "3.5"
+            unit: "kg"
