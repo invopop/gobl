@@ -39,6 +39,19 @@ func orgAddressRules() *rules.Set {
 	)
 }
 
+// orgAttributeRules validates item attributes against the constraints of the
+// FatturaPA AltriDatiGestionali block they map to. The attribute's type is
+// mapped to the TipoDato field, which is limited to 10 characters.
+func orgAttributeRules() *rules.Set {
+	return rules.For(new(org.Attribute),
+		rules.Field("type",
+			rules.Assert("01", "attribute type cannot be longer than 10 characters (TipoDato)",
+				is.Length(0, 10),
+			),
+		),
+	)
+}
+
 func addressHasStreetOrPostBox(val any) bool {
 	a, ok := val.(*org.Address)
 	if !ok || a == nil {

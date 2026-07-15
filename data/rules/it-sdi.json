@@ -432,6 +432,22 @@
       ]
     },
     {
+      "id": "GOBL-IT-SDI-ORG-ATTRIBUTE",
+      "object": "org.Attribute",
+      "subsets": [
+        {
+          "field": "type",
+          "assert": [
+            {
+              "id": "GOBL-IT-SDI-ORG-ATTRIBUTE-01",
+              "desc": "attribute type cannot be longer than 10 characters (TipoDato)",
+              "tests": "length between 0 and 10"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-IT-SDI-TAX-COMBO",
       "object": "tax.Combo",
       "subsets": [
