@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `addons/eu/en16931`: party identity scope validation — at most one identity may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
+
 ### Changed
 
 - `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
