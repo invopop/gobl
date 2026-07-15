@@ -21,9 +21,10 @@ const (
 
 	// RoundingRuleCurrency is the alternative method of performing calculations
 	// whereby the currency's precision or subunits are used to round the amounts
-	// **before** performing the sums. This can lead to rounding errors when converting
-	// to and from prices that include taxes, but is a common approach in other digital
-	// invoicing formats.
+	// **before** performing the sums. This is a common approach in other digital
+	// invoicing formats. When prices include tax, the tax amount is determined
+	// from the sum of each rate's tax-inclusive line totals and shared back over
+	// the lines, so that the resulting bases and amounts always sum precisely.
 	RoundingRuleCurrency cbc.Key = "currency"
 )
 
@@ -52,7 +53,10 @@ var RoundingRules = []*cbc.Definition{
 				The alternative method of calculating the totals that will first round all the amounts
 				to the currency's precision before making the sums. Totals using this approach can always
 				be recalculated using the amounts presented, but can lead to rounding errors in the case
-				of pre-payments and when line item prices include tax.
+				of pre-payments. When prices include tax, the tax amounts are calculated from each rate's
+				sum of tax-inclusive line totals so that the bases and amounts always add up, though
+				recalculating a tax amount from its base alone may occasionally differ by a single
+				subunit of the currency.
 			`),
 		},
 	},
