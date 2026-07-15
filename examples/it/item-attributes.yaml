@@ -43,11 +43,6 @@ lines:
     item:
       name: Mattoni Rossi
       price: "0.50"
-      # Named item features (EN 16931 BG-32). In FatturaPA these map to the
-      # AltriDatiGestionali block, where the attribute `type` becomes the
-      # TipoDato (limited to 10 characters by the it-sdi addon) and the value
-      # is routed by kind: text/code to RiferimentoTesto, amount to
-      # RiferimentoNumero, and date to RiferimentoData.
       attributes:
         - type: LOTTO
           text: "MR-2025-08"
