@@ -1,0 +1,148 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "231204063b9b6855ff92ccd69b9d87176a0874edc3eb39c0ed83fdc6651973a0"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "LU",
+		"uuid": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+		"type": "standard",
+		"series": "2024",
+		"code": "0002",
+		"issue_date": "2024-09-20",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Acme Luxembourg S.A.",
+			"tax_id": {
+				"country": "LU",
+				"code": "26375245"
+			},
+			"identities": [
+				{
+					"type": "RCS",
+					"code": "B263475"
+				}
+			],
+			"addresses": [
+				{
+					"street": "14 Rue Erasme",
+					"locality": "Luxembourg",
+					"code": "1468",
+					"country": "LU"
+				}
+			]
+		},
+		"customer": {
+			"name": "Entreprise Martin S.à r.l.",
+			"tax_id": {
+				"country": "LU",
+				"code": "12345613"
+			},
+			"addresses": [
+				{
+					"street": "5 Boulevard Royal",
+					"locality": "Luxembourg",
+					"code": "2449",
+					"country": "LU"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "8",
+				"item": {
+					"name": "IT infrastructure services",
+					"price": "3000.00"
+				},
+				"sum": "24000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "17.0%"
+					}
+				],
+				"total": "24000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "200",
+				"item": {
+					"name": "Mineral water (5L)",
+					"price": "2.50"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "8.0%"
+					}
+				],
+				"total": "500.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Children's clothing (set)",
+					"price": "45.00"
+				},
+				"sum": "45.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "super-reduced",
+						"percent": "3.0%"
+					}
+				],
+				"total": "45.00"
+			}
+		],
+		"totals": {
+			"sum": "24545.00",
+			"total": "24545.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "24000.00",
+								"percent": "17.0%",
+								"amount": "4080.00"
+							},
+							{
+								"key": "standard",
+								"base": "500.00",
+								"percent": "8.0%",
+								"amount": "40.00"
+							},
+							{
+								"key": "standard",
+								"base": "45.00",
+								"percent": "3.0%",
+								"amount": "1.35"
+							}
+						],
+						"amount": "4121.35"
+					}
+				],
+				"sum": "4121.35"
+			},
+			"tax": "4121.35",
+			"total_with_tax": "28666.35",
+			"payable": "28666.35"
+		}
+	}
+}

@@ -1,0 +1,109 @@
+{
+  "id": "GOBL-LU",
+  "package": "lu",
+  "subsets": [
+    {
+      "id": "GOBL-LU-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [LU]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-01",
+                      "desc": "Luxembourg TVA number must be exactly 8 digits",
+                      "tests": "length between 8 and 8"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-02",
+                      "desc": "Luxembourg TVA number must contain only digits",
+                      "tests": "digit"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-TAX-IDENTITY-03",
+                      "desc": "invalid Luxembourg TVA number: mod-89 checksum mismatch",
+                      "tests": "valid mod-89 checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LU-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [LU]",
+          "subsets": [
+            {
+              "guard": "type in [RCS]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-LU-ORG-IDENTITY-01",
+                      "desc": "invalid RCS number",
+                      "tests": "matches ^[A-Z]\\d{1,6}$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LU-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [LU]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "guard": "supplier has no TVA tax ID code",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-LU-BILL-INVOICE-01",
+                          "desc": "invoice LU supplier without TVA tax ID code must have an RCS identity",
+                          "tests": "type in [RCS]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

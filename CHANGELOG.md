@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `org`: new `Attribute` model with `Item.Attributes` for named item features such as color or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties of the item, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
 - `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
+- `regimes/lu`: new tax regime for Luxembourg, with full VAT rate history (including the temporary 2023 rate reduction), mod-89 TVA number validation, and RCS company-registry identities.
 
 ### Changed
 
