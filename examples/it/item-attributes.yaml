@@ -50,7 +50,7 @@ lines:
           date: "2025-08-01"
     taxes:
       - cat: VAT
-        rate: standard
+        rate: general
   - quantity: "50"
     item:
       name: Sacchi di Cemento 25kg
@@ -63,4 +63,4 @@ lines:
           unit: kg
     taxes:
       - cat: VAT
-        rate: standard
+        rate: general
