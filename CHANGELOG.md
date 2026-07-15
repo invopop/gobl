@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- `addons/eu/en16931`: party identity scope validation — at most one identity may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
+- `addons/eu/en16931`: party identities are now validated so that at most one may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
 
 ## [v0.502.2] - 2026-07-06
 
