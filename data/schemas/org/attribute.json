@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/attribute",
+  "$ref": "#/$defs/org.Attribute",
+  "$defs": {
+    "org.Attribute": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label for the attribute, used for presentation in converted outputs\nsuch as PDFs."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "anyOf": [
+            {
+              "const": "color",
+              "title": "Color",
+              "description": "Color of the item, either as a name or a code such as RAL or Pantone."
+            },
+            {
+              "const": "size",
+              "title": "Size",
+              "description": "Size of the item, such as a clothing size."
+            },
+            {
+              "const": "material",
+              "title": "Material",
+              "description": "Main material the item is made of, such as cotton or steel."
+            },
+            {
+              "const": "length",
+              "title": "Length",
+              "description": "Length of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "width",
+              "title": "Width",
+              "description": "Width of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "height",
+              "title": "Height",
+              "description": "Height of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "diameter",
+              "title": "Diameter",
+              "description": "Diameter of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "weight",
+              "title": "Weight",
+              "description": "Weight of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "volume",
+              "title": "Volume",
+              "description": "Volume of a single unit of the item itself, excluding packaging, usually as an amount with a unit of measure."
+            },
+            {
+              "const": "production",
+              "title": "Production Date",
+              "description": "Date the item was produced or manufactured."
+            },
+            {
+              "const": "expiry",
+              "title": "Expiry Date",
+              "description": "Date the item expires or is best consumed before."
+            },
+            {
+              "const": "nutrition+energy",
+              "title": "Energy",
+              "description": "Energy content per 100g or 100ml, usually in kilojoules (kj) or kilocalories (kcal)."
+            },
+            {
+              "const": "nutrition+fat",
+              "title": "Fat",
+              "description": "Total fat content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+saturated-fat",
+              "title": "Saturated Fat",
+              "description": "Saturated fat content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+carbohydrates",
+              "title": "Carbohydrates",
+              "description": "Carbohydrate content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+sugars",
+              "title": "Sugars",
+              "description": "Sugar content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+protein",
+              "title": "Protein",
+              "description": "Protein content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+salt",
+              "title": "Salt",
+              "description": "Salt content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "nutrition+fibre",
+              "title": "Fibre",
+              "description": "Fibre content per 100g or 100ml, usually in grams."
+            },
+            {
+              "const": "emissions+co2e",
+              "title": "CO2e Emissions",
+              "description": "Greenhouse gas emissions of a single unit of the item expressed as a carbon dioxide equivalent, usually in kilograms."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Other"
+            }
+          ],
+          "title": "Key",
+          "description": "Key that identifies the attribute, either from the list pre-defined by\nGOBL or an alternative agreed upon between the supplier and customer."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Type",
+          "description": "Type defines a code used to identify the attribute when the \"key\"\nfield is empty, from a code list agreed upon between the supplier\nand customer."
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "Text value of the attribute."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code value of the attribute, used as an alternative to text when the\nvalue comes from a code list agreed upon between the supplier and customer."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "Amount used when the attribute represents a numeric or measurable value."
+        },
+        "unit": {
+          "$ref": "https://gobl.org/draft-0/org/unit",
+          "title": "Unit",
+          "description": "Unit of measure that accompanies the amount."
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "Date value of the attribute."
+        }
+      },
+      "type": "object",
+      "description": "Attribute describes a named feature or property of the parent object, such as the color or size of an item."
+    }
+  }
+}
