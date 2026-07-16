@@ -105,6 +105,12 @@ func billInvoiceRules() *rules.Set {
 			rules.Field("addresses",
 				rules.Assert("12", "customer addresses are required", is.Present),
 			),
+			rules.Field("inboxes",
+				rules.Assert("23",
+					fmt.Sprintf("customer cannot have both '%s' and '%s' inboxes", KeyInboxCode, KeyInboxPEC),
+					is.Func("single SDI inbox", inboxesNotBothCodeAndPEC),
+				),
+			),
 		),
 		// Customer name required when tax_id code is present or people is nil
 		rules.Assert("13", "customer name is required",
@@ -255,6 +261,26 @@ func invoiceCustomerHasFiscalCodeIdentity(val any) bool {
 		return false
 	}
 	return org.IdentityForKey(ids, it.IdentityKeyFiscalCode) != nil
+}
+
+func inboxesNotBothCodeAndPEC(val any) bool {
+	ins, ok := val.([]*org.Inbox)
+	if !ok {
+		return true
+	}
+	var code, pec bool
+	for _, in := range ins {
+		if in == nil {
+			continue
+		}
+		switch in.Key {
+		case KeyInboxCode:
+			code = true
+		case KeyInboxPEC:
+			pec = true
+		}
+	}
+	return !code || !pec
 }
 
 func invoiceHasDeferredTag(val any) bool {

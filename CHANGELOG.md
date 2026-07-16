@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
 - `addons/eu/en16931`: party identities are now validated so that at most one may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
 - `addons/it/sdi`: item attribute `type` is validated to be at most 10 characters, matching the FatturaPA `AltriDatiGestionali/TipoDato` (BT-160) field it maps to.
+- `addons/it/sdi`: invoice customers may no longer carry both an `it-sdi-code` and an `it-sdi-pec` inbox. FatturaPA allows `PECDestinatario` only alongside the `0000000` recipient code, so a document with both can never be delivered.
 
 ### Fixed
 

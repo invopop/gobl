@@ -36,8 +36,6 @@ customer:
   inboxes:
     - key: it-sdi-code
       code: M5UXCR5
-    - key: it-sdi-pec
-      email: "inbox@example.com"
   addresses:
     - num: "23"
       street: Via dei Mille

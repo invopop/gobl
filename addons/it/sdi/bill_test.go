@@ -339,6 +339,34 @@ func TestCustomerValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer people are required when name is empty")
 	})
 
+	t.Run("customer with code inbox", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Inboxes = []*org.Inbox{
+			{Key: sdi.KeyInboxCode, Code: "ABC1234"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("customer with PEC inbox", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Inboxes = []*org.Inbox{
+			{Key: sdi.KeyInboxPEC, Email: "customer@pec.it"},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("customer with both code and PEC inboxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Inboxes = []*org.Inbox{
+			{Key: sdi.KeyInboxCode, Code: "ABC1234"},
+			{Key: sdi.KeyInboxPEC, Email: "customer@pec.it"},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, fmt.Sprintf("customer cannot have both '%s' and '%s' inboxes", sdi.KeyInboxCode, sdi.KeyInboxPEC))
+	})
 }
 
 func TestSupplierTelephoneValidation(t *testing.T) {
