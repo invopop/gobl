@@ -15,6 +15,34 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizeSupplier(inv.Supplier)
+	normalizeCustomer(inv.Customer)
+}
+
+func normalizeCustomer(party *org.Party) {
+	if party == nil {
+		return
+	}
+	// FatturaPA only allows a PEC destination alongside the "0000000"
+	// recipient code, so when an SDI code is also present the code takes
+	// precedence and the PEC inbox is removed.
+	var code, pec bool
+	for _, in := range party.Inboxes {
+		switch in.Key {
+		case KeyInboxCode:
+			code = true
+		case KeyInboxPEC:
+			pec = true
+		}
+	}
+	if code && pec {
+		ins := make([]*org.Inbox, 0, len(party.Inboxes)-1)
+		for _, in := range party.Inboxes {
+			if in.Key != KeyInboxPEC {
+				ins = append(ins, in)
+			}
+		}
+		party.Inboxes = ins
+	}
 }
 
 func normalizeSupplier(party *org.Party) {
@@ -104,12 +132,6 @@ func billInvoiceRules() *rules.Set {
 			),
 			rules.Field("addresses",
 				rules.Assert("12", "customer addresses are required", is.Present),
-			),
-			rules.Field("inboxes",
-				rules.Assert("23",
-					fmt.Sprintf("customer cannot have both '%s' and '%s' inboxes", KeyInboxCode, KeyInboxPEC),
-					is.Func("single SDI inbox", inboxesNotBothCodeAndPEC),
-				),
 			),
 		),
 		// Customer name required when tax_id code is present or people is nil
@@ -261,20 +283,6 @@ func invoiceCustomerHasFiscalCodeIdentity(val any) bool {
 		return false
 	}
 	return org.IdentityForKey(ids, it.IdentityKeyFiscalCode) != nil
-}
-
-func inboxesNotBothCodeAndPEC(val any) bool {
-	ins, _ := val.([]*org.Inbox)
-	var code, pec bool
-	for _, in := range ins {
-		switch in.Key {
-		case KeyInboxCode:
-			code = true
-		case KeyInboxPEC:
-			pec = true
-		}
-	}
-	return !code || !pec
 }
 
 func invoiceHasDeferredTag(val any) bool {

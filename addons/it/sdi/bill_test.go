@@ -357,15 +357,16 @@ func TestCustomerValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(inv))
 	})
 
-	t.Run("customer with both code and PEC inboxes", func(t *testing.T) {
+	t.Run("customer with both code and PEC inboxes keeps only the code", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Inboxes = []*org.Inbox{
 			{Key: sdi.KeyInboxCode, Code: "ABC1234"},
 			{Key: sdi.KeyInboxPEC, Email: "customer@pec.it"},
 		}
 		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, fmt.Sprintf("customer cannot have both '%s' and '%s' inboxes", sdi.KeyInboxCode, sdi.KeyInboxPEC))
+		assert.NoError(t, rules.Validate(inv))
+		require.Len(t, inv.Customer.Inboxes, 1)
+		assert.Equal(t, sdi.KeyInboxCode, inv.Customer.Inboxes[0].Key)
 	})
 }
 
