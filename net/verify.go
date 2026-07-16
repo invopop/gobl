@@ -17,7 +17,9 @@ import (
 // returned. Additional signatures (e.g. authority countersignatures) are
 // not checked here; use VerifyAuthority for those.
 func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud cbc.URI) (Address, error) {
-	if !env.Signed() {
+	// A malformed envelope may carry signatures without a header;
+	// reject rather than let header verification panic.
+	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 

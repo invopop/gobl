@@ -56,7 +56,9 @@ func (c *Client) VerifyAuthorityWithScope(ctx context.Context, env *gobl.Envelop
 }
 
 func (c *Client) verifyAuthority(ctx context.Context, env *gobl.Envelope, minScope cbc.Key) error {
-	if env == nil || len(env.Signatures) == 0 {
+	// A malformed envelope may carry signatures without a header;
+	// reject rather than let header verification panic.
+	if env == nil || env.Head == nil || len(env.Signatures) == 0 {
 		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 	if len(c.authorities) == 0 {

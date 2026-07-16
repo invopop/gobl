@@ -119,6 +119,32 @@ func TestVerifyEnvelope(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
 
+	t.Run("undecodable signature payload", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.URI(), "")
+		bad, err := dsig.NewSignature(key, "not-an-object")
+		require.NoError(t, err)
+		env.Signatures[0] = bad
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err = c.VerifyEnvelope(ctx, env, "")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
+	t.Run("signatures without a header", func(t *testing.T) {
+		// A malformed envelope carrying signatures but no head must be
+		// rejected, not panic.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env.Head = nil
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyEnvelope(ctx, env, "")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("no iss", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		env := buildTestEnvelope(t, key, "", "") // signed without an iss

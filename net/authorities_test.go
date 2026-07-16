@@ -309,6 +309,84 @@ func TestVerifyAuthority(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
 
+	t.Run("skips undecodable signature payloads", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified)))
+		// Prepend a signature whose payload does not decode; it must be
+		// stepped past, not fail the whole check.
+		bad, err := dsig.NewSignature(authKey, "not-an-object")
+		require.NoError(t, err)
+		env.Signatures = append([]*dsig.Signature{bad}, env.Signatures...)
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env))
+	})
+
+	t.Run("skips an invalid iss FQDN", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(cbc.URI("gobl:localhost"))))
+
+		c := NewClient(WithAuthorities(authorityAddr))
+		err = c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnknownAuthority))
+	})
+
+	t.Run("rejects a tampered envelope", func(t *testing.T) {
+		// The countersignature fetches its key fine but no longer
+		// matches the (mutated) header digest.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		env.Head.Digest = dsig.NewSHA256Digest([]byte("tampered"))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		err = c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
+	t.Run("rejects signatures without a header", func(t *testing.T) {
+		// A malformed envelope carrying signatures but no head must be
+		// rejected, not panic.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		env.Head = nil
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		err = c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("rejects an envelope with no signatures at all", func(t *testing.T) {
 		msg := &note.Message{Content: "x"}
 		msg.SetUUID(uuid.V7())

@@ -195,6 +195,29 @@ func TestHTTPFetcherRejectsNonPublicAddresses(t *testing.T) {
 	assert.Contains(t, err.Error(), "refusing to dial non-public address")
 }
 
+func TestSafeDialContext(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("address without a port", func(t *testing.T) {
+		_, err := safeDialContext(ctx, "tcp", "example.com")
+		require.Error(t, err)
+	})
+
+	t.Run("unresolvable host", func(t *testing.T) {
+		// .invalid is reserved (RFC 2606) and never resolves.
+		_, err := safeDialContext(ctx, "tcp", "does-not-exist.invalid:443")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+	})
+
+	t.Run("non-public address", func(t *testing.T) {
+		_, err := safeDialContext(ctx, "tcp", "127.0.0.1:443")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.Contains(t, err.Error(), "refusing to dial non-public address")
+	})
+}
+
 func TestIsPublicIP(t *testing.T) {
 	tests := []struct {
 		ip   string

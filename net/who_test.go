@@ -127,6 +127,13 @@ func TestWho(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrPartyMissing))
 	})
 
+	t.Run("rejects an invalid address", func(t *testing.T) {
+		c := NewClient()
+		_, err := c.Who(ctx, Address("localhost"))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrAddressInvalid))
+	})
+
 	t.Run("propagates a no-content response", func(t *testing.T) {
 		c := NewClient(WithFetcher(&mockFetcher{err: ErrNoContent}))
 		_, err := c.Who(ctx, subject)
