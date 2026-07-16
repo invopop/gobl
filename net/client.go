@@ -121,6 +121,9 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string) ([]byte, error) {
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
+	if resp.StatusCode == http.StatusNoContent {
+		return nil, fmt.Errorf("%w: %s", ErrNoContent, url)
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrFetchFailed, resp.StatusCode, url)
 	}
@@ -175,7 +178,10 @@ func NewClient(opts ...ClientOption) *Client {
 // augmented with the `valid_from` / `valid_until` extension members
 // understood by dsig.PublicKey.
 func (c *Client) FetchKey(ctx context.Context, addr Address, kid string) (*dsig.PublicKey, error) {
-	if err := addr.Validate(); err != nil {
+	// Canonicalize so the per-key URL uses the ASCII form regardless
+	// of how the address was written.
+	addr, err := ParseAddress(string(addr))
+	if err != nil {
 		return nil, err
 	}
 	if kid == "" {

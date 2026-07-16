@@ -12,11 +12,14 @@ import (
 // VerifyEnvelope performs remote verification of a signed GOBL envelope.
 // It reads the signer's GOBL Net identity (iss) from the first
 // signature's signed payload, fetches that address's public keys, and
-// verifies the signature. When expectedAud is non-empty, the signature's
+// verifies that signature. When expectedAud is non-empty, the signature's
 // signed audience (aud) must equal it. The verified issuer address is
-// returned.
+// returned. Additional signatures (e.g. authority countersignatures) are
+// not checked here; use VerifyAuthority for those.
 func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud cbc.URI) (Address, error) {
-	if !env.Signed() {
+	// A malformed envelope may carry signatures without a header;
+	// reject rather than let header verification panic.
+	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
 
@@ -31,8 +34,10 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 	if p.Iss.Scheme() != Scheme {
 		return "", fmt.Errorf("%w: iss %q is not a gobl address", ErrVerifyFailed, p.Iss)
 	}
-	issuer := Address(p.Iss.Opaque())
-	if err := issuer.Validate(); err != nil {
+	// Canonicalize the issuer so key-fetch URLs and comparisons use
+	// the ASCII form regardless of how the iss was written.
+	issuer, err := ParseAddress(p.Iss.Opaque())
+	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 
@@ -45,9 +50,9 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
-	// env.Verify enforces the key's validity window against the signed
-	// `ts` via head.Header.Verify.
-	if err := env.Verify(pubKey); err != nil {
+	// VerifySignature enforces the key's validity window against the
+	// signed `iat` via head.Header.Verify.
+	if err := env.VerifySignature(sig, pubKey); err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 
