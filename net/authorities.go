@@ -2,9 +2,12 @@ package net
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 )
 
@@ -27,16 +30,24 @@ func RegisterAuthority(addr Address) {
 // client's known authorities (the package-level Authorities slice
 // plus anything added via WithAuthorities). Each candidate signature
 // is cryptographically verified against the authority's own
-// published key.
+// published key, and its signed scope claim must satisfy minScope:
+// an empty minScope accepts any authority signature, otherwise the
+// claim must be the same key or rank higher (registered < verified).
+// Custom scope keys only satisfy an exact match.
 //
-// Returns nil on the first authority signature that verifies. If no
-// signature is from a known authority, returns ErrUnknownAuthority.
-// If all candidates fail crypto verification, returns
-// ErrVerifyFailed wrapping the last error.
+// A candidate whose signed exp claim has passed is rejected: expired
+// endorsements are not evidence.
+//
+// Returns nil on the first authority signature that verifies at
+// minScope. If no signature is from a known authority, returns
+// ErrUnknownAuthority. If a verified authority signature has expired,
+// returns ErrSignatureExpired; if it falls short of minScope, returns
+// ErrScopeInsufficient. If all candidates fail crypto verification,
+// returns ErrVerifyFailed wrapping the last error.
 //
 // Callers that want to accept self-signed (no-authority) envelopes
 // should skip this call rather than ignore its error.
-func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) error {
+func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, minScope cbc.Key) error {
 	if env == nil || len(env.Signatures) == 0 {
 		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
@@ -74,10 +85,47 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) error 
 			lastErr = err
 			continue
 		}
+		// Claims are only trusted after the signature verifies.
+		if p.ExpiresAt > 0 && time.Now().UTC().Unix() > p.ExpiresAt {
+			lastErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
+			continue
+		}
+		if !scopeSatisfies(p.Scope, minScope) {
+			lastErr = fmt.Errorf("%w: %q does not meet minimum %q", ErrScopeInsufficient, p.Scope, minScope)
+			continue
+		}
 		return nil
 	}
 	if lastErr != nil {
+		if errors.Is(lastErr, ErrScopeInsufficient) || errors.Is(lastErr, ErrSignatureExpired) {
+			return lastErr
+		}
 		return fmt.Errorf("%w: %v", ErrVerifyFailed, lastErr)
 	}
 	return ErrUnknownAuthority
+}
+
+// scopeRank orders the baseline scope keys: none < registered <
+// verified. Unrecognised keys rank 0.
+func scopeRank(scope cbc.Key) int {
+	switch scope {
+	case head.ScopeRegistered:
+		return 1
+	case head.ScopeVerified:
+		return 2
+	}
+	return 0
+}
+
+// scopeSatisfies reports whether a signed scope claim meets the
+// required minimum: any claim satisfies an empty minimum, an exact
+// match always satisfies, and baseline keys satisfy lower-ranked
+// baseline minimums.
+func scopeSatisfies(got, minScope cbc.Key) bool {
+	if minScope == "" || got == minScope {
+		return true
+	}
+	r := scopeRank(minScope)
+	return r > 0 && scopeRank(got) >= r
 }

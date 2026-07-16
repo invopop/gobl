@@ -22,7 +22,8 @@ documents. It binds a document signature to a fully qualified domain name
 - `/.well-known/gobl/keys/<kid>` — a single public JWK looked up by key
   ID, used to verify signatures.
 - `/.well-known/gobl/who` — a signed GOBL Envelope carrying an
-  `org.Party` document, endorsing the holder's identity.
+  `org.Party` document, endorsing the holder's identity, retrieved
+  with a plain GET.
 - `/.well-known/gobl/inbox` — a write endpoint that accepts signed
   envelopes addressed to the holder.
 
@@ -30,11 +31,18 @@ Trust in an identity is anchored to the TLS certificate for the
 Address's FQDN: a signature's verifiable origin lives in its signed
 `iss`, the verifier fetches the corresponding public key from
 `https://<iss>/.well-known/gobl/keys/<kid>`, and the HTTPS connection
-proves the response really came from that FQDN. KYC vendors
-("Authorities") are an optional endorsement layer on top of that
-anchor — a participant MAY carry a vendor's countersignature, and
-verifiers MAY treat that countersignature as additional evidence;
-neither side is required to.
+proves the response really came from that FQDN. Key discovery is
+unconditional: it works the same for every participant and every
+policy below layers on top of it, never replaces it.
+
+The two roles in an exchange carry asymmetric requirements. *Anyone*
+may provision a receiving address — publishing an inbox requires no
+approval from any third party, and a receive-only participant need
+not even publish identity details (§8.2). *Senders*, by contrast, are
+expected to carry an endorsement: a countersignature on their `/who`
+identity from a KYC vendor ("Authority") that receivers trust.
+Receivers accept or reject incoming documents on the strength of that
+endorsement (§6.4, §8.4).
 
 The protocol layers on top of standards already in use by GOBL:
 
@@ -60,7 +68,12 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   optional `valid_from` / `valid_until` extension members) served at
   `/.well-known/gobl/keys/<kid>`.
 - **Party Envelope** — A signed GOBL Envelope whose document is an
-  `org.Party`, exchanged at the who endpoint.
+  `org.Party`, served at the who endpoint. The first signature is the
+  subject's self-signature; Authority countersignatures follow.
+- **Sender / Receiver** — The two roles in a document exchange. A
+  receiver only needs a domain, TLS, and (if it signs) published
+  keys. A sender is additionally expected to carry an Authority
+  endorsement on its who identity (§6.4).
 - **iss / aud** — Fields in a signature's *signed payload* carrying the
   verifiable GOBL Net origin (`iss`) and the address the signature is
   bound to (`aud`), both as `gobl:` `cbc.URI` values. These are the
@@ -69,8 +82,6 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   envelope header expressing *intent/routing* in any scheme
   (`iso6523-actorid-upis:`, `mailto:`, `gobl:`…). Useful for interop
   with other formats; not used for verification.
-- **allow-list** — Optional `<domain>/allow.json` (array of addresses)
-  restricting which callers a domain accepts on `/who` and `/inbox`.
 
 ## 3. Addressing
 
@@ -95,7 +106,7 @@ Inputs that contain a scheme, port, or path MUST be rejected with
 `ErrAddressInvalid`. An empty input MUST be rejected with `ErrAddressEmpty`.
 
 **Canonical form.** Addresses on the wire — in `iss`, `aud`,
-well-known URLs, allow-lists, and identity files — MUST be ASCII
+well-known URLs, and identity files — MUST be ASCII
 A-Labels. Implementations are free to accept U-Label input from
 humans (e.g. CLI flags) but MUST normalise to A-Label before
 signing, fetching, or comparing.
@@ -279,6 +290,12 @@ Each signature signs a payload of `{uuid, dig, iss, aud, iat}`:
   verifiers read it for the per-key validity window check but no
   freshness policy is enforced by default — receivers may apply their
   own max-age window when relevant.
+- `exp` (optional, JWT-standard per RFC 7519 §4.1.4, set with
+  `head.WithExpiration`) is the time after which the signature's
+  assertions should no longer be relied upon. Ordinary transport
+  signatures omit it — archived envelopes must keep verifying
+  indefinitely. Authorities set it on their countersignatures to
+  bound the endorsement's lifetime (§5.3).
 
 Because `iss`/`aud`/`iat` are inside the signed payload, the origin,
 audience, and signing time are all tamper-proof. Multiple parties may
@@ -320,9 +337,22 @@ env.Sign(authorityKey,
 
 Verifiers MAY require a minimum scope per use case (`registered`
 suffices for `/who` discovery; `verified` may be required before
-acting on inbox deliveries from new counterparties). Operators MAY
-define additional scope keys; `registered` and `verified` are the
-baseline values the protocol recognises.
+acting on inbox deliveries from new counterparties). The minimum is
+passed to `Client.VerifyAuthority` / `Client.VerifySender`: an empty
+minimum accepts any authority signature, `registered` is satisfied by
+`registered` or `verified`, and a custom scope key is satisfied only
+by an exact match. Operators MAY define additional scope keys;
+`registered` and `verified` are the baseline values the protocol
+recognises.
+
+An Authority countersignature SHOULD carry an `exp` claim bounding
+the endorsement's lifetime — 90 days is the recommended maximum,
+after which the subject renews its registration (§11.4). Verifiers
+MUST treat an expired countersignature as absent: `VerifyAuthority`
+rejects candidates whose `exp` has passed with
+`ErrSignatureExpired`. A countersignature without `exp` does not
+expire; verifiers MAY apply their own `iat` max-age policy to such
+legacy endorsements.
 
 ### 5.4 X.509 evidence (optional, long-term storage)
 
@@ -341,8 +371,8 @@ Treat `x5c` as supplementary evidence, not as a replacement for §11.1:
 the chain proves that *some* CA-attested entity signed the document,
 but does not bind the signature to a GOBL Net Address. Verifiers MAY
 consult `x5c` for archival proofs, but for live verification of an
-inbox or `/who` exchange the signed `iss` + Web PKI MUST be the
-authoritative chain.
+inbox delivery or `/who` lookup the signed `iss` + Web PKI MUST be
+the authoritative chain.
 
 The library does not stamp `x5c` automatically. Operators with an
 archival need can add it via a future `dsig.WithX5C` option or by
@@ -367,15 +397,29 @@ issuer address:
    within `[valid_from, valid_until]` (each bound optional).
 7. The verified issuer address is returned.
 
-### 6.2 Identity exchange (`/who`)
+### 6.2 Identity lookup (`GET /who`)
 
-`/who` is an authenticated, mutual exchange (see §8.2). The caller POSTs
-a signed envelope (`iss=gobl:caller`, `aud=gobl:target`, document = the
-caller's `org.Party`); the target verifies it, applies its allow-list,
-and responds with its own party envelope signed `iss=gobl:target`,
-`aud=gobl:caller`. A conforming client performs the exchange and
-verifies the response is signed by the target and bound to the
-caller.
+`/who` is an open, unauthenticated GET (see §8.2). The response is
+the target's party envelope: document = the target's `org.Party`,
+first signature = the target's self-signature with `iss=gobl:target`
+and no `aud` (a GET response has no caller to bind to), optionally
+followed by Authority countersignatures.
+
+`Client.Who(ctx, addr)` performs the lookup and verifies it:
+
+1. `GET https://<addr>/.well-known/gobl/who`. A `204` returns
+   `ErrNoContent` — the address exists but publishes no identity
+   details (a receive-only account).
+2. The response envelope's first signature is verified via
+   `VerifyEnvelope` (the signed `iss` resolved to a published key).
+3. The verified issuer MUST equal the fetched address — a valid
+   envelope for a *different* identity served at this URL is
+   rejected.
+4. The document MUST be an `org.Party`, else `ErrPartyMissing`.
+
+Because the response is a static signed document, it is cacheable
+(§8.2). The identity's integrity comes from the self-signature and
+the TLS origin, not from any per-request binding.
 
 ### 6.3 Trusted Authorities
 
@@ -384,21 +428,35 @@ treated as trusted KYC vendors. The default list is empty;
 `net.RegisterAuthority` or the `WithAuthorities` client option add to
 it.
 
-`Client.VerifyAuthority(ctx, env)` returns nil iff the envelope
-carries at least one signature whose signed `iss` is in the client's
-authorities AND that signature cryptographically verifies against
-the authority's published key. It returns `ErrUnknownAuthority` when
-no candidate signature is from a known authority (or none has been
-registered) and `ErrVerifyFailed` when a candidate fails its crypto
+`Client.VerifyAuthority(ctx, env, minScope)` returns nil iff the
+envelope carries at least one signature whose signed `iss` is in the
+client's authorities AND that signature cryptographically verifies
+against the authority's published key AND its signed `exp` claim (if
+any) has not passed AND its signed scope claim satisfies `minScope`
+(§5.3). It returns `ErrUnknownAuthority` when no candidate signature
+is from a known authority (or none has been registered),
+`ErrSignatureExpired` when a verified authority signature has
+expired, `ErrScopeInsufficient` when it falls short of the minimum
+scope, and `ErrVerifyFailed` when a candidate fails its crypto
 check.
 
-The protocol does **not** mandate when callers must invoke
-`VerifyAuthority`. The recommended policy: `/who` consumers SHOULD
-require an authority countersignature by default and only relax it
-for explicitly self-signed lookups (bootstrap, internal discovery).
-The trust anchor in §11.1 — TLS-bound `iss` — does not depend on
-authorities; authorities are an additional, opt-in policy layer on
-top.
+Endorsement requirements attach to the **sending** role. Verifiers
+resolving a *receiver's* identity MUST NOT demand an authority
+countersignature: receiving addresses are self-provisioned and MAY be
+entirely self-signed, or publish nothing at all (204). The trust
+anchor in §11.1 — TLS-bound `iss` — does not depend on authorities;
+authorities are an additional, opt-in policy layer on top.
+
+### 6.4 Sender verification
+
+`Client.VerifySender(ctx, addr, minScope)` combines the two: it
+resolves `addr`'s identity via `Who` and requires an Authority
+countersignature satisfying `minScope` via `VerifyAuthority`,
+returning the endorsed `org.Party`. Receiving inboxes call it with
+the verified issuer of an incoming envelope before accepting the
+delivery (§8.4). A receive-only account (204) or a merely self-signed
+identity fails this check by construction — such addresses can
+receive but cannot act as approved senders.
 
 ## 7. Discovery Transport
 
@@ -413,10 +471,12 @@ The default `HTTPFetcher` enforces:
 | Maximum response size | 1 MiB              |
 | Required `Accept`     | `application/json` |
 | Required scheme       | `https`            |
-| Required status       | `200 OK`           |
+| Required status       | `200 OK` (`204` → `ErrNoContent`) |
 
-Responses larger than 1 MiB are truncated. Any non-200 response causes
-`ErrFetchFailed`.
+Responses larger than 1 MiB are truncated. A `204 No Content`
+response causes `ErrNoContent` — a distinct sentinel because at the
+who endpoint an empty response is meaningful (§8.2). Any other
+non-200 response causes `ErrFetchFailed`.
 
 **SSRF defense.** The fetcher's transport refuses to dial any host
 whose resolved IP is loopback, private (RFC 1918 / RFC 6598),
@@ -445,22 +505,34 @@ the file `<domain>/keys/<kid>.json`, optionally carrying GOBL Net's
 `valid_from` / `valid_until` extension members (see §4). Unknown kid
 returns `404 Not Found`. No bulk endpoint is exposed.
 
-### 8.2 `POST /.well-known/gobl/who`
+### 8.2 `GET /.well-known/gobl/who`
 
-Authenticated party exchange. The caller POSTs a signed envelope
-(`iss=gobl:caller`, `aud=gobl:self`, document = the caller's
-`org.Party`). The server verifies the signature against the caller's
-published key (fetched from the caller's per-kid endpoint), requires
-`aud == self`, and applies the allow-list to `iss`. It responds `200`
-with its own party envelope signed
-`iss=gobl:self`, `aud=gobl:caller`.
+Open. Returns the domain's party envelope: an `org.Party` document,
+self-signed with `iss=gobl:self` as the **first** signature (no
+`aud`), optionally carrying Authority countersignatures. The response
+is a static signed document — the same bytes for every caller.
 
-| Status            | Cause                                              |
-|-------------------|----------------------------------------------------|
-| `200 OK`          | Verified; returns the signed party envelope.       |
-| `400 Bad Request` | Body did not decode as an envelope.                |
-| `401 Unauthorized`| Signature/issuer/audience verification failed.     |
-| `403 Forbidden`   | Caller (`iss`) not on the domain's allow-list.     |
+| Status            | Cause                                                |
+|-------------------|------------------------------------------------------|
+| `200 OK`          | Returns the signed party envelope.                   |
+| `204 No Content`  | The account exists but publishes no identity details. A 204 account is receive-only: it cannot pass sender verification (§6.4), but deliveries *to* it are unaffected. |
+| `404 Not Found`   | The address does not participate in GOBL Net.        |
+
+Because the response is static, servers SHOULD set standard HTTP
+caching headers (`Cache-Control`, `ETag`) and clients MAY cache
+accordingly. Keep the TTL modest (minutes to a few hours): a cached
+who bounds how quickly an Authority's revocation of an endorsement is
+observed (§11.4).
+
+Key discovery (§8.1) is independent of who visibility: a participant
+that signs anything MUST serve its published keys regardless of
+whether its who returns 200 or 204.
+
+> **Note.** Earlier drafts specified `/who` as an authenticated POST
+> exchange so the target could pre-approve requesters and log who
+> asked for its details. That negotiated disclosure MAY return in a
+> future revision as an optional POST alongside the GET; the GET is
+> the baseline every participant serves.
 
 ### 8.3 `POST /.well-known/gobl/inbox`
 
@@ -468,15 +540,17 @@ Accepts a signed GOBL Envelope. The signer (`iss`) is verified against
 its published key (fetched from `<iss>/.well-known/gobl/keys/<kid>`);
 the signed `aud` MUST be present and MUST equal this inbox's
 Address — envelopes signed without an audience, or bound to a
-different audience, MUST be rejected. The allow-list (if present) is
-applied to `iss`. Status codes:
+different audience, MUST be rejected. The inbox SHOULD then apply its
+sender-endorsement policy: resolve the sender's who (§6.4) and
+require an Authority countersignature at the operator's minimum
+scope. Status codes:
 
 | Status                       | Cause                                                |
 |------------------------------|------------------------------------------------------|
 | `202 Accepted`               | Envelope parsed, validated, signature verified, persisted. |
 | `400 Bad Request`            | Body could not be read or did not decode as JSON.    |
 | `401 Unauthorized`           | Envelope signature did not verify, or `aud` missing / not equal to this inbox. |
-| `403 Forbidden`              | Caller (`iss`) not on the domain's allow-list.       |
+| `403 Forbidden`              | Sender (`iss`) is not endorsed by an Authority this inbox trusts, or falls short of its minimum scope. |
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
 
@@ -491,8 +565,60 @@ receipt. The reference server in
 each accepted envelope to `<config>/<domain>/inbox/<envelope-uuid>.json`;
 that layout is one valid choice, not a protocol requirement.
 
-In this release the server does not return a signed receipt on 202;
-the response body is empty.
+The empty `202 Accepted` body is deliberate: it asserts durable
+persistence by the inbox and nothing more. There are no transport
+receipts in GOBL Net — experience with receipt-bearing networks
+shows they attest to a handoff between intermediaries, not to
+anything the recipient actually did. Business-level processing is
+signalled instead by follow-up documents (e.g. a `bill.Status`
+envelope) sent back through the same inbox mechanism — which, like
+any other sending, requires the responding party to be an endorsed
+sender (§6.4). Receive-only participants do not send status; a
+supplier delivering to consumers should treat delivery as
+fire-and-forget beyond the 202.
+
+Inbox delivery MUST be idempotent on the envelope's identity: a
+re-POST of an envelope with the same `uuid` and `dig` returns `202`
+without creating a duplicate record. Since a status response may
+never come, "retry until 202" is the sender's correct recovery
+strategy, and idempotency is what makes it safe. (The signed `aud`
+already prevents the same envelope being replayed against a
+*different* inbox.)
+
+### 8.4 End-to-end delivery flow
+
+The canonical invoice exchange between a Supplier (sender) and a
+Customer (receiver — a business or an individual consumer):
+
+1. Supplier needs to send an invoice to Customer, whose GOBL Net
+   Address it learned out-of-band (checkout, contract, directory).
+2. *Optionally*, Supplier performs `GET /who` on Customer to fetch
+   complete invoicing details. A `204 No Content` means the account
+   exists but shares nothing — the Supplier proceeds with the details
+   it already holds.
+3. Supplier signs the invoice envelope with `iss=gobl:supplier`,
+   `aud=gobl:customer` and POSTs it to Customer's `/inbox`.
+4. Customer verifies the envelope signature and audience (§6.1), then
+   resolves the Supplier's identity with `GET /who` on the verified
+   issuer (a cached copy MAY be used within its TTL).
+5. Customer accepts iff the Supplier's who carries a countersignature
+   from an Authority the Customer trusts, at the Customer's minimum
+   scope (§6.4) — i.e. the sender is registered/KYC'd.
+6. `202 Accepted` (empty body) confirms reception to the Supplier.
+
+Only step 5 involves any registration requirement, and it applies
+solely to the sending party. The Customer's own address never needs
+Authority approval — steps 1–3 work against any self-provisioned
+endpoint.
+
+Sending is one role, whoever performs it: any follow-up document
+the Customer might send back — a `bill.Status` reporting
+acceptance or payment, a corrective exchange — is itself a
+delivery under this flow and requires the Customer to be an
+endorsed sender. A receive-only Customer sends nothing, and the
+Supplier expects nothing: for B2C, the 202 in step 6 is the end of
+the exchange. Status flows are a feature of exchanges between
+registered participants.
 
 ## 9. Reference Implementation
 
@@ -515,9 +641,12 @@ The package exports the following sentinel errors:
 |------------------------|------------------------------------------------------------------|
 | `ErrAddressEmpty`      | Empty input to `ParseAddress`.                                   |
 | `ErrAddressInvalid`    | Input is not a valid FQDN per §3.1.                              |
-| `ErrFetchFailed`       | Well-known resource fetch failed (network, non-200, malformed).  |
-| `ErrVerifyFailed`      | Envelope verification failed (no signature, non-`gobl:` `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window). |
+| `ErrFetchFailed`       | Well-known resource fetch failed (network, non-200/204, malformed). |
+| `ErrNoContent`         | The resource exists but has no content (HTTP 204) — a who endpoint that publishes no identity details. |
+| `ErrVerifyFailed`      | Envelope verification failed (no signature, non-`gobl:` `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window, who issuer/address mismatch). |
 | `ErrUnknownAuthority`  | An endorser on a `/who` envelope is not in `Authorities` (only raised by callers that opt into authority enforcement). |
+| `ErrScopeInsufficient` | An authority countersignature verified but its scope claim falls short of the required minimum. |
+| `ErrSignatureExpired`  | An authority countersignature verified but its `exp` claim has passed. |
 | `ErrPartyMissing`      | A `/who` response did not contain an `org.Party` document.       |
 | `ErrInboxRejected`     | A receiving inbox did not return 202.                            |
 
@@ -540,8 +669,8 @@ produce a signature that verifies against an attacker-controlled key
 served from that host — distinguishable from the expected identity
 at the application layer. Callers that already know the expected
 Address SHOULD pass it as `expectedAud` to `Client.VerifyEnvelope`,
-or compare the returned issuer Address against an allow-list before
-acting on the document.
+or compare the returned issuer Address against the expected sender
+before acting on the document.
 
 ### 11.2 TLS
 
@@ -562,15 +691,26 @@ the strength of that authority's countersignature. Where this hook
 is used, the KYC vendor list MUST be kept short and reviewed
 regularly.
 
-### 11.4 Inbox Authentication
+### 11.4 Inbox Authentication and Sender Endorsement
 
-The inbox endpoint verifies the sender's signature before persisting an
-envelope, but does *not* require the sender to be a known
-KYC-endorsed participant. Operators that need to restrict inbox
-acceptance to known correspondents MUST apply additional filtering —
-typically a per-domain `allow.json` (see §2) gating `iss`, or an
-application-level `/who` exchange against the sender's address before
-acting on the document.
+The inbox endpoint verifies the sender's signature before persisting
+an envelope; the sender-endorsement policy (§6.4, §8.4) is the layer
+that restricts acceptance to Authority-registered participants.
+Operators choose the minimum scope and the trusted Authority list.
+
+Endorsement revocation is bounded by two mechanisms. First, the
+countersignature's own `exp` claim (§5.3): with the recommended
+90-day maximum, a revoked sender's endorsement dies on its own even
+if the stale who keeps being served — and the renewal cycle this
+forces (re-registering before expiry, in the spirit of Let's
+Encrypt certificates) gives the Authority a recurring checkpoint at
+which to decline. Second, who caching: once an Authority stops
+countersigning a sender (or the sender re-publishes its who without
+the countersignature), receivers continue to accept only until
+their cached copy expires. Inboxes enforcing endorsement MUST
+resolve the sender's who with a bounded TTL rather than trusting a
+cached copy indefinitely, and MAY additionally apply a max-age
+policy to the `iat` of countersignatures that carry no `exp`.
 
 ### 11.5 Response Size
 
@@ -595,6 +735,19 @@ checks.
 two visually distinct strings such as `Example.COM.` and `example.com`
 normalize to the same Address. Callers MUST use `ParseAddress` (directly
 or via `Address.Validate`) before comparing addresses for equality.
+
+### 11.8 Identity Privacy
+
+`GET /who` makes the published party details readable by anyone who
+knows the address. Sending participants generally publish business
+details that are public record anyway; individuals and other
+receive-only participants SHOULD respond `204` rather than publish
+personal data. Servers MAY rate-limit the endpoint to slow bulk
+harvesting. Hosted providers offering per-user sub-addresses
+(`alice.inbox.provider.example`) hold the keys and the inbox contents
+for their users; that concentration of trust is a deployment choice
+outside this protocol, but users of such services should understand
+the provider can read anything delivered to them.
 
 ## 12. References
 

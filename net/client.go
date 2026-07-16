@@ -121,6 +121,9 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string) ([]byte, error) {
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
+	if resp.StatusCode == http.StatusNoContent {
+		return nil, fmt.Errorf("%w: %s", ErrNoContent, url)
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrFetchFailed, resp.StatusCode, url)
 	}

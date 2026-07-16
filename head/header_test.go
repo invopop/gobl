@@ -2,6 +2,7 @@ package head_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -348,6 +349,31 @@ func TestHeaderSignWithScope(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, head.ScopeVerified, p.Scope)
 	assert.Equal(t, cbc.URI("gobl:authority.example"), p.Iss)
+}
+
+func TestHeaderSignWithExpiration(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	exp := time.Now().Add(90 * 24 * time.Hour)
+	sig, err := h.Sign(priv,
+		head.WithIssuer("gobl:authority.example"),
+		head.WithExpiration(exp))
+	require.NoError(t, err)
+
+	p, err := head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Equal(t, exp.UTC().Unix(), p.ExpiresAt)
+	assert.LessOrEqual(t, p.IssuedAt, p.ExpiresAt)
+
+	// Without the option, exp is unset.
+	sig, err = h.Sign(priv, head.WithIssuer("gobl:authority.example"))
+	require.NoError(t, err)
+	p, err = head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Zero(t, p.ExpiresAt)
 }
 
 func TestSignedPayloadDecodeError(t *testing.T) {

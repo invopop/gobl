@@ -168,19 +168,25 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // Digest identify the document; Iss and Aud are the verifiable origin
 // and audience of *this* signature (as `gobl:` URIs); IssuedAt is the
 // time the signature was produced as a JWT-standard NumericDate (Unix
-// seconds, per RFC 7519 §2). Scope (optional, set via head.WithScope)
-// is the signer's assertion about the level of confidence in the
-// document — e.g. `head.ScopeRegistered` for an address-only check,
-// `head.ScopeVerified` for a KYC-verified countersignature. Header
-// stamps, links, tags, meta, notes and the (unsigned, intent-level)
-// From/To fields can still be modified after signing.
+// seconds, per RFC 7519 §2). ExpiresAt (optional, set via
+// head.WithExpiration) is the JWT-standard `exp` claim (RFC 7519
+// §4.1.4): the time after which the signature's assertions should no
+// longer be relied upon — used by authorities to bound the lifetime
+// of their countersignatures. Scope (optional, set via
+// head.WithScope) is the signer's assertion about the level of
+// confidence in the document — e.g. `head.ScopeRegistered` for an
+// address-only check, `head.ScopeVerified` for a KYC-verified
+// countersignature. Header stamps, links, tags, meta, notes and the
+// (unsigned, intent-level) From/To fields can still be modified
+// after signing.
 type SigningPayload struct {
-	UUID     uuid.UUID    `json:"uuid"`
-	Digest   *dsig.Digest `json:"dig"`
-	Iss      cbc.URI      `json:"iss,omitempty"`
-	Aud      cbc.URI      `json:"aud,omitempty"`
-	IssuedAt int64        `json:"iat,omitempty"`
-	Scope    cbc.Key      `json:"scope,omitempty"`
+	UUID      uuid.UUID    `json:"uuid"`
+	Digest    *dsig.Digest `json:"dig"`
+	Iss       cbc.URI      `json:"iss,omitempty"`
+	Aud       cbc.URI      `json:"aud,omitempty"`
+	IssuedAt  int64        `json:"iat,omitempty"`
+	ExpiresAt int64        `json:"exp,omitempty"`
+	Scope     cbc.Key      `json:"scope,omitempty"`
 }
 
 // Known scope values that an Authority can assert when
@@ -205,6 +211,7 @@ type SignOption func(*signOptions)
 type signOptions struct {
 	iss    cbc.URI
 	aud    cbc.URI
+	exp    int64
 	scope  cbc.Key
 	signer []dsig.SignerOption
 }
@@ -232,20 +239,29 @@ func WithScope(scope cbc.Key) SignOption {
 	return func(o *signOptions) { o.scope = scope }
 }
 
+// WithExpiration sets the JWT-standard `exp` claim in the signed
+// payload: the time after which the signature's assertions should no
+// longer be relied upon. Default (no option) leaves it unset — the
+// signature does not expire.
+func WithExpiration(t time.Time) SignOption {
+	return func(o *signOptions) { o.exp = t.UTC().Unix() }
+}
+
 // WithSignerOption forwards a low-level dsig.SignerOption (e.g.
 // dsig.WithJKU) through to the underlying JWS signer.
 func WithSignerOption(opts ...dsig.SignerOption) SignOption {
 	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
 }
 
-func (h *Header) payload(iss, aud cbc.URI, iat int64, scope cbc.Key) *SigningPayload {
+func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, scope cbc.Key) *SigningPayload {
 	return &SigningPayload{
-		UUID:     h.UUID,
-		Digest:   h.Digest,
-		Iss:      iss,
-		Aud:      aud,
-		IssuedAt: iat,
-		Scope:    scope,
+		UUID:      h.UUID,
+		Digest:    h.Digest,
+		Iss:       iss,
+		Aud:       aud,
+		IssuedAt:  iat,
+		ExpiresAt: exp,
+		Scope:     scope,
 	}
 }
 
@@ -263,7 +279,7 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 		opt(so)
 	}
 	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.scope), so.signer...)
+	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.exp, so.scope), so.signer...)
 }
 
 // Verify checks that the signature covers this header's document

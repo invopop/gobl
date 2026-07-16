@@ -10,9 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `org`: new `Attribute` model with `Item.Attributes` for named item features such as color or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties of the item, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
 - `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
+- `net`: `Client.Who` fetches and verifies a domain's public identity from `GET /.well-known/gobl/who`, and `Client.VerifySender` additionally requires a countersignature from a trusted authority at a minimum scope. New `ErrNoContent` (HTTP 204: the account exists but publishes no identity details) and `ErrScopeInsufficient` sentinel errors.
+- `head`: optional `exp` claim (JWT-standard, RFC 7519 §4.1.4) in the signed payload, set with `head.WithExpiration`, marking the time after which the signature's assertions should no longer be relied upon. `net.VerifyAuthority` rejects countersignatures whose `exp` has passed with the new `ErrSignatureExpired` sentinel; signatures without `exp` do not expire.
 
 ### Changed
 
+- `net`: `/who` is now an open GET returning the domain's self-signed party envelope, replacing the authenticated POST exchange; allow-list support is removed. `Client.VerifyAuthority` takes a minimum scope argument. `Client.VerifyEnvelope` verifies only the first signature, so envelopes carrying authority countersignatures now verify.
 - `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
 - `addons/eu/en16931`: party identities are now validated so that at most one may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
 - `addons/it/sdi`: item attribute `type` is validated to be at most 10 characters, matching the FatturaPA `AltriDatiGestionali/TipoDato` (BT-160) field it maps to.

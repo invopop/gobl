@@ -116,6 +116,17 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		assert.Equal(t, `{"ok":true}`, string(body))
 	})
 
+	t.Run("204 returns ErrNoContent", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer srv.Close()
+
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrNoContent))
+	})
+
 	t.Run("non-200", func(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			http.Error(w, "nope", http.StatusNotFound)

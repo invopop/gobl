@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -94,7 +96,130 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env))
+		assert.NoError(t, c.VerifyAuthority(ctx, env, ""))
+	})
+
+	t.Run("enforces a minimum scope", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithAudience(subjectAddr.URI()),
+			head.WithScope(head.ScopeRegistered)))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		// registered satisfies registered but not verified.
+		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeRegistered))
+		err = c.VerifyAuthority(ctx, env, head.ScopeVerified)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrScopeInsufficient))
+	})
+
+	t.Run("verified satisfies a registered minimum", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified)))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeRegistered))
+	})
+
+	t.Run("scopeless authority signature fails any named minimum", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env, ""))
+		err = c.VerifyAuthority(ctx, env, head.ScopeRegistered)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrScopeInsufficient))
+	})
+
+	t.Run("custom scope requires an exact match", func(t *testing.T) {
+		custom := cbc.Key("premium")
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(custom)))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env, custom))
+		err = c.VerifyAuthority(ctx, env, head.ScopeRegistered)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrScopeInsufficient))
+	})
+
+	t.Run("rejects an expired countersignature", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified),
+			head.WithExpiration(time.Now().Add(-time.Hour))))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		err = c.VerifyAuthority(ctx, env, "")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrSignatureExpired))
+	})
+
+	t.Run("accepts a countersignature within its exp window", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified),
+			head.WithExpiration(time.Now().Add(90*24*time.Hour))))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeVerified))
 	})
 
 	t.Run("rejects an envelope with only a self-signature", func(t *testing.T) {
@@ -108,7 +233,7 @@ func TestVerifyAuthority(t *testing.T) {
 			WithAuthorities(authorityAddr),
 			WithFetcher(&mapFetcher{data: map[string][]byte{}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		err = c.VerifyAuthority(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -120,7 +245,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, err)
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env)
+		err = c.VerifyAuthority(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -133,7 +258,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
 
 		c := NewClient() // empty authorities
-		err = c.VerifyAuthority(ctx, env)
+		err = c.VerifyAuthority(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -156,7 +281,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(other),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		err = c.VerifyAuthority(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -171,7 +296,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer("mailto:a@b")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env)
+		err = c.VerifyAuthority(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
