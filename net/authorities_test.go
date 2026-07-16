@@ -203,6 +203,29 @@ func TestVerifyAuthority(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
 
+	t.Run("rejects a pre-epoch expiry", func(t *testing.T) {
+		// A negative exp is a valid NumericDate before 1970 and must be
+		// enforced, not treated as an absent claim.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified),
+			head.WithExpiration(time.Unix(-1000, 0))))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		err = c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrSignatureExpired))
+	})
+
 	t.Run("expiry outlives later candidate failures", func(t *testing.T) {
 		// An expired countersignature followed by a candidate whose key
 		// cannot be fetched must still surface ErrSignatureExpired, not

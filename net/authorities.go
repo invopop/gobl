@@ -97,8 +97,10 @@ func (c *Client) verifyAuthority(ctx context.Context, env *gobl.Envelope, minSco
 			continue
 		}
 		// Claims are only trusted after the signature verifies. Per
-		// RFC 7519, the current time must be strictly before exp.
-		if p.ExpiresAt > 0 && time.Now().UTC().Unix() >= p.ExpiresAt {
+		// RFC 7519, the current time must be strictly before exp. Zero
+		// means the claim is absent (the JSON zero value); any other
+		// value — including a pre-1970 NumericDate — is enforced.
+		if p.ExpiresAt != 0 && time.Now().UTC().Unix() >= p.ExpiresAt {
 			claimErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
