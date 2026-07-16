@@ -264,15 +264,9 @@ func invoiceCustomerHasFiscalCodeIdentity(val any) bool {
 }
 
 func inboxesNotBothCodeAndPEC(val any) bool {
-	ins, ok := val.([]*org.Inbox)
-	if !ok {
-		return true
-	}
+	ins, _ := val.([]*org.Inbox)
 	var code, pec bool
 	for _, in := range ins {
-		if in == nil {
-			continue
-		}
 		switch in.Key {
 		case KeyInboxCode:
 			code = true
