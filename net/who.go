@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
 )
 
@@ -39,6 +40,16 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if issuer != addr {
 		return nil, fmt.Errorf("%w: who issuer %q does not match address %q", ErrVerifyFailed, issuer, addr)
 	}
+	// A who response is a public document: a caller-bound (aud-carrying)
+	// envelope is not a conforming identity and must not be treated as
+	// one.
+	p, err := head.SignedPayload(env.Signatures[0])
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+	}
+	if p.Aud != "" {
+		return nil, fmt.Errorf("%w: who response must not be audience-bound (aud %q)", ErrVerifyFailed, p.Aud)
+	}
 	if _, ok := env.Extract().(*org.Party); !ok {
 		return nil, ErrPartyMissing
 	}
@@ -56,7 +67,7 @@ func (c *Client) VerifySender(ctx context.Context, addr Address, minScope cbc.Ke
 	if err != nil {
 		return nil, err
 	}
-	if err := c.VerifyAuthority(ctx, env, minScope); err != nil {
+	if err := c.VerifyAuthorityWithScope(ctx, env, minScope); err != nil {
 		return nil, err
 	}
 	return env.Extract().(*org.Party), nil

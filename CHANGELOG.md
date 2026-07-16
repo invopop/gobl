@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `net`: `/who` is now an open GET returning the domain's self-signed party envelope, replacing the authenticated POST exchange; allow-list support is removed. `Client.VerifyAuthority` takes a minimum scope argument. `Client.VerifyEnvelope` verifies only the first signature, so envelopes carrying authority countersignatures now verify.
+- `net`: `/who` is now an open GET returning the domain's self-signed party envelope, replacing the authenticated POST exchange; allow-list support is removed. `Client.VerifyAuthorityWithScope` enforces a minimum scope on top of the `Client.VerifyAuthority` check. `Client.VerifyEnvelope` verifies only the first signature, so envelopes carrying authority countersignatures now verify.
 - `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
 - `addons/eu/en16931`: party identities are now validated so that at most one may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
 - `addons/it/sdi`: item attribute `type` is validated to be at most 10 characters, matching the FatturaPA `AltriDatiGestionali/TipoDato` (BT-160) field it maps to.

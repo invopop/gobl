@@ -74,6 +74,29 @@ func TestWho(t *testing.T) {
 		assert.Contains(t, err.Error(), "does not match address")
 	})
 
+	t.Run("rejects an audience-bound response", func(t *testing.T) {
+		// A who response is a public document; an envelope signed with
+		// an aud is caller-bound and non-conforming.
+		party := &org.Party{Name: "Bound"}
+		party.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(party)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(subjKey,
+			head.WithIssuer(subject.URI()),
+			head.WithAudience(Address("caller.example.com").URI())))
+		data, err := json.Marshal(env)
+		require.NoError(t, err)
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             data,
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		_, err = c.Who(ctx, subject)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.Contains(t, err.Error(), "audience-bound")
+	})
+
 	t.Run("rejects a non-party document", func(t *testing.T) {
 		msg := &note.Message{Content: "not a party"}
 		msg.SetUUID(uuid.V7())

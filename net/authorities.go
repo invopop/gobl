@@ -2,7 +2,6 @@ package net
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -30,24 +29,33 @@ func RegisterAuthority(addr Address) {
 // client's known authorities (the package-level Authorities slice
 // plus anything added via WithAuthorities). Each candidate signature
 // is cryptographically verified against the authority's own
-// published key, and its signed scope claim must satisfy minScope:
-// an empty minScope accepts any authority signature, otherwise the
-// claim must be the same key or rank higher (registered < verified).
-// Custom scope keys only satisfy an exact match.
+// published key, and a candidate whose signed exp claim has passed
+// is rejected: expired endorsements are not evidence.
 //
-// A candidate whose signed exp claim has passed is rejected: expired
-// endorsements are not evidence.
-//
-// Returns nil on the first authority signature that verifies at
-// minScope. If no signature is from a known authority, returns
-// ErrUnknownAuthority. If a verified authority signature has expired,
-// returns ErrSignatureExpired; if it falls short of minScope, returns
-// ErrScopeInsufficient. If all candidates fail crypto verification,
+// Returns nil on the first authority signature that verifies. If no
+// signature is from a known authority, returns ErrUnknownAuthority.
+// If a verified authority signature has expired, returns
+// ErrSignatureExpired. If all candidates fail crypto verification,
 // returns ErrVerifyFailed wrapping the last error.
 //
 // Callers that want to accept self-signed (no-authority) envelopes
-// should skip this call rather than ignore its error.
-func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, minScope cbc.Key) error {
+// should skip this call rather than ignore its error. Callers with
+// a minimum scope requirement use VerifyAuthorityWithScope.
+func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) error {
+	return c.verifyAuthority(ctx, env, "")
+}
+
+// VerifyAuthorityWithScope performs the VerifyAuthority check and
+// additionally requires the countersignature's signed scope claim to
+// satisfy minScope: the claim must be the same key or rank higher
+// (registered < verified); custom scope keys only satisfy an exact
+// match. A verified authority signature falling short of the minimum
+// returns ErrScopeInsufficient.
+func (c *Client) VerifyAuthorityWithScope(ctx context.Context, env *gobl.Envelope, minScope cbc.Key) error {
+	return c.verifyAuthority(ctx, env, minScope)
+}
+
+func (c *Client) verifyAuthority(ctx context.Context, env *gobl.Envelope, minScope cbc.Key) error {
 	if env == nil || len(env.Signatures) == 0 {
 		return fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
@@ -59,7 +67,10 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, minSco
 		auths[a] = true
 	}
 
-	var lastErr error
+	// claimErr records a candidate that verified cryptographically but
+	// failed a claim check (expired or insufficient scope); it takes
+	// precedence over crypto failures from other candidates.
+	var lastErr, claimErr error
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -85,22 +96,23 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope, minSco
 			lastErr = err
 			continue
 		}
-		// Claims are only trusted after the signature verifies.
-		if p.ExpiresAt > 0 && time.Now().UTC().Unix() > p.ExpiresAt {
-			lastErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
+		// Claims are only trusted after the signature verifies. Per
+		// RFC 7519, the current time must be strictly before exp.
+		if p.ExpiresAt > 0 && time.Now().UTC().Unix() >= p.ExpiresAt {
+			claimErr = fmt.Errorf("%w: exp %s has passed", ErrSignatureExpired,
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
 		if !scopeSatisfies(p.Scope, minScope) {
-			lastErr = fmt.Errorf("%w: %q does not meet minimum %q", ErrScopeInsufficient, p.Scope, minScope)
+			claimErr = fmt.Errorf("%w: %q does not meet minimum %q", ErrScopeInsufficient, p.Scope, minScope)
 			continue
 		}
 		return nil
 	}
+	if claimErr != nil {
+		return claimErr
+	}
 	if lastErr != nil {
-		if errors.Is(lastErr, ErrScopeInsufficient) || errors.Is(lastErr, ErrSignatureExpired) {
-			return lastErr
-		}
 		return fmt.Errorf("%w: %v", ErrVerifyFailed, lastErr)
 	}
 	return ErrUnknownAuthority

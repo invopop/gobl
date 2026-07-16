@@ -338,10 +338,10 @@ env.Sign(authorityKey,
 Verifiers MAY require a minimum scope per use case (`registered`
 suffices for `/who` discovery; `verified` may be required before
 acting on inbox deliveries from new counterparties). The minimum is
-passed to `Client.VerifyAuthority` / `Client.VerifySender`: an empty
-minimum accepts any authority signature, `registered` is satisfied by
-`registered` or `verified`, and a custom scope key is satisfied only
-by an exact match. Operators MAY define additional scope keys;
+passed to `Client.VerifyAuthorityWithScope` / `Client.VerifySender`:
+`registered` is satisfied by `registered` or `verified`, and a
+custom scope key is satisfied only by an exact match; plain
+`Client.VerifyAuthority` accepts any authority signature. Operators MAY define additional scope keys;
 `registered` and `verified` are the baseline values the protocol
 recognises.
 
@@ -349,10 +349,10 @@ An Authority countersignature SHOULD carry an `exp` claim bounding
 the endorsement's lifetime — 90 days is the recommended maximum,
 after which the subject renews its registration (§11.4). Verifiers
 MUST treat an expired countersignature as absent: `VerifyAuthority`
-rejects candidates whose `exp` has passed with
-`ErrSignatureExpired`. A countersignature without `exp` does not
-expire; verifiers MAY apply their own `iat` max-age policy to such
-legacy endorsements.
+and `VerifyAuthorityWithScope` reject candidates whose `exp` has
+passed with `ErrSignatureExpired`. A countersignature without `exp`
+does not expire; verifiers MAY apply their own `iat` max-age policy
+to such legacy endorsements.
 
 ### 5.4 X.509 evidence (optional, long-term storage)
 
@@ -428,13 +428,14 @@ treated as trusted KYC vendors. The default list is empty;
 `net.RegisterAuthority` or the `WithAuthorities` client option add to
 it.
 
-`Client.VerifyAuthority(ctx, env, minScope)` returns nil iff the
-envelope carries at least one signature whose signed `iss` is in the
-client's authorities AND that signature cryptographically verifies
-against the authority's published key AND its signed `exp` claim (if
-any) has not passed AND its signed scope claim satisfies `minScope`
-(§5.3). It returns `ErrUnknownAuthority` when no candidate signature
-is from a known authority (or none has been registered),
+`Client.VerifyAuthority(ctx, env)` returns nil iff the envelope
+carries at least one signature whose signed `iss` is in the client's
+authorities AND that signature cryptographically verifies against
+the authority's published key AND its signed `exp` claim (if any)
+has not passed. `Client.VerifyAuthorityWithScope(ctx, env, minScope)`
+additionally requires the signed scope claim to satisfy `minScope`
+(§5.3). They return `ErrUnknownAuthority` when no candidate
+signature is from a known authority (or none has been registered),
 `ErrSignatureExpired` when a verified authority signature has
 expired, `ErrScopeInsufficient` when it falls short of the minimum
 scope, and `ErrVerifyFailed` when a candidate fails its crypto
@@ -451,8 +452,8 @@ authorities are an additional, opt-in policy layer on top.
 
 `Client.VerifySender(ctx, addr, minScope)` combines the two: it
 resolves `addr`'s identity via `Who` and requires an Authority
-countersignature satisfying `minScope` via `VerifyAuthority`,
-returning the endorsed `org.Party`. Receiving inboxes call it with
+countersignature satisfying `minScope` via
+`VerifyAuthorityWithScope`, returning the endorsed `org.Party`. Receiving inboxes call it with
 the verified issuer of an incoming envelope before accepting the
 delivery (§8.4). A receive-only account (204) or a merely self-signed
 identity fails this check by construction — such addresses can

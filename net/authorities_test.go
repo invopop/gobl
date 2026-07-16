@@ -96,7 +96,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env, ""))
+		assert.NoError(t, c.VerifyAuthority(ctx, env))
 	})
 
 	t.Run("enforces a minimum scope", func(t *testing.T) {
@@ -117,8 +117,8 @@ func TestVerifyAuthority(t *testing.T) {
 			}}),
 		)
 		// registered satisfies registered but not verified.
-		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeRegistered))
-		err = c.VerifyAuthority(ctx, env, head.ScopeVerified)
+		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered))
+		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeVerified)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrScopeInsufficient))
 	})
@@ -138,7 +138,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeRegistered))
+		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered))
 	})
 
 	t.Run("scopeless authority signature fails any named minimum", func(t *testing.T) {
@@ -154,8 +154,8 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env, ""))
-		err = c.VerifyAuthority(ctx, env, head.ScopeRegistered)
+		assert.NoError(t, c.VerifyAuthority(ctx, env))
+		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrScopeInsufficient))
 	})
@@ -176,8 +176,8 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env, custom))
-		err = c.VerifyAuthority(ctx, env, head.ScopeRegistered)
+		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, custom))
+		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrScopeInsufficient))
 	})
@@ -198,7 +198,35 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrSignatureExpired))
+	})
+
+	t.Run("expiry outlives later candidate failures", func(t *testing.T) {
+		// An expired countersignature followed by a candidate whose key
+		// cannot be fetched must still surface ErrSignatureExpired, not
+		// the generic ErrVerifyFailed from the later failure.
+		otherAuth := Address("auth.example.org")
+		otherKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.URI()),
+			head.WithScope(head.ScopeVerified),
+			head.WithExpiration(time.Now().Add(-time.Hour))))
+		require.NoError(t, env.Sign(otherKey, head.WithIssuer(otherAuth.URI())))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr, otherAuth),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				// Only the first authority's key resolves.
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
@@ -219,7 +247,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env, head.ScopeVerified))
+		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeVerified))
 	})
 
 	t.Run("rejects an envelope with only a self-signature", func(t *testing.T) {
@@ -233,7 +261,7 @@ func TestVerifyAuthority(t *testing.T) {
 			WithAuthorities(authorityAddr),
 			WithFetcher(&mapFetcher{data: map[string][]byte{}}),
 		)
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -245,7 +273,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, err)
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -258,7 +286,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
 
 		c := NewClient() // empty authorities
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -281,7 +309,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(other),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -296,7 +324,7 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer("mailto:a@b")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env, "")
+		err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
