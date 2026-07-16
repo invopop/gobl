@@ -62,9 +62,13 @@ func (c *Client) verifyAuthority(ctx context.Context, env *gobl.Envelope, minSco
 	if len(c.authorities) == 0 {
 		return fmt.Errorf("%w: no authorities registered on this client", ErrUnknownAuthority)
 	}
+	// Both sides of the lookup are canonicalized so U-Label or
+	// trailing-dot forms — configured or signed — compare equal.
 	auths := make(map[Address]bool, len(c.authorities))
 	for _, a := range c.authorities {
-		auths[a] = true
+		if canon, err := ParseAddress(string(a)); err == nil {
+			auths[canon] = true
+		}
 	}
 
 	// claimErr records a candidate that verified cryptographically but
@@ -79,8 +83,8 @@ func (c *Client) verifyAuthority(ctx context.Context, env *gobl.Envelope, minSco
 		if p.Iss.Scheme() != Scheme {
 			continue
 		}
-		issuer := Address(p.Iss.Opaque())
-		if err := issuer.Validate(); err != nil {
+		issuer, err := ParseAddress(p.Iss.Opaque())
+		if err != nil {
 			continue
 		}
 		if !auths[issuer] {

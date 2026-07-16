@@ -22,7 +22,10 @@ import (
 // A 204 response returns ErrNoContent: the address exists but does not
 // publish identity details (a receive-only account).
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
-	if err := addr.Validate(); err != nil {
+	// Canonicalize so well-known URLs and the issuer comparison use
+	// the ASCII form regardless of how the address was written.
+	addr, err := ParseAddress(string(addr))
+	if err != nil {
 		return nil, err
 	}
 	data, err := c.fetcher.Fetch(ctx, addr.WhoURL())

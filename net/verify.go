@@ -32,8 +32,10 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 	if p.Iss.Scheme() != Scheme {
 		return "", fmt.Errorf("%w: iss %q is not a gobl address", ErrVerifyFailed, p.Iss)
 	}
-	issuer := Address(p.Iss.Opaque())
-	if err := issuer.Validate(); err != nil {
+	// Canonicalize the issuer so key-fetch URLs and comparisons use
+	// the ASCII form regardless of how the iss was written.
+	issuer, err := ParseAddress(p.Iss.Opaque())
+	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 

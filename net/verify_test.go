@@ -62,6 +62,35 @@ func TestVerifyEnvelope(t *testing.T) {
 		assert.Equal(t, addr.KeyURL(key.ID()), mock.url)
 	})
 
+	t.Run("countersignatures do not block verification", func(t *testing.T) {
+		// Only the first (transport) signature is verified; additional
+		// signatures — e.g. an authority countersignature whose key is
+		// not fetchable here — must not fail the envelope.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.URI(), "")
+		other := dsig.NewES256Key()
+		require.NoError(t, env.Sign(other, head.WithIssuer(Address("kyc.example.com").URI())))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		issuer, err := c.VerifyEnvelope(ctx, env, "")
+		require.NoError(t, err)
+		assert.Equal(t, addr, issuer)
+	})
+
+	t.Run("non-canonical iss is canonicalized", func(t *testing.T) {
+		// A U-Label / mixed-case iss must resolve to the same ASCII
+		// address for key fetching and the returned issuer.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, cbc.URI("gobl:Billing.Invopop.COM."), "")
+
+		mock := &mockFetcher{data: jwkFromKey(t, key)}
+		c := NewClient(WithFetcher(mock))
+		issuer, err := c.VerifyEnvelope(ctx, env, "")
+		require.NoError(t, err)
+		assert.Equal(t, addr, issuer)
+		assert.Equal(t, addr.KeyURL(key.ID()), mock.url, "key URL uses the canonical form")
+	})
+
 	t.Run("audience match", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		aud := Address("recipient.example.com")

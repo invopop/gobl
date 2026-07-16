@@ -61,6 +61,18 @@ func TestWho(t *testing.T) {
 		assert.Equal(t, "Test Subject", party.Name)
 	})
 
+	t.Run("canonicalizes a non-canonical address", func(t *testing.T) {
+		// Mixed case and a trailing dot must resolve to the same
+		// canonical who URL and match the signed issuer.
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             buildPartyEnvelope(t, subjKey, subject, nil, "", ""),
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		env, err := c.Who(ctx, Address("SUPPLIER.Example.COM."))
+		require.NoError(t, err)
+		assert.NotNil(t, env)
+	})
+
 	t.Run("rejects an issuer that does not match the address", func(t *testing.T) {
 		other := Address("other.example.com")
 		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{

@@ -203,6 +203,26 @@ func TestVerifyAuthority(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
 
+	t.Run("canonicalizes a non-canonical authority iss", func(t *testing.T) {
+		// The countersignature names the authority in mixed case with a
+		// trailing dot; it must still match the registered authority.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(cbc.URI("gobl:KYC.Example.COM.")),
+			head.WithScope(head.ScopeVerified)))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		assert.NoError(t, c.VerifyAuthority(ctx, env))
+	})
+
 	t.Run("rejects a pre-epoch expiry", func(t *testing.T) {
 		// A negative exp is a valid NumericDate before 1970 and must be
 		// enforced, not treated as an absent claim.
