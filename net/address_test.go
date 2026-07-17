@@ -110,6 +110,12 @@ func TestAddressString(t *testing.T) {
 	assert.Equal(t, "billing.invopop.com", Address("billing.invopop.com").String())
 }
 
+func TestAddressValidate(t *testing.T) {
+	assert.NoError(t, Address("billing.invopop.com").Validate())
+	assert.ErrorIs(t, Address("").Validate(), ErrAddressEmpty)
+	assert.ErrorIs(t, Address("localhost").Validate(), ErrAddressInvalid)
+}
+
 func TestAddressKeyURL(t *testing.T) {
 	a := Address("billing.invopop.com")
 	assert.Equal(t,
