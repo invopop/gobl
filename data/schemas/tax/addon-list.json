@@ -92,6 +92,10 @@
             "title": "Mexican SAT CFDI v4.X"
           },
           {
+            "const": "peppol-pint-v1",
+            "title": "Peppol PINT"
+          },
+          {
             "const": "pl-favat-v3",
             "title": "Polish KSeF FA_VAT FA(3)"
           },
