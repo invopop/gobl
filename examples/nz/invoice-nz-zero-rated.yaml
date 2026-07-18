@@ -1,0 +1,64 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["peppol-pint-v1"]
+uuid: "0195ce71-dc9c-72c8-bf2c-9890a4a9f0a2"
+regime: "NZ"
+type: "standard"
+series: "SAMPLE"
+code: "002"
+issue_date: "2024-05-15"
+currency: "NZD"
+
+supplier:
+  name: "Provide One Limited"
+  tax_id:
+    country: "NZ"
+    code: "49091850"
+  inboxes:
+    - key: "peppol"
+      scheme: "0088"
+      code: "9429000000008"
+  addresses:
+    - num: "1"
+      street: "Queen Street"
+      locality: "Auckland"
+      code: "1010"
+      country: "NZ"
+
+customer:
+  name: "Sample Customer Limited"
+  tax_id:
+    country: "NZ"
+    code: "136410132"
+  inboxes:
+    - key: "peppol"
+      scheme: "0088"
+      code: "9429000000015"
+  addresses:
+    - num: "10"
+      street: "Lambton Quay"
+      locality: "Wellington"
+      code: "6011"
+      country: "NZ"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Exported goods"
+      price: "100.00"
+      unit: "h"
+    taxes:
+      - cat: "GST"
+        key: "zero"
+        percent: "0%"
+
+payment:
+  terms:
+    key: "due-date"
+    due_dates:
+      - date: "2024-06-15"
+        percent: "100%"
+  instructions:
+    key: "credit-transfer"
+    credit_transfer:
+      - number: "0100000000000"
+        name: "Provide One Limited"

@@ -1,0 +1,66 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["peppol-pint-v1"]
+uuid: "0195ce71-dc9c-72c8-bf2c-9890a4a9f0a2"
+regime: "AU"
+type: "standard"
+series: "SAMPLE"
+code: "001"
+issue_date: "2024-05-15"
+currency: "AUD"
+
+supplier:
+  name: "Provide One Pty Ltd"
+  tax_id:
+    country: "AU"
+    code: "51824753556"
+  inboxes:
+    - key: "peppol"
+      scheme: "0151"
+      code: "51824753556"
+  addresses:
+    - num: "100"
+      street: "Queen Street"
+      locality: "Melbourne"
+      region: "VIC"
+      code: "3000"
+      country: "AU"
+
+customer:
+  name: "Sample Customer Pty Ltd"
+  tax_id:
+    country: "AU"
+    code: "53004085616"
+  inboxes:
+    - key: "peppol"
+      scheme: "0151"
+      code: "53004085616"
+  addresses:
+    - num: "1"
+      street: "Martin Place"
+      locality: "Sydney"
+      region: "NSW"
+      code: "2000"
+      country: "AU"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Consulting services"
+      price: "100.00"
+      unit: "h"
+    taxes:
+      - cat: "GST"
+        key: "standard"
+        rate: "general"
+
+payment:
+  terms:
+    key: "due-date"
+    due_dates:
+      - date: "2024-06-15"
+        percent: "100%"
+  instructions:
+    key: "credit-transfer"
+    credit_transfer:
+      - number: "123456789"
+        name: "Provide One Pty Ltd"

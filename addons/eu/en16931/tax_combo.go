@@ -30,8 +30,9 @@ var exemptTaxCategories = []cbc.Code{
 	TaxCategoryExport, TaxCategoryOutsideScope,
 }
 
-// VAT key mapping from GOBL tax keys to UNTDID 5305 codes.
-var vatKeyMap = tax.ExtensionsOf(cbc.CodeMap{
+// TaxCategoryMap maps GOBL tax keys to their UNTDID 5305 duty/tax/fee category
+// codes.
+var TaxCategoryMap = tax.ExtensionsOf(cbc.CodeMap{
 	tax.KeyStandard:       TaxCategoryStandard,
 	tax.KeyZero:           TaxCategoryZero,
 	tax.KeyExempt:         TaxCategoryExempt,
@@ -49,13 +50,13 @@ func NormalizeTaxCombo(tc *tax.Combo) {
 	case tax.CategoryVAT:
 		if tc.Key.IsEmpty() {
 			// Try doing a reverse map of the VAT category key
-			k := vatKeyMap.Lookup(tc.Ext.Get(untdid.ExtKeyTaxCategory))
+			k := TaxCategoryMap.Lookup(tc.Ext.Get(untdid.ExtKeyTaxCategory))
 			if k.IsEmpty() {
 				k = tax.KeyStandard
 			}
 			tc.Key = k
 		}
-		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, vatKeyMap.Get(tc.Key))
+		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, TaxCategoryMap.Get(tc.Key))
 	case es.TaxCategoryIGIC:
 		tc.Ext = tc.Ext.Set(untdid.ExtKeyTaxCategory, TaxCategoryIGIC)
 	case es.TaxCategoryIPSI:
@@ -76,7 +77,7 @@ func taxComboRules() *rules.Set {
 		rules.When(is.Func("is VAT", taxComboIsVAT),
 			rules.Field("ext",
 				rules.Assert("02", "VAT category code must be valid",
-					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, vatKeyMap.Values()...),
+					tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryMap.Values()...),
 				),
 			),
 		),

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `addons/peppol/pint`: New base addon for the Peppol International (PINT) billing model. Builds on EN 16931 and re-maps the UNTDID 5305 tax category code from the tax key so that non-VAT schemes such as GST are reported correctly (e.g. standard-rated GST as `S` instead of `O`). Also adds the PINT business rules not already covered by GOBL core or EN 16931 — a mandatory Buyer (ibr-007), Seller and Buyer electronic addresses (ibr-080/081), and an identifiable Seller (ibr-co-26). Intended as the shared layer for country-specific PINT sub-addons.
 - `regimes/au`: New tax regime for Australia — GST and ABN tax identity validation (weighted modulus-89 checksum).
 - `regimes/nz`: New tax regime for New Zealand — GST, IRD number validation (weighted modulus-11 checksum), and te reo Māori (`mi`) translations.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.

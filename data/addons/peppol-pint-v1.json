@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "peppol-pint-v1",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "Peppol PINT"
+  },
+  "description": {
+    "en": "Support for the Peppol International (PINT) billing model, the common\nlayer shared by the country-specific PINT specifications.\n\nPINT builds on EN 16931 but, unlike the EU CIUS, recognises indirect\ntax schemes beyond VAT. This addon re-maps the\nUNTDID 5305 tax category code from the GOBL tax key so that, for\nexample, standard-rated GST is reported as \"S\" (standard rated) instead\nof the EN 16931 default of \"O\" (outside scope).\n\nCountry-specific requirements are layered on top by dedicated sub-addons\nthat require this one."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Peppol PINT specifications"
+      },
+      "url": "https://docs.peppol.eu/poac/pint/"
+    }
+  ],
+  "extensions": null,
+  "scenarios": null,
+  "corrections": null
+}

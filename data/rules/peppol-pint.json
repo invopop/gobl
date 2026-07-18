@@ -1,0 +1,73 @@
+{
+  "id": "GOBL-PEPPOL-PINT",
+  "package": "peppol-pint",
+  "guard": "context: addon in [peppol-pint-v1]",
+  "subsets": [
+    {
+      "id": "GOBL-PEPPOL-PINT-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "supplier",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-PINT-BILL-INVOICE-01",
+              "desc": "invoice supplier must have a tax ID or identity (IBR-CO-26)",
+              "tests": "has identifier"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-PINT-BILL-INVOICE-02",
+                  "desc": "invoice supplier electronic address is required (IBR-081)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "customer",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-PINT-BILL-INVOICE-03",
+              "desc": "invoice customer is required (IBR-007)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "inboxes",
+              "assert": [
+                {
+                  "id": "GOBL-PEPPOL-PINT-BILL-INVOICE-04",
+                  "desc": "invoice customer electronic address is required (IBR-080)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-PEPPOL-PINT-TAX-COMBO",
+      "object": "tax.Combo",
+      "subsets": [
+        {
+          "field": "ext",
+          "assert": [
+            {
+              "id": "GOBL-PEPPOL-PINT-TAX-COMBO-01",
+              "desc": "invoice line tax category code must be a recognised PINT UNTDID 5305 code",
+              "tests": "ext 'untdid-tax-category' in [AE, E, G, K, O, S, Z]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
