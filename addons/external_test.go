@@ -49,6 +49,12 @@ func TestApprovedAddons(t *testing.T) {
 				"mx-cfdi-v4": "github.com/invopop/gobl.mx.cfdi",
 			},
 		},
+		{
+			name: "DK OIOUBL",
+			modules: map[cbc.Key]string{
+				"dk-oioubl-v2": "github.com/invopop/gobl.dk.oioubl",
+			},
+		},
 	}
 
 	for _, group := range groups {
