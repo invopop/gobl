@@ -14,8 +14,8 @@
               "assert": [
                 {
                   "id": "GOBL-DK-BILL-INVOICE-01",
-                  "desc": "invoice DK supplier must have either tax ID code or identity with 'CVR' type",
-                  "tests": "has tax ID code or identity with 'CVR' type"
+                  "desc": "invoice DK supplier must have either tax ID code or identity with 'CVR' or 'CPR' type",
+                  "tests": "has tax ID code or identity with 'CVR' or 'CPR' type"
                 }
               ]
             }
@@ -28,18 +28,43 @@
       "object": "org.Identity",
       "subsets": [
         {
-          "guard": "is CVR",
+          "guard": "context: regime in [DK]",
           "subsets": [
             {
-              "field": "code",
+              "guard": "type in [CVR]",
               "subsets": [
                 {
-                  "guard": "present",
-                  "assert": [
+                  "field": "code",
+                  "subsets": [
                     {
-                      "id": "GOBL-DK-ORG-IDENTITY-01",
-                      "desc": "invalid Danish CVR identity code",
-                      "tests": "valid"
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-ORG-IDENTITY-01",
+                          "desc": "invalid Danish CVR identity code",
+                          "tests": "valid"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "type in [CPR]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-ORG-IDENTITY-02",
+                          "desc": "invalid Danish CPR identity code",
+                          "tests": "valid"
+                        }
+                      ]
                     }
                   ]
                 }

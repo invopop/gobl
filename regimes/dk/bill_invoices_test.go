@@ -91,4 +91,17 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})
+
+	t.Run("supplier with nil tax ID and CPR identity", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: dk.IdentityTypeCPR,
+				Code: "1111111118",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
 }
