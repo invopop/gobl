@@ -9,7 +9,6 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -18,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func buildTestEnvelope(t *testing.T, key *dsig.PrivateKey, iss, aud cbc.URI) *gobl.Envelope {
+func buildTestEnvelope(t *testing.T, key *dsig.PrivateKey, iss, aud string) *gobl.Envelope {
 	t.Helper()
 
 	msg := &note.Message{Content: "test message content"}
@@ -51,7 +50,7 @@ func TestVerifyEnvelope(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 
 		mock := &mockFetcher{data: jwkFromKey(t, key)}
 		c := NewClient(WithFetcher(mock))
@@ -67,9 +66,9 @@ func TestVerifyEnvelope(t *testing.T) {
 		// signatures — e.g. an authority countersignature whose key is
 		// not fetchable here — must not fail the envelope.
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		other := dsig.NewES256Key()
-		require.NoError(t, env.Sign(other, head.WithIssuer(Address("kyc.example.com").URI())))
+		require.NoError(t, env.Sign(other, head.WithIssuer("kyc.example.com")))
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		issuer, err := c.VerifyEnvelope(ctx, env, "")
@@ -81,7 +80,7 @@ func TestVerifyEnvelope(t *testing.T) {
 		// A U-Label / mixed-case iss must resolve to the same ASCII
 		// address for key fetching and the returned issuer.
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, cbc.URI("gobl:Billing.Invopop.COM."), "")
+		env := buildTestEnvelope(t, key, "Billing.Invopop.COM.", "")
 
 		mock := &mockFetcher{data: jwkFromKey(t, key)}
 		c := NewClient(WithFetcher(mock))
@@ -94,20 +93,20 @@ func TestVerifyEnvelope(t *testing.T) {
 	t.Run("audience match", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		aud := Address("recipient.example.com")
-		env := buildTestEnvelope(t, key, addr.URI(), aud.URI())
+		env := buildTestEnvelope(t, key, addr.String(), aud.String())
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		issuer, err := c.VerifyEnvelope(ctx, env, aud.URI())
+		issuer, err := c.VerifyEnvelope(ctx, env, aud)
 		require.NoError(t, err)
 		assert.Equal(t, addr, issuer)
 	})
 
 	t.Run("audience mismatch", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), Address("a.example").URI())
+		env := buildTestEnvelope(t, key, addr.String(), "a.example")
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
-		_, err := c.VerifyEnvelope(ctx, env, Address("b.example").URI())
+		_, err := c.VerifyEnvelope(ctx, env, "b.example")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -121,7 +120,7 @@ func TestVerifyEnvelope(t *testing.T) {
 
 	t.Run("undecodable signature payload", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		bad, err := dsig.NewSignature(key, "not-an-object")
 		require.NoError(t, err)
 		env.Signatures[0] = bad
@@ -136,7 +135,7 @@ func TestVerifyEnvelope(t *testing.T) {
 		// A malformed envelope carrying signatures but no head must be
 		// rejected, not panic.
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		env.Head = nil
 
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
@@ -159,7 +158,7 @@ func TestVerifyEnvelope(t *testing.T) {
 		// signature's kid, so the client rejects the response.
 		key := dsig.NewES256Key()
 		other := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, other)}))
 		_, err := c.VerifyEnvelope(ctx, env, "")
 		require.Error(t, err)
@@ -169,7 +168,7 @@ func TestVerifyEnvelope(t *testing.T) {
 	t.Run("signing time before valid_from", func(t *testing.T) {
 		// Sign now, then publish the key with a valid_from in the future.
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		future := cal.TimestampOf(time.Now().Add(24 * time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &future, nil)}))
 		_, err := c.VerifyEnvelope(ctx, env, "")
@@ -180,7 +179,7 @@ func TestVerifyEnvelope(t *testing.T) {
 
 	t.Run("signing time after valid_until", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		past := cal.TimestampOf(time.Now().Add(-24 * time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, nil, &past)}))
 		_, err := c.VerifyEnvelope(ctx, env, "")
@@ -191,7 +190,7 @@ func TestVerifyEnvelope(t *testing.T) {
 
 	t.Run("signing time inside window", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, addr.URI(), "")
+		env := buildTestEnvelope(t, key, addr.String(), "")
 		from := cal.TimestampOf(time.Now().Add(-time.Hour))
 		until := cal.TimestampOf(time.Now().Add(time.Hour))
 		c := NewClient(WithFetcher(&mockFetcher{data: publishedJWK(t, key, &from, &until)}))
@@ -204,20 +203,19 @@ func TestVerifyEnvelope(t *testing.T) {
 func TestVerifyEnvelopePayloadErrors(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("non-gobl iss scheme", func(t *testing.T) {
+	t.Run("URI-form iss is not an address", func(t *testing.T) {
 		key := dsig.NewES256Key()
-		env := buildTestEnvelope(t, key, cbc.URI("mailto:a@example.com"), "")
+		env := buildTestEnvelope(t, key, "mailto:a@example.com", "")
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyEnvelope(ctx, env, "")
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "is not a gobl address")
 	})
 
 	t.Run("invalid iss FQDN", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		// "localhost" is a single label — fails FQDN validation.
-		env := buildTestEnvelope(t, key, cbc.URI("gobl:localhost"), "")
+		env := buildTestEnvelope(t, key, "localhost", "")
 		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
 		_, err := c.VerifyEnvelope(ctx, env, "")
 		require.Error(t, err)

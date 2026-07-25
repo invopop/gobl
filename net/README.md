@@ -89,8 +89,9 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   own countersignature (§5.3).
 - **iss / aud** — Fields in a signature's *signed payload* carrying the
   verifiable GOBL Net origin (`iss`) and the address the signature is
-  bound to (`aud`), both as `gobl:` `cbc.URI` values. These are the
-  authoritative, tamper-proof identities.
+  bound to (`aud`), both as bare GOBL Net addresses (FQDNs) — GOBL
+  Net is implied inside the signed payload, so no URI scheme is
+  carried. These are the authoritative, tamper-proof identities.
 - **Request token** — A short-lived JWT presented in the
   `Authorization` header of who and inbox requests, identifying the
   party *making the HTTP request* (§5.5). Its `iss` may name a
@@ -169,7 +170,8 @@ The following constants are defined in `net/address.go`:
 For an Address `A`, the canonical URI and URLs are
 
 ```
-gobl:<A>                                   ← Address.URI()  (iss / aud value)
+<A>                                        ← Address.String() (iss / aud / verifier value)
+gobl:<A>                                   ← Address.URI()  (endpoint / header from-to value)
 https://<A>/.well-known/gobl/keys/<kid>    ← KeyURL(kid)
 https://<A>/.well-known/gobl/who           ← WhoURL()
 https://<A>/.well-known/gobl/inbox         ← InboxURL()
@@ -285,9 +287,12 @@ does *not* live inside the key material itself.
 Each signature signs a payload of `{uuid, dig, iss, aud, iat}`:
 
 - `uuid` + `dig` identify the document (immutable after signing).
-- `iss` is the signer's verifiable GOBL Net address as a `gobl:` URI
-  (e.g. `gobl:billing.invopop.com`). The verifier reads it to
-  discover *which* per-key endpoint to fetch.
+- `iss` is the signer's verifiable GOBL Net address as a bare FQDN
+  (e.g. `billing.invopop.com`). The verifier reads it to discover
+  *which* per-key endpoint to fetch. No URI scheme is carried:
+  within the protocol the value can only be a GOBL Net address, and
+  since an FQDN can never contain a colon, a future revision could
+  admit URI forms without ambiguity.
 - `aud` is the GOBL Net address the signature is bound to. It is
   optional at the protocol layer (e.g. a self-signed identity
   document, or an envelope archived for later inspection, may omit
@@ -335,7 +340,7 @@ address (FQDN ownership).
 **Verified identities.** When the subject has additionally passed
 identity verification (KYC/KYB), the registration Authority's
 countersignature carries a `verifier` claim: the GOBL Net address
-(a `gobl:` URI) of the authority that performed the verification.
+(a bare FQDN) of the authority that performed the verification.
 The named verifier MUST also countersign the same envelope; the
 subject is **verified** only when both hold — the registration
 Authority's pointer authorizes *which* signature to trust for
@@ -349,21 +354,21 @@ the countersignature's presence, verification by the confirmed
 ```go
 // Registration authority (e.g. lookup.gobl.org):
 env.Sign(authorityKey,
-    head.WithIssuer(authorityAddr.URI()),
-    head.WithAudience(subjectAddr.URI()),
-    head.WithVerifier(verifierAddr.URI()))
+    head.WithIssuer(authorityAddr.String()),
+    head.WithAudience(subjectAddr.String()),
+    head.WithVerifier(verifierAddr.String()))
 // Verifying authority (KYC/KYB vendor):
 env.Sign(verifierKey,
-    head.WithIssuer(verifierAddr.URI()),
-    head.WithAudience(subjectAddr.URI()))
+    head.WithIssuer(verifierAddr.String()),
+    head.WithAudience(subjectAddr.String()))
 ```
 
 A named verifier whose countersignature is absent, invalid, or
 expired MUST degrade the endorsement to registered rather than
 invalidate it: the registration stands on its own, and callers that
 require verification reject with `ErrNotVerified`
-(`Endorsement.Verified` in code). A malformed or non-`gobl:`
-`verifier` value is treated as absent. Adding or revoking
+(`Endorsement.Verified` in code). A `verifier` value that is not a
+valid bare address is treated as absent. Adding or revoking
 verification is the registration Authority's act: it re-countersigns
 the envelope with the pointer added or removed, which makes the
 registry the single source of truth for verification state and
@@ -421,11 +426,11 @@ inside the request body.
 
 The signed claims are:
 
-- `iss` — the requester's Address as a `gobl:` URI. This MAY be a
+- `iss` — the requester's Address as a bare FQDN. This MAY be a
   trusted intermediary transmitting a document on behalf of its
   signer; the envelope's own `iss` (§5.1) remains the authoritative
   document origin.
-- `aud` — the destination Address as a `gobl:` URI. Verifiers MUST
+- `aud` — the destination Address as a bare FQDN. Verifiers MUST
   reject a token whose `aud` is not their own address: binding the
   audience prevents a captured token from being replayed against a
   different server.
@@ -483,8 +488,8 @@ returns the verified requester Address.
 issuer address:
 
 1. The envelope MUST be signed; otherwise `ErrVerifyFailed`.
-2. The first signature's signed payload is read; `iss` MUST be a `gobl:`
-   URI (else `ErrVerifyFailed`).
+2. The first signature's signed payload is read; `iss` MUST be a
+   valid bare Address (else `ErrVerifyFailed`).
 3. `FetchKey(ctx, iss-host, kid)` fetches the issuer's published key
    from `/.well-known/gobl/keys/<kid>` (including its optional
    `valid_from` / `valid_until`).
@@ -499,14 +504,14 @@ issuer address:
 `/who` is an authenticated GET (see §8.2): the caller presents a
 request token (§5.5) identifying itself. The response is the
 target's party envelope: document = the target's `org.Party`,
-first signature = the target's self-signature with `iss=gobl:target`
+first signature = the target's self-signature with `iss=target`
 and no `aud` (the response is the same signed document for every
 authorized caller), optionally followed by Authority
 countersignatures.
 
 `Client.Who(ctx, addr)` performs the lookup and verifies it:
 
-1. A request token for `aud=gobl:<addr>` is minted from the client's
+1. A request token for `aud=<addr>` is minted from the client's
    identity (`WithIdentity`) and sent with
    `GET https://<addr>/.well-known/gobl/who`. A `204` returns
    `ErrNoContent` — the address exists but publishes no identity
@@ -646,7 +651,7 @@ returns `404 Not Found`. No bulk endpoint is exposed.
 Authenticated. The caller MUST present a request token (§5.5); a
 request without a valid token is rejected with `401 Unauthorized`.
 Returns the domain's party envelope: an `org.Party` document,
-self-signed with `iss=gobl:self` as the **first** signature (no
+self-signed with `iss=self` as the **first** signature (no
 `aud`), optionally carrying Authority countersignatures. The
 response body is a static signed document — the same bytes for
 every authorized caller; the token controls access and feeds the
@@ -655,7 +660,7 @@ audit log (§11.9), it does not change the response.
 | Status            | Cause                                                |
 |-------------------|------------------------------------------------------|
 | `200 OK`          | Returns the signed party envelope.                   |
-| `202 Accepted`    | Request authenticated and recorded; the owner discloses selectively. If the owner approves, it delivers its party envelope to the requester's inbox (the token's `iss`), signed `iss=gobl:owner`, `aud=gobl:requester` (§8.3). There is no guarantee and no deadline — requesters MUST NOT wait synchronously and proceed with the details they already hold. |
+| `202 Accepted`    | Request authenticated and recorded; the owner discloses selectively. If the owner approves, it delivers its party envelope to the requester's inbox (the token's `iss`), signed `iss=owner`, `aud=requester` (§8.3). There is no guarantee and no deadline — requesters MUST NOT wait synchronously and proceed with the details they already hold. |
 | `204 No Content`  | The account exists but publishes no identity details. A 204 account is receive-only: it cannot pass sender verification (§6.4), but deliveries *to* it are unaffected. |
 | `401 Unauthorized`| Missing or invalid request token (§5.5).             |
 | `404 Not Found`   | The address does not participate in GOBL Net.        |
@@ -785,11 +790,11 @@ Customer (receiver — a business or an individual consumer):
    nothing; a `202 Accepted` means the Customer may deliver its
    details to the Supplier's inbox later. Either way the Supplier
    proceeds with the details it already holds.
-3. Supplier signs the invoice envelope with `iss=gobl:supplier`,
-   `aud=gobl:customer` and POSTs it to Customer's `/inbox`, again
+3. Supplier signs the invoice envelope with `iss=supplier`,
+   `aud=customer` and POSTs it to Customer's `/inbox`, again
    presenting a request token. When a service provider transmits on
    the Supplier's behalf, the token names the provider while the
-   envelope keeps `iss=gobl:supplier`.
+   envelope keeps `iss=supplier`.
 4. Customer verifies the request token, then the envelope signature
    and audience (§6.1), then resolves the Supplier's identity with
    `GET /who` on the verified issuer (a cached copy MAY be used
@@ -843,7 +848,7 @@ The package exports the following sentinel errors:
 | `ErrPending`           | A who request was accepted for deferred disclosure (HTTP 202) — the owner may deliver its party envelope to the requester's inbox later. |
 | `ErrTokenInvalid`      | A request token failed verification (parse, signature, key fetch, `aud` mismatch, key validity window). |
 | `ErrTokenExpired`      | A request token failed the freshness check (`exp` passed, `iat` too old or in the future). |
-| `ErrVerifyFailed`      | Envelope verification failed (no signature, non-`gobl:` `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window, who issuer/address mismatch). |
+| `ErrVerifyFailed`      | Envelope verification failed (no signature, invalid `iss`, key fetch failed, signature mismatch, `aud` mismatch, `iat` outside the key's validity window, who issuer/address mismatch). |
 | `ErrUnknownAuthority`  | An endorser on a `/who` envelope is not in `Authorities` (only raised by callers that opt into authority enforcement). |
 | `ErrNotVerified`       | A sender's endorsement is valid but carries no confirmed verifier (§5.3) and the caller required identity verification. |
 | `ErrSignatureExpired`  | An authority countersignature verified but its `exp` claim has passed. |

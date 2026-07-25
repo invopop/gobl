@@ -25,14 +25,14 @@ func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address,
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
-	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.URI())))
+	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 	if authKey != nil {
 		opts := []head.SignOption{
-			head.WithIssuer(authority.URI()),
-			head.WithAudience(subject.URI()),
+			head.WithIssuer(authority.String()),
+			head.WithAudience(subject.String()),
 		}
 		if verifier != "" {
-			opts = append(opts, head.WithVerifier(verifier.URI()))
+			opts = append(opts, head.WithVerifier(verifier.String()))
 		}
 		require.NoError(t, env.Sign(authKey, opts...))
 	}
@@ -98,8 +98,8 @@ func TestWho(t *testing.T) {
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(subjKey,
-			head.WithIssuer(subject.URI()),
-			head.WithAudience(Address("caller.example.com").URI())))
+			head.WithIssuer(subject.String()),
+			head.WithAudience("caller.example.com")))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
@@ -118,7 +118,7 @@ func TestWho(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.URI())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 

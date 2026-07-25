@@ -41,8 +41,8 @@ func buildSignedEnvelope(t *testing.T, key *dsig.PrivateKey, iss, aud Address) *
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
 	require.NoError(t, env.Sign(key,
-		head.WithIssuer(iss.URI()),
-		head.WithAudience(aud.URI())))
+		head.WithIssuer(iss.String()),
+		head.WithAudience(aud.String())))
 	return env
 }
 
@@ -66,8 +66,8 @@ func TestSend(t *testing.T) {
 		auth := poster.header.Get("Authorization")
 		require.NotEmpty(t, auth)
 		claims := tokenPayload(t, auth[len("Bearer "):])
-		assert.Equal(t, sender.URI(), claims.Iss)
-		assert.Equal(t, receiver.URI(), claims.Aud)
+		assert.Equal(t, sender, claims.Iss)
+		assert.Equal(t, receiver, claims.Aud)
 	})
 
 	t.Run("canonicalizes the address", func(t *testing.T) {

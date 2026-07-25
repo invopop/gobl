@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/uuid"
 )
@@ -25,10 +24,11 @@ const (
 // the Authorization header of who and inbox requests. Iss names the
 // party making the request — possibly a trusted intermediary distinct
 // from any document signer inside the request body — and Aud names
-// the destination address the token is bound to.
+// the destination address the token is bound to. Both are bare GOBL
+// Net addresses (FQDNs).
 type TokenClaims struct {
-	Iss cbc.URI `json:"iss"`
-	Aud cbc.URI `json:"aud"`
+	Iss Address `json:"iss"`
+	Aud Address `json:"aud"`
 	Iat int64   `json:"iat"`
 	Exp int64   `json:"exp"`
 	JTI string  `json:"jti,omitempty"`
@@ -58,8 +58,8 @@ func NewToken(key *dsig.PrivateKey, iss, aud Address, ttl time.Duration) (string
 	}
 	now := time.Now().UTC()
 	claims := &TokenClaims{
-		Iss: iss.URI(),
-		Aud: aud.URI(),
+		Iss: iss,
+		Aud: aud,
 		Iat: now.Unix(),
 		Exp: now.Add(ttl).Unix(),
 		JTI: uuid.V7().String(),
@@ -92,10 +92,7 @@ func (c *Client) VerifyToken(ctx context.Context, token string, aud Address) (Ad
 	if err := sig.UnsafePayload(claims); err != nil {
 		return "", fmt.Errorf("%w: %v", ErrTokenInvalid, err)
 	}
-	if claims.Iss.Scheme() != Scheme {
-		return "", fmt.Errorf("%w: iss %q is not a gobl address", ErrTokenInvalid, claims.Iss)
-	}
-	issuer, err := ParseAddress(claims.Iss.Opaque())
+	issuer, err := ParseAddress(string(claims.Iss))
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrTokenInvalid, err)
 	}
@@ -111,8 +108,8 @@ func (c *Client) VerifyToken(ctx context.Context, token string, aud Address) (Ad
 	if err := sig.VerifyPayload(key, verified); err != nil {
 		return "", fmt.Errorf("%w: %v", ErrTokenInvalid, err)
 	}
-	if verified.Aud != aud.URI() {
-		return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrTokenInvalid, verified.Aud, aud.URI())
+	if got, err := ParseAddress(string(verified.Aud)); err != nil || got != aud {
+		return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrTokenInvalid, verified.Aud, aud)
 	}
 	if verified.Iat == 0 || verified.Exp == 0 {
 		return "", fmt.Errorf("%w: iat and exp are required", ErrTokenInvalid)

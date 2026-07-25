@@ -41,8 +41,8 @@ func TestNewToken(t *testing.T) {
 		token, err := NewToken(key, requester, target, 0)
 		require.NoError(t, err)
 		claims := tokenPayload(t, token)
-		assert.Equal(t, requester.URI(), claims.Iss)
-		assert.Equal(t, target.URI(), claims.Aud)
+		assert.Equal(t, requester, claims.Iss)
+		assert.Equal(t, target, claims.Aud)
 		assert.NotEmpty(t, claims.JTI)
 		assert.Equal(t, int64(60), claims.Exp-claims.Iat)
 	})
@@ -63,8 +63,8 @@ func TestNewToken(t *testing.T) {
 		token, err := NewToken(key, "Sender.Example.COM.", "RECEIVER.example.com", 0)
 		require.NoError(t, err)
 		claims := tokenPayload(t, token)
-		assert.Equal(t, requester.URI(), claims.Iss)
-		assert.Equal(t, target.URI(), claims.Aud)
+		assert.Equal(t, requester, claims.Iss)
+		assert.Equal(t, target, claims.Aud)
 	})
 
 	t.Run("rejects an invalid address", func(t *testing.T) {
@@ -136,11 +136,11 @@ func TestVerifyToken(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrTokenInvalid))
 	})
 
-	t.Run("rejects a non-gobl issuer", func(t *testing.T) {
+	t.Run("rejects a non-address issuer", func(t *testing.T) {
 		now := time.Now().UTC()
 		token := signClaims(t, key, &TokenClaims{
 			Iss: "https://sender.example.com",
-			Aud: target.URI(),
+			Aud: target,
 			Iat: now.Unix(),
 			Exp: now.Add(time.Minute).Unix(),
 		})
@@ -150,8 +150,8 @@ func TestVerifyToken(t *testing.T) {
 
 	t.Run("rejects missing iat or exp", func(t *testing.T) {
 		token := signClaims(t, key, &TokenClaims{
-			Iss: requester.URI(),
-			Aud: target.URI(),
+			Iss: requester,
+			Aud: target,
 		})
 		_, err := client.VerifyToken(ctx, token, target)
 		assert.True(t, errors.Is(err, ErrTokenInvalid))
@@ -161,8 +161,8 @@ func TestVerifyToken(t *testing.T) {
 	t.Run("rejects a passed exp", func(t *testing.T) {
 		now := time.Now().UTC()
 		token := signClaims(t, key, &TokenClaims{
-			Iss: requester.URI(),
-			Aud: target.URI(),
+			Iss: requester,
+			Aud: target,
 			Iat: now.Add(-2 * time.Minute).Unix(),
 			Exp: now.Add(-time.Minute).Unix(),
 		})
@@ -173,8 +173,8 @@ func TestVerifyToken(t *testing.T) {
 	t.Run("rejects an iat older than the ceiling even with a live exp", func(t *testing.T) {
 		now := time.Now().UTC()
 		token := signClaims(t, key, &TokenClaims{
-			Iss: requester.URI(),
-			Aud: target.URI(),
+			Iss: requester,
+			Aud: target,
 			Iat: now.Add(-10 * time.Minute).Unix(),
 			Exp: now.Add(10 * time.Minute).Unix(),
 		})
@@ -186,8 +186,8 @@ func TestVerifyToken(t *testing.T) {
 	t.Run("rejects an iat in the future", func(t *testing.T) {
 		now := time.Now().UTC()
 		token := signClaims(t, key, &TokenClaims{
-			Iss: requester.URI(),
-			Aud: target.URI(),
+			Iss: requester,
+			Aud: target,
 			Iat: now.Add(5 * time.Minute).Unix(),
 			Exp: now.Add(6 * time.Minute).Unix(),
 		})
@@ -277,8 +277,8 @@ func TestWhoAuthorization(t *testing.T) {
 		require.NotEmpty(t, auth)
 		require.True(t, len(auth) > 7 && auth[:7] == "Bearer ")
 		claims := tokenPayload(t, auth[7:])
-		assert.Equal(t, self.URI(), claims.Iss)
-		assert.Equal(t, subject.URI(), claims.Aud)
+		assert.Equal(t, self, claims.Iss)
+		assert.Equal(t, subject, claims.Aud)
 
 		// Key fetches go out bare.
 		assert.Empty(t, rec.byURL[subject.KeyURL(subjKey.ID())].Get("Authorization"))

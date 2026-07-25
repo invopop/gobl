@@ -102,10 +102,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		if err != nil {
 			continue
 		}
-		if p.Iss.Scheme() != Scheme {
-			continue
-		}
-		issuer, err := ParseAddress(p.Iss.Opaque())
+		issuer, err := ParseAddress(p.Iss)
 		if err != nil {
 			continue
 		}
@@ -153,10 +150,7 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 // verifier degrades to registered, it does not invalidate the
 // endorsement.
 func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) Address {
-	if p.Verifier == "" || p.Verifier.Scheme() != Scheme {
-		return ""
-	}
-	verifier, err := ParseAddress(p.Verifier.Opaque())
+	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
 		return ""
 	}
@@ -180,10 +174,7 @@ func (c *Client) verifySignatureBy(ctx context.Context, env *gobl.Envelope, addr
 		if err != nil {
 			continue
 		}
-		if p.Iss.Scheme() != Scheme {
-			continue
-		}
-		issuer, err := ParseAddress(p.Iss.Opaque())
+		issuer, err := ParseAddress(p.Iss)
 		if err != nil || issuer != addr {
 			continue
 		}
