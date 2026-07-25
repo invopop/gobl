@@ -452,7 +452,11 @@ Freshness: a token MUST be rejected when `exp` has passed, when
 `iat` lies in the future, or when `iat` is older than 5 minutes
 regardless of `exp`; verifiers SHOULD allow 30 seconds of clock
 skew. A request with a missing or invalid token MUST be rejected
-with `401 Unauthorized`.
+with `401 Unauthorized`. A verifier that cannot *reach* the
+issuer's key endpoint (`ErrUnavailable`: network failure, 429, 5xx)
+MUST NOT treat the token as invalid — the server responds
+`503 Service Unavailable` so the client retries, rather than `401`,
+which clients treat as a definitive rejection.
 
 Published keys are immutable per `kid` (§4), so verifiers SHOULD
 cache fetched keys for a short TTL rather than re-fetch per
@@ -461,7 +465,8 @@ the request token and the body's signature are made with the same
 key — the common case of a sender delivering its own documents —
 token and envelope verification then share a single key fetch. The
 TTL also bounds how long a key removed from the issuer's endpoint
-(§4, 404) keeps verifying.
+(§4, 404) keeps verifying; `Client.FlushKeyCache` empties the cache
+on demand for operators reacting to a reported compromise.
 
 Any participant with published keys can mint a request token —
 endorsement requirements (§6.4) attach to the *document signer*,
@@ -536,9 +541,11 @@ per lookup.
 
 The package-level slice `net.Authorities` holds GOBL Net addresses
 treated as trusted registration authorities. The default list
-contains the network's default authority, `lookup.gobl.org`;
-`net.RegisterAuthority` or the `WithAuthorities` client option add
-to it.
+contains the network's default authority, `lookup.gobl.org`, and
+`net.RegisterAuthority` appends to it. The `WithAuthorities` client
+option *replaces* the list for that client: whoever configures
+trust states it fully, so closed deployments can exclude the
+default authority entirely (include it explicitly to supplement).
 
 `Client.VerifyAuthority(ctx, env)` returns an `Endorsement` iff the
 envelope carries at least one signature whose signed `iss` is in the
@@ -600,8 +607,10 @@ The default `HTTPFetcher` enforces:
 Responses larger than 1 MiB are truncated. A `204 No Content`
 response causes `ErrNoContent` and a `202 Accepted` response causes
 `ErrPending` — distinct sentinels because at the who endpoint both
-empty responses are meaningful (§8.2). Any other non-200 response
-causes `ErrFetchFailed`.
+empty responses are meaningful (§8.2). Transient conditions — 429,
+any 5xx, or a transport failure — cause the retryable
+`ErrUnavailable`; any other non-200 response causes the permanent
+`ErrFetchFailed`.
 
 A `Client` configured with an identity (`net.WithIdentity`) mints a
 fresh request token (§5.5) per who or inbox request and sends it as
@@ -627,15 +636,14 @@ There is no public escape hatch; in-process test fixtures (e.g.
 
 ### 7.2 Pluggable Fetcher
 
-The `Fetcher` interface (`Fetch(ctx, url, header) ([]byte, error)`)
-allows substituting the HTTP transport, e.g. for testing, in-process
-resolution, or alternative transports; `header` carries any
-`Authorization` request token the `Client` has minted for the
-request. A `Fetcher` that additionally implements the `Poster`
-interface (`Post(ctx, url, body, header) error`) can deliver
-envelopes via `Client.Send` (§8.3); the default `HTTPFetcher`
-implements both. Use `net.WithFetcher(f)` when constructing a
-`Client`.
+The `Fetcher` interface (`Fetch(ctx, url, header) ([]byte, error)`
+and `Post(ctx, url, body, header) error`) allows substituting the
+HTTP transport, e.g. for testing, in-process resolution, or
+alternative transports; `header` carries any `Authorization`
+request token the `Client` has minted for the request, and `Post`
+is what `Client.Send` (§8.3) delivers envelopes through.
+Verification-only transports may implement `Post` as a plain error
+return. Use `net.WithFetcher(f)` when constructing a `Client`.
 
 ## 8. Server-Side Endpoints
 
@@ -664,6 +672,7 @@ audit log (§11.9), it does not change the response.
 | `204 No Content`  | The account exists but publishes no identity details. A 204 account is receive-only: it cannot pass sender verification (§6.4), but deliveries *to* it are unaffected. |
 | `401 Unauthorized`| Missing or invalid request token (§5.5).             |
 | `404 Not Found`   | The address does not participate in GOBL Net.        |
+| `503 Service Unavailable` | The requester's key endpoint could not be reached to verify the token (§5.5); retry later. |
 
 `202` and `204` express different stances: `204` means "there is
 nothing to share, ever" — the account publishes no identity details
@@ -730,6 +739,7 @@ the envelope's signer, never to the token's issuer. Status codes:
 | `403 Forbidden`              | Sender (`iss`) is not endorsed by an Authority this inbox trusts, or lacks the verified status the operator requires (§5.3). |
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
+| `503 Service Unavailable`    | A key endpoint needed to verify the token or envelope could not be reached (§5.5); retry later. |
 
 The request body size is capped at 1 MiB. The protocol does not
 mandate where or how an accepted envelope is persisted — that is an
@@ -774,8 +784,10 @@ party envelopes are subject to the normal endorsement policy.
 
 In code, `Client.Send(ctx, addr, env)` performs the delivery: it
 mints a request token for the target inbox, POSTs the envelope, and
-returns nil on `202`, `ErrInboxRejected` on any 4xx, and
-`ErrFetchFailed` otherwise.
+returns nil on `202`, `ErrInboxRejected` on a definitive 4xx (do
+not retry — the inbox has decided), and the retryable
+`ErrUnavailable` on 429, 5xx, or transport failure. "Retry on
+`ErrUnavailable` until `202`" is the sender's recovery strategy.
 
 ### 8.4 End-to-end delivery flow
 
@@ -843,7 +855,8 @@ The package exports the following sentinel errors:
 |------------------------|------------------------------------------------------------------|
 | `ErrAddressEmpty`      | Empty input to `ParseAddress`.                                   |
 | `ErrAddressInvalid`    | Input is not a valid FQDN per §3.1.                              |
-| `ErrFetchFailed`       | Well-known resource fetch failed (network, unexpected status, malformed). |
+| `ErrFetchFailed`       | Well-known resource fetch failed for a reason retrying will not cure (definitive non-2xx, malformed content, invalid input). |
+| `ErrUnavailable`       | A well-known resource could not be reached (network failure, 429, 5xx) — a transient, retryable condition. Servers respond 503, not 401, when token verification hits it. |
 | `ErrNoContent`         | The resource exists but has no content (HTTP 204) — a who endpoint that publishes no identity details. |
 | `ErrPending`           | A who request was accepted for deferred disclosure (HTTP 202) — the owner may deliver its party envelope to the requester's inbox later. |
 | `ErrTokenInvalid`      | A request token failed verification (parse, signature, key fetch, `aud` mismatch, key validity window). |
@@ -928,10 +941,14 @@ for the verifier's own longer-lived signature to expire. The
 long-lived verifier signature is only evidence when the short-lived
 registration signature points at it.
 
-### 11.5 Response Size
+### 11.5 Response Size and Signature Count
 
 The 1 MiB cap on Key, Who, and inbox bodies limits memory amplification
-from hostile or misconfigured peers.
+from hostile or misconfigured peers. `VerifyAuthority` additionally
+refuses envelopes carrying more than 32 signatures: each candidate
+countersignature can cost a network key fetch, so an unbounded
+signature list would turn a hostile who envelope into a
+fetch-amplification gadget against verifying inboxes.
 
 ### 11.6 SSRF / non-public dial targets
 

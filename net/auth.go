@@ -2,6 +2,7 @@ package net
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -102,6 +103,12 @@ func (c *Client) VerifyToken(ctx context.Context, token string, aud Address) (Ad
 	}
 	key, err := c.FetchKey(ctx, issuer, kid)
 	if err != nil {
+		if errors.Is(err, ErrUnavailable) {
+			// The issuer's key endpoint could not be reached: a
+			// transient condition, not an invalid token. Servers
+			// respond 503, not 401.
+			return "", err
+		}
 		return "", fmt.Errorf("%w: %v", ErrTokenInvalid, err)
 	}
 	verified := new(TokenClaims)
