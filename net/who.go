@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/org"
 )
@@ -19,8 +18,14 @@ import (
 // countersignatures, if any, are preserved on the returned envelope
 // for VerifyAuthority.
 //
+// The request carries a bearer request token minted from the client's
+// identity (WithIdentity); conforming servers reject requests without
+// one.
+//
 // A 204 response returns ErrNoContent: the address exists but does not
-// publish identity details (a receive-only account).
+// publish identity details (a receive-only account). A 202 response
+// returns ErrPending: the request was recorded and the owner may
+// deliver its party envelope to the requester's inbox later.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
 	// Canonicalize so well-known URLs and the issuer comparison use
 	// the ASCII form regardless of how the address was written.
@@ -28,7 +33,11 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if err != nil {
 		return nil, err
 	}
-	data, err := c.fetcher.Fetch(ctx, addr.WhoURL())
+	header, err := c.authHeader(addr)
+	if err != nil {
+		return nil, err
+	}
+	data, err := c.fetcher.Fetch(ctx, addr.WhoURL(), header)
 	if err != nil {
 		return nil, err
 	}
@@ -61,17 +70,23 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 
 // VerifySender confirms that the given address is approved to send
 // documents: its who identity must verify (see Who) and carry a
-// countersignature from one of the client's trusted authorities
-// satisfying minScope. Returns the sender's endorsed party on
-// success. Receiving inboxes call this with the verified issuer of an
+// countersignature from one of the client's trusted authorities.
+// When requireVerified is true the endorsement must additionally
+// carry a confirmed verifier (see VerifyAuthority), else
+// ErrNotVerified. Returns the sender's endorsed party on success.
+// Receiving inboxes call this with the verified issuer of an
 // incoming envelope before accepting it.
-func (c *Client) VerifySender(ctx context.Context, addr Address, minScope cbc.Key) (*org.Party, error) {
+func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified bool) (*org.Party, error) {
 	env, err := c.Who(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
-	if err := c.VerifyAuthorityWithScope(ctx, env, minScope); err != nil {
+	end, err := c.VerifyAuthority(ctx, env)
+	if err != nil {
 		return nil, err
+	}
+	if requireVerified && !end.Verified() {
+		return nil, fmt.Errorf("%w: %s", ErrNotVerified, addr)
 	}
 	return env.Extract().(*org.Party), nil
 }

@@ -22,7 +22,7 @@ type mockFetcher struct {
 	url  string // records the URL that was fetched
 }
 
-func (m *mockFetcher) Fetch(_ context.Context, url string) ([]byte, error) {
+func (m *mockFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte, error) {
 	m.url = url
 	return m.data, m.err
 }
@@ -95,6 +95,76 @@ func TestFetchPublicKey(t *testing.T) {
 	})
 }
 
+// countingFetcher wraps a Fetcher and counts fetches per URL.
+type countingFetcher struct {
+	inner Fetcher
+	n     map[string]int
+}
+
+func (f *countingFetcher) Fetch(ctx context.Context, url string, header http.Header) ([]byte, error) {
+	f.n[url]++
+	return f.inner.Fetch(ctx, url, header)
+}
+
+func TestFetchKeyCache(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	url := addr.KeyURL(key.ID())
+
+	pubData, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+
+	newCounting := func() *countingFetcher {
+		return &countingFetcher{
+			inner: &mapFetcher{data: map[string][]byte{url: pubData}},
+			n:     map[string]int{},
+		}
+	}
+
+	t.Run("second fetch is served from cache", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f))
+		for range 3 {
+			pk, err := c.FetchKey(ctx, addr, key.ID())
+			require.NoError(t, err)
+			assert.Equal(t, key.ID(), pk.ID())
+		}
+		assert.Equal(t, 1, f.n[url])
+	})
+
+	t.Run("zero TTL disables the cache", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f), WithKeyCacheTTL(0))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+
+	t.Run("entries expire after the TTL", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f), WithKeyCacheTTL(10*time.Millisecond))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		time.Sleep(20 * time.Millisecond)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+
+	t.Run("failed fetches are not cached", func(t *testing.T) {
+		f := &countingFetcher{inner: &mapFetcher{}, n: map[string]int{}}
+		c := NewClient(WithFetcher(f))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.Error(t, err)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.Error(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+}
+
 func TestNewHTTPFetcher(t *testing.T) {
 	f := NewHTTPFetcher()
 	require.NotNil(t, f)
@@ -111,7 +181,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL+"/x")
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL+"/x", nil)
 		require.NoError(t, err)
 		assert.Equal(t, `{"ok":true}`, string(body))
 	})
@@ -122,7 +192,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrNoContent))
 	})
@@ -133,14 +203,14 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 		assert.Contains(t, err.Error(), "HTTP 404")
 	})
 
 	t.Run("invalid URL", func(t *testing.T) {
-		_, err := NewHTTPFetcher().Fetch(context.Background(), "://broken")
+		_, err := NewHTTPFetcher().Fetch(context.Background(), "://broken", nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
@@ -149,7 +219,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		// NewRequestWithContext panics on a nil context, so the func
 		// must error rather than crash.
 		var ctx context.Context //nolint:staticcheck
-		_, err := NewHTTPFetcher().Fetch(ctx, "http://example.invalid")
+		_, err := NewHTTPFetcher().Fetch(ctx, "http://example.invalid", nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
@@ -157,7 +227,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 	t.Run("transport error", func(t *testing.T) {
 		// Unreachable address (port 1 is privileged + usually closed).
 		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
-		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x")
+		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x", nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
@@ -174,7 +244,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.NoError(t, err)
 		assert.Equal(t, maxBodySize, len(body))
 	})
@@ -189,7 +259,7 @@ func TestHTTPFetcherRejectsNonPublicAddresses(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x")
+	_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x", nil)
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFetchFailed))
 	assert.Contains(t, err.Error(), "refusing to dial non-public address")

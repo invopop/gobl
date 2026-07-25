@@ -330,10 +330,10 @@ func TestSignedPayload(t *testing.T) {
 	assert.Equal(t, cbc.URI("gobl:alice.example"), p.Iss)
 	assert.Equal(t, cbc.URI("gobl:bob.example"), p.Aud)
 	assert.NotZero(t, p.IssuedAt)
-	assert.Equal(t, cbc.KeyEmpty, p.Scope, "no scope by default")
+	assert.Empty(t, p.Verifier, "no verifier by default")
 }
 
-func TestHeaderSignWithScope(t *testing.T) {
+func TestHeaderSignWithVerifier(t *testing.T) {
 	priv := dsig.NewES256Key()
 	h := head.NewHeader()
 	h.UUID = uuid.V7()
@@ -342,12 +342,12 @@ func TestHeaderSignWithScope(t *testing.T) {
 	sig, err := h.Sign(priv,
 		head.WithIssuer("gobl:authority.example"),
 		head.WithAudience("gobl:subject.example"),
-		head.WithScope(head.ScopeVerified))
+		head.WithVerifier("gobl:verify.example"))
 	require.NoError(t, err)
 
 	p, err := head.SignedPayload(sig)
 	require.NoError(t, err)
-	assert.Equal(t, head.ScopeVerified, p.Scope)
+	assert.Equal(t, cbc.URI("gobl:verify.example"), p.Verifier)
 	assert.Equal(t, cbc.URI("gobl:authority.example"), p.Iss)
 }
 
