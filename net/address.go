@@ -62,9 +62,11 @@ func (a Address) String() string {
 }
 
 // URI returns the address as a gobl: scheme cbc.URI, e.g.
-// "gobl:acme.example.com", suitable for a signature's iss/aud. The
-// scheme labels the identity as a GOBL Net address rather than a
-// generic HTTPS service.
+// "gobl:acme.example.com", for use where multiple schemes coexist —
+// org.Endpoint lists and the envelope header's unsigned from/to
+// routing fields. Signed iss/aud/verifier claims carry the bare
+// address (Address.String) instead: within the protocol they can
+// only be GOBL Net addresses, so no scheme is needed.
 func (a Address) URI() cbc.URI {
 	return cbc.URI(Scheme + ":" + string(a))
 }

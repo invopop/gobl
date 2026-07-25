@@ -166,62 +166,62 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 
 // SigningPayload defines the fields locked by a signature. UUID and
 // Digest identify the document; Iss and Aud are the verifiable origin
-// and audience of *this* signature (as `gobl:` URIs); IssuedAt is the
-// time the signature was produced as a JWT-standard NumericDate (Unix
-// seconds, per RFC 7519 §2). ExpiresAt (optional, set via
-// head.WithExpiration) is the JWT-standard `exp` claim (RFC 7519
-// §4.1.4): the time after which the signature's assertions should no
-// longer be relied upon — used by authorities to bound the lifetime
-// of their countersignatures. Verifier (optional, set via
-// head.WithVerifier) names the GOBL Net address of the authority
-// that performed identity verification (KYC/KYB) of the subject; it
-// is asserted by a registration authority on its countersignature
-// and is confirmed by the named verifier's own countersignature on
-// the same envelope. Header stamps, links, tags, meta, notes and the
-// (unsigned, intent-level) From/To fields can still be modified
-// after signing.
+// and audience of *this* signature, as bare GOBL Net addresses
+// (FQDNs); IssuedAt is the time the signature was produced as a
+// JWT-standard NumericDate (Unix seconds, per RFC 7519 §2).
+// ExpiresAt (optional, set via head.WithExpiration) is the
+// JWT-standard `exp` claim (RFC 7519 §4.1.4): the time after which
+// the signature's assertions should no longer be relied upon — used
+// by authorities to bound the lifetime of their countersignatures.
+// Verifier (optional, set via head.WithVerifier) names the GOBL Net
+// address of the authority that performed identity verification
+// (KYC/KYB) of the subject; it is asserted by a registration
+// authority on its countersignature and is confirmed by the named
+// verifier's own countersignature on the same envelope. Header
+// stamps, links, tags, meta, notes and the (unsigned, intent-level)
+// From/To fields can still be modified after signing.
 type SigningPayload struct {
 	UUID      uuid.UUID    `json:"uuid"`
 	Digest    *dsig.Digest `json:"dig"`
-	Iss       cbc.URI      `json:"iss,omitempty"`
-	Aud       cbc.URI      `json:"aud,omitempty"`
+	Iss       string       `json:"iss,omitempty"`
+	Aud       string       `json:"aud,omitempty"`
 	IssuedAt  int64        `json:"iat,omitempty"`
 	ExpiresAt int64        `json:"exp,omitempty"`
-	Verifier  cbc.URI      `json:"verifier,omitempty"`
+	Verifier  string       `json:"verifier,omitempty"`
 }
 
 // SignOption configures a call to Header.Sign / Envelope.Sign.
 type SignOption func(*signOptions)
 
 type signOptions struct {
-	iss      cbc.URI
-	aud      cbc.URI
+	iss      string
+	aud      string
 	exp      int64
-	verifier cbc.URI
+	verifier string
 	signer   []dsig.SignerOption
 }
 
-// WithIssuer sets the signer's verifiable GOBL Net address (a gobl: URI)
-// as the `iss` claim of the signed payload. Generic JWT verifiers resolve
-// the public keys by fetching `<iss>/.well-known/jwks.json` from the
-// HTTPS iss URL.
-func WithIssuer(iss cbc.URI) SignOption {
+// WithIssuer sets the signer's verifiable GOBL Net address (a bare
+// FQDN) as the `iss` claim of the signed payload. Generic JWT
+// verifiers resolve the public keys by fetching
+// `https://<iss>/.well-known/jwks.json`.
+func WithIssuer(iss string) SignOption {
 	return func(o *signOptions) { o.iss = iss }
 }
 
-// WithAudience sets the GOBL Net audience the signature is bound to as
-// the `aud` claim of the signed payload.
-func WithAudience(aud cbc.URI) SignOption {
+// WithAudience sets the GOBL Net address (a bare FQDN) the signature
+// is bound to as the `aud` claim of the signed payload.
+func WithAudience(aud string) SignOption {
 	return func(o *signOptions) { o.aud = aud }
 }
 
 // WithVerifier sets the `verifier` claim in the signed payload: the
-// GOBL Net address (a gobl: URI) of the authority that performed
+// GOBL Net address (a bare FQDN) of the authority that performed
 // identity verification of the subject. Set by registration
 // authorities on their countersignatures; the named verifier is
 // expected to countersign the same envelope. Default (no option)
 // leaves it unset — the signature asserts registration only.
-func WithVerifier(v cbc.URI) SignOption {
+func WithVerifier(v string) SignOption {
 	return func(o *signOptions) { o.verifier = v }
 }
 
@@ -239,7 +239,7 @@ func WithSignerOption(opts ...dsig.SignerOption) SignOption {
 	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
 }
 
-func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, verifier cbc.URI) *SigningPayload {
+func (h *Header) payload(iss, aud string, iat, exp int64, verifier string) *SigningPayload {
 	return &SigningPayload{
 		UUID:      h.UUID,
 		Digest:    h.Digest,

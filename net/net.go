@@ -5,8 +5,10 @@
 package net
 
 const (
-	// Scheme is the URI scheme used by GOBL Net addresses, e.g.
-	// "gobl:acme.example.com".
+	// Scheme is the URI scheme labelling a GOBL Net address in
+	// multi-scheme contexts (org.Endpoint lists, the envelope
+	// header's from/to routing fields), e.g. "gobl:acme.example.com".
+	// Signed iss/aud/verifier claims carry bare addresses instead.
 	Scheme = "gobl"
 
 	// WellKnownPath is the base path for GOBL Net well-known URLs.
