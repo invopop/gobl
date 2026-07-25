@@ -84,14 +84,6 @@ func TestSend(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrInboxRejected))
 	})
 
-	t.Run("rejects a fetcher without POST support", func(t *testing.T) {
-		c := NewClient(WithFetcher(&mapFetcher{}))
-		err := c.Send(ctx, receiver, env)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
-		assert.Contains(t, err.Error(), "does not support POST")
-	})
-
 	t.Run("rejects an invalid address", func(t *testing.T) {
 		c := NewClient(WithFetcher(new(mockPoster)))
 		err := c.Send(ctx, "not valid!", env)
@@ -141,10 +133,10 @@ func TestHTTPFetcherPost(t *testing.T) {
 		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), nil)
 		require.Error(t, err)
 		assert.False(t, errors.Is(err, ErrInboxRejected))
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
-	t.Run("5xx reports ErrFetchFailed", func(t *testing.T) {
+	t.Run("5xx is retryable", func(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			http.Error(w, "boom", http.StatusInternalServerError)
 		}))
@@ -152,15 +144,16 @@ func TestHTTPFetcherPost(t *testing.T) {
 
 		err := newHTTPFetcher(true).Post(ctx, srv.URL, []byte(`{}`), nil)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrInboxRejected))
 	})
 
-	t.Run("transport error", func(t *testing.T) {
+	t.Run("transport error is retryable", func(t *testing.T) {
 		// Unreachable address (port 1 is privileged + usually closed).
 		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
 		err := f.Post(ctx, "http://127.0.0.1:1/x", []byte(`{}`), nil)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 }
 

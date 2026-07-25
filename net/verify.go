@@ -2,6 +2,7 @@ package net
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl"
@@ -45,6 +46,9 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 
 	pubKey, err := c.FetchKey(ctx, issuer, kid)
 	if err != nil {
+		if errors.Is(err, ErrUnavailable) {
+			return "", err
+		}
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 	// VerifySignature enforces the key's validity window against the

@@ -2,6 +2,7 @@ package net
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -18,6 +19,12 @@ import (
 var Authorities = []Address{
 	"lookup.gobl.org",
 }
+
+// maxEnvelopeSignatures bounds how many signatures VerifyAuthority is
+// willing to examine: each candidate can cost a network key fetch, so
+// an unbounded envelope would be a fetch-amplification gadget.
+// Legitimate envelopes carry a handful of signatures.
+const maxEnvelopeSignatures = 32
 
 // RegisterAuthority adds an address to the global set of trusted
 // authority addresses.
@@ -85,6 +92,10 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	if len(c.authorities) == 0 {
 		return nil, fmt.Errorf("%w: no authorities registered on this client", ErrUnknownAuthority)
 	}
+	if len(env.Signatures) > maxEnvelopeSignatures {
+		return nil, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
 	// Both sides of the lookup are canonicalized so U-Label or
 	// trailing-dot forms — configured or signed — compare equal.
 	auths := make(map[Address]bool, len(c.authorities))
@@ -132,10 +143,14 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
-		end := &Endorsement{
-			Authority: issuer,
-			Verifier:  c.confirmVerifier(ctx, env, issuer, p),
+		verifier, err := c.confirmVerifier(ctx, env, issuer, p)
+		if err != nil {
+			// The verifier's key could not be checked (transient):
+			// surface the condition rather than silently degrading a
+			// genuinely verified endorsement to registered.
+			return nil, err
 		}
+		end := &Endorsement{Authority: issuer, Verifier: verifier}
 		if end.Verified() {
 			return end, nil
 		}
@@ -157,25 +172,31 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 
 // confirmVerifier resolves the verifier claim on a verified authority
 // countersignature. It returns the verifier's address when the claim
-// names a valid gobl address whose own countersignature on the
+// names a valid bare address whose own countersignature on the
 // envelope verifies (or names the authority itself, whose signature
-// has already been checked), and "" otherwise — an unconfirmed
-// verifier degrades to registered, it does not invalidate the
-// endorsement.
-func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) Address {
+// has already been checked), and "" when the claim is absent,
+// malformed, or its countersignature is definitively invalid — an
+// unconfirmed verifier degrades to registered, it does not
+// invalidate the endorsement. A transient failure to fetch the
+// verifier's key (ErrUnavailable) is returned as an error instead:
+// "could not check" must not silently downgrade a verified identity.
+func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) (Address, error) {
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
-		return ""
+		return "", nil //nolint:nilerr // malformed claim degrades to registered
 	}
 	// An authority that performs verification itself names itself;
 	// the countersignature just checked serves as both attestations.
 	if verifier == authority {
-		return verifier
+		return verifier, nil
 	}
 	if err := c.verifySignatureBy(ctx, env, verifier); err != nil {
-		return ""
+		if errors.Is(err, ErrUnavailable) {
+			return "", err
+		}
+		return "", nil //nolint:nilerr // invalid or absent signature degrades
 	}
-	return verifier
+	return verifier, nil
 }
 
 // verifySignatureBy reports whether the envelope carries a valid,

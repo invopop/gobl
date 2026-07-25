@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -257,6 +258,10 @@ func (h *headerRecorder) Fetch(ctx context.Context, url string, header http.Head
 	return h.inner.Fetch(ctx, url, header)
 }
 
+func (h *headerRecorder) Post(ctx context.Context, url string, body []byte, header http.Header) error {
+	return h.inner.Post(ctx, url, body, header)
+}
+
 func TestWhoAuthorization(t *testing.T) {
 	ctx := context.Background()
 	subject := Address("supplier.example.com")
@@ -435,4 +440,22 @@ func TestVerifyTokenEdgeCases(t *testing.T) {
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrTokenInvalid))
 	})
+}
+
+func TestVerifyTokenUnavailableKeyEndpoint(t *testing.T) {
+	// A transient failure to reach the issuer's key endpoint is not an
+	// invalid token: servers respond 503, not 401.
+	key := dsig.NewES256Key()
+	requester := Address("sender.example.com")
+	target := Address("receiver.example.com")
+
+	c := NewClient(WithFetcher(&mapFetcher{errs: map[string]error{
+		requester.KeyURL(key.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+	}}))
+	token, err := NewToken(key, requester, target, 0)
+	require.NoError(t, err)
+	_, err = c.VerifyToken(context.Background(), token, target)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrUnavailable))
+	assert.False(t, errors.Is(err, ErrTokenInvalid))
 }

@@ -15,9 +15,12 @@ import (
 // trusted intermediary transmitting on the signer's behalf.
 //
 // A 202 response means the inbox has persisted the envelope. Any
-// other 4xx — except 429, which is retryable — returns
-// ErrInboxRejected. Delivery is idempotent on the envelope's uuid and
-// digest, so "retry until 202" is the correct recovery strategy.
+// other 4xx — except 429 — returns ErrInboxRejected: the inbox has
+// decided, do not retry. Transient conditions (429, 5xx, transport
+// failures) return ErrUnavailable, and delivery is idempotent on the
+// envelope's uuid and digest, so "retry on ErrUnavailable until 202"
+// is the correct recovery strategy. Other errors are permanent input
+// or configuration failures.
 func (c *Client) Send(ctx context.Context, addr Address, env *gobl.Envelope) error {
 	if env == nil {
 		return fmt.Errorf("%w: envelope is nil", ErrFetchFailed)
@@ -25,10 +28,6 @@ func (c *Client) Send(ctx context.Context, addr Address, env *gobl.Envelope) err
 	addr, err := ParseAddress(string(addr))
 	if err != nil {
 		return err
-	}
-	poster, ok := c.fetcher.(Poster)
-	if !ok {
-		return fmt.Errorf("%w: fetcher does not support POST", ErrFetchFailed)
 	}
 	body, err := json.Marshal(env)
 	if err != nil {
@@ -38,5 +37,5 @@ func (c *Client) Send(ctx context.Context, addr Address, env *gobl.Envelope) err
 	if err != nil {
 		return err
 	}
-	return poster.Post(ctx, addr.InboxURL(), body, header)
+	return c.fetcher.Post(ctx, addr.InboxURL(), body, header)
 }

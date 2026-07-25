@@ -28,6 +28,10 @@ func (m *mockFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byt
 	return m.data, m.err
 }
 
+func (m *mockFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+	return ErrFetchFailed
+}
+
 func TestFetchPublicKey(t *testing.T) {
 	ctx := context.Background()
 	key := dsig.NewES256Key()
@@ -105,6 +109,10 @@ type countingFetcher struct {
 func (f *countingFetcher) Fetch(ctx context.Context, url string, header http.Header) ([]byte, error) {
 	f.n[url]++
 	return f.inner.Fetch(ctx, url, header)
+}
+
+func (f *countingFetcher) Post(ctx context.Context, url string, body []byte, header http.Header) error {
+	return f.inner.Post(ctx, url, body, header)
 }
 
 func TestFetchKeyCache(t *testing.T) {
@@ -225,12 +233,24 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 
-	t.Run("transport error", func(t *testing.T) {
+	t.Run("transport error is retryable", func(t *testing.T) {
 		// Unreachable address (port 1 is privileged + usually closed).
 		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
 		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x", nil)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("5xx is retryable", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			http.Error(w, "boom", http.StatusInternalServerError)
+		}))
+		defer srv.Close()
+
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrFetchFailed))
 	})
 
 	t.Run("body too large is truncated", func(t *testing.T) {
@@ -274,11 +294,12 @@ func TestSafeDialContext(t *testing.T) {
 		require.Error(t, err)
 	})
 
-	t.Run("unresolvable host", func(t *testing.T) {
-		// .invalid is reserved (RFC 2606) and never resolves.
+	t.Run("unresolvable host is retryable", func(t *testing.T) {
+		// .invalid is reserved (RFC 2606) and never resolves; DNS
+		// failures are transient conditions.
 		_, err := safeDialContext(ctx, "tcp", "does-not-exist.invalid:443")
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
 	t.Run("non-public address", func(t *testing.T) {
@@ -355,13 +376,7 @@ func TestAuthHeaderMintFailure(t *testing.T) {
 
 	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
 	require.Error(t, err)
-	assert.True(t, errors.Is(err, ErrFetchFailed), "mapFetcher cannot POST")
-
-	poster := new(mockPoster)
-	c = NewClient(WithFetcher(poster), WithIdentity("not valid!", key))
-	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
-	require.Error(t, err)
-	assert.True(t, errors.Is(err, ErrAddressInvalid))
+	assert.True(t, errors.Is(err, ErrAddressInvalid), "token minting fails before delivery")
 }
 
 func TestKeyCacheEviction(t *testing.T) {
@@ -389,4 +404,26 @@ func TestKeyCacheEviction(t *testing.T) {
 		assert.LessOrEqual(t, len(c.keyCache), maxKeyCacheEntries)
 		assert.NotNil(t, c.cachedKey("https://fresh.example/key"))
 	})
+}
+
+func TestFlushKeyCache(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	url := addr.KeyURL(key.ID())
+
+	pubData, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+	f := &countingFetcher{
+		inner: &mapFetcher{data: map[string][]byte{url: pubData}},
+		n:     map[string]int{},
+	}
+	c := NewClient(WithFetcher(f))
+
+	_, err = c.FetchKey(ctx, addr, key.ID())
+	require.NoError(t, err)
+	c.FlushKeyCache()
+	_, err = c.FetchKey(ctx, addr, key.ID())
+	require.NoError(t, err)
+	assert.Equal(t, 2, f.n[url], "flush forces a refetch")
 }

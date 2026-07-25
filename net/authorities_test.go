@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -52,16 +53,24 @@ func TestWithAuthorities(t *testing.T) {
 
 // mapFetcher is a URL-keyed Fetcher for tests that need to serve
 // different blobs for different URLs (e.g. multiple per-key
-// endpoints).
+// endpoints), with optional per-URL errors.
 type mapFetcher struct {
 	data map[string][]byte
+	errs map[string]error
 }
 
 func (m *mapFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte, error) {
+	if err, ok := m.errs[url]; ok {
+		return nil, err
+	}
 	if d, ok := m.data[url]; ok {
 		return d, nil
 	}
 	return nil, ErrFetchFailed
+}
+
+func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+	return ErrFetchFailed
 }
 
 func TestVerifyAuthority(t *testing.T) {
@@ -604,5 +613,85 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 		assert.True(t, end.Verified())
 		assert.Equal(t, secondAddr, end.Authority)
 		assert.Equal(t, secondAddr, end.Verifier)
+	})
+}
+
+func TestWithAuthoritiesReplacesDefault(t *testing.T) {
+	original := Authorities
+	t.Cleanup(func() { Authorities = original })
+	Authorities = []Address{"lookup.gobl.org"}
+
+	// A closed deployment states its full trust list: the default
+	// authority must not be implicitly trusted alongside it.
+	c := NewClient(WithAuthorities("authority.corp.example"))
+	assert.Equal(t, []Address{"authority.corp.example"}, c.authorities)
+}
+
+func TestVerifyAuthorityUnavailability(t *testing.T) {
+	ctx := context.Background()
+	authorityAddr := Address("kyc.example.com")
+	verifierAddr := Address("verify.example.net")
+	authKey := dsig.NewES256Key()
+	verifKey := dsig.NewES256Key()
+
+	jwkOf := func(k *dsig.PrivateKey) []byte {
+		out, err := json.Marshal(k.Public())
+		require.NoError(t, err)
+		return out
+	}
+
+	buildVerified := func(t *testing.T) *gobl.Envelope {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		return env
+	}
+
+	t.Run("unreachable verifier key surfaces instead of degrading", func(t *testing.T) {
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{
+				data: map[string][]byte{
+					authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				},
+				errs: map[string]error{
+					verifierAddr.KeyURL(verifKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+				},
+			}),
+		)
+		_, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("removed verifier key still degrades to registered", func(t *testing.T) {
+		// A definitive 404 means the key is gone — revoked — and the
+		// endorsement degrades rather than erroring.
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {
+		env := buildVerified(t)
+		for len(env.Signatures) <= maxEnvelopeSignatures {
+			env.Signatures = append(env.Signatures, env.Signatures[0])
+		}
+		c := NewClient(WithAuthorities(authorityAddr), WithFetcher(&mapFetcher{}))
+		_, err := c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.Contains(t, err.Error(), "signatures")
 	})
 }

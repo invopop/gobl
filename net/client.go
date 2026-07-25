@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	stdnet "net"
@@ -44,7 +45,7 @@ func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, er
 	}
 	ips, err := stdnet.DefaultResolver.LookupIP(ctx, "ip", host)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	for _, ip := range ips {
 		if !isPublicIP(ip) {
@@ -75,16 +76,15 @@ func isPublicIP(ip stdnet.IP) bool {
 	return true
 }
 
-// Fetcher defines the interface for fetching data from a URL. The
-// header carries any Authorization request token the Client has
-// minted for the request; implementations must forward it.
+// Fetcher is the transport used by a Client: Fetch retrieves
+// well-known resources and Post delivers envelopes to an inbox, as
+// used by Client.Send. The header carries any Authorization request
+// token the Client has minted for the request; implementations must
+// forward it. Implementations that never deliver (verification-only
+// transports, test fixtures) may implement Post as a plain error
+// return.
 type Fetcher interface {
 	Fetch(ctx context.Context, url string, header http.Header) ([]byte, error)
-}
-
-// Poster is implemented by Fetchers that can also deliver envelopes
-// with a POST, as used by Client.Send.
-type Poster interface {
 	Post(ctx context.Context, url string, body []byte, header http.Header) error
 }
 
@@ -137,7 +137,7 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return nil, fmt.Errorf("%w: %v", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
@@ -147,21 +147,41 @@ func (f *HTTPFetcher) Fetch(ctx context.Context, url string, header http.Header)
 	if resp.StatusCode == http.StatusAccepted {
 		return nil, fmt.Errorf("%w: %s", ErrPending, url)
 	}
+	if retryable(resp.StatusCode) {
+		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrUnavailable, resp.StatusCode, url)
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%w: HTTP %d from %s", ErrFetchFailed, resp.StatusCode, url)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodySize))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	return body, nil
 }
 
+// retryable reports whether a response status signals a transient
+// condition worth retrying: 429 or any 5xx.
+func retryable(status int) bool {
+	return status == http.StatusTooManyRequests || status >= 500
+}
+
+// transportErr classifies a round-trip error: the SSRF guard's
+// refusal to dial is permanent (ErrFetchFailed); anything else —
+// timeouts, resets, DNS failures — is transient (ErrUnavailable).
+func transportErr(err error) error {
+	if errors.Is(err, ErrFetchFailed) {
+		return ErrFetchFailed
+	}
+	return ErrUnavailable
+}
+
 // Post delivers a JSON body to the given URL, forwarding the given
 // headers on the request. A 202 response is success. Any other 4xx —
-// except 429, which is retryable — reports ErrInboxRejected; anything
-// else reports ErrFetchFailed.
+// except 429 — reports ErrInboxRejected; 429, 5xx, and transport
+// failures report the retryable ErrUnavailable; anything else
+// reports ErrFetchFailed.
 func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte, header http.Header) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
@@ -173,7 +193,7 @@ func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte, header 
 
 	resp, err := f.Client.Do(req)
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFetchFailed, err)
+		return fmt.Errorf("%w: %v", transportErr(err), err)
 	}
 	defer resp.Body.Close() // nolint:errcheck
 
@@ -183,6 +203,8 @@ func (f *HTTPFetcher) Post(ctx context.Context, url string, body []byte, header 
 	case resp.StatusCode >= 400 && resp.StatusCode < 500 &&
 		resp.StatusCode != http.StatusTooManyRequests:
 		return fmt.Errorf("%w: HTTP %d from %s", ErrInboxRejected, resp.StatusCode, url)
+	case retryable(resp.StatusCode):
+		return fmt.Errorf("%w: HTTP %d from %s", ErrUnavailable, resp.StatusCode, url)
 	default:
 		return fmt.Errorf("%w: HTTP %d from %s", ErrFetchFailed, resp.StatusCode, url)
 	}
@@ -233,11 +255,15 @@ func WithFetcher(f Fetcher) ClientOption {
 	}
 }
 
-// WithAuthorities adds trusted authority GOBL Net Addresses to the
-// client, supplementing the built-in Authorities.
+// WithAuthorities sets the client's trusted registration authorities,
+// replacing the default list (net.Authorities, which carries the
+// network's default authority). Operators who want to supplement the
+// default rather than replace it include it explicitly, or grow the
+// global default with RegisterAuthority. Replacement semantics let
+// closed deployments exclude the default authority entirely.
 func WithAuthorities(addrs ...Address) ClientOption {
 	return func(c *Client) {
-		c.authorities = append(c.authorities, addrs...)
+		c.authorities = append([]Address{}, addrs...)
 	}
 }
 
@@ -322,6 +348,16 @@ func (c *Client) FetchKey(ctx context.Context, addr Address, kid string) (*dsig.
 	}
 	c.storeKey(url, pk)
 	return pk, nil
+}
+
+// FlushKeyCache empties the client's key cache so subsequent
+// verifications refetch published keys — observing a key's removal
+// from the issuer's endpoint immediately, e.g. after a reported
+// compromise, instead of after the cache TTL.
+func (c *Client) FlushKeyCache() {
+	c.keyMu.Lock()
+	defer c.keyMu.Unlock()
+	clear(c.keyCache)
 }
 
 // cachedKey returns the unexpired cached key for the given URL, or nil.
