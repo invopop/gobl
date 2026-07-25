@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	stdnet "net"
 	"net/http"
 	"net/http/httptest"
@@ -317,5 +318,75 @@ func TestIsPublicIP(t *testing.T) {
 
 	t.Run("nil IP", func(t *testing.T) {
 		assert.False(t, isPublicIP(nil))
+	})
+}
+
+func TestHTTPFetcherFetch202(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusAccepted)
+	}))
+	defer srv.Close()
+
+	_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrPending))
+}
+
+func TestHTTPFetcherPostNilContext(t *testing.T) {
+	// NewRequestWithContext panics on a nil context, so the func must
+	// error rather than crash.
+	var ctx context.Context //nolint:staticcheck
+	err := NewHTTPFetcher().Post(ctx, "http://example.invalid", []byte(`{}`), nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrFetchFailed))
+}
+
+func TestAuthHeaderMintFailure(t *testing.T) {
+	// An identity whose address cannot be canonicalized fails token
+	// minting, which must surface from the calling operation.
+	key := dsig.NewES256Key()
+	c := NewClient(
+		WithFetcher(&mapFetcher{}),
+		WithIdentity("not valid!", key),
+	)
+	_, err := c.Who(context.Background(), "receiver.example.com")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrAddressInvalid))
+
+	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrFetchFailed), "mapFetcher cannot POST")
+
+	poster := new(mockPoster)
+	c = NewClient(WithFetcher(poster), WithIdentity("not valid!", key))
+	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrAddressInvalid))
+}
+
+func TestKeyCacheEviction(t *testing.T) {
+	key := dsig.NewES256Key()
+	pk := key.Public()
+
+	t.Run("purges expired entries when full", func(t *testing.T) {
+		c := NewClient(WithFetcher(&mapFetcher{}))
+		past := time.Now().Add(-time.Minute)
+		for i := range maxKeyCacheEntries {
+			c.keyCache[fmt.Sprintf("https://k%d.example/key", i)] = keyCacheEntry{key: pk, exp: past}
+		}
+		c.storeKey("https://fresh.example/key", pk)
+		assert.LessOrEqual(t, len(c.keyCache), maxKeyCacheEntries)
+		assert.NotNil(t, c.cachedKey("https://fresh.example/key"))
+	})
+
+	t.Run("evicts arbitrarily when full of live entries", func(t *testing.T) {
+		c := NewClient(WithFetcher(&mapFetcher{}))
+		future := time.Now().Add(time.Hour)
+		for i := range maxKeyCacheEntries {
+			c.keyCache[fmt.Sprintf("https://k%d.example/key", i)] = keyCacheEntry{key: pk, exp: future}
+		}
+		c.storeKey("https://fresh.example/key", pk)
+		assert.LessOrEqual(t, len(c.keyCache), maxKeyCacheEntries)
+		assert.NotNil(t, c.cachedKey("https://fresh.example/key"))
 	})
 }

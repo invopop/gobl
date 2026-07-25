@@ -2,11 +2,17 @@ package net
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/go-jose/go-jose/v4"
+	"github.com/invopop/gobl/cal"
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/stretchr/testify/assert"
@@ -303,5 +309,130 @@ func TestWhoAuthorization(t *testing.T) {
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrPending))
+	})
+}
+
+// signWithoutKID builds a compact ES256 JWS with no kid header, which
+// dsig cannot produce but a hostile client could.
+func signWithoutKID(t *testing.T, payload any) string {
+	t.Helper()
+	raw, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	require.NoError(t, err)
+	signer, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.ES256, Key: raw}, nil)
+	require.NoError(t, err)
+	data, err := json.Marshal(payload)
+	require.NoError(t, err)
+	jws, err := signer.Sign(data)
+	require.NoError(t, err)
+	token, err := jws.CompactSerialize()
+	require.NoError(t, err)
+	return token
+}
+
+// spoofKID re-labels a published JWK with another signature's kid so
+// the per-key fetch succeeds but the crypto check must fail.
+func spoofKID(t *testing.T, key *dsig.PrivateKey, kid string) []byte {
+	t.Helper()
+	data, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+	m := map[string]any{}
+	require.NoError(t, json.Unmarshal(data, &m))
+	m["kid"] = kid
+	out, err := json.Marshal(m)
+	require.NoError(t, err)
+	return out
+}
+
+func TestNewTokenEdgeCases(t *testing.T) {
+	key := dsig.NewES256Key()
+
+	t.Run("rejects an invalid audience", func(t *testing.T) {
+		_, err := NewToken(key, "sender.example.com", "not valid!", 0)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrAddressInvalid))
+	})
+
+	t.Run("rejects an unusable key", func(t *testing.T) {
+		_, err := NewToken(new(dsig.PrivateKey), "sender.example.com", "receiver.example.com", 0)
+		require.Error(t, err)
+	})
+}
+
+func TestVerifyTokenEdgeCases(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+	requester := Address("sender.example.com")
+	target := Address("receiver.example.com")
+
+	keyData, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+	client := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+		requester.KeyURL(key.ID()): keyData,
+	}}))
+
+	t.Run("rejects an invalid audience argument", func(t *testing.T) {
+		token, err := NewToken(key, requester, target, 0)
+		require.NoError(t, err)
+		_, err = client.VerifyToken(ctx, token, "not valid!")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrAddressInvalid))
+	})
+
+	t.Run("rejects a non-object payload", func(t *testing.T) {
+		sig, err := dsig.NewSignature(key, "not-an-object")
+		require.NoError(t, err)
+		_, err = client.VerifyToken(ctx, sig.String(), target)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrTokenInvalid))
+	})
+
+	t.Run("rejects a token without a key ID", func(t *testing.T) {
+		now := time.Now().UTC()
+		token := signWithoutKID(t, &TokenClaims{
+			Iss: requester,
+			Aud: target,
+			Iat: now.Unix(),
+			Exp: now.Add(time.Minute).Unix(),
+		})
+		_, err := client.VerifyToken(ctx, token, target)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrTokenInvalid))
+		assert.Contains(t, err.Error(), "no key ID")
+	})
+
+	t.Run("rejects a signature that fails against the published key", func(t *testing.T) {
+		// The published JWK claims the signer's kid but holds another
+		// key's material, so the fetch succeeds and the crypto fails.
+		other := dsig.NewES256Key()
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			requester.KeyURL(key.ID()): spoofKID(t, other, key.ID()),
+		}}))
+		token, err := NewToken(key, requester, target, 0)
+		require.NoError(t, err)
+		_, err = c.VerifyToken(ctx, token, target)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrTokenInvalid))
+	})
+
+	t.Run("rejects a token outside the key's validity window", func(t *testing.T) {
+		// The published key retired an hour ago; a token minted now
+		// carries an iat the key no longer allows.
+		data, err := json.Marshal(key.Public())
+		require.NoError(t, err)
+		pk := new(dsig.PublicKey)
+		require.NoError(t, json.Unmarshal(data, pk))
+		until := cal.TimestampOf(time.Now().Add(-time.Hour))
+		pk.ValidUntil = &until
+		retired, err := json.Marshal(pk)
+		require.NoError(t, err)
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			requester.KeyURL(key.ID()): retired,
+		}}))
+		token, err := NewToken(key, requester, target, 0)
+		require.NoError(t, err)
+		_, err = c.VerifyToken(ctx, token, target)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrTokenInvalid))
 	})
 }

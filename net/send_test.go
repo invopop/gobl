@@ -163,3 +163,11 @@ func TestHTTPFetcherPost(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 }
+
+func TestSendNilEnvelope(t *testing.T) {
+	c := NewClient(WithFetcher(new(mockPoster)))
+	err := c.Send(context.Background(), "receiver.example.com", nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrFetchFailed))
+	assert.Contains(t, err.Error(), "envelope is nil")
+}
