@@ -172,11 +172,12 @@ func (h *Header) Link(category, key cbc.Key) *Link {
 // head.WithExpiration) is the JWT-standard `exp` claim (RFC 7519
 // §4.1.4): the time after which the signature's assertions should no
 // longer be relied upon — used by authorities to bound the lifetime
-// of their countersignatures. Scope (optional, set via
-// head.WithScope) is the signer's assertion about the level of
-// confidence in the document — e.g. `head.ScopeRegistered` for an
-// address-only check, `head.ScopeVerified` for a KYC-verified
-// countersignature. Header stamps, links, tags, meta, notes and the
+// of their countersignatures. Verifier (optional, set via
+// head.WithVerifier) names the GOBL Net address of the authority
+// that performed identity verification (KYC/KYB) of the subject; it
+// is asserted by a registration authority on its countersignature
+// and is confirmed by the named verifier's own countersignature on
+// the same envelope. Header stamps, links, tags, meta, notes and the
 // (unsigned, intent-level) From/To fields can still be modified
 // after signing.
 type SigningPayload struct {
@@ -186,34 +187,18 @@ type SigningPayload struct {
 	Aud       cbc.URI      `json:"aud,omitempty"`
 	IssuedAt  int64        `json:"iat,omitempty"`
 	ExpiresAt int64        `json:"exp,omitempty"`
-	Scope     cbc.Key      `json:"scope,omitempty"`
+	Verifier  cbc.URI      `json:"verifier,omitempty"`
 }
-
-// Known scope values that an Authority can assert when
-// countersigning a /who response (or any envelope it endorses).
-// Operators MAY define additional scope keys; these are the
-// baseline values the protocol recognises.
-const (
-	// ScopeRegistered asserts that the signer has confirmed the
-	// subject controls the named GOBL Net address (e.g. via a
-	// challenge-response over the address's published key). No
-	// identity check beyond ownership of the FQDN.
-	ScopeRegistered cbc.Key = "registered"
-	// ScopeVerified asserts that the signer has performed full
-	// identity verification of the subject (e.g. KYC) in addition
-	// to the address ownership check.
-	ScopeVerified cbc.Key = "verified"
-)
 
 // SignOption configures a call to Header.Sign / Envelope.Sign.
 type SignOption func(*signOptions)
 
 type signOptions struct {
-	iss    cbc.URI
-	aud    cbc.URI
-	exp    int64
-	scope  cbc.Key
-	signer []dsig.SignerOption
+	iss      cbc.URI
+	aud      cbc.URI
+	exp      int64
+	verifier cbc.URI
+	signer   []dsig.SignerOption
 }
 
 // WithIssuer sets the signer's verifiable GOBL Net address (a gobl: URI)
@@ -230,13 +215,14 @@ func WithAudience(aud cbc.URI) SignOption {
 	return func(o *signOptions) { o.aud = aud }
 }
 
-// WithScope sets the signer's confidence-level assertion in the
-// signed payload, e.g. head.ScopeRegistered or head.ScopeVerified.
-// Default (no option) leaves Scope empty — the signer makes no
-// assertion beyond the cryptographic facts the signature already
-// proves.
-func WithScope(scope cbc.Key) SignOption {
-	return func(o *signOptions) { o.scope = scope }
+// WithVerifier sets the `verifier` claim in the signed payload: the
+// GOBL Net address (a gobl: URI) of the authority that performed
+// identity verification of the subject. Set by registration
+// authorities on their countersignatures; the named verifier is
+// expected to countersign the same envelope. Default (no option)
+// leaves it unset — the signature asserts registration only.
+func WithVerifier(v cbc.URI) SignOption {
+	return func(o *signOptions) { o.verifier = v }
 }
 
 // WithExpiration sets the JWT-standard `exp` claim in the signed
@@ -253,7 +239,7 @@ func WithSignerOption(opts ...dsig.SignerOption) SignOption {
 	return func(o *signOptions) { o.signer = append(o.signer, opts...) }
 }
 
-func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, scope cbc.Key) *SigningPayload {
+func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, verifier cbc.URI) *SigningPayload {
 	return &SigningPayload{
 		UUID:      h.UUID,
 		Digest:    h.Digest,
@@ -261,7 +247,7 @@ func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, scope cbc.Key) *Signi
 		Aud:       aud,
 		IssuedAt:  iat,
 		ExpiresAt: exp,
-		Scope:     scope,
+		Verifier:  verifier,
 	}
 }
 
@@ -270,7 +256,7 @@ func (h *Header) payload(iss, aud cbc.URI, iat, exp int64, scope cbc.Key) *Signi
 // JWT-standard `iat` claim (Unix seconds), and any optional claims
 // configured via options: the signer's GOBL Net identity
 // (head.WithIssuer), the audience it is bound to (head.WithAudience),
-// and a scope assertion (head.WithScope). Generic JWT verifiers
+// and a verifier assertion (head.WithVerifier). Generic JWT verifiers
 // resolve the public keys by fetching `<iss>/.well-known/jwks.json`
 // from the HTTPS iss URL — no `jku` header is needed.
 func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature, error) {
@@ -279,7 +265,7 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 		opt(so)
 	}
 	iat := time.Now().UTC().Unix()
-	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.exp, so.scope), so.signer...)
+	return dsig.NewSignature(key, h.payload(so.iss, so.aud, iat, so.exp, so.verifier), so.signer...)
 }
 
 // Verify checks that the signature covers this header's document

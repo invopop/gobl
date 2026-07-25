@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `net`: request tokens (README §5.5): short-lived ES256 JWTs sent as `Authorization: Bearer` on `/who` and `/inbox` requests, identifying the requester — possibly a trusted intermediary distinct from the envelope's signer. `net.NewToken` mints one, `Client.VerifyToken` / `Client.VerifyAuthorization` verify inbound tokens against the issuer's published key, audience, and a 30s–5m freshness window, and the `net.WithIdentity` client option attaches one to every who and inbox request. New `ErrTokenInvalid` and `ErrTokenExpired` sentinels.
+- `net`: `Client.Send` delivers a signed envelope to an address's inbox: 202 is success, other non-retryable 4xx report `ErrInboxRejected`. The `Poster` interface extends a `Fetcher` with POST support; `HTTPFetcher` implements it.
+- `net`: `/who` may answer `202 Accepted` (new `ErrPending` sentinel) to record the authenticated request for deferred disclosure: the owner decides per requester and, if approved, delivers its party envelope to the requester's inbox later.
+- `net`: `Client.FetchKey` caches fetched keys per URL for a short TTL (5 minutes by default, tunable with `net.WithKeyCacheTTL`, zero disables; successes only, size-capped), so a token and an envelope signed by the same key verify with a single key fetch.
+
+### Changed
+
+- `net`: requests to `/who` and `/inbox` without a valid request token are rejected with 401; servers may keep an audit log of requester identities. `/who` responses are no longer publicly cacheable (`Cache-Control: private`); clients cache the verified party envelope locally instead. The `Fetcher` interface gains an `http.Header` parameter to carry the token.
+
+- `net`: `Authorities` now defaults to the network's default registration authority, `lookup.gobl.org` (implemented in [`gobl.lookup`](https://github.com/invopop/gobl.lookup)), instead of an empty list.
+- `head`/`net`: the `scope` claim is replaced by structural verification (spec §5.3). A registration authority's countersignature alone asserts a registered identity; a new `verifier` claim (`head.WithVerifier`) names the authority that performed KYC/KYB, confirmed by that verifier's own countersignature on the same envelope — the two carry independent `exp` lifecycles (90-day registration renewals vs long-lived verifications). `Client.VerifyAuthority` now returns an `Endorsement{Authority, Verifier}`; `Client.VerifySender` takes a `requireVerified` bool and reports the new `ErrNotVerified` sentinel. `head.WithScope`, `head.ScopeRegistered`/`ScopeVerified`, `Client.VerifyAuthorityWithScope`, and `ErrScopeInsufficient` are removed.
+
+### Removed
+
+- `net`: `Address.Topic()` and the spec's topic-derivation section — the reversed-label topic form had no consumers.
+
 ## [v0.503.0] - 2026-07-15
 
 ### Added
