@@ -237,3 +237,29 @@ func publishedJWK(t *testing.T, key *dsig.PrivateKey, from, until *cal.Timestamp
 	require.NoError(t, err)
 	return out
 }
+
+func TestVerifyEnvelopeMissingKID(t *testing.T) {
+	// A signature without a kid cannot resolve a published key.
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	env := buildTestEnvelope(t, key, addr.String(), "")
+	bare, err := dsig.ParseSignature(signWithoutKID(t, map[string]any{"iss": addr.String()}))
+	require.NoError(t, err)
+	env.Signatures[0] = bare
+
+	c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+	_, err = c.VerifyEnvelope(context.Background(), env, "")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrVerifyFailed))
+	assert.Contains(t, err.Error(), "no key ID")
+}
+
+func TestVerifyEnvelopeInvalidExpectedAud(t *testing.T) {
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	env := buildTestEnvelope(t, key, addr.String(), addr.String())
+	c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+	_, err := c.VerifyEnvelope(context.Background(), env, "not valid!")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrVerifyFailed))
+}

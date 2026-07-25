@@ -66,12 +66,13 @@ func (e *Endorsement) Verified() bool {
 // registered rather than failing it: the registration stands on its
 // own. Callers that require verification check Endorsement.Verified.
 //
-// Returns the endorsement from the first authority signature that
-// verifies. If no signature is from a known authority, returns
-// ErrUnknownAuthority. If a verified authority signature has
-// expired, returns ErrSignatureExpired. If all candidates fail
-// crypto verification, returns ErrVerifyFailed wrapping the last
-// error.
+// Every candidate authority signature is considered: an endorsement
+// with a confirmed verifier is preferred over a registered-only one
+// regardless of signature order. If no signature is from a known
+// authority, returns ErrUnknownAuthority. If a verified authority
+// signature has expired, returns ErrSignatureExpired. If all
+// candidates fail crypto verification, returns ErrVerifyFailed
+// wrapping the last error.
 //
 // Callers that want to accept self-signed (no-authority) envelopes
 // should skip this call rather than ignore its error.
@@ -95,8 +96,11 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 
 	// claimErr records a candidate that verified cryptographically but
 	// carried an expired exp claim; it takes precedence over crypto
-	// failures from other candidates.
+	// failures from other candidates. registered holds the first
+	// valid registered-only endorsement while the remaining
+	// signatures are searched for one with a confirmed verifier.
 	var lastErr, claimErr error
+	var registered *Endorsement
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
 		if err != nil {
@@ -128,10 +132,19 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 				time.Unix(p.ExpiresAt, 0).UTC().Format(time.RFC3339))
 			continue
 		}
-		return &Endorsement{
+		end := &Endorsement{
 			Authority: issuer,
 			Verifier:  c.confirmVerifier(ctx, env, issuer, p),
-		}, nil
+		}
+		if end.Verified() {
+			return end, nil
+		}
+		if registered == nil {
+			registered = end
+		}
+	}
+	if registered != nil {
+		return registered, nil
 	}
 	if claimErr != nil {
 		return nil, claimErr

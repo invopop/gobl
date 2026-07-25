@@ -19,6 +19,9 @@ import (
 // ErrInboxRejected. Delivery is idempotent on the envelope's uuid and
 // digest, so "retry until 202" is the correct recovery strategy.
 func (c *Client) Send(ctx context.Context, addr Address, env *gobl.Envelope) error {
+	if env == nil {
+		return fmt.Errorf("%w: envelope is nil", ErrFetchFailed)
+	}
 	addr, err := ParseAddress(string(addr))
 	if err != nil {
 		return err

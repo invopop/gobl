@@ -533,3 +533,76 @@ func TestVerifyAuthority(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
 }
+
+func TestVerifySignatureByEdgeCases(t *testing.T) {
+	ctx := context.Background()
+	authorityAddr := Address("kyc.example.com")
+	verifierAddr := Address("verify.example.net")
+	authKey := dsig.NewES256Key()
+	verifKey := dsig.NewES256Key()
+
+	jwkOf := func(k *dsig.PrivateKey) []byte {
+		out, err := json.Marshal(k.Public())
+		require.NoError(t, err)
+		return out
+	}
+
+	t.Run("steps past undecodable payloads and rejects a kid-spoofed key", func(t *testing.T) {
+		// The verifier's published JWK claims its kid but holds other
+		// key material, so the fetch succeeds and the crypto fails —
+		// the endorsement degrades to registered. A non-object payload
+		// signature is stepped past on the way.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		bad, err := dsig.NewSignature(verifKey, "not-an-object")
+		require.NoError(t, err)
+		env.Signatures = append(env.Signatures, bad)
+
+		other := dsig.NewES256Key()
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): spoofKID(t, other, verifKey.ID()),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("prefers a verified endorsement regardless of signature order", func(t *testing.T) {
+		// Two trusted authorities countersign: the first is registered
+		// only, the second names itself as verifier. The verified
+		// endorsement must win even though it appears later.
+		secondAddr := Address("auth.example.org")
+		secondKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		require.NoError(t, env.Sign(secondKey,
+			head.WithIssuer(secondAddr.String()),
+			head.WithVerifier(secondAddr.String())))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr, secondAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				secondAddr.KeyURL(secondKey.ID()):  jwkOf(secondKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.True(t, end.Verified())
+		assert.Equal(t, secondAddr, end.Authority)
+		assert.Equal(t, secondAddr, end.Verifier)
+	})
+}
