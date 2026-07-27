@@ -34,6 +34,7 @@ func init() {
 		rules.GOBL.Add("CO-DIAN"),
 		is.InContext(tax.AddonIn(V2)),
 		billInvoiceRules(),
+		billLineRules(),
 	)
 	norm.RegisterWithGuard(
 		is.InContext(tax.AddonIn(V2)),

@@ -9,9 +9,11 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -23,7 +25,7 @@ func baseInvoice() *bill.Invoice {
 		Regime:    tax.WithRegime("CO"),
 		Addons:    tax.WithAddons(dian.V2),
 		Currency:  currency.COP,
-		Code:      "TEST",
+		Code:      "12345",
 		IssueDate: cal.MakeDate(2022, 12, 27),
 		Type:      bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -62,10 +64,17 @@ func baseInvoice() *bill.Invoice {
 		},
 		Lines: []*bill.Line{
 			{
-				Quantity: num.MakeAmount(1, 3),
+				Quantity: num.MakeAmount(1000, 3),
 				Item: &org.Item{
 					Name:  "bogus",
 					Price: num.NewAmount(1000, 3),
+				},
+			},
+		},
+		Payment: &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{Date: cal.NewDate(2023, 1, 27), Percent: num.NewPercentage(1, 0)},
 				},
 			},
 		},
@@ -78,13 +87,16 @@ func creditNote() *bill.Invoice {
 		Regime:    tax.WithRegime("CO"),
 		Addons:    tax.WithAddons(dian.V2),
 		Currency:  currency.COP,
-		Code:      "TEST",
+		Code:      "12346",
 		Type:      bill.InvoiceTypeCreditNote,
 		IssueDate: cal.MakeDate(2022, 12, 29),
 		Preceding: []*org.DocumentRef{
 			{
-				Code:      "TEST",
+				Code:      "12345",
 				IssueDate: cal.NewDate(2022, 12, 27),
+				Stamps: []*head.Stamp{
+					{Provider: dian.StampCUDE, Value: "a1b2c3d4e5f6"},
+				},
 				Ext: tax.ExtensionsOf(cbc.CodeMap{
 					dian.ExtKeyCreditCode: "2", // revoked
 				}),
@@ -126,10 +138,17 @@ func creditNote() *bill.Invoice {
 		},
 		Lines: []*bill.Line{
 			{
-				Quantity: num.MakeAmount(1, 3),
+				Quantity: num.MakeAmount(1000, 3),
 				Item: &org.Item{
 					Name:  "bogus",
 					Price: num.NewAmount(1000, 3),
+				},
+			},
+		},
+		Payment: &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{Date: cal.NewDate(2023, 1, 29), Percent: num.NewPercentage(1, 0)},
 				},
 			},
 		},
@@ -327,5 +346,134 @@ func TestNormalizeInvoice(t *testing.T) {
 
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Supplier.Ext.Get(dian.ExtKeyFiscalResponsibility))
 		assert.Equal(t, cbc.Code("R-99-PN"), inv.Customer.Ext.Get(dian.ExtKeyFiscalResponsibility))
+	})
+}
+
+func TestInvoiceCodeValidation(t *testing.T) {
+	t.Run("rejects non-numeric codes", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Code = "TEST"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-15")
+	})
+
+	t.Run("rejects leading zeroes", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Code = "0123"
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-15")
+	})
+
+	t.Run("allows empty draft codes", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+}
+
+func TestCreditNoteWithoutReferenceValidation(t *testing.T) {
+	// unreferenced returns a credit note whose preceding ref has no dian-cude stamp (91-22).
+	unreferenced := func() *bill.Invoice {
+		inv := creditNote()
+		inv.Preceding[0].Stamps = nil
+		inv.Preceding[0].Reason = "Correcting an error"
+		inv.Preceding[0].Ext = inv.Preceding[0].Ext.Set(dian.ExtKeyCreditCode, "3")
+		return inv
+	}
+
+	t.Run("rejects revoking without a referenced document", func(t *testing.T) {
+		inv := unreferenced()
+		inv.Preceding[0].Ext = inv.Preceding[0].Ext.Set(dian.ExtKeyCreditCode, "2")
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-16")
+	})
+
+	t.Run("treats empty stamp values as unreferenced", func(t *testing.T) {
+		inv := creditNote()
+		inv.Preceding[0].Reason = "Correcting an error"
+		inv.Preceding[0].Stamps[0].Value = ""
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-16")
+	})
+
+	t.Run("allows revoking with a referenced document", func(t *testing.T) {
+		inv := creditNote()
+		inv.Preceding[0].Reason = "Correcting an error"
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("rejects periods crossing calendar months", func(t *testing.T) {
+		inv := unreferenced()
+		inv.Preceding[0].Period = &cal.Period{Start: cal.MakeDate(2022, 11, 15), End: cal.MakeDate(2022, 12, 15)}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-17")
+	})
+
+	t.Run("allows periods within one calendar month", func(t *testing.T) {
+		inv := unreferenced()
+		inv.Preceding[0].Period = &cal.Period{Start: cal.MakeDate(2022, 12, 1), End: cal.MakeDate(2022, 12, 28)}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("drops nil preceding entries on calculation", func(t *testing.T) {
+		inv := creditNote()
+		inv.Preceding = append(inv.Preceding, nil)
+		inv.Preceding[0].Reason = "Correcting an error"
+		require.NoError(t, inv.Calculate())
+		assert.Len(t, inv.Preceding, 1)
+		assert.NoError(t, rules.Validate(inv))
+	})
+}
+
+func TestPaymentDueDateValidation(t *testing.T) {
+	t.Run("rejects unpaid invoices without due dates", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-18")
+	})
+
+	t.Run("rejects unpaid invoices with only nil due dates", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Payment.Terms.DueDates = []*pay.DueDate{nil}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "GOBL-CO-DIAN-BILL-INVOICE-18")
+	})
+
+	t.Run("allows fully paid invoices without due dates", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Record{
+				{Description: "prepaid", Percent: num.NewPercentage(1, 0)},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("skips proforma invoices", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Type = bill.InvoiceTypeProforma
+		inv.Payment = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("skips uncalculated drafts", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Payment = nil
+		err := rules.Validate(inv)
+		require.Error(t, err) // core totals faults, but no due date fault
+		assert.NotContains(t, err.Error(), "GOBL-CO-DIAN-BILL-INVOICE-18")
 	})
 }
