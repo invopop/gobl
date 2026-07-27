@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `co-dian-v2`: added `co-dian-item-identification` and `co-dian-regime` extensions.
+- `co-dian-v2`: new validation rules for invoice code format, credit notes without a `dian-cude` stamp (91-22), payment due dates, and line quantities.
+
 ## [v0.503.0] - 2026-07-15
 
 ### Added
