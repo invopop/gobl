@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `tax`: `TotalCalculator.ExtractIncludedTaxes` provides the total of each taxable line with the included tax taken out, as shared by the `currency` rounding rule, so that the results add up to the bases determined by `Calculate`.
+
+### Fixed
+
+- `bill`: `RemoveIncludedTaxes` with the `currency` rounding rule now shares the removed tax out between the rows in the same way the tax totals do, instead of removing it from each price on its own. Line prices are nudged so that the resulting document keeps the tax bases it was issued with, and gains the accuracy needed for the line sums to still be recalculated from the prices presented. Previously a hotel invoice of 12 nights at a tax-inclusive 125.00 with 6% VAT ended up with a base of 1415.04 instead of 1415.09, and a `totals.rounding` of 0.06 that formats unable to express it would silently drop.
+
 ## [v0.503.0] - 2026-07-15
 
 ### Added

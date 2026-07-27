@@ -310,8 +310,12 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 //
 // This method will call "Calculate" on the invoice automatically after removing the taxes.
 //
-// If after removing taxes the totals don't match, a rounding error will be added to the
-// invoice totals. In most scenarios this shouldn't be more than a cent or two.
+// With the "currency" rounding rule the tax is shared out between the rows in the same
+// way the tax totals determine it, adjusting the net prices so that the invoice keeps the
+// tax bases it was issued with.
+//
+// If after removing taxes the totals still don't match, a rounding error will be added to
+// the invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
 // This method will replace the invoice contents in place, or return an error.
 func (inv *Invoice) RemoveIncludedTaxes() error {

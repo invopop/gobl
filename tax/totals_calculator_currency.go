@@ -35,6 +35,39 @@ func (tc *TotalCalculator) calculateCurrencyTotals(t *Total, taxLines []*taxLine
 	return nil
 }
 
+// ExtractIncludedTaxes provides the total of each of the calculator's lines
+// with the tax included in their prices taken out, in the same order as the
+// lines were provided. As the tax is extracted from the sum of each rate's
+// tax-inclusive line totals and shared back over the lines, the results will
+// always add up to the bases determined by Calculate, which removing the tax
+// from every line on its own would not achieve.
+//
+// This is only meaningful with the currency rounding rule, where the line
+// totals are rounded to the currency's precision before being summed.
+func (tc *TotalCalculator) ExtractIncludedTaxes() ([]num.Amount, error) {
+	tc.zero = tc.Currency.Def().Zero()
+
+	taxLines := mapTaxLines(tc.Lines)
+	if err := tc.prepareCombos(taxLines); err != nil {
+		return nil, err
+	}
+	for _, tl := range taxLines {
+		tl.total = tl.total.Rescale(tc.zero.Exp())
+	}
+
+	// The rate totals are only needed to accumulate the running sums.
+	t := &Total{Categories: make([]*CategoryTotal, 0), Sum: tc.zero}
+	if err := tc.extractIncludedTaxes(t, taxLines); err != nil {
+		return nil, err
+	}
+
+	totals := make([]num.Amount, len(taxLines))
+	for i, tl := range taxLines {
+		totals[i] = tl.total
+	}
+	return totals, nil
+}
+
 // extractIncludedTaxes removes the included tax from each line's total.
 // The tax is calculated over the accumulated sum of the rate's tax-inclusive
 // line totals, with each line assuming the increment, so that the resulting

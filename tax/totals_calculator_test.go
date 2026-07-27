@@ -1691,3 +1691,82 @@ func TestTotalCalculatorCurrencyRounding(t *testing.T) {
 		assert.Equal(t, "21.00", tot.Sum.String())
 	})
 }
+
+func TestExtractIncludedTaxes(t *testing.T) {
+	date := cal.MakeDate(2026, 7, 9)
+	extract := func(t *testing.T, country l10n.TaxCountryCode, lines ...tax.TaxableLine) []string {
+		t.Helper()
+		tc := &tax.TotalCalculator{
+			Country:  country,
+			Currency: currency.EUR,
+			Rounding: tax.RoundingRuleCurrency,
+			Date:     date,
+			Lines:    lines,
+			Includes: tax.CategoryVAT,
+		}
+		totals, err := tc.ExtractIncludedTaxes()
+		require.NoError(t, err)
+		out := make([]string, len(totals))
+		for i, a := range totals {
+			out[i] = a.String()
+		}
+		return out
+	}
+
+	t.Run("shares the remainder between the lines", func(t *testing.T) {
+		// 12 lines of 125.00 with 6% VAT included: taking the tax out of each
+		// line on its own would leave every one of them at 117.92, adding up to
+		// 1415.04 instead of the rate's base of 1415.09.
+		lines := make([]tax.TaxableLine, 12)
+		for i := range lines {
+			lines[i] = &taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateReduced}},
+				amount: num.MakeAmount(12500, 2),
+			}
+		}
+		totals := extract(t, "PT", lines...)
+		assert.Equal(t, []string{
+			"117.92", "117.93", "117.92", "117.93", "117.92", "117.93",
+			"117.92", "117.93", "117.92", "117.93", "117.92", "117.92",
+		}, totals)
+
+		sum := num.MakeAmount(0, 2)
+		for _, a := range totals {
+			v, err := num.AmountFromString(a)
+			require.NoError(t, err)
+			sum = sum.Add(v)
+		}
+		assert.Equal(t, "1415.09", sum.String())
+	})
+
+	t.Run("keeps lines without the included tax", func(t *testing.T) {
+		totals := extract(t, "PT",
+			&taxableLine{
+				taxes:  tax.Set{{Category: tax.CategoryVAT, Rate: tax.RateReduced}},
+				amount: num.MakeAmount(12500, 2),
+			},
+			&taxableLine{
+				taxes:  nil,
+				amount: num.MakeAmount(2000, 2),
+			},
+		)
+		assert.Equal(t, []string{"117.92", "20.00"}, totals)
+	})
+
+	t.Run("with an invalid included category", func(t *testing.T) {
+		_, err := (&tax.TotalCalculator{
+			Country:  "ES",
+			Currency: currency.EUR,
+			Rounding: tax.RoundingRuleCurrency,
+			Date:     date,
+			Lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes:  tax.Set{{Category: es.TaxCategoryIRPF, Rate: "pro"}},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			Includes: es.TaxCategoryIRPF,
+		}).ExtractIncludedTaxes()
+		assert.ErrorContains(t, err, "cannot include retained category")
+	})
+}

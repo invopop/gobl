@@ -75,18 +75,10 @@ func calculate(doc billable) error {
 
 	// Figure out rounding rules and if prices include tax early
 	var pit cbc.Code
-	var rr cbc.Key
-	if tx := doc.getTax(); tx != nil {
-		if tx.PricesInclude != "" {
-			pit = tx.PricesInclude
-		}
-		if tx.Rounding != "" {
-			rr = tx.Rounding
-		}
+	if tx := doc.getTax(); tx != nil && tx.PricesInclude != "" {
+		pit = tx.PricesInclude
 	}
-	if rr == "" {
-		rr = r.GetRoundingRule()
-	}
+	rr := roundingRule(doc)
 
 	// Do we need to deal with the customer-rates tag?
 	if doc.HasTags(tax.TagCustomerRates) {
@@ -256,6 +248,15 @@ func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.
 	}
 }
 
+// roundingRule provides the rounding rule to use for the document's
+// calculations, either the one explicitly requested or the regime's default.
+func roundingRule(doc billable) cbc.Key {
+	if tx := doc.getTax(); tx != nil && tx.Rounding != "" {
+		return tx.Rounding
+	}
+	return doc.RegimeDef().GetRoundingRule()
+}
+
 func canRemoveIncludedTaxes(doc billable) bool {
 	return doc.getTax() != nil && !doc.getTax().PricesInclude.IsEmpty()
 }
@@ -267,6 +268,15 @@ func removeIncludedTaxes(doc billable) error {
 	tpi := doc.getTax().PricesInclude
 
 	totalWithTax := doc.getTotals().TotalWithTax
+
+	// Figure out the totals every row should end up with before touching any
+	// of the prices, as with the currency rounding rule the included tax is
+	// shared out between the rows instead of being removed from each one
+	// independently.
+	nt, err := prepareIncludedTaxNetTotals(doc, tpi)
+	if err != nil {
+		return err
+	}
 
 	doc.setTotals(new(Totals))
 	lines := doc.getLines()
@@ -291,6 +301,10 @@ func removeIncludedTaxes(doc billable) error {
 	tx.PricesInclude = ""
 
 	if err := calculate(doc); err != nil {
+		return err
+	}
+
+	if err := nt.align(doc); err != nil {
 		return err
 	}
 
