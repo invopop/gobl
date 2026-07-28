@@ -47,7 +47,7 @@ type Header struct {
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// From is the URI-form transport address of the envelope's issuer,
-	// e.g. "gobl:samlown.example.com" or
+	// e.g. "gobl:invoices.example.com" or
 	// "iso6523-actorid-upis::9920:b123123123".
 	From cbc.URI `json:"from,omitempty" jsonschema:"title=From"`
 
