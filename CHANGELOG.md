@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `org`: an `Attribute` may now hold more than one of the `text`, `code`, `amount`, or `date` values, where before exactly one was required, so that formats grouping related values under a single name can be mapped directly. At least one value is still needed.
+
 ## [v0.503.0] - 2026-07-15
 
 ### Added
