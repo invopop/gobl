@@ -13,6 +13,9 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// partyHasTaxIDCode is reused by the invoice guards below.
+var partyHasTaxIDCode = org.PartyHasTaxIDCode()
+
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizeSupplier(inv.Supplier)
 }
@@ -246,7 +249,7 @@ func invoiceCustomerIsItalianWithoutTaxIDCode(val any) bool {
 	if !ok || inv == nil || inv.Customer == nil {
 		return false
 	}
-	return isItalianParty(inv.Customer) && !hasTaxIDCode(inv.Customer)
+	return isItalianParty(inv.Customer) && !partyHasTaxIDCode.Check(inv.Customer)
 }
 
 func invoiceCustomerHasFiscalCodeIdentity(val any) bool {
@@ -291,10 +294,6 @@ func chargeIsFundContribution(val any) bool {
 		return false
 	}
 	return c.Key.Has(KeyFundContribution)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 func hasFiscalCode(party *org.Party) bool {

@@ -39,7 +39,7 @@
               "field": "supplier",
               "subsets": [
                 {
-                  "guard": "no BCE identity",
+                  "guard": "not (has a type in [BCE])",
                   "subsets": [
                     {
                       "field": "tax_id",
@@ -66,7 +66,7 @@
                   ]
                 },
                 {
-                  "guard": "no tax ID code",
+                  "guard": "not (has tax ID code)",
                   "subsets": [
                     {
                       "field": "identities",
@@ -74,7 +74,7 @@
                         {
                           "id": "GOBL-BE-BILL-INVOICE-03",
                           "desc": "supplier identities must include BCE type",
-                          "tests": "has BCE type"
+                          "tests": "has a type in [BCE]"
                         }
                       ]
                     }

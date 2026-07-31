@@ -96,3 +96,27 @@ func TestAnyOfCheckWithContext(t *testing.T) {
 		assert.True(t, ct.CheckWithContext(rc, nil))
 	})
 }
+
+func TestAnyOfCompile(t *testing.T) {
+	type anyOfThing struct {
+		Code string `json:"code"`
+	}
+
+	t.Run("compiles wrapped tests", func(t *testing.T) {
+		set := rules.For(new(anyOfThing),
+			rules.Field("code",
+				rules.Assert("001", "code must be numeric or empty",
+					is.AnyOf(is.Matches(`^\d+$`), is.Empty),
+				),
+			),
+		)
+		assert.Nil(t, set.Validate(&anyOfThing{Code: "123"}))
+		assert.Nil(t, set.Validate(&anyOfThing{}))
+		assert.NotNil(t, set.Validate(&anyOfThing{Code: "abc"}))
+	})
+
+	t.Run("reports compilation errors", func(t *testing.T) {
+		aoTest := is.AnyOf(is.Matches(`^(\d+$`)).(interface{ Compile(any) error })
+		assert.Error(t, aoTest.Compile(new(anyOfThing)))
+	})
+}

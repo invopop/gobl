@@ -15,7 +15,7 @@
                 {
                   "id": "GOBL-DE-BILL-INVOICE-01",
                   "desc": "invoice DE supplier must have either tax ID code or identity with 'de-tax-number' key",
-                  "tests": "has tax ID code or identity with 'de-tax-number' key"
+                  "tests": "has tax ID code, or has a key in [de-tax-number]"
                 }
               ]
             }

@@ -172,3 +172,58 @@ func TestPartyHasTaxIDCode(t *testing.T) {
 		assert.Equal(t, "has tax ID code", test.String())
 	})
 }
+
+func TestPartyHasIdentityTypeIn(t *testing.T) {
+	test := org.PartyHasIdentityTypeIn("CVR", "CPR")
+
+	t.Run("with matching type", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Type: "CPR", Code: "1111111118"}}}
+		assert.True(t, test.Check(p))
+		assert.True(t, test.Check(*p))
+	})
+
+	t.Run("with other type", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Type: "FOO", Code: "123"}}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("without identities", func(t *testing.T) {
+		assert.False(t, test.Check(&org.Party{}))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("other type", func(t *testing.T) {
+		assert.False(t, test.Check("foo"))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has a type in [CVR, CPR]", test.String())
+	})
+}
+
+func TestPartyHasIdentityKeyIn(t *testing.T) {
+	test := org.PartyHasIdentityKeyIn("de-tax-number")
+
+	t.Run("with matching key", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Key: "de-tax-number", Code: "123"}}}
+		assert.True(t, test.Check(p))
+	})
+
+	t.Run("with other key", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Key: "other", Code: "123"}}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has a key in [de-tax-number]", test.String())
+	})
+}
