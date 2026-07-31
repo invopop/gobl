@@ -86,4 +86,11 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.mx.cfdi",
 	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "fi-finvoice-v3",
+		Name: i18n.String{
+			i18n.EN: "Finland Finvoice 3.0",
+		},
+		Module: "github.com/invopop/gobl.fi.finvoice",
+	})
 }

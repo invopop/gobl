@@ -52,6 +52,10 @@
             "title": "EN 16931-1:2017"
           },
           {
+            "const": "fi-finvoice-v3",
+            "title": "Finland Finvoice 3.0"
+          },
+          {
             "const": "fr-choruspro-v1",
             "title": "Chorus Pro"
           },
