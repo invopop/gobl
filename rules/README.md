@@ -163,7 +163,18 @@ faults := validator.Validate(obj, func(rc *rules.Context) {
 
 ## Available tests
 
-All tests live in the `github.com/invopop/gobl/rules/is` package. Import it alongside `rules`:
+Tests come from three places, in order of preference:
+
+1. **`rules/is`** — the generic tests below. Always check here first.
+2. **Domain packages** — `num`, `cal`, `cbc`, `tax`, `org`, `bill`, `currency`,
+   `head`, `uuid` each export tests for their own types. See
+   [Domain tests](#domain-tests-outside-rulesis).
+3. **A custom function** — only when neither of the above expresses the rule.
+   See [Prefer plain rules over helper functions](#prefer-plain-rules-over-helper-functions).
+
+### Generic tests (`rules/is`)
+
+Import `is` alongside `rules`:
 
 ```go
 import (
@@ -195,7 +206,171 @@ import (
 The `rules/is` package also re-exports all format tests from `github.com/invopop/validation/is`
 (e.g. `is.URL`, `is.EmailFormat`, `is.Alphanumeric`).
 
+### Domain tests outside `rules/is`
+
+`rules.Test` is just an interface (`Check(any) bool` + `String() string`), so any
+package can provide tests for its own types. **These are the ones addons and
+regimes most often need — check this list before writing an `is.Func`.**
+
+Amounts and percentages — `github.com/invopop/gobl/num`:
+
+| Test                                                       | Notes                                              |
+| ---------------------------------------------------------- | -------------------------------------------------- |
+| `num.Positive` / `num.ZeroOrPositive`                      | Greater than / at least zero                       |
+| `num.Negative` / `num.ZeroOrNegative`                      | Less than / at most zero                           |
+| `num.NotZero`                                              | Any non-zero value                                 |
+| `num.Min(v)` / `num.Max(v)` / `num.Equals(v)`              | Accepts `num.Amount` or `num.Percentage`           |
+| `.Exclusive()`                                             | Modifier on `Min`/`Max` to exclude the boundary    |
+
+Dates and times — `github.com/invopop/gobl/cal`:
+
+| Test                                                            | Notes                       |
+| --------------------------------------------------------------- | --------------------------- |
+| `cal.DateNotZero()` / `cal.DateAfter(d)` / `cal.DateBefore(d)`  | `cal.Date` fields           |
+| `cal.DateTimeNotZero()` / `DateTimeAfter` / `DateTimeBefore`    | `cal.DateTime` fields       |
+| `cal.TimestampNotZero()` / `TimestampAfter` / `TimestampBefore` | `cal.Timestamp` fields      |
+
+Codes and keys — `github.com/invopop/gobl/cbc`:
+
+| Test                          | Notes                                                     |
+| ----------------------------- | --------------------------------------------------------- |
+| `cbc.InCodes(codes...)`       | `cbc.Code` is one of the list                             |
+| `cbc.InCodeDefs(defs)`        | Code is one of a `[]*cbc.Definition` list's codes         |
+| `cbc.InKeyDefs(defs)`         | Key is one of a `[]*cbc.Definition` list's keys           |
+| `cbc.HasValidKeyIn(keys...)`  | Key equals or is prefixed by one of the keys (`a+b`)      |
+| `cbc.CodeMapHas(keys...)`     | `cbc.CodeMap` contains all the given keys                 |
+
+Tax — `github.com/invopop/gobl/tax`:
+
+| Test                                          | Notes                                                       |
+| --------------------------------------------- | ----------------------------------------------------------- |
+| `tax.ExtensionsRequire(keys...)`              | All keys present                                            |
+| `tax.ExtensionsExclude(keys...)`              | None of the keys present                                    |
+| `tax.ExtensionsRequireAllOrNone(keys...)`     | XNOR over the keys                                          |
+| `tax.ExtensionsAllowOneOf(keys...)`           | At most one of the keys                                     |
+| `tax.ExtensionsHasCodes(key, codes...)`       | Key's value is one of the codes                             |
+| `tax.ExtensionsExcludeCodes(key, codes...)`   | Key's value is none of the codes                            |
+| `tax.ExtensionHasValidCode(key)`              | If present, value matches the extension's own definition    |
+| `tax.SetHasCategory(cats...)`                 | `tax.Set` has all the categories                            |
+| `tax.SetHasOneOf(cats...)`                    | `tax.Set` has at least one of the categories                |
+| `tax.RegimeIn(codes...)`                      | Object's regime country; usually via `is.InContext`         |
+| `tax.IdentityIn(codes...)`                    | `tax.Identity` country code                                 |
+| `tax.HasAddon(key)` / `tax.AddonIn(keys...)`  | Object declares the addon / context carries it              |
+| `tax.TagsIn(tags...)`                         | All of the object's tags are in the list                    |
+
+Organisation and documents:
+
+| Test                                                | Notes                                                |
+| --------------------------------------------------- | ---------------------------------------------------- |
+| `org.IdentityTypeIn(types...)`                      | Single `*org.Identity` type                          |
+| `org.IdentityKeyIn(keys...)`                        | Single `*org.Identity` key                           |
+| `org.IdentitiesTypeIn(types...)`                    | Any of `[]*org.Identity` has the type                |
+| `org.IdentitiesKeyIn(keys...)`                      | Any of `[]*org.Identity` has the key                 |
+| `org.IdentitiesExtensionIn(key, values...)`         | Any identity has the ext key with one of the values  |
+| `org.AttributesHaveUniqueKeys()`                    | No duplicate keys in `[]*org.Attribute`              |
+| `bill.InvoiceTypeIn(types...)`                      | `*bill.Invoice` type; a `When` guard                 |
+| `bill.PaymentTypeIn(types...)`                      | `*bill.Payment` type; a `When` guard                 |
+| `bill.StatusTypeIn(types...)`                       | `*bill.Status` type; a `When` guard                  |
+| `bill.StatusLineKeyIn(keys...)`                     | `*bill.StatusLine` key; a `When` guard               |
+| `bill.RequireLineTaxCategory(cat)`                  | `*bill.Line` has a tax combo for the category        |
+| `currency.CanConvertTo(codes...)`                   | Object has exchange rates reaching one of the codes  |
+| `head.StampsHas(provider)`                          | `[]*head.Stamp` includes the provider                |
+| `uuid.Valid`, `uuid.IsV4`, `uuid.IsNotZero`, …      | Also `HasTimestamp`, `Timeless`, `Within(ttl)`       |
+
+If a rule you are writing looks generally useful for a GOBL type, add the test
+to that type's package rather than keeping it private to an addon — that is how
+most of the entries above came to exist.
+
 ## Common patterns
+
+### Prefer plain rules over helper functions
+
+Reach for `Field`, `Each`, `When` and an existing test before writing a custom
+function. Custom functions have to re-implement navigation and nil handling that
+the framework already does, and they hide what is being checked behind a name.
+
+Drill down with nested `Field` instead of type-asserting inside a function:
+
+```go
+// Avoid — a function to reach one nested value.
+rules.Field("tax",
+    rules.Assert("41", "rounding must follow the currency rule",
+        is.Func("uses currency rounding", taxUsesCurrencyRounding),
+    ),
+)
+
+func taxUsesCurrencyRounding(val any) bool {
+    t, ok := val.(*bill.Tax)
+    if !ok || t == nil {
+        return true
+    }
+    return t.Rounding == "" || t.Rounding == tax.RoundingRuleCurrency
+}
+
+// Prefer — the framework extracts the field and skips nil parents.
+rules.Field("tax",
+    rules.Field("rounding",
+        rules.AssertIfPresent("41", "rounding must follow the currency rule",
+            is.In(tax.RoundingRuleCurrency),
+        ),
+    ),
+)
+```
+
+Use the domain test for the field's type:
+
+```go
+// Avoid
+rules.Field("quantity",
+    rules.Assert("06", "line quantity must not be zero",
+        is.Func("non-zero amount", quantityNonZero),
+    ),
+)
+rules.Field("taxes",
+    rules.Assert("28", "charge requires a VAT tax",
+        is.Func("has a VAT combo", taxesHaveVAT),
+    ),
+)
+
+// Prefer
+rules.Field("quantity",
+    rules.Assert("06", "line quantity must not be zero", num.NotZero),
+)
+rules.Field("taxes",
+    rules.Assert("28", "charge requires a VAT tax", tax.SetHasCategory(tax.CategoryVAT)),
+)
+```
+
+Split a multi-field helper into one assertion per field. Each field gets its own
+fault path and code, so the caller learns *which* value is wrong:
+
+```go
+// Avoid — one fault for two fields, path points at "totals".
+rules.Field("totals",
+    rules.Assert("26", "payable and due totals must not be negative",
+        is.Func("non-negative totals", totalsNonNegative),
+    ),
+)
+
+// Prefer — faults at totals.payable and totals.due.
+rules.Field("totals",
+    rules.Field("payable",
+        rules.Assert("26", "payable total must not be negative", num.ZeroOrPositive),
+    ),
+    rules.Field("due",
+        rules.AssertIfPresent("27", "due total must not be negative", num.ZeroOrPositive),
+    ),
+)
+```
+
+Beyond readability, custom functions fail open. The `val.(*bill.Tax)` assertion
+above returns `true` when the type does not match, so a field rename or a
+refactor silently disables the rule with no test failure. `Field` validates its
+name against the struct at initialisation and panics immediately instead.
+
+Custom functions are still the right answer for genuine cross-field logic, for
+domain lookups (regime currency, exchange rates, catalogue codes), and for
+anything an existing test cannot express — see the next two sections.
 
 ### Required field with format check
 
@@ -224,10 +399,16 @@ custom validator instead.
 
 ### Custom validation logic
 
-Extract logic into named private functions and use `is.Func`, `is.StringFunc`,
-or `is.FuncError`. **Prefer private named functions over inline anonymous
+Once you have confirmed no generic or domain test covers the rule, extract the
+logic into named private functions and use `is.Func`, `is.StringFunc`, or
+`is.FuncError`. **Prefer private named functions over inline anonymous
 functions** — they are easier to test in isolation, appear in stack traces, and
 keep the rule set readable at a glance.
+
+Scope the function as narrowly as the rule allows: nest it inside `Field` so it
+receives the smallest value it needs, rather than taking the whole document and
+navigating down. `is.StringFunc` and the `num`/`cal` tests avoid the type
+assertion entirely.
 
 ```go
 func myCodeChecksumValid(code string) bool {
@@ -356,7 +537,8 @@ assert.NoError(t, err)
 
 faults := rules.Validate(obj)
 require.NotNil(t, faults)
-assert.True(t, faults.HasPath("field"))
+assert.True(t, faults.HasPath("$.field"))
+assert.True(t, faults.HasPath("$.lines[0].quantity"))
 assert.True(t, faults.HasCode("GOBL-PKG-STRUCT-01"))
 assert.Equal(t, "assertion description", faults.First().Message())
 
@@ -366,11 +548,18 @@ require.NotNil(t, faults)
 assert.True(t, faults.HasCode("MYAPP-STRUCT-01"))
 ```
 
-`rules.Faults` implements `error`. A nil return means no faults. The full error
-string format is:
+`rules.Faults` implements `error`. A nil return means no faults. Paths are JSON
+Paths rooted at `$`, and `HasPath` matches them exactly. The full error string
+format is:
 
 ```
-[GOBL-PKG-STRUCT-01] field: assertion description
+[GOBL-PKG-STRUCT-01] ($.field) assertion description
+```
+
+Faults sharing a code and message are merged, listing every path:
+
+```
+[GOBL-PKG-STRUCT-01] ($.lines[0].code, $.lines[2].code) assertion description
 ```
 
 ## Assertion code conventions
