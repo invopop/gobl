@@ -1,0 +1,138 @@
+{
+  "id": "GOBL-FI-FINVOICE",
+  "package": "fi-finvoice",
+  "guard": "context: addon in [fi-finvoice-v3]",
+  "subsets": [
+    {
+      "id": "GOBL-FI-FINVOICE-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "field": "customer",
+          "assert": [
+            {
+              "id": "GOBL-FI-FINVOICE-BILL-INVOICE-01",
+              "desc": "customer is required (Finvoice BuyerPartyDetails)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "name",
+              "assert": [
+                {
+                  "id": "GOBL-FI-FINVOICE-BILL-INVOICE-02",
+                  "desc": "customer name is required (Finvoice BuyerOrganisationName)",
+                  "tests": "present"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "payment",
+          "assert": [
+            {
+              "id": "GOBL-FI-FINVOICE-BILL-INVOICE-03",
+              "desc": "payment details are required (Finvoice EpiDetails)",
+              "tests": "present"
+            }
+          ],
+          "subsets": [
+            {
+              "field": "instructions",
+              "assert": [
+                {
+                  "id": "GOBL-FI-FINVOICE-BILL-INVOICE-04",
+                  "desc": "payment instructions are required (Finvoice EpiDetails)",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "key",
+                  "assert": [
+                    {
+                      "id": "GOBL-FI-FINVOICE-BILL-INVOICE-05",
+                      "desc": "payment instructions key must be credit-transfer",
+                      "tests": "be or starts with one of [credit-transfer]"
+                    }
+                  ]
+                },
+                {
+                  "field": "ref",
+                  "assert": [
+                    {
+                      "id": "GOBL-FI-FINVOICE-BILL-INVOICE-06",
+                      "desc": "payment reference is required (Finvoice EpiReference)",
+                      "tests": "present"
+                    }
+                  ]
+                },
+                {
+                  "field": "credit_transfer",
+                  "assert": [
+                    {
+                      "id": "GOBL-FI-FINVOICE-BILL-INVOICE-07",
+                      "desc": "credit transfer details are required (Finvoice EpiAccountID)",
+                      "tests": "present"
+                    },
+                    {
+                      "id": "GOBL-FI-FINVOICE-BILL-INVOICE-08",
+                      "desc": "first credit transfer IBAN is required (Finvoice EpiAccountID)",
+                      "tests": "first entry has IBAN"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "each": true,
+                      "subsets": [
+                        {
+                          "field": "iban",
+                          "subsets": [
+                            {
+                              "guard": "present",
+                              "assert": [
+                                {
+                                  "id": "GOBL-FI-FINVOICE-BILL-INVOICE-09",
+                                  "desc": "credit transfer IBAN is not valid",
+                                  "tests": "mod-97 checksum"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "field": "terms",
+              "assert": [
+                {
+                  "id": "GOBL-FI-FINVOICE-BILL-INVOICE-10",
+                  "desc": "payment terms are required (Finvoice EpiDateOptionDate)",
+                  "tests": "present"
+                }
+              ],
+              "subsets": [
+                {
+                  "field": "due_dates",
+                  "assert": [
+                    {
+                      "id": "GOBL-FI-FINVOICE-BILL-INVOICE-11",
+                      "desc": "at least one due date is required (Finvoice EpiDateOptionDate)",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

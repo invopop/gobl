@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `addons/fi/finvoice`: new `fi-finvoice-v3` addon for the Finnish Finvoice 3.0 format. Builds on `eu-en16931-v2017` and adds the Finvoice-specific requirements: a named customer, and unconditional payment details — credit transfer instructions with a checksum-validated IBAN, a payment reference, and at least one due date — since Finvoice's `EpiDetails` block is mandatory on every invoice, including credit notes. IBANs and payment references are normalized to their machine form (grouping spaces removed, IBANs upper-cased).
+
 ## [v0.503.0] - 2026-07-15
 
 ### Added
