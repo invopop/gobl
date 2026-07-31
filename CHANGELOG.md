@@ -8,8 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `regimes/dk`: new `IdentityTypeCPR` alongside the existing `IdentityTypeCVR`, and the supplier rule (`GOBL-DK-BILL-INVOICE-01`) now accepts either -- a CPR-identified supplier (a natural person, not a VAT-registered business) had no way to satisfy it before, even though this is a valid, schematron-permitted OIOUBL shape.
+- `regimes/dk`: new `IdentityTypeCPR` alongside the existing `IdentityTypeCVR`, and the supplier rule (`GOBL-DK-BILL-INVOICE-01`) now accepts either -- a CPR-identified supplier (a natural person, not a VAT-registered business) had no way to satisfy it before, even though this is a valid, schematron-permitted OIOUBL shape. The fault is now reported at `$.supplier.identities` instead of `$.supplier`.
 - `addons`: registered `dk-oioubl-v2` (implementation in `github.com/invopop/gobl.dk.oioubl`) on the approved external addon list, so it's now a valid `$addons` value.
+- `rules/is`: new `Not` test that passes when the wrapped test does not.
+- `org`: new `PartyHasTaxIDCode` test for a party with a tax identity code.
 
 ## [v0.503.0] - 2026-07-15
 

@@ -3,6 +3,8 @@ package org
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -80,6 +82,25 @@ func (p *Party) FirstEndpoint() *Endpoint {
 		}
 	}
 	return nil
+}
+
+// PartyHasTaxIDCode provides a test that will determine if the party has a
+// tax identity with a code.
+func PartyHasTaxIDCode() rules.Test {
+	return is.Func("has tax ID code", partyHasTaxIDCode)
+}
+
+func partyHasTaxIDCode(obj any) bool {
+	var p *Party
+	switch v := obj.(type) {
+	case *Party:
+		p = v
+	case Party:
+		p = &v
+	default:
+		return false
+	}
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
 }
 
 // JSONSchemaExtend adds extra details to the schema.

@@ -11,11 +11,21 @@
           "subsets": [
             {
               "field": "supplier",
-              "assert": [
+              "subsets": [
                 {
-                  "id": "GOBL-DK-BILL-INVOICE-01",
-                  "desc": "invoice DK supplier must have either tax ID code or identity with 'CVR' or 'CPR' type",
-                  "tests": "has tax ID code or identity with 'CVR' or 'CPR' type"
+                  "guard": "not (has tax ID code)",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-BILL-INVOICE-01",
+                          "desc": "invoice DK supplier without a tax ID code requires an identity with 'CVR' or 'CPR' type",
+                          "tests": "has a type in [CVR, CPR]"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -62,7 +72,7 @@
                         {
                           "id": "GOBL-DK-ORG-IDENTITY-02",
                           "desc": "invalid Danish CPR identity code",
-                          "tests": "valid"
+                          "tests": "length between 10 and 10, digit"
                         }
                       ]
                     }

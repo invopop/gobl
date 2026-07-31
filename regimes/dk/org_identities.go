@@ -51,7 +51,7 @@ func orgIdentityRules() *rules.Set {
 				org.IdentityTypeIn(IdentityTypeCPR),
 				rules.Field("code",
 					rules.AssertIfPresent("02", "invalid Danish CPR identity code",
-						is.Func("valid", isValidCPRCode)),
+						is.Length(10, 10), is.Digit),
 				),
 			),
 		),
@@ -61,12 +61,6 @@ func orgIdentityRules() *rules.Set {
 func isValidCVRCode(val any) bool {
 	code, _ := val.(cbc.Code)
 	return validateTaxCode(code) == nil
-}
-
-// isValidCPRCode checks a Danish CPR number is 10 digits. There is no
-// checksum or other validation.
-func isValidCPRCode(val any) bool {
-	return is.Length(10, 10).Check(val) && is.Digit.Check(val)
 }
 
 // normalizeOrgIdentity strips separators from a Danish CPR number, e.g.

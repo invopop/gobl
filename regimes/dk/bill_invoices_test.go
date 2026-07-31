@@ -62,8 +62,34 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
 		require.NoError(t, inv.Calculate())
-		err := rules.Validate(inv)
-		assert.ErrorContains(t, err, "[GOBL-DK-BILL-INVOICE-01]")
+		faults := rules.Validate(inv)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasCode("GOBL-DK-BILL-INVOICE-01"))
+		assert.True(t, faults.HasPath("$.supplier.identities"))
+	})
+
+	t.Run("supplier with unrelated identity type", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: "FOO",
+				Code: "12345674",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		faults := rules.Validate(inv)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasCode("GOBL-DK-BILL-INVOICE-01"))
+	})
+
+	t.Run("missing supplier", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier = nil
+		_ = inv.Calculate()
+		faults := rules.Validate(inv)
+		require.NotNil(t, faults)
+		assert.False(t, faults.HasCode("GOBL-DK-BILL-INVOICE-01"))
 	})
 
 	t.Run("supplier with CVR identity instead of tax ID", func(t *testing.T) {

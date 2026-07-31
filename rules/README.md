@@ -200,7 +200,9 @@ import (
 | `is.StringFunc(desc, func(string) bool)`              | Convenience for string-typed fields                                    |
 | `is.FuncError(desc, func(any) error)`                 | Error message is discarded; use `desc`                                 |
 | `is.FuncContext(desc, func(rules.Context, any) bool)` | Context-aware custom function                                          |
-| `is.Or(tests...)`                                     | Passes if any test passes                                              |
+| `is.AnyOf(tests...)`                                  | Passes if any test passes; `is.Or` is a deprecated alias               |
+| `is.OneOf(tests...)`                                  | Passes only if exactly one test passes                                 |
+| `is.Not(test)`                                        | Passes when the wrapped test does not                                  |
 | `is.InContext(test)`                                  | Passes when any context value satisfies the inner test                 |
 
 The `rules/is` package also re-exports all format tests from `github.com/invopop/validation/is`
@@ -268,6 +270,7 @@ Organisation and documents:
 | `org.IdentitiesKeyIn(keys...)`                      | Any of `[]*org.Identity` has the key                 |
 | `org.IdentitiesExtensionIn(key, values...)`         | Any identity has the ext key with one of the values  |
 | `org.AttributesHaveUniqueKeys()`                    | No duplicate keys in `[]*org.Attribute`              |
+| `org.PartyHasTaxIDCode()`                           | `*org.Party` has a tax identity with a code          |
 | `bill.InvoiceTypeIn(types...)`                      | `*bill.Invoice` type; a `When` guard                 |
 | `bill.PaymentTypeIn(types...)`                      | `*bill.Payment` type; a `When` guard                 |
 | `bill.StatusTypeIn(types...)`                       | `*bill.Status` type; a `When` guard                  |

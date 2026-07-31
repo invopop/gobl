@@ -140,3 +140,35 @@ func TestPartyValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "German tax number code must be in valid format")
 	})
 }
+
+func TestPartyHasTaxIDCode(t *testing.T) {
+	test := org.PartyHasTaxIDCode()
+
+	t.Run("with tax ID code", func(t *testing.T) {
+		p := &org.Party{TaxID: &tax.Identity{Country: "DK", Code: "12345674"}}
+		assert.True(t, test.Check(p))
+		assert.True(t, test.Check(*p))
+	})
+
+	t.Run("with empty tax ID code", func(t *testing.T) {
+		p := &org.Party{TaxID: &tax.Identity{Country: "DK"}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("without tax ID", func(t *testing.T) {
+		assert.False(t, test.Check(&org.Party{}))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("other type", func(t *testing.T) {
+		assert.False(t, test.Check("foo"))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has tax ID code", test.String())
+	})
+}
