@@ -1,0 +1,223 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "de": "Luxemburg",
+    "en": "Luxembourg",
+    "fr": "Luxembourg"
+  },
+  "description": {
+    "en": "Luxembourg's tax system is administered by the Administration de\nl'enregistrement, des domaines et de la TVA (AED). As an EU member\nstate, Luxembourg follows the EU VAT Directive and applies the\nlowest standard VAT rate in the Union.\n\nVAT (taxe sur la valeur ajoutée, TVA) applies at a standard rate of\n17%, an intermediate rate of 14%, a reduced rate of 8%, and a\nsuper-reduced rate of 3%. A temporary one-point reduction applied\nto the standard, intermediate, and reduced rates during 2023.\n\nBusinesses are identified by their n° TVA (VAT identification\nnumber) in the format LU followed by 8 digits, of which the last\ntwo are check digits. Luxembourg supports credit notes for invoice\ncorrections. B2G e-invoicing via PEPPOL is supported."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "AED - Value Added Tax (TVA)"
+      },
+      "url": "https://pfi.public.lu/en/professionnels/tva.html"
+    },
+    {
+      "title": {
+        "en": "Guichet.lu - VAT rates"
+      },
+      "url": "https://guichet.public.lu/en/entreprises/fiscalite/tva/assujettissement/taux-tva.html"
+    }
+  ],
+  "time_zone": "Europe/Luxembourg",
+  "country": "LU",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "de": "MwSt.",
+        "en": "VAT",
+        "fr": "TVA"
+      },
+      "title": {
+        "de": "Mehrwertsteuer",
+        "en": "Value Added Tax",
+        "fr": "Taxe sur la valeur ajoutée"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Normalsatz",
+            "en": "General Rate",
+            "fr": "Taux normal"
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "17.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "17.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Mittlerer Satz",
+            "en": "Intermediate Rate",
+            "fr": "Taux intermédiaire"
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "13.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "14.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Ermäßigter Satz",
+            "en": "Reduced Rate",
+            "fr": "Taux réduit"
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "7.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "8.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Stark ermäßigter Satz",
+            "en": "Super-Reduced Rate",
+            "fr": "Taux super-réduit"
+          },
+          "values": [
+            {
+              "since": "2015-01-01",
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Guichet.lu - VAT rates"
+          },
+          "url": "https://guichet.public.lu/en/entreprises/fiscalite/tva/assujettissement/taux-tva.html"
+        }
+      ]
+    }
+  ]
+}
