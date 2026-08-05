@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -18,19 +17,24 @@ import (
 )
 
 // buildPartyEnvelope returns the JSON of a party envelope self-signed
-// by subject, optionally countersigned by an authority at scope.
-func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address, authKey *dsig.PrivateKey, authority Address, scope cbc.Key) []byte {
+// by subject, optionally countersigned by an authority naming a
+// verifier.
+func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address, authKey *dsig.PrivateKey, authority, verifier Address) []byte {
 	t.Helper()
 	party := &org.Party{Name: "Test Subject"}
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
-	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.URI())))
+	require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 	if authKey != nil {
-		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authority.URI()),
-			head.WithAudience(subject.URI()),
-			head.WithScope(scope)))
+		opts := []head.SignOption{
+			head.WithIssuer(authority.String()),
+			head.WithAudience(subject.String()),
+		}
+		if verifier != "" {
+			opts = append(opts, head.WithVerifier(verifier.String()))
+		}
+		require.NoError(t, env.Sign(authKey, opts...))
 	}
 	data, err := json.Marshal(env)
 	require.NoError(t, err)
@@ -94,8 +98,8 @@ func TestWho(t *testing.T) {
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(subjKey,
-			head.WithIssuer(subject.URI()),
-			head.WithAudience(Address("caller.example.com").URI())))
+			head.WithIssuer(subject.String()),
+			head.WithAudience("caller.example.com")))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
@@ -114,7 +118,7 @@ func TestWho(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.URI())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
 		data, err := json.Marshal(env)
 		require.NoError(t, err)
 
@@ -182,7 +186,7 @@ func TestVerifySender(t *testing.T) {
 	}
 
 	endorsed := map[string][]byte{
-		subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, head.ScopeVerified),
+		subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, authority),
 		subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
 		authority.KeyURL(authKey.ID()): jwkOf(authKey),
 	}
@@ -192,7 +196,7 @@ func TestVerifySender(t *testing.T) {
 			WithAuthorities(authority),
 			WithFetcher(&mapFetcher{data: endorsed}),
 		)
-		party, err := c.VerifySender(ctx, subject, head.ScopeVerified)
+		party, err := c.VerifySender(ctx, subject, true)
 		require.NoError(t, err)
 		assert.Equal(t, "Test Subject", party.Name)
 	})
@@ -205,23 +209,30 @@ func TestVerifySender(t *testing.T) {
 				subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
 			}}),
 		)
-		_, err := c.VerifySender(ctx, subject, "")
+		_, err := c.VerifySender(ctx, subject, false)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
 
-	t.Run("rejects an endorsement below the minimum scope", func(t *testing.T) {
+	t.Run("rejects an unverified sender when verification is required", func(t *testing.T) {
+		registered := map[string][]byte{
+			subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, ""),
+			subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
+			authority.KeyURL(authKey.ID()): jwkOf(authKey),
+		}
 		c := NewClient(
 			WithAuthorities(authority),
-			WithFetcher(&mapFetcher{data: map[string][]byte{
-				subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, head.ScopeRegistered),
-				subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
-				authority.KeyURL(authKey.ID()): jwkOf(authKey),
-			}}),
+			WithFetcher(&mapFetcher{data: registered}),
 		)
-		_, err := c.VerifySender(ctx, subject, head.ScopeVerified)
+		_, err := c.VerifySender(ctx, subject, true)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrScopeInsufficient))
+		assert.True(t, errors.Is(err, ErrNotVerified))
+
+		// Registration alone satisfies a caller that does not require
+		// verification.
+		party, err := c.VerifySender(ctx, subject, false)
+		require.NoError(t, err)
+		assert.Equal(t, "Test Subject", party.Name)
 	})
 
 	t.Run("rejects a receive-only account", func(t *testing.T) {
@@ -229,7 +240,7 @@ func TestVerifySender(t *testing.T) {
 			WithAuthorities(authority),
 			WithFetcher(&mockFetcher{err: ErrNoContent}),
 		)
-		_, err := c.VerifySender(ctx, subject, head.ScopeVerified)
+		_, err := c.VerifySender(ctx, subject, true)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrNoContent))
 	})

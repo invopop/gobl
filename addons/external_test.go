@@ -49,6 +49,12 @@ func TestApprovedAddons(t *testing.T) {
 				"mx-cfdi-v4": "github.com/invopop/gobl.mx.cfdi",
 			},
 		},
+		{
+			name: "FI Finvoice",
+			modules: map[cbc.Key]string{
+				"fi-finvoice-v3": "github.com/invopop/gobl.fi.finvoice",
+			},
+		},
 	}
 
 	for _, group := range groups {

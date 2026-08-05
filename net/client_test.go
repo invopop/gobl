@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	stdnet "net"
 	"net/http"
 	"net/http/httptest"
@@ -22,9 +23,13 @@ type mockFetcher struct {
 	url  string // records the URL that was fetched
 }
 
-func (m *mockFetcher) Fetch(_ context.Context, url string) ([]byte, error) {
+func (m *mockFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte, error) {
 	m.url = url
 	return m.data, m.err
+}
+
+func (m *mockFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+	return ErrFetchFailed
 }
 
 func TestFetchPublicKey(t *testing.T) {
@@ -95,6 +100,80 @@ func TestFetchPublicKey(t *testing.T) {
 	})
 }
 
+// countingFetcher wraps a Fetcher and counts fetches per URL.
+type countingFetcher struct {
+	inner Fetcher
+	n     map[string]int
+}
+
+func (f *countingFetcher) Fetch(ctx context.Context, url string, header http.Header) ([]byte, error) {
+	f.n[url]++
+	return f.inner.Fetch(ctx, url, header)
+}
+
+func (f *countingFetcher) Post(ctx context.Context, url string, body []byte, header http.Header) error {
+	return f.inner.Post(ctx, url, body, header)
+}
+
+func TestFetchKeyCache(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	url := addr.KeyURL(key.ID())
+
+	pubData, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+
+	newCounting := func() *countingFetcher {
+		return &countingFetcher{
+			inner: &mapFetcher{data: map[string][]byte{url: pubData}},
+			n:     map[string]int{},
+		}
+	}
+
+	t.Run("second fetch is served from cache", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f))
+		for range 3 {
+			pk, err := c.FetchKey(ctx, addr, key.ID())
+			require.NoError(t, err)
+			assert.Equal(t, key.ID(), pk.ID())
+		}
+		assert.Equal(t, 1, f.n[url])
+	})
+
+	t.Run("zero TTL disables the cache", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f), WithKeyCacheTTL(0))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+
+	t.Run("entries expire after the TTL", func(t *testing.T) {
+		f := newCounting()
+		c := NewClient(WithFetcher(f), WithKeyCacheTTL(10*time.Millisecond))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		time.Sleep(20 * time.Millisecond)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.NoError(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+
+	t.Run("failed fetches are not cached", func(t *testing.T) {
+		f := &countingFetcher{inner: &mapFetcher{}, n: map[string]int{}}
+		c := NewClient(WithFetcher(f))
+		_, err := c.FetchKey(ctx, addr, key.ID())
+		require.Error(t, err)
+		_, err = c.FetchKey(ctx, addr, key.ID())
+		require.Error(t, err)
+		assert.Equal(t, 2, f.n[url])
+	})
+}
+
 func TestNewHTTPFetcher(t *testing.T) {
 	f := NewHTTPFetcher()
 	require.NotNil(t, f)
@@ -111,7 +190,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL+"/x")
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL+"/x", nil)
 		require.NoError(t, err)
 		assert.Equal(t, `{"ok":true}`, string(body))
 	})
@@ -122,7 +201,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrNoContent))
 	})
@@ -133,14 +212,14 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 		assert.Contains(t, err.Error(), "HTTP 404")
 	})
 
 	t.Run("invalid URL", func(t *testing.T) {
-		_, err := NewHTTPFetcher().Fetch(context.Background(), "://broken")
+		_, err := NewHTTPFetcher().Fetch(context.Background(), "://broken", nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
@@ -149,17 +228,29 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		// NewRequestWithContext panics on a nil context, so the func
 		// must error rather than crash.
 		var ctx context.Context //nolint:staticcheck
-		_, err := NewHTTPFetcher().Fetch(ctx, "http://example.invalid")
+		_, err := NewHTTPFetcher().Fetch(ctx, "http://example.invalid", nil)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrFetchFailed))
 	})
 
-	t.Run("transport error", func(t *testing.T) {
+	t.Run("transport error is retryable", func(t *testing.T) {
 		// Unreachable address (port 1 is privileged + usually closed).
 		f := &HTTPFetcher{Client: &http.Client{Timeout: 100 * time.Millisecond}}
-		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x")
+		_, err := f.Fetch(context.Background(), "http://127.0.0.1:1/x", nil)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("5xx is retryable", func(t *testing.T) {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			http.Error(w, "boom", http.StatusInternalServerError)
+		}))
+		defer srv.Close()
+
+		_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrFetchFailed))
 	})
 
 	t.Run("body too large is truncated", func(t *testing.T) {
@@ -174,7 +265,7 @@ func TestHTTPFetcherFetch(t *testing.T) {
 		}))
 		defer srv.Close()
 
-		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL)
+		body, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
 		require.NoError(t, err)
 		assert.Equal(t, maxBodySize, len(body))
 	})
@@ -189,7 +280,7 @@ func TestHTTPFetcherRejectsNonPublicAddresses(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x")
+	_, err := NewHTTPFetcher().Fetch(context.Background(), srv.URL+"/x", nil)
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFetchFailed))
 	assert.Contains(t, err.Error(), "refusing to dial non-public address")
@@ -203,11 +294,12 @@ func TestSafeDialContext(t *testing.T) {
 		require.Error(t, err)
 	})
 
-	t.Run("unresolvable host", func(t *testing.T) {
-		// .invalid is reserved (RFC 2606) and never resolves.
+	t.Run("unresolvable host is retryable", func(t *testing.T) {
+		// .invalid is reserved (RFC 2606) and never resolves; DNS
+		// failures are transient conditions.
 		_, err := safeDialContext(ctx, "tcp", "does-not-exist.invalid:443")
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrFetchFailed))
+		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
 	t.Run("non-public address", func(t *testing.T) {
@@ -248,4 +340,90 @@ func TestIsPublicIP(t *testing.T) {
 	t.Run("nil IP", func(t *testing.T) {
 		assert.False(t, isPublicIP(nil))
 	})
+}
+
+func TestHTTPFetcherFetch202(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusAccepted)
+	}))
+	defer srv.Close()
+
+	_, err := newHTTPFetcher(true).Fetch(context.Background(), srv.URL, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrPending))
+}
+
+func TestHTTPFetcherPostNilContext(t *testing.T) {
+	// NewRequestWithContext panics on a nil context, so the func must
+	// error rather than crash.
+	var ctx context.Context //nolint:staticcheck
+	err := NewHTTPFetcher().Post(ctx, "http://example.invalid", []byte(`{}`), nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrFetchFailed))
+}
+
+func TestAuthHeaderMintFailure(t *testing.T) {
+	// An identity whose address cannot be canonicalized fails token
+	// minting, which must surface from the calling operation.
+	key := dsig.NewES256Key()
+	c := NewClient(
+		WithFetcher(&mapFetcher{}),
+		WithIdentity("not valid!", key),
+	)
+	_, err := c.Who(context.Background(), "receiver.example.com")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrAddressInvalid))
+
+	err = c.Send(context.Background(), "receiver.example.com", buildSignedEnvelope(t, key, "sender.example.com", "receiver.example.com"))
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrAddressInvalid), "token minting fails before delivery")
+}
+
+func TestKeyCacheEviction(t *testing.T) {
+	key := dsig.NewES256Key()
+	pk := key.Public()
+
+	t.Run("purges expired entries when full", func(t *testing.T) {
+		c := NewClient(WithFetcher(&mapFetcher{}))
+		past := time.Now().Add(-time.Minute)
+		for i := range maxKeyCacheEntries {
+			c.keyCache[fmt.Sprintf("https://k%d.example/key", i)] = keyCacheEntry{key: pk, exp: past}
+		}
+		c.storeKey("https://fresh.example/key", pk)
+		assert.LessOrEqual(t, len(c.keyCache), maxKeyCacheEntries)
+		assert.NotNil(t, c.cachedKey("https://fresh.example/key"))
+	})
+
+	t.Run("evicts arbitrarily when full of live entries", func(t *testing.T) {
+		c := NewClient(WithFetcher(&mapFetcher{}))
+		future := time.Now().Add(time.Hour)
+		for i := range maxKeyCacheEntries {
+			c.keyCache[fmt.Sprintf("https://k%d.example/key", i)] = keyCacheEntry{key: pk, exp: future}
+		}
+		c.storeKey("https://fresh.example/key", pk)
+		assert.LessOrEqual(t, len(c.keyCache), maxKeyCacheEntries)
+		assert.NotNil(t, c.cachedKey("https://fresh.example/key"))
+	})
+}
+
+func TestFlushKeyCache(t *testing.T) {
+	ctx := context.Background()
+	key := dsig.NewES256Key()
+	addr := Address("billing.invopop.com")
+	url := addr.KeyURL(key.ID())
+
+	pubData, err := json.Marshal(key.Public())
+	require.NoError(t, err)
+	f := &countingFetcher{
+		inner: &mapFetcher{data: map[string][]byte{url: pubData}},
+		n:     map[string]int{},
+	}
+	c := NewClient(WithFetcher(f))
+
+	_, err = c.FetchKey(ctx, addr, key.ID())
+	require.NoError(t, err)
+	c.FlushKeyCache()
+	_, err = c.FetchKey(ctx, addr, key.ID())
+	require.NoError(t, err)
+	assert.Equal(t, 2, f.n[url], "flush forces a refetch")
 }

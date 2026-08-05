@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -143,18 +145,9 @@ func TestAddressJWKSURL(t *testing.T) {
 	assert.Equal(t, "https://billing.invopop.com/.well-known/jwks.json", a.JWKSURL())
 }
 
-func TestAddressTopic(t *testing.T) {
-	tests := []struct {
-		addr Address
-		want string
-	}{
-		{Address("billing.invopop.com"), "com.invopop.billing"},
-		{Address("sub.domain.example.org"), "org.example.domain.sub"},
-		{Address("example.com"), "com.example"},
-	}
-	for _, tt := range tests {
-		t.Run(string(tt.addr), func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.addr.Topic())
-		})
-	}
+func TestAddressURI(t *testing.T) {
+	// The gobl: URI form is for endpoint lists and header routing;
+	// signed claims carry the bare address.
+	a := Address("billing.invopop.com")
+	assert.Equal(t, cbc.URI("gobl:billing.invopop.com"), a.URI())
 }

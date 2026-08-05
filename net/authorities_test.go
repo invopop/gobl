@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
 	"testing"
 	"time"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
@@ -52,16 +53,24 @@ func TestWithAuthorities(t *testing.T) {
 
 // mapFetcher is a URL-keyed Fetcher for tests that need to serve
 // different blobs for different URLs (e.g. multiple per-key
-// endpoints).
+// endpoints), with optional per-URL errors.
 type mapFetcher struct {
 	data map[string][]byte
+	errs map[string]error
 }
 
-func (m *mapFetcher) Fetch(_ context.Context, url string) ([]byte, error) {
+func (m *mapFetcher) Fetch(_ context.Context, url string, _ http.Header) ([]byte, error) {
+	if err, ok := m.errs[url]; ok {
+		return nil, err
+	}
 	if d, ok := m.data[url]; ok {
 		return d, nil
 	}
 	return nil, ErrFetchFailed
+}
+
+func (m *mapFetcher) Post(_ context.Context, _ string, _ []byte, _ http.Header) error {
+	return ErrFetchFailed
 }
 
 func TestVerifyAuthority(t *testing.T) {
@@ -84,11 +93,10 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		// Subject's self-signature (not an authority) + authority countersignature.
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithAudience(subjectAddr.URI()),
-			head.WithScope(head.ScopeVerified)))
+			head.WithIssuer(authorityAddr.String()),
+			head.WithAudience(subjectAddr.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
@@ -96,79 +104,50 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env))
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, authorityAddr, end.Authority)
+		assert.False(t, end.Verified(), "no verifier claim means registered only")
 	})
 
-	t.Run("enforces a minimum scope", func(t *testing.T) {
+	t.Run("confirms a verifier named by the authority", func(t *testing.T) {
+		verifierAddr := Address("verify.example.net")
+		verifKey := dsig.NewES256Key()
 		msg := &note.Message{Content: "party doc"}
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithAudience(subjectAddr.URI()),
-			head.WithScope(head.ScopeRegistered)))
+			head.WithIssuer(authorityAddr.String()),
+			head.WithAudience(subjectAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey,
+			head.WithIssuer(verifierAddr.String()),
+			head.WithAudience(subjectAddr.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
 			WithFetcher(&mapFetcher{data: map[string][]byte{
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): jwkOf(verifKey),
 			}}),
 		)
-		// registered satisfies registered but not verified.
-		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered))
-		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeVerified)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrScopeInsufficient))
-	})
-
-	t.Run("verified satisfies a registered minimum", func(t *testing.T) {
-		msg := &note.Message{Content: "party doc"}
-		msg.SetUUID(uuid.V7())
-		env, err := gobl.Envelop(msg)
+		end, err := c.VerifyAuthority(ctx, env)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified)))
-
-		c := NewClient(
-			WithAuthorities(authorityAddr),
-			WithFetcher(&mapFetcher{data: map[string][]byte{
-				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
-			}}),
-		)
-		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered))
+		assert.Equal(t, authorityAddr, end.Authority)
+		assert.Equal(t, verifierAddr, end.Verifier)
+		assert.True(t, end.Verified())
 	})
 
-	t.Run("scopeless authority signature fails any named minimum", func(t *testing.T) {
-		msg := &note.Message{Content: "party doc"}
-		msg.SetUUID(uuid.V7())
-		env, err := gobl.Envelop(msg)
-		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
-
-		c := NewClient(
-			WithAuthorities(authorityAddr),
-			WithFetcher(&mapFetcher{data: map[string][]byte{
-				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
-			}}),
-		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env))
-		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrScopeInsufficient))
-	})
-
-	t.Run("custom scope requires an exact match", func(t *testing.T) {
-		custom := cbc.Key("premium")
+	t.Run("authority naming itself needs no second signature", func(t *testing.T) {
 		msg := &note.Message{Content: "party doc"}
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(custom)))
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(authorityAddr.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
@@ -176,10 +155,104 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, custom))
-		err = c.VerifyAuthorityWithScope(ctx, env, head.ScopeRegistered)
-		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrScopeInsufficient))
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, authorityAddr, end.Verifier)
+		assert.True(t, end.Verified())
+	})
+
+	t.Run("degrades to registered when the verifier signature is missing", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier("verify.example.net")))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, authorityAddr, end.Authority)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("degrades when the verifier signature is expired", func(t *testing.T) {
+		verifierAddr := Address("verify.example.net")
+		verifKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey,
+			head.WithIssuer(verifierAddr.String()),
+			head.WithExpiration(time.Now().Add(-time.Hour))))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): jwkOf(verifKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("degrades when the verifier signature does not verify", func(t *testing.T) {
+		// The verifier countersigned, but its published key is a
+		// different one, so the crypto check fails.
+		verifierAddr := Address("verify.example.net")
+		verifKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+
+		other := dsig.NewES256Key()
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): jwkOf(other),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("ignores a malformed verifier claim", func(t *testing.T) {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier("https://verify.example.net")))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
 	})
 
 	t.Run("rejects an expired countersignature", func(t *testing.T) {
@@ -188,8 +261,7 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified),
+			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
 
 		c := NewClient(
@@ -198,7 +270,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
@@ -211,8 +283,7 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(cbc.URI("gobl:KYC.Example.COM.")),
-			head.WithScope(head.ScopeVerified)))
+			head.WithIssuer("KYC.Example.COM.")))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
@@ -220,7 +291,8 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env))
+		_, err = c.VerifyAuthority(ctx, env)
+		assert.NoError(t, err)
 	})
 
 	t.Run("rejects a pre-epoch expiry", func(t *testing.T) {
@@ -231,8 +303,7 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified),
+			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Unix(-1000, 0))))
 
 		c := NewClient(
@@ -241,7 +312,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
@@ -257,10 +328,9 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified),
+			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(-time.Hour))))
-		require.NoError(t, env.Sign(otherKey, head.WithIssuer(otherAuth.URI())))
+		require.NoError(t, env.Sign(otherKey, head.WithIssuer(otherAuth.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr, otherAuth),
@@ -269,7 +339,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrSignatureExpired))
 	})
@@ -280,8 +350,7 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified),
+			head.WithIssuer(authorityAddr.String()),
 			head.WithExpiration(time.Now().Add(90*24*time.Hour))))
 
 		c := NewClient(
@@ -290,7 +359,9 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthorityWithScope(ctx, env, head.ScopeVerified))
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, authorityAddr, end.Authority)
 	})
 
 	t.Run("rejects an envelope with only a self-signature", func(t *testing.T) {
@@ -298,13 +369,13 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.URI())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subjectAddr.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr),
 			WithFetcher(&mapFetcher{data: map[string][]byte{}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -315,8 +386,7 @@ func TestVerifyAuthority(t *testing.T) {
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
 		require.NoError(t, env.Sign(authKey,
-			head.WithIssuer(authorityAddr.URI()),
-			head.WithScope(head.ScopeVerified)))
+			head.WithIssuer(authorityAddr.String())))
 		// Prepend a signature whose payload does not decode; it must be
 		// stepped past, not fail the whole check.
 		bad, err := dsig.NewSignature(authKey, "not-an-object")
@@ -329,7 +399,8 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		assert.NoError(t, c.VerifyAuthority(ctx, env))
+		_, err = c.VerifyAuthority(ctx, env)
+		assert.NoError(t, err)
 	})
 
 	t.Run("skips an invalid iss FQDN", func(t *testing.T) {
@@ -337,10 +408,10 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(cbc.URI("gobl:localhost"))))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer("localhost")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
 	})
@@ -352,7 +423,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
 		env.Head.Digest = dsig.NewSHA256Digest([]byte("tampered"))
 
 		c := NewClient(
@@ -361,7 +432,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -373,7 +444,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
 		env.Head = nil
 
 		c := NewClient(
@@ -382,7 +453,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -394,22 +465,43 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, err)
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
 
 	t.Run("rejects when client has no authorities registered", func(t *testing.T) {
+		original := Authorities
+		t.Cleanup(func() { Authorities = original })
+		Authorities = nil
+
 		msg := &note.Message{Content: "x"}
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
 
 		c := NewClient() // empty authorities
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
+	})
+
+	t.Run("trusts the default authority out of the box", func(t *testing.T) {
+		lookupKey := dsig.NewES256Key()
+		lookup := Address("lookup.gobl.org")
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(lookupKey, head.WithIssuer(lookup.String())))
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			lookup.KeyURL(lookupKey.ID()): jwkOf(lookupKey),
+		}}))
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.Equal(t, lookup, end.Authority)
 	})
 
 	t.Run("rejects when authority signature does not verify against published key", func(t *testing.T) {
@@ -420,7 +512,7 @@ func TestVerifyAuthority(t *testing.T) {
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
 		require.NoError(t, err)
-		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.URI())))
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
 
 		other := dsig.NewES256Key()
 		c := NewClient(
@@ -430,7 +522,7 @@ func TestVerifyAuthority(t *testing.T) {
 				authorityAddr.KeyURL(authKey.ID()): jwkOf(other),
 			}}),
 		)
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
@@ -445,8 +537,161 @@ func TestVerifyAuthority(t *testing.T) {
 		require.NoError(t, env.Sign(subjKey, head.WithIssuer("mailto:a@b")))
 
 		c := NewClient(WithAuthorities(authorityAddr))
-		err = c.VerifyAuthority(ctx, env)
+		_, err = c.VerifyAuthority(ctx, env)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrUnknownAuthority))
+	})
+}
+
+func TestVerifySignatureByEdgeCases(t *testing.T) {
+	ctx := context.Background()
+	authorityAddr := Address("kyc.example.com")
+	verifierAddr := Address("verify.example.net")
+	authKey := dsig.NewES256Key()
+	verifKey := dsig.NewES256Key()
+
+	jwkOf := func(k *dsig.PrivateKey) []byte {
+		out, err := json.Marshal(k.Public())
+		require.NoError(t, err)
+		return out
+	}
+
+	t.Run("steps past undecodable payloads and rejects a kid-spoofed key", func(t *testing.T) {
+		// The verifier's published JWK claims its kid but holds other
+		// key material, so the fetch succeeds and the crypto fails —
+		// the endorsement degrades to registered. A non-object payload
+		// signature is stepped past on the way.
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		bad, err := dsig.NewSignature(verifKey, "not-an-object")
+		require.NoError(t, err)
+		env.Signatures = append(env.Signatures, bad)
+
+		other := dsig.NewES256Key()
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				verifierAddr.KeyURL(verifKey.ID()): spoofKID(t, other, verifKey.ID()),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("prefers a verified endorsement regardless of signature order", func(t *testing.T) {
+		// Two trusted authorities countersign: the first is registered
+		// only, the second names itself as verifier. The verified
+		// endorsement must win even though it appears later.
+		secondAddr := Address("auth.example.org")
+		secondKey := dsig.NewES256Key()
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
+		require.NoError(t, env.Sign(secondKey,
+			head.WithIssuer(secondAddr.String()),
+			head.WithVerifier(secondAddr.String())))
+
+		c := NewClient(
+			WithAuthorities(authorityAddr, secondAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				secondAddr.KeyURL(secondKey.ID()):  jwkOf(secondKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, env)
+		require.NoError(t, err)
+		assert.True(t, end.Verified())
+		assert.Equal(t, secondAddr, end.Authority)
+		assert.Equal(t, secondAddr, end.Verifier)
+	})
+}
+
+func TestWithAuthoritiesReplacesDefault(t *testing.T) {
+	original := Authorities
+	t.Cleanup(func() { Authorities = original })
+	Authorities = []Address{"lookup.gobl.org"}
+
+	// A closed deployment states its full trust list: the default
+	// authority must not be implicitly trusted alongside it.
+	c := NewClient(WithAuthorities("authority.corp.example"))
+	assert.Equal(t, []Address{"authority.corp.example"}, c.authorities)
+}
+
+func TestVerifyAuthorityUnavailability(t *testing.T) {
+	ctx := context.Background()
+	authorityAddr := Address("kyc.example.com")
+	verifierAddr := Address("verify.example.net")
+	authKey := dsig.NewES256Key()
+	verifKey := dsig.NewES256Key()
+
+	jwkOf := func(k *dsig.PrivateKey) []byte {
+		out, err := json.Marshal(k.Public())
+		require.NoError(t, err)
+		return out
+	}
+
+	buildVerified := func(t *testing.T) *gobl.Envelope {
+		msg := &note.Message{Content: "party doc"}
+		msg.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer(authorityAddr.String()),
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifKey, head.WithIssuer(verifierAddr.String())))
+		return env
+	}
+
+	t.Run("unreachable verifier key surfaces instead of degrading", func(t *testing.T) {
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{
+				data: map[string][]byte{
+					authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+				},
+				errs: map[string]error{
+					verifierAddr.KeyURL(verifKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+				},
+			}),
+		)
+		_, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("removed verifier key still degrades to registered", func(t *testing.T) {
+		// A definitive 404 means the key is gone — revoked — and the
+		// endorsement degrades rather than erroring.
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{data: map[string][]byte{
+				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
+			}}),
+		)
+		end, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.NoError(t, err)
+		assert.False(t, end.Verified())
+	})
+
+	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {
+		env := buildVerified(t)
+		for len(env.Signatures) <= maxEnvelopeSignatures {
+			env.Signatures = append(env.Signatures, env.Signatures[0])
+		}
+		c := NewClient(WithAuthorities(authorityAddr), WithFetcher(&mapFetcher{}))
+		_, err := c.VerifyAuthority(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.Contains(t, err.Error(), "signatures")
 	})
 }
