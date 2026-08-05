@@ -151,7 +151,7 @@ var AttributeKeyDefinitions = []*cbc.Definition{
 
 // Attribute describes a named feature or property of the parent object,
 // such as the color or size of an item. Attributes are identified by
-// either a key or a type, and hold exactly one of the text, code, amount,
+// either a key or a type, and hold at least one of the text, code, amount,
 // or date value fields.
 type Attribute struct {
 	// Label for the attribute, used for presentation in converted outputs
@@ -168,7 +168,7 @@ type Attribute struct {
 	// and customer.
 	Type cbc.Code `json:"type,omitempty" jsonschema:"title=Type"`
 
-	// Value fields; exactly one must be provided.
+	// Value fields; at least one must be provided.
 
 	// Text value of the attribute.
 	Text string `json:"text,omitempty" jsonschema:"title=Text"`
@@ -188,8 +188,8 @@ func attributeRules() *rules.Set {
 		rules.Assert("01", "attribute must have either a key or a type, but not both",
 			is.Expr(`(string(Key) == "") != (string(Type) == "")`),
 		),
-		rules.Assert("02", "attribute must have exactly one of the text, code, amount, or date values",
-			is.Expr(`(Text == "" ? 0 : 1) + (string(Code) == "" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) == 1`),
+		rules.Assert("02", "attribute must have at least one of the text, code, amount, or date values",
+			is.Expr(`(Text == "" ? 0 : 1) + (string(Code) == "" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) >= 1`),
 		),
 		rules.When(is.Expr(`string(Unit) != ""`),
 			rules.Assert("03", "attribute unit may only be used alongside an amount",

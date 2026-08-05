@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `org`: an `Attribute` may now hold more than one of the `text`, `code`, `amount`, or `date` values, where before exactly one was required, so that formats grouping related values under a single name can be mapped directly. At least one value is still needed.
 - `net`: requests to `/who` and `/inbox` without a valid request token are rejected with 401; servers may keep an audit log of requester identities. `/who` responses are no longer publicly cacheable (`Cache-Control: private`); clients cache the verified party envelope locally instead. The `Fetcher` interface gains an `http.Header` parameter to carry the token.
 
 - `head`/`net`: signed `iss`/`aud`/`verifier` claims and request-token claims now carry bare GOBL Net addresses (FQDNs) instead of `gobl:` URIs — the scheme carried no information inside the protocol, and an FQDN can never contain a colon, so URI forms could still be admitted unambiguously later. `head.SigningPayload` fields and the `WithIssuer`/`WithAudience`/`WithVerifier` options are plain strings (use `Address.String()`); `Client.VerifyEnvelope` takes an `expectedAud net.Address`. The `gobl:` scheme remains where multiple schemes coexist: `org.Endpoint` URIs and the unsigned header `from`/`to`.

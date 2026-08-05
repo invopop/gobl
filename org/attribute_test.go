@@ -74,27 +74,35 @@ func TestAttributeValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, rules.Validate(a), "attribute must have either a key or a type, but not both")
 	})
-	t.Run("missing value", func(t *testing.T) {
+	t.Run("valid with text and date", func(t *testing.T) {
 		a := &org.Attribute{
-			Key: org.AttributeKeyColor,
+			Type: "INTENTO",
+			Text: "08060120341234567-000001",
+			Date: cal.NewDate(2026, time.March, 10),
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("multiple values", func(t *testing.T) {
+	t.Run("valid with text and amount", func(t *testing.T) {
 		a := &org.Attribute{
 			Key:    org.AttributeKeyWeight,
 			Text:   "200g",
 			Amount: num.NewAmount(200, 0),
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("text and code", func(t *testing.T) {
+	t.Run("valid with text and code", func(t *testing.T) {
 		a := &org.Attribute{
 			Key:  org.AttributeKeyColor,
 			Text: "Black",
 			Code: "RAL 9005",
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute must have exactly one of the text, code, amount, or date values")
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("missing value", func(t *testing.T) {
+		a := &org.Attribute{
+			Key: org.AttributeKeyColor,
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have at least one of the text, code, amount, or date values")
 	})
 	t.Run("unit without amount", func(t *testing.T) {
 		a := &org.Attribute{
