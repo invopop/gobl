@@ -2,10 +2,10 @@ package net
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 )
 
@@ -16,7 +16,7 @@ import (
 // signed audience (aud) must equal it. The verified issuer address is
 // returned. Additional signatures (e.g. authority countersignatures) are
 // not checked here; use VerifyAuthority for those.
-func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud cbc.URI) (Address, error) {
+func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud Address) (Address, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
 	if env == nil || env.Head == nil || !env.Signed() {
@@ -31,12 +31,10 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 	if p.Iss == "" {
 		return "", fmt.Errorf("%w: signature has no iss", ErrVerifyFailed)
 	}
-	if p.Iss.Scheme() != Scheme {
-		return "", fmt.Errorf("%w: iss %q is not a gobl address", ErrVerifyFailed, p.Iss)
-	}
 	// Canonicalize the issuer so key-fetch URLs and comparisons use
-	// the ASCII form regardless of how the iss was written.
-	issuer, err := ParseAddress(p.Iss.Opaque())
+	// the ASCII form regardless of how the iss was written. Anything
+	// that is not a bare FQDN — including URI forms — is rejected.
+	issuer, err := ParseAddress(p.Iss)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
@@ -48,6 +46,9 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 
 	pubKey, err := c.FetchKey(ctx, issuer, kid)
 	if err != nil {
+		if errors.Is(err, ErrUnavailable) {
+			return "", err
+		}
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 	// VerifySignature enforces the key's validity window against the
@@ -56,8 +57,15 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
 
-	if expectedAud != "" && p.Aud != expectedAud {
-		return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrVerifyFailed, p.Aud, expectedAud)
+	if expectedAud != "" {
+		want, err := ParseAddress(string(expectedAud))
+		if err != nil {
+			return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		}
+		got, err := ParseAddress(p.Aud)
+		if err != nil || got != want {
+			return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrVerifyFailed, p.Aud, want)
+		}
 	}
 
 	return issuer, nil

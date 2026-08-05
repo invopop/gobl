@@ -55,6 +55,12 @@ func TestApprovedAddons(t *testing.T) {
 				"dk-oioubl-v2": "github.com/invopop/gobl.dk.oioubl",
 			},
 		},
+		{
+			name: "FI Finvoice",
+			modules: map[cbc.Key]string{
+				"fi-finvoice-v3": "github.com/invopop/gobl.fi.finvoice",
+			},
+		},
 	}
 
 	for _, group := range groups {

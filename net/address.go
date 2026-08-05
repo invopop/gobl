@@ -20,33 +20,6 @@ var addressIDNA = idna.New(
 	idna.StrictDomainName(true),
 )
 
-const (
-	// Scheme is the URI scheme used by GOBL Net addresses, e.g.
-	// "gobl:acme.example.com".
-	Scheme = "gobl"
-
-	// WellKnownPath is the base path for GOBL Net well-known URLs.
-	WellKnownPath = "/.well-known/gobl"
-	// KeysPath is the base of the per-key endpoint; the full path for a
-	// single key is KeysPath + "/" + kid.
-	KeysPath = WellKnownPath + "/keys"
-	// WhoPath is the well-known path serving the signed Party envelope.
-	WhoPath = WellKnownPath + "/who"
-	// InboxPath is the well-known path accepting envelope deliveries.
-	InboxPath = WellKnownPath + "/inbox"
-	// JWKSPath is the bulk JWK Set endpoint published at the root
-	// well-known directory so generic JWT tooling (jwt.io, OIDC-style
-	// verifiers) can resolve `jku` and verify signatures without
-	// out-of-band key exchange.
-	JWKSPath = "/.well-known/jwks.json"
-)
-
-// KeyPath returns the well-known path serving a single public key by
-// its key ID. Use this to construct lookup URLs.
-func KeyPath(kid string) string {
-	return KeysPath + "/" + kid
-}
-
 // Address represents a GOBL Net address, which is a fully qualified
 // domain name (FQDN) used for key discovery and network identification.
 type Address string
@@ -89,9 +62,11 @@ func (a Address) String() string {
 }
 
 // URI returns the address as a gobl: scheme cbc.URI, e.g.
-// "gobl:acme.example.com", suitable for a signature's iss/aud. The
-// scheme labels the identity as a GOBL Net address rather than a
-// generic HTTPS service.
+// "gobl:acme.example.com", for use where multiple schemes coexist —
+// org.Endpoint lists and the envelope header's unsigned from/to
+// routing fields. Signed iss/aud/verifier claims carry the bare
+// address (Address.String) instead: within the protocol they can
+// only be GOBL Net addresses, so no scheme is needed.
 func (a Address) URI() cbc.URI {
 	return cbc.URI(Scheme + ":" + string(a))
 }
@@ -117,16 +92,6 @@ func (a Address) WhoURL() string {
 // InboxURL returns the deterministic inbox URL for this address.
 func (a Address) InboxURL() string {
 	return "https://" + string(a) + InboxPath
-}
-
-// Topic reverses the FQDN labels to produce a notification topic string.
-// For example, "billing.invopop.com" becomes "com.invopop.billing".
-func (a Address) Topic() string {
-	parts := strings.Split(string(a), ".")
-	for i, j := 0, len(parts)-1; i < j; i, j = i+1, j-1 {
-		parts[i], parts[j] = parts[j], parts[i]
-	}
-	return strings.Join(parts, ".")
 }
 
 // Validate checks that the address is a valid FQDN.

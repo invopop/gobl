@@ -8,15 +8,38 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `pay`: `IsIBAN` and `IsBIC` rules tests for bank details — the ISO 13616 structure with its ISO 7064 mod 97-10 check digits, and the ISO 9362 structure. Available to rule sets that need them; no core rule applies them.
+- `rules/is`: `AllOf` composes several tests into one that passes only when all of them do, alongside the existing `AnyOf` and `OneOf`.
+- `fi-finvoice-v3`: approved as an external addon implemented by [`github.com/invopop/gobl.fi.finvoice`](https://github.com/invopop/gobl.fi.finvoice) — Finland's Finvoice 3.0 e-invoicing format. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.fi.finvoice/addon"`) for documents declaring the key to calculate and validate.
+- `net`: request tokens (README §5.5): short-lived ES256 JWTs sent as `Authorization: Bearer` on `/who` and `/inbox` requests, identifying the requester — possibly a trusted intermediary distinct from the envelope's signer. `net.NewToken` mints one, `Client.VerifyToken` / `Client.VerifyAuthorization` verify inbound tokens against the issuer's published key, audience, and a 30s–5m freshness window, and the `net.WithIdentity` client option attaches one to every who and inbox request. New `ErrTokenInvalid` and `ErrTokenExpired` sentinels.
+- `net`: `Client.Send` delivers a signed envelope to an address's inbox: 202 is success, other non-retryable 4xx report `ErrInboxRejected`. The `Poster` interface extends a `Fetcher` with POST support; `HTTPFetcher` implements it.
+- `net`: `/who` may answer `202 Accepted` (new `ErrPending` sentinel) to record the authenticated request for deferred disclosure: the owner decides per requester and, if approved, delivers its party envelope to the requester's inbox later.
+- `net`: `Client.FetchKey` caches fetched keys per URL for a short TTL (5 minutes by default, tunable with `net.WithKeyCacheTTL`, zero disables; successes only, size-capped), so a token and an envelope signed by the same key verify with a single key fetch.
 - `regimes/dk`: new `IdentityTypeCPR` alongside the existing `IdentityTypeCVR`, and the supplier rule (`GOBL-DK-BILL-INVOICE-01`) now accepts either -- a CPR-identified supplier (a natural person, not a VAT-registered business) had no way to satisfy it before, even though this is a valid, schematron-permitted OIOUBL shape. The fault is now reported at `$.supplier.identities` instead of `$.supplier`.
 - `addons`: registered `dk-oioubl-v2` (implementation in `github.com/invopop/gobl.dk.oioubl`) on the approved external addon list, so it's now a valid `$addons` value.
 - `rules/is`: new `Not` test that passes when the wrapped test does not.
 - `org`: new `PartyHasTaxIDCode` test for a party with a tax identity code.
 - `org`: new `PartyHasIdentityTypeIn` and `PartyHasIdentityKeyIn` tests for a party carrying an identity with one of the given types or keys.
 
+### Changed
+
+- `org`: an `Attribute` may now hold more than one of the `text`, `code`, `amount`, or `date` values, where before exactly one was required, so that formats grouping related values under a single name can be mapped directly. At least one value is still needed.
+- `net`: requests to `/who` and `/inbox` without a valid request token are rejected with 401; servers may keep an audit log of requester identities. `/who` responses are no longer publicly cacheable (`Cache-Control: private`); clients cache the verified party envelope locally instead. The `Fetcher` interface gains an `http.Header` parameter to carry the token.
+
+- `head`/`net`: signed `iss`/`aud`/`verifier` claims and request-token claims now carry bare GOBL Net addresses (FQDNs) instead of `gobl:` URIs — the scheme carried no information inside the protocol, and an FQDN can never contain a colon, so URI forms could still be admitted unambiguously later. `head.SigningPayload` fields and the `WithIssuer`/`WithAudience`/`WithVerifier` options are plain strings (use `Address.String()`); `Client.VerifyEnvelope` takes an `expectedAud net.Address`. The `gobl:` scheme remains where multiple schemes coexist: `org.Endpoint` URIs and the unsigned header `from`/`to`.
+- `net`: `Authorities` now defaults to the network's default registration authority, `lookup.gobl.org` (implemented in [`gobl.lookup`](https://github.com/invopop/gobl.lookup)), instead of an empty list.
+- `head`/`net`: the `scope` claim is replaced by structural verification (spec §5.3). A registration authority's countersignature alone asserts a registered identity; a new `verifier` claim (`head.WithVerifier`) names the authority that performed KYC/KYB, confirmed by that verifier's own countersignature on the same envelope — the two carry independent `exp` lifecycles (90-day registration renewals vs long-lived verifications). `Client.VerifyAuthority` now returns an `Endorsement{Authority, Verifier}`; `Client.VerifySender` takes a `requireVerified` bool and reports the new `ErrNotVerified` sentinel. `head.WithScope`, `head.ScopeRegistered`/`ScopeVerified`, `Client.VerifyAuthorityWithScope`, and `ErrScopeInsufficient` are removed.
+
+- `net`: transient failures are now distinguished from permanent ones by the new `ErrUnavailable` sentinel (network failures, 429, 5xx): token and envelope verification surface it instead of `ErrTokenInvalid`/`ErrVerifyFailed` (servers respond 503, not 401), a verifier countersignature that cannot be *checked* no longer silently degrades a verified endorsement to registered, and `Client.Send` retries key on `ErrUnavailable` rather than `ErrFetchFailed`.
+- `net`: `WithAuthorities` now replaces the client's trust list instead of appending, so closed deployments can exclude the default authority; `RegisterAuthority` still appends to the global default. `VerifyAuthority` prefers an endorsement with a confirmed verifier over a registered-only one regardless of signature order, and refuses envelopes with more than 32 signatures (fetch-amplification defense). `Client.FlushKeyCache` empties the key cache on demand. `Post` is now part of the `Fetcher` interface (the optional `Poster` interface is removed), so custom transports fail at compile time rather than when `Client.Send` is first called.
+
+### Removed
+
+- `net`: `Address.Topic()` and the spec's topic-derivation section — the reversed-label topic form had no consumers.
+
 ### Fixed
 
-- `rules/is`: `AnyOf` and `OneOf` now prepare the tests they wrap, so that `Expr` and `Matches` work inside them.
+- `rules/is`: `AllOf`, `AnyOf`, and `OneOf` now prepare the tests they wrap, so that `Expr` and `Matches` work inside them.
 
 ## [v0.503.0] - 2026-07-15
 

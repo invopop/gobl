@@ -200,6 +200,7 @@ import (
 | `is.StringFunc(desc, func(string) bool)`              | Convenience for string-typed fields                                    |
 | `is.FuncError(desc, func(any) error)`                 | Error message is discarded; use `desc`                                 |
 | `is.FuncContext(desc, func(rules.Context, any) bool)` | Context-aware custom function                                          |
+| `is.AllOf(tests...)`                                  | Passes only if every test passes                                       |
 | `is.AnyOf(tests...)`                                  | Passes if any test passes; `is.Or` is a deprecated alias               |
 | `is.OneOf(tests...)`                                  | Passes only if exactly one test passes                                 |
 | `is.Not(test)`                                        | Passes when the wrapped test does not                                  |
@@ -259,6 +260,14 @@ Tax — `github.com/invopop/gobl/tax`:
 | `tax.IdentityIn(codes...)`                    | `tax.Identity` country code                                 |
 | `tax.HasAddon(key)` / `tax.AddonIn(keys...)`  | Object declares the addon / context carries it              |
 | `tax.TagsIn(tags...)`                         | All of the object's tags are in the list                    |
+
+Payments — `github.com/invopop/gobl/pay`:
+
+| Test                   | Notes                                                      |
+| ---------------------- | ---------------------------------------------------------- |
+| `pay.HasValidMeansKey` | Instructions key is based on one of the defined means keys  |
+| `pay.IsIBAN`           | ISO 13616 structure with matching mod 97-10 check digits     |
+| `pay.IsBIC`            | ISO 9362 structure                                          |
 
 Organisation and documents:
 
