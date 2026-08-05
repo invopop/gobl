@@ -33,6 +33,34 @@ func TestInstructionsNormalize(t *testing.T) {
 	})
 }
 
+func TestCreditTransferNormalize(t *testing.T) {
+	ct := &pay.CreditTransfer{
+		IBAN:     " DK50 0040 0440 1162 43 ",
+		BIC:      " DABADKKK ",
+		Number:   " 0440-116243 ",
+		Clearing: " 1234 ",
+		Name:     "Example Bank",
+	}
+
+	norm.Normalize(ct)
+
+	assert.Equal(t, cbc.Code("DK50 0040 0440 1162 43"), ct.IBAN)
+	assert.Equal(t, cbc.Code("DABADKKK"), ct.BIC)
+	assert.Equal(t, cbc.Code("0440-116243"), ct.Number)
+	assert.Equal(t, cbc.Code("1234"), ct.Clearing)
+	assert.Equal(t, "Example Bank", ct.Name)
+
+	data, err := json.Marshal(ct)
+	require.NoError(t, err)
+	assert.JSONEq(t, `{
+		"iban": "DK50 0040 0440 1162 43",
+		"bic": "DABADKKK",
+		"number": "0440-116243",
+		"clearing": "1234",
+		"name": "Example Bank"
+	}`, string(data))
+}
+
 func TestOnline(t *testing.T) {
 	instr := &pay.Instructions{
 		Key: pay.MeansKeyOnline,

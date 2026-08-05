@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `pay`: `CreditTransfer` now supports a `clearing` code for national bank or branch identifiers such as Danish registration numbers, UK sort codes, and US routing numbers. Its `iban`, `bic`, `number`, and `clearing` identifiers use the flexible `cbc.Code` type; the descriptive bank `name` remains a string.
 - `pay`: `IsIBAN` and `IsBIC` rules tests for bank details — the ISO 13616 structure with its ISO 7064 mod 97-10 check digits, and the ISO 9362 structure. Available to rule sets that need them; no core rule applies them.
 - `rules/is`: `AllOf` composes several tests into one that passes only when all of them do, alongside the existing `AnyOf` and `OneOf`.
 - `fi-finvoice-v3`: approved as an external addon implemented by [`github.com/invopop/gobl.fi.finvoice`](https://github.com/invopop/gobl.fi.finvoice) — Finland's Finvoice 3.0 e-invoicing format. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.fi.finvoice/addon"`) for documents declaring the key to calculate and validate.
