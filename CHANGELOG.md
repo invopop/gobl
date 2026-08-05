@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.504.0]
+
 ### Added
 
 - `pay`: `IsIBAN` and `IsBIC` rules tests for bank details — the ISO 13616 structure with its ISO 7064 mod 97-10 check digits, and the ISO 9362 structure. Available to rule sets that need them; no core rule applies them.
