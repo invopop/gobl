@@ -15,7 +15,7 @@ func billInvoiceRules() *rules.Set {
 			is.InContext(tax.RegimeIn(l10n.BE.Tax())),
 			rules.Field("supplier",
 				rules.When(
-					is.Func("no BCE identity", supplierNoBCEIdentity),
+					is.Not(org.PartyHasIdentityTypeIn(IdentityTypeBCE)),
 					rules.Field("tax_id",
 						rules.Assert("01", "supplier tax ID required for Belgian regime", is.Present),
 						rules.Field("code",
@@ -24,39 +24,13 @@ func billInvoiceRules() *rules.Set {
 					),
 				),
 				rules.When(
-					is.Func("no tax ID code", supplierNoTaxIDCode),
+					is.Not(org.PartyHasTaxIDCode()),
 					rules.Field("identities",
 						rules.Assert("03", "supplier identities must include BCE type",
-							is.Func("has BCE type", identitiesIncludeBCE)),
+							org.IdentitiesTypeIn(IdentityTypeBCE)),
 					),
 				),
 			),
 		),
 	)
-}
-
-func supplierNoBCEIdentity(val any) bool {
-	p, _ := val.(*org.Party)
-	return !hasIdentityBCE(p)
-}
-
-func supplierNoTaxIDCode(val any) bool {
-	p, _ := val.(*org.Party)
-	return !hasTaxIDCode(p)
-}
-
-func identitiesIncludeBCE(val any) bool {
-	idents, _ := val.([]*org.Identity)
-	return org.IdentityForType(idents, IdentityTypeBCE) != nil
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasIdentityBCE(party *org.Party) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-	return org.IdentityForType(party.Identities, IdentityTypeBCE) != nil
 }

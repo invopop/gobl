@@ -30,10 +30,7 @@ func (t notTest) CheckWithContext(rc *rules.Context, val any) bool {
 // Compile prepares the wrapped test when it requires compilation, such as
 // Expr or Matches.
 func (t notTest) Compile(val any) error {
-	if ct, ok := t.test.(interface{ Compile(any) error }); ok {
-		return ct.Compile(val)
-	}
-	return nil
+	return compileTest(val, t.test)
 }
 
 // String provides the string representation of the test.

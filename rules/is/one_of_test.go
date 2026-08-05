@@ -97,3 +97,26 @@ func TestOneOfCheckWithContext(t *testing.T) {
 		assert.True(t, ct.CheckWithContext(rc, nil))
 	})
 }
+
+func TestOneOfCompile(t *testing.T) {
+	type oneOfThing struct {
+		Code string `json:"code"`
+	}
+
+	t.Run("compiles wrapped tests", func(t *testing.T) {
+		set := rules.For(new(oneOfThing),
+			rules.Field("code",
+				rules.Assert("001", "code must be numeric or empty, not both",
+					is.OneOf(is.Matches(`^\d+$`), is.Empty),
+				),
+			),
+		)
+		assert.Nil(t, set.Validate(&oneOfThing{Code: "123"}))
+		assert.NotNil(t, set.Validate(&oneOfThing{Code: "abc"}))
+	})
+
+	t.Run("reports compilation errors", func(t *testing.T) {
+		ooTest := is.OneOf(is.Matches(`^(\d+$`)).(interface{ Compile(any) error })
+		assert.Error(t, ooTest.Compile(new(oneOfThing)))
+	})
+}

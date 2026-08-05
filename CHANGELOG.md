@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `addons`: registered `dk-oioubl-v2` (implementation in `github.com/invopop/gobl.dk.oioubl`) on the approved external addon list, so it's now a valid `$addons` value.
 - `rules/is`: new `Not` test that passes when the wrapped test does not.
 - `org`: new `PartyHasTaxIDCode` test for a party with a tax identity code.
+- `org`: new `PartyHasIdentityTypeIn` and `PartyHasIdentityKeyIn` tests for a party carrying an identity with one of the given types or keys.
+
+### Fixed
+
+- `rules/is`: `AnyOf` and `OneOf` now prepare the tests they wrap, so that `Expr` and `Matches` work inside them.
 
 ## [v0.503.0] - 2026-07-15
 

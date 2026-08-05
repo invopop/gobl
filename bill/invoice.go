@@ -143,7 +143,7 @@ func invoiceRules() *rules.Set {
 			),
 		),
 		rules.Field("customer",
-			rules.When(is.Func("has tax ID code", customerHasTaxIDCode),
+			rules.When(org.PartyHasTaxIDCode(),
 				rules.Field("name",
 					rules.Assert("07", "invoice customer name required when tax ID is set", is.Present),
 				),
@@ -180,19 +180,6 @@ func invoiceHasTaxPoint(val any) bool {
 		return false
 	}
 	return inv != nil && inv.Tax != nil && inv.Tax.Point != cbc.KeyEmpty
-}
-
-func customerHasTaxIDCode(val any) bool {
-	var p *org.Party
-	switch v := val.(type) {
-	case *org.Party:
-		p = v
-	case org.Party:
-		p = &v
-	default:
-		return false
-	}
-	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
 }
 
 func invoiceNeedsLines(val any) bool {

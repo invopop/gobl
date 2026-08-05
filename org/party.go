@@ -91,16 +91,44 @@ func PartyHasTaxIDCode() rules.Test {
 }
 
 func partyHasTaxIDCode(obj any) bool {
-	var p *Party
+	p := partyFrom(obj)
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
+// PartyHasIdentityTypeIn provides a test that will determine if at least one of
+// the party's identities has one of the given types.
+func PartyHasIdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return partyIdentities(IdentitiesTypeIn(typ...))
+}
+
+// PartyHasIdentityKeyIn provides a test that will determine if at least one of
+// the party's identities has one of the given keys.
+func PartyHasIdentityKeyIn(key ...cbc.Key) rules.Test {
+	return partyIdentities(IdentitiesKeyIn(key...))
+}
+
+// partyIdentities adapts a test for a party's identities so that it can be
+// applied to the party itself.
+func partyIdentities(test rules.Test) rules.Test {
+	return is.Func(test.String(), func(obj any) bool {
+		p := partyFrom(obj)
+		if p == nil {
+			return false
+		}
+		return test.Check(p.Identities)
+	})
+}
+
+// partyFrom extracts a party from either a pointer or a value, as object level
+// tests may receive either shape.
+func partyFrom(obj any) *Party {
 	switch v := obj.(type) {
 	case *Party:
-		p = v
+		return v
 	case Party:
-		p = &v
-	default:
-		return false
+		return &v
 	}
-	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+	return nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.
