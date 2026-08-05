@@ -3,6 +3,8 @@ package org
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -78,6 +80,53 @@ func (p *Party) FirstEndpoint() *Endpoint {
 		if e != nil {
 			return e
 		}
+	}
+	return nil
+}
+
+// PartyHasTaxIDCode provides a test that will determine if the party has a
+// tax identity with a code.
+func PartyHasTaxIDCode() rules.Test {
+	return is.Func("has tax ID code", partyHasTaxIDCode)
+}
+
+func partyHasTaxIDCode(obj any) bool {
+	p := partyFrom(obj)
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
+// PartyHasIdentityTypeIn provides a test that will determine if at least one of
+// the party's identities has one of the given types.
+func PartyHasIdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return partyIdentities(IdentitiesTypeIn(typ...))
+}
+
+// PartyHasIdentityKeyIn provides a test that will determine if at least one of
+// the party's identities has one of the given keys.
+func PartyHasIdentityKeyIn(key ...cbc.Key) rules.Test {
+	return partyIdentities(IdentitiesKeyIn(key...))
+}
+
+// partyIdentities adapts a test for a party's identities so that it can be
+// applied to the party itself.
+func partyIdentities(test rules.Test) rules.Test {
+	return is.Func(test.String(), func(obj any) bool {
+		p := partyFrom(obj)
+		if p == nil {
+			return false
+		}
+		return test.Check(p.Identities)
+	})
+}
+
+// partyFrom extracts a party from either a pointer or a value, as object level
+// tests may receive either shape.
+func partyFrom(obj any) *Party {
+	switch v := obj.(type) {
+	case *Party:
+		return v
+	case Party:
+		return &v
 	}
 	return nil
 }

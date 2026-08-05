@@ -68,3 +68,27 @@ func TestAllOfCheckWithContext(t *testing.T) {
 		assert.False(t, ct.CheckWithContext(rc, nil))
 	})
 }
+
+func TestAllOfCompile(t *testing.T) {
+	type allOfThing struct {
+		Code string `json:"code"`
+	}
+
+	t.Run("compiles wrapped tests", func(t *testing.T) {
+		set := rules.For(new(allOfThing),
+			rules.Field("code",
+				rules.Assert("001", "code must be four digits",
+					is.AllOf(is.Matches(`^\d+$`), is.Length(4, 4)),
+				),
+			),
+		)
+		assert.Nil(t, set.Validate(&allOfThing{Code: "1234"}))
+		assert.NotNil(t, set.Validate(&allOfThing{Code: "123"}))
+		assert.NotNil(t, set.Validate(&allOfThing{Code: "abcd"}))
+	})
+
+	t.Run("reports compilation errors", func(t *testing.T) {
+		aoTest := is.AllOf(is.Matches(`^(\d+$`)).(interface{ Compile(any) error })
+		assert.Error(t, aoTest.Compile(new(allOfThing)))
+	})
+}

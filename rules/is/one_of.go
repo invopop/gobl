@@ -60,6 +60,12 @@ func (t oneOfTest) CheckWithContext(rc *rules.Context, val any) bool {
 	return passed == 1
 }
 
+// Compile prepares each of the wrapped tests that require compilation, such as
+// Expr or Matches.
+func (t oneOfTest) Compile(val any) error {
+	return compileTests(val, t.tests)
+}
+
 // String provides the string representation of the test.
 func (t oneOfTest) String() string {
 	return t.desc

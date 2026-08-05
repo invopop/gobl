@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.Send` delivers a signed envelope to an address's inbox: 202 is success, other non-retryable 4xx report `ErrInboxRejected`. The `Poster` interface extends a `Fetcher` with POST support; `HTTPFetcher` implements it.
 - `net`: `/who` may answer `202 Accepted` (new `ErrPending` sentinel) to record the authenticated request for deferred disclosure: the owner decides per requester and, if approved, delivers its party envelope to the requester's inbox later.
 - `net`: `Client.FetchKey` caches fetched keys per URL for a short TTL (5 minutes by default, tunable with `net.WithKeyCacheTTL`, zero disables; successes only, size-capped), so a token and an envelope signed by the same key verify with a single key fetch.
+- `regimes/dk`: new `IdentityTypeCPR` alongside the existing `IdentityTypeCVR`, and the supplier rule (`GOBL-DK-BILL-INVOICE-01`) now accepts either -- a CPR-identified supplier (a natural person, not a VAT-registered business) had no way to satisfy it before, even though this is a valid, schematron-permitted OIOUBL shape. The fault is now reported at `$.supplier.identities` instead of `$.supplier`.
+- `addons`: registered `dk-oioubl-v2` (implementation in `github.com/invopop/gobl.dk.oioubl`) on the approved external addon list, so it's now a valid `$addons` value.
+- `rules/is`: new `Not` test that passes when the wrapped test does not.
+- `org`: new `PartyHasTaxIDCode` test for a party with a tax identity code.
+- `org`: new `PartyHasIdentityTypeIn` and `PartyHasIdentityKeyIn` tests for a party carrying an identity with one of the given types or keys.
 
 ### Changed
 
@@ -31,6 +36,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Removed
 
 - `net`: `Address.Topic()` and the spec's topic-derivation section — the reversed-label topic form had no consumers.
+
+### Fixed
+
+- `rules/is`: `AllOf`, `AnyOf`, and `OneOf` now prepare the tests they wrap, so that `Expr` and `Matches` work inside them.
 
 ## [v0.503.0] - 2026-07-15
 

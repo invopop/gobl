@@ -16,29 +16,18 @@ func billInvoiceRules() *rules.Set {
 		rules.When(
 			is.InContext(tax.RegimeIn(l10n.DK.Tax())),
 			rules.Field("supplier",
-				rules.Assert("01", fmt.Sprintf("invoice DK supplier must have either tax ID code or identity with '%s' type", IdentityTypeCVR),
-					is.Func(
-						fmt.Sprintf("has tax ID code or identity with '%s' type", IdentityTypeCVR),
-						hasTaxIDOrIdentity,
+				rules.When(
+					is.Not(org.PartyHasTaxIDCode()),
+					rules.Field("identities",
+						rules.Assert("01", fmt.Sprintf(
+							"invoice DK supplier without a tax ID code requires an identity with '%s' or '%s' type",
+							IdentityTypeCVR, IdentityTypeCPR,
+						),
+							org.IdentitiesTypeIn(IdentityTypeCVR, IdentityTypeCPR),
+						),
 					),
 				),
 			),
 		),
 	)
-}
-
-func hasTaxIDOrIdentity(value any) bool {
-	party, _ := value.(*org.Party)
-	return hasTaxIDCode(party) || hasIdentityCVR(party)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasIdentityCVR(party *org.Party) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-	return org.IdentityForType(party.Identities, IdentityTypeCVR) != nil
 }
