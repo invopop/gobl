@@ -6,19 +6,24 @@
     "pay.CreditTransfer": {
       "properties": {
         "iban": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "IBAN",
           "description": "International Bank Account Number"
         },
         "bic": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "BIC",
           "description": "Bank Identifier Code used for international transfers."
         },
         "number": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Number",
           "description": "Account number, if IBAN not available."
+        },
+        "clearing": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Clearing Code",
+          "description": "National bank or branch clearing identifier, such as a Danish registration\nnumber, UK sort code, or US routing number."
         },
         "name": {
           "type": "string",
