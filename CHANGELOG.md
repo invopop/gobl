@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
+
 ## [v0.504.0]
 
 ### Added
