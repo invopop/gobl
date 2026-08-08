@@ -695,3 +695,27 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		assert.Contains(t, err.Error(), "signatures")
 	})
 }
+
+func TestWithSandbox(t *testing.T) {
+	original := Authorities
+	t.Cleanup(func() { Authorities = original })
+	Authorities = []Address{"lookup.gobl.org"}
+
+	t.Run("switches to the sandbox trust list", func(t *testing.T) {
+		c := NewClient(WithSandbox())
+		assert.Equal(t, SandboxAuthorities, c.authorities)
+	})
+
+	t.Run("live default excludes sandbox authorities", func(t *testing.T) {
+		c := NewClient()
+		for _, sandbox := range SandboxAuthorities {
+			assert.NotContains(t, c.authorities, sandbox,
+				"live clients must never trust sandbox endorsements")
+		}
+	})
+
+	t.Run("last trust option wins", func(t *testing.T) {
+		c := NewClient(WithSandbox(), WithAuthorities("authority.corp.example"))
+		assert.Equal(t, []Address{"authority.corp.example"}, c.authorities)
+	})
+}

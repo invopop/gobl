@@ -560,6 +560,19 @@ authority (or none has been registered), `ErrSignatureExpired` when
 a verified authority signature has expired, and `ErrVerifyFailed`
 when a candidate fails its crypto check.
 
+**Sandbox.** The network runs a parallel sandbox environment:
+`lookup.sandbox.gobl.org` (the default entry in
+`net.SandboxAuthorities`) operates the same registration service as
+the live authority, backed by its own database and its own accepted
+verification providers — typically relaxed KYB suited to test
+identities. The live and sandbox trust lists are disjoint by
+construction and MUST stay that way: a live verifier never accepts
+a sandbox endorsement, and a sandbox verifier never needs a live
+one. Clients opt in with `net.WithSandbox()`, which replaces the
+trust list with the sandbox authorities; everything else — request
+tokens, endorsement checks, the verifier claim — behaves
+identically in both environments.
+
 Note the trust topology this creates: receivers list *registration*
 authorities; the verifiers those authorities name are trusted
 transitively, because the registry names them inside its signed

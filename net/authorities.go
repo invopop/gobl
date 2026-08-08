@@ -20,6 +20,17 @@ var Authorities = []Address{
 	"lookup.gobl.org",
 }
 
+// SandboxAuthorities is the default trust list for sandbox
+// deployments: lookup.sandbox.gobl.org runs the same registration
+// service as the live authority but endorses test identities through
+// relaxed verification providers. The live and sandbox lists are
+// disjoint by construction — endorsements from a sandbox authority
+// MUST never be accepted in live contexts, and vice versa. Clients
+// opt in with WithSandbox.
+var SandboxAuthorities = []Address{
+	"lookup.sandbox.gobl.org",
+}
+
 // maxEnvelopeSignatures bounds how many signatures VerifyAuthority is
 // willing to examine: each candidate can cost a network key fetch, so
 // an unbounded envelope would be a fetch-amplification gadget.

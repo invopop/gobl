@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `net`: sandbox environment support. `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) is the trust list for sandbox deployments — the same registration service with relaxed verification providers for test identities — and the `WithSandbox` client option switches a client onto it. The live and sandbox lists are disjoint: neither environment accepts the other's endorsements.
+
 ## [v0.504.0]
 
 ### Added

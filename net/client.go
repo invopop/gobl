@@ -276,6 +276,18 @@ func WithKeyCacheTTL(d time.Duration) ClientOption {
 	}
 }
 
+// WithSandbox switches the client's trusted registration authorities
+// to the sandbox list (net.SandboxAuthorities), replacing the live
+// default. Sandbox authorities endorse test identities with relaxed
+// verification, so the two environments never trust each other's
+// endorsements. Like WithAuthorities this replaces the trust list —
+// when both options are given, the last one wins.
+func WithSandbox() ClientOption {
+	return func(c *Client) {
+		c.authorities = append([]Address{}, SandboxAuthorities...)
+	}
+}
+
 // WithIdentity sets the client's own address and private key, used to
 // mint the request tokens that who and inbox requests carry in their
 // Authorization header. A client without an identity sends those
