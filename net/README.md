@@ -371,9 +371,14 @@ require verification reject with `ErrNotVerified`
 valid bare address is treated as absent. Adding or revoking
 verification is the registration Authority's act: it re-countersigns
 the envelope with the pointer added or removed, which makes the
-registry the single source of truth for verification state and
-requires coordination between the two authorities when KYC
-completes.
+registry the single source of truth for verification state. The
+coordination when verification completes is an ordinary delivery
+with no new endpoints: the subject sends its registered envelope to
+the verifier's inbox, the verifier countersigns that exact envelope
+(same `uuid` + `dig`) and posts it back to the registration
+Authority's inbox, and the Authority re-countersigns with the
+pointer and re-delivers to the subject — whose published envelope
+then carries both countersignatures, each with its own lifetime.
 
 The two countersignatures carry independent `exp` claims and
 deliberately independent lifecycles. A registration
