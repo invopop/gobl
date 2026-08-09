@@ -669,6 +669,24 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
+	t.Run("unreachable authority key surfaces instead of rejecting", func(t *testing.T) {
+		// The outcome is indeterminate while the authority's key
+		// endpoint is down: callers must see the transient condition
+		// (retry) rather than a definitive verification failure.
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{
+				errs: map[string]error{
+					authorityAddr.KeyURL(authKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+				},
+			}),
+		)
+		_, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("removed verifier key still degrades to registered", func(t *testing.T) {
 		// A definitive 404 means the key is gone — revoked — and the
 		// endorsement degrades rather than erroring.

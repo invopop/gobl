@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `net`: sandbox environment support. `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) is the trust list for sandbox deployments — the same registration service with relaxed verification providers for test identities — and the `WithSandbox` client option switches a client onto it. The live and sandbox lists are disjoint: neither environment accepts the other's endorsements.
 
+### Changed
+
+- `net`: `Client.VerifyAuthority` reports `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of wrapping the failure as `ErrVerifyFailed` — the outcome is indeterminate, so callers (e.g. a verifier's inbox) answer 503 and the sender retries.
+
 ## [v0.504.0]
 
 ### Added
