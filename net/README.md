@@ -75,7 +75,12 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   `/.well-known/gobl/keys/<kid>`.
 - **Party Envelope** — A signed GOBL Envelope whose document is an
   `org.Party`, served at the who endpoint. The first signature is the
-  subject's self-signature; Authority countersignatures follow.
+  subject's self-signature, establishing whose identity it is; the
+  subject appends one audience-bound self-signature per delivery hop
+  (a registration, a verification request), and Authority and
+  verifier countersignatures accumulate alongside. Signature order
+  beyond the first is not significant: consumers search rather than
+  index.
 - **Sender / Receiver** — The two roles in a document exchange. A
   receiver only needs a domain, TLS, and (if it signs or makes
   authenticated requests — §5.5) published keys. A sender is
@@ -379,6 +384,12 @@ the verifier's inbox, the verifier countersigns that exact envelope
 Authority's inbox, and the Authority re-countersigns with the
 pointer and re-delivers to the subject — whose published envelope
 then carries both countersignatures, each with its own lifetime.
+The audience rule (§8.3) holds at every hop without new signatures
+from the verifier's side: the subject's registration signature
+(`aud` = the Authority) remains aboard the append-only envelope, so
+the returned delivery still binds to the Authority's inbox, and the
+Authority SHOULD verify its own earlier countersignature on the
+returned envelope before re-countersigning (§8.3).
 
 The two countersignatures carry independent `exp` claims and
 deliberately independent lifecycles. A registration
@@ -504,7 +515,10 @@ issuer address:
    from `/.well-known/gobl/keys/<kid>` (including its optional
    `valid_from` / `valid_until`).
 4. The envelope is verified against that public key.
-5. If `expectedAud` is non-empty, the signed `aud` MUST equal it.
+5. If `expectedAud` is non-empty, at least one valid signature by
+   the same subject MUST carry that signed `aud` — searched across
+   all signatures, since the subject appends one audience-bound
+   signature per delivery hop and their order is not significant.
 6. If the key declares a validity window, the signed `iat` MUST fall
    within `[valid_from, valid_until]` (each bound optional).
 7. The verified issuer address is returned.
@@ -515,9 +529,14 @@ issuer address:
 request token (§5.5) identifying itself. The response is the
 target's party envelope: document = the target's `org.Party`,
 first signature = the target's self-signature with `iss=target`
-and no `aud` (the response is the same signed document for every
-authorized caller), optionally followed by Authority
-countersignatures.
+(the response is the same signed document for every authorized
+caller). The envelope MUST carry at least one valid audience-free
+self-signature — the subject's publication assertion. Audience-
+bound self-signatures (delivery-hop artifacts, e.g. the
+registration signature) and Authority or verifier countersignatures
+MAY also be aboard and do not disqualify the response; this is what
+lets the endorsed envelope be published exactly as the Authority
+delivered it.
 
 `Client.Who(ctx, addr)` performs the lookup and verifies it:
 
@@ -533,7 +552,11 @@ countersignatures.
 3. The verified issuer MUST equal the fetched address — a valid
    envelope for a *different* identity served at this URL is
    rejected.
-4. The document MUST be an `org.Party`, else `ErrPartyMissing`.
+4. The envelope MUST carry at least one valid audience-free
+   self-signature; an envelope with only caller-bound signatures
+   (e.g. a deferred disclosure minted for someone else, §8.2) is
+   not a public identity and is rejected.
+5. The document MUST be an `org.Party`, else `ErrPartyMissing`.
 
 The response body is still a static signed document — the request
 token controls *access*; it does not bind the response to the
@@ -738,13 +761,19 @@ transmitting documents its customers signed) authenticates the
 document signer's. The two layers are independent and both
 required.
 
-The envelope layer is unchanged by the token: the signer (`iss`) is
-verified against its published key (fetched from
-`<iss>/.well-known/gobl/keys/<kid>`); the signed `aud` MUST be
-present and MUST equal this inbox's Address — envelopes signed
-without an audience, or bound to a different audience, MUST be
-rejected. The inbox SHOULD then apply its sender-endorsement
-policy: resolve the sender's who (§6.4) and require an Authority
+The envelope layer is unchanged by the token: the subject (the
+first signature's `iss`) is verified against its published key
+(fetched from `<iss>/.well-known/gobl/keys/<kid>`); at least one
+valid signature by the subject MUST carry `aud` equal to this
+inbox's Address — searched across all signatures, so an envelope
+that legitimately accumulated hop signatures (§5.3) still binds.
+Envelopes where the subject never signed for this inbox MUST be
+rejected. An inbox that finds its *own* earlier countersignature
+aboard (an Authority receiving back the envelope it endorsed)
+SHOULD verify that signature against its own keys and reject the
+envelope when it does not hold — a broken or forged copy of the
+Authority's signature means the envelope is not what it endorsed.
+The inbox SHOULD then apply its sender-endorsement policy: resolve the sender's who (§6.4) and require an Authority
 countersignature — optionally with a confirmed verifier (§5.3) when
 the operator demands verified identities. Endorsement attaches to
 the envelope's signer, never to the token's issuer. Status codes:
@@ -753,7 +782,7 @@ the envelope's signer, never to the token's issuer. Status codes:
 |------------------------------|------------------------------------------------------|
 | `202 Accepted`               | Envelope parsed, validated, signature verified, persisted. |
 | `400 Bad Request`            | Body could not be read or did not decode as JSON.    |
-| `401 Unauthorized`           | Missing or invalid request token (§5.5); envelope signature did not verify; or `aud` missing / not equal to this inbox. |
+| `401 Unauthorized`           | Missing or invalid request token (§5.5); envelope signature did not verify; or no subject signature carries `aud` equal to this inbox. |
 | `403 Forbidden`              | Sender (`iss`) is not endorsed by an Authority this inbox trusts, or lacks the verified status the operator requires (§5.3). |
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
@@ -796,8 +825,8 @@ operator has an outstanding who request to that address (§8.2,
 `202`) SHOULD be accepted without sender endorsement: it carries
 exactly the assertions a `200` who response would, so it needs no
 more trust than the lookup it answers. Verification is the same as
-`Client.Who` steps 2–4 (§6.2), except that the envelope's signed
-`aud` MUST name this inbox. Outside of an outstanding who request,
+`Client.Who` steps 2–3 and 5 (§6.2), except that the subject MUST
+have signed for this inbox (`aud`) rather than for publication. Outside of an outstanding who request,
 party envelopes are subject to the normal endorsement policy.
 
 In code, `Client.Send(ctx, addr, env)` performs the delivery: it

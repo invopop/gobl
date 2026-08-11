@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `net`: signature checks search instead of indexing. The first signature still establishes the envelope's subject, but `Client.VerifyEnvelope`'s `expectedAud` is now satisfied by *any* valid subject signature carrying that audience, and `Client.Who` requires at least one audience-free self-signature instead of rejecting an audience-bound first signature. This resolves a conflict that made endorsed envelopes unpublishable: the registration hop demands a subject signature bound to the registry, while `/who` demands a publication signature with no audience — with search semantics both live on the same append-only envelope, so the countersigned envelope an Authority delivers can be served at `/who` verbatim, and the verifier's return to the registry binds through the subject's original registration signature.
 - `net`: `Client.VerifyAuthority` reports `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of wrapping the failure as `ErrVerifyFailed` — the outcome is indeterminate, so callers (e.g. a verifier's inbox) answer 503 and the sender retries.
 
 ## [v0.504.0]

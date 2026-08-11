@@ -111,6 +111,38 @@ func TestVerifyEnvelope(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
 
+	t.Run("audience found on a later subject signature", func(t *testing.T) {
+		// The subject appends one audience-bound signature per delivery
+		// hop; the expected audience may sit on any of them, not just
+		// the first.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.String(), "")
+		require.NoError(t, env.Sign(key,
+			head.WithIssuer(addr.String()),
+			head.WithAudience("recipient.example.com")))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		issuer, err := c.VerifyEnvelope(ctx, env, "recipient.example.com")
+		require.NoError(t, err)
+		assert.Equal(t, addr, issuer)
+	})
+
+	t.Run("audience on another party's signature does not count", func(t *testing.T) {
+		// A countersignature by someone else naming the expected
+		// audience is not the subject's delivery intent.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.String(), "")
+		other := dsig.NewES256Key()
+		require.NoError(t, env.Sign(other,
+			head.WithIssuer("other.example.com"),
+			head.WithAudience("recipient.example.com")))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyEnvelope(ctx, env, "recipient.example.com")
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("not signed", func(t *testing.T) {
 		c := NewClient()
 		_, err := c.VerifyEnvelope(ctx, new(gobl.Envelope), "")

@@ -10,12 +10,15 @@ import (
 )
 
 // VerifyEnvelope performs remote verification of a signed GOBL envelope.
-// It reads the signer's GOBL Net identity (iss) from the first
+// It reads the subject's GOBL Net identity (iss) from the first
 // signature's signed payload, fetches that address's public keys, and
-// verifies that signature. When expectedAud is non-empty, the signature's
-// signed audience (aud) must equal it. The verified issuer address is
-// returned. Additional signatures (e.g. authority countersignatures) are
-// not checked here; use VerifyAuthority for those.
+// verifies that signature. When expectedAud is non-empty, at least one
+// valid signature by the subject must carry that signed audience —
+// searched across all signatures, since the subject appends one
+// audience-bound signature per delivery hop and their order is not
+// significant. The verified subject address is returned. Signatures by
+// other parties (e.g. authority countersignatures) are not checked
+// here; use VerifyAuthority for those.
 func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud Address) (Address, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
@@ -62,11 +65,59 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 		if err != nil {
 			return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 		}
-		got, err := ParseAddress(p.Aud)
-		if err != nil || got != want {
-			return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrVerifyFailed, p.Aud, want)
+		ok, err := c.subjectSignatureFor(ctx, env, issuer, func(sp *head.SigningPayload) bool {
+			aud, aerr := ParseAddress(sp.Aud)
+			return aerr == nil && aud == want
+		})
+		if err != nil {
+			return "", err
+		}
+		if !ok {
+			return "", fmt.Errorf("%w: no valid signature by %q for audience %q", ErrVerifyFailed, issuer, want)
 		}
 	}
 
 	return issuer, nil
+}
+
+// subjectSignatureFor reports whether the envelope carries at least
+// one cryptographically valid signature by subject whose signed
+// payload satisfies match. The signature count is bounded the same
+// way as VerifyAuthority (each candidate can cost a key fetch); a
+// transient key-fetch failure is returned as ErrUnavailable when no
+// other candidate matched.
+func (c *Client) subjectSignatureFor(ctx context.Context, env *gobl.Envelope, subject Address, match func(*head.SigningPayload) bool) (bool, error) {
+	if len(env.Signatures) > maxEnvelopeSignatures {
+		return false, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	var unavailable error
+	for _, sig := range env.Signatures {
+		p, err := head.SignedPayload(sig)
+		if err != nil {
+			continue
+		}
+		iss, err := ParseAddress(p.Iss)
+		if err != nil || iss != subject {
+			continue
+		}
+		if !match(p) {
+			continue
+		}
+		pub, err := c.FetchKey(ctx, subject, sig.KeyID())
+		if err != nil {
+			if errors.Is(err, ErrUnavailable) {
+				unavailable = err
+			}
+			continue
+		}
+		if err := env.VerifySignature(sig, pub); err != nil {
+			continue
+		}
+		return true, nil
+	}
+	if unavailable != nil {
+		return false, unavailable
+	}
+	return false, nil
 }
