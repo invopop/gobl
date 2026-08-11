@@ -669,6 +669,24 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
+	t.Run("unreachable authority key surfaces instead of rejecting", func(t *testing.T) {
+		// The outcome is indeterminate while the authority's key
+		// endpoint is down: callers must see the transient condition
+		// (retry) rather than a definitive verification failure.
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{
+				errs: map[string]error{
+					authorityAddr.KeyURL(authKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+				},
+			}),
+		)
+		_, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("removed verifier key still degrades to registered", func(t *testing.T) {
 		// A definitive 404 means the key is gone — revoked — and the
 		// endorsement degrades rather than erroring.
@@ -693,5 +711,29 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 		assert.Contains(t, err.Error(), "signatures")
+	})
+}
+
+func TestWithSandbox(t *testing.T) {
+	original := Authorities
+	t.Cleanup(func() { Authorities = original })
+	Authorities = []Address{"lookup.gobl.org"}
+
+	t.Run("switches to the sandbox trust list", func(t *testing.T) {
+		c := NewClient(WithSandbox())
+		assert.Equal(t, SandboxAuthorities, c.authorities)
+	})
+
+	t.Run("live default excludes sandbox authorities", func(t *testing.T) {
+		c := NewClient()
+		for _, sandbox := range SandboxAuthorities {
+			assert.NotContains(t, c.authorities, sandbox,
+				"live clients must never trust sandbox endorsements")
+		}
+	})
+
+	t.Run("last trust option wins", func(t *testing.T) {
+		c := NewClient(WithSandbox(), WithAuthorities("authority.corp.example"))
+		assert.Equal(t, []Address{"authority.corp.example"}, c.authorities)
 	})
 }

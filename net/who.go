@@ -52,15 +52,18 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if issuer != addr {
 		return nil, fmt.Errorf("%w: who issuer %q does not match address %q", ErrVerifyFailed, issuer, addr)
 	}
-	// A who response is a public document: a caller-bound (aud-carrying)
-	// envelope is not a conforming identity and must not be treated as
-	// one.
-	p, err := head.SignedPayload(env.Signatures[0])
+	// A who response is a public document: it must carry at least
+	// one audience-free self-signature. Audience-bound self-
+	// signatures (delivery-hop artifacts) are ignored; an envelope
+	// with only caller-bound signatures is not a public identity.
+	ok, err := c.subjectSignatureFor(ctx, env, addr, func(p *head.SigningPayload) bool {
+		return p.Aud == ""
+	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return nil, err
 	}
-	if p.Aud != "" {
-		return nil, fmt.Errorf("%w: who response must not be audience-bound (aud %q)", ErrVerifyFailed, p.Aud)
+	if !ok {
+		return nil, fmt.Errorf("%w: who response carries no audience-free self-signature", ErrVerifyFailed)
 	}
 	if _, ok := env.Extract().(*org.Party); !ok {
 		return nil, ErrPartyMissing

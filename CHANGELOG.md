@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `net`: sandbox support: `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) and the `WithSandbox` client option. The live and sandbox trust lists are disjoint.
+
+### Fixed
+
+- `head`: `SignedPayload` and `Header.Verify` return an error for a nil signature (a JSON `null` entry in `sigs`) instead of panicking.
+
+### Changed
+
+- `net`: signature checks search instead of indexing. The first signature still names the subject, but `Client.VerifyEnvelope` satisfies `expectedAud` with any valid subject signature carrying that audience, and `Client.Who` requires one audience-free self-signature while ignoring audience-bound ones. The endorsed envelope an Authority delivers can now be published at `/who` as-is.
+- `net`: `Client.VerifyAuthority` returns `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of `ErrVerifyFailed`.
+
 ## [v0.504.0]
 
 ### Added
