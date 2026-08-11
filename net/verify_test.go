@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -294,4 +296,169 @@ func TestVerifyEnvelopeInvalidExpectedAud(t *testing.T) {
 	_, err := c.VerifyEnvelope(context.Background(), env, "not valid!")
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, ErrVerifyFailed))
+}
+
+func TestVerifyEnvelopeSubjectKeyUnavailable(t *testing.T) {
+	// A transient failure fetching the subject's key surfaces as
+	// ErrUnavailable, never as a definitive verification failure.
+	ctx := context.Background()
+	addr := Address("issuer.example.com")
+	key := dsig.NewES256Key()
+	env := buildTestEnvelope(t, key, addr.String(), "")
+
+	c := NewClient(WithFetcher(&mapFetcher{errs: map[string]error{
+		addr.KeyURL(key.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+	}}))
+	_, err := c.VerifyEnvelope(ctx, env, "")
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrUnavailable))
+	assert.False(t, errors.Is(err, ErrVerifyFailed))
+}
+
+func TestVerifyEnvelopeAudienceSearch(t *testing.T) {
+	ctx := context.Background()
+	addr := Address("issuer.example.com")
+	aud := Address("recipient.example.com")
+
+	t.Run("hop signature key unavailable", func(t *testing.T) {
+		// The audience-bound hop signature uses a second key whose
+		// endpoint is down: the outcome is indeterminate, so the
+		// caller sees ErrUnavailable and retries rather than
+		// rejecting.
+		keyA, keyB := dsig.NewES256Key(), dsig.NewES256Key()
+		env := buildTestEnvelope(t, keyA, addr.String(), "")
+		require.NoError(t, env.Sign(keyB,
+			head.WithIssuer(addr.String()),
+			head.WithAudience(aud.String())))
+
+		c := NewClient(WithFetcher(&mapFetcher{
+			data: map[string][]byte{
+				addr.KeyURL(keyA.ID()): jwkFromKey(t, keyA),
+			},
+			errs: map[string]error{
+				addr.KeyURL(keyB.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+			},
+		}))
+		_, err := c.VerifyEnvelope(ctx, env, aud)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("forged hop signature does not bind", func(t *testing.T) {
+		// The audience-bound signature claims the subject but was made
+		// with a key that does not match the published one: the crypto
+		// check fails and the audience is not satisfied.
+		keyA, keyB := dsig.NewES256Key(), dsig.NewES256Key()
+		env := buildTestEnvelope(t, keyA, addr.String(), "")
+		require.NoError(t, env.Sign(keyB,
+			head.WithIssuer(addr.String()),
+			head.WithAudience(aud.String())))
+
+		// Publish a different key under keyB's kid so the fetch
+		// succeeds and the crypto check is what fails.
+		other := dsig.NewES256Key()
+		var jwk map[string]any
+		require.NoError(t, json.Unmarshal(jwkFromKey(t, other), &jwk))
+		jwk["kid"] = keyB.ID()
+		forged, err := json.Marshal(jwk)
+		require.NoError(t, err)
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			addr.KeyURL(keyA.ID()): jwkFromKey(t, keyA),
+			addr.KeyURL(keyB.ID()): forged,
+		}}))
+		_, err = c.VerifyEnvelope(ctx, env, aud)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
+	t.Run("hop signature key removed does not bind", func(t *testing.T) {
+		// A definitive 404 on the hop signature's key is not
+		// retryable: the search just fails to bind.
+		keyA, keyB := dsig.NewES256Key(), dsig.NewES256Key()
+		env := buildTestEnvelope(t, keyA, addr.String(), "")
+		require.NoError(t, env.Sign(keyB,
+			head.WithIssuer(addr.String()),
+			head.WithAudience(aud.String())))
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			addr.KeyURL(keyA.ID()): jwkFromKey(t, keyA),
+		}}))
+		_, err := c.VerifyEnvelope(ctx, env, aud)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.False(t, errors.Is(err, ErrUnavailable))
+	})
+
+	t.Run("rejects an envelope with too many signatures", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.String(), aud.String())
+		for len(env.Signatures) <= maxEnvelopeSignatures {
+			env.Signatures = append(env.Signatures, env.Signatures[0])
+		}
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			addr.KeyURL(key.ID()): jwkFromKey(t, key),
+		}}))
+		_, err := c.VerifyEnvelope(ctx, env, aud)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.Contains(t, err.Error(), "signatures")
+	})
+
+	t.Run("unreadable signature payloads are skipped", func(t *testing.T) {
+		// A nil signature — a JSON `null` in the sigs array unmarshals
+		// without error — must not panic the search or break it for a
+		// valid signature aboard.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, addr.String(), aud.String())
+		env.Signatures = append([]*dsig.Signature{nil}, env.Signatures...)
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			addr.KeyURL(key.ID()): jwkFromKey(t, key),
+		}}))
+		// The nil first signature also breaks subject resolution, so
+		// VerifyEnvelope rejects cleanly (no panic)...
+		_, err := c.VerifyEnvelope(ctx, env, aud)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		// ...while the search itself skips it and finds the valid one.
+		ok, err := c.subjectSignatureFor(ctx, env, addr, func(p *head.SigningPayload) bool {
+			return p.Aud == aud.String()
+		})
+		require.NoError(t, err)
+		assert.True(t, ok)
+	})
+}
+
+func TestWhoPublicationSignatureUnavailable(t *testing.T) {
+	// The publication (audience-free) self-signature uses a second key
+	// whose endpoint is down while the hop signature verifies: Who
+	// reports the transient condition instead of rejecting.
+	ctx := context.Background()
+	subject := Address("issuer.example.com")
+	keyA, keyB := dsig.NewES256Key(), dsig.NewES256Key()
+
+	party := &org.Party{Name: "Flaky"}
+	party.SetUUID(uuid.V7())
+	env, err := gobl.Envelop(party)
+	require.NoError(t, err)
+	require.NoError(t, env.Sign(keyA,
+		head.WithIssuer(subject.String()),
+		head.WithAudience("lookup.example.com")))
+	require.NoError(t, env.Sign(keyB, head.WithIssuer(subject.String())))
+	data, err := json.Marshal(env)
+	require.NoError(t, err)
+
+	c := NewClient(WithFetcher(&mapFetcher{
+		data: map[string][]byte{
+			subject.WhoURL():          data,
+			subject.KeyURL(keyA.ID()): jwkFromKey(t, keyA),
+		},
+		errs: map[string]error{
+			subject.KeyURL(keyB.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+		},
+	}))
+	_, err = c.Who(ctx, subject)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, ErrUnavailable))
 }

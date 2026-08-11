@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `net`: sandbox environment support. `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) is the trust list for sandbox deployments — the same registration service with relaxed verification providers for test identities — and the `WithSandbox` client option switches a client onto it. The live and sandbox lists are disjoint: neither environment accepts the other's endorsements.
 
+### Fixed
+
+- `head`: `SignedPayload` and `Header.Verify` report a payload error for a nil signature instead of panicking — a JSON `null` entry in an envelope's `sigs` array unmarshals without error, so a hostile envelope could crash a receiving inbox.
+
 ### Changed
 
 - `net`: signature checks search instead of indexing. The first signature still establishes the envelope's subject, but `Client.VerifyEnvelope`'s `expectedAud` is now satisfied by *any* valid subject signature carrying that audience, and `Client.Who` requires at least one audience-free self-signature instead of rejecting an audience-bound first signature. This resolves a conflict that made endorsed envelopes unpublishable: the registration hop demands a subject signature bound to the registry, while `/who` demands a publication signature with no audience — with search semantics both live on the same append-only envelope, so the countersigned envelope an Authority delivers can be served at `/who` verbatim, and the verifier's return to the registry binds through the subject's original registration signature.
