@@ -169,6 +169,24 @@ func TestVerifyParty(t *testing.T) {
 		require.ErrorIs(t, err, ErrPartyMissing)
 	})
 
+	t.Run("party endpoint is not a valid address", func(t *testing.T) {
+		key := dsig.NewES256Key()
+		party := &org.Party{
+			Name:      "Bad Endpoint",
+			Endpoints: []*org.Endpoint{{URI: "gobl:localhost"}},
+		}
+		party.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(party)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(key, head.WithIssuer(addr.String())))
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err = c.VerifyParty(ctx, env)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+		assert.Contains(t, err.Error(), "not a valid address")
+	})
+
 	t.Run("party without a gobl endpoint", func(t *testing.T) {
 		key := dsig.NewES256Key()
 		party := &org.Party{Name: "No Endpoint"}
@@ -385,6 +403,18 @@ func TestVerifyDelivery(t *testing.T) {
 			sender.KeyURL(key.ID()): forged,
 		}}))
 		_, err = c.VerifyDelivery(ctx, env, inbox)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrVerifyFailed))
+	})
+
+	t.Run("binding with an invalid issuer is skipped", func(t *testing.T) {
+		// A signature bound to this inbox whose iss is not a valid
+		// address can never resolve a key and does not bind.
+		key := dsig.NewES256Key()
+		env := buildTestEnvelope(t, key, "localhost", inbox.String())
+
+		c := NewClient(WithFetcher(&mockFetcher{data: jwkFromKey(t, key)}))
+		_, err := c.VerifyDelivery(ctx, env, inbox)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 	})
