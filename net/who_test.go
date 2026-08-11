@@ -21,7 +21,10 @@ import (
 // verifier.
 func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address, authKey *dsig.PrivateKey, authority, verifier Address) []byte {
 	t.Helper()
-	party := &org.Party{Name: "Test Subject"}
+	party := &org.Party{
+		Name:      "Test Subject",
+		Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+	}
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
@@ -87,13 +90,16 @@ func TestWho(t *testing.T) {
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "does not match address")
+		assert.Contains(t, err.Error(), "identity of")
 	})
 
 	t.Run("rejects an audience-bound response", func(t *testing.T) {
 		// A who response is a public document; an envelope signed with
 		// an aud is caller-bound and non-conforming.
-		party := &org.Party{Name: "Bound"}
+		party := &org.Party{
+			Name:      "Bound",
+			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+		}
 		party.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
@@ -119,7 +125,10 @@ func TestWho(t *testing.T) {
 		// countersignature is aboard, and an audience-free
 		// self-signature asserts the public identity. Signature order
 		// is not significant.
-		party := &org.Party{Name: "Endorsed"}
+		party := &org.Party{
+			Name:      "Endorsed",
+			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+		}
 		party.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
