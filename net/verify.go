@@ -10,15 +10,12 @@ import (
 )
 
 // VerifyEnvelope performs remote verification of a signed GOBL envelope.
-// It reads the subject's GOBL Net identity (iss) from the first
-// signature's signed payload, fetches that address's public keys, and
-// verifies that signature. When expectedAud is non-empty, at least one
-// valid signature by the subject must carry that signed audience —
-// searched across all signatures, since the subject appends one
-// audience-bound signature per delivery hop and their order is not
-// significant. The verified subject address is returned. Signatures by
-// other parties (e.g. authority countersignatures) are not checked
-// here; use VerifyAuthority for those.
+// The first signature names the subject: its iss is resolved to a
+// published key and the signature verified. When expectedAud is
+// non-empty, at least one valid subject signature must carry that
+// audience — searched, since the subject appends one audience-bound
+// signature per delivery hop. Returns the verified subject address.
+// Other parties' signatures are not checked here; use VerifyAuthority.
 func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud Address) (Address, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
@@ -80,12 +77,10 @@ func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expecte
 	return issuer, nil
 }
 
-// subjectSignatureFor reports whether the envelope carries at least
-// one cryptographically valid signature by subject whose signed
-// payload satisfies match. The signature count is bounded the same
-// way as VerifyAuthority (each candidate can cost a key fetch); a
-// transient key-fetch failure is returned as ErrUnavailable when no
-// other candidate matched.
+// subjectSignatureFor reports whether the envelope carries a valid
+// signature by subject whose payload satisfies match. The signature
+// count is capped (each candidate can cost a key fetch); a transient
+// key-fetch failure returns ErrUnavailable when nothing else matched.
 func (c *Client) subjectSignatureFor(ctx context.Context, env *gobl.Envelope, subject Address, match func(*head.SigningPayload) bool) (bool, error) {
 	if len(env.Signatures) > maxEnvelopeSignatures {
 		return false, fmt.Errorf("%w: envelope carries %d signatures (max %d)",

@@ -8,16 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `net`: sandbox environment support. `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) is the trust list for sandbox deployments — the same registration service with relaxed verification providers for test identities — and the `WithSandbox` client option switches a client onto it. The live and sandbox lists are disjoint: neither environment accepts the other's endorsements.
+- `net`: sandbox support: `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) and the `WithSandbox` client option. The live and sandbox trust lists are disjoint.
 
 ### Fixed
 
-- `head`: `SignedPayload` and `Header.Verify` report a payload error for a nil signature instead of panicking — a JSON `null` entry in an envelope's `sigs` array unmarshals without error, so a hostile envelope could crash a receiving inbox.
+- `head`: `SignedPayload` and `Header.Verify` return an error for a nil signature (a JSON `null` entry in `sigs`) instead of panicking.
 
 ### Changed
 
-- `net`: signature checks search instead of indexing. The first signature still establishes the envelope's subject, but `Client.VerifyEnvelope`'s `expectedAud` is now satisfied by *any* valid subject signature carrying that audience, and `Client.Who` requires at least one audience-free self-signature instead of rejecting an audience-bound first signature. This resolves a conflict that made endorsed envelopes unpublishable: the registration hop demands a subject signature bound to the registry, while `/who` demands a publication signature with no audience — with search semantics both live on the same append-only envelope, so the countersigned envelope an Authority delivers can be served at `/who` verbatim, and the verifier's return to the registry binds through the subject's original registration signature.
-- `net`: `Client.VerifyAuthority` reports `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of wrapping the failure as `ErrVerifyFailed` — the outcome is indeterminate, so callers (e.g. a verifier's inbox) answer 503 and the sender retries.
+- `net`: signature checks search instead of indexing. The first signature still names the subject, but `Client.VerifyEnvelope` satisfies `expectedAud` with any valid subject signature carrying that audience, and `Client.Who` requires one audience-free self-signature while ignoring audience-bound ones. The endorsed envelope an Authority delivers can now be published at `/who` as-is.
+- `net`: `Client.VerifyAuthority` returns `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of `ErrVerifyFailed`.
 
 ## [v0.504.0]
 

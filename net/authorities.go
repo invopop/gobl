@@ -87,13 +87,11 @@ func (e *Endorsement) Verified() bool {
 // Every candidate authority signature is considered: an endorsement
 // with a confirmed verifier is preferred over a registered-only one
 // regardless of signature order. If no signature is from a known
-// authority, returns ErrUnknownAuthority. If a candidate's key could
-// not be fetched due to a transient condition and no endorsement was
-// found, returns ErrUnavailable — the outcome is indeterminate and
-// the caller should retry, not reject. If a verified authority
-// signature has expired, returns ErrSignatureExpired. If all
-// candidates fail crypto verification, returns ErrVerifyFailed
-// wrapping the last error.
+// authority, returns ErrUnknownAuthority. A transient key-fetch
+// failure with no endorsement found returns ErrUnavailable. If a
+// verified authority signature has expired, returns
+// ErrSignatureExpired. If all candidates fail crypto verification,
+// returns ErrVerifyFailed wrapping the last error.
 //
 // Callers that want to accept self-signed (no-authority) envelopes
 // should skip this call rather than ignore its error.
@@ -119,14 +117,11 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		}
 	}
 
-	// claimErr records a candidate that verified cryptographically but
-	// carried an expired exp claim; it takes precedence over crypto
-	// failures from other candidates. unavailableErr records a
-	// candidate whose key endpoint could not be reached — a transient
-	// condition that leaves the outcome indeterminate, so it outranks
-	// both. registered holds the first valid registered-only
-	// endorsement while the remaining signatures are searched for one
-	// with a confirmed verifier.
+	// claimErr records a candidate that verified but carries an
+	// expired exp; unavailableErr records a transient key-fetch
+	// failure and outranks it. registered holds the first valid
+	// registered-only endorsement while the search continues for a
+	// confirmed verifier.
 	var lastErr, claimErr, unavailableErr error
 	var registered *Endorsement
 	for _, sig := range env.Signatures {

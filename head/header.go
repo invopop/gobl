@@ -307,9 +307,7 @@ func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 
 // SignedPayload extracts the (unverified) signed payload from a
 // signature, used to read iss before fetching the signer's keys.
-// A nil signature — e.g. a JSON `null` entry in an envelope's sigs
-// array, which unmarshals without error — is reported as a payload
-// error rather than dereferenced.
+// A nil signature (a JSON `null` sigs entry) is a payload error.
 func SignedPayload(sig *dsig.Signature) (*SigningPayload, error) {
 	if sig == nil {
 		return nil, ErrSignaturePayload
