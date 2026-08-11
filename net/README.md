@@ -389,9 +389,15 @@ then carries both countersignatures, each with its own lifetime.
 The same bearer envelope flows through every hop with no per-hop
 subject signatures (§8.3): delivery intent is each request's token,
 while the countersignatures carry the directed statements (`iss` +
-`aud` = the subject). The Authority SHOULD verify its own earlier
-countersignature on the returned envelope before re-countersigning
-(§8.3).
+`aud` = the subject). Each role gates its own inbox: the Authority
+requires the subject's who eligibility (§6.2), the verifier
+requires the Authority's countersignature, and the subject's inbox
+accepts party envelopes whose subject is itself — the returns. The
+Authority SHOULD verify its own earlier countersignature on the
+returned envelope before re-countersigning. Anyone may re-submit a
+published envelope, but every outcome is delivered to the subject's
+own inbox and endorsements are scoped by each client's trust list,
+so third-party submission is at worst an unsolicited renewal.
 
 The two countersignatures carry independent `exp` claims and
 deliberately independent lifecycles. A registration
@@ -772,19 +778,10 @@ inbox finds its own binding. Envelopes where the subject never
 signed for this inbox MUST be rejected.
 
 Party envelopes in the registration and verification flows are the
-exception: they are bearer documents carrying no audience-bound
-subject signature, and each receiving role applies its own rule
-instead. A registration Authority requires only the request token
-and the subject's eligibility (§6.2); a verifier requires the
-registration Authority's countersignature (§5.3); a subject's own
-inbox accepts party envelopes whose subject is itself — the
-registration and verification returns. Deferred who disclosures
-remain audience-bound to their requester (§8.2): the `aud` is what
-marks them as private rather than publishable. A bearer envelope
-can be submitted to a registry by anyone, but every outcome is
-delivered to the subject's own inbox and endorsements are scoped by
-each client's trust list, so third-party submission is at worst an
-unsolicited renewal.
+exception: bearer documents with no audience binding — the request
+token carries delivery intent, and each receiving role's own rule
+is defined with that role (registration §5.3, verification §5.3,
+returns to the subject's inbox §5.3, deferred disclosures §8.2).
 
 An inbox that finds its *own* earlier countersignature aboard (an
 Authority receiving back the envelope it endorsed) SHOULD verify
