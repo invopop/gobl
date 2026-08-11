@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `net`: spec §5.3 — a party re-countersigning an envelope MUST replace its own earlier countersignatures (supersession); removing another party's signatures remains forbidden. In steady state an endorsed identity carries exactly three signatures: the subject's, the Authority's, and the verifier's.
+
 ### Added
 
 - `net`: sandbox support: `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) and the `WithSandbox` client option. The live and sandbox trust lists are disjoint.

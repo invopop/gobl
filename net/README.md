@@ -378,7 +378,12 @@ require verification reject with `ErrNotVerified`
 valid bare address is treated as absent. Adding or revoking
 verification is the registration Authority's act: it re-countersigns
 the envelope with the pointer added or removed, which makes the
-registry the single source of truth for verification state. The
+registry the single source of truth for verification state. A party
+re-countersigning an envelope MUST replace its own earlier
+countersignatures rather than accumulate copies: supersession is
+what makes the latest statement authoritative — a lingering older
+signature could assert a verifier the Authority has since revoked.
+No party may remove another party's signatures. The
 coordination when verification completes is an ordinary delivery
 with no new endpoints: the subject sends its registered envelope to
 the verifier's inbox, the verifier countersigns that exact envelope
