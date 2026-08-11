@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `net`: signature checks search instead of indexing. The first signature still names the subject, but `Client.VerifyEnvelope` satisfies `expectedAud` with any valid subject signature carrying that audience, and `Client.Who` requires one audience-free self-signature while ignoring audience-bound ones. The endorsed envelope an Authority delivers can now be published at `/who` as-is.
+- `net`: party envelopes in the registration and verification flows are bearer documents (spec §8.3): the subject signs once, audience-free, and the same envelope registers, publishes, and verifies. Delivery intent comes from the request token; Authority and verifier countersignatures carry the directed `iss`/`aud`. Deferred who disclosures remain audience-bound. Document deliveries keep the signed `aud` requirement.
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of `ErrVerifyFailed`.
 
 ## [v0.504.0]
