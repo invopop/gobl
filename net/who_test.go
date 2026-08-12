@@ -214,8 +214,10 @@ func TestVerifySender(t *testing.T) {
 	ctx := context.Background()
 	subject := Address("supplier.example.com")
 	authority := Address("kyc.example.com")
+	verifier := Address("verify.example.com")
 	subjKey := dsig.NewES256Key()
 	authKey := dsig.NewES256Key()
+	verifierKey := dsig.NewES256Key()
 
 	jwkOf := func(k *dsig.PrivateKey) []byte {
 		t.Helper()
@@ -224,10 +226,22 @@ func TestVerifySender(t *testing.T) {
 		return out
 	}
 
+	endorsedEnvelope := new(gobl.Envelope)
+	require.NoError(t, json.Unmarshal(
+		buildPartyEnvelope(t, subjKey, subject, authKey, authority, verifier),
+		endorsedEnvelope,
+	))
+	require.NoError(t, endorsedEnvelope.Sign(verifierKey,
+		head.WithIssuer(verifier.String()),
+		head.WithAudience(subject.String())))
+	endorsedData, err := json.Marshal(endorsedEnvelope)
+	require.NoError(t, err)
+
 	endorsed := map[string][]byte{
-		subject.WhoURL():               buildPartyEnvelope(t, subjKey, subject, authKey, authority, authority),
-		subject.KeyURL(subjKey.ID()):   jwkOf(subjKey),
-		authority.KeyURL(authKey.ID()): jwkOf(authKey),
+		subject.WhoURL():                  endorsedData,
+		subject.KeyURL(subjKey.ID()):      jwkOf(subjKey),
+		authority.KeyURL(authKey.ID()):    jwkOf(authKey),
+		verifier.KeyURL(verifierKey.ID()): jwkOf(verifierKey),
 	}
 
 	t.Run("accepts an authority-endorsed sender", func(t *testing.T) {

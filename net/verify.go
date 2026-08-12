@@ -10,11 +10,9 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// VerifyParty establishes the subject of a party envelope: the address
-// the party document itself declares as its gobl: endpoint. The
-// envelope must carry at least one valid self-signature by that
-// address; signature order is not significant. Returns the subject.
-// Countersignatures are not checked here; use VerifyAuthority.
+// VerifyParty returns the address declared by a party envelope's gobl endpoint
+// after verifying a self-signature from that address. It does not verify
+// authority endorsements.
 func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
@@ -43,11 +41,8 @@ func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, 
 	return subject, nil
 }
 
-// VerifyDelivery establishes the sender of a document delivery: the
-// issuer of a valid signature whose signed aud equals self, the
-// receiving inbox. Exactly one issuer may bind — none rejects the
-// delivery, more than one is ambiguous. Signature order is not
-// significant.
+// VerifyDelivery returns the sole issuer of valid signatures addressed to
+// self. It fails if no issuer or multiple issuers bind the delivery.
 func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)

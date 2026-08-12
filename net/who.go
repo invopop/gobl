@@ -10,21 +10,9 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Who fetches the public identity for the given address with a GET on
-// its well-known who endpoint and verifies it. The response must be a
-// party envelope whose subject (the address its document declares —
-// see VerifyParty) equals the fetched address, carrying an
-// audience-free self-signature. Authority countersignatures, if any,
-// are preserved on the returned envelope for VerifyAuthority.
-//
-// The request carries a bearer request token minted from the client's
-// identity (WithIdentity); conforming servers reject requests without
-// one.
-//
-// A 204 response returns ErrNoContent: the address exists but does not
-// publish identity details (a receive-only account). A 202 response
-// returns ErrPending: the request was recorded and the owner may
-// deliver its party envelope to the requester's inbox later.
+// Who fetches and verifies addr's party envelope. The subject must equal addr
+// and have an audience-free self-signature. WithIdentity authenticates the
+// request. HTTP 204 and 202 responses return ErrNoContent and ErrPending.
 func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) {
 	// Canonicalize so well-known URLs and the issuer comparison use
 	// the ASCII form regardless of how the address was written.
@@ -67,14 +55,9 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	return env, nil
 }
 
-// VerifySender confirms that the given address is approved to send
-// documents: its who identity must verify (see Who) and carry a
-// countersignature from one of the client's trusted authorities.
-// When requireVerified is true the endorsement must additionally
-// carry a confirmed verifier (see VerifyAuthority), else
-// ErrNotVerified. Returns the sender's endorsed party on success.
-// Receiving inboxes call this with the verified issuer of an
-// incoming envelope before accepting it.
+// VerifySender returns addr's party after verifying its identity and a trusted
+// authority endorsement. If requireVerified is true, the endorsement must also
+// include confirmed verifier evidence.
 func (c *Client) VerifySender(ctx context.Context, addr Address, requireVerified bool) (*org.Party, error) {
 	env, err := c.Who(ctx, addr)
 	if err != nil {

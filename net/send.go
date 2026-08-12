@@ -8,19 +8,10 @@ import (
 	"github.com/invopop/gobl"
 )
 
-// Send delivers a signed envelope to the address's inbox with a POST
-// on its well-known inbox endpoint. The request carries a bearer
-// request token minted from the client's identity (WithIdentity),
-// which may name a different party than the envelope's signer — a
-// trusted intermediary transmitting on the signer's behalf.
-//
-// A 202 response means the inbox has persisted the envelope. Any
-// other 4xx — except 429 — returns ErrInboxRejected: the inbox has
-// decided, do not retry. Transient conditions (429, 5xx, transport
-// failures) return ErrUnavailable, and delivery is idempotent on the
-// envelope's uuid and digest, so "retry on ErrUnavailable until 202"
-// is the correct recovery strategy. Other errors are permanent input
-// or configuration failures.
+// Send posts an envelope to addr's inbox. WithIdentity adds a request token;
+// its issuer may differ from the envelope signer. A 202 response succeeds,
+// definitive 4xx responses return ErrInboxRejected, and transient failures
+// return ErrUnavailable.
 func (c *Client) Send(ctx context.Context, addr Address, env *gobl.Envelope) error {
 	if env == nil {
 		return fmt.Errorf("%w: envelope is nil", ErrFetchFailed)

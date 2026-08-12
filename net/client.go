@@ -31,13 +31,9 @@ const (
 // dialTimeout is the per-attempt timeout for the SSRF-safe dialer.
 const dialTimeout = 5 * time.Second
 
-// safeDialContext is the DialContext used by the default HTTPFetcher.
-// It resolves the target host and refuses to connect when any of the
-// resolved IPs is a loopback, private, link-local, or unspecified
-// address — the standard SSRF defense for a client that dials hosts
-// derived from signed payloads (a `gobl:` `iss` URI). Tests and local
-// development should inject a custom Fetcher rather than relaxing
-// this default.
+// safeDialContext is the SSRF-resistant dialer used by HTTPFetcher. It rejects
+// hosts that resolve to non-public addresses. Tests and local services should
+// inject a custom Fetcher.
 func safeDialContext(ctx context.Context, network, addr string) (stdnet.Conn, error) {
 	host, port, err := stdnet.SplitHostPort(addr)
 	if err != nil {
@@ -220,8 +216,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
-// Client provides GOBL Net operations including KeySet fetching
-// and remote verification.
+// Client performs GOBL Net discovery, delivery, and verification.
 type Client struct {
 	fetcher     Fetcher
 	authorities []Address
@@ -255,12 +250,7 @@ func WithFetcher(f Fetcher) ClientOption {
 	}
 }
 
-// WithAuthorities sets the client's trusted registration authorities,
-// replacing the default list (net.Authorities, which carries the
-// network's default authority). Operators who want to supplement the
-// default rather than replace it include it explicitly, or grow the
-// global default with RegisterAuthority. Replacement semantics let
-// closed deployments exclude the default authority entirely.
+// WithAuthorities replaces the client's trusted registration authorities.
 func WithAuthorities(addrs ...Address) ClientOption {
 	return func(c *Client) {
 		c.authorities = append([]Address{}, addrs...)
@@ -276,22 +266,16 @@ func WithKeyCacheTTL(d time.Duration) ClientOption {
 	}
 }
 
-// WithSandbox switches the client's trusted registration authorities
-// to the sandbox list (net.SandboxAuthorities), replacing the live
-// default. Sandbox authorities endorse test identities with relaxed
-// verification, so the two environments never trust each other's
-// endorsements. Like WithAuthorities this replaces the trust list —
-// when both options are given, the last one wins.
+// WithSandbox replaces the client's trust list with SandboxAuthorities.
+// If combined with WithAuthorities, the last option wins.
 func WithSandbox() ClientOption {
 	return func(c *Client) {
 		c.authorities = append([]Address{}, SandboxAuthorities...)
 	}
 }
 
-// WithIdentity sets the client's own address and private key, used to
-// mint the request tokens that who and inbox requests carry in their
-// Authorization header. A client without an identity sends those
-// requests bare and conforming servers reject them.
+// WithIdentity sets the address and key used to authenticate Who and Send
+// requests. Without an identity, those requests have no Authorization header.
 func WithIdentity(addr Address, key *dsig.PrivateKey) ClientOption {
 	return func(c *Client) {
 		c.identity = &identity{addr: addr, key: key}
@@ -416,8 +400,7 @@ func (c *Client) storeKey(url string, pk *dsig.PublicKey) {
 	c.keyCache[url] = keyCacheEntry{key: pk, exp: now.Add(c.keyTTL)}
 }
 
-// FetchPublicKey is an alias for FetchKey retained for clarity at
-// call sites that only need the verification primitive.
+// FetchPublicKey is an alias for FetchKey.
 func (c *Client) FetchPublicKey(ctx context.Context, addr Address, kid string) (*dsig.PublicKey, error) {
 	return c.FetchKey(ctx, addr, kid)
 }
