@@ -1,6 +1,7 @@
 package sk_test
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -11,10 +12,14 @@ import (
 )
 
 func TestTaxIdentityRules(t *testing.T) {
+	// The format and checksum rules are asserted separately, so a code may
+	// trigger either or both. Codes not listed must NOT be reported.
+	allCodes := []string{"IDENTITY-01", "IDENTITY-02"}
+
 	tests := []struct {
-		name        string
-		inputCode   cbc.Code
-		expectedErr string
+		name         string
+		inputCode    cbc.Code
+		expectedErrs []string
 	}{
 		{
 			name:      "valid divisible by 11",
@@ -29,34 +34,34 @@ func TestTaxIdentityRules(t *testing.T) {
 			inputCode: "",
 		},
 		{
-			name:        "leading zero",
-			inputCode:   "0000000011",
-			expectedErr: "IDENTITY-01",
+			name:         "leading zero, checksum still valid",
+			inputCode:    "0000000011",
+			expectedErrs: []string{"IDENTITY-01"},
 		},
 		{
-			name:        "all zeros",
-			inputCode:   "0000000000",
-			expectedErr: "IDENTITY-01",
+			name:         "all zeros, checksum still valid",
+			inputCode:    "0000000000",
+			expectedErrs: []string{"IDENTITY-01"},
 		},
 		{
-			name:        "not divisible by 11",
-			inputCode:   "2020273894",
-			expectedErr: "IDENTITY-01",
+			name:         "well formed but not divisible by 11",
+			inputCode:    "2020273894",
+			expectedErrs: []string{"IDENTITY-02"},
 		},
 		{
-			name:        "too short",
-			inputCode:   "202027389",
-			expectedErr: "IDENTITY-01",
+			name:         "too short",
+			inputCode:    "202027389",
+			expectedErrs: []string{"IDENTITY-01", "IDENTITY-02"},
 		},
 		{
-			name:        "too long",
-			inputCode:   "20202738931",
-			expectedErr: "IDENTITY-01",
+			name:         "too long",
+			inputCode:    "20202738931",
+			expectedErrs: []string{"IDENTITY-01", "IDENTITY-02"},
 		},
 		{
-			name:        "contains letters",
-			inputCode:   "202027389A",
-			expectedErr: "IDENTITY-01",
+			name:         "contains letters",
+			inputCode:    "202027389A",
+			expectedErrs: []string{"IDENTITY-01", "IDENTITY-02"},
 		},
 	}
 
@@ -64,11 +69,18 @@ func TestTaxIdentityRules(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tID := &tax.Identity{Country: "SK", Code: tt.inputCode}
 			err := rules.Validate(tID)
-			if tt.expectedErr == "" {
+			if len(tt.expectedErrs) == 0 {
 				assert.NoError(t, err)
-			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), tt.expectedErr)
+				return
+			}
+			if !assert.Error(t, err) {
+				return
+			}
+			for _, code := range allCodes {
+				if slices.Contains(tt.expectedErrs, code) {
+					assert.Contains(t, err.Error(), code)
+				} else {
+					assert.NotContains(t, err.Error(), code)
 				}
 			}
 		})

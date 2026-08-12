@@ -17,8 +17,18 @@
                   "assert": [
                     {
                       "id": "GOBL-SK-TAX-IDENTITY-01",
-                      "desc": "tax identity code for SK must be 10 digits starting with 1-9 and divisible by 11",
-                      "tests": "valid"
+                      "desc": "tax identity code for SK must be 10 digits starting with 1-9",
+                      "tests": "matches ^[1-9]\\d{9}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-SK-TAX-IDENTITY-02",
+                      "desc": "tax identity code for SK failed the checksum: the 10 digit number must be divisible by 11",
+                      "tests": "checksum"
                     }
                   ]
                 }

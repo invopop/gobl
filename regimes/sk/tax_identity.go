@@ -2,8 +2,8 @@ package sk
 
 import (
 	"regexp"
+	"strconv"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -19,32 +19,21 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.AssertIfPresent("01", "tax identity code for SK must be 10 digits starting with 1-9 and divisible by 11",
-					is.Func("valid", validateTaxCode),
+				rules.AssertIfPresent("01", "tax identity code for SK must be 10 digits starting with 1-9",
+					is.MatchesRegexp(taxCodeRegexp),
+				),
+				rules.AssertIfPresent("02", "tax identity code for SK failed the checksum: the 10 digit number must be divisible by 11",
+					is.StringFunc("checksum", validateTaxCodeChecksum),
 				),
 			),
 		),
 	)
 }
 
-func validateTaxCode(value any) bool {
-	code, ok := value.(cbc.Code)
-	if !ok {
-		return false
-	}
-	val := code.String()
-
-	if !taxCodeRegexp.MatchString(val) {
-		return false
-	}
-	return validateTaxCodeChecksum(val)
-}
-
-// Slovak IČ DPH checksum: the whole 10-digit number must be divisible by 11.
-//
-// A 10-digit number can reach ~10^10, which overflows a 32-bit int, so the digits
-// are accumulated into an int64. Digit conversion via val[i]-'0' assumes the input
-// contains only ASCII digits, which is guaranteed by the regex in validateTaxCode.
+// validateTaxCodeChecksum applies the Slovak IČ DPH checksum: the whole 10-digit
+// number must be divisible by 11. Each assertion is evaluated independently, so a
+// code that already failed the format rule still reaches this function; ParseInt
+// rejects anything that is not a plain integer.
 //
 // Note: the Slovak tax authority does not publish this algorithm; the modulo-11
 // rule is consistently documented by EU VAT-number validators and matches all
@@ -52,10 +41,10 @@ func validateTaxCode(value any) bool {
 //
 // Reference: https://github.com/ltns35/go-vat/blob/main/countries/slovakia.go
 // Reference: https://vatdb.com/guides/validate-sk-vat-number/
-func validateTaxCodeChecksum(val string) bool {
-	var n int64
-	for i := range len(val) {
-		n = n*10 + int64(val[i]-'0')
+func validateTaxCodeChecksum(code string) bool {
+	n, err := strconv.ParseInt(code, 10, 64)
+	if err != nil {
+		return false
 	}
 	return n%11 == 0
 }
