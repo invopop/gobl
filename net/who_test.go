@@ -21,7 +21,10 @@ import (
 // verifier.
 func buildPartyEnvelope(t *testing.T, subjKey *dsig.PrivateKey, subject Address, authKey *dsig.PrivateKey, authority, verifier Address) []byte {
 	t.Helper()
-	party := &org.Party{Name: "Test Subject"}
+	party := &org.Party{
+		Name:      "Test Subject",
+		Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+	}
 	party.SetUUID(uuid.V7())
 	env, err := gobl.Envelop(party)
 	require.NoError(t, err)
@@ -87,13 +90,16 @@ func TestWho(t *testing.T) {
 		_, err := c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "does not match address")
+		assert.Contains(t, err.Error(), "identity of")
 	})
 
 	t.Run("rejects an audience-bound response", func(t *testing.T) {
 		// A who response is a public document; an envelope signed with
 		// an aud is caller-bound and non-conforming.
-		party := &org.Party{Name: "Bound"}
+		party := &org.Party{
+			Name:      "Bound",
+			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+		}
 		party.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(party)
 		require.NoError(t, err)
@@ -110,7 +116,40 @@ func TestWho(t *testing.T) {
 		_, err = c.Who(ctx, subject)
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
-		assert.Contains(t, err.Error(), "audience-bound")
+		assert.Contains(t, err.Error(), "audience-free")
+	})
+
+	t.Run("accepts hop-bound self-signatures alongside the publication one", func(t *testing.T) {
+		// A published endorsed envelope: the subject's registration
+		// signature is audience-bound to the registry, an authority
+		// countersignature is aboard, and an audience-free
+		// self-signature asserts the public identity. Signature order
+		// is not significant.
+		party := &org.Party{
+			Name:      "Endorsed",
+			Endpoints: []*org.Endpoint{{URI: subject.URI()}},
+		}
+		party.SetUUID(uuid.V7())
+		env, err := gobl.Envelop(party)
+		require.NoError(t, err)
+		require.NoError(t, env.Sign(subjKey,
+			head.WithIssuer(subject.String()),
+			head.WithAudience("lookup.example.com")))
+		authKey := dsig.NewES256Key()
+		require.NoError(t, env.Sign(authKey,
+			head.WithIssuer("lookup.example.com"),
+			head.WithAudience(subject.String())))
+		require.NoError(t, env.Sign(subjKey, head.WithIssuer(subject.String())))
+		data, err := json.Marshal(env)
+		require.NoError(t, err)
+
+		c := NewClient(WithFetcher(&mapFetcher{data: map[string][]byte{
+			subject.WhoURL():             data,
+			subject.KeyURL(subjKey.ID()): jwkOf(subjKey),
+		}}))
+		got, err := c.Who(ctx, subject)
+		require.NoError(t, err)
+		require.Len(t, got.Signatures, 3, "countersignatures preserved for VerifyAuthority")
 	})
 
 	t.Run("rejects a non-party document", func(t *testing.T) {

@@ -11,12 +11,11 @@ import (
 )
 
 // Who fetches the public identity for the given address with a GET on
-// its well-known who endpoint and verifies it. The response envelope's
-// first signature must be the subject's self-signature: its signed
-// `iss` is resolved to a published key and must name the fetched
-// address. The document must be an org.Party. Authority
-// countersignatures, if any, are preserved on the returned envelope
-// for VerifyAuthority.
+// its well-known who endpoint and verifies it. The response must be a
+// party envelope whose subject (the address its document declares —
+// see VerifyParty) equals the fetched address, carrying an
+// audience-free self-signature. Authority countersignatures, if any,
+// are preserved on the returned envelope for VerifyAuthority.
 //
 // The request carries a bearer request token minted from the client's
 // identity (WithIdentity); conforming servers reject requests without
@@ -45,25 +44,25 @@ func (c *Client) Who(ctx context.Context, addr Address) (*gobl.Envelope, error) 
 	if err := json.Unmarshal(data, env); err != nil {
 		return nil, fmt.Errorf("%w: invalid who envelope: %v", ErrFetchFailed, err)
 	}
-	issuer, err := c.VerifyEnvelope(ctx, env, "")
+	subject, err := c.VerifyParty(ctx, env)
 	if err != nil {
 		return nil, err
 	}
-	if issuer != addr {
-		return nil, fmt.Errorf("%w: who issuer %q does not match address %q", ErrVerifyFailed, issuer, addr)
+	if subject != addr {
+		return nil, fmt.Errorf("%w: who response is the identity of %q, not %q", ErrVerifyFailed, subject, addr)
 	}
-	// A who response is a public document: a caller-bound (aud-carrying)
-	// envelope is not a conforming identity and must not be treated as
-	// one.
-	p, err := head.SignedPayload(env.Signatures[0])
+	// A who response is a public document: it must carry at least
+	// one audience-free self-signature. Audience-bound self-
+	// signatures are ignored; an envelope with only caller-bound
+	// signatures is not a public identity.
+	ok, err := c.subjectSignatureFor(ctx, env, addr, func(p *head.SigningPayload) bool {
+		return p.Aud == ""
+	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+		return nil, err
 	}
-	if p.Aud != "" {
-		return nil, fmt.Errorf("%w: who response must not be audience-bound (aud %q)", ErrVerifyFailed, p.Aud)
-	}
-	if _, ok := env.Extract().(*org.Party); !ok {
-		return nil, ErrPartyMissing
+	if !ok {
+		return nil, fmt.Errorf("%w: who response carries no audience-free self-signature", ErrVerifyFailed)
 	}
 	return env, nil
 }

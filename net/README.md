@@ -74,8 +74,15 @@ document are to be interpreted as described in BCP 14 (RFC 2119, RFC 8174).
   optional `valid_from` / `valid_until` extension members) served at
   `/.well-known/gobl/keys/<kid>`.
 - **Party Envelope** — A signed GOBL Envelope whose document is an
-  `org.Party`, served at the who endpoint. The first signature is the
-  subject's self-signature; Authority countersignatures follow.
+  `org.Party`, served at the who endpoint. Its subject is the address
+  the party document itself declares as its `gobl:` endpoint, attested
+  by the subject's audience-free self-signature; Authority and
+  verifier countersignatures (each bound to the subject with `iss` +
+  `aud`) accumulate alongside. The party envelope is a bearer
+  document: the same envelope registers, publishes, and verifies
+  without per-hop signatures — delivery intent is carried by the
+  request token (§5.5). Signature order is not significant: consumers
+  search, never index.
 - **Sender / Receiver** — The two roles in a document exchange. A
   receiver only needs a domain, TLS, and (if it signs or makes
   authenticated requests — §5.5) published keys. A sender is
@@ -371,9 +378,31 @@ require verification reject with `ErrNotVerified`
 valid bare address is treated as absent. Adding or revoking
 verification is the registration Authority's act: it re-countersigns
 the envelope with the pointer added or removed, which makes the
-registry the single source of truth for verification state and
-requires coordination between the two authorities when KYC
-completes.
+registry the single source of truth for verification state. A party
+re-countersigning an envelope MUST replace its own earlier
+countersignatures rather than accumulate copies: supersession is
+what makes the latest statement authoritative — a lingering older
+signature could assert a verifier the Authority has since revoked.
+No party may remove another party's signatures. The
+coordination when verification completes is an ordinary delivery
+with no new endpoints: the subject sends its registered envelope to
+the verifier's inbox, the verifier countersigns that exact envelope
+(same `uuid` + `dig`) and posts it back to the registration
+Authority's inbox, and the Authority re-countersigns with the
+pointer and re-delivers to the subject — whose published envelope
+then carries both countersignatures, each with its own lifetime.
+The same bearer envelope flows through every hop with no per-hop
+subject signatures (§8.3): delivery intent is each request's token,
+while the countersignatures carry the directed statements (`iss` +
+`aud` = the subject). Each role gates its own inbox: the Authority
+requires the subject's who eligibility (§6.2), the verifier
+requires the Authority's countersignature, and the subject's inbox
+accepts party envelopes whose subject is itself — the returns. The
+Authority SHOULD verify its own earlier countersignature on the
+returned envelope before re-countersigning. Anyone may re-submit a
+published envelope, but every outcome is delivered to the subject's
+own inbox and endorsements are scoped by each client's trust list,
+so third-party submission is at worst an unsolicited renewal.
 
 The two countersignatures carry independent `exp` claims and
 deliberately independent lifecycles. A registration
@@ -489,30 +518,45 @@ returns the verified requester Address.
 
 ### 6.1 Envelope Verification Flow
 
-`Client.VerifyEnvelope(ctx, env, expectedAud)` returns the verified
-issuer address:
+Verification never depends on signature order — any holder of an
+envelope can permute its signatures without invalidating them, so
+nothing may be read from position. Two entry points cover the two
+envelope roles.
 
-1. The envelope MUST be signed; otherwise `ErrVerifyFailed`.
-2. The first signature's signed payload is read; `iss` MUST be a
-   valid bare Address (else `ErrVerifyFailed`).
-3. `FetchKey(ctx, iss-host, kid)` fetches the issuer's published key
-   from `/.well-known/gobl/keys/<kid>` (including its optional
-   `valid_from` / `valid_until`).
-4. The envelope is verified against that public key.
-5. If `expectedAud` is non-empty, the signed `aud` MUST equal it.
-6. If the key declares a validity window, the signed `iat` MUST fall
-   within `[valid_from, valid_until]` (each bound optional).
-7. The verified issuer address is returned.
+`Client.VerifyParty(ctx, env)` establishes the subject of an
+identity envelope:
+
+1. The envelope MUST be signed and its document MUST be an
+   `org.Party` declaring a `gobl:` endpoint — that address is the
+   subject.
+2. At least one signature whose `iss` is the subject MUST verify
+   against the subject's published keys (`FetchKey`, including the
+   key's optional `valid_from` / `valid_until` window against the
+   signed `iat`).
+3. The subject address is returned.
+
+`Client.VerifyDelivery(ctx, env, self)` establishes the sender of a
+document delivery:
+
+1. The envelope MUST be signed.
+2. Among all signatures, those whose signed `aud` equals `self` and
+   which verify against their issuer's published keys are the
+   delivery bindings. Exactly one issuer may bind: none rejects the
+   delivery, more than one is ambiguous.
+3. That issuer — the sender — is returned.
 
 ### 6.2 Identity lookup (`GET /who`)
 
 `/who` is an authenticated GET (see §8.2): the caller presents a
 request token (§5.5) identifying itself. The response is the
-target's party envelope: document = the target's `org.Party`,
-first signature = the target's self-signature with `iss=target`
-and no `aud` (the response is the same signed document for every
-authorized caller), optionally followed by Authority
-countersignatures.
+target's party envelope (the same signed document for every
+authorized caller): its document MUST declare the target as its
+`gobl:` endpoint, and the envelope MUST carry at least one valid
+audience-free self-signature — the subject's publication assertion.
+Authority or verifier countersignatures and audience-bound
+self-signatures (from older protocol revisions) MAY also be aboard
+and do not disqualify the response; the endorsed envelope is
+published exactly as the Authority delivered it.
 
 `Client.Who(ctx, addr)` performs the lookup and verifies it:
 
@@ -523,12 +567,15 @@ countersignatures.
    details (a receive-only account). A `202` returns `ErrPending` —
    the request was recorded and the owner may deliver its party
    envelope to the caller's inbox later (§8.2).
-2. The response envelope's first signature is verified via
-   `VerifyEnvelope` (the signed `iss` resolved to a published key).
-3. The verified issuer MUST equal the fetched address — a valid
+2. The subject is established via `VerifyParty` (§6.1): the party
+   document's declared endpoint, attested by a valid
+   self-signature. It MUST equal the fetched address — a valid
    envelope for a *different* identity served at this URL is
    rejected.
-4. The document MUST be an `org.Party`, else `ErrPartyMissing`.
+3. The envelope MUST carry at least one valid audience-free
+   self-signature; an envelope with only caller-bound signatures
+   (e.g. a deferred disclosure minted for someone else, §8.2) is
+   not a public identity and is rejected.
 
 The response body is still a static signed document — the request
 token controls *access*; it does not bind the response to the
@@ -559,6 +606,19 @@ verifier's own countersignature (§5.3), the verifier;
 authority (or none has been registered), `ErrSignatureExpired` when
 a verified authority signature has expired, and `ErrVerifyFailed`
 when a candidate fails its crypto check.
+
+**Sandbox.** The network runs a parallel sandbox environment:
+`lookup.sandbox.gobl.org` (the default entry in
+`net.SandboxAuthorities`) operates the same registration service as
+the live authority, backed by its own database and its own accepted
+verification providers — typically relaxed KYB suited to test
+identities. The live and sandbox trust lists are disjoint by
+construction and MUST stay that way: a live verifier never accepts
+a sandbox endorsement, and a sandbox verifier never needs a live
+one. Clients opt in with `net.WithSandbox()`, which replaces the
+trust list with the sandbox authorities; everything else — request
+tokens, endorsement checks, the verifier claim — behaves
+identically in both environments.
 
 Note the trust topology this creates: receivers list *registration*
 authorities; the verifiers those authorities name are trusted
@@ -720,13 +780,26 @@ transmitting documents its customers signed) authenticates the
 document signer's. The two layers are independent and both
 required.
 
-The envelope layer is unchanged by the token: the signer (`iss`) is
-verified against its published key (fetched from
-`<iss>/.well-known/gobl/keys/<kid>`); the signed `aud` MUST be
-present and MUST equal this inbox's Address — envelopes signed
-without an audience, or bound to a different audience, MUST be
-rejected. The inbox SHOULD then apply its sender-endorsement
-policy: resolve the sender's who (§6.4) and require an Authority
+The envelope layer is unchanged by the token. For document
+deliveries the sender is established by the delivery binding
+(§6.1): the issuer of a valid signature whose signed `aud` equals
+this inbox's Address — searched, so a sender signs once per
+intended recipient and each inbox finds its own binding; exactly
+one issuer may bind. Envelopes nobody signed for this inbox MUST be
+rejected.
+
+Party envelopes in the registration and verification flows are the
+exception: bearer documents with no audience binding — the request
+token carries delivery intent, and each receiving role's own rule
+is defined with that role (registration §5.3, verification §5.3,
+returns to the subject's inbox §5.3, deferred disclosures §8.2).
+
+An inbox that finds its *own* earlier countersignature aboard (an
+Authority receiving back the envelope it endorsed) SHOULD verify
+that signature against its own keys and reject the envelope when it
+does not hold — a broken or forged copy of the Authority's
+signature means the envelope is not what it endorsed. The inbox
+SHOULD then apply its sender-endorsement policy: resolve the sender's who (§6.4) and require an Authority
 countersignature — optionally with a confirmed verifier (§5.3) when
 the operator demands verified identities. Endorsement attaches to
 the envelope's signer, never to the token's issuer. Status codes:
@@ -735,7 +808,7 @@ the envelope's signer, never to the token's issuer. Status codes:
 |------------------------------|------------------------------------------------------|
 | `202 Accepted`               | Envelope parsed, validated, signature verified, persisted. |
 | `400 Bad Request`            | Body could not be read or did not decode as JSON.    |
-| `401 Unauthorized`           | Missing or invalid request token (§5.5); envelope signature did not verify; or `aud` missing / not equal to this inbox. |
+| `401 Unauthorized`           | Missing or invalid request token (§5.5); envelope signature did not verify; or (documents) no subject signature carries `aud` equal to this inbox. |
 | `403 Forbidden`              | Sender (`iss`) is not endorsed by an Authority this inbox trusts, or lacks the verified status the operator requires (§5.3). |
 | `422 Unprocessable Entity`   | Envelope failed structural validation.               |
 | `500 Internal Server Error`  | Persistence failed.                                  |
@@ -778,8 +851,8 @@ operator has an outstanding who request to that address (§8.2,
 `202`) SHOULD be accepted without sender endorsement: it carries
 exactly the assertions a `200` who response would, so it needs no
 more trust than the lookup it answers. Verification is the same as
-`Client.Who` steps 2–4 (§6.2), except that the envelope's signed
-`aud` MUST name this inbox. Outside of an outstanding who request,
+`Client.Who` steps 2–3 and 5 (§6.2), except that the subject MUST
+have signed for this inbox (`aud`) rather than for publication. Outside of an outstanding who request,
 party envelopes are subject to the normal endorsement policy.
 
 In code, `Client.Send(ctx, addr, env)` performs the delivery: it

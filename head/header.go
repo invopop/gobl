@@ -275,6 +275,9 @@ func (h *Header) Sign(key *dsig.PrivateKey, opts ...SignOption) (*dsig.Signature
 // fall within it. The signed iss/aud are part of the statement and are
 // not validated here — read them with SignedPayload.
 func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	if sig == nil {
+		return ErrSignaturePayload
+	}
 	if len(keys) == 0 {
 		p := new(SigningPayload)
 		if err := sig.UnsafePayload(p); err != nil {
@@ -304,7 +307,11 @@ func (h *Header) Verify(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 
 // SignedPayload extracts the (unverified) signed payload from a
 // signature, used to read iss before fetching the signer's keys.
+// A nil signature (a JSON `null` sigs entry) is a payload error.
 func SignedPayload(sig *dsig.Signature) (*SigningPayload, error) {
+	if sig == nil {
+		return nil, ErrSignaturePayload
+	}
 	p := new(SigningPayload)
 	if err := sig.UnsafePayload(p); err != nil {
 		return nil, ErrSignaturePayload

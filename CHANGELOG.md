@@ -6,9 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `net`: spec §5.3 — a party re-countersigning an envelope MUST replace its own earlier countersignatures (supersession); removing another party's signatures remains forbidden. In steady state an endorsed identity carries exactly three signatures: the subject's, the Authority's, and the verifier's.
+
 ### Added
 
+- `net`: sandbox support: `SandboxAuthorities` (default `lookup.sandbox.gobl.org`) and the `WithSandbox` client option. The live and sandbox trust lists are disjoint.
 - `sk`: Slovakia tax regime with VAT categories for standard (23%), reduced (19%) and super-reduced (5%) rates per zákon č. 222/2004 Z. z. § 27, EUR currency, `Europe/Bratislava` timezone, and IČ DPH tax identity validation (10 digits, modulo-11 check).
+
+### Fixed
+
+- `head`: `SignedPayload` and `Header.Verify` return an error for a nil signature (a JSON `null` entry in `sigs`) instead of panicking.
+
+### Changed
+
+- `net`: signature order is never significant — signatures all cover the same payload, so position cannot be trusted. `Client.VerifyEnvelope` is replaced by `Client.VerifyParty` (the subject is the address the party document declares as its `gobl:` endpoint, attested by a valid self-signature — the endpoint/subject match is now enforced) and `Client.VerifyDelivery` (the sender is the single issuer with a valid signature bound to the receiving inbox). `Client.Who` additionally requires one audience-free self-signature. The endorsed envelope an Authority delivers can be published at `/who` as-is.
+- `net`: party envelopes in the registration and verification flows are bearer documents (spec §8.3): the subject signs once, audience-free, and the same envelope registers, publishes, and verifies. Delivery intent comes from the request token; Authority and verifier countersignatures carry the directed `iss`/`aud`. Deferred who disclosures remain audience-bound. Document deliveries keep the signed `aud` requirement.
+- `net`: `Client.VerifyAuthority` returns `ErrUnavailable` when a candidate authority's key endpoint cannot be reached and no endorsement was found, instead of `ErrVerifyFailed`.
 
 ## [v0.504.0]
 

@@ -20,6 +20,17 @@ var Authorities = []Address{
 	"lookup.gobl.org",
 }
 
+// SandboxAuthorities is the default trust list for sandbox
+// deployments: lookup.sandbox.gobl.org runs the same registration
+// service as the live authority but endorses test identities through
+// relaxed verification providers. The live and sandbox lists are
+// disjoint by construction — endorsements from a sandbox authority
+// MUST never be accepted in live contexts, and vice versa. Clients
+// opt in with WithSandbox.
+var SandboxAuthorities = []Address{
+	"lookup.sandbox.gobl.org",
+}
+
 // maxEnvelopeSignatures bounds how many signatures VerifyAuthority is
 // willing to examine: each candidate can cost a network key fetch, so
 // an unbounded envelope would be a fetch-amplification gadget.
@@ -76,10 +87,11 @@ func (e *Endorsement) Verified() bool {
 // Every candidate authority signature is considered: an endorsement
 // with a confirmed verifier is preferred over a registered-only one
 // regardless of signature order. If no signature is from a known
-// authority, returns ErrUnknownAuthority. If a verified authority
-// signature has expired, returns ErrSignatureExpired. If all
-// candidates fail crypto verification, returns ErrVerifyFailed
-// wrapping the last error.
+// authority, returns ErrUnknownAuthority. A transient key-fetch
+// failure with no endorsement found returns ErrUnavailable. If a
+// verified authority signature has expired, returns
+// ErrSignatureExpired. If all candidates fail crypto verification,
+// returns ErrVerifyFailed wrapping the last error.
 //
 // Callers that want to accept self-signed (no-authority) envelopes
 // should skip this call rather than ignore its error.
@@ -105,12 +117,12 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		}
 	}
 
-	// claimErr records a candidate that verified cryptographically but
-	// carried an expired exp claim; it takes precedence over crypto
-	// failures from other candidates. registered holds the first
-	// valid registered-only endorsement while the remaining
-	// signatures are searched for one with a confirmed verifier.
-	var lastErr, claimErr error
+	// claimErr records a candidate that verified but carries an
+	// expired exp; unavailableErr records a transient key-fetch
+	// failure and outranks it. registered holds the first valid
+	// registered-only endorsement while the search continues for a
+	// confirmed verifier.
+	var lastErr, claimErr, unavailableErr error
 	var registered *Endorsement
 	for _, sig := range env.Signatures {
 		p, err := head.SignedPayload(sig)
@@ -127,7 +139,11 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 		// Candidate from a known authority — verify it crypto-wise.
 		pub, err := c.FetchKey(ctx, issuer, sig.KeyID())
 		if err != nil {
-			lastErr = err
+			if errors.Is(err, ErrUnavailable) {
+				unavailableErr = err
+			} else {
+				lastErr = err
+			}
 			continue
 		}
 		if err := env.Head.Verify(sig, pub); err != nil {
@@ -160,6 +176,9 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 	}
 	if registered != nil {
 		return registered, nil
+	}
+	if unavailableErr != nil {
+		return nil, unavailableErr
 	}
 	if claimErr != nil {
 		return nil, claimErr
