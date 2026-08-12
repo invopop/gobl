@@ -11,8 +11,6 @@ import (
 	// Import all the addons to ensure they're ready to use.
 	_ "github.com/invopop/gobl/addons/ar/arca"
 	_ "github.com/invopop/gobl/addons/co/dian"
-	_ "github.com/invopop/gobl/addons/de/xrechnung"
-	_ "github.com/invopop/gobl/addons/de/zugferd"
 	_ "github.com/invopop/gobl/addons/es/facturae"
 	_ "github.com/invopop/gobl/addons/es/sii"
 	_ "github.com/invopop/gobl/addons/es/tbai"
