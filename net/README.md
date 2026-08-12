@@ -156,10 +156,12 @@ A registration authority countersigns a party envelope with:
 - `aud` equal to the party address; and
 - optionally, `verifier` naming the address that performed KYC/KYB.
 
-The verifier MUST also countersign the same envelope. When the authority is
-also the verifier, one countersignature satisfies both roles. Missing, invalid,
-or expired verifier evidence reduces the result to registered; it does not
-invalidate a valid registration endorsement.
+The verifier MUST be a different participant from the registration authority
+and MUST countersign the same envelope. Separating these roles prevents the
+authority from attesting to identity checks that no independent verifier
+performed. A self-referential, missing, invalid, or expired verifier claim
+reduces the result to registered; it does not invalidate a valid registration
+endorsement.
 
 `Client.VerifyAuthority` checks all candidate authority signatures and prefers
 a confirmed verifier over a registration-only result. An authority signature's

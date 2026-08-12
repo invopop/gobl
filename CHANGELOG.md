@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   deliveries and deferred `/who` responses remain audience-bound.
 - `net`: a party that countersigns an envelope must replace its own previous
   countersignature. It may not remove signatures from other parties.
+- `net`: registration authorities can no longer verify their own endorsements;
+  the named identity verifier must be a different participant.
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.

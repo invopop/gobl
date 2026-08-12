@@ -33,7 +33,7 @@ func RegisterAuthority(addr Address) {
 }
 
 // Endorsement identifies the trusted authority behind an envelope and any
-// confirmed identity verifier it named.
+// confirmed, independent identity verifier it named.
 type Endorsement struct {
 	// Authority is the trusted address whose countersignature
 	// endorsed the envelope: the subject is a registered identity.
@@ -55,7 +55,8 @@ func (e *Endorsement) Verified() bool {
 
 // VerifyAuthority verifies countersignatures from the client's trusted
 // authorities. It returns the strongest endorsement found, preferring one with
-// confirmed verifier evidence. Missing or invalid verifier evidence leaves a
+// confirmed verifier evidence. The verifier must differ from the authority;
+// self-referential, missing, or invalid verifier evidence leaves a
 // registration-only endorsement valid. It returns ErrUnknownAuthority when no
 // trusted candidate exists, ErrSignatureExpired for expired authority evidence,
 // ErrUnavailable for transient key lookup failures, or ErrVerifyFailed when
@@ -156,23 +157,19 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 
 // confirmVerifier resolves the verifier claim on a verified authority
 // countersignature. It returns the verifier's address when the claim
-// names a valid bare address whose own countersignature on the
-// envelope verifies (or names the authority itself, whose signature
-// has already been checked), and "" when the claim is absent,
-// malformed, or its countersignature is definitively invalid — an
-// unconfirmed verifier degrades to registered, it does not
-// invalidate the endorsement. A transient failure to fetch the
-// verifier's key (ErrUnavailable) is returned as an error instead:
-// "could not check" must not silently downgrade a verified identity.
+// names a valid address, distinct from the authority, whose countersignature
+// verifies. An absent, self-referential, malformed, or invalid claim returns
+// "", degrading the endorsement to registered. A transient key-fetch failure
+// returns ErrUnavailable instead of silently downgrading the endorsement.
 func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) (Address, error) {
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
 		return "", nil //nolint:nilerr // malformed claim degrades to registered
 	}
-	// An authority that performs verification itself names itself;
-	// the countersignature just checked serves as both attestations.
+	// Registration and identity verification must be performed by distinct
+	// participants. A self-referential claim provides no verifier evidence.
 	if verifier == authority {
-		return verifier, nil
+		return "", nil
 	}
 	if err := c.verifySignatureBy(ctx, env, verifier); err != nil {
 		if errors.Is(err, ErrUnavailable) {
