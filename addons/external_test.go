@@ -61,6 +61,13 @@ func TestApprovedAddons(t *testing.T) {
 				"fi-finvoice-v3": "github.com/invopop/gobl.fi.finvoice",
 			},
 		},
+		{
+			name: "DE XInvoice",
+			modules: map[cbc.Key]string{
+				"de-xrechnung-v3": "github.com/invopop/gobl.de.xinvoice",
+				"de-zugferd-v2":   "github.com/invopop/gobl.de.xinvoice",
+			},
+		},
 	}
 
 	for _, group := range groups {
