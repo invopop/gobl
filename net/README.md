@@ -30,7 +30,32 @@ parts of the protocol. The reference server and CLI live in
 The terms MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are interpreted as
 described in BCP 14 (RFC 2119 and RFC 8174).
 
-## 2. Addresses and discovery
+## 2. Terminology
+
+| Term | Meaning |
+|---|---|
+| **Participant** | An entity identified by a GOBL Net address. A participant may hold different roles in different exchanges. |
+| **Subject** | The participant described by a party envelope. Its address comes from the party's `gobl:` endpoint. |
+| **Issuer** | The participant identified by a signature's `iss` claim. This is a signature-level role. |
+| **Audience** | The participant identified by a signature's `aud` claim. The signature is bound to this address. |
+| **Sender** | The issuer of a valid document signature whose audience is the receiving inbox. |
+| **Receiver** | The participant operating the inbox to which a document is delivered. For ordinary deliveries, the receiver is also the signature's audience. |
+| **Requester** | The issuer of an HTTP request token. A requester may be an intermediary and need not be the document sender. |
+| **Authority** | A trusted participant that confirms the subject controls its GOBL Net address and countersigns its party envelope. |
+| **Verifier** | A participant, independent of the Authority, that performs KYC/KYB and countersigns the subject's party envelope. |
+| **Endorsement** | A valid Authority countersignature, optionally supported by a confirmed Verifier countersignature. |
+| **Party envelope** | A signed GOBL envelope containing an `org.Party`. It identifies its Subject and may carry Authority and Verifier countersignatures. |
+
+Issuer, Sender, and Requester often refer to the same participant in a direct
+delivery, but the protocol does not assume they are the same. Audience and
+Receiver are equivalent for ordinary document delivery; in other signatures,
+such as an Authority endorsement, the Audience is the Subject rather than the
+recipient of an HTTP request.
+
+An Authority and Verifier MUST be different participants. Other roles may
+overlap where their definitions permit it.
+
+## 3. Addresses and discovery
 
 A GOBL Net address is an FQDN without a scheme, port, path, query, or fragment.
 `ParseAddress`:
@@ -60,7 +85,7 @@ The first form is used in signed `iss`, `aud`, and `verifier` claims. The
 `gobl:` URI is used in `org.Party` endpoints and optional envelope routing
 fields. Production endpoints MUST use HTTPS.
 
-## 3. Keys
+## 4. Keys
 
 Each signing key MUST be available as a single RFC 7517 JWK at
 `/.well-known/gobl/keys/<kid>`. Unknown or removed key IDs return `404`. The
@@ -75,7 +100,7 @@ must remain verifiable.
 
 Signatures identify keys with `kid`; they do not carry a `jku` header.
 
-## 4. Envelope signatures
+## 5. Envelope signatures
 
 The signed payload contains the document `uuid` and digest plus these protocol
 claims:
@@ -94,7 +119,7 @@ be used for verification.
 Signature order has no meaning. Implementations MUST search all signatures and
 MUST NOT assign roles by array position.
 
-### 4.1 Party identities
+### 5.1 Party identities
 
 A party envelope contains an `org.Party` with a `gobl:` endpoint. That endpoint
 defines the subject. `Client.VerifyParty` requires a valid signature whose
@@ -108,7 +133,7 @@ A public `/who` response has the following additional requirements:
 
 Other self-signatures and countersignatures may be present.
 
-### 4.2 Deliveries
+### 5.2 Deliveries
 
 For an ordinary inbox delivery, `Client.VerifyDelivery(ctx, env, receiver)`
 searches for valid signatures with `aud` equal to `receiver`. All matching
@@ -119,7 +144,7 @@ Registration, verification, and deferred identity workflows may carry party
 envelopes without an audience binding. Their receiver-specific rules must be
 applied separately.
 
-## 5. Request authentication
+## 6. Request authentication
 
 Requests to `/who` and `/inbox` MUST include a compact ES256 request token as
 `Authorization: Bearer <token>`. Key discovery is unauthenticated.
@@ -148,7 +173,7 @@ Bearer header.
 If the issuer's key endpoint is temporarily unavailable, verification returns
 `ErrUnavailable`; a server SHOULD answer `503`, not `401`.
 
-## 6. Authorities and sender policy
+## 7. Authorities and sender policy
 
 A registration authority countersigns a party envelope with:
 
@@ -183,9 +208,9 @@ Authority endorsement is a sender policy, not a prerequisite for receiving.
 A receive-only address may publish only an inbox and keys, and may return `204`
 from `/who`.
 
-## 7. Endpoints
+## 8. Endpoints
 
-### 7.1 `GET /.well-known/gobl/keys/<kid>`
+### 8.1 `GET /.well-known/gobl/keys/<kid>`
 
 This endpoint is public and returns one JWK as `application/json`.
 
@@ -195,7 +220,7 @@ This endpoint is public and returns one JWK as `application/json`.
 | `404` | Key is unknown or removed. |
 | `429`, `5xx` | Temporary failure. |
 
-### 7.2 `GET /.well-known/gobl/who`
+### 8.2 `GET /.well-known/gobl/who`
 
 This endpoint requires a valid request token. It returns a signed party
 envelope or one of these empty responses:
@@ -210,15 +235,15 @@ envelope or one of these empty responses:
 | `503` | A required key endpoint is unavailable. |
 
 `Client.Who` maps `202` to `ErrPending` and `204` to `ErrNoContent`, then
-verifies a `200` response as described in section 4.1. Authenticated responses
+verifies a `200` response as described in section 5.1. Authenticated responses
 SHOULD use `Cache-Control: private`. Clients may cache verified identities for
 a bounded period.
 
-### 7.3 `POST /.well-known/gobl/inbox`
+### 8.3 `POST /.well-known/gobl/inbox`
 
 This endpoint requires both a valid request token and a signed GOBL envelope.
 For ordinary documents, the envelope MUST have exactly one issuer bound to the
-inbox address as described in section 4.2. The receiver may then apply its
+inbox address as described in section 5.2. The receiver may then apply its
 sender endorsement policy.
 
 | Status | Meaning |
@@ -238,7 +263,7 @@ changing the request.
 `Client.Send` serializes the envelope, adds a fresh request token when the
 client has an identity, and succeeds only on `202`.
 
-## 8. Client and transport
+## 9. Client and transport
 
 `NewClient` uses `HTTPFetcher`, the default live authority list, and a
 five-minute public-key cache. Configure it with:
@@ -264,7 +289,7 @@ can inject a custom fetcher.
 Fetched keys are cached by URL, only on success, with a maximum of 1,024
 entries. `FlushKeyCache` forces subsequent verification to fetch keys again.
 
-## 9. Typical delivery flow
+## 10. Typical delivery flow
 
 1. The sender obtains the receiver's address out of band.
 2. The sender may call `/who` for the receiver's invoicing details.
@@ -278,7 +303,7 @@ Only step 6 requires authority endorsement, and that requirement applies to
 the sender. Any response document is a new delivery and is subject to the same
 rules.
 
-## 10. Errors
+## 11. Errors
 
 | Error | Meaning |
 |---|---|
@@ -299,7 +324,7 @@ rules.
 
 Callers should classify wrapped errors with `errors.Is`.
 
-## 11. Security considerations
+## 12. Security considerations
 
 - **Web PKI:** control of an address and its TLS certificate controls its
   published keys. Applications must compare verified issuers with the
@@ -317,7 +342,7 @@ Callers should classify wrapped errors with `errors.Is`.
 - **Routing fields:** unsigned `from` and `to` values are hints only. Security
   decisions must use signed claims.
 
-## 12. References
+## 13. References
 
 - RFC 2119 and RFC 8174 — requirement keywords
 - RFC 6750 — Bearer token usage
