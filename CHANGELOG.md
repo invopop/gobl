@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `addons`: the German `de-xrechnung-v3` and `de-zugferd-v2` addons move out of core into [`github.com/invopop/gobl.de.xinvoice`](https://github.com/invopop/gobl.de.xinvoice) and join the approved external addon list. As with the other external addons, the module must be imported (`_ "github.com/invopop/gobl.de.xinvoice/addon/xrechnung"` and `_ "github.com/invopop/gobl.de.xinvoice/addon/zugferd"`) for documents declaring those keys to calculate and validate; `gobl.dev/bundle` does this for the services that use it. The German examples and the generated addon and rule data move with them.
 - `net`: spec §5.3 — a party re-countersigning an envelope MUST replace its own earlier countersignatures (supersession); removing another party's signatures remains forbidden. In steady state an endorsed identity carries exactly three signatures: the subject's, the Authority's, and the verifier's.
 
 ### Added

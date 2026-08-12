@@ -86,6 +86,23 @@ func init() {
 		},
 		Module: "github.com/invopop/gobl.mx.cfdi",
 	})
+	const deXInvoiceModule = "github.com/invopop/gobl.de.xinvoice"
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-xrechnung-v3",
+		Name: i18n.String{
+			i18n.EN: "German XRechnung 3.X",
+			i18n.DE: "XRechnung 3.X",
+		},
+		Module: deXInvoiceModule,
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "de-zugferd-v2",
+		Name: i18n.String{
+			i18n.EN: "German ZUGFeRD 2.X",
+			i18n.DE: "ZUGFeRD 2.X",
+		},
+		Module: deXInvoiceModule,
+	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "dk-oioubl-v2",
 		Name: i18n.String{
