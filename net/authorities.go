@@ -10,23 +10,13 @@ import (
 	"github.com/invopop/gobl/head"
 )
 
-// Authorities is the hardcoded set of GOBL Net Addresses considered
-// trusted registration authorities. A /who response is only
-// considered endorsed if it is signed by at least one of these.
-//
-// lookup.gobl.org is the network's default authority; operators may
-// add their own with RegisterAuthority or WithAuthorities.
+// Authorities is the default list of trusted registration authorities.
 var Authorities = []Address{
 	"lookup.gobl.org",
 }
 
-// SandboxAuthorities is the default trust list for sandbox
-// deployments: lookup.sandbox.gobl.org runs the same registration
-// service as the live authority but endorses test identities through
-// relaxed verification providers. The live and sandbox lists are
-// disjoint by construction — endorsements from a sandbox authority
-// MUST never be accepted in live contexts, and vice versa. Clients
-// opt in with WithSandbox.
+// SandboxAuthorities is the trust list selected by WithSandbox. Sandbox
+// endorsements must not be accepted in live contexts.
 var SandboxAuthorities = []Address{
 	"lookup.sandbox.gobl.org",
 }
@@ -37,16 +27,13 @@ var SandboxAuthorities = []Address{
 // Legitimate envelopes carry a handful of signatures.
 const maxEnvelopeSignatures = 32
 
-// RegisterAuthority adds an address to the global set of trusted
-// authority addresses.
+// RegisterAuthority appends addr to the default authority list.
 func RegisterAuthority(addr Address) {
 	Authorities = append(Authorities, addr)
 }
 
-// Endorsement describes a successful authority check on an envelope:
-// the trusted authority that countersigned it and, when that
-// countersignature names a verifier whose own countersignature also
-// verifies, the verifier's address.
+// Endorsement identifies the trusted authority behind an envelope and any
+// confirmed, independent identity verifier it named.
 type Endorsement struct {
 	// Authority is the trusted address whose countersignature
 	// endorsed the envelope: the subject is a registered identity.
@@ -66,35 +53,14 @@ func (e *Endorsement) Verified() bool {
 	return e != nil && e.Verifier != ""
 }
 
-// VerifyAuthority checks that the envelope carries at least one
-// signature whose signed `iss` resolves to an address in the
-// client's known authorities (the package-level Authorities slice
-// plus anything added via WithAuthorities). Each candidate signature
-// is cryptographically verified against the authority's own
-// published key, and a candidate whose signed exp claim has passed
-// is rejected: expired endorsements are not evidence.
-//
-// When the authority's countersignature carries a `verifier` claim,
-// the named address's own countersignature on the same envelope is
-// looked up and verified the same way; if it holds, the returned
-// endorsement carries the verifier's address. A verifier that names
-// itself needs no second signature — its own countersignature serves
-// as both attestations. A named verifier whose countersignature is
-// missing, invalid, or expired degrades the endorsement to
-// registered rather than failing it: the registration stands on its
-// own. Callers that require verification check Endorsement.Verified.
-//
-// Every candidate authority signature is considered: an endorsement
-// with a confirmed verifier is preferred over a registered-only one
-// regardless of signature order. If no signature is from a known
-// authority, returns ErrUnknownAuthority. A transient key-fetch
-// failure with no endorsement found returns ErrUnavailable. If a
-// verified authority signature has expired, returns
-// ErrSignatureExpired. If all candidates fail crypto verification,
-// returns ErrVerifyFailed wrapping the last error.
-//
-// Callers that want to accept self-signed (no-authority) envelopes
-// should skip this call rather than ignore its error.
+// VerifyAuthority verifies countersignatures from the client's trusted
+// authorities. It returns the strongest endorsement found, preferring one with
+// confirmed verifier evidence. The verifier must differ from the authority;
+// self-referential, missing, or invalid verifier evidence leaves a
+// registration-only endorsement valid. It returns ErrUnknownAuthority when no
+// trusted candidate exists, ErrSignatureExpired for expired authority evidence,
+// ErrUnavailable for transient key lookup failures, or ErrVerifyFailed when
+// candidates fail cryptographic verification.
 func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endorsement, error) {
 	// A malformed envelope may carry signatures without a header;
 	// reject rather than let header verification panic.
@@ -191,23 +157,19 @@ func (c *Client) VerifyAuthority(ctx context.Context, env *gobl.Envelope) (*Endo
 
 // confirmVerifier resolves the verifier claim on a verified authority
 // countersignature. It returns the verifier's address when the claim
-// names a valid bare address whose own countersignature on the
-// envelope verifies (or names the authority itself, whose signature
-// has already been checked), and "" when the claim is absent,
-// malformed, or its countersignature is definitively invalid — an
-// unconfirmed verifier degrades to registered, it does not
-// invalidate the endorsement. A transient failure to fetch the
-// verifier's key (ErrUnavailable) is returned as an error instead:
-// "could not check" must not silently downgrade a verified identity.
+// names a valid address, distinct from the authority, whose countersignature
+// verifies. An absent, self-referential, malformed, or invalid claim returns
+// "", degrading the endorsement to registered. A transient key-fetch failure
+// returns ErrUnavailable instead of silently downgrading the endorsement.
 func (c *Client) confirmVerifier(ctx context.Context, env *gobl.Envelope, authority Address, p *head.SigningPayload) (Address, error) {
 	verifier, err := ParseAddress(p.Verifier)
 	if err != nil {
 		return "", nil //nolint:nilerr // malformed claim degrades to registered
 	}
-	// An authority that performs verification itself names itself;
-	// the countersignature just checked serves as both attestations.
+	// Registration and identity verification must be performed by distinct
+	// participants. A self-referential claim provides no verifier evidence.
 	if verifier == authority {
-		return verifier, nil
+		return "", nil
 	}
 	if err := c.verifySignatureBy(ctx, env, verifier); err != nil {
 		if errors.Is(err, ErrUnavailable) {

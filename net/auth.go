@@ -21,12 +21,8 @@ const (
 	tokenClockSkew  = 30 * time.Second
 )
 
-// TokenClaims is the signed payload of a request token presented in
-// the Authorization header of who and inbox requests. Iss names the
-// party making the request — possibly a trusted intermediary distinct
-// from any document signer inside the request body — and Aud names
-// the destination address the token is bound to. Both are bare GOBL
-// Net addresses (FQDNs).
+// TokenClaims is the signed payload of a Who or Send request token. Iss is the
+// requester, which may differ from an envelope signer, and Aud is the target.
 type TokenClaims struct {
 	Iss Address `json:"iss"`
 	Aud Address `json:"aud"`
@@ -35,11 +31,8 @@ type TokenClaims struct {
 	JTI string  `json:"jti,omitempty"`
 }
 
-// NewToken mints a request token: a compact ES256 JWS asserting that
-// iss is making a request to aud. A ttl of zero uses the one minute
-// default; other values are clamped to the 30 second – 5 minute
-// window the protocol allows. A jti is stamped automatically for
-// audit correlation.
+// NewToken creates a compact ES256 request token from iss to aud. A zero TTL
+// uses one minute; other values are clamped to 30 seconds through five minutes.
 func NewToken(key *dsig.PrivateKey, iss, aud Address, ttl time.Duration) (string, error) {
 	iss, err := ParseAddress(string(iss))
 	if err != nil {
@@ -72,11 +65,8 @@ func NewToken(key *dsig.PrivateKey, iss, aud Address, ttl time.Duration) (string
 	return sig.String(), nil
 }
 
-// VerifyToken verifies a request token received on an inbound who or
-// inbox request. The token's signature is checked against the
-// issuer's published key, its aud claim must equal the given address,
-// and its freshness window must include the current time. The
-// verified requester address is returned.
+// VerifyToken verifies a request token's signature, audience, key validity, and
+// freshness, then returns the canonical requester address.
 func (c *Client) VerifyToken(ctx context.Context, token string, aud Address) (Address, error) {
 	if token == "" {
 		return "", fmt.Errorf("%w: token is empty", ErrTokenInvalid)
@@ -138,10 +128,8 @@ func (c *Client) VerifyToken(ctx context.Context, token string, aud Address) (Ad
 	return issuer, nil
 }
 
-// VerifyAuthorization verifies the value of an Authorization header,
-// stripping the "Bearer" scheme before passing the token to
-// VerifyToken. Servers call this with the raw header of an inbound
-// who or inbox request and their own address.
+// VerifyAuthorization verifies a Bearer Authorization header for aud and
+// returns the canonical requester address.
 func (c *Client) VerifyAuthorization(ctx context.Context, header string, aud Address) (Address, error) {
 	scheme, token, found := strings.Cut(strings.TrimSpace(header), " ")
 	if !found || !strings.EqualFold(scheme, "Bearer") {
