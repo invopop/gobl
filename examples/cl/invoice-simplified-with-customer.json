@@ -1,0 +1,66 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "CL",
+  "$tags": [
+    "simplified"
+  ],
+  "uuid": "9f3c8b72-1ab5-4d9e-9c3f-f4e2d3c4b5a6",
+  "code": "B001-00000789",
+  "issue_date": "2025-01-20",
+  "currency": "CLP",
+  "supplier": {
+    "name": "Tienda de Electrónica Tech Store",
+    "tax_id": {
+      "country": "CL",
+      "code": "713254975"
+    },
+    "addresses": [
+      {
+        "street": "Av. Apoquindo 3500",
+        "locality": "Las Condes",
+        "region": "Región Metropolitana",
+        "code": "7550000",
+        "country": "CL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Juan Pérez",
+    "tax_id": {
+      "country": "CL",
+      "code": "77668208K"
+    }
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Notebook HP Pavilion 15",
+        "price": "599000"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general",
+          "percent": "19%"
+        }
+      ]
+    },
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Mouse inalámbrico",
+        "price": "15000"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general",
+          "percent": "19%"
+        }
+      ]
+    }
+  ]
+}
