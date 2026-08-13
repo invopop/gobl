@@ -1,0 +1,996 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "ar-arca-v4",
+  "name": {
+    "en": "Argentina ARCA V4"
+  },
+  "description": {
+    "en": "Support for the Argentina ARCA v4 standard for electronic invoicing."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Argentina ARCA V4"
+      },
+      "url": "https://www.afip.gob.ar/ws/documentacion/manuales/manual-desarrollador-ARCA-COMPG-v4-0.pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "ar-arca-doc-type",
+      "name": {
+        "en": "Argentina ARCA Document Type",
+        "es": "Tipo de comprobante Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code used to identify the type of document being issued.\n\nThis can always be set directly. If not provided, GOBL will automatically determine it during\nnormalization based on the following rules:\n\nType C (Simplified Tax Scheme / Monotributo supplier): If the invoice has the\n`monotax` tag set, the document type will be `11` (Invoice C), `13` (Credit Note C),\nor `12` (Debit Note C).\n\nType A (B2B with VAT-registered customers): If the customer's `ar-arca-vat-status` extension\nis one of `1` (Registered Company), `6` (Monotributo Responsible), `13` (Social Monotributista),\nor `16` (Promoted Independent Worker), the document type will be `1` (Invoice A), `3` (Credit\nNote A), or `2` (Debit Note A).\n\nType B (B2C or other scenarios): For all other cases (final consumers, foreign customers,\nexempt entities, or when no customer is provided), the document type will be `6` (Invoice B),\n`8` (Credit Note B), or `7` (Debit Note B).\n\nFor other document types the value must be set manually."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Invoice A",
+            "es": "Factura A"
+          },
+          "desc": {
+            "en": "Invoice issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Factura emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Debit Note A",
+            "es": "Nota de Débito A"
+          },
+          "desc": {
+            "en": "Debit note issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Nota de débito emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Credit Note A",
+            "es": "Nota de Crédito A"
+          },
+          "desc": {
+            "en": "Credit note issued by a VAT registered company to another VAT registered company or a monotributista",
+            "es": "Nota de crédito emitida por un responsable inscripto a otro responsable inscripto o a un monotributista"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Receipt A",
+            "es": "Recibos A"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Cash Sales Note A",
+            "es": "Notas de Venta al contado A"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Invoice B",
+            "es": "Factura B"
+          },
+          "desc": {
+            "en": "Invoice issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Factura emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Debit Note B",
+            "es": "Nota de Débito B"
+          },
+          "desc": {
+            "en": "Debit note issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Nota de débito emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Credit Note B",
+            "es": "Nota de Crédito B"
+          },
+          "desc": {
+            "en": "Credit note issued by a registered taxpayer in the value added tax by operations performed with final consumers, exempt subjects in such tax, subjects not reached, subjects not categorized and with tourists from abroad.",
+            "es": "Nota de crédito emitida por responsables inscriptos en el impuesto al valor agregado por operaciones realizadas con consumidores finales, sujetos exentos en dicho impuesto, sujetos no alcanzados, sujetos no categorizados y con turistas del extranjero."
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Receipt B",
+            "es": "Recibos B"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Cash Sales Note B",
+            "es": "Notas de Venta al contado B"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Invoice C",
+            "es": "Factura C"
+          },
+          "desc": {
+            "en": "Invoice issued by a monotributista.",
+            "es": "Factura emitida por un monotributista."
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Debit Note C",
+            "es": "Nota de Débito C"
+          },
+          "desc": {
+            "en": "Debit note issued by a monotributista",
+            "es": "Nota de débito emitida por un monotributista"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Credit Note C",
+            "es": "Nota de Crédito C"
+          },
+          "desc": {
+            "en": "Credit note issued by a monotributista",
+            "es": "Nota de crédito emitida por un monotributista"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Receipt C",
+            "es": "Recibo C"
+          }
+        },
+        {
+          "code": "34",
+          "name": {
+            "en": "Invoices A per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. A del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "35",
+          "name": {
+            "en": "Vouchers B per Annex I, Section A, subsection f), R.G. No. 1415",
+            "es": "Cbtes. B del Anexo I, Apartado A, inc. f), R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "39",
+          "name": {
+            "en": "Other Vouchers A compliant with R.G. No. 1415",
+            "es": "Otros comprobantes A que cumplan con R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "40",
+          "name": {
+            "en": "Other Vouchers B compliant with R.G. No. 1415",
+            "es": "Otros comprobantes B que cumplan con R.G. Nro. 1415"
+          }
+        },
+        {
+          "code": "49",
+          "name": {
+            "en": "Used Goods Purchase Invoice to Final Consumer",
+            "es": "Comprobante de Compra de Bienes Usados a Consumidor Final"
+          }
+        },
+        {
+          "code": "51",
+          "name": {
+            "en": "Invoice A with Legend 'Subject to Withholding'",
+            "es": "Factura A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "52",
+          "name": {
+            "en": "Debit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Débito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "53",
+          "name": {
+            "en": "Credit Note A with Legend 'Subject to Withholding'",
+            "es": "Nota de Crédito A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "54",
+          "name": {
+            "en": "Receipt A with Legend 'Subject to Withholding'",
+            "es": "Recibo A con Leyenda 'Operación Sujeta a Retención'"
+          }
+        },
+        {
+          "code": "60",
+          "name": {
+            "en": "Sales Account and Product Settlement A",
+            "es": "Cta de Vta y Liquido prod. A"
+          }
+        },
+        {
+          "code": "61",
+          "name": {
+            "en": "Sales Account and Product Settlement B",
+            "es": "Cta de Vta y Liquido prod. B"
+          }
+        },
+        {
+          "code": "63",
+          "name": {
+            "en": "Settlement A",
+            "es": "Liquidacion A"
+          }
+        },
+        {
+          "code": "64",
+          "name": {
+            "en": "Settlement B",
+            "es": "Liquidacion B"
+          }
+        },
+        {
+          "code": "201",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) A",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "202",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) A",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "203",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) A",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) A"
+          }
+        },
+        {
+          "code": "206",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) B",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "207",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) B",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "208",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) B",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) B"
+          }
+        },
+        {
+          "code": "211",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Invoice (FCE) C",
+            "es": "Factura de Crédito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "212",
+          "name": {
+            "en": "MiPyMEs Electronic Debit Note (FCE) C",
+            "es": "Nota de Débito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "213",
+          "name": {
+            "en": "MiPyMEs Electronic Credit Note (FCE) C",
+            "es": "Nota de Crédito electrónica MiPyMEs (FCE) C"
+          }
+        },
+        {
+          "code": "195",
+          "name": {
+            "en": "Invoice T",
+            "es": "Factura T"
+          },
+          "desc": {
+            "en": "Tourism invoice issued under WSCT (Web Service Comprobante T) for accommodation and travel services to non-resident tourists.",
+            "es": "Factura de turismo emitida bajo el WSCT para servicios de alojamiento y viajes a turistas no residentes."
+          }
+        },
+        {
+          "code": "196",
+          "name": {
+            "en": "Debit Note T",
+            "es": "Nota de Débito T"
+          },
+          "desc": {
+            "en": "Tourism debit note issued under WSCT.",
+            "es": "Nota de débito de turismo emitida bajo el WSCT."
+          }
+        },
+        {
+          "code": "197",
+          "name": {
+            "en": "Credit Note T",
+            "es": "Nota de Crédito T"
+          },
+          "desc": {
+            "en": "Tourism credit note issued under WSCT.",
+            "es": "Nota de crédito de turismo emitida bajo el WSCT."
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-concept",
+      "name": {
+        "en": "Argentina ARCA Concept (Goods, services, or both)",
+        "es": "Concepto Argentina ARCA (Productos, servicios, o ambos)"
+      },
+      "desc": {
+        "en": "Code used to identify the invoice concept, indicating whether the invoice covers\ngoods, services, or both.\n\nThis extension is automatically determined by GOBL based on the `key` field of each\nline item:\n\n- `1` (Products): All line items have `key` set to `goods`.\n- `2` (Services): All line items have `key` empty, unset, or set to any value other than `goods`.\n- `3` (Products and Services): The invoice contains a mix of both goods and services.\n\nWhen the concept is `2` (Services) or `3` (Products and Services), the invoice must\ninclude an ordering period and payment terms with due dates."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Goods",
+            "es": "Productos"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Services",
+            "es": "Servicios"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Goods and services",
+            "es": "Productos y servicios"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tax-type",
+      "name": {
+        "en": "Argentina ARCA Tax Type",
+        "es": "Tipo de Tributo Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code used to identify the type of tax applied as a charge. This is used for taxes other than\nVAT that need to be included in the invoice (national taxes, provincial taxes, withholdings, etc.).\n\nThese taxes must be added as invoice charges (not in line items) with the charge `key` set\nto `tax`, a `percent` value (required, amounts are not accepted), and this extension to\nspecify the tax type.\n\nExample - Tax applied to invoice total:\n\n```json\n\"charges\": [\n\t{\n\t\t\"key\": \"tax\",\n\t\t\"percent\": \"3%\",\n\t\t\"ext\": {\n\t\t\t\"ar-arca-tax-type\": \"1\"\n\t\t}\n\t}\n]\n```\n\nExample - Tax applied to a specific base:\n\n```json\n\"charges\": [\n\t{\n\t\t\"key\": \"tax\",\n\t\t\"percent\": \"3%\",\n\t\t\"base\": \"1000.00\",\n\t\t\"ext\": {\n\t\t\t\"ar-arca-tax-type\": \"1\"\n\t\t}\n\t}\n]\n```\n\nValidation rules:\n\n- When a charge has `key: tax`, this extension is required.\n- The `percent` field is required when this extension is present.\n- When using code `99` (Other), the charge `reason` field is required to describe the tax."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "National Taxes",
+            "es": "Impuestos Nacionales"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Provincial Taxes",
+            "es": "Impuestos Provinciales"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Municipal Taxes",
+            "es": "Impuestos Municipales"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Internal Taxes",
+            "es": "Impuestos Internos"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Gross Income Tax",
+            "es": "IIBB"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "VAT Prepayment",
+            "es": "Percepción de IVA"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Gross Income Tax Prepayment",
+            "es": "Percepción de IIBB"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Municipal Taxes Prepayment",
+            "es": "Percepciones por Impuestos Municipales"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Other Prepayments",
+            "es": "Otras Percepciones"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "VAT Not Categorized Prepayment",
+            "es": "Percepción de IVA a no Categorizado"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Other",
+            "es": "Otras"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-vat-rate",
+      "name": {
+        "en": "Argentina ARCA VAT Rate",
+        "es": "Tasa de IVA Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code used to identify the VAT rate applied to line items.\n\nThis extension is automatically determined by GOBL based on the tax rate key defined in\nthe Argentine tax regime:\n\n- `zero` rate (0%) → code `3`\n- `reduced` rate (10.5%) → code `4`\n- `standard` rate (21%) → code `5`\n- `increased` rate (27%) → code `6`\n\nFor the special reduced rates of 5% and 2.5%, the extension must be set manually on the\nline tax as these are not covered by the standard rate keys:\n\n- 5% → code `8`\n- 2.5% → code `9`"
+      },
+      "values": [
+        {
+          "code": "3",
+          "name": {
+            "en": "0%",
+            "es": "0%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "10.5%",
+            "es": "10.5%"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "21%",
+            "es": "21%"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "27%",
+            "es": "27%"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "5%",
+            "es": "5%"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "2.5%",
+            "es": "2.5%"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-identity-type",
+      "name": {
+        "en": "Argentina ARCA Customer Identity Type",
+        "es": "Código de Documento identificatorio del comprador"
+      },
+      "desc": {
+        "en": "Code used to identify the type of identity document in the customer's `identities` field.\n\nThis extension is typically only needed for B2C operations where the customer needs to\nprovide an identification number but does not have a tax ID. Common examples include\nDNI (code `96`), passport, or provincial identity cards.\n\nWhen the customer has a CUIT, CUIL, or a valid foreign tax identification number,\nthese should be included in the `tax_id` field instead, and this extension is not required.\n\nExample usage for a final consumer with DNI:\n\n```json\n\"customer\": {\n\t\"name\": \"John Doe\",\n\t\"identities\": [\n\t\t{\n\t\t\t\"code\": \"12345678\",\n\t\t\t\"ext\": {\n\t\t\t\t\"ar-arca-identity-type\": \"96\"\n\t\t\t}\n\t\t}\n\t],\n\t\"ext\": {\n\t\t\"ar-arca-vat-status\": \"5\"\n\t}\n}\n```"
+      },
+      "values": [
+        {
+          "code": "00",
+          "name": {
+            "en": "CI Capital Federal",
+            "es": "CI Capital Federal"
+          }
+        },
+        {
+          "code": "01",
+          "name": {
+            "en": "CI Buenos Aires",
+            "es": "CI Buenos Aires"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "CI Catamarca",
+            "es": "CI Catamarca"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "CI Córdoba",
+            "es": "CI Córdoba"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "CI Corrientes",
+            "es": "CI Corrientes"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "CI Entre Ríos",
+            "es": "CI Entre Ríos"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "CI Jujuy",
+            "es": "CI Jujuy"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "CI Mendoza",
+            "es": "CI Mendoza"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "CI La Rioja",
+            "es": "CI La Rioja"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "CI Salta",
+            "es": "CI Salta"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "CI San Juan",
+            "es": "CI San Juan"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "CI San Luis",
+            "es": "CI San Luis"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "CI Santa Fe",
+            "es": "CI Santa Fe"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "CI Santiago del Estero",
+            "es": "CI Santiago del Estero"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "en": "CI Tucumán",
+            "es": "CI Tucumán"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "CI Chaco",
+            "es": "CI Chaco"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "en": "CI Chubut",
+            "es": "CI Chubut"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "en": "CI Formosa",
+            "es": "CI Formosa"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "en": "CI Misiones",
+            "es": "CI Misiones"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "en": "CI Neuquén",
+            "es": "CI Neuquén"
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "en": "CI La Pampa",
+            "es": "CI La Pampa"
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "en": "CI Río Negro",
+            "es": "CI Río Negro"
+          }
+        },
+        {
+          "code": "23",
+          "name": {
+            "en": "CI Santa Cruz",
+            "es": "CI Santa Cruz"
+          }
+        },
+        {
+          "code": "24",
+          "name": {
+            "en": "CI Tierra del Fuego",
+            "es": "CI Tierra del Fuego"
+          }
+        },
+        {
+          "code": "80",
+          "name": {
+            "en": "CUIT (Unique Tax Identification Number)",
+            "es": "CUIT (Clave Única de Identificación Tributaria)"
+          }
+        },
+        {
+          "code": "86",
+          "name": {
+            "en": "CUIL (Unique Labor Identification Number)",
+            "es": "CUIL (Clave Única de Identificación Laboral)"
+          }
+        },
+        {
+          "code": "87",
+          "name": {
+            "en": "CDI",
+            "es": "CDI"
+          }
+        },
+        {
+          "code": "89",
+          "name": {
+            "en": "LE",
+            "es": "LE"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "LC",
+            "es": "LC"
+          }
+        },
+        {
+          "code": "91",
+          "name": {
+            "en": "Foreign CI",
+            "es": "CI extranjera"
+          }
+        },
+        {
+          "code": "92",
+          "name": {
+            "en": "In Process",
+            "es": "en trámite"
+          }
+        },
+        {
+          "code": "93",
+          "name": {
+            "en": "Birth Certificate",
+            "es": "Acta Nacimiento"
+          }
+        },
+        {
+          "code": "94",
+          "name": {
+            "en": "Passport",
+            "es": "Pasaporte"
+          }
+        },
+        {
+          "code": "95",
+          "name": {
+            "en": "CI Bs. As. RNP",
+            "es": "CI Bs. As. RNP"
+          }
+        },
+        {
+          "code": "96",
+          "name": {
+            "en": "DNI",
+            "es": "DNI"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Final Consumer",
+            "es": "Consumidor Final"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-vat-status",
+      "name": {
+        "en": "Customer VAT Status",
+        "es": "Condición frente al IVA del receptor"
+      },
+      "desc": {
+        "en": "Code used to identify the VAT status of the customer. This extension must be included\nin the customer's `ext` field when the customer is required.\n\nGOBL will automatically normalize this value based on the customer's tax identification:\n\nCustomer without tax ID (final consumers): Defaults to `5` (Final Consumer). Also\naccepts `4` (Exempt Subject), `7` (Uncategorized), `10` (VAT Exempt Law 19640),\nor `15` (VAT Not Applicable).\n\nCustomer with foreign tax ID: Defaults to `9` (Foreign Customer). Also accepts\n`8` (Foreign Supplier).\n\nCustomer with Argentine tax ID (CUIT/CUIL): Defaults to `1` (Registered VAT Company).\nAlso accepts `6` (Monotributo), `13` (Social Monotributista), `16` (Promoted Independent\nWorker), `4` (Exempt Subject), `7` (Uncategorized), `10` (VAT Exempt Law 19640),\nor `15` (VAT Not Applicable).\n\nThe VAT status is validated against the document type:\n\n- Type A documents (`1`, `2`, `3`, etc.): Require VAT status `1`, `6`, `13`, or `16`.\n- Type B documents (`6`, `7`, `8`, etc.): Cannot have VAT status `1`, `6`, `13`, or `16`.\n- Document type `49` (Used Goods Purchase Invoice): Requires VAT status `5` (Final Consumer)."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Registered VAT Company",
+            "es": "IVA Responsable Inscripto"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "VAT Exempt Subject",
+            "es": "IVA Sujeto Exento"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Final Consumer",
+            "es": "Consumidor Final"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Monotributo Responsible",
+            "es": "Responsable Monotributo"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "en": "Uncategorized Subject",
+            "es": "Sujeto No Categorizado"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "en": "Foreign Supplier",
+            "es": "Proveedor del Exterior"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Foreign Customer",
+            "es": "Cliente del Exterior"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "VAT Exempt - Law N° 19.640",
+            "es": "IVA Liberado – Ley N° 19.640"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Social Monotributista",
+            "es": "Monotributista Social"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "VAT Not Applicable",
+            "es": "IVA No Alcanzado"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Promoted Independent Worker Monotributista",
+            "es": "Monotributo Trabajador Independiente Promovido"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tourism-type",
+      "name": {
+        "en": "Argentina ARCA Tourism Issuer-Receiver Relationship",
+        "es": "Código de relación emisor-receptor para turismo"
+      },
+      "desc": {
+        "en": "Code that identifies the relationship between the issuer and the receiver for tourism\ninvoices (Comprobante T). Required on the invoice `tax.ext` when the document type is\n`195` (Invoice T), `196` (Debit Note T), or `197` (Credit Note T).\n\nCorresponds to `codigoRelacionEmisorReceptor` in the WSCT web service."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Direct Accommodation to Non-Resident Tourist",
+            "es": "Alojamiento Directo a Turista No Residente"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Accommodation to Resident Travel Agency",
+            "es": "Alojamiento a Agencia de Viaje Residente"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Accommodation to Non-Resident Travel Agency",
+            "es": "Alojamiento a Agencia de Viaje No Residente"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Resident Travel Agency to Non-Resident Travel Agency",
+            "es": "Agencia de Viaje Residente a Agencia de Viaje No Residente"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Resident Travel Agency to Non-Resident Tourist",
+            "es": "Agencia de Viaje Residente a Turista No Residente"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Resident Travel Agency to Resident Travel Agency",
+            "es": "Agencia de Viaje Residente a Agencia de Viaje Residente"
+          }
+        }
+      ]
+    },
+    {
+      "key": "ar-arca-tourism-item",
+      "name": {
+        "en": "Argentina ARCA Tourism Item Code",
+        "es": "Código de ítem de turismo Argentina ARCA"
+      },
+      "desc": {
+        "en": "Code that identifies the type of tourism item on a line. Used on line item `tax.ext`\nfor tourism invoices (Comprobante T, doc types 195/196/197).\n\nCorresponds to `codigoTurismo` in the WSCT web service. Additional codes may be\navailable via the `consultarCodigosItemTurismo` operation of the WSCT service."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Hotel without Breakfast",
+            "es": "Hotel sin desayuno"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Hotel with Breakfast",
+            "es": "Hotel con desayuno"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Surplus",
+            "es": "Excedente"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "monotax",
+          "name": {
+            "en": "Monotax",
+            "es": "Monotributo"
+          },
+          "desc": {
+            "en": "Invoice C: Supplier is under the Monotributo regime (simplified unified tax for small taxpayers).",
+            "es": "Factura C: El proveedor está bajo el régimen de Monotributo."
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "extensions": [
+        "ar-arca-doc-type"
+      ]
+    }
+  ]
+}

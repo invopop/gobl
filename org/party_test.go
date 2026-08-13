@@ -1,0 +1,229 @@
+package org_test
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/org"
+	_ "github.com/invopop/gobl/regimes"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+)
+
+func TestPartyNormalize(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var p *org.Party
+		assert.NotPanics(t, func() {
+			norm.Normalize(p)
+		})
+	})
+	t.Run("for known regime", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "423 429 12.G",
+			},
+		}
+		norm.Normalize(&party)
+		assert.Empty(t, party.GetRegime())
+		assert.Equal(t, "ES", party.TaxID.Country.String())
+		assert.Equal(t, "ES42342912G", party.TaxID.String())
+	})
+
+	t.Run("for known regime with Calculate", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "423 429 12.G",
+			},
+		}
+		assert.NoError(t, party.Calculate())
+		assert.Empty(t, party.GetRegime())
+		assert.Equal(t, "ES", party.TaxID.Country.String())
+		assert.Equal(t, "ES42342912G", party.TaxID.String())
+	})
+
+	t.Run("for unknown regime", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ZZ", // no country has ZZ!
+				Code:    "423 429 12.G",
+			},
+		}
+		norm.Normalize(&party) // unknown entry should not cause problem
+		assert.Equal(t, "42342912G", party.TaxID.Code.String())
+	})
+
+	t.Run("for specific regime", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "123 456 78901",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		assert.Equal(t, "DE", party.GetRegime().String())
+		assert.Equal(t, "123/456/78901", party.Identities[0].Code.String())
+	})
+
+	t.Run("with telephone", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			Telephones: []*org.Telephone{
+				{
+					Number: " +49 123 4567890 ",
+				},
+			},
+		}
+		norm.Normalize(&party)
+		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
+	})
+
+	t.Run("for regime without normalizer", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("US"),
+			Name:   "Invopop",
+		}
+		assert.NotPanics(t, func() {
+			assert.NoError(t, party.Calculate())
+		})
+	})
+}
+
+func TestPartyAddressNill(t *testing.T) {
+	party := org.Party{
+		Addresses: []*org.Address{nil},
+	}
+	norm.Normalize(&party)
+	assert.NoError(t, rules.Validate(&party))
+}
+
+func TestPartyValidation(t *testing.T) {
+	t.Run("with regime", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "123 456 78901",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		assert.NoError(t, rules.Validate(&party))
+		assert.Equal(t, "DE", party.GetRegime().String())
+	})
+	t.Run("with regime and bad code", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "1231312423432422",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		err := rules.Validate(&party)
+		assert.ErrorContains(t, err, "German tax number code must be in valid format")
+	})
+}
+
+func TestPartyHasTaxIDCode(t *testing.T) {
+	test := org.PartyHasTaxIDCode()
+
+	t.Run("with tax ID code", func(t *testing.T) {
+		p := &org.Party{TaxID: &tax.Identity{Country: "DK", Code: "12345674"}}
+		assert.True(t, test.Check(p))
+		assert.True(t, test.Check(*p))
+	})
+
+	t.Run("with empty tax ID code", func(t *testing.T) {
+		p := &org.Party{TaxID: &tax.Identity{Country: "DK"}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("without tax ID", func(t *testing.T) {
+		assert.False(t, test.Check(&org.Party{}))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("other type", func(t *testing.T) {
+		assert.False(t, test.Check("foo"))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has tax ID code", test.String())
+	})
+}
+
+func TestPartyHasIdentityTypeIn(t *testing.T) {
+	test := org.PartyHasIdentityTypeIn("CVR", "CPR")
+
+	t.Run("with matching type", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Type: "CPR", Code: "1111111118"}}}
+		assert.True(t, test.Check(p))
+		assert.True(t, test.Check(*p))
+	})
+
+	t.Run("with other type", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Type: "FOO", Code: "123"}}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("without identities", func(t *testing.T) {
+		assert.False(t, test.Check(&org.Party{}))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("other type", func(t *testing.T) {
+		assert.False(t, test.Check("foo"))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has a type in [CVR, CPR]", test.String())
+	})
+}
+
+func TestPartyHasIdentityKeyIn(t *testing.T) {
+	test := org.PartyHasIdentityKeyIn("de-tax-number")
+
+	t.Run("with matching key", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Key: "de-tax-number", Code: "123"}}}
+		assert.True(t, test.Check(p))
+	})
+
+	t.Run("with other key", func(t *testing.T) {
+		p := &org.Party{Identities: []*org.Identity{{Key: "other", Code: "123"}}}
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("nil party", func(t *testing.T) {
+		var p *org.Party
+		assert.False(t, test.Check(p))
+	})
+
+	t.Run("description", func(t *testing.T) {
+		assert.Equal(t, "has a key in [de-tax-number]", test.String())
+	})
+}

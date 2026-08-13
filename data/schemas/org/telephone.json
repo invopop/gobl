@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/telephone",
+  "$ref": "#/$defs/org.Telephone",
+  "$defs": {
+    "org.Telephone": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for this number."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "Free-text string that represents the telephone number."
+        }
+      },
+      "type": "object",
+      "required": [
+        "num"
+      ],
+      "description": "Telephone describes what is expected for a telephone number."
+    }
+  }
+}

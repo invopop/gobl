@@ -1,0 +1,101 @@
+// Package pt provides models for dealing with the Portuguese tax regime.
+package pt
+
+import (
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+)
+
+// CountryCode is the tax country code for Portugal.
+const CountryCode = "PT"
+
+func init() {
+	tax.RegisterRegimeDef(New())
+	rules.Register("pt", rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		taxComboRules(),
+		taxIdentityRules(),
+	)
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(migrateInvoiceRates), // *bill.Invoice
+		norm.For(normalizeTaxCombo),   // *tax.Combo
+	)
+}
+
+// Custom keys used typically in meta information
+const (
+	KeyATTaxCountryRegion cbc.Key = "at-tax-country-region"
+	KeyATTaxCode          cbc.Key = "at-tax-code"
+	KeyATTaxExemptionCode cbc.Key = "at-tax-exemption-code"
+	KeyATInvoiceType      cbc.Key = "at-invoice-type"
+)
+
+// AT official codes to include in stamps.
+const (
+	StampProviderATATCUD     cbc.Key = "at-atcud"
+	StampProviderATQR        cbc.Key = "at-qr"
+	StampProviderATHash      cbc.Key = "at-hash"
+	StampProviderATHashFull  cbc.Key = "at-hash-full"
+	StampProviderATAppID     cbc.Key = "at-app-id"
+	StampProviderATTimestamp cbc.Key = "at-ts"
+	StampProviderATDocCode   cbc.Key = "at-doc-code"
+)
+
+// New instantiates a new Portugal regime for the given zone.
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
+		Country:   CountryCode,
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
+		Name: i18n.String{
+			i18n.EN: "Portugal",
+			i18n.PT: "Portugal",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Portugal's tax system is administered by the Autoridade Tributária e Aduaneira
+				(AT). As an EU member state, Portugal follows the EU VAT Directive with
+				locally adapted rates that vary by region.
+
+				IVA (Imposto sobre o Valor Acrescentado) applies at standard, intermediate,
+				and reduced rates on the mainland. The autonomous regions of Açores and
+				Madeira apply their own reduced rates.
+
+				Businesses are identified by their NIF (Número de Identificação Fiscal), a
+				9-digit number. The Portuguese VAT number uses the format PT followed by the
+				NIF.
+
+				Portugal requires all invoicing software to be certified by the AT and
+				invoices must include a unique document identifier (ATCUD) and a hash chain
+				linking sequential documents. The SAF-T (Standard Audit File for Tax Purposes)
+				format is used for tax reporting. Both credit notes and debit notes are
+				supported for invoice corrections.
+			`),
+		},
+		TimeZone:   "Europe/Lisbon",
+		Extensions: extensionKeys,
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				},
+			},
+		},
+		Categories: taxCategories,
+	}
+}

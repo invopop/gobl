@@ -1,24 +1,97 @@
 package gobl_test
 
 import (
-	"io/ioutil"
+	"encoding/json"
+	"fmt"
+	"os"
 	"testing"
 
-	"github.com/ghodss/yaml"
+	"github.com/invopop/yaml"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/co/dian"
+	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/uuid"
 )
 
 var testKey = dsig.NewES256Key()
 
+const testMessageContent = "This is test content."
+
+func ExampleNewEnvelope_complete() {
+	// Prepare a new Envelope with a region
+	env := gobl.NewEnvelope()
+	env.Head.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
+
+	// Prepare a payload and insert
+	msg := &note.Message{
+		Content: "sample message content",
+	}
+	msg.SetUUID(uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002"))
+	if err := env.Insert(msg); err != nil {
+		panic(err.Error())
+	}
+	if err := env.Validate(); err != nil {
+		panic(err.Error())
+	}
+
+	data, err := json.MarshalIndent(env, "", "\t")
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("%v\n", string(data))
+	// Output:
+	// {
+	// 	"$schema": "https://gobl.org/draft-0/envelope",
+	// 	"head": {
+	// 		"uuid": "871c1e6a-8b5c-11ec-af5f-3e7e00ce5635",
+	// 		"dig": {
+	// 			"alg": "sha256",
+	// 			"val": "6854b999501883c478f0dbcb929ea1cb33e0e738fd0e74ac8194d1e5b7991980"
+	// 		}
+	// 	},
+	// 	"doc": {
+	// 		"$schema": "https://gobl.org/draft-0/note/message",
+	//		"uuid": "e8c70516-0098-11ef-92c8-0242ac120002",
+	// 		"content": "sample message content"
+	// 	}
+	// }
+}
+
+func TestEnvelop(t *testing.T) {
+	t.Run("valid message", func(t *testing.T) {
+		msg := &note.Message{
+			Content: testMessageContent,
+		}
+		msg.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
+		e, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		if assert.NotNil(t, e) {
+			assert.Equal(t, "cf75a55f8f00e57201685aebfa5765c908c1d22520858024610bbc2f6a494824", e.Head.Digest.Value)
+		}
+	})
+	t.Run("invalid content", func(t *testing.T) {
+		e1 := gobl.NewEnvelope()
+		e2, err := gobl.Envelop(e1)
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "no-document")
+		assert.Nil(t, e2, "should not return envelope")
+	})
+}
+
 func TestEnvelopeDocument(t *testing.T) {
-	m := new(note.Message)
-	m.Content = "This is test content."
+	m := testNoteExample()
 
 	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
@@ -33,7 +106,7 @@ func TestEnvelopeDocument(t *testing.T) {
 
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, "c6a5148ce90f70c24ebfe6de1abed0d0aafde4323a9bcf47cc4a5d544af9ea19", e.Head.Digest.Value, "digest should be the same")
+		assert.Equal(t, "54eb5ac433e82575b554dc21a8e53b291479dab188dffaabc97e8141d1cdfc65", e.Head.Digest.Value, "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -53,15 +126,69 @@ func TestEnvelopeExtract(t *testing.T) {
 	assert.Nil(t, obj)
 }
 
+func TestEnvelopeInsert(t *testing.T) {
+	m := testNoteExample()
+
+	t.Run("missing head", func(t *testing.T) {
+		e := new(gobl.Envelope)
+		err := e.Insert(m)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "missing head")
+	})
+
+	t.Run("no document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		err := e.Insert(nil)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "no-document")
+	})
+}
+
+func TestEnvelopeCalculate(t *testing.T) {
+	m := testNoteExample()
+
+	t.Run("basics", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		err := e.Calculate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("handle stamps", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		e.Head.AddStamp(&head.Stamp{Provider: cbc.Key("test"), Value: "test"})
+		err := e.Calculate()
+		assert.NoError(t, err)
+		require.NoError(t, e.Sign(testKey))
+		assert.NotEmpty(t, e.Head.Stamps)
+
+		// remove signatures
+		e.Signatures = nil
+		err = e.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "envelope header cannot have stamps when not signed")
+		err = e.Calculate()
+		assert.NoError(t, err)
+		assert.Len(t, e.Head.Stamps, 1)
+		/*
+			// Removed for now as we prefer to just validate.
+			assert.Empty(t, e.Head.Stamps)
+			err = e.Validate()
+			assert.NoError(t, err)
+		*/
+	})
+}
+
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
-	data, err := ioutil.ReadFile("./samples/envelope-invoice-es.yaml")
+	data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
 
-	err = e.Complete()
+	err = e.Calculate()
 	require.NoError(t, err)
 
 	inv, ok := e.Extract().(*bill.Invoice)
@@ -69,6 +196,53 @@ func TestEnvelopeComplete(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "1210.00", inv.Totals.Payable.String())
+}
+
+func TestEnvelopeCompleteErrors(t *testing.T) {
+	t.Run("missing document", func(t *testing.T) {
+		e := new(gobl.Envelope)
+		err := e.Calculate()
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+	})
+	t.Run("missing document payload", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		err := e.Calculate()
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+	})
+}
+
+func TestEnvelopeHeaderIgnore(t *testing.T) {
+	// An empty note fails with a single content-required fault.
+	code := rules.Validate(&note.Message{}).First().Code()
+	require.Equal(t, rules.Code("GOBL-NOTE-MESSAGE-01"), code)
+
+	build := func() *gobl.Envelope {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(&note.Message{}))
+		return e
+	}
+
+	t.Run("baseline fails without ignore", func(t *testing.T) {
+		err := build().Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
+
+	t.Run("header ignore suppresses the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{code}
+		assert.NoError(t, e.Validate())
+	})
+
+	t.Run("unrelated ignore leaves the fault", func(t *testing.T) {
+		e := build()
+		e.Head.Ignore = []rules.Code{"GOBL-SOMETHING-ELSE-01"}
+		err := e.Validate()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "message content is required")
+	})
 }
 
 func TestEnvelopeValidate(t *testing.T) {
@@ -83,35 +257,24 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents; [GOBL-ENVELOPE-01] ($.$schema) envelope schema is required; [GOBL-ENVELOPE-02] ($.head) envelope header is required; [GOBL-ENVELOPE-03] ($.doc) envelope doc is required",
 		},
 		{
 			name: "missing message body, draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Head.Draft = true
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "doc: (content: cannot be blank.).",
+			want: "validation: [GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required",
 		},
 		{
 			name: "missing sig, draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Head.Draft = true
 				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				return env
 			},
-		},
-		{
-			name: "missing sig, not draft",
-			env: func() *gobl.Envelope {
-				env := gobl.NewEnvelope()
-				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
-				return env
-			},
-			want: "sigs: cannot be blank.",
 		},
 		{
 			name: "with sig, not draft",
@@ -132,7 +295,39 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "digest mismatch",
+			want: "validation: [GOBL-ENVELOPE-11] envelope digest does not match document contents",
+		},
+		{
+			name: "passthrough doc",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				raw := []byte(`{"$schema":"https://example.com/unknown","foo":"bar"}`)
+				doc := new(schema.Object)
+				require.NoError(t, doc.UnmarshalJSON(raw))
+				env.Document = doc
+				dig, err := env.Digest()
+				require.NoError(t, err)
+				env.Head.Digest = dig
+				return env
+			},
+			want: "validation: [GOBL-ENVELOPE-04] ($.doc) envelope doc must have a known schema",
+		},
+		{
+			name: "with more complex document and rules",
+			env: func() *gobl.Envelope {
+				data, err := os.ReadFile("./examples/fr/invoice-fr-fr.yaml")
+				require.NoError(t, err)
+				inv := new(bill.Invoice)
+				err = yaml.Unmarshal(data, inv)
+				require.NoError(t, err)
+				inv.Supplier.TaxID.Code = ""
+
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(inv))
+
+				return env
+			},
+			want: "validation: [GOBL-FR-BILL-INVOICE-01] ($.doc.supplier) invoice supplier must have a tax ID code or a SIREN/SIRET identity",
 		},
 	}
 
@@ -146,4 +341,375 @@ func TestEnvelopeValidate(t *testing.T) {
 			assert.EqualError(t, err, tt.want)
 		})
 	}
+}
+
+func TestEnvelopeSign(t *testing.T) {
+	t.Run("will sign", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Foooo"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		assert.Len(t, env.Signatures, 1)
+	})
+	t.Run("cannot sign invalid document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
+		err := env.Sign(testKey)
+		assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.doc.content) message content is required")
+	})
+	t.Run("sign valid document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		assert.True(t, env.Signed())
+	})
+
+	t.Run("unsign document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		env.Unsign()
+		assert.False(t, env.Signed())
+	})
+
+	t.Run("from/to are outside the signed payload", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		env.Head.From = cbc.URI("gobl:samlown.example.com")
+		env.Head.To = cbc.URI("iso6523-actorid-upis::9920:x3157928m")
+		require.NoError(t, env.Sign(testKey))
+		require.NoError(t, env.Verify(testKey.Public()))
+
+		// Mutating the routing addresses after signing must NOT break
+		// verification, proving they are not part of the signed payload.
+		env.Head.To = cbc.URI("mailto:someone@example.com")
+		assert.NoError(t, env.Verify(testKey.Public()))
+	})
+
+	t.Run("checks for header", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		env.Head = nil // remove header
+		err := env.Sign(testKey)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "validation: header required")
+	})
+
+	t.Run("checks signing state", func(t *testing.T) {
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		env := gobl.NewEnvelope()
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+
+		inv := env.Extract().(*bill.Invoice)
+		inv.Code = "" // blank, so cannot sign
+		require.NoError(t, env.Calculate())
+
+		err = env.Sign(testKey)
+		assert.ErrorContains(t, err, "[GOBL-ENVELOPE-13] envelope doc is not ready to be signed, check code or other key fields")
+
+	})
+}
+func TestEnvelopeCorrect(t *testing.T) {
+	t.Run("correct invoice", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+		require.NoError(t, env.Calculate())
+
+		_, err = env.Correct(
+			bill.Corrective,
+			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
+		)
+		require.NoError(t, err)
+
+		doc := env.Extract().(*bill.Invoice)
+		assert.Equal(t, doc.Type, bill.InvoiceTypeStandard, "should not update in place")
+
+		e2, err := env.Correct(
+			bill.Corrective,
+			bill.WithExtension(facturae.ExtKeyCorrection, "02"),
+		)
+		require.NoError(t, err)
+		doc = e2.Extract().(*bill.Invoice)
+		assert.Equal(t, doc.Type, bill.InvoiceTypeCorrective, "corrected")
+	})
+
+	t.Run("correct with stamps", func(t *testing.T) {
+		data, err := os.ReadFile("./examples/co/out/simple.json")
+		require.NoError(t, err)
+		out, err := gobl.Parse(data)
+		require.NoError(t, err)
+		env, ok := out.(*gobl.Envelope)
+		require.True(t, ok)
+		env.Head.AddStamp(&head.Stamp{
+			Provider: dian.StampCUDE,
+			Value:    "1234567890",
+		})
+
+		_, err = env.Correct()
+		assert.ErrorContains(t, err, "validation: missing correction type")
+
+		e2, err := env.Correct(bill.Credit, bill.WithReason("test"))
+		require.NoError(t, err)
+		doc := e2.Extract().(*bill.Invoice)
+		assert.Equal(t, "1234567890", doc.Preceding[0].Stamps[0].Value, "should copy stamps")
+	})
+}
+
+func TestEnvelopeReplicate(t *testing.T) {
+	t.Run("replicate invoice", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+		require.NoError(t, env.Calculate())
+
+		_, err = env.Replicate()
+		require.NoError(t, err)
+
+		doc := env.Extract().(*bill.Invoice)
+		assert.Equal(t, "SAMPLE-001", doc.Code.String(), "should not update in place")
+
+		e2, err := env.Replicate()
+		require.NoError(t, err)
+		doc = e2.Extract().(*bill.Invoice)
+		assert.Empty(t, doc.Code)
+	})
+}
+
+func TestDocument(t *testing.T) {
+	msg := testNoteExample()
+	env := gobl.NewEnvelope()
+	err := env.Insert(msg)
+	require.NoError(t, err)
+	doc := env.Document
+
+	id := schema.Lookup(&note.Message{})
+	assert.Contains(t, id.String(), "https://gobl.org/")
+	assert.Contains(t, id.String(), "/note/message")
+
+	dig := "54eb5ac433e82575b554dc21a8e53b291479dab188dffaabc97e8141d1cdfc65"
+	assert.Equal(t, id, doc.Schema)
+	sha, err := env.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+	assert.Equal(t, doc.Instance(), msg)
+
+	data, err := json.Marshal(doc)
+	require.NoError(t, err)
+	assert.Equal(t, `{"$schema":"`+id.String()+`","uuid":"e8c70516-0098-11ef-92c8-0242ac120002","content":"This is test content."}`, string(data))
+
+	doc = new(schema.Object)
+	err = json.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	assert.Equal(t, doc.Schema, id)
+	sha, err = env.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+
+	obj, ok := doc.Instance().(*note.Message)
+	assert.True(t, ok)
+	assert.Equal(t, msg.Content, obj.Content)
+}
+
+func TestDocumentValidation(t *testing.T) {
+	msg := &note.Message{}
+
+	doc, err := schema.NewObject(msg)
+	require.NoError(t, err)
+
+	err = rules.Validate(doc.Instance())
+	assert.ErrorContains(t, err, "[GOBL-NOTE-MESSAGE-01] ($.content) message content is required")
+
+	doc = new(schema.Object)
+	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
+	require.NoError(t, err)
+	err = yaml.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	inv := doc.Instance().(*bill.Invoice)
+	inv.Code = "" // blank, which will not be accepted if not a draft
+	require.NoError(t, doc.Calculate())
+	assert.NoError(t, doc.Validate())
+	inv.IssueDate = cal.Date{}
+	err = doc.Validate()
+	// Double check to make sure validation working
+	assert.ErrorContains(t, err, "[GOBL-BILL-INVOICE-03] ($.issue_date) invoice issue date is required")
+}
+
+func TestDocumentValidationOutput(t *testing.T) {
+	msg := &note.Message{}
+
+	doc, err := schema.NewObject(msg)
+	require.NoError(t, err)
+
+	err = rules.Validate(doc)
+	data, err := json.Marshal(err)
+	require.NoError(t, err)
+	assert.Equal(t, `[{"code":"GOBL-NOTE-MESSAGE-01","paths":["$.content"],"message":"message content is required"}]`, string(data))
+
+	env := gobl.NewEnvelope()
+	require.NoError(t, env.Insert(msg))
+	err = env.Validate()
+	data, err = json.Marshal(err)
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"key":"validation","faults":[{"paths":["$.doc.content"],"code":"GOBL-NOTE-MESSAGE-01","message":"message content is required"}]}`, string(data))
+}
+
+func TestEnvelopeVerify(t *testing.T) {
+	t.Run("invalid situations", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Verify()
+		assert.ErrorContains(t, err, "no signatures to verify")
+	})
+
+	t.Run("valid signature", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		require.NoError(t, err)
+		err = env.Verify()
+		assert.NoError(t, err)
+		err = env.Verify(testKey.Public())
+		assert.NoError(t, err)
+		rk := dsig.NewES256Key()
+		err = env.Verify(rk.Public(), testKey.Public())
+		assert.NoError(t, err)
+		err = env.Verify(rk.Public())
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "no key match found")
+	})
+
+	t.Run("changes", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		require.NoError(t, err)
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
+		err = env.Verify()
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "signature payload mismatch")
+		err = env.Verify(testKey.Public())
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "signature payload mismatch")
+
+		rk := dsig.NewES256Key()
+		err = env.Verify(rk.Public())
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "no key match found")
+	})
+}
+
+func TestEnvelopeVerifySignature(t *testing.T) {
+	t.Run("valid, no key", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		assert.NoError(t, env.Sign(testKey))
+		assert.NoError(t, env.VerifySignature(env.Signatures[0]))
+	})
+
+}
+
+func TestEnvelopeCorrectionOptionsSchema(t *testing.T) {
+	t.Run("missing document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		out, err := e.CorrectionOptionsSchema()
+		assert.Error(t, err)
+		assert.Nil(t, out)
+		assert.ErrorContains(t, err, "no-document")
+	})
+	t.Run("nil document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		out, err := e.CorrectionOptionsSchema()
+		assert.Error(t, err)
+		assert.Nil(t, out)
+		assert.ErrorContains(t, err, "no-document")
+	})
+	t.Run("valid document", func(t *testing.T) {
+		e := new(gobl.Envelope)
+
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, e)
+		require.NoError(t, err)
+
+		out, err := e.CorrectionOptionsSchema()
+		require.NoError(t, err)
+		assert.NotNil(t, out)
+
+		data, err = json.Marshal(out)
+		require.NoError(t, err)
+		// look for little strings
+		assert.Contains(t, string(data), "\"const\":\"credit-note\",\"title\":\"Credit Note\"")
+	})
+}
+
+func testNoteExample() *note.Message {
+	m := new(note.Message)
+	m.Content = testMessageContent
+	m.UUID = uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002")
+	return m
+}
+
+func TestEnvelopeCalculateSetsFromTo(t *testing.T) {
+	mkInvoice := func() *bill.Invoice {
+		// Minimal invoice with parties carrying endpoints; we only need
+		// Calculate() to succeed enough to call normalizeRouting.
+		return &bill.Invoice{
+			Currency: "EUR",
+			Supplier: &org.Party{
+				Name:      "Supplier",
+				Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}},
+			},
+			Customer: &org.Party{
+				Name:      "Customer",
+				Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}},
+			},
+		}
+	}
+
+	t.Run("populates empty From/To from the document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("preserves operator-set From", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		env.Head = head.NewHeader()
+		env.Head.From = "gobl:override.example"
+		require.NoError(t, env.Insert(mkInvoice()))
+		assert.Equal(t, cbc.URI("gobl:override.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.To)
+	})
+
+	t.Run("note.Message does not implement EndpointResolver", func(t *testing.T) {
+		// A document without From/To resolution leaves the header empty
+		// and Calculate still succeeds.
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "hi"}))
+		assert.Empty(t, string(env.Head.From))
+		assert.Empty(t, string(env.Head.To))
+	})
+
+	t.Run("self-billed invoice flips routing during Calculate", func(t *testing.T) {
+		inv := mkInvoice()
+		inv.Tags.List = []cbc.Key{"self-billed"}
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(inv))
+		assert.Equal(t, cbc.URI("gobl:customer.example"), env.Head.From)
+		assert.Equal(t, cbc.URI("gobl:supplier.example"), env.Head.To)
+	})
 }

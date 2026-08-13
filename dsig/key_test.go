@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewKeyPair(t *testing.T) {
@@ -43,6 +45,50 @@ func TestNewKeyPair(t *testing.T) {
 	t.Logf("json output of public key: %v", string(pubdata))
 }
 
+func TestPrivateKeyValidate(t *testing.T) {
+	t.Run("key not set", func(t *testing.T) {
+		k := new(dsig.PrivateKey)
+		err := k.Validate()
+		assert.ErrorContains(t, err, "key not set")
+	})
+	t.Run("id required", func(t *testing.T) {
+		data := []byte(`{"use":"sig","kty":"EC","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
+		k := new(dsig.PrivateKey)
+		require.NoError(t, json.Unmarshal(data, k))
+		err := k.Validate()
+		assert.ErrorContains(t, err, "id required")
+	})
+	t.Run("public", func(t *testing.T) {
+		data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4"}`)
+		k := new(dsig.PrivateKey)
+		require.NoError(t, json.Unmarshal(data, k))
+		err := k.Validate()
+		assert.ErrorContains(t, err, "private key only contains public part")
+	})
+}
+
+func TestPublicKeyValidate(t *testing.T) {
+	t.Run("key not set", func(t *testing.T) {
+		k := new(dsig.PublicKey)
+		err := k.Validate()
+		assert.ErrorContains(t, err, "key not set")
+	})
+	t.Run("id required", func(t *testing.T) {
+		data := []byte(`{"use":"sig","kty":"EC","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
+		k := new(dsig.PublicKey)
+		require.NoError(t, json.Unmarshal(data, k))
+		err := k.Validate()
+		assert.ErrorContains(t, err, "id required")
+	})
+	t.Run("public", func(t *testing.T) {
+		data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
+		k := new(dsig.PublicKey)
+		require.NoError(t, json.Unmarshal(data, k))
+		err := k.Validate()
+		assert.ErrorContains(t, err, "public key is private")
+	})
+}
+
 func TestKeyParsing(t *testing.T) {
 	data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
 	kid := "3500bbee-966c-4b7a-8fbc-c763ae2aec62"
@@ -77,4 +123,19 @@ func TestKeyParsing(t *testing.T) {
 	if pk.ID() != kid {
 		t.Errorf("unexpected public key id, got: %v", k.ID())
 	}
+}
+
+func TestPrivateKeySignAndVerify(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
+		k := new(dsig.PrivateKey)
+		require.NoError(t, json.Unmarshal(data, k))
+		sig, err := k.Sign("hello world")
+		require.NoError(t, err)
+
+		pk := k.Public()
+		var str string
+		require.NoError(t, pk.Verify(sig, &str))
+		assert.Equal(t, "hello world", str)
+	})
 }

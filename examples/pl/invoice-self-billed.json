@@ -1,0 +1,66 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "$tags": ["self-billed"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3cbe",
+  "type": "standard",
+  "series": "SELF",
+  "code": "001",
+  "issue_date": "2026-01-20",
+  "currency": "PLN",
+  "supplier": {
+    "name": "External Supplier Ltd",
+    "tax_id": {
+      "country": "PL",
+      "code": "1111111111"
+    },
+    "addresses": [
+      {
+        "street": "ul. Dostawcy 20",
+        "locality": "Poznań",
+        "code": "60-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "100",
+      "item": {
+        "name": "Agricultural Products",
+        "price": "50.00",
+        "unit": "kg"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "reduced"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "key": "legal",
+      "text": "Self-billing invoice issued by the buyer on behalf of the supplier with their agreement."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-sii-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "EXPORT"
+code: "N2-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "US"
+    code: "1234567890"
+  name: "Global Tech Solutions Inc."
+  addresses:
+    - street: "123 Main Street"
+      locality: "New York"
+      region: "NY"
+      code: "10001"
+      country: "US"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Software development services"
+      price: "150.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        key: outside-scope
+  - quantity: 5
+    item:
+      name: "Technical consulting"
+      price: "200.00"
+      unit: "day"
+    taxes:
+      - cat: VAT
+        key: outside-scope
+  - quantity: 1
+    item:
+      name: "Project management"
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        key: outside-scope
+
+notes:
+  - key: "general"
+    text: "Services provided to customer outside the European Union - outside scope of Spanish VAT"
+

@@ -1,0 +1,118 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5dfa6d68801a03f73f9d9d6c1a73a8643147d62afa2d686b9af78e5ff39075e5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "SAMPLE-X-002",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge",
+					"text": "Reverse Charge / Inversión del sujeto pasivo."
+				}
+			]
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "NL",
+				"code": "000099995B57"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Services exported",
+					"price": "20.00",
+					"unit": "day"
+				},
+				"sum": "200.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope"
+					}
+				],
+				"total": "200.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Branded Mugs",
+					"price": "7.50"
+				},
+				"sum": "375.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "export"
+					}
+				],
+				"total": "375.00"
+			}
+		],
+		"totals": {
+			"sum": "575.00",
+			"total": "575.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "outside-scope",
+								"base": "575.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "575.00",
+			"payable": "575.00"
+		}
+	}
+}

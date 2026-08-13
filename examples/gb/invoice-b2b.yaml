@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "019035bd-4524-73ab-bf44-6037841ce5d9"
+issue_date: "2024-07-31"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "GB"
+    code: "000472631"
+  name: "Test Company Ltd."
+  emails:
+    - addr: "company@example.com"
+  addresses:
+    - num: "12"
+      street: "Main Street"
+      locality: "Hull"
+      code: "HU17 7PQ"
+      country: "GB"
+
+customer:
+  tax_id:
+    country: "GB"
+    code: "350983637"
+  name: "Random Company Ltd."
+  emails:
+    - addr: "random@example.com"
+  addresses:
+    - num: "45"
+      street: "Some Street"
+      locality: "London"
+      code: "SW1A 1AA"
+      country: "GB"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: "standard"

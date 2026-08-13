@@ -1,0 +1,44 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-05-21"
+series: "SIMPL"
+code: "0042"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Talleres del Norte S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "8"
+      street: "Calle Mayor"
+      locality: "Donostia"
+      region: "Gipuzkoa"
+      code: "20003"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Cliente Particular"
+
+lines:
+  - quantity: 1
+    item:
+      key: "services"
+      name: "Mechanic shop module"
+      price: "300.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+        ext:
+          es-tbai-regime: "52"
+
+notes:
+  - key: "general"
+    text: "Operation under the simplified VAT regime (módulos)."

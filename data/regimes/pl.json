@@ -1,0 +1,138 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Poland",
+    "pl": "Polska"
+  },
+  "description": {
+    "en": "Poland's tax system is administered by the Krajowa Administracja Skarbowa\n(National Revenue Administration, KAS). As an EU member state, Poland follows\nthe EU VAT Directive with locally adapted rates.\n\nVAT (Podatek od towarów i usług, PTU) applies at standard, reduced, and\nsuper-reduced rates. Zero-rated supplies include exports and intra-community\nsupplies.\n\nBusinesses are identified by their NIP (Numer Identyfikacji Podatkowej), a\n10-digit tax identification number. The Polish VAT number uses the format PL\nfollowed by the 10-digit NIP.\n\nPoland has implemented the KSeF (Krajowy System e-Faktur) national e-invoicing\nsystem, which is progressively becoming mandatory for B2B transactions.\nE-invoicing via PEPPOL is used for cross-border and B2G transactions."
+  },
+  "time_zone": "Europe/Warsaw",
+  "country": "PL",
+  "currency": "PLN",
+  "tax_scheme": "VAT",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "pl": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "pl": "Podatek od Wartości Dodanej"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "pl": "Stawka Podstawowa"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "23.0%"
+            },
+            {
+              "since": "1993-07-08",
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "First Reduced Rate",
+            "pl": "Stawka Obniżona Pierwsza"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "2000-09-04",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Second Reduced Rate",
+            "pl": "Stawka Obniżona Druga"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "5.0%"
+            },
+            {
+              "since": "2000-09-04",
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

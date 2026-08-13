@@ -1,76 +1,218 @@
 package bill
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 )
 
-// LineCharge represents an amount added to the line, and will be
-// applied before taxes.
-// TODO: use UNTDID 7161 code list
-type LineCharge struct {
-	// Percentage rate if fixed amount not applied
-	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Fixed or resulting charge amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
-	// Reference code.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
-	// Text description as to why the charge was applied
-	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-}
+// Charge keys for identifying the type of charge being applied.
+// These are based on a subset of the UN/CEFACT UNTDID 7161 codes,
+// and are intentionally kept lean.
+const (
+	ChargeKeyStampDuty cbc.Key = "stamp-duty"
+	ChargeKeyOutlay    cbc.Key = "outlay"
+	ChargeKeyTax       cbc.Key = "tax"
+	ChargeKeyCustoms   cbc.Key = "customs"
+	ChargeKeyDelivery  cbc.Key = "delivery"
+	ChargeKeyPacking   cbc.Key = "packing"
+	ChargeKeyHandling  cbc.Key = "handling"
+	ChargeKeyInsurance cbc.Key = "insurance"
+	ChargeKeyStorage   cbc.Key = "storage"
+	ChargeKeyAdmin     cbc.Key = "admin" // administration
+	ChargeKeyCleaning  cbc.Key = "cleaning"
+)
 
-// Validate checks the line charge's fields.
-func (lc *LineCharge) Validate() error {
-	return validation.ValidateStruct(lc,
-		validation.Field(&lc.Amount, validation.Required),
-	)
+var chargeKeyDefinitions = []*cbc.Definition{
+	{
+		Key:  ChargeKeyStampDuty,
+		Name: i18n.NewString("Stamp Duty"),
+	},
+	{
+		Key:  ChargeKeyOutlay,
+		Name: i18n.NewString("Outlay"),
+	},
+	{
+		Key:  ChargeKeyTax,
+		Name: i18n.NewString("Tax"),
+	},
+	{
+		Key:  ChargeKeyCustoms,
+		Name: i18n.NewString("Customs"),
+	},
+	{
+		Key:  ChargeKeyDelivery,
+		Name: i18n.NewString("Delivery"),
+	},
+	{
+		Key:  ChargeKeyPacking,
+		Name: i18n.NewString("Packing"),
+	},
+	{
+		Key:  ChargeKeyHandling,
+		Name: i18n.NewString("Handling"),
+	},
+	{
+		Key:  ChargeKeyInsurance,
+		Name: i18n.NewString("Insurance"),
+	},
+	{
+		Key:  ChargeKeyStorage,
+		Name: i18n.NewString("Storage"),
+	},
+	{
+		Key:  ChargeKeyAdmin,
+		Name: i18n.NewString("Administration"),
+	},
+	{
+		Key:  ChargeKeyCleaning,
+		Name: i18n.NewString("Cleaning"),
+	},
 }
-
-// Charges represents an array of charge objects
-type Charges []*Charge
 
 // Charge represents a surchange applied to the complete document
 // independent from the individual lines.
 type Charge struct {
-	// Unique identifying for the discount entry
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Line number inside the list of discounts
-	Index int `json:"i" jsonschema:"title=Index"`
-	// Code to used to refer to the this charge
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
-	// Base represents the value used as a base for rate calculations.
-	// If not already provided, we'll take the invoices sum before
-	// discounts.
-	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage rate to apply to the invoice's Sum
-	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
-	// List of taxes to apply to the charge
-	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Code for why was this charge applied?
-	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
+	uuid.Identify
+	// Line number inside the list of charges (calculated).
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
+	// Key for grouping or identifying charges for tax purposes. A suggested list of
+	// keys is provided, but these may be extended by the issuer.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Code to used to refer to the this charge by the issuer
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Base represents the value used as a base for percent calculations instead
+	// of the invoice's sum of lines.
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	// Percentage to apply to the sum of all lines
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Amount to apply (calculated if percent present)
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
+	// List of taxes to apply to the charge
+	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
+	// Extension codes that apply to the charge
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate checks the discount's fields.
-func (m *Charge) Validate() error {
-	return validation.ValidateStruct(m,
-		validation.Field(&m.Amount, validation.Required),
+func normalizeCharge(m *Charge) {
+	m.Taxes = tax.CleanSet(m.Taxes)
+}
+
+func chargeRules() *rules.Set {
+	return rules.For(new(Charge),
+		rules.When(is.Expr("Base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", is.Present),
+			),
+		),
 	)
 }
 
-// GetTaxRates responds with the array of tax rates applied to this line.
-func (m *Charge) GetTaxRates() tax.Rates {
+// GetTaxes responds with the array of tax rates applied to this line.
+func (m *Charge) GetTaxes() tax.Set {
 	return m.Taxes
 }
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
 func (m *Charge) GetTotal() num.Amount {
 	return m.Amount
+}
+
+func (m *Charge) removeIncludedTaxes(cat cbc.Code) *Charge {
+	accuracy := defaultTaxRemovalAccuracy
+	rate := m.Taxes.Get(cat)
+	if rate == nil || rate.Percent == nil {
+		return m
+	}
+	m2 := *m
+	m2.Amount = m2.Amount.Upscale(accuracy).Remove(*rate.Percent)
+	return &m2
+}
+
+// JSONSchemaExtend adds the charge key definitions to the schema.
+func (Charge) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithChargeKey(schema)
+}
+
+func calculateCharges(lines []*Charge, cur currency.Code, sum num.Amount, rr cbc.Key) {
+	// COPIED FROM discount.go
+	zero := cur.Def().Zero()
+	if len(lines) == 0 {
+		return
+	}
+	for i, l := range lines {
+		if l == nil {
+			continue
+		}
+		l.Index = i + 1
+		if l.Percent != nil {
+			base := sum
+			if l.Base != nil {
+				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)
+				base = tax.ApplyRoundingRule(rr, cur, base)
+			}
+			l.Amount = l.Percent.Of(base)
+		}
+		l.Amount = tax.ApplyRoundingRule(rr, cur, l.Amount)
+	}
+}
+
+func calculateChargeSum(charges []*Charge, cur currency.Code) *num.Amount {
+	if len(charges) == 0 {
+		return nil
+	}
+	total := cur.Def().Zero()
+	for _, l := range charges {
+		if l == nil {
+			continue
+		}
+		total = total.MatchPrecision(l.Amount)
+		total = total.Add(l.Amount)
+	}
+	return &total
+}
+
+func (m *Charge) round(cur currency.Code) {
+	// Default round to currency, or use base if present
+	e := cur.Def().Subunits
+	if m.Base != nil {
+		e = m.Base.Exp()
+	}
+	m.Amount = m.Amount.RescaleDown(e)
+}
+
+func roundCharges(lines []*Charge, cur currency.Code) {
+	for _, l := range lines {
+		if l != nil {
+			l.round(cur)
+		}
+	}
+}
+
+func extendJSONSchemaWithChargeKey(schema *jsonschema.Schema) {
+	prop, ok := schema.Properties.Get("key")
+	if !ok {
+		return
+	}
+	prop.AnyOf = make([]*jsonschema.Schema, len(chargeKeyDefinitions))
+	for i, v := range chargeKeyDefinitions {
+		prop.AnyOf[i] = &jsonschema.Schema{
+			Const: v.Key,
+			Title: v.Name.String(),
+		}
+	}
+	prop.AnyOf = append(prop.AnyOf, &jsonschema.Schema{
+		Title:   "Other",
+		Pattern: cbc.KeyPattern,
+	})
 }

@@ -1,0 +1,356 @@
+package bill
+
+import (
+	"fmt"
+
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
+)
+
+// Predefined list of the order types supported.
+const (
+	OrderTypePurchase cbc.Key = "purchase"
+	OrderTypeSale     cbc.Key = "sale"
+	OrderTypeQuote    cbc.Key = "quote"
+)
+
+// OrderTypes defines the list of order types supported.
+var OrderTypes = []*cbc.Definition{
+	{
+		Key: OrderTypePurchase,
+		Name: i18n.String{
+			i18n.EN: "Purchase Order",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A purchase order is a document that a buyer sends to a seller to request goods or services.
+			`),
+		},
+	},
+	{
+		Key: OrderTypeSale,
+		Name: i18n.String{
+			i18n.EN: "Sales Order",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A sales order is a document that a seller sends to a buyer to confirm the sale of goods or services.
+			`),
+		},
+	},
+	{
+		Key: OrderTypeQuote,
+		Name: i18n.String{
+			i18n.EN: "Quote",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A quote is a document that a seller sends to a buyer to provide a price for goods or services.
+			`),
+		},
+	},
+}
+
+var isValidOrderType = cbc.InKeyDefs(OrderTypes)
+
+// Order documents are used for the initial part of a order-to-invoice process
+// where the buyer requests goods or services from the seller.
+type Order struct {
+	tax.Regime
+	tax.Addons
+	tax.Tags
+	uuid.Identify
+
+	// Type of the order.
+	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
+	// Series is used to identify groups of orders by date, business area, project,
+	// type, customer, a combination of any, or other company specific data.
+	// If the output format does not support the series as a separate field, it will be
+	// prepended to the code for presentation with a dash (`-`) for separation.
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
+	// Code is a sequential identifier that uniquely identifies the order. The code can
+	// be left empty initially, but is **required** to **sign** the document.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// When the invoice was created.
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the order was issued. Some regions and formats may require this field to be set.
+	// An empty string will be automatically updated to reflect the current time, otherwise
+	// the field can be left with a nil value.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
+	// Date when the operation defined by the invoice became effective.
+	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
+	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
+	// Currency for all invoice totals.
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
+	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
+
+	// The identification of contracts.
+	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts"`
+	// Key information regarding previous order documents.
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+
+	// Additional codes, IDs, SKUs, or other regional or custom identifiers that may be used to identify the order.
+	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Period of time in which the order is valid.
+	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
+
+	// Special tax configuration for billing.
+	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
+
+	// The entity supplying the goods or services and usually responsible for paying taxes.
+	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
+	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
+	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
+	// Party who is responsible for issuing payment, if not the same as the customer.
+	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
+	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
+	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
+
+	// List of lines representing each of the items to be ordered.
+	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
+	// Discounts or allowances applied to order totals
+	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	// Charges or surcharges applied to order totals
+	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
+
+	// Information on when, how, and to whom a final invoice would be paid.
+	Payment *PaymentDetails `json:"payment,omitempty" jsonschema:"title=Payment Details"`
+	// Specific details on delivery of the goods to copy to the final invoice.
+	Delivery *DeliveryDetails `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
+
+	// Summary of all the order totals, including taxes (calculated).
+	Totals *Totals `json:"totals,omitempty" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
+
+	// Unstructured information that is relevant to the order, such as correction or additional
+	// legal details.
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Additional complementary objects that add relevant information to the order.
+	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
+
+	// Additional semi-structured data that doesn't fit into the body of the order.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// Attachments provide additional information or supporting documents that are not included
+	// in the main document. It is important that attachments are not used for alternative
+	// versions of the PDF, for that, see "links" inside the envelope headers.
+	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
+}
+
+// CanSign returns a boolean indicating whether the order is ready to be signed
+// or not.
+func (ord *Order) CanSign() bool {
+	return !ord.Code.IsEmpty()
+}
+
+func normalizeOrder(ord *Order) {
+	if ord.Type == cbc.KeyEmpty {
+		ord.Type = OrderTypePurchase
+	}
+}
+
+func orderRules() *rules.Set {
+	return rules.For(new(Order),
+		rules.Field("type",
+			rules.Assert("01", "type is required", is.Present),
+			rules.Assert("02", "type is not valid", isValidOrderType),
+		),
+		rules.Field("issue_date",
+			rules.Assert("03", "issue date is required", is.Present),
+		),
+		rules.Field("currency",
+			rules.Assert("04", "currency is required", is.Present),
+		),
+		rules.Field("supplier",
+			rules.Assert("05", "supplier is required", is.Present),
+		),
+		rules.Field("lines",
+			rules.Assert("06", "lines are required", is.Present),
+		),
+	)
+}
+
+// Calculate performs all the normalizations and calculations required for the order
+// totals and taxes. If the original order only includes partial calculations, this
+// will figure out what's missing.
+func (ord *Order) Calculate() error {
+	// Try to set Regime if not already prepared from the supplier's tax ID
+	if ord.Regime.IsEmpty() {
+		ord.SetRegime(partyTaxCountry(ord.Supplier))
+	}
+	norm.Normalize(ord)
+	return calculate(ord)
+}
+
+// ConvertInto will use the defined exchange rates in the order to convert all the prices
+// into the given currency.
+//
+// The intent of this method is help convert the order amounts when the destination is
+// unable or unwilling to handle the current currency. This is typically the case
+// with tax related reports or declarations.
+//
+// The method will return a new order with all the amounts converted into the given
+// currency or an error if the conversion is not possible.
+//
+// Conversion is done by first exchanging the lowest common amounts to the destination
+// currency, then recalculating the totals.
+func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
+	// Calculate ensures that all the totals and amounts have been prepared
+	// so we can make assumptions about the data that will be available,
+	// including the original currency!
+	if err := ord.Calculate(); err != nil {
+		return nil, err
+	}
+
+	if ord.Currency == cur {
+		return ord, nil
+	}
+	ex := currency.MatchExchangeRate(ord.ExchangeRates, ord.Currency, cur)
+	if ex == nil {
+		return nil, fmt.Errorf("no exchange rate defined for '%v' to '%v'", ord.Currency, cur)
+	}
+
+	o2 := *ord
+	o2.Totals = nil
+	o2.Lines = convertLinesInto(ex, ord.Lines)
+	o2.Discounts = convertDiscountsInto(ex, ord.Discounts)
+	o2.Charges = convertChargesInto(ex, ord.Charges)
+	o2.Payment = convertPaymentDetailsInto(ex, ord.Payment)
+	o2.Currency = cur
+
+	if err := o2.Calculate(); err != nil {
+		return nil, err
+	}
+
+	return &o2, nil
+}
+
+/** Calculation Interface Methods **/
+
+// GetCurrency provides the documents current currency code.
+func (ord *Order) GetCurrency() currency.Code {
+	return ord.Currency
+}
+
+// GetExchangeRates provides the documents exchange rates that can be used for currency conversion.
+func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
+	return ord.ExchangeRates
+}
+
+func (ord *Order) getIssueDate() cal.Date {
+	return ord.IssueDate
+}
+func (ord *Order) getIssueTime() *cal.Time {
+	return ord.IssueTime
+}
+func (ord *Order) getValueDate() *cal.Date {
+	return ord.ValueDate
+}
+func (ord *Order) getTax() *Tax {
+	return ord.Tax
+}
+func (ord *Order) getPreceding() []*org.DocumentRef {
+	return ord.Preceding
+}
+func (ord *Order) getCustomer() *org.Party {
+	return ord.Customer
+}
+func (ord *Order) getLines() []*Line {
+	return ord.Lines
+}
+func (ord *Order) getDiscounts() []*Discount {
+	return ord.Discounts
+}
+func (ord *Order) getCharges() []*Charge {
+	return ord.Charges
+}
+func (ord *Order) getPaymentDetails() *PaymentDetails {
+	return ord.Payment
+}
+func (ord *Order) getTotals() *Totals {
+	return ord.Totals
+}
+func (ord *Order) getComplements() []*schema.Object {
+	return ord.Complements
+}
+
+func (ord *Order) setIssueDate(d cal.Date) {
+	ord.IssueDate = d
+}
+func (ord *Order) setIssueTime(t *cal.Time) {
+	ord.IssueTime = t
+}
+func (ord *Order) setCurrency(c currency.Code) {
+	ord.Currency = c
+}
+func (ord *Order) setTotals(t *Totals) {
+	ord.Totals = t
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this order document. A `purchase` order (customer asks the
+// supplier for goods or services) flows from customer to supplier; a
+// `sale` order (supplier confirms a sale) and a `quote` (supplier
+// proposes a price) flow the other way.
+func (ord *Order) FromEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Customer.FirstEndpoint()
+	}
+	return ord.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this order document. Inverse of FromEndpoint.
+func (ord *Order) ToEndpoint() *org.Endpoint {
+	if ord == nil {
+		return nil
+	}
+	if ord.Type == OrderTypePurchase {
+		return ord.Supplier.FirstEndpoint()
+	}
+	return ord.Customer.FirstEndpoint()
+}
+
+/** ---- **/
+
+// JSONSchemaExtend extends the schema with additional property details
+func (ord Order) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	// Extend type list
+	if its, ok := props.Get("type"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(OrderTypes))
+		for i, kd := range OrderTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
+	// Recommendations
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"$regime",
+			"series",
+			"code",
+			"lines",
+		},
+	}
+}

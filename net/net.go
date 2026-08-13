@@ -1,0 +1,33 @@
+// Package net implements GOBL Net identity discovery, authentication,
+// envelope delivery, and remote signature verification.
+//
+// EXPERIMENTAL: GOBL Net is under active development. Its API and wire
+// protocol may change without notice and carry no stability guarantee yet.
+package net
+
+const (
+	// Scheme is the URI scheme labelling a GOBL Net address in
+	// multi-scheme contexts (org.Endpoint lists, the envelope
+	// header's from/to routing fields), e.g. "gobl:acme.example.com".
+	// Signed iss/aud/verifier claims carry bare addresses instead.
+	Scheme = "gobl"
+
+	// WellKnownPath is the base path for GOBL Net well-known URLs.
+	WellKnownPath = "/.well-known/gobl"
+	// KeysPath is the base of the per-key endpoint; the full path for a
+	// single key is KeysPath + "/" + kid.
+	KeysPath = WellKnownPath + "/keys"
+	// WhoPath is the well-known path serving the signed Party envelope.
+	WhoPath = WellKnownPath + "/who"
+	// InboxPath is the well-known path accepting envelope deliveries.
+	InboxPath = WellKnownPath + "/inbox"
+	// JWKSPath is the conventional bulk JWK Set endpoint for generic tooling.
+	// GOBL Net verification uses the per-key endpoint instead.
+	JWKSPath = "/.well-known/jwks.json"
+)
+
+// KeyPath returns the well-known path serving a single public key by
+// its key ID. Use this to construct lookup URLs.
+func KeyPath(kid string) string {
+	return KeysPath + "/" + kid
+}

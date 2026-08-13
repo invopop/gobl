@@ -1,0 +1,93 @@
+package pl_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNormalizeTaxIdentity(t *testing.T) {
+	tests := []struct {
+		Code     cbc.Code
+		Expected cbc.Code
+	}{
+		{
+			Code:     "9551893317",
+			Expected: "9551893317",
+		},
+		{
+			Code:     "PL9551893317",
+			Expected: "9551893317",
+		},
+		{
+			Code:     "955-189-33.17",
+			Expected: "9551893317",
+		},
+	}
+	for _, ts := range tests {
+		tID := &tax.Identity{Country: "PL", Code: ts.Code}
+		norm.Normalize(tID)
+		assert.Equal(t, ts.Expected, tID.Code)
+	}
+}
+
+func TestTaxIdentityRules(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		err  string
+	}{
+		{name: "good 1", code: "9551893317"},
+		{name: "good 2", code: "1132191233"},
+		{name: "good 3", code: "5841896486"},
+		{name: "good 4", code: "7010009325"},
+		{
+			name: "bad mid length",
+			code: "12345678910",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too long",
+			code: "1234567890123",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too short",
+			code: "123456",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "not normalized",
+			code: "12.449.965-4",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad format",
+			code: "1002191233",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad checksum",
+			code: "9551893318",
+			err:  "IDENTITY-01",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "PL", Code: tt.code}
+			err := rules.Validate(tID)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
+			}
+		})
+	}
+}

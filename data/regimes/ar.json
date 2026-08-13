@@ -1,0 +1,173 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Argentina",
+    "es": "Argentina"
+  },
+  "description": {
+    "en": "Argentina's tax system is administered by ARCA (Agencia de Recaudación\ny Control Aduanero), which oversees the collection of IVA (Impuesto al\nValor Agregado), the country's value-added tax.\n\nTaxpayers are identified using three main types of tax identification\nnumbers: CUIT (Clave Única de Identificación Tributaria), 11 digits\n(XX-XXXXXXXX-X) used by companies and legal entities with prefixes 30,\n33, and 34; CUIL (Clave Única de Identificación Laboral), 11 digits used\nby individuals with prefixes 20, 27, and 23; and CDI (Clave de\nIdentificación) for foreign residents without CUIT/CUIL.\n\nIVA has increased, general, and reduced rates. Argentina also\napplies several retention taxes: IVA Retenido (Retained VAT) with\nvariable rates based on taxpayer category; Ganancias (Income Tax\nWithholding) applied to payments for services; and Ingresos Brutos\n(Gross Income Tax), a provincial tax with rates set by each\njurisdiction.\n\nElectronic invoicing through ARCA is required for most transactions.\nInvoices must include a CAE (Código de Autorización Electrónico) and\nPoint of Sale (Punto de Venta) number.\n\nCommon invoice types include Tipo A (between Responsable Inscripto\nparties), Tipo B (to Monotributista or final consumer), Tipo C (from\nMonotributista or exempt entities), Tipo E (exports), and Credit Notes\n(Notas de Crédito).\n\nTax regime classifications include Responsable Inscripto (full IVA\nobligations), Monotributo (simplified regime for small businesses),\nExento (exempt from IVA), and Consumidor Final (no tax ID required)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "AFIP - Administración Federal de Ingresos Públicos"
+      },
+      "url": "https://www.afip.gob.ar/"
+    },
+    {
+      "title": {
+        "en": "Invoice type and mandatory information"
+      },
+      "url": "https://www.argentina.gob.ar/normativa/recurso/54461/259-98a/htm"
+    },
+    {
+      "title": {
+        "en": "AFIP SIRE - Percepciones y Retenciones"
+      },
+      "url": "https://www.afip.gob.ar/sire/percepciones-retenciones/"
+    }
+  ],
+  "time_zone": "America/Argentina/Buenos_Aires",
+  "country": "AR",
+  "currency": "ARS",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "desc": {
+        "en": "Known in Spanish as \"Impuesto al Valor Agregado\" (IVA), Argentina's VAT is a\nconsumption tax applied to the sale of goods and services. The standard rate is 21%,\nwith reduced rates of 10.5% for certain essential goods and services, and 0% for\nexports and specific categories."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "increased",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Increased Rate",
+            "es": "Alícuota Incrementada"
+          },
+          "desc": {
+            "en": "Applies to the sale of gas, electricity and water regulated by meter and other services stated in the points 4, 5 and 6 of the inciso e) of the article 3.",
+            "es": "Se aplica para las ventas de gas, energía eléctrica y aguas reguladas por medidor y demás prestaciones comprendidas en los puntos 4, 5 y 6, del inciso e) del artículo 3°."
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "27.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Alícuota General"
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "21.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Alícuota Reducida"
+          },
+          "desc": {
+            "en": "Applies to the sale of construction work, medicine, public transportation, livestock and agricultural products for food, etc.",
+            "es": "Se aplica para las ventas de trabajo de construcción, medicina, transporte público, ganado y productos agrícolas para alimentos, etc."
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "10.5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "VAT law - Article 28"
+          },
+          "url": "https://biblioteca.arca.gob.ar/cuadroslegislativos/getAdjunto.aspx?i=7833"
+        }
+      ]
+    }
+  ]
+}

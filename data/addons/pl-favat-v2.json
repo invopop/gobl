@@ -1,0 +1,235 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "pl-favat-v2",
+  "name": {
+    "en": "Polish KSeF FA_VAT v2.x"
+  },
+  "extensions": [
+    {
+      "key": "pl-favat-vat-special",
+      "name": {
+        "en": "Special VAT Extensions for KSeF",
+        "pl": "Rozszerzenia specjalne dla KSeF"
+      },
+      "values": [
+        {
+          "code": "taxi",
+          "name": {
+            "en": "Taxi Rate",
+            "pl": "Ryczałt dla taksówek"
+          },
+          "desc": {
+            "en": "Special flat rate for taxi drivers.",
+            "pl": "Specjalna stawka ryczałtu dla taksówkarzy."
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-vat-zero",
+      "name": {
+        "en": "Zero VAT Extensions for KSeF"
+      },
+      "values": [
+        {
+          "code": "wdt",
+          "name": {
+            "en": "WDT",
+            "pl": "WDT"
+          }
+        },
+        {
+          "code": "domestic",
+          "name": {
+            "en": "Domestic",
+            "pl": "Krajowy"
+          }
+        },
+        {
+          "code": "export",
+          "name": {
+            "en": "Export",
+            "pl": "Eksport"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-favat-effective-date",
+      "name": {
+        "en": "Effective date code.",
+        "pl": "Kod daty wejścia w życie."
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Original",
+            "pl": "Pierwotna"
+          },
+          "desc": {
+            "en": "Effective according to date of the original invoice.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury pierwotnej."
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Correction",
+            "pl": "Korygująca"
+          },
+          "desc": {
+            "en": "Effective according to date of correction.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury korygującej."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Other",
+            "pl": "Inna"
+          },
+          "desc": {
+            "en": "Correction has legal consequences in another date or the dates are different for different position on the invoice",
+            "pl": "Faktura skutkująca w innej dacie. W tym gdy dla różnych pozycji faktury korygującej data jest różna."
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "settlement",
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "name": {
+            "en": "Regular Invoice",
+            "pl": "Faktura Podstawowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "VAT"
+          }
+        },
+        {
+          "name": {
+            "en": "Prepayment Invoice",
+            "pl": "Faktura Zaliczkowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "ZAL"
+          }
+        },
+        {
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "ROZ"
+          }
+        },
+        {
+          "name": {
+            "en": "Simplified Invoice",
+            "pl": "Faktura Uproszczona"
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "UPR"
+          }
+        },
+        {
+          "name": {
+            "en": "Credit note",
+            "pl": "Faktura korygująca"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "KOR"
+          }
+        },
+        {
+          "name": {
+            "en": "Prepayment credit note",
+            "pl": "Faktura korygująca fakturę zaliczkową"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "KOR_ZAL"
+          }
+        },
+        {
+          "name": {
+            "en": "Settlement credit note",
+            "pl": "Faktura korygująca fakturę rozliczeniową"
+          },
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "codes": {
+            "pl-favat-invoice-type": "KOR_ROZ"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "extensions": [
+        "pl-favat-effective-date"
+      ],
+      "reason_required": true,
+      "stamps": [
+        "favat-id"
+      ]
+    }
+  ]
+}

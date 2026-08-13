@@ -1,6 +1,8 @@
 package schema
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // registry contains all the schemas that we can possibly know about from either
 // inside or outside GOBL.
@@ -17,7 +19,7 @@ var schemas *registry
 
 func newRegistry() *registry {
 	return &registry{
-		entries: make([]*entry, 0),
+		entries: make([]*entry, 0, 100),
 	}
 }
 
@@ -72,7 +74,7 @@ func (r *registry) ids() []ID {
 // baseTypeOf removes the pointer and ensures we have a base type.
 func baseTypeOf(obj interface{}) reflect.Type {
 	typ := reflect.TypeOf(obj)
-	if typ.Kind() == reflect.Ptr {
+	if typ.Kind() == reflect.Pointer {
 		typ = typ.Elem()
 	}
 	return typ
@@ -82,33 +84,21 @@ func baseTypeOf(obj interface{}) reflect.Type {
 // registry. This should be called for all GOBL models that will be included
 // inside schema documents or included in an envelope document payload. The name
 // of the object will be determined from the type of the object provided.
-func Register(base ID, obj interface{}) {
-	if err := schemas.add(base, obj); err != nil {
-		panic(err)
+func Register(base ID, objs ...interface{}) {
+	for _, obj := range objs {
+		if err := schemas.add(base, obj); err != nil {
+			panic(err)
+		}
 	}
 }
 
 // RegisterIn will determine the anchor and add it to the base schema before
 // adding to the global registry.
-func RegisterIn(base ID, obj interface{}) {
-	if err := schemas.addWithAnchor(base, obj); err != nil {
-		panic(err)
-	}
-}
-
-// RegisterAll takes an array of objects to register as additional schema using the
-// ID#Add method. Se `RegistereAllIn` for registering schema using anchors.
-func RegisterAll(base ID, objs []interface{}) {
+func RegisterIn(base ID, objs ...interface{}) {
 	for _, obj := range objs {
-		Register(base, obj)
-	}
-}
-
-// RegisterAllIn takes the base schema ID and adds all the provided objects as
-// anchored entries in the base.
-func RegisterAllIn(base ID, objs []interface{}) {
-	for _, obj := range objs {
-		RegisterIn(base, obj)
+		if err := schemas.addWithAnchor(base, obj); err != nil {
+			panic(err)
+		}
 	}
 }
 

@@ -1,0 +1,126 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "bd732f16f7f31bb9a6ceaf38353a56479d7390012cd7e8d85feec7cfedb45669"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2024-08-20",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"gr-mydata-invoice-type": "11.3"
+			}
+		},
+		"supplier": {
+			"name": "Ελληνικά Τρόφιμα Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "177472438"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Λεωφόρος Βουλιαγμένης",
+					"locality": "Αθήνα",
+					"code": "11636",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hellenicfoods@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Υπηρεσίες Ανάπτυξης",
+					"price": "8.44",
+					"unit": "h"
+				},
+				"sum": "8.44",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "24%",
+						"ext": {
+							"gr-mydata-vat-rate": "1"
+						}
+					}
+				],
+				"total": "8.44"
+			}
+		],
+		"payment": {
+			"advances": [
+				{
+					"key": "card",
+					"description": "Prepaid amount",
+					"percent": "100%",
+					"amount": "8.44",
+					"ext": {
+						"gr-mydata-payment-means": "7"
+					}
+				}
+			],
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"gr-mydata-payment-means": "7"
+				}
+			}
+		},
+		"totals": {
+			"sum": "8.44",
+			"tax_included": "1.63",
+			"total": "6.81",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"gr-mydata-vat-rate": "1"
+								},
+								"base": "6.81",
+								"percent": "24%",
+								"amount": "1.63"
+							}
+						],
+						"amount": "1.63"
+					}
+				],
+				"sum": "1.63"
+			},
+			"tax": "1.63",
+			"total_with_tax": "8.44",
+			"payable": "8.44",
+			"advance": "8.44",
+			"due": "0.00"
+		}
+	}
+}

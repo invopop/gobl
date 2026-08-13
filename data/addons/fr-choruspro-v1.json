@@ -1,0 +1,260 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-choruspro-v1",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "Chorus Pro",
+    "fr": "Chorus Pro"
+  },
+  "description": {
+    "en": "Support for the French Chorus Pro platform for B2G (Business-to-Government) electronic invoicing.\nThis addon provides the necessary structures and validations to ensure compliance with the\nChorus Pro specifications.\n\nIt requires the EN16931 addon as it expands on the European standard with French-specific\nrequirements for public sector invoicing.",
+    "fr": "Support pour la plateforme française Chorus Pro pour la facturation électronique B2G\n(Business-to-Government). Cet addon fournit les structures et validations nécessaires\npour assurer la conformité avec les spécifications Chorus Pro.\n\nIl nécessite l'addon EN16931 car il étend le standard européen avec des exigences\nspécifiques françaises pour la facturation du secteur public."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Chorus Pro Specifications",
+        "fr": "Spécifications Chorus Pro"
+      },
+      "url": "https://communaute.chorus-pro.gouv.fr/wp-content/uploads/2018/11/External_Specifications_EDI_Appendix_V4.10.pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "fr-choruspro-framework",
+      "name": {
+        "en": "General Information Framework",
+        "fr": "Informations générales"
+      },
+      "desc": {
+        "en": "The general information framework is used to provide additional context\nabout the entity submitting the document. If no value is provided, it will\ndefault to \"A1\" (Submission by a supplier of an invoice), the most common\nuse-case.\n\nThis extension's value is not deterministic, meaning that it will not be\nreplaced by GOBL during normalization.",
+        "fr": "Le cadre d'informations générales est utilisé pour fournir un contexte\nsupplémentaire sur l'entité soumettant le document. Si aucune valeur\nn'est fournie, elle sera par défaut \"A1\" (Dépôt par un fournisseur d'une facture), le cas d'utilisation le plus courant.\n\nLa valeur de cette extension n'est pas déterministe, ce qui signifie qu'elle\nne sera pas remplacée par GOBL lors de la normalisation."
+      },
+      "values": [
+        {
+          "code": "A1",
+          "name": {
+            "en": "Submission by a supplier of an invoice",
+            "fr": "Dépôt par un fournisseur d'une facture"
+          }
+        },
+        {
+          "code": "A2",
+          "name": {
+            "en": "Submission by a supplier of an invoice already paid",
+            "fr": "Dépôt par un fournisseur d'une facture déjà payée"
+          }
+        },
+        {
+          "code": "A3",
+          "name": {
+            "en": "Submission by a supplier of a Memorandum on Justice Costs",
+            "fr": "Dépôt par un fournisseur d'un mémoire de frais de justice"
+          }
+        },
+        {
+          "code": "A4",
+          "name": {
+            "en": "Submission by a supplier of a draft monthly statement",
+            "fr": "Dépôt par un fournisseur d'un projet de décompte mensuel"
+          }
+        },
+        {
+          "code": "A5",
+          "name": {
+            "en": "Submission by a supplier of an account statement",
+            "fr": "Dépôt par un fournisseur d'un état d'acompte"
+          }
+        },
+        {
+          "code": "A6",
+          "name": {
+            "en": "Work invoice document sent to a financial service",
+            "fr": "Pièce de facturation de travaux transmise au service financier"
+          }
+        },
+        {
+          "code": "A7",
+          "name": {
+            "en": "Submission by a supplier of a draft final statement",
+            "fr": "Dépôt par un fournisseur d'un projet de décompte final"
+          }
+        },
+        {
+          "code": "A8",
+          "name": {
+            "en": "Submission by a supplier of a general and definitive statement",
+            "fr": "Dépôt par un fournisseur d'un décompte général et définitif"
+          }
+        },
+        {
+          "code": "A9",
+          "name": {
+            "en": "Submission by a subcontractor of an invoice",
+            "fr": "Dépôt par un sous-traitant d'une facture"
+          }
+        },
+        {
+          "code": "A10",
+          "name": {
+            "en": "Submission by a subcontractor of a draft monthly statement",
+            "fr": "Dépôt par un sous-traitant d'un projet de décompte mensuel"
+          }
+        },
+        {
+          "code": "A12",
+          "name": {
+            "en": "Submission by a joint contractor of an invoice",
+            "fr": "Dépôt par un cotraitant d'une facture"
+          }
+        },
+        {
+          "code": "A13",
+          "name": {
+            "en": "Submission by a joint contractor of a draft monthly statement",
+            "fr": "Dépôt par un cotraitant d'un projet de décompte mensuel"
+          }
+        },
+        {
+          "code": "A14",
+          "name": {
+            "en": "Submission by a joint contractor of a draft final statement",
+            "fr": "Dépôt par un cotraitant d'un projet de décompte final"
+          }
+        },
+        {
+          "code": "A15",
+          "name": {
+            "en": "Submission by a project manager of an account statement",
+            "fr": "Dépôt par une MOE d'un état d'acompte"
+          }
+        },
+        {
+          "code": "A16",
+          "name": {
+            "en": "Submission by a project manager of a validated account statement",
+            "fr": "Dépôt par une MOE d'un état d'acompte validé"
+          }
+        },
+        {
+          "code": "A17",
+          "name": {
+            "en": "Submission by a project manager of a draft general statement",
+            "fr": "Dépôt par une MOE d'un projet de décompte général"
+          }
+        },
+        {
+          "code": "A18",
+          "name": {
+            "en": "Submission by a project manager of a general statement",
+            "fr": "Dépôt par une MOE d'un décompte général"
+          }
+        },
+        {
+          "code": "A19",
+          "name": {
+            "en": "Submission by a contracting authority of a validated account statement",
+            "fr": "Dépôt par une MOA d'un état d'acompte validé"
+          }
+        },
+        {
+          "code": "A20",
+          "name": {
+            "en": "Submission by a contracting authority of a general statement",
+            "fr": "Dépôt par une MOA d'un décompte général"
+          }
+        },
+        {
+          "code": "A21",
+          "name": {
+            "en": "Submission by a beneficiary of an ICT reimbursement request",
+            "fr": "Dépôt par un bénéficiaire d'une demande de remboursement de la TIC"
+          }
+        },
+        {
+          "code": "A22",
+          "name": {
+            "en": "Submission by a supplier or an authorised representative of a draft general statement as part of a tacit procedure",
+            "fr": "Dépôt par un fournisseur ou mandataire d'un projet de décompte général dans le cadre d'une procédure tacite"
+          }
+        },
+        {
+          "code": "A23",
+          "name": {
+            "en": "Submission by a supplier or an authorised representative of a tacit general and final statement",
+            "fr": "Dépôt par un fournisseur ou mandataire d'un décompte général et définitif tacite"
+          }
+        },
+        {
+          "code": "A24",
+          "name": {
+            "en": "Submission by an authorised representative of a tacit general and final statement",
+            "fr": "Dépôt par une MOE d'un décompte général et définitif tacite"
+          }
+        },
+        {
+          "code": "A25",
+          "name": {
+            "en": "Submission by an authorised representative of a general and final statement as part of a tacit procedure",
+            "fr": "Dépôt par une MOA d'un décompte général et définitif dans le cadre d'une procédure tacite"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fr-choruspro-scheme",
+      "name": {
+        "en": "Scheme",
+        "fr": "Schéma"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Third party with SIRET",
+            "fr": "Tiers avec SIRET"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "European structure outside France",
+            "fr": "Structure Européenne hors France"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Structure outside the EU",
+            "fr": "Structure hors UE"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "RIDET",
+            "fr": "RIDET"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Tahiti Number",
+            "fr": "Numéro Tahiti"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Other",
+            "fr": "Autre"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": null
+}

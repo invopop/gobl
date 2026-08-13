@@ -1,0 +1,594 @@
+package bill_test
+
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/invopop/gobl/addons/es/tbai"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestPaymentCalculate(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+
+		assert.Equal(t, bill.PaymentTypeReceipt, p.Type)
+		assert.Equal(t, currency.EUR, p.Currency)
+		assert.Equal(t, p.Regime.Country.String(), "ES")
+		assert.Equal(t, p.Supplier.TaxID.Code.String(), "B98602642", "should normalize")
+	})
+
+	t.Run("missing supplier", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Supplier = nil
+		assert.NotPanics(t, func() {
+			assert.ErrorContains(t, p.Calculate(), "currency: required, unable to determine")
+		})
+	})
+
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Supplier.TaxID = nil
+		assert.NotPanics(t, func() {
+			assert.ErrorContains(t, p.Calculate(), "currency: required, unable to determine")
+		})
+	})
+
+	t.Run("with positive amount and refunds", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Refund: true,
+			Amount: num.MakeAmount(5000, 2),
+			Document: &org.DocumentRef{
+				Type:      "credit-note",
+				Series:    "CN1",
+				Code:      "0123",
+				IssueDate: cal.NewDate(2025, 1, 24),
+			},
+		})
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "50.00", p.Total.String(), "should balance")
+	})
+
+	t.Run("with credit", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Lines[0].Refund = true
+		pmt.Lines[0].Amount = num.MakeAmount(5000, 2)
+		require.NoError(t, pmt.Calculate())
+		require.NoError(t, rules.Validate(pmt))
+		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
+	})
+
+	t.Run("with taxes", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		require.NoError(t, p.Calculate())
+		// assert.Equal(t, "21.00", p.Tax.Sum.String())
+	})
+
+	t.Run("with multiple tax lines", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Amount: num.MakeAmount(10000, 2),
+			Document: &org.DocumentRef{
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(10, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		})
+		require.NoError(t, p.Calculate())
+		//assert.Len(t, p.Tax.Categories, 1)
+		//assert.Len(t, p.Tax.Categories[0].Rates, 2)
+		//assert.Equal(t, "31.00", p.Tax.Sum.String())
+	})
+
+	t.Run("with partial payments and taxes 50%", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Lines[0].Payable = num.NewAmount(12100, 2)
+		p.Lines[0].Amount = num.MakeAmount(6050, 2) // half paid
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "60.50", p.Total.String(), "should be half of the total")
+		//assert.Equal(t, "10.50", p.Tax.Sum.String(), "should be half of the tax")
+		//assert.Equal(t, "60.50", p.Due.String(), "should be half of the payable amount")
+	})
+
+	t.Run("with partial payments and taxes ~25%", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Lines[0].Installment = 2
+		p.Lines[0].Payable = num.NewAmount(12100, 2)
+		p.Lines[0].Advances = num.NewAmount(2000, 2) // 20€ already paid
+		p.Lines[0].Amount = num.MakeAmount(3025, 2)  // 25% paid, approx
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "30.25", p.Total.String(), "should be a quarter of the total")
+		//assert.Equal(t, "5.25", p.Tax.Sum.String(), "should be a quarter of the tax")
+		//assert.Equal(t, "70.75", p.Due.String(), "should be three quarters of the payable amount, minus 20€")
+		assert.Equal(t, 2, p.Lines[0].Installment, "should be the second installment")
+	})
+
+	t.Run("missing lines", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Lines = nil
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, num.AmountZero, p.Total)
+	})
+
+	t.Run("line indexes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Index: 23,
+		})
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, 1, p.Lines[0].Index)
+		assert.Equal(t, 2, p.Lines[1].Index)
+	})
+
+	t.Run("without issue date", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.IssueDate = cal.Date{}
+		require.NoError(t, p.Calculate())
+		tn := cal.TodayIn(p.RegimeDef().TimeLocation())
+		assert.Equal(t, p.IssueDate, tn)
+		assert.Nil(t, p.IssueTime)
+	})
+
+	t.Run("with empty issue time", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.IssueDate = cal.Date{}
+		p.IssueTime = new(cal.Time)
+		require.NoError(t, p.Calculate())
+		tn := cal.ThisSecondIn(p.RegimeDef().TimeLocation())
+		assert.Equal(t, p.IssueDate.String(), tn.Date().String())
+		assert.Equal(t, p.IssueTime.Hour, tn.Time().Hour)
+		assert.Equal(t, p.IssueTime.Minute, tn.Time().Minute)
+		assert.Equal(t, p.IssueTime.Second, tn.Time().Second)
+	})
+
+	t.Run("with different exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.USD
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines[0].Document.Currency = currency.EUR
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "100.00", p.Total.String(), "should convert to USD")
+		//assert.Equal(t, "23.10", p.Tax.Sum.String())
+	})
+
+	t.Run("with missing exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.MXN
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines[0].Document.Payable = num.NewAmount(10000, 2)
+		p.Lines[0].Document.Currency = currency.EUR
+		require.ErrorContains(t, p.Calculate(), "lines: 1: document: currency: missing exchange rate from EUR to MXN")
+	})
+
+	t.Run("with multiple and different exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.USD
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Amount: num.MakeAmount(10000, 2),
+			Document: &org.DocumentRef{
+				Currency: currency.EUR,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(20000, 2),
+									Percent: num.NewPercentage(10, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		})
+		require.NoError(t, p.Calculate())
+		data, _ := json.MarshalIndent(p, "", "  ")
+		t.Logf("Payment JSON: %s", data)
+		assert.Equal(t, "200.00", p.Total.String(), "should convert to USD")
+		//assert.Equal(t, "43.00", p.Tax.Sum.String())
+	})
+}
+
+func TestPaymentValidate(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("with error", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		require.NoError(t, pmt.Calculate())
+		pmt.Supplier = nil
+		assert.ErrorContains(t, rules.Validate(pmt), "supplier is required")
+	})
+
+	t.Run("with addon", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Addons.SetAddons(tbai.V1)
+		require.NoError(t, pmt.Calculate())
+		require.NoError(t, rules.Validate(pmt))
+	})
+
+	t.Run("with nil array entries", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Lines = append(pmt.Lines, nil)
+		pmt.Notes = append(pmt.Notes, nil)
+		pmt.Preceding = append(pmt.Preceding, nil)
+		pmt.ExchangeRates = append(pmt.ExchangeRates, nil)
+		pmt.Complements = append(pmt.Complements, nil)
+		require.NoError(t, pmt.Calculate())
+		require.NoError(t, rules.Validate(pmt))
+	})
+
+	t.Run("method missing key", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Methods = []*pay.Record{{Amount: num.MakeAmount(10000, 2)}}
+		require.NoError(t, pmt.Calculate())
+		err := rules.Validate(pmt)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "payment method key is required")
+	})
+}
+
+func testPaymentMinimal(t *testing.T) *bill.Payment {
+	t.Helper()
+	p := &bill.Payment{
+		Series:    "P1",
+		Code:      "0123",
+		IssueDate: cal.MakeDate(2025, 1, 24),
+		Methods: []*pay.Record{
+			{Key: pay.MeansKeyCard},
+		},
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "B-98602642",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "54387763P",
+			},
+		},
+		Lines: []*bill.PaymentLine{
+			{
+				Document: &org.DocumentRef{
+					Series:    "F1",
+					Code:      "01234",
+					IssueDate: cal.NewDate(2025, 1, 24),
+				},
+				Amount: num.MakeAmount(10000, 2),
+			},
+		},
+	}
+	return p
+}
+
+func testPaymentWithTax(t *testing.T) *bill.Payment {
+	pmt := testPaymentMinimal(t)
+	pmt.Lines[0].Document.Tax = &tax.Total{
+		Categories: []*tax.CategoryTotal{
+			{
+				Code: "VAT",
+				Rates: []*tax.RateTotal{
+					{
+						Base:    num.MakeAmount(10000, 2),
+						Percent: num.NewPercentage(21, 2),
+					},
+				},
+			},
+		},
+	}
+	return pmt
+}
+
+func TestPaymentJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$regime": {
+				"$ref": "https://gobl.org/draft-0/tax/regime-code",
+				"title": "Tax Regime"
+			},
+			"$addons": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/tax/addon-list",
+					"title": "Addons",
+					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+				}
+			},
+			"uuid": {
+				"type": "string",
+				"format": "uuid",
+				"title": "UUID",
+				"description": "Universally Unique Identifier."
+			},
+			"type": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Type",
+				"description": "Type of invoice document subject to the requirements of the local tax regime.",
+				"calculated": true
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	pmt := bill.Payment{}
+	pmt.JSONSchemaExtend(js)
+
+	assert.Equal(t, js.Properties.Len(), 4) // from this example
+
+	t.Run("types", func(t *testing.T) {
+		prop, ok := js.Properties.Get("type")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		it := bill.PaymentTypes[0]
+		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
+	})
+	t.Run("recommended", func(t *testing.T) {
+		assert.Len(t, js.Extras[schema.Recommended], 4)
+	})
+
+}
+
+func TestPaymentMethodsAutoFill(t *testing.T) {
+	t.Run("single method amount filled from total", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.Len(t, p.Methods, 1)
+		assert.Equal(t, "100.00", p.Methods[0].Amount.String())
+	})
+
+	t.Run("single method amount preserved when set", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods[0].Amount = num.MakeAmount(50, 0)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "50", p.Methods[0].Amount.String())
+	})
+
+	t.Run("multiple methods are not auto-filled", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "60.00", p.Methods[0].Amount.String())
+		assert.Equal(t, "40.00", p.Methods[1].Amount.String())
+	})
+
+	t.Run("mixed currency methods round-trip", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(2200, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		out := new(bill.Payment)
+		require.NoError(t, json.Unmarshal(data, out))
+		require.Len(t, out.Methods, 2)
+		assert.Equal(t, currency.USD, out.Methods[1].Currency)
+	})
+
+	t.Run("percent-based method calculated from total", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Percent: num.NewPercentage(25, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "25.00", p.Methods[0].Amount.String())
+	})
+}
+
+func TestPaymentMethodsSumMatchesTotal(t *testing.T) {
+	t.Run("single method auto-filled passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("multi-method same currency summing to total passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("multi-method sum below total fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(3000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("multi-method sum above total fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(6000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(5000, 2)},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("mixed currency converted via exchange rates passes", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{From: currency.USD, To: currency.EUR, Amount: num.MakeAmount(50, 2)},
+		}
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("mixed currency without exchange rate fails", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(8000, 2)},
+			{Key: pay.MeansKeyCash, Amount: num.MakeAmount(4000, 2), Currency: currency.USD},
+		}
+		require.NoError(t, p.Calculate())
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "methods sum must match total")
+	})
+
+	t.Run("nil method entries are skipped", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = []*pay.Record{
+			{Key: pay.MeansKeyCard, Amount: num.MakeAmount(10000, 2)},
+			nil,
+		}
+		require.NoError(t, p.Calculate())
+		require.NoError(t, rules.Validate(p))
+	})
+
+	t.Run("empty methods short-circuits to nil error", func(t *testing.T) {
+		p := testPaymentMinimal(t)
+		p.Methods = nil
+		// "at least one payment method is required" rule fires, but the sum
+		// rule itself should not contribute an error.
+		err := rules.Validate(p)
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "methods sum must match total")
+	})
+}
+
+func TestPaymentCanSign(t *testing.T) {
+	t.Run("empty code", func(t *testing.T) {
+		p := &bill.Payment{}
+		assert.False(t, p.CanSign())
+	})
+	t.Run("with code", func(t *testing.T) {
+		p := &bill.Payment{Code: "RCT/0001"}
+		assert.True(t, p.CanSign())
+	})
+}
+
+func TestPaymentLegacyMethodMigration(t *testing.T) {
+	const legacy = `{
+		"type": "receipt",
+		"series": "P1",
+		"code": "0001",
+		"issue_date": "2025-01-24",
+		"currency": "EUR",
+		"method": {
+			"key": "credit-transfer",
+			"detail": "Wire transfer from BBVA",
+			"credit_transfer": [{"iban": "ES1234567890123456789012"}]
+		},
+		"supplier": {"name": "Test Supplier"},
+		"lines": [{"document": {"code": "F1/01"}, "amount": "100.00"}],
+		"total": "100.00"
+	}`
+
+	pmt := new(bill.Payment)
+	require.NoError(t, json.Unmarshal([]byte(legacy), pmt))
+	require.Len(t, pmt.Methods, 1)
+	assert.Equal(t, pay.MeansKeyCreditTransfer, pmt.Methods[0].Key)
+	assert.Equal(t, "Wire transfer from BBVA", pmt.Methods[0].Description)
+	require.NotNil(t, pmt.Methods[0].CreditTransfer)
+	assert.Equal(t, cbc.Code("ES1234567890123456789012"), pmt.Methods[0].CreditTransfer.IBAN)
+}
+
+func TestPaymentFromToEndpoint(t *testing.T) {
+	mkSupplier := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:supplier.example"}}}
+	}
+	mkCustomer := func() *org.Party {
+		return &org.Party{Endpoints: []*org.Endpoint{{URI: "gobl:customer.example"}}}
+	}
+
+	tests := []struct {
+		name     string
+		typ      cbc.Key
+		wantFrom string
+		wantTo   string
+	}{
+		{"request", bill.PaymentTypeRequest, "gobl:supplier.example", "gobl:customer.example"},
+		{"receipt", bill.PaymentTypeReceipt, "gobl:supplier.example", "gobl:customer.example"},
+		{"advice", bill.PaymentTypeAdvice, "gobl:customer.example", "gobl:supplier.example"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pmt := &bill.Payment{
+				Type:     tt.typ,
+				Supplier: mkSupplier(),
+				Customer: mkCustomer(),
+			}
+			require.NotNil(t, pmt.FromEndpoint())
+			require.NotNil(t, pmt.ToEndpoint())
+			assert.Equal(t, tt.wantFrom, pmt.FromEndpoint().URI.String())
+			assert.Equal(t, tt.wantTo, pmt.ToEndpoint().URI.String())
+		})
+	}
+
+	t.Run("nil payment is a no-op", func(t *testing.T) {
+		var pmt *bill.Payment
+		assert.Nil(t, pmt.FromEndpoint())
+		assert.Nil(t, pmt.ToEndpoint())
+	})
+}

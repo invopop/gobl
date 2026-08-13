@@ -1,0 +1,202 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Brazil",
+    "pt": "Brasil"
+  },
+  "description": {
+    "en": "Brazil uses Notas Fiscais Eletrônicas (electronic fiscal notes) such as NFSe,\nNFe, and NFCe for reporting tax information to municipal, state, and federal\nauthorities. The tax system is administered by the Receita Federal (Federal\nRevenue Service).\n\nTax identification is provided through a CNPJ (Cadastro Nacional da Pessoa\nJurídica) for businesses, consisting of 14 digits, or a CPF (Cadastro de Pessoas\nFísicas) for individuals, consisting of 11 digits. Both types are valid for the\nissuance of NFS-e (electronic service invoices).\n\nBrazilian addresses have three subdivisions relevant for tax purposes: bairro\n(neighbourhood), município (municipality), and estado (state). Municipality codes\nfollow the IBGE coding system.\n\nService notes (NFSe) let service providers document and report taxes such as\nISS (Imposto Sobre Serviços) related to the services they provide. Municipal\ngovernments regulate them. Special tax regimes include Simples Nacional for\nsimplified taxation of micro and small enterprises, and MEI (Micro-Empreendedor\nIndividual) for individual micro-entrepreneurs."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "NFS-e Technical Documentation (ABRASF)"
+      },
+      "url": "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e"
+    },
+    {
+      "title": {
+        "en": "IBGE Municipality Codes"
+      },
+      "url": "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+    }
+  ],
+  "time_zone": "America/Sao_Paulo",
+  "country": "BR",
+  "currency": "BRL",
+  "extensions": [
+    {
+      "key": "br-ibge-municipality",
+      "name": {
+        "en": "IBGE Municipality Code",
+        "pt": "Código do Município do IBGE"
+      },
+      "desc": {
+        "en": "The municipality code as defined by the IBGE (Brazilian Institute of Geography and\nStatistics)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "IBGE - Municipalities Codes",
+            "pt": "IBGE - Códigos dos Municípios"
+          },
+          "url": "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+        }
+      ],
+      "pattern": "^\\d{7}$"
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "ISS",
+      "name": {
+        "en": "ISS",
+        "pt": "ISS"
+      },
+      "title": {
+        "en": "Municipal Service Tax",
+        "pt": "Imposto Sobre Serviços"
+      },
+      "informative": true
+    },
+    {
+      "code": "ICMS",
+      "name": {
+        "en": "ICMS",
+        "pt": "ICMS"
+      },
+      "title": {
+        "en": "State value-added tax",
+        "pt": "Imposto sobre Circulação de Mercadorias e Serviços"
+      },
+      "informative": true
+    },
+    {
+      "code": "IPI",
+      "name": {
+        "en": "IPI",
+        "pt": "IPI"
+      },
+      "title": {
+        "en": "Federal value-added Tax",
+        "pt": "Imposto sobre Produtos Industrializados"
+      }
+    },
+    {
+      "code": "PIS",
+      "name": {
+        "en": "PIS",
+        "pt": "PIS"
+      },
+      "title": {
+        "en": "Social Integration Program",
+        "pt": "Programa de Integração Social"
+      },
+      "informative": true
+    },
+    {
+      "code": "PISRet",
+      "name": {
+        "en": "PIS (Retained)",
+        "pt": "PIS (Retido)"
+      },
+      "title": {
+        "en": "Social Integration Program Retained",
+        "pt": "Programa de Integração Social Retido"
+      },
+      "retained": true
+    },
+    {
+      "code": "COFINS",
+      "name": {
+        "en": "COFINS",
+        "pt": "COFINS"
+      },
+      "title": {
+        "en": "Contribution for the Financing of Social Security",
+        "pt": "Contribuição para o Financiamento da Seguridade Social"
+      },
+      "informative": true
+    },
+    {
+      "code": "COFINSRet",
+      "name": {
+        "en": "COFINS (Retained)",
+        "pt": "COFINS (Retido)"
+      },
+      "title": {
+        "en": "Contribution for the Financing of Social Security Retained",
+        "pt": "Contribuição para o Financiamento da Seguridade Social Retido"
+      },
+      "retained": true
+    },
+    {
+      "code": "CSLL",
+      "name": {
+        "en": "CSLL",
+        "pt": "CSLL"
+      },
+      "title": {
+        "en": "Social Contribution on Net Profit",
+        "pt": "Contribuição Social sobre o Lucro Líquido"
+      },
+      "retained": true
+    },
+    {
+      "code": "INSS",
+      "name": {
+        "en": "INSS",
+        "pt": "INSS"
+      },
+      "title": {
+        "en": "National Social Security Institute Withholding",
+        "pt": "Retenção do Instituto Nacional do Seguro Social"
+      },
+      "retained": true
+    },
+    {
+      "code": "IRRF",
+      "name": {
+        "en": "IRRF",
+        "pt": "IRRF"
+      },
+      "title": {
+        "en": "Income Tax Withheld at Source",
+        "pt": "Imposto de Renda Retido na Fonte"
+      },
+      "retained": true
+    },
+    {
+      "code": "IBS",
+      "name": {
+        "en": "IBS",
+        "pt": "IBS"
+      },
+      "title": {
+        "en": "Goods and Services Tax",
+        "pt": "Imposto sobre Bens e Serviços"
+      },
+      "informative": true
+    },
+    {
+      "code": "CBS",
+      "name": {
+        "en": "CBS",
+        "pt": "CBS"
+      },
+      "title": {
+        "en": "Federal Goods and Services Contribution",
+        "pt": "Contribuição sobre Bens e Serviços"
+      },
+      "informative": true
+    }
+  ]
+}

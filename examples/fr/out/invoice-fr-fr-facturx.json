@@ -1,0 +1,216 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1a5539d5cb3af435b30f28a6499c864caaf721590cc4e220459b7f3297111b87"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-facturx-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Provide One Inc.",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			},
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Rue Sundacsakn",
+					"locality": "Saint-Germain-En-Laye",
+					"code": "75050",
+					"country": "FR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "email@sample.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "one"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"percent": "20%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Random exempt extra",
+					"price": "90.00",
+					"unit": "one"
+				},
+				"sum": "90.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt",
+						"ext": {
+							"cef-vatex": "VATEX-EU-79-C",
+							"untdid-tax-category": "E"
+						}
+					}
+				],
+				"total": "90.00"
+			}
+		],
+		"payment": {
+			"payee": {
+				"name": "Affacturage Express SA",
+				"identities": [
+					{
+						"label": "SIREN",
+						"code": "732829320"
+					}
+				],
+				"addresses": [
+					{
+						"num": "8",
+						"street": "Avenue des Champs-Élysées",
+						"locality": "Paris",
+						"code": "75008",
+						"country": "FR"
+					}
+				],
+				"emails": [
+					{
+						"addr": "recouvrement@affacturage.example"
+					}
+				]
+			},
+			"payer": {
+				"name": "Groupe Parent SARL",
+				"identities": [
+					{
+						"label": "SIREN",
+						"code": "552081317"
+					}
+				],
+				"addresses": [
+					{
+						"num": "12",
+						"street": "Rue de la République",
+						"locality": "Lyon",
+						"code": "69002",
+						"country": "FR"
+					}
+				],
+				"emails": [
+					{
+						"addr": "comptabilite@groupe-parent.example"
+					}
+				]
+			},
+			"terms": {
+				"notes": "Please pay within 10 days"
+			},
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"untdid-payment-means": "48"
+				}
+			}
+		},
+		"totals": {
+			"sum": "1710.00",
+			"total": "1710.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "1620.00",
+								"percent": "20%",
+								"amount": "324.00"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"cef-vatex": "VATEX-EU-79-C",
+									"untdid-tax-category": "E"
+								},
+								"base": "90.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "324.00"
+					}
+				],
+				"sum": "324.00"
+			},
+			"tax": "324.00",
+			"total_with_tax": "2034.00",
+			"payable": "2034.00"
+		}
+	}
+}

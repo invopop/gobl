@@ -1,0 +1,94 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "551ada6c41734c81e56c5e4cfea5763c858ee22a4f251414d81de97683064598"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SE",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "2025",
+		"code": "1234",
+		"issue_date": "2025-04-25",
+		"currency": "SEK",
+		"supplier": {
+			"name": "Example Supplier AB",
+			"tax_id": {
+				"country": "SE",
+				"code": "556036079301"
+			},
+			"addresses": [
+				{
+					"street": "Exempelgatan 123",
+					"locality": "Stockholm",
+					"code": "111 20",
+					"country": "SE"
+				}
+			]
+		},
+		"customer": {
+			"name": "Example Company AB",
+			"tax_id": {
+				"country": "SE",
+				"code": "556703748501"
+			},
+			"addresses": [
+				{
+					"street": "Imaginärt Torg, 24",
+					"locality": "Stockholm",
+					"code": "111 53",
+					"country": "SE"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Software Engineering Services",
+					"price": "1000.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000.00",
+								"percent": "25.0%",
+								"amount": "250.00"
+							}
+						],
+						"amount": "250.00"
+					}
+				],
+				"sum": "250.00"
+			},
+			"tax": "250.00",
+			"total_with_tax": "1250.00",
+			"payable": "1250.00"
+		}
+	}
+}

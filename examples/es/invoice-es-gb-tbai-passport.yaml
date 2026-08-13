@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-07-19"
+series: "PASS"
+code: "0003"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "San Frantzisko"
+      locality: "Bilbo"
+      region: "Bizkaia"
+      code: "48003"
+      country: "ES"
+
+customer:
+  name: "Jane Doe"
+  identities:
+    - key: passport
+      country: "GB"
+      code: "543210987"
+
+lines:
+  - quantity: 2
+    item:
+      key: "services"
+      name: "Guided tour booking fee"
+      price: "75.00"
+    taxes:
+      - cat: VAT
+        key: outside-scope
+        ext:
+          es-tbai-exemption: "RL"
+
+notes:
+  - key: "general"
+    text: "Tourist booking identified by passport."

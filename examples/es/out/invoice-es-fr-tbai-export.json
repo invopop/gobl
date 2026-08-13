@@ -1,0 +1,115 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "8db245dbd20e9d75afd94bd696882558c834863be654706ba94af8f693e4cb7c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "EXPORT",
+		"code": "0010",
+		"issue_date": "2024-03-12",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Atelier SAS",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"key": "goods",
+					"name": "Crafted leather goods",
+					"price": "120.00"
+				},
+				"sum": "600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "export",
+						"ext": {
+							"es-tbai-exemption": "E2",
+							"es-tbai-product": "goods",
+							"es-tbai-regime": "02"
+						}
+					}
+				],
+				"total": "600.00"
+			}
+		],
+		"totals": {
+			"sum": "600.00",
+			"total": "600.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "export",
+								"ext": {
+									"es-tbai-exemption": "E2",
+									"es-tbai-product": "goods",
+									"es-tbai-regime": "02"
+								},
+								"base": "600.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "600.00",
+			"payable": "600.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Goods exported to France."
+			}
+		]
+	}
+}

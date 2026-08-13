@@ -1,0 +1,96 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AR",
+  "uuid": "8f3c2a1b-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+  "code": "0001-00000124",
+  "issue_date": "2025-01-16",
+  "currency": "ARS",
+  "supplier": {
+    "name": "Constructora del Sur S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Rivadavia 5000",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1424",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "contacto@constructoradelsur.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Municipalidad de San Martín",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. San Martín 3200",
+        "locality": "San Martín",
+        "region": "Buenos Aires",
+        "code": "B1650",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@sanmartin.gob.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Obra de construcción - Refacción de edificio municipal",
+        "price": "2500000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "reduced",
+          "percent": "10.5%"
+        }
+      ]
+    },
+    {
+      "quantity": "500",
+      "item": {
+        "name": "Materiales de construcción",
+        "price": "1500.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "reduced",
+          "percent": "10.5%"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-03-16",
+          "percent": "50%"
+        },
+        {
+          "date": "2025-05-16",
+          "percent": "50%"
+        }
+      ]
+    }
+  }
+}

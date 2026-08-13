@@ -1,36 +1,122 @@
 package org
 
 import (
+	"strings"
+
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 )
 
 // Address defines a globally acceptable set of attributes that describes
 // a postal or fiscal address.
-// Attribute names loosly based on the xCard file format.
+// Attribute names loosely based on the xCard file format.
 type Address struct {
-	UUID          *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Label         string       `json:"label,omitempty" jsonschema:"title=Label,description=Useful identifier, such as home, work, etc."`
-	PostOfficeBox string       `json:"po_box,omitempty" jsonschema:"title=Post Office Box,description=Box number or code for the post office box located at the address."`
-	Number        string       `json:"num,omitempty" jsonschema:"title=Number,description=House or building number in the street."`
-	Floor         string       `json:"floor,omitempty" jsonschema:"title=Floor,description=Floor number within the building."`
-	Block         string       `json:"block,omitempty" jsonschema:"title=Block,description=Block number within the building."`
-	Door          string       `json:"door,omitempty" jsonschema:"title=Door,description=Door number within the building."`
-	Street        string       `json:"street,omitempty" jsonschema:"title=Street,description=Fist line of street."`
-	StreetExtra   string       `json:"street_extra,omitempty" jsonschema:"title=Extended Street,description=Additional street address details."`
-	Locality      string       `json:"locality" jsonschema:"title=Locality,description=The village, town, district, or city."`
-	Region        string       `json:"region" jsonschema:"title=Region,description=Province, County, or State."`
-	Code          string       `json:"code,omitempty" jsonschema:"title=Code,description=Post or ZIP code."`
-	Country       l10n.Country `json:"country,omitempty" jsonschema:"title=Country,description=ISO country code."`
-	Coordinates   *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates,description=For when the postal address is not sufficient, coordinates help locate the address more precisely."`
-	Meta          Meta         `json:"meta,omitempty" jsonschema:"title=Meta"`
+	uuid.Identify
+	// Useful identifier, such as home, work, etc.
+	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Office"`
+	// Box number or code for the post office box located at the address.
+	PostOfficeBox string `json:"po_box,omitempty" jsonschema:"title=Post Office Box"`
+	// House or building number in the street.
+	Number string `json:"num,omitempty" jsonschema:"title=Number"`
+	// Floor number within the building.
+	Floor string `json:"floor,omitempty" jsonschema:"title=Floor"`
+	// Block number within the building.
+	Block string `json:"block,omitempty" jsonschema:"title=Block"`
+	// Door number within the building.
+	Door string `json:"door,omitempty" jsonschema:"title=Door"`
+	// First line of street.
+	Street string `json:"street,omitempty" jsonschema:"title=Street"`
+	// Additional street address details.
+	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
+	// Name of a village, town, district, or city, typically inside a region.
+	Locality string `json:"locality,omitempty" jsonschema:"title=Locality"`
+	// Name of a city, province, county, or state, inside a country.
+	Region string `json:"region,omitempty" jsonschema:"title=Region"`
+	// State or province code for countries that require it.
+	State cbc.Code `json:"state,omitempty" jsonschema:"title=State"`
+	// Post or ZIP code.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// ISO country code.
+	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
+	// When the postal address is not sufficient, coordinates help locate the address more precisely.
+	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
+	// Any additional semi-structure details about the address.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Coordinates describes an exact geographical location in the world. We provide support
-// for a set of different options beyond regular latitude and longitude.
-type Coordinates struct {
-	Latitude  float64 `json:"lat,omitempty" jsonschema:"title=Latitude,description=Decimal latitude coordinate."`
-	Longitude float64 `json:"lon,omitempty" jsonschema:"title=Longitude,description=Decimal longitude coordinate."`
-	W3W       string  `json:"w3w,omitempty" jsonschema:"title=What 3 Words,description=Text coordinates compose of three words."`
-	Geohash   string  `json:"geohash,omitempty" jsonschema:"title=Geohash,description=Single string coordinate based on geohash standard."`
+// JSONSchemaExtend adds extra details to the Address schema.
+func (Address) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"number", "street", "locality", "region", "code", "country",
+		},
+	}
+}
+
+// LineOne returns the first line of the address by automatically
+// combining street, number, and other details into a single line.
+// This is useful for compatibility with other formats that don't
+// support the number fields directly.
+func (a *Address) LineOne() string {
+	str := a.Street
+	num := a.CompleteNumber()
+	if num != "" {
+		if str == "" {
+			return num
+		}
+		if a.numberFirst() {
+			str = num + " " + str
+		} else {
+			str = str + " " + num
+		}
+	}
+	return str
+}
+
+// LineTwo returns the second line of the address which for GOBL
+// is the `StreetExtra` field.
+func (a *Address) LineTwo() string {
+	return a.StreetExtra
+}
+
+// CompleteNumber will combine all the number related details, such
+// as number, block, floor, and door, into a single string separated
+// by spaces.
+func (a *Address) CompleteNumber() string {
+	strs := []string{a.Number, a.Block, a.Floor, a.Door}
+	// Remove empty strings.
+	var parts []string
+	for _, s := range strs {
+		if s != "" {
+			parts = append(parts, s)
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
+func (a *Address) numberFirst() bool {
+	// TODO: add more countries here!
+	switch a.Country.Code() {
+	case l10n.GB, l10n.US, l10n.CA, l10n.FR:
+		return true
+	default:
+		return false
+	}
+}
+
+func normalizeAddress(a *Address) {
+	uuid.Normalize(&a.UUID)
+	a.PostOfficeBox = cbc.NormalizeString(a.PostOfficeBox)
+	a.Number = cbc.NormalizeString(a.Number)
+	a.Floor = cbc.NormalizeString(a.Floor)
+	a.Block = cbc.NormalizeString(a.Block)
+	a.Door = cbc.NormalizeString(a.Door)
+	a.Street = cbc.NormalizeString(a.Street)
+	a.StreetExtra = cbc.NormalizeString(a.StreetExtra)
+	a.Locality = cbc.NormalizeString(a.Locality)
+	a.Region = cbc.NormalizeString(a.Region)
+	a.State = cbc.NormalizeAlphanumericalCode(a.State)
 }

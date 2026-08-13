@@ -1,0 +1,110 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AR",
+  "uuid": "7d2c1a9b-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
+  "code": "0001-00000125",
+  "issue_date": "2025-01-20",
+  "currency": "ARS",
+  "supplier": {
+    "name": "Servicios Energéticos Argentina S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Córdoba 850",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1054",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "facturacion@serviciosenergeticos.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Industrias Metalúrgicas del Plata S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Ruta 8 Km 65",
+        "locality": "Pilar",
+        "region": "Buenos Aires",
+        "code": "B1629",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "administracion@metalurgicasdelplata.com.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "15000",
+      "item": {
+        "name": "Energía eléctrica - Consumo kWh",
+        "price": "45.50",
+        "unit": "kwh"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "increased",
+          "percent": "27%"
+        }
+      ]
+    },
+    {
+      "quantity": "8500",
+      "item": {
+        "name": "Gas natural - Consumo m³",
+        "price": "32.00",
+        "unit": "m3"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "increased",
+          "percent": "27%"
+        }
+      ]
+    },
+    {
+      "quantity": "350",
+      "item": {
+        "name": "Agua - Consumo m³",
+        "price": "120.00",
+        "unit": "m3"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "increased",
+          "percent": "27%"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-02-05",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}

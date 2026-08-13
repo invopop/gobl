@@ -1,0 +1,34 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-001"
+tax:
+  tags:
+    - "simplified"
+  prices_include: "VAT"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Simple Goods Store"
+  addresses:
+    - num: "43"
+      street: "Calle Mayor"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28003"
+
+# No customer, simplified invoice
+
+lines:
+  - quantity: 10
+    item:
+      name: "Mugs from provider"
+      price: "16.00"
+      meta:
+        source: "provider"
+    taxes:
+      - cat: VAT
+        rate: standard

@@ -1,0 +1,31 @@
+// Package cbc provides a set of Common Basic Components.
+//
+// Name is take from the similar namespace used in UBL.
+package cbc
+
+import (
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+)
+
+func init() {
+	schema.Register(schema.GOBL.Add("cbc"),
+		Code(""),
+		CodeMap{},
+		Definition{},
+		Key(""),
+		Meta{},
+		Source{},
+		URI(""),
+	)
+	rules.Register(
+		"cbc",
+		rules.GOBL.Add("CBC"),
+		codeRules(),
+		codeMapRules(),
+		keyRules(),
+		definitionRules(),
+		sourceRules(),
+		uriRules(),
+	)
+}

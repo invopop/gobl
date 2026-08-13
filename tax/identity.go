@@ -1,0 +1,185 @@
+package tax
+
+import (
+	"errors"
+	"fmt"
+	"regexp"
+	"strings"
+
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/jsonschema"
+)
+
+// Identity stores the details required to identify an entity for tax
+// purposes in a specific country. Typically this would be a code related
+// to a specific indirect tax scheme like VAT or GST. Some countries, such as the
+// US, do not have an official tax scheme and should omit the `code` field.
+//
+// Other fiscal identities should be defined in a party identities array
+// with their own validation rules and country specific handling.
+type Identity struct {
+	// Tax country code for Where the tax identity was issued.
+	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Country Code"`
+
+	// Normalized code shown on the original identity document.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+
+	// Scheme is an optional field that may be used to override the tax regime's
+	// default tax scheme. Many electronic formats such as UBL or CII define an
+	// equivalent field. Examples: `VAT`, `GST`, `ST`, etc.
+	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
+
+	// Type is set according to the requirements of each regime, some have a single
+	// tax document type code, others require a choice to be made.
+	//
+	// Deprecated: Tax Identities should only be used for VAT or similar codes
+	// for companies. Use the identities array for other types of identification.
+	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
+}
+
+var (
+	// IdentityCodePattern is the regular expression pattern used to validate tax identity codes.
+	// Includes special exception letters used in some regions such as MX.
+	IdentityCodePattern = `^[A-Z0-9Ñ\&]+$`
+
+	// IdentityCodePatternRegexp is the regular expression used to validate tax identity codes.
+	IdentityCodePatternRegexp = regexp.MustCompile(IdentityCodePattern)
+
+	// ErrIdentityCodeInvalid is returned when the tax identity code is not valid.
+	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
+
+	// IdentityCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
+	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9Ñ\&]+`)
+)
+
+// ParseIdentity will attempt to parse a tax identity from a string making
+// the assumption that the first two characters are the country code and
+// the rest is the tax code. If the country code is identified by a
+// tax regime, the code will be normalized and validated.
+func ParseIdentity(tin string) (*Identity, error) {
+	if len(tin) < 2 {
+		return nil, ErrIdentityCodeInvalid
+	}
+	id := &Identity{
+		Country: l10n.TaxCountryCode(tin[:2]),
+		Code:    cbc.Code(tin[2:]),
+	}
+	id.Normalize()
+	if err := rules.Validate(id); err != nil {
+		return nil, err
+	}
+	return id, nil
+}
+
+// String provides a string representation of the tax identity.
+func (id *Identity) String() string {
+	return fmt.Sprintf("%s%s", id.Country, id.Code)
+}
+
+// Regime provides the regime object for this tax identity.
+func (id *Identity) Regime() *RegimeDef {
+	if id == nil {
+		return nil
+	}
+	return regimes.For(id.Country.Code())
+}
+
+// Calculate will simply perform normalization.
+func (id *Identity) Calculate() error {
+	id.Normalize()
+	return nil
+}
+
+// GetScheme can be used to determine the tax identities Scheme
+// either from the value defined directly in the identity, or
+// from the tax regime.
+func (id *Identity) GetScheme() cbc.Code {
+	if id.Scheme != cbc.CodeEmpty {
+		return id.Scheme
+	}
+	if r := regimes.For(id.Country.Code()); r != nil {
+		return r.TaxScheme
+	}
+	return cbc.CodeEmpty
+}
+
+// Normalize will attempt to perform a regional tax normalization
+// on the tax identity. Identities are an exception to the normal
+// normalization rules as they are normalized by their own country's
+// tax regime, never by the document regime or an addon.
+func (id *Identity) Normalize() {
+	norm.Normalize(id)
+}
+
+func identityRules() *rules.Set {
+	return rules.For(new(Identity),
+		rules.Field("country",
+			rules.Assert("01", "tax id country code is always required", is.Present),
+		),
+		rules.Field("code",
+			rules.Assert("02", "tax id code must have a valid format", is.Matches(IdentityCodePattern)),
+		),
+		rules.Field("scheme",
+			rules.AssertIfPresent("03", "tax id scheme must be a valid code", cbc.StrictCode),
+		),
+	)
+}
+
+// InEU checks if the tax identity is from a country that is part of the EU on
+// the given date.
+func (id *Identity) InEU(date cal.Date) bool {
+	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
+}
+
+// IdentityIn provides a rules test that checks if a tax identity's country code is one of the provided codes.
+func IdentityIn(codes ...l10n.TaxCountryCode) rules.Test {
+	var str string
+	for i, c := range codes {
+		if i > 0 {
+			str += ", "
+		}
+		str += string(c)
+	}
+	return is.Func("code in ["+str+"]",
+		func(value any) bool {
+			id, ok := value.(*Identity)
+			if !ok {
+				return false
+			}
+			return id.Country.In(codes...)
+		},
+	)
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	if cp, ok := js.Properties.Get("code"); ok {
+		cp.Pattern = IdentityCodePattern
+	}
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"code",
+		},
+	}
+}
+
+// NormalizeIdentity removes any whitespace or separation characters and ensures all letters are
+// uppercase.
+func NormalizeIdentity(tID *Identity, altCodes ...l10n.Code) {
+	if tID == nil {
+		return
+	}
+	code := strings.ToUpper(tID.Code.String())
+	code = IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = strings.TrimPrefix(code, string(tID.Country))
+	for _, alt := range altCodes {
+		code = strings.TrimPrefix(code, string(alt))
+	}
+	tID.Code = cbc.Code(code)
+}

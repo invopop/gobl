@@ -1,0 +1,118 @@
+// Package es provides tax regime support for Spain.
+package es
+
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+)
+
+// CountryCode is the ISO 3166-2 code for Spain.
+const CountryCode = "ES"
+
+func init() {
+	tax.RegisterRegimeDef(New())
+	rules.Register(
+		"es",
+		rules.GOBL.Add(CountryCode),
+		billInvoiceRules(),
+		taxIdentityRules(),
+	)
+	// Tax identities are normalized by their own country's regime, so the
+	// guard matches the identity's country rather than the document context.
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
+	)
+}
+
+// Local tax category definitions which are not considered standard.
+const (
+	TaxCategoryIRPF cbc.Code = "IRPF"
+	TaxCategoryIRNR cbc.Code = "IRNR"
+	TaxCategoryIGIC cbc.Code = "IGIC"
+	TaxCategoryIPSI cbc.Code = "IPSI"
+)
+
+// Specific tax rate codes.
+const (
+	// IRPF non-standard Rates (usually for self-employed)
+	TaxRatePro                cbc.Key = "pro"                 // Professional Services
+	TaxRateProStart           cbc.Key = "pro-start"           // Professionals, first 2 years
+	TaxRateModules            cbc.Key = "modules"             // Module system
+	TaxRateAgriculture        cbc.Key = "agriculture"         // Agricultural
+	TaxRateAgricultureSpecial cbc.Key = "agriculture-special" // Agricultural special
+	TaxRateCapital            cbc.Key = "capital"             // Rental or Interest
+
+	// Special tax rate surcharge extension
+	TaxRateEquivalence cbc.Key = "eqs"
+)
+
+// Inbox key and role definitions.
+// TODO: move to their own addon.
+const (
+	InboxKeyFACE cbc.Key = "face"
+
+	// Main roles defined in FACE
+	InboxRoleFiscal    cbc.Key = "fiscal"    // Fiscal / 01
+	InboxRoleRecipient cbc.Key = "recipient" // Receptor / 02
+	InboxRolePayer     cbc.Key = "payer"     // Pagador / 03
+	InboxRoleCustomer  cbc.Key = "customer"  // Comprador / 04
+
+)
+
+// New provides the Spanish tax regime definition
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
+		Country:   CountryCode,
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
+		Name: i18n.String{
+			i18n.EN: "Spain",
+			i18n.ES: "España",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Spain's tax system is administered by the Agencia Tributaria (AEAT). As an
+				EU member state, Spain follows the EU VAT Directive with locally adapted rates.
+
+				IVA (Impuesto sobre el Valor Añadido) applies at general, reduced, and
+				super-reduced rates. The Canary Islands use IGIC (Impuesto General Indirecto
+				Canario) instead of IVA, while Ceuta and Melilla use IPSI (Impuesto sobre la
+				Producción, los Servicios y la Importación).
+
+				Businesses are identified by their NIF (Número de Identificación Fiscal) or
+				CIF for companies. IRPF (Impuesto sobre la Renta de las Personas Físicas)
+				retention taxes apply to freelancer invoices at varying rates.
+
+				According to Real Decreto 1619/2012, only rectified (rectificativa) invoices
+				are recognized in Spanish law. GOBL maps corrective invoices to "rectificación
+				modelo íntegro" (complete replacement) and credit notes to "rectificación por
+				diferencias" (correction by differences, with quantities inverted during
+				conversion). The FacturaE format is used for B2G e-invoicing, with TicketBAI
+				required in the Basque Country, VeriFactu being rolled out nationally, and the
+				SII (Suministro Inmediato de Información) system providing near-real-time
+				reporting of invoicing data to the AEAT.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("Real Decreto 1619/2012 - Invoicing Regulation"),
+				URL:   "https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696",
+			},
+		},
+		TimeZone: "Europe/Madrid",
+		Tags: []*tax.TagSet{
+			invoiceTags(),
+		},
+		Identities: identityDefinitions(),
+		Categories: taxCategories(),
+		Scenarios: []*tax.ScenarioSet{
+			invoiceScenarios(),
+		},
+		Corrections: correctionDefinitions(),
+	}
+}

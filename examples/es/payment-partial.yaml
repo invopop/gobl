@@ -1,0 +1,54 @@
+$schema: "https://gobl.org/draft-0/bill/payment"
+$regime: "ES"
+uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
+type: "receipt"
+series: "RCT"
+code: "0001"
+issue_date: "2025-01-28"
+exchange_rates:
+  - from: "USD"
+    to: "EUR"
+    amount: "0.90"
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - document:
+      type: "standard"
+      issue_date: "2025-01-10"
+      series: "SAMPLE"
+      code: "001"
+      payable: "1630.00"
+    amount: "815.00"
+  - document:
+      type: "standard"
+      issue_date: "2025-01-12"
+      series: "SAMPLE"
+      code: "002"
+      payable: "400.00"
+    amount: "200.00"
+
+methods:
+  - key: "credit-transfer"
+    amount: "925.00"
+  - key: "cash"
+    currency: "USD"
+    amount: "100.00"

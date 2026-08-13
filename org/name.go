@@ -1,0 +1,57 @@
+package org
+
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/uuid"
+)
+
+// Name represents what a human is called. This is a complex subject, see this
+// w3 article for some insights:
+// https://www.w3.org/International/questions/qa-personal-names
+type Name struct {
+	uuid.Identify
+	// What the person would like to be called
+	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
+	// Additional prefix to add to name, like Mrs. or Mr.
+	Prefix string `json:"prefix,omitempty" jsonschema:"title=Prefix"`
+	// Person's given or first name
+	Given string `json:"given,omitempty" jsonschema:"title=Given"`
+	// Middle names or initials
+	Middle string `json:"middle,omitempty" jsonschema:"title=Middle"`
+	// Second or Family name.
+	Surname string `json:"surname,omitempty" jsonschema:"title=Surname"`
+	// Additional second of family name.
+	Surname2 string `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
+	// Titles to include after the name.
+	Suffix string `json:"suffix,omitempty" jsonschema:"title=Suffix"`
+	// Any additional useful data.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+func nameRules() *rules.Set {
+	return rules.For(new(Name),
+		rules.When(is.Expr(`Surname == ""`),
+			rules.Field("given",
+				rules.Assert("01", "given name is required when surname is absent", is.Present),
+			),
+		),
+		rules.When(is.Expr(`Given == ""`),
+			rules.Field("surname",
+				rules.Assert("02", "surname is required when given name is absent", is.Present),
+			),
+		),
+	)
+}
+
+func normalizeName(n *Name) {
+	uuid.Normalize(&n.UUID)
+	n.Alias = cbc.NormalizeString(n.Alias)
+	n.Prefix = cbc.NormalizeString(n.Prefix)
+	n.Given = cbc.NormalizeString(n.Given)
+	n.Middle = cbc.NormalizeString(n.Middle)
+	n.Surname = cbc.NormalizeString(n.Surname)
+	n.Surname2 = cbc.NormalizeString(n.Surname2)
+	n.Suffix = cbc.NormalizeString(n.Suffix)
+}

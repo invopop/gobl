@@ -1,0 +1,16 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "756ee06ced5cba14c1faeeb2d151d281b8e858e0121d04e8049dc989d5085567"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/note/message",
+		"uuid": "cfefe56a-9812-4b97-9b86-23eb6e9fb15a",
+		"title": "Test Message",
+		"content": "We hope you like this test message!"
+	}
+}

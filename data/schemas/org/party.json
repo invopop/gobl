@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/party",
+  "$ref": "#/$defs/org.Party",
+  "$defs": {
+    "org.Party": {
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/tax/regime-code",
+          "title": "Tax Regime",
+          "description": "Country code that identifies the tax regime applicable to the document.\nIt determines which country-specific tax rules, normalizations, and validations are applied.\nIt may be determined automatically via normalization of a supplier or issuer tax identity\ncountry code."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label can be used to provide a custom label for the party in a given\ncontext in a single language, for example \"Supplier\", \"Host\", or similar.",
+          "examples": [
+            "Supplier"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Legal name or representation of the organization."
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "Alternate short name."
+        },
+        "tax_id": {
+          "$ref": "https://gobl.org/draft-0/tax/identity",
+          "title": "Tax Identity",
+          "description": "The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Set of codes used to identify the party in other systems."
+        },
+        "people": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/person"
+          },
+          "type": "array",
+          "title": "People",
+          "description": "Details of physical people who represent the party."
+        },
+        "endpoints": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/endpoint"
+          },
+          "type": "array",
+          "title": "Endpoints",
+          "description": "Endpoints to which electronic documents may be sent, identified by URI."
+        },
+        "inboxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/inbox"
+          },
+          "type": "array",
+          "title": "Inboxes",
+          "description": "Digital inboxes used for forwarding electronic versions of documents"
+        },
+        "addresses": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/address"
+          },
+          "type": "array",
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
+        },
+        "emails": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/email"
+          },
+          "type": "array",
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses"
+        },
+        "websites": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/website"
+          },
+          "type": "array",
+          "title": "Websites",
+          "description": "Public websites that provide further information about the party."
+        },
+        "telephones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers",
+          "description": "Regular telephone numbers"
+        },
+        "registration": {
+          "$ref": "https://gobl.org/draft-0/org/registration",
+          "title": "Registration",
+          "description": "Additional registration details about the company that may need to be included in a document."
+        },
+        "logos": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/image"
+          },
+          "type": "array",
+          "title": "Logos",
+          "description": "Images that can be used to identify the party visually."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension code map for any additional regime specific codes that may be required."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional semi-structured information that does not fit into the rest of the party."
+        }
+      },
+      "type": "object",
+      "description": "Party represents a person or business entity.",
+      "recommended": [
+        "name",
+        "tax_id"
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+package verifactu_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/addons/es/verifactu"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestInvoiceDocumentScenarios(t *testing.T) {
+	t.Run("with addon", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Calculate())
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F1")
+	})
+
+	t.Run("simplified invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.SetTags(tax.TagSimplified)
+		// Simplified invoices without customer tax id or identities should get F2
+		i.Customer.TaxID = nil
+		i.Customer.Identities = nil
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 0)
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F2")
+	})
+
+	t.Run("credit note", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Correct(bill.Credit, bill.WithExtension(verifactu.ExtKeyDocType, "R1")))
+		// require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 0)
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R1")
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyCorrectionType).String(), "I")
+	})
+
+	t.Run("corrective", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "R2")))
+		assert.Len(t, i.Notes, 0)
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R2")
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyCorrectionType).String(), "S")
+	})
+
+	t.Run("corrective special", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Calculate())
+		require.NoError(t, i.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "R2")))
+		assert.Equal(t, "R2", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+	})
+
+	t.Run("simplified corrective invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.SetTags(tax.TagSimplified)
+		// Simplified invoices without customer tax id or identities should get R5 when corrected
+		i.Customer.TaxID = nil
+		i.Customer.Identities = nil
+		require.NoError(t, i.Calculate())
+		require.NoError(t, i.Correct(bill.Corrective))
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R5")
+	})
+
+	t.Run("replacement", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.SetTags(tax.TagReplacement)
+		require.NoError(t, i.Calculate())
+		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "F3")
+	})
+}
+
+func TestCorrectionNormalize(t *testing.T) {
+	t.Run("ignores non-invoice document", func(t *testing.T) {
+		ad := tax.AddonForKey(verifactu.V1)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		require.NotNil(t, def.Normalizer)
+		def.Normalizer.Normalize("not an invoice")
+	})
+
+	t.Run("ignores invoice without preceding", func(_ *testing.T) {
+		ad := tax.AddonForKey(verifactu.V1)
+		def := ad.Corrections.Def(bill.ShortSchemaInvoice)
+		def.Normalizer.Normalize(&bill.CorrectionNormalize{Invoice: &bill.Invoice{}})
+	})
+
+	t.Run("credit note routes doc-type to invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Calculate())
+		assert.Equal(t, "F1", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+
+		require.NoError(t, i.Correct(bill.Credit, bill.WithExtension(verifactu.ExtKeyDocType, "R1")))
+
+		assert.Equal(t, "R1", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
+		// Doc type should not remain on preceding
+		assert.Empty(t, i.Preceding[0].Ext.Get(verifactu.ExtKeyDocType))
+	})
+}

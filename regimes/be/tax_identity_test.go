@@ -1,0 +1,73 @@
+package be_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	_ "github.com/invopop/gobl/regimes/be"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTaxIdentityRules(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		err  string
+	}{
+		{name: "good enterprise 1", code: "0413172884"},
+		{name: "good enterprise 2", code: "0414445663"},
+		{name: "good enterprise 3", code: "0897223571"},
+		{name: "good personal 1", code: "897222383"},
+		{name: "good personal 2", code: "897231984"},
+		{name: "good enterprise 4", code: "1602602623"},
+		{name: "good enterprise 5", code: "1400521335"},
+		{name: "good enterprise 6", code: "1400004463"},
+		{name: "good enterprise 7", code: "1012609724"},
+		{
+			name: "bad mid length",
+			code: "82238333",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too long",
+			code: "01234567890123",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too short",
+			code: "0123456",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "not normalized",
+			code: "0.413.172-884",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad checksum",
+			code: "0413172885",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad checksum",
+			code: "1013172885",
+			err:  "IDENTITY-01",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "BE", Code: tt.code}
+			err := rules.Validate(tID)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
+			}
+		})
+	}
+}

@@ -1,0 +1,286 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Italy",
+    "it": "Italia"
+  },
+  "description": {
+    "en": "Italy's tax system is administered by the Agenzia delle Entrate (Revenue\nAgency). All invoices must comply with the FatturaPA electronic format,\ntransmitted through the Sistema di Interscambio (SDI).\n\nIVA (Imposta sul Valore Aggiunto) applies at standard, reduced, intermediate,\nand minimum rates covering various categories of goods and services.\n\nBusinesses are identified by their Partita IVA (VAT number), an 11-digit code,\nand by the Codice Fiscale (fiscal code) for individuals and entities. The\nFatturaPA format requires a Codice Destinatario (recipient code) or PEC\n(certified email) for invoice routing. Every supplier must declare a fiscal\nregime (Regime Fiscale, e.g. RF01 Ordinary, RF19 Flat rate) in their invoices.\n\nThe FatturaPA format supports an extensive set of document types (TD01-TD28)\ncovering standard invoices, self-billed invoices, and various special cases.\nLine items may require Nature (Natura) codes to explain VAT exemptions or\nreverse charge situations. Stamp duty (Imposta di bollo) applies to certain\nexempt invoices. Withholding taxes (IRPEF, IRES, INPS, ENASARCO, ENPAM) can\nbe applied alongside VAT. Both credit notes and debit notes are supported for\ncorrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Agenzia delle Entrate - Electronic Invoicing"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/web/guest/fatturazione-elettronica-e-dati-fatture-transfrontaliere-new"
+    },
+    {
+      "title": {
+        "en": "FatturaPA - Documentation and Schemas"
+      },
+      "url": "https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/"
+    },
+    {
+      "title": {
+        "en": "FatturaPA - Filling Guide"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/451259/Guida_compilazione-FE-Esterometro-V_1.9_2024-03-05.pdf"
+    }
+  ],
+  "time_zone": "Europe/Rome",
+  "country": "IT",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "it-fiscal-code",
+      "name": {
+        "en": "Fiscal Code",
+        "it": "Codice Fiscale"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversione del soggetto passivo"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "it": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "it": "Imposta sul Valore Aggiunto"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Minimum Rate",
+            "it": "Aliquota Minima"
+          },
+          "values": [
+            {
+              "percent": "4.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "it": "Aliquota Ridotta"
+          },
+          "values": [
+            {
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Intermediate Rate",
+            "it": "Aliquota Intermedia"
+          },
+          "values": [
+            {
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "it": "Aliquota Ordinaria"
+          },
+          "values": [
+            {
+              "percent": "22.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IRPEF",
+      "name": {
+        "en": "IRPEF",
+        "it": "IRPEF"
+      },
+      "title": {
+        "en": "Personal Income Tax",
+        "it": "Imposta sul Reddito delle Persone Fisiche"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT01"
+      }
+    },
+    {
+      "code": "IRES",
+      "name": {
+        "en": "IRES",
+        "it": "IRES"
+      },
+      "title": {
+        "en": "Corporate Income Tax",
+        "it": "Imposta sul Reddito delle Società"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT02"
+      }
+    },
+    {
+      "code": "INPS",
+      "name": {
+        "en": "INPS Contribution",
+        "it": "Contributo INPS"
+      },
+      "title": {
+        "en": "Contribution to the National Social Security Institute",
+        "it": "Contributo Istituto Nazionale della Previdenza Sociale"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT03"
+      }
+    },
+    {
+      "code": "ENASARCO",
+      "name": {
+        "en": "ENASARCO Contribution",
+        "it": "Contributo ENASARCO"
+      },
+      "title": {
+        "en": "Contribution to the National Welfare Board for Sales Agents and Representatives",
+        "it": "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT04"
+      }
+    },
+    {
+      "code": "ENPAM",
+      "name": {
+        "en": "ENPAM Contribution",
+        "it": "Contributo ENPAM"
+      },
+      "title": {
+        "en": "Contribution to the National Pension and Welfare Board for Doctors",
+        "it": "Contributo - Ente Nazionale Previdenza e Assistenza Medici"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT05"
+      }
+    },
+    {
+      "code": "CP",
+      "name": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "title": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT06"
+      }
+    }
+  ]
+}

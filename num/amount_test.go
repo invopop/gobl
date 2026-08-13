@@ -3,151 +3,302 @@ package num_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"math"
 	"testing"
 
 	"github.com/invopop/gobl/num"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAmountAdd(t *testing.T) {
-	a := num.MakeAmount(200, 2)
-	a2 := num.MakeAmount(1000, 3)
-	r := a.Add(a2)
-	e := num.MakeAmount(300, 2)
-	if !r.Equals(e) {
-		t.Errorf("did not add amounts correctly, got: %v", r)
+	// Use table driven tests to test multiple scenarios
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(300, 2)},
+		{num.MakeAmount(2000, 2), num.MakeAmount(100, 2), num.MakeAmount(2100, 2)},
+		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(10299, 3)},
+		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(1000, 2)},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v + %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Add(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
 	}
 }
 
-func TestAmountSubtract(t *testing.T) {
-	a := num.MakeAmount(200, 2)
-	a2 := num.MakeAmount(1000, 3)
-	r := a.Subtract(a2)
-	e := num.MakeAmount(100, 2)
-	if !r.Equals(e) {
-		t.Errorf("did not add amounts correctly, got: %v", r)
+func TestAmountAddOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("999999999999999999")
+	require.NoError(t, err)
+	acc := num.AmountZero
+	for range 10 {
+		acc = acc.Add(a)
 	}
-	a = num.MakeAmount(200, 2)
-	a2 = num.MakeAmount(1000, 2)
-	r = a.Subtract(a2)
-	e = num.MakeAmount(-800, 2)
-	if !r.Equals(e) {
-		t.Errorf("did not add amounts correctly, got: %v", r)
+	assert.Equal(t, int64(math.MaxInt64), acc.Value(), "saturates instead of wrapping")
+
+	// Mixed exponents near the limit
+	p, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	r := p.Add(a)
+	assert.Equal(t, "1000000000000000002", r.String())
+}
+
+func TestAmountSubtract(t *testing.T) {
+	// Use table driven tests to test multiple scenarios
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(100, 2)},
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 2), num.MakeAmount(-800, 2)},
+		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(-9701, 3)},
+		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(3000, 2)},
+		{num.MakeAmount(1890000, 2), num.MakeAmount(1890002, 2), num.MakeAmount(-2, 2)},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v - %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Subtract(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
+	}
+}
+
+func TestAmountSub(t *testing.T) {
+	// Use table driven tests to test multiple scenarios
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(100, 2)},
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 2), num.MakeAmount(-800, 2)},
+		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(-9701, 3)},
+		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(3000, 2)},
+		{num.MakeAmount(1890000, 2), num.MakeAmount(1890002, 2), num.MakeAmount(-2, 2)},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v - %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Sub(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
 	}
 }
 
 func TestAmountCompare(t *testing.T) {
 	a := num.MakeAmount(1000, 2)
 	b := num.MakeAmount(2000, 2)
-	if a.Compare(a) != 0 {
-		t.Errorf("expected 0")
-	}
-	if a.Compare(b) != -1 {
-		t.Errorf("expected -1")
-	}
-	if b.Compare(a) != 1 {
-		t.Errorf("expected 1")
-	}
+	assert.Equal(t, 0, a.Compare(a))
+	assert.Equal(t, -1, a.Compare(b))
+	assert.Equal(t, 1, b.Compare(a))
+
+	a = num.MakeAmount(1000, 2)
+	b = num.MakeAmount(200000, 4)
+	assert.Equal(t, 0, a.Compare(a))
+	assert.Equal(t, -1, a.Compare(b))
+	assert.Equal(t, 1, b.Compare(a))
+
+	// Mixed exponents near the int64 limit (issue #844)
+	a = num.MakeAmount(999999999999999999, 0)
+	b = num.MakeAmount(30888382687927107, 16) // 3.0888382687927107
+	assert.Equal(t, 1, a.Compare(b))
+	assert.Equal(t, -1, b.Compare(a))
+	assert.Equal(t, 0, a.Compare(a))
 }
 
 func TestAmountNewFromString(t *testing.T) {
 	a, err := num.AmountFromString("245.890")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
-	}
+	require.NoError(t, err)
+
 	e := num.MakeAmount(245890, 3)
-	if !a.Equals(e) {
-		t.Errorf("unexpected parsed value, got: %v", a)
-	}
+	assert.True(t, a.Equals(e))
+
 	a, err = num.AmountFromString("245")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
-	}
+	assert.NoError(t, err)
 	e = num.MakeAmount(245, 0)
-	if !a.Equals(e) {
-		t.Errorf("unexpected parsed value, got: %v", a)
-	}
+	assert.True(t, a.Equals(e))
+
 	a, err = num.AmountFromString("-245.00")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	if a.Value() != -24500 {
-		t.Errorf("unexpected parsed amount, got: %v", a.Value())
-	}
-	a, err = num.AmountFromString("23.433.00")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
-	a, err = num.AmountFromString("23,433.00")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
-	a, err = num.AmountFromString("1234.bar")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -24500)
+
+	a, err = num.AmountFromString("-245.12")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -24512)
+
+	a, err = num.AmountFromString("0.022")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), 22)
+
+	a, err = num.AmountFromString("-0.022")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -22)
+
+	_, err = num.AmountFromString("23.433.00")
+	assert.Error(t, err)
+	_, err = num.AmountFromString("23,433.00")
+	assert.Error(t, err)
+	_, err = num.AmountFromString("1234.bar")
+	assert.Error(t, err)
+
+	// 18 digits (9+9) should succeed without truncation
+	a, err = num.AmountFromString("123456789.123456789")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789.123456789", a.String())
+
+	// 18-digit integer should succeed
+	a, err = num.AmountFromString("123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789012345678", a.String())
+
+	// 19 digits (9+10) should truncate decimal to 9 places
+	a, err = num.AmountFromString("123456789.1234567890")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789.123456789", a.String())
+
+	// Excess decimal digits truncated to fit 18 sig figs
+	a, err = num.AmountFromString("1.12345678901234567890")
+	assert.NoError(t, err)
+	assert.Equal(t, "1.12345678901234567", a.String())
+
+	// 19-digit integer should fail (integer part alone exceeds limit)
+	_, err = num.AmountFromString("1234567890123456789")
+	assert.ErrorContains(t, err, "too many digits (19)")
+
+	// Leading zeros in major part should not count toward digit limit
+	a, err = num.AmountFromString("0.123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "0.123456789012345678", a.String())
+
+	a, err = num.AmountFromString("000123.456")
+	assert.NoError(t, err)
+	assert.Equal(t, "123.456", a.String())
+
+	// 18-digit integer with decimals should truncate all decimals
+	a, err = num.AmountFromString("123456789012345678.99")
+	assert.NoError(t, err)
+	assert.Equal(t, "123456789012345678", a.String())
+
+	// Empty string should return error
+	_, err = num.AmountFromString("")
+	assert.Error(t, err)
+
+	// Very long integer should fail
+	_, err = num.AmountFromString("99999999999999999999")
+	assert.ErrorContains(t, err, "too many digits")
+
+	// Very long decimal should truncate, not fail
+	a, err = num.AmountFromString("1.99999999999999999999")
+	assert.NoError(t, err)
+	assert.Equal(t, "1.99999999999999999", a.String())
+
+	// Integer part with exactly 18 digits and a decimal: decimal should be ignored
+	a, err = num.AmountFromString("999999999999999999.1")
+	assert.NoError(t, err)
+	assert.Equal(t, "999999999999999999", a.String())
+
+	// Negative numbers around the 18-digit limit
+	a, err = num.AmountFromString("-123456789012345678")
+	assert.NoError(t, err)
+	assert.Equal(t, "-123456789012345678", a.String())
+
+	a, err = num.AmountFromString("-123456789.123456789")
+	assert.NoError(t, err)
+	assert.Equal(t, "-123456789.123456789", a.String())
+
+	_, err = num.AmountFromString("-1234567890123456789")
+	assert.ErrorContains(t, err, "too many digits")
+}
+
+func TestAmountFromFloat64(t *testing.T) {
+	a := num.AmountFromFloat64(123.45, 2)
+	assert.Equal(t, "123.45", a.String())
+
+	a = num.AmountFromFloat64(123.45123, 4)
+	assert.Equal(t, "123.4512", a.String())
+
+	// without math rounding, this would be 129.336
+	a = num.AmountFromFloat64(129.337000, 3)
+	assert.Equal(t, "129.337", a.String())
 }
 
 func TestMultiply(t *testing.T) {
 	a := num.MakeAmount(10010, 2)
 	x := num.MakeAmount(21, 1)
-	e := num.MakeAmount(21021, 2)
-	r := a.Multiply(x)
-	if !r.Equals(e) {
-		t.Errorf("failed to multiply, expected: %v, got: %v", e, r)
+	a.Multiply(x)
+	assert.Equal(t, "100.10", a.String(), "should not modify original amount")
+
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(10010, 2), num.MakeAmount(21, 1), num.MakeAmount(21021, 2)},
+		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(42, 0)},
+		{num.MakeAmount(1002002, 4), num.MakeAmount(150, 2), num.MakeAmount(1503003, 4)},
+		{num.MakeAmount(669099, 2), num.MakeAmount(23, 2), num.MakeAmount(153893, 2)},
+		{num.MakeAmount(101, 2), num.MakeAmount(101, 2), num.MakeAmount(102, 2)},
+		{num.MakeAmount(133, 2), num.MakeAmount(133, 2), num.MakeAmount(177, 2)},
 	}
-	if a.String() != "100.10" {
-		t.Errorf("base was modified")
-	}
-	a = num.MakeAmount(200, 0)
-	x = num.MakeAmount(21, 2)
-	e = num.MakeAmount(42, 0)
-	r = a.Multiply(x)
-	if !r.Equals(e) {
-		t.Errorf("failed to multiply, expected: %v, got: %v", e, r)
-	}
-	a = num.MakeAmount(1002002, 4)
-	x = num.MakeAmount(150, 2)
-	e = num.MakeAmount(1503003, 4)
-	r = a.Multiply(x)
-	if !r.Equals(e) {
-		t.Errorf("failed to multiply, expected: %v, got: %v", e, r)
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v x %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Multiply(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
 	}
 }
 
+func TestMultiplyOverflow(t *testing.T) {
+	// Issue #844
+	price, err := num.AmountFromString("3.0888382687927107")
+	require.NoError(t, err)
+	qty := num.MakeAmount(439, 0)
+	r := price.Multiply(qty)
+	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
+	assert.Equal(t, "1356.00", r.RescaleDown(2).String())
+	assert.Equal(t, uint32(15), r.Exp(), "exponent reduced to fit int64")
+
+	// Integer parts that exceed int64 saturate at the boundary.
+	pos := num.MakeAmount(10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
+	assert.Equal(t, int64(math.MaxInt64), pos.Value())
+	neg := num.MakeAmount(-10_000_000_000, 0).Multiply(num.MakeAmount(10_000_000_000, 0))
+	assert.Equal(t, int64(math.MinInt64), neg.Value())
+}
+
 func TestDivide(t *testing.T) {
-	a := num.MakeAmount(10010, 2)
-	x := num.MakeAmount(22, 1)
-	e := num.MakeAmount(4550, 2)
-	r := a.Divide(x)
-	assert.Equal(t, e.String(), r.String(), "unexpected division result")
-	assert.Equal(t, "100.10", a.String(), "base was modified")
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(10010, 2), num.MakeAmount(22, 1), num.MakeAmount(4550, 2)},
+		{num.MakeAmount(20000, 2), num.MakeAmount(21, 2), num.MakeAmount(95238, 2)},
+		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(952, 0)},
+		{num.MakeAmount(1000, 2), num.MakeAmount(11, 0), num.MakeAmount(91, 2)},
+		{num.MakeAmount(1000, 0), num.MakeAmount(16, 0), num.MakeAmount(63, 0)},
+		{num.MakeAmount(1000, 0), num.MakeAmount(14, 0), num.MakeAmount(71, 0)},
+		{num.MakeAmount(1000, 2), num.MakeAmount(-4, 0), num.MakeAmount(-250, 2)},
+		{num.MakeAmount(-1000, 2), num.MakeAmount(-4, 0), num.MakeAmount(250, 2)},
+		{num.MakeAmount(-1000, 0), num.MakeAmount(16, 0), num.MakeAmount(-63, 0)},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v / %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Divide(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
+	}
+}
 
-	a = num.MakeAmount(200, 0)
-	x = num.MakeAmount(21, 2)
-	e = num.MakeAmount(952, 0)
-	r = a.Divide(x)
-	assert.Equal(t, e.String(), r.String(), "unexpected division result")
+func TestDivideOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("1.00000000000000000")
+	require.NoError(t, err)
+	b := num.MakeAmount(50, 2) // 0.50
+	assert.Equal(t, "2.00000000000000000", a.Divide(b).String())
 
-	a = num.MakeAmount(1000, 2)
-	x = num.MakeAmount(11, 0)
-	e = num.MakeAmount(91, 2)
-	r = a.Divide(x)
-	assert.Equal(t, e.String(), r.String(), "unexpected division result")
-
-	a = num.MakeAmount(1000, 0)
-	x = num.MakeAmount(16, 0)
-	e = num.MakeAmount(63, 0) // 62.5
-	r = a.Divide(x)
-	assert.Equal(t, e.String(), r.String(), "unexpected division rounding")
-
-	a = num.MakeAmount(1000, 0)
-	x = num.MakeAmount(14, 0)
-	e = num.MakeAmount(71, 0) // 71.4286
-	r = a.Divide(x)
-	assert.Equal(t, e.String(), r.String(), "unexpected division rounding")
+	// Division by zero
+	assert.Equal(t, "0.00", num.MakeAmount(100, 2).Divide(num.AmountZero).String())
 }
 
 func TestSplit(t *testing.T) {
@@ -164,21 +315,17 @@ func TestSplit(t *testing.T) {
 
 func TestAmountString(t *testing.T) {
 	a := num.MakeAmount(12345670, 3)
-	if a.String() != "12345.670" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "12345.670", a.String())
 	a = num.MakeAmount(2, 0)
-	if a.String() != "2" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "2", a.String())
 	a = num.MakeAmount(50, 0)
-	if a.String() != "50" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "50", a.String())
 	a = num.MakeAmount(-5025, 2)
-	if a.String() != "-50.25" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "-50.25", a.String())
+	a = num.MakeAmount(-5025, 0)
+	assert.Equal(t, "-5025", a.String())
+	a = num.MakeAmount(-2, 2)
+	assert.Equal(t, "-0.02", a.String())
 }
 
 func TestAmountMinimalString(t *testing.T) {
@@ -188,6 +335,11 @@ func TestAmountMinimalString(t *testing.T) {
 	assert.Equal(t, "1.23", a.MinimalString())
 	a = num.MakeAmount(123000, 0)
 	assert.Equal(t, "123000", a.MinimalString())
+}
+
+func TestAmountFloat64(t *testing.T) {
+	a := num.MakeAmount(123123, 3)
+	assert.Equal(t, 123.123, a.Float64())
 }
 
 func TestAmountRescale(t *testing.T) {
@@ -219,6 +371,74 @@ func TestAmountRescale(t *testing.T) {
 	assert.Equal(t, "1234.57", r.String(), "rounded number")
 }
 
+func TestAmountRescaleOverflow(t *testing.T) {
+	// Issue #844
+	a, err := num.AmountFromString("999999999.999999999")
+	require.NoError(t, err)
+	r := a.Rescale(10)
+	assert.False(t, r.IsNegative(), "result must not wrap to a negative value")
+	assert.True(t, r.Equals(a), "numeric value preserved")
+	assert.Equal(t, uint32(9), r.Exp(), "exponent capped at what int64 allows")
+}
+
+func TestAmountRemove(t *testing.T) {
+	a := num.MakeAmount(20000, 2)
+	p := num.MakePercentage(10, 2)
+	b := a.Remove(p)
+	assert.Equal(t, "181.82", b.String())
+}
+
+func TestAmountUpscale(t *testing.T) {
+	a := num.MakeAmount(2123, 2)
+	b := a.Upscale(2)
+	assert.Equal(t, "21.2300", b.String())
+}
+
+func TestAmountDownscale(t *testing.T) {
+	a := num.MakeAmount(2183, 2)
+	b := a.Downscale(2)
+	assert.Equal(t, "22", b.String())
+	b = a.Downscale(5)
+	assert.Equal(t, "22", b.String())
+}
+
+func TestAmountRescaleUp(t *testing.T) {
+	a := num.MakeAmount(123456, 2)
+	r := a.RescaleUp(4)
+	assert.Equal(t, "1234.5600", r.String())
+	r = a.RescaleUp(2)
+	assert.Equal(t, "1234.56", r.String())
+	r = a.RescaleUp(0)
+	assert.Equal(t, "1234.56", r.String())
+}
+
+func TestAmountRescaleDown(t *testing.T) {
+	a := num.MakeAmount(123456, 4)
+	r := a.RescaleDown(4)
+	assert.Equal(t, "12.3456", r.String())
+	r = a.RescaleDown(2)
+	assert.Equal(t, "12.35", r.String())
+	r = a.RescaleDown(6)
+	assert.Equal(t, "12.3456", r.String())
+}
+
+func TestAmountRescaleRange(t *testing.T) {
+	a := num.MakeAmount(123456, 2)
+	r := a.RescaleRange(2, 4)
+	assert.Equal(t, "1234.56", r.String())
+	r = a.RescaleRange(2, 0) // nonsense, but should work
+	assert.Equal(t, "1235", r.String())
+	r = a.RescaleRange(2, 6)
+	assert.Equal(t, "1234.56", r.String())
+
+	a = num.MakeAmount(12345678, 6)
+	r = a.RescaleRange(1, 3)
+	assert.Equal(t, "12.346", r.String())
+	a = num.MakeAmount(12, 0)
+	r = a.RescaleRange(1, 3)
+	assert.Equal(t, "12.0", r.String())
+}
+
 func TestAmountMatchPrecision(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	a2 := num.MakeAmount(12345678, 4)
@@ -232,7 +452,17 @@ func TestAmountMatchPrecision(t *testing.T) {
 	assert.Equal(t, a.Exp(), r.Exp(), "expected no precision change")
 }
 
+func TestAmountNegate(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	a = a.Negate()
+	assert.Equal(t, "-12.34", a.String())
+	a = num.MakeAmount(-1234, 2)
+	a = a.Negate()
+	assert.Equal(t, "12.34", a.String())
+}
+
 func TestAmountInvert(t *testing.T) {
+	// deprecatd
 	a := num.MakeAmount(1234, 2)
 	a = a.Invert()
 	assert.Equal(t, "-12.34", a.String())
@@ -241,15 +471,95 @@ func TestAmountInvert(t *testing.T) {
 	assert.Equal(t, "12.34", a.String())
 }
 
-func TestAmountUnmarshalJSON(t *testing.T) {
+func TestAmountIsZero(t *testing.T) {
+	a := num.MakeAmount(0, 0)
+	assert.True(t, a.IsZero())
+	a = num.MakeAmount(0, 2)
+	assert.True(t, a.IsZero())
+	a = num.MakeAmount(1234, 2)
+	assert.False(t, a.IsZero())
+	a = num.MakeAmount(-1234, 2)
+	assert.False(t, a.IsZero())
+}
+
+func TestAmountIsNegative(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	assert.False(t, a.IsNegative())
+	a = num.MakeAmount(-1234, 2)
+	assert.True(t, a.IsNegative())
+	a = num.MakeAmount(0, 2)
+	assert.False(t, a.IsNegative())
+}
+
+func TestAmountIsPositive(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	assert.True(t, a.IsPositive())
+	a = num.MakeAmount(-1234, 2)
+	assert.False(t, a.IsPositive())
+	a = num.MakeAmount(0, 2)
+	assert.False(t, a.IsPositive())
+}
+
+func TestAmountAbs(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	r := a.Abs()
+	assert.Equal(t, "12.34", r.String())
+	a = num.MakeAmount(-1234, 2)
+	r = a.Abs()
+	assert.Equal(t, "12.34", r.String())
+}
+
+func TestAmountUnmarshalJSONBasic(t *testing.T) {
 	d := []byte(`{"amount":"12.43"}`)
+	o := struct {
+		Amount num.Amount
+	}{}
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, 0, o.Amount.Compare(num.MakeAmount(1243, 2)))
+
+	d = []byte(`{"amount":10}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(10), o.Amount.Value())
+	assert.Equal(t, uint32(0), o.Amount.Exp())
+
+	d = []byte(`{"amount":10.10}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(1010), o.Amount.Value())
+	assert.Equal(t, uint32(2), o.Amount.Exp())
+
+	o.Amount = num.MakeAmount(0, 0)
+	d = []byte(`{"amount":null}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(0), o.Amount.Value())
+
+	d = []byte(`{"amount":"bad"}`)
+	require.ErrorContains(t, json.Unmarshal(d, &o), "invalid major number 'bad', strconv.ParseInt: parsing \"bad\": invalid syntax")
+}
+
+func TestAmountUnmarshalJSONPointer(t *testing.T) {
+	d := []byte(`{"amount":"12.43"}`)
+	o := struct {
+		Amount *num.Amount
+	}{}
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, 0, o.Amount.Compare(num.MakeAmount(1243, 2)))
+	d = []byte(`{"amount":null}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Nil(t, o.Amount)
+
+	d = []byte(`{"amount":"bad"}`)
+	require.ErrorContains(t, json.Unmarshal(d, &o), "invalid major number 'bad', strconv.ParseInt: parsing \"bad\": invalid syntax")
+}
+
+func TestNegativeAmountUnmarshalJSON(t *testing.T) {
+	d := []byte(`{"amount":"-12.43"}`)
 	o := struct {
 		Amount num.Amount
 	}{}
 	if err := json.Unmarshal(d, &o); err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	if o.Amount.Compare(num.MakeAmount(1243, 2)) != 0 {
+	if o.Amount.Compare(num.MakeAmount(-1243, 2)) != 0 {
 		t.Errorf("got back unexpected response: %+v", o)
 	}
 }
@@ -265,6 +575,22 @@ func TestAmountMarshalJSON(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 	de := []byte(`{"amount":"12.67"}`)
+	if !bytes.Equal(d, de) {
+		t.Errorf("results don't match, got: %s", d)
+	}
+}
+
+func TestNegativeAmountMarshalJSON(t *testing.T) {
+	o := struct {
+		Amount num.Amount `json:"amount"`
+	}{
+		Amount: num.MakeAmount(-1267, 2),
+	}
+	d, err := json.Marshal(o)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	de := []byte(`{"amount":"-12.67"}`)
 	if !bytes.Equal(d, de) {
 		t.Errorf("results don't match, got: %s", d)
 	}

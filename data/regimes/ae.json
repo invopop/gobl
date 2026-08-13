@@ -1,0 +1,156 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "ar": "الإمارات العربية المتحدة",
+    "en": "United Arab Emirates"
+  },
+  "description": {
+    "en": "The UAE tax system is administered by the Federal Tax Authority (FTA).\nVAT was introduced on January 1, 2018, with standard, zero, and\nexempt rate categories.\n\nBusinesses must register for VAT if taxable supplies and imports\nexceed AED 375,000 in a 12-month period, with voluntary registration\navailable above AED 187,500. Registered businesses receive a Tax\nRegistration Number (TRN) which must be included on all tax invoices.\n\nSimplified VAT invoices may be used when the recipient is not VAT\nregistered, or when the transaction value does not exceed AED 10,000\nfor VAT-registered recipients. Credit notes are supported for\ncorrecting invoices."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Federal Tax Authority - VAT"
+      },
+      "url": "https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx"
+    }
+  ],
+  "time_zone": "Asia/Dubai",
+  "country": "AE",
+  "currency": "AED",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "VAT"
+      },
+      "title": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ar": "معدل قياسي",
+            "en": "General Rate"
+          },
+          "desc": {
+            "ar": "ينطبق على معظم السلع والخدمات ما لم ينص على خلاف ذلك.",
+            "en": "Applies to most goods and services unless specified otherwise."
+          },
+          "values": [
+            {
+              "since": "2018-01-01",
+              "percent": "5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "ar": "الهيئة الاتحادية للضرائب",
+            "en": "Federal Tax Authority - UAE VAT Regulations"
+          },
+          "url": "https://www.tax.gov.ae"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "id": "GOBL-DK",
+  "package": "dk",
+  "subsets": [
+    {
+      "id": "GOBL-DK-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [DK]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "guard": "not (has tax ID code)",
+                  "subsets": [
+                    {
+                      "field": "identities",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-BILL-INVOICE-01",
+                          "desc": "invoice DK supplier without a tax ID code requires an identity with 'CVR' or 'CPR' type",
+                          "tests": "has a type in [CVR, CPR]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DK-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [DK]",
+          "subsets": [
+            {
+              "guard": "type in [CVR]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-ORG-IDENTITY-01",
+                          "desc": "invalid Danish CVR identity code",
+                          "tests": "valid"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "guard": "type in [CPR]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-DK-ORG-IDENTITY-02",
+                          "desc": "invalid Danish CPR identity code",
+                          "tests": "length between 10 and 10, digit"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-DK-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [DK]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-DK-TAX-IDENTITY-01",
+                      "desc": "invalid Danish VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

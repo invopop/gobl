@@ -1,0 +1,42 @@
+version: "2"
+output:
+  formats:
+    text:
+      path: stdout
+linters:
+  enable:
+    - errname
+    # - goconst # Disabled due to "composite literal elements" check
+    - gocyclo
+    - nakedret
+    - revive
+    - unconvert
+    - unparam
+    - zerologlint
+  settings:
+    staticcheck:
+      checks:
+        - all
+        # Embedding is complex in GOBL, so disabled this check.
+        - -QF1008
+  exclusions:
+    generated: lax
+    rules:
+      - linters: [revive]
+        text: "var-naming: avoid meaningless package names"
+        path: pkg/api/
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - node_modules
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

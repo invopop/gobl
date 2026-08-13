@@ -1,0 +1,97 @@
+{
+    "$schema": "https://gobl.org/draft-0/bill/invoice",
+    "uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
+    "$regime": "IT",
+    "$addons": [
+        "it-ticket-v1"
+    ],
+    "type": "corrective",
+    "issue_date": "2025-05-09",
+    "currency": "EUR",
+    "preceding": [
+    {
+        "type": "standard",
+        "issue_date": "2022-06-13",
+        "code": "123TEST",
+        "stamps": [
+        {
+            "prv": "ade-ref",
+            "val": "1234567890"
+        }
+        ]
+    }
+    ],
+    "tax": {
+    "prices_include": "VAT",
+    "ext": {
+        "it-ticket-lottery": "12345678"
+    }
+    },
+    "supplier": {
+    "name": "Test Supplier",
+    "tax_id": {
+        "country": "IT",
+        "code": "12345678903"
+    }
+    },
+    "lines": [
+        {
+            "i": 1,
+            "quantity": "10",
+            "item": {
+            "name": "Test Item 0",
+            "price": "100.00",
+            "ext": {
+                "it-ticket-product": "services"
+            }
+            },
+            "discounts": [
+                {
+                    "reason": "Testing",
+                    "percent": "10%",
+                    "amount": "100.00"
+                }
+            ],
+            "taxes": [
+            {
+                "cat": "VAT",
+                "rate": "standard",
+                "percent": "22.0%"
+            }
+            ],
+            "ext": {
+                "it-ticket-line-ref": "1234567890"
+            }
+        },
+        {
+            "i": 2,
+            "quantity": "13",
+            "item": {
+            "name": "Test Item 1",
+            "price": "10.00",
+            "ext": {
+                "it-ticket-product": "services"
+            }
+            },
+            "discounts": [
+            {
+                "reason": "Testing",
+                "percent": "10%",
+                "amount": "13.00"
+            }
+            ],
+            "taxes": [
+            {
+                "cat": "VAT",
+                "ext": {
+                "it-ticket-exempt": "N4"
+                }
+            }
+            ],
+            "total": "117.00",
+            "ext": {
+                "it-ticket-line-ref": "1234567890"
+            }
+        }
+    ]
+}

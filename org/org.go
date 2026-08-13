@@ -1,22 +1,58 @@
+// Package org contains structures related to organization.
 package org
 
-import "github.com/invopop/gobl/schema"
+import (
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/schema"
+)
 
 func init() {
-	objs := []interface{}{
+	schema.Register(schema.GOBL.Add("org"),
 		Address{},
+		Attribute{},
 		Coordinates{},
-		Date{},
+		DocumentRef{},
+		Email{},
+		Endpoint{},
+		Identity{},
+		Image{},
+		Inbox{},
 		Item{},
+		Name{},
 		Note{},
 		Party{},
 		Person{},
-		Name{},
-		Email{},
-		Telephone{},
 		Registration{},
-		Period{},
-		TaxID{},
-	}
-	schema.RegisterAll(schema.GOBL.Add("org"), objs)
+		Telephone{},
+		Unit(""),
+		Website{},
+		Attachment{},
+	)
+	rules.Register(
+		"org",
+		rules.GOBL.Add("ORG"),
+		attachmentRules(),
+		attributeRules(),
+		coordinatesRules(),
+		documentRefRules(),
+		emailRules(),
+		endpointRules(),
+		identityRules(),
+		imageRules(),
+		inboxRules(),
+		itemRules(),
+		nameRules(),
+		noteRules(),
+		personRules(),
+		registrationRules(),
+		telephoneRules(),
+		unitRules(),
+		websiteRules(),
+	)
 }
+
+// ShortSchemaParty is the short schema name for Party
+const (
+	ShortSchemaParty = "org/party"
+	ShortSchemaItem  = "org/item"
+)

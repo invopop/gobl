@@ -1,0 +1,116 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "69c209a4303724b9278fa17b8add117be09d46b368c4157c37a0aab75ec62fe7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SIMPL",
+		"code": "0042",
+		"issue_date": "2024-05-21",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "SS"
+			}
+		},
+		"supplier": {
+			"name": "Talleres del Norte S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "8",
+					"street": "Calle Mayor",
+					"locality": "Donostia",
+					"region": "Gipuzkoa",
+					"code": "20003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Particular",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"key": "services",
+					"name": "Mechanic shop module",
+					"price": "300.00"
+				},
+				"sum": "300.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"es-tbai-product": "services",
+							"es-tbai-regime": "52"
+						}
+					}
+				],
+				"total": "300.00"
+			}
+		],
+		"totals": {
+			"sum": "300.00",
+			"total": "300.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"es-tbai-product": "services",
+									"es-tbai-regime": "52"
+								},
+								"base": "300.00",
+								"percent": "21.0%",
+								"amount": "63.00"
+							}
+						],
+						"amount": "63.00"
+					}
+				],
+				"sum": "63.00"
+			},
+			"tax": "63.00",
+			"total_with_tax": "363.00",
+			"payable": "363.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Operation under the simplified VAT regime (módulos)."
+			}
+		]
+	}
+}

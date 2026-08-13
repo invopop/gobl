@@ -1,0 +1,16 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "de-zugferd-v2",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "German ZUGFeRD 2.X"
+  },
+  "description": {
+    "en": "Support for the German ZUGFeRD version 2.2 and upwards standard for electronic\ninvoicing. ZUGFeRD 2.2 and Factur-X 1.0 are fully compatible and technically\nidentical formats the use the Factur-X identifier.\n\nCurrently this is just a placeholder addon as the EN16931 addon will provide\nall validation requirements.\n\nFor more information, visit [www.ferd-net.de](https://www.ferd-net.de/)."
+  },
+  "extensions": null,
+  "scenarios": null,
+  "corrections": null
+}

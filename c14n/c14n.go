@@ -1,8 +1,11 @@
+// Package c14n provides canonical JSON encoding and decoding.
 package c14n
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -22,11 +25,25 @@ func UnmarshalJSON(src io.Reader) (Canonicalable, error) {
 	return res, nil
 }
 
+// MarshalJSON takes any Go object that can be serialized into JSON and generates
+// the canonical JSON representation of that object.
+func MarshalJSON(src any) ([]byte, error) {
+	data := new(bytes.Buffer)
+	enc := json.NewEncoder(data)
+	if err := enc.Encode(src); err != nil {
+		return nil, fmt.Errorf("encoding: %w", err)
+	}
+	return CanonicalJSON(data)
+}
+
 // CanonicalJSON performs the unmarshal and marshal commands in one go.
 func CanonicalJSON(src io.Reader) ([]byte, error) {
 	obj, err := UnmarshalJSON(src)
 	if err != nil {
 		return nil, err
+	}
+	if obj == nil {
+		return nil, nil // nothing to marshal
 	}
 	return obj.MarshalJSON()
 }

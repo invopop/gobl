@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/regime-def",
+  "$ref": "#/$defs/tax.RegimeDef",
+  "$defs": {
+    "tax.CategoryDef": {
+      "properties": {
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code to be used in documents"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Short name of the category to be used instead of code in output"
+        },
+        "title": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Title",
+          "description": "Human name for the code to use for titles"
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Useful description of the category."
+        },
+        "retained": {
+          "type": "boolean",
+          "title": "Retained",
+          "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
+        },
+        "informative": {
+          "type": "boolean",
+          "title": "Informative",
+          "description": "Informative when true implies that the tax amount will be calculated\nand reported but will not affect the invoice totals. Typically used\nfor taxes that are embedded in the base amount or don't impact the\nfinal payable amount."
+        },
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/tax.KeyDef"
+          },
+          "type": "array",
+          "title": "Keys",
+          "description": "Specific tax definitions inside this category."
+        },
+        "rates": {
+          "items": {
+            "$ref": "#/$defs/tax.RateDef"
+          },
+          "type": "array",
+          "title": "Rates",
+          "description": "Rates defines the set of rates that can be used with this category."
+        },
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extensions defines a list of extension keys that may be used or required\nas an alternative or alongside choosing a rate for the tax category.\nEvery key must be defined in the Regime's extensions table."
+        },
+        "map": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Map",
+          "description": "Map defines a set of regime specific code mappings."
+        },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "List of sources for the information contained in this category and most importantly,\nan official source where the tax rates can be reviewed and updated in the future."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension key-value pairs that will be copied to the tax combo if this\ncategory is used."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the category that is relevant\nfor local frequently used formats."
+        }
+      },
+      "type": "object",
+      "required": [
+        "code",
+        "name"
+      ],
+      "description": "CategoryDef contains the definition of a general type of tax inside a region."
+    },
+    "tax.KeyDef": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key identifies this rate within the system"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Human name of the rate set"
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Useful description of the rate."
+        },
+        "no_percent": {
+          "type": "boolean",
+          "title": "No Percent",
+          "description": "NoPercent when true implies that the rate when used in a tax Combo should\nnot define a percent value."
+        }
+      },
+      "type": "object",
+      "description": "KeyDef defines a key that can be used inside a tax category."
+    },
+    "tax.RateDef": {
+      "properties": {
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Rate",
+          "description": "Rate defines the key for which this rate applies."
+        },
+        "keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Keys",
+          "description": "Keys identifies the set of tax keys defined in the category that this\nrate can be used with."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Human name of the rate"
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Useful description of the rate."
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/tax.RateValueDef"
+          },
+          "type": "array",
+          "title": "Values",
+          "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the rate that is relevant\nfor local frequently used implementations."
+        }
+      },
+      "type": "object",
+      "required": [
+        "rate",
+        "name"
+      ],
+      "description": "RateDef defines a single rate inside a category"
+    },
+    "tax.RateValueDef": {
+      "properties": {
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Only apply this rate if one of the tags is present in the invoice.\nTags []cbc.Key `json:\"tags,omitempty\" jsonschema:\"title=Tags\"`\nExt map of keys that can be used to filter to determine if the rate applies."
+        },
+        "since": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Since",
+          "description": "Date from which this value should be applied."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percent rate that should be applied"
+        },
+        "surcharge": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Surcharge",
+          "description": "An additional surcharge to apply."
+        },
+        "disabled": {
+          "type": "boolean",
+          "title": "Disabled",
+          "description": "When true, this value should no longer be used."
+        }
+      },
+      "type": "object",
+      "required": [
+        "percent"
+      ],
+      "description": "RateValueDef contains a percentage rate or fixed amount for a given date range."
+    },
+    "tax.RegimeDef": {
+      "properties": {
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the tax regime."
+        },
+        "description": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Introductory details about the regime."
+        },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Sources is a list of references to tax authority or other relevant documentation that\ncan be used to validate the regime's data and be used in the future to check for updates\nand changes."
+        },
+        "time_zone": {
+          "type": "string",
+          "title": "Time Zone",
+          "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones). If a country has multiple\ntime zones, the most common or central one should be used."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "title": "Code",
+          "description": "Country code for tax purposes which usually coincides with the ISO 3166-1 alpha-2 code, but not\nalways."
+        },
+        "alt_country_codes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/l10n/code"
+          },
+          "type": "array",
+          "title": "Alternative Country Codes",
+          "description": "Alternative localization codes that may be used to identify the tax regime\nin specific circumstances."
+        },
+        "zone": {
+          "$ref": "https://gobl.org/draft-0/l10n/code",
+          "title": "Zone",
+          "description": "Specific Locality, region, city, province, county, or similar code inside\nthe country, if needed."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency used by the country."
+        },
+        "tax_scheme": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Tax Scheme",
+          "description": "TaxScheme defines the principal scheme of consumption tax that should be\napplied to the regime and associated with Tax IDs in some export formats\nsuch as UBL or CII. Some regimes may not have a Tax Scheme and as a\nconsequence will not use tax identities, like the US."
+        },
+        "calculator_rounding_rule": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Calculator Rounding Rule",
+          "description": "Rounding rule to use when calculating the tax totals. See the RoundingRule\nconstants for more details. If not provided, the default is RoundingRulePrecise."
+        },
+        "tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/tag-set"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags that can be applied at the document level to identify additional\nconsiderations."
+        },
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extensions defines the keys that can be used for extended or extra data inside the regime that\nis specific to the regime and cannot be easily determined from other GOBL structures.\nTypically these are used to define local codes for suppliers, customers, products, or tax rates."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities used in addition to regular tax identities and specific for the\nregime that may be validated against."
+        },
+        "payment_means_keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Payment Means Keys",
+          "description": "PaymentMeansKeys specific for the regime that extend the original\nbase payment means keys."
+        },
+        "inbox_keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Inbox Keys",
+          "description": "InboxKeys specific to the regime that can be used to identify where a document\nshould be forwarded to."
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/scenario-set"
+          },
+          "type": "array",
+          "title": "Scenarios",
+          "description": "Scenarios are used to describe a specific set of conditions and rules that apply to a specific\ndocument schema. These provide a more generic solution for normalization and validation of documents\nin regimes with specific requirements."
+        },
+        "corrections": {
+          "$ref": "https://gobl.org/draft-0/tax/correction-set",
+          "title": "Corrections",
+          "description": "Configuration details for corrections to be used with correction options."
+        },
+        "categories": {
+          "items": {
+            "$ref": "#/$defs/tax.CategoryDef"
+          },
+          "type": "array",
+          "title": "Categories",
+          "description": "List of tax categories."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "time_zone",
+        "country",
+        "currency",
+        "categories"
+      ],
+      "description": "RegimeDef defines the holding structure for the definitions of taxes inside a country or territory."
+    }
+  }
+}

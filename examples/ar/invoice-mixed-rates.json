@@ -1,0 +1,129 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "AR",
+  "uuid": "6b5a4c3d-2e1f-0a9b-8c7d-6e5f4a3b2c1d",
+  "code": "0001-00000126",
+  "issue_date": "2025-01-22",
+  "currency": "ARS",
+  "supplier": {
+    "name": "Distribuidora Integral Argentina S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Libertador 7500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1429",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "ventas@distribuidoraintegral.com.ar"
+      }
+    ],
+    "telephones": [
+      {
+        "num": "+54 11 4567-8900"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Hospital General San José",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Belgrano 2450",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1096",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@hospitalsanjose.gob.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "200",
+      "item": {
+        "name": "Medicamentos oncológicos",
+        "price": "15000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "reduced",
+          "percent": "10.5%"
+        }
+      ]
+    },
+    {
+      "quantity": "50",
+      "item": {
+        "name": "Equipamiento médico - Monitores",
+        "price": "45000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general",
+          "percent": "21%"
+        }
+      ]
+    },
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Servicios de mantenimiento de instalaciones",
+        "price": "180000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general",
+          "percent": "21%"
+        }
+      ]
+    },
+    {
+      "quantity": "12000",
+      "item": {
+        "name": "Energía eléctrica - Consumo mensual kWh",
+        "price": "48.00",
+        "unit": "kwh"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "increased",
+          "percent": "27%"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "notes": "Pago contra entrega",
+      "due_dates": [
+        {
+          "date": "2025-01-22",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}

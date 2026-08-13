@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/invopop/jsonschema"
-	"github.com/square/go-jose/v3"
 )
 
 // Signature represents a stored JSON Web Signature and provides helper
@@ -34,6 +34,12 @@ func WithJKU(jku string) SignerOption {
 
 const (
 	headerJKU jose.HeaderKey = "jku"
+)
+
+var (
+	joseSignatureAlgorithms = []jose.SignatureAlgorithm{
+		jose.ES256,
+	}
 )
 
 // NewSignature instantiates a new Signature object by signing the provided
@@ -92,7 +98,7 @@ func ParseSignature(data string) (*Signature, error) {
 }
 
 func (s *Signature) parse(data string) error {
-	o, err := jose.ParseSigned(data)
+	o, err := jose.ParseSigned(data, joseSignatureAlgorithms)
 	if err != nil {
 		return fmt.Errorf("dsig: %w", err)
 	}
@@ -133,28 +139,42 @@ func (s *Signature) String() string {
 	return d
 }
 
-// VerifyPayload verifies that the provided key was indeed used to
-// sign the original payload and will parse the data ready to use.
-func (s *Signature) VerifyPayload(key *PublicKey, payload interface{}) error {
+// Verify will ensure that the provided key was used to sign the
+// signature and will provide the raw data that was signed.
+func (s *Signature) Verify(key *PublicKey) ([]byte, error) {
 	data, err := s.jws.Verify(key.jwk)
 	if err != nil {
 		// at the risk of hiding useful errors, provide our own
-		return ErrKeyMismatch
+		return nil, ErrKeyMismatch
 	}
+	return data, nil
+}
 
+// VerifyPayload verifies that the provided key was indeed used to
+// sign the original payload and will parse the data ready to use.
+func (s *Signature) VerifyPayload(key *PublicKey, payload any) error {
+	data, err := s.Verify(key)
+	if err != nil {
+		return err
+	}
 	if err := json.Unmarshal(data, payload); err != nil {
 		return fmt.Errorf("dsig verify: %w", err)
 	}
-
 	return nil
+}
+
+// Unsafe provides the raw data that was signed, but will not check
+// any of the signatures.
+func (s *Signature) Unsafe() []byte {
+	return s.jws.UnsafePayloadWithoutVerification()
 }
 
 // UnsafePayload will extract the payload data into the provided
 // object but will not perform any signature checking. Only
 // recommended for specific use cases when the original key is
 // not available or has already been confirmed elsewhere.
-func (s *Signature) UnsafePayload(payload interface{}) error {
-	data := s.jws.UnsafePayloadWithoutVerification()
+func (s *Signature) UnsafePayload(payload any) error {
+	data := s.Unsafe()
 	if err := json.Unmarshal(data, payload); err != nil {
 		return fmt.Errorf("dsig unsafe payload: %w", err)
 	}

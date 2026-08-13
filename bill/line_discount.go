@@ -1,0 +1,66 @@
+package bill
+
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
+)
+
+// LineDiscount represents an amount deducted from the line, and will be
+// applied before taxes.
+type LineDiscount struct {
+	// Key for identifying the type of discount being applied.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Code or reference for this discount defined by the issuer
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// Text description as to why the discount was applied
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Base for percent calculations instead of the line's sum.
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	// Percentage to apply to the base or line sum to calculate the discount amount
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Fixed discount amount to apply (calculated if percent present)
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
+	// Extension codes that apply to the discount
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+}
+
+func lineDiscountRules() *rules.Set {
+	return rules.For(new(LineDiscount),
+		rules.When(is.Expr("Base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", is.Present),
+			),
+		),
+	)
+}
+
+// IsEmpty returns true if the discount is empty.
+func (ld *LineDiscount) IsEmpty() bool {
+	return ld.Key.IsEmpty() &&
+		ld.Code.IsEmpty() &&
+		ld.Reason == "" &&
+		(ld.Percent == nil || ld.Percent.IsZero()) &&
+		ld.Amount.IsZero() &&
+		ld.Ext.IsZero()
+}
+
+// CleanLineDiscounts removes any empty discounts from the list.
+func CleanLineDiscounts(lines []*LineDiscount) []*LineDiscount {
+	var cleaned []*LineDiscount
+	for _, d := range lines {
+		if d.IsEmpty() {
+			continue
+		}
+		cleaned = append(cleaned, d)
+	}
+	return cleaned
+}
+
+// JSONSchemaExtend adds the discount key definitions to the schema.
+func (LineDiscount) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithDiscountKey(schema)
+}

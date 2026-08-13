@@ -1,0 +1,66 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["it-sdi-v1"]
+uuid: "0194b2c0-1a2b-7c3d-8e4f-5a6b7c8d9e0f"
+series: SAMPLE
+code: "003"
+currency: EUR
+issue_date: "2024-02-15"
+type: standard
+supplier:
+  tax_id:
+    country: IT
+    code: "12345678903"
+  name: Mattoni e Cementi S.r.l.
+  registration:
+    capital: "50000.00"
+    currency: EUR
+    entry: "123456"
+    office: RM
+  addresses:
+    - num: "102"
+      street: Via dei Mattoni
+      locality: Roma
+      region: RM
+      code: "00100"
+      country: IT
+customer:
+  tax_id:
+    country: IT
+    code: "13029381004"
+  name: Edilizia Firenze S.r.l.
+  inboxes:
+    - key: it-sdi-code
+      code: M5UXCR5
+  addresses:
+    - num: "23"
+      street: Via dei Mille
+      locality: Firenze
+      region: FI
+      code: "50100"
+      country: IT
+lines:
+  - quantity: "1000"
+    item:
+      name: Mattoni Rossi
+      price: "0.50"
+      attributes:
+        - type: LOTTO
+          text: "MR-2025-08"
+        - type: PRODUZIONE
+          date: "2025-08-01"
+    taxes:
+      - cat: VAT
+        rate: general
+  - quantity: "50"
+    item:
+      name: Sacchi di Cemento 25kg
+      price: "6.00"
+      attributes:
+        - type: LOTTO
+          text: "CEM-2025-07"
+        - type: PESO
+          amount: "25"
+          unit: kg
+    taxes:
+      - cat: VAT
+        rate: general

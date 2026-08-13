@@ -1,0 +1,165 @@
+package cal_test
+
+import (
+	"encoding/json"
+	"testing"
+	"time"
+
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/rules"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestDateTimeJSONParsing(t *testing.T) {
+	// Handle a zero date
+	t.Run("zero date", func(t *testing.T) {
+		var dt cal.DateTime
+		data, err := json.Marshal(dt)
+		assert.NoError(t, err)
+		assert.EqualValues(t, string(data), `"0000-00-00T00:00:00"`)
+
+		err = json.Unmarshal([]byte(`"0000-00-00T00:00:00"`), &dt)
+		assert.NoError(t, err)
+	})
+
+	t.Run("valid date", func(t *testing.T) {
+		dt := cal.MakeDateTime(2023, time.September, 4, 15, 59, 30)
+		data, err := json.Marshal(dt)
+		assert.NoError(t, err)
+		assert.EqualValues(t, string(data), `"2023-09-04T15:59:30"`)
+
+		err = json.Unmarshal([]byte(`"2023-09-04T15:59:30"`), &dt)
+		assert.NoError(t, err)
+		assert.Equal(t, dt.Date().Year, 2023)
+		assert.Equal(t, dt.Date().Month, time.September)
+		assert.Equal(t, dt.Date().Day, 4)
+	})
+}
+
+func TestDateTimeValidation(t *testing.T) {
+	t.Run("basics", func(t *testing.T) {
+		d := cal.MakeDateTime(2021, time.May, 26, 15, 59, 30)
+		assert.NoError(t, rules.Validate(d))
+
+		d = cal.MakeDateTime(2021, 0, 1, 15, 59, 30)
+		assert.Error(t, rules.Validate(d))
+
+		d = cal.MakeDateTime(2021, 1, 0, 15, 59, 30)
+		assert.Error(t, rules.Validate(d))
+
+		// Pointer
+		dp := cal.NewDateTime(2021, 1, 0, 15, 59, 30)
+		assert.Error(t, rules.Validate(dp))
+
+		dp = nil
+		assert.NoError(t, rules.Validate(dp))
+	})
+
+	t.Run("date time not zero", func(t *testing.T) {
+		d := cal.MakeDateTime(2021, time.May, 26, 10, 10, 10)
+		assert.True(t, cal.DateTimeNotZero().Check(d))
+
+		d = cal.DateTime{}
+		assert.False(t, cal.DateTimeNotZero().Check(d))
+
+		dp := new(cal.DateTime)
+		assert.False(t, cal.DateTimeNotZero().Check(dp))
+
+		dp = nil
+		assert.True(t, cal.DateTimeNotZero().Check(dp))
+	})
+
+	t.Run("date time after", func(t *testing.T) {
+		d := cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
+
+		d2 := cal.MakeDateTime(2023, time.March, 24, 10, 10, 9)
+		assert.True(t, cal.DateTimeAfter(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 9)
+		assert.True(t, cal.DateTimeAfter(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 26, 10, 10, 10)
+		assert.False(t, cal.DateTimeAfter(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 11)
+		assert.False(t, cal.DateTimeAfter(d2).Check(d))
+	})
+
+	t.Run("date time before", func(t *testing.T) {
+		d := cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
+
+		d2 := cal.MakeDateTime(2023, time.March, 26, 10, 10, 10)
+		assert.True(t, cal.DateTimeBefore(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 11)
+		assert.True(t, cal.DateTimeBefore(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 25, 10, 10, 10)
+		assert.False(t, cal.DateTimeBefore(d2).Check(d))
+
+		d2 = cal.MakeDateTime(2023, time.March, 24, 10, 10, 10)
+		assert.False(t, cal.DateTimeBefore(d2).Check(d))
+	})
+}
+
+func TestDateTimeThisSecond(t *testing.T) {
+	d := cal.ThisSecond()
+	tn := time.Now().UTC()
+	// note: this test may fail if minute changes between
+	// the two "Now()" calls
+	assert.Equal(t, d.Date().Year, tn.Year())
+	assert.Equal(t, d.Date().Month, tn.Month())
+	assert.Equal(t, d.Date().Day, tn.Day())
+	assert.Equal(t, d.Time().Hour, tn.Hour())
+	assert.Equal(t, d.Time().Minute, tn.Minute())
+	assert.Equal(t, d.Time().Nanosecond, 0)
+
+	l, err := time.LoadLocation("America/New_York")
+	require.NoError(t, err)
+	tn = time.Now().In(l)
+	d = cal.ThisSecondIn(l)
+	assert.Equal(t, d.Date().Year, tn.Year())
+	assert.Equal(t, d.Date().Month, tn.Month())
+	assert.Equal(t, d.Date().Day, tn.Day())
+	assert.Equal(t, d.Time().Hour, tn.Hour())
+	assert.Equal(t, d.Time().Minute, tn.Minute())
+	assert.Equal(t, d.Time().Nanosecond, 0)
+}
+
+func TestDateTimeClone(t *testing.T) {
+	d := cal.MakeDateTime(2021, time.May, 26, 10, 10, 10)
+	d2 := d.Clone()
+	assert.Equal(t, d.String(), d2.String())
+	d = cal.MakeDateTime(2021, time.May, 27, 10, 10, 10)
+	assert.NotEqual(t, d.String(), d2.String())
+}
+
+func TestDateTimeWithTimeZ(t *testing.T) {
+	d := cal.MakeDateTime(2023, time.July, 28, 10, 10, 5)
+	dt := d.TimeZ()
+	assert.Equal(t, "2023-07-28 10:10:05 +0000 UTC", dt.String())
+
+	dp := cal.NewDateTime(2023, time.July, 28, 10, 10, 5)
+	dt = dp.TimeZ()
+	assert.Equal(t, "2023-07-28 10:10:05 +0000 UTC", dt.String())
+
+	loc, err := time.LoadLocation("Europe/Madrid")
+	require.NoError(t, err)
+	dt = d.In(loc)
+	assert.Equal(t, "2023-07-28 10:10:05 +0200 CEST", dt.String())
+}
+
+func TestDateTimeOf(t *testing.T) {
+	x := time.Date(2023, time.July, 28, 12, 12, 1, 0, time.UTC)
+	d := cal.DateTimeOf(x)
+	assert.Equal(t, "2023-07-28T12:12:01", d.String())
+}
+
+func TestJSONSchema(t *testing.T) {
+	data := []byte(`{"description":"Civil date time in simplified ISO format with no time zone\nnor location information, for example: 2021-05-26T13:45:00", "pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", "title":"Date Time", "type":"string"}`)
+	schema := cal.DateTime{}.JSONSchema()
+	out, err := json.Marshal(schema)
+	require.NoError(t, err)
+	assert.JSONEq(t, string(data), string(out))
+}

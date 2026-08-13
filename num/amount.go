@@ -1,10 +1,10 @@
 package num
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -22,6 +22,16 @@ type Amount struct {
 	exp   uint32
 }
 
+// AmmountMaxDigits is the maximum total number of digits (major + decimal)
+// allowed in an amount string. This ensures values fit safely in int64
+// and do not overflow.
+const AmmountMaxDigits = 18
+
+var (
+	// AmountZero is a convenience variable for testing against zero amounts.
+	AmountZero = MakeAmount(0, 0)
+)
+
 // NewAmount provides a pointer to an Amount instance. Normally we'd recommend
 // using the `MakeAmount` method.
 func NewAmount(val int64, exp uint32) *Amount {
@@ -33,6 +43,17 @@ func NewAmount(val int64, exp uint32) *Amount {
 // instance. We use "Make" instead of "New" as there are no pointers.
 func MakeAmount(val int64, exp uint32) Amount {
 	return Amount{value: val, exp: exp}
+}
+
+// AmountFromFloat64 takes a float64 value and converts it into an amount
+// object. The exponential value is used to determine the accuracy of the
+// amount. For example, if you have a float value of `12.345` and an exp
+// of `3`, the resulting amount's underlying value will be `12345`.
+// This method also takes steps to ensure that numbers are rounded
+// correctly as dealing with Floats can have unexpected consequences.
+func AmountFromFloat64(val float64, exp uint32) Amount {
+	v := int64(math.Round(val * float64(intPow(10, exp))))
+	return Amount{value: v, exp: exp}
 }
 
 // AmountFromString takes the provided string and tries to convert it
@@ -47,10 +68,30 @@ func MakeAmount(val int64, exp uint32) Amount {
 // the `AmountFromHumanString` method.
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
-	x := strings.Split(val, ".")
+	n := strings.HasPrefix(val, "-")
+	x := strings.Split(strings.TrimPrefix(val, "-"), ".")
 	l := len(x)
 	if l > 2 {
 		return a, fmt.Errorf("amount must contain 0 or 1 decimal separators: %v", val)
+	}
+
+	// Check that the integer part alone doesn't exceed the digit limit.
+	// Leading zeros don't contribute to overflow risk, so we strip them.
+	sigMajor := len(strings.TrimLeft(x[0], "0"))
+	if sigMajor > AmmountMaxDigits {
+		return a, fmt.Errorf("amount '%v' has too many digits (%d), maximum is %d", val, sigMajor, AmmountMaxDigits)
+	}
+
+	// Truncate the decimal part so that total significant digits fit in int64.
+	// If truncation removes all decimal digits, treat the value as an integer.
+	if l == 2 {
+		maxDecimal := AmmountMaxDigits - sigMajor
+		if len(x[1]) > maxDecimal {
+			x[1] = x[1][:maxDecimal]
+		}
+		if len(x[1]) == 0 {
+			l = 1
+		}
 	}
 
 	// Parse the "major" part
@@ -73,52 +114,65 @@ func AmountFromString(val string) (Amount, error) {
 	}
 
 	// Prepare the result
-	a.value = v
+	if n {
+		a.value = -v
+	} else {
+		a.value = v
+	}
 	a.exp = e
 	return a, nil
 }
 
-// AmountFromHumanString removes an excess decimal places, commas, or
+// AmountFromHumanString removes any excess decimal places, commas, or
 // other symbols so that we end up with a simple string that can be parsed.
-func AmountFromHumanString(val string) (Amount, error) {
+func AmountFromHumanString(_ string) (Amount, error) {
 	return Amount{}, errors.New("not yet implemented")
-}
-
-// IsZero returns true if the value of the amount is 0.
-func (a Amount) IsZero() bool {
-	return a.value == 0
 }
 
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{a.value + a2.value, a.exp}
+	sum := new(big.Int).Add(big.NewInt(a.value), bigRescale(a2.value, a2.exp, a.exp))
+	value, exp := fitBigToInt64(sum, a.exp)
+	return Amount{value, exp}
 }
 
 // Subtract takes away the amount provided from the base.
-func (a Amount) Subtract(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{value: a.value - a2.value, exp: a.exp}
+func (a Amount) Subtract(b Amount) Amount {
+	diff := new(big.Int).Sub(big.NewInt(a.value), bigRescale(b.value, b.exp, a.exp))
+	value, exp := fitBigToInt64(diff, a.exp)
+	return Amount{value, exp}
 }
 
-// Multiply our base amount by the provided amount.
+// Sub will subtract the provided amount from the base amount.
+// This is a convenience method for the Subtract method.
+func (a Amount) Sub(b Amount) Amount {
+	return a.Subtract(b)
+}
+
+// Multiply the amount by the provided amount. Calculations are performed
+// with big.Int internally to avoid int64 overflow; if the result cannot be
+// held at the current exponent, decimal places are dropped to fit.
 func (a Amount) Multiply(a2 Amount) Amount {
-	return Amount{
-		value: (a.value * a2.value) / intPow(10, a2.exp),
-		exp:   a.exp,
+	product := new(big.Int).Mul(big.NewInt(a.value), big.NewInt(a2.value))
+	if a2.exp > 0 {
+		product = roundedDiv(product, bigPow10(a2.exp))
 	}
+	value, exp := fitBigToInt64(product, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
-// Divide our base amount by the provided amount. We use floating point to do the actual division
-// and then round again to get an int. This prevents rounding errors, but if you want true division
-// with a base and a remainder, use the Split method.
+// Divide the amount by the provided amount, rounding the result. For true
+// division with a base and a remainder, use the Split method. Dividing by
+// zero returns a zero amount.
 func (a Amount) Divide(a2 Amount) Amount {
-	v := float64(a.value*intPow(10, a2.exp)) / float64(a2.value)
-	return Amount{
-		value: int64(math.Round(v)),
-		exp:   a.exp,
+	if a2.value == 0 {
+		return Amount{value: 0, exp: a.exp}
 	}
+	num := new(big.Int).Mul(big.NewInt(a.value), bigPow10(a2.exp))
+	q := roundedDiv(num, big.NewInt(a2.value))
+	value, exp := fitBigToInt64(q, a.exp)
+	return Amount{value: value, exp: exp}
 }
 
 // Split divides the amount by x, like Divide, but also provides an
@@ -134,19 +188,14 @@ func (a Amount) Split(x int) (Amount, Amount) {
 // Compare two amounts and return an integer value according to the
 // sign of the difference:
 //
-//   -1 if a <  a2
-//    0 if a == a2
-//    1 if a >  a2
-//
-func (a Amount) Compare(a2 Amount) int {
-	a, a2 = rescaleAmountPair(a, a2)
-	if a.value < a2.value {
-		return -1
-	}
-	if a.value > a2.value {
-		return 1
-	}
-	return 0
+//	-1 if a < b
+//	 0 if a == b
+//	 1 if a > b
+func (a Amount) Compare(b Amount) int {
+	exp := max(a.exp, b.exp)
+	av := bigRescale(a.value, a.exp, exp)
+	bv := bigRescale(b.value, b.exp, exp)
+	return av.Cmp(bv)
 }
 
 // Equals returns true if the two amounts represent the same value,
@@ -162,29 +211,82 @@ func (a Amount) Rescale(exp uint32) Amount {
 	if a.exp > exp {
 		// need to divide
 		e := a.exp - exp
-		v := float64(a.value) / float64(intPow(10, e))
-		return Amount{int64(math.Round(v)), exp}
+		v := roundedDiv(big.NewInt(a.value), bigPow10(e))
+		return Amount{v.Int64(), exp}
 	}
 	if a.exp < exp {
-		// need to multiply
+		// need to multiply, capping the exponent if int64 would overflow
 		e := exp - a.exp
-		v := a.value * intPow(10, e)
-		return Amount{v, exp}
+		v := new(big.Int).Mul(big.NewInt(a.value), bigPow10(e))
+		value, exp := fitBigToInt64(v, exp)
+		return Amount{value, exp}
 	}
 	return a
+}
+
+// RescaleUp will rescale the exponent value of the amount, but only if it is
+// lower than the current exponent.
+func (a Amount) RescaleUp(exp uint32) Amount {
+	if exp > a.exp {
+		return a.Rescale(exp)
+	}
+	return a
+}
+
+// RescaleDown rescales the exponent to the value provided, but only if the
+// amount's exponent is higher. This is useful to ensure that a number has
+// a maximum accuracy.
+func (a Amount) RescaleDown(exp uint32) Amount {
+	if exp < a.exp {
+		return a.Rescale(exp)
+	}
+	return a
+}
+
+// RescaleRange will rescale the amount so that it fits within the provided
+// range of exponents. This is useful for ensuring that amounts are within
+// a certain range of accuracy.
+func (a Amount) RescaleRange(minimum, maximum uint32) Amount {
+	return a.RescaleUp(minimum).RescaleDown(maximum)
 }
 
 // MatchPrecision will rescale the exponent value of the amount so that it
 // matches the scale of the provided amount, but *only* if it is higher.
 func (a Amount) MatchPrecision(a2 Amount) Amount {
-	if a2.exp > a.exp {
-		return a.Rescale(a2.exp)
+	return a.RescaleUp(a2.exp)
+}
+
+// Upscale increases the accuracy of the amount by rescaling the exponent
+// by the provided amount.
+func (a Amount) Upscale(increase uint32) Amount {
+	return a.Rescale(a.Exp() + increase)
+}
+
+// Downscale decreases the amount's exponent by the provided accuracy.
+func (a Amount) Downscale(decrease uint32) Amount {
+	var x uint32
+	if decrease > a.Exp() {
+		x = 0
+	} else {
+		x = a.Exp() - decrease
 	}
-	return a
+	return a.Rescale(x)
+}
+
+// Remove takes the provided percentage away from the amount assuming it was
+// already applied previously.
+func (a Amount) Remove(percent Percentage) Amount {
+	return a.Divide(percent.Factor())
 }
 
 // Invert the value.
+// Deprecated: Use Negate instead.
 func (a Amount) Invert() Amount {
+	return a.Negate()
+}
+
+// Negate inverts the value, positive to negative and vice versa.
+func (a Amount) Negate() Amount {
 	return Amount{value: -a.value, exp: a.exp}
 }
 
@@ -198,6 +300,29 @@ func (a Amount) Exp() uint32 {
 	return a.exp
 }
 
+// IsZero returns true if the value of the amount is 0.
+func (a Amount) IsZero() bool {
+	return a.value == 0
+}
+
+// IsNegative returns true if the amount is less than zero.
+func (a Amount) IsNegative() bool {
+	return a.value < 0
+}
+
+// IsPositive returns true if the amount is greater than zero.
+func (a Amount) IsPositive() bool {
+	return a.value > 0
+}
+
+// Abs provides the absolute value of the amount
+func (a Amount) Abs() Amount {
+	if a.value < 0 {
+		return a.Invert()
+	}
+	return a
+}
+
 // String returns the simplified string amount.
 func (a Amount) String() string {
 	if a.exp == 0 {
@@ -207,12 +332,18 @@ func (a Amount) String() string {
 		return "NA"
 	}
 	p := intPow(10, a.exp)
-	v1 := a.value / p
-	v2 := a.value - (v1 * p)
-	if v2 < 0 {
-		v2 = -v2
+	v := a.value
+	s := ""
+	if v < 0 {
+		s = "-"
+		v = -v
 	}
-	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
+	v1 := v / p
+	v2 := v - (v1 * p)
+	//if v2 < 0 {
+	//	v2 = -v2
+	//}
+	return fmt.Sprintf("%s%d.%0*d", s, v1, a.exp, v2)
 }
 
 // MinimalString provides the amount without any tailing 0s or '.'
@@ -226,6 +357,12 @@ func (a Amount) MinimalString() string {
 	return strings.TrimSuffix(s, ".")
 }
 
+// Float64 provides the amount as a float64 value which should be used
+// with caution!
+func (a Amount) Float64() float64 {
+	return float64(a.value) / float64(intPow(10, a.exp))
+}
+
 // MarshalText provides the byte value of the amount. See also the
 // String() method.
 // We always add quotes around values as number representations do not
@@ -236,16 +373,6 @@ func (a Amount) MarshalText() ([]byte, error) {
 	return []byte(a.String()), nil
 }
 
-// MarshalJSON takes string value of the text and adds quotes around
-// it ready to be used in a JSON object.
-func (a Amount) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	buf.WriteByte('"')
-	buf.WriteString(a.String())
-	buf.WriteByte('"')
-	return buf.Bytes(), nil
-}
-
 // UnmarshalText will decode the amount value, even if it is quoted
 // as a string and will be used for JSON, XML, or any other text
 // unmarshaling.
@@ -253,11 +380,9 @@ func (a *Amount) UnmarshalText(value []byte) error {
 	if string(value) == "null" {
 		return nil
 	}
-
-	str := unquote(value)
-	amount, err := AmountFromString(string(str))
+	amount, err := AmountFromString(string(value))
 	if err != nil {
-		return fmt.Errorf("decoding string `%s`: %w", str, err)
+		return err
 	}
 	*a = amount
 
@@ -267,7 +392,7 @@ func (a *Amount) UnmarshalText(value []byte) error {
 // UnmarshalJSON ensures amounts will be parsed even if defined as
 // numbers in the source JSON.
 func (a *Amount) UnmarshalJSON(value []byte) error {
-	return a.UnmarshalText(value)
+	return a.UnmarshalText(unquote(value))
 }
 
 func unquote(value []byte) []byte {
@@ -278,15 +403,6 @@ func unquote(value []byte) []byte {
 	return value
 }
 
-func rescaleAmountPair(a, a2 Amount) (Amount, Amount) {
-	// Take the largest exp
-	exp := a.exp
-	if a2.exp > exp {
-		exp = a2.exp
-	}
-	return a.Rescale(exp), a2.Rescale(exp)
-}
-
 func intPow(base int, exp uint32) int64 { // nolint:unparam
 	out := int64(1)
 	for exp != 0 {
@@ -294,6 +410,79 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 		exp--
 	}
 	return out
+}
+
+var (
+	bigOne = big.NewInt(1)
+	bigTen = big.NewInt(10)
+)
+
+// bigPow10 returns 10^exp as a big.Int.
+func bigPow10(exp uint32) *big.Int {
+	return new(big.Int).Exp(bigTen, big.NewInt(int64(exp)), nil)
+}
+
+// bigRescale returns v, currently at the `from` exponent, rescaled to the
+// `to` exponent, rounding when reducing.
+func bigRescale(v int64, from, to uint32) *big.Int {
+	b := big.NewInt(v)
+	if from < to {
+		return b.Mul(b, bigPow10(to-from))
+	}
+	if from > to {
+		return roundedDiv(b, bigPow10(from-to))
+	}
+	return b
+}
+
+// roundedDiv divides num by den rounding half away from zero. The
+// denominator must not be zero.
+func roundedDiv(num, den *big.Int) *big.Int {
+	n, d := num, den
+	if d.Sign() < 0 {
+		n = new(big.Int).Neg(n)
+		d = new(big.Int).Neg(d)
+	}
+	q := new(big.Int)
+	r := new(big.Int)
+	q.QuoRem(n, d, r) // r has the same sign as n
+	twiceRem := new(big.Int).Abs(r)
+	twiceRem.Lsh(twiceRem, 1)
+	if twiceRem.Cmp(d) >= 0 {
+		if n.Sign() < 0 {
+			q.Sub(q, bigOne)
+		} else {
+			q.Add(q, bigOne)
+		}
+	}
+	return q
+}
+
+// fitBigToInt64 returns v as an int64 with the exponent it can be stored at.
+// If v does not fit, decimal digits are dropped with rounding, lowering the
+// exponent accordingly. Values whose integer part exceeds int64 saturate at
+// the boundary instead of wrapping.
+func fitBigToInt64(v *big.Int, exp uint32) (int64, uint32) {
+	if v.IsInt64() {
+		return v.Int64(), exp
+	}
+	drop := uint32(0)
+	probe := new(big.Int).Set(v)
+	for !probe.IsInt64() && drop < exp {
+		probe.Quo(probe, bigTen)
+		drop++
+	}
+	if drop > 0 {
+		v = roundedDiv(v, bigPow10(drop))
+		exp -= drop
+	}
+	if !v.IsInt64() {
+		if v.Sign() < 0 {
+			return math.MinInt64, exp
+		}
+		return math.MaxInt64, exp
+	}
+	return v.Int64(), exp
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

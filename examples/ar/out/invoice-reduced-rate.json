@@ -1,0 +1,139 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "18d1c0f8752538fabfb0416d91f1f40d7c60ae60c5f4d73f4fc491cfc10a3da1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"uuid": "8f3c2a1b-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+		"type": "standard",
+		"code": "0001-00000124",
+		"issue_date": "2025-01-16",
+		"currency": "ARS",
+		"supplier": {
+			"name": "Constructora del Sur S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Rivadavia 5000",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1424",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "contacto@constructoradelsur.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Municipalidad de San Martín",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Av. San Martín 3200",
+					"locality": "San Martín",
+					"region": "Buenos Aires",
+					"code": "B1650",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@sanmartin.gob.ar"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Obra de construcción - Refacción de edificio municipal",
+					"price": "2500000.00"
+				},
+				"sum": "2500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "10.5%"
+					}
+				],
+				"total": "2500000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "500",
+				"item": {
+					"name": "Materiales de construcción",
+					"price": "1500.00"
+				},
+				"sum": "750000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "10.5%"
+					}
+				],
+				"total": "750000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-03-16",
+						"amount": "1795625.00",
+						"percent": "50%"
+					},
+					{
+						"date": "2025-05-16",
+						"amount": "1795625.00",
+						"percent": "50%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "3250000.00",
+			"total": "3250000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "3250000.00",
+								"percent": "10.5%",
+								"amount": "341250.00"
+							}
+						],
+						"amount": "341250.00"
+					}
+				],
+				"sum": "341250.00"
+			},
+			"tax": "341250.00",
+			"total_with_tax": "3591250.00",
+			"payable": "3591250.00"
+		}
+	}
+}

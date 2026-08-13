@@ -1,0 +1,181 @@
+package ar_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTaxIdentityRules(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		err  string
+	}{
+		// Valid CUIT/CUIL examples
+		// These are valid CUIT/CUIL numbers following the modulo 11 algorithm
+		{
+			name: "valid CUIT - standard company",
+			code: "30500010912", // Valid test CUIT
+		},
+		{
+			name: "valid CUIL - male individual",
+			code: "20172543597",
+		},
+		{
+			name: "valid CUIL - female individual",
+			code: "27123456780",
+		},
+		{
+			name: "valid CUIT - prefix 23 (conflict resolution)",
+			code: "23000000019",
+		},
+		{
+			name: "valid CUIT - prefix 33 (company conflict resolution)",
+			code: "33000000049",
+		},
+
+		// Invalid - wrong length
+		{
+			name: "too short",
+			code: "2017254359",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too long",
+			code: "201725435978",
+			err:  "IDENTITY-01",
+		},
+
+		// Invalid - non-numeric
+		{
+			name: "contains letters",
+			code: "2017254A597",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "contains special characters",
+			code: "20172543A97",
+			err:  "IDENTITY-01",
+		},
+
+		// Invalid - wrong check digit
+		{
+			name: "wrong check digit",
+			code: "20172543598",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "wrong check digit - company",
+			code: "30500010911", // Changed last digit
+			err:  "IDENTITY-01",
+		},
+
+		// Invalid - another wrong check digit test
+		{
+			name: "wrong check digit - female",
+			code: "27123456781", // Wrong check digit
+			err:  "IDENTITY-01",
+		},
+
+		// Invalid - invalid prefix
+		{
+			name: "invalid prefix - 10",
+			code: "10123456789",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "invalid prefix - 40",
+			code: "40123456789",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "invalid prefix - 99",
+			code: "99123456789",
+			err:  "IDENTITY-01",
+		},
+
+		// Valid - special check digit cases
+		{
+			name: "valid CUIT - check digit 0 (remainder 0, expected 11)",
+			code: "20000000060", // sum=22, remainder=0, check digit becomes 0
+		},
+		{
+			name: "valid CUIT - check digit 9 (remainder 1, expected 10)",
+			code: "20000000019", // sum=12, remainder=1, check digit becomes 9
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "AR", Code: tt.code}
+			err := rules.Validate(tID)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
+			}
+		})
+	}
+}
+
+func TestTaxIdentityNormalization(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "already normalized",
+			code: "30714589840",
+			want: "30714589840",
+		},
+		{
+			name: "with hyphens",
+			code: "30-71458984-0",
+			want: "30714589840",
+		},
+		{
+			name: "with spaces",
+			code: "30 71458984 0",
+			want: "30714589840",
+		},
+		{
+			name: "with hyphens and spaces",
+			code: "30-71458984-0 ",
+			want: "30714589840",
+		},
+		{
+			name: "CUIL with hyphens",
+			code: "20-17254359-7",
+			want: "20172543597",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "AR", Code: tt.code}
+			norm.Normalize(tID)
+			assert.Equal(t, tt.want, tID.Code)
+		})
+	}
+}
+
+func TestEmptyTaxIdentity(t *testing.T) {
+	tID := &tax.Identity{Country: "AR"}
+	err := rules.Validate(tID)
+	assert.NoError(t, err)
+}
+
+func TestTaxIdentityWithEmptyCode(t *testing.T) {
+	// Test explicitly empty code string
+	tID := &tax.Identity{Country: "AR", Code: ""}
+	err := rules.Validate(tID)
+	assert.NoError(t, err)
+}

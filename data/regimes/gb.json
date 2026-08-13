@@ -1,0 +1,137 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "United Kingdom"
+  },
+  "description": {
+    "en": "The United Kingdom's tax system is administered by His Majesty's Revenue and\nCustoms (HMRC). Following Brexit, the UK operates its own VAT system\nindependently of the EU VAT Directive.\n\nVAT applies at standard, reduced, and zero rates. Zero-rated supplies include\nfood, children's clothing, books, and newspapers. Some supplies are exempt\nfrom VAT, including financial services, education, and healthcare.\nCompanies are identified by their VAT Registration Number (VRN) in the format\nGB followed by 9 digits, and optionally by their Company Registration Number\n(CRN) from Companies House.\n\nNorthern Ireland (country code XI) has special arrangements for goods under\nthe Windsor Framework, remaining aligned with EU VAT rules for goods while\nfollowing UK rules for services. Credit notes are supported for invoice\ncorrections."
+  },
+  "time_zone": "Europe/London",
+  "country": "GB",
+  "alt_country_codes": [
+    "XI",
+    "XU"
+  ],
+  "currency": "GBP",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate"
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

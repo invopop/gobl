@@ -1,0 +1,94 @@
+package bill
+
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
+)
+
+// LineCharge represents an amount added to the line, and will be
+// applied before taxes.
+type LineCharge struct {
+	// Key for grouping or identifying charges for tax purposes. A suggested list of
+	// keys is provided, but these are for reference only and may be extended by
+	// the issuer.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Reference or ID for this charge defined by the issuer
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// Text description as to why the charge was applied
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Base for percent calculations instead of the line's sum
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	// Percentage of base or parent line's sum
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Quantity of units to apply the charge to when using the rate instead of
+	// the line's quantity.
+	Quantity *num.Amount `json:"quantity,omitempty" jsonschema:"title=Quantity"`
+	// Unit to associate with the quantity when using the rate.
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// Rate defines a price per unit to use instead of the percentage.
+	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
+	// Fixed or resulting charge amount to apply (calculated if percent present).
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
+	// Extension codes that apply to the charge
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+}
+
+func lineChargeRules() *rules.Set {
+	return rules.For(new(LineCharge),
+		rules.When(is.Expr("Base != nil"),
+			rules.Field("percent",
+				rules.Assert("01", "percent is required when base is set", is.Present),
+			),
+		),
+		rules.When(is.Expr("Base != nil || Percent != nil"),
+			rules.Field("quantity",
+				rules.Assert("02", "quantity must be blank with base or percent", is.Empty),
+			),
+			rules.Field("rate",
+				rules.Assert("03", "rate must be blank with base or percent", is.Empty),
+			),
+		),
+		rules.When(is.Expr("Quantity == nil"),
+			rules.Field("unit",
+				rules.Assert("04", "unit must be blank without quantity", is.Empty),
+			),
+		),
+		rules.When(is.Expr("Quantity != nil"),
+			rules.Field("rate",
+				rules.Assert("05", "rate is required when quantity is set", is.Present),
+			),
+		),
+	)
+}
+
+// IsEmpty returns true if the charge is empty.
+func (lc *LineCharge) IsEmpty() bool {
+	return lc.Key.IsEmpty() &&
+		lc.Code.IsEmpty() &&
+		lc.Reason == "" &&
+		(lc.Percent == nil || lc.Percent.IsZero()) &&
+		lc.Amount.IsZero() &&
+		lc.Ext.IsZero()
+}
+
+// CleanLineCharges removes any empty charges from the list.
+func CleanLineCharges(lines []*LineCharge) []*LineCharge {
+	var cleaned []*LineCharge
+	for _, l := range lines {
+		if l.IsEmpty() {
+			continue
+		}
+		cleaned = append(cleaned, l)
+	}
+	return cleaned
+}
+
+// JSONSchemaExtend adds the charge key definitions to the schema.
+func (LineCharge) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithChargeKey(schema)
+}

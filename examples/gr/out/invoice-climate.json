@@ -1,0 +1,97 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "8c1cd44e5911998a9e6f297313857eda9fd63dbf0cc4fc6a4243d7b2cd5f0e89"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
+		"type": "other",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "8.2"
+			}
+		},
+		"supplier": {
+			"name": "Ελληνικά Τρόφιμα Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "177472438"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Λεωφόρος Βουλιαγμένης",
+					"locality": "Αθήνα",
+					"code": "11636",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hellenicfoods@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Αιγαίο Λιανική Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "841442160"
+			},
+			"addresses": [
+				{
+					"num": "45",
+					"street": "Οδός Εγνατίας",
+					"locality": "Θεσσαλονίκη",
+					"code": "54625",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "aegeanretail@example.com"
+				}
+			]
+		},
+		"charges": [
+			{
+				"i": 1,
+				"reason": "Accommodation tax",
+				"amount": "3.00",
+				"ext": {
+					"gr-mydata-other-tax": "8",
+					"gr-mydata-tax-type": "3"
+				}
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
+			}
+		},
+		"totals": {
+			"sum": "0.00",
+			"charge": "3.00",
+			"total": "3.00",
+			"tax": "0.00",
+			"total_with_tax": "3.00",
+			"payable": "3.00"
+		}
+	}
+}

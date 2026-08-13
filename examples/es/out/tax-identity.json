@@ -1,0 +1,15 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3630785426ac28dd900af9bd1ea51cf5ed783896dfe954773ad1d88058267453"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/tax/identity",
+		"country": "ES",
+		"code": "B98602642"
+	}
+}

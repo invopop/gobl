@@ -1,0 +1,1915 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "gr-mydata-v1",
+  "name": {
+    "en": "Greece MyData v1.x"
+  },
+  "description": {
+    "en": "Greece uses the myDATA and Peppol BIS Billing 3.0 formats for their e-invoicing/tax-reporting system.\nThis addon will ensure that the GOBL documents have all the required fields to be able to correctly\ngenerate the myDATA XML reporting files."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "myDATA API Documentation v1.0.7"
+      },
+      "url": "https://www.aade.gr/sites/default/files/2023-10/myDATA%20API%20Documentation_v1.0.7_eng.pdf",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Greek Peppol BIS Billing 3.0"
+      },
+      "url": "https://www.gsis.gr/sites/default/files/eInvoice/Instructions%20to%20B2G%20Suppliers%20and%20certified%20PEPPOL%20Providers%20for%20the%20Greek%20PEPPOL%20BIS-EN-%20v1.0.pdf",
+      "content_type": "application/pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "gr-mydata-vat-rate",
+      "name": {
+        "el": "Κατηγορία ΦΠΑ",
+        "en": "VAT rate"
+      },
+      "desc": {
+        "en": "Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by\n30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate\nwith a specific VAT category.\n\nThe IAPR VAT category code must be set using the `gr-mydata-vat-rate` extension of\na line's tax to one of the codes.\n\n| Code | Description                 | GOBL Rate              |\n| ---- | --------------------------- | ---------------------- |\n| `1`  | Standard rate               | `standard`             |\n| `2`  | Reduced rate                | `reduced`              |\n| `3`  | Super-reduced rate          | `super-reduced`        |\n| `4`  | Standard rate (Island)      | `standard+island`      |\n| `5`  | Reduced rate (Island)       | `reduced+island`       |\n| `6`  | Super-reduced rate (Island) | `super-reduced+island` |\n| `7`  | Without VAT                 | `exempt`               |\n| `8`  | Records without VAT         |                        |\n\nPlease, note that GOBL will automatically set the proper `gr-mydata-vat-rate` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t\"i\": 1,\n\t\t\t\"quantity\": \"20\",\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\t\"price\": \"90.00\",\n\t\t\t},\n\t\t\t\"sum\": \"1800.00\",\n\t\t\t\"taxes\": [\n\t\t\t\t{\n\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\"rate\": \"standard+island\"\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"total\": \"1800.00\"\n\t\t}\n\t],\n}\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Κανονικός συντελεστής",
+            "en": "Standard rate"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Μειωμένος συντελεστής",
+            "en": "Reduced rate"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής",
+            "en": "Super-Reduced Rate"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Κανονικός συντελεστής (Νησί)",
+            "en": "Standard rate (Island)"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Μειωμένος συντελεστής (Νησί)",
+            "en": "Reduced rate (Island)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής (Νησί)",
+            "en": "Super-reduced rate (Island)"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Άνευ ΦΠΑ",
+            "en": "Without VAT"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)",
+            "en": "Records without VAT (e.g. Payroll, Amortisations)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-invoice-type",
+      "name": {
+        "el": "Είδος παραστατικού",
+        "en": "Invoice type"
+      },
+      "desc": {
+        "en": "The Greek tax authority (IAPR) requires an invoice type code to be specified as part of the invoice. GOBL will\nautomatically set the correct code based on the invoice's `type` and `$tags` values.\n\nHowever, you can also set the code manually using the `gr-mydata-invoice-type` extension in the tax\nsection of the invoice, and setting the invoice's `type` to `other`.\n\nThe following table lists how the combination of `type` and `$tags` values are mapped to the\nIAPR MyDATA invoice type code:\n\n| Type   | Description                                     | GOBL Type     | GOBL Tags                  |\n| ------ | ----------------------------------------------- | ------------- |----------------------------|\n| `1.1`  | Sales Invoice                                   | `standard`    | `goods`                    |\n| `1.2`  | Sales Invoice/Intra-community Supplies          | `standard`    | `goods`, `export`, `eu`    |\n| `1.3`  | Sales Invoice/Third Country Supplies            | `standard`    | `goods`, `export`          |\n| `1.4`  | Sales Invoice/Sale on Behalf of Third Parties   | `standard`    | `goods`, `self-billed`     |\n| `2.1`  | Service Rendered Invoice                        | `standard`    | `services`                 |\n| `2.2`  | Intra-community Service Rendered Invoice        | `standard`    | `services`, `export`, `eu` |\n| `2.3`  | Third Country Service Rendered Invoice          | `standard`    | `services`, `export`       |\n| `5.1`  | Credit Invoice/Associated                       | `credit-note` |                            |\n| `11.1` | Retail Sales Receipt                            | `standard`    | `goods`, `simplified`      |\n| `11.2` | Service Rendered Receipt                        | `standard`    | `services`, `simplified`   |\n| `11.3` | Simplified Invoice                              | `standard`    | `simplified`               |\n| `11.4` | Retail Sales Credit Note                        | `credit-note` | `simplified`               |\n| `11.5` | Retail Sales Receipt on Behalf of Third Parties | `credit-note` | `goods`, `simplified`, `self-billed` |\n\nFor example, this is how you set the IAPR invoice type explicitly:\n\n```json\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"type\": \"other\",\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-invoice-type\": \"2.3\"\n\t\t}\n\t}\n}\n```\n\nAnd this is how you'll get the same result by using the GOBL type and tags:\n\n```json\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$addons\": [\"gr-mydata-v1\"],\n\t\"$tags\": [\"services\", \"export\"],\n\t// ...\n\t\"type\": \"standard\",\n}\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1.1",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης",
+            "en": "Sales Invoice"
+          }
+        },
+        {
+          "code": "1.2",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης/Ενδοκοινοτικές Παραδόσεις",
+            "en": "Sales Invoice/Intra-community Supplies"
+          }
+        },
+        {
+          "code": "1.3",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης/Παραδόσεις Τρίτων Χωρών",
+            "en": "Sales Invoice/Third Country Supplies"
+          }
+        },
+        {
+          "code": "1.4",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης/Πώληση για Λογαριασμό Τρίτων",
+            "en": "Sales Invoice/Sale on Behalf of Third Parties"
+          }
+        },
+        {
+          "code": "1.5",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης/Εκκαθάριση Πωλήσεων Τρίτων - Αμοιβή από Πωλήσεις Τρίτων",
+            "en": "Sales Invoice/Clearance of Sales on Behalf of Third Parties – Fees from Sales on Behalf of Third Parties"
+          }
+        },
+        {
+          "code": "1.6",
+          "name": {
+            "el": "Τιμολόγιο Πώλησης/Συμπληρωματικό Παραστατικό",
+            "en": "Sales Invoice/Supplemental Accounting Source Document"
+          }
+        },
+        {
+          "code": "2.1",
+          "name": {
+            "el": "Τιμολόγιο Παροχής Υπηρεσιών",
+            "en": "Service Rendered Invoice"
+          }
+        },
+        {
+          "code": "2.2",
+          "name": {
+            "el": "Τιμολόγιο Παροχής/Ενδοκοινοτική Παροχή Υπηρεσιών",
+            "en": "Intra-community Service Rendered Invoice"
+          }
+        },
+        {
+          "code": "2.3",
+          "name": {
+            "el": "Τιμολόγιο Παροχής/Παροχή Υπηρεσιών σε λήπτη Τρίτης Χώρας",
+            "en": "Third Country Service Rendered Invoice"
+          }
+        },
+        {
+          "code": "2.4",
+          "name": {
+            "el": "Τιμολόγιο Παροχής/Συμπληρωματικό Παραστατικό",
+            "en": "Service Rendered Invoice/Supplemental Accounting Source Document"
+          }
+        },
+        {
+          "code": "3.1",
+          "name": {
+            "el": "Τίτλος Κτήσης (μη υπόχρεος Εκδότης)",
+            "en": "Proof of Expenditure (non-liable Issuer)"
+          }
+        },
+        {
+          "code": "3.2",
+          "name": {
+            "el": "Τίτλος Κτήσης (άρνηση έκδοσης από υπόχρεο Εκδότη)",
+            "en": "Proof of Expenditure (denial of issuance by liable Issuer)"
+          }
+        },
+        {
+          "code": "5.1",
+          "name": {
+            "el": "Πιστωτικό Τιμολόγιο/Συσχετιζόμενο",
+            "en": "Credit Invoice/Associated"
+          }
+        },
+        {
+          "code": "5.2",
+          "name": {
+            "el": "Πιστωτικό Τιμολόγιο/Μη Συσχετιζόμενο",
+            "en": "Credit Invoice/Non-Associated"
+          }
+        },
+        {
+          "code": "6.1",
+          "name": {
+            "el": "Στοιχείο Αυτοπαράδοσης",
+            "en": "Self-Delivery Record"
+          }
+        },
+        {
+          "code": "6.2",
+          "name": {
+            "el": "Στοιχείο Ιδιοχρησιμοποίησης",
+            "en": "Self-Supply Record"
+          }
+        },
+        {
+          "code": "7.1",
+          "name": {
+            "el": "Συμβόλαιο - Έσοδο",
+            "en": "Contract – Income"
+          }
+        },
+        {
+          "code": "8.1",
+          "name": {
+            "el": "Ενοίκια - Έσοδο",
+            "en": "Rents – Income"
+          }
+        },
+        {
+          "code": "8.2",
+          "name": {
+            "el": "Ειδικό Στοιχείο – Απόδειξης Είσπραξης Φόρου Διαμονής",
+            "en": "Special Record – Accommodation Tax Collection/Payment Receipt"
+          }
+        },
+        {
+          "code": "11.1",
+          "name": {
+            "el": "ΑΛΠ",
+            "en": "Retail Sales Receipt"
+          }
+        },
+        {
+          "code": "11.2",
+          "name": {
+            "el": "ΑΠΥ",
+            "en": "Service Rendered Receipt"
+          }
+        },
+        {
+          "code": "11.3",
+          "name": {
+            "el": "Απλοποιημένο Τιμολόγιο",
+            "en": "Simplified Invoice"
+          }
+        },
+        {
+          "code": "11.4",
+          "name": {
+            "el": "Πιστωτικό Στοιχ. Λιανικής",
+            "en": "Retail Sales Credit Note"
+          }
+        },
+        {
+          "code": "11.5",
+          "name": {
+            "el": "Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων",
+            "en": "Retail Sales Receipt on Behalf of Third Parties"
+          }
+        },
+        {
+          "code": "13.1",
+          "name": {
+            "el": "Έξοδα - Αγορές Λιανικών Συναλλαγών ημεδαπής / αλλοδαπής",
+            "en": "Expenses – Domestic/Foreign Retail Transaction Purchases"
+          }
+        },
+        {
+          "code": "13.2",
+          "name": {
+            "el": "Παροχή Λιανικών Συναλλαγών ημεδαπής / αλλοδαπής",
+            "en": "Domestic/Foreign Retail Transaction Provision"
+          }
+        },
+        {
+          "code": "13.3",
+          "name": {
+            "el": "Κοινόχρηστα",
+            "en": "Shared Utility Bills"
+          }
+        },
+        {
+          "code": "13.4",
+          "name": {
+            "el": "Συνδρομές",
+            "en": "Subscriptions"
+          }
+        },
+        {
+          "code": "13.30",
+          "name": {
+            "el": "Παραστατικά Οντότητας ως Αναγράφονται από την ίδια (Δυναμικό)",
+            "en": "Self-Declared Entity Accounting Source Documents (Dynamic)"
+          }
+        },
+        {
+          "code": "13.31",
+          "name": {
+            "el": "Πιστωτικό Στοιχ. Λιανικής ημεδαπής / αλλοδαπής",
+            "en": "Domestic/Foreign Retail Sales Credit Note"
+          }
+        },
+        {
+          "code": "14.1",
+          "name": {
+            "el": "Τιμολόγιο / Ενδοκοινοτικές Αποκτήσεις",
+            "en": "Invoice/Intra-community Acquisitions"
+          }
+        },
+        {
+          "code": "14.2",
+          "name": {
+            "el": "Τιμολόγιο / Αποκτήσεις Τρίτων Χωρών",
+            "en": "Invoice/Third Country Acquisitions"
+          }
+        },
+        {
+          "code": "14.3",
+          "name": {
+            "el": "Τιμολόγιο / Ενδοκοινοτική Λήψη Υπηρεσιών",
+            "en": "Invoice/Intra-community Services Receipt"
+          }
+        },
+        {
+          "code": "14.4",
+          "name": {
+            "el": "Τιμολόγιο / Λήψη Υπηρεσιών Τρίτων Χωρών",
+            "en": "Invoice/Third Country Services Receipt"
+          }
+        },
+        {
+          "code": "14.5",
+          "name": {
+            "el": "ΕΦΚΑ και λοιποί Ασφαλιστικοί Οργανισμοί",
+            "en": "EFKA"
+          }
+        },
+        {
+          "code": "14.30",
+          "name": {
+            "el": "Παραστατικά Οντότητας ως Αναγράφονται από την ίδια (Δυναμικό)",
+            "en": "Self-Declared Entity Accounting Source Documents (Dynamic)"
+          }
+        },
+        {
+          "code": "14.31",
+          "name": {
+            "el": "Πιστωτικό ημεδαπής / αλλοδαπής",
+            "en": "Domestic/Foreign Credit Note"
+          }
+        },
+        {
+          "code": "15.1",
+          "name": {
+            "el": "Συμβόλαιο - Έξοδο",
+            "en": "Contract-Expense"
+          }
+        },
+        {
+          "code": "16.1",
+          "name": {
+            "el": "Ενοίκιο Έξοδο",
+            "en": "Rent-Expense"
+          }
+        },
+        {
+          "code": "17.1",
+          "name": {
+            "el": "Μισθοδοσία",
+            "en": "Payroll"
+          }
+        },
+        {
+          "code": "17.2",
+          "name": {
+            "el": "Αποσβέσεις",
+            "en": "Amortisations"
+          }
+        },
+        {
+          "code": "17.3",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εσόδων - Λογιστική Βάση",
+            "en": "Other Income Adjustment/Regularisation Entries – Accounting Base"
+          }
+        },
+        {
+          "code": "17.4",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εσόδων - Φορολογική Βάση",
+            "en": "Other Income Adjustment/Regularisation Entries – Tax Base"
+          }
+        },
+        {
+          "code": "17.5",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εξόδων - Λογιστική Βάση",
+            "en": "Other Expense Adjustment/Regularisation Entries – Accounting Base"
+          }
+        },
+        {
+          "code": "17.6",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εξόδων - Φορολογική Βάση",
+            "en": "Other Expense Adjustment/Regularisation Entries – Tax Base"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-payment-means",
+      "name": {
+        "el": "Τρόπος Πληρωμής",
+        "en": "Payment means"
+      },
+      "desc": {
+        "en": "The IAPR requires invoices to specify a payment method code. In a GOBL invoice,\nthe payment means is set using the `key` field in the payment instructions.\nThe following table lists all the IAPR payment methods and how GOBL will map from\nthe payment instructions key to each of them:\n\n| Code | Name                             | GOBL Payment Instruction Key |\n| ---- | -------------------------------- | ---------------------------- |\n| `1`  | Domestic Payments Account Number | `credit-transfer`            |\n| `2`  | Foreign Payments Account Number  | `credit-transfer+foreign`    |\n| `3`  | Cash                             | `cash`                       |\n| `4`  | Check                            | `cheque`                     |\n| `5`  | On credit                        | `promissory-note`            |\n| `6`  | Web Banking                      | `online`                     |\n| `7`  | POS / e-POS                      | `card`                       |\n\nFor example:\n\n```js\n\"payment\": {\n\t\"instructions\": {\n\t\t\"key\": \"credit-transfer+foreign\" // Will set the IAPR Payment Method to \"2\"\n\t}\n}\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Επαγ. Λογαριασμός Πληρωμών Ημεδαπής",
+            "en": "Domestic Payments Account Number"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Επαγ. Λογαριασμός Πληρωμών Αλλοδαπής",
+            "en": "Foreign Payments Account Number"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Μετρητά",
+            "en": "Cash"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Επιταγή",
+            "en": "Check"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Επί Πιστώσει",
+            "en": "On credit"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Web Banking",
+            "en": "Web Banking"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "POS / e-POS",
+            "en": "POS / e-POS"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-exemption",
+      "name": {
+        "el": "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
+        "en": "VAT exemption cause"
+      },
+      "desc": {
+        "en": "Greece invoices can be exempt of VAT for different causes and the tax authority\nrequire a specific cause code to be provided.\n\nGOBL will try to automatically map the tax combo `key` to an appropriate exemption\ncode, but given the number of options you will no doubt need to consult with\na tax professional to determine the correct code for your case.\n\nExample usage:\n\n```js\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\"price\": \"90.00\",\n\t\t},\n\t\t\"sum\": \"1800.00\",\n\t\t\"taxes\": [\n\t\t\t{\n\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\"key\": \"exempt\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"gr-mydata-exemption\": \"7\"\n\t\t\t\t}\n\t\t\t}\n\t\t],\n\t\t\"total\": \"1800.00\"\n\t}\n]\n```\n\nNote that descriptions provided in the `gr-mydata-exemption` extension are\ngenerated using AI and may not be 100% accurate. Always consult with a tax\nprofessional to ensure you're choosing the correct code."
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 3 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 3 of the VAT code"
+          },
+          "desc": {
+            "en": "Outside the scope of VAT per Art. 3 (transaction not within the VAT “object”)."
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 5 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 5 of the VAT code"
+          },
+          "desc": {
+            "en": "Outside Greek VAT due to the legal cases in Art. 5 (e.g., not treated as a taxable supply under that article)."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 13 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 13 of the VAT code"
+          },
+          "desc": {
+            "en": "Use when the transaction is exempt under Art. 13 (as defined in Greek VAT Code)."
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 14 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 14 of the VAT code"
+          },
+          "desc": {
+            "en": "Use when Art. 14 grants an exemption (specific cases set in law)."
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 16 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 16 of the VAT code"
+          },
+          "desc": {
+            "en": "Use for the specific non-taxable/exempt cases referenced in Art. 16."
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 19 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 19 of the VAT code"
+          },
+          "desc": {
+            "en": "Exempt cases per Art. 19 (e.g., special valuation/administrative rules that make the item non-taxable)."
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 22 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 22 of the VAT code"
+          },
+          "desc": {
+            "en": "Classic VAT-exempt activities (healthcare, education, culture, financial/insurance, rentals, etc.)."
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 24 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 24 of the VAT code"
+          },
+          "desc": {
+            "en": "Exports of goods outside the EU (exempt with right to deduct)."
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 25 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 25 of the VAT code"
+          },
+          "desc": {
+            "en": "Free zones/warehousing / international transport‐related exemptions covered by Art. 25."
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 26 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 26 of the VAT code"
+          },
+          "desc": {
+            "en": "Exemption per Art. 26 (misc. cases defined in law)."
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27 of the VAT code"
+          },
+          "desc": {
+            "en": "Supplies relating to vessels/aircraft and similar Art. 27 exemptions."
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27 - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27 - Seagoing Vessels of the VAT code"
+          },
+          "desc": {
+            "en": "Supplies for qualifying seagoing vessels (navigation on high seas) – exempt with right to deduct."
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27.1.γ - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27.1.γ - Seagoing Vessels of the VAT code"
+          },
+          "desc": {
+            "en": "Specific seagoing-vessel case under Art. 27(1)(c)."
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 28 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 28 of the VAT code"
+          },
+          "desc": {
+            "en": "Intra-Community supply of goods (B2B, goods dispatched to another EU MS)."
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 39 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 39 of the VAT code"
+          },
+          "desc": {
+            "en": "Small-business exemption regime."
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 39α του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 39a of the VAT code"
+          },
+          "desc": {
+            "en": "Domestic reverse charge (e.g., mobiles/tablets/consoles, scrap, etc.)."
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 40 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 40 of the VAT code"
+          },
+          "desc": {
+            "en": "Flat-rate (lump-sum) special scheme: no output VAT charged."
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 41 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 41 of the VAT code"
+          },
+          "desc": {
+            "en": "Farmers’ special scheme (no VAT charged; compensation scheme applies)."
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 47 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 47 of the VAT code"
+          },
+          "desc": {
+            "en": "Investment gold special regime (generally exempt, option to tax possible)."
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 43 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 43 of the VAT code"
+          },
+          "desc": {
+            "en": "Travel Agents’ Margin Scheme (TOMS) – VAT is on the margin."
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 44 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 44 of the VAT code"
+          },
+          "desc": {
+            "en": "Margin scheme – second-hand goods."
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 45 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 45 of the VAT code"
+          },
+          "desc": {
+            "en": "Margin scheme – works of art."
+          }
+        },
+        {
+          "code": "23",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 46 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 46 of the VAT code"
+          },
+          "desc": {
+            "en": "Margin scheme – collectors’ items \u0026 antiques."
+          }
+        },
+        {
+          "code": "24",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 6 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 6 of the VAT code"
+          },
+          "desc": {
+            "en": "Out-of-scope/“excluding VAT” per Art. 6 (place-of-supply style exclusions)."
+          }
+        },
+        {
+          "code": "25",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - ΠΟΛ.1029/1995",
+            "en": "Without VAT - ΠΟΛ.1029/1995"
+          },
+          "desc": {
+            "en": "Exemption per Circular ΠΟΛ.1029/1995 (narrow administrative exemption)."
+          }
+        },
+        {
+          "code": "26",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - ΠΟΛ.1167/2015",
+            "en": "Without VAT - ΠΟΛ.1167/2015"
+          },
+          "desc": {
+            "en": "Exemption per Circular ΠΟΛ.1167/2015 (narrow administrative exemption)."
+          }
+        },
+        {
+          "code": "27",
+          "name": {
+            "el": "Λοιπές Εξαιρέσεις ΦΠΑ",
+            "en": "Without VAT - Other VAT exceptions"
+          },
+          "desc": {
+            "en": "Catch-all for other statutory exemptions not listed above."
+          }
+        },
+        {
+          "code": "28",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 24 περ. β' παρ.1 του Κώδικα ΦΠΑ, (Tax Free)",
+            "en": "Without VAT - Article 24 (b) (1) of the VAT Code (Tax Free)"
+          },
+          "desc": {
+            "en": "Retail “tax-free shopping” to third-country travelers."
+          }
+        },
+        {
+          "code": "29",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47β, του Κώδικα ΦΠΑ (OSS μη ενωσιακό καθεστώς)",
+            "en": "Without VAT - Article 47b of the VAT Code (OSS non-EU scheme)"
+          },
+          "desc": {
+            "en": "Non-Union OSS services to EU consumers — VAT due in MS of consumption, not Greece."
+          }
+        },
+        {
+          "code": "30",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47γ, του Κώδικα ΦΠΑ (OSS ενωσιακό καθεστώς)",
+            "en": "Without VAT - Article 47c of the VAT Code (OSS EU scheme)"
+          },
+          "desc": {
+            "en": "Union OSS (intra-EU B2C distance sales) — VAT due in MS of consumption."
+          }
+        },
+        {
+          "code": "31",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47δ του Κώδικα ΦΠΑ (IOSS)",
+            "en": "Excluding VAT - Article 47d of the VAT Code (IOSS)"
+          },
+          "desc": {
+            "en": "IOSS for low-value imports — VAT accounted via IOSS in MS of consumption."
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-income-cat",
+      "name": {
+        "el": "Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
+        "en": "Income Classification Category"
+      },
+      "desc": {
+        "en": "Invoices reported to the Greek tax authority via myDATA can optionally include information\nabout the income classification of each invoice item.\n\nIn a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be\nset at the item level to any of the values expected by the IAPR. For example:\n\n```json\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\"price\": \"90.00\",\n\t\t\t\"ext\": {\n\t\t\t\t\"gr-mydata-income-cat\": \"category1_1\",\n\t\t\t\t\"gr-mydata-income-type\": \"E3_561_001\",\n\t\t\t}\n\t\t}\n\t}\n]\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "category1_1",
+          "name": {
+            "el": "Έσοδα από Πώληση Εμπορευμάτων (+)/(-)",
+            "en": "Commodity Sale Income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_2",
+          "name": {
+            "el": "Έσοδα από Πώληση Προϊόντων (+)/(-)",
+            "en": "Product Sale Income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_3",
+          "name": {
+            "el": "Έσοδα από Παροχή Υπηρεσιών (+)/(-)",
+            "en": "Provision of Services Income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_4",
+          "name": {
+            "el": "Έσοδα από Πώληση Παγίων (+)/(-)",
+            "en": "Sale of Fixed Assets Income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_5",
+          "name": {
+            "el": "Λοιπά Έσοδα/ Κέρδη (+)/(-)",
+            "en": "Other Income/Profits (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_6",
+          "name": {
+            "el": "Αυτοπαραδόσεις / Ιδιοχρησιμοποιήσεις (+)/(-)",
+            "en": "Self-Deliveries/Self-Supplies (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_7",
+          "name": {
+            "el": "Έσοδα για λ/σμο τρίτων (+)/(-)",
+            "en": "Income on behalf of Third Parties (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_8",
+          "name": {
+            "el": "Έσοδα προηγούμενων χρήσεων (+)/ (-)",
+            "en": "Past fiscal years income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_9",
+          "name": {
+            "el": "Έσοδα επομένων χρήσεων (+)/(-)",
+            "en": "Future fiscal years income (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_10",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εσόδων (+)/(-)",
+            "en": "Other Income Adjustment/Regularisation Entries (+)/(-)"
+          }
+        },
+        {
+          "code": "category1_95",
+          "name": {
+            "el": "Λοιπά Πληροφοριακά Στοιχεία Εσόδων (+)/(-)",
+            "en": "Other Income-related Information (+)/(-)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-income-type",
+      "name": {
+        "el": "Κωδικός Τύπου Χαρακτηρισμού Εσόδων",
+        "en": "Income Classification Type"
+      },
+      "desc": {
+        "en": "See the Income Classification Category for more information."
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "E3_106",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Εμπορεύματα",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Commodities"
+          }
+        },
+        {
+          "code": "E3_205",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Πρώτες ύλες και λοιπά υλικά",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials"
+          }
+        },
+        {
+          "code": "E3_210",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Προϊόντα και παραγωγή σε εξέλιξη",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress"
+          }
+        },
+        {
+          "code": "E3_305",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις – Καταστροφές αποθεμάτων/Πρώτες ύλες και λοιπά υλικά",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials"
+          }
+        },
+        {
+          "code": "E3_310",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Προϊόντα και παραγωγή σε εξέλιξη",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress"
+          }
+        },
+        {
+          "code": "E3_318",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Έξοδα παραγωγής",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Production expenses"
+          }
+        },
+        {
+          "code": "E3_561_001",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών",
+            "en": "Wholesale Sales of Goods and Services – for Traders"
+          }
+        },
+        {
+          "code": "E3_561_002",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)",
+            "en": "Wholesale Sales of Goods and Services pursuant to article 39a paragraph 5 of the VAT Code (Law 2859/2000)"
+          }
+        },
+        {
+          "code": "E3_561_003",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λιανικές - Ιδιωτική Πελατεία",
+            "en": "Retail Sales of Goods and Services – Private Clientele"
+          }
+        },
+        {
+          "code": "E3_561_004",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λιανικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)",
+            "en": "Retail Sales of Goods and Services pursuant to article 39a paragraph 5 of the VAT Code (Law 2859/2000)"
+          }
+        },
+        {
+          "code": "E3_561_005",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales of Goods and Services"
+          }
+        },
+        {
+          "code": "E3_561_006",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales of Goods and Services"
+          }
+        },
+        {
+          "code": "E3_561_007",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λοιπά",
+            "en": "Other Sales of Goods and Services"
+          }
+        },
+        {
+          "code": "E3_562",
+          "name": {
+            "el": "Λοιπά συνήθη έσοδα",
+            "en": "Other Ordinary Income"
+          }
+        },
+        {
+          "code": "E3_563",
+          "name": {
+            "el": "Πιστωτικοί τόκοι και συναφή έσοδα",
+            "en": "Credit Interest and Related Income"
+          }
+        },
+        {
+          "code": "E3_564",
+          "name": {
+            "el": "Πιστωτικές συναλλαγματικές διαφορές",
+            "en": "Credit Exchange Differences"
+          }
+        },
+        {
+          "code": "E3_565",
+          "name": {
+            "el": "Έσοδα συμμετοχών",
+            "en": "Income from Participations"
+          }
+        },
+        {
+          "code": "E3_566",
+          "name": {
+            "el": "Κέρδη από διάθεση μη κυκλοφορούντων περιουσιακών στοιχείων",
+            "en": "Profits from Disposing Non-Current Assets"
+          }
+        },
+        {
+          "code": "E3_567",
+          "name": {
+            "el": "Κέρδη από αναστροφή προβλέψεων και απομειώσεων",
+            "en": "Profits from the Reversal of Provisions and Impairments"
+          }
+        },
+        {
+          "code": "E3_568",
+          "name": {
+            "el": "Κέρδη από επιμέτρηση στην εύλογη αξία",
+            "en": "Profits from Measurement at Fair Value"
+          }
+        },
+        {
+          "code": "E3_570",
+          "name": {
+            "el": "Ασυνήθη έσοδα και κέρδη",
+            "en": "Extraordinary income and profits"
+          }
+        },
+        {
+          "code": "E3_595",
+          "name": {
+            "el": "Έξοδα σε ιδιοπαραγωγή",
+            "en": "Self-Production Expenses"
+          }
+        },
+        {
+          "code": "E3_596",
+          "name": {
+            "el": "Επιδοτήσεις - Επιχορηγήσεις",
+            "en": "Subsidies - Grants"
+          }
+        },
+        {
+          "code": "E3_597",
+          "name": {
+            "el": "Επιδοτήσεις - Επιχορηγήσεις για επενδυτικούς σκοπούς - κάλυψη δαπανών",
+            "en": "Subsidies – Grants for Investment Purposes – Expense Coverage"
+          }
+        },
+        {
+          "code": "E3_880_001",
+          "name": {
+            "el": "Πωλήσεις Παγίων Χονδρικές",
+            "en": "Wholesale Sales of Fixed Assets"
+          }
+        },
+        {
+          "code": "E3_880_002",
+          "name": {
+            "el": "Πωλήσεις Παγίων Λιανικές",
+            "en": "Retail Sales of Fixed Assets"
+          }
+        },
+        {
+          "code": "E3_880_003",
+          "name": {
+            "el": "Πωλήσεις Παγίων Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales of Fixed Assets"
+          }
+        },
+        {
+          "code": "E3_880_004",
+          "name": {
+            "el": "Πωλήσεις Παγίων Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales of Fixed Assets"
+          }
+        },
+        {
+          "code": "E3_881_001",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Χονδρικές",
+            "en": "Wholesale Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "code": "E3_881_002",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Λιανικές",
+            "en": "Retail Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "code": "E3_881_003",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "code": "E3_881_004",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "code": "E3_598_001",
+          "name": {
+            "el": "Πωλήσεις αγαθών που υπάγονται σε ΕΦΚ",
+            "en": "Sales of goods belonging to excise duty"
+          }
+        },
+        {
+          "code": "E3_598_003",
+          "name": {
+            "el": "Πωλήσεις για λογαριασμό αγροτών μέσω αγροτικού συνεταιρισμού κ.λ.π.",
+            "en": "Sales on behalf of farmers through an agricultural cooperative e.t.c."
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-tax-type",
+      "name": {
+        "el": "Είδος Φόρου",
+        "en": "Tax type"
+      },
+      "desc": {
+        "en": "Greek invoices may contain charges or allowances for taxes and fees different from VAT. The\n`gr-mydata-tax-type` extension at charge level must be used to specify the tax type.\n\nGOBL will attempt to automatically set the `gr-mydata-tax-type` extension. The following\ntable shows the mappings used: first, GOBL will check the charge's `key` field; if that\ndoes not match, it will then check for the presence of the related extension:\n\n| Code | Name       | GOBL Charge Key | Extension              |\n| ---- | ---------- | --------------- | ---------------------- |\n| `2`  | Fee        |                 | `gr-mydata-fee`        |\n| `3`  | Other Tax  | `tax`           | `gr-mydata-other-tax`  |\n| `4`  | Stamp Duty | `stamp-duty`    | `gr-mydata-stamp-duty` |\n\nFor example (manual):\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Stamp duty fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Παρακρατούμενος Φόρος",
+            "en": "Withholding Tax"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Τέλη",
+            "en": "Fee"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Λοιποί Φόροι",
+            "en": "Other Tax"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Ψηφιακού Τέλος συναλλαγής",
+            "en": "Stamp Duty"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Κρατήσεις",
+            "en": "Deduction"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-fee",
+      "name": {
+        "el": "Κατηγορία Τελών",
+        "en": "Fee category"
+      },
+      "desc": {
+        "en": "Greek invoices may contain charges for different types of fees. In GOBL, you must use\nthe `gr-mydata-fee` extension at charge level to specify the specific fee category\nfor the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"10.00\",\n\t\t\"reason\": \"Subscription fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"2\",\n\t\t\t\"gr-mydata-fee\": \"13\",\n\t\t}\n\t}\n]\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Για μηνιαίο λογαριασμό μέχρι και 50 ευρώ 12%",
+            "en": "Monthly account up to 50 euros 12%"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Για μηνιαίο λογαριασμό από 50,01 μέχρι και 100 ευρώ 15%",
+            "en": "Monthly account from 50.01 to 100 euros 15%"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Για μηνιαίο λογαριασμό από 100,01 μέχρι και 150 ευρώ 18%",
+            "en": "Monthly account from 100.01 to 150 euros 18%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Για μηνιαίο λογαριασμό από 150,01 ευρώ και άνω 20%",
+            "en": "Monthly account from 150.01 euros and above 20%"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Τέλος καρτοκινητής επί της αξίας του χρόνου ομιλίας (12%)",
+            "en": "Mobile telephony fee based on call time value (12%)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Τέλος στη συνδρομητική τηλεόραση 10%",
+            "en": "Subscription television fee 10%"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Τέλος συνδρομητών σταθερής τηλεφωνίας 5%",
+            "en": "Fixed-line subscription fee 5%"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Περιβαλλοντικό Τέλος \u0026 πλαστικής σακούλας ν. 2339/2001 αρ. 6α 0,07 ευρώ ανά τεμάχιο",
+            "en": "Environmental fee \u0026 plastic bag v. 2339/2001 art. 6a 0.07 euros per item"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "el": "Εισφορά δακοκτονίας 2%",
+            "en": "Postal service contribution 2%"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "el": "Λοιπά τέλη",
+            "en": "Other fees"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "el": "Τέλη Λοιπών Φόρων",
+            "en": "Petroleum fees"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "el": "Εισφορά δακοκτονίας",
+            "en": "Postal service contribution"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "el": "Για μηνιαίο λογαριασμό κάθε σύνδεσης (10%)",
+            "en": "Monthly account per connection (10%)"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "el": "Τέλος καρτοκινητής επί της αξίας του χρόνου ομιλίας (10%)",
+            "en": "Mobile and mobile telephony fee based on call time value (10%)"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "el": "Τέλος κινητής και καρτοκινητής για φυσικά πρόσωπα ηλικίας 15 έως και 29 ετών (0%)",
+            "en": "Mobile and mobile telephony fee for natural persons aged 15 to 29 years (0%)"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "el": "Εισφορά προστασίας περιβάλλοντος πλαστικών προϊόντων 0,04 λεπτά ανά τεμάχιο [άρθρο 4 ν. 4736/2020]",
+            "en": "Environmental protection contribution for plastic products 0.04 cents per item [article 4 v. 4736/2020]"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "el": "Τέλος ανακύκλωσης 0,08 λεπτά ανά τεμάχιο [άρθρο 80 ν. 4819/2021]",
+            "en": "Recycling fee 0.08 cents per item [article 80 v. 4819/2021]"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "el": "Τέλος διαμονής παρεπιδημούντων",
+            "en": "Accommodation fee"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "el": "Τέλος επί των ακαθάριστων εσόδων των εστιατορίων και συναφών καταστημάτων",
+            "en": "Fee on gross revenues of restaurants and related establishments"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "el": "Τέλος επί των ακαθάριστων εσόδων των κέντρων διασκέδασης",
+            "en": "Fee on gross revenues of entertainment centers"
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "el": "Τέλος επί των ακαθάριστων εσόδων των καζίνο",
+            "en": "Fee on gross revenues of casinos"
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "el": "Λοιπά τέλη επί των ακαθάριστων εσόδων",
+            "en": "Other fees on gross revenues"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-other-tax",
+      "name": {
+        "el": "Κατηγορία Λοιπών Φόρων",
+        "en": "Other taxes category"
+      },
+      "desc": {
+        "en": "Greek invoices may contain charges for different taxes other than VAT. The\n`gr-mydata-other-tax` extension at charge level must be used to specify the specific\nother tax category for the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"3.00\",\n\t\t\"reason\": \"Climate Crisis Fee\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"3\",\n\t\t\t\"gr-mydata-other-tax\": \"8\",\n\t\t}\n\t}\n]\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "α1) ασφάλιστρα κλάδου πυρός 20%",
+            "en": "a1) fire insurance premiums 20%"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "α2) ασφάλιστρα κλάδου πυρός 20%",
+            "en": "a2) fire insurance premiums 20%"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "β) ασφάλιστρα κλάδου ζωής 4%",
+            "en": "b) life insurance premiums 4%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "γ) ασφάλιστρα λοιπών κλάδων 15%",
+            "en": "c) insurance premiums for other branches 15%"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "δ) απαλλασσόμενα φόρου ασφάλιστρα 0%",
+            "en": "d) tax-exempt insurance premiums 0%"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Ξενοδοχεία 1-2 αστέρων 0,50 €",
+            "en": "Hotels 1-2 stars 0.50 €"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Ξενοδοχεία 3 αστέρων 1,50 €",
+            "en": "Hotels 3 stars 1.50 €"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Ξενοδοχεία 4 αστέρων 3,00 €",
+            "en": "Hotels 4 stars 3.00 €"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "el": "Ξενοδοχεία 4 αστέρων 4,00 €",
+            "en": "Hotels 4 stars 4.00 €"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "el": "Ενοικιαζόμενα - επιπλωμένα δωμάτια - διαμερίσματα 0,50 €",
+            "en": "Rented - furnished rooms - apartments 0.50 €"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "el": "Ειδικός Φόρος στις διαφημίσεις που προβάλλονται από την τηλεόραση (ΕΦΔΤ) 5%",
+            "en": "Special tax on advertisements broadcast on television (EFTD) 5%"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "el": "3.1 Φόρος πολυτελείας 10% επί της φορολογητέας αξίας για τα ενδοκοινοτικώς αποκτούμενα και εισαγόμενα από τρίτες χώρες 10%",
+            "en": "3.1 Luxury tax 10% on the taxable value for intra-Community acquisitions and imported from third countries 10%"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "el": "3.2 Φόρος πολυτελείας 10% επί της τιμής πώλησης προ Φ.Π.Α. για τα εγχωρίως παραγόμενα είδη 10%",
+            "en": "3.2 Luxury tax 10% on the selling price before VAT for domestically produced goods 10%"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "el": "Δικαίωμα του Δημοσίου στα εισιτήρια των καζίνο (80% επί του εισιτηρίου)",
+            "en": "State rights on casino tickets (80% on the ticket)"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "el": "ασφάλιστρα κλάδου πυρός 20%",
+            "en": "Fire insurance premiums 20%"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "el": "Λοιποί Τελωνειακοί Δασμοί-Φόροι",
+            "en": "Other Customs Duties-Taxes"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "el": "Λοιποί Φόροι",
+            "en": "Other Taxes"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "el": "Επιβαρύνσεις Λοιπών Φόρων",
+            "en": "Charges of Other Taxes"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "el": "ΕΦΚ",
+            "en": "EFK"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "el": "Ξενοδοχεία 1-2 αστέρων 1,50€ (ανά Δωμ./Διαμ.)",
+            "en": "Hotels 1-2 stars 1.50€ (per Room/Night)"
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "el": "Ξενοδοχεία 3 αστέρων 3,00€ (ανά Δωμ./Διαμ.)",
+            "en": "Hotels 3 stars 3.00€ (per Room/Night)"
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "el": "Ξενοδοχεία 4 αστέρων 7,00€ (ανά Δωμ./Διαμ.)",
+            "en": "Hotels 4 stars 7.00€ (per Room/Night)"
+          }
+        },
+        {
+          "code": "23",
+          "name": {
+            "el": "Ξενοδοχεία 5 αστέρων 10,00€ (ανά Δωμ./Διαμ.)",
+            "en": "Hotels 5 stars 10.00€ (per Room/Night)"
+          }
+        },
+        {
+          "code": "24",
+          "name": {
+            "el": "Ενοικιαζόμενα επιπλωμένα δωμάτια – διαμερίσματα 1,50€ (ανά Δωμ./Διαμ.)",
+            "en": "Rented furnished rooms – apartments 1.50€ (per Room/Night)"
+          }
+        },
+        {
+          "code": "25",
+          "name": {
+            "el": "Ακίνητα βραχυχρόνιας μίσθωσης 1,50€",
+            "en": "Short-term rental properties 1.50€"
+          }
+        },
+        {
+          "code": "26",
+          "name": {
+            "el": "Ακίνητα βραχυχρόνιας μίσθωσης μονοκατοικίες άνω 80 τ.μ. 10,00€",
+            "en": "Short-term rental properties detached houses over 80 sq.m. 10.00€"
+          }
+        },
+        {
+          "code": "27",
+          "name": {
+            "el": "Αυτοεξυπηρετούμενα καταλύματα – τουριστικές επιπλωμένες επαύλεις (βίλες) 10,00€",
+            "en": "Self-catering accommodation – tourist furnished villas (villas) 10.00€"
+          }
+        },
+        {
+          "code": "28",
+          "name": {
+            "el": "Ακίνητα βραχυχρόνιας μίσθωσης 0,50€",
+            "en": "Short-term rental properties 0.50€"
+          }
+        },
+        {
+          "code": "29",
+          "name": {
+            "el": "Ακίνητα βραχυχρόνιας μίσθωσης μονοκατοικίες άνω 80 τ.μ. 4,00€",
+            "en": "Short-term rental properties detached houses over 80 sq.m. 4.00€"
+          }
+        },
+        {
+          "code": "30",
+          "name": {
+            "el": "Αυτοεξυπηρετούμενα καταλύματα – τουριστικές επιπλωμένες επαύλεις (βίλες) 4,00€",
+            "en": "Self-catering accommodation – tourist furnished villas (villas) 4.00€"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-stamp-duty",
+      "name": {
+        "el": "Κατηγορία Συντελεστή Ψηφιακού Τέλους συναλλαγής",
+        "en": "Stamp duty coefficient category"
+      },
+      "desc": {
+        "en": "Greek invoices may contain charges for stamp duty. The `gr-mydata-stamp-duty` extension\nat charge level must be used to specify the specific stamp duty coefficient category\nfor the charge.\n\nFor example:\n\n```json\n\"charges\": [\n\t{\n\t\t\"amount\": \"12.00\",\n\t\t\"reason\": \"Stamp duty\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-tax-type\": \"4\",\n\t\t\t\"gr-mydata-stamp-duty\": \"1\"\n\t\t}\n\t}\n]\n```"
+      },
+      "sources": [
+        {
+          "title": {
+            "el": "Τεχνική περιγραφή διεπαφών REST API για διαβίβαση \u0026 λήψη δεδομένων για χρήστες ERP (Έκδοση 2.0.0)",
+            "en": "Technical description of REST API interfaces for sending \u0026 receiving data for ERP users (Version 2.0.0)"
+          },
+          "url": "https://www.aade.gr/sites/default/files/2025-12/myDATA%20API%20Documentation%20v2.0.0_official_erp.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Συντελεστής 1,2 %",
+            "en": "Coefficient 1.2%"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Συντελεστής 2,4 %",
+            "en": "Coefficient 2.4%"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Συντελεστής 3,6 %",
+            "en": "Coefficient 3.6%"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Λοιπές περιπτώσεις",
+            "en": "Other cases"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "islands",
+          "name": {
+            "el": "Νησιά μειωμένοι συντελεστές",
+            "en": "Islands Reduced Rates"
+          }
+        },
+        {
+          "key": "goods",
+          "name": {
+            "en": "Goods"
+          }
+        },
+        {
+          "key": "services",
+          "name": {
+            "en": "Services"
+          }
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          }
+        },
+        {
+          "key": "eu",
+          "name": {
+            "en": "European Union"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "2.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "goods"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "1.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "goods",
+            "export"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "1.3"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "goods",
+            "export",
+            "eu"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "1.2"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "goods",
+            "self-billed"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "1.4"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "services"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "2.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "services",
+            "export"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "2.3"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "services",
+            "export",
+            "eu"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "2.2"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "5.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "11.3"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "goods",
+            "simplified"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "11.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "services",
+            "simplified"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "11.2"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "11.4"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "goods",
+            "simplified",
+            "self-billed"
+          ],
+          "ext": {
+            "gr-mydata-invoice-type": "11.5"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}

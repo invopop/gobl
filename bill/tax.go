@@ -1,0 +1,152 @@
+package bill
+
+import (
+	"encoding/json"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
+)
+
+// Tax defines a summary of the taxes which may be applied to an invoice.
+type Tax struct {
+	// Category of the tax already included in the line item prices, especially
+	// useful for B2C retailers with customers who prefer final prices inclusive of
+	// tax.
+	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
+
+	// Rounding model used to perform tax calculations on the invoice. This
+	// will be configured automatically based on the tax regime, or
+	// `sum-then-round` by default, but you can override here if needed.
+	// Use with caution, as some conversion tools may make assumptions about
+	// the rounding model used.
+	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
+
+	// Point is a code that identifies the event which triggers the tax liability,
+	// such as invoice issuance, delivery of goods, or receipt of payment.
+	Point cbc.Key `json:"point,omitempty" jsonschema:"title=Point"`
+
+	// Additional extensions that are applied to the invoice as a whole as opposed to specific
+	// sections.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+
+	// Notes contains tax-related notes, typically used for exemption reasons
+	// or other tax-specific explanations associated with particular tax categories.
+	Notes []*tax.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Any additional data that may be required for processing, but should never
+	// be relied upon by recipients.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	tags []cbc.Key
+}
+
+// MergeNotes adds a tax note to the tax object, automatically handling nil data,
+// and returning a new updated instance.
+func (t *Tax) MergeNotes(notes ...*tax.Note) *Tax {
+	if len(notes) == 0 {
+		return t
+	}
+	if t == nil {
+		t = new(Tax)
+	}
+	t.Notes = append(t.Notes, notes...)
+	return t
+}
+
+// MergeExtensions makes it easier to add extensions to the tax object
+// by automatically handling nil data, and replying a new updated instance.
+func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {
+	if ext.IsZero() {
+		return t
+	}
+	if t == nil {
+		t = new(Tax)
+	}
+	t.Ext = t.Ext.Merge(ext)
+	return t
+}
+
+// GetExt is a convenience method to retrieve an extension value while
+// providing nil checks on the tax object.
+func (t *Tax) GetExt(key cbc.Key) cbc.Code {
+	if t == nil {
+		return cbc.CodeEmpty
+	}
+	return t.Ext.Get(key)
+}
+
+// HasExt is a convenience method to check for an extension value while
+// providing nil checks on the tax object.
+func (t *Tax) HasExt(key cbc.Key) bool {
+	if t == nil {
+		return false
+	}
+	return t.Ext.Has(key)
+}
+
+func normalizeBillTax(t *Tax) {
+	// migration for old rounding rules
+	switch t.Rounding {
+	case "sum-then-round":
+		t.Rounding = tax.RoundingRulePrecise
+	case "round-then-sum":
+		t.Rounding = tax.RoundingRuleCurrency
+	}
+}
+
+func taxRules() *rules.Set {
+	return rules.For(new(Tax),
+		rules.Field("rounding",
+			rules.AssertIfPresent("01", "rounding model is not valid",
+				cbc.InKeyDefs(tax.RoundingRules),
+			),
+		),
+		rules.Field("point",
+			rules.AssertIfPresent("02", "tax point is not valid",
+				cbc.InKeyDefs(tax.PointDefs),
+			),
+		),
+	)
+}
+
+// UnmarshalJSON helps migrate the desc field to description.
+func (t *Tax) UnmarshalJSON(data []byte) error {
+	type Alias Tax
+	aux := struct {
+		Tags []cbc.Key `json:"tags,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	t.tags = aux.Tags
+	return nil
+}
+
+// JSONSchemaExtend is used to add the additional options to the JSON schema.
+func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
+	if p, ok := schema.Properties.Get("rounding"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.RoundingRules))
+		for i, r := range tax.RoundingRules {
+			p.OneOf[i] = &jsonschema.Schema{
+				Const:       r.Key.String(),
+				Title:       r.Name.String(),
+				Description: r.Desc.String(),
+			}
+		}
+	}
+	if p, ok := schema.Properties.Get("point"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.PointDefs))
+		for i, w := range tax.PointDefs {
+			p.OneOf[i] = &jsonschema.Schema{
+				Const:       w.Key.String(),
+				Title:       w.Name.String(),
+				Description: w.Desc.String(),
+			}
+		}
+	}
+}

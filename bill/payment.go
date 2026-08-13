@@ -1,0 +1,403 @@
+package bill
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
+)
+
+// Predefined list of the payment types supported.
+const (
+	PaymentTypeRequest cbc.Key = "request"
+	PaymentTypeReceipt cbc.Key = "receipt"
+	PaymentTypeAdvice  cbc.Key = "advice"
+)
+
+// PaymentTypes defines the list of potential payment types.
+var PaymentTypes = []*cbc.Definition{
+	{
+		Key: PaymentTypeRequest,
+		Name: i18n.String{
+			i18n.EN: "Request",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A payment request sent from the supplier to a customer indicating that they are
+				requesting a transfer of funds from the customer directly or a payer.
+				This is used to request payment for specific documents and invoices.
+			`),
+		},
+	},
+	{
+		Key: PaymentTypeAdvice,
+		Name: i18n.String{
+			i18n.EN: "Advice",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A remittance advice sent from the customer to the supplier reflecting that payment for
+				the referenced documents has been made.
+			`),
+		},
+	},
+	{
+		Key: PaymentTypeReceipt,
+		Name: i18n.String{
+			i18n.EN: "Receipt",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A payment receipt sent from the supplier to a customer indicating that they have
+				received a transfer of funds from the customer directly or a payer.
+				This is the default payment type and may be required by some tax
+				regimes in order to communicate the payment of specific documents and invoices.
+			`),
+		},
+	},
+}
+
+var isValidPaymentType = cbc.InKeyDefs(PaymentTypes)
+
+// PaymentTypeIn returns a test that passes when the Payment's Type is
+// one of the provided values. Intended as a guard inside rules.When
+// when an addon needs per-type rule branches.
+func PaymentTypeIn(types ...cbc.Key) rules.Test {
+	return is.Func(
+		fmt.Sprintf("payment type in [%s]", strings.Join(cbc.KeyStrings(types), ", ")),
+		func(obj any) bool {
+			pmt, ok := obj.(*Payment)
+			if !ok || pmt == nil {
+				return false
+			}
+			return pmt.Type.In(types...)
+		},
+	)
+}
+
+// A Payment is used to link an invoice or invoices with a payment transaction.
+type Payment struct {
+	tax.Regime
+	tax.Addons
+	tax.Tags
+	uuid.Identify
+
+	// Type of payment document being issued.
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
+
+	// Series is used to identify groups of payments by date, business area, project,
+	// type, customer, a combination of any, or other company specific data.
+	// If the output format does not support the series as a separate field, it will be
+	// prepended to the code for presentation with a dash (`-`) for separation.
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
+	// Code is a sequential identifier that uniquely identifies the payment. The code can
+	// be left empty initially, but is **required** to **sign** the document.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// When the payment was issued.
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the payment was issued.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
+	// When the taxes of this payment become accountable, if none set, the issue date is assumed.
+	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
+	// Currency for all payment totals.
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
+	// Exchange rates to be used when converting the payment's monetary values into other currencies.
+	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
+	// Extensions for additional codes that may be required.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+
+	// Key information regarding previous versions of this document.
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+
+	// The taxable entity who is responsible for supplying goods or services.
+	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
+	// Legal entity that receives the goods or services.
+	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
+	// Legal entity that receives the payment if not the supplier.
+	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
+
+	// Ordering allows for additional information about the ordering process including references
+	// to other documents and alternative parties involved in the order-to-delivery process.
+	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
+
+	// List of documents that are being paid for.
+	Lines []*PaymentLine `json:"lines" jsonschema:"title=Lines"`
+	// Methods describes how the payment was settled. At least one method is
+	// required; multiple may be present when the payment was split across
+	// means (for example, partly card + partly cash).
+	Methods []*pay.Record `json:"methods" jsonschema:"title=Methods"`
+
+	// Total amount to be paid in this payment, either positive or negative according to the
+	// line types and totals. Calculated automatically.
+	Total num.Amount `json:"total" jsonschema:"title=Total,calculated=true"`
+
+	// Unstructured information that is relevant to the payment, such as correction or additional
+	// legal details.
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Additional complementary objects that add relevant information to the payment.
+	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
+
+	// Additional semi-structured data that doesn't fit into the body of the invoice.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// CanSign returns a boolean indicating whether the payment is ready to be signed
+// or not.
+func (pmt *Payment) CanSign() bool {
+	return !pmt.Code.IsEmpty()
+}
+
+func normalizePayment(pmt *Payment) {
+	if pmt.Type == cbc.KeyEmpty {
+		pmt.Type = PaymentTypeReceipt
+	}
+}
+
+func paymentRules() *rules.Set {
+	return rules.For(new(Payment),
+		rules.Field("type",
+			rules.Assert("01", "payment type is required", is.Present),
+			rules.Assert("02", "payment type is not valid", isValidPaymentType),
+		),
+		rules.Field("methods",
+			rules.Assert("03", "at least one payment method is required", is.Present),
+			rules.Each(
+				rules.Field("key",
+					rules.Assert("09", "payment method key is required", is.Present),
+				),
+			),
+		),
+		rules.Field("issue_date",
+			rules.Assert("04", "payment issue date is required", is.Present),
+		),
+		rules.Field("currency",
+			rules.Assert("05", "payment currency is required", is.Present),
+		),
+		rules.Field("supplier",
+			rules.Assert("06", "payment supplier is required", is.Present),
+		),
+		rules.Field("lines",
+			rules.Assert("07", "payment lines are required", is.Present),
+		),
+		rules.Assert("08", "methods sum must match total",
+			is.FuncError("methods sum", paymentMethodsSumMatchesTotal),
+		),
+	)
+}
+
+// paymentMethodsSumMatchesTotal verifies that the amounts on a payment's
+// Methods, after conversion to the document currency via ExchangeRates,
+// add up to the document Total. Methods without an explicit Currency are
+// assumed to be in the document Currency.
+func paymentMethodsSumMatchesTotal(val any) error {
+	pmt, ok := val.(*Payment)
+	if !ok || pmt == nil || len(pmt.Methods) == 0 {
+		return nil
+	}
+	exp := pmt.Total.Exp()
+	if def := pmt.Currency.Def(); def != nil {
+		exp = def.Zero().Exp()
+	}
+	sum := num.MakeAmount(0, exp)
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		from := m.Currency
+		if from == currency.CodeEmpty {
+			from = pmt.Currency
+		}
+		converted := currency.Convert(pmt.ExchangeRates, from, pmt.Currency, m.Amount)
+		if converted == nil {
+			return fmt.Errorf("missing exchange rate from %s to %s", from, pmt.Currency)
+		}
+		sum = sum.Add(*converted)
+	}
+	if sum.Compare(pmt.Total) != 0 {
+		return fmt.Errorf("sum %s does not match total %s", sum.String(), pmt.Total.String())
+	}
+	return nil
+}
+
+// Calculate performs all the normalizations and calculations required for the invoice
+// totals and taxes. If the original invoice only includes partial calculations, this
+// will figure out what's missing.
+func (pmt *Payment) Calculate() error {
+	// Try to set Regime if not already prepared from the supplier's tax ID
+	if pmt.Regime.IsEmpty() {
+		pmt.SetRegime(partyTaxCountry(pmt.Supplier))
+	}
+	norm.Normalize(pmt)
+	return pmt.calculate()
+}
+
+func (pmt *Payment) calculate() error {
+	r := pmt.RegimeDef()
+	rr := r.GetRoundingRule()
+
+	// Set the issue date and time
+	tz := r.TimeLocation()
+	if pmt.IssueTime != nil && pmt.IssueTime.IsZero() {
+		// If setting the time, also set the date
+		tn := cal.ThisSecondIn(tz)
+		hn := tn.Time()
+		pmt.IssueDate = tn.Date()
+		pmt.IssueTime = &hn
+	} else if pmt.IssueDate.IsZero() {
+		pmt.IssueDate = cal.TodayIn(tz)
+	}
+
+	// Convert empty or invalid currency to the regime's currency
+	if pmt.Currency == currency.CodeEmpty && r != nil {
+		pmt.Currency = r.Currency
+	}
+	if pmt.Currency == currency.CodeEmpty {
+		return fmt.Errorf("currency: required, unable to determine")
+	}
+
+	var total *num.Amount
+	for i, l := range pmt.Lines {
+		if l == nil {
+			continue
+		}
+		l.Index = i + 1
+
+		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
+			return fmt.Errorf("lines: %d: %w", l.Index, err)
+		}
+
+		// Add the totals
+		a := l.Amount
+		if l.Refund {
+			a = a.Negate()
+		}
+		if total == nil {
+			total = &a
+		} else {
+			nt := total.Add(a)
+			total = &nt
+		}
+	}
+	if total != nil {
+		pmt.Total = *total
+	}
+
+	// Apply percent-based amounts and auto-fill the single-method case from
+	// the document Total when no Amount or Currency was provided.
+	for _, m := range pmt.Methods {
+		if m == nil {
+			continue
+		}
+		m.CalculateFrom(pmt.Total)
+	}
+	if len(pmt.Methods) == 1 {
+		m := pmt.Methods[0]
+		if m != nil && m.Amount.IsZero() && m.Currency == currency.CodeEmpty {
+			m.Amount = pmt.Total
+		}
+	}
+
+	return nil
+}
+
+// FromEndpoint returns the endpoint of the party most likely to be
+// sending this payment document. A `request` (supplier asks the
+// customer to pay) and `receipt` (supplier confirms funds received)
+// flow from supplier to customer; an `advice` (customer notifies the
+// supplier that payment has been made) flows the other way.
+func (pmt *Payment) FromEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Customer.FirstEndpoint()
+	}
+	return pmt.Supplier.FirstEndpoint()
+}
+
+// ToEndpoint returns the endpoint of the party most likely to be
+// receiving this payment document. Inverse of FromEndpoint.
+func (pmt *Payment) ToEndpoint() *org.Endpoint {
+	if pmt == nil {
+		return nil
+	}
+	if pmt.Type == PaymentTypeAdvice {
+		return pmt.Supplier.FirstEndpoint()
+	}
+	return pmt.Customer.FirstEndpoint()
+}
+
+// UnmarshalJSON migrates documents that use the legacy singular `method`
+// field (a [pay.Instructions]) into the [Payment.Methods] slice.
+func (pmt *Payment) UnmarshalJSON(data []byte) error {
+	type Alias Payment
+	aux := struct {
+		Method *pay.Instructions `json:"method,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(pmt),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Method != nil && len(pmt.Methods) == 0 {
+		var ct *pay.CreditTransfer
+		if len(aux.Method.CreditTransfer) > 0 {
+			ct = aux.Method.CreditTransfer[0]
+		}
+		pmt.Methods = []*pay.Record{{
+			Key:            aux.Method.Key,
+			Ref:            string(aux.Method.Ref),
+			Description:    aux.Method.Detail,
+			Card:           aux.Method.Card,
+			CreditTransfer: ct,
+			DirectDebit:    aux.Method.DirectDebit,
+			Online:         aux.Method.Online,
+			Ext:            aux.Method.Ext,
+			Meta:           aux.Method.Meta,
+		}}
+	}
+	return nil
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	// Extend type list
+	if its, ok := props.Get("type"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(PaymentTypes))
+		for i, kd := range PaymentTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
+	// Recommendations
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"$regime",
+			"series",
+			"code",
+			"lines",
+		},
+	}
+}

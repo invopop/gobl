@@ -1,0 +1,104 @@
+package fr_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNormalizeTaxIdentity(t *testing.T) {
+	tests := []struct {
+		Code     cbc.Code
+		Expected cbc.Code
+	}{
+		{
+			Code:     "356000000", // SIREN to VAT
+			Expected: "39356000000",
+		},
+		{
+			Code:     "44 73282 9320 ",
+			Expected: "44732829320",
+		},
+		{
+			Code:     "391-838-042",
+			Expected: "44391838042",
+		},
+		{
+			Code:     "FR391838042",
+			Expected: "44391838042",
+		},
+		{
+			Code:     "FR44391838042",
+			Expected: "44391838042",
+		},
+		{
+			Code:     "391838043",
+			Expected: "391838043",
+		},
+		{
+			Code:     " INV-ALID ",
+			Expected: "INVALID",
+		},
+	}
+	for _, ts := range tests {
+		tID := &tax.Identity{Country: "FR", Code: ts.Code}
+		norm.Normalize(tID)
+		assert.Equal(t, ts.Expected, tID.Code)
+	}
+}
+
+func TestTaxIdentityRules(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		err  string
+	}{
+		{name: "good 1", code: "39356000000"},
+		{name: "good 2", code: "44732829320"},
+		{name: "good 3", code: "44391838042"},
+		{name: "good with letters", code: "0L433754066"}, // Special cases.
+		{name: "good La Poste", code: "11356000000"},     // "11" invented
+		{
+			name: "empty",
+			code: "",
+		},
+		{
+			name: "too long",
+			code: "44123456789100",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "too short",
+			code: "123456",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "not normalized",
+			code: "12.449.965-4",
+			err:  "IDENTITY-01",
+		},
+		{
+			name: "bad checksum",
+			code: "44999999991",
+			err:  "IDENTITY-01",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: "FR", Code: tt.code}
+			err := rules.Validate(tID)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.err)
+				}
+			}
+		})
+	}
+}

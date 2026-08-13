@@ -1,47 +1,72 @@
 //go:build mage
-// +build mage
 
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
+	"os"
+	"os/exec"
 
-	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/currency"
-	"github.com/invopop/gobl/internal/schemas"
-	"github.com/invopop/gobl/region"
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 )
 
-// Schema generates the JSON Schema from the base models
-func Schema() error {
-	return schemas.Generate()
+// Lint runs golangci-lint
+func Lint() error {
+	return runQuiet("✓ Lint passed", "golangci-lint", "run")
 }
 
-// RegionData generates JSON version of each region's data.
-func RegionData() error {
-	for c, r := range region.All() {
-		doc, err := gobl.NewDocument(r.Taxes())
-		if err != nil {
-			return err
-		}
-		data, err := json.MarshalIndent(doc, "", "  ")
-		if err != nil {
-			return err
-		}
-		f := filepath.Join("build", "data", "tax", string(c)+".json")
-		if err := ioutil.WriteFile(f, data, 0644); err != nil {
-			return err
-		}
-		fmt.Printf("Processed %v\n", f)
+// Fix runs golangci-lint with auto-fix
+func Fix() error {
+	return runQuiet("✓ Fix complete", "golangci-lint", "run", "--fix")
+}
+
+// Test runs all tests
+func Test() error {
+	return runQuiet("✓ Tests passed", "go", "test", "./...")
+}
+
+// TestRace runs all tests with the race detector
+func TestRace() error {
+	return runQuiet("✓ Tests passed (race)", "go", "test", "-race", "./...")
+}
+
+// Generate runs go generate (regenerates schemas, definitions, rules data)
+func Generate() error {
+	return runQuiet("✓ Generate complete", "go", "generate", ".")
+}
+
+// Check runs the full pipeline: lint, generate, test, and verify no uncommitted changes
+func Check() error {
+	if err := Lint(); err != nil {
+		return err
 	}
+	if err := Generate(); err != nil {
+		return err
+	}
+	if err := Test(); err != nil {
+		return err
+	}
+	// Verify generate didn't produce uncommitted changes
+	if err := runQuiet("No uncommitted changes", "git", "diff", "--exit-code"); err != nil {
+		return err
+	}
+	fmt.Println("✓ All checks passed")
 	return nil
 }
 
-// Currencies generates the Go definition files from the raw list of
-// XML ISO data.
-func Currencies() error {
-	return currency.GenerateCodes()
+// runQuiet buffers output and only shows it on failure, printing msg on success.
+// Use mage -v to stream everything.
+func runQuiet(msg, cmd string, args ...string) error {
+	if mg.Verbose() {
+		return sh.RunV(cmd, args...)
+	}
+	c := exec.Command(cmd, args...)
+	out, err := c.CombinedOutput()
+	if err != nil {
+		os.Stderr.Write(out)
+		return err
+	}
+	fmt.Println(msg)
+	return nil
 }

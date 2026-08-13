@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-AT",
+  "package": "at",
+  "subsets": [
+    {
+      "id": "GOBL-AT-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [AT]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-AT-TAX-IDENTITY-01",
+                      "desc": "invalid Austrian VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

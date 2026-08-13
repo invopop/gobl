@@ -1,2 +1,0 @@
-# Spanish GOBL Tax Definitions
-

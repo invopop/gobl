@@ -12,9 +12,9 @@ One of the objectives of GoBL is to create a document that could potentially be 
 
 This `c14n` package, inspired by the works of others, thus aims to define a simple standardized approach to canonical JSON that could potentially be implemented easily in other languages. More than just a definition, the code here is a reference implementation from which libraries can be made in languages other than Go.
 
-## GoBL JSON C14n
+## GOBL JSON C14n
 
-GoBL considers the following JSON values as explicit types:
+GOBL considers the following JSON values as explicit types:
 
 - a string
 - a number, which extends the JSON spec and is split into:
@@ -56,7 +56,7 @@ JSON in canonical form:
    2. using six-character `\u00XX` uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence described previously, and
    3. reject any string containing invalid encoding.
 
-The GoBL JSON c14n package has been designed to operate using any raw JSON source and uses the Go [`encoding/json`](https://golang.org/pkg/encoding/json/) library's streaming methods to parse and recreate a document in memory. A simplified object model is used to map JSON structures ready to be converted into canonical JSON.
+The GOBL JSON c14n package has been designed to operate using any raw JSON source and uses the Go [`encoding/json`](https://golang.org/pkg/encoding/json/) library's streaming methods to parse and recreate a document in memory. A simplified object model is used to map JSON structures ready to be converted into canonical JSON.
 
 ## Usage Example
 

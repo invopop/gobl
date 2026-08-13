@@ -9,12 +9,25 @@ const (
 // String provides a simple map of locales to texts.
 type String map[Lang]string
 
-// String provides a single string from the map using the
-// language requested or resorting to the default.
-func (s String) String(lang Lang) string {
+// NewString is a convenience method to create a new i18n.String
+// using the default language.
+func NewString(text string) String {
+	return String{
+		defaultLanguage: text,
+	}
+}
+
+// In provides a single string from the map using the
+// language requested or resorts to the default.
+func (s String) In(lang Lang) string {
 	if v, ok := s[lang]; ok {
 		return v
 	}
+	return s.String()
+}
+
+// String returns the default language string or first entry found.
+func (s String) String() string {
 	if v, ok := s[defaultLanguage]; ok {
 		return v
 	}
@@ -22,6 +35,11 @@ func (s String) String(lang Lang) string {
 		return v // provide first entry
 	}
 	return ""
+}
+
+// IsEmpty returns true if the string map is empty.
+func (s String) IsEmpty() bool {
+	return len(s) == 0
 }
 
 // JSONSchema returns the json schema definition

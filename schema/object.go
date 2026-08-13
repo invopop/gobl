@@ -1,0 +1,253 @@
+package schema
+
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
+)
+
+// Error is used to define schema errors
+type Error string
+
+// Error provides the error code
+func (e Error) Error() string {
+	return string(e)
+}
+
+const (
+	// ErrUnknownSchema is returned when the schema has not been registered.
+	ErrUnknownSchema Error = "unknown-schema"
+)
+
+// Object helps handle json objects that must contain a schema to correctly identify
+// the contents and ensuring that a `$schema` property is added automatically when
+// marshalling back into JSON.
+//
+// When the $schema is not registered in the global registry, the Object stores
+// the raw JSON for round-trip passthrough. In this case Instance() returns nil
+// and HasPayload() returns false.
+type Object struct {
+	Schema  ID `json:"$schema"`
+	payload any
+	raw     json.RawMessage // stores full JSON when schema is unregistered
+}
+
+// Calculable defines the methods expected of a document payload that contains a `Calculate`
+// method to be used to perform any additional calculations.
+type Calculable interface {
+	Calculate() error
+}
+
+// Correctable defines the expected interface of a document that can be
+// corrected.
+type Correctable interface {
+	Correct(...Option) error
+	CorrectionOptionsSchema() (any, error)
+}
+
+// Replicable defines the methods expected of a document payload that can be replicated.
+type Replicable interface {
+	Replicate() error
+}
+
+// Identifiable defines the methods expected of a document payload that contains a UUID.
+// The `uuid` packages `Identify` struct can be embedded to satisfy this.
+type Identifiable interface {
+	GetUUID() uuid.UUID
+	SetUUID(uuid.UUID)
+}
+
+// NewObject instantiates an Object wrapper around the provided payload.
+func NewObject(payload any) (*Object, error) {
+	d := new(Object)
+	return d, d.insert(payload)
+}
+
+func objectRules() *rules.Set {
+	return rules.For(new(Object),
+		rules.Field("$schema",
+			rules.Assert("01", "schema is required", is.Present),
+		),
+	)
+}
+
+// Validate will check the document payload for any rule violations
+// and return them as a list of faults. This will only check the
+// payload of the object, which would not otherwise be verified.
+func (d *Object) Validate() rules.Faults {
+	return rules.Validate(d.Instance())
+}
+
+// IsEmpty returns true if no payload or raw JSON has been set yet.
+func (d *Object) IsEmpty() bool {
+	return d.payload == nil && d.raw == nil
+}
+
+// HasPayload returns true when the Object contains a resolved Go instance
+// (i.e., the schema was registered). Returns false for passthrough objects
+// that only hold raw JSON.
+func (d *Object) HasPayload() bool {
+	return d.payload != nil
+}
+
+// Instance returns a prepared version of the document's content.
+func (d *Object) Instance() any {
+	return d.payload
+}
+
+// Embedded returns the document payload so that the rules traversal can validate
+// it at the same JSON level as the Object wrapper, maintaining correct paths.
+func (d *Object) Embedded() any {
+	return d.payload
+}
+
+// Calculate will attempt to run the calculation method on the
+// document payload. If the object implements the Identifiable
+// interface, it will also ensure the UUID is set.
+func (d *Object) Calculate() error {
+	if ident, ok := d.payload.(Identifiable); ok {
+		id := ident.GetUUID()
+		if id.IsZero() {
+			ident.SetUUID(uuid.V7())
+		}
+	}
+	pl, ok := d.payload.(Calculable)
+	if !ok {
+		return nil
+	}
+	return pl.Calculate()
+}
+
+// Correct will attempt to run the correction method on the document
+// using some of the provided options.
+func (d *Object) Correct(opts ...Option) error {
+	pl, ok := d.payload.(Correctable)
+	if !ok {
+		return errors.New("document cannot be corrected")
+	}
+	if err := pl.Correct(opts...); err != nil {
+		return err
+	}
+	return nil
+}
+
+// CorrectionOptionsSchema provides a schema with the correction options available
+// for the schema, if available.
+func (d *Object) CorrectionOptionsSchema() (any, error) {
+	pl, ok := d.payload.(Correctable)
+	if !ok {
+		return nil, nil
+	}
+	res, err := pl.CorrectionOptionsSchema()
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// Replicate will attempt to clone and run the Replicate method of the object
+// if it has one.
+func (d *Object) Replicate() error {
+	obj, ok := d.payload.(Replicable)
+	if ok {
+		if err := obj.Replicate(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Insert places the provided object inside the document and looks up the schema
+// information to ensure it is known.
+func (d *Object) insert(payload any) error {
+	d.Schema = Lookup(payload)
+	if d.Schema == UnknownID {
+		return ErrUnknownSchema
+	}
+	d.payload = payload
+	return nil
+}
+
+// UUID extracts the UUID from the payload using reflection. An empty
+// id is returned if the payload does not have a UUID field.
+func (d *Object) UUID() uuid.UUID {
+	obj, ok := d.payload.(Identifiable)
+	if !ok {
+		return uuid.Empty
+	}
+	return obj.GetUUID()
+}
+
+// Clone makes a copy of the document by serializing and deserializing
+// the contents into a new document instance.
+func (d *Object) Clone() (*Object, error) {
+	d2 := new(Object)
+	data, err := json.Marshal(d)
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(data, d2); err != nil {
+		return nil, err
+	}
+	return d2, nil
+}
+
+// UnmarshalJSON satisfies the json.Unmarshaler interface.
+func (d *Object) UnmarshalJSON(data []byte) error {
+	var err error
+	if d.Schema, err = Extract(data); err != nil {
+		return err
+	}
+	if d.Schema == UnknownID {
+		return nil // return silently
+	}
+
+	// Map the schema to an instance of the payload. If the schema is not
+	// registered, store the raw JSON for passthrough.
+	d.payload = d.Schema.Interface()
+	if d.payload == nil {
+		d.raw = make(json.RawMessage, len(data))
+		copy(d.raw, data)
+		return nil
+	}
+	if err := json.Unmarshal(data, d.payload); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalJSON satisfies the json.Marshaler interface.
+func (d *Object) MarshalJSON() ([]byte, error) {
+	if d.raw != nil {
+		return d.raw, nil
+	}
+
+	data, err := json.Marshal(d.payload)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err = Insert(d.Schema, data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// JSONSchema returns a jsonschema.Schema instance.
+func (Object) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type:  "object",
+		Title: "Object",
+		Description: here.Doc(`
+			Data object whose type is determined from the ~$schema~ property.
+		`),
+	}
+}

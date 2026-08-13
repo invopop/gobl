@@ -1,0 +1,69 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-001"
+tax:
+  prices_include: "VAT"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Simple Goods Store"
+  addresses:
+    - num: "43"
+      street: "Calle Mayor"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28003"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Mugs from provider"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: "standard+eqs"
+  - quantity: 1
+    item:
+      name: "Delivery Costs"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+
+payment:
+  terms:
+    key: due-date
+    due_dates:
+      - date: "2021-10-30"
+        percent: "40%"
+      - date: "2021-11-30"
+        percent: "60%"
+  advances:
+    - date: "2021-09-01"
+      desc: "Deposit paid upfront"
+      amount: "25.00"
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - name: "Bankinter"
+        iban: "ES06 0128 0011 3901 0008 1391"
+        bic: "BKBKESMMXXX"

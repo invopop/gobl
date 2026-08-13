@@ -1,0 +1,776 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Spain",
+    "es": "España"
+  },
+  "description": {
+    "en": "Spain's tax system is administered by the Agencia Tributaria (AEAT). As an\nEU member state, Spain follows the EU VAT Directive with locally adapted rates.\n\nIVA (Impuesto sobre el Valor Añadido) applies at general, reduced, and\nsuper-reduced rates. The Canary Islands use IGIC (Impuesto General Indirecto\nCanario) instead of IVA, while Ceuta and Melilla use IPSI (Impuesto sobre la\nProducción, los Servicios y la Importación).\n\nBusinesses are identified by their NIF (Número de Identificación Fiscal) or\nCIF for companies. IRPF (Impuesto sobre la Renta de las Personas Físicas)\nretention taxes apply to freelancer invoices at varying rates.\n\nAccording to Real Decreto 1619/2012, only rectified (rectificativa) invoices\nare recognized in Spanish law. GOBL maps corrective invoices to \"rectificación\nmodelo íntegro\" (complete replacement) and credit notes to \"rectificación por\ndiferencias\" (correction by differences, with quantities inverted during\nconversion). The FacturaE format is used for B2G e-invoicing, with TicketBAI\nrequired in the Basque Country, VeriFactu being rolled out nationally, and the\nSII (Suministro Inmediato de Información) system providing near-real-time\nreporting of invoicing data to the AEAT."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Real Decreto 1619/2012 - Invoicing Regulation"
+      },
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696"
+    }
+  ],
+  "time_zone": "Europe/Madrid",
+  "country": "ES",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "copy",
+          "name": {
+            "en": "Copy",
+            "es": "Copia"
+          }
+        },
+        {
+          "key": "summary",
+          "name": {
+            "en": "Summary",
+            "es": "Recapitulativa"
+          }
+        },
+        {
+          "key": "simplified-scheme",
+          "name": {
+            "en": "Simplified tax scheme",
+            "es": "Contribuyente en régimen simplificado"
+          }
+        },
+        {
+          "key": "travel-agency",
+          "name": {
+            "en": "Special scheme for travel agencies",
+            "es": "Régimen especial de las agencias de viajes"
+          }
+        },
+        {
+          "key": "second-hand-goods",
+          "name": {
+            "en": "Special scheme for second-hand goods",
+            "es": "Régimen especial de los bienes usados"
+          }
+        },
+        {
+          "key": "art",
+          "name": {
+            "en": "Special scheme of works of art",
+            "es": "Régimen especial de los objetos de arte"
+          }
+        },
+        {
+          "key": "antiques",
+          "name": {
+            "en": "Special scheme of antiques and collectables",
+            "es": "Régimen especial de las antigüedades y objetos de colección"
+          }
+        },
+        {
+          "key": "cash-basis",
+          "name": {
+            "en": "Special scheme on cash basis",
+            "es": "Régimen especial del criterio de caja"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "passport",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      }
+    },
+    {
+      "key": "foreign",
+      "name": {
+        "en": "National ID Card or similar from a foreign country",
+        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
+      }
+    },
+    {
+      "key": "resident",
+      "name": {
+        "en": "Residential permit",
+        "es": "Certificado de residencia"
+      }
+    },
+    {
+      "key": "other",
+      "name": {
+        "en": "An other type of source not listed",
+        "es": "Otro documento probatorio"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversión del sujeto pasivo."
+          }
+        },
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Inversión del sujeto pasivo."
+          }
+        },
+        {
+          "tags": [
+            "simplified-scheme"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "simplified-scheme",
+            "text": "Factura expedida por contribuyente en régimen simplificado."
+          }
+        },
+        {
+          "tags": [
+            "self-billed"
+          ],
+          "note": {
+            "key": "self-billed",
+            "text": "Facturación por el destinatario."
+          }
+        },
+        {
+          "tags": [
+            "travel-agency"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "travel-agency",
+            "text": "Régimen especial de las agencias de viajes."
+          }
+        },
+        {
+          "tags": [
+            "travel-agency"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "travel-agency",
+            "text": "Régimen especial de las agencias de viajes."
+          }
+        },
+        {
+          "tags": [
+            "second-hand-goods"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "second-hand-goods",
+            "text": "Régimen especial de los bienes usados."
+          }
+        },
+        {
+          "tags": [
+            "second-hand-goods"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "second-hand-goods",
+            "text": "Régimen especial de los bienes usados."
+          }
+        },
+        {
+          "tags": [
+            "art"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "art",
+            "text": "Régimen especial de los objetos de arte."
+          }
+        },
+        {
+          "tags": [
+            "art"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "art",
+            "text": "Régimen especial de los objetos de arte."
+          }
+        },
+        {
+          "tags": [
+            "antiques"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "antiques",
+            "text": "Régimen especial de las antigüedades y objetos de colección."
+          }
+        },
+        {
+          "tags": [
+            "antiques"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "antiques",
+            "text": "Régimen especial de las antigüedades y objetos de colección."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "cash-basis",
+            "text": "Régimen especial del criterio de caja."
+          }
+        },
+        {
+          "tags": [
+            "cash-basis"
+          ],
+          "cat": [
+            "IGIC"
+          ],
+          "note": {
+            "cat": "IGIC",
+            "key": "cash-basis",
+            "text": "Régimen especial del criterio de caja."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "corrective",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ca": "IVA",
+        "en": "VAT",
+        "es": "IVA",
+        "eu": "BEZ",
+        "gl": "IVE"
+      },
+      "title": {
+        "ca": "Impost sobre el Valor Afegit",
+        "en": "Value Added Tax",
+        "es": "Impuesto sobre el Valor Añadido",
+        "eu": "Balio Erantsiaren Zerga",
+        "gl": "Imposto sobre o Valor Engadido"
+      },
+      "desc": {
+        "en": "Known in Spanish as \"Impuesto sobre el Valor Añadido\" (IVA), is a consumption tax\napplied to the purchase of goods and services. It's a tax on the value added at\neach stage of production or distribution. Spain, as a member of the European Union,\nfollows the EU's VAT Directive, but with specific rates and exemptions tailored\nto its local needs."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus general",
+            "en": "Standard Rate",
+            "es": "Tipo General",
+            "eu": "Tasa Orokorra",
+            "gl": "Tipo Xeral"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general+eqs",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus general + Recàrrec d'equivalència",
+            "en": "Standard Rate + Equivalence Surcharge",
+            "es": "Tipo General + Recargo de Equivalencia",
+            "eu": "Tasa Orokorra + Baliokidetasun Errekargua",
+            "gl": "Tipo Xeral + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%",
+              "surcharge": "5.2%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%",
+              "surcharge": "4.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus reduït",
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido",
+            "eu": "Tasa Murriztua",
+            "gl": "Tipo Reducido"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "7.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced+eqs",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus reduït + Recàrrec d'equivalència",
+            "en": "Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Reducido + Recargo de Equivalencia",
+            "eu": "Tasa Murriztua + Baliokidetasun Errekargua",
+            "gl": "Tipo Reducido + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%",
+              "surcharge": "1.4%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%",
+              "surcharge": "1.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus superreduït",
+            "en": "Super-Reduced Rate",
+            "es": "Tipo Superreducido",
+            "eu": "Tasa Oso Murriztua",
+            "gl": "Tipo Superreducido"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "4.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "3.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced+eqs",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus superreduït + Recàrrec d'equivalència",
+            "en": "Super-Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Superreducido + Recargo de Equivalencia",
+            "eu": "Tasa Oso Murriztua + Baliokidetasun Errekargua",
+            "gl": "Tipo Superreducido + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "4.0%",
+              "surcharge": "0.5%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IGIC",
+      "name": {
+        "ca": "IGIC",
+        "en": "IGIC",
+        "es": "IGIC",
+        "eu": "IGIC",
+        "gl": "IGIC"
+      },
+      "title": {
+        "ca": "Impost General Indirecte Canari",
+        "en": "Canary Island General Indirect Tax",
+        "es": "Impuesto General Indirecto Canario",
+        "eu": "Kanariar Uharteetako Zerga Orokor Zeharkakoa",
+        "gl": "Imposto Xeral Indirecto Canario"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus general",
+            "en": "General Rate",
+            "es": "Tipo General",
+            "eu": "Tasa Orokorra",
+            "gl": "Tipo Xeral"
+          },
+          "values": [
+            {
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "ca": "Tipus reduït",
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido",
+            "eu": "Tasa Murriztua",
+            "gl": "Tipo Reducido"
+          },
+          "values": [
+            {
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IPSI",
+      "name": {
+        "ca": "IPSI",
+        "en": "IPSI",
+        "es": "IPSI",
+        "eu": "IPSI",
+        "gl": "IPSI"
+      },
+      "title": {
+        "ca": "Impost sobre la Producció, els Serveis i la Importació",
+        "en": "Production, Services, and Import Tax",
+        "es": "Impuesto sobre la Producción, los Servicios y la Importación",
+        "eu": "Ekoizpen, Zerbitzu eta Inportazio Zerga",
+        "gl": "Imposto sobre a Produción, os Servizos e a Importación"
+      }
+    },
+    {
+      "code": "IRPF",
+      "name": {
+        "ca": "IRPF",
+        "en": "IRPF",
+        "es": "IRPF",
+        "eu": "IRPF",
+        "gl": "IRPF"
+      },
+      "title": {
+        "ca": "Impost sobre la renda de les persones físiques.",
+        "en": "Personal income tax.",
+        "es": "Impuesto sobre la renta de las personas físicas.",
+        "eu": "Pertsona fisikoen errentaren gaineko zerga.",
+        "gl": "Imposto sobre a renda das persoas físicas."
+      },
+      "retained": true,
+      "rates": [
+        {
+          "rate": "pro",
+          "name": {
+            "ca": "Professionals",
+            "en": "Professional Rate",
+            "es": "Profesionales",
+            "eu": "Profesionalak",
+            "gl": "Profesionais"
+          },
+          "values": [
+            {
+              "since": "2015-07-12",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2007-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "rate": "pro-start",
+          "name": {
+            "ca": "Inici Professionals",
+            "en": "Professional Starting Rate",
+            "es": "Profesionales Inicio",
+            "eu": "Hasiera Profesionalak",
+            "gl": "Inicio Profesionais"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "rate": "capital",
+          "name": {
+            "ca": "Lloguers o Interessos de Capital",
+            "en": "Rental or Interest Capital",
+            "es": "Alquileres o Intereses de Capital",
+            "eu": "Errentamenduak edo Kapitalaren Interesak",
+            "gl": "Alugueres ou Intereses de Capital"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "rate": "modules",
+          "name": {
+            "ca": "Tipus Mòduls",
+            "en": "Modules Rate",
+            "es": "Tipo Modulos",
+            "eu": "Modulu Tasa",
+            "gl": "Tipo Módulos"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "1.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IRNR",
+      "name": {
+        "ca": "IRNR",
+        "en": "IRNR",
+        "es": "IRNR",
+        "eu": "IRNR",
+        "gl": "IRNR"
+      },
+      "title": {
+        "ca": "Impost sobre la renda de no residents",
+        "en": "Non-residents income tax",
+        "es": "Impuesto sobre la renta de no residentes",
+        "eu": "Ez egoiliarren errentaren gaineko zerga",
+        "gl": "Imposto sobre a renda de non residentes"
+      },
+      "desc": {
+        "en": "Personal or corporate income tax levied on income obtained in Spanish\nterritory by individuals and entities that are not resident in Spain.\nRegulated by Real Decreto Legislativo 5/2004 (TRLIRNR).\n\nThis category covers income obtained without a permanent establishment\n(sin establecimiento permanente), where the Spanish payer is generally\nobliged to withhold the tax at source on each payment. Income obtained\nthrough a permanent establishment is taxed under the rules of the\nCorporate Income Tax (Impuesto sobre Sociedades) and is out of scope\nat the invoice level.\n\nApplicable rates depend on the type of income and on whether the\nrecipient is resident in another EU/EEA Member State with an effective\nexchange of tax information, in which case reduced rates apply."
+      },
+      "retained": true
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/record",
+  "$ref": "#/$defs/pay.Record",
+  "$defs": {
+    "pay.Record": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "When the payment was made."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "anyOf": [
+            {
+              "const": "any",
+              "title": "Any",
+              "description": "Any method available, no preference."
+            },
+            {
+              "const": "card",
+              "title": "Card",
+              "description": "Payment by card."
+            },
+            {
+              "const": "card+credit",
+              "title": "Credit Card",
+              "description": "Payment by credit card."
+            },
+            {
+              "const": "card+debit",
+              "title": "Debit Card",
+              "description": "Payment by debit card."
+            },
+            {
+              "const": "credit-transfer",
+              "title": "Credit Transfer",
+              "description": "Sender initiated bank or wire transfer."
+            },
+            {
+              "const": "credit-transfer+sepa",
+              "title": "SEPA Credit Transfer",
+              "description": "Sender initiated bank or wire transfer via SEPA."
+            },
+            {
+              "const": "debit-transfer",
+              "title": "Debit Transfer",
+              "description": "Receiver initiated bank or wire transfer."
+            },
+            {
+              "const": "cash",
+              "title": "Cash",
+              "description": "Cash in hand."
+            },
+            {
+              "const": "cheque",
+              "title": "Cheque",
+              "description": "Cheque from bank."
+            },
+            {
+              "const": "bank-draft",
+              "title": "Draft",
+              "description": "Bankers Draft or Bank Cheque."
+            },
+            {
+              "const": "direct-debit",
+              "title": "Direct Debit",
+              "description": "Direct debit from the customers bank account."
+            },
+            {
+              "const": "direct-debit+sepa",
+              "title": "SEPA Direct Debit",
+              "description": "Direct debit from the customers bank account via SEPA."
+            },
+            {
+              "const": "online",
+              "title": "Online",
+              "description": "Online or web payment."
+            },
+            {
+              "const": "promissory-note",
+              "title": "Promissory Note",
+              "description": "Promissory note contract."
+            },
+            {
+              "const": "netting",
+              "title": "Netting",
+              "description": "Intercompany clearing or clearing between partners."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Other or mutually defined means of payment."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Regime Specific Key"
+            }
+          ],
+          "title": "Key",
+          "description": "The payment means used."
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference",
+          "description": "ID or reference for the payment."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description about the payment."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percentage of the total amount payable that was paid. Note that\nmultiple records with percentages may lead to rounding errors,\nespecially when the total sums to 100%. We recommend only including one\nrecord with a percent value per document."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much was paid."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        },
+        "card": {
+          "$ref": "https://gobl.org/draft-0/pay/card",
+          "title": "Card",
+          "description": "Details of the payment that was made via a credit or debit card."
+        },
+        "credit_transfer": {
+          "$ref": "https://gobl.org/draft-0/pay/credit-transfer",
+          "title": "Credit Transfer",
+          "description": "Details about how the payment was made by credit (bank) transfer."
+        },
+        "direct_debit": {
+          "$ref": "https://gobl.org/draft-0/pay/direct-debit",
+          "title": "Direct Debit",
+          "description": "Details of the payment that was made via direct debit."
+        },
+        "online": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/pay/online"
+          },
+          "type": "array",
+          "title": "Online",
+          "description": "Details of the payment that was made via an online provider."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Tax extensions required by tax regimes or addons."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional details useful for the parties involved."
+        }
+      },
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "description": "Record represents an individual payment transaction made via a specific means (cash, card, credit-transfer, etc.), with its own amount and optional currency."
+    }
+  }
+}

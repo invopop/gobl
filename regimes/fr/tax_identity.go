@@ -1,0 +1,143 @@
+package fr
+
+import (
+	"errors"
+	"fmt"
+	"regexp"
+	"strconv"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+)
+
+var (
+	taxCodeVATRegexp   = regexp.MustCompile(`^[A-Z\d]{2}\d{9}$`)
+	taxCodeWithLetters = regexp.MustCompile(`[A-Z]`)
+	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
+)
+
+const (
+	// Special exception case for La Poste which doesn't use the same
+	// Luhn check. Source: https://fr.wikipedia.org/wiki/Formule_de_Luhn
+	taxCodeSIRENLaPoste = "356000000"
+)
+
+// normalizeTaxIdentity normalizes the SIREN code, if there are any errors,
+// these will be picked up by validation.
+func normalizeTaxIdentity(tID *tax.Identity) {
+	if tID.Code == "" {
+		return
+	}
+	tax.NormalizeIdentity(tID)
+
+	str := tID.Code.String()
+	// Check if we have a valid SIREN so we can try and
+	// normalize with the check digit.
+	if err := validateSIRENTaxCode(tID.Code); err != nil {
+		return
+	}
+	chk := calculateVATCheckDigit(str)
+	tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
+}
+
+func taxIdentityRules() *rules.Set {
+	return rules.For(new(tax.Identity),
+		rules.When(tax.IdentityIn("FR"),
+			rules.Field("code",
+				rules.AssertIfPresent("01", "invalid French VAT identity code format or checksum",
+					is.Func("valid", isValidTaxIdentityCode),
+				),
+			),
+		),
+	)
+}
+
+func isValidTaxIdentityCode(value any) bool {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return false
+	}
+	return validateVATTaxCode(code) == nil
+}
+
+func validateVATTaxCode(value interface{}) error {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return nil
+	}
+	str := code.String()
+
+	if !taxCodeVATRegexp.MatchString(str) {
+		return errors.New("invalid format")
+	}
+
+	chk := str[:2]   // first 2
+	siren := str[2:] // last 9
+	if taxCodeWithLetters.MatchString(chk) {
+		// Skip checksum check for VAT codes with letters which
+		// may be provided for Government agencies.
+		return nil
+	}
+	if siren == taxCodeSIRENLaPoste {
+		// Skip format and Luhn checks for La Poste.
+		return nil
+	}
+
+	if calculateVATCheckDigit(siren) != chk {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
+}
+
+func calculateVATCheckDigit(str string) string {
+	// Assume we have a SIREN
+	total, _ := strconv.Atoi(str)
+	total = (total*100 + 12) % 97
+
+	return fmt.Sprintf("%02d", total)
+}
+
+func validateSIRENTaxCode(value any) error {
+	code, ok := value.(cbc.Code)
+	if !ok || code == "" {
+		return nil
+	}
+	str := code.String()
+	if !taxCodeSIRENRegexp.MatchString(str) {
+		return errors.New("invalid format")
+	}
+
+	base := str[:8]
+	chk := str[8:]
+	v := computeLuhnCheckDigit(base)
+	if chk != v {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
+}
+
+// TODO: refactor this into a shareable method.
+func computeLuhnCheckDigit(number string) string {
+	sum := 0
+	pos := 0
+
+	for i := len(number) - 1; i >= 0; i-- {
+		digit := int(number[i] - '0')
+
+		if pos%2 == 0 {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
+
+		sum += digit
+		pos++
+	}
+
+	return strconv.FormatInt(int64((10-(sum%10))%10), 10)
+}

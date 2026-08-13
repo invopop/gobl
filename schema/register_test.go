@@ -29,3 +29,44 @@ func TestRegistry(t *testing.T) {
 		t.Logf("schema: %v", id)
 	}
 }
+
+func TestRegistryTypeFor(t *testing.T) {
+	r := newRegistry()
+	base := ID("https://gobl.org/test02/schema")
+
+	assert.NoError(t, r.add(base, TestRegistryType{}))
+
+	id := ID("https://gobl.org/test02/schema/test-registry-type")
+	typ := r.typeFor(id)
+	assert.NotNil(t, typ)
+	assert.Equal(t, "TestRegistryType", typ.Name())
+
+	// Unknown ID should return nil
+	typ = r.typeFor(ID("https://gobl.org/unknown"))
+	assert.Nil(t, typ)
+}
+
+func TestRegistryLookupNotFound(t *testing.T) {
+	r := newRegistry()
+	type UnknownType struct{}
+	id := r.lookup(UnknownType{})
+	assert.Equal(t, UnknownID, id)
+}
+
+func TestGlobalType(t *testing.T) {
+	// schema.Object is registered globally
+	id := ID(GOBL.String() + "/schema/object")
+	typ := schemas.typeFor(id)
+	assert.NotNil(t, typ)
+	assert.Equal(t, "Object", typ.Name())
+}
+
+func TestGlobalList(t *testing.T) {
+	ids := List()
+	assert.Greater(t, len(ids), 0)
+}
+
+func TestGlobalTypes(t *testing.T) {
+	types := Types()
+	assert.Greater(t, len(types), 0)
+}

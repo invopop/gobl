@@ -1,0 +1,202 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "de": "Deutschland",
+    "en": "Germany"
+  },
+  "description": {
+    "en": "Germany's tax system is administered by the Federal Central Tax Office\n(Bundeszentralamt für Steuern, BZSt). As an EU member state, Germany follows\nthe EU VAT Directive with locally adapted rates.\n\nVAT (Umsatzsteuer, USt) applies at standard and reduced rates. The reduced\nrate covers food, books, newspapers, public transport, and cultural events.\n\nBusinesses are identified by their Umsatzsteuer-Identifikationsnummer (USt-IdNr)\nin the format DE followed by 9 digits for cross-border transactions, and by\ntheir Steuernummer (tax number) in regional formats for domestic purposes.\n\nGermany supports credit notes for invoice corrections. E-invoicing is\nprogressively becoming mandatory, with XRechnung as the standard for B2G\ntransactions and ZUGFeRD/Factur-X widely used for B2B."
+  },
+  "time_zone": "Europe/Berlin",
+  "country": "DE",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "key": "de-tax-number",
+      "name": {
+        "de": "Steuernummer",
+        "en": "Tax Number"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Umkehr der Steuerschuld."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "de": "USt",
+        "en": "VAT"
+      },
+      "title": {
+        "de": "Mehrwertsteuer",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Allgemeiner Steuersatz",
+            "en": "General rate"
+          },
+          "desc": {
+            "de": "Für den Großteil der Verkäufe von Waren und Dienstleistungen gilt: Dies gilt für alle Produkte oder Dienstleistungen, für die ausdrücklich kein anderer Satz festgelegt ist.",
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+          },
+          "values": [
+            {
+              "since": "2021-01-01",
+              "percent": "19%"
+            },
+            {
+              "since": "2020-07-01",
+              "percent": "16%"
+            },
+            {
+              "since": "2007-01-01",
+              "percent": "19%"
+            },
+            {
+              "since": "1998-04-01",
+              "percent": "16%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "15%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Verminderter Steuersatz",
+            "en": "Reduced rate"
+          },
+          "desc": {
+            "de": "Insbesondere anwendbar auf Grundnahrungsmittel, Bücher und Zeitschriften, kulturelle Veranstaltungen, Hotelunterkünfte, öffentliche Verkehrsmittel, medizinische Produkte oder Hausrenovierung.",
+            "en": "Applicable in particular to basic foodstuffs, books and magazines, cultural events, hotel accommodations, public transportation, medical products, or home renovation."
+          },
+          "values": [
+            {
+              "since": "2021-01-01",
+              "percent": "7%"
+            },
+            {
+              "since": "2020-07-01",
+              "percent": "5%"
+            },
+            {
+              "since": "1983-07-01",
+              "percent": "7%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "de": "Bundesfinanzministerium: 100 Jahre Umsatzsteuer in Deutschland",
+            "en": "Federal Ministry of Finance: 100 Years of VAT in Germany"
+          },
+          "url": "https://www.bundesfinanzministerium.de/Monatsberichte/2019/12/Inhalte/Kapitel-3-Analysen/3-4-100-jahre-umsatzsteuer.html"
+        },
+        {
+          "title": {
+            "de": "Wissenschaftliche Dienste des Deutschen Bundestages: Rolle der Umsatzsteuer und ihr Beitrag zur Finanzierung der sozialen Sicherungssysteme",
+            "en": "German Bundestag Research Service: Role of VAT and its Contribution to Financing Social Security Systems"
+          },
+          "url": "https://www.bundestag.de/resource/blob/410468/8ceeef0b94cdfa0b39a9925dece2aa75/WD-4-040-10-pdf.pdf"
+        },
+        {
+          "title": {
+            "de": "Statistisches Bundesamt: Auswirkungen der Mehrwertsteuersenkung",
+            "en": "Federal Statistical Office: Effect of the VAT Reduction"
+          },
+          "url": "https://www.destatis.de/EN/Themes/Society-Environment/Income-Consumption-Living-Conditions/Consumption-Expenditure/consumption-1-VAT.html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "496f1edcc6fb51cfac1361640e251053bae0a2b3484198ee9564200aabd5d8d1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "PASS",
+		"code": "0003",
+		"issue_date": "2024-07-19",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Jane Doe",
+			"identities": [
+				{
+					"country": "GB",
+					"key": "passport",
+					"code": "543210987",
+					"ext": {
+						"es-tbai-identity-type": "03"
+					}
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"key": "services",
+					"name": "Guided tour booking fee",
+					"price": "75.00"
+				},
+				"sum": "150.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope",
+						"ext": {
+							"es-tbai-exemption": "RL",
+							"es-tbai-product": "services",
+							"es-tbai-regime": "01"
+						}
+					}
+				],
+				"total": "150.00"
+			}
+		],
+		"totals": {
+			"sum": "150.00",
+			"total": "150.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "outside-scope",
+								"ext": {
+									"es-tbai-exemption": "RL",
+									"es-tbai-product": "services",
+									"es-tbai-regime": "01"
+								},
+								"base": "150.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "150.00",
+			"payable": "150.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Tourist booking identified by passport."
+			}
+		]
+	}
+}

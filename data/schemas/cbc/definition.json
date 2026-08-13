@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cbc/definition",
+  "$ref": "#/$defs/cbc.Definition",
+  "$defs": {
+    "cbc.Definition": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key being defined."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code this definition represents."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Short name for the key."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description offering more details about when the key should be used."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta defines any additional details that may be useful or associated\nwith the key."
+        },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Where the information was sourced from and where it can be reviewed for updates in the future."
+        },
+        "values": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
+          },
+          "type": "array",
+          "title": "Values",
+          "description": "Values defines the possible values associated with the key, which themselves will\neither be keys or codes depending on the context."
+        },
+        "pattern": {
+          "type": "string",
+          "title": "Pattern",
+          "description": "Pattern is used to validate the key value instead of using a fixed value\nfrom the code or key definitions."
+        },
+        "map": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Code Map",
+          "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "description": "Definition defines properties of a key, code, or other value that has a specific meaning or utility."
+    }
+  }
+}

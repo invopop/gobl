@@ -1,100 +1,179 @@
 package pay
 
 import (
-	"errors"
+	"encoding/json"
+	"strings"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 )
 
 // Terms defines when we expect the customer to pay, or have paid, for
 // the contents of the document.
 type Terms struct {
-	Code     TermCode   `json:"code" jsonschema:"title=Code,description=Type of terms to be applied."`
-	Detail   string     `json:"detail,omitempty" jsonschema:"title=Detail,description=Text detail of the chosen payment terms."`
-	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates,description=Set of dates for agreed payments."`
-	Notes    string     `json:"notes,omitempty" jsonschema:"title=Notes,description=Description of the conditions for payment."`
+	// Type of terms to be applied.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Set of dates for agreed payments.
+	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates"`
+	// Description of the conditions for payment.
+	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+	// Extensions to the terms for local codes.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
-// TermCode is used to define a code that identifies the payment terms.
-type TermCode string
+// TermKeyDef holds a definition of a single payment term key
+type TermKeyDef struct {
+	// The key being defined
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	// Human readable title for the key
+	Title string `json:"title" jsonschema:"title=Title"`
+	// Human text for the key
+	Description string `json:"description" jsonschema:"title=Description"`
+	// The equivalent UNTDID 4279 Code
+	UNTDID4279 cbc.Code `json:"untdid4279" jsonschema:"title=UNTDID 4279 Code"`
+}
 
 // Pre-defined Payment Terms based on UNTDID 4279
 const (
-	TermNA         TermCode = "na"           // None defined
-	TermEndOfMonth TermCode = "end_of_month" // End of Month
-	TermDueDate    TermCode = "due_date"     // Due on a specific date
-	TermDeferred   TermCode = "deferred"     // Deferred until after the due dates
-	TermProximo    TermCode = "proximo"      // Month after the present
-	TermInstant    TermCode = "instant"      // on receipt of invoice
-	TermElective   TermCode = "elective"     // chosen by buyer
-	TermPending    TermCode = "pending"      // Seller to advise buyer in separate transaction
-	TermAdvance    TermCode = "advance"      // Payment made in advance
-	TermDelivery   TermCode = "delivery"     // Payment on Delivery
+	// End of Month
+	TermKeyEndOfMonth cbc.Key = "end-of-month"
+	// Due on a specific date
+	TermKeyDueDate cbc.Key = "due-date"
+	// Deferred until after the due dates
+	TermKeyDeferred cbc.Key = "deferred"
+	// Month after the present
+	TermKeyProximo cbc.Key = "proximo"
+	// on receipt of invoice
+	TermKeyInstant cbc.Key = "instant"
+	// chosen by buyer
+	TermKeyElective cbc.Key = "elective"
+	// Seller to advise buyer in separate transaction
+	TermKeyPending cbc.Key = "pending"
+	// Payment made in advance
+	TermKeyAdvanced cbc.Key = "advanced"
+	// Payment on Delivery
+	TermKeyDelivery cbc.Key = "delivery"
+	// Not yet defined
+	TermKeyUndefined cbc.Key = "undefined"
 )
 
-// Source: https://service.unece.org/trade/untdid/d15b/tred/tred4279.htm
-var untdid4279Terms = map[TermCode]string{
-	TermNA:         "16", // Not Yet Defined
-	TermEndOfMonth: "2",  // End of month
-	TermDueDate:    "3",  // Fixed date
-	TermDeferred:   "4",  // Deferred
-	TermProximo:    "9",  // Proximo
-	TermInstant:    "10", // Instant
-	TermElective:   "11", // Elective
-	TermPending:    "13", // Seller to advise buyer
-	TermAdvance:    "32", // Advanced payment
-	TermDelivery:   "52", // Cash on Delivery (COD)
+// TermKeyDefinitions includes all the currently accepted
+// GOBL Payment Term definitions.
+var TermKeyDefinitions = []TermKeyDef{
+	{TermKeyEndOfMonth, "End of Month", "End of month", "2"},
+	{TermKeyDueDate, "Due Date", "Due on a specific date", "3"},
+	{TermKeyDeferred, "Deferred", "Deferred until after the due date", "4"},
+	{TermKeyProximo, "Proximo", "Month after the present", "9"},
+	{TermKeyInstant, "Instant", "On receipt of invoice", "10"},
+	{TermKeyElective, "Elective", "Chosen by the buyer", "11"},
+	{TermKeyPending, "Pending", "Seller to advise buyer in separate transaction", "13"},
+	{TermKeyAdvanced, "Advanced", "Payment made in advance", "32"},
+	{TermKeyDelivery, "Delivery", "Payment on Delivery", "52"}, // Cash on Delivery (COD)
+	{TermKeyUndefined, "Undefined", "Not yet defined", "16"},
 }
 
-// Validate checks to ensure the typecode is part of a known list.
-func (c TermCode) Validate() error {
-	if string(c) == "" {
-		return nil
+func termsRules() *rules.Set {
+	termKeys := make([]any, len(TermKeyDefinitions))
+	for i, v := range TermKeyDefinitions {
+		termKeys[i] = v.Key
 	}
-	for k := range untdid4279Terms {
-		if k == c {
-			return nil
+	return rules.For(new(Terms),
+		rules.Field("key",
+			rules.AssertIfPresent("01", "key must be valid", is.In(termKeys...)),
+		),
+	)
+}
+
+// UnmarshalJSON handles backwards compatibility for the deprecated "detail" field.
+func (t *Terms) UnmarshalJSON(data []byte) error {
+	type Alias Terms
+	aux := struct {
+		*Alias
+		Detail string `json:"detail,omitempty"`
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	// Map detail to notes if detail is present
+	if aux.Detail != "" {
+		if t.Notes != "" {
+			t.Notes = strings.TrimSpace(t.Notes)
+			t.Notes, _ = strings.CutSuffix(t.Notes, ".")
+			t.Notes += ". " + aux.Detail
+		} else {
+			t.Notes = aux.Detail
 		}
+
 	}
-	return errors.New("invalid term code")
+	return nil
 }
 
 // DueDate contains an amount that should be paid by the given date.
 type DueDate struct {
-	Date     *org.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
+	Date     *cal.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
 	Notes    string          `json:"notes,omitempty" jsonschema:"title=Notes,description=Other details to take into account for the due date."`
 	Amount   num.Amount      `json:"amount" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
 	Percent  *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent,description=Percentage of the total that should be paid by the date."`
 	Currency currency.Code   `json:"currency,omitempty" jsonschema:"title=Currency,description=If different from the parent document's base currency."`
 }
 
+func dueDateRules() *rules.Set {
+	return rules.For(new(DueDate),
+		rules.Field("date",
+			rules.Assert("01", "date is required", is.Present),
+		),
+		rules.Field("amount",
+			rules.Assert("02", "amount must not be zero", num.NotZero),
+		),
+	)
+}
+
+// UNTDID4279 returns the UNTDID 4279 code associated with the terms key.
+func (t *Terms) UNTDID4279() cbc.Code {
+	for _, v := range TermKeyDefinitions {
+		if t.Key == v.Key {
+			return v.UNTDID4279
+		}
+	}
+	return cbc.CodeEmpty
+}
+
 // CalculateDues goes through each DueDate. If it has a percentage
 // value set, it'll be used to calculate the amount.
-func (t *Terms) CalculateDues(sum num.Amount) {
+func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 	if t == nil {
 		return
 	}
 	for _, dd := range t.DueDates {
+		if dd == nil {
+			continue
+		}
 		if dd.Percent != nil && !dd.Percent.IsZero() {
 			dd.Amount = dd.Percent.Of(sum)
 		}
+		dd.Amount = dd.Amount.Rescale(zero.Exp())
 	}
 }
 
-// Validate ensures that the terms contain everything required.
-func (t *Terms) Validate() error {
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Code, validation.Required),
-	)
-}
-
-// Validate checks the DueDate has the required fields.
-func (dd *DueDate) Validate() error {
-	return validation.ValidateStruct(dd,
-		validation.Field(&dd.Date, validation.Required),
-		validation.Field(&dd.Amount, validation.Required),
-	)
+// JSONSchemaExtend adds the payment terms key list to the schema.
+func (Terms) JSONSchemaExtend(schema *jsonschema.Schema) {
+	prop, ok := schema.Properties.Get("key")
+	if ok {
+		prop.OneOf = make([]*jsonschema.Schema, len(TermKeyDefinitions))
+		for i, v := range TermKeyDefinitions {
+			prop.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key,
+				Title:       v.Title,
+				Description: v.Description,
+			}
+		}
+	}
 }

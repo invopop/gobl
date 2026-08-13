@@ -1,33 +1,51 @@
 package gobl
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"bytes"
+	"encoding/json"
+	"strconv"
+	"strings"
 
+	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/uuid"
 )
 
-// Envelope wraps around a gobl document and provides support for digest creation
-// and digital signatures.
+// Envelope wraps around a document adding headers and
+// digital signatures. An Envelope is similar to a regular envelope
+// in the physical world, it keeps the contents safe and helps
+// get the document where its needed.
 type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
-	Head *Header `json:"head" jsonschema:"title=Header"`
+	Head *head.Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
-	Document *Document `json:"doc" jsonschema:"title=Document"`
+	Document *schema.Object `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
-	Signatures []*dsig.Signature `json:"sigs" jsonschema:"title=Signatures"`
+	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
 
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
 
-// Calculable defines the methods expected of a document payload that contains a `Calculate`
-// method to be used to perform any additional calculations.
-type Calculable interface {
-	Calculate() error
+// EndpointResolver is an optional interface that envelope-embedded
+// documents may implement to declare which party endpoints the
+// envelope should be routed from and to. When implemented, the
+// envelope's calculation step copies the URIs from the nominated
+// endpoints into Head.From / Head.To — but only when those fields
+// are not already populated by the caller. A nil return from
+// FromEndpoint / ToEndpoint leaves the corresponding header field
+// empty.
+type EndpointResolver interface {
+	FromEndpoint() *org.Endpoint
+	ToEndpoint() *org.Endpoint
 }
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
@@ -36,99 +54,307 @@ type Calculable interface {
 func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
-	e.Head = NewHeader()
-	e.Document = new(Document)
+	e.Head = head.NewHeader()
+	e.Document = new(schema.Object)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
 }
 
-// Validate ensures that the envelope contains everything it should to be considered valid GoBL.
-func (e *Envelope) Validate() error {
-	err := validation.ValidateStruct(e,
-		validation.Field(&e.Schema, validation.Required),
-		validation.Field(&e.Head, validation.Required),
-		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures, validation.When(e.Head != nil && !e.Head.Draft, validation.Required)),
+// Envelop is a convenience method that will build a new envelope and insert
+// the contents document provided in a single swoop. The resulting envelope
+// will still need to be signed afterwards.
+func Envelop(doc any) (*Envelope, error) {
+	e := NewEnvelope()
+	if err := e.Insert(doc); err != nil {
+		return nil, err
+	}
+	return e, nil
+}
+
+func envelopeRules() *rules.Set {
+	return rules.For(new(Envelope),
+		rules.Field("$schema",
+			rules.Assert("01", "envelope schema is required", is.Present),
+		),
+		rules.Field("head",
+			rules.Assert("02", "envelope header is required", is.Present),
+		),
+		rules.Field("doc",
+			rules.Assert("03", "envelope doc is required", is.Present),
+			rules.AssertIfPresent("04", "envelope doc must have a known schema",
+				is.Func("doc has payload", docHasPayload),
+			),
+		),
+		rules.Assert("11", "envelope digest does not match document contents",
+			is.Func("valid digest", validDigest),
+		),
+		rules.When(is.Func("not signed", notSigned),
+			rules.Assert("12", "envelope header cannot have stamps when not signed",
+				is.Func("no stamps", hasNoStamps),
+			),
+		),
+		rules.When(is.Func("has signatures", hasSignatures),
+			rules.Assert("13", "envelope doc is not ready to be signed, check code or other key fields",
+				isDocumentReadyToSign,
+			),
+		),
 	)
-	if err != nil {
-		return err
-	}
-	return e.verifyDigest()
 }
 
-func (e *Envelope) verifyDigest() error {
+func docHasPayload(val any) bool {
+	obj, ok := val.(*schema.Object)
+	return ok && obj.HasPayload()
+}
+
+func notSigned(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) == 0
+}
+
+func hasSignatures(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return false
+	}
+	return len(e.Signatures) > 0
+}
+
+func hasNoStamps(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok {
+		return true
+	}
+	return e.Head == nil || len(e.Head.Stamps) == 0
+}
+
+type documentCanSign interface {
+	CanSign() bool
+}
+
+// isDocumentReadyToSign is used to determine if the embedded document is reporting itself as ready to
+// sign. This is used by the signing rules to ensure that documents have all the
+// necessary information.
+var isDocumentReadyToSign rules.Test = is.Func(
+	"ready to sign",
+	func(val any) bool {
+		e, ok := val.(*Envelope)
+		if !ok || e == nil || e.Document == nil {
+			return false // cannot sign
+		}
+		obj, ok := e.Document.Instance().(documentCanSign)
+		if ok {
+			return obj.CanSign()
+		}
+		// assume all other documents are ready
+		return true
+	})
+
+func validDigest(val any) bool {
+	e, ok := val.(*Envelope)
+	if !ok || e.Head == nil {
+		return false
+	}
 	d1 := e.Head.Digest
-	d2, err := e.Document.Digest()
+	d2, err := e.Digest()
 	if err != nil {
-		return err
+		return false
 	}
-	return d1.Equals(d2)
+	return d1.Equals(d2) == nil
 }
 
-// Sign uses the private key to the envelope headers.
-func (e *Envelope) Sign(key *dsig.PrivateKey) error {
-	sig, err := key.Sign(e.Head)
+// Validate ensures that the envelope contains everything it should to be considered valid GOBL.
+func (e *Envelope) Validate() error {
+	return wrapError(rules.Validate(e))
+}
+
+// RulesContext injects validation directives carried on the envelope header
+// (currently Header.Ignore) into the validation context. rules.Validate calls
+// it automatically on the root object. We bridge through the envelope here
+// rather than have collectContext discover Header.RulesContext directly, since
+// the header is a pointer field and the field scan only resolves ContextAdders
+// on value (embedded) fields.
+func (e *Envelope) RulesContext() rules.WithContext {
+	return func(rc *rules.Context) {
+		if e != nil && e.Head != nil {
+			e.Head.RulesContext()(rc)
+		}
+	}
+}
+
+// Verify checks the envelope's signatures to ensure the headers they contain
+// still matches with the current headers. If a list of public keys are provided,
+// they will be used to ensure that the signatures we're signed by at least
+// one of them. If no keys are provided, only the contents will be checked.
+func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
+	if len(e.Signatures) == 0 {
+		return ErrSignature.WithReason("no signatures to verify")
+	}
+
+	var msgs []string
+	for i, s := range e.Signatures {
+		if err := e.verifySignature(s, keys...); err != nil {
+			msgs = append(msgs, "sigs["+strconv.Itoa(i)+"]: "+err.Error())
+		}
+	}
+	if len(msgs) > 0 {
+		return ErrSignature.WithReason("%s", strings.Join(msgs, "; "))
+	}
+
+	return nil
+}
+
+// VerifySignature checks a specific signature with the envelope to see if its
+// contents are still valid.
+// If a list of public keys are provided, they will be used to ensure that the
+// signature was signed by at least one of them. If no keys are provided, only
+// the contents will be checked.
+func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	return wrapError(e.verifySignature(sig, keys...))
+}
+
+func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	return e.Head.Verify(sig, keys...)
+}
+
+// Sign uses the private key to sign the envelope headers. Additional validation
+// rules may be applied to signed documents, so the document will be signed,
+// then validated, and if the validation fails, the signature will be removed.
+// The signer's GOBL Net address and the audience the signature is bound to
+// may be set with head.WithIssuer and head.WithAudience.
+func (e *Envelope) Sign(key *dsig.PrivateKey, opts ...head.SignOption) error {
+	if e.Head == nil {
+		return ErrValidation.WithReason("header required")
+	}
+	sig, err := e.Head.Sign(key, opts...)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
+	if err := e.Validate(); err != nil {
+		// invalid envelopes cannot be signed
+		e.Signatures = nil
+		return err
+	}
 	return nil
 }
 
-// Insert takes the provided document, performs any calculations, validates, then
-// serializes it ready for use.
+// Signed returns true if the envelope has signatures.
+func (e *Envelope) Signed() bool {
+	return len(e.Signatures) > 0
+}
+
+// Unsign removes the signatures from the envelope.
+func (e *Envelope) Unsign() {
+	e.Signatures = nil
+}
+
+// Insert takes the provided document and inserts it into this
+// envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
-		return ErrInternal.WithErrorf("missing head")
+		return ErrInternal.WithReason("missing head")
 	}
-
-	var err error
-	e.Document, err = NewDocument(doc)
-	if err != nil {
-		return err
-	}
-
-	if err := e.complete(doc); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Complete is used to perform calculations and validations on the envelopes document
-// if it responds to the Calculable and Validatable interfaces. Behind the scenes,
-// this method will determine the document type, extract, calculate, validate,
-// and then re-insert the potentially updated contents.
-func (e *Envelope) Complete() error {
-	if e.Document == nil {
+	if doc == nil {
 		return ErrNoDocument
 	}
 
-	obj := e.Document.Instance()
-	if obj == nil {
-		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
+	if d, ok := doc.(*schema.Object); ok {
+		e.Document = d
+	} else {
+		var err error
+		e.Document, err = schema.NewObject(doc)
+		if err != nil {
+			return wrapError(err)
+		}
 	}
 
-	return e.complete(obj)
+	if err := e.calculate(); err != nil {
+		return wrapError(err)
+	}
+
+	return nil
 }
 
-func (e *Envelope) complete(doc interface{}) error {
+// Calculate is used to perform calculations on the envelope's
+// document contents to ensure everything looks correct.
+// Headers will be refreshed to ensure they have the latest valid
+// digest.
+func (e *Envelope) Calculate() error {
+	if e.Document == nil {
+		return ErrNoDocument
+	}
+	if e.Document.IsEmpty() {
+		return ErrNoDocument
+	}
+
+	return e.calculate()
+}
+
+func (e *Envelope) calculate() error {
 	// Always set our schema version
 	e.Schema = EnvelopeSchema
 
 	// arm doors and cross check
-	if obj, ok := doc.(Calculable); ok {
-		if err := obj.Calculate(); err != nil {
-			return ErrCalculation.WithCause(err)
-		}
+	if err := e.Document.Calculate(); err != nil {
+		return ErrCalculation.WithCause(err)
 	}
 
-	var err error
+	// Double check the header looks okay
 	if e.Head == nil {
-		e.Head = NewHeader()
+		e.Head = head.NewHeader()
 	}
-	e.Head.Digest, err = e.Document.Digest()
-	return err
+	if e.Head.UUID.IsZero() {
+		e.Head.UUID = uuid.V7()
+	}
+	e.normalizeRouting()
+	var err error
+	e.Head.Digest, err = e.Digest()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// normalizeRouting populates Head.From / Head.To from the embedded
+// document when (a) the document implements EndpointResolver and (b)
+// the relevant header field is empty. Operator-set From / To values
+// are preserved; missing endpoints are quietly skipped.
+func (e *Envelope) normalizeRouting() {
+	if e.Head == nil || e.Document == nil {
+		return
+	}
+	r, ok := e.Document.Instance().(EndpointResolver)
+	if !ok {
+		return
+	}
+	if e.Head.From == "" {
+		if ep := r.FromEndpoint(); ep != nil {
+			e.Head.From = ep.URI
+		}
+	}
+	if e.Head.To == "" {
+		if ep := r.ToEndpoint(); ep != nil {
+			e.Head.To = ep.URI
+		}
+	}
+}
+
+// Digest calculates a digital digest using the canonical JSON of the document.
+func (e *Envelope) Digest() (*dsig.Digest, error) {
+	data, err := json.Marshal(e.Document)
+	if err != nil {
+		return nil, ErrMarshal.WithCause(err)
+	}
+	r := bytes.NewReader(data)
+	cd, err := c14n.CanonicalJSON(r)
+	if err != nil {
+		return nil, ErrInternal.WithReason("canonical JSON error: %w", err)
+	}
+	return dsig.NewSHA256Digest(cd), nil
 }
 
 // Extract the contents of the envelope into the provided document type.
@@ -137,4 +363,54 @@ func (e *Envelope) Extract() interface{} {
 		return nil
 	}
 	return e.Document.Instance()
+}
+
+// Correct will attempt to build a new envelope as a correction of the
+// current envelope contents, if possible.
+func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
+	if e.Head != nil && len(e.Head.Stamps) > 0 {
+		opts = append(opts, head.WithHead(e.Head))
+	}
+
+	nd, err := e.Document.Clone()
+	if err != nil {
+		return nil, wrapError(err)
+	}
+	if err := nd.Correct(opts...); err != nil {
+		return nil, ErrValidation.WithCause(err)
+	}
+
+	// Create a completely new envelope with a new set of data.
+	return Envelop(nd)
+}
+
+// Replicate will create a new envelope with the same contents as the current,
+// but with schema specific options applied to remove information that must
+// change between documents, such as stamps, invoice code, date, UUID, etc.
+// The intention here is for users to be able to get a new copy of the original
+// document so that they can issue a new version with updated details, or
+// simply use the original as a template.
+func (e *Envelope) Replicate() (*Envelope, error) {
+	nd, err := e.Document.Clone()
+	if err != nil {
+		return nil, wrapError(err)
+	}
+	if err := nd.Replicate(); err != nil {
+		return nil, wrapError(err)
+	}
+	return Envelop(nd)
+}
+
+// CorrectionOptionsSchema will attempt to provide a corrective options JSON Schema
+// that can be used to generate a JSON object to send when correcting a document.
+// If none are available, the result will be nil.
+func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
+	if e.Document == nil || e.Document.IsEmpty() {
+		return nil, ErrNoDocument
+	}
+	opts, err := e.Document.CorrectionOptionsSchema()
+	if err != nil {
+		return nil, wrapError(err)
+	}
+	return opts, nil
 }

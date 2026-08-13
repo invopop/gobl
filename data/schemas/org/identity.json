@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/identity",
+  "$ref": "#/$defs/org.Identity",
+  "$defs": {
+    "org.Identity": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Optional label useful for non-standard identities to give a bit more context."
+        },
+        "scope": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "tax",
+              "title": "Tax"
+            },
+            {
+              "const": "legal",
+              "title": "Legal"
+            }
+          ],
+          "title": "Scope",
+          "description": "Scope defines the context in which this identity is meant to be used."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
+          "title": "Country",
+          "description": "Country from which the identity was issued."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Uniquely classify this identity using a key instead of a Type."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Type",
+          "description": "The type of Code being represented and usually specific for\na particular context, country, or tax regime, and cannot be used\nalongside the key."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "The actual value of the identity code."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description adds details about what the code could mean or imply"
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext provides a way to add additional information to the identity."
+        }
+      },
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "description": "Identity is used to define a code for a specific context."
+    }
+  }
+}

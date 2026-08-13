@@ -1,0 +1,144 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "it-ticket-v1",
+  "name": {
+    "en": "Italy AdE ticket v1.x"
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Italian AdE Cassetto Fiscale"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Italian AdE Fattura e Corrispettivi"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "it-ticket-exempt",
+      "name": {
+        "en": "Exemption Code",
+        "it": "Natura Esenzione"
+      },
+      "values": [
+        {
+          "code": "N1",
+          "name": {
+            "en": "Excluded pursuant to Art. 15, DPR 633/72",
+            "it": "Escluse ex. art. 15 del D.P.R. 633/1972"
+          }
+        },
+        {
+          "code": "N2",
+          "name": {
+            "en": "Not subject",
+            "it": "Non soggette"
+          }
+        },
+        {
+          "code": "N3",
+          "name": {
+            "en": "Not taxable",
+            "it": "Non imponibili"
+          }
+        },
+        {
+          "code": "N4",
+          "name": {
+            "en": "Exempt",
+            "it": "Esenti"
+          }
+        },
+        {
+          "code": "N5",
+          "name": {
+            "en": "Margin regime / VAT not exposed",
+            "it": "Regime del margine/IVA non esposta in fattura"
+          }
+        },
+        {
+          "code": "N6",
+          "name": {
+            "en": "Reverse charge",
+            "it": "Inversione contabile"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-ticket-product",
+      "name": {
+        "en": "AdE CF Product Key",
+        "it": "Chiave Prodotto AdE CF"
+      },
+      "desc": {
+        "en": "Product keys are used by AdE CF to differentiate between goods\nand services."
+      },
+      "values": [
+        {
+          "code": "goods",
+          "name": {
+            "en": "Delivery of goods",
+            "it": "Consegna di beni"
+          }
+        },
+        {
+          "code": "services",
+          "name": {
+            "en": "Provision of services",
+            "it": "Prestazione di servizi"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-ticket-lottery",
+      "name": {
+        "en": "AdE Lottery Code",
+        "it": "Codice Lotteria AdE"
+      },
+      "desc": {
+        "en": "Lottery key is used to identify the lottery number (Codice lotteria). \nThis lottery code is provided by the customer at the time of purchase. \nIt is used to identify the customer in the lottery system provided by the Agenzia delle Entrate."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Agenzia delle Entrate",
+            "it": "Agenzia delle Entrate"
+          },
+          "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51"
+        }
+      ],
+      "pattern": "^[A-Z0-9]{8}$"
+    },
+    {
+      "key": "it-ticket-line-ref",
+      "name": {
+        "en": "AdE Line Reference",
+        "it": "Riferimento Linea AdE"
+      },
+      "desc": {
+        "en": "Reference code provided by the AdE to be able to identify the specific line in credit notes."
+      }
+    }
+  ],
+  "scenarios": null,
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective"
+      ],
+      "stamps": [
+        "ade-ref"
+      ]
+    }
+  ]
+}

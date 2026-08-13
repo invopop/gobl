@@ -1,0 +1,76 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "PL",
+  "$addons": ["pl-favat-v3"],
+  "uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3cfc",
+  "type": "standard",
+  "series": "GV",
+  "code": "001",
+  "issue_date": "2026-01-20",
+  "currency": "PLN",
+  "supplier": {
+    "name": "Testowa Firma Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "addresses": [
+      {
+        "street": "ul. Główna 1",
+        "locality": "Warsaw",
+        "code": "00-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "customer": {
+    "name": "VAT Group Member Sp. z o.o.",
+    "tax_id": {
+      "country": "PL",
+      "code": "9876543210"
+    },
+    "ext": {
+      "pl-favat-group-vat": "1"
+    },
+    "identities": [
+      {
+        "code": "GV-MEMBER-12345",
+        "ext": {
+          "pl-favat-third-party-role": "10"
+        }
+      }
+    ],
+    "addresses": [
+      {
+        "street": "ul. Grupowa 50",
+        "locality": "Kraków",
+        "code": "30-001",
+        "country": "PL"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "10",
+      "item": {
+        "name": "Consulting Services for VAT Group Member",
+        "price": "500.00",
+        "unit": "h"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "standard",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "key": "general",
+      "text": "Invoice for services provided to a VAT Group member."
+    }
+  ]
+}

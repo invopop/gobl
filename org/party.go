@@ -1,104 +1,148 @@
 package org
 
 import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/invopop/jsonschema"
 )
 
 // Party represents a person or business entity.
 type Party struct {
-	ID           string        `json:"id,omitempty" jsonschema:"title=ID,description=Internal ID used to identify the party inside a document."`
-	UUID         *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	TaxID        *TaxID        `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
-	Name         string        `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
-	Alias        string        `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
-	People       []*Person     `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`
-	Addresses    []*Address    `json:"addresses,omitempty" jsonschema:"title=Postal Addresses,description=Regular post addresses for where information should be sent if needed."`
-	Emails       []*Email      `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
-	Telephones   []*Telephone  `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
-	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration,description=Additional registration details about the company that may need to be included in a document."`
-	Meta         Meta          `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional semi-structured information that does not fit into the rest of the party."`
-}
+	tax.Regime
+	uuid.Identify
 
-// Person represents a human, and how to contact them electronically.
-type Person struct {
-	ID         string       `json:"id,omitempty" jsonschema:"title=ID,description=Internal ID used to identify the person inside a document."`
-	UUID       *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Name       Name         `json:"name" jsonschema:"title=Name,description=Complete details on the name of the person"`
-	Role       string       `json:"role,omitempty" jsonschema:"title=Role,description=What they do within an organization"`
-	Emails     []*Email     `json:"emails,omitempty" jsonschema:"title=Email Addresses,description=Electronic mail addresses that belong to the person."`
+	// Label can be used to provide a custom label for the party in a given
+	// context in a single language, for example "Supplier", "Host", or similar.
+	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Supplier"`
+	// Legal name or representation of the organization.
+	Name string `json:"name,omitempty" jsonschema:"title=Name"`
+	// Alternate short name.
+	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
+	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
+	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
+	// Set of codes used to identify the party in other systems.
+	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Details of physical people who represent the party.
+	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
+	// Endpoints to which electronic documents may be sent, identified by URI.
+	Endpoints []*Endpoint `json:"endpoints,omitempty" jsonschema:"title=Endpoints"`
+	// Digital inboxes used for forwarding electronic versions of documents
+	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
+	// Regular post addresses for where information should be sent if needed.
+	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
+	// Electronic mail addresses
+	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
+	// Public websites that provide further information about the party.
+	Websites []*Website `json:"websites,omitempty" jsonschema:"title=Websites"`
+	// Regular telephone numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
-	Meta       Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Data about the data."`
+	// Additional registration details about the company that may need to be included in a document.
+	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration"`
+	// Images that can be used to identify the party visually.
+	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
+	// Extension code map for any additional regime specific codes that may be required.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
+	// Any additional semi-structured information that does not fit into the rest of the party.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Name represents what a human is called. This is a complex subject, see this
-// w3 article for some insights:
-// https://www.w3.org/International/questions/qa-personal-names
-type Name struct {
-	UUID     *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Alias    string     `json:"alias,omitempty" jsonschema:"title=Alias,description=What the person would like to be called"`
-	Prefix   string     `json:"prefix,omitempty" jsonschema:"title=Prefix"`
-	Given    string     `json:"given" jsonschema:"title=Given,description=The person's given name"`
-	Middle   string     `json:"middle,omitempty" jsonschema:"title=Middle,description=Middle names or initials"`
-	Surname  string     `json:"surname" jsonschema:"title=Surname"`
-	Surname2 string     `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
-	Suffix   string     `json:"suffix,omitempty" jsonschema:"title=Suffix"`
-	Meta     Meta       `json:"meta,omitempty" jsonschema:"title=Meta"`
+// Calculate will perform basic normalization of the party's data using the
+// party's own embedded tax regime, if any.
+func (p *Party) Calculate() error {
+	norm.Normalize(p)
+	return nil
 }
 
-// Email describes the electronic mailing details.
-type Email struct {
-	UUID    *uuid.UUID `json:"uuid,omitempty"`
-	Label   string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for the email."`
-	Address string     `json:"addr" jsonschema:"title=Address,description=Electronic mailing address."`
-	Meta    Meta       `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional fields."`
+// Endpoint returns the party's first endpoint whose URI uses the given
+// scheme, or nil if none is present.
+func (p *Party) Endpoint(scheme string) *Endpoint {
+	for _, e := range p.Endpoints {
+		if e != nil && e.URI.Scheme() == scheme {
+			return e
+		}
+	}
+	return nil
 }
 
-// Telephone describes what is expected for a telephone number.
-type Telephone struct {
-	UUID   *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Label  string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for this number."`
-	Number string     `json:"num" jsonschema:"title=Number,description=The number to be dialed in ITU E.164 international format."`
+// FirstEndpoint returns the party's first endpoint, or nil if the
+// party is nil or has none. Endpoint order is operator-controlled —
+// the first entry is treated as the preferred routing address.
+func (p *Party) FirstEndpoint() *Endpoint {
+	if p == nil {
+		return nil
+	}
+	for _, e := range p.Endpoints {
+		if e != nil {
+			return e
+		}
+	}
+	return nil
 }
 
-// Registration is used in countries that require additional information to be associated
-// with a company usually related to a specific registration office.
-// The definition found here is based on the details required for spain.
-// If your country requires additional fields, please let us know.
-type Registration struct {
-	UUID    *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Office  string     `json:"office,omitempty" jsonschema:"title=Office,description=Office where the company is registered."`
-	Book    string     `json:"book,omitempty" jsonschema:"title=Book"`
-	Volume  string     `json:"volume,omitempty" jsonschema:"title=Volume"`
-	Sheet   string     `json:"sheet,omitempty" jsonschema:"title=Sheet"`
-	Section string     `json:"section,omitempty" jsonschema:"title=Section"`
-	Page    string     `json:"page,omitempty" jsonschema:"title=Page"`
-	Entry   string     `json:"entry,omitempty" jsonschema:"title=Entry"`
+// PartyHasTaxIDCode provides a test that will determine if the party has a
+// tax identity with a code.
+func PartyHasTaxIDCode() rules.Test {
+	return is.Func("has tax ID code", partyHasTaxIDCode)
 }
 
-// Validate is used to check the party's data meets minimum expectations.
-func (p *Party) Validate() error {
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Name, validation.Required),
-		validation.Field(&p.TaxID),
-		validation.Field(&p.People),
-		validation.Field(&p.Emails),
-		validation.Field(&p.Telephones),
-	)
+func partyHasTaxIDCode(obj any) bool {
+	p := partyFrom(obj)
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
 }
 
-// Validate ensures email address looks valid.
-func (e *Email) Validate() error {
-	return validation.ValidateStruct(e,
-		validation.Field(&e.Address, validation.Required, is.Email),
-	)
+// PartyHasIdentityTypeIn provides a test that will determine if at least one of
+// the party's identities has one of the given types.
+func PartyHasIdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return partyIdentities(IdentitiesTypeIn(typ...))
 }
 
-// Validate checks the telephone objects number to ensure it looks correct.
-func (t *Telephone) Validate() error {
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Number, validation.Required, is.E164),
-	)
+// PartyHasIdentityKeyIn provides a test that will determine if at least one of
+// the party's identities has one of the given keys.
+func PartyHasIdentityKeyIn(key ...cbc.Key) rules.Test {
+	return partyIdentities(IdentitiesKeyIn(key...))
+}
+
+// partyIdentities adapts a test for a party's identities so that it can be
+// applied to the party itself.
+func partyIdentities(test rules.Test) rules.Test {
+	return is.Func(test.String(), func(obj any) bool {
+		p := partyFrom(obj)
+		if p == nil {
+			return false
+		}
+		return test.Check(p.Identities)
+	})
+}
+
+// partyFrom extracts a party from either a pointer or a value, as object level
+// tests may receive either shape.
+func partyFrom(obj any) *Party {
+	switch v := obj.(type) {
+	case *Party:
+		return v
+	case Party:
+		return &v
+	}
+	return nil
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"name", "tax_id",
+		},
+	}
+}
+
+func normalizeParty(p *Party) {
+	uuid.Normalize(&p.UUID)
+	p.Label = cbc.NormalizeString(p.Label)
+	p.Name = cbc.NormalizeString(p.Name)
+	p.Alias = cbc.NormalizeString(p.Alias)
 }

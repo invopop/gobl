@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/schema/object",
+  "$ref": "#/$defs/schema.Object",
+  "$defs": {
+    "schema.Object": {
+      "type": "object",
+      "title": "Object",
+      "description": "Data object whose type is determined from the `$schema` property."
+    }
+  }
+}

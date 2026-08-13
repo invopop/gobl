@@ -1,0 +1,127 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Singapore"
+  },
+  "description": {
+    "en": "Singapore's tax system includes a Goods and Services Tax (GST) administered\nby the Inland Revenue Authority of Singapore (IRAS). Zero-rated supplies apply\nto international services and exports. Exempt supplies include financial\nservices, sale and lease of residential properties, digital payment tokens,\nand investment precious metals.\n\nBusinesses are identified by their Unique Entity Number (UEN). GST-registered\nsuppliers must display their GST Registration Number on all tax invoices,\nwhich in most cases is the same as the UEN.\n\nThree invoicing methods are supported: tax invoices (standard, requiring full\nsupplier and customer details), simplified tax invoices (for transactions\nup to 1000 SGD inclusive of GST), and receipts (for non-GST-registered\ncustomers). Credit notes are supported for correcting invoices; debit notes\nin Singapore are used for requesting payment on non-GST transactions, not\nfor invoice corrections."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "IRAS - GST General Guide for Businesses"
+      },
+      "url": "https://www.iras.gov.sg/media/docs/default-source/e-tax/etaxguide_gst_gst-general-guide-for-businesses(1).pdf"
+    }
+  ],
+  "time_zone": "Asia/Singapore",
+  "country": "SG",
+  "currency": "SGD",
+  "tax_scheme": "GST",
+  "identities": [
+    {
+      "code": "UEN",
+      "name": {
+        "en": "Unique Entity Number (UEN)"
+      },
+      "desc": {
+        "en": "The Unique Entity Number (UEN) is a standard identification number\nissued to entities (businesses and local companies) in Singapore.\nIt is used for all interactions with government agencies. The same\nUEN is normally used as the GST registration number, but not always."
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate"
+          },
+          "desc": {
+            "en": "GST-registered businesses are required to charge and account for GST at 9% on all sales of goods and services in Singapore unless the sale can be zero-rated or exempted under the GST law."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "9%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "8%"
+            },
+            {
+              "since": "2007-07-01",
+              "percent": "7%"
+            },
+            {
+              "since": "2004-01-01",
+              "percent": "5%"
+            },
+            {
+              "since": "2003-01-01",
+              "percent": "4%"
+            },
+            {
+              "since": "1994-04-01",
+              "percent": "3%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Goods and Services Tax (GST)"
+          },
+          "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates"
+        }
+      ]
+    }
+  ]
+}

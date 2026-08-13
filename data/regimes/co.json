@@ -1,0 +1,196 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Colombia",
+    "es": "Colombia"
+  },
+  "description": {
+    "en": "Colombia's tax system is administered by the DIAN (Dirección de Impuestos y\nAduanas Nacionales). Electronic invoicing is mandatory for most businesses\nthrough the DIAN's e-invoicing platform.\n\nBusinesses are identified by their NIT (Número de Identificación Tributaria),\nwhich includes a check digit. For B2C transactions (using the simplified tag),\ncustomers may be identified using various document types including Registro\ncivil, Tarjeta de identidad, Cédula de ciudadanía, Tarjeta de extranjería,\nCédula de extranjería, Pasaporte, PEP, or NUIP. If no customer identity is\nprovided for simplified invoices, the reserved final consumer code is used\nautomatically.\n\nIVA (Impuesto sobre el Valor Agregado) applies at general, reduced, and zero\nrates. Some goods and services are excluded or exempt from IVA.\n\nInvoice series must be pre-registered with the DIAN. Municipality codes are\nrequired for addresses. Both credit notes and debit notes are supported for\ninvoice corrections, each requiring a specific correction cause code from the\nDIAN (e.g. partial refund, revoked, discount, adjustment for credit notes;\ninterest, pending charges, change in value for debit notes)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "DIAN - Invoice numbering authorization"
+      },
+      "url": "https://www.dian.gov.co/impuestos/sociedades/presentacionclientes/Solicitud_de_Autorizacion_de_Numeracion_de_Facturacion.pdf"
+    },
+    {
+      "title": {
+        "en": "DIAN - Municipality codes"
+      },
+      "url": "https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf"
+    }
+  ],
+  "time_zone": "America/Bogota",
+  "country": "CO",
+  "currency": "COP",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "General"
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2006-01-01",
+              "percent": "16.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Reducido"
+          },
+          "values": [
+            {
+              "since": "2006-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IC",
+      "name": {
+        "es": "IC"
+      },
+      "title": {
+        "en": "Consumption Tax",
+        "es": "Impuesto sobre Consumo"
+      }
+    },
+    {
+      "code": "ICA",
+      "name": {
+        "es": "ICA"
+      },
+      "title": {
+        "en": "Industry and Commerce Tax",
+        "es": "Impuesto de Industria y Comercio"
+      }
+    },
+    {
+      "code": "INC",
+      "name": {
+        "es": "INC"
+      },
+      "title": {
+        "en": "National Consumption Tax",
+        "es": "Impuesto Nacional al Consumo"
+      }
+    },
+    {
+      "code": "RVAT",
+      "name": {
+        "es": "ReteIVA"
+      },
+      "title": {
+        "es": "Retención en la fuente por el Impuesto al Valor Agregado"
+      },
+      "retained": true
+    },
+    {
+      "code": "RICA",
+      "name": {
+        "es": "ReteICA"
+      },
+      "title": {
+        "es": "Retención en la fuente por el Impuesto de Industria y Comercio"
+      },
+      "retained": true
+    },
+    {
+      "code": "RR",
+      "name": {
+        "es": "Retefuente"
+      },
+      "title": {
+        "es": "Retención en la fuente por el Impuesto de la Renta"
+      },
+      "retained": true
+    }
+  ]
+}

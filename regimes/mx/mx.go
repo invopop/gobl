@@ -1,0 +1,102 @@
+// Package mx provides the Mexican tax regime.
+package mx
+
+import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
+)
+
+// CountryCode is the tax country code for Mexico.
+const CountryCode = "MX"
+
+func init() {
+	tax.RegisterRegimeDef(New())
+	rules.Register("mx", rules.GOBL.Add(CountryCode), taxIdentityRules())
+	norm.Register(
+		norm.When(tax.IdentityIn(CountryCode),
+			norm.For(normalizeTaxIdentity),
+		),
+	)
+	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
+		norm.For(normalizeInvoice), // *bill.Invoice
+	)
+}
+
+// Official SAT codes to include in stamps.
+const (
+	StampSATSignature   cbc.Key = "sat-sig"          // Signature - Sello Digital del SAT (optional)
+	StampSATSerial      cbc.Key = "sat-serial"       // Cert Serial - Número de Certificado SAT
+	StampSATTimestamp   cbc.Key = "sat-timestamp"    // Timestamp - Fecha y hora de certificación del SAT
+	StampSATUUID        cbc.Key = "sat-uuid"         // Folio Fiscal
+	StampSATURL         cbc.Key = "sat-url"          // URL QR Code
+	StampSATProviderRFC cbc.Key = "sat-provider-rfc" // Provider RFC - RFC del Proveedor de Certificación
+	StampSATChain       cbc.Key = "sat-chain"        // Cadena original del complemento de certificación digital del SAT
+)
+
+// Custom keys used typically in meta or codes information.
+const (
+	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago's codes
+	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion's codes
+	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto's codes
+)
+
+// New provides the tax region definition
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
+		Country:   "MX",
+		Currency:  currency.MXN,
+		TaxScheme: tax.CategoryVAT,
+		Name: i18n.String{
+			i18n.EN: "Mexico",
+			i18n.ES: "México",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Mexico's tax system is administered by the SAT (Servicio de Administración
+				Tributaria). Electronic invoicing through CFDI (Comprobante Fiscal Digital por
+				Internet) version 4.0 is mandatory for all businesses.
+
+				IVA (Impuesto al Valor Agregado) applies at general, zero, and exempt rates.
+				Zero-rated supplies include food, medicine, and exports, while educational
+				and medical services are exempt.
+
+				Businesses are identified by their RFC (Registro Federal de Contribuyentes),
+				a 12-character code for companies or 13-character code for individuals, which
+				includes a date component and check digits. Every supplier and customer must
+				be associated with a fiscal regime code (RegimenFiscal).
+
+				CFDI invoices require specific fields including issue place (LugarExpedicion),
+				CFDI use (UsoCFDI), payment method (MetodoPago distinguishing between fully
+				paid PUE and pending PPD invoices), payment means (FormaPago), and
+				product/service codes (ClaveProdServ) from the SAT catalog. For B2C sales,
+				the simplified tag triggers use of the generic RFC code for final consumers.
+				For foreign customers, their country and local tax code are mapped
+				automatically. Invoices can include complements for fuel account balances and
+				food vouchers among others.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("SAT - Anexo 20 (Invoice Format)"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm",
+			},
+			{
+				Title: i18n.NewString("SAT - CFDI 4.0 Filling Guide"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/Anexo_20_Guia_de_llenado_CFDI.pdf",
+			},
+			{
+				Title: i18n.NewString("SAT - Global CFDI 4.0 Filling Guide"),
+				URL:   "http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf",
+			},
+		},
+		TimeZone:    "America/Mexico_City",
+		Categories:  taxCategories,
+		Corrections: correctionDefinitions,
+	}
+}

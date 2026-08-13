@@ -1,0 +1,90 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Canada"
+  },
+  "description": {
+    "en": "Canada's tax system is administered by the Canada Revenue Agency\n(CRA). The country uses a multi-layered sales tax system consisting\nof the federal Goods and Services Tax (GST) and various provincial\ntaxes.\n\nThe Harmonized Sales Tax (HST) combines GST and provincial sales\ntax in participating provinces. Non-participating provinces levy a\nseparate Provincial Sales Tax (PST) at varying rates. Zero-rated\nsupplies include basic groceries, agricultural products, and\nexports. Exempt supplies include certain financial services,\neducational services, and healthcare services.\n\nBusinesses with annual taxable revenues exceeding CAD 30,000 must\nregister for GST/HST. Tax identification is through the Business\nNumber (BN) assigned by the CRA. Canada supports both credit notes\nand debit notes for invoice corrections."
+  },
+  "time_zone": "America/Toronto",
+  "country": "CA",
+  "currency": "CAD",
+  "tax_scheme": "GST",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "General Sales Tax"
+      },
+      "rates": [
+        {
+          "rate": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Some supplies are zero-rated under the GST, mainly: basic groceries, agricultural products, farm livestock, most fishery products such, prescription drugs and drug-dispensing services, certain medical devices, feminine hygiene products, exports, many transportation services where the origin or destination is outside Canada"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "name": {
+            "en": "General rate"
+          },
+          "desc": {
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+          },
+          "values": [
+            {
+              "since": "2022-01-01",
+              "percent": "5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "GST/HST provincial rates table"
+          },
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate/calculator.html"
+        }
+      ]
+    },
+    {
+      "code": "HST",
+      "name": {
+        "en": "HST"
+      },
+      "title": {
+        "en": "Harmonized Sales Tax"
+      }
+    },
+    {
+      "code": "PST",
+      "name": {
+        "en": "PST"
+      },
+      "title": {
+        "en": "Provincial Sales Tax"
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "c814dff123ca4616587fb8fcfb3491873201b622e358436b8b8dcb42ae7807e1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/org/party",
+		"uuid": "0192a13b-7f85-7429-a635-b269f6eb5295",
+		"name": "Provide One S.L.",
+		"tax_id": {
+			"country": "ES",
+			"code": "B98602642"
+		},
+		"people": [
+			{
+				"label": "Representante",
+				"key": "representative",
+				"name": {
+					"given": "Juan",
+					"surname": "Pérez"
+				},
+				"identities": [
+					{
+						"label": "NIF",
+						"key": "national",
+						"code": "60784097L"
+					}
+				],
+				"addresses": [
+					{
+						"num": "42",
+						"street": "Calle Pradillo",
+						"locality": "Madrid",
+						"region": "Madrid",
+						"code": "28002",
+						"country": "ES"
+					}
+				]
+			}
+		],
+		"addresses": [
+			{
+				"num": "42",
+				"street": "Calle Pradillo",
+				"locality": "Madrid",
+				"region": "Madrid",
+				"code": "28002",
+				"country": "ES"
+			}
+		],
+		"emails": [
+			{
+				"addr": "billing@example.com"
+			}
+		]
+	}
+}

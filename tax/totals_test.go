@@ -2,339 +2,751 @@ package tax_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
-	"github.com/invopop/gobl/regions/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // taxableLine is a very simple implementation of what the totals calculator requires.
 type taxableLine struct {
-	rates  tax.Rates
+	taxes  tax.Set
 	amount num.Amount
 }
 
-func (tl *taxableLine) GetTaxRates() tax.Rates {
-	return tl.rates
+func (tl *taxableLine) GetTaxes() tax.Set {
+	return tl.taxes
 }
 
 func (tl *taxableLine) GetTotal() num.Amount {
 	return tl.amount
 }
 
-func TestTotalCalculate(t *testing.T) {
-	spain := es.New()
-	date := org.MakeDate(2022, 01, 24)
-	zero := num.MakeAmount(0, 2)
-	var tests = []struct {
-		desc        string
-		lines       []tax.TaxableLine
-		taxIncluded tax.Code
-		want        *tax.Total
-		err         error
-	}{
-		{
-			desc: "basic no tax",
-			lines: []tax.TaxableLine{
-				&taxableLine{rates: nil, amount: num.MakeAmount(10000, 2)},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{},
-				Sum:        zero,
+func TestTotalClone(t *testing.T) {
+	var tt *tax.Total
+	assert.NotPanics(t, func() {
+		_ = tt.Clone()
+	})
+	tt = &tax.Total{
+		Categories: []*tax.CategoryTotal{
+			{
+				Code:     tax.CategoryVAT,
+				Retained: false,
+				Rates: []*tax.RateTotal{
+					{
+						Key:     tax.KeyStandard,
+						Base:    num.MakeAmount(10000, 2),
+						Percent: num.NewPercentage(210, 3),
+						Amount:  num.MakeAmount(2100, 2),
+						Surcharge: &tax.RateTotalSurcharge{
+							Percent: num.MakePercentage(10, 3),
+							Amount:  num.MakeAmount(100, 2),
+						},
+					},
+				},
+				Amount:    num.MakeAmount(2100, 2),
+				Surcharge: num.NewAmount(100, 2),
 			},
 		},
-		{
-			desc: "with VAT",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(10000, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(2100, 2),
-							},
-						},
-						Base:   num.MakeAmount(10000, 2),
-						Amount: num.MakeAmount(2100, 2),
-					},
-				},
-				Sum: num.MakeAmount(2100, 2),
-			},
-		},
-		{
-			desc: "with multiline VAT",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(25000, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(5250, 2),
-							},
-						},
-						Base:   num.MakeAmount(25000, 2),
-						Amount: num.MakeAmount(5250, 2),
-					},
-				},
-				Sum: num.MakeAmount(5250, 2),
-			},
-		},
-		{
-			desc: "with multirate VAT",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATReduced},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(10000, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(2100, 2),
-							},
-							{
-								Code:    common.TaxRateVATReduced,
-								Base:    num.MakeAmount(15000, 2),
-								Percent: num.MakePercentage(100, 3),
-								Amount:  num.MakeAmount(1500, 2),
-							},
-						},
-						Base:   num.MakeAmount(25000, 2),
-						Amount: num.MakeAmount(3600, 2),
-					},
-				},
-				Sum: num.MakeAmount(3600, 2),
-			},
-		},
-		{
-			desc: "with multirate VAT included in price",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATReduced},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: common.TaxCategoryVAT,
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(8264, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(1736, 2),
-							},
-							{
-								Code:    common.TaxRateVATReduced,
-								Base:    num.MakeAmount(13636, 2),
-								Percent: num.MakePercentage(100, 3),
-								Amount:  num.MakeAmount(1364, 2),
-							},
-						},
-						Base:   num.MakeAmount(21900, 2),
-						Amount: num.MakeAmount(3100, 2),
-					},
-				},
-				Sum: num.MakeAmount(3100, 2),
-			},
-		},
-		{
-			desc: "with multirate VAT and retained tax",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-						{Category: es.TaxCategoryIRPF, Code: es.TaxRateIRPFStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATReduced},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(10000, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(2100, 2),
-							},
-							{
-								Code:    common.TaxRateVATReduced,
-								Base:    num.MakeAmount(15000, 2),
-								Percent: num.MakePercentage(100, 3),
-								Amount:  num.MakeAmount(1500, 2),
-							},
-						},
-						Base:   num.MakeAmount(25000, 2),
-						Amount: num.MakeAmount(3600, 2),
-					},
-					{
-						Code:     es.TaxCategoryIRPF,
-						Retained: true,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    es.TaxRateIRPFStandard,
-								Base:    num.MakeAmount(10000, 2),
-								Percent: num.MakePercentage(150, 3),
-								Amount:  num.MakeAmount(1500, 2),
-							},
-						},
-						Base:   num.MakeAmount(10000, 2),
-						Amount: num.MakeAmount(1500, 2),
-					},
-				},
-				Sum: num.MakeAmount(2100, 2),
-			},
-		},
+		Sum: num.MakeAmount(2200, 2),
+	}
+	tt2 := tt.Clone()
+	d1, err := json.Marshal(tt)
+	require.NoError(t, err)
+	d2, err := json.Marshal(tt2)
+	require.NoError(t, err)
 
-		{
-			desc: "with multirate VAT included in price plus retained tax",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATStandard},
-						{Category: es.TaxCategoryIRPF, Code: es.TaxRateIRPFStandard},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					rates: []*tax.Rate{
-						{Category: common.TaxCategoryVAT, Code: common.TaxRateVATReduced},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: common.TaxCategoryVAT,
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
+	assert.JSONEq(t, string(d1), string(d2))
+
+	tt.Categories[0].Rates[0].Base = num.MakeAmount(20000, 2)
+	assert.NotEqual(t, tt.Categories[0].Rates[0].Base, tt2.Categories[0].Rates[0].Base)
+}
+
+func TestTotalNegate(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			_ = tt.Negate()
+		})
+	})
+
+	tt := &tax.Total{
+		Categories: []*tax.CategoryTotal{
+			{
+				Code:     tax.CategoryVAT,
+				Retained: false,
+				Rates: []*tax.RateTotal{
 					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    common.TaxRateVATStandard,
-								Base:    num.MakeAmount(8264, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(1736, 2),
-							},
-							{
-								Code:    common.TaxRateVATReduced,
-								Base:    num.MakeAmount(13636, 2),
-								Percent: num.MakePercentage(100, 3),
-								Amount:  num.MakeAmount(1364, 2),
-							},
-						},
-						Base:   num.MakeAmount(21900, 2),
-						Amount: num.MakeAmount(3100, 2),
-					},
-					{
-						Code:     es.TaxCategoryIRPF,
-						Retained: true,
-						Rates: []*tax.RateTotal{
-							{
-								Code:    es.TaxRateIRPFStandard,
-								Base:    num.MakeAmount(8264, 2),
-								Percent: num.MakePercentage(150, 3),
-								Amount:  num.MakeAmount(1240, 2),
-							},
-						},
-						Base:   num.MakeAmount(8264, 2),
-						Amount: num.MakeAmount(1240, 2),
+						Key:     tax.KeyStandard,
+						Base:    num.MakeAmount(10000, 2),
+						Percent: num.NewPercentage(210, 3),
+						Amount:  num.MakeAmount(2100, 2),
 					},
 				},
-				Sum: num.MakeAmount(1860, 2),
+				Amount: num.MakeAmount(2100, 2),
 			},
 		},
+		Sum: num.MakeAmount(2100, 2),
+	}
+	tt2 := tt.Negate()
+	assert.Equal(t, int64(-2100), tt2.Category("VAT").Rates[0].Amount.Value())
+}
+
+func TestTotalCategory(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			_ = tt.Category("VAT")
+		})
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		assert.Nil(t, tt.Category("VAT"))
+	})
+
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		cat := tt.Category("VAT")
+		assert.NotNil(t, cat)
+		assert.Equal(t, tax.CategoryVAT, cat.Code)
+		assert.Len(t, cat.Rates, 1)
+	})
+}
+
+func TestTotalExchange(t *testing.T) {
+	er := &currency.ExchangeRate{
+		From:   currency.EUR,
+		To:     currency.USD,
+		Amount: num.MakeAmount(120, 2), // 1 EUR = 1.20 USD
 	}
 
-	for _, test := range tests {
-		t.Run(test.desc, func(t *testing.T) {
-			tot := tax.NewTotal(zero)
-			err := tot.Calculate(spain.Taxes(), test.lines, test.taxIncluded, date, zero)
-			if test.err != nil {
-				assert.ErrorIs(t, err, test.err)
-			}
-			if test.want != nil {
-				if !assert.Equal(t, test.want, tot) {
-					data, _ := json.MarshalIndent(tot, "", "  ")
-					t.Logf("data output: %v", string(data))
-				}
-			}
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Exchange(er, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("basic example", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt.Exchange(er, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(2520), tt.Sum.Value())
+		assert.Equal(t, int64(2520), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2520), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+}
+
+func TestTotalScale(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Scale(num.MakeAmount(5, 2), currency.EUR, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		assert.NotPanics(t, func() {
+			tt.Scale(num.MakeAmount(5, 2), currency.EUR, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Scale(num.MakeAmount(50, 2), currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(1050), tt.Sum.Value())
+		assert.Equal(t, int64(1050), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(1050), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+}
+
+func TestTotalMerge(t *testing.T) {
+	t.Run("basic merge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(4200), tt3.Category("VAT").Amount.Value())
+	})
+	t.Run("invert then merge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt = tt.Negate()
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(0), tt3.Category("VAT").Amount.Value())
+	})
+	t.Run("merge exempt", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:   num.MakeAmount(10000, 2),
+							Amount: num.MakeAmount(0, 2),
+						},
+					},
+					Amount: num.MakeAmount(0, 2),
+				},
+			},
+			Sum: num.MakeAmount(0, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:   num.MakeAmount(10000, 2),
+							Amount: num.MakeAmount(0, 2),
+						},
+					},
+					Amount: num.MakeAmount(0, 2),
+				},
+			},
+			Sum: num.MakeAmount(0, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(0), tt3.Sum.Value())
+		assert.Equal(t, int64(0), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(0), tt3.Category("VAT").Rates[0].Amount.Value())
+	})
+	t.Run("merge with different rate keys", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(4200), tt3.Sum.Value())
+		assert.Equal(t, int64(4200), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(4200), tt3.Category("VAT").Rates[0].Amount.Value())
+		assert.Equal(t, tax.KeyStandard, tt3.Category("VAT").Rates[0].Key)
+	})
+	t.Run("merge with different rate percents", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(200, 3),
+							Amount:  num.MakeAmount(2000, 2),
+						},
+					},
+					Amount: num.MakeAmount(2000, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(4200), tt3.Sum.Value())
+		assert.Equal(t, int64(4100), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2100), tt3.Category("VAT").Rates[0].Amount.Value())
+		assert.Equal(t, int64(2000), tt3.Category("VAT").Rates[1].Amount.Value())
+	})
+	t.Run("merge with different categories", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.KeyStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     "IRPF",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(150, 3),
+							Amount:  num.MakeAmount(1500, 2),
+						},
+					},
+					Amount: num.MakeAmount(1500, 2),
+				},
+			},
+			Sum: num.MakeAmount(-1500, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(2100), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2100), tt3.Category("VAT").Rates[0].Amount.Value())
+		assert.Equal(t, int64(1500), tt3.Category("IRPF").Rates[0].Amount.Value())
+		assert.Equal(t, int64(600), tt3.Sum.Value())
+	})
+	t.Run("merge with same surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+								Amount:  num.MakeAmount(100, 2),
+							},
+							Amount: num.MakeAmount(2100, 2),
+						},
+					},
+					Amount:    num.MakeAmount(2200, 2),
+					Surcharge: num.NewAmount(100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2200, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2000, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+								Amount:  num.MakeAmount(100, 2),
+							},
+						},
+					},
+					Amount:    num.MakeAmount(2100, 2),
+					Surcharge: num.NewAmount(100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2200, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(4400), tt3.Sum.Value())
+		assert.Equal(t, int64(4300), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(4100), tt3.Category("VAT").Rates[0].Amount.Value())
+		assert.Equal(t, int64(200), tt3.Category("VAT").Surcharge.Value())
+	})
+	t.Run("merge with different surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+								Amount:  num.MakeAmount(100, 2),
+							},
+							Amount: num.MakeAmount(2100, 2),
+						},
+					},
+					Amount:    num.MakeAmount(2200, 2),
+					Surcharge: num.NewAmount(100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2200, 2),
+		}
+		tt2 := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2000, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(11, 3),
+								Amount:  num.MakeAmount(110, 2),
+							},
+						},
+					},
+					Amount:    num.MakeAmount(2100, 2),
+					Surcharge: num.NewAmount(110, 2),
+				},
+			},
+			Sum: num.MakeAmount(2210, 2),
+		}
+		tt3 := tt.Merge(tt2)
+		assert.Equal(t, int64(4410), tt3.Sum.Value())
+		assert.Equal(t, int64(4300), tt3.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2100), tt3.Category("VAT").Rates[0].Amount.Value())
+		assert.Equal(t, int64(2000), tt3.Category("VAT").Rates[1].Amount.Value())
+	})
+}
+
+func TestTotalCalculate(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(0), tt.Sum.Value())
+	})
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(2100), tt.Sum.Value())
+		assert.Equal(t, int64(2100), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+	t.Run("basic with surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		data, _ := json.Marshal(tt)
+		fmt.Printf("TOTAL: %s\n", string(data))
+		assert.Equal(t, int64(2200), tt.Sum.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
+		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
+	})
+
+	t.Run("basic with retained surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+				{
+					Code:     "IRPF",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(150, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		data, _ := json.Marshal(tt)
+		fmt.Printf("TOTAL: %s\n", string(data))
+		assert.Equal(t, "22.00", tt.Sum.String())
+		assert.Equal(t, "16.00", tt.Retained.String())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
+		assert.Equal(t, "15.00", tt.Category("IRPF").Rates[0].Amount.String())
+		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
+	})
+
+	t.Run("basic with multiple informative taxes", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+				{
+					Code:        "ISS",
+					Informative: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(50, 3),
+						},
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(30, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(2100), tt.Sum.Value()) // Informative tax with surcharge should not affect Sum
+		assert.True(t, tt.Category("ISS").Informative)
+		assert.Equal(t, int64(800), tt.Category("ISS").Amount.Value())
+		assert.Equal(t, "5.00", tt.Category("ISS").Rates[0].Amount.String())
+		assert.Equal(t, "3.00", tt.Category("ISS").Rates[1].Amount.String())
+	})
+}
+
+func TestTotalCalculateRepeated(t *testing.T) {
+	build := func() *tax.Total {
+		return &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(21, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: *num.NewPercentage(52, 3),
+							},
+						},
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(10, 2),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: *num.NewPercentage(14, 3),
+							},
+						},
+					},
+				},
+				{
+					Code:     "IRPF",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(15, 2),
+						},
+					},
+				},
+				{
+					Code:     "RET",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(2, 2),
+						},
+					},
+				},
+			},
+		}
+	}
+	for _, rr := range []cbc.Key{tax.RoundingRulePrecise, tax.RoundingRuleCurrency} {
+		t.Run(rr.String(), func(t *testing.T) {
+			tot := build()
+			tot.Calculate(currency.EUR, rr)
+			tot.Calculate(currency.EUR, rr)
+			assert.Equal(t, "21.00", tot.Categories[0].Rates[0].Amount.String())
+			assert.Equal(t, "6.60", tot.Categories[0].Surcharge.String())
+			assert.Equal(t, "37.60", tot.Sum.String())
+			require.NotNil(t, tot.Retained)
+			assert.Equal(t, "17.00", tot.Retained.String())
 		})
 	}
-
 }

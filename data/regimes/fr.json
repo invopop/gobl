@@ -1,0 +1,196 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "France",
+    "fr": "La France"
+  },
+  "description": {
+    "en": "France's tax system is administered by the Direction Générale des Finances\nPubliques (DGFiP). As an EU member state, France follows the EU VAT Directive\nwith locally adapted rates.\n\nTVA (Taxe sur la Valeur Ajoutée) applies at standard, intermediate, reduced,\nand super-reduced rates covering various categories of goods and services.\n\nBusinesses are identified by three closely related numbers: the VAT code\n(numéro de TVA intracommunautaire), an 11-digit number starting with a\n2-digit checksum followed by the 9-digit SIREN; the SIREN itself, a 9-digit\ncompany identifier from the national register (Répertoire SIRENE); and the\nSIRET, which extends the SIREN with a 5-digit establishment number to form\na 14-digit code.\n\nFrance supports both corrective invoices and credit notes for invoice\ncorrections. E-invoicing via the Chorus Pro platform is mandatory for B2G\ntransactions, with B2B e-invoicing being progressively mandated through the\nCTC (Continuous Transaction Controls) framework."
+  },
+  "time_zone": "Europe/Paris",
+  "country": "FR",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse Charge / Autoliquidation de la TVA - Article 283-1 du CGI. Le client est redevable de la TVA."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "corrective"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "fr": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "fr": "Taxe sur la Valeur Ajoutée"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate",
+            "fr": "Taux normal"
+          },
+          "desc": {
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided.",
+            "fr": "Pour la majorité des ventes de biens et des prestations de services : il s'applique à tous les produits ou services pour lesquels aucun autre taux n'est expressément prévu."
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "20%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Intermediate rate",
+            "fr": "Taux intermédiaire"
+          },
+          "desc": {
+            "en": "Applicable in particular to unprocessed agricultural products, firewood, housing improvement works which do not benefit from the 5.5% rate, to certain accommodation and camping services, to fairs and exhibitions, fairground games and rides, to entrance fees to museums, zoos, monuments, to passenger transport, to the processing of waste, restoration.",
+            "fr": "Notamment applicable aux produits agricoles non transformés, au bois de chauffage, aux travaux d'amélioration du logement qui ne bénéficient pas du taux de 5,5%, à certaines prestations de logement et de camping, aux foires et salons, jeux et manèges forains, aux droits d'entrée des musées, zoo, monuments, aux transports de voyageurs, au traitement des déchets, à la restauration."
+          },
+          "values": [
+            {
+              "since": "2014-01-01",
+              "percent": "10%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced rate",
+            "fr": "Taux réduit"
+          },
+          "desc": {
+            "en": "Concerns most food products, feminine hygiene protection products, equipment and services for the disabled, books on any medium, gas and electricity subscriptions, supply of heat from renewable energies, supply of meals in school canteens, ticketing for live shows and cinemas, certain imports and deliveries of works of art, improvement works the energy quality of housing, social or emergency housing, home ownership.",
+            "fr": "Concerne l'essentiel des produits alimentaires, les produits de protection hygiénique féminine, équipements et services pour handicapés, livres sur tout support, abonnements gaz et électricité, fourniture de chaleur issue d’énergies renouvelables, fourniture de repas dans les cantines scolaires, billeterie de spectacle vivant et de cinéma, certaines importations et livraisons d'œuvres d'art, travaux d’amélioration de la qualité énergétique des logements, logements sociaux ou d'urgence, accession à la propriété."
+          },
+          "values": [
+            {
+              "since": "2014-01-01",
+              "percent": "5.5%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super reduced rate",
+            "fr": "Taux super réduit"
+          },
+          "desc": {
+            "en": "Reserved for medicines reimbursable by social security, sales of live animals for slaughter and charcuterie to non-taxable persons, the television license fee, certain shows and press publications registered with the Joint Commission for Publications and Press Agencies.",
+            "fr": "Réservé aux médicaments remboursables par la sécurité sociale, aux ventes d’animaux vivants de boucherie et de charcuterie à des non assujettis, à la redevance télévision, à certains spectacles et aux publications de presse inscrites à la Commission paritaire des publications et agences de presse."
+          },
+          "values": [
+            {
+              "since": "2014-01-01",
+              "percent": "2.1%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "What are the current VAT rates in France and in the European Union?",
+            "fr": "Quels sont les taux de TVA en vigueur en France et dans l'Union européenne?"
+          },
+          "url": "https://www.economie.gouv.fr/cedef/taux-tva-france-et-union-europeenne"
+        }
+      ]
+    }
+  ]
+}

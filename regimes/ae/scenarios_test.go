@@ -1,0 +1,103 @@
+package ae_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func testInvoiceReverseCharge(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Code:     "123TEST",
+		Currency: "AED",
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: "AE",
+				Code:    "123456789012345",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "AE",
+				Code:    "123456789012346",
+			},
+		},
+		IssueDate: cal.MakeDate(2023, 1, 15),
+		Tags:      tax.WithTags(tax.TagReverseCharge),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(5, 0),
+				Item: &org.Item{
+					Name:  "Service Item",
+					Price: num.NewAmount(5000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "general",
+					},
+				},
+			},
+		},
+	}
+}
+
+func testInvoiceSimplified(t *testing.T) *bill.Invoice {
+	t.Helper()
+	return &bill.Invoice{
+		Code:     "123TEST",
+		Currency: "AED",
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: "AE",
+				Code:    "123456789012345",
+			},
+		},
+		IssueDate: cal.MakeDate(2023, 1, 15),
+		Tags:      tax.WithTags(tax.TagSimplified),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Product Item",
+					Price: num.NewAmount(2000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "general",
+					},
+				},
+			},
+		},
+	}
+}
+
+func TestInvoiceScenarios(t *testing.T) {
+	i := testInvoiceReverseCharge(t)
+	require.NoError(t, i.Calculate())
+	require.NoError(t, rules.Validate(i))
+	require.NotNil(t, i.Tax)
+	assert.Len(t, i.Tax.Notes, 1)
+	assert.Equal(t, tax.KeyReverseCharge, i.Tax.Notes[0].Key)
+	assert.Equal(t, "Reverse Charge", i.Tax.Notes[0].Text)
+
+	i = testInvoiceSimplified(t)
+	require.NoError(t, i.Calculate())
+	require.NoError(t, rules.Validate(i))
+	require.NotNil(t, i.Tax)
+	assert.Len(t, i.Tax.Notes, 1)
+	assert.Equal(t, "Simplified Tax Invoice", i.Tax.Notes[0].Text)
+}

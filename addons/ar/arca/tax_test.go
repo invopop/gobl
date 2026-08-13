@@ -1,0 +1,111 @@
+package arca_test
+
+import (
+	"testing"
+
+	"github.com/invopop/gobl/addons/ar/arca"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/regimes/ar"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNormalizeTaxCombo(t *testing.T) {
+
+	t.Run("nil tax combo does not panic", func(t *testing.T) {
+		var tc *tax.Combo
+		assert.NotPanics(t, func() {
+			norm.Normalize(tc, tax.AddonContext(arca.V4))
+		})
+	})
+
+	t.Run("zero rate key sets VAT rate 3", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyZero,
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Equal(t, "3", tc.Ext.Get(arca.ExtKeyVATRate).String())
+	})
+
+	t.Run("reduced rate sets VAT rate 4", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateReduced,
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Equal(t, "4", tc.Ext.Get(arca.ExtKeyVATRate).String())
+	})
+
+	t.Run("general rate sets VAT rate 5", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
+	})
+
+	t.Run("increased rate sets VAT rate 6", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     ar.RateIncreased,
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Equal(t, "6", tc.Ext.Get(arca.ExtKeyVATRate).String())
+	})
+
+	t.Run("other rate does not set VAT rate", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateSpecial,
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Empty(t, tc.Ext.Get(arca.ExtKeyVATRate))
+	})
+
+	t.Run("existing extensions are preserved", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"custom-key": "custom-value",
+			}),
+		}
+		norm.Normalize(tc, tax.AddonContext(arca.V4))
+		assert.Equal(t, "5", tc.Ext.Get(arca.ExtKeyVATRate).String())
+		assert.Equal(t, "custom-value", tc.Ext.Get("custom-key").String())
+	})
+}
+
+func TestValidateTaxCombo(t *testing.T) {
+	t.Run("valid VAT combo with rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				arca.ExtKeyVATRate: "5",
+			}),
+		}
+		err := rules.Validate(tc, withAddonContext())
+		assert.NoError(t, err)
+	})
+
+	t.Run("VAT combo missing rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+		}
+		err := rules.Validate(tc, withAddonContext())
+		assert.ErrorContains(t, err, "VAT combo requires 'ar-arca-vat-rate' extension")
+	})
+
+	t.Run("non-VAT combo does not require rate extension", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: "OTHER",
+		}
+		err := rules.Validate(tc, withAddonContext())
+		assert.NoError(t, err)
+	})
+}

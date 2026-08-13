@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "995b42aa5d88716e4a8d88a6dbcc4640bbb1fe0745ea141b2e134bafca0a3d28"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "0b4f421d-c035-b242-a724-5f5957bf5c9b",
+		"type": "standard",
+		"series": "2",
+		"code": "00000250",
+		"issue_date": "2025-02-05",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "6"
+			}
+		},
+		"supplier": {
+			"name": "Servicios Globales Argentina S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Madero 900",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1106",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "international@serviciosglobales.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Empresa Brasileña Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "11222333000181"
+			},
+			"addresses": [
+				{
+					"street": "Av. Paulista 1000",
+					"locality": "São Paulo",
+					"region": "SP",
+					"code": "01310-100",
+					"country": "BR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@empresabrasilena.com.br"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "9"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"key": "goods",
+					"name": "Licencia de software anual",
+					"price": "2500000.00"
+				},
+				"sum": "2500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "2500000.00"
+			}
+		],
+		"totals": {
+			"sum": "2500000.00",
+			"total": "2500000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "2500000.00",
+								"percent": "21.0%",
+								"amount": "525000.00"
+							}
+						],
+						"amount": "525000.00"
+					}
+				],
+				"sum": "525000.00"
+			},
+			"tax": "525000.00",
+			"total_with_tax": "3025000.00",
+			"payable": "3025000.00"
+		}
+	}
+}

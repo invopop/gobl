@@ -1,0 +1,71 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "26e0d92f3290c44676c0de4df677e6710174a5a93a5ea6f843f956175d9cca42"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/delivery",
+		"$regime": "ES",
+		"uuid": "0194ad4c-3462-7695-a40c-66a30ccc1405",
+		"type": "note",
+		"series": "DLV",
+		"code": "0001",
+		"issue_date": "2025-01-28",
+		"currency": "EUR",
+		"tracking": {
+			"code": "X123435"
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Promo Mugs",
+					"price": "12.50"
+				},
+				"sum": "125.00",
+				"total": "125.00"
+			}
+		],
+		"totals": {
+			"sum": "125.00",
+			"total": "125.00",
+			"tax": "0.00",
+			"total_with_tax": "125.00",
+			"payable": "125.00"
+		}
+	}
+}

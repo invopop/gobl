@@ -1,0 +1,101 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ee3ff13d3d88b4938bf599672215272432c0bc9865159681a2e150beef94be97"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
+		"type": "other",
+		"series": "1",
+		"code": "00000124",
+		"issue_date": "2025-01-15",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "49"
+			}
+		},
+		"supplier": {
+			"name": "Compraventa de Usados S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Warnes 1234",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1414",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@usados.com.ar"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"key": "goods",
+					"name": "Automóvil Usado - Ford Focus 2018",
+					"price": "8500000.00"
+				},
+				"sum": "8500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "8500000.00"
+			}
+		],
+		"totals": {
+			"sum": "8500000.00",
+			"total": "8500000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "8500000.00",
+								"percent": "21.0%",
+								"amount": "1785000.00"
+							}
+						],
+						"amount": "1785000.00"
+					}
+				],
+				"sum": "1785000.00"
+			},
+			"tax": "1785000.00",
+			"total_with_tax": "10285000.00",
+			"payable": "10285000.00"
+		}
+	}
+}

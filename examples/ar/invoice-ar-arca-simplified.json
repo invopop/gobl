@@ -1,0 +1,58 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "4bea8c67-6ad9-5cfc-a1ce-f9f391e963b1",
+  "currency": "ARS",
+  "issue_date": "2025-01-16",
+  "series": "2",
+  "code": "00000456",
+  "supplier": {
+    "name": "Electrodomésticos del Sur S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Rivadavia 5000",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1424",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "ventas@electrodomesticos.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Juan Pérez",
+    "identities": [
+      {
+        "code": "25123456",
+        "ext": {
+          "ar-arca-identity-type": "96"
+        }
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Heladera Samsung 400L",
+        "price": "850000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ]
+}
+

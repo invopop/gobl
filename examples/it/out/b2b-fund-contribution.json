@@ -1,0 +1,177 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "00a5b707815350dc803e55bef0505da81161f6bb3600d41dd79fdb271d97ee34"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"uuid": "0198f526-41e0-7000-b86e-80e06b5922cb",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2025-08-21",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
+		},
+		"supplier": {
+			"name": "ALPHA SRL",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"name": "Mela S.r.l.",
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "M5UXCR5"
+				}
+			],
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Via dei Mille",
+					"locality": "Firenze",
+					"region": "FI",
+					"code": "00100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"period": {
+					"start": "2025-08-17",
+					"end": "2025-08-19"
+				},
+				"item": {
+					"name": "IT environment support setup",
+					"price": "1600.00"
+				},
+				"sum": "1600.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
+					}
+				],
+				"total": "1600.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"key": "fund-contribution",
+				"percent": "4%",
+				"amount": "64.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
+					}
+				],
+				"ext": {
+					"it-sdi-fund-type": "TC22"
+				}
+			}
+		],
+		"totals": {
+			"sum": "1600.00",
+			"charge": "64.00",
+			"total": "1664.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1664.00",
+								"percent": "22.0%",
+								"amount": "366.08"
+							}
+						],
+						"amount": "366.08"
+					},
+					{
+						"code": "IRPEF",
+						"retained": true,
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-retained": "A"
+								},
+								"base": "1664.00",
+								"percent": "20%",
+								"amount": "332.80"
+							}
+						],
+						"amount": "332.80"
+					}
+				],
+				"sum": "366.08",
+				"retained": "332.80"
+			},
+			"tax": "366.08",
+			"total_with_tax": "2030.08",
+			"retained_tax": "332.80",
+			"payable": "1697.28"
+		}
+	}
+}

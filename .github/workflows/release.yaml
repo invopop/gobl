@@ -1,45 +1,44 @@
 #
-# Automatically tag a merge with master, or build a new image from the tag.
+# Tags the version declared in version.go and publishes a GitHub Release with
+# auto-generated notes. Core is a pure library — no binaries are built here.
+# The CLI and wasm are released from github.com/invopop/gobl.dev.
 #
-# Secrets required:
-#  * `DO_TOKEN` - DigitalOcean private token
-#  * `DO_REGISTRY_NAME` - DigitalOcean name of the registry
-#  * `GO_MOD_USER` - Machine username to read private repos
-#  * `GO_MOD_PASS` - Machine password to read private repos
-#
-
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - "version.go"
 
+permissions:
+  contents: write
+
 jobs:
-  tag-build-publish:
-    name: Tag
+  release:
+    name: Tag & Release
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          fetch-depth: "0" # make sure we get all commits!
+          fetch-depth: "0" # full history for release notes
 
       - name: Read current version
+        run: grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> "$GITHUB_ENV"
+
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
-
-      - name: "Release tag"
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ env.GOBL_VERSION }}
-
-      # - name: Bump version and push tag
-      #   id: bump
-      #   uses: anothrNick/github-tag-action@1.36.0
-      #  env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_BRANCHES: main
-      #     WITH_V: true
+          if gh release view "$GOBL_VERSION" >/dev/null 2>&1; then
+            echo "Release $GOBL_VERSION already exists — nothing to do."
+            exit 0
+          fi
+          gh release create "$GOBL_VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "$GOBL_VERSION" \
+            --generate-notes

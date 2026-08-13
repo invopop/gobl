@@ -1,0 +1,164 @@
+package org_test
+
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestNoteNormalize(t *testing.T) {
+	t.Run("accepts nil", func(t *testing.T) {
+		var n *org.Note
+		assert.NotPanics(t, func() {
+			norm.Normalize(n)
+		})
+	})
+
+	t.Run("accepts empty", func(t *testing.T) {
+		n := &org.Note{}
+		assert.NotPanics(t, func() {
+			norm.Normalize(n)
+		})
+	})
+
+	t.Run("converts valid", func(t *testing.T) {
+		n := &org.Note{
+			Key:  org.NoteKeyGeneral,
+			Text: "This is a general note test",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"untidid-text-subject": "AAI",
+			}),
+		}
+		norm.Normalize(n)
+		assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
+	})
+
+	t.Run("cleans extensions", func(t *testing.T) {
+		n := &org.Note{
+			Code: " FOO ",
+			Text: "This is a general note test",
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"missing": "",
+			}),
+		}
+		norm.Normalize(n)
+		assert.Equal(t, "FOO", n.Code.String())
+		assert.True(t, n.Ext.IsZero())
+	})
+}
+
+func TestNotesValidation(t *testing.T) {
+	n := new(org.Note)
+	n.Text = "This is a general note test"
+
+	err := rules.Validate(n)
+	assert.NoError(t, err) // empty key ok
+
+	n.Key = org.NoteKeyGeneral
+	err = rules.Validate(n)
+	assert.NoError(t, err)
+
+	n.Key = cbc.Key("fooo")
+	err = rules.Validate(n)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "note key must be a valid value")
+}
+
+func TestNoteSameAs(t *testing.T) {
+	n := &org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Text: "This is a test",
+	}
+	assert.True(t, n.SameAs(&org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Text: "This is a test ABC",
+	}))
+	assert.False(t, n.SameAs(&org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "123",
+		Text: "This is a test 123",
+	}))
+	assert.False(t, n.SameAs(&org.Note{
+		Key:  org.NoteKeyLegal,
+		Code: "ABC",
+		Text: "This is a test ABC",
+	}))
+	t.Run("nils", func(t *testing.T) {
+		var n1, n2 *org.Note
+		assert.False(t, n1.SameAs(n2), "nil should not match nil")
+	})
+}
+
+func TestNoteEquals(t *testing.T) {
+	n := &org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Text: "This is a test",
+	}
+	assert.True(t, n.Equals(&org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Text: "This is a test",
+	}))
+	assert.False(t, n.Equals(&org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "123",
+		Text: "This is a test",
+	}))
+	assert.False(t, n.Equals(&org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Src:  "fooo",
+		Text: "This is a test",
+	}))
+	assert.False(t, n.Equals(&org.Note{
+		Key:  org.NoteKeyLegal,
+		Code: "ABC",
+		Text: "This is a test",
+	}))
+}
+
+func TestNoteWithSrc(t *testing.T) {
+	n := &org.Note{
+		Key:  org.NoteKeyGeneral,
+		Code: "ABC",
+		Text: "This is a test",
+	}
+	n2 := n.WithSrc("foo")
+	assert.Empty(t, n.Src)
+	assert.Equal(t, "foo", n2.Src.String())
+}
+
+func TestNoteWithCode(t *testing.T) {
+	n := &org.Note{
+		Key:  org.NoteKeyGeneral,
+		Text: "This is a test",
+	}
+	n2 := n.WithCode("foo")
+	assert.Empty(t, n.Code)
+	assert.Equal(t, "foo", n2.Code.String())
+}
+
+func TestNoteJSONSchemaExtend(t *testing.T) {
+	ks := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(`{"properties":{"key":{}}}`), ks))
+	n := new(org.Note)
+	n.JSONSchemaExtend(ks)
+	kp, _ := ks.Properties.Get("key")
+	require.NotNil(t, kp)
+	assert.Greater(t, len(kp.OneOf), 1)
+	first := kp.OneOf[0]
+	assert.Equal(t, "goods", first.Const)
+	assert.Equal(t, "Goods", first.Title)
+	assert.Equal(t, "Goods Description", first.Description)
+}

@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-GR",
+  "package": "gr",
+  "subsets": [
+    {
+      "id": "GOBL-GR-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [EL]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-GR-TAX-IDENTITY-01",
+                      "desc": "invalid Greek VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

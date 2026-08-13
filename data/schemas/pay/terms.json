@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/terms",
+  "$ref": "#/$defs/pay.Terms",
+  "$defs": {
+    "pay.DueDate": {
+      "properties": {
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "When the payment is due."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Other details to take into account for the due date."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much needs to be paid by the date."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percentage of the total that should be paid by the date."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        }
+      },
+      "type": "object",
+      "required": [
+        "date",
+        "amount"
+      ],
+      "description": "DueDate contains an amount that should be paid by the given date."
+    },
+    "pay.Terms": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "end-of-month",
+              "title": "End of Month",
+              "description": "End of month"
+            },
+            {
+              "const": "due-date",
+              "title": "Due Date",
+              "description": "Due on a specific date"
+            },
+            {
+              "const": "deferred",
+              "title": "Deferred",
+              "description": "Deferred until after the due date"
+            },
+            {
+              "const": "proximo",
+              "title": "Proximo",
+              "description": "Month after the present"
+            },
+            {
+              "const": "instant",
+              "title": "Instant",
+              "description": "On receipt of invoice"
+            },
+            {
+              "const": "elective",
+              "title": "Elective",
+              "description": "Chosen by the buyer"
+            },
+            {
+              "const": "pending",
+              "title": "Pending",
+              "description": "Seller to advise buyer in separate transaction"
+            },
+            {
+              "const": "advanced",
+              "title": "Advanced",
+              "description": "Payment made in advance"
+            },
+            {
+              "const": "delivery",
+              "title": "Delivery",
+              "description": "Payment on Delivery"
+            },
+            {
+              "const": "undefined",
+              "title": "Undefined",
+              "description": "Not yet defined"
+            }
+          ],
+          "title": "Key",
+          "description": "Type of terms to be applied."
+        },
+        "due_dates": {
+          "items": {
+            "$ref": "#/$defs/pay.DueDate"
+          },
+          "type": "array",
+          "title": "Due Dates",
+          "description": "Set of dates for agreed payments."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Description of the conditions for payment."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions to the terms for local codes."
+        }
+      },
+      "type": "object",
+      "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
+    }
+  }
+}

@@ -1,0 +1,386 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "es-facturae-v3",
+  "name": {
+    "en": "Spain FacturaE"
+  },
+  "extensions": [
+    {
+      "key": "es-facturae-subsidy",
+      "name": {
+        "en": "FacturaE: Subsidy",
+        "es": "FacturaE: Subvención"
+      },
+      "desc": {
+        "en": "Indicates that an advance payment came from a public grant or subsidy. Set on a payment Record's `ext` map; replaces the previous `pay.Record.Grant` boolean field.",
+        "es": "Indica que un pago anticipado proviene de una subvención o ayuda pública. Se establece en el mapa `ext` del Record de pago; reemplaza el antiguo campo booleano `pay.Record.Grant`."
+      },
+      "values": [
+        {
+          "code": "S",
+          "name": {
+            "en": "Yes",
+            "es": "Sí"
+          }
+        },
+        {
+          "code": "N",
+          "name": {
+            "en": "No",
+            "es": "No"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-facturae-doc-type",
+      "name": {
+        "en": "FacturaE: Document Type",
+        "es": "FacturaE: Tipo de Documento"
+      },
+      "values": [
+        {
+          "code": "FC",
+          "name": {
+            "en": "Commercial Invoice",
+            "es": "Factura Comercial"
+          }
+        },
+        {
+          "code": "FA",
+          "name": {
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada"
+          }
+        },
+        {
+          "code": "AF",
+          "name": {
+            "en": "Self-billed Invoice",
+            "es": "Auto-Factura"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-facturae-invoice-class",
+      "name": {
+        "en": "FacturaE: Invoice Class",
+        "es": "FacturaE: Clase de Factura"
+      },
+      "values": [
+        {
+          "code": "OO",
+          "name": {
+            "en": "Original",
+            "es": "Original"
+          }
+        },
+        {
+          "code": "OR",
+          "name": {
+            "en": "Corrective Original",
+            "es": "Original Rectificativa"
+          }
+        },
+        {
+          "code": "OC",
+          "name": {
+            "en": "Summary Original",
+            "es": "Original Recapitulativa"
+          }
+        },
+        {
+          "code": "CO",
+          "name": {
+            "en": "Copy of the Original",
+            "es": "Duplicado Original"
+          }
+        },
+        {
+          "code": "CR",
+          "name": {
+            "en": "Copy of the Corrective",
+            "es": "Duplicado Rectificativa"
+          }
+        },
+        {
+          "code": "CC",
+          "name": {
+            "en": "Copy of the Summary",
+            "es": "Duplicado Recapitulativa"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-facturae-correction",
+      "name": {
+        "en": "FacturaE Change",
+        "es": "Cambio de FacturaE"
+      },
+      "desc": {
+        "en": "FacturaE requires a specific and single code that explains why the previous invoice is being corrected.",
+        "es": "FacturaE requiere un código específico y único que explique por qué se está corrigiendo la factura anterior."
+      },
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Invoice code",
+            "es": "Número de la factura"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Invoice series",
+            "es": "Serie de la factura"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Issue date",
+            "es": "Fecha expedición"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Name and surnames/Corporate name - Issuer (Sender)",
+            "es": "Nombre y apellidos/Razón Social-Emisor"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Name and surnames/Corporate name - Receiver",
+            "es": "Nombre y apellidos/Razón Social-Receptor"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Issuer's Tax Identification Number",
+            "es": "Identificación fiscal Emisor/obligado"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Receiver's Tax Identification Number",
+            "es": "Identificación fiscal Receptor"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Supplier's address",
+            "es": "Domicilio Emisor/Obligado"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "Customer's address",
+            "es": "Domicilio Receptor"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Item line",
+            "es": "Detalle Operación"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Applicable Tax Rate",
+            "es": "Porcentaje impositivo a aplicar"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Applicable Tax Amount",
+            "es": "Cuota tributaria a aplicar"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Applicable Date/Period",
+            "es": "Fecha/Periodo a aplicar"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "en": "Invoice Class",
+            "es": "Clase de factura"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Legal literals",
+            "es": "Literales legales"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Taxable Base",
+            "es": "Base imponible"
+          }
+        },
+        {
+          "code": "80",
+          "name": {
+            "en": "Calculation of tax outputs",
+            "es": "Cálculo de cuotas repercutidas"
+          }
+        },
+        {
+          "code": "81",
+          "name": {
+            "en": "Calculation of tax inputs",
+            "es": "Cálculo de cuotas retenidas"
+          }
+        },
+        {
+          "code": "82",
+          "name": {
+            "en": "Taxable Base modified due to return of packages and packaging materials",
+            "es": "Base imponible modificada por devolución de envases / embalajes"
+          }
+        },
+        {
+          "code": "83",
+          "name": {
+            "en": "Taxable Base modified due to discounts and rebates",
+            "es": "Base imponible modificada por descuentos y bonificaciones"
+          }
+        },
+        {
+          "code": "84",
+          "name": {
+            "en": "Taxable Base modified due to firm court ruling or administrative decision",
+            "es": "Base imponible modificada por resolución firme, judicial o administrativa"
+          }
+        },
+        {
+          "code": "85",
+          "name": {
+            "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
+            "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard",
+            "corrective",
+            "credit-note",
+            "debit-note"
+          ],
+          "ext": {
+            "es-facturae-doc-type": "FC"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-facturae-doc-type": "FA"
+          }
+        },
+        {
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "es-facturae-doc-type": "AF"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "OO"
+          }
+        },
+        {
+          "type": [
+            "corrective",
+            "credit-note",
+            "debit-note"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "OR"
+          }
+        },
+        {
+          "tags": [
+            "summary"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "OC"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "copy"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "CO"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "copy"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "CR"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "copy",
+            "summary"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "CC"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "extensions": [
+        "es-facturae-correction"
+      ]
+    }
+  ]
+}

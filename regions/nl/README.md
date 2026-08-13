@@ -1,2 +1,0 @@
-# Dutch GOBL Tax Definitions
-
