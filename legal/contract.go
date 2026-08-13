@@ -1,7 +1,14 @@
 package legal
 
-// Contract represents a basic legal document between a set of parties.
+import (
+	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/uuid"
+)
+
+// Contract represents the structured body of a legal document.
 type Contract struct {
+	uuid.Identify
+
 	// Title of the document
 	Title string `json:"title" jsonschema:"title=Title"`
 	// Sub-title
@@ -12,14 +19,10 @@ type Contract struct {
 	Chapters []*Chapter `json:"chapters,omitempty" jsonschema:"title=Chapters"`
 }
 
-// Calculate runs through the chapters and makes sure they are
-// correctly indexed.
+// Calculate prepares the contract for use as a GOBL document payload.
+// Intrinsic normalization is registered by type; this method is only the
+// standard document-level integration hook used by schema.Object.
 func (c *Contract) Calculate() error {
-	for i, sc := range c.Chapters {
-		if err := sc.Calculate(); err != nil {
-			return err
-		}
-		sc.Index = int32(i + 1) // count from 1
-	}
+	norm.Normalize(c)
 	return nil
 }

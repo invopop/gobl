@@ -1,0 +1,160 @@
+{
+  "id": "GOBL-LEGAL",
+  "package": "legal",
+  "subsets": [
+    {
+      "id": "GOBL-LEGAL-CONTRACT",
+      "object": "legal.Contract",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-CONTRACT-03",
+          "desc": "anchors must be unique throughout the contract",
+          "tests": "unique anchors"
+        },
+        {
+          "id": "GOBL-LEGAL-CONTRACT-04",
+          "desc": "local references must resolve to an anchor in the contract",
+          "tests": "resolved local references"
+        }
+      ],
+      "subsets": [
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-01",
+              "desc": "contract title is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "chapters",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CONTRACT-02",
+              "desc": "contract requires at least one chapter",
+              "tests": "present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-CHAPTER",
+      "object": "legal.Chapter",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-CHAPTER-03",
+          "desc": "chapter requires sections or a reference",
+          "tests": "len(Sections) \u003e 0 || Ref != \"\""
+        }
+      ],
+      "subsets": [
+        {
+          "field": "idx",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CHAPTER-01",
+              "desc": "chapter index is required and must be positive",
+              "tests": "present, at least 1"
+            }
+          ]
+        },
+        {
+          "field": "title",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-CHAPTER-02",
+              "desc": "chapter title is required",
+              "tests": "present"
+            }
+          ]
+        },
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-CHAPTER-04",
+                  "desc": "chapter anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "$ref",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-CHAPTER-05",
+                  "desc": "chapter reference must be an absolute URI, absolute path, or local anchor",
+                  "tests": "request-uri, or matches ^#[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-LEGAL-SECTION",
+      "object": "legal.Section",
+      "assert": [
+        {
+          "id": "GOBL-LEGAL-SECTION-02",
+          "desc": "section requires content, sub-sections, or a reference",
+          "tests": "Content != \"\" || len(Sections) \u003e 0 || Ref != \"\""
+        }
+      ],
+      "subsets": [
+        {
+          "field": "idx",
+          "assert": [
+            {
+              "id": "GOBL-LEGAL-SECTION-01",
+              "desc": "section index is required and must be positive",
+              "tests": "present, at least 1"
+            }
+          ]
+        },
+        {
+          "field": "$anchor",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-SECTION-03",
+                  "desc": "section anchor must be a valid plain-name anchor",
+                  "tests": "matches ^[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "$ref",
+          "subsets": [
+            {
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-LEGAL-SECTION-04",
+                  "desc": "section reference must be an absolute URI, absolute path, or local anchor",
+                  "tests": "request-uri, or matches ^#[A-Za-z_][-A-Za-z0-9._]*$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
