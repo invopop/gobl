@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/legal/contract",
-  "$ref": "#/$defs/legal.Contract",
+  "$id": "https://gobl.org/draft-0/legal/dispute-resolution",
+  "$ref": "#/$defs/legal.DisputeResolution",
   "$defs": {
     "i18n.Lang": {
       "oneOf": [
@@ -746,141 +746,34 @@
       "title": "Language Code",
       "description": "Identifies the ISO639-1 language code"
     },
-    "legal.Contract": {
+    "legal.DisputeResolution": {
       "properties": {
-        "uuid": {
-          "type": "string",
-          "format": "uuid",
-          "title": "UUID",
-          "description": "Universally Unique Identifier."
-        },
-        "agreement": {
-          "type": "string",
-          "format": "uuid",
-          "title": "Agreement UUID",
-          "description": "Agreement identifies the enduring legal relationship. Each amendment or\nrestatement has its own UUID while retaining this agreement UUID."
-        },
-        "kind": {
+        "method": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Contract Kind",
-          "description": "Kind describes the intended legal form of this document."
+          "title": "Method"
         },
-        "code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Human or system assigned identifier for this contract."
+        "forum": {
+          "type": "string",
+          "title": "Forum"
         },
-        "version": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Version",
-          "description": "Version label supplied by the author or contract management system."
+        "seat": {
+          "type": "string",
+          "title": "Seat"
+        },
+        "rules": {
+          "type": "string",
+          "title": "Rules"
         },
         "language": {
           "$ref": "#/$defs/i18n.Lang",
-          "title": "Language",
-          "description": "Primary language of the authoritative text."
-        },
-        "title": {
-          "type": "string",
-          "title": "Title",
-          "description": "Title of the document"
-        },
-        "sub_title": {
-          "type": "string",
-          "title": "Sub Title",
-          "description": "Sub-title"
-        },
-        "description": {
-          "type": "string",
-          "title": "Description",
-          "description": "Brief summary reflecting on the contents."
-        },
-        "issue_date": {
-          "$ref": "https://gobl.org/draft-0/cal/date",
-          "title": "Issue Date",
-          "description": "Date on which this version was issued."
-        },
-        "effect": {
-          "$ref": "https://gobl.org/draft-0/legal/effect",
-          "title": "Effect",
-          "description": "Conditions and dates governing when this contract has effect."
-        },
-        "parties": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/party"
-          },
-          "type": "array",
-          "title": "Parties",
-          "description": "Parties and the roles in which they enter this contract."
-        },
-        "recitals": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/recital"
-          },
-          "type": "array",
-          "title": "Recitals",
-          "description": "Background facts and purposes used to interpret the operative terms."
-        },
-        "definitions": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/definition"
-          },
-          "type": "array",
-          "title": "Definitions",
-          "description": "Defined terms used by the document."
-        },
-        "chapters": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/chapter"
-          },
-          "type": "array",
-          "title": "Chapters",
-          "description": "Set of chapters that make up the contract."
-        },
-        "law": {
-          "$ref": "https://gobl.org/draft-0/legal/governing-law",
-          "title": "Governing Law",
-          "description": "Law that the parties intend to govern the agreement."
-        },
-        "disputes": {
-          "$ref": "https://gobl.org/draft-0/legal/dispute-resolution",
-          "title": "Dispute Resolution",
-          "description": "Agreed process and forum for disputes."
-        },
-        "execution": {
-          "$ref": "https://gobl.org/draft-0/legal/execution",
-          "title": "Execution",
-          "description": "Requirements for legally executing this version."
-        },
-        "preceding": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/reference"
-          },
-          "type": "array",
-          "title": "Preceding Documents",
-          "description": "Earlier versions, amendments, or other related legal documents."
-        },
-        "resources": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/legal/resource"
-          },
-          "type": "array",
-          "title": "Resources",
-          "description": "Digest-bound material incorporated into or supporting the agreement."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Metadata",
-          "description": "Additional non-essential metadata."
+          "title": "Language"
         }
       },
       "type": "object",
       "required": [
-        "agreement",
-        "language",
-        "title"
+        "method"
       ],
-      "description": "Contract represents the structured body of a legal document."
+      "description": "DisputeResolution describes the agreed process for resolving disputes."
     }
   }
 }

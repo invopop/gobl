@@ -1,0 +1,58 @@
+$schema: "https://gobl.org/draft-0/legal/analysis"
+uuid: "0198a981-8c00-79f2-bb94-b590e5cb6860"
+contract:
+  relation: "agreement"
+  uuid: "0198a981-8c00-7c21-b104-8f680640d163"
+  title: "Invopop Terms & Conditions — illustrative abridged representation"
+  digest:
+    alg: "sha256"
+    val: "152a9aa0185cc1888b58ec5eca223ee9534915f93f5b4628a1ce53a88bd199a7"
+produced_at: "2026-08-13T12:00:00Z"
+method: "illustrative-llm-review-v1"
+annotations:
+  - anchor: "user-responsibilities"
+    kind: "obligation"
+    subject: "user"
+    object: "invopop"
+    summary: >-
+      The User is responsible for accurate account information, credential
+      security, lawful use, and content submitted through the Platform.
+  - anchor: "prohibited-use"
+    kind: "prohibition"
+    subject: "user"
+    summary: >-
+      The provision restricts unlawful, harmful, deceptive, infringing, and
+      unauthorized automated uses of the Platform.
+  - anchor: "service-versions"
+    kind: "condition"
+    subject: "user"
+    object: "invopop"
+    summary: >-
+      Continued use after a revised version is published is described as an
+      acceptance event.
+  - anchor: "signature-service"
+    kind: "permission"
+    subject: "user"
+    object: "invopop"
+    summary: >-
+      A User may employ supported electronic-signature mechanisms to sign and
+      issue documents through the Platform.
+  - anchor: "signature-responsibility"
+    kind: "obligation"
+    subject: "user"
+    summary: >-
+      Responsibility for issued documents and underlying transactions remains
+      with the User.
+  - anchor: "platform-rights"
+    kind: "prohibition"
+    subject: "user"
+    object: "invopop"
+    summary: >-
+      Platform use does not transfer Invopop's or its licensors' intellectual
+      property rights to the User.
+  - anchor: "termination-right"
+    kind: "termination"
+    subject: "invopop"
+    object: "user"
+    summary: >-
+      Invopop reserves a contractual termination and account-access remedy.

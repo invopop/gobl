@@ -3,10 +3,13 @@ package legal_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/legal"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -76,7 +79,7 @@ func TestContractValidation(t *testing.T) {
 		norm.Normalize(contract)
 		faults := rules.Validate(contract)
 		require.Error(t, faults)
-		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-01"))
+		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-03"))
 		assert.True(t, faults.HasPath("$.title"))
 	})
 
@@ -98,7 +101,7 @@ func TestContractValidation(t *testing.T) {
 		norm.Normalize(contract)
 		faults := rules.Validate(contract)
 		require.Error(t, faults)
-		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-03"))
+		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-10"))
 	})
 
 	t.Run("local reference resolves", func(t *testing.T) {
@@ -107,7 +110,7 @@ func TestContractValidation(t *testing.T) {
 		norm.Normalize(contract)
 		faults := rules.Validate(contract)
 		require.Error(t, faults)
-		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-04"))
+		assert.True(t, faults.HasCode("GOBL-LEGAL-CONTRACT-11"))
 	})
 
 	t.Run("anchor format", func(t *testing.T) {
@@ -142,8 +145,20 @@ func TestContractSchemaRegistration(t *testing.T) {
 }
 
 func validContract() *legal.Contract {
+	id := uuid.V7()
 	return &legal.Contract{
-		Title: "Service agreement",
+		Identify:  uuid.Identify{UUID: id},
+		Agreement: id,
+		Language:  i18n.EN,
+		Title:     "Service agreement",
+		Parties: []*legal.Party{
+			{
+				Key:       "provider",
+				Role:      "service-provider",
+				DefinedAs: "Provider",
+				Entity:    &org.Party{Name: "Example Provider Ltd"},
+			},
+		},
 		Chapters: []*legal.Chapter{
 			{
 				Anchor: "scope",
