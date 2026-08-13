@@ -1,0 +1,31 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$regime: AD
+type: credit-note
+series: "2024"
+code: "CN-0001"
+issue_date: "2024-01-05"
+currency: EUR
+preceding:
+  - regime: AD
+    type: standard
+    series: "2024"
+    code: "0001"
+    issue_date: "2024-01-01"
+supplier:
+  name: "Empresa Andorrana"
+  tax_id:
+    country: AD
+    code: L123456A
+customer:
+  name: "Client Particular"
+  tax_id:
+    country: AD
+    code: F121212B
+lines:
+  - quantity: 1
+    item:
+      name: "Producte Estàndard (Devolució)"
+      price: 100.00
+    taxes:
+      - cat: VAT
+        rate: general
