@@ -8,11 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `untdid`: new `untdid-unit` extension for preserving any UN/ECE
+  Recommendations 20 or 21 unit code. The EN16931 addon provides
+  `UnitToUNTDID` and `UnitFromUNTDID` converters.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
 ### Changed
 
+- **breaking**: removed `org.Unit`; unit fields and constants now use `cbc.Key`,
+  consistent with other GOBL key-based vocabularies. `UnitDefinitions`,
+  `HasValidUnitKey`, and `ExtendUnitKeySchema` provide shared definitions,
+  contextual validation, and schema choices. During normalization, `org.Item`
+  moves legacy UN/ECE unit values to the `untdid-unit` extension without
+  interpreting them. The `eu-en16931-v2017` addon owns bidirectional mapping
+  between that extension and GOBL unit keys.
 - `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
   is replaced by `Client.VerifyParty`, which verifies the address declared by a
   party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an

@@ -178,7 +178,7 @@ type Attribute struct {
 	// Amount used when the attribute represents a numeric or measurable value.
 	Amount *num.Amount `json:"amount,omitempty" jsonschema:"title=Amount"`
 	// Unit of measure that accompanies the amount.
-	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Date value of the attribute.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 }
@@ -196,6 +196,9 @@ func attributeRules() *rules.Set {
 				is.Expr(`Amount != nil`),
 			),
 		),
+		rules.Field("unit",
+			rules.AssertIfPresent("04", "attribute unit must be valid", HasValidUnitKey),
+		),
 	)
 }
 
@@ -212,7 +215,7 @@ func (a *Attribute) IsEmpty() bool {
 		a.Text == "" &&
 		a.Code == "" &&
 		a.Amount == nil &&
-		a.Unit == UnitEmpty &&
+		a.Unit == cbc.KeyEmpty &&
 		a.Date == nil)
 }
 
@@ -252,6 +255,7 @@ func CleanAttributes(attrs []*Attribute) []*Attribute {
 
 // JSONSchemaExtend adds extra details to the schema.
 func (Attribute) JSONSchemaExtend(js *jsonschema.Schema) {
+	ExtendUnitKeySchema(js, "unit")
 	prop, ok := js.Properties.Get("key")
 	if !ok {
 		return

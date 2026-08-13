@@ -29,7 +29,7 @@ type LineCharge struct {
 	// the line's quantity.
 	Quantity *num.Amount `json:"quantity,omitempty" jsonschema:"title=Quantity"`
 	// Unit to associate with the quantity when using the rate.
-	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Rate defines a price per unit to use instead of the percentage.
 	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed or resulting charge amount to apply (calculated if percent present).
@@ -63,6 +63,9 @@ func lineChargeRules() *rules.Set {
 				rules.Assert("05", "rate is required when quantity is set", is.Present),
 			),
 		),
+		rules.Field("unit",
+			rules.AssertIfPresent("06", "unit must be valid", org.HasValidUnitKey),
+		),
 	)
 }
 
@@ -91,4 +94,5 @@ func CleanLineCharges(lines []*LineCharge) []*LineCharge {
 // JSONSchemaExtend adds the charge key definitions to the schema.
 func (LineCharge) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithChargeKey(schema)
+	org.ExtendUnitKeySchema(schema, "unit")
 }
