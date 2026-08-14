@@ -33,6 +33,9 @@
           "name": {
             "en": "Excluded pursuant to Art. 15, DPR 633/72",
             "it": "Escluse ex. art. 15 del D.P.R. 633/1972"
+          },
+          "desc": {
+            "en": "Amounts excluded from the taxable base, such as default interest,\npenalties, and sums advanced on behalf of the customer."
           }
         },
         {
@@ -40,6 +43,9 @@
           "name": {
             "en": "Not subject",
             "it": "Non soggette"
+          },
+          "desc": {
+            "en": "Operations outside the scope of Italian VAT, either because a\nrequirement for taxation is not met, or because of the supplier's\nregime, such as the flat-rate regime (regime forfettario)."
           }
         },
         {
@@ -47,6 +53,9 @@
           "name": {
             "en": "Not taxable",
             "it": "Non imponibili"
+          },
+          "desc": {
+            "en": "Operations within the scope of VAT but not taxable by law, such as\nexports, international services, and intra-community supplies."
           }
         },
         {
@@ -54,6 +63,9 @@
           "name": {
             "en": "Exempt",
             "it": "Esenti"
+          },
+          "desc": {
+            "en": "Operations exempt under Art. 10 of DPR 633/72, such as medical,\nfinancial, insurance, and educational services."
           }
         },
         {
@@ -61,6 +73,9 @@
           "name": {
             "en": "Margin regime / VAT not exposed",
             "it": "Regime del margine/IVA non esposta in fattura"
+          },
+          "desc": {
+            "en": "Sales under the margin scheme for second-hand goods, works of art,\nand antiques, where VAT is included in the price but not shown\nseparately."
           }
         },
         {
@@ -68,6 +83,9 @@
           "name": {
             "en": "Reverse charge",
             "it": "Inversione contabile"
+          },
+          "desc": {
+            "en": "Operations for which the customer is liable for the VAT instead of\nthe supplier."
           }
         }
       ]
