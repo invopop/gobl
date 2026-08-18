@@ -12,103 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type discrepancyItem struct {
-	Label  string `json:"label"`
-	Amount string `json:"amount" jsonschema_extras:"calculated=true"`
-}
-
-type discrepancyTotals struct {
-	Tax string `json:"tax"`
-}
-
-type discrepancyDoc struct {
-	Label   string             `json:"label"`
-	Ignored string             `json:"-" jsonschema_extras:"calculated=true"`
-	Ext     map[string]string  `json:"ext,omitempty" jsonschema_extras:"calculated=true"`
-	Totals  *discrepancyTotals `json:"totals,omitempty" jsonschema_extras:"calculated=true"`
-	Items   []discrepancyItem  `json:"items,omitempty"`
-}
-
-func TestFindCalculationDiscrepancies_Fields(t *testing.T) {
-	t.Run("fields without the calculated tag are never reported", func(t *testing.T) {
-		data := []byte(`{"label": "before"}`)
-		calculated := &discrepancyDoc{Label: "after"}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		assert.Empty(t, discrepancies)
-	})
-
-	t.Run("a calculated field with a different value is reported", func(t *testing.T) {
-		data := []byte(`{"items": [{"label": "tulips", "amount": "10.00"}]}`)
-		calculated := &discrepancyDoc{
-			Items: []discrepancyItem{{Label: "tulips", Amount: "20.00"}},
-		}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		require.Len(t, discrepancies, 1)
-		assert.Equal(t, "$.items[0].amount", discrepancies[0].Path)
-		assert.JSONEq(t, `"10.00"`, string(discrepancies[0].Provided))
-		assert.JSONEq(t, `"20.00"`, string(discrepancies[0].Calculated))
-	})
-
-	t.Run("a calculated field omitted from the input is not reported", func(t *testing.T) {
-		data := []byte(`{"label": "invoice"}`)
-		calculated := &discrepancyDoc{
-			Label:  "invoice",
-			Totals: &discrepancyTotals{Tax: "6.00"},
-		}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		assert.Empty(t, discrepancies)
-	})
-
-	t.Run("an explicit null for a calculated field is not reported", func(t *testing.T) {
-		data := []byte(`{"label": "invoice", "totals": null}`)
-		calculated := &discrepancyDoc{
-			Label:  "invoice",
-			Totals: &discrepancyTotals{Tax: "6.00"},
-		}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		assert.Empty(t, discrepancies)
-	})
-
-	t.Run("fields nested under a calculated field are treated as calculated even when not tagged themselves", func(t *testing.T) {
-		data := []byte(`{"totals": {"tax": "5.00"}}`)
-		calculated := &discrepancyDoc{Totals: &discrepancyTotals{Tax: "6.00"}}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		require.Len(t, discrepancies, 1)
-		assert.Equal(t, "$.totals.tax", discrepancies[0].Path)
-	})
-
-	t.Run("fields excluded from JSON are never reported even if marked calculated", func(t *testing.T) {
-		data := []byte(`{"ignored": "x"}`)
-		calculated := &discrepancyDoc{Ignored: "y"}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		assert.Empty(t, discrepancies)
-	})
-
-	t.Run("a calculated field that isn't a Go struct or slice is compared as a whole", func(t *testing.T) {
-		data := []byte(`{"ext": {"a": "1"}}`)
-		calculated := &discrepancyDoc{Ext: map[string]string{"a": "2"}}
-
-		discrepancies, err := gobl.FindCalculationDiscrepancies(data, calculated)
-		require.NoError(t, err)
-		require.Len(t, discrepancies, 1)
-		assert.Equal(t, "$.ext", discrepancies[0].Path)
-		assert.JSONEq(t, `{"a":"1"}`, string(discrepancies[0].Provided))
-		assert.JSONEq(t, `{"a":"2"}`, string(discrepancies[0].Calculated))
-	})
-}
-
 const sampleInvoice = `{
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "$regime": "NL",
@@ -124,7 +27,7 @@ const sampleInvoice = `{
   }]
 }`
 
-func TestFindCalculationDiscrepancies_Invoice(t *testing.T) {
+func TestFindCalculationDiscrepancies(t *testing.T) {
 	t.Run("omitted calculated values are not discrepancies", func(t *testing.T) {
 		data := []byte(sampleInvoice)
 		inv := parseAndCalculateInvoice(t, data)
@@ -165,6 +68,19 @@ func TestFindCalculationDiscrepancies_Invoice(t *testing.T) {
 			}},
 		})
 		inv := parseAndCalculateInvoice(t, data)
+
+		discrepancies, err := gobl.FindCalculationDiscrepancies(data, inv)
+		require.NoError(t, err)
+		assert.Empty(t, discrepancies)
+	})
+
+	t.Run("an explicit zero value for a non-pointer calculated field is not a discrepancy", func(t *testing.T) {
+		// "type" is calculated but isn't a pointer, so an explicit ""
+		// can't be told apart from having left it out; normalizeInvoice
+		// fills it in with "standard" either way.
+		data := withInvoiceValues(t, map[string]any{"type": ""})
+		inv := parseAndCalculateInvoice(t, data)
+		require.Equal(t, "standard", inv.Type.String())
 
 		discrepancies, err := gobl.FindCalculationDiscrepancies(data, inv)
 		require.NoError(t, err)
