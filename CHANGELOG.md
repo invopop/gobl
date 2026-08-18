@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `FindCalculationDiscrepancies`: an opt-in way to detect when a document
+  supplies calculated fields (e.g. line sums, tax amounts, totals) that
+  don't match GOBL's own calculation, instead of having them silently
+  overwritten. Compares the original data against an already-calculated
+  document or envelope and returns the mismatched fields as
+  `CalculationDiscrepancies`; calculated values omitted from the input
+  are unaffected.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
