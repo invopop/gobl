@@ -74,17 +74,31 @@ func TestFindCalculationDiscrepancies(t *testing.T) {
 		assert.Empty(t, discrepancies)
 	})
 
-	t.Run("an explicit zero value for a non-pointer calculated field is not a discrepancy", func(t *testing.T) {
-		// "type" is calculated but isn't a pointer, so an explicit ""
-		// can't be told apart from having left it out; normalizeInvoice
-		// fills it in with "standard" either way.
+	t.Run("an explicit null for a calculated field is not a discrepancy", func(t *testing.T) {
+		data := withInvoiceValues(t, map[string]any{"totals": nil})
+		inv := parseAndCalculateInvoice(t, data)
+
+		discrepancies, err := gobl.FindCalculationDiscrepancies(data, inv)
+		require.NoError(t, err)
+		assert.Empty(t, discrepancies)
+	})
+
+	t.Run("an explicitly empty value for a non-pointer calculated field is still reported", func(t *testing.T) {
+		// "type" is calculated but isn't a pointer, so its Go zero value
+		// alone can't tell an omitted field apart from an explicit "";
+		// presence is read from a generic decode of the original JSON, so
+		// this is still caught even though normalizeInvoice would happily
+		// fill it in with "standard" either way.
 		data := withInvoiceValues(t, map[string]any{"type": ""})
 		inv := parseAndCalculateInvoice(t, data)
 		require.Equal(t, "standard", inv.Type.String())
 
 		discrepancies, err := gobl.FindCalculationDiscrepancies(data, inv)
 		require.NoError(t, err)
-		assert.Empty(t, discrepancies)
+		require.Len(t, discrepancies, 1)
+		assert.Equal(t, "$.type", discrepancies[0].Path)
+		assert.JSONEq(t, `""`, string(discrepancies[0].Provided))
+		assert.JSONEq(t, `"standard"`, string(discrepancies[0].Calculated))
 	})
 
 	t.Run("a deeply nested tax breakdown reports precise paths under an envelope", func(t *testing.T) {

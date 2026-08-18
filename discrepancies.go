@@ -34,16 +34,14 @@ type CalculationDiscrepancies []*CalculationDiscrepancy
 //
 // data is parsed again to recover the values as they were before
 // calculation, then compared against calculated field by field using the
-// same reflection GOBL already relies on to walk documents; no separate
-// JSON tree walk is needed.
+// same reflection GOBL already relies on to walk documents. A second,
+// generic decode of data is used purely to know which keys it actually
+// contained; unlike the typed values, it's never a source of values to
+// report, so it carries no risk of e.g. losing amount precision.
 //
-// A calculated field left out of data is never reported: GOBL is expected
-// to fill those in, and doing so is not a discrepancy. Because a Go zero
-// value (an empty string, a zero date, index zero) is indistinguishable
-// from an omitted field for the handful of calculated fields that aren't
-// pointers, a calculated field explicitly supplied with its zero value is
-// treated the same way: not worth reporting, since GOBL is expected to
-// replace it regardless of whether it was left out or supplied as such.
+// A calculated field left out of data, or explicitly set to null, is
+// never reported: GOBL is expected to fill those in, and doing so is not
+// a discrepancy.
 //
 // An empty, non-nil result means every calculated value the caller
 // supplied matched GOBL's calculation.
@@ -51,6 +49,11 @@ func FindCalculationDiscrepancies(data []byte, calculated any) (CalculationDiscr
 	provided, err := Parse(data)
 	if err != nil {
 		return nil, err
+	}
+
+	var presence any
+	if err := json.Unmarshal(data, &presence); err != nil {
+		return nil, ErrInput.WithCause(err)
 	}
 
 	path := "$"
@@ -62,31 +65,39 @@ func FindCalculationDiscrepancies(data []byte, calculated any) (CalculationDiscr
 		if !ok {
 			return nil, ErrInput.WithReason("calculated is an envelope, but data is not")
 		}
+		if root, ok := presence.(map[string]any); ok {
+			presence = root["doc"]
+		} else {
+			presence = nil
+		}
 		providedValue = reflect.ValueOf(providedEnv.Extract())
 		calculatedValue = reflect.ValueOf(env.Extract())
 		path = "$.doc"
 	}
 
-	return findDiscrepancies(providedValue, calculatedValue, false, path), nil
+	return findDiscrepancies(providedValue, calculatedValue, presence, false, path), nil
 }
 
 // findDiscrepancies walks provided, the value as it was before
 // calculation, in step with calculated, the equivalent already-calculated
-// value. isCalculated is true once this location is inside a field whose
-// schema marks it (or an ancestor) as calculated=true; everything beneath
-// such a field is treated as calculated too, since GOBL only annotates the
-// outermost calculated field of a subtree such as an invoice's totals.
-func findDiscrepancies(provided, calculated reflect.Value, isCalculated bool, path string) CalculationDiscrepancies {
-	// A pointer or interface still holding a value once dereferenced was
-	// explicitly supplied, even if that value happens to be zero; only a
-	// non-pointer field's zero value is ambiguous with an omission.
-	nilable := isNilable(provided)
+// value. presence is the generic decode of the same location in the
+// original JSON, used only to tell an omitted or null value (nil) apart
+// from one that was genuinely supplied, which a Go zero value alone
+// can't do for non-pointer fields. isCalculated is true once this
+// location is inside a field whose schema marks it (or an ancestor) as
+// calculated=true; everything beneath such a field is treated as
+// calculated too, since GOBL only annotates the outermost calculated
+// field of a subtree such as an invoice's totals.
+func findDiscrepancies(provided, calculated reflect.Value, presence any, isCalculated bool, path string) CalculationDiscrepancies {
+	if presence == nil {
+		// Omitted, or explicitly null: never a discrepancy.
+		return nil
+	}
 
 	provided = indirect(provided)
 	calculated = indirect(calculated)
 
 	if !provided.IsValid() {
-		// Left out of the original data entirely: never a discrepancy.
 		return nil
 	}
 	if !calculated.IsValid() {
@@ -99,21 +110,18 @@ func findDiscrepancies(provided, calculated reflect.Value, isCalculated bool, pa
 	// A type such as num.Amount is a Go struct, but marshals to a single
 	// JSON string via its own MarshalText/MarshalJSON rather than one
 	// object key per (unexported) field; walking it field by field would
-	// find nothing; it needs to be treated as a leaf, same as a plain
+	// find nothing, so it needs to be treated as a leaf, same as a plain
 	// scalar.
 	if !hasCustomMarshaling(provided.Type()) {
 		switch provided.Kind() {
 		case reflect.Struct:
-			return findFieldDiscrepancies(provided, calculated, isCalculated, path)
+			return findFieldDiscrepancies(provided, calculated, presence, isCalculated, path)
 		case reflect.Slice, reflect.Array:
-			return findElementDiscrepancies(provided, calculated, isCalculated, path)
+			return findElementDiscrepancies(provided, calculated, presence, isCalculated, path)
 		}
 	}
 
 	if !isCalculated {
-		return nil
-	}
-	if !nilable && provided.IsZero() {
 		return nil
 	}
 	if equal(provided, calculated) {
@@ -136,7 +144,9 @@ func hasCustomMarshaling(t reflect.Type) bool {
 		reflect.PointerTo(t).Implements(jsonMarshalerType) || reflect.PointerTo(t).Implements(textMarshalerType)
 }
 
-func findFieldDiscrepancies(provided, calculated reflect.Value, isCalculated bool, path string) CalculationDiscrepancies {
+func findFieldDiscrepancies(provided, calculated reflect.Value, presence any, isCalculated bool, path string) CalculationDiscrepancies {
+	fields, _ := presence.(map[string]any)
+
 	var discrepancies CalculationDiscrepancies
 	for _, field := range reflect.VisibleFields(provided.Type()) {
 		// Anonymous (embedded) fields are also returned by VisibleFields
@@ -158,21 +168,27 @@ func findFieldDiscrepancies(provided, calculated reflect.Value, isCalculated boo
 			continue
 		}
 		discrepancies = append(discrepancies, findDiscrepancies(
-			providedField, calculatedField, isCalculated || isCalculatedField(field), path+"."+name,
+			providedField, calculatedField, fields[name], isCalculated || isCalculatedField(field), path+"."+name,
 		)...)
 	}
 	return discrepancies
 }
 
-func findElementDiscrepancies(provided, calculated reflect.Value, isCalculated bool, path string) CalculationDiscrepancies {
+func findElementDiscrepancies(provided, calculated reflect.Value, presence any, isCalculated bool, path string) CalculationDiscrepancies {
+	items, _ := presence.([]any)
+
 	var discrepancies CalculationDiscrepancies
 	for i := 0; i < provided.Len(); i++ {
 		var calculatedElem reflect.Value
 		if i < calculated.Len() {
 			calculatedElem = calculated.Index(i)
 		}
+		var itemPresence any
+		if i < len(items) {
+			itemPresence = items[i]
+		}
 		discrepancies = append(discrepancies, findDiscrepancies(
-			provided.Index(i), calculatedElem, isCalculated, fmt.Sprintf("%s[%d]", path, i),
+			provided.Index(i), calculatedElem, itemPresence, isCalculated, fmt.Sprintf("%s[%d]", path, i),
 		)...)
 	}
 	return discrepancies
@@ -204,13 +220,6 @@ func equal(provided, calculated reflect.Value) bool {
 		}
 	}
 	return reflect.DeepEqual(provided.Interface(), calculated.Interface())
-}
-
-// isNilable reports whether value's declared type can be nil, i.e.
-// whether it being present with a zero underlying value is distinguishable
-// from it being absent altogether.
-func isNilable(value reflect.Value) bool {
-	return value.Kind() == reflect.Pointer || value.Kind() == reflect.Interface
 }
 
 // indirect follows pointers and interfaces down to the concrete value
