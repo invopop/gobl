@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/cy`: added the Cyprus VAT regime with current and historical rates,
+  tax identity validation, invoice requirements, and prescribed VAT scenario wording.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 

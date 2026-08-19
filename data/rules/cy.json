@@ -1,0 +1,80 @@
+{
+  "id": "GOBL-CY",
+  "package": "cy",
+  "subsets": [
+    {
+      "id": "GOBL-CY-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [CY]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CY-TAX-IDENTITY-01",
+                      "desc": "invalid Cyprus TIN identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-CY-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [CY]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-CY-BILL-INVOICE-01",
+                      "desc": "supplier tax ID is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-CY-BILL-INVOICE-02",
+                          "desc": "supplier tax ID code is required",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "field": "addresses",
+                  "assert": [
+                    {
+                      "id": "GOBL-CY-BILL-INVOICE-03",
+                      "desc": "supplier address is required",
+                      "tests": "present"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
