@@ -18,6 +18,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("cy", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
+		billInvoiceRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(func(id *tax.Identity) { tax.NormalizeIdentity(id) })),
@@ -53,7 +54,10 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.gov.cy/mof-tax/documents/ekdosi-timologioy-f-p-a/",
 			},
 		},
-		TimeZone:   "Asia/Nicosia",
+		TimeZone: "Asia/Nicosia",
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
 		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
