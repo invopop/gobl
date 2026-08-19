@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6137fe1dff83bf55a48085f255bbc8059b2f9e3d4f1082483fa1a89a582cd00b"
+			"val": "6e84b526f70c2a8ca4b4d36b3974bb5899a4f8b8c6d1a3d127e331f8d22ad0b3"
 		}
 	},
 	"doc": {
@@ -19,7 +19,7 @@
 			"name": "EXAMPLE SUPPLIER",
 			"tax_id": {
 				"country": "SG",
-				"code": "201312345A"
+				"code": "201312345N"
 			}
 		},
 		"lines": [

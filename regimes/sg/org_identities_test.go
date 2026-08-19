@@ -35,14 +35,19 @@ func TestValidateUENIdentity(t *testing.T) {
 		code string
 		err  bool
 	}{
-		{name: "UEN (ROC)", code: "199912345A", err: false},
-		{name: "UEN (ROB)", code: "12345678A", err: false},
-		{name: "UEN (Others)", code: "T12AB1234A", err: false},
+		{name: "UEN (ROC)", code: "197401143C", err: false},
+		{name: "UEN (ROB)", code: "00192200M", err: false},
+		{name: "UEN (Others)", code: "T08GB0020K", err: false},
+		{name: "UEN (Others, 1800s)", code: "R00LL0001F", err: false},
 		{name: "NIRC/FIN", code: "S1234567A", err: true},
 		{name: "Invalid short", code: "1234567A", err: true},
 		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
 		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
 		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
+		{name: "Unknown UEN entity type", code: "T12AB1234D", err: true},
+		{name: "Invalid UEN (ROB) check character", code: "00192200A", err: true},
+		{name: "Invalid UEN (ROC) check character", code: "197401143A", err: true},
+		{name: "Invalid UEN (Others) check character", code: "T08GB0020A", err: true},
 		{name: "Empty code", code: "", err: true},
 	}
 
