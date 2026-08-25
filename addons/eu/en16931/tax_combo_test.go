@@ -153,6 +153,45 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("french CTC extended vatex code passes the catalogue pattern", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-FR-CGI275",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("lowercase vatex code fails the catalogue pattern", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "vatex-fr-cgi275",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "GOBL-EU-EN16931-TAX-COMBO-08")
+	})
+
+	t.Run("vatex code with trailing separator fails the catalogue pattern", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-FR-",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "GOBL-EU-EN16931-TAX-COMBO-08")
+	})
+
 	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,

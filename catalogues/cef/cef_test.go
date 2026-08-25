@@ -31,6 +31,7 @@ func TestVATEXPattern(t *testing.T) {
 		"VATEX-FR-FRANCHISE",
 		"VATEX-SA-34-1",
 		"VATEX-FR-CGI261-1", // outside the official list
+		"VATEX-FR-CGI275",   // French CTC Extended profile code, outside the official list
 	}
 	for _, code := range valid {
 		assert.True(t, re.MatchString(code), code)
