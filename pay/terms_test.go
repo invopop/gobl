@@ -44,6 +44,19 @@ func TestTermsValidation(t *testing.T) {
 			},
 		}
 		err := rules.Validate(tm)
+		assert.NoError(t, err, "an absent amount is allowed")
+	})
+
+	t.Run("with due dates and zero amount", func(t *testing.T) {
+		tm := new(pay.Terms)
+		tm.Key = pay.TermKeyDueDate
+		tm.DueDates = []*pay.DueDate{
+			{
+				Date:   cal.NewDate(2021, 11, 10),
+				Amount: num.NewAmount(0, 2),
+			},
+		}
+		err := rules.Validate(tm)
 		assert.ErrorContains(t, err, "amount must not be zero")
 	})
 }
@@ -151,13 +164,13 @@ func TestTermsCalculateDues(t *testing.T) {
 	}
 	terms.CalculateDues(zero, sum)
 
-	assert.Equal(t, num.MakeAmount(4000, 2), terms.DueDates[0].Amount)
-	assert.Equal(t, num.MakeAmount(6000, 2), terms.DueDates[1].Amount)
+	assert.Equal(t, num.NewAmount(4000, 2), terms.DueDates[0].Amount)
+	assert.Equal(t, num.NewAmount(6000, 2), terms.DueDates[1].Amount)
 
 	terms.DueDates = []*pay.DueDate{
 		{
 			Date:   cal.NewDate(2021, 11, 10),
-			Amount: num.MakeAmount(40, 0),
+			Amount: num.NewAmount(40, 0),
 		},
 	}
 	terms.CalculateDues(zero, sum)
