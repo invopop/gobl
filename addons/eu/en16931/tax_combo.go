@@ -109,11 +109,6 @@ func taxComboRules() *rules.Set {
 				),
 			),
 		),
-		rules.Field("ext",
-			rules.Assert("08", "VATEX code must match the CEF VATEX format",
-				tax.ExtensionHasValidCode(cef.ExtKeyVATEX),
-			),
-		),
 	)
 }
 

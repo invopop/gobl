@@ -28,7 +28,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
 - `catalogues/cef`: the `cef-vatex` extension validates VATEX codes against the pattern `^VATEX-[A-Z]{2}(-[A-Z0-9]+)+$` instead of enumerating the 75 official codes, so that the country codes admitted by national profiles, such as the French `VATEX-FR-CGI*` ones, are accepted. Each profile's schematron checks the codes it allows.
-- `addons/eu/en16931`: new well-formedness assert (`GOBL-EU-EN16931-TAX-COMBO-08`) on `cef-vatex` extension codes, checked against the CEF VATEX pattern independently of the addon's own exemption rules.
 
 ### Fixed
 

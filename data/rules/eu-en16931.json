@@ -371,16 +371,6 @@
               ]
             }
           ]
-        },
-        {
-          "field": "ext",
-          "assert": [
-            {
-              "id": "GOBL-EU-EN16931-TAX-COMBO-08",
-              "desc": "VATEX code must match the CEF VATEX format",
-              "tests": "ext 'cef-vatex' matches pattern '^VATEX-[A-Z]{2}(-[A-Z0-9]+)+$'"
-            }
-          ]
         }
       ]
     }
