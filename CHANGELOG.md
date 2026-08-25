@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
-- `catalogues/cef`: the `cef-vatex` extension validates VATEX codes against the pattern `^VATEX-[A-Z]{2}(-[A-Z0-9]+)+$` instead of enumerating the 75 official codes, so that the country codes admitted by national profiles, such as the French `VATEX-FR-CGI*` ones, are accepted. Each profile's schematron checks the codes it allows.
+- `catalogues/cef`: the `cef-vatex` extension validates VATEX codes against the pattern `^VATEX-[A-Z]{2}(-[A-Z0-9]+)+$` instead of enumerating the 75 official codes, so that the country codes admitted by national profiles, such as the French `VATEX-FR-CGI*` ones, are accepted.
 
 ### Fixed
 
