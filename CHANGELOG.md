@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/mt`: added the Malta (`MT`) VAT regime — standard 18% rate with 12%/7%/5%
+  reduced rates, exempt-with-credit mapped to `zero` and exempt-without-credit to `exempt`,
+  mod-37 VAT-number validation, and credit-note/debit-note corrections.
+
 ## [v0.505.0]
 
 ### Added

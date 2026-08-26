@@ -1,0 +1,53 @@
+{
+  "id": "GOBL-MT",
+  "package": "mt",
+  "subsets": [
+    {
+      "id": "GOBL-MT-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [MT]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-MT-TAX-IDENTITY-01",
+                      "desc": "invalid Maltese VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-MT-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [MT]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-MT-BILL-INVOICE-01",
+                  "desc": "invoice supplier in Malta must have a VAT tax ID code",
+                  "tests": "has tax ID code"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

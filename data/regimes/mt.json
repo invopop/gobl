@@ -1,0 +1,214 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Malta",
+    "mt": "Malta"
+  },
+  "description": {
+    "en": "Malta's VAT is governed by the Value Added Tax Act (Cap. 406) and administered\nby the Malta Tax and Customs Administration (MTCA). As an EU member state Malta\nfollows the EU VAT Directive (2006/112/EC).\n\nThe standard rate is 18%, with reduced rates of 12%, 7% and 5%. Supplies that are\n\"exempt with credit\" (Fifth Schedule Part One - exports, intra-community supplies,\nfood, pharmaceuticals) are zero-rated with input-VAT recovery; supplies \"exempt\nwithout credit\" (Fifth Schedule Part Two - insurance, finance, letting of\nimmovable property, health, education) carry no input-VAT recovery.\n\nBusinesses are identified by a VAT identification number: the prefix \"MT\" followed\nby eight digits (Article 10 and Article 12 registrations). Full tax invoices must\nshow both the supplier's and the customer's VAT number; simplified invoices are\nallowed for amounts up to EUR 100. Corrections use credit notes and debit notes."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Value Added Tax Act (Cap. 406)"
+      },
+      "url": "https://legislation.mt/eli/cap/406/eng"
+    },
+    {
+      "title": {
+        "en": "MTCA - VAT Rates"
+      },
+      "url": "https://mtca.gov.mt/business-tax/vat1/vat-compliance/vat-rates/vat-rates"
+    },
+    {
+      "title": {
+        "en": "MTCA - VAT Rates and Exemptions FAQs"
+      },
+      "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-and-exemptions---faqs.pdf"
+    }
+  ],
+  "time_zone": "Europe/Malta",
+  "country": "MT",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "mt": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "mt": "Taxxa fuq il-Valur Miżjud"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2004-01-01",
+              "percent": "18%"
+            },
+            {
+              "since": "1999-01-01",
+              "percent": "15%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (12%)"
+          },
+          "desc": {
+            "en": "Custody and management of securities, credit management, hiring of pleasure boats, and care of the human body (Eighth Schedule items 12-15)."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "12%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (7%)"
+          },
+          "desc": {
+            "en": "Licensed tourist accommodation and use of sporting facilities (Eighth Schedule items 1, 11)."
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "7%"
+            }
+          ]
+        },
+        {
+          "rate": "special",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (5%)"
+          },
+          "desc": {
+            "en": "Electricity, confectionery, medical accessories, printed matter, minor repairs, domestic care and cultural admissions (Eighth Schedule items 2-10)."
+          },
+          "values": [
+            {
+              "since": "1999-01-01",
+              "percent": "5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "MTCA - VAT Rates"
+          },
+          "url": "https://mtca.gov.mt/business-tax/vat1/vat-compliance/vat-rates/vat-rates"
+        },
+        {
+          "title": {
+            "en": "MTCA - VAT Rates and Exemptions FAQs (Eighth and Fifth Schedules)"
+          },
+          "url": "https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-and-exemptions---faqs.pdf"
+        }
+      ]
+    }
+  ]
+}

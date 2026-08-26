@@ -1,0 +1,40 @@
+# Zero-rated (exempt-with-credit) supply.
+#
+# Food for human consumption is "exempt with credit" under the Fifth Schedule,
+# Part One (item 9): no VAT is charged, but the supplier keeps the right to
+# recover input VAT. In GOBL this maps to the "zero" combo key, not "exempt".
+# Source: MTCA VAT Rates & Exemptions FAQs (Fifth Schedule Part One),
+# https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-and-exemptions---faqs.pdf
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b1"
+series: "SAMPLE"
+code: "002"
+issue_date: "2026-01-15"
+currency: "EUR"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+  addresses:
+    - num: "50"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+
+customer:
+  name: "Client Holdings Ltd"
+  tax_id:
+    country: "MT"
+    code: "12357210"
+
+lines:
+  - quantity: "100"
+    item:
+      name: "Fresh produce (food for human consumption)"
+      price: "2.50"
+    taxes:
+      - cat: VAT
+        rate: zero
