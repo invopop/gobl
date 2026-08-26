@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-JP",
+  "package": "jp",
+  "subsets": [
+    {
+      "id": "GOBL-JP-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [JP]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-JP-TAX-IDENTITY-01",
+                      "desc": "invalid Japanese registration number",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
