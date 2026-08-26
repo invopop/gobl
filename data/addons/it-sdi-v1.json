@@ -4,6 +4,9 @@
   "name": {
     "en": "Italy SDI FatturaPA v1.x"
   },
+  "description": {
+    "en": "Italy exchanges electronic invoices in the FatturaPA XML format through the tax\nauthority's Sistema di Interscambio (SDI). This addon ensures GOBL documents carry\nthe fields and extensions needed to produce valid FatturaPA files with\n[gobl.fatturapa](https://github.com/invopop/gobl.fatturapa).\n\nAn Italian customer is identified by a partita IVA (VAT number, in the party's\n`tax_id`) or a codice fiscale (an identity with the key `it-fiscal-code`), and\nrouted by a codice destinatario (`it-sdi-code` inbox) or a PEC address\n(`it-sdi-pec` inbox). A customer outside Italy needs only the country in `tax_id`.\n\nWhere a party has no code of its own, FatturaPA expects a placeholder rather than\nan empty field, and the conversion supplies it: `0000000` for a customer with no\ntax code, or an Italian customer with no inbox; `XXXXXXX` as the recipient code for\na customer outside Italy; and `OO99999999999` in place of a non-EU business's own\ntax number, since only EU VAT numbers are meaningful to SDI. Leave the field out\nrather than writing these values yourself."
+  },
   "extensions": [
     {
       "key": "it-sdi-format",

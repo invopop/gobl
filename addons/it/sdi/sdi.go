@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
@@ -55,6 +56,26 @@ func newAddon() *tax.AddonDef {
 		Key: V1,
 		Name: i18n.String{
 			i18n.EN: "Italy SDI FatturaPA v1.x",
+		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				Italy exchanges electronic invoices in the FatturaPA XML format through the tax
+				authority's Sistema di Interscambio (SDI). This addon ensures GOBL documents carry
+				the fields and extensions needed to produce valid FatturaPA files with
+				[gobl.fatturapa](https://github.com/invopop/gobl.fatturapa).
+
+				An Italian customer is identified by a partita IVA (VAT number, in the party's
+				~tax_id~) or a codice fiscale (an identity with the key ~it-fiscal-code~), and
+				routed by a codice destinatario (~it-sdi-code~ inbox) or a PEC address
+				(~it-sdi-pec~ inbox). A customer outside Italy needs only the country in ~tax_id~.
+
+				Where a party has no code of its own, FatturaPA expects a placeholder rather than
+				an empty field, and the conversion supplies it: ~0000000~ for a customer with no
+				tax code, or an Italian customer with no inbox; ~XXXXXXX~ as the recipient code for
+				a customer outside Italy; and ~OO99999999999~ in place of a non-EU business's own
+				tax number, since only EU VAT numbers are meaningful to SDI. Leave the field out
+				rather than writing these values yourself.
+			`),
 		},
 		Extensions: extensions,
 		Tags: []*tax.TagSet{
