@@ -64,6 +64,8 @@ func newAddon() *tax.AddonDef {
 				the fields and extensions needed to produce valid FatturaPA files with
 				[gobl.fatturapa](https://github.com/invopop/gobl.fatturapa).
 
+				## Customer identification
+
 				An Italian customer is identified by a partita IVA (VAT number, in the party's
 				~tax_id~) or a codice fiscale (an identity with the key ~it-fiscal-code~), and
 				routed by a codice destinatario (~it-sdi-code~ inbox) or a PEC address
