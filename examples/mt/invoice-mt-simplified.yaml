@@ -1,0 +1,32 @@
+# Simplified invoice (amount up to EUR 100).
+#
+# Cap. 406 Twelfth Schedule items 1(3) and 5 allow a simplified invoice where the
+# amount including tax does not exceed EUR 100. It may omit the customer's name
+# and address and the per-rate breakdown; the supplier VAT number and total tax
+# are still required. The "simplified" tag selects this treatment.
+# Source: https://legislation.mt/eli/cap/406/eng
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b4"
+series: "SAMPLE"
+code: "005"
+issue_date: "2026-01-15"
+currency: "EUR"
+
+tax:
+  tags:
+    - "simplified"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+
+lines:
+  - quantity: "2"
+    item:
+      name: "Retail goods"
+      price: "30.00"
+    taxes:
+      - cat: VAT
+        rate: standard

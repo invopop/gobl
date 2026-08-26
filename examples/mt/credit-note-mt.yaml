@@ -1,0 +1,47 @@
+# Credit note correcting a previously issued tax invoice.
+#
+# Maltese VAT law corrects an issued invoice with credit notes (a decrease in
+# consideration) and debit notes (an increase) - Cap. 406 Tenth Schedule item
+# 1(h). The correcting document must reference the original invoice (Twelfth
+# Schedule item 1(2)); the "preceding" block carries that reference.
+# Source: https://legislation.mt/eli/cap/406/eng
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b5"
+type: "credit-note"
+series: "SAMPLE-CN"
+code: "001"
+issue_date: "2026-02-01"
+currency: "EUR"
+
+preceding:
+  - series: "SAMPLE"
+    code: "001"
+    issue_date: "2026-01-15"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+  addresses:
+    - num: "50"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+
+customer:
+  name: "Client Holdings Ltd"
+  tax_id:
+    country: "MT"
+    code: "12357210"
+
+lines:
+  - quantity: "2"
+    item:
+      name: "Consultancy services"
+      price: "100.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard

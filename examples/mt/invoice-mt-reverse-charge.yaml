@@ -1,0 +1,52 @@
+# Cross-border B2B service with reverse charge.
+#
+# A Maltese supplier provides services to a business established in another EU
+# member state. Under the general place-of-supply rule the customer accounts for
+# the VAT (Directive 2006/112/EC arts. 44/196; Cap. 406 art. 20). The invoice
+# carries no VAT and must show the "Reverse charge" legend (Twelfth Schedule item
+# 3(n)), which the baseline scenario note provides.
+# Source: https://legislation.mt/eli/cap/406/eng
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b3"
+series: "SAMPLE"
+code: "004"
+issue_date: "2026-01-15"
+currency: "EUR"
+
+tax:
+  tags:
+    - "reverse-charge"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+  addresses:
+    - num: "50"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+
+customer:
+  name: "Cliente Italiano S.r.l."
+  tax_id:
+    country: "IT"
+    code: "12345678903"
+  addresses:
+    - num: "10"
+      street: "Via Roma"
+      locality: "Milano"
+      code: "20121"
+      country: "IT"
+
+lines:
+  - quantity: "5"
+    item:
+      name: "Advisory services"
+      price: "200.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: exempt+reverse-charge
