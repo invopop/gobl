@@ -1,4 +1,5 @@
 {
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
   "name": {
     "en": "Japan",
     "ja": "日本"

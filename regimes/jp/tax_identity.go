@@ -1,7 +1,6 @@
 package jp
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/cbc"
@@ -22,30 +21,43 @@ import (
 //     https://www.invoice-kohyo.nta.go.jp/
 var taxCodeRegexp = regexp.MustCompile(`^T[0-9]{13}$`)
 
-var errInvalidFormat = errors.New("invalid format")
+// Check-digit validation: the 13 digits following "T" are a 1-digit check
+// digit followed by the 12-digit base number, per the NTA's published
+// algorithm:
+// https://www.houjin-bangou.nta.go.jp/documents/checkdigit.pdf
+//
+//	sum         = Σ (base digit × weight), summed right-to-left, weights
+//	              alternating 1, 2, 1, 2, ... starting at the rightmost digit
+//	check digit = 9 - (sum mod 9)
+//
+// Worked example from the NTA PDF: base "700110005901" yields sum 37,
+// 37 mod 9 = 1, check digit 9-1 = 8, giving "8700110005901".
+//
+// Note that the NTA only documents this algorithm for Corporate Numbers, but
+// any registration number carrying a "T" is claiming to be a valid qualified
+// invoice issuer number, so GOBL checks it regardless. A registrant without
+// one can simply omits tax_id.code, which stays valid.
+func isValidChecksum(code string) bool {
+	// code is "T" + check digit (1) + base number (12).
+	if len(code) != 14 {
+		return false
+	}
+	checkDigit := int(code[1] - '0')
+	base := code[2:]
 
-// Note on checksum validation: the Corporate Number carries a documented mod-9
-// check digit (see https://www.houjin-bangou.nta.go.jp/documents/checkdigit.pdf),
-// so "T" + a Corporate Number could in principle be checksum-verified. GOBL does
-// NOT enforce it here, for two reasons:
-//
-//  1. The NTA check-digit specification is scoped to the Corporate Number system.
-//     No official source extends it to the qualified-invoice registration-number
-//     space as a whole, which also includes numbers the NTA issues to registrants
-//     without a Corporate Number. Enforcing a checksum requires positive
-//     confirmation that every code in the space satisfies it; that confirmation
-//     does not exist. (A shared algorithm would also give no collision-avoidance
-//     benefit - disjoint ranges do that - so the shared-algorithm assumption has
-//     no design rationale behind it either.)
-//  2. A corporate and a non-corporate registration number are indistinguishable by
-//     shape (both are "T" + 13 digits), so the checksum cannot be applied
-//     conditionally.
-//
-// In a validation library the failure modes are asymmetric: enforcing a checksum
-// that some valid numbers do not satisfy rejects real invoices, whereas
-// validating format only merely fails to catch a mistyped digit. We therefore
-// validate the format and leave definitive verification to the NTA public lookup
-// site above.
+	sum := 0
+	weight := 1
+	for i := len(base) - 1; i >= 0; i-- {
+		sum += int(base[i]-'0') * weight
+		if weight == 1 {
+			weight = 2
+		} else {
+			weight = 1
+		}
+	}
+
+	return checkDigit == 9-(sum%9)
+}
 
 func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
@@ -65,18 +77,9 @@ func taxIdentityRules() *rules.Set {
 
 func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
+	if !ok {
 		return false
 	}
-	return validateTaxCode(code) == nil
-}
-
-func validateTaxCode(code cbc.Code) error {
-	if code == "" {
-		return nil
-	}
-	if !taxCodeRegexp.MatchString(code.String()) {
-		return errInvalidFormat
-	}
-	return nil
+	val := code.String()
+	return taxCodeRegexp.MatchString(val) && isValidChecksum(val)
 }

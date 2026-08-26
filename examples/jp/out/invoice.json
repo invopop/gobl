@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b2ab30562cd7e5c0d8d8783b913626edf95e08b1b2398c04706b3a237a978c28"
+			"val": "5a7d19f2bbf558176eac1a21b1f5af7f9eee9d5a8b53c6cd4a24a8ac736815e3"
 		}
 	},
 	"doc": {
@@ -36,7 +36,7 @@
 			"name": "得意先株式会社",
 			"tax_id": {
 				"country": "JP",
-				"code": "T2021001052461"
+				"code": "T5021001052461"
 			}
 		},
 		"lines": [

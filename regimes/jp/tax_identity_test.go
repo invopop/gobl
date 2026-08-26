@@ -40,11 +40,15 @@ func TestTaxIdentityRules(t *testing.T) {
 		err  string
 	}{
 		{name: "valid corporate-derived", code: "T8700110005901"},
-		{name: "valid", code: "T1234567890123"},
+		{name: "valid", code: "T7123456789012"},
+		// Boundary: base sums to a multiple of 9, so 9-(sum%9) yields check digit 9.
+		{name: "valid check digit 9", code: "T9000000000000"},
 		{name: "missing T prefix", code: "1234567890123", err: "IDENTITY-01"},
 		{name: "too short", code: "T123456789012", err: "IDENTITY-01"},
 		{name: "too long", code: "T12345678901234", err: "IDENTITY-01"},
 		{name: "letters in numeric part", code: "T123456789012A", err: "IDENTITY-01"},
+		{name: "invalid checksum", code: "T1234567890123", err: "IDENTITY-01"},
+		{name: "checksum off by one", code: "T8700110005902", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {
