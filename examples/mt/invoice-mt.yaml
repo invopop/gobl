@@ -1,0 +1,55 @@
+# Standard Maltese B2B tax invoice.
+#
+# Demonstrates the mandatory content of a full tax invoice (Cap. 406 art. 50 and
+# Twelfth Schedule item 3): supplier and customer VAT identification numbers, the
+# 18% standard rate, and a 5% reduced-rate line (Eighth Schedule).
+# Source: https://legislation.mt/eli/cap/406/eng
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b0"
+series: "SAMPLE"
+code: "001"
+issue_date: "2026-01-15"
+currency: "EUR"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+  addresses:
+    - num: "50"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+  emails:
+    - addr: "billing@example.mt"
+
+customer:
+  name: "Client Holdings Ltd"
+  tax_id:
+    country: "MT"
+    code: "12357210"
+  addresses:
+    - num: "12"
+      street: "Triq San Ġwann"
+      locality: "Sliema"
+      code: "SLM 1234"
+      country: "MT"
+
+lines:
+  - quantity: "20"
+    item:
+      name: "Consultancy services"
+      price: "100.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "10"
+    item:
+      name: "Printed handbooks"
+      price: "15.00"
+    taxes:
+      - cat: VAT
+        rate: special # 5% reduced rate for printed matter

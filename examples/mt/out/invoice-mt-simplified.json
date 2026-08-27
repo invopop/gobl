@@ -1,0 +1,75 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "278a04b91fa69b793c30edc3746f56b1c756b3c1088f74fd1d71a3c4d4a10944"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MT",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852b4",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "005",
+		"issue_date": "2026-01-15",
+		"currency": "EUR",
+		"tax": {},
+		"supplier": {
+			"name": "Provider Services Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12701906"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Retail goods",
+					"price": "30.00"
+				},
+				"sum": "60.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "18%"
+					}
+				],
+				"total": "60.00"
+			}
+		],
+		"totals": {
+			"sum": "60.00",
+			"total": "60.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "60.00",
+								"percent": "18%",
+								"amount": "10.80"
+							}
+						],
+						"amount": "10.80"
+					}
+				],
+				"sum": "10.80"
+			},
+			"tax": "10.80",
+			"total_with_tax": "70.80",
+			"payable": "70.80"
+		}
+	}
+}

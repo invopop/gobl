@@ -16,7 +16,7 @@ func TestPartyNormalization(t *testing.T) {
 		cus.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "RSSGNN60R30H501U",
-			Type:    "individual",
+			Type:    "individual", //nolint:staticcheck // deprecated field set on purpose to test its normalization into the identities array
 		}
 		norm.Normalize(cus, tax.RegimeContext("IT"))
 		assert.Empty(t, cus.TaxID.Code)
@@ -31,7 +31,7 @@ func TestPartyNormalization(t *testing.T) {
 		cus.TaxID = &tax.Identity{
 			Country: "XX",
 			Code:    "RSSGNN60R30H501U",
-			Type:    "individual",
+			Type:    "individual", //nolint:staticcheck // deprecated field set on purpose to test its normalization into the identities array
 		}
 		norm.Normalize(cus, tax.RegimeContext("IT"))
 		assert.Equal(t, "RSSGNN60R30H501U", cus.TaxID.Code.String())
