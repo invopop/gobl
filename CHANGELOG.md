@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
   signature entries instead of panicking.
+- `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
+  contingency prefix) are no longer wrongly rejected as having an invalid prefix.
 
 ## [v0.504.0]
 
