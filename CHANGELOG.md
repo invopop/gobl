@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/pe`: added Peru (PE) tax regime: IGV category with the general
+  rate and the temporary MYPE reduced rate, RUC normalization and mod-11
+  validation, DNI/CE/passport identity types, and corrections limited to
+  credit and debit notes.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
