@@ -1,0 +1,43 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "PE"
+uuid: "7f1e9b24-c3d5-4a68-b0e7-2d4c6a8f9e1c"
+currency: PEN
+series: "F001"
+code: "00000456"
+issue_date: "2026-06-20"
+
+# Example of the temporary reduced rate for qualifying micro and small
+# enterprises in the restaurant, hotel and tourist accommodation sectors
+# (Ley 31556). During 2026 it resolves to 10.5% (8% IGV + 2.5% IPM).
+supplier:
+  name: Hostal Mirador del Valle E.I.R.L.
+  tax_id:
+    country: "PE"
+    code: "20554433228"
+  addresses:
+    - street: Calle San Agustín 210
+      locality: Cusco
+      region: Cusco
+      code: "08002"
+      country: "PE"
+
+customer:
+  name: Distribuidora del Sur S.A.
+  tax_id:
+    country: "PE"
+    code: "20876543215"
+  addresses:
+    - street: Av. Ejército 745
+      locality: Arequipa
+      region: Arequipa
+      code: "04001"
+      country: "PE"
+
+lines:
+  - quantity: "3"
+    item:
+      name: Alojamiento - habitación doble (por noche)
+      price: "180.00"
+    taxes:
+      - cat: VAT
+        rate: reduced

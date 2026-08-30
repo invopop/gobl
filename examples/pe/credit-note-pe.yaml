@@ -1,0 +1,45 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "PE"
+uuid: "9c5b3a17-2e8d-4f60-a1b9-6d7e8c9f0a2d"
+type: credit-note
+currency: PEN
+series: "FC01"
+code: "00000012"
+issue_date: "2026-07-01"
+
+preceding:
+  - code: "F001-00000123"
+    issue_date: "2026-06-15"
+
+supplier:
+  name: Comercial Andina S.A.C.
+  tax_id:
+    country: "PE"
+    code: "20401234561"
+  addresses:
+    - street: Av. Javier Prado Este 1234
+      locality: San Isidro
+      region: Lima
+      code: "15036"
+      country: "PE"
+
+customer:
+  name: Distribuidora del Sur S.A.
+  tax_id:
+    country: "PE"
+    code: "20876543215"
+  addresses:
+    - street: Av. Ejército 745
+      locality: Arequipa
+      region: Arequipa
+      code: "04001"
+      country: "PE"
+
+lines:
+  - quantity: "2"
+    item:
+      name: Servicios de consultoría
+      price: "1500.00"
+    taxes:
+      - cat: VAT
+        rate: standard

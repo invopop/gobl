@@ -1,0 +1,197 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Peru",
+    "es": "Perú"
+  },
+  "description": {
+    "en": "Peru applies the IGV (Impuesto General a las Ventas), a\nvalue-added tax administered by SUNAT, at a standard rate that\ncombines the IGV itself with the Municipal Promotion Tax (IPM).\nA temporary reduced rate applies to qualifying micro and small\nenterprises in the restaurant, hotel and tourist accommodation\nsectors.\n\nBusinesses and individuals are identified by their RUC\n(Registro Único de Contribuyentes), an eleven-digit number\nwith a taxpayer type prefix and a mod-11 check digit."
+  },
+  "time_zone": "America/Lima",
+  "country": "PE",
+  "currency": "PEN",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "DNI",
+      "name": {
+        "en": "National Identity Document",
+        "es": "Documento Nacional de Identidad"
+      },
+      "desc": {
+        "en": "Eight-digit identity document issued by RENIEC to Peruvian citizens.",
+        "es": "Documento de identidad de ocho dígitos emitido por RENIEC a los ciudadanos peruanos."
+      }
+    },
+    {
+      "code": "CE",
+      "name": {
+        "en": "Foreigner Resident Card",
+        "es": "Carné de Extranjería"
+      },
+      "desc": {
+        "en": "Identity document issued by Migraciones to foreign residents in Peru.",
+        "es": "Documento de identidad emitido por Migraciones a los extranjeros residentes en el Perú."
+      }
+    },
+    {
+      "code": "PAS",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "IGV",
+        "es": "IGV"
+      },
+      "title": {
+        "en": "General Sales Tax",
+        "es": "Impuesto General a las Ventas"
+      },
+      "desc": {
+        "en": "The IGV is Peru's value-added tax. The rate charged on invoices\nalways combines the IGV itself with the Municipal Promotion Tax\n(IPM); both are levied together and shown as a single amount, so\nGOBL models them as one rate."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Tasa General"
+          },
+          "desc": {
+            "en": "Standard rate for most goods and services: 16% IGV plus 2% IPM (Ley 29666).",
+            "es": "Tasa estándar para la mayoría de bienes y servicios: 16% de IGV más 2% de IPM (Ley 29666)."
+          },
+          "values": [
+            {
+              "since": "2011-03-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "2003-08-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate (tourism and restaurant MYPEs)",
+            "es": "Tasa Reducida (MYPE de turismo y restaurantes)"
+          },
+          "desc": {
+            "en": "Temporary rate for qualifying micro and small enterprises\nin the restaurant, hotel and tourist accommodation\nsectors (Ley 31556, extended by Ley 32219 with the IPM\ncomponent raised by Ley 32387). Eligibility depends on\nthe supplier's registration with SUNAT; the special\nregime is legislated to end on 31 December 2027.",
+            "es": "Tasa temporal para micro y pequeñas empresas calificadas\nde los rubros de restaurantes, hoteles y alojamientos\nturísticos (Ley 31556, prorrogada por la Ley 32219 con el\ncomponente del IPM elevado por la Ley 32387). La\nelegibilidad depende de la inscripción del emisor ante\nSUNAT; el régimen especial concluye el 31 de diciembre\nde 2027."
+          },
+          "values": [
+            {
+              "since": "2027-01-01",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2026-01-01",
+              "percent": "10.5%"
+            },
+            {
+              "since": "2022-09-01",
+              "percent": "10.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "SUNAT - IGV concept, rate and taxed operations",
+            "es": "SUNAT - Concepto, tasa y operaciones gravadas - IGV"
+          },
+          "url": "https://orientacion.sunat.gob.pe/3053-concepto-tasa-y-operaciones-gravadas-igv-empresas",
+          "at": "2026-08-30T00:00:00"
+        },
+        {
+          "title": {
+            "en": "SUNAT - Reduced IGV for restaurant, hotel and tourist accommodation MYPEs",
+            "es": "SUNAT - Reducción del IGV para restaurantes, hoteles y alojamientos turísticos"
+          },
+          "url": "https://orientacion.sunat.gob.pe/reduccion-del-igv-para-restaurantes-hoteles-y-alojamiento-turisticos-1",
+          "at": "2026-08-30T00:00:00"
+        },
+        {
+          "title": {
+            "es": "Ley 32219 - prórroga y modificación de la Ley 31556"
+          },
+          "url": "https://busquedas.elperuano.pe/dispositivo/NL/2357993-3"
+        }
+      ]
+    }
+  ]
+}
