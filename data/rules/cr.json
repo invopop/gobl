@@ -1,0 +1,52 @@
+{
+  "id": "GOBL-CR",
+  "package": "cr",
+  "subsets": [
+    {
+      "id": "GOBL-CR-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [CR]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CR-TAX-IDENTITY-01",
+                      "desc": "must be 9 to 12 characters long",
+                      "tests": "length between 9 and 12"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CR-TAX-IDENTITY-02",
+                      "desc": "must contain only digits, or digits and letters when 10 characters long",
+                      "tests": "valid characters"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-CR-TAX-IDENTITY-03",
+                      "desc": "must not start with a zero",
+                      "tests": "no leading zero"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
