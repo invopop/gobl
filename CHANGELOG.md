@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
+  `category1_95` (Other Income-related Information) without an accompanying
+  `gr-mydata-income-type`, as required by IAPR for informative amounts such as
+  the 0.5% municipality duty. Setting an income type alongside `category1_95`
+  is now rejected. All other income categories still require both extensions.
 - `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
   is replaced by `Client.VerifyParty`, which verifies the address declared by a
   party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
