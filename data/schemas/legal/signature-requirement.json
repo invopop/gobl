@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/signature-requirement",
+  "$ref": "#/$defs/legal.SignatureRequirement",
+  "$defs": {
+    "legal.SignatureRequirement": {
+      "properties": {
+        "party": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Party"
+        },
+        "signatory": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Signatory"
+        },
+        "intent": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Intent"
+        },
+        "witnesses": {
+          "type": "integer",
+          "title": "Witnesses"
+        }
+      },
+      "type": "object",
+      "required": [
+        "party",
+        "intent"
+      ],
+      "description": "SignatureRequirement identifies whose assent is required and in what role."
+    }
+  }
+}
