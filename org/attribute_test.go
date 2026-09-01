@@ -60,11 +60,18 @@ func TestAttributeValidation(t *testing.T) {
 		}
 		assert.NoError(t, rules.Validate(a))
 	})
-	t.Run("missing key and type", func(t *testing.T) {
+	t.Run("valid with label instead of key or type", func(t *testing.T) {
+		a := &org.Attribute{
+			Label: "SubitemValue3",
+			Text:  "850,36",
+		}
+		assert.NoError(t, rules.Validate(a))
+	})
+	t.Run("missing label, key, and type", func(t *testing.T) {
 		a := &org.Attribute{
 			Text: "Black",
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute must have either a key or a type, but not both")
+		assert.ErrorContains(t, rules.Validate(a), "attribute must have a key, a type, or a label")
 	})
 	t.Run("both key and type", func(t *testing.T) {
 		a := &org.Attribute{
@@ -72,7 +79,16 @@ func TestAttributeValidation(t *testing.T) {
 			Type: "X01",
 			Text: "Black",
 		}
-		assert.ErrorContains(t, rules.Validate(a), "attribute must have either a key or a type, but not both")
+		assert.ErrorContains(t, rules.Validate(a), "attribute must not have both a key and a type")
+	})
+	t.Run("both key and type with label", func(t *testing.T) {
+		a := &org.Attribute{
+			Label: "Color",
+			Key:   org.AttributeKeyColor,
+			Type:  "X01",
+			Text:  "Black",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute must not have both a key and a type")
 	})
 	t.Run("valid with text and date", func(t *testing.T) {
 		a := &org.Attribute{

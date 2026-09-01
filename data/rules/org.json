@@ -39,16 +39,26 @@
       "assert": [
         {
           "id": "GOBL-ORG-ATTRIBUTE-01",
-          "desc": "attribute must have either a key or a type, but not both",
-          "tests": "(string(Key) == \"\") != (string(Type) == \"\")"
+          "desc": "attribute must not have both a key and a type",
+          "tests": "not both key and type"
         },
         {
           "id": "GOBL-ORG-ATTRIBUTE-02",
           "desc": "attribute must have at least one of the text, code, amount, or date values",
-          "tests": "(Text == \"\" ? 0 : 1) + (string(Code) == \"\" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) \u003e= 1"
+          "tests": "text, code, amount, or date present"
         }
       ],
       "subsets": [
+        {
+          "guard": "no label",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-04",
+              "desc": "attribute must have a key, a type, or a label",
+              "tests": "key or type present"
+            }
+          ]
+        },
         {
           "guard": "string(Unit) != \"\"",
           "assert": [
