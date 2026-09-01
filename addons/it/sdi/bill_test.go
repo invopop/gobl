@@ -177,6 +177,75 @@ func TestInvoiceNormalization(t *testing.T) {
 		require.Len(t, inv.Supplier.Telephones, 1)
 		assert.Equal(t, "333123456", inv.Supplier.Telephones[0].Number)
 	})
+
+	t.Run("self-billed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Equal(t, sdi.ExtCodeIssuerTypeCustomer, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType))
+	})
+
+	t.Run("self-billed by the supplier itself", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer.TaxID.Code = inv.Supplier.TaxID.Code
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Empty(t, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType).String())
+	})
+
+	t.Run("self-billed without customer tax ID code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer.TaxID.Code = ""
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Empty(t, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType).String())
+	})
+
+	t.Run("issuer takes precedence over self-billed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				TaxID: &tax.Identity{
+					Country: "IT",
+					Code:    "12345678903",
+				},
+			},
+		}
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Equal(t, sdi.ExtCodeIssuerTypeThirdParty, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType))
+	})
+
+	t.Run("with issuer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				TaxID: &tax.Identity{
+					Country: "IT",
+					Code:    "12345678903",
+				},
+			},
+		}
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Equal(t, sdi.ExtCodeIssuerTypeThirdParty, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType))
+	})
+
+	t.Run("explicit issuer type is kept for same-party self-billing", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer.TaxID.Code = inv.Supplier.TaxID.Code
+		inv.Tax.Ext = inv.Tax.Ext.Set(sdi.ExtKeyIssuerType, sdi.ExtCodeIssuerTypeCustomer)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Equal(t, sdi.ExtCodeIssuerTypeCustomer, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType))
+	})
+
+	t.Run("issued by supplier", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		norm.Normalize(inv, tax.AddonContext(sdi.V1))
+		assert.Empty(t, inv.Tax.Ext.Get(sdi.ExtKeyIssuerType).String())
+	})
 }
 
 func TestSupplierValidation(t *testing.T) {
@@ -797,6 +866,53 @@ func TestOrderingValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("issuer with tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				TaxID: &tax.Identity{
+					Country: "IT",
+					Code:    "12345678903",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("issuer with fiscal code only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				Identities: []*org.Identity{
+					{
+						Key:  it.IdentityKeyFiscalCode,
+						Code: "RSSMRA80A01H501U",
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("issuer without tax ID code or fiscal code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				TaxID: &tax.Identity{
+					Country: "IT",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := rules.Validate(inv)
+		assert.ErrorContains(t, err, "issuer tax ID code or fiscal code is required")
 	})
 
 	t.Run("despatch with deferred tag and valid additional data", func(t *testing.T) {

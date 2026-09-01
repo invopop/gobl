@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
+- `it-sdi`: `it-sdi-issuer-type` extension for the FatturaPA `SoggettoEmittente`
+  field, set to `TZ` when the invoice ordering names an `issuer` and to `CC` on
+  self-billed invoices whose customer tax ID differs from the supplier's.
+- `it-sdi`: an ordering `issuer` must carry a tax ID code or a fiscal code
+  identity, as FatturaPA requires one of the two for the third-party block.
 
 ### Changed
 

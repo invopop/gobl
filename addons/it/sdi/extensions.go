@@ -17,9 +17,17 @@ const (
 	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
 	ExtKeyVATLiability cbc.Key = "it-sdi-vat-liability"
 	ExtKeyFundType     cbc.Key = "it-sdi-fund-type"
+	ExtKeyIssuerType   cbc.Key = "it-sdi-issuer-type"
 
 	ExtKeyLiquidationState cbc.Key = "it-sdi-liquidation-state"
 	ExtKeyShareholderState cbc.Key = "it-sdi-shareholder-state"
+)
+
+// Issuer type codes used to identify who compiled the invoice when it was not
+// the supplier.
+const (
+	ExtCodeIssuerTypeCustomer   cbc.Code = "CC" // Cessionario / Committente
+	ExtCodeIssuerTypeThirdParty cbc.Code = "TZ" // Terzo
 )
 
 var extensions = []*cbc.Definition{
@@ -1118,6 +1126,52 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Multiple shareholders",
 					i18n.IT: "Più soci",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyIssuerType,
+		Name: i18n.String{
+			i18n.EN: "Issuer Type",
+			i18n.IT: "Soggetto Emittente",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "FatturaPA - Filling Guide",
+					i18n.IT: "Guida alla compilazione della fattura elettronica",
+				},
+				URL: "https://www.agenziaentrate.gov.it/portale/documents/20143/451259/Guida_compilazione-FE-Esterometro-V_1.9_2024-03-05.pdf",
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Identifies who compiled the invoice when this was not the supplier, as
+				required by article 21 of DPR 633/1972. Mapped to the ~SoggettoEmittente~
+				field of a FatturaPA document.
+
+				Set automatically to ~TZ~ when the invoice's ordering section names an
+				~issuer~, and to ~CC~ when the invoice is ~self-billed~ and the
+				customer's tax ID differs from the supplier's. Left unset when a
+				self-billed invoice's supplier and customer are the same party, as in
+				an autofattura for self-consumption (TD27), where the supplier is the
+				one filing the document.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeIssuerTypeCustomer,
+				Name: i18n.String{
+					i18n.EN: "Issued by Customer",
+					i18n.IT: "Emessa dal cessionario / committente",
+				},
+			},
+			{
+				Code: ExtCodeIssuerTypeThirdParty,
+				Name: i18n.String{
+					i18n.EN: "Issued by Third Party",
+					i18n.IT: "Emessa da un soggetto terzo",
 				},
 			},
 		},

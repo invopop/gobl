@@ -1,0 +1,128 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "86bcdd31c5131a550524410904896eb0afbacc8a9366a757d9bc829a05907b9a"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6471",
+		"type": "standard",
+		"series": "FT",
+		"code": "021",
+		"issue_date": "2024-07-12",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12",
+				"it-sdi-issuer-type": "TZ"
+			}
+		},
+		"supplier": {
+			"name": "Company Name S.r.l.",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"name": "Cliente S.p.A.",
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Via dei Mille",
+					"locality": "Firenze",
+					"region": "FI",
+					"code": "00100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cleaning services",
+					"price": "125.00"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"ordering": {
+			"issuer": {
+				"name": "Fatturazione Terzi S.r.l.",
+				"tax_id": {
+					"country": "IT",
+					"code": "01234567897"
+				}
+			}
+		},
+		"totals": {
+			"sum": "125.00",
+			"tax_included": "22.54",
+			"total": "102.46",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "102.46",
+								"percent": "22.0%",
+								"amount": "22.54"
+							}
+						],
+						"amount": "22.54"
+					}
+				],
+				"sum": "22.54"
+			},
+			"tax": "22.54",
+			"total_with_tax": "125.00",
+			"payable": "125.00"
+		}
+	}
+}

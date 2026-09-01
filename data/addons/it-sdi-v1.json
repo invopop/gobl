@@ -1135,6 +1135,41 @@
           }
         }
       ]
+    },
+    {
+      "key": "it-sdi-issuer-type",
+      "name": {
+        "en": "Issuer Type",
+        "it": "Soggetto Emittente"
+      },
+      "desc": {
+        "en": "Identifies who compiled the invoice when this was not the supplier, as\nrequired by article 21 of DPR 633/1972. Mapped to the `SoggettoEmittente`\nfield of a FatturaPA document.\n\nSet automatically to `TZ` when the invoice's ordering section names an\n`issuer`, and to `CC` when the invoice is `self-billed` and the\ncustomer's tax ID differs from the supplier's. Left unset when a\nself-billed invoice's supplier and customer are the same party, as in\nan autofattura for self-consumption (TD27), where the supplier is the\none filing the document."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "FatturaPA - Filling Guide",
+            "it": "Guida alla compilazione della fattura elettronica"
+          },
+          "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/451259/Guida_compilazione-FE-Esterometro-V_1.9_2024-03-05.pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "CC",
+          "name": {
+            "en": "Issued by Customer",
+            "it": "Emessa dal cessionario / committente"
+          }
+        },
+        {
+          "code": "TZ",
+          "name": {
+            "en": "Issued by Third Party",
+            "it": "Emessa da un soggetto terzo"
+          }
+        }
+      ]
     }
   ],
   "tags": [
