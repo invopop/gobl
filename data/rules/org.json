@@ -45,7 +45,7 @@
         {
           "id": "GOBL-ORG-ATTRIBUTE-02",
           "desc": "attribute must have at least one of the text, code, amount, or date values",
-          "tests": "(Text == \"\" ? 0 : 1) + (string(Code) == \"\" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) \u003e= 1"
+          "tests": "text, code, amount, or date present"
         }
       ],
       "subsets": [

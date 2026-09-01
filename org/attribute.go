@@ -194,7 +194,7 @@ func attributeRules() *rules.Set {
 			),
 		),
 		rules.Assert("02", "attribute must have at least one of the text, code, amount, or date values",
-			is.Expr(`(Text == "" ? 0 : 1) + (string(Code) == "" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) >= 1`),
+			is.Func("text, code, amount, or date present", attributeHasValue),
 		),
 		rules.When(is.Expr(`string(Unit) != ""`),
 			rules.Assert("03", "attribute unit may only be used alongside an amount",
@@ -217,6 +217,11 @@ func attributeHasNoLabel(val any) bool {
 func attributeHasKeyOrType(val any) bool {
 	a, ok := val.(*Attribute)
 	return ok && (a.Key != "" || a.Type != "")
+}
+
+func attributeHasValue(val any) bool {
+	a, ok := val.(*Attribute)
+	return ok && (a.Text != "" || a.Code != "" || a.Amount != nil || a.Date != nil)
 }
 
 func normalizeAttribute(a *Attribute) {
