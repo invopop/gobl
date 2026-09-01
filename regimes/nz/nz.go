@@ -39,10 +39,6 @@ func New() *tax.RegimeDef {
 				Title: i18n.NewString("Inland Revenue - GST"),
 				URL:   "https://www.ird.govt.nz/gst",
 			},
-			{
-				Title: i18n.NewString("Inland Revenue - IRD number algorithm"),
-				URL:   "https://www.classic.ird.govt.nz/resources/6/1/6198472a-ebee-4b71-bb16-3f7275e7f2bd/2019+RWT-NRWT+Specification+v1.0.pdf",
-			},
 		},
 		TimeZone: "Pacific/Auckland",
 		Description: i18n.String{
