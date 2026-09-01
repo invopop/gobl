@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "799f50eb30b44191e079786b6758a6fc323d28ad4eb10d7d0d2e4189badad2ec"
+			"val": "830b3cc5d8d731434c11f590293a8f3df03e986805ba7753c375dda610db6c42"
 		}
 	},
 	"doc": {
@@ -83,7 +83,10 @@
 				"item": {
 					"name": "Freelance design services",
 					"price": "500.00",
-					"unit": "h"
+					"unit": "h",
+					"ext": {
+						"untdid-unit": "HUR"
+					}
 				},
 				"sum": "5000.00",
 				"taxes": [

@@ -191,16 +191,11 @@
     {
       "id": "GOBL-EU-EN16931-ORG-ITEM",
       "object": "org.Item",
-      "subsets": [
+      "assert": [
         {
-          "field": "unit",
-          "assert": [
-            {
-              "id": "GOBL-EU-EN16931-ORG-ITEM-01",
-              "desc": "unit is required (BR-23)",
-              "tests": "present"
-            }
-          ]
+          "id": "GOBL-EU-EN16931-ORG-ITEM-02",
+          "desc": "UNTDID unit `untdid-unit` must be present and valid (BR-23)",
+          "tests": "required valid UNTDID unit"
         }
       ]
     },

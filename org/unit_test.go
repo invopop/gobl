@@ -5,58 +5,58 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnitValidation(t *testing.T) {
-	u := org.Unit("h")
-	assert.NoError(t, u.Validate())
-
-	u = org.Unit("XUN")
-	assert.NoError(t, u.Validate())
-
-	u = org.Unit("X")
-	err := u.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "must be a valid value or UN/ECE code")
-	}
-
-	u = org.Unit("XUNX")
-	err = u.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "must be a valid value or UN/ECE code")
-	}
+	assert.True(t, org.HasValidUnitKey.Check(cbc.Key("h")))
+	assert.False(t, org.HasValidUnitKey.Check(cbc.Key("XUN")))
+	assert.False(t, org.HasValidUnitKey.Check(cbc.Key("X")))
+	assert.False(t, org.HasValidUnitKey.Check(cbc.Key("XUNX")))
 }
 
-func TestUnitUNECE(t *testing.T) {
-	u := org.Unit("h")
-	assert.Equal(t, u.UNECE(), cbc.Code("HUR"))
+func TestUnitDefinitions(t *testing.T) {
+	for _, def := range org.UnitDefinitions {
+		assert.Empty(t, def.Map)
+	}
 
-	u = org.UnitTetraBrik
-	assert.Equal(t, u.UNECE(), cbc.CodeEmpty, "valid but no code")
+	def := cbc.GetKeyDefinition(org.UnitHour, org.UnitDefinitions)
+	assert.NotNil(t, def)
+	assert.Equal(t, "Hours", def.Name.String())
+	assert.Empty(t, def.Map)
 
-	u = org.Unit("XUN")
-	assert.Equal(t, u.UNECE(), cbc.Code("XUN"))
-
-	u = org.Unit("random-something")
-	assert.Equal(t, u.UNECE(), cbc.Code("ZZ"))
-
-	u = org.Unit("")
-	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
+	def = cbc.GetKeyDefinition(org.UnitKilogram, org.UnitDefinitions)
+	assert.NotNil(t, def)
+	assert.Equal(t, "kg", def.Meta[org.UnitMetaKeySymbol])
 }
 
 func TestUnitJSONSchema(t *testing.T) {
-	u := org.Unit("h")
-	schema := u.JSONSchema()
-	assert.Equal(t, schema.Title, "Unit")
-	assert.Equal(t, schema.OneOf[0].Const, org.UnitDefinitions[0].Unit)
-	last := schema.OneOf[len(schema.OneOf)-1]
-	assert.Equal(t, last.Pattern, org.UnitPatternUNECE)
+	t.Run("with property", func(t *testing.T) {
+		schema := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		schema.Properties.Set("unit", &jsonschema.Schema{})
+		org.ExtendUnitKeySchema(schema, "unit")
+		unit, ok := schema.Properties.Get("unit")
+		assert.True(t, ok)
+		assert.Equal(t, unit.OneOf[0].Const, org.UnitDefinitions[0].Key)
+		assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+	})
+	t.Run("missing property", func(t *testing.T) {
+		schema := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		schema.Properties.Set("other", &jsonschema.Schema{})
+		org.ExtendUnitKeySchema(schema, "unit")
+		other, ok := schema.Properties.Get("other")
+		require.True(t, ok)
+		assert.Empty(t, other.OneOf)
+		_, ok = schema.Properties.Get("unit")
+		assert.False(t, ok)
+	})
 }
 
 func TestNewUnitsValidation(t *testing.T) {
 	// Test all new units validate successfully
-	newUnits := []org.Unit{
+	newUnits := []cbc.Key{
 		org.UnitWeek,
 		org.UnitYear,
 		org.UnitDecilitre,
@@ -70,29 +70,6 @@ func TestNewUnitsValidation(t *testing.T) {
 	}
 
 	for _, u := range newUnits {
-		assert.NoError(t, u.Validate(), "unit %s should validate", u)
-	}
-}
-
-func TestNewUnitsUNECE(t *testing.T) {
-	// Test UNECE mappings for new units
-	tests := []struct {
-		unit     org.Unit
-		expected cbc.Code
-	}{
-		{org.UnitWeek, "WEE"},
-		{org.UnitYear, "ANN"},
-		{org.UnitDecilitre, "DLT"},
-		{org.UnitKilolitre, "K6"},
-		{org.UnitCentigram, "CGM"},
-		{org.UnitLinearMetre, "LM"},
-		{org.UnitLinearFoot, "LF"},
-		{org.UnitBlock, "XOK"},
-		{org.UnitPacket, "XPA"},
-		{org.UnitBundle, "XBE"},
-	}
-
-	for _, tt := range tests {
-		assert.Equal(t, tt.expected, tt.unit.UNECE(), "UNECE code for %s should be %s", tt.unit, tt.expected)
+		assert.True(t, org.HasValidUnitKey.Check(u), "unit %s should validate", u)
 	}
 }

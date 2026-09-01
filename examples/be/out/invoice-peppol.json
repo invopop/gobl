@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "37756a46f1b6db63ebed3c8c6cbe7787832e5f390507009059ea9c054d93f875"
+			"val": "7c7deb5fe149856f7e6f7dc0ad0ac6521f1d2d992e66c873ec45466cba7dd993"
 		},
 		"from": "iso6523-actorid-upis::0208:0735585741",
 		"to": "iso6523-actorid-upis::0208:0699912507"
@@ -92,7 +92,10 @@
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
-					"unit": "h"
+					"unit": "h",
+					"ext": {
+						"untdid-unit": "HUR"
+					}
 				},
 				"sum": "1800.00",
 				"discounts": [
@@ -121,7 +124,10 @@
 				"item": {
 					"name": "Promotional cookies",
 					"price": "10.00",
-					"unit": "one"
+					"unit": "one",
+					"ext": {
+						"untdid-unit": "C62"
+					}
 				},
 				"sum": "10.00",
 				"taxes": [

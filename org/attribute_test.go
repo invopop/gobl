@@ -112,6 +112,14 @@ func TestAttributeValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, rules.Validate(a), "attribute unit may only be used alongside an amount")
 	})
+	t.Run("invalid unit", func(t *testing.T) {
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: num.NewAmount(200, 0),
+			Unit:   "unknown",
+		}
+		assert.ErrorContains(t, rules.Validate(a), "attribute unit must be valid")
+	})
 }
 
 func TestAttributeNormalization(t *testing.T) {
@@ -193,6 +201,9 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 				"key": {
 					"$ref": "https://gobl.org/draft-0/cbc/key",
 					"title": "Key"
+				},
+				"unit": {
+					"$ref": "https://gobl.org/draft-0/cbc/key"
 				}
 			}
 		}
@@ -209,4 +220,18 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 	last := prop.AnyOf[len(prop.AnyOf)-1]
 	assert.Equal(t, "Other", last.Title)
 	assert.NotEmpty(t, last.Pattern)
+	unit, ok := js.Properties.Get("unit")
+	require.True(t, ok)
+	require.Len(t, unit.OneOf, len(org.UnitDefinitions))
+
+	t.Run("missing key property", func(t *testing.T) {
+		js := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		js.Properties.Set("unit", &jsonschema.Schema{})
+		org.Attribute{}.JSONSchemaExtend(js)
+		unit, ok := js.Properties.Get("unit")
+		require.True(t, ok)
+		assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+		_, ok = js.Properties.Get("key")
+		assert.False(t, ok)
+	})
 }

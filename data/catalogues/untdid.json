@@ -8490,6 +8490,16 @@
       ]
     },
     {
+      "key": "untdid-unit",
+      "name": {
+        "en": "UNTDID Unit of Measure"
+      },
+      "desc": {
+        "en": "Unit of measure code from UN/ECE Recommendations 20 and 21. This extension preserves the exact standard code when a GOBL unit key is unavailable or when a document format requires the UNTDID representation."
+      },
+      "pattern": "^[A-Z0-9]{2,3}$"
+    },
+    {
       "key": "untdid-item-type",
       "name": {
         "en": "UNTDID 7143 Item Type Identification Code"
