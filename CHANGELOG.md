@@ -123,6 +123,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `fi`: added the Finnish (FI) tax regime.
 - `dk-oioubl-v2`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate. The EN 16931 rules that OIOUBL deliberately relaxes are handled inside that addon via `rules.Ignore`, keeping `addons/eu/en16931` free of OIOUBL-specific coupling.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/is`: New tax regime for Iceland — VAT (virðisaukaskattur / VSK) at standard 24% and reduced 11% rates with historical values, and Kennitala tax-identity validation using the weighted modulus-11 algorithm.
 - `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
 
 ### Changed
