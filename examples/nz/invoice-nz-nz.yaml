@@ -1,0 +1,35 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: NZ
+uuid: 8c4e4d1e-3b39-4f5d-b4ef-94c61a5aaf17
+currency: NZD
+series: "2025"
+code: "INV-001"
+issue_date: "2025-04-25"
+
+supplier:
+  name: Example Supplier Ltd
+  tax_id:
+    country: NZ
+    code: "49091850"
+  addresses:
+    - street: 12 Queen Street
+      locality: Auckland
+      country: NZ
+      code: "1010"
+
+customer:
+  name: Example Customer Ltd
+  addresses:
+    - street: 8 Short Street
+      locality: Wellington
+      country: NZ
+      code: "6011"
+
+lines:
+  - quantity: "1"
+    item:
+      name: Consulting Services
+      price: "1000.00"
+    taxes:
+      - cat: GST
+        rate: general

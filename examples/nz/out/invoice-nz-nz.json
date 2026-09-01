@@ -1,0 +1,90 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "a38b284baf40eb55b6d11238d73b447f55be06a2da7478dc878bfefd23f8c915"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NZ",
+		"uuid": "8c4e4d1e-3b39-4f5d-b4ef-94c61a5aaf17",
+		"type": "standard",
+		"series": "2025",
+		"code": "INV-001",
+		"issue_date": "2025-04-25",
+		"currency": "NZD",
+		"supplier": {
+			"name": "Example Supplier Ltd",
+			"tax_id": {
+				"country": "NZ",
+				"code": "49091850"
+			},
+			"addresses": [
+				{
+					"street": "12 Queen Street",
+					"locality": "Auckland",
+					"code": "1010",
+					"country": "NZ"
+				}
+			]
+		},
+		"customer": {
+			"name": "Example Customer Ltd",
+			"addresses": [
+				{
+					"street": "8 Short Street",
+					"locality": "Wellington",
+					"code": "6011",
+					"country": "NZ"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Consulting Services",
+					"price": "1000.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"key": "standard",
+						"rate": "general",
+						"percent": "15.0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000.00",
+								"percent": "15.0%",
+								"amount": "150.00"
+							}
+						],
+						"amount": "150.00"
+					}
+				],
+				"sum": "150.00"
+			},
+			"tax": "150.00",
+			"total_with_tax": "1150.00",
+			"payable": "1150.00"
+		}
+	}
+}

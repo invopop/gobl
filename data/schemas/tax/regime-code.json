@@ -90,6 +90,10 @@
           "title": "Norway"
         },
         {
+          "const": "NZ",
+          "title": "New Zealand"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },
