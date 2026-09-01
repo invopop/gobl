@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnitValidation(t *testing.T) {
@@ -32,13 +33,25 @@ func TestUnitDefinitions(t *testing.T) {
 }
 
 func TestUnitJSONSchema(t *testing.T) {
-	schema := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
-	schema.Properties.Set("unit", &jsonschema.Schema{})
-	org.ExtendUnitKeySchema(schema, "unit")
-	unit, ok := schema.Properties.Get("unit")
-	assert.True(t, ok)
-	assert.Equal(t, unit.OneOf[0].Const, org.UnitDefinitions[0].Key)
-	assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+	t.Run("with property", func(t *testing.T) {
+		schema := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		schema.Properties.Set("unit", &jsonschema.Schema{})
+		org.ExtendUnitKeySchema(schema, "unit")
+		unit, ok := schema.Properties.Get("unit")
+		assert.True(t, ok)
+		assert.Equal(t, unit.OneOf[0].Const, org.UnitDefinitions[0].Key)
+		assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+	})
+	t.Run("missing property", func(t *testing.T) {
+		schema := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		schema.Properties.Set("other", &jsonschema.Schema{})
+		org.ExtendUnitKeySchema(schema, "unit")
+		other, ok := schema.Properties.Get("other")
+		require.True(t, ok)
+		assert.Empty(t, other.OneOf)
+		_, ok = schema.Properties.Get("unit")
+		assert.False(t, ok)
+	})
 }
 
 func TestNewUnitsValidation(t *testing.T) {

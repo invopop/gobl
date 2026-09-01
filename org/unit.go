@@ -16,6 +16,9 @@ const (
 	UnitPatternUNECE = `^[A-Z0-9]{2,3}$`
 	// UnitMetaKeySymbol identifies the display symbol in a unit definition's metadata.
 	UnitMetaKeySymbol cbc.Key = `symbol`
+	// unitExtKeyUNTDID receives legacy UN/ECE unit codes during normalization.
+	// Mirrors untdid.ExtKeyUnit without importing the catalogue.
+	unitExtKeyUNTDID cbc.Key = `untdid-unit`
 )
 
 // Set of common units. Some local formats may define additional non-standard

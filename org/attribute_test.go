@@ -223,4 +223,15 @@ func TestAttributeJSONSchemaExtend(t *testing.T) {
 	unit, ok := js.Properties.Get("unit")
 	require.True(t, ok)
 	require.Len(t, unit.OneOf, len(org.UnitDefinitions))
+
+	t.Run("missing key property", func(t *testing.T) {
+		js := &jsonschema.Schema{Properties: jsonschema.NewProperties()}
+		js.Properties.Set("unit", &jsonschema.Schema{})
+		org.Attribute{}.JSONSchemaExtend(js)
+		unit, ok := js.Properties.Get("unit")
+		require.True(t, ok)
+		assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
+		_, ok = js.Properties.Get("key")
+		assert.False(t, ok)
+	})
 }

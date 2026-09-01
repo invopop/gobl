@@ -1,7 +1,6 @@
 package org
 
 import (
-	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
@@ -106,15 +105,12 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 }
 
 func normalizeItem(i *Item) {
-	if i == nil {
-		return
-	}
 	// Before Unit was restricted to GOBL keys, it also accepted raw UN/ECE
 	// codes. Preserve those codes in the dedicated extension without making
 	// assumptions about their meaning; addons may provide their own mapping.
 	if regexpUNECEUnit.MatchString(i.Unit.String()) {
 		code := cbc.Code(i.Unit)
-		i.Ext = i.Ext.SetIfEmpty(untdid.ExtKeyUnit, code)
+		i.Ext = i.Ext.SetIfEmpty(unitExtKeyUNTDID, code)
 		i.Unit = cbc.KeyEmpty
 	}
 	i.Name = cbc.NormalizeString(i.Name)

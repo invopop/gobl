@@ -103,6 +103,16 @@ var unitUNTDIDMap = map[cbc.Key]cbc.Code{
 	org.UnitUnit:             "XUN",
 }
 
+// untdidUnitMap reverses unitUNTDIDMap for constant time lookups. The forward
+// map is one-to-one, so each code resolves to a single unit.
+var untdidUnitMap = func() map[cbc.Code]cbc.Key {
+	m := make(map[cbc.Code]cbc.Key, len(unitUNTDIDMap))
+	for unit, code := range unitUNTDIDMap {
+		m[code] = unit
+	}
+	return m
+}()
+
 // UnitToUNTDID converts a GOBL unit key into its corresponding UNTDID unit
 // code. It returns an empty code when the unit has no standard mapping.
 func UnitToUNTDID(unit cbc.Key) cbc.Code {
@@ -112,22 +122,10 @@ func UnitToUNTDID(unit cbc.Key) cbc.Code {
 // UnitFromUNTDID converts a UNTDID unit code into its corresponding GOBL unit
 // key. It returns an empty unit when GOBL has no standard mapping.
 func UnitFromUNTDID(code cbc.Code) cbc.Key {
-	if code == cbc.CodeEmpty {
-		return cbc.KeyEmpty
-	}
-	for unit, mapped := range unitUNTDIDMap {
-		if mapped == code {
-			return unit
-		}
-	}
-	return cbc.KeyEmpty
+	return untdidUnitMap[code]
 }
 
 func normalizeOrgItem(item *org.Item) {
-	if item == nil {
-		return
-	}
-
 	code := item.Ext.Get(untdid.ExtKeyUnit)
 	if unit := UnitFromUNTDID(code); unit != cbc.KeyEmpty {
 		item.Unit = unit
