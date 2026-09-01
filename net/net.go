@@ -1,4 +1,5 @@
-// Package net provides models and utilities for GOBL Net, a decentralized identity and communication protocol.
+// Package net implements GOBL Net identity discovery, authentication,
+// envelope delivery, and remote signature verification.
 //
 // EXPERIMENTAL: GOBL Net is under active development. Its API and wire
 // protocol may change without notice and carry no stability guarantee yet.
@@ -20,10 +21,8 @@ const (
 	WhoPath = WellKnownPath + "/who"
 	// InboxPath is the well-known path accepting envelope deliveries.
 	InboxPath = WellKnownPath + "/inbox"
-	// JWKSPath is the bulk JWK Set endpoint published at the root
-	// well-known directory so generic JWT tooling (jwt.io, OIDC-style
-	// verifiers) can resolve `jku` and verify signatures without
-	// out-of-band key exchange.
+	// JWKSPath is the conventional bulk JWK Set endpoint for generic tooling.
+	// GOBL Net verification uses the per-key endpoint instead.
 	JWKSPath = "/.well-known/jwks.json"
 )
 

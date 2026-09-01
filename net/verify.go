@@ -7,66 +7,130 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 )
 
-// VerifyEnvelope performs remote verification of a signed GOBL envelope.
-// It reads the signer's GOBL Net identity (iss) from the first
-// signature's signed payload, fetches that address's public keys, and
-// verifies that signature. When expectedAud is non-empty, the signature's
-// signed audience (aud) must equal it. The verified issuer address is
-// returned. Additional signatures (e.g. authority countersignatures) are
-// not checked here; use VerifyAuthority for those.
-func (c *Client) VerifyEnvelope(ctx context.Context, env *gobl.Envelope, expectedAud Address) (Address, error) {
-	// A malformed envelope may carry signatures without a header;
-	// reject rather than let header verification panic.
+// VerifyParty returns the address declared by a party envelope's gobl endpoint
+// after verifying a self-signature from that address. It does not verify
+// authority endorsements.
+func (c *Client) VerifyParty(ctx context.Context, env *gobl.Envelope) (Address, error) {
 	if env == nil || env.Head == nil || !env.Signed() {
 		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
 	}
+	party, ok := env.Extract().(*org.Party)
+	if !ok {
+		return "", ErrPartyMissing
+	}
+	ep := party.Endpoint(Scheme)
+	if ep == nil {
+		return "", fmt.Errorf("%w: party declares no gobl: endpoint", ErrPartyMissing)
+	}
+	subject, err := ParseAddress(ep.URI.Opaque())
+	if err != nil {
+		return "", fmt.Errorf("%w: party endpoint %q is not a valid address: %v", ErrVerifyFailed, ep.URI, err)
+	}
+	ok, err = c.subjectSignatureFor(ctx, env, subject, func(*head.SigningPayload) bool {
+		return true
+	})
+	if err != nil {
+		return "", err
+	}
+	if !ok {
+		return "", fmt.Errorf("%w: no valid self-signature by %q", ErrVerifyFailed, subject)
+	}
+	return subject, nil
+}
 
-	sig := env.Signatures[0]
-	p, err := head.SignedPayload(sig)
+// VerifyDelivery returns the sole issuer of valid signatures addressed to
+// self. It fails if no issuer or multiple issuers bind the delivery.
+func (c *Client) VerifyDelivery(ctx context.Context, env *gobl.Envelope, self Address) (Address, error) {
+	if env == nil || env.Head == nil || !env.Signed() {
+		return "", fmt.Errorf("%w: envelope is not signed", ErrVerifyFailed)
+	}
+	want, err := ParseAddress(string(self))
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
 	}
-	if p.Iss == "" {
-		return "", fmt.Errorf("%w: signature has no iss", ErrVerifyFailed)
+	if len(env.Signatures) > maxEnvelopeSignatures {
+		return "", fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
 	}
-	// Canonicalize the issuer so key-fetch URLs and comparisons use
-	// the ASCII form regardless of how the iss was written. Anything
-	// that is not a bare FQDN — including URI forms — is rejected.
-	issuer, err := ParseAddress(p.Iss)
-	if err != nil {
-		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	kid := sig.KeyID()
-	if kid == "" {
-		return "", fmt.Errorf("%w: signature has no key ID", ErrVerifyFailed)
-	}
-
-	pubKey, err := c.FetchKey(ctx, issuer, kid)
-	if err != nil {
-		if errors.Is(err, ErrUnavailable) {
-			return "", err
-		}
-		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-	// VerifySignature enforces the key's validity window against the
-	// signed `iat` via head.Header.Verify.
-	if err := env.VerifySignature(sig, pubKey); err != nil {
-		return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
-	}
-
-	if expectedAud != "" {
-		want, err := ParseAddress(string(expectedAud))
+	var sender Address
+	var unavailable error
+	for _, sig := range env.Signatures {
+		p, err := head.SignedPayload(sig)
 		if err != nil {
-			return "", fmt.Errorf("%w: %v", ErrVerifyFailed, err)
+			continue
 		}
-		got, err := ParseAddress(p.Aud)
-		if err != nil || got != want {
-			return "", fmt.Errorf("%w: audience mismatch (got %q, want %q)", ErrVerifyFailed, p.Aud, want)
+		aud, err := ParseAddress(p.Aud)
+		if err != nil || aud != want {
+			continue
 		}
+		iss, err := ParseAddress(p.Iss)
+		if err != nil {
+			continue
+		}
+		pub, err := c.FetchKey(ctx, iss, sig.KeyID())
+		if err != nil {
+			if errors.Is(err, ErrUnavailable) {
+				unavailable = err
+			}
+			continue
+		}
+		if err := env.VerifySignature(sig, pub); err != nil {
+			continue
+		}
+		if sender != "" && sender != iss {
+			return "", fmt.Errorf("%w: ambiguous delivery: bound to %q by both %q and %q",
+				ErrVerifyFailed, want, sender, iss)
+		}
+		sender = iss
 	}
+	if sender == "" {
+		if unavailable != nil {
+			return "", unavailable
+		}
+		return "", fmt.Errorf("%w: no valid signature bound to %q", ErrVerifyFailed, want)
+	}
+	return sender, nil
+}
 
-	return issuer, nil
+// subjectSignatureFor reports whether the envelope carries a valid
+// signature by subject whose payload satisfies match. The signature
+// count is capped (each candidate can cost a key fetch); a transient
+// key-fetch failure returns ErrUnavailable when nothing else matched.
+func (c *Client) subjectSignatureFor(ctx context.Context, env *gobl.Envelope, subject Address, match func(*head.SigningPayload) bool) (bool, error) {
+	if len(env.Signatures) > maxEnvelopeSignatures {
+		return false, fmt.Errorf("%w: envelope carries %d signatures (max %d)",
+			ErrVerifyFailed, len(env.Signatures), maxEnvelopeSignatures)
+	}
+	var unavailable error
+	for _, sig := range env.Signatures {
+		p, err := head.SignedPayload(sig)
+		if err != nil {
+			continue
+		}
+		iss, err := ParseAddress(p.Iss)
+		if err != nil || iss != subject {
+			continue
+		}
+		if !match(p) {
+			continue
+		}
+		pub, err := c.FetchKey(ctx, subject, sig.KeyID())
+		if err != nil {
+			if errors.Is(err, ErrUnavailable) {
+				unavailable = err
+			}
+			continue
+		}
+		if err := env.VerifySignature(sig, pub); err != nil {
+			continue
+		}
+		return true, nil
+	}
+	if unavailable != nil {
+		return false, unavailable
+	}
+	return false, nil
 }

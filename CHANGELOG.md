@@ -6,9 +6,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
+  and `WithSandbox`. Sandbox and live trust lists remain separate.
+
+### Changed
+
+- `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
+  is replaced by `Client.VerifyParty`, which verifies the address declared by a
+  party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
+  inbox. `Client.Who` now requires an audience-free self-signature.
+- `net`: registration and verification may pass the same party envelope between
+  participants; request tokens convey delivery intent. Ordinary document
+  deliveries and deferred `/who` responses remain audience-bound.
+- `net`: a party that countersigns an envelope must replace its own previous
+  countersignature. It may not remove signatures from other parties.
+- `net`: registration authorities can no longer verify their own endorsements;
+  the named identity verifier must be a different participant.
+- `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
+  `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
+  endorsement can be verified.
+
 ### Fixed
 
 - `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
+- `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
+  signature entries instead of panicking.
+- `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
+  contingency prefix) are no longer wrongly rejected as having an invalid prefix.
 
 ## [v0.504.0]
 

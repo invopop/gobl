@@ -140,7 +140,7 @@ func TestVerifyAuthority(t *testing.T) {
 		assert.True(t, end.Verified())
 	})
 
-	t.Run("authority naming itself needs no second signature", func(t *testing.T) {
+	t.Run("authority cannot verify itself", func(t *testing.T) {
 		msg := &note.Message{Content: "party doc"}
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
@@ -157,8 +157,9 @@ func TestVerifyAuthority(t *testing.T) {
 		)
 		end, err := c.VerifyAuthority(ctx, env)
 		require.NoError(t, err)
-		assert.Equal(t, authorityAddr, end.Verifier)
-		assert.True(t, end.Verified())
+		assert.Equal(t, authorityAddr, end.Authority)
+		assert.Empty(t, end.Verifier)
+		assert.False(t, end.Verified())
 	})
 
 	t.Run("degrades to registered when the verifier signature is missing", func(t *testing.T) {
@@ -588,10 +589,12 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 
 	t.Run("prefers a verified endorsement regardless of signature order", func(t *testing.T) {
 		// Two trusted authorities countersign: the first is registered
-		// only, the second names itself as verifier. The verified
-		// endorsement must win even though it appears later.
+		// only, while the second names an independent verifier. The
+		// verified endorsement must win even though it appears later.
 		secondAddr := Address("auth.example.org")
 		secondKey := dsig.NewES256Key()
+		verifierAddr := Address("verify.example.org")
+		verifierKey := dsig.NewES256Key()
 		msg := &note.Message{Content: "party doc"}
 		msg.SetUUID(uuid.V7())
 		env, err := gobl.Envelop(msg)
@@ -599,20 +602,23 @@ func TestVerifySignatureByEdgeCases(t *testing.T) {
 		require.NoError(t, env.Sign(authKey, head.WithIssuer(authorityAddr.String())))
 		require.NoError(t, env.Sign(secondKey,
 			head.WithIssuer(secondAddr.String()),
-			head.WithVerifier(secondAddr.String())))
+			head.WithVerifier(verifierAddr.String())))
+		require.NoError(t, env.Sign(verifierKey,
+			head.WithIssuer(verifierAddr.String())))
 
 		c := NewClient(
 			WithAuthorities(authorityAddr, secondAddr),
 			WithFetcher(&mapFetcher{data: map[string][]byte{
-				authorityAddr.KeyURL(authKey.ID()): jwkOf(authKey),
-				secondAddr.KeyURL(secondKey.ID()):  jwkOf(secondKey),
+				authorityAddr.KeyURL(authKey.ID()):    jwkOf(authKey),
+				secondAddr.KeyURL(secondKey.ID()):     jwkOf(secondKey),
+				verifierAddr.KeyURL(verifierKey.ID()): jwkOf(verifierKey),
 			}}),
 		)
 		end, err := c.VerifyAuthority(ctx, env)
 		require.NoError(t, err)
 		assert.True(t, end.Verified())
 		assert.Equal(t, secondAddr, end.Authority)
-		assert.Equal(t, secondAddr, end.Verifier)
+		assert.Equal(t, verifierAddr, end.Verifier)
 	})
 }
 
@@ -669,6 +675,24 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		assert.True(t, errors.Is(err, ErrUnavailable))
 	})
 
+	t.Run("unreachable authority key surfaces instead of rejecting", func(t *testing.T) {
+		// The outcome is indeterminate while the authority's key
+		// endpoint is down: callers must see the transient condition
+		// (retry) rather than a definitive verification failure.
+		c := NewClient(
+			WithAuthorities(authorityAddr),
+			WithFetcher(&mapFetcher{
+				errs: map[string]error{
+					authorityAddr.KeyURL(authKey.ID()): fmt.Errorf("%w: HTTP 503", ErrUnavailable),
+				},
+			}),
+		)
+		_, err := c.VerifyAuthority(ctx, buildVerified(t))
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, ErrUnavailable))
+		assert.False(t, errors.Is(err, ErrVerifyFailed))
+	})
+
 	t.Run("removed verifier key still degrades to registered", func(t *testing.T) {
 		// A definitive 404 means the key is gone — revoked — and the
 		// endorsement degrades rather than erroring.
@@ -693,5 +717,29 @@ func TestVerifyAuthorityUnavailability(t *testing.T) {
 		require.Error(t, err)
 		assert.True(t, errors.Is(err, ErrVerifyFailed))
 		assert.Contains(t, err.Error(), "signatures")
+	})
+}
+
+func TestWithSandbox(t *testing.T) {
+	original := Authorities
+	t.Cleanup(func() { Authorities = original })
+	Authorities = []Address{"lookup.gobl.org"}
+
+	t.Run("switches to the sandbox trust list", func(t *testing.T) {
+		c := NewClient(WithSandbox())
+		assert.Equal(t, SandboxAuthorities, c.authorities)
+	})
+
+	t.Run("live default excludes sandbox authorities", func(t *testing.T) {
+		c := NewClient()
+		for _, sandbox := range SandboxAuthorities {
+			assert.NotContains(t, c.authorities, sandbox,
+				"live clients must never trust sandbox endorsements")
+		}
+	})
+
+	t.Run("last trust option wins", func(t *testing.T) {
+		c := NewClient(WithSandbox(), WithAuthorities("authority.corp.example"))
+		assert.Equal(t, []Address{"authority.corp.example"}, c.authorities)
 	})
 }

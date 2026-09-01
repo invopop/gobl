@@ -461,3 +461,14 @@ func mustParseTS(t *testing.T, s string) cal.Timestamp {
 	}
 	return ts
 }
+
+func TestNilSignatureGuards(t *testing.T) {
+	// A JSON `null` in an envelope's sigs array unmarshals to a nil
+	// *dsig.Signature without error: readers must report it as a
+	// payload error, never dereference it.
+	_, err := head.SignedPayload(nil)
+	require.ErrorIs(t, err, head.ErrSignaturePayload)
+
+	h := head.NewHeader()
+	require.ErrorIs(t, h.Verify(nil), head.ErrSignaturePayload)
+}
