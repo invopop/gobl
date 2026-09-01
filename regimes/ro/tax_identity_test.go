@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// ---- Unit tests to check the algorithm inside tax_identity.go ----
+// Unit tests to check the algorithm inside tax_identity.go
 func TestTaxIdentityRules(t *testing.T) {
 	tests := []struct {
 		name string

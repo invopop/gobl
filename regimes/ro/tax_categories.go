@@ -23,7 +23,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.RO: "Taxa pe Valoarea Adăugată",
 		},
 
-		// ---- Trustworthy sources about tax systems in Romania (ANAF) ----
+		// Trustworthy sources about tax systems in Romania (ANAF)
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.NewString("ANAF - Cod fiscal 227/2015 Cotele de TVA (VAT rates)"),
@@ -45,7 +45,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.RO: "Cota Standard",
 				},
 
-				// ---- General Rate History ----
+				// General Rate History
 				Values: []*tax.RateValueDef{
 					{
 						// 1 Aug 2025
@@ -72,7 +72,7 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.RO: "Cota Redusă",
 				},
 
-				// ---- Reduced Rate History ----
+				// Reduced Rate History
 				Values: []*tax.RateValueDef{
 					{
 						// 1 Aug 2025

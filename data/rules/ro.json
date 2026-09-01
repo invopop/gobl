@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-RO",
+  "package": "ro",
+  "subsets": [
+    {
+      "id": "GOBL-RO-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [RO]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-RO-TAX-IDENTITY-01",
+                      "desc": "invalid Romanian CIF/CUI",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -20,8 +20,8 @@ algorithm.
 	(The exact algorithm can be found at page 76)
 */
 
-// We use a regex to reject anything outside 2-10 plain digits
-var taxCodeRegexp = regexp.MustCompile(`^\d{2,10}$`)
+// We use a regex to reject anything outside 2-10 plain digits. No leading 0s.
+var taxCodeRegexp = regexp.MustCompile(`^[1-9]\d{1,9}$`)
 
 /*
 	taxCodeWeights are applied right-to-left against the code digits

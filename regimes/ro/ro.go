@@ -34,7 +34,7 @@ func New() *tax.RegimeDef {
 			i18n.RO: "România",
 		},
 
-		// ---- Short description (based on pl format) ----
+		// Short description (based on pl format)
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Romania's tax system is administered by the Agenția Națională de
@@ -42,11 +42,7 @@ func New() *tax.RegimeDef {
 				the EU VAT Directive.
 
 				VAT (Taxa pe Valoarea Adăugată, TVA) applies to most goods and
-				services. Since 1 August 2025 Romania applies a standard rate of
-				21% and a single reduced rate of 11%, replacing the previous 19%
-				standard and 5%/9% reduced rates.
-
-				Businesses are identified by their Cod de Identificare Fiscală
+				services. Businesses are identified by their Cod de Identificare Fiscală
 				(CIF), also known historically as the Cod Unic de Înregistrare
 				(CUI). For VAT-registered entities this is prefixed with RO to
 				form the Romanian VAT number (e.g. RO12345678).
@@ -58,7 +54,7 @@ func New() *tax.RegimeDef {
 			`),
 		},
 
-		// ---- Trustworthy sources about tax systems in Romania (ANAF) ----
+		// Trustworthy sources about tax systems in Romania (ANAF)
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.NewString("ANAF - Cod fiscal 227/2015 Cotele de TVA (VAT rates)"),

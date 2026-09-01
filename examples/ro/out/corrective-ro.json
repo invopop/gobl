@@ -4,18 +4,26 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f4503e02939330bf6d62a897a9bbcf686c9682f44796a9973899c7b1865275a9"
+			"val": "4e970012800a201cc8076f460f054adc0c6303253b008d0c9cfed92542963d5a"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "RO",
-		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c4e",
-		"type": "standard",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c51",
+		"type": "corrective",
 		"series": "FACT",
-		"code": "0001",
-		"issue_date": "2026-02-10",
+		"code": "0004",
+		"issue_date": "2026-03-20",
 		"currency": "RON",
+		"preceding": [
+			{
+				"issue_date": "2026-02-10",
+				"series": "FACT",
+				"code": "0001",
+				"reason": "Corectare cotă TVA aplicată eronat"
+			}
+		],
 		"supplier": {
 			"name": "Furnizor Exemplu S.R.L.",
 			"tax_id": {
@@ -26,13 +34,9 @@
 				{
 					"street": "Strada Exemplu 10",
 					"locality": "București",
+					"region": "B",
 					"code": "010101",
 					"country": "RO"
-				}
-			],
-			"emails": [
-				{
-					"addr": "contact@furnizor-exemplu.ro"
 				}
 			]
 		},
@@ -40,12 +44,13 @@
 			"name": "Client Exemplu S.R.L.",
 			"tax_id": {
 				"country": "RO",
-				"code": "19"
+				"code": "23456783"
 			},
 			"addresses": [
 				{
 					"street": "Strada Client 5",
 					"locality": "Cluj-Napoca",
+					"region": "CJ",
 					"code": "400001",
 					"country": "RO"
 				}
@@ -54,25 +59,6 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "10",
-				"item": {
-					"name": "Servicii de consultanță",
-					"price": "250.00",
-					"unit": "h"
-				},
-				"sum": "2500.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "standard",
-						"rate": "general",
-						"percent": "21.0%"
-					}
-				],
-				"total": "2500.00"
-			},
-			{
-				"i": 2,
 				"quantity": "5",
 				"item": {
 					"name": "Cărți tehnice",
@@ -91,21 +77,9 @@
 				"total": "400.00"
 			}
 		],
-		"payment": {
-			"instructions": {
-				"key": "credit-transfer",
-				"detail": "Plată prin transfer bancar",
-				"credit_transfer": [
-					{
-						"iban": "RO49AAAA1B31007593840000",
-						"name": "Furnizor Exemplu S.R.L."
-					}
-				]
-			}
-		},
 		"totals": {
-			"sum": "2900.00",
-			"total": "2900.00",
+			"sum": "400.00",
+			"total": "400.00",
 			"taxes": {
 				"categories": [
 					{
@@ -113,25 +87,19 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "2500.00",
-								"percent": "21.0%",
-								"amount": "525.00"
-							},
-							{
-								"key": "standard",
 								"base": "400.00",
 								"percent": "11.0%",
 								"amount": "44.00"
 							}
 						],
-						"amount": "569.00"
+						"amount": "44.00"
 					}
 				],
-				"sum": "569.00"
+				"sum": "44.00"
 			},
-			"tax": "569.00",
-			"total_with_tax": "3469.00",
-			"payable": "3469.00"
+			"tax": "44.00",
+			"total_with_tax": "444.00",
+			"payable": "444.00"
 		}
 	}
 }
