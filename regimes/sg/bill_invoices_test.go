@@ -72,7 +72,7 @@ func TestValidInvoiceWithUEN(t *testing.T) {
 	inv.Supplier.Identities = []*org.Identity{
 		{
 			Type: sg.IdentityTypeUEN,
-			Code: "199912345A",
+			Code: "199912345R",
 		},
 	}
 	require.NoError(t, inv.Calculate())
