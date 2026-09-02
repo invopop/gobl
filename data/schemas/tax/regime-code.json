@@ -78,6 +78,10 @@
           "title": "Italy"
         },
         {
+          "const": "JP",
+          "title": "Japan"
+        },
+        {
           "const": "MX",
           "title": "Mexico"
         },

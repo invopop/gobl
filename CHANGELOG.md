@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/jp`: new tax regime for Japan (JP). Consumption Tax (消費税) on the
+  shared VAT category with a 10% standard and 8% reduced rate (plus historical
+  rates), and qualified-invoice registration number validation (`T` + 13 digits)
+  enforcing the NTA mod-9 check digit.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
