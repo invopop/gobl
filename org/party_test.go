@@ -89,6 +89,17 @@ func TestPartyNormalize(t *testing.T) {
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
 	})
 
+	t.Run("with agent", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			Agent: &org.Party{
+				Name: " Agent ",
+			},
+		}
+		norm.Normalize(&party)
+		assert.Equal(t, "Agent", party.Agent.Name)
+	})
+
 	t.Run("for regime without normalizer", func(t *testing.T) {
 		party := org.Party{
 			Regime: tax.WithRegime("US"),

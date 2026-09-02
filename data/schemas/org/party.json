@@ -34,6 +34,11 @@
           "title": "Alias",
           "description": "Alternate short name."
         },
+        "agent": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Agent",
+          "description": "Agent is a party that acts on behalf of this party."
+        },
         "tax_id": {
           "$ref": "https://gobl.org/draft-0/tax/identity",
           "title": "Tax Identity",
