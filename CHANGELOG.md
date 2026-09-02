@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
+- `catalogues/cef`: the `cef-vatex` extension now reflects the official VATEX code list version 8.0, growing from 59 to 88 enumerated codes. The 26 French codes admitted by the CTC profiles, such as `VATEX-FR-CGI261-1`, are included, along with the new EU codes `VATEX-EU-135-1`, `VATEX-EU-144`, `VATEX-EU-146-1E`, `VATEX-EU-153` and `VATEX-EU-159`, so the shape-only pattern is no longer needed. Every code now carries the source list's `nationality`, `deprecated` and `first-version` columns as metadata — plus `last-version` and `remark` where the list provides them — and its context of exemption as the description. The extension itself records the code list `version` and where it came from.
 
 ### Fixed
 
