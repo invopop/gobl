@@ -33,6 +33,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
+- `pay`: `DueDate` no longer requires an `amount`; due dates parsed from
+  documents that don't include partial payment amounts (e.g. CII payment terms)
+  are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
+  amount that is set must still not be zero, and it is still calculated from
+  `percent` when present.
 
 ### Fixed
 
