@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
+- `sk`: Slovakia tax regime with VAT categories for standard (23%), reduced (19%) and super-reduced (5%) rates per zákon č. 222/2004 Z. z. § 27, EUR currency, `Europe/Bratislava` timezone, and IČ DPH tax identity validation (10 digits, modulo-11 check).
 
 ### Changed
 

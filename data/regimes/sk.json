@@ -1,0 +1,197 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Slovakia",
+    "sk": "Slovensko"
+  },
+  "description": {
+    "en": "Slovakia's tax system is administered by the Financial Administration of the\nSlovak Republic (Finančná správa Slovenskej republiky). As an EU member state,\nSlovakia follows the EU VAT Directive.\n\nVAT (daň z pridanej hodnoty, DPH) applies at a standard rate, with reduced rates\nfor certain goods and services such as foodstuffs, medicines, medical devices,\nbooks, and accommodation. Exports and intra-EU supplies to VAT-registered buyers\nare zero-rated.\n\nBusinesses registered for VAT are identified by their IČ DPH, formed by the\nprefix SK followed by ten digits (e.g. SK2020273893)."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Finančná správa - Daň z pridanej hodnoty (VAT)"
+      },
+      "url": "https://www.financnasprava.sk/sk/podnikatelia/dane/dan-z-pridanej-hodnoty",
+      "at": "2026-08-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Slov-Lex - Zákon č. 222/2004 Z. z. o dani z pridanej hodnoty"
+      },
+      "url": "https://www.slov-lex.sk/ezbierky/pravne-predpisy/SK/ZZ/2004/222/",
+      "at": "2026-08-06T00:00:00"
+    },
+    {
+      "title": {
+        "en": "Financial Administration of the Slovak Republic (English)"
+      },
+      "url": "https://www.financnasprava.sk/en/",
+      "at": "2026-08-06T00:00:00"
+    }
+  ],
+  "time_zone": "Europe/Bratislava",
+  "country": "SK",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "sk": "DPH"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "sk": "Daň z pridanej hodnoty"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "sk": "Základná sadzba"
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "23.0%"
+            },
+            {
+              "since": "2011-01-01",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "sk": "Znížená sadzba"
+          },
+          "desc": {
+            "en": "Non-basic foodstuffs, electricity and certain catering services.",
+            "sk": "Potraviny okrem základných, elektrina a niektoré reštauračné služby."
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Super-reduced Rate",
+            "sk": "Druhá znížená sadzba"
+          },
+          "desc": {
+            "en": "Basic foodstuffs, medicines, medical devices, books, and accommodation.",
+            "sk": "Základné potraviny, lieky, zdravotnícke pomôcky, knihy a ubytovanie."
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Slov-Lex - Zákon č. 222/2004 Z. z. § 27 (Sadzba dane)"
+          },
+          "url": "https://www.slov-lex.sk/ezbierky/pravne-predpisy/SK/ZZ/2004/222/",
+          "at": "2026-08-06T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Slov-Lex - Zákon č. 490/2010 Z. z. (novela zákona č. 222/2004 Z. z.)"
+          },
+          "url": "https://www.slov-lex.sk/ezbierky/pravne-predpisy/SK/ZZ/2010/490/",
+          "at": "2026-08-06T00:00:00"
+        }
+      ]
+    }
+  ]
+}
