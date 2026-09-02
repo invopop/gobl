@@ -1,0 +1,40 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "PE"
+uuid: "5a8d4f02-9b6e-4c13-8d7a-3e5f1b2c4d6e"
+currency: PEN
+series: "B001"
+code: "00000789"
+issue_date: "2026-06-18"
+
+# Simplified invoice covering the "boleta de venta" use case: issued to a
+# final consumer, identified by their DNI rather than a tax ID.
+tax:
+  tags:
+    - "simplified"
+
+supplier:
+  name: Comercial Andina S.A.C.
+  tax_id:
+    country: "PE"
+    code: "20401234561"
+  addresses:
+    - street: Av. Javier Prado Este 1234
+      locality: San Isidro
+      region: Lima
+      code: "15036"
+      country: "PE"
+
+customer:
+  name: Juan Pérez Quispe
+  identities:
+    - type: "DNI"
+      code: "40123456"
+
+lines:
+  - quantity: "2"
+    item:
+      name: Memoria USB 64GB
+      price: "45.00"
+    taxes:
+      - cat: VAT
+        rate: standard
