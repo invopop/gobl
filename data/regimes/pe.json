@@ -1,0 +1,201 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Peru",
+    "es": "Perú"
+  },
+  "description": {
+    "en": "Peru applies the IGV (Impuesto General a las Ventas), a\nvalue-added tax administered by SUNAT, at a standard rate that\ncombines the IGV itself with the Municipal Promotion Tax (IPM).\n\nBusinesses and individuals are identified by their RUC\n(Registro Único de Contribuyentes), an eleven-digit number\nwith a taxpayer type prefix and a mod-11 check digit."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "SUNAT - Inscripción al RUC"
+      },
+      "url": "https://centrovirtual.sunat.gob.pe/tramites/inscribete-ruc"
+    },
+    {
+      "title": {
+        "en": "SUNAT - Catalogue 06: identity document types"
+      },
+      "url": "https://www.sunat.gob.pe/legislacion/superin/2021/anexo-026-2021.pdf"
+    },
+    {
+      "title": {
+        "en": "SUNAT - Payment Voucher Regulations: credit and debit notes"
+      },
+      "url": "https://www.sunat.gob.pe/legislacion/comprob/regla/capituloIII.pdf"
+    }
+  ],
+  "time_zone": "America/Lima",
+  "country": "PE",
+  "currency": "PEN",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "DNI",
+      "name": {
+        "en": "National Identity Document",
+        "es": "Documento Nacional de Identidad"
+      },
+      "desc": {
+        "en": "Eight-digit identity document issued by RENIEC to Peruvian citizens.",
+        "es": "Documento de identidad de ocho dígitos emitido por RENIEC a los ciudadanos peruanos."
+      }
+    },
+    {
+      "code": "CE",
+      "name": {
+        "en": "Foreigner Resident Card",
+        "es": "Carné de Extranjería"
+      },
+      "desc": {
+        "en": "Identity document issued by Migraciones to foreign residents in Peru.",
+        "es": "Documento de identidad emitido por Migraciones a los extranjeros residentes en el Perú."
+      }
+    },
+    {
+      "code": "PAS",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "IGV",
+        "es": "IGV"
+      },
+      "title": {
+        "en": "General Sales Tax",
+        "es": "Impuesto General a las Ventas"
+      },
+      "desc": {
+        "en": "The IGV is Peru's value-added tax. The rate charged on invoices\nalways combines the IGV itself with the Municipal Promotion Tax\n(IPM); both are levied together and shown as a single amount, so\nGOBL models them as one rate."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Tasa General"
+          },
+          "desc": {
+            "en": "Standard rate for most goods and services, combining the\nIGV and the IPM. The internal split between the two is\nset by law year to year (16% + 2% until 2025, recomposed\nannually by Ley 32387 from 2026); the 18% total charged\non invoices does not change.",
+            "es": "Tasa estándar para la mayoría de bienes y servicios, que\ncombina el IGV y el IPM. La composición interna entre\nambos la fija la ley año a año (16% + 2% hasta 2025,\nrecompuesta anualmente por la Ley 32387 desde 2026); el\n18% total del comprobante no varía."
+          },
+          "values": [
+            {
+              "since": "2011-03-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "2003-08-01",
+              "percent": "19.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "TUO de la Ley del IGV e ISC (D.S. 055-99-EF)"
+          },
+          "url": "https://www.sunat.gob.pe/legislacion/igv/ley/"
+        },
+        {
+          "title": {
+            "en": "SUNAT - IGV concept, rate and taxed operations",
+            "es": "SUNAT - Concepto, tasa y operaciones gravadas - IGV"
+          },
+          "url": "https://orientacion.sunat.gob.pe/3053-concepto-tasa-y-operaciones-gravadas-igv-empresas",
+          "at": "2026-08-30T00:00:00"
+        }
+      ]
+    }
+  ]
+}
