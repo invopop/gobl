@@ -23,6 +23,8 @@ type Party struct {
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
+	// Agent is a party that acts on behalf of this party.
+	Agent *Party `json:"agent,omitempty" jsonschema:"title=Agent"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
 	// Set of codes used to identify the party in other systems.
