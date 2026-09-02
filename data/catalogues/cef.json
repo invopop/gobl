@@ -13,15 +13,1300 @@
       "desc": {
         "en": "Codes for the reasons for VAT exemption as defined by the Connecting Europe Facility (CEF)."
       },
+      "meta": {
+        "version": "8.0"
+      },
       "sources": [
+        {
+          "title": {
+            "en": "VAT Exemption Reason Code list VATEX - version 8"
+          },
+          "url": "https://ec.europa.eu/digital-building-blocks/sites/download/attachments/467108974/VAT%20Exemption%20Reason%20Code%20list%20VATEX%20-%20version%208.xlsx?api=v2",
+          "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        },
         {
           "title": {
             "en": "VATEX code list"
           },
           "url": "https://ec.europa.eu/digital-building-blocks/sites/x/XYTXGw"
+        },
+        {
+          "title": {
+            "en": "Registry of supporting artefacts to implement EN16931"
+          },
+          "url": "https://ec.europa.eu/digital-building-blocks/sites/spaces/DIGITAL/pages/467108974/Registry+of+supporting+artefacts+to+implement+EN16931"
         }
       ],
-      "pattern": "^VATEX-[A-Z]{2}(-[A-Z0-9]+)+$"
+      "values": [
+        {
+          "code": "VATEX-EU-79-C",
+          "name": {
+            "en": "Exempt based on article 79, point c of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions relating to repayment of expenditures."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "4",
+            "nationality": "EU",
+            "remark": "Repayment of expenditure is not an exemption in the sense of the VAT Directive but may be handled as such in the context of the EN16931."
+          }
+        },
+        {
+          "code": "VATEX-EU-132",
+          "name": {
+            "en": "Exempt based on article 132 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions for certain activities in public interest."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "2",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1A",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (a) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply by the public postal services of services other than passenger transport and telecommunications services, and the supply of goods incidental thereto."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1B",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (b) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Hospital and medical care and closely related activities undertaken by bodies governed by public law or, under social conditions comparable with those applicable to bodies governed by public law, by hospitals, centres for medical treatment or diagnosis and other duly recognised establishments of a similar nature"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1C",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (c) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The provision of medical care in the exercise of the medical and paramedical professions as defined by the Member State concerned."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1D",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (d) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of human organs, blood and milk."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1E",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (e) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services by dental technicians in their professional capacity and the supply of dental prostheses by dentists and dental technicians."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1F",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (f) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services by independent groups of persons, who are carrying on an activity which is exempt from VAT or in relation to which they are not taxable persons, for the purpose of rendering their members the services directly necessary for the exercise of that activity, where those groups merely claim from their members exact reimbursement of their share of the joint expenses, provided that such exemption is not likely to cause distortion of competition."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1G",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (g) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services and of goods closely linked to welfare and social security work, including those supplied by old people's homes, by bodies governed by public law or by other bodies recognised by the Member State concerned as being devoted to social wellbeing."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1H",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (h) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services and of goods closely linked to the protection of children and young persons by bodies governed by public law or by other organisations recognised by the Member State concerned as being devoted to social wellbeing;"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1I",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (i) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The provision of children's or young people's education, school or university education, vocational training or retraining, including the supply of services and of goods closely related thereto, by bodies governed by public law having such as their aim or by other organisations recognised by the Member State concerned as having similar objects."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1J",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (j) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Tuition given privately by teachers and covering school or university education."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1K",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (k) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of staff by religious or philosophical institutions for the purpose of the activities referred to in points (b), (g), (h) and (i) and with a view to spiritual welfare."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1L",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (l) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services, and the supply of goods closely linked thereto, to their members in their common interest in return for a subscription fixed in accordance with their rules by non-profitmaking organisations with aims of a political, trade-union, religious, patriotic, philosophical, philanthropic or civic nature, provided that this exemption is not likely to cause distortion of competition."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1M",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (m) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of certain services closely linked to sport or physical education by non-profit-making organisations to persons taking part in sport or physical education."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1N",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (n) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of certain cultural services, and the supply of goods closely linked thereto, by bodies governed by public law or by other cultural bodies recognised by the Member State concerned."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1O",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (o) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of services and goods, by organisations whose activities are exempt pursuant to points (b), (g), (h), (i), (l), (m) and (n), in connection with fund-raising events organised exclusively for their own benefit, provided that exemption is not likely to cause distortion of competition."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1P",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (p) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of transport services for sick or injured persons in vehicles specially designed for the purpose, by duly authorised bodies."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-132-1Q",
+          "name": {
+            "en": "Exempt based on article 132, section 1 (q) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The activities, other than those of a commercial nature, carried out by public radio and television bodies."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-135-1",
+          "name": {
+            "en": "Exempt based on article 135, section 1 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Insurance and financial services"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "8",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143",
+          "name": {
+            "en": "Exempt based on article 143 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions on importation."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "2",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1A",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (a) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The final importation of goods of which the supply by a taxable person would in all circumstances be exempt within their respective territory."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1B",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (b) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The final importation of goods governed by Council Directives 69/169/EEC (1), 83/181/EEC (2) and 2006/79/EC (3)."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1C",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (c) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The final importation of goods, in free circulation from a third territory forming part of the Community customs territory, which would be entitled to exemption under point (b) if they had been imported within the meaning of the first paragraph of Article 30"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1D",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (d) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of goods dispatched or transported from a third territory or a third country into a Member State other than that in which the dispatch or transport of the goods ends, where the supply of such goods by the importer designated or recognised under Article 201 as liable for payment of VAT is exempt under Article 138."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1E",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (e) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The reimportation, by the person who exported them, of goods in the state in which they were exported, where those goods are exempt from customs duties."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1F",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (f) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation, under diplomatic and consular arrangements, of goods which are exempt from customs duties."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1FA",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (fa) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of goods by the European Community, the European Atomic Energy Community, the European Central Bank or the European Investment Bank, or by the bodies set up by the Communities to which the Protocol of 8 April 1965 on the privileges and immunities of the European Communities applies, within the limits and under the conditions of that Protocol and the agreements for its implementation or the headquarters agreements, in so far as it does not lead to distortion of competition;"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1G",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (g) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of goods by international bodies, other than those referred to in point (fa), recognised as such by the public authorities of the host Member State, or by members of such bodies, within the limits and under the conditions laid down by the international conventions establishing the bodies or by headquarters agreements;"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1H",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (h) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of goods, into Member States party to the North Atlantic Treaty, by the armed forces of other States party to that Treaty for the use of those forces or the civilian staff accompanying them or for supplying their messes or canteens where such forces take part in the common defence effort."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1I",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (i) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of goods by the armed forces of the United Kingdom stationed in the island of Cyprus pursuant to the Treaty of Establishment concerning the Republic of Cyprus, dated 16 August 1960, which are for the use of those forces or the civilian staff accompanying them or for supplying their messes or canteens."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1J",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (j) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation into ports, by sea fishing undertakings, of their catches, unprocessed or after undergoing preservation for marketing but before being supplied."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1K",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (k) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of gold by central banks."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-143-1L",
+          "name": {
+            "en": "Exempt based on article 143, section 1 (l) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The importation of gas through a natural gas system or any network connected to such a system or fed in from a vessel transporting gas into a natural gas system or any upstream pipeline network, of electricity or of heat or cooling energy through heating or cooling networks."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-144",
+          "name": {
+            "en": "Exempt based on article 144 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions for services linked to the import of goods"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "6",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-146-1E",
+          "name": {
+            "en": "Exempt based on article 146 section 1 (e) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions for services linked to the export of goods"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "6",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148",
+          "name": {
+            "en": "Exempt based on article 148 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions related to international transport."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "2",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-A",
+          "name": {
+            "en": "Exempt based on article 148, section (a) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Fuel supplies for commercial international transport vessels"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-B",
+          "name": {
+            "en": "Exempt based on article 148, section (b) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Fuel supplies for fighting ships in international transport."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-C",
+          "name": {
+            "en": "Exempt based on article 148, section (c) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Maintenance, modification, chartering and hiring of international transport vessels."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-D",
+          "name": {
+            "en": "Exempt based on article 148, section (d) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Supply to of other services to commercial international transport vessels."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-E",
+          "name": {
+            "en": "Exempt based on article 148, section (e) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Fuel supplies for aircraft on international routes."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-F",
+          "name": {
+            "en": "Exempt based on article 148, section (f) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Maintenance, modification, chartering and hiring of aircraft on international routes."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-148-G",
+          "name": {
+            "en": "Exempt based on article 148, section (g) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Supply to of other services to aircraft on international routes."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151",
+          "name": {
+            "en": "Exempt based on article 151 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions relating to certain Transactions treated as exports."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "2",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1A",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (a) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services under diplomatic and consular arrangements."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1AA",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (aa) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services to the European Community, the European Atomic Energy Community, the European Central Bank or the European Investment Bank, or to the bodies set up by the Communities to which the Protocol of 8 April 1965 on the privileges and immunities of the European Communities applies, within the limits and under the conditions of that Protocol and the agreements for its implementation or the headquarters agreements, in so far as it does not lead to distortion of competition."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1B",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (b) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services to international bodies, other than those referred to in point (aa), recognised as such by the public authorities of the host Member States, and to members of such bodies, within the limits and under the conditions laid down by the international conventions establishing the bodies or by headquarters agreements."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1C",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (c) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services within a Member State which is a party to the North Atlantic Treaty, intended either for the armed forces of other States party to that Treaty for the use of those forces, or of the civilian staff accompanying them, or for supplying their messes or canteens when such forces take part in the common defence effort."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1D",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (d) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services to another Member State, intended for the armed forces of any State which is a party to the North Atlantic Treaty, other than the Member State of destination itself, for the use of those forces, or of the civilian staff accompanying them, or for supplying their messes or canteens when such forces take part in the common defence effort."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-151-1E",
+          "name": {
+            "en": "Exempt based on article 151, section 1 (e) of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "The supply of goods or services to the armed forces of the United Kingdom stationed in the island of Cyprus pursuant to the Treaty of Establishment concerning the Republic of Cyprus, dated 16 August 1960, which are for the use of those forces, or of the civilian staff accompanying them, or for supplying their messes or canteens."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-153",
+          "name": {
+            "en": "Exempt based on article 153 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Supply of services by intermediaries acting in the name and on behalf of another person. Excluding travel agents."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-159",
+          "name": {
+            "en": "Exempt based on article 159 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Exemptions for services linked to supplies of goods intended to be placed under customs warehouses, warehouses other than customs warehouses and similar arrangements."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "6",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-309",
+          "name": {
+            "en": "Exempt based on article 309 of Council Directive 2006/112/EC"
+          },
+          "desc": {
+            "en": "Travel agents performed outside of EU."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU"
+          }
+        },
+        {
+          "code": "VATEX-EU-AE",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "desc": {
+            "en": "Supports EN 16931-1 rule BR-AE-10"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code AE"
+          }
+        },
+        {
+          "code": "VATEX-EU-D",
+          "name": {
+            "en": "Intra-Community acquisition from second hand means of transport"
+          },
+          "desc": {
+            "en": "Second-hand means of transport - Indication that VAT has been paid according to the relevant transitional arrangements"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code E"
+          }
+        },
+        {
+          "code": "VATEX-EU-F",
+          "name": {
+            "en": "Intra-Community acquisition of second hand goods"
+          },
+          "desc": {
+            "en": "Second-hand goods - Indication that the VAT margin scheme for second-hand goods has been applied."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code E"
+          }
+        },
+        {
+          "code": "VATEX-EU-G",
+          "name": {
+            "en": "Export outside the EU"
+          },
+          "desc": {
+            "en": "Supports EN 16931-1 rule BR-G-10"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code G"
+          }
+        },
+        {
+          "code": "VATEX-EU-I",
+          "name": {
+            "en": "Intra-Community acquisition of works of art"
+          },
+          "desc": {
+            "en": "Works of art - Indication that the VAT margin scheme for works of art has been applied."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code E"
+          }
+        },
+        {
+          "code": "VATEX-EU-IC",
+          "name": {
+            "en": "Intra-Community supply"
+          },
+          "desc": {
+            "en": "Supports EN 16931-1 rule BR-IC-10"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code K"
+          }
+        },
+        {
+          "code": "VATEX-EU-J",
+          "name": {
+            "en": "Intra-Community acquisition of collectors items and antiques"
+          },
+          "desc": {
+            "en": "Collectors' items and antiques - Indication that the VAT margin scheme for collector’s items and antiques has been applied."
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code E"
+          }
+        },
+        {
+          "code": "VATEX-EU-O",
+          "name": {
+            "en": "Not subject to VAT"
+          },
+          "desc": {
+            "en": "Supports EN 16931-1 rule BR-O-10"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "1",
+            "nationality": "EU",
+            "remark": "Only use with VAT category code O"
+          }
+        },
+        {
+          "code": "VATEX-FR-FRANCHISE",
+          "name": {
+            "en": "France domestic VAT franchise in base"
+          },
+          "desc": {
+            "en": "Domestic VAT taxable persons which are franchised in base (article 293 B of the general tax code. In this case, they are exempt from VAT.)"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "5",
+            "nationality": "FR",
+            "remark": "For domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CNWVAT",
+          "name": {
+            "en": "France domestic Credit Notes without VAT, due to supplier forfeit of VAT for discount"
+          },
+          "desc": {
+            "en": "Administrative doctrine BOI TVA DECLA 30 20 20 §260 and 270 for credit notes and §280 and 290 for discounts"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "5",
+            "nationality": "FR",
+            "remark": "For domestic Credit Notes only in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-1",
+          "name": {
+            "en": "Exempt based on 1 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for operations suject to other taxes"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-2",
+          "name": {
+            "en": "Exempt based on 2 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for agricultural and fisheries activities"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-3",
+          "name": {
+            "en": "Exempt based on 3 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for sales of used goods"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-4",
+          "name": {
+            "en": "Exempt based on 4 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for activities of the professions and various activities"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-5",
+          "name": {
+            "en": "Exempt based on 5 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for real-estate operations"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-7",
+          "name": {
+            "en": "Exempt based on 7 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for non-profit organizations operations"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261-8",
+          "name": {
+            "en": "Exempt based on 8 of article 261 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption, in the event of a disaster affecting the territory of a Member State of the European Union, for supplies of goods and the provision of services linked to such supplies, where the importation of such goods by the recipient of such supplies or by the contractor of such services would have been exempt pursuant to 2° bis of II of article 291 of CGI"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261A",
+          "name": {
+            "en": "Exempt based on article 261 A of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for operations made by legal entities subject to corporate income tax whose purpose is to transfer the use of movable or immovable property to their members free of charge (article 239 octies of CGI)"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261B",
+          "name": {
+            "en": "Exempt based on article 261 B of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for services rendered to their members by groups formed by natural or legal persons carrying out some activities exempt from VAT on the basis of 4, with the exception of 10°, and 7 of article 261 of CGI (professions and various activities, non-profit organizations activities)"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261C-1",
+          "name": {
+            "en": "Exempt based on 1° of article 261 C of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for banking and financial transactions"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261C-2",
+          "name": {
+            "en": "Exempt based on 2° of article 261 C of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for insurance and reinsurance transactions and related services carried out by insurance brokers and intermediaries"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261C-3",
+          "name": {
+            "en": "Exempt based on 3° of article 261 C of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for sales at their official value of revenue stamps and postage stamps with current or franking value in France"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261D-1",
+          "name": {
+            "en": "Exempt based on 1° of article 261 D of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for rentals of land and buildings for agricultural use"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261D-1BIS",
+          "name": {
+            "en": "Exempt based on 1°bis of article 261 D of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for leases of immovable property resulting from a lease conferring a right in rem"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261D-2",
+          "name": {
+            "en": "Exempt based on 2° of article 261 D of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for certain leases of undeveloped land and bare premises, with the exception of parking spaces for vehicles"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261D-3",
+          "name": {
+            "en": "Exempt based on 3° of article 261 D of the Code Général des Impôts (CGI ; General tax code)",
+            "fr": "Exonération de TVA - Article 261 D-3° du Code Général des Impôts"
+          },
+          "desc": {
+            "en": "VAT exemption for the leasing or granting of rights over the properties referred to in 1° and 2° of article 261 D of CGI insofar as they relate to the management of a property portfolio"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261D-4",
+          "name": {
+            "en": "Exempt based on 4° of article 261 D of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for occasional, permanent or seasonal rentals of furnished or furnished accommodation for residential use"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261E-1",
+          "name": {
+            "en": "Exempt based on 1° of article 261 E of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for the organisation of games of chance or gambling subject to the progressive levies"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI261E-2",
+          "name": {
+            "en": "Exempt based on 2° of article 261 E of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemption for proceeds from the operation of the national lottery, the national lottery, horserace betting, betting on sporting competitions and online circle games, with the exception of remuneration received by organisers and intermediaries involved in the organisation of these games and bets"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI277A",
+          "name": {
+            "en": "Exempt based on article 277 A of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT suspensive scheme"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI275",
+          "name": {
+            "en": "Exempt based on article 275 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT-free purchases of goods intended for export, for an exempt supply, for a supply taking place within the territory of another Member State of the European Union or for a supply outside France, as well as services relating to these goods"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-298SEXDECIESA",
+          "name": {
+            "en": "Exempt based on article 298 sexdecies A of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "Special scheme for investment gold"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-CGI295",
+          "name": {
+            "en": "Exempt based on article 295 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "VAT exemptions for the French territories referred to in Article 349 and Article 355(1) of the Treaty on the Functioning of the European Union where VAT applies"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        },
+        {
+          "code": "VATEX-FR-AE",
+          "name": {
+            "en": "Exempt based on 2 of article 283 of the Code Général des Impôts (CGI ; General tax code)"
+          },
+          "desc": {
+            "en": "Domestic reverse charge system"
+          },
+          "meta": {
+            "deprecated": "false",
+            "first-version": "7",
+            "nationality": "FR",
+            "remark": "Only for domestic invoicing in France"
+          }
+        }
+      ]
     }
   ]
 }
