@@ -1,0 +1,174 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Romania",
+    "ro": "România"
+  },
+  "description": {
+    "en": "Romania's tax system is administered by the Agenția Națională de\nAdministrare Fiscală (ANAF). As an EU member state, Romania follows\nthe EU VAT Directive.\n\nVAT (Taxa pe Valoarea Adăugată, TVA) applies to most goods and\nservices. Businesses are identified by their Cod de Identificare Fiscală\n(CIF), also known historically as the Cod Unic de Înregistrare\n(CUI). For VAT-registered entities this is prefixed with RO to\nform the Romanian VAT number (e.g. RO12345678).\n\nRomania has progressively mandated the RO e-Factura national\ne-invoicing system for B2B and B2G transactions; support for this\nformat is out of scope for this base regime and is expected to be\nimplemented as a separate addon."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "ANAF - Cod fiscal 227/2015 Cotele de TVA (VAT rates)"
+      },
+      "url": "https://static.anaf.ro/static/10/Anaf/legislatie/Cod_fiscal_norme_2023.htm"
+    },
+    {
+      "title": {
+        "en": "MODIFICĂRI ADUSE LEGII NR. 227/2015 PRIVIND CODUL FISCAL PRIN LEGEA NR. 141/2025*. VAT 19% -\u003e 21%"
+      },
+      "url": "https://static.anaf.ro/static/10/Brasov/Brasov/tva_2025.pdf"
+    }
+  ],
+  "time_zone": "Europe/Bucharest",
+  "country": "RO",
+  "currency": "RON",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "ro": "TVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "ro": "Taxa pe Valoarea Adăugată"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "ro": "Cota Standard"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2016-01-01",
+              "percent": "20.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "ro": "Cota Redusă"
+          },
+          "values": [
+            {
+              "since": "2025-08-01",
+              "percent": "11.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "ANAF - Cod fiscal 227/2015 Cotele de TVA (VAT rates)"
+          },
+          "url": "https://static.anaf.ro/static/10/Anaf/legislatie/Cod_fiscal_norme_2023.htm"
+        },
+        {
+          "title": {
+            "en": "MODIFICĂRI ADUSE LEGII NR. 227/2015 PRIVIND CODUL FISCAL PRIN LEGEA NR. 141/2025*. VAT 19% -\u003e 21%"
+          },
+          "url": "https://static.anaf.ro/static/10/Brasov/Brasov/tva_2025.pdf"
+        }
+      ]
+    }
+  ]
+}

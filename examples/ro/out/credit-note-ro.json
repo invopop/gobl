@@ -1,0 +1,105 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d406f707b593b19c218c1da7ca726f931091c1d4d79a99957356bff082f678b3"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "RO",
+		"uuid": "01927639-c1a0-7f3a-88d9-5b1f2a5e3c4f",
+		"type": "credit-note",
+		"series": "FACT",
+		"code": "0002",
+		"issue_date": "2026-03-05",
+		"currency": "RON",
+		"preceding": [
+			{
+				"issue_date": "2026-02-10",
+				"series": "FACT",
+				"code": "0001",
+				"reason": "Retur parțial de marfă"
+			}
+		],
+		"supplier": {
+			"name": "Furnizor Exemplu S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "16281620"
+			},
+			"addresses": [
+				{
+					"street": "Strada Exemplu 10",
+					"locality": "București",
+					"region": "B",
+					"code": "010101",
+					"country": "RO"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Exemplu S.R.L.",
+			"tax_id": {
+				"country": "RO",
+				"code": "23456783"
+			},
+			"addresses": [
+				{
+					"street": "Strada Client 5",
+					"locality": "Cluj-Napoca",
+					"region": "CJ",
+					"code": "400001",
+					"country": "RO"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Servicii de consultanță",
+					"price": "250.00",
+					"unit": "h"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "500.00",
+			"total": "500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "500.00",
+								"percent": "21.0%",
+								"amount": "105.00"
+							}
+						],
+						"amount": "105.00"
+					}
+				],
+				"sum": "105.00"
+			},
+			"tax": "105.00",
+			"total_with_tax": "605.00",
+			"payable": "605.00"
+		}
+	}
+}
