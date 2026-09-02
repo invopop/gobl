@@ -90,6 +90,10 @@
           "title": "Norway"
         },
         {
+          "const": "PE",
+          "title": "Peru"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },
