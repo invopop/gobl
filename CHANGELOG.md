@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
+- `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
+  `category1_95` (Other Income-related Information) without an accompanying
+  `gr-mydata-income-type`, as required by IAPR for informative amounts such as
+  the 0.5% municipality duty. Setting an income type alongside `category1_95`
+  is now rejected. All other income categories still require both extensions.
+- `org`: `Attribute` no longer requires a `key` or `type` when a `label` is present.
 - `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
   is replaced by `Client.VerifyParty`, which verifies the address declared by a
   party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
@@ -32,10 +39,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+- `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
 - `sg`: tax identity codes accept IRAS-assigned GST registration numbers ending
   in a digit (for example, `M201189853`).
 - `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
   signature entries instead of panicking.
+- `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
+  contingency prefix) are no longer wrongly rejected as having an invalid prefix.
 
 ## [v0.504.0]
 

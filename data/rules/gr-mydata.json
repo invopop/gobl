@@ -168,6 +168,11 @@
                           "id": "GOBL-GR-MYDATA-BILL-INVOICE-12",
                           "desc": "item income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present",
                           "tests": "income ext pair"
+                        },
+                        {
+                          "id": "GOBL-GR-MYDATA-BILL-INVOICE-20",
+                          "desc": "item income extension 'gr-mydata-income-type' must not be present with category 'category1_95'",
+                          "tests": "no income type with other info category"
                         }
                       ]
                     }
@@ -343,7 +348,12 @@
                 {
                   "id": "GOBL-GR-MYDATA-TAX-COMBO-03",
                   "desc": "income extensions 'gr-mydata-income-cat' and 'gr-mydata-income-type' must both be present",
-                  "tests": "ext require [gr-mydata-income-cat, gr-mydata-income-type]"
+                  "tests": "income ext pair"
+                },
+                {
+                  "id": "GOBL-GR-MYDATA-TAX-COMBO-04",
+                  "desc": "income extension 'gr-mydata-income-type' must not be present with category 'category1_95'",
+                  "tests": "no income type with other info category"
                 }
               ]
             }

@@ -106,7 +106,7 @@ inv := &bill.Invoice{
 	IssueDate: cal.MakeDate(2023, time.May, 11),
 	Supplier: &org.Party{
 		TaxID: &tax.Identity{
-			Country: l10n.US,
+			Country: l10n.US.Tax(),
 		},
 		Name:  "Provider One Inc.",
 		Alias: "Provider One",
@@ -122,7 +122,7 @@ inv := &bill.Invoice{
 				Locality: "San Francisco",
 				Region:   "CA",
 				Code:     "94105",
-				Country:  l10n.US,
+				Country:  l10n.US.ISO(),
 			},
 		},
 	},
@@ -139,12 +139,12 @@ inv := &bill.Invoice{
 			Quantity: num.MakeAmount(20, 0),
 			Item: &org.Item{
 				Name:  "A stylish mug",
-				Price: num.MakeAmount(2000, 2),
+				Price: num.NewAmount(2000, 2),
 				Unit:  org.UnitHour,
 			},
 			Taxes: []*tax.Combo{
 				{
-					Category: common.TaxCategoryST,
+					Category: tax.CategoryST,
 					Percent:  num.NewPercentage(85, 3),
 				},
 			},

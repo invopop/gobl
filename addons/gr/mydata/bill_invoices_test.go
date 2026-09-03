@@ -209,4 +209,23 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, rules.Validate(inv))
 	})
+
+	t.Run("other info cat, no type", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyIncomeCat: mydata.IncomeCatOtherInfo,
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("other info cat with type", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyIncomeCat:  mydata.IncomeCatOtherInfo,
+			mydata.ExtKeyIncomeType: "E3_106",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "income extension 'gr-mydata-income-type' must not be present with category 'category1_95'")
+	})
 }
