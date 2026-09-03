@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/nz`: added New Zealand GST regime with IRD tax ID validation.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 

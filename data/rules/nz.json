@@ -1,0 +1,53 @@
+{
+  "id": "GOBL-NZ",
+  "package": "nz",
+  "subsets": [
+    {
+      "id": "GOBL-NZ-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "regime in [NZ]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "assert": [
+                {
+                  "id": "GOBL-NZ-BILL-INVOICE-01",
+                  "desc": "invoice supplier in New Zealand must have a GST tax ID code",
+                  "tests": "has tax ID code"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-NZ-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [NZ]",
+          "subsets": [
+            {
+              "field": "code",
+              "assert": [
+                {
+                  "id": "GOBL-NZ-TAX-IDENTITY-01",
+                  "desc": "invoice tax id code must be a valid IRD number",
+                  "tests": "matches ^[0-9]{8,9}$"
+                },
+                {
+                  "id": "GOBL-NZ-TAX-IDENTITY-02",
+                  "desc": "invoice tax id code checksum must be valid",
+                  "tests": "valid"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
