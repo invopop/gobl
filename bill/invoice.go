@@ -403,8 +403,8 @@ func (inv *Invoice) ToEndpoint() *org.Endpoint {
 // UnmarshalJSON implements the json.Unmarshaler interface and provides any
 // data migrations that might be required.
 func (inv *Invoice) UnmarshalJSON(data []byte) error {
-	type Alias *Invoice
-	if err := json.Unmarshal(data, (Alias)(inv)); err != nil {
+	type Alias Invoice
+	if err := json.Unmarshal(data, (*Alias)(inv)); err != nil {
 		return err
 	}
 	// Ensure there is regime set when coming in from a raw JSON source.

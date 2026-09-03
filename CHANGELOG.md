@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   signature entries instead of panicking.
 - `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
   contingency prefix) are no longer wrongly rejected as having an invalid prefix.
+- `bill`: `Invoice.UnmarshalJSON` no longer recurses infinitely under the `jsonv2` implementation of `encoding/json`, enabled by default from Go 1.27. The method used a defined pointer type (`type Alias *Invoice`) to strip itself before delegating, which has an empty method set under the v1 implementation but not under v2, where the decoder dereferences through the named pointer and finds `UnmarshalJSON` again. Unmarshalling any invoice on Go 1.27 ended in `fatal error: stack overflow`, which callers cannot recover from. The alias is now value-typed (`type Alias Invoice`), matching every other alias site in the codebase and behaving identically under both implementations.
 
 ## [v0.504.0]
 
