@@ -104,6 +104,22 @@
           ]
         }
       ]
+    },
+    {
+      "id": "GOBL-ES-FACTURAE-PAY-DUEDATE",
+      "object": "pay.DueDate",
+      "subsets": [
+        {
+          "field": "amount",
+          "assert": [
+            {
+              "id": "GOBL-ES-FACTURAE-PAY-DUEDATE-01",
+              "desc": "amount is required",
+              "tests": "present, not zero"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

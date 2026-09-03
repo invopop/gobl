@@ -38,6 +38,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
   amount that is set must still not be zero, and it is still calculated from
   `percent` when present.
+- `es-facturae-v3`: due dates now require an `amount`
+  (`GOBL-ES-FACTURAE-PAY-DUEDATE-01`), preserving the guarantee behind
+  FacturaE's mandatory `InstallmentAmount` element — the original reason
+  `pay.DueDate` required an amount globally — now that the core requirement is
+  relaxed.
 
 ### Fixed
 
