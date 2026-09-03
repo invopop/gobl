@@ -38,6 +38,10 @@
           "title": "Colombia"
         },
         {
+          "const": "CY",
+          "title": "Cyprus"
+        },
+        {
           "const": "DE",
           "title": "Germany"
         },

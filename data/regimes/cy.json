@@ -1,0 +1,278 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "el": "Κύπρος",
+    "en": "Cyprus"
+  },
+  "description": {
+    "en": "Cyprus's tax system is administered by the Cyprus Tax Department. As an\nEU member state, Cyprus follows the EU VAT Directive with locally adapted\nrates.\n\nVAT applies at standard, reduced, super-reduced, zero, and exempt rates.\nExports and qualifying intra-EU supplies may be zero-rated.\n\nTaxpayers are identified by a Tax Identification Number (TIN) consisting\nof eight digits followed by a Latin letter."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Cyprus Tax Department - VAT Invoice Requirements"
+      },
+      "url": "https://www.gov.cy/mof-tax/documents/ekdosi-timologioy-f-p-a/"
+    }
+  ],
+  "time_zone": "Asia/Nicosia",
+  "country": "CY",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "travel-agency-margin",
+          "name": {
+            "el": "Καθεστώς περιθωρίου ταξιδιωτικών πρακτορείων",
+            "en": "Travel agency margin scheme"
+          }
+        },
+        {
+          "key": "cash-accounting",
+          "name": {
+            "el": "Καθεστώς ταμειακής λογιστικής",
+            "en": "Cash accounting scheme"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge / Αντίστροφη χρέωση"
+          }
+        },
+        {
+          "tags": [
+            "self-billed"
+          ],
+          "note": {
+            "key": "self-billed",
+            "text": "Self-billing / Αυτοτιμολόγηση"
+          }
+        },
+        {
+          "tags": [
+            "travel-agency-margin"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "travel-agency-margin",
+            "text": "Margin scheme - Travel agents / Καθεστώς περιθωρίου - Ταξιδιωτικά πρακτορεία"
+          }
+        },
+        {
+          "tags": [
+            "cash-accounting"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "cash-accounting",
+            "text": "Cash accounting / Καθεστώς Ταμειακής Λογιστικής"
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "el": "ΦΠΑ",
+        "en": "VAT"
+      },
+      "title": {
+        "el": "Φόρος Προστιθέμενης Αξίας",
+        "en": "Value Added Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "el": "Κανονικός συντελεστής",
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2014-01-13",
+              "percent": "19%"
+            },
+            {
+              "since": "2013-01-14",
+              "percent": "18%"
+            },
+            {
+              "since": "2012-03-01",
+              "percent": "17%"
+            },
+            {
+              "since": "2003-01-01",
+              "percent": "15%"
+            },
+            {
+              "since": "2002-07-01",
+              "percent": "13%"
+            },
+            {
+              "since": "2000-07-01",
+              "percent": "10%"
+            },
+            {
+              "since": "1993-10-01",
+              "percent": "8%"
+            },
+            {
+              "since": "1992-07-01",
+              "percent": "5%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "el": "Υψηλότερος μειωμένος συντελεστής",
+            "en": "Higher Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2014-01-13",
+              "percent": "9%"
+            },
+            {
+              "since": "2005-08-01",
+              "percent": "8%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "el": "Χαμηλότερος μειωμένος συντελεστής",
+            "en": "Lower Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2000-07-01",
+              "percent": "5%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής",
+            "en": "Super-Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2023-07-21",
+              "percent": "3%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Cyprus Tax Department - VAT Rates"
+          },
+          "url": "https://www.gov.cy/mof-tax/documents/syntelestes-f-p-a/"
+        },
+        {
+          "title": {
+            "en": "European Commission - VAT Rates"
+          },
+          "url": "https://europa.eu/youreurope/business/finance-and-tax/vat/vat-rules-rates/index_en.htm"
+        },
+        {
+          "title": {
+            "en": "Cyprus Treasury - Historical VAT Rates"
+          },
+          "url": "https://www.gov.cy/media/sites/42/2026/01/9Α_Θέματα-Φόρου-Προστιθέμενης-Αξίας-Φ.Π.Α.-1-2.pdf"
+        }
+      ]
+    }
+  ]
+}
