@@ -20,19 +20,21 @@ func TestTaxIdentityRules(t *testing.T) {
 		{name: "sole proprietorship GST", code: "MR2345678A"},
 		{name: "overseas vendor GST", code: "MB2345678A"},
 		{name: "overseas vendor GST 2", code: "MX2345678A"},
+		{name: "IRAS-assigned GST with digit suffix", code: "M201189853"},
 		{name: "invalid GST short", code: "M91234567", err: "IDENTITY-01"},
 		{name: "invalid GST long", code: "M91234567XA", err: "IDENTITY-01"},
 		{name: "invalid GST no M", code: "912345678X", err: "IDENTITY-01"},
-		{name: "invalid GST no end letter", code: "M912345678", err: "IDENTITY-01"},
 		// UEN identities also
-		{name: "UEN (ROC)", code: "199912345A"},
-		{name: "UEN (ROB)", code: "12345678A"},
-		{name: "UEN (Others)", code: "T12AB1234A"},
+		{name: "UEN (ROC)", code: "197401143C"},
+		{name: "UEN (ROB)", code: "00192200M"},
+		{name: "UEN (Others)", code: "T08GB0020K"},
 		{name: "NIRC/FIN", code: "S1234567A", err: "IDENTITY-01"},
 		{name: "Invalid short", code: "1234567A", err: "IDENTITY-01"},
 		{name: "Invalid UEN (ROC)", code: "2199123456", err: "IDENTITY-01"},
 		{name: "Invalid UEN (ROB)", code: "1234567A", err: "IDENTITY-01"},
 		{name: "Invalid UEN (Others)", code: "T12A1234A", err: "IDENTITY-01"},
+		{name: "Unknown UEN entity type", code: "T12AB1234D", err: "IDENTITY-01"},
+		{name: "Invalid UEN check character", code: "197401143A", err: "IDENTITY-01"},
 	}
 
 	for _, tt := range tests {

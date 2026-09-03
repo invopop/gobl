@@ -9,7 +9,7 @@
       "name": "EXAMPLE SUPPLIER",
       "tax_id": {
         "country": "SG",
-        "code": "201312345A"
+        "code": "201312345N"
       },
       "addresses": [
         {
@@ -45,6 +45,4 @@
         ]
       }
     ]
-    
   }
-  

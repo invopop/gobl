@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `sg`: UEN check-character validation now covers business, local-company, and
+  other-entity UENs, for both UEN identities and tax identity codes.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
@@ -38,6 +40,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
+- `sg`: tax identity codes accept IRAS-assigned GST registration numbers ending
+  in a digit (for example, `M201189853`).
 - `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
   signature entries instead of panicking.
 - `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
