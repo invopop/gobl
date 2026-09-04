@@ -1,0 +1,65 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "CR"
+uuid: "0193e2c1-5b8e-7d4f-8c6b-7a9e3f2d5c8b"
+currency: CRC
+series: "2026"
+code: "0002"
+issue_date: "2026-05-20"
+
+supplier:
+  name: Farmacia y Abastecedor La Sabana S.A.
+  tax_id:
+    country: "CR"
+    code: "3101654321"
+  addresses:
+    - street: La Sabana Norte
+      locality: San José
+      country: "CR"
+
+customer:
+  name: Hotel Monteverde Verde S.R.L.
+  tax_id:
+    country: "CR"
+    code: "3102987654"
+  addresses:
+    - street: Cerro Plano
+      locality: Monteverde
+      region: Puntarenas
+      country: "CR"
+
+lines:
+  - quantity: "1"
+    item:
+      name: Consulta médica privada
+      price: "45000.00"
+    taxes:
+      - cat: VAT
+        rate: intermediate
+  - quantity: "24"
+    item:
+      name: Acetaminofén 500mg
+      price: "2500.00"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: "50"
+    item:
+      name: Arroz 95% grano entero (canasta básica)
+      price: "1200.00"
+    taxes:
+      - cat: VAT
+        rate: super-reduced
+  - quantity: "20"
+    item:
+      name: Café orgánico certificado
+      price: "5500.00"
+    taxes:
+      - cat: VAT
+        rate: special
+  - quantity: "5"
+    item:
+      name: Utensilios de cocina
+      price: "12000.00"
+    taxes:
+      - cat: VAT
+        rate: general

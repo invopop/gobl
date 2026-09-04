@@ -1,0 +1,98 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5ad8eda9e2a1ad1b720fab23a799a71481b42cbda6da56dc2cfe0b9e72528f12"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CR",
+		"uuid": "0193e2c1-6c9f-7e5a-9d7c-8b0f4a3e6d9c",
+		"type": "credit-note",
+		"series": "2026",
+		"code": "0003",
+		"issue_date": "2026-06-02",
+		"currency": "CRC",
+		"preceding": [
+			{
+				"issue_date": "2026-05-12",
+				"code": "2026/0001"
+			}
+		],
+		"supplier": {
+			"name": "Distribuidora del Valle S.A.",
+			"tax_id": {
+				"country": "CR",
+				"code": "3101123456"
+			},
+			"addresses": [
+				{
+					"street": "Avenida Central, Calle 5",
+					"locality": "San José",
+					"country": "CR"
+				}
+			]
+		},
+		"customer": {
+			"name": "María Rodríguez Jiménez",
+			"tax_id": {
+				"country": "CR",
+				"code": "109980456"
+			},
+			"addresses": [
+				{
+					"street": "Barrio Escalante",
+					"locality": "San José",
+					"country": "CR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Licencia de software",
+					"price": "250000.00"
+				},
+				"sum": "250000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "13.0%"
+					}
+				],
+				"total": "250000.00"
+			}
+		],
+		"totals": {
+			"sum": "250000.00",
+			"total": "250000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "250000.00",
+								"percent": "13.0%",
+								"amount": "32500.00"
+							}
+						],
+						"amount": "32500.00"
+					}
+				],
+				"sum": "32500.00"
+			},
+			"tax": "32500.00",
+			"total_with_tax": "282500.00",
+			"payable": "282500.00"
+		}
+	}
+}
