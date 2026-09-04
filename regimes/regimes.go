@@ -23,6 +23,7 @@ import (
 	_ "github.com/invopop/gobl/regimes/ie"
 	_ "github.com/invopop/gobl/regimes/in"
 	_ "github.com/invopop/gobl/regimes/it"
+	_ "github.com/invopop/gobl/regimes/mt"
 	_ "github.com/invopop/gobl/regimes/mx"
 	_ "github.com/invopop/gobl/regimes/nl"
 	_ "github.com/invopop/gobl/regimes/no"
