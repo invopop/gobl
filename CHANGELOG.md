@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   applied to both `UEN` org identities and tax identity codes.
 - `org`/`bill`: parties may now identify a single-level agent acting on their
   behalf, and ordering details may identify the addressee alongside the document issuer.
+- `addons/eu/en16931`: the party electronic address (BT-34, BT-49) is now
+  validated on `org.Endpoint` as well as on the deprecated `org.Inbox`. A party
+  may carry at most one `iso6523-actorid-upis` endpoint, and such an endpoint's
+  URI must contain both a scheme and a code
+  (`iso6523-actorid-upis::<scheme>:<code>`). Endpoints using other URI schemes
+  (`mailto:`, `gobl:`) are unrestricted.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 

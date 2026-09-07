@@ -235,6 +235,16 @@
           ]
         },
         {
+          "field": "endpoints",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-ORG-PARTY-04",
+              "desc": "cannot have more than one peppol endpoint (BT-34, BT-49)",
+              "tests": "single peppol endpoint"
+            }
+          ]
+        },
+        {
           "field": "identities",
           "assert": [
             {
@@ -264,6 +274,22 @@
           "id": "GOBL-EU-EN16931-ORG-INBOX-02",
           "desc": "code cannot be blank when scheme is set",
           "tests": "code required with scheme"
+        }
+      ]
+    },
+    {
+      "id": "GOBL-EU-EN16931-ORG-ENDPOINT",
+      "object": "org.Endpoint",
+      "subsets": [
+        {
+          "field": "uri",
+          "assert": [
+            {
+              "id": "GOBL-EU-EN16931-ORG-ENDPOINT-01",
+              "desc": "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+              "tests": "valid peppol endpoint uri"
+            }
+          ]
         }
       ]
     },

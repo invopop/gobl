@@ -2,6 +2,7 @@ package en16931
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
@@ -183,6 +184,14 @@ func orgPartyRules() *rules.Set {
 				is.Length(0, 1),
 			),
 		),
+		rules.Field("endpoints",
+			// BT-34/BT-49 allow a single electronic address. Only the
+			// peppol endpoints are counted; a party may also hold
+			// endpoints with other URI schemes (mailto:, gobl:).
+			rules.Assert("04", "cannot have more than one peppol endpoint (BT-34, BT-49)",
+				is.Func("single peppol endpoint", orgPartySinglePeppolEndpoint),
+			),
+		),
 		rules.Field("identities",
 			rules.Assert("02", "only one identity may have the legal scope (BT-30, BT-47)",
 				is.Func("single legal-scope identity", orgIdentitiesSingleLegalScope),
@@ -214,6 +223,21 @@ func orgIdentitiesSingleTaxScope(val any) bool {
 	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
 }
 
+func orgPartyPeppolEndpointCount(endpoints []*org.Endpoint) int {
+	n := 0
+	for _, e := range endpoints {
+		if e != nil && e.URI.Scheme() == peppolEndpointScheme {
+			n++
+		}
+	}
+	return n
+}
+
+func orgPartySinglePeppolEndpoint(val any) bool {
+	endpoints, ok := val.([]*org.Endpoint)
+	return ok && orgPartyPeppolEndpointCount(endpoints) <= 1
+}
+
 func orgInboxRules() *rules.Set {
 	return rules.For(new(org.Inbox),
 		// BR-62, BR-63: scheme required when code is present
@@ -235,6 +259,34 @@ func orgInboxSchemeRequiredWithCode(val any) bool {
 func orgInboxCodeRequiredWithScheme(val any) bool {
 	i, ok := val.(*org.Inbox)
 	return !ok || i == nil || i.Scheme == cbc.CodeEmpty || i.Code != cbc.CodeEmpty
+}
+
+func orgEndpointRules() *rules.Set {
+	return rules.For(new(org.Endpoint),
+		rules.Field("uri",
+			// Endpoint analogue of the inbox scheme/code pair (BR-62, BR-63).
+			rules.Assert("01", "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+				is.Func("valid peppol endpoint uri", orgEndpointPeppolURIValid),
+			),
+		),
+	)
+}
+
+// orgEndpointPeppolURIValid requires an `iso6523-actorid-upis` URI to carry
+// both a scheme and a code. Go exposes the opaque part of
+// `iso6523-actorid-upis::0225:356000000` as `:0225:356000000`, hence the
+// leading colon.
+func orgEndpointPeppolURIValid(val any) bool {
+	uri, ok := val.(cbc.URI)
+	if !ok || uri.Scheme() != peppolEndpointScheme {
+		return true
+	}
+	opaque, ok := strings.CutPrefix(uri.Opaque(), ":")
+	if !ok {
+		return false
+	}
+	scheme, code, found := strings.Cut(opaque, ":")
+	return found && scheme != "" && code != ""
 }
 
 func orgAddressRules() *rules.Set {
