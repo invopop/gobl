@@ -65,11 +65,24 @@ func TestPeriodValidation(t *testing.T) {
 		p := cal.Period{}
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
-		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-01"))
-		assert.True(t, faults.HasPath("$.start"))
-		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-02"))
-		assert.True(t, faults.HasPath("$.end"))
+		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-03"))
+		assert.True(t, faults.HasPath("$"))
+		assert.Equal(t, "either a start or end date is required", faults.First().Message())
+		// A single fault: the retired field-level codes must not reappear.
+		assert.False(t, faults.HasCode("GOBL-CAL-PERIOD-01"))
+		assert.False(t, faults.HasCode("GOBL-CAL-PERIOD-02"))
 		assert.False(t, faults.HasCode("GOBL-CAL-PERIOD-10"))
+
+		faults = rules.Validate(&p)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-03"))
+	})
+
+	t.Run("label only", func(t *testing.T) {
+		p := cal.Period{Label: "Q3"}
+		faults := rules.Validate(p)
+		require.NotNil(t, faults)
+		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-03"))
 	})
 }
 

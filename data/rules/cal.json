@@ -29,41 +29,14 @@
       "object": "cal.Period",
       "assert": [
         {
+          "id": "GOBL-CAL-PERIOD-03",
+          "desc": "either a start or end date is required",
+          "tests": "has start or end"
+        },
+        {
           "id": "GOBL-CAL-PERIOD-10",
           "desc": "end date must be on or after start date",
           "tests": "end not before start"
-        }
-      ],
-      "subsets": [
-        {
-          "guard": "End.IsZero()",
-          "subsets": [
-            {
-              "field": "start",
-              "assert": [
-                {
-                  "id": "GOBL-CAL-PERIOD-01",
-                  "desc": "start date cannot be zero",
-                  "tests": "not zero"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "guard": "Start.IsZero()",
-          "subsets": [
-            {
-              "field": "end",
-              "assert": [
-                {
-                  "id": "GOBL-CAL-PERIOD-02",
-                  "desc": "end date cannot be zero",
-                  "tests": "not zero"
-                }
-              ]
-            }
-          ]
         }
       ]
     },

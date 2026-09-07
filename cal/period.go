@@ -21,26 +21,26 @@ type Period struct {
 
 func periodRules() *rules.Set {
 	return rules.For(new(Period),
-		rules.When(is.Expr(`End.IsZero()`),
-			rules.Field("start",
-				rules.Assert("01", "start date cannot be zero",
-					DateNotZero(),
-				),
-			),
-		),
-		rules.When(is.Expr(`Start.IsZero()`),
-			rules.Field("end",
-				rules.Assert("02", "end date cannot be zero",
-					DateNotZero(),
-				),
-			),
-		),
 		rules.Object(
+			rules.Assert("03", "either a start or end date is required",
+				is.Func("has start or end", periodHasBound),
+			),
 			rules.Assert("10", "end date must be on or after start date",
 				is.Func("end not before start", periodEndNotBeforeStart),
 			),
 		),
 	)
+}
+
+// periodHasBound checks that at least one of the two dates is set. Which one
+// is irrelevant: EN 16931 BR-CO-19 and BR-CO-20 allow either bound alone, so
+// this is reported once against the period rather than against each field.
+func periodHasBound(val any) bool {
+	p, ok := val.(*Period)
+	if !ok || p == nil {
+		return true
+	}
+	return !p.Start.IsZero() || !p.End.IsZero()
 }
 
 func periodEndNotBeforeStart(val any) bool {
