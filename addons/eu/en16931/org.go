@@ -135,12 +135,8 @@ func normalizeOrgParty(p *org.Party) {
 	normalizeOrgPartyEndpoints(p)
 }
 
-// peppolEndpointScheme is the URI scheme used for Peppol participant
-// identifier endpoints (CEN/Peppol SMP and AS4 spec).
-const peppolEndpointScheme = "iso6523-actorid-upis"
-
 func normalizeOrgPartyEndpoints(p *org.Party) {
-	if p.Endpoint(peppolEndpointScheme) != nil {
+	if p.Endpoint(org.PeppolEndpointScheme) != nil {
 		// No peppol endpoint, return
 		return
 	}
@@ -151,7 +147,7 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
 			continue
 		}
-		uri := cbc.URI(peppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
+		uri := cbc.URI(org.PeppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
 		p.Endpoints = append(p.Endpoints, &org.Endpoint{
 			Label: in.Label,
 			URI:   uri,
@@ -185,9 +181,6 @@ func orgPartyRules() *rules.Set {
 			),
 		),
 		rules.Field("endpoints",
-			// BT-34/BT-49 allow a single electronic address. Only the
-			// peppol endpoints are counted; a party may also hold
-			// endpoints with other URI schemes (mailto:, gobl:).
 			rules.Assert("04", "cannot have more than one peppol endpoint (BT-34, BT-49)",
 				is.Func("single peppol endpoint", orgPartySinglePeppolEndpoint),
 			),
@@ -226,7 +219,7 @@ func orgIdentitiesSingleTaxScope(val any) bool {
 func orgPartyPeppolEndpointCount(endpoints []*org.Endpoint) int {
 	n := 0
 	for _, e := range endpoints {
-		if e != nil && e.URI.Scheme() == peppolEndpointScheme {
+		if e != nil && e.URI.Scheme() == org.PeppolEndpointScheme {
 			n++
 		}
 	}
@@ -272,13 +265,11 @@ func orgEndpointRules() *rules.Set {
 	)
 }
 
-// orgEndpointPeppolURIValid requires an `iso6523-actorid-upis` URI to carry
-// both a scheme and a code. Go exposes the opaque part of
-// `iso6523-actorid-upis::0225:356000000` as `:0225:356000000`, hence the
-// leading colon.
+// orgEndpointPeppolURIValid requires a peppol URI to carry both a scheme and a
+// code. URI parsing exposes the opaque part as ":<scheme>:<code>".
 func orgEndpointPeppolURIValid(val any) bool {
 	uri, ok := val.(cbc.URI)
-	if !ok || uri.Scheme() != peppolEndpointScheme {
+	if !ok || uri.Scheme() != org.PeppolEndpointScheme {
 		return true
 	}
 	opaque, ok := strings.CutPrefix(uri.Opaque(), ":")
