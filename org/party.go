@@ -136,12 +136,14 @@ func partyFrom(obj any) *Party {
 func partyRules() *rules.Set {
 	return rules.For(new(Party),
 		rules.Field("agent",
-			rules.Assert("01", "agent must not have an agent", is.Func("not have an agent", func(obj any) bool {
-				p := partyFrom(obj)
-				return p == nil || p.Agent == nil
-			})),
+			rules.Assert("01", "agent must not have an agent", is.Func("not have an agent", partyHasNoAgent)),
 		),
 	)
+}
+
+func partyHasNoAgent(obj any) bool {
+	p := partyFrom(obj)
+	return p == nil || p.Agent == nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.
