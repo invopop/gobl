@@ -5,26 +5,34 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// Period represents two dates with a start and finish.
+// Period represents a span of time bounded by a start and/or an end date.
+// At least one of the two bounds must be provided, but either may be omitted
+// on its own, mirroring EN 16931 (BR-CO-19 and BR-CO-20) where the invoicing
+// and line period start and end dates are each optional.
 type Period struct {
 	// Label is a short description of the period.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Start indicates when this period starts.
-	Start Date `json:"start" jsonschema:"title=Start"`
-	// End indicates when the period ends, and must be after the start date.
-	End Date `json:"end" jsonschema:"title=End"`
+	// Start indicates when this period starts. Required if no end date is provided.
+	Start Date `json:"start,omitzero" jsonschema:"title=Start"`
+	// End indicates when the period ends, and must be on or after the start
+	// date when both are present. Required if no start date is provided.
+	End Date `json:"end,omitzero" jsonschema:"title=End"`
 }
 
 func periodRules() *rules.Set {
 	return rules.For(new(Period),
-		rules.Field("start",
-			rules.Assert("01", "start date cannot be zero",
-				DateNotZero(),
+		rules.When(is.Expr(`End.IsZero()`),
+			rules.Field("start",
+				rules.Assert("01", "start date cannot be zero",
+					DateNotZero(),
+				),
 			),
 		),
-		rules.Field("end",
-			rules.Assert("02", "end date cannot be zero",
-				DateNotZero(),
+		rules.When(is.Expr(`Start.IsZero()`),
+			rules.Field("end",
+				rules.Assert("02", "end date cannot be zero",
+					DateNotZero(),
+				),
 			),
 		),
 		rules.Object(

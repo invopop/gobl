@@ -1,0 +1,64 @@
+# Regression fixture for GBL-93: EN 16931 BR-CO-19 / BR-CO-20 allow a period
+# to carry only one of its bounds. Modelled on an inbound supplier invoice
+# where the header invoicing period only had an end date (BT-74 without
+# BT-73), and lines for one-off services only had a start date (BT-134
+# without BT-135).
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0195f7c2-7d1a-7b00-8c7e-3c1c0d5e9a11"
+currency: "EUR"
+issue_date: "2026-09-01"
+series: "SAMPLE"
+code: "002"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "44732829320" # random
+  name: "Provide One Inc."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "356000000"
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.com"
+  addresses:
+    - num: "1"
+      street: "Rue Sundacsakn"
+      locality: "Saint-Germain-En-Laye"
+      code: "75050"
+      country: "FR"
+
+ordering:
+  period:
+    end: "2026-08-31"
+
+lines:
+  - quantity: 1
+    period:
+      start: "2026-08-12"
+    item:
+      name: "Transport service"
+      price: "180.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    period:
+      start: "2026-08-20"
+    item:
+      name: "Handling fee"
+      price: "25.00"
+    taxes:
+      - cat: VAT
+        rate: standard

@@ -1,6 +1,7 @@
 package cal_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cal"
@@ -28,26 +29,21 @@ func TestPeriodValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(&p))
 	})
 
-	t.Run("missing start", func(t *testing.T) {
+	// EN 16931 BR-CO-19 / BR-CO-20: a period only needs one of its bounds.
+	t.Run("end only", func(t *testing.T) {
 		p := cal.Period{
 			End: cal.MakeDate(2022, 2, 28),
 		}
-		faults := rules.Validate(p)
-		require.NotNil(t, faults)
-		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-01"))
-		assert.True(t, faults.HasPath("$.start"))
-		assert.Equal(t, "start date cannot be zero", faults.First().Message())
+		assert.NoError(t, rules.Validate(p))
+		assert.NoError(t, rules.Validate(&p))
 	})
 
-	t.Run("missing end", func(t *testing.T) {
+	t.Run("start only", func(t *testing.T) {
 		p := cal.Period{
 			Start: cal.MakeDate(2022, 1, 25),
 		}
-		faults := rules.Validate(p)
-		require.NotNil(t, faults)
-		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-02"))
-		assert.True(t, faults.HasPath("$.end"))
-		assert.Equal(t, "end date cannot be zero", faults.First().Message())
+		assert.NoError(t, rules.Validate(p))
+		assert.NoError(t, rules.Validate(&p))
 	})
 
 	t.Run("end before start", func(t *testing.T) {
@@ -70,6 +66,63 @@ func TestPeriodValidation(t *testing.T) {
 		faults := rules.Validate(p)
 		require.NotNil(t, faults)
 		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-01"))
+		assert.True(t, faults.HasPath("$.start"))
 		assert.True(t, faults.HasCode("GOBL-CAL-PERIOD-02"))
+		assert.True(t, faults.HasPath("$.end"))
+		assert.False(t, faults.HasCode("GOBL-CAL-PERIOD-10"))
+	})
+}
+
+func TestPeriodJSON(t *testing.T) {
+	t.Run("both bounds", func(t *testing.T) {
+		p := cal.Period{
+			Start: cal.MakeDate(2022, 1, 25),
+			End:   cal.MakeDate(2022, 2, 28),
+		}
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"start":"2022-01-25","end":"2022-02-28"}`, string(data))
+	})
+
+	t.Run("end only omits start", func(t *testing.T) {
+		p := cal.Period{
+			End: cal.MakeDate(2022, 2, 28),
+		}
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"end":"2022-02-28"}`, string(data))
+		assert.NotContains(t, string(data), "0000-00-00")
+
+		var out cal.Period
+		require.NoError(t, json.Unmarshal(data, &out))
+		assert.Equal(t, p, out)
+		assert.True(t, out.Start.IsZero())
+	})
+
+	t.Run("start only omits end", func(t *testing.T) {
+		p := cal.Period{
+			Start: cal.MakeDate(2022, 1, 25),
+		}
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"start":"2022-01-25"}`, string(data))
+		assert.NotContains(t, string(data), "0000-00-00")
+
+		var out cal.Period
+		require.NoError(t, json.Unmarshal(data, &out))
+		assert.Equal(t, p, out)
+		assert.True(t, out.End.IsZero())
+	})
+
+	t.Run("legacy zero date input", func(t *testing.T) {
+		// Older documents may carry "0000-00-00" for the missing bound; it
+		// must still parse and then be dropped on re-serialization.
+		var p cal.Period
+		require.NoError(t, json.Unmarshal([]byte(`{"start":"0000-00-00","end":"2022-02-28"}`), &p))
+		assert.True(t, p.Start.IsZero())
+		assert.NoError(t, rules.Validate(p))
+		data, err := json.Marshal(p)
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"end":"2022-02-28"}`, string(data))
 	})
 }

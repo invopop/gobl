@@ -36,22 +36,32 @@
       ],
       "subsets": [
         {
-          "field": "start",
-          "assert": [
+          "guard": "End.IsZero()",
+          "subsets": [
             {
-              "id": "GOBL-CAL-PERIOD-01",
-              "desc": "start date cannot be zero",
-              "tests": "not zero"
+              "field": "start",
+              "assert": [
+                {
+                  "id": "GOBL-CAL-PERIOD-01",
+                  "desc": "start date cannot be zero",
+                  "tests": "not zero"
+                }
+              ]
             }
           ]
         },
         {
-          "field": "end",
-          "assert": [
+          "guard": "Start.IsZero()",
+          "subsets": [
             {
-              "id": "GOBL-CAL-PERIOD-02",
-              "desc": "end date cannot be zero",
-              "tests": "not zero"
+              "field": "end",
+              "assert": [
+                {
+                  "id": "GOBL-CAL-PERIOD-02",
+                  "desc": "end date cannot be zero",
+                  "tests": "not zero"
+                }
+              ]
             }
           ]
         }
