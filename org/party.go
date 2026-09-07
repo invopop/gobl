@@ -23,7 +23,7 @@ type Party struct {
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
-	// Agent is a party that acts on behalf of this party.
+	// Agent is a party that acts on behalf of this party. An agent cannot itself have an agent.
 	Agent *Party `json:"agent,omitempty" jsonschema:"title=Agent"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
@@ -131,6 +131,17 @@ func partyFrom(obj any) *Party {
 		return &v
 	}
 	return nil
+}
+
+func partyRules() *rules.Set {
+	return rules.For(new(Party),
+		rules.Field("agent",
+			rules.Assert("01", "agent must not have an agent", is.Func("not have an agent", func(obj any) bool {
+				p := partyFrom(obj)
+				return p == nil || p.Agent == nil
+			})),
+		),
+	)
 }
 
 // JSONSchemaExtend adds extra details to the schema.
