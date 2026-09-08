@@ -29,32 +29,6 @@
       ]
     },
     {
-      "id": "GOBL-PE-ORG-IDENTITY",
-      "object": "org.Identity",
-      "subsets": [
-        {
-          "guard": "context: regime in [PE]",
-          "subsets": [
-            {
-              "guard": "type in [DNI]",
-              "subsets": [
-                {
-                  "field": "code",
-                  "assert": [
-                    {
-                      "id": "GOBL-PE-ORG-IDENTITY-01",
-                      "desc": "invalid DNI",
-                      "tests": "valid 8-digit DNI"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "GOBL-PE-BILL-INVOICE",
       "object": "bill.Invoice",
       "subsets": [

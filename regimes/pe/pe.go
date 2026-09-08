@@ -9,39 +9,20 @@ import (
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
-	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/tax"
 )
 
 // CountryCode is the tax country code for Peru.
 const CountryCode = "PE"
 
-// Identity type codes for non-tax identities commonly used in Peru
-// (SUNAT Catalogue 06).
-const (
-	// IdentityTypeDNI represents the "Documento Nacional de Identidad",
-	// the national identity document for Peruvian citizens.
-	IdentityTypeDNI cbc.Code = "DNI"
-	// IdentityTypeCE represents the "Carné de Extranjería", the identity
-	// document issued to foreign residents in Peru.
-	IdentityTypeCE cbc.Code = "CE"
-	// IdentityTypePassport represents a passport, used to identify
-	// non-resident individuals.
-	IdentityTypePassport cbc.Code = "PAS"
-)
-
 func init() {
 	tax.RegisterRegimeDef(New())
 	rules.Register("pe", rules.GOBL.Add(CountryCode),
 		taxIdentityRules(),
-		orgIdentityRules(),
 		billInvoiceRules(),
 	)
 	norm.Register(
 		norm.When(tax.IdentityIn(CountryCode), norm.For(normalizeTaxIdentity)),
-	)
-	norm.RegisterWithGuard(is.InContext(tax.RegimeIn(CountryCode)),
-		norm.For(normalizeOrgIdentity),
 	)
 }
 
@@ -73,15 +54,10 @@ func New() *tax.RegimeDef {
 				URL:   "https://centrovirtual.sunat.gob.pe/tramites/inscribete-ruc",
 			},
 			{
-				Title: i18n.NewString("SUNAT - Catalogue 06: identity document types"),
-				URL:   "https://www.sunat.gob.pe/legislacion/superin/2021/anexo-026-2021.pdf",
-			},
-			{
 				Title: i18n.NewString("SUNAT - Payment Voucher Regulations: credit and debit notes"),
 				URL:   "https://www.sunat.gob.pe/legislacion/comprob/regla/capituloIII.pdf",
 			},
 		},
-		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),

@@ -61,7 +61,6 @@ func TestSources(t *testing.T) {
 
 	assert.ElementsMatch(t, []string{
 		"https://centrovirtual.sunat.gob.pe/tramites/inscribete-ruc",
-		"https://www.sunat.gob.pe/legislacion/superin/2021/anexo-026-2021.pdf",
 		"https://www.sunat.gob.pe/legislacion/comprob/regla/capituloIII.pdf",
 	}, sourceURLs(t, regime.Sources))
 	assert.ElementsMatch(t, []string{
@@ -109,22 +108,6 @@ func TestCorrections(t *testing.T) {
 		bill.InvoiceTypeCreditNote,
 		bill.InvoiceTypeDebitNote,
 	}, correction.Types)
-}
-
-func TestIdentities(t *testing.T) {
-	t.Parallel()
-	regime := pe.New()
-
-	require.Len(t, regime.Identities, 3)
-	codes := make([]cbc.Code, len(regime.Identities))
-	for i, def := range regime.Identities {
-		codes[i] = def.Code
-	}
-	assert.Equal(t, []cbc.Code{
-		pe.IdentityTypeDNI,
-		pe.IdentityTypeCE,
-		pe.IdentityTypePassport,
-	}, codes)
 }
 
 func sourceURLs(t *testing.T, sources []*cbc.Source) []string {

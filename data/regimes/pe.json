@@ -16,12 +16,6 @@
     },
     {
       "title": {
-        "en": "SUNAT - Catalogue 06: identity document types"
-      },
-      "url": "https://www.sunat.gob.pe/legislacion/superin/2021/anexo-026-2021.pdf"
-    },
-    {
-      "title": {
         "en": "SUNAT - Payment Voucher Regulations: credit and debit notes"
       },
       "url": "https://www.sunat.gob.pe/legislacion/comprob/regla/capituloIII.pdf"
@@ -31,37 +25,6 @@
   "country": "PE",
   "currency": "PEN",
   "tax_scheme": "VAT",
-  "identities": [
-    {
-      "code": "DNI",
-      "name": {
-        "en": "National Identity Document",
-        "es": "Documento Nacional de Identidad"
-      },
-      "desc": {
-        "en": "Eight-digit identity document issued by RENIEC to Peruvian citizens.",
-        "es": "Documento de identidad de ocho dígitos emitido por RENIEC a los ciudadanos peruanos."
-      }
-    },
-    {
-      "code": "CE",
-      "name": {
-        "en": "Foreigner Resident Card",
-        "es": "Carné de Extranjería"
-      },
-      "desc": {
-        "en": "Identity document issued by Migraciones to foreign residents in Peru.",
-        "es": "Documento de identidad emitido por Migraciones a los extranjeros residentes en el Perú."
-      }
-    },
-    {
-      "code": "PAS",
-      "name": {
-        "en": "Passport",
-        "es": "Pasaporte"
-      }
-    }
-  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

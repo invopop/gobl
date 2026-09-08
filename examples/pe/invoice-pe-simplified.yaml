@@ -6,8 +6,8 @@ series: "B001"
 code: "00000789"
 issue_date: "2026-06-18"
 
-# Simplified invoice covering the "boleta de venta" use case: issued to a
-# final consumer, identified by their DNI rather than a tax ID.
+# GOBL simplified invoice for a final consumer with a national identity.
+# SUNAT document mappings and identity validation belong in a future addon.
 tax:
   tags:
     - "simplified"
@@ -27,7 +27,8 @@ supplier:
 customer:
   name: Juan Pérez Quispe
   identities:
-    - type: "DNI"
+    - key: national
+      country: PE
       code: "40123456"
 
 lines:

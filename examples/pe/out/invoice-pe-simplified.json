@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "95341ab74fc4afb83533fa4e70e9af01218afdd373649540266c5c000886e5d8"
+			"val": "84d438475d92192cefbc7357512499c8dd084d90e73dff263f804bf7c11891a3"
 		}
 	},
 	"doc": {
@@ -40,7 +40,8 @@
 			"name": "Juan Pérez Quispe",
 			"identities": [
 				{
-					"type": "DNI",
+					"country": "PE",
+					"key": "national",
 					"code": "40123456"
 				}
 			]
