@@ -13,12 +13,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `cal`: `Period` now accepts a single bound. Only one of `start` or `end` is
-  required, matching EN 16931 BR-CO-19 / BR-CO-20 where the invoicing and line
-  period dates are each optional. The absent bound is omitted from JSON instead
-  of being serialized as `0000-00-00`. A period with neither bound fails with
-  the new `GOBL-CAL-PERIOD-03`; the field-level codes `GOBL-CAL-PERIOD-01` and
-  `GOBL-CAL-PERIOD-02` are retired.
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
 - `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
 - `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
   `category1_95` (Other Income-related Information) without an accompanying

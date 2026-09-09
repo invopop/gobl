@@ -13,12 +13,12 @@
         "start": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Start",
-          "description": "Start indicates when this period starts. Required if no end date is provided."
+          "description": "Start indicates when this period starts, required if there is no end date."
         },
         "end": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "End",
-          "description": "End indicates when the period ends, and must be on or after the start\ndate when both are present. Required if no start date is provided."
+          "description": "End indicates when the period ends, required if there is no start date,\nand must be on or after the start date."
         }
       },
       "type": "object",

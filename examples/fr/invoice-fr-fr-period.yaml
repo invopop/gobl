@@ -1,8 +1,3 @@
-# Regression fixture for GBL-93: EN 16931 BR-CO-19 / BR-CO-20 allow a period
-# to carry only one of its bounds. Modelled on an inbound supplier invoice
-# where the header invoicing period only had an end date (BT-74 without
-# BT-73), and lines for one-off services only had a start date (BT-134
-# without BT-135).
 $schema: "https://gobl.org/draft-0/bill/invoice"
 uuid: "0195f7c2-7d1a-7b00-8c7e-3c1c0d5e9a11"
 currency: "EUR"
