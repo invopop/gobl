@@ -82,6 +82,10 @@
           "title": "Italy"
         },
         {
+          "const": "LU",
+          "title": "Luxembourg"
+        },
+        {
           "const": "MX",
           "title": "Mexico"
         },
