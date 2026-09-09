@@ -1,0 +1,45 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "IS"
+uuid: "3f9e2a4c-1d5b-4e7a-9c8d-0b1f2e3a4c5d"
+currency: ISK
+series: "2026"
+code: "0001"
+issue_date: "2026-05-15"
+
+supplier:
+  name: Reykjavík Ráðgjöf ehf.
+  tax_id:
+    country: "IS"
+    code: "1201743399"
+  addresses:
+    - street: Laugavegur 22
+      locality: Reykjavík
+      code: "101"
+      country: "IS"
+
+customer:
+  name: Norðurljós Tækni hf.
+  tax_id:
+    country: "IS"
+    code: "1503854239"
+  addresses:
+    - street: Borgartún 30
+      locality: Reykjavík
+      code: "105"
+      country: "IS"
+
+lines:
+  - quantity: "15"
+    item:
+      name: Ráðgjafarþjónusta
+      price: "18500"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: "1"
+    item:
+      name: Uppsetning hugbúnaðar
+      price: "125000"
+    taxes:
+      - cat: VAT
+        rate: standard

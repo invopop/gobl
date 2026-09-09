@@ -1,0 +1,159 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Iceland",
+    "is": "Ísland"
+  },
+  "description": {
+    "en": "Iceland's Value Added Tax (virðisaukaskattur, VSK), administered by\nSkatturinn (Iceland Revenue and Customs), is applied to most goods\nand services at a standard rate, with a reduced rate for\naccommodation, books, food and certain cultural services.\n\nBusinesses are identified by their Kennitala, a 10-digit national\nidentifier whose validity is confirmed with a weighted modulus-11\ncheck digit; the same number serves as the tax identity for both\nindividuals and legal entities."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Skatturinn - Value Added Tax"
+      },
+      "url": "https://www.skatturinn.is/english/companies/value-added-tax/"
+    }
+  ],
+  "time_zone": "Atlantic/Reykjavik",
+  "country": "IS",
+  "currency": "ISK",
+  "tax_scheme": "VAT",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "is": "VSK"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "is": "Virðisaukaskattur"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "is": "Almennt skatthlutfall"
+          },
+          "desc": {
+            "en": "Applies to most goods and services unless a reduced rate or zero-rating applies.",
+            "is": "Gildir um flestar vörur og þjónustu nema að lægra þrep eða núll-hlutfall eigi við."
+          },
+          "values": [
+            {
+              "since": "2015-01-01",
+              "percent": "24.0%"
+            },
+            {
+              "since": "2010-01-01",
+              "percent": "25.5%"
+            },
+            {
+              "since": "1990-01-01",
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "is": "Lægra skatthlutfall"
+          },
+          "desc": {
+            "en": "Accommodation, books and periodicals, food, radio/TV licences and certain cultural services.",
+            "is": "Gisting, bækur og tímarit, matvæli, afnotagjöld útvarps og tiltekin menningarþjónusta."
+          },
+          "values": [
+            {
+              "since": "2015-01-01",
+              "percent": "11.0%"
+            },
+            {
+              "since": "2007-03-01",
+              "percent": "7.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Skatturinn - Value Added Tax",
+            "is": "Skatturinn - Virðisaukaskattur"
+          },
+          "url": "https://www.skatturinn.is/english/companies/value-added-tax/"
+        },
+        {
+          "title": {
+            "is": "Skatturinn - Skattskylda og skattprósentur"
+          },
+          "url": "https://www.skatturinn.is/atvinnurekstur/virdisaukaskattur/skattskylda-og-skattprosentur/"
+        },
+        {
+          "title": {
+            "en": "OECD - Consumption Tax Trends: Iceland"
+          },
+          "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/consumption-tax-trends/consumption-tax-trends-iceland.pdf"
+        }
+      ]
+    }
+  ]
+}
