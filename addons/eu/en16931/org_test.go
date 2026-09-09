@@ -151,7 +151,7 @@ func TestOrgInboxNormalize(t *testing.T) {
 	})
 }
 
-func TestOrgPartyNormalizePeppolEndpoint(t *testing.T) {
+func TestOrgPartyNormalizeEndpoints(t *testing.T) {
 	t.Run("accepts nil", func(t *testing.T) {
 		var p *org.Party
 		assert.NotPanics(t, func() {
@@ -321,44 +321,6 @@ func TestOrgAttachmentValidation(t *testing.T) {
 }
 
 func TestOrgPartyValidate(t *testing.T) {
-	t.Run("no inboxes", func(t *testing.T) {
-		p := &org.Party{}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("one inbox", func(t *testing.T) {
-		p := &org.Party{
-			Inboxes: []*org.Inbox{
-				{
-					Scheme: "scheme1",
-					Code:   "code1",
-				},
-			},
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("multiple inboxes", func(t *testing.T) {
-		// BT-34/BT-49 is asserted on endpoints now; the deprecated inboxes
-		// carry no addon rules of their own.
-		p := &org.Party{
-			Inboxes: []*org.Inbox{
-				{
-					Scheme: "scheme1",
-					Code:   "code1",
-				},
-				{
-					Scheme: "scheme2",
-					Code:   "code2",
-				},
-			},
-		}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
 	t.Run("one iso6523 endpoint", func(t *testing.T) {
 		p := &org.Party{
 			Endpoints: []*org.Endpoint{
@@ -377,7 +339,7 @@ func TestOrgPartyValidate(t *testing.T) {
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "cannot have more than one endpoint (BT-34, BT-49)")
+		assert.ErrorContains(t, err, "cannot have more than one 'iso6523-actorid-upis' endpoint (BT-34, BT-49)")
 	})
 
 	t.Run("iso6523 endpoint alongside other schemes", func(t *testing.T) {
@@ -447,41 +409,6 @@ func TestOrgPartyValidate(t *testing.T) {
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "only one identity may have the tax scope (BT-31, BT-48)")
-	})
-}
-
-func TestOrgInboxValidate(t *testing.T) {
-	t.Run("missing scheme and code", func(t *testing.T) {
-		i := &org.Inbox{}
-		// Not specific for addon, but this is important to check
-		assert.ErrorContains(t, rules.Validate(i), "inbox requires a code, url, or email")
-	})
-
-	t.Run("missing scheme", func(t *testing.T) {
-		// BR-62/BR-63 moved to the endpoint URI, so a half-populated
-		// inbox is only the base org rules' business.
-		i := &org.Inbox{
-			Code: "code1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("missing code", func(t *testing.T) {
-		i := &org.Inbox{
-			Scheme: "scheme1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "inbox requires a code, url, or email")
-	})
-
-	t.Run("valid inbox", func(t *testing.T) {
-		i := &org.Inbox{
-			Scheme: "scheme1",
-			Code:   "code1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
 	})
 }
 

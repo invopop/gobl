@@ -229,7 +229,7 @@
           "assert": [
             {
               "id": "GOBL-EU-EN16931-ORG-PARTY-04",
-              "desc": "cannot have more than one endpoint (BT-34, BT-49)",
+              "desc": "cannot have more than one 'iso6523-actorid-upis' endpoint (BT-34, BT-49)",
               "tests": "single iso6523 endpoint"
             }
           ]

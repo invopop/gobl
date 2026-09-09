@@ -174,7 +174,7 @@ func orgAttachmentRules() *rules.Set {
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
 		rules.Field("endpoints",
-			rules.Assert("04", "cannot have more than one endpoint (BT-34, BT-49)",
+			rules.Assert("04", "cannot have more than one 'iso6523-actorid-upis' endpoint (BT-34, BT-49)",
 				is.Func("single iso6523 endpoint", orgPartySingleISO6523Endpoint),
 			),
 		),
