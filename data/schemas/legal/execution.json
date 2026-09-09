@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/execution",
+  "$ref": "#/$defs/legal.Execution",
+  "$defs": {
+    "legal.Execution": {
+      "properties": {
+        "method": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Method"
+        },
+        "counterparts": {
+          "type": "boolean",
+          "title": "Counterparts"
+        },
+        "statement": {
+          "type": "string",
+          "title": "Execution Statement"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/signature-requirement"
+          },
+          "type": "array",
+          "title": "Signature Requirements"
+        }
+      },
+      "type": "object",
+      "required": [
+        "requirements"
+      ],
+      "description": "Execution describes what assent is required for a contract version."
+    }
+  }
+}

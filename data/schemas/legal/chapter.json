@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/legal/chapter",
+  "$ref": "#/$defs/legal.Chapter",
+  "$defs": {
+    "legal.Chapter": {
+      "properties": {
+        "$anchor": {
+          "type": "string",
+          "title": "Anchor",
+          "description": "Unique anchor for this chapter inside the document"
+        },
+        "idx": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Index of this chapter inside its context.",
+          "calculated": true
+        },
+        "$ref": {
+          "type": "string",
+          "title": "Ref",
+          "description": "Link to the source material for this chapter"
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Chapter title"
+        },
+        "sub_title": {
+          "type": "string",
+          "title": "Sub Title",
+          "description": "Additional sub-title for the chapter."
+        },
+        "sections": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/legal/section"
+          },
+          "type": "array",
+          "title": "Sections",
+          "description": "Sections containing the chapter's contents."
+        }
+      },
+      "type": "object",
+      "required": [
+        "idx",
+        "title"
+      ],
+      "description": "Chapter represents a chapter inside a document."
+    }
+  }
+}
