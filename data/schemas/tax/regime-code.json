@@ -50,6 +50,10 @@
           "title": "Denmark"
         },
         {
+          "const": "EE",
+          "title": "Estonia"
+        },
+        {
           "const": "EL",
           "title": "Greece"
         },

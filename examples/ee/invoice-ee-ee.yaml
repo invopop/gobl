@@ -1,0 +1,63 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "f24aaf52-5ce3-4ff2-bbf1-ca9d2f778897" 
+series: "SAMPLE"
+code: "001"
+issue_date: "2026-09-09"
+
+supplier:
+  name: "Paul Keres"
+  tax_id:
+    country: "EE"
+    code: "100366327"
+  addresses:
+    - num: "315"
+      street: "Jõe tn"
+      locality: "Narva"
+      code: "20306"
+      country: "EE"
+  emails:
+    - addr: "billing@example.ee"
+
+customer:
+  name: "Raul Keres"
+  tax_id:
+    country: "EE"
+    code: "102090374"
+  addresses:
+    - num: "4"
+      street: "Kiriku tn"
+      locality: "Kihelkonna"
+      code: "93401"
+      country: "EE"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Software development services"
+      price: "120.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+  - quantity: "1"
+    item:
+      name: "Accommodation"
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        rate: "intermediate"
+  - quantity: "1"
+    item:
+      name: "Medical devices"
+      price: "1000.00"
+    taxes:
+      - cat: VAT
+        rate: "reduced"
+  - quantity: "5"
+    item:
+      name: "Exempt community export"
+      price: "200.00"
+    taxes:
+      - cat: VAT
+        rate: "zero"
+

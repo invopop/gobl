@@ -1,0 +1,211 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Estonia",
+    "et": "Eesti"
+  },
+  "description": {
+    "en": "Estonia's tax system is administered by the Estonian Tax and Customs Board (Maksu- ja Tolliamet or EMTA).\nAs an EU member state, Estonia follows the EU VAT Directive.\nA general, intermediate, reduced, and zero rates apply, with certain exemptions for specific goods and services.\nEstonian businesses are required to register for the VAT system if their revenue exceeds the 40,000 EUR threshold.\nBusinesses are identified by a unique VAT number (käibemaksukohustuslase number) with prefix EE.\nE-invoicing is mandated for accounting entities regiistered as e-invoice recipients in the commerical register.\nGiven that all public sector entities are registered as e-invoice recipients, this effectively mandates e-invoicing for all B2G transactions.\nThe European standard for e-invoicing (EN 16931) is used. There is no mandate for B2C e-invoicing."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Estonian Tax and Customs Board - Value Added Tax"
+      },
+      "url": "https://www.emta.ee/en/business-client/taxes-and-payment/value-added-tax"
+    },
+    {
+      "title": {
+        "en": "Riigi Teataja - Käibemaksuseadus"
+      },
+      "url": "https://www.riigiteataja.ee/en/akt/511072022006"
+    },
+    {
+      "title": {
+        "en": "Estonian Tax and Customs Board - VAT rates and supply exempt from tax"
+      },
+      "url": "https://www.emta.ee/en/business-client/taxes-and-payment/value-added-tax/vat-rates-and-supply-exempt-tax/standard-vat-rate"
+    },
+    {
+      "title": {
+        "en": "European Commission - eInvoicing in Estonia"
+      },
+      "url": "https://ec.europa.eu/digital-building-blocks/sites/spaces/DIGITAL/pages/467108883/eInvoicing+in+Estonia"
+    }
+  ],
+  "time_zone": "Europe/Tallinn",
+  "country": "EE",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "cat": [
+            "VAT"
+          ],
+          "note": {
+            "cat": "VAT",
+            "key": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "et": "KM"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "et": "Käibemaks"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Standard Rate",
+            "et": "Tavakäibemaks"
+          },
+          "values": [
+            {
+              "since": "2025-07-01",
+              "percent": "24.0%"
+            },
+            {
+              "since": "2024-01-01",
+              "percent": "22.0%"
+            },
+            {
+              "since": "2009-07-01",
+              "percent": "20.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "1991-01-01",
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Intermediate Rate",
+            "et": "Keskmine käibemaks"
+          },
+          "values": [
+            {
+              "since": "2025-01-01",
+              "percent": "13.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "et": "Alandatud käibemaks"
+          },
+          "values": [
+            {
+              "since": "2013-01-01",
+              "percent": "9.0%"
+            }
+          ]
+        },
+        {
+          "rate": "zero",
+          "keys": [
+            "zero"
+          ],
+          "name": {
+            "en": "Zero Rate",
+            "et": "Nullkäibemaks"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Estonian Tax and Customs Board - Value Added Tax"
+          },
+          "url": "https://www.emta.ee/en/business-client/taxes-and-payment/value-added-tax"
+        }
+      ]
+    }
+  ]
+}
