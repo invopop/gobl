@@ -43,6 +43,7 @@ func init() {
 		itemRules(),
 		nameRules(),
 		noteRules(),
+		partyRules(),
 		personRules(),
 		registrationRules(),
 		telephoneRules(),

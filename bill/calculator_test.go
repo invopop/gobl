@@ -281,6 +281,44 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "1000.00", inv.Totals.Payable.String())
 	})
 
+	t.Run("with currency rounding rule", func(t *testing.T) {
+		lines := make([]*bill.Line, 12)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Room rate",
+					Price: num.NewAmount(12500, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Percent:  num.NewPercentage(6, 2),
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		// The document can no longer use the currency's precision for the
+		// line prices, so it switches to the precise rounding rule in order
+		// to maintain the original tax amounts.
+		assert.Equal(t, tax.RoundingRulePrecise, inv.Tax.Rounding)
+		assert.Equal(t, "117.9245", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "1415.09", inv.Totals.Sum.String())
+		assert.Equal(t, "1415.09", inv.Totals.Total.String())
+		assert.Equal(t, "84.91", inv.Totals.Tax.String())
+		assert.Equal(t, "1500.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "1500.00", inv.Totals.Payable.String())
+		assert.Nil(t, inv.Totals.Rounding, "no rounding adjustment needed")
+		rt := inv.Totals.Taxes.Categories[0].Rates[0]
+		assert.Equal(t, "1415.09", rt.Base.String())
+		assert.Equal(t, "84.91", rt.Amount.String())
+	})
+
 	t.Run("from discounts", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Discounts = []*bill.Discount{

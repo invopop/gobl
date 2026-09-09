@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
-	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -1210,7 +1209,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								sdi.ExtKeyRetained: "A",
+								"it-sdi-retained": "A",
 							}),
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1226,7 +1225,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.ExtensionsOf(cbc.CodeMap{
-								sdi.ExtKeyRetained: "J", // truffles!
+								"it-sdi-retained": "J", // truffles!
 							}),
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1254,7 +1253,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									sdi.ExtKeyRetained: "A",
+									"it-sdi-retained": "A",
 								}),
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
@@ -1262,7 +1261,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.ExtensionsOf(cbc.CodeMap{
-									sdi.ExtKeyRetained: "J",
+									"it-sdi-retained": "J",
 								}),
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),

@@ -29,6 +29,15 @@ const (
 	TaxTypeDeduction   = "5"
 )
 
+// Income classification category codes.
+const (
+	// IncomeCatOtherInfo is the "Other Income-related Information" category
+	// used to report informative amounts, such as the 0.5% municipality duty,
+	// that do not count towards income. It is the only income category that
+	// must be reported without an accompanying income classification type.
+	IncomeCatOtherInfo = "category1_95"
+)
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyVATRate,
@@ -971,6 +980,11 @@ var extensions = []*cbc.Definition{
 					}
 				]
 				~~~
+
+				When an income category is set, the income type must also be provided, with one
+				exception: ~category1_95~ (Other Income-related Information) covers informative
+				amounts that do not count towards income, such as the 0.5% municipality duty, and
+				must be reported without the ~gr-mydata-income-type~ extension.
 			`),
 		},
 		Sources: []*cbc.Source{

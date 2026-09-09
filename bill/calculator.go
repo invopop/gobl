@@ -290,6 +290,17 @@ func removeIncludedTaxes(doc billable) error {
 	tx := doc.getTax()
 	tx.PricesInclude = ""
 
+	// Tax-exclusive prices need more decimal places than the currency to
+	// represent the original amounts, so the currency rounding rule can no
+	// longer be applied without losing the tax totals.
+	rr := tx.Rounding
+	if rr == "" {
+		rr = doc.RegimeDef().GetRoundingRule()
+	}
+	if rr == tax.RoundingRuleCurrency {
+		tx.Rounding = tax.RoundingRulePrecise
+	}
+
 	if err := calculate(doc); err != nil {
 		return err
 	}

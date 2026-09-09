@@ -358,7 +358,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				DueDates: []*pay.DueDate{
 					{
 						Date:   cal.NewDate(2025, time.January, 1),
-						Amount: num.MakeAmount(1000, 2),
+						Amount: num.NewAmount(1000, 2),
 					},
 				},
 			},
@@ -678,7 +678,7 @@ func TestValidateBillPayment(t *testing.T) {
 			DueDates: []*pay.DueDate{
 				{
 					Date:   cal.NewDate(2025, time.January, 1),
-					Amount: num.MakeAmount(1000, 2),
+					Amount: num.NewAmount(1000, 2),
 				},
 			},
 		}
