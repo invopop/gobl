@@ -10,11 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `sg`: UEN check character validation for the ROB, ROC, and "Others" formats,
   applied to both `UEN` org identities and tax identity codes.
+- `org`/`bill`: parties may now identify a single-level agent acting on their
+  behalf, and ordering details may identify the addressee alongside the document issuer.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
 ### Changed
 
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
 - `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
   `category1_95` (Other Income-related Information) without an accompanying
   `gr-mydata-income-type`, as required by IAPR for informative amounts such as
@@ -35,6 +38,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
+- `catalogues/cef`: the `cef-vatex` extension now reflects the official VATEX code list version 8.0, growing from 59 to 88 enumerated codes. The 26 French codes admitted by the CTC profiles, such as `VATEX-FR-CGI261-1`, are included, along with the new EU codes `VATEX-EU-135-1`, `VATEX-EU-144`, `VATEX-EU-146-1E`, `VATEX-EU-153` and `VATEX-EU-159`, so the shape-only pattern is no longer needed. Every code now carries the source list's `nationality`, `deprecated` and `first-version` columns as metadata — plus `last-version` and `remark` where the list provides them — and its context of exemption as the description. The extension itself records the code list `version` and where it came from.
+- `pay`: `DueDate` no longer requires an `amount`; due dates parsed from
+  documents that don't include partial payment amounts (e.g. CII payment terms)
+  are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
+  amount that is set must still not be zero, and it is still calculated from
+  `percent` when present.
+- `es-facturae-v3`: due dates now require an `amount`
+  (`GOBL-ES-FACTURAE-PAY-DUEDATE-01`), preserving the guarantee behind
+  FacturaE's mandatory `InstallmentAmount` element — the original reason
+  `pay.DueDate` required an amount globally — now that the core requirement is
+  relaxed.
 
 ### Fixed
 

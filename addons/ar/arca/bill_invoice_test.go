@@ -1840,7 +1840,7 @@ func testPayment() *bill.PaymentDetails {
 			DueDates: []*pay.DueDate{
 				{
 					Date:   cal.NewDate(2024, 2, 15),
-					Amount: num.MakeAmount(10000, 2),
+					Amount: num.NewAmount(10000, 2),
 				},
 			},
 		},

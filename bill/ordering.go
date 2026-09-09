@@ -6,8 +6,9 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Ordering provides additional information about the ordering process including references
-// to other documents and alternative parties involved in the order-to-delivery process.
+// Ordering contains information about the commercial process and documents used to prepare
+// the invoice, including orders, contracts, projects, preceding documents, and parties
+// involved in issuing or addressing the invoice.
 type Ordering struct {
 	/*** IDENTIFIERS ***/
 
@@ -31,6 +32,9 @@ type Ordering struct {
 	// Issuer represents a third party responsible for issuing the document, but is not
 	// responsible for tax. Some tax regimes and formats require this field.
 	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
+	// Addressee represents a third party to whom the document is addressed, but is not
+	// the customer.
+	Addressee *org.Party `json:"addressee,omitempty" jsonschema:"title=Addressee"`
 
 	/*** DOCUMENTS ***/
 
