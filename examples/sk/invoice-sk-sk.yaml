@@ -1,0 +1,55 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "b3d5f7a1-2c4e-4b6a-8d9f-1a2b3c4d5e6f"
+series: "SAMPLE"
+code: "001"
+issue_date: "2025-03-01"
+
+supplier:
+  name: "Vzorová s.r.o."
+  tax_id:
+    country: "SK"
+    code: "2020273893"
+  addresses:
+    - num: "12"
+      street: "Hlavná"
+      locality: "Bratislava"
+      code: "81101"
+      country: "SK"
+  emails:
+    - addr: "fakturacia@example.sk"
+
+customer:
+  name: "Zákazník s.r.o."
+  tax_id:
+    country: "SK"
+    code: "7120001713"
+  addresses:
+    - num: "5"
+      street: "Štúrova"
+      locality: "Košice"
+      code: "04001"
+      country: "SK"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Softvérové služby"
+      price: "120.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+  - quantity: "100"
+    item:
+      name: "Elektrina"
+      price: "0.25"
+    taxes:
+      - cat: VAT
+        rate: "reduced"
+  - quantity: "5"
+    item:
+      name: "Knihy"
+      price: "20.00"
+    taxes:
+      - cat: VAT
+        rate: "super-reduced"
