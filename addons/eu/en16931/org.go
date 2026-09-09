@@ -209,21 +209,17 @@ func orgIdentitiesSingleTaxScope(val any) bool {
 	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
 }
 
-func orgPartyISO6523EndpointCount(endpoints []*org.Endpoint) int {
+// orgPartySingleISO6523Endpoint reports whether the party carries at most one
+// ISO 6523 address. Other schemes are additional routes, not BT-34/BT-49.
+func orgPartySingleISO6523Endpoint(val any) bool {
+	endpoints, ok := val.([]*org.Endpoint)
 	n := 0
 	for _, e := range endpoints {
 		if e != nil && e.URI.Scheme() == iso.ActorIDScheme {
 			n++
 		}
 	}
-	return n
-}
-
-// orgPartySingleISO6523Endpoint reports whether the party carries at most one
-// ISO 6523 address. Other schemes are additional routes, not BT-34/BT-49.
-func orgPartySingleISO6523Endpoint(val any) bool {
-	endpoints, ok := val.([]*org.Endpoint)
-	return ok && orgPartyISO6523EndpointCount(endpoints) <= 1
+	return ok && n <= 1
 }
 
 func orgEndpointRules() *rules.Set {
