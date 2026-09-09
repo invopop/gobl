@@ -2,6 +2,7 @@ package bill_test
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 	"time"
 
@@ -1185,6 +1186,27 @@ func TestInvoiceUnmarshalJSON(t *testing.T) {
 		inv := new(bill.Invoice)
 		require.NoError(t, json.Unmarshal([]byte(raw), inv))
 		assert.Equal(t, "ES", inv.Regime.Country.String())
+	})
+
+	t.Run("does not re-enter itself", func(t *testing.T) {
+		// A self-re-entering UnmarshalJSON ends in a fatal stack overflow,
+		// which takes the test binary down rather than failing here.
+		inv := new(bill.Invoice)
+		assert.NotPanics(t, func() {
+			_ = json.Unmarshal([]byte(`{"code": "ABC"}`), inv)
+		})
+	})
+
+	t.Run("alias sheds decoding methods", func(t *testing.T) {
+		// UnmarshalJSON delegates through a defined type to shed itself. An
+		// embedded field carrying its own JSON or text decoding puts a
+		// method back on that type, and decoding re-enters it.
+		type alias bill.Invoice
+		typ := reflect.TypeOf(new(alias))
+		for _, method := range []string{"UnmarshalJSON", "UnmarshalJSONFrom", "UnmarshalText"} {
+			_, ok := typ.MethodByName(method)
+			assert.False(t, ok, "alias promotes %s from an embedded field", method)
+		}
 	})
 }
 

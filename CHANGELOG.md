@@ -11,11 +11,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `regimes/pe`: added the core Peru (PE) tax regime: the general IGV rate,
   RUC normalization and mod-11 validation, and corrections limited to
   credit and debit notes.
+- `sg`: UEN check character validation for the ROB, ROC, and "Others" formats,
+  applied to both `UEN` org identities and tax identity codes.
+- `org`/`bill`: parties may now identify a single-level agent acting on their
+  behalf, and ordering details may identify the addressee alongside the document issuer.
+- `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
+  branch (establishment) number on suppliers and customers. When absent, the
+  headquarters branch (`0`) is assumed. Values are validated on the invoice's
+  supplier and customer extensions.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
 ### Changed
 
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
+- `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
+  `category1_95` (Other Income-related Information) without an accompanying
+  `gr-mydata-income-type`, as required by IAPR for informative amounts such as
+  the 0.5% municipality duty. Setting an income type alongside `category1_95`
+  is now rejected. All other income categories still require both extensions.
+- `org`: `Attribute` no longer requires a `key` or `type` when a `label` is present.
 - `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
   is replaced by `Client.VerifyParty`, which verifies the address declared by a
   party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
@@ -30,11 +48,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
   `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
   endorsement can be verified.
+- `catalogues/cef`: the `cef-vatex` extension now reflects the official VATEX code list version 8.0, growing from 59 to 88 enumerated codes. The 26 French codes admitted by the CTC profiles, such as `VATEX-FR-CGI261-1`, are included, along with the new EU codes `VATEX-EU-135-1`, `VATEX-EU-144`, `VATEX-EU-146-1E`, `VATEX-EU-153` and `VATEX-EU-159`, so the shape-only pattern is no longer needed. Every code now carries the source list's `nationality`, `deprecated` and `first-version` columns as metadata — plus `last-version` and `remark` where the list provides them — and its context of exemption as the description. The extension itself records the code list `version` and where it came from.
+- `pay`: `DueDate` no longer requires an `amount`; due dates parsed from
+  documents that don't include partial payment amounts (e.g. CII payment terms)
+  are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
+  amount that is set must still not be zero, and it is still calculated from
+  `percent` when present.
+- `es-facturae-v3`: due dates now require an `amount`
+  (`GOBL-ES-FACTURAE-PAY-DUEDATE-01`), preserving the guarantee behind
+  FacturaE's mandatory `InstallmentAmount` element — the original reason
+  `pay.DueDate` required an amount globally — now that the core requirement is
+  relaxed.
 
 ### Fixed
 
+- `sg`: tax identity codes now accept IRAS-assigned GST registration numbers
+  ending in a digit (e.g. `M201189853`), previously rejected because a trailing
+  letter was required.
+- `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
 - `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
   signature entries instead of panicking.
+- `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
+  contingency prefix) are no longer wrongly rejected as having an invalid prefix.
+- `bill`: unmarshalling an `Invoice` under the `jsonv2` implementation of
+  `encoding/json`, the default from Go 1.27, no longer re-enters
+  `Invoice.UnmarshalJSON` until the process dies with a fatal stack overflow.
 
 ## [v0.504.0]
 
