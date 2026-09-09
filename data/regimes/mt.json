@@ -5,7 +5,7 @@
     "mt": "Malta"
   },
   "description": {
-    "en": "Malta's VAT is governed by the Value Added Tax Act (Cap. 406) and administered\nby the Malta Tax and Customs Administration (MTCA). As an EU member state Malta\nfollows the EU VAT Directive (2006/112/EC).\n\nThe standard rate is 18%, with reduced rates of 12%, 7% and 5%. Supplies that are\n\"exempt with credit\" (Fifth Schedule Part One - exports, intra-community supplies,\nfood, pharmaceuticals) are zero-rated with input-VAT recovery; supplies \"exempt\nwithout credit\" (Fifth Schedule Part Two - insurance, finance, letting of\nimmovable property, health, education) carry no input-VAT recovery.\n\nBusinesses are identified by a VAT identification number: the prefix \"MT\" followed\nby eight digits (Article 10 and Article 12 registrations). Full tax invoices must\nshow both the supplier's and the customer's VAT number; simplified invoices are\nallowed for amounts up to EUR 100. Corrections use credit notes and debit notes."
+    "en": "Malta's VAT is governed by the Value Added Tax Act (Cap. 406) and administered\nby the Malta Tax and Customs Administration (MTCA). As an EU member state, Malta\nfollows the EU VAT Directive (2006/112/EC).\n\nSupplies may be exempt with credit (zero-rated, keeping input-VAT recovery) or\nexempt without credit (no input-VAT recovery). Businesses are identified by a VAT\nidentification number: the prefix \"MT\" followed by eight digits. Corrections use\ncredit notes and debit notes."
   },
   "sources": [
     {
