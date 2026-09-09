@@ -446,6 +446,22 @@
       ]
     },
     {
+      "id": "GOBL-ORG-PARTY",
+      "object": "org.Party",
+      "subsets": [
+        {
+          "field": "agent",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PARTY-01",
+              "desc": "agent must not have an agent",
+              "tests": "not have an agent"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-PERSON",
       "object": "org.Person",
       "subsets": [
