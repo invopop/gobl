@@ -1,0 +1,32 @@
+{
+  "id": "GOBL-EE",
+  "package": "ee",
+  "subsets": [
+    {
+      "id": "GOBL-EE-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [EE]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-EE-TAX-IDENTITY-01",
+                      "desc": "invalid Estonian VAT identity code",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
