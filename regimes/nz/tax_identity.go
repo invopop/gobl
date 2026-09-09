@@ -38,9 +38,9 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.Assert("01", "invoice tax id code must be a valid IRD number",
+				rules.Assert("01", "tax id code must be a valid IRD number",
 					is.MatchesRegexp(irdRegexp)),
-				rules.Assert("02", "invoice tax id code checksum must be valid",
+				rules.AssertIfPresent("02", "tax id code checksum must be valid",
 					is.Func("valid", isValidTaxIdentityCode)),
 			),
 		),
@@ -48,12 +48,11 @@ func taxIdentityRules() *rules.Set {
 }
 
 // isValidTaxIdentityCode reports whether the value is an IRD number within range
-// and with a valid check digit. Empty or non-conforming values are left to the
-// format rule above.
+// and with a valid check digit.
 func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
-		return true
+		return false
 	}
 	return validIRD(code.String())
 }
@@ -66,8 +65,6 @@ func validIRD(code string) bool {
 		return false
 	}
 
-	// Left-pad to 9 digits so the base is always the first 8 digits and the
-	// check digit the 9th.
 	if len(code) == 8 {
 		code = "0" + code
 	}
@@ -76,7 +73,7 @@ func validIRD(code string) bool {
 
 	calc := irdCheckDigit(code, irdWeights)
 	if calc == 10 {
-		// Re-run with the secondary weights when the first pass is inconclusive.
+		// Re-run with the secondary weights
 		calc = irdCheckDigit(code, irdWeightsSecondary)
 		if calc == 10 {
 			return false

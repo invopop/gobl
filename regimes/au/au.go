@@ -35,7 +35,7 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				Australia's Goods and Services Tax (GST) is a broad-based tax of 10%
+				Australia's Goods and Services Tax (GST) is a broad-based tax
 				applied to most goods, services and other items sold or consumed in
 				Australia. It is administered by the Australian Taxation Office (ATO).
 

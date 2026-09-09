@@ -27,9 +27,9 @@ func taxIdentityRules() *rules.Set {
 	return rules.For(new(tax.Identity),
 		rules.When(tax.IdentityIn(CountryCode),
 			rules.Field("code",
-				rules.Assert("01", "invoice tax id code must be a valid 11-digit ABN",
+				rules.Assert("01", "tax id code must be a valid 11-digit ABN",
 					is.MatchesRegexp(abnRegexp)),
-				rules.Assert("02", "invoice tax id code checksum must be valid",
+				rules.AssertIfPresent("02", "tax id code checksum must be valid",
 					is.Func("valid", isValidTaxIdentityCode)),
 			),
 		),
@@ -37,11 +37,11 @@ func taxIdentityRules() *rules.Set {
 }
 
 // isValidTaxIdentityCode reports whether the value is an ABN with valid check
-// digits. Empty or non-conforming values are left to the format rule above.
+// digits.
 func isValidTaxIdentityCode(value any) bool {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
-		return true
+		return false
 	}
 	return validABN(code.String())
 }

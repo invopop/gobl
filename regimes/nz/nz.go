@@ -36,7 +36,7 @@ func New() *tax.RegimeDef {
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-				New Zealand's Goods and Services Tax (GST) is a broad-based tax of 15%
+				New Zealand's Goods and Services Tax (GST) is a broad-based tax
 				applied to most goods and services supplied in New Zealand. It is
 				administered by Inland Revenue (IRD).
 

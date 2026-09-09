@@ -30,32 +30,36 @@ func TestTaxIdentityRules(t *testing.T) {
 
 	t.Run("invalid check digit", func(t *testing.T) {
 		err := validate("49091851")
-		assert.ErrorContains(t, err, "IDENTITY-02")
+		if assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-02") {
+			assert.NotContains(t, err.Error(), "NZ-TAX-IDENTITY-01")
+		}
 	})
 
 	t.Run("below valid range", func(t *testing.T) {
 		err := validate("09999999")
-		assert.ErrorContains(t, err, "IDENTITY-02")
+		if assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-02") {
+			assert.NotContains(t, err.Error(), "NZ-TAX-IDENTITY-01")
+		}
 	})
 
 	t.Run("too short", func(t *testing.T) {
 		err := validate("4909185")
-		assert.ErrorContains(t, err, "IDENTITY-01")
+		assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-01")
 	})
 
 	t.Run("too long", func(t *testing.T) {
 		err := validate("1364101320")
-		assert.ErrorContains(t, err, "IDENTITY-01")
+		assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-01")
 	})
 
 	t.Run("contains letters", func(t *testing.T) {
 		err := validate("4909185A")
-		assert.ErrorContains(t, err, "IDENTITY-01")
+		assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-01")
 	})
 
 	t.Run("special characters", func(t *testing.T) {
 		err := validate("49-091-850")
-		assert.ErrorContains(t, err, "IDENTITY-01")
+		assert.ErrorContains(t, err, "NZ-TAX-IDENTITY-01")
 	})
 }
 
