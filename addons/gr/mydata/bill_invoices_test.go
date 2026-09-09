@@ -275,4 +275,33 @@ func TestPartyBranchExtension(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, rules.Validate(inv), "supplier 'gr-mydata-branch' extension must be a valid branch number")
 	})
+
+	t.Run("invalid branch on customer rejected", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "2A",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "customer 'gr-mydata-branch' extension must be a valid branch number")
+	})
+
+	t.Run("invalid branch on optional customer rejected", func(t *testing.T) {
+		inv := validInvoice()
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Addresses = nil
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "2A",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "customer 'gr-mydata-branch' extension must be a valid branch number")
+	})
+
+	t.Run("no customer", func(t *testing.T) {
+		inv := validInvoice()
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
 }

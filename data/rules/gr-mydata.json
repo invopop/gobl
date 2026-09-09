@@ -84,6 +84,21 @@
           ]
         },
         {
+          "field": "customer",
+          "subsets": [
+            {
+              "field": "ext",
+              "assert": [
+                {
+                  "id": "GOBL-GR-MYDATA-BILL-INVOICE-22",
+                  "desc": "customer 'gr-mydata-branch' extension must be a valid branch number",
+                  "tests": "ext 'gr-mydata-branch' matches pattern '^(0|[1-9]\\d{0,3})$'"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "guard": "requires customer",
           "subsets": [
             {
@@ -103,16 +118,6 @@
                       "id": "GOBL-GR-MYDATA-BILL-INVOICE-06",
                       "desc": "customer tax ID is required",
                       "tests": "present"
-                    }
-                  ]
-                },
-                {
-                  "field": "ext",
-                  "assert": [
-                    {
-                      "id": "GOBL-GR-MYDATA-BILL-INVOICE-22",
-                      "desc": "customer 'gr-mydata-branch' extension must be a valid branch number",
-                      "tests": "ext 'gr-mydata-branch' matches pattern '^(0|[1-9]\\d{0,3})$'"
                     }
                   ]
                 },
