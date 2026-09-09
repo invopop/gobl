@@ -72,11 +72,14 @@ type DirectDebit struct {
 // a bank transfer or wire.
 type CreditTransfer struct {
 	// International Bank Account Number
-	IBAN string `json:"iban,omitempty" jsonschema:"title=IBAN"`
+	IBAN cbc.Code `json:"iban,omitempty" jsonschema:"title=IBAN"`
 	// Bank Identifier Code used for international transfers.
-	BIC string `json:"bic,omitempty" jsonschema:"title=BIC"`
+	BIC cbc.Code `json:"bic,omitempty" jsonschema:"title=BIC"`
 	// Account number, if IBAN not available.
-	Number string `json:"number,omitempty" jsonschema:"title=Number"`
+	Number cbc.Code `json:"number,omitempty" jsonschema:"title=Number"`
+	// National bank or branch clearing identifier, such as a Danish registration
+	// number, UK sort code, or US routing number.
+	Clearing cbc.Code `json:"clearing,omitempty" jsonschema:"title=Clearing Code"`
 	// Name of the bank.
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Bank office branch address, not normally required.

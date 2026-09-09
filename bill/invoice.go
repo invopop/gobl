@@ -143,7 +143,7 @@ func invoiceRules() *rules.Set {
 			),
 		),
 		rules.Field("customer",
-			rules.When(is.Func("has tax ID code", customerHasTaxIDCode),
+			rules.When(org.PartyHasTaxIDCode(),
 				rules.Field("name",
 					rules.Assert("07", "invoice customer name required when tax ID is set", is.Present),
 				),
@@ -180,19 +180,6 @@ func invoiceHasTaxPoint(val any) bool {
 		return false
 	}
 	return inv != nil && inv.Tax != nil && inv.Tax.Point != cbc.KeyEmpty
-}
-
-func customerHasTaxIDCode(val any) bool {
-	var p *org.Party
-	switch v := val.(type) {
-	case *org.Party:
-		p = v
-	case org.Party:
-		p = &v
-	default:
-		return false
-	}
-	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
 }
 
 func invoiceNeedsLines(val any) bool {
@@ -313,6 +300,10 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 // If after removing taxes the totals don't match, a rounding error will be added to the
 // invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
+// Documents using the `currency` rounding rule are switched to `precise`, as the
+// tax-exclusive prices need more decimal places than the currency to reproduce the
+// original tax amounts.
+//
 // This method will replace the invoice contents in place, or return an error.
 func (inv *Invoice) RemoveIncludedTaxes() error {
 	return removeIncludedTaxes(inv)
@@ -412,8 +403,8 @@ func (inv *Invoice) ToEndpoint() *org.Endpoint {
 // UnmarshalJSON implements the json.Unmarshaler interface and provides any
 // data migrations that might be required.
 func (inv *Invoice) UnmarshalJSON(data []byte) error {
-	type Alias *Invoice
-	if err := json.Unmarshal(data, (Alias)(inv)); err != nil {
+	type Alias Invoice
+	if err := json.Unmarshal(data, (*Alias)(inv)); err != nil {
 		return err
 	}
 	// Ensure there is regime set when coming in from a raw JSON source.

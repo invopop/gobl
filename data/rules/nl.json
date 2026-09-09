@@ -15,7 +15,7 @@
                 {
                   "id": "GOBL-NL-BILL-INVOICE-01",
                   "desc": "invoice supplier must have a tax ID code or a KVK/OIN identity",
-                  "tests": "has tax ID code or KVK/OIN identity"
+                  "tests": "has tax ID code, or has a type in [KVK, OIN]"
                 }
               ]
             }

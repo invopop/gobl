@@ -8,8 +8,24 @@ on:
   pull_request:
 jobs:
   test:
-    name: Test
+    name: Test (Go ${{ matrix.go-version }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # The three most recent Go releases. The oldest matches the go
+        # directive in go.mod, and 1.27 is the first release to enable the
+        # jsonv2 implementation of encoding/json by default.
+        go-version: ["1.25.x", "1.26.x", "1.27.x"]
+        include:
+          - go-version: "1.27.x"
+            coverage: true
+
+    env:
+      # Run on the toolchain the matrix installed instead of downloading a
+      # newer one when a module in the graph asks for it.
+      GOTOOLCHAIN: local
 
     steps:
       - name: Check out code
@@ -18,7 +34,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: "go.mod"
+          go-version: ${{ matrix.go-version }}
 
       - name: Install Dependencies
         env:
@@ -33,6 +49,7 @@ jobs:
         run: go test -race -coverprofile=coverage.out -covermode=atomic -coverpkg=./... ./...
 
       - name: Upload coverage reports to Codecov
+        if: matrix.coverage
         uses: codecov/codecov-action@v5.1.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

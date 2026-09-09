@@ -2,6 +2,7 @@ package head_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -231,7 +232,7 @@ func TestHeaderSignNoJKU(t *testing.T) {
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
-	sig, err := h.Sign(priv, head.WithIssuer("gobl:acme.example"))
+	sig, err := h.Sign(priv, head.WithIssuer("acme.example"))
 	if err != nil {
 		t.Fatalf("Sign: %v", err)
 	}
@@ -319,35 +320,60 @@ func TestSignedPayload(t *testing.T) {
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
 	sig, err := h.Sign(priv,
-		head.WithIssuer("gobl:alice.example"),
-		head.WithAudience("gobl:bob.example"))
+		head.WithIssuer("alice.example"),
+		head.WithAudience("bob.example"))
 	require.NoError(t, err)
 
 	p, err := head.SignedPayload(sig)
 	require.NoError(t, err)
 	assert.Equal(t, h.UUID, p.UUID)
-	assert.Equal(t, cbc.URI("gobl:alice.example"), p.Iss)
-	assert.Equal(t, cbc.URI("gobl:bob.example"), p.Aud)
+	assert.Equal(t, "alice.example", p.Iss)
+	assert.Equal(t, "bob.example", p.Aud)
 	assert.NotZero(t, p.IssuedAt)
-	assert.Equal(t, cbc.KeyEmpty, p.Scope, "no scope by default")
+	assert.Empty(t, p.Verifier, "no verifier by default")
 }
 
-func TestHeaderSignWithScope(t *testing.T) {
+func TestHeaderSignWithVerifier(t *testing.T) {
 	priv := dsig.NewES256Key()
 	h := head.NewHeader()
 	h.UUID = uuid.V7()
 	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
 
 	sig, err := h.Sign(priv,
-		head.WithIssuer("gobl:authority.example"),
-		head.WithAudience("gobl:subject.example"),
-		head.WithScope(head.ScopeVerified))
+		head.WithIssuer("authority.example"),
+		head.WithAudience("subject.example"),
+		head.WithVerifier("verify.example"))
 	require.NoError(t, err)
 
 	p, err := head.SignedPayload(sig)
 	require.NoError(t, err)
-	assert.Equal(t, head.ScopeVerified, p.Scope)
-	assert.Equal(t, cbc.URI("gobl:authority.example"), p.Iss)
+	assert.Equal(t, "verify.example", p.Verifier)
+	assert.Equal(t, "authority.example", p.Iss)
+}
+
+func TestHeaderSignWithExpiration(t *testing.T) {
+	priv := dsig.NewES256Key()
+	h := head.NewHeader()
+	h.UUID = uuid.V7()
+	h.Digest = dsig.NewSHA256Digest([]byte(`{"x":1}`))
+
+	exp := time.Now().Add(90 * 24 * time.Hour)
+	sig, err := h.Sign(priv,
+		head.WithIssuer("authority.example"),
+		head.WithExpiration(exp))
+	require.NoError(t, err)
+
+	p, err := head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Equal(t, exp.UTC().Unix(), p.ExpiresAt)
+	assert.LessOrEqual(t, p.IssuedAt, p.ExpiresAt)
+
+	// Without the option, exp is unset.
+	sig, err = h.Sign(priv, head.WithIssuer("authority.example"))
+	require.NoError(t, err)
+	p, err = head.SignedPayload(sig)
+	require.NoError(t, err)
+	assert.Zero(t, p.ExpiresAt)
 }
 
 func TestSignedPayloadDecodeError(t *testing.T) {
@@ -434,4 +460,15 @@ func mustParseTS(t *testing.T, s string) cal.Timestamp {
 		t.Fatalf("ParseTimestamp(%q): %v", s, err)
 	}
 	return ts
+}
+
+func TestNilSignatureGuards(t *testing.T) {
+	// A JSON `null` in an envelope's sigs array unmarshals to a nil
+	// *dsig.Signature without error: readers must report it as a
+	// payload error, never dereference it.
+	_, err := head.SignedPayload(nil)
+	require.ErrorIs(t, err, head.ErrSignaturePayload)
+
+	h := head.NewHeader()
+	require.ErrorIs(t, h.Verify(nil), head.ErrSignaturePayload)
 }

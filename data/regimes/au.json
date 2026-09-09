@@ -4,7 +4,7 @@
     "en": "Australia"
   },
   "description": {
-    "en": "Australia's Goods and Services Tax (GST) is a broad-based tax of 10%\napplied to most goods, services and other items sold or consumed in\nAustralia. It is administered by the Australian Taxation Office (ATO).\n\nBusinesses are identified by their Australian Business Number (ABN), an\n11-digit identifier whose validity is confirmed with a weighted\nmodulus-89 check."
+    "en": "Australia's Goods and Services Tax (GST) is a broad-based tax\napplied to most goods, services and other items sold or consumed in\nAustralia. It is administered by the Australian Taxation Office (ATO).\n\nBusinesses are identified by their Australian Business Number (ABN), an\n11-digit identifier whose validity is confirmed with a weighted\nmodulus-89 check."
   },
   "sources": [
     {

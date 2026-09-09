@@ -5,7 +5,7 @@
     "mi": "Aotearoa"
   },
   "description": {
-    "en": "New Zealand's Goods and Services Tax (GST) is a broad-based tax of 15%\napplied to most goods and services supplied in New Zealand. It is\nadministered by Inland Revenue (IRD).\n\nBusinesses are identified by their IRD number, an 8 or 9 digit\nidentifier whose validity is confirmed with a weighted modulus-11 check."
+    "en": "New Zealand's Goods and Services Tax (GST) is a broad-based tax\napplied to most goods and services supplied in New Zealand. It is\nadministered by Inland Revenue (IRD).\n\nBusinesses are identified by their IRD number, an 8 or 9 digit\nidentifier whose validity is confirmed with a weighted modulus-11 check."
   },
   "sources": [
     {

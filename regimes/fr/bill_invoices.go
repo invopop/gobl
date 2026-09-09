@@ -15,30 +15,12 @@ func billInvoiceRules() *rules.Set {
 			is.InContext(tax.RegimeIn(l10n.FR.Tax())),
 			rules.Field("supplier",
 				rules.Assert("01", "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
-					is.Func("has tax ID code or SIREN/SIRET identity", hasSupplierTaxIDOrIdentity),
+					is.AnyOf(
+						org.PartyHasTaxIDCode(),
+						org.PartyHasIdentityTypeIn(IdentityTypeSIREN, IdentityTypeSIRET),
+					),
 				),
 			),
 		),
 	)
-}
-
-func hasSupplierTaxIDOrIdentity(value any) bool {
-	party, _ := value.(*org.Party)
-	return hasTaxIDCode(party) || hasSupplierIdentity(party)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasSupplierIdentity(party *org.Party) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-	for _, id := range party.Identities {
-		if id.Type == IdentityTypeSIREN || id.Type == IdentityTypeSIRET {
-			return true
-		}
-	}
-	return false
 }

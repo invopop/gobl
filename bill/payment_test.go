@@ -551,7 +551,7 @@ func TestPaymentLegacyMethodMigration(t *testing.T) {
 	assert.Equal(t, pay.MeansKeyCreditTransfer, pmt.Methods[0].Key)
 	assert.Equal(t, "Wire transfer from BBVA", pmt.Methods[0].Description)
 	require.NotNil(t, pmt.Methods[0].CreditTransfer)
-	assert.Equal(t, "ES1234567890123456789012", pmt.Methods[0].CreditTransfer.IBAN)
+	assert.Equal(t, cbc.Code("ES1234567890123456789012"), pmt.Methods[0].CreditTransfer.IBAN)
 }
 
 func TestPaymentFromToEndpoint(t *testing.T) {

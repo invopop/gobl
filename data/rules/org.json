@@ -34,6 +34,44 @@
       ]
     },
     {
+      "id": "GOBL-ORG-ATTRIBUTE",
+      "object": "org.Attribute",
+      "assert": [
+        {
+          "id": "GOBL-ORG-ATTRIBUTE-01",
+          "desc": "attribute must not have both a key and a type",
+          "tests": "not both key and type"
+        },
+        {
+          "id": "GOBL-ORG-ATTRIBUTE-02",
+          "desc": "attribute must have at least one of the text, code, amount, or date values",
+          "tests": "text, code, amount, or date present"
+        }
+      ],
+      "subsets": [
+        {
+          "guard": "no label",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-04",
+              "desc": "attribute must have a key, a type, or a label",
+              "tests": "key or type present"
+            }
+          ]
+        },
+        {
+          "guard": "string(Unit) != \"\"",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-03",
+              "desc": "attribute unit may only be used alongside an amount",
+              "tests": "Amount != nil"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-COORDINATES",
       "object": "org.Coordinates",
       "subsets": [
@@ -327,6 +365,16 @@
               ]
             }
           ]
+        },
+        {
+          "field": "attributes",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ITEM-03",
+              "desc": "item attributes must not contain duplicate keys",
+              "tests": "attribute keys must be unique"
+            }
+          ]
         }
       ]
     },
@@ -398,6 +446,22 @@
       ]
     },
     {
+      "id": "GOBL-ORG-PARTY",
+      "object": "org.Party",
+      "subsets": [
+        {
+          "field": "agent",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PARTY-01",
+              "desc": "agent must not have an agent",
+              "tests": "not have an agent"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "GOBL-ORG-PERSON",
       "object": "org.Person",
       "subsets": [
@@ -457,7 +521,7 @@
         {
           "id": "GOBL-ORG-UNIT-01",
           "desc": "unit must be a valid value or UN/ECE code",
-          "tests": "matches ^[A-Z0-9]{2,3}$, or one of [mg, cg, g, kg, t, mm, cm, dm, m, lm, km, in, ft, lft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, dl, l, kl, w, kw, kwh, rate, yr, mon, wk, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, pkt, bunch, bdl, blk, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
+          "tests": "matches ^[A-Z0-9]{2,3}$, or one of [mg, cg, g, kg, t, mm, cm, dm, m, lm, km, in, ft, lft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, dl, l, kl, w, kw, kwh, kj, kcal, rate, yr, mon, wk, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, pkt, bunch, bdl, blk, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
         }
       ]
     },

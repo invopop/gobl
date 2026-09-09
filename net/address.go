@@ -10,55 +10,19 @@ import (
 	"github.com/invopop/gobl/rules/is"
 )
 
-// addressIDNA is the Lookup profile (the strict IDN form used for DNS
-// lookups). ToASCII converts U-Labels to A-Labels, lowercases ASCII
-// labels, and rejects labels that don't satisfy the IDNA2008 lookup
-// rules — exactly the canonicalization GOBL Net needs.
+// addressIDNA canonicalizes and validates names using the IDNA lookup profile.
 var addressIDNA = idna.New(
 	idna.MapForLookup(),
 	idna.Transitional(false),
 	idna.StrictDomainName(true),
 )
 
-const (
-	// Scheme is the URI scheme used by GOBL Net addresses, e.g.
-	// "gobl:acme.example.com".
-	Scheme = "gobl"
-
-	// WellKnownPath is the base path for GOBL Net well-known URLs.
-	WellKnownPath = "/.well-known/gobl"
-	// KeysPath is the base of the per-key endpoint; the full path for a
-	// single key is KeysPath + "/" + kid.
-	KeysPath = WellKnownPath + "/keys"
-	// WhoPath is the well-known path serving the signed Party envelope.
-	WhoPath = WellKnownPath + "/who"
-	// InboxPath is the well-known path accepting envelope deliveries.
-	InboxPath = WellKnownPath + "/inbox"
-	// JWKSPath is the bulk JWK Set endpoint published at the root
-	// well-known directory so generic JWT tooling (jwt.io, OIDC-style
-	// verifiers) can resolve `jku` and verify signatures without
-	// out-of-band key exchange.
-	JWKSPath = "/.well-known/jwks.json"
-)
-
-// KeyPath returns the well-known path serving a single public key by
-// its key ID. Use this to construct lookup URLs.
-func KeyPath(kid string) string {
-	return KeysPath + "/" + kid
-}
-
-// Address represents a GOBL Net address, which is a fully qualified
-// domain name (FQDN) used for key discovery and network identification.
+// Address is a GOBL Net participant's fully qualified domain name.
 type Address string
 
-// ParseAddress validates and returns an Address from a string.
-// The input must be a valid FQDN (no scheme, no path, no port).
-//
-// Internationalised domain names (IDN) in U-Label form are accepted
-// and normalised to their ASCII (A-Label / Punycode) representation,
-// so the canonical form on the wire and in `iss`/`aud` is always
-// ASCII. `München.DE` and `xn--mnchen-3ya.de` parse to the same
-// Address.
+// ParseAddress validates an FQDN and returns its canonical ASCII form.
+// It accepts internationalized names, trims whitespace and a trailing dot,
+// and rejects schemes, ports, paths, and single-label names.
 func ParseAddress(fqdn string) (Address, error) {
 	fqdn = strings.TrimSpace(fqdn)
 	if fqdn == "" {
@@ -88,17 +52,14 @@ func (a Address) String() string {
 	return string(a)
 }
 
-// URI returns the address as a gobl: scheme cbc.URI, e.g.
-// "gobl:acme.example.com", suitable for a signature's iss/aud. The
-// scheme labels the identity as a GOBL Net address rather than a
-// generic HTTPS service.
+// URI returns the address as a gobl URI for party endpoints and routing fields.
+// Signed iss, aud, and verifier claims use String instead.
 func (a Address) URI() cbc.URI {
 	return cbc.URI(Scheme + ":" + string(a))
 }
 
-// JWKSURL returns the deterministic JWK Set discovery URL for this
-// address. The matching JOSE `jku` header on a signature points here
-// so generic JWT verifiers can fetch the public keys automatically.
+// JWKSURL returns the conventional bulk JWK Set URL for the address.
+// GOBL Net verification uses KeyURL; signatures do not carry jku.
 func (a Address) JWKSURL() string {
 	return "https://" + string(a) + JWKSPath
 }
@@ -117,16 +78,6 @@ func (a Address) WhoURL() string {
 // InboxURL returns the deterministic inbox URL for this address.
 func (a Address) InboxURL() string {
 	return "https://" + string(a) + InboxPath
-}
-
-// Topic reverses the FQDN labels to produce a notification topic string.
-// For example, "billing.invopop.com" becomes "com.invopop.billing".
-func (a Address) Topic() string {
-	parts := strings.Split(string(a), ".")
-	for i, j := 0, len(parts)-1; i < j; i, j = i+1, j-1 {
-		parts[i], parts[j] = parts[j], parts[i]
-	}
-	return strings.Join(parts, ".")
 }
 
 // Validate checks that the address is a valid FQDN.

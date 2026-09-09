@@ -1,0 +1,85 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0198f2f1-7f30-7d33-9a63-8a12f4a1c003"
+currency: "EUR"
+issue_date: "2026-07-09"
+series: "SAMPLE"
+code: "024"
+tax:
+  prices_include: "VAT"
+  rounding: "currency"
+supplier:
+  tax_id:
+    country: "PT"
+    code: "599999993" # test
+  name: "Hotel Azul Lda."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - street: "Rua das Flores"
+      locality: "Lisboa"
+      code: "3830-000"
+      country: "PT"
+
+customer:
+  tax_id:
+    country: "PT"
+    code: "999999990" # final consumer
+  name: "Sample Guest"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Room rate"
+      price: "125.00"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: 1
+    item:
+      name: "Room rate"
+      price: "125.00"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: reduced
+  - quantity: 1
+    item:
+      name: "Breakfast"
+      price: "12.50"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: intermediate
+  - quantity: 1
+    item:
+      name: "Breakfast"
+      price: "12.50"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: intermediate
+  - quantity: 1
+    item:
+      name: "Dinner menu"
+      price: "35.80"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: intermediate
+  - quantity: 1
+    item:
+      name: "Minibar drinks"
+      price: "7.95"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Spa access"
+      price: "45.00"
+      unit: "one"
+    taxes:
+      - cat: VAT
+        rate: standard

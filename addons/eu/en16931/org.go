@@ -1,6 +1,7 @@
 package en16931
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -134,13 +135,9 @@ func normalizeOrgParty(p *org.Party) {
 	normalizeOrgPartyEndpoints(p)
 }
 
-// peppolEndpointScheme is the URI scheme used for Peppol participant
-// identifier endpoints (CEN/Peppol SMP and AS4 spec).
-const peppolEndpointScheme = "iso6523-actorid-upis"
-
 func normalizeOrgPartyEndpoints(p *org.Party) {
-	if p.Endpoint(peppolEndpointScheme) != nil {
-		// No peppol endpoint, return
+	if p.Endpoint(iso.ActorIDScheme) != nil {
+		// ISO 6523 endpoint already present, nothing to derive.
 		return
 	}
 	for _, in := range p.Inboxes {
@@ -150,10 +147,9 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
 			continue
 		}
-		uri := cbc.URI(peppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
 		p.Endpoints = append(p.Endpoints, &org.Endpoint{
 			Label: in.Label,
-			URI:   uri,
+			URI:   cbc.URI(iso.ActorIDScheme + "::" + in.Scheme.String() + ":" + in.Code.String()),
 		})
 		return
 	}
@@ -178,41 +174,70 @@ func orgAttachmentRules() *rules.Set {
 
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
-		rules.Field("inboxes",
-			rules.Assert("01", "cannot have more than one inbox (BT-34, BT-49)",
-				is.Length(0, 1),
+		rules.Field("endpoints",
+			rules.Assert("04", fmt.Sprintf("cannot have more than one '%s' endpoint (BT-34, BT-49)", iso.ActorIDScheme),
+				is.Func("single iso6523 endpoint", orgPartySingleISO6523Endpoint),
+			),
+		),
+		rules.Field("identities",
+			rules.Assert("02", "only one identity may have the legal scope (BT-30, BT-47)",
+				is.Func("single legal-scope identity", orgIdentitiesSingleLegalScope),
+			),
+			rules.Assert("03", "only one identity may have the tax scope (BT-31, BT-48)",
+				is.Func("single tax-scope identity", orgIdentitiesSingleTaxScope),
 			),
 		),
 	)
 }
 
-func orgInboxRules() *rules.Set {
-	return rules.For(new(org.Inbox),
-		// BR-62, BR-63: scheme required when code is present
-		rules.Assert("01", "scheme cannot be blank when code is set (BR-62, BR-63)",
-			is.Func("scheme required with code", orgInboxSchemeRequiredWithCode),
-		),
-		// code required when scheme is present
-		rules.Assert("02", "code cannot be blank when scheme is set",
-			is.Func("code required with scheme", orgInboxCodeRequiredWithScheme),
+func orgIdentitiesScopeCount(identities []*org.Identity, scope cbc.Key) int {
+	n := 0
+	for _, id := range identities {
+		if id != nil && id.Scope.Has(scope) {
+			n++
+		}
+	}
+	return n
+}
+
+func orgIdentitiesSingleLegalScope(val any) bool {
+	identities, ok := val.([]*org.Identity)
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeLegal) <= 1
+}
+
+func orgIdentitiesSingleTaxScope(val any) bool {
+	identities, ok := val.([]*org.Identity)
+	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
+}
+
+// orgPartySingleISO6523Endpoint reports whether the party carries at most one
+// ISO 6523 address. Other schemes are additional routes, not BT-34/BT-49.
+func orgPartySingleISO6523Endpoint(val any) bool {
+	endpoints, ok := val.([]*org.Endpoint)
+	n := 0
+	for _, e := range endpoints {
+		if e != nil && e.URI.Scheme() == iso.ActorIDScheme {
+			n++
+		}
+	}
+	return ok && n <= 1
+}
+
+func orgEndpointRules() *rules.Set {
+	return rules.For(new(org.Endpoint),
+		rules.Field("uri",
+			rules.When(cbc.URISchemeIn(iso.ActorIDScheme),
+				rules.Assert("01", fmt.Sprintf("endpoint uri requires both a scheme and a code, e.g. '%s::0225:356000000' (BR-62, BR-63)", iso.ActorIDScheme),
+					cbc.URIOpaqueMatches(`^:[^:]+:.+$`),
+				),
+			),
 		),
 	)
-}
-
-func orgInboxSchemeRequiredWithCode(val any) bool {
-	i, ok := val.(*org.Inbox)
-	return !ok || i == nil || i.Code == cbc.CodeEmpty || i.Scheme != cbc.CodeEmpty
-}
-
-func orgInboxCodeRequiredWithScheme(val any) bool {
-	i, ok := val.(*org.Inbox)
-	return !ok || i == nil || i.Scheme == cbc.CodeEmpty || i.Code != cbc.CodeEmpty
 }
 
 func orgAddressRules() *rules.Set {
 	return rules.For(new(org.Address),
 		rules.Field("country",
-			// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
 			rules.Assert("01", "country is required (BR-9, BR-11, BR-20, BR-57)", is.Present),
 		),
 	)

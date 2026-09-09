@@ -15,7 +15,7 @@
                 {
                   "id": "GOBL-FR-BILL-INVOICE-01",
                   "desc": "invoice supplier must have a tax ID code or a SIREN/SIRET identity",
-                  "tests": "has tax ID code or SIREN/SIRET identity"
+                  "tests": "has tax ID code, or has a type in [SIREN, SIRET]"
                 }
               ]
             }

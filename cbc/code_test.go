@@ -423,7 +423,7 @@ func TestCode_Rules(t *testing.T) {
 		},
 		{
 			name: "almost too long",
-			code: cbc.Code("123456789012345678901234567890AB"),
+			code: cbc.Code("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890ABCDEFGH"),
 		},
 		{
 			name: "dot at start",
@@ -471,7 +471,7 @@ func TestCode_Rules(t *testing.T) {
 		},
 		{
 			name:     "too long",
-			code:     cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
+			code:     cbc.Code("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890ABCDEFGHI"),
 			wantCode: "GOBL-CBC-CODE-01",
 		},
 	}
@@ -541,7 +541,7 @@ func TestCode_Validate(t *testing.T) {
 		},
 		{
 			name: "almost too long",
-			code: cbc.Code("123456789012345678901234567890AB"),
+			code: cbc.Code("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890ABCDEFGH"),
 		},
 		{
 			name: "dot at start",
@@ -589,7 +589,7 @@ func TestCode_Validate(t *testing.T) {
 		},
 		{
 			name:    "too long",
-			code:    cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
+			code:    cbc.Code("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890ABCDEFGHI"),
 			wantErr: "codes must be no longer than",
 		},
 	}
@@ -749,7 +749,7 @@ func TestCodeJSONSchema(t *testing.T) {
 	assert.Equal(t, "string", s.Type)
 	assert.Equal(t, "Code", s.Title)
 	assert.Equal(t, uint64(1), *s.MinLength)
-	assert.Equal(t, uint64(64), *s.MaxLength)
+	assert.Equal(t, uint64(128), *s.MaxLength)
 }
 
 func TestCodeMapJSONSchemaExtend(t *testing.T) {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -37,14 +36,6 @@ func TestDeliveryCalculate(t *testing.T) {
 		dlv.Type = bill.DeliveryTypeOther
 		require.NoError(t, dlv.Calculate())
 		assert.Equal(t, bill.DeliveryTypeOther, dlv.Type)
-	})
-
-	t.Run("return tag", func(t *testing.T) {
-		dlv := baseDeliveryWithLines(t)
-		dlv.SetTags(saft.TagReturn)
-		dlv.SetAddons(saft.V1)
-		require.NoError(t, dlv.Calculate())
-		assert.True(t, dlv.HasTags(saft.TagReturn))
 	})
 }
 
@@ -127,13 +118,6 @@ func TestDeliveryConvertInto(t *testing.T) {
 }
 
 func TestDeliveryTagsValidation(t *testing.T) {
-	t.Run("valid tag", func(t *testing.T) {
-		dlv := baseDeliveryWithLines(t)
-		dlv.SetAddons(saft.V1)
-		dlv.SetTags(saft.TagReturn)
-		assert.NoError(t, dlv.Calculate())
-	})
-
 	t.Run("invalid tag", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)
 		dlv.SetTags("invalid-tag")

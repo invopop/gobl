@@ -10,7 +10,171 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `regimes/au`: New tax regime for Australia — GST and ABN tax identity validation (weighted modulus-89 checksum).
 - `regimes/nz`: New tax regime for New Zealand — GST, IRD number validation (weighted modulus-11 checksum), and te reo Māori (`mi`) translations.
+- `sg`: UEN check character validation for the ROB, ROC, and "Others" formats,
+  applied to both `UEN` org identities and tax identity codes.
+- `org`/`bill`: parties may now identify a single-level agent acting on their
+  behalf, and ordering details may identify the addressee alongside the document issuer.
+- `addons/eu/en16931`: the party electronic address (BT-34, BT-49) is now
+  validated on `org.Endpoint` instead of the deprecated `org.Inbox`: at most one
+  ISO 6523 endpoint per party, and its URI must carry both a scheme and a code.
+- `cbc`: `URISchemeIn` and `URIOpaqueMatches` rules tests, so a rule can be
+  scoped to one kind of URI, or applied to the address it carries, instead of
+  parsing the URI inside a custom function.
+- `catalogues/iso`: `ActorIDScheme`, the `iso6523-actorid-upis` URI scheme, so
+  addons no longer redeclare the literal.
+- `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
+  branch (establishment) number on suppliers and customers. When absent, the
+  headquarters branch (`0`) is assumed. Values are validated on the invoice's
+  supplier and customer extensions.
+- `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
+  and `WithSandbox`. Sandbox and live trust lists remain separate.
+
+### Changed
+
+- `addons/eu/en16931`: the deprecated `org.Inbox` no longer carries
+  addon rules. These are now handled by `org.Endpoint`.
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
+- `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
+- `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
+  `category1_95` (Other Income-related Information) without an accompanying
+  `gr-mydata-income-type`, as required by IAPR for informative amounts such as
+  the 0.5% municipality duty. Setting an income type alongside `category1_95`
+  is now rejected. All other income categories still require both extensions.
+- `org`: `Attribute` no longer requires a `key` or `type` when a `label` is present.
+- `net`: signatures are no longer interpreted by position. `Client.VerifyEnvelope`
+  is replaced by `Client.VerifyParty`, which verifies the address declared by a
+  party, and `Client.VerifyDelivery`, which finds the sole issuer bound to an
+  inbox. `Client.Who` now requires an audience-free self-signature.
+- `net`: registration and verification may pass the same party envelope between
+  participants; request tokens convey delivery intent. Ordinary document
+  deliveries and deferred `/who` responses remain audience-bound.
+- `net`: a party that countersigns an envelope must replace its own previous
+  countersignature. It may not remove signatures from other parties.
+- `net`: registration authorities can no longer verify their own endorsements;
+  the named identity verifier must be a different participant.
+- `net`: `Client.VerifyAuthority` returns `ErrUnavailable`, rather than
+  `ErrVerifyFailed`, when authority keys are temporarily unreachable and no
+  endorsement can be verified.
+- `catalogues/cef`: the `cef-vatex` extension now reflects the official VATEX code list version 8.0, growing from 59 to 88 enumerated codes. The 26 French codes admitted by the CTC profiles, such as `VATEX-FR-CGI261-1`, are included, along with the new EU codes `VATEX-EU-135-1`, `VATEX-EU-144`, `VATEX-EU-146-1E`, `VATEX-EU-153` and `VATEX-EU-159`, so the shape-only pattern is no longer needed. Every code now carries the source list's `nationality`, `deprecated` and `first-version` columns as metadata — plus `last-version` and `remark` where the list provides them — and its context of exemption as the description. The extension itself records the code list `version` and where it came from.
+- `pay`: `DueDate` no longer requires an `amount`; due dates parsed from
+  documents that don't include partial payment amounts (e.g. CII payment terms)
+  are no longer assigned a zero amount that fails `GOBL-PAY-DUEDATE-02`. An
+  amount that is set must still not be zero, and it is still calculated from
+  `percent` when present.
+- `es-facturae-v3`: due dates now require an `amount`
+  (`GOBL-ES-FACTURAE-PAY-DUEDATE-01`), preserving the guarantee behind
+  FacturaE's mandatory `InstallmentAmount` element — the original reason
+  `pay.DueDate` required an amount globally — now that the core requirement is
+  relaxed.
+
+### Fixed
+
+- `sg`: tax identity codes now accept IRAS-assigned GST registration numbers
+  ending in a digit (e.g. `M201189853`), previously rejected because a trailing
+  letter was required.
+- `bill`: removing taxes included in prices from a document using the `currency` rounding rule now switches it to `precise`, so that the resulting tax bases and amounts match those of the original document. Before, the tax-exclusive line totals were rounded to the currency's precision, which drifted from the original tax amounts by an amount that grew with the number of lines and left the difference in the document's `rounding` total.
+- `head`: `SignedPayload` and `Header.Verify` now return an error for `null`
+  signature entries instead of panicking.
+- `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
+  contingency prefix) are no longer wrongly rejected as having an invalid prefix.
+- `bill`: unmarshalling an `Invoice` under the `jsonv2` implementation of
+  `encoding/json`, the default from Go 1.27, no longer re-enters
+  `Invoice.UnmarshalJSON` until the process dies with a fatal stack overflow.
+
+## [v0.504.0]
+
+### Added
+
+- `pay`: `CreditTransfer` now supports a `clearing` code for national bank or branch identifiers such as Danish registration numbers, UK sort codes, and US routing numbers. Its `iban`, `bic`, `number`, and `clearing` identifiers use the flexible `cbc.Code` type; the descriptive bank `name` remains a string.
+- `pay`: `IsIBAN` and `IsBIC` rules tests for bank details — the ISO 13616 structure with its ISO 7064 mod 97-10 check digits, and the ISO 9362 structure. Available to rule sets that need them; no core rule applies them.
+- `rules/is`: `AllOf` composes several tests into one that passes only when all of them do, alongside the existing `AnyOf` and `OneOf`.
+- `fi-finvoice-v3`: approved as an external addon implemented by [`github.com/invopop/gobl.fi.finvoice`](https://github.com/invopop/gobl.fi.finvoice) — Finland's Finvoice 3.0 e-invoicing format. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.fi.finvoice/addon"`) for documents declaring the key to calculate and validate.
+- `net`: request tokens (README §5.5): short-lived ES256 JWTs sent as `Authorization: Bearer` on `/who` and `/inbox` requests, identifying the requester — possibly a trusted intermediary distinct from the envelope's signer. `net.NewToken` mints one, `Client.VerifyToken` / `Client.VerifyAuthorization` verify inbound tokens against the issuer's published key, audience, and a 30s–5m freshness window, and the `net.WithIdentity` client option attaches one to every who and inbox request. New `ErrTokenInvalid` and `ErrTokenExpired` sentinels.
+- `net`: `Client.Send` delivers a signed envelope to an address's inbox: 202 is success, other non-retryable 4xx report `ErrInboxRejected`. The `Poster` interface extends a `Fetcher` with POST support; `HTTPFetcher` implements it.
+- `net`: `/who` may answer `202 Accepted` (new `ErrPending` sentinel) to record the authenticated request for deferred disclosure: the owner decides per requester and, if approved, delivers its party envelope to the requester's inbox later.
+- `net`: `Client.FetchKey` caches fetched keys per URL for a short TTL (5 minutes by default, tunable with `net.WithKeyCacheTTL`, zero disables; successes only, size-capped), so a token and an envelope signed by the same key verify with a single key fetch.
+- `regimes/dk`: new `IdentityTypeCPR` alongside the existing `IdentityTypeCVR`, and the supplier rule (`GOBL-DK-BILL-INVOICE-01`) now accepts either -- a CPR-identified supplier (a natural person, not a VAT-registered business) had no way to satisfy it before, even though this is a valid, schematron-permitted OIOUBL shape. The fault is now reported at `$.supplier.identities` instead of `$.supplier`.
+- `addons`: registered `dk-oioubl-v2` (implementation in `github.com/invopop/gobl.dk.oioubl`) on the approved external addon list, so it's now a valid `$addons` value.
+- `rules/is`: new `Not` test that passes when the wrapped test does not.
+- `org`: new `PartyHasTaxIDCode` test for a party with a tax identity code.
+- `org`: new `PartyHasIdentityTypeIn` and `PartyHasIdentityKeyIn` tests for a party carrying an identity with one of the given types or keys.
+
+### Changed
+
+- `org`: an `Attribute` may now hold more than one of the `text`, `code`, `amount`, or `date` values, where before exactly one was required, so that formats grouping related values under a single name can be mapped directly. At least one value is still needed.
+- `net`: requests to `/who` and `/inbox` without a valid request token are rejected with 401; servers may keep an audit log of requester identities. `/who` responses are no longer publicly cacheable (`Cache-Control: private`); clients cache the verified party envelope locally instead. The `Fetcher` interface gains an `http.Header` parameter to carry the token.
+
+- `head`/`net`: signed `iss`/`aud`/`verifier` claims and request-token claims now carry bare GOBL Net addresses (FQDNs) instead of `gobl:` URIs — the scheme carried no information inside the protocol, and an FQDN can never contain a colon, so URI forms could still be admitted unambiguously later. `head.SigningPayload` fields and the `WithIssuer`/`WithAudience`/`WithVerifier` options are plain strings (use `Address.String()`); `Client.VerifyEnvelope` takes an `expectedAud net.Address`. The `gobl:` scheme remains where multiple schemes coexist: `org.Endpoint` URIs and the unsigned header `from`/`to`.
+- `net`: `Authorities` now defaults to the network's default registration authority, `lookup.gobl.org` (implemented in [`gobl.lookup`](https://github.com/invopop/gobl.lookup)), instead of an empty list.
+- `head`/`net`: the `scope` claim is replaced by structural verification (spec §5.3). A registration authority's countersignature alone asserts a registered identity; a new `verifier` claim (`head.WithVerifier`) names the authority that performed KYC/KYB, confirmed by that verifier's own countersignature on the same envelope — the two carry independent `exp` lifecycles (90-day registration renewals vs long-lived verifications). `Client.VerifyAuthority` now returns an `Endorsement{Authority, Verifier}`; `Client.VerifySender` takes a `requireVerified` bool and reports the new `ErrNotVerified` sentinel. `head.WithScope`, `head.ScopeRegistered`/`ScopeVerified`, `Client.VerifyAuthorityWithScope`, and `ErrScopeInsufficient` are removed.
+
+- `net`: transient failures are now distinguished from permanent ones by the new `ErrUnavailable` sentinel (network failures, 429, 5xx): token and envelope verification surface it instead of `ErrTokenInvalid`/`ErrVerifyFailed` (servers respond 503, not 401), a verifier countersignature that cannot be *checked* no longer silently degrades a verified endorsement to registered, and `Client.Send` retries key on `ErrUnavailable` rather than `ErrFetchFailed`.
+- `net`: `WithAuthorities` now replaces the client's trust list instead of appending, so closed deployments can exclude the default authority; `RegisterAuthority` still appends to the global default. `VerifyAuthority` prefers an endorsement with a confirmed verifier over a registered-only one regardless of signature order, and refuses envelopes with more than 32 signatures (fetch-amplification defense). `Client.FlushKeyCache` empties the key cache on demand. `Post` is now part of the `Fetcher` interface (the optional `Poster` interface is removed), so custom transports fail at compile time rather than when `Client.Send` is first called.
+
+### Removed
+
+- `net`: `Address.Topic()` and the spec's topic-derivation section — the reversed-label topic form had no consumers.
+
+### Fixed
+
+- `rules/is`: `AllOf`, `AnyOf`, and `OneOf` now prepare the tests they wrap, so that `Expr` and `Matches` work inside them.
+
+## [v0.503.0] - 2026-07-15
+
+### Added
+
+- `org`: new `Attribute` model with `Item.Attributes` for named item features such as color or size (EN 16931 BG-32). Attributes replace the previous practice of mapping `Item.Meta` into output formats — meta is internal-only data. Each attribute is identified by a `key` or `type` and holds exactly one of a `text`, `code`, `amount` (with optional `unit`), or `date` value. Standard keys cover physical properties of the item, dates, nutritional declarations, and CO2e emissions. Item attribute keys must be unique.
+- `org`: `kj` (kilojoule) and `kcal` (kilocalorie) units.
+- `net`: `Client.Who` fetches and verifies a domain's public identity from `GET /.well-known/gobl/who`, and `Client.VerifySender` additionally requires a countersignature from a trusted authority at a minimum scope. New `ErrNoContent` (HTTP 204: the account exists but publishes no identity details) and `ErrScopeInsufficient` sentinel errors.
+- `head`: optional `exp` claim (JWT-standard, RFC 7519 §4.1.4) in the signed payload, set with `head.WithExpiration`, marking the time after which the signature's assertions should no longer be relied upon. `net.VerifyAuthority` rejects countersignatures whose `exp` has passed with the new `ErrSignatureExpired` sentinel; signatures without `exp` do not expire.
+
+### Changed
+
+- `net`: `/who` is now an open GET returning the domain's self-signed party envelope, replacing the authenticated POST exchange; allow-list support is removed. `Client.VerifyAuthorityWithScope` enforces a minimum scope on top of the `Client.VerifyAuthority` check. `Client.VerifyEnvelope` verifies only the first signature, so envelopes carrying authority countersignatures now verify.
+- `tax`: the `currency` rounding rule combined with `prices_include` now determines each rate's tax amount from the sum of the tax-inclusive line totals and shares it back over the lines, so that bases, tax amounts, and document totals always add up, including when other categories such as retained taxes are present.
+- `addons/eu/en16931`: party identities are now validated so that at most one may carry the `legal` scope (BT-30, BT-47) and at most one the `tax` scope (BT-31, BT-48).
+- `addons/it/sdi`: item attribute `type` is validated to be at most 10 characters, matching the FatturaPA `AltriDatiGestionali/TipoDato` (BT-160) field it maps to.
+
+### Fixed
+
+- `tax`: totals now reset the retained tax and category surcharge sums before recalculating, so repeated calculations over the same totals no longer accumulate stale amounts.
+
+## [v0.502.2] - 2026-07-06
+
+### Changed
+
+- `cbc.Code`: maximum length increased from 64 to 128 characters.
+
+## [v0.502.1] - 2026-07-02
+
+### Removed
+
+- `dk-oioubl-v2`: removed from the approved external addons list. The [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) module is not yet ready for release; it was approved prematurely in v0.502.0. It will be re-added once the module ships a stable release.
+
+## [v0.502.0] - 2026-07-02
+
+### Fixed
+
+- `pkg/examples`: normalize path separators before skip-list matching so example discovery works correctly on Windows.
+
+### Added
+
+- `fi`: added the Finnish (FI) tax regime.
+- `dk-oioubl-v2`: approved as an external addon implemented by [`github.com/invopop/gobl.dk.oioubl`](https://github.com/invopop/gobl.dk.oioubl) — Denmark's OIOUBL 2.1 standard for the NemHandel network. As with other external addons, the module must be imported (`_ "github.com/invopop/gobl.dk.oioubl/addon"`) for documents declaring the key to calculate and validate. The EN 16931 rules that OIOUBL deliberately relaxes are handled inside that addon via `rules.Ignore`, keeping `addons/eu/en16931` free of OIOUBL-specific coupling.
 - `bill`: `PaymentDetails.Payer` party — the party responsible for making payment of the invoice if not the customer, the counterpart of the existing `Payee`.
+- `regimes/pt`: `IRS` and `IRC` retained tax categories for Portugal income tax withholdings (*retenção na fonte*).
+
+### Changed
+
+- `addons/pt/saft`: **breaking**: the Portuguese SAF-T addon moved to the standalone [`github.com/invopop/gobl.pt.saft`](https://github.com/invopop/gobl.pt.saft) module. Add a blank import of `gobl.pt.saft/addon` to keep using the `pt-saft-v1` addon key.
+- `addons/br`: **breaking**: the Brazil NF-e/NFC-e (`br-nfe-v4`) and NFS-e (`br-nfse-v1`) addons moved to their own standalone modules, [`github.com/invopop/gobl.br.nfe`](https://github.com/invopop/gobl.br.nfe) and [`github.com/invopop/gobl.br.nfse`](https://github.com/invopop/gobl.br.nfse) respectively. Add a blank import of `gobl.br.nfe/addon` and/or `gobl.br.nfse/addon` to keep using the `br-nfe-*` / `br-nfse-*` addon keys.
+- `addons/mx`: **breaking**: the Mexico CFDI (`mx-cfdi-v4`) addon — including the fuel account balance and food voucher complements — moved to the standalone [`github.com/invopop/gobl.mx.cfdi`](https://github.com/invopop/gobl.mx.cfdi) module. Add a blank import of `gobl.mx.cfdi/addon` to keep using the `mx-cfdi-*` addon keys.
+
+### Removed
+
+- `addons`: `fr-ctc-v1` generic addon removed, no longer used by [gobl.fr.ctc](https://github.com/invopop/gobl.fr.ctc).
 
 ## [v0.501.0] - 2026-06-16
 

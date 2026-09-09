@@ -21,7 +21,7 @@
             {
               "const": "currency",
               "title": "Currency",
-              "description": "The alternative method of calculating the totals that will first round all the amounts\nto the currency's precision before making the sums. Totals using this approach can always\nbe recalculated using the amounts presented, but can lead to rounding errors in the case\nof pre-payments and when line item prices include tax."
+              "description": "The alternative method of calculating the totals that will first round all the amounts\nto the currency's precision before making the sums. Totals using this approach can always\nbe recalculated using the amounts presented, but can lead to rounding errors in the case\nof pre-payments. When prices include tax, the tax amounts are calculated from each rate's\nsum of tax-inclusive line totals so that the bases and amounts always add up, though\nrecalculating a tax amount from its base alone may occasionally differ by a single\nsubunit of the currency."
             }
           ],
           "title": "Rounding Model",

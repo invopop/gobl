@@ -1,0 +1,142 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "799f50eb30b44191e079786b6758a6fc323d28ad4eb10d7d0d2e4189badad2ec"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DK",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "892da681-72e6-4cea-962b-baaaa0ca39e1",
+		"type": "standard",
+		"series": "S2025",
+		"code": "002",
+		"issue_date": "2025-05-20",
+		"currency": "DKK",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Jens Hansen",
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "CPR",
+					"code": "1111111118"
+				}
+			],
+			"addresses": [
+				{
+					"num": "8",
+					"street": "Strøget",
+					"locality": "København",
+					"region": "Hovedstaden",
+					"code": "1155",
+					"country": "DK"
+				}
+			],
+			"emails": [
+				{
+					"addr": "jens.hansen@example.dk"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Customer ApS",
+			"tax_id": {
+				"country": "DK",
+				"code": "88146328"
+			},
+			"identities": [
+				{
+					"scope": "legal",
+					"type": "CVR",
+					"code": "88146328",
+					"ext": {
+						"iso-scheme-id": "0184"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Amagertorv",
+					"locality": "København",
+					"region": "Hovedstaden",
+					"code": "1160",
+					"country": "DK"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Freelance design services",
+					"price": "500.00",
+					"unit": "h"
+				},
+				"sum": "5000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "25.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "5000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-05-30",
+						"amount": "6250.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "5000.00",
+			"total": "5000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "5000.00",
+								"percent": "25.0%",
+								"amount": "1250.00"
+							}
+						],
+						"amount": "1250.00"
+					}
+				],
+				"sum": "1250.00"
+			},
+			"tax": "1250.00",
+			"total_with_tax": "6250.00",
+			"payable": "6250.00"
+		}
+	}
+}

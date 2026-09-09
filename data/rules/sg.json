@@ -15,7 +15,7 @@
                 {
                   "id": "GOBL-SG-BILL-INVOICE-01",
                   "desc": "invoice supplier in Singapore must have a GST tax ID code or a UEN identity",
-                  "tests": "has GST tax ID code or UEN identity"
+                  "tests": "has tax ID code, or has a type in [UEN]"
                 }
               ]
             }

@@ -1,0 +1,382 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1f33628bcf4765dba263fa6c76dc423d074cadce57ab0bf1a720dba1e1dae940"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"uuid": "0198f2f1-7f30-7d33-9a63-8a12f4a1c002",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "024",
+		"issue_date": "2026-07-09",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"rounding": "currency"
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 5,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 6,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 7,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 8,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 9,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 10,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 11,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 12,
+				"quantity": "1",
+				"item": {
+					"name": "Professional services",
+					"price": "125.00",
+					"unit": "h"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"totals": {
+			"sum": "1500.00",
+			"tax_included": "260.33",
+			"total": "1239.67",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1239.67",
+								"percent": "21.0%",
+								"amount": "260.33"
+							}
+						],
+						"amount": "260.33"
+					},
+					{
+						"code": "IRPF",
+						"retained": true,
+						"rates": [
+							{
+								"base": "1239.67",
+								"percent": "15.0%",
+								"amount": "185.95"
+							}
+						],
+						"amount": "185.95"
+					}
+				],
+				"sum": "260.33",
+				"retained": "185.95"
+			},
+			"tax": "260.33",
+			"total_with_tax": "1500.00",
+			"retained_tax": "185.95",
+			"payable": "1314.05"
+		}
+	}
+}

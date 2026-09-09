@@ -18,6 +18,13 @@
         "da": "CVR-nummer",
         "en": "CVR Number"
       }
+    },
+    {
+      "code": "CPR",
+      "name": {
+        "da": "CPR-nummer",
+        "en": "CPR Number"
+      }
     }
   ],
   "corrections": [

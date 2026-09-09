@@ -5,11 +5,20 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
+// Local tax category definitions which are not considered standard.
+const (
+	TaxCategoryIRS cbc.Code = "IRS" // Imposto sobre o Rendimento das Pessoas Singulares
+	TaxCategoryIRC cbc.Code = "IRC" // Imposto sobre o Rendimento das Pessoas Coletivas
+)
+
 var taxCategories = []*tax.CategoryDef{
+	//
 	// VAT
+	//
 	{
 		Code: tax.CategoryVAT,
 		Name: i18n.String{
@@ -124,6 +133,63 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{},
 			},
+		},
+	},
+
+	//
+	// IRS
+	//
+	{
+		Code:     TaxCategoryIRS,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "IRS",
+			i18n.PT: "IRS",
+		},
+		Title: i18n.String{
+			i18n.EN: "Personal income tax",
+			i18n.PT: "Imposto sobre o Rendimento das Pessoas Singulares",
+		},
+		Description: &i18n.String{
+			i18n.EN: here.Doc(`
+				Personal income tax withheld at source from payments made to individuals
+				and self-employed workers. The Portuguese payer retains the tax on each
+				payment and remits it to the AT on behalf of the recipient.
+			`),
+			i18n.PT: here.Doc(`
+				Imposto sobre o rendimento retido na fonte sobre pagamentos efetuados a
+				pessoas singulares e trabalhadores independentes. O pagador português retém
+				o imposto em cada pagamento e entrega-o à AT por conta do titular do
+				rendimento.
+			`),
+		},
+	},
+
+	//
+	// IRC
+	//
+	{
+		Code:     TaxCategoryIRC,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "IRC",
+			i18n.PT: "IRC",
+		},
+		Title: i18n.String{
+			i18n.EN: "Corporate income tax",
+			i18n.PT: "Imposto sobre o Rendimento das Pessoas Coletivas",
+		},
+		Description: &i18n.String{
+			i18n.EN: here.Doc(`
+				Corporate income tax withheld at source from payments made to legal
+				persons. The Portuguese payer retains the tax on each payment and remits it
+				to the AT on behalf of the recipient.
+			`),
+			i18n.PT: here.Doc(`
+				Imposto sobre o rendimento retido na fonte sobre pagamentos efetuados a
+				pessoas coletivas. O pagador português retém o imposto em cada pagamento e
+				entrega-o à AT por conta do titular do rendimento.
+			`),
 		},
 	},
 }

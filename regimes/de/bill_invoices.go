@@ -17,28 +17,12 @@ func billInvoiceRules() *rules.Set {
 			is.InContext(tax.RegimeIn(l10n.DE.Tax())),
 			rules.Field("supplier",
 				rules.Assert("01", fmt.Sprintf("invoice DE supplier must have either tax ID code or identity with '%s' key", IdentityKeyTaxNumber),
-					is.Func(
-						fmt.Sprintf("has tax ID code or identity with '%s' key", IdentityKeyTaxNumber),
-						hasTaxIDOrIdentity,
+					is.AnyOf(
+						org.PartyHasTaxIDCode(),
+						org.PartyHasIdentityKeyIn(IdentityKeyTaxNumber),
 					),
 				),
 			),
 		),
 	)
-}
-
-func hasTaxIDOrIdentity(value any) bool {
-	party, _ := value.(*org.Party)
-	return hasTaxIDCode(party) || hasIdentityTaxNumber(party)
-}
-
-func hasTaxIDCode(party *org.Party) bool {
-	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
-}
-
-func hasIdentityTaxNumber(party *org.Party) bool {
-	if party == nil || len(party.Identities) == 0 {
-		return false
-	}
-	return org.IdentityForKey(party.Identities, IdentityKeyTaxNumber) != nil
 }

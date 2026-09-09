@@ -38,6 +38,9 @@ type Item struct {
 	Name string `json:"name" jsonschema:"title=Name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Attributes describe named features or properties of the item, such as
+	// color or size.
+	Attributes []*Attribute `json:"attributes,omitempty" jsonschema:"title=Attributes"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Images associated with the item.
@@ -67,6 +70,11 @@ func itemRules() *rules.Set {
 		rules.Field("price",
 			rules.AssertIfPresent("02", "item price must be zero or positive", num.ZeroOrPositive),
 		),
+		rules.Field("attributes",
+			rules.Assert("03", "item attributes must not contain duplicate keys",
+				AttributesHaveUniqueKeys(),
+			),
+		),
 	)
 }
 
@@ -94,4 +102,5 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 func normalizeItem(i *Item) {
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
+	i.Attributes = CleanAttributes(i.Attributes)
 }

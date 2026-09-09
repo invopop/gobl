@@ -120,6 +120,28 @@ func TestCollectContextNilPointer(_ *testing.T) {
 	collectContext(rc, p)
 }
 
+func TestEnterPointer(t *testing.T) {
+	value := 1
+	rv := reflect.ValueOf(&value)
+
+	visit, ok := enterPointer(nil, rv)
+	assert.True(t, ok)
+	assert.Equal(t, rv.Type(), visit.typ)
+	assert.Equal(t, rv.Pointer(), visit.ptr)
+	assert.NotPanics(t, func() {
+		leavePointer(nil, visit)
+	})
+
+	rc := &Context{}
+	visit, ok = enterPointer(rc, rv)
+	assert.True(t, ok)
+	_, ok = enterPointer(rc, rv)
+	assert.False(t, ok)
+	leavePointer(rc, visit)
+	_, ok = enterPointer(rc, rv)
+	assert.True(t, ok)
+}
+
 func TestCollectContextNonStruct(t *testing.T) {
 	rc := &Context{}
 	collectContext(rc, "a string")

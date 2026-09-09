@@ -8,7 +8,7 @@ code: "002"
 tax:
   tags:
     - "simplified"
-  # prices_include: "VAT"
+  prices_include: "VAT"
 
 supplier:
   tax_id:

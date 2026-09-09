@@ -32,6 +32,10 @@
             "title": "German ZUGFeRD 2.X"
           },
           {
+            "const": "dk-oioubl-v2",
+            "title": "Danish OIOUBL 2.1"
+          },
+          {
             "const": "es-facturae-v3",
             "title": "Spain FacturaE"
           },
@@ -52,6 +56,10 @@
             "title": "EN 16931-1:2017"
           },
           {
+            "const": "fi-finvoice-v3",
+            "title": "Finland Finvoice 3.0"
+          },
+          {
             "const": "fr-choruspro-v1",
             "title": "Chorus Pro"
           },
@@ -66,10 +74,6 @@
           {
             "const": "fr-ctc-flow6-v1",
             "title": "France CTC Flow 6 (Cycle de Vie)"
-          },
-          {
-            "const": "fr-ctc-v1",
-            "title": "France CTC (auto-dispatch)"
           },
           {
             "const": "fr-facturx-v1",

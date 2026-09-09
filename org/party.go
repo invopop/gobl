@@ -3,6 +3,8 @@ package org
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
+	"github.com/invopop/gobl/rules"
+	"github.com/invopop/gobl/rules/is"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -21,6 +23,8 @@ type Party struct {
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
+	// Agent is a party that acts on behalf of this party. An agent cannot itself have an agent.
+	Agent *Party `json:"agent,omitempty" jsonschema:"title=Agent"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
 	// Set of codes used to identify the party in other systems.
@@ -80,6 +84,66 @@ func (p *Party) FirstEndpoint() *Endpoint {
 		}
 	}
 	return nil
+}
+
+// PartyHasTaxIDCode provides a test that will determine if the party has a
+// tax identity with a code.
+func PartyHasTaxIDCode() rules.Test {
+	return is.Func("has tax ID code", partyHasTaxIDCode)
+}
+
+func partyHasTaxIDCode(obj any) bool {
+	p := partyFrom(obj)
+	return p != nil && p.TaxID != nil && p.TaxID.Code != ""
+}
+
+// PartyHasIdentityTypeIn provides a test that will determine if at least one of
+// the party's identities has one of the given types.
+func PartyHasIdentityTypeIn(typ ...cbc.Code) rules.Test {
+	return partyIdentities(IdentitiesTypeIn(typ...))
+}
+
+// PartyHasIdentityKeyIn provides a test that will determine if at least one of
+// the party's identities has one of the given keys.
+func PartyHasIdentityKeyIn(key ...cbc.Key) rules.Test {
+	return partyIdentities(IdentitiesKeyIn(key...))
+}
+
+// partyIdentities adapts a test for a party's identities so that it can be
+// applied to the party itself.
+func partyIdentities(test rules.Test) rules.Test {
+	return is.Func(test.String(), func(obj any) bool {
+		p := partyFrom(obj)
+		if p == nil {
+			return false
+		}
+		return test.Check(p.Identities)
+	})
+}
+
+// partyFrom extracts a party from either a pointer or a value, as object level
+// tests may receive either shape.
+func partyFrom(obj any) *Party {
+	switch v := obj.(type) {
+	case *Party:
+		return v
+	case Party:
+		return &v
+	}
+	return nil
+}
+
+func partyRules() *rules.Set {
+	return rules.For(new(Party),
+		rules.Field("agent",
+			rules.Assert("01", "agent must not have an agent", is.Func("not have an agent", partyHasNoAgent)),
+		),
+	)
+}
+
+func partyHasNoAgent(obj any) bool {
+	p := partyFrom(obj)
+	return p == nil || p.Agent == nil
 }
 
 // JSONSchemaExtend adds extra details to the schema.

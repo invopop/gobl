@@ -1,0 +1,151 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0198f2f1-7f30-7d33-9a63-8a12f4a1c002"
+currency: "EUR"
+issue_date: "2026-07-09"
+series: "SAMPLE"
+code: "024"
+tax:
+  prices_include: "VAT"
+  rounding: "currency"
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro
+  - quantity: 1
+    item:
+      name: "Professional services"
+      price: "125.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+      - cat: IRPF
+        rate: pro

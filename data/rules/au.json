@@ -14,13 +14,20 @@
               "assert": [
                 {
                   "id": "GOBL-AU-TAX-IDENTITY-01",
-                  "desc": "invoice tax id code must be a valid 11-digit ABN",
+                  "desc": "tax id code must be a valid 11-digit ABN",
                   "tests": "matches ^[0-9]{11}$"
-                },
+                }
+              ],
+              "subsets": [
                 {
-                  "id": "GOBL-AU-TAX-IDENTITY-02",
-                  "desc": "invoice tax id code checksum must be valid",
-                  "tests": "valid"
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-AU-TAX-IDENTITY-02",
+                      "desc": "tax id code checksum must be valid",
+                      "tests": "valid"
+                    }
+                  ]
                 }
               ]
             }

@@ -36,6 +36,20 @@ func billInvoiceRules() *rules.Set {
 					rules.Assert("18", "supplier tax ID code is required", is.Present),
 				),
 			),
+			rules.Field("ext",
+				rules.Assert("21",
+					fmt.Sprintf("supplier '%s' extension must be a valid branch number", ExtKeyBranch),
+					tax.ExtensionHasValidCode(ExtKeyBranch),
+				),
+			),
+		),
+		rules.Field("customer",
+			rules.Field("ext",
+				rules.Assert("22",
+					fmt.Sprintf("customer '%s' extension must be a valid branch number", ExtKeyBranch),
+					tax.ExtensionHasValidCode(ExtKeyBranch),
+				),
+			),
 		),
 		rules.When(is.Func("requires customer", invoiceRequiresValidCustomer),
 			rules.Field("customer",
@@ -67,7 +81,12 @@ func billInvoiceRules() *rules.Set {
 						rules.Assert("12",
 							fmt.Sprintf("item income extensions '%s' and '%s' must both be present",
 								ExtKeyIncomeCat, ExtKeyIncomeType),
-							is.Func("income ext pair", itemIncomeExtPairValid),
+							is.Func("income ext pair", incomeExtPairValid),
+						),
+						rules.Assert("20",
+							fmt.Sprintf("item income extension '%s' must not be present with category '%s'",
+								ExtKeyIncomeType, IncomeCatOtherInfo),
+							is.Func("no income type with other info category", incomeExtOtherInfoValid),
 						),
 					),
 				),
@@ -115,7 +134,7 @@ func invoiceRequiresValidCustomer(val any) bool {
 	return false
 }
 
-func itemIncomeExtPairValid(val any) bool {
+func incomeExtPairValid(val any) bool {
 	ext, ok := tax.ExtensionsFromValue(val)
 	if !ok {
 		return true
@@ -125,7 +144,21 @@ func itemIncomeExtPairValid(val any) bool {
 	if !hasCat && !hasType {
 		return true // neither set, valid
 	}
+	if ext.Get(ExtKeyIncomeCat) == IncomeCatOtherInfo {
+		return true // informative category, type checked separately
+	}
 	return hasCat && hasType // both must be set
+}
+
+func incomeExtOtherInfoValid(val any) bool {
+	ext, ok := tax.ExtensionsFromValue(val)
+	if !ok {
+		return true
+	}
+	if ext.Get(ExtKeyIncomeCat) != IncomeCatOtherInfo {
+		return true
+	}
+	return !ext.Has(ExtKeyIncomeType)
 }
 
 func paymentHasInstructionsOrAdvances(val any) bool {
