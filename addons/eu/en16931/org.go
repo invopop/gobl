@@ -1,6 +1,7 @@
 package en16931
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/invopop/gobl/catalogues/iso"
@@ -174,7 +175,7 @@ func orgAttachmentRules() *rules.Set {
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
 		rules.Field("endpoints",
-			rules.Assert("04", "cannot have more than one 'iso6523-actorid-upis' endpoint (BT-34, BT-49)",
+			rules.Assert("04", fmt.Sprintf("cannot have more than one '%s' endpoint (BT-34, BT-49)", iso.ActorIDScheme),
 				is.Func("single iso6523 endpoint", orgPartySingleISO6523Endpoint),
 			),
 		),
@@ -226,7 +227,7 @@ func orgEndpointRules() *rules.Set {
 	return rules.For(new(org.Endpoint),
 		rules.Field("uri",
 			rules.When(cbc.URISchemeIn(iso.ActorIDScheme),
-				rules.Assert("01", "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+				rules.Assert("01", fmt.Sprintf("endpoint uri requires both a scheme and a code, e.g. '%s::0225:356000000' (BR-62, BR-63)", iso.ActorIDScheme),
 					cbc.URIOpaqueMatches(`^:[^:]+:.+$`),
 				),
 			),
