@@ -12,6 +12,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   applied to both `UEN` org identities and tax identity codes.
 - `org`/`bill`: parties may now identify a single-level agent acting on their
   behalf, and ordering details may identify the addressee alongside the document issuer.
+- `addons/eu/en16931`: the party electronic address (BT-34, BT-49) is now
+  validated on `org.Endpoint` instead of the deprecated `org.Inbox`: at most one
+  ISO 6523 endpoint per party, and its URI must carry both a scheme and a code.
+- `cbc`: `URISchemeIn` and `URIOpaqueMatches` rules tests, so a rule can be
+  scoped to one kind of URI, or applied to the address it carries, instead of
+  parsing the URI inside a custom function.
+- `catalogues/iso`: `ActorIDScheme`, the `iso6523-actorid-upis` URI scheme, so
+  addons no longer redeclare the literal.
 - `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
   branch (establishment) number on suppliers and customers. When absent, the
   headquarters branch (`0`) is assumed. Values are validated on the invoice's
@@ -21,6 +29,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `addons/eu/en16931`: the deprecated `org.Inbox` no longer carries
+  addon rules. These are now handled by `org.Endpoint`.
 - `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
   of the two is required. A period with neither fails with the new
   `GOBL-CAL-PERIOD-11`.

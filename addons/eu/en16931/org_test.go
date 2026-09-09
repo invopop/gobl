@@ -151,7 +151,7 @@ func TestOrgInboxNormalize(t *testing.T) {
 	})
 }
 
-func TestOrgPartyNormalizePeppolEndpoint(t *testing.T) {
+func TestOrgPartyNormalizeEndpoints(t *testing.T) {
 	t.Run("accepts nil", func(t *testing.T) {
 		var p *org.Party
 		assert.NotPanics(t, func() {
@@ -321,40 +321,50 @@ func TestOrgAttachmentValidation(t *testing.T) {
 }
 
 func TestOrgPartyValidate(t *testing.T) {
-	t.Run("no inboxes", func(t *testing.T) {
-		p := &org.Party{}
-		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
-	})
-
-	t.Run("one inbox", func(t *testing.T) {
+	t.Run("one iso6523 endpoint", func(t *testing.T) {
 		p := &org.Party{
-			Inboxes: []*org.Inbox{
-				{
-					Scheme: "scheme1",
-					Code:   "code1",
-				},
+			Endpoints: []*org.Endpoint{
+				{URI: "iso6523-actorid-upis::0225:356000000"},
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
-	t.Run("multiple inboxes", func(t *testing.T) {
+	t.Run("multiple iso6523 endpoints", func(t *testing.T) {
 		p := &org.Party{
-			Inboxes: []*org.Inbox{
-				{
-					Scheme: "scheme1",
-					Code:   "code1",
-				},
-				{
-					Scheme: "scheme2",
-					Code:   "code2",
-				},
+			Endpoints: []*org.Endpoint{
+				{URI: "iso6523-actorid-upis::0225:356000000"},
+				{URI: "iso6523-actorid-upis::0009:35600000000048"},
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "cannot have more than one inbox (BT-34, BT-49)")
+		assert.ErrorContains(t, err, "cannot have more than one 'iso6523-actorid-upis' endpoint (BT-34, BT-49)")
+	})
+
+	t.Run("iso6523 endpoint alongside other schemes", func(t *testing.T) {
+		// BT-34/BT-49 constrain the ISO 6523 address only; other URI
+		// schemes are additional contact routes, not extra addresses.
+		p := &org.Party{
+			Endpoints: []*org.Endpoint{
+				{URI: "iso6523-actorid-upis::0225:356000000"},
+				{URI: "mailto:billing@example.com"},
+				{URI: "gobl:acme.example.com"},
+				nil,
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("malformed iso6523 endpoint under a party", func(t *testing.T) {
+		p := &org.Party{
+			Endpoints: []*org.Endpoint{
+				{URI: "iso6523-actorid-upis::0225"},
+			},
+		}
+		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "endpoint uri requires both a scheme and a code")
 	})
 
 	t.Run("single legal-scope identity", func(t *testing.T) {
@@ -402,35 +412,61 @@ func TestOrgPartyValidate(t *testing.T) {
 	})
 }
 
-func TestOrgInboxValidate(t *testing.T) {
-	t.Run("missing scheme and code", func(t *testing.T) {
-		i := &org.Inbox{}
-		// Not specific for addon, but this is important to check
-		assert.ErrorContains(t, rules.Validate(i), "inbox requires a code, url, or email")
-	})
+func TestOrgEndpointValidate(t *testing.T) {
+	tests := []struct {
+		name string
+		uri  cbc.URI
+		err  string
+	}{
+		{
+			name: "valid iso6523 uri",
+			uri:  "iso6523-actorid-upis::0225:356000000",
+		},
+		{
+			name: "missing code",
+			uri:  "iso6523-actorid-upis::0225:",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+		},
+		{
+			name: "missing scheme",
+			uri:  "iso6523-actorid-upis:::356000000",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+		},
+		{
+			name: "no scheme code separator",
+			uri:  "iso6523-actorid-upis::356000000",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+		},
+		{
+			name: "single colon form",
+			uri:  "iso6523-actorid-upis:0225:356000000",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+		},
+		{
+			name: "other scheme left alone",
+			uri:  "mailto:billing@example.com",
+		},
+		{
+			name: "gobl scheme left alone",
+			uri:  "gobl:acme.example.com",
+		},
+	}
+	for _, ts := range tests {
+		t.Run(ts.name, func(t *testing.T) {
+			e := &org.Endpoint{URI: ts.uri}
+			err := rules.Validate(e, tax.AddonContext(en16931.V2017))
+			if ts.err == "" {
+				assert.NoError(t, err)
+				return
+			}
+			assert.ErrorContains(t, err, ts.err)
+		})
+	}
 
-	t.Run("missing scheme", func(t *testing.T) {
-		i := &org.Inbox{
-			Code: "code1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "scheme cannot be blank when code is set (BR-62, BR-63)")
-	})
-
-	t.Run("missing code", func(t *testing.T) {
-		i := &org.Inbox{
-			Scheme: "scheme1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "code cannot be blank when scheme is set")
-	})
-
-	t.Run("valid inbox", func(t *testing.T) {
-		i := &org.Inbox{
-			Scheme: "scheme1",
-			Code:   "code1",
-		}
-		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.NoError(t, err)
+	t.Run("missing uri", func(t *testing.T) {
+		// Presence is the base org rule's business, not the addon's.
+		e := &org.Endpoint{}
+		err := rules.Validate(e, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "endpoint uri is required")
 	})
 }
