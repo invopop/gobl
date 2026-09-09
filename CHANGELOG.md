@@ -20,6 +20,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   parsing the URI inside a custom function.
 - `catalogues/iso`: `ActorIDScheme`, the `iso6523-actorid-upis` URI scheme, so
   addons no longer redeclare the literal.
+- `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
+  branch (establishment) number on suppliers and customers. When absent, the
+  headquarters branch (`0`) is assumed. Values are validated on the invoice's
+  supplier and customer extensions.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
@@ -27,6 +31,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `addons/eu/en16931`: the deprecated `org.Inbox` no longer carries
   addon rules. These are now handled by `org.Endpoint`.
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
 - `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
 - `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
   `category1_95` (Other Income-related Information) without an accompanying
