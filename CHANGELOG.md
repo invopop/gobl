@@ -21,6 +21,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `cal`: **breaking**: `Period` `start` and `end` are now pointers, and only one
+  of the two is required. A period with neither fails with the new
+  `GOBL-CAL-PERIOD-11`.
 - `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
 - `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
   `category1_95` (Other Income-related Information) without an accompanying

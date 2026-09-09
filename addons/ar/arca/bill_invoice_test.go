@@ -1828,8 +1828,8 @@ func testInvoiceTypeC(t *testing.T) *bill.Invoice {
 func testOrdering() *bill.Ordering {
 	return &bill.Ordering{
 		Period: &cal.Period{
-			Start: cal.MakeDate(2024, 1, 1),
-			End:   cal.MakeDate(2024, 1, 31),
+			Start: cal.NewDate(2024, 1, 1),
+			End:   cal.NewDate(2024, 1, 31),
 		},
 	}
 }
