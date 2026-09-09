@@ -135,7 +135,7 @@ func normalizeOrgParty(p *org.Party) {
 }
 
 func normalizeOrgPartyEndpoints(p *org.Party) {
-	if p.Endpoint(org.ISO6523Scheme) != nil {
+	if p.Endpoint(iso.ActorIDScheme) != nil {
 		// ISO 6523 endpoint already present, nothing to derive.
 		return
 	}
@@ -148,7 +148,7 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 		}
 		p.Endpoints = append(p.Endpoints, &org.Endpoint{
 			Label: in.Label,
-			URI:   cbc.URI(org.ISO6523Scheme + "::" + in.Scheme.String() + ":" + in.Code.String()),
+			URI:   cbc.URI(iso.ActorIDScheme + "::" + in.Scheme.String() + ":" + in.Code.String()),
 		})
 		return
 	}
@@ -212,7 +212,7 @@ func orgIdentitiesSingleTaxScope(val any) bool {
 func orgPartyISO6523EndpointCount(endpoints []*org.Endpoint) int {
 	n := 0
 	for _, e := range endpoints {
-		if e != nil && e.URI.Scheme() == org.ISO6523Scheme {
+		if e != nil && e.URI.Scheme() == iso.ActorIDScheme {
 			n++
 		}
 	}
@@ -229,7 +229,7 @@ func orgPartySingleISO6523Endpoint(val any) bool {
 func orgEndpointRules() *rules.Set {
 	return rules.For(new(org.Endpoint),
 		rules.Field("uri",
-			rules.When(cbc.URISchemeIn(org.ISO6523Scheme),
+			rules.When(cbc.URISchemeIn(iso.ActorIDScheme),
 				rules.Assert("01", "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
 					cbc.URIOpaqueMatches(`^:[^:]+:.+$`),
 				),

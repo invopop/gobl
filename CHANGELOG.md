@@ -18,8 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc`: `URISchemeIn` and `URIOpaqueMatches` rules tests, so a rule can be
   scoped to one kind of URI, or applied to the address it carries, instead of
   parsing the URI inside a custom function.
-- `org`: `ISO6523Scheme`, the `iso6523-actorid-upis` URI scheme, so addons no
-  longer redeclare the literal.
+- `catalogues/iso`: `ActorIDScheme`, the `iso6523-actorid-upis` URI scheme, so
+  addons no longer redeclare the literal.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 

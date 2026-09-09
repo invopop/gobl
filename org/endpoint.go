@@ -7,10 +7,6 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// ISO6523Scheme is the URI scheme for ISO 6523 participant identifiers, as
-// in "iso6523-actorid-upis::0225:356000000".
-const ISO6523Scheme = "iso6523-actorid-upis"
-
 // Endpoint identifies an address to which electronic documents may be
 // sent, expressed as a single URI. The URI scheme identifies the
 // network or namespace, e.g. "gobl:acme.example.com" (GOBL Net),
