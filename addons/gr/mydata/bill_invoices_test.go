@@ -229,3 +229,50 @@ func TestInvoiceLineItemIncomeExt(t *testing.T) {
 		assert.ErrorContains(t, rules.Validate(inv), "income extension 'gr-mydata-income-type' must not be present with category 'category1_95'")
 	})
 }
+
+func TestPartyBranchExtension(t *testing.T) {
+	t.Run("valid branch on supplier", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "2",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("headquarters branch", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "0",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("valid branch on customer", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Customer.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "1234",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("leading zeros rejected", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "01",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "supplier 'gr-mydata-branch' extension must be a valid branch number")
+	})
+
+	t.Run("non-numeric rejected", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.Ext = tax.ExtensionsOf(cbc.CodeMap{
+			mydata.ExtKeyBranch: "2A",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, rules.Validate(inv), "supplier 'gr-mydata-branch' extension must be a valid branch number")
+	})
+}
