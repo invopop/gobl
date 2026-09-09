@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   applied to both `UEN` org identities and tax identity codes.
 - `org`/`bill`: parties may now identify a single-level agent acting on their
   behalf, and ordering details may identify the addressee alongside the document issuer.
+- `gr-mydata-v1`: new `gr-mydata-branch` party extension to declare the AADE
+  branch (establishment) number on suppliers and customers. When absent, the
+  headquarters branch (`0`) is assumed. Values are validated on the invoice's
+  supplier and customer extensions.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
