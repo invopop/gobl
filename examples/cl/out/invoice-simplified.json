@@ -1,0 +1,108 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "7ac00af90933266101a735fd93dedb014451ecf3ae08e74f444f84de40d53e12"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CL",
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "8d51fd61-9db6-41cf-8d44-e3a1e1b48d9a",
+		"type": "standard",
+		"code": "B001-00000456",
+		"issue_date": "2025-01-15",
+		"currency": "CLP",
+		"supplier": {
+			"name": "Restaurante El Buen Sabor",
+			"tax_id": {
+				"country": "CL",
+				"code": "713254975"
+			},
+			"addresses": [
+				{
+					"street": "Av. Providencia 1234",
+					"locality": "Providencia",
+					"region": "Región Metropolitana",
+					"code": "7500000",
+					"country": "CL"
+				}
+			],
+			"emails": [
+				{
+					"addr": "contacto@buensabor.cl"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Final"
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Almuerzo Ejecutivo",
+					"price": "8500"
+				},
+				"sum": "17000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%"
+					}
+				],
+				"total": "17000"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Bebida",
+					"price": "2000"
+				},
+				"sum": "4000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%"
+					}
+				],
+				"total": "4000"
+			}
+		],
+		"totals": {
+			"sum": "21000",
+			"total": "21000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "21000",
+								"percent": "19%",
+								"amount": "3990"
+							}
+						],
+						"amount": "3990"
+					}
+				],
+				"sum": "3990"
+			},
+			"tax": "3990",
+			"total_with_tax": "24990",
+			"payable": "24990"
+		}
+	}
+}
