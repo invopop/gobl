@@ -9,11 +9,13 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// abnRegexp matches the basic shape of an Australian Business Number: 11 digits.
-var abnRegexp = regexp.MustCompile(`^[0-9]{11}$`)
+var (
+	// abnRegexp matches the basic shape of an Australian Business Number: 11 digits.
+	abnRegexp = regexp.MustCompile(`^[0-9]{11}$`)
 
-// abnWeights are the position weights used by the ABN check-digit algorithm.
-var abnWeights = []int{10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
+	// abnWeights are the position weights used by the ABN check-digit algorithm.
+	abnWeights = []int{10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
+)
 
 // normalizeTaxIdentity strips whitespace, separators and country prefix from an
 // Australian Business Number.

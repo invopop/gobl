@@ -19,12 +19,14 @@ const (
 	irdMax = 200000000
 )
 
-// irdWeights are the primary weighting factors applied to the IRD base number.
-var irdWeights = []int{3, 2, 7, 6, 5, 4, 3, 2}
+var (
+	// irdWeights are the primary weighting factors applied to the IRD base number.
+	irdWeights = []int{3, 2, 7, 6, 5, 4, 3, 2}
 
-// irdWeightsSecondary are the weighting factors used when the primary check
-// digit calculation yields 10.
-var irdWeightsSecondary = []int{7, 4, 3, 2, 5, 2, 7, 6}
+	// irdWeightsSecondary are the weighting factors used when the primary check
+	// digit calculation yields 10.
+	irdWeightsSecondary = []int{7, 4, 3, 2, 5, 2, 7, 6}
+)
 
 // normalizeTaxIdentity strips whitespace, separators and country prefix from a
 // New Zealand IRD number.
