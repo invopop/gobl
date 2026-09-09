@@ -7,9 +7,9 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// PeppolEndpointScheme is the URI scheme for Peppol participant identifier
-// endpoints, as in "iso6523-actorid-upis::0225:356000000".
-const PeppolEndpointScheme = "iso6523-actorid-upis"
+// ISO6523Scheme is the URI scheme for ISO 6523 participant identifiers, as
+// in "iso6523-actorid-upis::0225:356000000".
+const ISO6523Scheme = "iso6523-actorid-upis"
 
 // Endpoint identifies an address to which electronic documents may be
 // sent, expressed as a single URI. The URI scheme identifies the

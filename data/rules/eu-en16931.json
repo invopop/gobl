@@ -225,22 +225,12 @@
       "object": "org.Party",
       "subsets": [
         {
-          "field": "inboxes",
-          "assert": [
-            {
-              "id": "GOBL-EU-EN16931-ORG-PARTY-01",
-              "desc": "cannot have more than one inbox (BT-34, BT-49)",
-              "tests": "length between 0 and 1"
-            }
-          ]
-        },
-        {
           "field": "endpoints",
           "assert": [
             {
               "id": "GOBL-EU-EN16931-ORG-PARTY-04",
-              "desc": "cannot have more than one peppol endpoint (BT-34, BT-49)",
-              "tests": "single peppol endpoint"
+              "desc": "cannot have more than one endpoint (BT-34, BT-49)",
+              "tests": "single iso6523 endpoint"
             }
           ]
         },
@@ -262,32 +252,21 @@
       ]
     },
     {
-      "id": "GOBL-EU-EN16931-ORG-INBOX",
-      "object": "org.Inbox",
-      "assert": [
-        {
-          "id": "GOBL-EU-EN16931-ORG-INBOX-01",
-          "desc": "scheme cannot be blank when code is set (BR-62, BR-63)",
-          "tests": "scheme required with code"
-        },
-        {
-          "id": "GOBL-EU-EN16931-ORG-INBOX-02",
-          "desc": "code cannot be blank when scheme is set",
-          "tests": "code required with scheme"
-        }
-      ]
-    },
-    {
       "id": "GOBL-EU-EN16931-ORG-ENDPOINT",
       "object": "org.Endpoint",
       "subsets": [
         {
           "field": "uri",
-          "assert": [
+          "subsets": [
             {
-              "id": "GOBL-EU-EN16931-ORG-ENDPOINT-01",
-              "desc": "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
-              "tests": "valid peppol endpoint uri"
+              "guard": "uri scheme in [iso6523-actorid-upis]",
+              "assert": [
+                {
+                  "id": "GOBL-EU-EN16931-ORG-ENDPOINT-01",
+                  "desc": "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+                  "tests": "uri opaque matches ^:[^:]+:.+$"
+                }
+              ]
             }
           ]
         }

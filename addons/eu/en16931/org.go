@@ -2,7 +2,6 @@ package en16931
 
 import (
 	"regexp"
-	"strings"
 
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
@@ -136,8 +135,8 @@ func normalizeOrgParty(p *org.Party) {
 }
 
 func normalizeOrgPartyEndpoints(p *org.Party) {
-	if p.Endpoint(org.PeppolEndpointScheme) != nil {
-		// No peppol endpoint, return
+	if p.Endpoint(org.ISO6523Scheme) != nil {
+		// ISO 6523 endpoint already present, nothing to derive.
 		return
 	}
 	for _, in := range p.Inboxes {
@@ -147,10 +146,9 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 		if in.Scheme == cbc.CodeEmpty || in.Code == cbc.CodeEmpty {
 			continue
 		}
-		uri := cbc.URI(org.PeppolEndpointScheme + "::" + in.Scheme.String() + ":" + in.Code.String())
 		p.Endpoints = append(p.Endpoints, &org.Endpoint{
 			Label: in.Label,
-			URI:   uri,
+			URI:   cbc.URI(org.ISO6523Scheme + "::" + in.Scheme.String() + ":" + in.Code.String()),
 		})
 		return
 	}
@@ -175,14 +173,9 @@ func orgAttachmentRules() *rules.Set {
 
 func orgPartyRules() *rules.Set {
 	return rules.For(new(org.Party),
-		rules.Field("inboxes",
-			rules.Assert("01", "cannot have more than one inbox (BT-34, BT-49)",
-				is.Length(0, 1),
-			),
-		),
 		rules.Field("endpoints",
-			rules.Assert("04", "cannot have more than one peppol endpoint (BT-34, BT-49)",
-				is.Func("single peppol endpoint", orgPartySinglePeppolEndpoint),
+			rules.Assert("04", "cannot have more than one endpoint (BT-34, BT-49)",
+				is.Func("single iso6523 endpoint", orgPartySingleISO6523Endpoint),
 			),
 		),
 		rules.Field("identities",
@@ -216,74 +209,38 @@ func orgIdentitiesSingleTaxScope(val any) bool {
 	return ok && orgIdentitiesScopeCount(identities, org.IdentityScopeTax) <= 1
 }
 
-func orgPartyPeppolEndpointCount(endpoints []*org.Endpoint) int {
+func orgPartyISO6523EndpointCount(endpoints []*org.Endpoint) int {
 	n := 0
 	for _, e := range endpoints {
-		if e != nil && e.URI.Scheme() == org.PeppolEndpointScheme {
+		if e != nil && e.URI.Scheme() == org.ISO6523Scheme {
 			n++
 		}
 	}
 	return n
 }
 
-func orgPartySinglePeppolEndpoint(val any) bool {
+// orgPartySingleISO6523Endpoint reports whether the party carries at most one
+// ISO 6523 address. Other schemes are additional routes, not BT-34/BT-49.
+func orgPartySingleISO6523Endpoint(val any) bool {
 	endpoints, ok := val.([]*org.Endpoint)
-	return ok && orgPartyPeppolEndpointCount(endpoints) <= 1
-}
-
-func orgInboxRules() *rules.Set {
-	return rules.For(new(org.Inbox),
-		// BR-62, BR-63: scheme required when code is present
-		rules.Assert("01", "scheme cannot be blank when code is set (BR-62, BR-63)",
-			is.Func("scheme required with code", orgInboxSchemeRequiredWithCode),
-		),
-		// code required when scheme is present
-		rules.Assert("02", "code cannot be blank when scheme is set",
-			is.Func("code required with scheme", orgInboxCodeRequiredWithScheme),
-		),
-	)
-}
-
-func orgInboxSchemeRequiredWithCode(val any) bool {
-	i, ok := val.(*org.Inbox)
-	return !ok || i == nil || i.Code == cbc.CodeEmpty || i.Scheme != cbc.CodeEmpty
-}
-
-func orgInboxCodeRequiredWithScheme(val any) bool {
-	i, ok := val.(*org.Inbox)
-	return !ok || i == nil || i.Scheme == cbc.CodeEmpty || i.Code != cbc.CodeEmpty
+	return ok && orgPartyISO6523EndpointCount(endpoints) <= 1
 }
 
 func orgEndpointRules() *rules.Set {
 	return rules.For(new(org.Endpoint),
 		rules.Field("uri",
-			// Endpoint analogue of the inbox scheme/code pair (BR-62, BR-63).
-			rules.Assert("01", "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
-				is.Func("valid peppol endpoint uri", orgEndpointPeppolURIValid),
+			rules.When(cbc.URISchemeIn(org.ISO6523Scheme),
+				rules.Assert("01", "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+					cbc.URIOpaqueMatches(`^:[^:]+:.+$`),
+				),
 			),
 		),
 	)
 }
 
-// orgEndpointPeppolURIValid requires a peppol URI to carry both a scheme and a
-// code. URI parsing exposes the opaque part as ":<scheme>:<code>".
-func orgEndpointPeppolURIValid(val any) bool {
-	uri, ok := val.(cbc.URI)
-	if !ok || uri.Scheme() != org.PeppolEndpointScheme {
-		return true
-	}
-	opaque, ok := strings.CutPrefix(uri.Opaque(), ":")
-	if !ok {
-		return false
-	}
-	scheme, code, found := strings.Cut(opaque, ":")
-	return found && scheme != "" && code != ""
-}
-
 func orgAddressRules() *rules.Set {
 	return rules.For(new(org.Address),
 		rules.Field("country",
-			// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
 			rules.Assert("01", "country is required (BR-9, BR-11, BR-20, BR-57)", is.Present),
 		),
 	)

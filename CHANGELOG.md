@@ -14,14 +14,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   behalf, and ordering details may identify the addressee alongside the document issuer.
 - `addons/eu/en16931`: the party electronic address (BT-34, BT-49) is now
   validated on `org.Endpoint`, not just the deprecated `org.Inbox`: at most one
-  peppol endpoint per party, and its URI must carry both a scheme and a code.
-- `org`: exported `org.PeppolEndpointScheme`, so addons no longer redeclare the
-  `iso6523-actorid-upis` literal.
+  ISO 6523 endpoint per party, and its URI must carry both a scheme and a code.
+- `cbc`: `URISchemeIn` and `URIOpaqueMatches` rules tests, so a rule can be
+  scoped to one kind of URI, or applied to the address it carries, instead of
+  parsing the URI inside a custom function.
+- `org`: `ISO6523Scheme`, the `iso6523-actorid-upis` URI scheme, so addons no
+  longer redeclare the literal.
 - `net`: added `SandboxAuthorities` (defaulting to `lookup.sandbox.gobl.org`)
   and `WithSandbox`. Sandbox and live trust lists remain separate.
 
 ### Changed
 
+- `addons/eu/en16931`: the deprecated `org.Inbox` no longer carries
+  addon rules. These are now hanlded by `org.Endpoint`
 - `addons/it/sdi`: **breaking**: the Italian SDI FatturaPA (`it-sdi-v1`) addon moved to the standalone [`github.com/invopop/gobl.it.sdi`](https://github.com/invopop/gobl.it.sdi) module. Add a blank import (`_ "github.com/invopop/gobl.it.sdi/addon"`) to keep using the `it-sdi-v1` addon key.
 - `gr-mydata-v1`: the `gr-mydata-income-cat` extension may now be set to
   `category1_95` (Other Income-related Information) without an accompanying

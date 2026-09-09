@@ -3,6 +3,8 @@ package cbc
 import (
 	"fmt"
 	"net/url"
+	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/rules"
@@ -112,4 +114,64 @@ func validURI(val any) bool {
 		return false
 	}
 	return p.Scheme != "" && (p.Opaque != "" || p.Host != "" || p.Path != "")
+}
+
+// -- Tests ----------------------------------------------------------------
+
+// URISchemeIn checks the URI's scheme is one of those provided, compared
+// case-insensitively. Use it as a rules.When pre-condition for assertions
+// that only apply to one kind of URI.
+func URISchemeIn(schemes ...string) rules.Test {
+	return uriSchemeInTest{schemes: schemes}
+}
+
+// URIOpaqueMatches checks the URI's scheme-specific part against a regular
+// expression. Unlike is.Matches an empty part is not skipped, so the pattern
+// decides whether an address may be absent. The pattern is compiled on
+// construction and panics if invalid.
+func URIOpaqueMatches(pattern string) rules.Test {
+	return uriOpaqueMatchTest{re: regexp.MustCompile(pattern)}
+}
+
+type uriSchemeInTest struct {
+	schemes []string
+}
+
+// Check returns true when the value is a URI whose scheme is in the list.
+func (t uriSchemeInTest) Check(val any) bool {
+	u, ok := val.(URI)
+	if !ok {
+		return false
+	}
+	scheme := u.Scheme()
+	if scheme == "" {
+		return false
+	}
+	for _, s := range t.schemes {
+		if strings.EqualFold(scheme, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func (t uriSchemeInTest) String() string {
+	return "uri scheme in [" + strings.Join(t.schemes, ", ") + "]"
+}
+
+type uriOpaqueMatchTest struct {
+	re *regexp.Regexp
+}
+
+// Check returns true when the opaque part matches the pattern.
+func (t uriOpaqueMatchTest) Check(val any) bool {
+	u, ok := val.(URI)
+	if !ok {
+		return false
+	}
+	return t.re.MatchString(u.Opaque())
+}
+
+func (t uriOpaqueMatchTest) String() string {
+	return "uri opaque matches " + t.re.String()
 }

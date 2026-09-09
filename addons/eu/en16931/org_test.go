@@ -341,6 +341,8 @@ func TestOrgPartyValidate(t *testing.T) {
 	})
 
 	t.Run("multiple inboxes", func(t *testing.T) {
+		// BT-34/BT-49 is asserted on endpoints now; the deprecated inboxes
+		// carry no addon rules of their own.
 		p := &org.Party{
 			Inboxes: []*org.Inbox{
 				{
@@ -354,10 +356,10 @@ func TestOrgPartyValidate(t *testing.T) {
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "cannot have more than one inbox (BT-34, BT-49)")
+		assert.NoError(t, err)
 	})
 
-	t.Run("one peppol endpoint", func(t *testing.T) {
+	t.Run("one iso6523 endpoint", func(t *testing.T) {
 		p := &org.Party{
 			Endpoints: []*org.Endpoint{
 				{URI: "iso6523-actorid-upis::0225:356000000"},
@@ -367,7 +369,7 @@ func TestOrgPartyValidate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("multiple peppol endpoints", func(t *testing.T) {
+	t.Run("multiple iso6523 endpoints", func(t *testing.T) {
 		p := &org.Party{
 			Endpoints: []*org.Endpoint{
 				{URI: "iso6523-actorid-upis::0225:356000000"},
@@ -375,31 +377,32 @@ func TestOrgPartyValidate(t *testing.T) {
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "cannot have more than one peppol endpoint (BT-34, BT-49)")
+		assert.ErrorContains(t, err, "cannot have more than one endpoint (BT-34, BT-49)")
 	})
 
-	t.Run("peppol endpoint alongside other schemes", func(t *testing.T) {
-		// BT-34/BT-49 constrain the peppol address only; other URI
+	t.Run("iso6523 endpoint alongside other schemes", func(t *testing.T) {
+		// BT-34/BT-49 constrain the ISO 6523 address only; other URI
 		// schemes are additional contact routes, not extra addresses.
 		p := &org.Party{
 			Endpoints: []*org.Endpoint{
 				{URI: "iso6523-actorid-upis::0225:356000000"},
 				{URI: "mailto:billing@example.com"},
 				{URI: "gobl:acme.example.com"},
+				nil,
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
 	})
 
-	t.Run("malformed peppol endpoint under a party", func(t *testing.T) {
+	t.Run("malformed iso6523 endpoint under a party", func(t *testing.T) {
 		p := &org.Party{
 			Endpoints: []*org.Endpoint{
 				{URI: "iso6523-actorid-upis::0225"},
 			},
 		}
 		err := rules.Validate(p, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "peppol endpoint uri requires both a scheme and a code")
+		assert.ErrorContains(t, err, "endpoint uri requires both a scheme and a code")
 	})
 
 	t.Run("single legal-scope identity", func(t *testing.T) {
@@ -455,11 +458,13 @@ func TestOrgInboxValidate(t *testing.T) {
 	})
 
 	t.Run("missing scheme", func(t *testing.T) {
+		// BR-62/BR-63 moved to the endpoint URI, so a half-populated
+		// inbox is only the base org rules' business.
 		i := &org.Inbox{
 			Code: "code1",
 		}
 		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "scheme cannot be blank when code is set (BR-62, BR-63)")
+		assert.NoError(t, err)
 	})
 
 	t.Run("missing code", func(t *testing.T) {
@@ -467,7 +472,7 @@ func TestOrgInboxValidate(t *testing.T) {
 			Scheme: "scheme1",
 		}
 		err := rules.Validate(i, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "code cannot be blank when scheme is set")
+		assert.ErrorContains(t, err, "inbox requires a code, url, or email")
 	})
 
 	t.Run("valid inbox", func(t *testing.T) {
@@ -487,28 +492,28 @@ func TestOrgEndpointValidate(t *testing.T) {
 		err  string
 	}{
 		{
-			name: "valid peppol uri",
+			name: "valid iso6523 uri",
 			uri:  "iso6523-actorid-upis::0225:356000000",
 		},
 		{
 			name: "missing code",
 			uri:  "iso6523-actorid-upis::0225:",
-			err:  "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
 		},
 		{
 			name: "missing scheme",
 			uri:  "iso6523-actorid-upis:::356000000",
-			err:  "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
 		},
 		{
 			name: "no scheme code separator",
 			uri:  "iso6523-actorid-upis::356000000",
-			err:  "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
 		},
 		{
 			name: "single colon form",
 			uri:  "iso6523-actorid-upis:0225:356000000",
-			err:  "peppol endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
+			err:  "endpoint uri requires both a scheme and a code, e.g. 'iso6523-actorid-upis::0225:356000000' (BR-62, BR-63)",
 		},
 		{
 			name: "other scheme left alone",
