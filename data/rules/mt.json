@@ -17,8 +17,18 @@
                   "assert": [
                     {
                       "id": "GOBL-MT-TAX-IDENTITY-01",
-                      "desc": "invalid Maltese VAT identity code",
-                      "tests": "valid"
+                      "desc": "invalid Maltese VAT number format",
+                      "tests": "matches ^\\d{8}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-MT-TAX-IDENTITY-02",
+                      "desc": "invalid Maltese VAT number checksum",
+                      "tests": "checksum"
                     }
                   ]
                 }

@@ -21,7 +21,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{name: "valid 2", code: "12357210"},
 		{name: "valid 3", code: "13043536"},
 		{name: "valid mod-37 edge (check digits 37)", code: "00000037"},
-		{name: "checksum near-miss", code: "12345678", err: "IDENTITY-01"},
+		{name: "checksum near-miss", code: "12345678", err: "IDENTITY-02"},
 		{name: "too short", code: "1270190", err: "IDENTITY-01"},
 		{name: "too long", code: "127019066", err: "IDENTITY-01"},
 		{name: "non-numeric", code: "1270190A", err: "IDENTITY-01"},
