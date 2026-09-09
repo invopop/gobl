@@ -60,6 +60,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   signature entries instead of panicking.
 - `regimes/ar`: CUIT/CUIL tax identities with the `24` prefix (an individual
   contingency prefix) are no longer wrongly rejected as having an invalid prefix.
+- `bill`: unmarshalling an `Invoice` under the `jsonv2` implementation of
+  `encoding/json`, the default from Go 1.27, no longer re-enters
+  `Invoice.UnmarshalJSON` until the process dies with a fatal stack overflow.
 
 ## [v0.504.0]
 
