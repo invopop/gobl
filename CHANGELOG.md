@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `regimes/fi`: New tax regime for Estonia and VAT number validation.
+
 ## [v0.505.0]
 
 ### Added
