@@ -1,0 +1,58 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "EXPORT-2024-014",
+	"currency": "JPY",
+	"issue_date": "2024-03-12",
+	"supplier": {
+		"name": "サンプル商事株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "2-7-1",
+				"street": "Marunouchi",
+				"locality": "Chiyoda-ku",
+				"region": "Tokyo",
+				"code": "100-0005",
+				"country": "JP"
+			}
+		]
+	},
+	"customer": {
+		"name": "Pacific Imports LLC",
+		"addresses": [
+			{
+				"street": "500 Terry Francine Blvd",
+				"locality": "San Francisco",
+				"region": "CA",
+				"code": "94158",
+				"country": "US"
+			}
+		]
+	},
+	"lines": [
+		{
+			"quantity": "100",
+			"item": {
+				"name": "Ceramic tableware set",
+				"price": "5000"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "export"
+				}
+			]
+		}
+	],
+	"notes": [
+		{
+			"key": "general",
+			"text": "Goods exported from Japan; zero-rated for Consumption Tax."
+		}
+	]
+}

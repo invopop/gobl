@@ -1,0 +1,110 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3d10b61290c9cbd96c3bd5aaf5d31880d6adb11697a0355fa95bb7307706498f"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+		"type": "standard",
+		"code": "SAMPLE-014",
+		"issue_date": "2024-07-31",
+		"currency": "JPY",
+		"supplier": {
+			"name": "サンプル株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "T8700110005901"
+			},
+			"addresses": [
+				{
+					"num": "1-1",
+					"street": "Chiyoda",
+					"locality": "Chiyoda-ku",
+					"region": "Tokyo",
+					"code": "100-0001",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "得意先株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "T5021001052461"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Monthly maintenance retainer",
+					"price": "200000"
+				},
+				"sum": "200000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "200000"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2024-08-31",
+						"amount": "220000",
+						"percent": "100%"
+					}
+				],
+				"notes": "月末締め翌月末払い (closing end of month, payment by end of the following month)."
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"number": "1234567",
+						"name": "MUFG Bank, Marunouchi Branch (ordinary account)"
+					}
+				],
+				"notes": "Bank transfer fees are borne by the payer."
+			}
+		},
+		"totals": {
+			"sum": "200000",
+			"total": "200000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "200000",
+								"percent": "10%",
+								"amount": "20000"
+							}
+						],
+						"amount": "20000"
+					}
+				],
+				"sum": "20000"
+			},
+			"tax": "20000",
+			"total_with_tax": "220000",
+			"payable": "220000"
+		}
+	}
+}

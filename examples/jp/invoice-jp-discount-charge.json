@@ -1,0 +1,78 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "SAMPLE-021",
+	"currency": "JPY",
+	"issue_date": "2024-10-10",
+	"supplier": {
+		"name": "サンプル株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "1-1",
+				"street": "Chiyoda",
+				"locality": "Chiyoda-ku",
+				"region": "Tokyo",
+				"code": "100-0001",
+				"country": "JP"
+			}
+		]
+	},
+	"customer": {
+		"name": "得意先株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T5021001052461"
+		}
+	},
+	"lines": [
+		{
+			"quantity": "3",
+			"item": {
+				"name": "Gift hamper (assorted sweets)",
+				"price": "4000"
+			},
+			"discounts": [
+				{
+					"percent": "10%",
+					"reason": "Bulk order discount"
+				}
+			],
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "reduced"
+				}
+			]
+		},
+		{
+			"quantity": "1",
+			"item": {
+				"name": "Gift wrapping service",
+				"price": "1500"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	],
+	"charges": [
+		{
+			"reason": "Refrigerated delivery (送料)",
+			"amount": "2000",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	]
+}

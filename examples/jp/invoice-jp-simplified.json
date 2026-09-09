@@ -1,0 +1,57 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "R-20240520-0042",
+	"currency": "JPY",
+	"issue_date": "2024-05-20",
+	"tax": {
+		"tags": ["simplified"],
+		"prices_include": "VAT"
+	},
+	"supplier": {
+		"name": "サンプルマート 渋谷店",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "1-23-4",
+				"street": "Jinnan",
+				"locality": "Shibuya-ku",
+				"region": "Tokyo",
+				"code": "150-0041",
+				"country": "JP"
+			}
+		]
+	},
+	"lines": [
+		{
+			"quantity": "2",
+			"item": {
+				"name": "Bottled green tea 500ml",
+				"price": "160"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "reduced"
+				}
+			]
+		},
+		{
+			"quantity": "1",
+			"item": {
+				"name": "AA alkaline batteries (4-pack)",
+				"price": "550"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	]
+}

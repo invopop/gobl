@@ -1,0 +1,61 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "USD-2024-0009",
+	"currency": "USD",
+	"issue_date": "2024-09-02",
+	"exchange_rates": [
+		{
+			"from": "JPY",
+			"to": "USD",
+			"amount": "0.006826"
+		}
+	],
+	"supplier": {
+		"name": "サンプル株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "1-1",
+				"street": "Chiyoda",
+				"locality": "Chiyoda-ku",
+				"region": "Tokyo",
+				"code": "100-0001",
+				"country": "JP"
+			}
+		]
+	},
+	"customer": {
+		"name": "得意先株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T5021001052461"
+		}
+	},
+	"lines": [
+		{
+			"quantity": "1",
+			"item": {
+				"name": "Cloud infrastructure usage",
+				"currency": "JPY",
+				"price": "750000"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	],
+	"notes": [
+		{
+			"key": "general",
+			"text": "Invoiced in USD; the line is priced in JPY and converted at 1 JPY = 0.006826 USD. Consumption Tax remains reportable in JPY."
+		}
+	]
+}

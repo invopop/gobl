@@ -1,0 +1,92 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "015cff9e5d6576b8978222f27bfcc5bfa0e57a75d148d2c9fdc59db5e854edde"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+		"type": "standard",
+		"code": "RC-2024-0031",
+		"issue_date": "2024-04-01",
+		"currency": "JPY",
+		"tax": {},
+		"supplier": {
+			"name": "Global Ads Inc.",
+			"tax_id": {
+				"country": "US"
+			},
+			"addresses": [
+				{
+					"street": "1 Market Street",
+					"locality": "San Francisco",
+					"region": "CA",
+					"code": "94105",
+					"country": "US"
+				}
+			]
+		},
+		"customer": {
+			"name": "得意先株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "T5021001052461"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Online advertising services (B2B)",
+					"price": "800000"
+				},
+				"sum": "800000",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge"
+					}
+				],
+				"total": "800000"
+			}
+		],
+		"totals": {
+			"sum": "800000",
+			"total": "800000",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"base": "800000",
+								"amount": "0"
+							}
+						],
+						"amount": "0"
+					}
+				],
+				"sum": "0"
+			},
+			"tax": "0",
+			"total_with_tax": "800000",
+			"payable": "800000"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Reverse charge: the customer accounts for Japanese Consumption Tax on this specified purchase of taxable services."
+			}
+		]
+	}
+}

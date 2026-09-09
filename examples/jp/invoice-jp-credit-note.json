@@ -1,0 +1,62 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"type": "credit-note",
+	"code": "CN-2024-0006",
+	"currency": "JPY",
+	"issue_date": "2024-03-05",
+	"preceding": [
+		{
+			"type": "standard",
+			"code": "SAMPLE-001",
+			"issue_date": "2024-02-01",
+			"reason": "Post-sale volume rebate"
+		}
+	],
+	"supplier": {
+		"name": "サンプル株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "1-1",
+				"street": "Chiyoda",
+				"locality": "Chiyoda-ku",
+				"region": "Tokyo",
+				"code": "100-0001",
+				"country": "JP"
+			}
+		]
+	},
+	"customer": {
+		"name": "得意先株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T5021001052461"
+		}
+	},
+	"lines": [
+		{
+			"quantity": "1",
+			"item": {
+				"name": "Volume rebate on Consulting service",
+				"price": "30000"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	],
+	"notes": [
+		{
+			"key": "general",
+			"text": "適格返還請求書 (qualified return invoice) for the rebate granted against invoice SAMPLE-001."
+		}
+	]
+}

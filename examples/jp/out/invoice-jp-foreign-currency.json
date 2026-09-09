@@ -1,0 +1,107 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f2a8a74a150a1a706df518eb23731245883ebae3931f6b5b7f562c821a88a3b5"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "JP",
+		"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+		"type": "standard",
+		"code": "USD-2024-0009",
+		"issue_date": "2024-09-02",
+		"currency": "USD",
+		"exchange_rates": [
+			{
+				"from": "JPY",
+				"to": "USD",
+				"amount": "0.006826"
+			}
+		],
+		"supplier": {
+			"name": "サンプル株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "T8700110005901"
+			},
+			"addresses": [
+				{
+					"num": "1-1",
+					"street": "Chiyoda",
+					"locality": "Chiyoda-ku",
+					"region": "Tokyo",
+					"code": "100-0001",
+					"country": "JP"
+				}
+			]
+		},
+		"customer": {
+			"name": "得意先株式会社",
+			"tax_id": {
+				"country": "JP",
+				"code": "T5021001052461"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cloud infrastructure usage",
+					"currency": "USD",
+					"price": "5120.00",
+					"alt_prices": [
+						{
+							"currency": "JPY",
+							"value": "750000"
+						}
+					]
+				},
+				"sum": "5120.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "10%"
+					}
+				],
+				"total": "5120.00"
+			}
+		],
+		"totals": {
+			"sum": "5120.00",
+			"total": "5120.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5120.00",
+								"percent": "10%",
+								"amount": "512.00"
+							}
+						],
+						"amount": "512.00"
+					}
+				],
+				"sum": "512.00"
+			},
+			"tax": "512.00",
+			"total_with_tax": "5632.00",
+			"payable": "5632.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoiced in USD; the line is priced in JPY and converted at 1 JPY = 0.006826 USD. Consumption Tax remains reportable in JPY."
+			}
+		]
+	}
+}

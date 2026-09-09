@@ -1,0 +1,54 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "RC-2024-0031",
+	"currency": "JPY",
+	"issue_date": "2024-04-01",
+	"tax": {
+		"tags": ["reverse-charge"]
+	},
+	"supplier": {
+		"name": "Global Ads Inc.",
+		"tax_id": {
+			"country": "US"
+		},
+		"addresses": [
+			{
+				"street": "1 Market Street",
+				"locality": "San Francisco",
+				"region": "CA",
+				"code": "94105",
+				"country": "US"
+			}
+		]
+	},
+	"customer": {
+		"name": "得意先株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T5021001052461"
+		}
+	},
+	"lines": [
+		{
+			"quantity": "1",
+			"item": {
+				"name": "Online advertising services (B2B)",
+				"price": "800000"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge"
+				}
+			]
+		}
+	],
+	"notes": [
+		{
+			"key": "general",
+			"text": "Reverse charge: the customer accounts for Japanese Consumption Tax on this specified purchase of taxable services."
+		}
+	]
+}

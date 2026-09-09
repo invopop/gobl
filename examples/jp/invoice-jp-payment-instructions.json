@@ -1,0 +1,69 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "JP",
+	"uuid": "0192a3b4-c5d6-7e8f-9012-3456789abcde",
+	"code": "SAMPLE-014",
+	"currency": "JPY",
+	"issue_date": "2024-07-31",
+	"supplier": {
+		"name": "サンプル株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T8700110005901"
+		},
+		"addresses": [
+			{
+				"num": "1-1",
+				"street": "Chiyoda",
+				"locality": "Chiyoda-ku",
+				"region": "Tokyo",
+				"code": "100-0001",
+				"country": "JP"
+			}
+		]
+	},
+	"customer": {
+		"name": "得意先株式会社",
+		"tax_id": {
+			"country": "JP",
+			"code": "T5021001052461"
+		}
+	},
+	"lines": [
+		{
+			"quantity": "1",
+			"item": {
+				"name": "Monthly maintenance retainer",
+				"price": "200000"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "general"
+				}
+			]
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "due-date",
+			"due_dates": [
+				{
+					"date": "2024-08-31",
+					"percent": "100%"
+				}
+			],
+			"notes": "月末締め翌月末払い (closing end of month, payment by end of the following month)."
+		},
+		"instructions": {
+			"key": "credit-transfer",
+			"credit_transfer": [
+				{
+					"name": "MUFG Bank, Marunouchi Branch (ordinary account)",
+					"number": "1234567"
+				}
+			],
+			"notes": "Bank transfer fees are borne by the payer."
+		}
+	}
+}
