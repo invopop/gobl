@@ -1,0 +1,44 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: "RO"
+$tags:
+  - self-billed
+uuid: "01927639-c1a0-7f3a-88d9-5b1f2a5e3c53"
+type: standard
+currency: RON
+series: "AUTO"
+code: "0001"
+issue_date: "2026-02-15"
+
+supplier:
+  name: Producator Agricol S.R.L.
+  tax_id:
+    country: "RO"
+    code: "34567892"
+  addresses:
+    - street: Strada Fermei 3
+      locality: Timișoara
+      region: "TM"
+      code: "300001"
+      country: "RO"
+
+customer:
+  name: Client Exemplu S.R.L.
+  tax_id:
+    country: "RO"
+    code: "23456783"
+  addresses:
+    - street: Strada Client 5
+      locality: Cluj-Napoca
+      region: "CJ"
+      code: "400001"
+      country: "RO"
+
+lines:
+  - quantity: "1200"
+    item:
+      name: Grâu de panificație
+      price: "1.15"
+      unit: kg
+    taxes:
+      - cat: VAT
+        rate: reduced
