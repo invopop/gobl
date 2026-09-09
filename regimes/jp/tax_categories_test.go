@@ -50,8 +50,8 @@ func TestConsumptionTaxRates(t *testing.T) {
 		require.NotNil(t, v)
 		assert.Equal(t, "8%", v.Percent.String())
 
-		// The reduced rate was introduced with the 10% standard rate on
-		// 2019-10-01 and did not exist before then.
+		// The reduced rate was introduced on 2019-10-01 and did not exist
+		// before then.
 		assert.Nil(t, rate.Value(cal.MakeDate(2019, 9, 30), tax.Extensions{}))
 	})
 }

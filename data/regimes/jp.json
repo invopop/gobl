@@ -5,7 +5,7 @@
     "ja": "日本"
   },
   "description": {
-    "en": "Japan levies a Consumption Tax (消費税, shōhizei) administered by the\nNational Tax Agency (NTA). It is a value-added tax charged at a standard\nrate of 10% with a reduced rate of 8% for food and drink (excluding alcohol\nand dining out) and certain newspaper subscriptions. Exports and export-like\ntransactions are zero-rated.\n\nAlthough the rate legally decomposes into a national Consumption Tax portion\nand a Local Consumption Tax portion (a fixed fraction of the national tax),\nthe two are invoiced as a single combined rate. GOBL therefore models a single\nConsumption Tax category using the shared VAT definition.\n\nSince October 2023, Japan operates the Qualified Invoice System\n(適格請求書等保存方式, \"Invoice Seido\"). Only a registered \"qualified invoice\nissuer\" may issue invoices that allow a registered buyer to claim an input tax\ncredit. Such issuers are identified by a registration number consisting of the\nletter \"T\" followed by 13 digits."
+    "en": "Japan levies a Consumption Tax (消費税, shōhizei) administered by the\nNational Tax Agency (NTA). It is a value-added tax charged at a standard\nrate, with a reduced rate for food and drink (excluding alcohol and\ndining out) and certain newspaper subscriptions. Exports and export-like\ntransactions are zero-rated.\n\nAlthough the rate legally decomposes into a national Consumption Tax portion\nand a Local Consumption Tax portion (a fixed fraction of the national tax),\nthe two are invoiced as a single combined rate. GOBL therefore models a single\nConsumption Tax category using the shared VAT definition.\n\nSince October 2023, Japan operates the Qualified Invoice System\n(適格請求書等保存方式, \"Invoice Seido\"). Only a registered \"qualified invoice\nissuer\" may issue invoices that allow a registered buyer to claim an input tax\ncredit. Such issuers are identified by a registration number consisting of the\nletter \"T\" followed by 13 digits."
   },
   "sources": [
     {
@@ -96,7 +96,7 @@
             "ja": "標準税率"
           },
           "desc": {
-            "en": "The standard rate of Consumption Tax applies to all supplies of goods and services unless a reduced rate, zero rate, or exemption applies. The 10% headline rate combines a 7.8% national Consumption Tax and a 2.2% Local Consumption Tax."
+            "en": "The standard rate of Consumption Tax applies to all supplies of goods and services unless a reduced rate, zero rate, or exemption applies. The headline rate combines a national Consumption Tax and a Local Consumption Tax charged as a fixed fraction of it, invoiced together as a single combined rate."
           },
           "values": [
             {
@@ -127,7 +127,7 @@
             "ja": "軽減税率"
           },
           "desc": {
-            "en": "The 8% reduced rate applies to food and drink for human\nconsumption excluding alcoholic drinks and \"dining out\" (eating\nat the establishment), and to newspapers issued twice a week or\nmore under a subscription. Note that catering, and food and drink\nprovided at fee-charging retirement homes, are standard-rated, and\nthat mixed \"linked goods\" bundles qualify only under specific\nvalue conditions - these boundaries cannot be determined from an\ninvoice line alone and are not enforced by GOBL."
+            "en": "The reduced rate applies to food and drink for human\nconsumption excluding alcoholic drinks and \"dining out\" (eating\nat the establishment), and to newspapers issued twice a week or\nmore under a subscription. Note that catering, and food and drink\nprovided at fee-charging retirement homes, are standard-rated, and\nthat mixed \"linked goods\" bundles qualify only under specific\nvalue conditions - these boundaries cannot be determined from an\ninvoice line alone and are not enforced by GOBL."
           },
           "values": [
             {

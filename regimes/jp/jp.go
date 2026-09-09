@@ -49,8 +49,8 @@ func New() *tax.RegimeDef {
 			i18n.EN: here.Doc(`
 				Japan levies a Consumption Tax (消費税, shōhizei) administered by the
 				National Tax Agency (NTA). It is a value-added tax charged at a standard
-				rate of 10% with a reduced rate of 8% for food and drink (excluding alcohol
-				and dining out) and certain newspaper subscriptions. Exports and export-like
+				rate, with a reduced rate for food and drink (excluding alcohol and
+				dining out) and certain newspaper subscriptions. Exports and export-like
 				transactions are zero-rated.
 
 				Although the rate legally decomposes into a national Consumption Tax portion

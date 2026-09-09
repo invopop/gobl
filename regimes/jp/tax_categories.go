@@ -39,7 +39,7 @@ func taxCategories() []*tax.CategoryDef {
 						i18n.JA: "標準税率",
 					},
 					Description: i18n.String{
-						i18n.EN: "The standard rate of Consumption Tax applies to all supplies of goods and services unless a reduced rate, zero rate, or exemption applies. The 10% headline rate combines a 7.8% national Consumption Tax and a 2.2% Local Consumption Tax.",
+						i18n.EN: "The standard rate of Consumption Tax applies to all supplies of goods and services unless a reduced rate, zero rate, or exemption applies. The headline rate combines a national Consumption Tax and a Local Consumption Tax charged as a fixed fraction of it, invoiced together as a single combined rate.",
 					},
 					// Values must be ordered newest-first (descending by date).
 					Values: []*tax.RateValueDef{
@@ -70,7 +70,7 @@ func taxCategories() []*tax.CategoryDef {
 					},
 					Description: i18n.String{
 						i18n.EN: here.Doc(`
-							The 8% reduced rate applies to food and drink for human
+							The reduced rate applies to food and drink for human
 							consumption excluding alcoholic drinks and "dining out" (eating
 							at the establishment), and to newspapers issued twice a week or
 							more under a subscription. Note that catering, and food and drink
@@ -80,8 +80,8 @@ func taxCategories() []*tax.CategoryDef {
 							invoice line alone and are not enforced by GOBL.
 						`),
 					},
-					// The reduced rate was introduced together with the 10% standard rate
-					// on 1 October 2019; it did not exist before that date.
+					// The reduced rate was introduced on 1 October 2019, together with
+					// the current standard rate; it did not exist before that date.
 					Values: []*tax.RateValueDef{
 						{
 							Since:   cal.NewDate(2019, 10, 1),
