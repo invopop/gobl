@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `regimes/au`: New tax regime for Australia — GST and ABN tax identity validation (weighted modulus-89 checksum).
+- `regimes/nz`: New tax regime for New Zealand — GST, IRD number validation (weighted modulus-11 checksum), and te reo Māori (`mi`) translations.
 - `sg`: UEN check character validation for the ROB, ROC, and "Others" formats,
   applied to both `UEN` org identities and tax identity codes.
 - `org`/`bill`: parties may now identify a single-level agent acting on their
