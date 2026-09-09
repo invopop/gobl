@@ -36,7 +36,7 @@ var taxCodeRegexp = regexp.MustCompile(`^T[0-9]{13}$`)
 // Note that the NTA only documents this algorithm for Corporate Numbers, but
 // any registration number carrying a "T" is claiming to be a valid qualified
 // invoice issuer number, so GOBL checks it regardless. A registrant without
-// one can simply omits tax_id.code, which stays valid.
+// one can simply omit tax_id.code, which stays valid.
 func isValidChecksum(code string) bool {
 	// code is "T" + check digit (1) + base number (12).
 	if len(code) != 14 {
