@@ -74,10 +74,6 @@ func New() *tax.RegimeDef {
 				URL:   "https://www.hacienda.go.cr/",
 			},
 			{
-				Title: i18n.NewString("OECD - Costa Rica Tax Identification Numbers"),
-				URL:   "https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/costa-rica-tin.pdf",
-			},
-			{
 				Title: i18n.NewString("Reglamento de Comprobantes Electrónicos para Efectos Tributarios"),
 				URL:   "https://sinalevi.go.cr/ResultadosNormativa/Informacion?param1=103206&param2=143152&param3=1",
 			},
