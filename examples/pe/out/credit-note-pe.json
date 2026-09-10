@@ -1,0 +1,104 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "8c5f40240fe1573aaa6275b0a4442f18fb4fdefdb9866e41ea069d9da3953080"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PE",
+		"uuid": "9c5b3a17-2e8d-4f60-a1b9-6d7e8c9f0a2d",
+		"type": "credit-note",
+		"series": "FC01",
+		"code": "00000012",
+		"issue_date": "2026-07-01",
+		"currency": "PEN",
+		"preceding": [
+			{
+				"type": "standard",
+				"issue_date": "2026-06-15",
+				"series": "F001",
+				"code": "00000123"
+			}
+		],
+		"supplier": {
+			"name": "Comercial Andina S.A.C.",
+			"tax_id": {
+				"country": "PE",
+				"code": "20401234561"
+			},
+			"addresses": [
+				{
+					"street": "Av. Javier Prado Este 1234",
+					"locality": "San Isidro",
+					"region": "Lima",
+					"code": "15036",
+					"country": "PE"
+				}
+			]
+		},
+		"customer": {
+			"name": "Distribuidora del Sur S.A.",
+			"tax_id": {
+				"country": "PE",
+				"code": "20876543215"
+			},
+			"addresses": [
+				{
+					"street": "Av. Ejército 745",
+					"locality": "Arequipa",
+					"region": "Arequipa",
+					"code": "04001",
+					"country": "PE"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Servicios de consultoría",
+					"price": "1500.00"
+				},
+				"sum": "3000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "18.0%"
+					}
+				],
+				"total": "3000.00"
+			}
+		],
+		"totals": {
+			"sum": "3000.00",
+			"total": "3000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "3000.00",
+								"percent": "18.0%",
+								"amount": "540.00"
+							}
+						],
+						"amount": "540.00"
+					}
+				],
+				"sum": "540.00"
+			},
+			"tax": "540.00",
+			"total_with_tax": "3540.00",
+			"payable": "3540.00"
+		}
+	}
+}
