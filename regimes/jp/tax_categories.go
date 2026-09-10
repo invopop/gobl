@@ -9,11 +9,13 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Japan's tax gets its own category code.
+const TaxCategoryJCT cbc.Code = "JCT"
+
 func taxCategories() []*tax.CategoryDef {
 	return []*tax.CategoryDef{
-		// Consumption Tax (modelled using the shared VAT category)
 		{
-			Code: tax.CategoryVAT,
+			Code: TaxCategoryJCT,
 			Name: i18n.String{
 				i18n.EN: "Consumption Tax",
 				i18n.JA: "消費税",

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "015cff9e5d6576b8978222f27bfcc5bfa0e57a75d148d2c9fdc59db5e854edde"
+			"val": "0be31e936b2f0ab969661cdd7bd2413b7c2e24758e5712a14038b3cba5941006"
 		}
 	},
 	"doc": {
@@ -52,7 +52,7 @@
 				"sum": "800000",
 				"taxes": [
 					{
-						"cat": "VAT",
+						"cat": "JCT",
 						"key": "reverse-charge"
 					}
 				],
@@ -65,7 +65,7 @@
 			"taxes": {
 				"categories": [
 					{
-						"code": "VAT",
+						"code": "JCT",
 						"rates": [
 							{
 								"key": "reverse-charge",

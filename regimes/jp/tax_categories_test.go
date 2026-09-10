@@ -11,8 +11,8 @@ import (
 )
 
 func TestConsumptionTaxRates(t *testing.T) {
-	cat := jp.New().CategoryDef(tax.CategoryVAT)
-	require.NotNil(t, cat, "VAT category should be defined in the JP regime")
+	cat := jp.New().CategoryDef(jp.TaxCategoryJCT)
+	require.NotNil(t, cat, "JCT category should be defined in the JP regime")
 
 	t.Run("standard rate history", func(t *testing.T) {
 		rate := cat.RateDef(tax.KeyStandard, tax.RateGeneral)

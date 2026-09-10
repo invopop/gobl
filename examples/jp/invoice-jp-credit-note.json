@@ -47,7 +47,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "general"
 				}
 			]

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2a99f48a31dc431bea1ae6eae6170f475ca967769079584b709e8237cb873cbf"
+			"val": "ba558c4c76fcc6b9b98bed24de91da07d9a9760a27fbac238bb5a7c7540a5a75"
 		}
 	},
 	"doc": {
@@ -19,7 +19,7 @@
 		"issue_date": "2024-05-20",
 		"currency": "JPY",
 		"tax": {
-			"prices_include": "VAT"
+			"prices_include": "JCT"
 		},
 		"supplier": {
 			"name": "サンプルマート 渋谷店",
@@ -49,7 +49,7 @@
 				"sum": "320",
 				"taxes": [
 					{
-						"cat": "VAT",
+						"cat": "JCT",
 						"key": "standard",
 						"rate": "reduced",
 						"percent": "8%"
@@ -67,7 +67,7 @@
 				"sum": "550",
 				"taxes": [
 					{
-						"cat": "VAT",
+						"cat": "JCT",
 						"key": "standard",
 						"rate": "general",
 						"percent": "10%"
@@ -83,7 +83,7 @@
 			"taxes": {
 				"categories": [
 					{
-						"code": "VAT",
+						"code": "JCT",
 						"rates": [
 							{
 								"key": "standard",

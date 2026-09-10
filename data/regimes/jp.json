@@ -5,7 +5,7 @@
     "ja": "日本"
   },
   "description": {
-    "en": "Japan levies a Consumption Tax (消費税, shōhizei) administered by the\nNational Tax Agency (NTA). It is a value-added tax charged at a standard\nrate, with a reduced rate for food and drink (excluding alcohol and\ndining out) and certain newspaper subscriptions. Exports and export-like\ntransactions are zero-rated.\n\nAlthough the rate legally decomposes into a national Consumption Tax portion\nand a Local Consumption Tax portion (a fixed fraction of the national tax),\nthe two are invoiced as a single combined rate. GOBL therefore models a single\nConsumption Tax category using the shared VAT definition.\n\nSince October 2023, Japan operates the Qualified Invoice System\n(適格請求書等保存方式, \"Invoice Seido\"). Only a registered \"qualified invoice\nissuer\" may issue invoices that allow a registered buyer to claim an input tax\ncredit. Such issuers are identified by a registration number consisting of the\nletter \"T\" followed by 13 digits."
+    "en": "Japan levies a Consumption Tax (消費税, shōhizei) administered by the\nNational Tax Agency (NTA). It is a value-added tax charged at a standard\nrate, with a reduced rate for food and drink (excluding alcohol and\ndining out) and certain newspaper subscriptions. Exports and export-like\ntransactions are zero-rated.\n\nAlthough the rate legally decomposes into a national Consumption Tax portion\nand a Local Consumption Tax portion (a fixed fraction of the national tax),\nthe two are invoiced as a single combined rate. GOBL models this as a single\ndedicated Consumption Tax category (JCT).\n\nSince October 2023, Japan operates the Qualified Invoice System\n(適格請求書等保存方式, \"Invoice Seido\"). Only a registered \"qualified invoice\nissuer\" may issue invoices that allow a registered buyer to claim an input tax\ncredit. Such issuers are identified by a registration number consisting of the\nletter \"T\" followed by 13 digits."
   },
   "sources": [
     {
@@ -27,7 +27,7 @@
   "tax_scheme": "VAT",
   "categories": [
     {
-      "code": "VAT",
+      "code": "JCT",
       "name": {
         "en": "Consumption Tax",
         "ja": "消費税"

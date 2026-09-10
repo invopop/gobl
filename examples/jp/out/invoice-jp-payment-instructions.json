@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3d10b61290c9cbd96c3bd5aaf5d31880d6adb11697a0355fa95bb7307706498f"
+			"val": "1d1e1d5aab18776d69b462241521cf912f44f8280845e61ff98235b660811575"
 		}
 	},
 	"doc": {
@@ -50,7 +50,7 @@
 				"sum": "200000",
 				"taxes": [
 					{
-						"cat": "VAT",
+						"cat": "JCT",
 						"key": "standard",
 						"rate": "general",
 						"percent": "10%"
@@ -88,7 +88,7 @@
 			"taxes": {
 				"categories": [
 					{
-						"code": "VAT",
+						"code": "JCT",
 						"rates": [
 							{
 								"key": "standard",

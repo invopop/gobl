@@ -7,7 +7,7 @@
 	"issue_date": "2024-05-20",
 	"tax": {
 		"tags": ["simplified"],
-		"prices_include": "VAT"
+		"prices_include": "JCT"
 	},
 	"supplier": {
 		"name": "サンプルマート 渋谷店",
@@ -35,7 +35,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "reduced"
 				}
 			]
@@ -48,7 +48,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "general"
 				}
 			]

@@ -43,7 +43,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"key": "export"
 				}
 			]

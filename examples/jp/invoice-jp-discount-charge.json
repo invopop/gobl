@@ -44,7 +44,7 @@
 			],
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "reduced"
 				}
 			]
@@ -57,7 +57,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "general"
 				}
 			]
@@ -69,7 +69,7 @@
 			"amount": "2000",
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "general"
 				}
 			]

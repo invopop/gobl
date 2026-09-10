@@ -39,7 +39,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"key": "reverse-charge"
 				}
 			]

@@ -55,8 +55,8 @@ func New() *tax.RegimeDef {
 
 				Although the rate legally decomposes into a national Consumption Tax portion
 				and a Local Consumption Tax portion (a fixed fraction of the national tax),
-				the two are invoiced as a single combined rate. GOBL therefore models a single
-				Consumption Tax category using the shared VAT definition.
+				the two are invoiced as a single combined rate. GOBL models this as a single
+				dedicated Consumption Tax category (JCT).
 
 				Since October 2023, Japan operates the Qualified Invoice System
 				(適格請求書等保存方式, "Invoice Seido"). Only a registered "qualified invoice

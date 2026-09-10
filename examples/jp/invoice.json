@@ -38,7 +38,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "general"
 				}
 			]
@@ -51,7 +51,7 @@
 			},
 			"taxes": [
 				{
-					"cat": "VAT",
+					"cat": "JCT",
 					"rate": "reduced"
 				}
 			]

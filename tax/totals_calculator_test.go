@@ -241,7 +241,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Country:  "JP",
+							Country:  "CN",
 							Percent:  num.NewPercentage(190, 3),
 						},
 					},
@@ -256,7 +256,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Country: "JP",
+								Country: "CN",
 								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(190, 3),
