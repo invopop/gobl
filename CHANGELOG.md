@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/cr`: new tax regime for Costa Rica.
+
 ## [v0.505.0]
 
 ### Added
