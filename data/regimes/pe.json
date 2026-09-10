@@ -58,11 +58,11 @@
     {
       "code": "VAT",
       "name": {
-        "en": "IGV",
+        "en": "VAT",
         "es": "IGV"
       },
       "title": {
-        "en": "General Sales Tax",
+        "en": "Value Added Tax",
         "es": "Impuesto General a las Ventas"
       },
       "desc": {

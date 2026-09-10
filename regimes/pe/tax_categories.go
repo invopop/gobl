@@ -13,11 +13,11 @@ var taxCategories = []*tax.CategoryDef{
 	{
 		Code: tax.CategoryVAT,
 		Name: i18n.String{
-			i18n.EN: "IGV",
+			i18n.EN: "VAT",
 			i18n.ES: "IGV",
 		},
 		Title: i18n.String{
-			i18n.EN: "General Sales Tax",
+			i18n.EN: "Value Added Tax",
 			i18n.ES: "Impuesto General a las Ventas",
 		},
 		Description: &i18n.String{
