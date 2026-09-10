@@ -49,4 +49,4 @@ lines:
       unit: "h"
     taxes:
       - cat: VAT
-        rate: exempt+reverse-charge
+        key: reverse-charge
