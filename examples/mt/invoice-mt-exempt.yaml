@@ -1,0 +1,41 @@
+# Exempt-without-credit supply.
+#
+# Insurance services are "exempt without credit" under the Fifth Schedule,
+# Part Two (item 2): no VAT is charged and the supplier cannot recover input VAT.
+# In GOBL this maps to the "exempt" combo key (no percentage), distinct from the
+# zero-rated "exempt with credit" case.
+# Source: MTCA VAT Rates & Exemptions FAQs (Fifth Schedule Part Two),
+# https://mtca.gov.mt/docs/default-source/documents/business-tax/vat/faqs/vat-rates-and-exemptions---faqs.pdf
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852b2"
+series: "SAMPLE"
+code: "003"
+issue_date: "2026-01-15"
+currency: "EUR"
+
+supplier:
+  name: "Provider Services Ltd"
+  tax_id:
+    country: "MT"
+    code: "12701906"
+  addresses:
+    - num: "50"
+      street: "Triq ir-Repubblika"
+      locality: "Valletta"
+      code: "VLT 1117"
+      country: "MT"
+
+customer:
+  name: "Client Holdings Ltd"
+  tax_id:
+    country: "MT"
+    code: "12357210"
+
+lines:
+  - quantity: "1"
+    item:
+      name: "Insurance service"
+      price: "500.00"
+    taxes:
+      - cat: VAT
+        rate: exempt

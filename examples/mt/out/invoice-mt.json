@@ -1,0 +1,126 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "a723578b6c299c6c3de25e3d83a46bc75ca57eaf4650d96e6772658bf7ce8f11"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MT",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852b0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2026-01-15",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Provider Services Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12701906"
+			},
+			"addresses": [
+				{
+					"num": "50",
+					"street": "Triq ir-Repubblika",
+					"locality": "Valletta",
+					"code": "VLT 1117",
+					"country": "MT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.mt"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Holdings Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12357210"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Triq San Ġwann",
+					"locality": "Sliema",
+					"code": "SLM 1234",
+					"country": "MT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Consultancy services",
+					"price": "100.00",
+					"unit": "h"
+				},
+				"sum": "2000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "18%"
+					}
+				],
+				"total": "2000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "10",
+				"item": {
+					"name": "Printed handbooks",
+					"price": "15.00"
+				},
+				"sum": "150.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "special",
+						"percent": "5%"
+					}
+				],
+				"total": "150.00"
+			}
+		],
+		"totals": {
+			"sum": "2150.00",
+			"total": "2150.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2000.00",
+								"percent": "18%",
+								"amount": "360.00"
+							},
+							{
+								"key": "standard",
+								"base": "150.00",
+								"percent": "5%",
+								"amount": "7.50"
+							}
+						],
+						"amount": "367.50"
+					}
+				],
+				"sum": "367.50"
+			},
+			"tax": "367.50",
+			"total_with_tax": "2517.50",
+			"payable": "2517.50"
+		}
+	}
+}

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/mt`: add the Malta (`MT`) VAT regime.
+
 ## [v0.505.0]
 
 ### Added

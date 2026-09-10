@@ -1,0 +1,84 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ffeb29841cf1f2f9171d853aa53f79cdaefda79198f5f850a457d9d7c7ff7a48"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MT",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852b2",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2026-01-15",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Provider Services Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12701906"
+			},
+			"addresses": [
+				{
+					"num": "50",
+					"street": "Triq ir-Repubblika",
+					"locality": "Valletta",
+					"code": "VLT 1117",
+					"country": "MT"
+				}
+			]
+		},
+		"customer": {
+			"name": "Client Holdings Ltd",
+			"tax_id": {
+				"country": "MT",
+				"code": "12357210"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Insurance service",
+					"price": "500.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "exempt"
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "500.00",
+			"total": "500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"base": "500.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "500.00",
+			"payable": "500.00"
+		}
+	}
+}
