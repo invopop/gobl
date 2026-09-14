@@ -9,6 +9,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `regimes/cr`: new tax regime for Costa Rica.
+- `bill`: `RoundToCurrency` recalculates an invoice with the `currency` rounding rule so that every amount fits the currency's precision, with any change in the amount payable carried in the totals' `rounding`.
+
+### Changed
+
+- `bill`: `RemoveIncludedTaxes` only switches to the `precise` rounding rule when the rule was inherited from the tax regime. A rule set on the document itself is now respected.
+
+### Fixed
+
+- `bill`: `RemoveIncludedTaxes` maintains the amount payable instead of the total with tax, adds to any `rounding` total already present instead of replacing it, and no longer panics on documents that have not been calculated.
 
 ## [v0.505.0]
 

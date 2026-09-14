@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -23,6 +24,7 @@ type billable interface {
 	GetTags() []cbc.Key
 
 	// Public methods
+	Calculate() error
 	GetCurrency() currency.Code
 	GetExchangeRates() []*currency.ExchangeRate
 
@@ -44,7 +46,50 @@ type billable interface {
 	setIssueDate(cal.Date)
 	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
+	setTax(*Tax)
 	setTotals(*Totals)
+}
+
+// roundingRule determines the rounding rule to apply to the document, either
+// explicitly defined in the tax object, or the one provided by the regime.
+func roundingRule(doc billable) cbc.Key {
+	if tx := doc.getTax(); tx != nil && tx.Rounding != "" {
+		return tx.Rounding
+	}
+	return doc.RegimeDef().GetRoundingRule()
+}
+
+// ensureCalculated performs a full calculation on documents that have not been
+// prepared yet.
+func ensureCalculated(doc billable) error {
+	if doc.getTotals() != nil {
+		return nil
+	}
+	return doc.Calculate()
+}
+
+// recalculateKeepingPayable recalculates the document, carrying any change in
+// the amount payable into the totals' rounding amount.
+func recalculateKeepingPayable(doc billable, payable num.Amount) error {
+	if err := calculate(doc); err != nil {
+		return err
+	}
+	t := doc.getTotals()
+	if t == nil {
+		return nil
+	}
+	diff := payable.Subtract(t.Payable)
+	if diff.IsZero() {
+		return nil
+	}
+	// Add to any rounding amount already present, which is included in both
+	// payable amounts.
+	rnd := diff
+	if t.Rounding != nil {
+		rnd = t.Rounding.Add(diff)
+	}
+	t.Rounding = &rnd
+	return calculate(doc)
 }
 
 func calculate(doc billable) error {
@@ -75,18 +120,10 @@ func calculate(doc billable) error {
 
 	// Figure out rounding rules and if prices include tax early
 	var pit cbc.Code
-	var rr cbc.Key
 	if tx := doc.getTax(); tx != nil {
-		if tx.PricesInclude != "" {
-			pit = tx.PricesInclude
-		}
-		if tx.Rounding != "" {
-			rr = tx.Rounding
-		}
+		pit = tx.PricesInclude
 	}
-	if rr == "" {
-		rr = r.GetRoundingRule()
-	}
+	rr := roundingRule(doc)
 
 	// Do we need to deal with the customer-rates tag?
 	if doc.HasTags(tax.TagCustomerRates) {
@@ -257,6 +294,10 @@ func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.
 }
 
 func canRemoveIncludedTaxes(doc billable) bool {
+	if doc.HasTags(tax.TagBypass) {
+		// Calculations are skipped entirely.
+		return false
+	}
 	return doc.getTax() != nil && !doc.getTax().PricesInclude.IsEmpty()
 }
 
@@ -266,7 +307,14 @@ func removeIncludedTaxes(doc billable) error {
 	}
 	tpi := doc.getTax().PricesInclude
 
-	totalWithTax := doc.getTotals().TotalWithTax
+	// The original totals are needed to maintain the amount payable.
+	if err := ensureCalculated(doc); err != nil {
+		return err
+	}
+	if doc.getTotals() == nil {
+		return nil
+	}
+	payable := doc.getTotals().Payable
 
 	doc.setTotals(new(Totals))
 	lines := doc.getLines()
@@ -291,31 +339,15 @@ func removeIncludedTaxes(doc billable) error {
 	tx.PricesInclude = ""
 
 	// Tax-exclusive prices need more decimal places than the currency to
-	// represent the original amounts, so the currency rounding rule can no
-	// longer be applied without losing the tax totals.
-	rr := tx.Rounding
-	if rr == "" {
-		rr = doc.RegimeDef().GetRoundingRule()
-	}
-	if rr == tax.RoundingRuleCurrency {
+	// represent the original amounts, so a currency rounding rule inherited
+	// from the regime is replaced with precise. A rule set on the document
+	// itself is respected.
+	if tx.Rounding == "" && doc.RegimeDef().GetRoundingRule() == tax.RoundingRuleCurrency {
 		tx.Rounding = tax.RoundingRulePrecise
 	}
 
-	if err := calculate(doc); err != nil {
-		return err
-	}
-
 	// Account for any rounding errors that we just can't handle
-	t := doc.getTotals()
-	if !totalWithTax.Equals(t.TotalWithTax) {
-		rnd := totalWithTax.Subtract(t.TotalWithTax)
-		t.Rounding = &rnd
-		if err := calculate(doc); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return recalculateKeepingPayable(doc, payable)
 }
 
 func applyCustomerRates(doc billable) {

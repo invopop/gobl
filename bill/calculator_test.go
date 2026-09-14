@@ -303,9 +303,53 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.RemoveIncludedTaxes())
 
-		// The document can no longer use the currency's precision for the
-		// line prices, so it switches to the precise rounding rule in order
-		// to maintain the original tax amounts.
+		// The rounding rule was set on the document itself, so it is kept
+		// and the amounts stay within the currency's precision. The tax no
+		// longer matches the original exactly, and the difference is carried
+		// in the totals' rounding amount.
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, "117.9245", inv.Lines[0].Item.Price.String())
+		assert.Equal(t, "117.92", inv.Lines[0].Total.String())
+		assert.Equal(t, "1415.04", inv.Totals.Sum.String())
+		assert.Equal(t, "1415.04", inv.Totals.Total.String())
+		assert.Equal(t, "84.90", inv.Totals.Tax.String())
+		assert.Equal(t, "1499.94", inv.Totals.TotalWithTax.String())
+		require.NotNil(t, inv.Totals.Rounding)
+		assert.Equal(t, "0.06", inv.Totals.Rounding.String())
+		assert.Equal(t, "1500.00", inv.Totals.Payable.String())
+		rt := inv.Totals.Taxes.Categories[0].Rates[0]
+		assert.Equal(t, "1415.04", rt.Base.String())
+		assert.Equal(t, "84.90", rt.Amount.String())
+	})
+
+	t.Run("with currency rounding rule from the regime", func(t *testing.T) {
+		lines := make([]*bill.Line, 12)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Room rate",
+					Price: num.NewAmount(12500, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Percent:  num.NewPercentage(6, 2),
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		// Greece is the only regime that defaults to currency rounding.
+		inv.Supplier.TaxID = &tax.Identity{Country: "EL", Code: "177472438"}
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.Equal(t, tax.RoundingRuleCurrency, inv.RegimeDef().GetRoundingRule(),
+			"the fixture regime is expected to default to currency rounding")
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		// The rule was only inherited from the regime, so it moves to precise
+		// in order to maintain the original tax amounts.
 		assert.Equal(t, tax.RoundingRulePrecise, inv.Tax.Rounding)
 		assert.Equal(t, "117.9245", inv.Lines[0].Item.Price.String())
 		assert.Equal(t, "1415.09", inv.Totals.Sum.String())
@@ -317,6 +361,57 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		rt := inv.Totals.Taxes.Categories[0].Rates[0]
 		assert.Equal(t, "1415.09", rt.Base.String())
 		assert.Equal(t, "84.91", rt.Amount.String())
+	})
+
+	t.Run("maintains the amount payable with retained taxes", func(t *testing.T) {
+		lines := make([]*bill.Line, 10)
+		for i := range lines {
+			lines[i] = &bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Service",
+					Price: num.NewAmount(193, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     tax.RateGeneral,
+					},
+					{
+						Category: es.TaxCategoryIRPF,
+						Rate:     "pro",
+					},
+				},
+			}
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
+		require.NoError(t, inv.Calculate())
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("maintains a rounding total provided externally", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		rnd := num.MakeAmount(-5, 2)
+		inv.Totals = &bill.Totals{Rounding: &rnd}
+		require.NoError(t, inv.Calculate())
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		require.NotNil(t, inv.Totals.Rounding)
+		assert.Equal(t, "-0.05", inv.Totals.Rounding.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("without having been calculated", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Equal(t, "826.45", inv.Totals.Sum.String())
 	})
 
 	t.Run("from discounts", func(t *testing.T) {

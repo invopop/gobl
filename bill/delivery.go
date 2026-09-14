@@ -352,6 +352,9 @@ func (dlv *Delivery) setIssueTime(t *cal.Time) {
 func (dlv *Delivery) setCurrency(c currency.Code) {
 	dlv.Currency = c
 }
+func (dlv *Delivery) setTax(tx *Tax) {
+	dlv.Tax = tx
+}
 func (dlv *Delivery) setTotals(t *Totals) {
 	dlv.Totals = t
 }

@@ -297,6 +297,9 @@ func (ord *Order) setIssueTime(t *cal.Time) {
 func (ord *Order) setCurrency(c currency.Code) {
 	ord.Currency = c
 }
+func (ord *Order) setTax(tx *Tax) {
+	ord.Tax = tx
+}
 func (ord *Order) setTotals(t *Totals) {
 	ord.Totals = t
 }
