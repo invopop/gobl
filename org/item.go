@@ -52,8 +52,9 @@ type Item struct {
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
-	// Unit of measure.
-	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// Unit of measure using a GOBL key. Standard UN/ECE codes may be preserved
+	// in the untdid-unit extension.
+	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Country code of where this item was from originally.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
@@ -75,11 +76,15 @@ func itemRules() *rules.Set {
 				AttributesHaveUniqueKeys(),
 			),
 		),
+		rules.Field("unit",
+			rules.AssertIfPresent("04", "item unit must be valid", HasValidUnitKey),
+		),
 	)
 }
 
 // JSONSchemaExtend adds extra details to the schema.
 func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
+	ExtendUnitKeySchema(js, "unit")
 	prop, ok := js.Properties.Get("key")
 	if ok {
 		prop.AnyOf = []*jsonschema.Schema{
@@ -100,6 +105,14 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 }
 
 func normalizeItem(i *Item) {
+	// Before Unit was restricted to GOBL keys, it also accepted raw UN/ECE
+	// codes. Preserve those codes in the dedicated extension without making
+	// assumptions about their meaning; addons may provide their own mapping.
+	if regexpUNECEUnit.MatchString(i.Unit.String()) {
+		code := cbc.Code(i.Unit)
+		i.Ext = i.Ext.SetIfEmpty(unitExtKeyUNTDID, code)
+		i.Unit = cbc.KeyEmpty
+	}
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
 	i.Attributes = CleanAttributes(i.Attributes)

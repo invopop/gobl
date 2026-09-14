@@ -55,6 +55,7 @@ func TestOrgItemNormalize(t *testing.T) {
 		item := &org.Item{}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitOne, item.Unit)
+		assert.Equal(t, cbc.Code("C62"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("maintains valid", func(t *testing.T) {
@@ -63,6 +64,51 @@ func TestOrgItemNormalize(t *testing.T) {
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.Equal(t, cbc.Code("HUR"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("preserves explicit UNTDID unit", func(t *testing.T) {
+		item := &org.Item{
+			Unit: org.UnitHour,
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+		}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("maps explicit UNTDID unit", func(t *testing.T) {
+		item := &org.Item{
+			Unit: org.UnitHour,
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
+		}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitKilogram, item.Unit)
+		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("migrates legacy UNTDID unit", func(t *testing.T) {
+		item := &org.Item{Unit: "KGM"}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitKilogram, item.Unit)
+		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("preserves unmapped legacy UNTDID unit", func(t *testing.T) {
+		item := &org.Item{Unit: "XZZ"}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitOne, item.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("rejects invalid UNTDID unit", func(t *testing.T) {
+		item := &org.Item{
+			Name: "test item",
+			Unit: org.UnitHour,
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "invalid"),
+		}
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "must be present and valid")
 	})
 }
 
@@ -271,13 +317,14 @@ func TestOrgItemValidate(t *testing.T) {
 	t.Run("missing unit", func(t *testing.T) {
 		item := &org.Item{Name: "Test"}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "unit is required (BR-23)")
+		assert.ErrorContains(t, err, "must be present and valid (BR-23)")
 	})
 
 	t.Run("validates unit", func(t *testing.T) {
 		item := &org.Item{
 			Name: "Test",
 			Unit: org.UnitOne,
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -288,6 +335,7 @@ func TestOrgItemValidate(t *testing.T) {
 			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(-100, 0),
+			Ext:   tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "zero or positive")
@@ -298,6 +346,7 @@ func TestOrgItemValidate(t *testing.T) {
 			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(0, 0),
+			Ext:   tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
