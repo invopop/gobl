@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regimes/cr`: new tax regime for Costa Rica.
+
 ### Fixed
 
 - `org`: `Inbox` normalization no longer re-interprets the `code` as a URL or email
