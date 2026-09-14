@@ -77,15 +77,6 @@ func normalizeOrgNote(n *org.Note) {
 	}
 }
 
-func normalizeOrgItem(item *org.Item) {
-	if item == nil {
-		return
-	}
-	if item.Unit == org.UnitEmpty {
-		item.Unit = org.UnitOne
-	}
-}
-
 func normalizeOrgIdentity(i *org.Identity) {
 	if i == nil {
 		return
@@ -153,15 +144,6 @@ func normalizeOrgPartyEndpoints(p *org.Party) {
 		})
 		return
 	}
-}
-
-func orgItemRules() *rules.Set {
-	return rules.For(new(org.Item),
-		rules.Field("unit",
-			// BR-23: unit of measure is required
-			rules.Assert("01", "unit is required (BR-23)", is.Present),
-		),
-	)
 }
 
 func orgAttachmentRules() *rules.Set {

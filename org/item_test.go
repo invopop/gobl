@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/norm"
 	"github.com/invopop/gobl/num"
@@ -22,6 +23,28 @@ func TestItemNormalization(t *testing.T) {
 		assert.NotPanics(t, func() {
 			norm.Normalize(i)
 		})
+	})
+	t.Run("legacy UNTDID unit", func(t *testing.T) {
+		i := &org.Item{Name: "test item", Unit: "KGM"}
+		norm.Normalize(i)
+		assert.Equal(t, cbc.KeyEmpty, i.Unit)
+		assert.Equal(t, cbc.Code("KGM"), i.Ext.Get(untdid.ExtKeyUnit))
+	})
+	t.Run("legacy UNTDID unit without GOBL mapping", func(t *testing.T) {
+		i := &org.Item{Name: "test item", Unit: "XZZ"}
+		norm.Normalize(i)
+		assert.Equal(t, cbc.KeyEmpty, i.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), i.Ext.Get(untdid.ExtKeyUnit))
+	})
+	t.Run("legacy unit preserves explicit extension", func(t *testing.T) {
+		i := &org.Item{
+			Name: "test item",
+			Unit: "KGM",
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+		}
+		norm.Normalize(i)
+		assert.Equal(t, cbc.KeyEmpty, i.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), i.Ext.Get(untdid.ExtKeyUnit))
 	})
 	t.Run("extensions", func(t *testing.T) {
 		i := &org.Item{
@@ -78,6 +101,10 @@ func TestItemValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, rules.Validate(i), "key must match the required pattern")
 	})
+	t.Run("invalid unit", func(t *testing.T) {
+		i := &org.Item{Name: "test item", Unit: "unknown"}
+		assert.ErrorContains(t, rules.Validate(i), "item unit must be valid")
+	})
 }
 
 func TestItemJSONSchema(t *testing.T) {
@@ -88,6 +115,9 @@ func TestItemJSONSchema(t *testing.T) {
 					"$ref": "https://gobl.org/draft-0/cbc/key",
 					"title": "Key",
 					"description": "Special key used to classify the item sometimes required by some regimes."
+				},
+				"unit": {
+					"$ref": "https://gobl.org/draft-0/cbc/key"
 				}
 			}
 		}
@@ -103,6 +133,9 @@ func TestItemJSONSchema(t *testing.T) {
 	assert.Equal(t, "Goods", prop.AnyOf[0].Title)
 	assert.Equal(t, org.ItemKeyServices, prop.AnyOf[1].Const)
 	assert.Equal(t, "Services", prop.AnyOf[1].Title)
+	unit, ok := js.Properties.Get("unit")
+	assert.True(t, ok)
+	assert.Len(t, unit.OneOf, len(org.UnitDefinitions))
 }
 
 func TestItemAttributesValidation(t *testing.T) {
