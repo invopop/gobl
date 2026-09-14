@@ -104,7 +104,7 @@ type Delivery struct {
 	uuid.Identify
 
 	// Type of delivery document.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt,other"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Series is used to identify groups of deliveries by date, business area, project,
 	// type, customer, a combination of any, or other company specific data.
 	// If the output format does not support the series as a separate field, it will be
