@@ -363,6 +363,28 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "84.91", rt.Amount.String())
 	})
 
+	t.Run("with the tax bypass tag", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.SetTags(tax.TagBypass)
+		require.NoError(t, inv.Calculate())
+
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Equal(t, tax.CategoryVAT, inv.Tax.PricesInclude,
+			"nothing should be removed")
+	})
+
+	t.Run("without any lines", func(t *testing.T) {
+		inv := baseInvoice(t)
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Nil(t, inv.Totals)
+	})
+
+	t.Run("that cannot be calculated", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier = nil
+		assert.Error(t, inv.RemoveIncludedTaxes())
+	})
+
 	t.Run("maintains the amount payable with retained taxes", func(t *testing.T) {
 		lines := make([]*bill.Line, 10)
 		for i := range lines {
