@@ -10,10 +10,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-const (
-	linePrecisionExtra uint32 = 2
-)
-
 func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	for i, l := range lines {
 		if l == nil {

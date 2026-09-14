@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -50,15 +49,6 @@ type billable interface {
 	setTotals(*Totals)
 }
 
-// roundingRule determines the rounding rule to apply to the document, either
-// explicitly defined in the tax object, or the one provided by the regime.
-func roundingRule(doc billable) cbc.Key {
-	if tx := doc.getTax(); tx != nil && tx.Rounding != "" {
-		return tx.Rounding
-	}
-	return doc.RegimeDef().GetRoundingRule()
-}
-
 // ensureCalculated performs a full calculation on documents that have not been
 // prepared yet.
 func ensureCalculated(doc billable) error {
@@ -66,30 +56,6 @@ func ensureCalculated(doc billable) error {
 		return nil
 	}
 	return doc.Calculate()
-}
-
-// recalculateKeepingPayable recalculates the document, carrying any change in
-// the amount payable into the totals' rounding amount.
-func recalculateKeepingPayable(doc billable, payable num.Amount) error {
-	if err := calculate(doc); err != nil {
-		return err
-	}
-	t := doc.getTotals()
-	if t == nil {
-		return nil
-	}
-	diff := payable.Subtract(t.Payable)
-	if diff.IsZero() {
-		return nil
-	}
-	// Add to any rounding amount already present, which is included in both
-	// payable amounts.
-	rnd := diff
-	if t.Rounding != nil {
-		rnd = t.Rounding.Add(diff)
-	}
-	t.Rounding = &rnd
-	return calculate(doc)
 }
 
 func calculate(doc billable) error {

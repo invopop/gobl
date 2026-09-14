@@ -17,11 +17,6 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const (
-	defaultTaxRemovalAccuracy         uint32 = 2
-	defaultCurrencyConversionAccuracy uint32 = 2
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods

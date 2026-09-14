@@ -1,9 +1,20 @@
 package bill
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+)
+
+const (
+	// linePrecisionExtra is the number of decimal places added to the
+	// currency's own when using the `precise` rounding rule.
+	linePrecisionExtra uint32 = 2
+
+	// defaultTaxRemovalAccuracy is the number of decimal places added to a
+	// price before dividing out the tax included in it.
+	defaultTaxRemovalAccuracy uint32 = 2
 )
 
 // RoundToCurrency recalculates the invoice using the `currency` rounding rule
@@ -157,4 +168,37 @@ func rescaledBase(a *num.Amount, cd *currency.Def) *num.Amount {
 	}
 	b := cd.Rescale(*a)
 	return &b
+}
+
+// roundingRule determines the rounding rule to apply to the document, either
+// explicitly defined in the tax object, or the one provided by the regime.
+func roundingRule(doc billable) cbc.Key {
+	if tx := doc.getTax(); tx != nil && tx.Rounding != "" {
+		return tx.Rounding
+	}
+	return doc.RegimeDef().GetRoundingRule()
+}
+
+// recalculateKeepingPayable recalculates the document, carrying any change in
+// the amount payable into the totals' rounding amount.
+func recalculateKeepingPayable(doc billable, payable num.Amount) error {
+	if err := calculate(doc); err != nil {
+		return err
+	}
+	t := doc.getTotals()
+	if t == nil {
+		return nil
+	}
+	diff := payable.Subtract(t.Payable)
+	if diff.IsZero() {
+		return nil
+	}
+	// Add to any rounding amount already present, which is included in both
+	// payable amounts.
+	rnd := diff
+	if t.Rounding != nil {
+		rnd = t.Rounding.Add(diff)
+	}
+	t.Rounding = &rnd
+	return calculate(doc)
 }
