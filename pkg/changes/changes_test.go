@@ -223,6 +223,35 @@ func TestPreview(t *testing.T) {
 		assert.Contains(t, err.Error(), "no change files found")
 	})
 
+	t.Run("without an unreleased directory", func(t *testing.T) {
+		_, err := changes.Preview(t.TempDir(), "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no change files found")
+	})
+
+	t.Run("with an unreadable subdirectory", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable directory does not stop root from walking it")
+		}
+		root := repo(t, map[string]string{"changes/unreleased/claude/nested.md": "## Added\n\n- one\n"})
+		dir := filepath.Join(root, "changes/unreleased/claude")
+		require.NoError(t, os.Chmod(dir, 0o000))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+		_, err := changes.Preview(root, "v0.506.0", testDate)
+		require.Error(t, err)
+	})
+
+	t.Run("with an unreadable change file", func(t *testing.T) {
+		root := repo(t, nil)
+		require.NoError(t, os.Symlink(
+			filepath.Join(root, "missing.md"),
+			filepath.Join(root, "changes/unreleased/broken.md"),
+		))
+		_, err := changes.Preview(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "broken.md")
+	})
+
 	t.Run("with an invalid file", func(t *testing.T) {
 		root := repo(t, map[string]string{"changes/unreleased/a.md": "## Nope\n\n- first\n"})
 		_, err := changes.Preview(root, "v0.506.0", testDate)
@@ -368,6 +397,45 @@ func TestChangelog(t *testing.T) {
 		assert.Equal(t, "# GOBL Changes\n\nEverything worth knowing.\n\n## [v0.505.0] - 2026-09-09\n\n### Added\n\n- one\n", log)
 	})
 
+	t.Run("orders releases of the same version by file name", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- first\n",
+			"changes/releases/2026-09-10-v0.505.0.md": "# v0.505.0 - 2026-09-10\n\n## Added\n\n- second\n",
+		})
+		log, err := changes.Changelog(root)
+		require.NoError(t, err)
+		assert.Regexp(t, `(?s)2026-09-10.*2026-09-09`, log)
+	})
+
+	t.Run("orders releases without a usable version by file name", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-vNOPE.md": "# vNOPE - 2026-09-09\n\n## Added\n\n- first\n",
+			"changes/releases/2026-08-05-vALSO.md": "# vALSO - 2026-08-05\n\n## Added\n\n- second\n",
+		})
+		log, err := changes.Changelog(root)
+		require.NoError(t, err)
+		assert.Regexp(t, `(?s)vNOPE.*vALSO`, log)
+	})
+
+	t.Run("with an unreadable release note", func(t *testing.T) {
+		root := repo(t, nil)
+		require.NoError(t, os.Symlink(
+			filepath.Join(root, "missing.md"),
+			filepath.Join(root, "changes/releases/2026-09-09-v0.505.0.md"),
+		))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+	})
+
+	t.Run("with an unreadable header", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+		})
+		require.NoError(t, os.Mkdir(filepath.Join(root, changes.HeaderFile), 0o755))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+	})
+
 	t.Run("without a project header", func(t *testing.T) {
 		root := repo(t, nil)
 		log, err := changes.Changelog(root)
@@ -391,6 +459,28 @@ func TestNormalize(t *testing.T) {
 		)
 	})
 
+	t.Run("reports a release note it cannot read", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-01-01\n\n## Added\n\n- one\n",
+		})
+		_, err := changes.Normalize(root)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "title is")
+	})
+
+	t.Run("cannot rewrite a release note", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("a read-only directory does not stop root from writing")
+		}
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n\n## Added\n\n- two\n",
+		})
+		require.NoError(t, os.Chmod(filepath.Join(root, changes.ReleasesDir), 0o555))
+		t.Cleanup(func() { _ = os.Chmod(filepath.Join(root, changes.ReleasesDir), 0o755) })
+		_, err := changes.Normalize(root)
+		require.Error(t, err)
+	})
+
 	t.Run("leaves canonical notes untouched", func(t *testing.T) {
 		root := repo(t, map[string]string{
 			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
@@ -398,6 +488,48 @@ func TestNormalize(t *testing.T) {
 		names, err := changes.Normalize(root)
 		require.NoError(t, err)
 		assert.Empty(t, names)
+	})
+}
+
+func TestReleaseWriteFailures(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("a read-only directory does not stop root from writing")
+	}
+	pending := map[string]string{"changes/unreleased/a.md": "## Added\n\n- first\n"}
+
+	// readOnly makes the directory reject new files for the rest of the test.
+	readOnly := func(t *testing.T, dir string) {
+		t.Helper()
+		require.NoError(t, os.Chmod(dir, 0o555))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+	}
+
+	t.Run("cannot write the release note", func(t *testing.T) {
+		root := repo(t, pending)
+		readOnly(t, filepath.Join(root, changes.ReleasesDir))
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
+		assert.NoFileExists(t, filepath.Join(root, changes.ChangelogFile))
+	})
+
+	t.Run("cannot write the changelog", func(t *testing.T) {
+		root := repo(t, pending)
+		readOnly(t, root)
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
+		assert.NoFileExists(t, filepath.Join(root, "changes/releases/2026-09-14-v0.506.0.md"))
+		assert.NoFileExists(t, filepath.Join(root, changes.ChangelogFile))
+	})
+
+	t.Run("cannot remove the change files", func(t *testing.T) {
+		root := repo(t, pending)
+		readOnly(t, filepath.Join(root, changes.UnreleasedDir))
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.FileExists(t, filepath.Join(root, "changes/releases/2026-09-14-v0.506.0.md"))
+		assert.FileExists(t, filepath.Join(root, changes.ChangelogFile))
 	})
 }
 
