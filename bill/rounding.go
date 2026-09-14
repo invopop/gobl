@@ -155,8 +155,14 @@ func taxTotalExceedsCurrencyPrecision(t *tax.Total, over func(*num.Amount) bool)
 		return false
 	}
 	for _, ct := range t.Categories {
+		if over(ct.Surcharge) {
+			return true
+		}
 		for _, rt := range ct.Rates {
 			if over(&rt.Base) || over(&rt.Amount) {
+				return true
+			}
+			if rt.Surcharge != nil && over(&rt.Surcharge.Amount) {
 				return true
 			}
 		}

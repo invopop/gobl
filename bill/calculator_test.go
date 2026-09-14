@@ -436,6 +436,21 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "826.45", inv.Totals.Sum.String())
 	})
 
+	t.Run("with totals that hold only a rounding amount", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		rnd := num.MakeAmount(-5, 2)
+		inv.Totals = &bill.Totals{Rounding: &rnd}
+
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		// Totals carrying nothing the calculator produces cannot be used to
+		// maintain the amount payable: reading a zero from them would invent a
+		// rounding amount the size of the invoice.
+		assert.Equal(t, "826.45", inv.Totals.Sum.String())
+		assert.Equal(t, "-0.05", inv.Totals.Rounding.String())
+		assert.Equal(t, "999.95", inv.Totals.Payable.String())
+	})
+
 	t.Run("from discounts", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Discounts = []*bill.Discount{

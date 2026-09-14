@@ -153,6 +153,19 @@ func TestRoundToCurrency(t *testing.T) {
 		assert.Equal(t, "31.67", inv.Lines[0].Total.String())
 	})
 
+	t.Run("totals that hold only a rounding amount", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3)))
+		rnd := num.MakeAmount(-5, 2)
+		inv.Totals = &bill.Totals{Rounding: &rnd}
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		// The rounding amount is the only total a caller supplies, so these
+		// totals still need calculating before anything can be read from them.
+		assert.Equal(t, "31.67", inv.Lines[0].Total.String())
+		assert.Equal(t, "-0.06", inv.Totals.Rounding.String())
+	})
+
 	t.Run("a discount base above the currency's precision", func(t *testing.T) {
 		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
 		base := num.MakeAmount(101234, 4)
@@ -537,6 +550,39 @@ func TestRoundToCurrencyModifiedAfterCalculation(t *testing.T) {
 
 		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
 		assert.Equal(t, "30.00", inv.Lines[0].Substituted[0].Total.String())
+	})
+
+	t.Run("with a rate surcharge above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals.Taxes)
+
+		rt := inv.Totals.Taxes.Categories[0].Rates[0]
+		rt.Surcharge = &tax.RateTotalSurcharge{
+			Percent: num.MakePercentage(52, 3),
+			Amount:  num.MakeAmount(15600, 4),
+		}
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("with a category surcharge above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals.Taxes)
+
+		surcharge := num.MakeAmount(15600, 4)
+		inv.Totals.Taxes.Categories[0].Surcharge = &surcharge
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
 	})
 
 	t.Run("with a tax rate base above the currency's precision", func(t *testing.T) {

@@ -52,10 +52,22 @@ type billable interface {
 // ensureCalculated performs a full calculation on documents that have not been
 // prepared yet.
 func ensureCalculated(doc billable) error {
-	if doc.getTotals() != nil {
+	if isCalculated(doc.getTotals()) {
 		return nil
 	}
 	return doc.Calculate()
+}
+
+// isCalculated reports whether the totals were produced by the calculator.
+// Every field but the rounding amount is output, so totals holding nothing
+// else were assembled by hand and cannot be relied on.
+func isCalculated(t *Totals) bool {
+	if t == nil {
+		return false
+	}
+	rest := *t
+	rest.Rounding = nil
+	return rest != (Totals{})
 }
 
 func calculate(doc billable) error {
