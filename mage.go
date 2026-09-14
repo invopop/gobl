@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/changes"
+	"github.com/invopop/gobl/pkg/changes"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )

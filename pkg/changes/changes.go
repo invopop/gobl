@@ -1,5 +1,6 @@
 // Package changes assembles release notes from the individual change files
-// contributors add to the changes directory.
+// contributors add to a project's changes directory, so that pull requests
+// never edit the same lines of the same changelog.
 package changes
 
 import (
@@ -18,6 +19,7 @@ const (
 	Dir           = "changes"
 	UnreleasedDir = Dir + "/unreleased"
 	ReleasesDir   = Dir + "/releases"
+	HeaderFile    = Dir + "/HEADER.md"
 	ChangelogFile = "CHANGELOG.md"
 )
 
@@ -32,15 +34,28 @@ const (
 	changelogSection = "### "
 )
 
-// changelogHeader introduces the generated CHANGELOG.md.
-const changelogHeader = `# Change Log
+// defaultHeader introduces the generated changelog of a project that does not
+// provide its own HEADER.md.
+const defaultHeader = `# Change Log
 
-All notable changes to GOBL will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-This file is generated from the change files in the [changes](./changes) directory. Add new entries to ` + "`changes/unreleased`" + ` instead of editing this file; see [changes/README.md](./changes/README.md).
-`
+This file is generated from the change files in the [changes](./changes) directory. Add new entries to ` + "`changes/unreleased`" + ` instead of editing this file; see [changes/README.md](./changes/README.md).`
+
+// header returns the introduction to the generated changelog, taken from the
+// project's HEADER.md when it provides one.
+func header(root string) (string, error) {
+	data, err := os.ReadFile(filepath.Join(root, HeaderFile)) //nolint:gosec // paths come from the repository
+	if err != nil {
+		if os.IsNotExist(err) {
+			return defaultHeader + "\n", nil
+		}
+		return "", err
+	}
+	return strings.TrimSpace(string(data)) + "\n", nil
+}
 
 // Sections are the headings a change file may use, in the order they are
 // rendered.
@@ -308,8 +323,12 @@ func Changelog(root string) (string, error) {
 		}
 		return a.name > b.name
 	})
+	head, err := header(root)
+	if err != nil {
+		return "", err
+	}
 	b := new(strings.Builder)
-	b.WriteString(changelogHeader)
+	b.WriteString(head)
 	for _, r := range releases {
 		title := fmt.Sprintf("## [%s] - %s", r.tag, r.date)
 		fmt.Fprintf(b, "\n%s", render(title, changelogSection, r.notes))

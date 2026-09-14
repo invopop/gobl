@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/invopop/gobl/internal/changes"
+	"github.com/invopop/gobl/pkg/changes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -272,11 +272,22 @@ func TestChangelog(t *testing.T) {
 		assert.Contains(t, err.Error(), "expected a name like")
 	})
 
-	t.Run("without releases", func(t *testing.T) {
+	t.Run("with a project header", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/HEADER.md":                       "# GOBL Changes\n\nEverything worth knowing.\n",
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+		})
+		log, err := changes.Changelog(root)
+		require.NoError(t, err)
+		assert.Equal(t, "# GOBL Changes\n\nEverything worth knowing.\n\n## [v0.505.0] - 2026-09-09\n\n### Added\n\n- one\n", log)
+	})
+
+	t.Run("without a project header", func(t *testing.T) {
 		root := repo(t, nil)
 		log, err := changes.Changelog(root)
 		require.NoError(t, err)
 		assert.Contains(t, log, "# Change Log")
+		assert.Contains(t, log, "All notable changes to this project")
 	})
 }
 
