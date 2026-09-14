@@ -1,9 +1,20 @@
 package bill
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+)
+
+const (
+	// linePrecisionExtra is the number of decimal places added to the
+	// currency's own when using the `precise` rounding rule.
+	linePrecisionExtra uint32 = 2
+
+	// defaultTaxRemovalAccuracy is the number of decimal places added to a
+	// price before dividing out the tax included in it.
+	defaultTaxRemovalAccuracy uint32 = 2
 )
 
 // RoundToCurrency recalculates the invoice using the `currency` rounding rule
@@ -35,10 +46,16 @@ func roundToCurrency(doc billable) error {
 	if cd == nil || !exceedsCurrencyPrecision(doc, cd) {
 		return nil
 	}
-	payable := doc.getTotals().Payable
+	t := doc.getTotals()
+	payable := t.Payable
 
-	// Bases are provided externally and never reduced by the calculator.
+	// Bases and the rounding amount are provided externally and never
+	// reduced by the calculator.
 	rescaleBases(doc, cd)
+	if t.Rounding != nil {
+		r := cd.Rescale(*t.Rounding)
+		t.Rounding = &r
+	}
 
 	tx := doc.getTax()
 	if tx == nil {
@@ -70,8 +87,12 @@ func exceedsCurrencyPrecision(doc billable, cd *currency.Def) bool {
 			return true
 		}
 	}
+	t := doc.getTotals()
+	if over(t.Rounding) {
+		return true
+	}
 	// Only reachable for totals assembled by hand.
-	return taxTotalExceedsCurrencyPrecision(doc.getTotals().Taxes, over)
+	return taxTotalExceedsCurrencyPrecision(t.Taxes, over)
 }
 
 // overCurrencyPrecision reports if an amount has more decimal places than the
@@ -89,17 +110,39 @@ func lineExceedsCurrencyPrecision(l *Line, over func(*num.Amount) bool) bool {
 	if over(l.Sum) || over(l.Total) {
 		return true
 	}
+	if lineAdjustmentsExceedCurrencyPrecision(l.Discounts, l.Charges, over) {
+		return true
+	}
 	for _, sl := range l.Breakdown {
-		if sl != nil && (over(sl.Sum) || over(sl.Total)) {
+		if subLineExceedsCurrencyPrecision(sl, over) {
 			return true
 		}
 	}
-	for _, d := range l.Discounts {
+	for _, sl := range l.Substituted {
+		if subLineExceedsCurrencyPrecision(sl, over) {
+			return true
+		}
+	}
+	return false
+}
+
+func subLineExceedsCurrencyPrecision(sl *SubLine, over func(*num.Amount) bool) bool {
+	if sl == nil {
+		return false
+	}
+	if over(sl.Sum) || over(sl.Total) {
+		return true
+	}
+	return lineAdjustmentsExceedCurrencyPrecision(sl.Discounts, sl.Charges, over)
+}
+
+func lineAdjustmentsExceedCurrencyPrecision(discounts []*LineDiscount, charges []*LineCharge, over func(*num.Amount) bool) bool {
+	for _, d := range discounts {
 		if d != nil && (over(&d.Amount) || over(d.Base)) {
 			return true
 		}
 	}
-	for _, c := range l.Charges {
+	for _, c := range charges {
 		if c != nil && (over(&c.Amount) || over(c.Base)) {
 			return true
 		}
@@ -128,14 +171,15 @@ func rescaleBases(doc billable, cd *currency.Def) {
 		if l == nil {
 			continue
 		}
-		for _, d := range l.Discounts {
-			if d != nil {
-				d.Base = rescaledBase(d.Base, cd)
+		rescaleLineBases(l.Discounts, l.Charges, cd)
+		for _, sl := range l.Breakdown {
+			if sl != nil {
+				rescaleLineBases(sl.Discounts, sl.Charges, cd)
 			}
 		}
-		for _, c := range l.Charges {
-			if c != nil {
-				c.Base = rescaledBase(c.Base, cd)
+		for _, sl := range l.Substituted {
+			if sl != nil {
+				rescaleLineBases(sl.Discounts, sl.Charges, cd)
 			}
 		}
 	}
@@ -151,10 +195,56 @@ func rescaleBases(doc billable, cd *currency.Def) {
 	}
 }
 
+func rescaleLineBases(discounts []*LineDiscount, charges []*LineCharge, cd *currency.Def) {
+	for _, d := range discounts {
+		if d != nil {
+			d.Base = rescaledBase(d.Base, cd)
+		}
+	}
+	for _, c := range charges {
+		if c != nil {
+			c.Base = rescaledBase(c.Base, cd)
+		}
+	}
+}
+
 func rescaledBase(a *num.Amount, cd *currency.Def) *num.Amount {
 	if a == nil {
 		return nil
 	}
 	b := cd.Rescale(*a)
 	return &b
+}
+
+// roundingRule determines the rounding rule to apply to the document, either
+// explicitly defined in the tax object, or the one provided by the regime.
+func roundingRule(doc billable) cbc.Key {
+	if tx := doc.getTax(); tx != nil && tx.Rounding != "" {
+		return tx.Rounding
+	}
+	return doc.RegimeDef().GetRoundingRule()
+}
+
+// recalculateKeepingPayable recalculates the document, carrying any change in
+// the amount payable into the totals' rounding amount.
+func recalculateKeepingPayable(doc billable, payable num.Amount) error {
+	if err := calculate(doc); err != nil {
+		return err
+	}
+	t := doc.getTotals()
+	if t == nil {
+		return nil
+	}
+	diff := payable.Subtract(t.Payable)
+	if diff.IsZero() {
+		return nil
+	}
+	// Add to any rounding amount already present, which is included in both
+	// payable amounts.
+	rnd := diff
+	if t.Rounding != nil {
+		rnd = t.Rounding.MatchPrecision(diff).Add(diff)
+	}
+	t.Rounding = &rnd
+	return calculate(doc)
 }

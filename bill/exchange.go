@@ -5,6 +5,10 @@ import (
 	"github.com/invopop/gobl/pay"
 )
 
+// defaultCurrencyConversionAccuracy is the number of decimal places added to
+// an amount before converting it into another currency.
+const defaultCurrencyConversionAccuracy uint32 = 2
+
 func convertLinesInto(ex *currency.ExchangeRate, lines []*Line) []*Line {
 	if len(lines) == 0 {
 		return nil
