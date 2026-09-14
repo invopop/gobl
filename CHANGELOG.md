@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `regimes/pe`: added the core Peru (PE) tax regime: the general IGV rate,
   RUC normalization and mod-11 validation, and corrections limited to
   credit and debit notes.
+- `regimes/cr`: new tax regime for Costa Rica.
 
 ## [v0.505.0]
 
