@@ -60,6 +60,26 @@ func TestParse(t *testing.T) {
 		f := changes.Parse("example.md", []byte("## Added\n\n- one:\n\n```yaml\n# a comment\n## not a heading\n```\n"))
 		require.Len(t, f.Sections, 1)
 		assert.Equal(t, []string{"- one:", "", "```yaml", "# a comment", "## not a heading", "```"}, f.Sections[0].Lines)
+		assert.Empty(t, f.Strays)
+	})
+
+	t.Run("headings inside a tilde fenced block", func(t *testing.T) {
+		f := changes.Parse("example.md", []byte("## Added\n\n- one:\n\n~~~md\n## not a heading\n~~~\n"))
+		require.Len(t, f.Sections, 1)
+		assert.Equal(t, []string{"- one:", "", "~~~md", "## not a heading", "~~~"}, f.Sections[0].Lines)
+		assert.Empty(t, f.Strays)
+	})
+
+	t.Run("fence closed only by a matching run", func(t *testing.T) {
+		f := changes.Parse("example.md", []byte("## Added\n\n````\n```\n## still fenced\n````\n\n## Fixed\n\n- two\n"))
+		require.Len(t, f.Sections, 2)
+		assert.Contains(t, f.Sections[0].Lines, "## still fenced")
+		assert.Equal(t, "Fixed", f.Sections[1].Title)
+	})
+
+	t.Run("stray headings", func(t *testing.T) {
+		f := changes.Parse("example.md", []byte("## Added\n\n- one\n\n#### Details\n\n- two\n"))
+		assert.Equal(t, []string{"#### Details"}, f.Strays)
 	})
 
 	t.Run("carriage returns", func(t *testing.T) {
@@ -85,6 +105,11 @@ func TestFragmentValidate(t *testing.T) {
 			name: "with a title",
 			data: "# My change\n\n## Added\n\n- one\n",
 			err:  `example.md: unexpected title "My change"`,
+		},
+		{
+			name: "heading at an unsupported level",
+			data: "## Added\n\n- one\n\n#### Details\n",
+			err:  `example.md: unexpected heading "#### Details"`,
 		},
 		{
 			name: "no heading",
@@ -131,6 +156,25 @@ Summary of b.
 `, out)
 }
 
+func TestNotesPreambles(t *testing.T) {
+	frags := []*changes.Fragment{
+		changes.Parse("a.md", []byte("Summary of a.\n\n## Added\n\n- one\n")),
+		changes.Parse("b.md", []byte("Summary of b.\n\n## Added\n\n- two\n")),
+	}
+	out := changes.Notes("v0.506.0", testDate, frags)
+	assert.Equal(t, `# v0.506.0 - 2026-09-14
+
+Summary of a.
+
+Summary of b.
+
+## Added
+
+- one
+- two
+`, out)
+}
+
 func TestPreview(t *testing.T) {
 	t.Run("merges pending files", func(t *testing.T) {
 		root := repo(t, map[string]string{
@@ -151,6 +195,25 @@ func TestPreview(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, out, "- first")
 		assert.NotContains(t, out, "instructions")
+	})
+
+	t.Run("inside a branch subdirectory", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/unreleased/claude/nested-work.md": "## Added\n\n- nested\n",
+			"changes/unreleased/a.md":                  "## Added\n\n- flat\n",
+		})
+		out, err := changes.Preview(root, "v0.506.0", testDate)
+		require.NoError(t, err)
+		assert.Equal(t, "# v0.506.0 - 2026-09-14\n\n## Added\n\n- flat\n- nested\n", out)
+	})
+
+	t.Run("reports the path of an invalid nested file", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/unreleased/claude/nested-work.md": "## Nope\n\n- nested\n",
+		})
+		_, err := changes.Preview(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "claude/nested-work.md: unknown heading")
 	})
 
 	t.Run("without pending files", func(t *testing.T) {
@@ -191,6 +254,29 @@ func TestRelease(t *testing.T) {
 		log := read(t, root, changes.ChangelogFile)
 		assert.Contains(t, log, "# Change Log")
 		assert.Contains(t, log, "## [v0.506.0] - 2026-09-14\n\n### Added\n\n- first\n\n## [v0.505.0] - 2026-09-09")
+	})
+
+	t.Run("clears branch subdirectories", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/unreleased/claude/nested-work.md": "## Added\n\n- nested\n",
+		})
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.NoError(t, err)
+		assert.NoDirExists(t, filepath.Join(root, "changes/unreleased/claude"))
+		assert.DirExists(t, filepath.Join(root, "changes/unreleased"))
+	})
+
+	t.Run("keeps the change files when the changelog cannot be built", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/unreleased/a.md":                 "## Added\n\n- first\n",
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-01-01\n",
+		})
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "expected")
+		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
+		assert.NoFileExists(t, filepath.Join(root, "changes/releases/2026-09-14-v0.506.0.md"))
+		assert.NoFileExists(t, filepath.Join(root, changes.ChangelogFile))
 	})
 
 	t.Run("with the version already released", func(t *testing.T) {
@@ -323,7 +409,9 @@ func repo(t *testing.T, files map[string]string) string {
 		require.NoError(t, os.MkdirAll(filepath.Join(root, dir), 0o755))
 	}
 	for name, data := range files {
-		require.NoError(t, os.WriteFile(filepath.Join(root, filepath.FromSlash(name)), []byte(data), 0o644))
+		path := filepath.Join(root, filepath.FromSlash(name))
+		require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
+		require.NoError(t, os.WriteFile(path, []byte(data), 0o644))
 	}
 	return root
 }

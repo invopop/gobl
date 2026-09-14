@@ -14,7 +14,8 @@ GOBL: any project laying its notes out this way can use it.
 ## Describing a change
 
 Add a file to `changes/unreleased` named after your branch, for example
-`changes/unreleased/bill-round-to-currency.md`:
+`changes/unreleased/bill-round-to-currency.md`. A branch name containing a
+slash, such as `fix/rounding`, may keep it: subdirectories are read too.
 
 ```markdown
 ## Added

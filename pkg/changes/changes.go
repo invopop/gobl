@@ -5,6 +5,7 @@ package changes
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -78,6 +79,8 @@ type Fragment struct {
 	Preamble []string
 	// Sections holds the entries grouped by heading, in the order found.
 	Sections []*Section
+	// Strays holds any heading that is neither the title nor a section.
+	Strays []string
 }
 
 // Section groups the entries under a single heading.
@@ -90,12 +93,17 @@ type Section struct {
 func Parse(name string, data []byte) *Fragment {
 	f := &Fragment{Name: name}
 	var cur *Section
-	var fenced, blank bool
+	var fence string
+	var blank bool
 	for _, line := range strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\n") {
-		if strings.HasPrefix(line, "```") {
-			fenced = !fenced
+		if m := fenceMarker(line); m != "" {
+			if fence == "" {
+				fence = m
+			} else if m[0] == fence[0] && len(m) >= len(fence) {
+				fence = ""
+			}
 		}
-		if !fenced {
+		if fence == "" {
 			if title, ok := strings.CutPrefix(line, "# "); ok && f.Title == "" && cur == nil {
 				f.Title = strings.TrimSpace(title)
 				blank = true
@@ -105,6 +113,9 @@ func Parse(name string, data []byte) *Fragment {
 				cur = f.section(title)
 				blank = true
 				continue
+			}
+			if isHeading(line) {
+				f.Strays = append(f.Strays, strings.TrimSpace(line))
 			}
 		}
 		if blank {
@@ -131,6 +142,9 @@ func Parse(name string, data []byte) *Fragment {
 func (f *Fragment) Validate() error {
 	if f.Title != "" {
 		return fmt.Errorf("%s: unexpected title %q, start with a section heading like '## Added'", f.Name, f.Title)
+	}
+	if len(f.Strays) > 0 {
+		return fmt.Errorf("%s: unexpected heading %q, group entries under a section like '## Added'", f.Name, f.Strays[0])
 	}
 	empty := true
 	for _, s := range f.Sections {
@@ -161,24 +175,24 @@ func (f *Fragment) section(title string) *Section {
 	return s
 }
 
-// LoadUnreleased reads and validates the pending change files, sorted by name.
+// LoadUnreleased reads and validates the pending change files, sorted by path.
 func LoadUnreleased(root string) ([]*Fragment, error) {
-	names, err := filepath.Glob(filepath.Join(root, UnreleasedDir, "*.md"))
+	paths, err := unreleasedFiles(root)
 	if err != nil {
 		return nil, err
 	}
-	sort.Strings(names)
-	out := make([]*Fragment, 0, len(names))
-	for _, name := range names {
-		base := filepath.Base(name)
-		if strings.EqualFold(base, "README.md") {
-			continue
-		}
-		data, err := os.ReadFile(name) //nolint:gosec // paths come from the repository
+	dir := filepath.Join(root, UnreleasedDir)
+	out := make([]*Fragment, 0, len(paths))
+	for _, path := range paths {
+		data, err := os.ReadFile(path) //nolint:gosec // paths come from the repository
 		if err != nil {
 			return nil, err
 		}
-		f := Parse(base, data)
+		name := path
+		if rel, err := filepath.Rel(dir, path); err == nil {
+			name = filepath.ToSlash(rel)
+		}
+		f := Parse(name, data)
 		if err := f.Validate(); err != nil {
 			return nil, err
 		}
@@ -187,10 +201,45 @@ func LoadUnreleased(root string) ([]*Fragment, error) {
 	return out, nil
 }
 
+// unreleasedFiles returns the pending change files, sorted by path. Branch
+// names containing a slash nest the files in subdirectories, so the whole
+// directory is walked.
+func unreleasedFiles(root string) ([]string, error) {
+	dir := filepath.Join(root, UnreleasedDir)
+	paths := make([]string, 0)
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || !strings.EqualFold(filepath.Ext(path), ".md") {
+			return nil
+		}
+		if strings.EqualFold(d.Name(), "README.md") {
+			return nil
+		}
+		paths = append(paths, path)
+		return nil
+	})
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	sort.Strings(paths)
+	return paths, nil
+}
+
 // Notes merges the change files into the release note for a version.
 func Notes(version string, date time.Time, frags []*Fragment) string {
 	merged := &Fragment{Sections: mergeSections(frags)}
 	for _, f := range frags {
+		if len(f.Preamble) == 0 {
+			continue
+		}
+		if len(merged.Preamble) > 0 {
+			merged.Preamble = append(merged.Preamble, "")
+		}
 		merged.Preamble = append(merged.Preamble, f.Preamble...)
 	}
 	title := fmt.Sprintf("# %s - %s", version, date.Format(DateFormat))
@@ -259,17 +308,22 @@ func Release(root, version string, date time.Time) (string, error) {
 		return "", fmt.Errorf("release notes for %s already exist at %s, bump the version in version.go first", version, prev)
 	}
 	name := filepath.Join(ReleasesDir, fmt.Sprintf("%s-%s.md", date.Format(DateFormat), version))
-	if err := os.WriteFile(filepath.Join(root, name), []byte(notes), 0644); err != nil { //nolint:gosec // release notes are public
+	path := filepath.Join(root, name)
+	if err := writeFile(path, notes); err != nil {
+		return "", err
+	}
+	// The change files are removed only once everything that can fail has
+	// succeeded, so that a failed release leaves the repository as it was.
+	log, err := Changelog(root)
+	if err != nil {
+		_ = os.Remove(path)
+		return "", err
+	}
+	if err := writeFile(filepath.Join(root, ChangelogFile), log); err != nil {
+		_ = os.Remove(path)
 		return "", err
 	}
 	if err := removeUnreleased(root); err != nil {
-		return "", err
-	}
-	log, err := Changelog(root)
-	if err != nil {
-		return "", err
-	}
-	if err := os.WriteFile(filepath.Join(root, ChangelogFile), []byte(log), 0644); err != nil { //nolint:gosec // the changelog is public
 		return "", err
 	}
 	return name, nil
@@ -293,12 +347,34 @@ func Normalize(root string) ([]string, error) {
 		if notes == r.raw {
 			continue
 		}
-		if err := os.WriteFile(path, []byte(notes), 0644); err != nil { //nolint:gosec // release notes are public
+		if err := writeFile(path, notes); err != nil {
 			return nil, err
 		}
 		changed = append(changed, filepath.Base(path))
 	}
 	return changed, nil
+}
+
+// writeFile replaces the file at the path with the data, leaving the original
+// in place if the write fails.
+func writeFile(path, data string) error {
+	f, err := os.CreateTemp(filepath.Dir(path), ".changes-*")
+	if err != nil {
+		return err
+	}
+	name := f.Name()
+	_, err = f.WriteString(data)
+	if cerr := f.Close(); err == nil {
+		err = cerr
+	}
+	if err == nil {
+		err = os.Chmod(name, 0644) //nolint:gosec // release notes are public
+	}
+	if err != nil {
+		_ = os.Remove(name)
+		return err
+	}
+	return os.Rename(name, path)
 }
 
 // Changelog assembles the complete changelog from the release notes, newest
@@ -395,17 +471,36 @@ func findRelease(root, version string) (string, error) {
 }
 
 func removeUnreleased(root string) error {
-	names, err := filepath.Glob(filepath.Join(root, UnreleasedDir, "*.md"))
+	paths, err := unreleasedFiles(root)
 	if err != nil {
 		return err
 	}
-	for _, name := range names {
-		if strings.EqualFold(filepath.Base(name), "README.md") {
-			continue
-		}
-		if err := os.Remove(name); err != nil {
+	for _, path := range paths {
+		if err := os.Remove(path); err != nil {
 			return err
 		}
+	}
+	return pruneDirs(filepath.Join(root, UnreleasedDir))
+}
+
+// pruneDirs removes the subdirectories left empty by the change files.
+func pruneDirs(dir string) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		sub := filepath.Join(dir, e.Name())
+		if err := pruneDirs(sub); err != nil {
+			return err
+		}
+		_ = os.Remove(sub) // only succeeds once empty
 	}
 	return nil
 }
@@ -419,6 +514,34 @@ func sectionTitle(line string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+// fenceMarker returns the run of backticks or tildes opening or closing a
+// fenced code block.
+func fenceMarker(line string) string {
+	trimmed := strings.TrimLeft(line, " ")
+	for _, c := range []byte{'`', '~'} {
+		if len(trimmed) < 3 || trimmed[0] != c {
+			continue
+		}
+		n := 0
+		for n < len(trimmed) && trimmed[n] == c {
+			n++
+		}
+		if n >= 3 {
+			return trimmed[:n]
+		}
+	}
+	return ""
+}
+
+// isHeading reports whether the line opens any heading level.
+func isHeading(line string) bool {
+	n := 0
+	for n < len(line) && line[n] == '#' {
+		n++
+	}
+	return n > 0 && n <= 6 && strings.HasPrefix(line[n:], " ")
 }
 
 func knownSection(title string) bool {
