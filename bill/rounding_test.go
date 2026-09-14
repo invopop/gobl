@@ -100,6 +100,38 @@ func TestRoundToCurrency(t *testing.T) {
 		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
 	})
 
+	t.Run("a rounding total above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		existing := num.MakeAmount(5, 3)
+		inv.Totals = &bill.Totals{Rounding: &existing}
+		require.NoError(t, inv.Calculate())
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		require.NotNil(t, inv.Totals.Rounding)
+		// The rounding total is the only amount out of range, so nothing else
+		// moves and the payable total already absorbed the half cent.
+		assert.Equal(t, "0.01", inv.Totals.Rounding.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("an existing rounding total without decimals", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3)))
+		existing := num.MakeAmount(-5, 0)
+		inv.Totals = &bill.Totals{Rounding: &existing}
+		require.NoError(t, inv.Calculate())
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		require.NotNil(t, inv.Totals.Rounding)
+		// The cent gained by the line must survive being added to a rounding
+		// total written without decimals.
+		assert.Equal(t, "-5.01", inv.Totals.Rounding.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
 	t.Run("is idempotent", func(t *testing.T) {
 		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3)))
 		require.NoError(t, inv.Calculate())
@@ -288,10 +320,72 @@ func TestRoundToCurrencyPrecisionChecks(t *testing.T) {
 		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
 	})
 
+	t.Run("a sub-line discount base above the currency's precision", func(t *testing.T) {
+		price := num.MakeAmount(1000, 2)
+		base := num.MakeAmount(10005, 4)
+		inv := roundingInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item:     &org.Item{Name: "Grouped item"},
+			Breakdown: []*bill.SubLine{
+				{
+					Quantity: num.MakeAmount(3, 0),
+					Item: &org.Item{
+						Name:  "Sub item",
+						Price: &price,
+					},
+					Discounts: []*bill.LineDiscount{
+						{
+							Base:    &base,
+							Percent: num.NewPercentage(10, 2),
+							Reason:  "testing",
+						},
+					},
+				},
+			},
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(210, 3),
+				},
+			},
+		})
+		require.NoError(t, inv.Calculate())
+		require.Equal(t, "0.1001", inv.Lines[0].Breakdown[0].Discounts[0].Amount.String())
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		d := inv.Lines[0].Breakdown[0].Discounts[0]
+		require.NotNil(t, d.Base)
+		assert.Equal(t, "1.00", d.Base.String())
+		assert.Equal(t, "0.10", d.Amount.String())
+	})
+
+	t.Run("a fixed line discount above the currency's precision", func(t *testing.T) {
+		line := roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3))
+		line.Discounts = []*bill.LineDiscount{
+			{
+				Amount: num.MakeAmount(5, 3),
+				Reason: "testing",
+			},
+		}
+		inv := roundingInvoice(t, line)
+		require.NoError(t, inv.Calculate())
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		// Fixed amounts are never reduced by the calculator on their own.
+		assert.Equal(t, "0.01", inv.Lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "31.66", inv.Lines[0].Total.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
 	t.Run("with nil lines, discounts and charges", func(t *testing.T) {
 		line := roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3))
 		line.Discounts = []*bill.LineDiscount{nil}
 		line.Charges = []*bill.LineCharge{nil}
+		line.Breakdown = []*bill.SubLine{nil}
+		line.Substituted = []*bill.SubLine{nil}
 		inv := roundingInvoice(t, nil, line)
 		inv.Discounts = []*bill.Discount{nil}
 		inv.Charges = []*bill.Charge{nil}
@@ -424,6 +518,25 @@ func TestRoundToCurrencyModifiedAfterCalculation(t *testing.T) {
 		require.NoError(t, inv.RoundToCurrency())
 
 		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+	})
+
+	t.Run("with a substituted sub-line above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+
+		total := num.MakeAmount(300001, 4)
+		inv.Lines[0].Substituted = []*bill.SubLine{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item:     &org.Item{Name: "Substituted item", Price: num.NewAmount(300001, 4)},
+				Total:    &total,
+			},
+		}
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, "30.00", inv.Lines[0].Substituted[0].Total.String())
 	})
 
 	t.Run("with a tax rate base above the currency's precision", func(t *testing.T) {

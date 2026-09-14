@@ -163,7 +163,7 @@ func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cu
 			}
 			d.Amount = d.Percent.Of(base) // always override
 		}
-		d.Amount = cd.RescaleUp(d.Amount)
+		d.Amount = tax.ApplyRoundingRule(rr, cur, d.Amount)
 		total = total.Subtract(d.Amount)
 	}
 	return total
@@ -190,7 +190,7 @@ func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount
 			}
 			c.Amount = c.Rate.Multiply(q)
 		}
-		c.Amount = cd.RescaleUp(c.Amount)
+		c.Amount = tax.ApplyRoundingRule(rr, cur, c.Amount)
 		total = total.Add(c.Amount)
 	}
 	return total

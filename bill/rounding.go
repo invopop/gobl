@@ -46,10 +46,16 @@ func roundToCurrency(doc billable) error {
 	if cd == nil || !exceedsCurrencyPrecision(doc, cd) {
 		return nil
 	}
-	payable := doc.getTotals().Payable
+	t := doc.getTotals()
+	payable := t.Payable
 
-	// Bases are provided externally and never reduced by the calculator.
+	// Bases and the rounding amount are provided externally and never
+	// reduced by the calculator.
 	rescaleBases(doc, cd)
+	if t.Rounding != nil {
+		r := cd.Rescale(*t.Rounding)
+		t.Rounding = &r
+	}
 
 	tx := doc.getTax()
 	if tx == nil {
@@ -81,8 +87,12 @@ func exceedsCurrencyPrecision(doc billable, cd *currency.Def) bool {
 			return true
 		}
 	}
+	t := doc.getTotals()
+	if over(t.Rounding) {
+		return true
+	}
 	// Only reachable for totals assembled by hand.
-	return taxTotalExceedsCurrencyPrecision(doc.getTotals().Taxes, over)
+	return taxTotalExceedsCurrencyPrecision(t.Taxes, over)
 }
 
 // overCurrencyPrecision reports if an amount has more decimal places than the
@@ -100,17 +110,39 @@ func lineExceedsCurrencyPrecision(l *Line, over func(*num.Amount) bool) bool {
 	if over(l.Sum) || over(l.Total) {
 		return true
 	}
+	if lineAdjustmentsExceedCurrencyPrecision(l.Discounts, l.Charges, over) {
+		return true
+	}
 	for _, sl := range l.Breakdown {
-		if sl != nil && (over(sl.Sum) || over(sl.Total)) {
+		if subLineExceedsCurrencyPrecision(sl, over) {
 			return true
 		}
 	}
-	for _, d := range l.Discounts {
+	for _, sl := range l.Substituted {
+		if subLineExceedsCurrencyPrecision(sl, over) {
+			return true
+		}
+	}
+	return false
+}
+
+func subLineExceedsCurrencyPrecision(sl *SubLine, over func(*num.Amount) bool) bool {
+	if sl == nil {
+		return false
+	}
+	if over(sl.Sum) || over(sl.Total) {
+		return true
+	}
+	return lineAdjustmentsExceedCurrencyPrecision(sl.Discounts, sl.Charges, over)
+}
+
+func lineAdjustmentsExceedCurrencyPrecision(discounts []*LineDiscount, charges []*LineCharge, over func(*num.Amount) bool) bool {
+	for _, d := range discounts {
 		if d != nil && (over(&d.Amount) || over(d.Base)) {
 			return true
 		}
 	}
-	for _, c := range l.Charges {
+	for _, c := range charges {
 		if c != nil && (over(&c.Amount) || over(c.Base)) {
 			return true
 		}
@@ -139,14 +171,15 @@ func rescaleBases(doc billable, cd *currency.Def) {
 		if l == nil {
 			continue
 		}
-		for _, d := range l.Discounts {
-			if d != nil {
-				d.Base = rescaledBase(d.Base, cd)
+		rescaleLineBases(l.Discounts, l.Charges, cd)
+		for _, sl := range l.Breakdown {
+			if sl != nil {
+				rescaleLineBases(sl.Discounts, sl.Charges, cd)
 			}
 		}
-		for _, c := range l.Charges {
-			if c != nil {
-				c.Base = rescaledBase(c.Base, cd)
+		for _, sl := range l.Substituted {
+			if sl != nil {
+				rescaleLineBases(sl.Discounts, sl.Charges, cd)
 			}
 		}
 	}
@@ -156,6 +189,19 @@ func rescaleBases(doc billable, cd *currency.Def) {
 		}
 	}
 	for _, c := range doc.getCharges() {
+		if c != nil {
+			c.Base = rescaledBase(c.Base, cd)
+		}
+	}
+}
+
+func rescaleLineBases(discounts []*LineDiscount, charges []*LineCharge, cd *currency.Def) {
+	for _, d := range discounts {
+		if d != nil {
+			d.Base = rescaledBase(d.Base, cd)
+		}
+	}
+	for _, c := range charges {
 		if c != nil {
 			c.Base = rescaledBase(c.Base, cd)
 		}
@@ -197,7 +243,7 @@ func recalculateKeepingPayable(doc billable, payable num.Amount) error {
 	// payable amounts.
 	rnd := diff
 	if t.Rounding != nil {
-		rnd = t.Rounding.Add(diff)
+		rnd = t.Rounding.MatchPrecision(diff).Add(diff)
 	}
 	t.Rounding = &rnd
 	return calculate(doc)
