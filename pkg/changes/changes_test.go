@@ -380,6 +380,24 @@ func TestRelease(t *testing.T) {
 		}
 	})
 
+	t.Run("puts the change files back when the cleanup fails", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("a read-only directory does not stop root from removing files")
+		}
+		root := repo(t, map[string]string{
+			"changes/unreleased/a.md":    "## Added\n\n- first\n",
+			"changes/unreleased/zz/b.md": "## Added\n\n- second\n",
+		})
+		dir := filepath.Join(root, "changes/unreleased/zz")
+		require.NoError(t, os.Chmod(dir, 0o555))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Equal(t, "## Added\n\n- first\n", read(t, root, "changes/unreleased/a.md"))
+		assert.Equal(t, "## Added\n\n- second\n", read(t, root, "changes/unreleased/zz/b.md"))
+	})
+
 	t.Run("with the version already released", func(t *testing.T) {
 		root := repo(t, map[string]string{
 			"changes/unreleased/a.md":                 "## Added\n\n- first\n",
@@ -538,6 +556,20 @@ func TestChangelog(t *testing.T) {
 		_, err := changes.Changelog(root)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "HEADER.md: symbolic links are not supported")
+	})
+
+	t.Run("with a symlinked changes directory", func(t *testing.T) {
+		root := t.TempDir()
+		outside := t.TempDir()
+		require.NoError(t, os.MkdirAll(filepath.Join(outside, "releases"), 0o755))
+		require.NoError(t, os.WriteFile(
+			filepath.Join(outside, "releases", "2026-09-09-v9.9.9.md"),
+			[]byte("# v9.9.9 - 2026-09-09\n"), 0o644,
+		))
+		require.NoError(t, os.Symlink(outside, filepath.Join(root, changes.Dir)))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "changes: symbolic links are not supported")
 	})
 
 	t.Run("with a symlinked releases directory", func(t *testing.T) {

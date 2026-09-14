@@ -48,8 +48,8 @@ This file is generated from the change files in the [changes](./changes) directo
 // header returns the introduction to the generated changelog, taken from the
 // project's HEADER.md when it provides one.
 func header(root string) (string, error) {
-	path := filepath.Join(root, HeaderFile)
-	if err := rejectSymlink(path); err != nil {
+	path, err := resolve(root, HeaderFile)
+	if err != nil {
 		return "", err
 	}
 	data, err := os.ReadFile(path) //nolint:gosec // paths come from the repository
@@ -209,12 +209,12 @@ func LoadUnreleased(root string) ([]*Fragment, error) {
 // names containing a slash nest the files in subdirectories, so the whole
 // directory is walked.
 func unreleasedFiles(root string) ([]string, error) {
-	dir := filepath.Join(root, UnreleasedDir)
-	if err := rejectSymlink(dir); err != nil {
+	dir, err := resolve(root, UnreleasedDir)
+	if err != nil {
 		return nil, err
 	}
 	paths := make([]string, 0)
-	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+	err = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -326,7 +326,10 @@ func Release(root, version string, date time.Time) (string, error) {
 		return "", fmt.Errorf("release notes for %s already exist at %s, bump the version in version.go first", version, prev)
 	}
 	name := filepath.Join(ReleasesDir, base)
-	path := filepath.Join(root, name)
+	path, err := resolve(root, ReleasesDir+"/"+base)
+	if err != nil {
+		return "", err
+	}
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil { //nolint:gosec // release notes are public
 		return "", err
 	}
@@ -340,7 +343,12 @@ func Release(root, version string, date time.Time) (string, error) {
 		_ = os.Remove(path)
 		return "", err
 	}
-	if err := writeFile(filepath.Join(root, ChangelogFile), log); err != nil {
+	logPath, err := resolve(root, ChangelogFile)
+	if err != nil {
+		_ = os.Remove(path)
+		return "", err
+	}
+	if err := writeFile(logPath, log); err != nil {
 		_ = os.Remove(path)
 		return "", err
 	}
@@ -375,20 +383,25 @@ func Normalize(root string) ([]string, error) {
 	return changed, nil
 }
 
-// rejectSymlink reports an error when the path is a symbolic link, so that
-// nothing outside the project is read into its release notes.
-func rejectSymlink(path string) error {
-	info, err := os.Lstat(path)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
+// resolve returns the full path of a location inside the project, rejecting a
+// symbolic link at every step below the root so that nothing outside the
+// project is read or written.
+func resolve(root, rel string) (string, error) {
+	path := root
+	for _, elem := range strings.Split(rel, "/") {
+		path = filepath.Join(path, elem)
+		info, err := os.Lstat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return "", err
 		}
-		return err
+		if info.Mode()&os.ModeSymlink != 0 {
+			return "", fmt.Errorf("%s: symbolic links are not supported", elem)
+		}
 	}
-	if info.Mode()&os.ModeSymlink != 0 {
-		return fmt.Errorf("%s: symbolic links are not supported", filepath.Base(path))
-	}
-	return nil
+	return path, nil
 }
 
 // writeFile replaces the file at the path with the data, leaving the original
@@ -503,8 +516,8 @@ func splitName(name string) (date, tag string, ok bool) {
 // releaseFiles returns the release notes, sorted by name. Unlike a glob, a
 // directory that cannot be read is reported instead of read as empty.
 func releaseFiles(root string) ([]string, error) {
-	dir := filepath.Join(root, ReleasesDir)
-	if err := rejectSymlink(dir); err != nil {
+	dir, err := resolve(root, ReleasesDir)
+	if err != nil {
 		return nil, err
 	}
 	entries, err := os.ReadDir(dir)
@@ -548,12 +561,46 @@ func removeUnreleased(root string) error {
 	if err != nil {
 		return err
 	}
+	removed := make(map[string]*removedFile, len(paths))
 	for _, path := range paths {
-		if err := os.Remove(path); err != nil {
+		file, err := readRemovable(path)
+		if err == nil {
+			err = os.Remove(path)
+		}
+		if err != nil {
+			// A release is already written by this point, so the change files
+			// go back rather than some of them being lost to a failed cleanup.
+			restoreUnreleased(removed)
 			return err
 		}
+		removed[path] = file
 	}
 	return pruneDirs(filepath.Join(root, UnreleasedDir))
+}
+
+// removedFile holds a change file so it can be put back.
+type removedFile struct {
+	data []byte
+	mode fs.FileMode
+}
+
+func readRemovable(path string) (*removedFile, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	data, err := os.ReadFile(path) //nolint:gosec // paths come from the repository
+	if err != nil {
+		return nil, err
+	}
+	return &removedFile{data: data, mode: info.Mode().Perm()}, nil
+}
+
+// restoreUnreleased puts back the change files removed before a failure.
+func restoreUnreleased(removed map[string]*removedFile) {
+	for path, file := range removed {
+		_ = os.WriteFile(path, file.data, file.mode)
+	}
 }
 
 // pruneDirs removes the subdirectories left empty by the change files.
