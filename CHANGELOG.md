@@ -4,13 +4,9 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [Unreleased]
+This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
-### Added
-
-- `regimes/cr`: new tax regime for Costa Rica.
-
-## [v0.505.0]
+## [v0.505.0] - 2026-09-09
 
 ### Added
 
@@ -89,7 +85,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   `encoding/json`, the default from Go 1.27, no longer re-enters
   `Invoice.UnmarshalJSON` until the process dies with a fatal stack overflow.
 
-## [v0.504.0]
+## [v0.504.0] - 2026-08-05
 
 ### Added
 
@@ -281,8 +277,6 @@ Normalization has been rebuilt around the new `norm` package — the counterpart
 - `es-verifactu-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 - `es-sii-v1`: Migrated doc-type extension routing from normalizer hack to `CorrectionNormalize`.
 
-### Fixed
-
 - `bill`: payment line validation now correctly rejects an `amount` greater than `payable - advances` when advances fully cover the payable, instead of falling through to a misleading "due must be zero or positive" error on the calculated `due` field.
 
 ## [v0.402.0] - 2026-04-30
@@ -409,15 +403,13 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 
 - `pt-saft-v1`: Added correction definitions
 
-### Removed
-
-- `pkg/template`: removed as no longer used.
-
-### Added
-
 - `fr-ctc-v1`: French CTC Flow 2 B2B e-invoicing addon
 - `fr`: SIREN and SIRET identity types format validation
 - `org`: New note keys: `payment-method` and `payment-term`
+
+### Removed
+
+- `pkg/template`: removed as no longer used.
 
 ### Changed
 
@@ -493,7 +485,7 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 
 - `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
 
-## Removed
+### Removed
 
 - `org`: `Attachment.Name` field is no longer required.
 - `it-sdi-v1`: removed IBAN length validation.
@@ -620,16 +612,14 @@ In addition, the "serve" CLI command has been improved to offer a self-hosted ve
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 
+- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
+- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
+- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
+
 ### Fixed
 
 - `mx`: normalize codes with `MX` code at the beginning
 - `es-verifactu-v1`: correct `N2` operation code scenario
-
-### Changed
-
-- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
-- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
-- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
 
 ## [v0.300.0-rc1] - 2025-09-02
 
@@ -1113,8 +1103,6 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `bill`: support for extensions in `Discount`, `Charge`, `LineDiscount`, and `LineCharge`.
 - `bill`: specifically defined keys for Discounts and Charges.
 
-### Changed
-
 - `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
 - `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
 - `cbc`: Code now allows `:` separator.
@@ -1131,7 +1119,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 
 - `mx`: Tax ID validation now correctly supports `&` and `Ñ` symbols in codes.
 
-## [v0.203.0] - 2024-20-21
+## [v0.203.0] - 2024-10-21
 
 ### Added
 
@@ -1468,7 +1456,7 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 - ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
 - MX: `mx.TaxIdentityCodeGeneric` constant added with the generic RFC for final consumers
 
-## Changed
+### Changed
 
 - MX: customer extensions no longer required for foreign customers
 
