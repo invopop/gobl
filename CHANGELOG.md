@@ -6,14 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
-## [v0.506.0]
-
-### Added
-
-- `regimes/pe`: added the core Peru (PE) tax regime: the general IGV rate,
-  RUC normalization and mod-11 validation, and corrections limited to
-  credit and debit notes.
-
 ## [v0.505.0] - 2026-09-09
 
 ### Added
