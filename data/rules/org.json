@@ -39,16 +39,26 @@
       "assert": [
         {
           "id": "GOBL-ORG-ATTRIBUTE-01",
-          "desc": "attribute must have either a key or a type, but not both",
-          "tests": "(string(Key) == \"\") != (string(Type) == \"\")"
+          "desc": "attribute must not have both a key and a type",
+          "tests": "not both key and type"
         },
         {
           "id": "GOBL-ORG-ATTRIBUTE-02",
           "desc": "attribute must have at least one of the text, code, amount, or date values",
-          "tests": "(Text == \"\" ? 0 : 1) + (string(Code) == \"\" ? 0 : 1) + (Amount == nil ? 0 : 1) + (Date == nil ? 0 : 1) \u003e= 1"
+          "tests": "text, code, amount, or date present"
         }
       ],
       "subsets": [
+        {
+          "guard": "no label",
+          "assert": [
+            {
+              "id": "GOBL-ORG-ATTRIBUTE-04",
+              "desc": "attribute must have a key, a type, or a label",
+              "tests": "key or type present"
+            }
+          ]
+        },
         {
           "guard": "string(Unit) != \"\"",
           "assert": [
@@ -66,7 +76,7 @@
               "guard": "present",
               "assert": [
                 {
-                  "id": "GOBL-ORG-ATTRIBUTE-04",
+                  "id": "GOBL-ORG-ATTRIBUTE-05",
                   "desc": "attribute unit must be valid",
                   "tests": "one of [mg, cg, g, kg, t, mm, cm, dm, m, lm, km, in, ft, lft, mm2, cm2, dm2, m2, ac, ha, mm3, cm3, dm3, m3, ml, cl, dl, l, kl, w, kw, kwh, kj, kcal, rate, yr, mon, wk, day, s, h, min, piece, item, pair, dozen, assortment, service, job, activity, trip, group, outfit, kit, basebox, pk, one, bag, box, bin, can, tub, case, tray, portion, set, roll, carton, cylinder, barrel, jerrican, carboy, demijohn, bottle, 6pack, canister, pkg, pkt, bunch, bdl, blk, tetrabrik, pallet, reel, sack, sheet, envelope, lot, unit]"
                 }
@@ -460,6 +470,22 @@
                   "tests": "one of [goods, payment, payment-method, payment-term, legal, dangerous-goods, ack, rate, reason, dispute, customer, glossary, customs, general, handling, packaging, loading, price, priority, regulatory, safety, ship-line, supplier, transport, delivery, quarantine, tax, other]"
                 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-ORG-PARTY",
+      "object": "org.Party",
+      "subsets": [
+        {
+          "field": "agent",
+          "assert": [
+            {
+              "id": "GOBL-ORG-PARTY-01",
+              "desc": "agent must not have an agent",
+              "tests": "not have an agent"
             }
           ]
         }

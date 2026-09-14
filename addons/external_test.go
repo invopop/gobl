@@ -61,6 +61,12 @@ func TestApprovedAddons(t *testing.T) {
 				"fi-finvoice-v3": "github.com/invopop/gobl.fi.finvoice",
 			},
 		},
+		{
+			name: "IT SDI",
+			modules: map[cbc.Key]string{
+				"it-sdi-v1": "github.com/invopop/gobl.it.sdi",
+			},
+		},
 	}
 
 	for _, group := range groups {

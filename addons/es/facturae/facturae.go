@@ -26,6 +26,7 @@ func init() {
 		rules.GOBL.Add("ES-FACTURAE"),
 		is.InContext(tax.AddonIn(V3)),
 		billInvoiceRules(),
+		payDueDateRules(),
 	)
 }
 

@@ -38,7 +38,7 @@ func init() {
 		orgItemRules(),
 		orgAttachmentRules(),
 		orgPartyRules(),
-		orgInboxRules(),
+		orgEndpointRules(),
 		orgAddressRules(),
 		taxComboRules(),
 	)
