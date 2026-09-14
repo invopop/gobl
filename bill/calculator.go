@@ -52,22 +52,36 @@ type billable interface {
 // ensureCalculated performs a full calculation on documents that have not been
 // prepared yet.
 func ensureCalculated(doc billable) error {
-	if isCalculated(doc.getTotals()) {
+	if isCalculated(doc) {
 		return nil
 	}
 	return doc.Calculate()
 }
 
-// isCalculated reports whether the totals were produced by the calculator.
-// Every field but the rounding amount is output, so totals holding nothing
-// else were assembled by hand and cannot be relied on.
-func isCalculated(t *Totals) bool {
+// isCalculated reports whether the document holds calculator output. The
+// rounding amount is the only total a caller provides, and every line that can
+// be priced is given a total, so a document missing either was assembled by
+// hand and its amounts cannot be read. Totals invented in full are
+// indistinguishable from calculated ones and are taken at face value.
+func isCalculated(doc billable) bool {
+	t := doc.getTotals()
 	if t == nil {
 		return false
 	}
 	rest := *t
 	rest.Rounding = nil
-	return rest != (Totals{})
+	if rest == (Totals{}) {
+		return false
+	}
+	for _, l := range doc.getLines() {
+		if l == nil || l.Total != nil {
+			continue
+		}
+		if len(l.Breakdown) > 0 || (l.Item != nil && l.Item.Price != nil) {
+			return false
+		}
+	}
+	return true
 }
 
 func calculate(doc billable) error {

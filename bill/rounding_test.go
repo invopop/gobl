@@ -166,6 +166,18 @@ func TestRoundToCurrency(t *testing.T) {
 		assert.Equal(t, "-0.06", inv.Totals.Rounding.String())
 	})
 
+	t.Run("totals that hold only an amount payable", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3)))
+		inv.Totals = &bill.Totals{Payable: num.MakeAmount(10000, 2)}
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		// Lines without a total mean nothing has been calculated, whatever the
+		// totals claim to hold.
+		assert.Equal(t, "31.67", inv.Lines[0].Total.String())
+		assert.Equal(t, "38.31", inv.Totals.Payable.String())
+	})
+
 	t.Run("a discount base above the currency's precision", func(t *testing.T) {
 		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
 		base := num.MakeAmount(101234, 4)
@@ -393,26 +405,6 @@ func TestRoundToCurrencyPrecisionChecks(t *testing.T) {
 		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
 	})
 
-	t.Run("with nil lines, discounts and charges", func(t *testing.T) {
-		line := roundingLine(num.MakeAmount(3, 0), num.MakeAmount(10555, 3))
-		line.Discounts = []*bill.LineDiscount{nil}
-		line.Charges = []*bill.LineCharge{nil}
-		line.Breakdown = []*bill.SubLine{nil}
-		line.Substituted = []*bill.SubLine{nil}
-		inv := roundingInvoice(t, nil, line)
-		inv.Discounts = []*bill.Discount{nil}
-		inv.Charges = []*bill.Charge{nil}
-		require.NoError(t, inv.Calculate())
-		payable := inv.Totals.Payable
-
-		require.NoError(t, inv.RoundToCurrency())
-
-		require.NotEmpty(t, inv.Lines)
-		last := inv.Lines[len(inv.Lines)-1]
-		assert.Equal(t, "31.67", last.Total.String())
-		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
-	})
-
 	t.Run("an invoice without any lines", func(t *testing.T) {
 		inv := roundingInvoice(t)
 		require.NoError(t, inv.RoundToCurrency())
@@ -582,6 +574,73 @@ func TestRoundToCurrencyModifiedAfterCalculation(t *testing.T) {
 		require.NoError(t, inv.RoundToCurrency())
 
 		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("with an aggregate tax sum above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals.Taxes)
+
+		inv.Totals.Taxes.Sum = num.MakeAmount(63001, 4)
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, "6.30", inv.Totals.Taxes.Sum.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("with a retained tax total above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals.Taxes)
+
+		retained := num.MakeAmount(15001, 4)
+		inv.Totals.Taxes.Retained = &retained
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("with a category amount above the currency's precision", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		require.NotNil(t, inv.Totals.Taxes)
+
+		inv.Totals.Taxes.Categories[0].Amount = num.MakeAmount(63001, 4)
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Equal(t, tax.RoundingRuleCurrency, inv.Tax.Rounding)
+		assert.Equal(t, "6.30", inv.Totals.Taxes.Categories[0].Amount.String())
+		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
+	})
+
+	t.Run("with nil nested entries", func(t *testing.T) {
+		inv := roundingInvoice(t, roundingLine(num.MakeAmount(3, 0), num.MakeAmount(1000, 2)))
+		require.NoError(t, inv.Calculate())
+		// Normalization prunes nil entries, so only a document modified
+		// afterwards can hold them. Every amount here fits the currency, so
+		// the scan walks them without triggering a recalculation.
+		line := inv.Lines[0]
+		line.Discounts = []*bill.LineDiscount{nil}
+		line.Charges = []*bill.LineCharge{nil}
+		line.Breakdown = []*bill.SubLine{nil}
+		line.Substituted = []*bill.SubLine{nil}
+		inv.Lines = append([]*bill.Line{nil}, inv.Lines...)
+		inv.Discounts = []*bill.Discount{nil}
+		inv.Charges = []*bill.Charge{nil}
+		payable := inv.Totals.Payable
+
+		require.NoError(t, inv.RoundToCurrency())
+
+		assert.Nil(t, inv.Tax)
 		assert.Equal(t, payable.String(), inv.Totals.Payable.String())
 	})
 

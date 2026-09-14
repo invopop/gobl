@@ -451,6 +451,19 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "999.95", inv.Totals.Payable.String())
 	})
 
+	t.Run("with totals that hold only an amount payable", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Totals = &bill.Totals{Payable: num.MakeAmount(50000, 2)}
+
+		require.NoError(t, inv.RemoveIncludedTaxes())
+
+		// A payable that no line supports is not a baseline to preserve, and
+		// keeping it would invent the difference as a rounding amount.
+		assert.Equal(t, "826.45", inv.Totals.Sum.String())
+		assert.Equal(t, "1000.00", inv.Totals.Payable.String())
+		assert.Nil(t, inv.Totals.Rounding)
+	})
+
 	t.Run("from discounts", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Discounts = []*bill.Discount{
