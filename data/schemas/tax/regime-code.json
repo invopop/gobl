@@ -102,6 +102,10 @@
           "title": "New Zealand"
         },
         {
+          "const": "PE",
+          "title": "Peru"
+        },
+        {
           "const": "PL",
           "title": "Poland"
         },
