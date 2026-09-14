@@ -34,5 +34,6 @@ import (
 	_ "github.com/invopop/gobl/regimes/sa"
 	_ "github.com/invopop/gobl/regimes/se"
 	_ "github.com/invopop/gobl/regimes/sg"
+	_ "github.com/invopop/gobl/regimes/si"
 	_ "github.com/invopop/gobl/regimes/us"
 )

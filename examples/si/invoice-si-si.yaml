@@ -1,0 +1,48 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "5b1e9c7a-2d4f-4a8b-9c3e-6f7a8b9c0d1e"
+series: "SAMPLE"
+code: "001"
+issue_date: "2026-03-01"
+
+supplier:
+  name: "Primer d.o.o."
+  tax_id:
+    country: "SI"
+    code: "12345679"
+  addresses:
+    - num: "10"
+      street: "Slovenska cesta"
+      locality: "Ljubljana"
+      code: "1000"
+      country: "SI"
+  emails:
+    - addr: "billing@example.si"
+
+customer:
+  name: "Stranka d.o.o."
+  tax_id:
+    country: "SI"
+    code: "87654326"
+  addresses:
+    - num: "5"
+      street: "Dunajska cesta"
+      locality: "Ljubljana"
+      code: "1000"
+      country: "SI"
+
+lines:
+  - quantity: "10"
+    item:
+      name: "Software development services"
+      price: "120.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: "standard"
+  - quantity: "5"
+    item:
+      name: "Printed book"
+      price: "20.00"
+    taxes:
+      - cat: VAT
+        rate: "super-reduced"

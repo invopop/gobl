@@ -1,0 +1,128 @@
+{
+  "id": "GOBL-SI",
+  "package": "si",
+  "subsets": [
+    {
+      "id": "GOBL-SI-BILL-INVOICE",
+      "object": "bill.Invoice",
+      "subsets": [
+        {
+          "guard": "context: regime in [SI]",
+          "subsets": [
+            {
+              "field": "supplier",
+              "subsets": [
+                {
+                  "field": "tax_id",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-BILL-INVOICE-01",
+                      "desc": "invoice SI supplier must have a tax ID",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "field": "code",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-BILL-INVOICE-02",
+                          "desc": "invoice SI supplier tax ID must have a code",
+                          "tests": "present"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SI-ORG-IDENTITY",
+      "object": "org.Identity",
+      "subsets": [
+        {
+          "guard": "context: regime in [SI]",
+          "subsets": [
+            {
+              "guard": "type in [MŠ]",
+              "subsets": [
+                {
+                  "field": "code",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-ORG-IDENTITY-01",
+                      "desc": "Slovenian registration number is required",
+                      "tests": "present"
+                    }
+                  ],
+                  "subsets": [
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-ORG-IDENTITY-02",
+                          "desc": "invalid Slovenian registration number format",
+                          "tests": "matches ^\\d{10}$"
+                        }
+                      ]
+                    },
+                    {
+                      "guard": "present",
+                      "assert": [
+                        {
+                          "id": "GOBL-SI-ORG-IDENTITY-03",
+                          "desc": "invalid Slovenian registration number check digit",
+                          "tests": "checksum"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GOBL-SI-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [SI]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-TAX-IDENTITY-01",
+                      "desc": "invalid Slovenian VAT identity format",
+                      "tests": "matches ^[1-9]\\d{7}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-SI-TAX-IDENTITY-02",
+                      "desc": "invalid Slovenian VAT identity check digit",
+                      "tests": "checksum"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
