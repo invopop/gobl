@@ -241,6 +241,17 @@ func TestPreview(t *testing.T) {
 		require.Error(t, err)
 	})
 
+	t.Run("with a symlinked unreleased directory", func(t *testing.T) {
+		root := repo(t, nil)
+		outside := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(outside, "a.md"), []byte("## Added\n\n- outside\n"), 0o644))
+		require.NoError(t, os.RemoveAll(filepath.Join(root, changes.UnreleasedDir)))
+		require.NoError(t, os.Symlink(outside, filepath.Join(root, changes.UnreleasedDir)))
+		_, err := changes.Preview(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "unreleased: symbolic links are not supported")
+	})
+
 	t.Run("with a symlinked change file", func(t *testing.T) {
 		root := repo(t, nil)
 		require.NoError(t, os.WriteFile(filepath.Join(root, "secret.md"), []byte("## Added\n\n- secret\n"), 0o644))
@@ -338,6 +349,35 @@ func TestRelease(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, read(t, root, changes.ChangelogFile), "v0.505.0")
 		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
+	})
+
+	t.Run("creates the releases directory for a first release", func(t *testing.T) {
+		root := t.TempDir()
+		require.NoError(t, os.MkdirAll(filepath.Join(root, changes.UnreleasedDir), 0o755))
+		require.NoError(t, os.WriteFile(filepath.Join(root, changes.UnreleasedDir, "a.md"), []byte("## Added\n\n- first\n"), 0o644))
+
+		name, err := changes.Release(root, "v0.1.0", testDate)
+		require.NoError(t, err)
+		assert.Equal(t, "changes/releases/2026-09-14-v0.1.0.md", name)
+		assert.Equal(t, "# v0.1.0 - 2026-09-14\n\n## Added\n\n- first\n", read(t, root, name))
+		assert.Contains(t, read(t, root, changes.ChangelogFile), "## [v0.1.0] - 2026-09-14")
+	})
+
+	t.Run("with a version that cannot be stored in a file name", func(t *testing.T) {
+		versions := map[string]string{
+			"v0.506.0/../../evil": "cannot contain a path separator",
+			`v0.506.0\evil`:       "cannot contain a path separator",
+			"0.506.0":             "cannot be read back",
+			"":                    "cannot be read back",
+		}
+		for version, msg := range versions {
+			root := repo(t, map[string]string{"changes/unreleased/a.md": "## Added\n\n- first\n"})
+			_, err := changes.Release(root, version, testDate)
+			require.Error(t, err, version)
+			assert.Contains(t, err.Error(), msg, version)
+			assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
+			assert.NoFileExists(t, filepath.Join(root, changes.ChangelogFile))
+		}
 	})
 
 	t.Run("with the version already released", func(t *testing.T) {
@@ -487,6 +527,28 @@ func TestChangelog(t *testing.T) {
 		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
 		_, err := changes.Changelog(root)
 		require.Error(t, err)
+	})
+
+	t.Run("with a symlinked header", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+		})
+		require.NoError(t, os.WriteFile(filepath.Join(root, "secret.md"), []byte("# Secrets\n"), 0o644))
+		require.NoError(t, os.Symlink(filepath.Join(root, "secret.md"), filepath.Join(root, changes.HeaderFile)))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "HEADER.md: symbolic links are not supported")
+	})
+
+	t.Run("with a symlinked releases directory", func(t *testing.T) {
+		root := repo(t, nil)
+		outside := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(outside, "2026-09-09-v9.9.9.md"), []byte("# v9.9.9 - 2026-09-09\n"), 0o644))
+		require.NoError(t, os.RemoveAll(filepath.Join(root, changes.ReleasesDir)))
+		require.NoError(t, os.Symlink(outside, filepath.Join(root, changes.ReleasesDir)))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "releases: symbolic links are not supported")
 	})
 
 	t.Run("with an unreadable header", func(t *testing.T) {

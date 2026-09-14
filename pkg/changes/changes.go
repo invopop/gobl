@@ -48,7 +48,11 @@ This file is generated from the change files in the [changes](./changes) directo
 // header returns the introduction to the generated changelog, taken from the
 // project's HEADER.md when it provides one.
 func header(root string) (string, error) {
-	data, err := os.ReadFile(filepath.Join(root, HeaderFile)) //nolint:gosec // paths come from the repository
+	path := filepath.Join(root, HeaderFile)
+	if err := rejectSymlink(path); err != nil {
+		return "", err
+	}
+	data, err := os.ReadFile(path) //nolint:gosec // paths come from the repository
 	if err != nil {
 		if os.IsNotExist(err) {
 			return defaultHeader + "\n", nil
@@ -206,6 +210,9 @@ func LoadUnreleased(root string) ([]*Fragment, error) {
 // directory is walked.
 func unreleasedFiles(root string) ([]string, error) {
 	dir := filepath.Join(root, UnreleasedDir)
+	if err := rejectSymlink(dir); err != nil {
+		return nil, err
+	}
 	paths := make([]string, 0)
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -301,6 +308,14 @@ func Preview(root, version string, date time.Time) (string, error) {
 // Release moves the pending change files into a dated release note and
 // regenerates the changelog. It returns the path of the release note.
 func Release(root, version string, date time.Time) (string, error) {
+	stamp := date.Format(DateFormat)
+	base := fmt.Sprintf("%s-%s.md", stamp, version)
+	if strings.ContainsAny(version, `/\`) {
+		return "", fmt.Errorf("version %q cannot contain a path separator", version)
+	}
+	if d, tag, ok := splitName(base); !ok || tag != version || d != stamp {
+		return "", fmt.Errorf("version %q cannot be read back from a release note name, expected something like v1.2.3", version)
+	}
 	notes, err := Preview(root, version, date)
 	if err != nil {
 		return "", err
@@ -310,8 +325,11 @@ func Release(root, version string, date time.Time) (string, error) {
 	} else if prev != "" {
 		return "", fmt.Errorf("release notes for %s already exist at %s, bump the version in version.go first", version, prev)
 	}
-	name := filepath.Join(ReleasesDir, fmt.Sprintf("%s-%s.md", date.Format(DateFormat), version))
+	name := filepath.Join(ReleasesDir, base)
 	path := filepath.Join(root, name)
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil { //nolint:gosec // release notes are public
+		return "", err
+	}
 	if err := writeFile(path, notes); err != nil {
 		return "", err
 	}
@@ -355,6 +373,22 @@ func Normalize(root string) ([]string, error) {
 		changed = append(changed, filepath.Base(path))
 	}
 	return changed, nil
+}
+
+// rejectSymlink reports an error when the path is a symbolic link, so that
+// nothing outside the project is read into its release notes.
+func rejectSymlink(path string) error {
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("%s: symbolic links are not supported", filepath.Base(path))
+	}
+	return nil
 }
 
 // writeFile replaces the file at the path with the data, leaving the original
@@ -470,6 +504,9 @@ func splitName(name string) (date, tag string, ok bool) {
 // directory that cannot be read is reported instead of read as empty.
 func releaseFiles(root string) ([]string, error) {
 	dir := filepath.Join(root, ReleasesDir)
+	if err := rejectSymlink(dir); err != nil {
+		return nil, err
+	}
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		if os.IsNotExist(err) {
