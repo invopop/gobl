@@ -217,6 +217,9 @@ func unreleasedFiles(root string) ([]string, error) {
 		if strings.EqualFold(d.Name(), "README.md") {
 			return nil
 		}
+		if d.Type()&fs.ModeSymlink != 0 {
+			return fmt.Errorf("%s: symbolic links are not supported", d.Name())
+		}
 		paths = append(paths, path)
 		return nil
 	})
@@ -332,13 +335,12 @@ func Release(root, version string, date time.Time) (string, error) {
 // Normalize rewrites any release note that differs from its canonical form,
 // returning the names of the files changed.
 func Normalize(root string) ([]string, error) {
-	names, err := filepath.Glob(filepath.Join(root, ReleasesDir, "*.md"))
+	paths, err := releaseFiles(root)
 	if err != nil {
 		return nil, err
 	}
-	sort.Strings(names)
 	changed := make([]string, 0)
-	for _, path := range names {
+	for _, path := range paths {
 		r, err := loadRelease(path)
 		if err != nil {
 			return nil, err
@@ -374,19 +376,23 @@ func writeFile(path, data string) error {
 		_ = os.Remove(name)
 		return err
 	}
-	return os.Rename(name, path)
+	if err := os.Rename(name, path); err != nil {
+		_ = os.Remove(name)
+		return err
+	}
+	return nil
 }
 
 // Changelog assembles the complete changelog from the release notes, newest
 // release first.
 func Changelog(root string) (string, error) {
-	names, err := filepath.Glob(filepath.Join(root, ReleasesDir, "*.md"))
+	paths, err := releaseFiles(root)
 	if err != nil {
 		return "", err
 	}
-	releases := make([]*release, 0, len(names))
-	for _, name := range names {
-		r, err := loadRelease(name)
+	releases := make([]*release, 0, len(paths))
+	for _, path := range paths {
+		r, err := loadRelease(path)
 		if err != nil {
 			return "", err
 		}
@@ -460,14 +466,44 @@ func splitName(name string) (date, tag string, ok bool) {
 	return date, "v" + tag, true
 }
 
+// releaseFiles returns the release notes, sorted by name. Unlike a glob, a
+// directory that cannot be read is reported instead of read as empty.
+func releaseFiles(root string) ([]string, error) {
+	dir := filepath.Join(root, ReleasesDir)
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	paths := make([]string, 0, len(entries))
+	for _, e := range entries {
+		if e.IsDir() || !strings.EqualFold(filepath.Ext(e.Name()), ".md") {
+			continue
+		}
+		if e.Type()&fs.ModeSymlink != 0 {
+			return nil, fmt.Errorf("%s: symbolic links are not supported", e.Name())
+		}
+		paths = append(paths, filepath.Join(dir, e.Name()))
+	}
+	sort.Strings(paths)
+	return paths, nil
+}
+
 // findRelease returns the release note file already published for the version,
 // or an empty string.
 func findRelease(root, version string) (string, error) {
-	names, err := filepath.Glob(filepath.Join(root, ReleasesDir, "*-"+version+".md"))
-	if err != nil || len(names) == 0 {
+	paths, err := releaseFiles(root)
+	if err != nil {
 		return "", err
 	}
-	return filepath.Join(ReleasesDir, filepath.Base(names[0])), nil
+	for _, path := range paths {
+		if _, tag, ok := splitName(filepath.Base(path)); ok && tag == version {
+			return filepath.Join(ReleasesDir, filepath.Base(path)), nil
+		}
+	}
+	return "", nil
 }
 
 func removeUnreleased(root string) error {

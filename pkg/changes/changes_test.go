@@ -241,15 +241,29 @@ func TestPreview(t *testing.T) {
 		require.Error(t, err)
 	})
 
-	t.Run("with an unreadable change file", func(t *testing.T) {
+	t.Run("with a symlinked change file", func(t *testing.T) {
 		root := repo(t, nil)
+		require.NoError(t, os.WriteFile(filepath.Join(root, "secret.md"), []byte("## Added\n\n- secret\n"), 0o644))
 		require.NoError(t, os.Symlink(
-			filepath.Join(root, "missing.md"),
-			filepath.Join(root, "changes/unreleased/broken.md"),
+			filepath.Join(root, "secret.md"),
+			filepath.Join(root, "changes/unreleased/link.md"),
 		))
 		_, err := changes.Preview(root, "v0.506.0", testDate)
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "broken.md")
+		assert.Contains(t, err.Error(), "link.md: symbolic links are not supported")
+	})
+
+	t.Run("with an unreadable change file", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable file does not stop root from reading it")
+		}
+		root := repo(t, map[string]string{"changes/unreleased/a.md": "## Added\n\n- one\n"})
+		path := filepath.Join(root, "changes/unreleased/a.md")
+		require.NoError(t, os.Chmod(path, 0o000))
+		t.Cleanup(func() { _ = os.Chmod(path, 0o644) })
+		_, err := changes.Preview(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "a.md")
 	})
 
 	t.Run("with an invalid file", func(t *testing.T) {
@@ -306,6 +320,24 @@ func TestRelease(t *testing.T) {
 		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
 		assert.NoFileExists(t, filepath.Join(root, "changes/releases/2026-09-14-v0.506.0.md"))
 		assert.NoFileExists(t, filepath.Join(root, changes.ChangelogFile))
+	})
+
+	t.Run("keeps the changelog when the history cannot be read", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable directory does not stop root from reading it")
+		}
+		root := repo(t, map[string]string{
+			"changes/unreleased/a.md":                 "## Added\n\n- first\n",
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- previous\n",
+			"CHANGELOG.md":                            "# Change Log\n\n## [v0.505.0] - 2026-09-09\n",
+		})
+		dir := filepath.Join(root, changes.ReleasesDir)
+		require.NoError(t, os.Chmod(dir, 0o333))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+		_, err := changes.Release(root, "v0.506.0", testDate)
+		require.Error(t, err)
+		assert.Contains(t, read(t, root, changes.ChangelogFile), "v0.505.0")
+		assert.FileExists(t, filepath.Join(root, "changes/unreleased/a.md"))
 	})
 
 	t.Run("with the version already released", func(t *testing.T) {
@@ -417,12 +449,42 @@ func TestChangelog(t *testing.T) {
 		assert.Regexp(t, `(?s)vNOPE.*vALSO`, log)
 	})
 
-	t.Run("with an unreadable release note", func(t *testing.T) {
+	t.Run("with a symlinked release note", func(t *testing.T) {
 		root := repo(t, nil)
+		require.NoError(t, os.WriteFile(filepath.Join(root, "secret.md"), []byte("anything at all\n"), 0o644))
 		require.NoError(t, os.Symlink(
-			filepath.Join(root, "missing.md"),
+			filepath.Join(root, "secret.md"),
 			filepath.Join(root, "changes/releases/2026-09-09-v0.505.0.md"),
 		))
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "symbolic links are not supported")
+	})
+
+	t.Run("with an unreadable release note", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable file does not stop root from reading it")
+		}
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+		})
+		path := filepath.Join(root, "changes/releases/2026-09-09-v0.505.0.md")
+		require.NoError(t, os.Chmod(path, 0o000))
+		t.Cleanup(func() { _ = os.Chmod(path, 0o644) })
+		_, err := changes.Changelog(root)
+		require.Error(t, err)
+	})
+
+	t.Run("with an unreadable releases directory", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable directory does not stop root from reading it")
+		}
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+		})
+		dir := filepath.Join(root, changes.ReleasesDir)
+		require.NoError(t, os.Chmod(dir, 0o000))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
 		_, err := changes.Changelog(root)
 		require.Error(t, err)
 	})
@@ -434,6 +496,23 @@ func TestChangelog(t *testing.T) {
 		require.NoError(t, os.Mkdir(filepath.Join(root, changes.HeaderFile), 0o755))
 		_, err := changes.Changelog(root)
 		require.Error(t, err)
+	})
+
+	t.Run("ignores anything that is not a release note", func(t *testing.T) {
+		root := repo(t, map[string]string{
+			"changes/releases/2026-09-09-v0.505.0.md": "# v0.505.0 - 2026-09-09\n\n## Added\n\n- one\n",
+			"changes/releases/notes.txt":              "scratch\n",
+		})
+		require.NoError(t, os.Mkdir(filepath.Join(root, "changes/releases/archive"), 0o755))
+		log, err := changes.Changelog(root)
+		require.NoError(t, err)
+		assert.Contains(t, log, "## [v0.505.0] - 2026-09-09")
+	})
+
+	t.Run("without a releases directory", func(t *testing.T) {
+		log, err := changes.Changelog(t.TempDir())
+		require.NoError(t, err)
+		assert.Contains(t, log, "# Change Log")
 	})
 
 	t.Run("without a project header", func(t *testing.T) {
@@ -477,6 +556,18 @@ func TestNormalize(t *testing.T) {
 		})
 		require.NoError(t, os.Chmod(filepath.Join(root, changes.ReleasesDir), 0o555))
 		t.Cleanup(func() { _ = os.Chmod(filepath.Join(root, changes.ReleasesDir), 0o755) })
+		_, err := changes.Normalize(root)
+		require.Error(t, err)
+	})
+
+	t.Run("reports an unreadable releases directory", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("an unreadable directory does not stop root from reading it")
+		}
+		root := repo(t, nil)
+		dir := filepath.Join(root, changes.ReleasesDir)
+		require.NoError(t, os.Chmod(dir, 0o000))
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
 		_, err := changes.Normalize(root)
 		require.Error(t, err)
 	})
