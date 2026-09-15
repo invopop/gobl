@@ -12,28 +12,30 @@ import (
 )
 
 func normalizeOrgItem(item *org.Item) {
-	code := item.Ext.Get(untdid.ExtKeyUnit)
-	if unit := untdid.UnitKey(code); unit != cbc.KeyEmpty {
-		item.Unit = unit
-	}
-	if item.Unit == cbc.KeyEmpty {
+	item.Unit, item.Ext = untdid.NormalizeUnit(item.Unit, item.Ext)
+	// BR-23 requires a unit of measure on every line, so stand in the generic
+	// unit when the document gives neither a key nor a code.
+	if item.Unit == cbc.KeyEmpty && !item.Ext.Has(untdid.ExtKeyUnit) {
 		item.Unit = org.UnitOne
 	}
-	if code == cbc.CodeEmpty {
-		if code = untdid.UnitCode(item.Unit); code != cbc.CodeEmpty {
-			item.Ext = item.Ext.Set(untdid.ExtKeyUnit, code)
-		}
-	}
+}
+
+func normalizeOrgAttribute(a *org.Attribute) {
+	a.Unit, a.Ext = untdid.NormalizeUnit(a.Unit, a.Ext)
 }
 
 func orgItemRules() *rules.Set {
 	return rules.For(new(org.Item),
-		rules.Assert("02", fmt.Sprintf("UNTDID unit `%s` must be present and valid (BR-23)", untdid.ExtKeyUnit),
+		rules.Assert("02", fmt.Sprintf("unit code must be determinable from the unit or the `%s` extension (BR-23)", untdid.ExtKeyUnit),
 			is.Func("required valid UNTDID unit", func(value any) bool {
 				item, ok := value.(*org.Item)
-				return ok && item != nil &&
-					item.Ext.Has(untdid.ExtKeyUnit) &&
-					tax.ExtensionHasValidCode(untdid.ExtKeyUnit).Check(item.Ext)
+				if !ok || item == nil {
+					return false
+				}
+				if item.Ext.Has(untdid.ExtKeyUnit) {
+					return tax.ExtensionHasValidCode(untdid.ExtKeyUnit).Check(item.Ext)
+				}
+				return untdid.UnitCode(item.Unit) != cbc.CodeEmpty
 			}),
 		),
 	)

@@ -55,67 +55,140 @@ func TestOrgItemNormalize(t *testing.T) {
 		item := &org.Item{}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitOne, item.Unit)
-		assert.Equal(t, cbc.Code("C62"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.True(t, item.Ext.IsZero(), "the key alone determines the code")
+	})
+
+	t.Run("maintains valid", func(t *testing.T) {
+		item := &org.Item{Unit: org.UnitHour}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.True(t, item.Ext.IsZero())
 	})
 
 	t.Run("maps the ES portion unit", func(t *testing.T) {
 		item := &org.Item{Unit: org.UnitPortion}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitPortion, item.Unit)
-		assert.Equal(t, cbc.Code("13"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.True(t, item.Ext.IsZero())
 	})
 
-	t.Run("maintains valid", func(t *testing.T) {
+	t.Run("replaces a mapped extension with its unit", func(t *testing.T) {
 		item := &org.Item{
-			Unit: org.UnitHour,
+			Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitHour, item.Unit)
-		assert.Equal(t, cbc.Code("HUR"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.Equal(t, org.UnitKilogram, item.Unit)
+		assert.True(t, item.Ext.IsZero())
 	})
 
-	t.Run("preserves explicit UNTDID unit", func(t *testing.T) {
+	t.Run("keeps an extension GOBL has no unit for", func(t *testing.T) {
 		item := &org.Item{
-			Unit: org.UnitHour,
-			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+			Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.Equal(t, cbc.KeyEmpty, item.Unit, "no unit can express this code")
 		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
-	t.Run("maps explicit UNTDID unit", func(t *testing.T) {
+	t.Run("extension wins over a contradictory unit", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
 			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.True(t, item.Ext.IsZero())
+	})
+
+	t.Run("unmapped extension wins over a contradictory unit", func(t *testing.T) {
+		item := &org.Item{
+			Unit: org.UnitHour,
+			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+		}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, cbc.KeyEmpty, item.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("migrates legacy UNTDID unit", func(t *testing.T) {
 		item := &org.Item{Unit: "KGM"}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.True(t, item.Ext.IsZero())
 	})
 
 	t.Run("preserves unmapped legacy UNTDID unit", func(t *testing.T) {
 		item := &org.Item{Unit: "XZZ"}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitOne, item.Unit)
+		assert.Equal(t, cbc.KeyEmpty, item.Unit)
 		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("is idempotent", func(t *testing.T) {
+		for _, item := range []*org.Item{
+			{Unit: org.UnitHour},
+			{Unit: "KGM"},
+			{Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ")},
+			{},
+		} {
+			norm.Normalize(item, tax.AddonContext(en16931.V2017))
+			unit, ext := item.Unit, item.Ext.Clone()
+			norm.Normalize(item, tax.AddonContext(en16931.V2017))
+			assert.Equal(t, unit, item.Unit)
+			assert.True(t, ext.Equals(item.Ext))
+		}
+	})
+
+	t.Run("accepts a unit with no extension", func(t *testing.T) {
+		item := &org.Item{Name: "test item", Unit: org.UnitHour}
+		assert.NoError(t, rules.Validate(item, tax.AddonContext(en16931.V2017)))
+	})
+
+	t.Run("rejects a unit with no code at all", func(t *testing.T) {
+		item := &org.Item{Name: "test item", Unit: cbc.KeyEmpty}
+		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
+		assert.ErrorContains(t, err, "must be determinable")
 	})
 
 	t.Run("rejects invalid UNTDID unit", func(t *testing.T) {
 		item := &org.Item{
 			Name: "test item",
-			Unit: org.UnitHour,
 			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "invalid"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "must be present and valid")
+		assert.ErrorContains(t, err, "must be determinable")
+	})
+}
+
+func TestOrgAttributeNormalize(t *testing.T) {
+	t.Run("replaces a mapped extension with its unit", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: &amount,
+			Ext:    tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
+		}
+		norm.Normalize(a, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitKilogram, a.Unit)
+		assert.True(t, a.Ext.IsZero())
+	})
+
+	t.Run("keeps an extension GOBL has no unit for", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: &amount,
+			Ext:    tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
+		}
+		norm.Normalize(a, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, cbc.KeyEmpty, a.Unit)
+		assert.Equal(t, cbc.Code("XZZ"), a.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("never defaults the unit", func(t *testing.T) {
+		a := &org.Attribute{Key: org.AttributeKeyColor, Text: "Black"}
+		norm.Normalize(a, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, cbc.KeyEmpty, a.Unit, "BR-23 applies to lines, not attributes")
 	})
 }
 
@@ -324,14 +397,13 @@ func TestOrgItemValidate(t *testing.T) {
 	t.Run("missing unit", func(t *testing.T) {
 		item := &org.Item{Name: "Test"}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
-		assert.ErrorContains(t, err, "must be present and valid (BR-23)")
+		assert.ErrorContains(t, err, "must be determinable")
 	})
 
 	t.Run("validates unit", func(t *testing.T) {
 		item := &org.Item{
 			Name: "Test",
 			Unit: org.UnitOne,
-			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
@@ -342,7 +414,6 @@ func TestOrgItemValidate(t *testing.T) {
 			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(-100, 0),
-			Ext:   tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.ErrorContains(t, err, "zero or positive")
@@ -353,7 +424,6 @@ func TestOrgItemValidate(t *testing.T) {
 			Name:  "Test",
 			Unit:  org.UnitOne,
 			Price: num.NewAmount(0, 0),
-			Ext:   tax.MakeExtensions().Set(untdid.ExtKeyUnit, "C62"),
 		}
 		err := rules.Validate(item, tax.AddonContext(en16931.V2017))
 		assert.NoError(t, err)
