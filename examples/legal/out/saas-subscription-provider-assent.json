@@ -1,0 +1,29 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4111839ca32673931a958724f481f4f6913b593b178a08bfd177028dc5a7d69e"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/legal/assent",
+		"uuid": "0198b001-1000-7202-a26e-3adeb40adcc8",
+		"contract": {
+			"relation": "agreement",
+			"uuid": "0198b001-1000-7a21-9b8a-48ea44647387",
+			"code": "SSA-2026-0042",
+			"title": "SaaS Subscription Agreement",
+			"digest": {
+				"alg": "sha256",
+				"val": "34fe86a8052549be2512a43d88672826a574282144fb854dfac583208535721e"
+			}
+		},
+		"party": "provider",
+		"signatory": "provider-signatory",
+		"intent": "execute",
+		"capacity": "Chief Operating Officer",
+		"statement": "Signed for and on behalf of Nimbus Ledger Software Ltd."
+	}
+}
