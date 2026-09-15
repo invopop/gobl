@@ -91,7 +91,7 @@ const (
 	UnitTub      cbc.Key = `tub`
 	UnitCase     cbc.Key = `case`
 	UnitTray     cbc.Key = `tray`
-	UnitPortion  cbc.Key = `portion` // non-standard (src: ES)
+	UnitPortion  cbc.Key = `portion`
 	UnitDozen    cbc.Key = `dozen`
 	UnitPair     cbc.Key = `pair`
 	UnitRoll     cbc.Key = `roll`
@@ -186,8 +186,8 @@ var UnitDefinitions = []*cbc.Definition{
 	{Key: UnitCan, Name: i18n.NewString("Cans")},
 	{Key: UnitTub, Name: i18n.NewString("Tubs")},
 	{Key: UnitCase, Name: i18n.NewString("Cases")},
-	{Key: UnitTray, Name: i18n.NewString("Trays")},       // plastic
-	{Key: UnitPortion, Name: i18n.NewString("Portions")}, // non-standard (src: ES)
+	{Key: UnitTray, Name: i18n.NewString("Trays")}, // plastic
+	{Key: UnitPortion, Name: i18n.NewString("Portions")},
 	{Key: UnitSet, Name: i18n.NewString("Sets"), Desc: i18n.NewString("A unit of count defining the number of sets (set: a number of objects grouped together).")},
 	{Key: UnitRoll, Name: i18n.NewString("Rolls")},
 	{Key: UnitCarton, Name: i18n.NewString("Cartons")},
