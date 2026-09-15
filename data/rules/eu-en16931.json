@@ -194,7 +194,7 @@
       "assert": [
         {
           "id": "GOBL-EU-EN16931-ORG-ITEM-02",
-          "desc": "UNTDID unit `untdid-unit` must be present and valid (BR-23)",
+          "desc": "unit code must be determinable from the unit or the `untdid-unit` extension (BR-23)",
           "tests": "required valid UNTDID unit"
         }
       ]
