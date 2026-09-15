@@ -97,24 +97,25 @@ func TestOrgItemNormalize(t *testing.T) {
 		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
-	t.Run("extension wins over a contradictory unit", func(t *testing.T) {
+	t.Run("unit wins over a contradictory extension", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
 			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, org.UnitKilogram, item.Unit)
-		assert.Equal(t, cbc.Code("KGM"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.Equal(t, cbc.Code("HUR"), item.Ext.Get(untdid.ExtKeyUnit),
+			"the extension is aligned with the unit")
 	})
 
-	t.Run("unmapped extension wins over a contradictory unit", func(t *testing.T) {
+	t.Run("unit wins over an extension GOBL cannot express", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
 			Ext:  tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ"),
 		}
 		norm.Normalize(item, tax.AddonContext(en16931.V2017))
-		assert.Equal(t, cbc.KeyEmpty, item.Unit)
-		assert.Equal(t, cbc.Code("XZZ"), item.Ext.Get(untdid.ExtKeyUnit))
+		assert.Equal(t, org.UnitHour, item.Unit)
+		assert.Equal(t, cbc.Code("HUR"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("migrates legacy UNTDID unit", func(t *testing.T) {
@@ -137,6 +138,8 @@ func TestOrgItemNormalize(t *testing.T) {
 			{Unit: org.UnitHour},
 			{Unit: "KGM"},
 			{Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "XZZ")},
+			{Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM")},
+			{Unit: org.UnitHour, Ext: tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM")},
 			{},
 		} {
 			norm.Normalize(item, tax.AddonContext(en16931.V2017))
@@ -191,6 +194,19 @@ func TestOrgAttributeNormalize(t *testing.T) {
 		norm.Normalize(a, tax.AddonContext(en16931.V2017))
 		assert.Equal(t, cbc.KeyEmpty, a.Unit)
 		assert.Equal(t, cbc.Code("XZZ"), a.Ext.Get(untdid.ExtKeyUnit))
+	})
+
+	t.Run("unit wins over a contradictory extension", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		a := &org.Attribute{
+			Key:    org.AttributeKeyWeight,
+			Amount: &amount,
+			Unit:   org.UnitGram,
+			Ext:    tax.MakeExtensions().Set(untdid.ExtKeyUnit, "KGM"),
+		}
+		norm.Normalize(a, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitGram, a.Unit)
+		assert.Equal(t, cbc.Code("GRM"), a.Ext.Get(untdid.ExtKeyUnit))
 	})
 
 	t.Run("never defaults the unit", func(t *testing.T) {
