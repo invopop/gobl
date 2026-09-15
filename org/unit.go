@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
 
@@ -83,39 +84,37 @@ const (
 	UnitOne              cbc.Key = `one`
 
 	// Presentation Unit Codes
-	UnitBag       cbc.Key = `bag`
-	UnitBox       cbc.Key = `box`
-	UnitBin       cbc.Key = `bin`
-	UnitCan       cbc.Key = `can`
-	UnitTub       cbc.Key = `tub`
-	UnitCase      cbc.Key = `case`
-	UnitTray      cbc.Key = `tray`
-	UnitPortion   cbc.Key = `portion` // non-standard (src: ES)
-	UnitDozen     cbc.Key = `dozen`
-	UnitPair      cbc.Key = `pair`
-	UnitRoll      cbc.Key = `roll`
-	UnitCarton    cbc.Key = `carton`
-	UnitCylinder  cbc.Key = `cylinder`
-	UnitBarrel    cbc.Key = `barrel`
-	UnitJerrican  cbc.Key = `jerrican`
-	UnitCarboy    cbc.Key = `carboy`
-	UnitDemijohn  cbc.Key = `demijohn`
-	UnitBottle    cbc.Key = `bottle`
-	UnitSixPack   cbc.Key = `6pack` // non-standard (src: ES)
-	UnitCanister  cbc.Key = `canister`
-	UnitPackage   cbc.Key = `pkg`
-	UnitPacket    cbc.Key = `pkt`
-	UnitBunch     cbc.Key = `bunch`
-	UnitBundle    cbc.Key = `bdl`
-	UnitBlock     cbc.Key = `blk`
-	UnitTetraBrik cbc.Key = `tetrabrik` // non-standard (src: ES)
-	UnitPallet    cbc.Key = `pallet`
-	UnitReel      cbc.Key = `reel`
-	UnitSack      cbc.Key = `sack`
-	UnitSheet     cbc.Key = `sheet`
-	UnitEnvelope  cbc.Key = `envelope`
-	UnitUnit      cbc.Key = `unit`
-	UnitLot       cbc.Key = `lot`
+	UnitBag      cbc.Key = `bag`
+	UnitBox      cbc.Key = `box`
+	UnitBin      cbc.Key = `bin`
+	UnitCan      cbc.Key = `can`
+	UnitTub      cbc.Key = `tub`
+	UnitCase     cbc.Key = `case`
+	UnitTray     cbc.Key = `tray`
+	UnitPortion  cbc.Key = `portion`
+	UnitDozen    cbc.Key = `dozen`
+	UnitPair     cbc.Key = `pair`
+	UnitRoll     cbc.Key = `roll`
+	UnitCarton   cbc.Key = `carton`
+	UnitCylinder cbc.Key = `cylinder`
+	UnitBarrel   cbc.Key = `barrel`
+	UnitJerrican cbc.Key = `jerrican`
+	UnitCarboy   cbc.Key = `carboy`
+	UnitDemijohn cbc.Key = `demijohn`
+	UnitBottle   cbc.Key = `bottle`
+	UnitCanister cbc.Key = `canister`
+	UnitPackage  cbc.Key = `pkg`
+	UnitPacket   cbc.Key = `pkt`
+	UnitBunch    cbc.Key = `bunch`
+	UnitBundle   cbc.Key = `bdl`
+	UnitBlock    cbc.Key = `blk`
+	UnitPallet   cbc.Key = `pallet`
+	UnitReel     cbc.Key = `reel`
+	UnitSack     cbc.Key = `sack`
+	UnitSheet    cbc.Key = `sheet`
+	UnitEnvelope cbc.Key = `envelope`
+	UnitUnit     cbc.Key = `unit`
+	UnitLot      cbc.Key = `lot`
 )
 
 // UnitDefinitions describes each of the unit constants.
@@ -187,8 +186,8 @@ var UnitDefinitions = []*cbc.Definition{
 	{Key: UnitCan, Name: i18n.NewString("Cans")},
 	{Key: UnitTub, Name: i18n.NewString("Tubs")},
 	{Key: UnitCase, Name: i18n.NewString("Cases")},
-	{Key: UnitTray, Name: i18n.NewString("Trays")},       // plastic
-	{Key: UnitPortion, Name: i18n.NewString("Portions")}, // non-standard (src: ES)
+	{Key: UnitTray, Name: i18n.NewString("Trays")}, // plastic
+	{Key: UnitPortion, Name: i18n.NewString("Portions")},
 	{Key: UnitSet, Name: i18n.NewString("Sets"), Desc: i18n.NewString("A unit of count defining the number of sets (set: a number of objects grouped together).")},
 	{Key: UnitRoll, Name: i18n.NewString("Rolls")},
 	{Key: UnitCarton, Name: i18n.NewString("Cartons")},
@@ -198,14 +197,12 @@ var UnitDefinitions = []*cbc.Definition{
 	{Key: UnitCarboy, Name: i18n.NewString("Carboys")},     // non-protected
 	{Key: UnitDemijohn, Name: i18n.NewString("Demijohns")}, // non-protected
 	{Key: UnitBottle, Name: i18n.NewString("Bottles")},     // non-protected, cylindrical
-	{Key: UnitSixPack, Name: i18n.NewString("Six Packs")},  // non-standard (src: ES)
 	{Key: UnitCanister, Name: i18n.NewString("Canisters")},
 	{Key: UnitPackage, Name: i18n.NewString("Packages"), Desc: i18n.NewString("Standard packaging unit.")},
 	{Key: UnitPacket, Name: i18n.NewString("Packets")},
 	{Key: UnitBunch, Name: i18n.NewString("Bunches")},
 	{Key: UnitBundle, Name: i18n.NewString("Bundles")},
 	{Key: UnitBlock, Name: i18n.NewString("Blocks")},
-	{Key: UnitTetraBrik, Name: i18n.NewString("Tetra-Briks")}, // non-standard (src: ES)
 	{Key: UnitPallet, Name: i18n.NewString("Pallets")},
 	{Key: UnitReel, Name: i18n.NewString("Reels")},
 	{Key: UnitSack, Name: i18n.NewString("Sacks")},
@@ -213,6 +210,28 @@ var UnitDefinitions = []*cbc.Definition{
 	{Key: UnitEnvelope, Name: i18n.NewString("Envelopes")},
 	{Key: UnitLot, Name: i18n.NewString("Lot")},
 	{Key: UnitUnit, Name: i18n.NewString("Unit"), Desc: i18n.NewString("A type of package composed of a single item or object, not otherwise specified as a unit of transport equipment.")},
+}
+
+// legacyUnits maps unit keys that GOBL no longer defines to their closest
+// replacement, so documents written before their removal keep validating.
+var legacyUnits = map[cbc.Key]cbc.Key{
+	`6pack`:     UnitPackage,
+	`tetrabrik`: UnitCarton,
+}
+
+// normalizeUnit migrates a legacy unit value. Before Unit was restricted to
+// GOBL keys it also accepted raw UN/ECE codes, which are preserved in the
+// dedicated extension without making assumptions about their meaning; addons
+// may provide their own mapping. Keys that GOBL has since dropped are replaced
+// by their closest equivalent.
+func normalizeUnit(unit cbc.Key, ext tax.Extensions) (cbc.Key, tax.Extensions) {
+	if regexpUNECEUnit.MatchString(unit.String()) {
+		return cbc.KeyEmpty, ext.SetIfEmpty(unitExtKeyUNTDID, cbc.Code(unit))
+	}
+	if replacement, ok := legacyUnits[unit]; ok {
+		return replacement, ext
+	}
+	return unit, ext
 }
 
 // HasValidUnitKey validates that a key is one of the units defined by GOBL.

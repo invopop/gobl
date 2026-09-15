@@ -79,6 +79,7 @@ var unitUNTDIDMap = map[cbc.Key]cbc.Code{
 	org.UnitTub:              "XTB",
 	org.UnitCase:             "XCS",
 	org.UnitTray:             "XDS",
+	org.UnitPortion:          "13",
 	org.UnitSet:              "SET",
 	org.UnitRoll:             "XRO",
 	org.UnitCarton:           "XCT",

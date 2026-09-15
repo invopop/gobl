@@ -24,7 +24,7 @@ func TestUnitToUNTDID(t *testing.T) {
 		{org.UnitBlock, "XOK"},
 		{org.UnitPacket, "XPA"},
 		{org.UnitBundle, "XBE"},
-		{org.UnitPortion, ""},
+		{org.UnitPortion, "13"},
 		{cbc.KeyEmpty, ""},
 	}
 
@@ -36,28 +36,20 @@ func TestUnitToUNTDID(t *testing.T) {
 func TestUnitFromUNTDID(t *testing.T) {
 	assert.Equal(t, org.UnitHour, en16931.UnitFromUNTDID("HUR"))
 	assert.Equal(t, org.UnitUnit, en16931.UnitFromUNTDID("XUN"))
+	assert.Equal(t, org.UnitPortion, en16931.UnitFromUNTDID("13"))
 	assert.Equal(t, cbc.KeyEmpty, en16931.UnitFromUNTDID("XZZ"))
 	assert.Equal(t, cbc.KeyEmpty, en16931.UnitFromUNTDID(""))
 }
 
 func TestUnitUNTDIDMapCoverage(t *testing.T) {
-	unmapped := map[cbc.Key]bool{
-		org.UnitPortion:   true,
-		org.UnitSixPack:   true,
-		org.UnitTetraBrik: true,
-	}
 	mapped := 0
 	for _, def := range org.UnitDefinitions {
 		unit := def.Key
 		code := en16931.UnitToUNTDID(unit)
-		if unmapped[unit] {
-			assert.Empty(t, code, "non-standard unit %s should not be mapped", unit)
-			continue
-		}
 		if assert.NotEmpty(t, code, "unit %s should be mapped", unit) {
 			assert.Equal(t, unit, en16931.UnitFromUNTDID(code))
 			mapped++
 		}
 	}
-	assert.Equal(t, 86, mapped)
+	assert.Equal(t, len(org.UnitDefinitions), mapped)
 }

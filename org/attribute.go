@@ -233,14 +233,7 @@ func attributeHasValue(val any) bool {
 }
 
 func normalizeAttribute(a *Attribute) {
-	// Before Unit was restricted to GOBL keys, it also accepted raw UN/ECE
-	// codes. Preserve those codes in the dedicated extension without making
-	// assumptions about their meaning; addons may provide their own mapping.
-	if regexpUNECEUnit.MatchString(a.Unit.String()) {
-		code := cbc.Code(a.Unit)
-		a.Ext = a.Ext.SetIfEmpty(unitExtKeyUNTDID, code)
-		a.Unit = cbc.KeyEmpty
-	}
+	a.Unit, a.Ext = normalizeUnit(a.Unit, a.Ext)
 	a.Label = cbc.NormalizeString(a.Label)
 	a.Text = cbc.NormalizeString(a.Text)
 }

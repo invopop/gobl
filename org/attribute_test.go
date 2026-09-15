@@ -183,6 +183,18 @@ func TestAttributeNormalization(t *testing.T) {
 		assert.Equal(t, cbc.KeyEmpty, a.Unit)
 		assert.Equal(t, cbc.Code("XZZ"), a.Ext.Get(untdid.ExtKeyUnit))
 	})
+	t.Run("legacy removed unit keys", func(t *testing.T) {
+		amount := num.MakeAmount(15, 1)
+		for unit, expect := range map[cbc.Key]cbc.Key{
+			"6pack":     org.UnitPackage,
+			"tetrabrik": org.UnitCarton,
+		} {
+			a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: unit}
+			norm.Normalize(a)
+			assert.Equal(t, expect, a.Unit)
+			assert.True(t, a.Ext.IsZero())
+		}
+	})
 	t.Run("keeps GOBL unit keys", func(t *testing.T) {
 		amount := num.MakeAmount(15, 1)
 		a := &org.Attribute{Key: org.AttributeKeyWeight, Amount: &amount, Unit: org.UnitKilogram}

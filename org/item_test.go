@@ -36,6 +36,17 @@ func TestItemNormalization(t *testing.T) {
 		assert.Equal(t, cbc.KeyEmpty, i.Unit)
 		assert.Equal(t, cbc.Code("XZZ"), i.Ext.Get(untdid.ExtKeyUnit))
 	})
+	t.Run("legacy removed unit keys", func(t *testing.T) {
+		for unit, expect := range map[cbc.Key]cbc.Key{
+			"6pack":     org.UnitPackage,
+			"tetrabrik": org.UnitCarton,
+		} {
+			i := &org.Item{Name: "test item", Unit: unit}
+			norm.Normalize(i)
+			assert.Equal(t, expect, i.Unit)
+			assert.True(t, i.Ext.IsZero())
+		}
+	})
 	t.Run("legacy unit preserves explicit extension", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",

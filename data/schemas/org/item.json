@@ -413,10 +413,6 @@
               "title": "Bottles"
             },
             {
-              "const": "6pack",
-              "title": "Six Packs"
-            },
-            {
               "const": "canister",
               "title": "Canisters"
             },
@@ -440,10 +436,6 @@
             {
               "const": "blk",
               "title": "Blocks"
-            },
-            {
-              "const": "tetrabrik",
-              "title": "Tetra-Briks"
             },
             {
               "const": "pallet",

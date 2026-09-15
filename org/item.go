@@ -105,14 +105,7 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 }
 
 func normalizeItem(i *Item) {
-	// Before Unit was restricted to GOBL keys, it also accepted raw UN/ECE
-	// codes. Preserve those codes in the dedicated extension without making
-	// assumptions about their meaning; addons may provide their own mapping.
-	if regexpUNECEUnit.MatchString(i.Unit.String()) {
-		code := cbc.Code(i.Unit)
-		i.Ext = i.Ext.SetIfEmpty(unitExtKeyUNTDID, code)
-		i.Unit = cbc.KeyEmpty
-	}
+	i.Unit, i.Ext = normalizeUnit(i.Unit, i.Ext)
 	i.Name = cbc.NormalizeString(i.Name)
 	i.Description = cbc.NormalizeString(i.Description)
 	i.Attributes = CleanAttributes(i.Attributes)

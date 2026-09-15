@@ -58,6 +58,13 @@ func TestOrgItemNormalize(t *testing.T) {
 		assert.Equal(t, cbc.Code("C62"), item.Ext.Get(untdid.ExtKeyUnit))
 	})
 
+	t.Run("maps the ES portion unit", func(t *testing.T) {
+		item := &org.Item{Unit: org.UnitPortion}
+		norm.Normalize(item, tax.AddonContext(en16931.V2017))
+		assert.Equal(t, org.UnitPortion, item.Unit)
+		assert.Equal(t, cbc.Code("13"), item.Ext.Get(untdid.ExtKeyUnit))
+	})
+
 	t.Run("maintains valid", func(t *testing.T) {
 		item := &org.Item{
 			Unit: org.UnitHour,
