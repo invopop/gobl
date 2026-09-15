@@ -240,8 +240,11 @@ func encodeString(s string) ([]byte, error) {
 			continue
 		}
 		c, size := utf8.DecodeRuneInString(s[i:])
-		if c == utf8.RuneError {
+		if c == utf8.RuneError && size == 1 {
 			// don't accept anything that isn't valid UTF-8, no exceptions.
+			// Only a size of 1 means the bytes are malformed: U+FFFD is itself
+			// a valid code point (encoded as EF BF BD, size 3) and is kept as
+			// content like any other rune.
 			return nil, &json.UnsupportedValueError{Value: reflect.ValueOf(s), Str: fmt.Sprintf("%q", s)}
 		}
 		i += size

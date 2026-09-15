@@ -233,6 +233,16 @@ func TestStringMarshalJSON(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "json: unsupported value")
 	})
+
+	t.Run("with replacement character", func(t *testing.T) {
+		// U+FFFD is a valid code point, emitted by senders whose own encoding
+		// conversion already mangled the text. The document still has to
+		// digest, so it is kept as content.
+		s := c14n.String("Premi\uFFFDre v\uFFFDrification")
+		d, err := s.MarshalJSON()
+		require.NoError(t, err)
+		assert.Equal(t, "\"Premi\uFFFDre v\uFFFDrification\"", string(d))
+	})
 }
 
 func TestNullMarshalJSON(t *testing.T) {
