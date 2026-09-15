@@ -3,6 +3,7 @@ package untdid
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 )
 
 // unitCodes maps GOBL unit keys to the UN/ECE Recommendation 20 and 21 codes
@@ -119,4 +120,20 @@ func UnitCode(unit cbc.Key) cbc.Code {
 // It returns an empty key when GOBL has no standard mapping.
 func UnitKey(code cbc.Code) cbc.Key {
 	return unitKeys[code]
+}
+
+// NormalizeUnit resolves a unit and its extensions so that the two never state
+// the same thing twice. A code that GOBL has a key for is replaced by that key
+// and the extension dropped, leaving the extension to carry only the codes GOBL
+// cannot express. When both are given the extension wins, as it comes from the
+// document format itself rather than the GOBL vocabulary.
+func NormalizeUnit(unit cbc.Key, ext tax.Extensions) (cbc.Key, tax.Extensions) {
+	code := ext.Get(ExtKeyUnit)
+	if code == cbc.CodeEmpty {
+		return unit, ext
+	}
+	if key := UnitKey(code); key != cbc.KeyEmpty {
+		return key, ext.Delete(ExtKeyUnit)
+	}
+	return cbc.KeyEmpty, ext
 }
