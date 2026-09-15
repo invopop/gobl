@@ -126,6 +126,10 @@
           "title": "Singapore"
         },
         {
+          "const": "SK",
+          "title": "Slovakia"
+        },
+        {
           "const": "US",
           "title": "United States of America"
         }
