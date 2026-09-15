@@ -6,6 +6,47 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 This file is generated from the change files in the [changes](./changes) directory. Add new entries to `changes/unreleased` instead of editing this file; see [changes/README.md](./changes/README.md).
 
+## [v0.507.0] - 2026-09-15
+
+### Added
+
+- `org`: `Attribute` accepts an `ext` extension map, so codes that accompany an
+  attribute can be preserved alongside its value. During normalization, legacy
+  UN/ECE unit values move to the `untdid-unit` extension without being
+  interpreted, matching `org.Item`.
+- `eu-en16931-v2017`: the `portion` unit maps to the UNTDID `13` (ration) code,
+  so it can satisfy BR-23, which requires a unit code on every invoice line.
+  Every unit GOBL defines now has an exact UNTDID equivalent.
+
+### Changed
+
+- `addons/pl/favat`: **breaking**: the Polish KSeF FA_VAT (`pl-favat-v3`) addon moved to the standalone [`github.com/invopop/gobl.pl.ksef`](https://github.com/invopop/gobl.pl.ksef) module, alongside the KSeF converter that consumes it. Add a blank import (`_ "github.com/invopop/gobl.pl.ksef/addon"`) to keep using the `pl-favat-v3` addon key. The key itself is unchanged, and remains a valid `$addons` value through the approved external addon list.
+- **breaking**: `catalogues/untdid`: the GOBL unit key to UN/ECE unit code
+  mapping lives here rather than in the `eu-en16931-v2017` addon, as `UnitCode`
+  and `UnitKey`, so that formats outside the EN 16931 family built on the same
+  codes, such as the Mexican CFDI's `ClaveUnidad`, can share one table. The
+  addon's `UnitToUNTDID` and `UnitFromUNTDID` are gone; call the catalogue
+  directly.
+- **breaking**: `eu-en16931-v2017`: an item's unit takes priority over its
+  `untdid-unit` extension, which is aligned with the code the unit defines.
+  Only when no unit is given does the extension determine one, which is left
+  empty for a code GOBL has no key for. Normalization corrects the extension
+  but never adds nor removes it, so a document that carries a standard code
+  keeps it alongside the unit, and one that does not is left alone. Item
+  attributes are normalized the same way.
+- **breaking**: `eu-en16931-v2017`: BR-23 accepts a unit code that is
+  determinable, from either the unit key or the extension, rather than one
+  stored in the extension. The generic `one` unit only stands in when the
+  document gives neither, so a code with no GOBL equivalent no longer produces
+  a unit that contradicts it.
+
+### Removed
+
+- **breaking**: `org`: the non-standard `6pack` and `tetrabrik` units, which had
+  no UN/ECE equivalent and so could never satisfy BR-23. Normalization replaces
+  them with `pkg` and `carton` respectively, so existing documents keep
+  validating.
+
 ## [v0.506.0] - 2026-09-15
 
 ### Added
