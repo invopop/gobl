@@ -17,11 +17,6 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const (
-	defaultTaxRemovalAccuracy         uint32 = 2
-	defaultCurrencyConversionAccuracy uint32 = 2
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -300,9 +295,11 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 // If after removing taxes the totals don't match, a rounding error will be added to the
 // invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
-// Documents using the `currency` rounding rule are switched to `precise`, as the
-// tax-exclusive prices need more decimal places than the currency to reproduce the
-// original tax amounts.
+// Documents that inherit the `currency` rounding rule from their tax regime are
+// switched to `precise`, as the tax-exclusive prices need more decimal places than
+// the currency to reproduce the original tax amounts. A rounding rule set on the
+// document itself is respected. Use RoundToCurrency afterwards when every amount
+// needs to fit the currency's precision.
 //
 // This method will replace the invoice contents in place, or return an error.
 func (inv *Invoice) RemoveIncludedTaxes() error {
@@ -366,6 +363,9 @@ func (inv *Invoice) setIssueTime(t *cal.Time) {
 }
 func (inv *Invoice) setCurrency(c currency.Code) {
 	inv.Currency = c
+}
+func (inv *Invoice) setTax(tx *Tax) {
+	inv.Tax = tx
 }
 func (inv *Invoice) setTotals(t *Totals) {
 	inv.Totals = t
