@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/rules"
 	"github.com/invopop/gobl/rules/is"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 )
 
@@ -181,6 +182,10 @@ type Attribute struct {
 	Unit cbc.Key `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Date value of the attribute.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
+
+	// Extension code map for any additional regime specific codes that may be
+	// required, such as the standard unit code behind the attribute's unit.
+	Ext tax.Extensions `json:"ext,omitzero" jsonschema:"title=Extensions"`
 }
 
 func attributeRules() *rules.Set {
@@ -228,6 +233,14 @@ func attributeHasValue(val any) bool {
 }
 
 func normalizeAttribute(a *Attribute) {
+	// Before Unit was restricted to GOBL keys, it also accepted raw UN/ECE
+	// codes. Preserve those codes in the dedicated extension without making
+	// assumptions about their meaning; addons may provide their own mapping.
+	if regexpUNECEUnit.MatchString(a.Unit.String()) {
+		code := cbc.Code(a.Unit)
+		a.Ext = a.Ext.SetIfEmpty(unitExtKeyUNTDID, code)
+		a.Unit = cbc.KeyEmpty
+	}
 	a.Label = cbc.NormalizeString(a.Label)
 	a.Text = cbc.NormalizeString(a.Text)
 }
@@ -241,7 +254,8 @@ func (a *Attribute) IsEmpty() bool {
 		a.Code == "" &&
 		a.Amount == nil &&
 		a.Unit == cbc.KeyEmpty &&
-		a.Date == nil)
+		a.Date == nil &&
+		a.Ext.IsZero())
 }
 
 // AttributesHaveUniqueKeys provides a test that ensures no two attributes
