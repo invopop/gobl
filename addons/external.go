@@ -102,6 +102,14 @@ func init() {
 		Module: "github.com/invopop/gobl.fi.finvoice",
 	})
 	tax.RegisterApprovedAddon(&tax.ExternalAddon{
+		Key: "pl-favat-v3",
+		Name: i18n.String{
+			i18n.EN: "Polish KSeF FA_VAT FA(3)",
+			i18n.PL: "Polski KSeF FA_VAT FA(3)",
+		},
+		Module: "github.com/invopop/gobl.pl.ksef",
+	})
+	tax.RegisterApprovedAddon(&tax.ExternalAddon{
 		Key: "it-sdi-v1",
 		Name: i18n.String{
 			i18n.EN: "Italy SDI FatturaPA v1.x",
