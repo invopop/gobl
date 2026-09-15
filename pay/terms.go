@@ -120,7 +120,7 @@ func (t *Terms) UnmarshalJSON(data []byte) error {
 type DueDate struct {
 	Date     *cal.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
 	Notes    string          `json:"notes,omitempty" jsonschema:"title=Notes,description=Other details to take into account for the due date."`
-	Amount   num.Amount      `json:"amount" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
+	Amount   *num.Amount     `json:"amount,omitempty" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
 	Percent  *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent,description=Percentage of the total that should be paid by the date."`
 	Currency currency.Code   `json:"currency,omitempty" jsonschema:"title=Currency,description=If different from the parent document's base currency."`
 }
@@ -147,7 +147,8 @@ func (t *Terms) UNTDID4279() cbc.Code {
 }
 
 // CalculateDues goes through each DueDate. If it has a percentage
-// value set, it'll be used to calculate the amount.
+// value set, it'll be used to calculate the amount. Due dates without
+// an amount or percentage are left untouched.
 func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 	if t == nil {
 		return
@@ -157,9 +158,13 @@ func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 			continue
 		}
 		if dd.Percent != nil && !dd.Percent.IsZero() {
-			dd.Amount = dd.Percent.Of(sum)
+			a := dd.Percent.Of(sum)
+			dd.Amount = &a
 		}
-		dd.Amount = dd.Amount.Rescale(zero.Exp())
+		if dd.Amount != nil {
+			a := dd.Amount.Rescale(zero.Exp())
+			dd.Amount = &a
+		}
 	}
 }
 

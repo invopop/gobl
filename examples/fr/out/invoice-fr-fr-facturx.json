@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1a5539d5cb3af435b30f28a6499c864caaf721590cc4e220459b7f3297111b87"
+			"val": "fd0dfe93f073d1811380bae07d04e26d25b735d790659799c2a3e4f9c0e5b4d2"
 		}
 	},
 	"doc": {
@@ -75,7 +75,10 @@
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
-					"unit": "one"
+					"unit": "one",
+					"ext": {
+						"untdid-unit": "C62"
+					}
 				},
 				"sum": "1800.00",
 				"discounts": [
@@ -103,7 +106,10 @@
 				"item": {
 					"name": "Random exempt extra",
 					"price": "90.00",
-					"unit": "one"
+					"unit": "one",
+					"ext": {
+						"untdid-unit": "C62"
+					}
 				},
 				"sum": "90.00",
 				"taxes": [

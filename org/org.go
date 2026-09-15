@@ -24,7 +24,6 @@ func init() {
 		Person{},
 		Registration{},
 		Telephone{},
-		Unit(""),
 		Website{},
 		Attachment{},
 	)
@@ -43,10 +42,10 @@ func init() {
 		itemRules(),
 		nameRules(),
 		noteRules(),
+		partyRules(),
 		personRules(),
 		registrationRules(),
 		telephoneRules(),
-		unitRules(),
 		websiteRules(),
 	)
 }

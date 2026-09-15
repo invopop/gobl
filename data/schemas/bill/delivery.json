@@ -66,7 +66,7 @@
           ],
           "title": "Type",
           "description": "Type of delivery document.",
-          "enum": "advice"
+          "calculated": true
         },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

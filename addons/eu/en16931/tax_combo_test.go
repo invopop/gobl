@@ -140,6 +140,32 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.NoError(t, rules.Validate(c, tax.AddonContext(en16931.V2017)))
 	})
 
+	t.Run("off-list country vatex code is accepted", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-FR-CGI261-1",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
+	t.Run("french CTC extended vatex code is accepted", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext: tax.ExtensionsOf(cbc.CodeMap{
+				"cef-vatex": "VATEX-FR-CGI275",
+			}),
+		}
+		norm.Normalize(c, tax.AddonContext(en16931.V2017))
+		err := rules.Validate(c, tax.AddonContext(en16931.V2017))
+		assert.NoError(t, err)
+	})
+
 	t.Run("reverse charge without vatex", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,

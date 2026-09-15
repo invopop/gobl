@@ -32,26 +32,41 @@
           "id": "GOBL-CAL-PERIOD-10",
           "desc": "end date must be on or after start date",
           "tests": "end not before start"
+        },
+        {
+          "id": "GOBL-CAL-PERIOD-11",
+          "desc": "either a start or end date is required",
+          "tests": "has start or end"
         }
       ],
       "subsets": [
         {
           "field": "start",
-          "assert": [
+          "subsets": [
             {
-              "id": "GOBL-CAL-PERIOD-01",
-              "desc": "start date cannot be zero",
-              "tests": "not zero"
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-CAL-PERIOD-01",
+                  "desc": "start date cannot be zero",
+                  "tests": "not zero"
+                }
+              ]
             }
           ]
         },
         {
           "field": "end",
-          "assert": [
+          "subsets": [
             {
-              "id": "GOBL-CAL-PERIOD-02",
-              "desc": "end date cannot be zero",
-              "tests": "not zero"
+              "guard": "present",
+              "assert": [
+                {
+                  "id": "GOBL-CAL-PERIOD-02",
+                  "desc": "end date cannot be zero",
+                  "tests": "not zero"
+                }
+              ]
             }
           ]
         }

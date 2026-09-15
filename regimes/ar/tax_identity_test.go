@@ -38,6 +38,10 @@ func TestTaxIdentityRules(t *testing.T) {
 			name: "valid CUIT - prefix 33 (company conflict resolution)",
 			code: "33000000049",
 		},
+		{
+			name: "valid CUIL - prefix 24 (individual contingency prefix)",
+			code: "24000000007",
+		},
 
 		// Invalid - wrong length
 		{
