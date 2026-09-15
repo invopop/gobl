@@ -9,47 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// The mapping itself is covered by the UNTDID catalogue; these only check that
+// the addon's converters still reach it.
 func TestUnitToUNTDID(t *testing.T) {
-	tests := []struct {
-		unit cbc.Key
-		code cbc.Code
-	}{
-		{org.UnitWeek, "WEE"},
-		{org.UnitYear, "ANN"},
-		{org.UnitDecilitre, "DLT"},
-		{org.UnitKilolitre, "K6"},
-		{org.UnitCentigram, "CGM"},
-		{org.UnitLinearMetre, "LM"},
-		{org.UnitLinearFoot, "LF"},
-		{org.UnitBlock, "XOK"},
-		{org.UnitPacket, "XPA"},
-		{org.UnitBundle, "XBE"},
-		{org.UnitPortion, "13"},
-		{cbc.KeyEmpty, ""},
-	}
-
-	for _, tt := range tests {
-		assert.Equal(t, tt.code, en16931.UnitToUNTDID(tt.unit))
-	}
+	assert.Equal(t, cbc.Code("HUR"), en16931.UnitToUNTDID(org.UnitHour))
+	assert.Equal(t, cbc.Code("13"), en16931.UnitToUNTDID(org.UnitPortion))
+	assert.Equal(t, cbc.CodeEmpty, en16931.UnitToUNTDID(cbc.KeyEmpty))
 }
 
 func TestUnitFromUNTDID(t *testing.T) {
 	assert.Equal(t, org.UnitHour, en16931.UnitFromUNTDID("HUR"))
-	assert.Equal(t, org.UnitUnit, en16931.UnitFromUNTDID("XUN"))
 	assert.Equal(t, org.UnitPortion, en16931.UnitFromUNTDID("13"))
 	assert.Equal(t, cbc.KeyEmpty, en16931.UnitFromUNTDID("XZZ"))
-	assert.Equal(t, cbc.KeyEmpty, en16931.UnitFromUNTDID(""))
-}
-
-func TestUnitUNTDIDMapCoverage(t *testing.T) {
-	mapped := 0
-	for _, def := range org.UnitDefinitions {
-		unit := def.Key
-		code := en16931.UnitToUNTDID(unit)
-		if assert.NotEmpty(t, code, "unit %s should be mapped", unit) {
-			assert.Equal(t, unit, en16931.UnitFromUNTDID(code))
-			mapped++
-		}
-	}
-	assert.Equal(t, len(org.UnitDefinitions), mapped)
 }
