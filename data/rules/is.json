@@ -1,0 +1,42 @@
+{
+  "id": "GOBL-IS",
+  "package": "is",
+  "subsets": [
+    {
+      "id": "GOBL-IS-TAX-IDENTITY",
+      "object": "tax.Identity",
+      "subsets": [
+        {
+          "guard": "code in [IS]",
+          "subsets": [
+            {
+              "field": "code",
+              "subsets": [
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-01",
+                      "desc": "tax id code must be a 10-digit Kennitala",
+                      "tests": "matches ^[0-9]{10}$"
+                    }
+                  ]
+                },
+                {
+                  "guard": "present",
+                  "assert": [
+                    {
+                      "id": "GOBL-IS-TAX-IDENTITY-02",
+                      "desc": "tax id code Kennitala checksum is invalid",
+                      "tests": "valid"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
